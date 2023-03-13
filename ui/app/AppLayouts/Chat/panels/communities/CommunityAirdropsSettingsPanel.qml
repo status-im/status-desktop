@@ -19,7 +19,7 @@ SettingsPageLayout {
 
     property int viewWidth: 560 // by design
 
-    signal airdropClicked(var airdropTokens, string address)
+    signal airdropClicked(var airdropTokens, var addresses)
     signal navigateToMintTokenSettings
 
     // TODO: Update with stackmanager when #8736 is integrated
@@ -96,7 +96,7 @@ SettingsPageLayout {
             collectiblesModel: root.collectiblesModel
 
             onAirdropClicked: {
-                root.airdropClicked(airdropTokens, address)
+                root.airdropClicked(airdropTokens, addresses)
                 stackManager.clear(d.welcomeViewState, StackView.Immediate)
             }
             onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()

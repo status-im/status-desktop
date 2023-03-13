@@ -24,6 +24,11 @@ logScope:
   topics = "community-tokens-service"
 
 type
+  CommunityTokenAndAmount* = object
+    communityToken*: CommunityTokenDto
+    amount*: int
+
+type
   CommunityTokenDeployedStatusArgs* = ref object of Args
     communityId*: string
     contractAddress*: string
@@ -156,3 +161,20 @@ QtObject:
     let price = self.tokenService.getTokenPrice(cryptoSymbol, currentCurrency)
     let value = parseFloat(cryptoBalance) * price
     return fmt"{value:.2f}"
+
+  proc contractOwner*(self: Service, chainId: int, contractAddress: string): string =
+    try:
+      let response = tokens_backend.contractOwner(chainId, contractAddress)
+      return response.result.getStr()
+    except RpcException:
+      error "Error getting contract owner", message = getCurrentExceptionMsg()
+
+  proc airdropCollectibles*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+    try:
+      for collectibleAndAmount in collectiblesAndAmounts:
+        let addressFrom = self.contractOwner(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
+        let txData = TransactionDataDto(source: parseAddress(addressFrom)) #TODO estimate fee in UI
+        let response = tokens_backend.mintTo(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, password, walletAddresses, collectibleAndAmount.amount)
+        echo "!!! Transaction hash ", response.result.getStr()
+    except RpcException:
+      error "Error minting collectibles", message = getCurrentExceptionMsg()

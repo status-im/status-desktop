@@ -345,7 +345,7 @@ StatusSectionLayout {
                 collectiblesModel: rootStore.collectiblesModel
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
-                onAirdropClicked: communityTokensStore.airdrop(airdropTokens, chainId, address)
+                onAirdropClicked: communityTokensStore.airdrop(root.community.id, airdropTokens, addresses)
                 onNavigateToMintTokenSettings: d.currentIndex = d.mintTokensSettingsIndex
             }
 

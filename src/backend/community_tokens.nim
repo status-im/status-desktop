@@ -19,3 +19,11 @@ proc addCommunityToken*(token: CommunityTokenDto): RpcResponse[JsonNode] {.raise
 proc updateCommunityTokenState*(contractAddress: string, deployState: DeployState): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [contractAddress, deployState.int]
   return core.callPrivateRPC("wakuext_updateCommunityTokenState", payload)
+
+proc mintTo*(chainId: int, contractAddress: string, txData: JsonNode, password: string, walletAddresses: seq[string], amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), walletAddresses, amount]
+  return core.callPrivateRPC("collectibles_mintTo", payload)
+
+proc contractOwner*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress]
+  return core.callPrivateRPC("collectibles_contractOwner", payload)

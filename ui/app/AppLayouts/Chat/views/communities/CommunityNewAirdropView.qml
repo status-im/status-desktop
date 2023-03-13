@@ -31,7 +31,7 @@ StatusScrollView {
     readonly property bool isFullyFilled: selectedHoldingsModel.count > 0 &&
                                           addressess.model.count > 0
 
-    signal airdropClicked(var airdropTokens, string address)
+    signal airdropClicked(var airdropTokens, var addresses)
     signal navigateToMintTokenSettings
 
     QtObject {
@@ -205,6 +205,7 @@ StatusScrollView {
             id: addressInput
 
             Layout.fillWidth: true
+
             placeholderText: qsTr("Example: 0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7999")
         }
 
@@ -249,7 +250,11 @@ StatusScrollView {
                                         root.selectedHoldingsModel,
                                         ["key", "type", "amount"])
 
-                root.airdropClicked(airdropTokens, addressess.model)
+                const addresses = ModelUtils.modelToArray(
+                                    addressess.model,
+                                    ["text"])
+
+                root.airdropClicked(airdropTokens, addresses)
             }
         }
     }
