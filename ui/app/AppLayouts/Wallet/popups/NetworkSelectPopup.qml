@@ -115,8 +115,10 @@ Popup {
             onClicked: {
                 if(root.multiSelection)
                     toggleModelIsActive()
-                else
-                    radioButton.toggle()
+                else {
+                    // Don't allow uncheck
+                    if(!radioButton.checked) radioButton.toggle()
+                }
             }
 
             function toggleModelIsActive() {
@@ -142,8 +144,12 @@ Popup {
                     size: StatusRadioButton.Size.Large
                     ButtonGroup.group: radioBtnGroup
                     checked: model.index === 0
-                    onCheckedChanged: if(checked) root.singleNetworkSelected(model.chainId, model.chainName, model.iconUrl)
-                    onToggled: if(checked) root.singleNetworkSelected(model.chainId, model.chainName, model.iconUrl)
+                    onCheckedChanged: {
+                        if(checked && !root.multiSelection) {
+                            root.singleNetworkSelected(model.chainId, model.chainName, model.iconUrl)
+                            close()
+                        }
+                    }
                 }
             ]
         }
