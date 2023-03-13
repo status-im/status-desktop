@@ -56,6 +56,7 @@ type ActivityCenterNotificationDto* = ref object of RootObj
   timestamp*: int64
   read*: bool
   dismissed*: bool
+  deleted*: bool
   accepted*: bool
 
 proc `$`*(self: ActivityCenterNotificationDto): string =
@@ -70,6 +71,7 @@ proc `$`*(self: ActivityCenterNotificationDto): string =
     timestamp: {self.timestamp},
     read: {$self.read},
     dismissed: {$self.dismissed},
+    deleted: {$self.deleted},
     accepted: {$self.accepted},
     message: {self.message}
     replyMessage: {self.replyMessage}
@@ -107,6 +109,7 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   discard jsonObj.getProp("timestamp", result.timestamp)
   discard jsonObj.getProp("read", result.read)
   discard jsonObj.getProp("dismissed", result.dismissed)
+  discard jsonObj.getProp("deleted", result.deleted)
   discard jsonObj.getProp("accepted", result.accepted)
 
   if jsonObj.contains("message") and jsonObj{"message"}.kind != JNull:
