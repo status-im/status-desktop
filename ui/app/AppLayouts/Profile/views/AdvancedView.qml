@@ -100,25 +100,6 @@ SettingsContentBase {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                id: wallet
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Wallet")
-                objectName: "WalletSettingsLineButton"
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isWalletEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isWalletEnabled) {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.wallet
-                        confirmationPopup.open()
-                    } else {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.wallet)
-                    }
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Dapp Browser")

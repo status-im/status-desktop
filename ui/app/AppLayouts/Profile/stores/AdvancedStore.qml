@@ -24,7 +24,6 @@ QtObject {
 
     readonly property bool isFakeLoadingScreenEnabled: localAppSettings.fakeLoadingScreenEnabled ?? false
     readonly property QtObject experimentalFeatures: QtObject {
-        readonly property string wallet: "wallet"
         readonly property string browser: "browser"
         readonly property string communities: "communities"
         readonly property string activityCenter: "activityCenter"
@@ -105,10 +104,7 @@ QtObject {
         if(!root.advancedModule)
             return
 
-        if (feature === experimentalFeatures.wallet) {
-            advancedModule.toggleWalletSection()
-        }
-        else if (feature === experimentalFeatures.browser) {
+        if (feature === experimentalFeatures.browser) {
             advancedModule.toggleBrowserSection()
         }
         else if (feature === experimentalFeatures.communities) {

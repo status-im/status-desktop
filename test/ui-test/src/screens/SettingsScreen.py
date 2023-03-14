@@ -48,7 +48,7 @@ class ENSScreen(Enum):
     OPEN_TRANSACTION: str = "settings_ENS_Terms_Open_Transaction"
     TRANSACTION_NEXT_BUTTON: str = "settings_ENS_Terms_Transaction_Next_Button"
     PASSWORD_INPUT: str = "settings_ENS_Terms_Transaction_Password_Input"
-   
+
 class MessagingOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW: str = "displayMessageLinkPreviewItem"
     LINK_PREVIEW_SWITCH: str = "linkPreviewSwitch"
@@ -56,7 +56,7 @@ class MessagingOptionScreen(Enum):
     TENOR_GIFS_PREVIEW_SWITCH_ITEM: str = "tenorGifsPreviewSwitchItem"
     SCROLLVIEW: str = "settingsContentBase_ScrollView"
     CONTACTS_BTN: str = "contacts_listItem_btn"
-   
+
 class ContactsViewScreen(Enum):
     CONTACT_REQUEST_CHAT_KEY_BTN: str = "contact_request_to_chat_key_btn"
     CONTACT_REQUEST_CHAT_KEY_INPUT: str = "contactRequest_ChatKey_Input"
@@ -65,7 +65,7 @@ class ContactsViewScreen(Enum):
     CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON: str = "contactRequest_PendingRequests_Button"
     SENT_REQUESTS_CONTACT_PANEL_LIST_VIEW: str = "sentRequests_contactListPanel_ListView"
     RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW: str = "receivedRequests_contactListPanel_ListView"
-   
+
 class ProfilePopupScreen(Enum):
     PROFILE_POPUP_SEND_CONTACT_REQUEST_BUTTON = "ProfilePopup_SendContactRequestButton"
     SAY_WHO_YOU_ARE_INPUT: str = "ProfilePopup_SayWhoYouAre_TextEdit"
@@ -140,20 +140,21 @@ class SettingsScreen:
 
     def open_advanced_settings(self):
         click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
-        
+
     def activate_community_permission_settings(self):
         click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS.value)
         click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-        
-    
+
+
     def open_wallet_settings(self):
         click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
 
     def activate_wallet_option(self):
-        click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
-        click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
-        click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-        verify_object_enabled(SidebarComponents.WALLET_OPTION.value)
+        if not is_loaded_visible_and_enabled(SidebarComponents.WALLET_OPTION.value):
+            click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
+            click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
+            click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
+            verify_object_enabled(SidebarComponents.WALLET_OPTION.value)
 
     def activate_open_wallet_section(self):
         self.activate_wallet_option()
@@ -214,43 +215,43 @@ class SettingsScreen:
         # needed cause if we do it immmediately the toggle doesn't work
         time.sleep(2)
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
-        click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)      
-        
+        click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)
+
     def open_language_and_currency_settings(self):
         click_obj_by_name(SidebarComponents.LANGUAGE_CURRENCY_OPTION.value)
 
     def register_random_ens_name(self, password: str):
         click_obj_by_name(SidebarComponents.ENS_ITEM.value)
         get_and_click_obj(ENSScreen.START_BUTTON.value)
-        
+
         name = ""
         for _ in range(4):
             name += string.ascii_lowercase[random.randrange(26)]
-            
+
         type_text(ENSScreen.ENS_SEARCH_INPUT.value, name)
         time.sleep(1)
-        
+
         click_obj_by_name(ENSScreen.NEXT_BUTTON.value)
         click_obj_by_name(ENSScreen.AGREE_TERMS.value)
         click_obj_by_name(ENSScreen.OPEN_TRANSACTION.value)
         click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
         click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
-        
+
         type_text(ENSScreen.PASSWORD_INPUT.value, password)
         click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
-    
+
     def _find_account_index(self, account_name: str) -> int:
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         for index in range(accounts.count):
             if(accounts.itemAtIndex(index).objectName == account_name):
                 return index
         return -1
-    
+
     def sign_out_and_quit_the_app(self, pid: int):
         SettingsScreen.__pid = pid
         click_obj_by_name(SidebarComponents.SIGN_OUT_AND_QUIT_OPTION.value)
         click_obj_by_name(ConfirmationDialog.SIGN_OUT_CONFIRMATION.value)
-        
+
     def verify_the_app_is_closed(self):
         verify_the_app_is_closed(SettingsScreen.__pid)
 
@@ -315,7 +316,7 @@ class SettingsScreen:
         self.verify_bio(bio)
 
     def set_social_links(self, table):
-        
+
         twitter = ""
         personal_site = ""
         github = ""
@@ -324,7 +325,7 @@ class SettingsScreen:
         telegram = ""
         custom_link_text = ""
         custom_link = ""
-        
+
         if table is not None:
             verify_equals(8, len(table)) # Expecting 8 as social media link fields to verify
             twitter = table[0][0]
@@ -334,8 +335,8 @@ class SettingsScreen:
             discord = table[4][0]
             telegram = table[5][0]
             custom_link_text = table[6][0]
-            custom_link = table[7][0]       
-        
+            custom_link = table[7][0]
+
         click_obj_by_name(ProfileSettingsScreen.OPEN_SOCIAL_LINKS_DIALOG.value)
 
         click_obj_by_name(ProfileSettingsScreen.TWITTER_SOCIAL_LINK_IN_DIALOG.value)
@@ -359,7 +360,7 @@ class SettingsScreen:
         click_obj_by_name(SettingsScreenComponents.SAVE_BUTTON.value)
 
     def verify_social_links(self, table):
-        
+
         twitter = ""
         personal_site = ""
         github = ""
@@ -368,7 +369,7 @@ class SettingsScreen:
         telegram = ""
         custom_link_text = ""
         custom_link = ""
-        
+
         if table is not None:
             verify_equals(8, len(table)) # Expecting 8 as social media link fields to verify
             twitter = table[0][0]
@@ -378,8 +379,8 @@ class SettingsScreen:
             discord = table[4][0]
             telegram = table[5][0]
             custom_link_text = table[6][0]
-            custom_link = table[7][0]       
-        
+            custom_link = table[7][0]
+
         verify_text_matching(ProfileSettingsScreen.TWITTER_SOCIAL_LINK.value, twitter)
         verify_text_matching(ProfileSettingsScreen.PERSONAL_SITE_SOCIAL_LINK.value, personal_site)
 
@@ -434,12 +435,12 @@ class SettingsScreen:
 
     def verify_seed_phrase_indicator_not_visible(self):
         verify_not_found(WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value, "Check that backup seed phrase settings button is visible")
-        
+
     def change_user_password(self, oldPassword: str, newPassword: str):
         get_and_click_obj(ProfileSettingsScreen.CHANGE_PASSWORD_BUTTON.value)
-        
+
         type_text(ChangePasswordMenu.CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT.value, oldPassword)
-        
+
         type_text(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_INPUT.value, newPassword)
 
         type_text(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT.value, newPassword)
@@ -449,16 +450,16 @@ class SettingsScreen:
 
     def add_contact_by_chat_key(self, chat_key: str, who_you_are: str):
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_BTN.value)
-        
+
         type_text(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_INPUT.value, chat_key)
         type_text(ContactsViewScreen.CONTACT_REQUEST_SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
-        
+
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_SEND_BUTTON.value)
 
     def send_contact_request_via_profile_popup(self, who_you_are: str):
         click_obj_by_name(ProfilePopupScreen.PROFILE_POPUP_SEND_CONTACT_REQUEST_BUTTON.value)
         type_text(ProfilePopupScreen.SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
-        
+
         click_obj_by_name(ProfilePopupScreen.SEND_CONTACT_REQUEST_BUTTON.value)
 
     def verify_contact_request(self, chat_key: str):
@@ -476,13 +477,13 @@ class SettingsScreen:
     def verify_there_is_a_sent_contact_request(self):
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
         contact_list = get_obj(ContactsViewScreen.SENT_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
-        verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request") 
+        verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request")
 
     def verify_there_is_a_received_contact_request(self):
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
         contact_list = get_obj(ContactsViewScreen.RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
-        verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request") 
-    
+        verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request")
+
     def open_community(self, community_name: str):
         communities_list = get_obj(CommunitiesSettingsScreen.LIST_PANEL.value)
         verify(communities_list.count > 0, "At least one joined community exists")
@@ -491,4 +492,4 @@ class SettingsScreen:
             if str(delegate.title) == community_name:
                 click_obj(delegate)
                 return
-        verify(False, "Community not found")        
+        verify(False, "Community not found")
