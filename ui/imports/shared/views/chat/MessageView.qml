@@ -55,6 +55,7 @@ Loader {
     property string messageOutgoingStatus: ""
     property string resendError: ""
     property int messageContentType: Constants.messageContentType.messageType
+
     property bool pinnedMessage: false
     property string messagePinnedBy: ""
     property var reactionsModel: []
@@ -443,7 +444,8 @@ Loader {
                 reactionsModel: root.reactionsModel
 
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
-                            (root.prevMessageContentType !== Constants.messageContentType.systemMessagePrivateGroupType && root.senderId !== root.prevMessageSenderId)
+                            root.prevMessageContentType === Constants.messageContentType.systemMessagePrivateGroupType ||
+                            root.senderId !== root.prevMessageSenderId
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 0
                 bottomPadding: showHeader && d.nextMessageHasHeader() ? Style.current.halfPadding : 2
