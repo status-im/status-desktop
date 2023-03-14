@@ -108,7 +108,8 @@ QtObject:
       communityToken.image = tokenMetadata.image
 
       # save token to db
-      discard tokens_backend.addCommunityToken(communityToken)
+      let communityTokenJson = tokens_backend.addCommunityToken(communityToken)
+      communityToken = communityTokenJson.result.toCommunityTokenDto()
       let data = CommunityTokenDeployedArgs(communityToken: communityToken)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYED, data)
 
