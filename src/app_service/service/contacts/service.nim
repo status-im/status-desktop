@@ -424,6 +424,8 @@ QtObject:
       contact.removed = false
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
+      self.activityCenterService.parseActivityCenterResponse(response)
+
     except Exception as e:
       error "an error occurred while sending contact request", msg=e.msg
 

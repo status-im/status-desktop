@@ -16,7 +16,7 @@ ActivityNotificationMessage {
     id: root
 
     Connections {
-        target: root.isOutgoingRequest ? root.store.contactsStore.sentContactRequestsModel :
+        target: root.isOutgoingMessage ? root.store.contactsStore.sentContactRequestsModel :
                                          root.store.contactsStore.receivedContactRequestsModel
 
         function onItemChanged(pubKey) {
@@ -29,7 +29,7 @@ ActivityNotificationMessage {
         if (!notification)
             return ""
 
-        return root.isOutgoingRequest ? notification.repliedMessage.messageText : notification.message.messageText
+        return root.isOutgoingMessage ? notification.repliedMessage.messageText : notification.message.messageText
     }
 
     messageSubheaderComponent: StatusBaseText {
@@ -37,7 +37,7 @@ ActivityNotificationMessage {
             if (!notification)
                 return ""
 
-            if (root.isOutgoingRequest) {
+            if (root.isOutgoingMessage) {
                 return qsTr("To verify their identity you asked: %1").arg(CoreUtils.Utils.stripHtmlTags(notification.message.messageText))
             }
 
@@ -50,7 +50,7 @@ ActivityNotificationMessage {
         font.pixelSize: 15
     }
 
-    ctaComponent: isOutgoingRequest ? outgoingContactVerificationCta : incomingContactVerificationCta
+    ctaComponent: isOutgoingMessage ? outgoingContactVerificationCta : incomingContactVerificationCta
 
     Component {
         id: outgoingContactVerificationCta

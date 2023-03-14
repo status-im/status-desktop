@@ -20,7 +20,7 @@ ActivityNotificationMessage {
     readonly property bool dismissed: notification && notification.message.contactRequestState === Constants.contactRequestStateDismissed
 
     Connections {
-        target: root.isOutgoingRequest ? root.store.contactsStore.sentContactRequestsModel :
+        target: root.isOutgoingMessage ? root.store.contactsStore.sentContactRequestsModel :
                                          root.store.contactsStore.receivedContactRequestsModel
 
         function onItemChanged(pubKey) {
@@ -30,34 +30,20 @@ ActivityNotificationMessage {
     }
 
     maximumLineCount: 5
-    messageDetails.messageText: {
-        if (isOutgoingRequest && contactDetails) {
-            const status = accepted ? qsTr("accepted") : dismissed ? qsTr("dismissed") : qsTr("recieved")
-            return qsTr("%1 %2 your contact request").arg(contactDetails.displayName).arg(status)
-        }
+    messageDetails.messageText: !root.isOutgoingMessage && notification ? notification.message.messageText : ""
 
-        if (!isOutgoingRequest && notification) {
-            return notification.message.messageText
-        }
-
-        return ""
-    }
-
-    messageSubheaderComponent: !isOutgoingRequest ? subheaderComponent : null
-
-    Component {
-        id: subheaderComponent
-
-        StatusBaseText {
-            text: qsTr("Sent contact request:")
-            color: Theme.palette.baseColor1
-            font.italic: true
-            font.pixelSize: 15
-        }
+    messageSubheaderComponent: StatusBaseText {
+        text: root.isOutgoingMessage ? qsTr("Сontact request sent to %1").arg(contactName) :
+                                       qsTr("Сontact request:")
+        font.italic: true
+        font.pixelSize: 15
+        maximumLineCount: 2
+        wrapMode: Text.WordWrap
+        color: Theme.palette.baseColor1
     }
 
     ctaComponent: ContactRequestCta {
-        isOutgoingRequest: root.isOutgoingRequest
+        isOutgoingRequest: root.isOutgoingMessage
         pending: root.pending
         accepted: root.accepted
         dismissed: root.dismissed
