@@ -138,8 +138,8 @@ Loader {
         LoadingComponent {
             anchors.centerIn: parent
             radius: width/2
-            height: root.asset.height
-            width: root.asset.width
+            height: root.asset.isImage ? root.asset.height : root.asset.bgHeight
+            width: root.asset.isImage ? root.asset.width : root.asset.bgWidth
         }
     }
 

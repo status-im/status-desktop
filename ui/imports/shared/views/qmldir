@@ -10,3 +10,4 @@ PasswordView 1.0 PasswordView.qml
 ProfileDialogView 1.0 ProfileDialogView.qml
 AssetsView 1.0 AssetsView.qml
 HistoryView 1.0 HistoryView.qml
+DeviceSyncingView 1.0 DeviceSyncingView.qml

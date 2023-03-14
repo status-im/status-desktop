@@ -15,8 +15,7 @@ method executeBackCommand*(self: WelcomeStateOldUser, controller: Controller) =
     controller.runLoginFlow()
 
 method getNextPrimaryState*(self: WelcomeStateOldUser, controller: Controller): State =
-  # We will handle here a click on `Scan sync code`
-  discard
+  return createState(StateType.SyncDeviceWithSyncCode, FlowType.FirstRunOldUserSyncCode, self)
 
 method getNextSecondaryState*(self: WelcomeStateOldUser, controller: Controller): State =
   return createState(StateType.RecoverOldUser, self.flowType, self)

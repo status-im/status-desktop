@@ -219,13 +219,14 @@ StatusSectionLayout {
         Loader {
             active: false
             asynchronous: true
-            sourceComponent: DevicesView {
+            sourceComponent: SyncingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                profileStore: root.store.profileStore
                 devicesStore: root.store.devicesStore
                 privacyStore: root.store.privacyStore
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
                 contentWidth: d.contentWidth
             }
         }

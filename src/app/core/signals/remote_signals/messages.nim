@@ -8,7 +8,7 @@ import ../../../../app_service/service/bookmarks/dto/[bookmark]
 import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/activity_center/dto/[notification]
 import ../../../../app_service/service/contacts/dto/[contacts, status_update]
-import ../../../../app_service/service/devices/dto/[device]
+import ../../../../app_service/service/devices/dto/[installation]
 import ../../../../app_service/service/settings/dto/[settings]
 import ../../../../app_service/service/saved_address/[dto]
 import ../../../../app_service/service/wallet_account/[key_pair_dto]
@@ -19,7 +19,7 @@ type MessageSignal* = ref object of Signal
   pinnedMessages*: seq[PinnedMessageUpdateDto]
   chats*: seq[ChatDto]
   contacts*: seq[ContactsDto]
-  devices*: seq[DeviceDto]
+  installations*: seq[InstallationDto]
   emojiReactions*: seq[ReactionDto]
   communities*: seq[CommunityDto]
   communitiesSettings*: seq[CommunitySettingsDto]
@@ -87,7 +87,7 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
 
   if event["event"]{"installations"} != nil:
     for jsonDevice in event["event"]["installations"]:
-      signal.devices.add(jsonDevice.toDeviceDto())
+      signal.installations.add(jsonDevice.toInstallationDto())
 
   if event["event"]{"emojiReactions"} != nil:
     for jsonReaction in event["event"]["emojiReactions"]:

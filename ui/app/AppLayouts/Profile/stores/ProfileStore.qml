@@ -15,6 +15,8 @@ QtObject {
     property string icon: !!Global.userProfile? Global.userProfile.icon : ""
     property bool userDeclinedBackupBanner: Global.appIsReady? localAccountSensitiveSettings.userDeclinedBackupBanner : false
     property var privacyStore: profileSectionModule.privacyModule
+    readonly property string keyUid: userProfile.keyUid
+    readonly property bool isKeycardUser: userProfile.isKeycardUser
 
     readonly property string bio: profileModule.bio
     readonly property string socialLinksJson: profileModule.socialLinksJson

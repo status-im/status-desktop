@@ -90,6 +90,8 @@ QtObject {
         readonly property string profileFetchingTimeout: "ProfileFetchingTimeout"
         readonly property string profileFetchingAnnouncement: "ProfileFetchingAnnouncement"
         readonly property string lostKeycardOptions: "LostKeycardOptions"
+        readonly property string syncDeviceWithSyncCode: "SyncDeviceWithSyncCode"
+        readonly property string syncDeviceResult: "SyncDeviceResult"
     }
 
     readonly property QtObject predefinedKeycardData: QtObject {
@@ -325,7 +327,7 @@ QtObject {
         property int appearance: 5
         property int language: 6
         property int notifications: 7
-        property int devicesSettings: 8
+        property int syncingSettings: 8
         property int browserSettings: 9
         property int advanced: 10
         property int about: 11
@@ -583,6 +585,32 @@ QtObject {
         readonly property int youtube: 4
         readonly property int discord: 5
         readonly property int telegram: 6
+    }
+
+    readonly property QtObject localPairingEventType: QtObject {
+        readonly property int eventUnknown: -1
+        readonly property int eventConnectionError: 0
+        readonly property int eventConnectionSuccess: 1
+        readonly property int eventTransferError: 2
+        readonly property int eventTransferSuccess: 3
+        readonly property int eventReceivedAccount: 4
+        readonly property int eventProcessSuccess: 5
+        readonly property int eventProcessError: 6
+    }
+
+    readonly property QtObject localPairingAction: QtObject {
+        readonly property int actionUnknown: 0
+        readonly property int actionConnect: 1
+        readonly property int actionPairingAccount: 2
+        readonly property int actionSyncDevice: 3
+    }
+
+    enum LocalPairingState {
+        Idle = 0,
+        WaitingForConnection = 1,
+        Transferring = 2,
+        Error = 3,
+        Finished = 4
     }
 
     readonly property QtObject regularExpressions: QtObject {

@@ -87,6 +87,8 @@ include profile_fetching_timeout_state
 include profile_fetching_announcement_state
 include recover_old_user_state
 include lost_keycard_options_state
+include sync_device_with_sync_code
+include sync_device_result
 
 include state_factory_general_implementation
 include state_factory_onboarding_implementation

@@ -47,7 +47,7 @@ Item {
         value: icon
     }
 
-    height: visible ? contentContainer.height : 0
+    implicitWidth: contentContainer.implicitWidth
     implicitHeight: contentContainer.implicitHeight
 
     QtObject {

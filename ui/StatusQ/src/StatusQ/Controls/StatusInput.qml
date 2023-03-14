@@ -262,7 +262,7 @@ Item {
             return
         }
 
-        statusBaseInput.valid = true
+        let valid = true
         const rawText = statusBaseInput.edit.getText(0, statusBaseInput.edit.length)
         if (validators.length) {
             for (let idx in validators) {
@@ -270,7 +270,7 @@ Item {
                 let result = validator.validate(rawText)
 
                 if (typeof result === "boolean" && result) {
-                    statusBaseInput.valid = statusBaseInput.valid && true
+                    valid = valid && true
                     delete errors[validator.name]
                 } else {
                     if (!errors) {
@@ -287,8 +287,7 @@ Item {
                     errors = errors
 
                     result.errorMessage = validator.errorMessage
-
-                    statusBaseInput.valid = statusBaseInput.valid && false
+                    valid = false
                 }
             }
             if (errors){
@@ -312,6 +311,8 @@ Item {
             }
             _previousText = text
         }
+
+        statusBaseInput.valid = valid
 
         if (asyncValidators.length && !Object.values(errors).length) {
             for (let idx in asyncValidators) {

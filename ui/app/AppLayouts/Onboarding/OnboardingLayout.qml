@@ -12,6 +12,7 @@ import shared.popups.keycard 1.0
 import "controls"
 import "views"
 import "stores"
+import "../Profile/stores"
 
 OnboardingBasePage {
     id: root
@@ -132,6 +133,12 @@ OnboardingBasePage {
             case Constants.startupState.profileFetchingSuccess:
             case Constants.startupState.profileFetchingTimeout:
                 return fetchingDataViewComponent
+
+            case Constants.startupState.syncDeviceWithSyncCode:
+                return syncDeviceViewComponent
+
+            case Constants.startupState.syncDeviceResult:
+                return syncDeviceResultComponent
             }
 
             return undefined
@@ -314,6 +321,20 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
     Component {
         id: fetchingDataViewComponent
         ProfileFetchingView {
+            startupStore: root.startupStore
+        }
+    }
+
+    Component {
+        id: syncDeviceViewComponent
+        SyncCodeView {
+            startupStore: root.startupStore
+        }
+    }
+
+    Component {
+        id: syncDeviceResultComponent
+        SyncDeviceResult {
             startupStore: root.startupStore
         }
     }

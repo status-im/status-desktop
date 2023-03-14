@@ -2,6 +2,7 @@ import NimQml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
+import logging
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
@@ -58,10 +59,10 @@ method onDevicesLoadingErrored*(self: Module) =
   self.view.setDevicesLoading(false)
   self.view.setDevicesLoadingError(true)
 
-method onDevicesLoaded*(self: Module, allDevices: seq[DeviceDto]) =
+method onDevicesLoaded*(self: Module, allDevices: seq[InstallationDto]) =
   var items: seq[Item]
   for d in allDevices:
-    let item = initItem(d.id, d.metadata.name, d.enabled, self.isMyDevice(d.id))
+    let item = initItem(d, self.isMyDevice(d.id))
     items.add(item)
   self.view.model().addItems(items)
   self.view.setDevicesLoading(false)
@@ -86,12 +87,34 @@ method syncAllDevices*(self: Module) =
 method advertise*(self: Module) =
   self.controller.advertise()
 
-method enableDevice*(self: Module, deviceId: string, enable: bool) =
-  self.controller.enableDevice(deviceId, enable)
+method enableDevice*(self: Module, installationId: string, enable: bool) =
+  self.controller.enableDevice(installationId, enable)
 
-method updateOrAddDevice*(self: Module, deviceId: string, name: string, enabled: bool) =
-  if(self.view.model().isItemWithInstallationIdAdded(deviceId)):
-    self.view.model().updateItem(deviceId, name, enabled)
+method updateOrAddDevice*(self: Module, installation: InstallationDto) =
+  if(self.view.model().isItemWithInstallationIdAdded(installation.id)):
+    self.view.model().updateItem(installation)
   else:
-    let item = initItem(deviceId, name, enabled, self.isMyDevice(deviceId))
+    let item = initItem(installation, self.isMyDevice(installation.id))
     self.view.model().addItem(item)
+
+
+method authenticateUser*(self: Module, keyUid: string) =
+  self.controller.authenticateUser(keyUid)
+
+method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+  self.view.emitUserAuthenticated(pin, password, keyUid)
+
+proc validateConnectionString*(self: Module, connectionString: string): string =
+  return self.controller.validateConnectionString(connectionString)
+
+method getConnectionStringForBootstrappingAnotherDevice*(self: Module, keyUid: string, password: string): string =
+  return self.controller.getConnectionStringForBootstrappingAnotherDevice(keyUid, password)
+
+method inputConnectionStringForBootstrapping*(self: Module, connectionString: string): string =
+  return self.controller.inputConnectionStringForBootstrapping(connectionString)
+
+method onLocalPairingEvent*(self: Module, eventType: EventType, action: Action, error: string) =
+  self.view.onLocalPairingEvent(eventType, action, error)
+
+method onLocalPairingStatusUpdate*(self: Module, status: LocalPairingStatus) =
+  self.view.onLocalPairingStatusUpdate(status)

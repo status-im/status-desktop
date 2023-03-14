@@ -79,6 +79,8 @@ type StateType* {.pure.} = enum
   ProfileFetchingTimeout = "ProfileFetchingTimeout"
   ProfileFetchingAnnouncement = "ProfileFetchingAnnouncement"
   LostKeycardOptions = "LostKeycardOptions"
+  SyncDeviceWithSyncCode = "SyncDeviceWithSyncCode"
+  SyncDeviceResult = "SyncDeviceResult"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

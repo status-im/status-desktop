@@ -121,7 +121,10 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newRecoverOldUserState(flowType, backState)
   if stateToBeCreated == StateType.LostKeycardOptions:
     return newLostKeycardOptionsState(flowType, backState)
-  
+  if stateToBeCreated == StateType.SyncDeviceWithSyncCode:
+    return newSyncDeviceWithSyncCodeState(flowType, backState)
+  if stateToBeCreated == StateType.SyncDeviceResult:
+    return newSyncDeviceResultState(flowType, backState)
   error "No implementation available for state ", state=stateToBeCreated
 
 proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State =
