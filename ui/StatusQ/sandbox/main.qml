@@ -363,6 +363,11 @@ StatusWindow {
                         selected: viewLoader.source.toString().includes(title)
                         onClicked: mainPageView.control(title);
                     }
+                    StatusNavigationListItem {
+                        title: "StatusPageIndicator"
+                        selected: viewLoader.source.toString().includes(title)
+                        onClicked: mainPageView.page(title);
+                    }
                 }
             }
 
