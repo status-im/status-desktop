@@ -59,7 +59,7 @@ method deployCollectible*(self: Module, communityId: string, fromAddress: string
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
   self.tempDeploymentParams.transferable = transferable
   self.tempDeploymentParams.remoteSelfDestruct = selfDestruct
-  self.tempTokenMetadata.image = image
+  self.tempTokenMetadata.image = singletonInstance.utils.formatImagePath(image)
   self.tempTokenMetadata.description = description
   if singletonInstance.userProfile.getIsKeycardUser():
     let keyUid = singletonInstance.userProfile.getKeyUid()
