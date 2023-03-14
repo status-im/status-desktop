@@ -37,46 +37,56 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 16
             anchors.topMargin: 5
+            anchors.right: parent.right
+            anchors.rightMargin: 16
 
             color: Theme.palette.baseColor1
             text: statusDescriptionListItem.title
             font.pixelSize: 13
             font.weight: Font.Medium
+            elide: Text.ElideRight
         }
 
-        StatusBaseText {
-            id: statusDescriptionListItemSubTitle
+        Row {
             anchors.top: statusDescriptionListItemTitle.bottom
             anchors.left: parent.left
             anchors.leftMargin: 16
             anchors.topMargin: 4
+            anchors.right: parent.right
+            anchors.rightMargin: 16
+            spacing: 4
 
-            text: statusDescriptionListItem.subTitle
-            color: Theme.palette.directColor1
-            font.pixelSize: 15
-            font.weight: Font.Normal
-        }
+            StatusBaseText {
+                id: statusDescriptionListItemSubTitle
+                anchors.verticalCenter: parent.verticalCenter
+                width: Math.min(implicitWidth, parent.width - parent.spacing -
+                                (statusFlatRoundButton.visible ? statusFlatRoundButton.width : 0) -
+                                (valueRow.visible ? valueRow.width : 0))
+                text: statusDescriptionListItem.subTitle
+                color: Theme.palette.directColor1
+                elide: Text.ElideRight
+            }
 
-        StatusFlatRoundButton {
-            id: statusFlatRoundButton
-            visible: !!statusDescriptionListItem.asset.name
-            anchors.verticalCenter: statusDescriptionListItemSubTitle.verticalCenter
-            anchors.left: statusDescriptionListItemSubTitle.right
-            anchors.leftMargin: 4
+            StatusFlatRoundButton {
+                id: statusFlatRoundButton
+                visible: !!statusDescriptionListItem.asset.name
+                anchors.verticalCenter: parent.verticalCenter
 
-            width: 32
-            height: 32
+                width: 32
+                height: 32
 
-            icon.name: statusDescriptionListItem.asset.name
-            icon.width: statusDescriptionListItem.asset.width
-            icon.height: statusDescriptionListItem.asset.height
+                icon.name: statusDescriptionListItem.asset.name
+                icon.width: statusDescriptionListItem.asset.width
+                icon.height: statusDescriptionListItem.asset.height
 
-            StatusToolTip {
-                id: statusToolTip
+                StatusToolTip {
+                    id: statusToolTip
+                }
             }
         }
 
         Row {
+            id: valueRow
             anchors.right: parent.right
             anchors.rightMargin: 16
             anchors.verticalCenter: parent.verticalCenter
@@ -91,8 +101,7 @@ Rectangle {
             }
 
             StatusIcon {
-                icon: "chevron-down"
-                rotation: 270
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         }

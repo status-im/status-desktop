@@ -46,7 +46,7 @@ Column {
 
     StatusDescriptionListItem {
         title: qsTr("Share community")
-        subTitle: Utils.getCommunityShareLink(root.community.id, true)
+        subTitle: Utils.getCommunityShareLink(root.community.id)
         tooltip.text: qsTr("Copied!")
         asset.name: "copy"
         iconButton.onClicked: {
@@ -78,31 +78,4 @@ Column {
         type: StatusListItem.Type.Danger
         onClicked: root.leaveButtonClicked()
     }
-
-    /*     // TODO add this back when roles exist */
-/* //        Loader { */
-/* //            active: root.community.isAdmin */
-/* //            width: parent.width */
-/* //            sourceComponent: CommunityPopupButton { */
-/* //                label: qsTr("Roles") */
-/* //                iconName: "roles" */
-/* //                width: parent.width */
-/* //                onClicked: console.log("TODO:") */
-/* //                txtColor: Style.current.textColor */
-/* //                SVGImage { */
-/* //                    anchors.verticalCenter: parent.verticalCenter */
-/* //                    anchors.right: parent.right */
-/* //                    anchors.rightMargin: Style.current.padding */
-/* //                    source: Style.svg("caret") */
-/* //                    width: 13 */
-/* //                    height: 7 */
-/* //                    rotation: -90 */
-/* //                    ColorOverlay { */
-/* //                        anchors.fill: parent */
-/* //                        source: parent */
-/* //                        color: Style.current.secondaryText */
-/* //                    } */
-/* //                } */
-/* //            } */
-/* //        } */
 }

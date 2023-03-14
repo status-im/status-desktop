@@ -453,9 +453,10 @@ ColumnLayout {
 
     StatusDescriptionListItem {
         title: "Title"
-        subTitle: "Subtitle"
+        subTitle: "Very long subtitle with icon to see it wrap words when overflown"
         value: "None"
         sensor.enabled: true
+        asset.name: "copy"
     }
 
     StatusDescriptionListItem {
