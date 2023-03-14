@@ -4,30 +4,37 @@ import json
 
 include ../../../common/[json_utils]
 
-type Metadata* = object
+# NOTE: DeviceType equeals to:
+#       - on Desktop (`hostOS` from system.nim):
+#           "windows", "macosx", "linux", "netbsd", "freebsd",
+#           "openbsd", "solaris", "aix", "haiku", "standalone".
+#       - on Mobile (from platform.cljs):
+#           "android", "ios"
+
+type InstallationMetadata* = object
   name*: string
   deviceType*: string
   fcmToken*: string
 
-type DeviceDto* = object
+type InstallationDto* = object
   id*: string
   identity*: string
   version*: int
   enabled*: bool
   timestamp*: int64
-  metadata*: Metadata
+  metadata*: InstallationMetadata
 
-proc isEmpty*(self: Metadata): bool =
+proc isEmpty*(self: InstallationMetadata): bool =
   return self.name.len == 0
 
-proc toMetadata(jsonObj: JsonNode): Metadata =
-  result = Metadata()
+proc toMetadata(jsonObj: JsonNode): InstallationMetadata =
+  result = InstallationMetadata()
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("deviceType", result.deviceType)
   discard jsonObj.getProp("fcmToken", result.fcmToken)
 
-proc toDeviceDto*(jsonObj: JsonNode): DeviceDto =
-  result = DeviceDto()
+proc toInstallationDto*(jsonObj: JsonNode): InstallationDto =
+  result = InstallationDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("identity", result.identity)
   discard jsonObj.getProp("version", result.version)

@@ -168,8 +168,9 @@ StatusMenu {
     }
 
     ProfileHeader {
-        width: parent.width
         visible: root.isProfile
+        width: parent.width
+        height: visible ? implicitHeight : 0
 
         displayNameVisible: false
         displayNamePlusIconsVisible: true

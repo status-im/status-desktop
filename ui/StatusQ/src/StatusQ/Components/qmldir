@@ -50,3 +50,4 @@ StatusChartPanel 0.1 StatusChartPanel.qml
 StatusStepper 0.1 StatusStepper.qml
 LoadingComponent 0.1 LoadingComponent.qml
 StatusQrCodeScanner 0.1 StatusQrCodeScanner.qml
+StatusSyncDeviceDelegate 0.1 StatusSyncDeviceDelegate.qml

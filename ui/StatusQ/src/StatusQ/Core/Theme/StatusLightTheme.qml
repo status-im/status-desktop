@@ -153,13 +153,6 @@ ThemePalette {
         property color secondaryBackgroundColor: "#E2E6E8"
     }
 
-    statusSwitchTab: QtObject {
-        property color buttonBackgroundColor: primaryColor1
-        property color barBackgroundColor: primaryColor3
-        property color selectedTextColor: white
-        property color textColor: primaryColor1
-    }
-
     statusSelect: QtObject {
         property color menuItemBackgroundColor: white
         property color menuItemHoverBackgroundColor: baseColor2

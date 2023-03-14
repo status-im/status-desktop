@@ -1,5 +1,7 @@
 import NimQml
 import io_interface, model
+import ../../../../../app_service/service/devices/service
+
 
 QtObject:
   type
@@ -9,11 +11,13 @@ QtObject:
       modelVariant: QVariant
       devicesLoading: bool
       devicesLoadingError: bool
+      localPairingStatus: LocalPairingStatus
 
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
     self.QObject.delete
+    self.localPairingStatus.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -23,6 +27,7 @@ QtObject:
     result.devicesLoadingError = false
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
+    result.localPairingStatus = newLocalPairingStatus()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -82,3 +87,45 @@ QtObject:
 
   proc enableDevice*(self: View, installationId: string, enable: bool) {.slot.} =
     self.delegate.enableDevice(installationId, enable)
+
+  # LocalPairing status
+
+  proc localPairingStatusChanged*(self: View) {.signal.}
+
+  proc getLocalPairingState*(self: View): int {.slot.} =
+    return self.localPairingStatus.state.int
+  QtProperty[int] localPairingState:
+    read = getLocalPairingState
+    notify = localPairingStatusChanged
+
+  proc getLocalPairingError*(self: View): string {.slot.}  =
+    return self.localPairingStatus.error
+  proc localPairingPairingErrorChanged*(self: View) {.signal.}
+  QtProperty[string] localPairingError:
+    read = getLocalPairingError
+    notify = localPairingStatusChanged
+
+  proc localPairingEvent(self: View, eventType: int, action: int, error: string) {.signal.}
+  proc onLocalPairingEvent*(self: View, eventType: EventType, action: Action, error: string) =
+    self.localPairingEvent(ord(eventType), ord(action), error)
+
+  proc onLocalPairingStatusUpdate*(self: View, status: LocalPairingStatus) =
+    self.localPairingStatus = status
+    self.localPairingStatusChanged()
+
+  # LocalPairing actions
+
+  proc userAuthenticated*(self: View, pin: string, password: string, keyUid: string) {.signal.}
+  proc emitUserAuthenticated*(self: View, pin: string, password: string, keyUid: string) =
+    self.userAuthenticated(pin, password, keyUid)
+  proc authenticateUser*(self: View, keyUid: string) {.slot.} =
+    self.delegate.authenticateUser(keyUid)
+
+  proc validateConnectionString*(self: View, connectionString: string): string {.slot.} =
+    return self.delegate.validateConnectionString(connectionString)
+
+  proc getConnectionStringForBootstrappingAnotherDevice*(self: View, keyUid: string, password: string): string {.slot.} =
+    return self.delegate.getConnectionStringForBootstrappingAnotherDevice(keyUid, password)
+
+  proc inputConnectionStringForBootstrapping*(self: View, connectionString: string): string {.slot.} =
+    return self.delegate.inputConnectionStringForBootstrapping(connectionString)

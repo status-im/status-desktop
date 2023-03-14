@@ -106,6 +106,8 @@ QtObject:
       of SignalType.WakuBackedUpProfile: WakuBackedUpProfileSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpSettings: WakuBackedUpSettingsSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpKeycards: WakuBackedUpKeycardsSignal.fromEvent(jsonSignal)
+      # pairing
+      of SignalType.LocalPairing: LocalPairingSignal.fromEvent(jsonSignal)
       else: Signal()
 
     result.signalType = signalType

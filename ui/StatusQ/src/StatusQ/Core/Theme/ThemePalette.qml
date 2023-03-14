@@ -241,11 +241,11 @@ QtObject {
         property color secondaryBackgroundColor
     }
 
-    property QtObject statusSwitchTab: QtObject {
-        property color buttonBackgroundColor
-        property color barBackgroundColor
-        property color selectedTextColor
-        property color textColor
+    readonly property QtObject statusSwitchTab: QtObject {
+        property color buttonBackgroundColor: primaryColor1
+        property color barBackgroundColor: primaryColor3
+        property color selectedTextColor: indirectColor1
+        property color textColor: primaryColor1
     }
 
     property QtObject statusSelect: QtObject {

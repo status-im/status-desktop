@@ -266,6 +266,11 @@ QtObject {
     function encodeUtf8(str){
         return unescape(encodeURIComponent(str));
     }
+
+    function deviceIcon(deviceType) {
+        const isMobileDevice = deviceType === "ios" || deviceType === "android"
+        return isMobileDevice ? "mobile" : "desktop"
+    }
 }
 
 
