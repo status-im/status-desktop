@@ -85,8 +85,9 @@ ColumnLayout {
     }
 
     StatusDescriptionListItem {
+        Layout.fillWidth: true
         title: qsTr("Share community")
-        subTitle: Utils.getCommunityShareLink(root.community.id, true)
+        subTitle: Utils.getCommunityShareLink(root.community.id)
         tooltip.text: qsTr("Copied!")
         asset.name: "copy"
         iconButton.onClicked: {
