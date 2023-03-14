@@ -25,7 +25,7 @@ StatusWindow {
 
     id: applicationWindow
     objectName: "mainWindow"
-    minimumWidth: 900
+    minimumWidth: 1200
     minimumHeight: 680
     color: Style.current.background
     title: {
@@ -71,8 +71,8 @@ StatusWindow {
         if (visibility === Window.Windowed) {
             applicationWindow.x = geometry.x;
             applicationWindow.y = geometry.y;
-            applicationWindow.width = geometry.width;
-            applicationWindow.height = geometry.height;
+            applicationWindow.width = Math.max(geometry.width, applicationWindow.minimumWidth)
+            applicationWindow.height = Math.max(geometry.height, applicationWindow.minimumHeight)
         }
     }
 
