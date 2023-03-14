@@ -40,7 +40,7 @@ StatusListItem {
             return WalletUtils.colorizedChainPrefix(chainShortNames) + address
     }
     border.color: Theme.palette.baseColor5
-    asset.name: root.favourite ? "star-icon" : "favourite"
+    asset.name: d.favouriteEnabled ? (root.favourite ? "star-icon" : "favourite") : ""
     asset.color: root.favourite ? Theme.palette.pinColor1 : (showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1) // star icon color default
     asset.hoverColor: root.favourite ? "transparent": Theme.palette.directColor1 // star icon color on hover
     asset.bgColor: statusListItemIcon.hovered ? Theme.palette.primaryColor3 : "transparent" // icon outer background color
@@ -61,6 +61,7 @@ StatusListItem {
         id: d
 
         readonly property string visibleAddress: root.address == Constants.zeroAddress ? root.ens : root.address
+        readonly property bool favouriteEnabled: false // Disabling favourite functionality until good times
     }
 
     components: [
