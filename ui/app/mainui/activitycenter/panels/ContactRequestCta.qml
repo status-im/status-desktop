@@ -43,6 +43,8 @@ Item {
         color: {
             if (root.accepted) {
                 return Theme.palette.successColor1
+            } else if (root.pending) {
+                return Theme.palette.baseColor1
             } else if (root.dismissed) {
                 return Theme.palette.dangerColor1
             }

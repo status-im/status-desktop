@@ -12,8 +12,10 @@ import utils 1.0
 ActivityNotificationBase {
     id: root
 
-    readonly property bool isOutgoingRequest: notification && notification.message.amISender
-    readonly property string contactId: notification ? isOutgoingRequest ? notification.chatId : notification.author : ""
+    readonly property bool isOutgoingMessage: notification && notification.message.amISender
+    readonly property string contactId: notification ? isOutgoingMessage ? notification.chatId : notification.author : ""
+    readonly property string contactName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
+                                                                      contactDetails.displayName, contactDetails.alias) : ""
 
     property var contactDetails: null
     property int maximumLineCount: 2
@@ -24,8 +26,7 @@ ActivityNotificationBase {
         messageText: notification ? notification.message.messageText : ""
         amISender: false
         sender.id: contactId
-        sender.displayName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
-                                                                      contactDetails.displayName, contactDetails.alias) : ""
+        sender.displayName: contactName
         sender.secondaryName: contactDetails && contactDetails.localNickname ?
                                   ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias) : ""
         sender.trustIndicator: contactDetails ? contactDetails.trustStatus : Constants.trustStatus.unknown
