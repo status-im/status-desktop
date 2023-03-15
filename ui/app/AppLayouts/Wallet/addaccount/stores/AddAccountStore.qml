@@ -38,6 +38,8 @@ QtObject {
                                                                          (root.addAccountModule.derivationPath.match(/\//g) || []).length !== 5
                                                                        : false
 
+    property bool derivationPathEditingNotValid: false
+
     readonly property var derivationPathRegEx: /^(m\/44'\/)([0-9|'|\/](?!\/'))*$/
     property string selectedRootPath: Constants.addAccountPopup.predefinedPaths.ethereum
     readonly property var roots: [Constants.addAccountPopup.predefinedPaths.custom,
@@ -182,6 +184,9 @@ QtObject {
             root.addAccountModule.selectedEmoji !== ""
 
         if (root.currentState.stateType === Constants.addAccountPopup.state.main) {
+            if(derivationPathEditingNotValid)
+                return false
+
             if (root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.profile ||
                     root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.seedImport) {
                 return valid &&

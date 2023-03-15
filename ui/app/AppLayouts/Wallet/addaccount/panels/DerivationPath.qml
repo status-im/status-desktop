@@ -49,61 +49,88 @@ GridLayout {
         text: qsTr("Account")
     }
 
-    StatusInput {
-        id: derivationPath
+    RowLayout {
         Layout.preferredWidth: d.oneHalfWidth
         Layout.columnSpan: 2
 
-        text: root.store.addAccountModule.derivationPath
-        onTextChanged: {
-            let t = text
-            if (t.endsWith("\n")) {
-                t = t.replace("\n", "")
-            }
-            if(root.store.derivationPathRegEx.test(t)) {
-                root.store.changeDerivationPathPostponed(t)
-            }
-            else {
-                root.store.addAccountModule.derivationPath = t
-            }
-        }
+        DerivationPathInput {
+            id: derivationPathInput
 
-        multiline: false
-        input.rightComponent: StatusIcon {
-            icon: "chevron-down"
-            color: Theme.palette.baseColor1
+            Layout.fillWidth: true
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    derivationPathSelection.popup(derivationPath.x, derivationPath.y + derivationPath.height + Style.current.halfPadding)
+            initialDerivationPath: root.store.addAccountModule.derivationPath
+            initialBasePath: root.store.selectedRootPath
+
+            levelsLimit: 4  // Allow only 5 separators in the derivation path
+
+            onDerivationPathChanged: {
+                let t = derivationPath
+                if(t.length > 0) {
+                    if(root.store.derivationPathRegEx.test(t)) {
+                        root.store.changeDerivationPathPostponed(t)
+                    } else {
+                        root.store.addAccountModule.derivationPath = t
+                    }
+                }
+            }
+
+            onEditingFinished: {
+                root.store.submitAddAccount(null)
+            }
+
+            input.rightComponent: StatusIcon {
+                icon: "chevron-down"
+                color: Theme.palette.baseColor1
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        derivationPathSelection.popup(0, derivationPathInput.height + Style.current.halfPadding)
+                    }
+                }
+            }
+
+            DerivationPathSelection {
+                id: derivationPathSelection
+
+                roots: root.store.roots
+                translation: root.store.translation
+                selectedRootPath: root.store.selectedRootPath
+
+                onSelected: {
+                    root.store.changeRootDerivationPath(rootPath)
                 }
             }
         }
 
-        onKeyPressed: {
-            root.store.submitAddAccount(event)
+        Connections {
+            target: root.store
+            function onSelectedRootPathChanged() {
+                derivationPathInput.resetDerivationPath(root.store.selectedRootPath, root.store.addAccountModule.derivationPath)
+            }
         }
 
-        DerivationPathSelection {
-            id: derivationPathSelection
-
-            roots: root.store.roots
-            translation: root.store.translation
-            selectedRootPath: root.store.selectedRootPath
-
-            onSelected: {
-                root.store.changeRootDerivationPath(rootPath)
+        Connections {
+            target: root.store.addAccountModule
+            function onDerivationPathChanged() {
+                derivationPathInput.resetDerivationPath(root.store.selectedRootPath, root.store.addAccountModule.derivationPath)
             }
+        }
+
+        // Propagate the error state to the store
+        Binding {
+            target: root.store
+            property: "derivationPathEditingNotValid"
+            value: derivationPathInput.errorMessage !== ""
         }
     }
 
     StatusListItem {
         id: generatedAddress
         Layout.preferredWidth: d.oneHalfWidth
-        Layout.preferredHeight: derivationPath.height
+        Layout.preferredHeight: derivationPathInput.height
         color: "transparent"
         border.width: 1
         border.color: Theme.palette.baseColor2
@@ -146,12 +173,31 @@ GridLayout {
         }
     }
 
-    StatusBaseText {
+    RowLayout {
         Layout.preferredWidth: d.oneHalfWidth
         Layout.columnSpan: 2
-        font.pixelSize: Constants.addAccountPopup.labelFontSize2
-        color: Theme.palette.baseColor1
-        text: root.store.translation(root.store.selectedRootPath, true)
+
+        StatusBaseText {
+            id: basePathName
+
+            Layout.fillWidth: true
+            visible: !errorMessageText.visible
+
+            font.pixelSize: Constants.addAccountPopup.labelFontSize2
+            color: Theme.palette.baseColor1
+            text: root.store.translation(root.store.selectedRootPath, true)
+        }
+        StatusBaseText {
+            id: errorMessageText
+
+            Layout.fillWidth: true
+            visible: !!derivationPathInput.errorMessage
+
+            font.pixelSize: basePathName.font.pixelSize
+            color: Theme.palette.dangerColor1
+
+            text: derivationPathInput.errorMessage
+        }
     }
 
     AddressDetails {
