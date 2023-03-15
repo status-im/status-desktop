@@ -174,6 +174,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "DerivationPathInput"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }

@@ -12,7 +12,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (APPLE)
     set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=10.14)
-    set(CMAKE_OSX_ARCHITECTURES "x86_64")
 endif()
 
 find_package(

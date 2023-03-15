@@ -272,6 +272,9 @@ Item {
         if(focus) edit.forceActiveFocus()
     }
 
+    implicitWidth: contentLayout.implicitWidth + root.leftPadding + root.rightPadding
+    implicitHeight: contentLayout.implicitHeight
+
     Rectangle {
         id: background
         anchors.fill: parent
@@ -308,6 +311,7 @@ Item {
                 root.editClicked()
             }
             RowLayout {
+                id: contentLayout
                 spacing: 8
                 anchors {
                     fill: parent
@@ -334,8 +338,12 @@ Item {
                     Layout.fillHeight: true
                     Layout.topMargin: root.topPadding
                     Layout.bottomMargin: root.bottomPadding
+
                     contentWidth: edit.paintedWidth
                     contentHeight: edit.paintedHeight
+                    implicitWidth: edit.implicitWidth
+                    implicitHeight: edit.implicitHeight
+
                     boundsBehavior: Flickable.StopAtBounds
                     QC.ScrollBar.vertical: QC.ScrollBar {
                         interactive: multiline
@@ -359,6 +367,7 @@ Item {
                         font.family: Theme.palette.baseFont.name
                         color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1 
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
+
                         Keys.onReturnPressed: {
                             root.keyPressed(event)
                             event.accepted = !multiline && !acceptReturn
