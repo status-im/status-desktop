@@ -153,6 +153,7 @@ SettingsContentBase {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                objectName: "CommunitySettingsLineButton"
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Community Permissions Settings")

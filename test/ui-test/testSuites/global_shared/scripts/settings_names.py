@@ -124,6 +124,7 @@ settings_Communities_MainView_LeavePopup_LeaveCommunityButton = {"container": st
 
 # Advanced Settings:
 walletSettingsLineButton = {"container": statusDesktop_mainWindow, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
+communitySettingsLineButton = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
 i_understand_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "I understand", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
 # Extra Settings:

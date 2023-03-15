@@ -37,6 +37,7 @@ class SidebarComponents(Enum):
 
 class AdvancedOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_WALLET: str = "walletSettingsLineButton"
+    ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS: str = "communitySettingsLineButton"
     I_UNDERSTAND_POP_UP: str = "i_understand_StatusBaseText"
 
 class ENSScreen(Enum):
@@ -137,6 +138,14 @@ class SettingsScreen:
     def __init__(self):
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
 
+    def open_advanced_settings(self):
+        click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
+        
+    def activate_community_permission_settings(self):
+        click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS.value)
+        click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
+        
+    
     def open_wallet_settings(self):
         click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
 
@@ -473,5 +482,13 @@ class SettingsScreen:
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
         contact_list = get_obj(ContactsViewScreen.RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
         verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request") 
-        
-        
+    
+    def open_community(self, community_name: str):
+        communities_list = get_obj(CommunitiesSettingsScreen.LIST_PANEL.value)
+        verify(communities_list.count > 0, "At least one joined community exists")
+        for i in range(communities_list.count):
+            delegate = communities_list.itemAtIndex(i)
+            if str(delegate.title) == community_name:
+                click_obj(delegate)
+                return
+        verify(False, "Community not found")        

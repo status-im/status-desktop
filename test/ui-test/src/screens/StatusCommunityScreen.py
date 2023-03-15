@@ -49,7 +49,8 @@ class CommunityScreenComponents(Enum):
     MARK_AS_READ_BUTTON = "mark_as_Read_StatusMenuItem"
     
     PIN_TEXT = "chatInfoButton_Pin_Text"
-    ADD_MEMBERS_BUTTON = "community_AddMembers_Button"
+    WELCOME_ADD_MEMBERS_BUTTON = "community_AddMembers_Button"
+    WELCOME_MANAGE_COMMUNITY = "community_ManageCommunity_Button"
     EXISTING_CONTACTS_LISTVIEW = "community_InviteFirends_Popup_ExistinContacts_ListView"
     INVITE_POPUP_NEXT_BUTTON = "community_InviteFriendsToCommunityPopup_NextButton"
     INVITE_POPUP_MESSAGE_INPUT = "community_ProfilePopupInviteMessagePanel_MessageInput"
@@ -67,6 +68,7 @@ class CommunitySettingsComponents(Enum):
     COMMUNITY_DESCRIPTION_TEXT = "communitySettings_CommunityDescription_Text"
     COMMUNITY_LETTER_IDENTICON = "communitySettings_Community_LetterIdenticon"
     MEMBERS_BUTTON = "communitySettings_Members_NavigationListItem"
+    PERMISSIONS_BUTTON = "communitySettings_Permissions_NavigationListItem"
     MEMBERS_TAB_MEMBERS_LISTVIEW = "communitySettings_MembersTab_Members_ListView"
     MEMBER_KICK_BUTTON = "communitySettings_MembersTab_Member_Kick_Button"
     MEMBER_CONFIRM_KICK_BUTTON = "communitySettings_KickModal_Kick_Button"
@@ -374,7 +376,7 @@ class StatusCommunityScreen:
         verify_equals(str(pin_text_obj.text), str(wanted_pin_count))
 
     def invite_user_to_community(self, user_name: str, message: str):
-        click_obj_by_name(CommunityScreenComponents.ADD_MEMBERS_BUTTON.value)
+        click_obj_by_name(CommunityScreenComponents.WELCOME_ADD_MEMBERS_BUTTON.value)
         
         contacts_list = wait_and_get_obj(CommunityScreenComponents.EXISTING_CONTACTS_LISTVIEW.value)
         
@@ -444,3 +446,13 @@ class StatusCommunityScreen:
             test.fail("Chat is not loaded")
         
         click_obj_by_name(CommunityScreenComponents.MARK_AS_READ_BUTTON.value)
+        
+    def click_sidebar_option(self, community_sidebar_option:str):
+        #TODO Make compatible with other sidebar options
+        if community_sidebar_option == "Manage Community":
+            click_obj_by_name(CommunityScreenComponents.WELCOME_MANAGE_COMMUNITY.value)    
+            
+    def verify_option_exists(self, option:str):
+        if option=="Permissions":
+            title = get_obj(CommunitySettingsComponents.PERMISSIONS_BUTTON.value).title
+            verify_text(option, str(title))    
