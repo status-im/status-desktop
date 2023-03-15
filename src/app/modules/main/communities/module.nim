@@ -21,8 +21,10 @@ import ../../../core/eventemitter
 import ../../../../app_service/common/types
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/chat/dto/chat
+import ./tokens/models/token_item
 import ./tokens/module as community_tokens_module
 
 export io_interface
@@ -53,7 +55,8 @@ proc newModule*(
     events: EventEmitter,
     communityService: community_service.Service,
     contactsService: contacts_service.Service,
-    communityTokensService: community_tokens_service.Service): Module =
+    communityTokensService: community_tokens_service.Service,
+    networksService: networks_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
@@ -64,6 +67,7 @@ proc newModule*(
     communityService,
     contactsService,
     communityTokensService,
+    networksService,
   )
   result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService)
   result.moduleLoaded = false
@@ -127,6 +131,16 @@ proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
     isVerified = contactDetails.details.isContactVerified(),
     requestToJoinId = requestId)
 
+proc createTokenItem(self: Module, tokenDto: CommunityTokenDto) : TokenItem =
+  var chainName, chainIcon: string
+  let networks = self.controller.getNetworks()
+  for network in networks:
+    if network.chainId == tokenDto.chainId:
+      chainName = network.chainName
+      chainIcon = network.iconURL
+      break
+  result = initTokenItem(tokenDto, chainName, chainIcon)
+
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
   return initItem(
       c.id,
@@ -164,7 +178,8 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
       encrypted = c.encrypted,
-      communityTokens = self.controller.getCommunityTokens(c.id)
+      communityTokens = self.controller.getCommunityTokens(c.id).map(proc(tokenDto: CommunityTokenDto): TokenItem =
+        result = self.createTokenItem(tokenDto))
     )
 
 method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommunityItem =
