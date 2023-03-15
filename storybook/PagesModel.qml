@@ -90,6 +90,10 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+         title: "CommunityAirdropsSettingsPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }

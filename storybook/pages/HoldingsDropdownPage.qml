@@ -7,45 +7,67 @@ import Models 1.0
 
 import AppLayouts.Chat.controls.community 1.0
 
-Pane {
+SplitView {
     id: root
 
-    RowLayout {
-        Label {
-            text: "Open flow:"
+    orientation: Qt.Vertical
+
+    Item {
+        id: container
+        anchors.fill: parent
+        anchors.margins: 50
+
+        RowLayout {
+
+            Label {
+                text: "Open flow:"
+            }
+
+            Button {
+                text: "Add"
+                onClicked: {
+                    holdingsDropdown.close()
+                    holdingsDropdown.open()
+                }
+            }
+
+            Button {
+                text: "Update"
+                onClicked: {
+                    holdingsDropdown.close()
+                    holdingsDropdown.setActiveTab(HoldingTypes.Type.Ens)
+                    holdingsDropdown.openUpdateFlow()
+                }
+            }
         }
 
-        Button {
-            text: "Add"
-            onClicked: {
+        HoldingsDropdown {
+            id: holdingsDropdown
+
+            parent: container
+            anchors.centerIn: container
+
+            collectiblesModel: CollectiblesModel {}
+            assetsModel: AssetsModel {}
+            isENSTab: isEnsTabChecker.checked
+
+            onOpened: contentItem.parent.parent = container
+            Component.onCompleted: {
                 holdingsDropdown.close()
                 holdingsDropdown.open()
             }
         }
-
-        Button {
-            text: "Update"
-            onClicked: {
-                holdingsDropdown.close()
-                holdingsDropdown.setActiveTab(HoldingTypes.Type.Ens)
-                holdingsDropdown.openUpdateFlow()
-            }
-        }
     }
 
-    HoldingsDropdown {
-        id: holdingsDropdown
 
-        parent: root
-        anchors.centerIn: root
+    LogsAndControlsPanel {
+        SplitView.minimumHeight: 100
+        SplitView.preferredHeight: 250
 
-        collectiblesModel: CollectiblesModel {}
-        assetsModel: AssetsModel {}
-
-        onOpened: contentItem.parent.parent = root
-        Component.onCompleted: {
-            holdingsDropdown.close()
-            holdingsDropdown.open()
+        CheckBox {
+            id: isEnsTabChecker
+            text: "Is ENS tab visible?"
+            checked: true
         }
     }
 }
