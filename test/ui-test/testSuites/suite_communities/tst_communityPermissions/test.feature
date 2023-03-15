@@ -23,5 +23,4 @@ Background:
 Scenario: Welcome Permissions Screen
     Given "Permissions" section is selected
     Then "Permissions" title is displayed
-
-
+    Then Welcome Permission Image is present

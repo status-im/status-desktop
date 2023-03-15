@@ -36,6 +36,7 @@ StatusScrollView {
                 spacing: 8
                 clip: true
                 Image {
+                    objectName: "welcomePermissionImage"
                     Layout.preferredWidth: 257
                     Layout.preferredHeight: Layout.preferredWidth
                     Layout.alignment: Qt.AlignHCenter

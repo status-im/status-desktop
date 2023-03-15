@@ -85,3 +85,6 @@ communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_over
 
 # Community permissions:
 communityPermissions_welcome_title = {"container": statusDesktop_mainWindow, "objectName": "communityPermissionsWelcomeTitle", "type": "StatusBaseText", "visible": True}
+communityPermissions_welcome_image = {"container": statusDesktop_mainWindow, "objectName": "welcomePermissionImage", "type": "Image", "visible": True}
+
+

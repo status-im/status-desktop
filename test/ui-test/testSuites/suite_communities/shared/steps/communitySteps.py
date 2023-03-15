@@ -241,7 +241,11 @@ def step(context, color: str):
 
 @Then("\"|any|\" title is displayed") 
 def step(context, community_settings_screen_name:str):
-    _statusCommunityScreen.verify_permission_screen_title(community_settings_screen_name)       
+    _statusCommunityScreen.verify_permission_screen_title(community_settings_screen_name) 
+
+@Then("Welcome Permission Image is present")
+def step(context):
+    _statusCommunityScreen.verify_welcome_permission_image()
     
   
 

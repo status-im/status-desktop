@@ -76,6 +76,7 @@ class CommunitySettingsComponents(Enum):
     
 class CommunityPermissionsComponents(Enum):
     WELCOME_SCREEN_TITLE = "communityPermissions_welcome_title"
+    WELCOME_SCREEN_IMAGE = "communityPermissions_welcome_image"
 
 class CommunityColorPanelComponents(Enum):
     HEX_COLOR_INPUT = "communitySettings_ColorPanel_HexColor_Input"
@@ -454,5 +455,9 @@ class StatusCommunityScreen:
     def verify_permission_screen_title(self, option:str):
         if option=="Permissions":
             title = get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_TITLE.value).text
-            verify_text(option, str(title)) 
-                     
+            verify_text(option, str(title))
+             
+    def verify_welcome_permission_image(self):
+        source = get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_IMAGE.value).source.path
+        log(str(source))
+        verify_text_contains(str(source), "permissions21_3_1")
