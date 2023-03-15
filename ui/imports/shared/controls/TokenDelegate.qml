@@ -21,24 +21,52 @@ StatusListItem {
                                Math.sign(changePct24hour) === 0 ? Theme.palette.baseColor1 :
                                Math.sign(changePct24hour) === -1 ? Theme.palette.dangerColor1 :
                                                                            Theme.palette.successColor1
+    property string errorTooltipText_1
+    property string errorTooltipText_2
 
     title: name
     subTitle: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance)
     asset.name: symbol ? Style.png("tokens/" + symbol) : ""
     asset.isImage: true
 
+    statusListItemTitleIcons.sourceComponent: StatusFlatRoundButton {
+        width: 14
+        height: visible ? 14 : 0
+        icon.width: 14
+        icon.height: 14
+        icon.name: "tiny/warning"
+        icon.color: Theme.palette.dangerColor1
+        tooltip.text: root.errorTooltipText_1
+        tooltip.maxWidth: 300
+        visible: !!tooltip.text
+    }
+
     components: [
         Column {
             id: valueColumn
+            StatusFlatRoundButton {
+                id: errorIcon
+                width: 14
+                height: visible ? 14 : 0
+                icon.width: 14
+                icon.height: 14
+                icon.name: "tiny/warning"
+                icon.color: Theme.palette.dangerColor1
+                tooltip.text: root.errorTooltipText_2
+                tooltip.maxWidth: 200
+                visible: !!tooltip.text
+            }
             StatusTextWithLoadingState   {
                 id: localeCurrencyBalance
                 anchors.right: parent.right
                 font.pixelSize: 15
                 text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance)
+                visible: !errorIcon.visible
             }
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 8
+                visible: !errorIcon.visible
                 StatusTextWithLoadingState {
                     id: change24HourText
                     font.pixelSize: 15

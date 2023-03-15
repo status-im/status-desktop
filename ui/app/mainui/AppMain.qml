@@ -680,7 +680,6 @@ Item {
                 ConnectionWarnings {
                     id: walletBlockchainConnectionBanner
                     objectName: "walletBlockchainConnectionBanner"
-                    readonly property string jointChainIdString: appMain.rootStore.getChainIdsJointString(chainIdsDown)
                     Layout.fillWidth: true
                     websiteDown: Constants.walletConnections.blockchains
                     text: {
@@ -723,6 +722,7 @@ Item {
                     StatusToolTip {
                         id: toolTip
                         orientation: StatusToolTip.Orientation.Bottom
+                        maxWidth: 300
                     }
                 }
 

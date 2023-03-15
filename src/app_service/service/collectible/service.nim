@@ -157,9 +157,9 @@ QtObject:
 
   # needs to be re-written once cache for colletibles works
   proc areCollectionsLoaded*(self: Service): bool =
-    for chainId, adressesData in self.ownershipData:
-      for address, collectionsData in adressesData:
-        if collectionsData.allLoaded:
+    for chainId, adressesData in self.accountsOwnershipData:
+      for address, ownershipData in adressesData:
+        if ownershipData.data.anyLoaded:
           return true
     return false
 

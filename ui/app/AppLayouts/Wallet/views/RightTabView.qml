@@ -6,6 +6,7 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared.views 1.0
+import shared.stores 1.0
 
 import "./"
 import "../stores"
@@ -19,6 +20,7 @@ Item {
     property var store
     property var contactsStore
     property var sendModal
+    readonly property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
 
     function resetStack() {
         stack.currentIndex = 0;
@@ -58,6 +60,7 @@ Item {
                     currentAccount: RootStore.currentAccount
                     store: root.store
                     walletStore: RootStore
+                    networkConnectionStore: root.networkConnectionStore
                 }
                 StatusTabBar {
                     id: walletTabBar
@@ -90,6 +93,7 @@ Item {
 
                     AssetsView {
                         account: RootStore.currentAccount
+                        networkConnectionStore: root.networkConnectionStore
                         assetDetailsLaunched: stack.currentIndex === 2
                         onAssetClicked: {
                             assetDetailView.token = token
@@ -124,6 +128,7 @@ Item {
                 visible: (stack.currentIndex === 2)
 
                 address:  RootStore.currentAccount.mixedcaseAddress
+                networkConnectionStore: root.networkConnectionStore
             }
             TransactionDetailView {
                 id: transactionDetailView
@@ -142,6 +147,7 @@ Item {
             Layout.rightMargin: !!root.StackView ? -root.StackView.view.anchors.rightMargin : 0
             sendModal: root.sendModal
             walletStore: RootStore
+            networkConnectionStore: root.networkConnectionStore
         }
     }
 }
