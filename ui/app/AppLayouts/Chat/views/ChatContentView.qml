@@ -53,6 +53,7 @@ ColumnLayout {
     property Component sendTransactionWithEnsModal
 
     property bool isBlocked: false
+    property bool isUserAdded: false
 
     property bool stickersLoaded: false
 
@@ -176,7 +177,8 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: Style.current.smallPadding
 
-                enabled: root.activeSectionData.joined && !root.activeSectionData.amIBanned
+                enabled: root.activeSectionData.joined && !root.activeSectionData.amIBanned &&
+                         !(chatType === Constants.chatType.oneToOne && !root.isUserAdded)
 
                 store: root.rootStore
                 usersStore: root.usersStore
