@@ -8,6 +8,8 @@ import ../io_interface as delegate_interface
 import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
+import ../../../../../app_service/service/node/service as node_service
+import ../../../../../app_service/service/network_connection/service as network_connection_service
 
 import ./current_collectible/module as current_collectible_module
 
@@ -34,12 +36,14 @@ proc newModule*(
   events: EventEmitter,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
-  networkService: network_service.Service
+  networkService: network_service.Service,
+  nodeService: node_service.Service,
+  networkConnectionService: network_connection_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
-  result.controller = newController(result, events, collectibleService, walletAccountService, networkService)
+  result.controller = newController(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
   result.moduleLoaded = false
   result.currentCollectibleModule = currentCollectibleModule.newModule(result, collectibleService)
 
@@ -110,3 +114,7 @@ method refreshCollectibles*(self: Module, chainId: int, address: string, collect
         return collectibleToItem(c, co)
       ))
     self.view.setCollectibles(newCollectibles, append, collectibles.allLoaded)
+
+method noConnectionToOpenSea*(self: Module) =
+   self.view.noConnectionToOpenSea()
+

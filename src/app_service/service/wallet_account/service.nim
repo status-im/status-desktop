@@ -32,6 +32,7 @@ const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
 const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddressesReady"
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
+const SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED* = "walletAccount/tokenFetching"
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED* = "walletAccount/derivedAddressDetailsFetched"
 
 const SIGNAL_KEYCARDS_SYNCHRONIZED* = "keycardsSynchronized"
@@ -580,6 +581,7 @@ QtObject:
       accounts: accounts,
       storeResult: store
     )
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED, Args())
     self.threadpool.start(arg)
 
   proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
@@ -857,3 +859,13 @@ QtObject:
         if self.walletAccounts[address].tokens.len > 0:
           return true
     return false
+
+  proc hasMarketCache*(self: Service): bool =
+    withLock self.walletAccountsLock:
+      for address, accountDto in self.walletAccounts:
+        for token in self.walletAccounts[address].tokens:
+          for currency, marketValues in token.marketValuesPerCurrency:
+            if marketValues.highDay > 0:
+              return true
+    return false
+

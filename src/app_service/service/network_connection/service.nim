@@ -150,7 +150,7 @@ QtObject:
         of BLOCKCHAINS:
           return self.walletService.hasCache()
         of MARKET:
-          return self.walletService.hasCache()
+          return self.walletService.hasMarketCache()
         of COLLECTIBLES:
           return self.collectibleService.areCollectionsLoaded()
 
@@ -263,3 +263,9 @@ QtObject:
   proc networkConnected*(self: Service) =
     self.walletService.reloadAccountTokens()
     self.events.emit(SIGNAL_REFRESH_COLLECTIBLES, RetryCollectibleArgs(addresses: self.walletService.getAddresses()))
+
+  proc checkIfConnected*(self: Service, website: string): bool =
+    if self.connectionStatus.hasKey(website) and self.connectionStatus[website].completelyDown:
+      return false
+    return true
+

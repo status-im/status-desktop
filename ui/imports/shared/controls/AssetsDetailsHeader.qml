@@ -16,6 +16,8 @@ Control {
     property alias secondaryText: cryptoBalance.text
     property alias tertiaryText: fiatBalance.text
     property var balances
+    property bool isLoading: false
+    property string errorTooltipText
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
@@ -34,8 +36,9 @@ Control {
                 id: identiconLoader
                 anchors.verticalCenter: parent.verticalCenter
                 asset: root.asset
+                loading: root.isLoading
             }
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 id: tokenName
                 width: Math.min(root.width - identiconLoader.width - cryptoBalance.width - fiatBalance.width - 24, implicitWidth)
                 anchors.verticalCenter: parent.verticalCenter
@@ -43,15 +46,17 @@ Control {
                 lineHeight: 30
                 lineHeightMode: Text.FixedHeight
                 elide: Text.ElideRight
-                color: Theme.palette.directColor1
+                customColor: Theme.palette.directColor1
+                loading: root.isLoading
             }
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 id: cryptoBalance
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 22
                 lineHeight: 30
                 lineHeightMode: Text.FixedHeight
-                color: Theme.palette.baseColor1
+                customColor: Theme.palette.baseColor1
+                loading: root.isLoading
             }
             StatusBaseText {
                 id: dotSeparator
@@ -61,13 +66,14 @@ Control {
                 color: Theme.palette.baseColor1
                 text: "."
             }
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 id: fiatBalance
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 22
                 lineHeight: 30
                 lineHeightMode: Text.FixedHeight
-                color: Theme.palette.baseColor1
+                customColor: Theme.palette.baseColor1
+                loading: root.isLoading
             }
         }
         Row {
@@ -81,6 +87,17 @@ Control {
                     tagPrimaryLabel.text: root.formatBalance(model.balance)
                     tagPrimaryLabel.color: root.getNetworkColor(model.chainId)
                     image.source: Style.svg("tiny/%1".arg(root.getNetworkIcon(model.chainId)))
+                    loading: root.isLoading
+                    rightComponent: StatusFlatRoundButton {
+                        width: 14
+                        height: visible ? 14 : 0
+                        icon.width: 14
+                        icon.height: 14
+                        icon.name: "tiny/warning"
+                        icon.color: Theme.palette.dangerColor1
+                        tooltip.text: root.errorTooltipText
+                        visible: !!root.errorTooltipText
+                    }
                 }
             }
         }

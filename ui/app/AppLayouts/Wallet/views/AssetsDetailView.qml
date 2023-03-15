@@ -21,6 +21,7 @@ Item {
     id: root
 
     property var token: ({})
+    property var networkConnectionStore
     /*required*/ property string address: ""
 
     QtObject {
@@ -51,10 +52,12 @@ Item {
         width: parent.width
         asset.name: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
         asset.isImage: true
-        primaryText: token.name ?? ""
-        secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance) : ""
-        tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance) : ""
+        primaryText: token.name ?? Constants.dummyText
+        secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance) : Constants.dummyText
+        tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance) : Constants.dummyText
         balances: token && token.balances ? token.balances : null
+        isLoading: RootStore.tokensLoading
+        errorTooltipText: token && token.balances ? networkConnectionStore.getNetworkDownTextForToken(token.balances): ""
         getNetworkColor: function(chainId){
             return RootStore.getNetworkColor(chainId)
         }
@@ -274,17 +277,20 @@ Item {
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Market Cap")
-                secondaryText: token && token.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketCap) : "---"
+                secondaryText: token && token.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketCap) : Constants.dummyText
+                isLoading: RootStore.tokensLoading
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day Low")
-                secondaryText: token && token.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.lowDay) : "---"
+                secondaryText: token && token.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.lowDay) : Constants.dummyText
+                isLoading: RootStore.tokensLoading
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day High")
-                secondaryText: token && token.highDay ? LocaleUtils.currencyAmountToLocaleString(token.highDay) : "---"
+                secondaryText: token && token.highDay ? LocaleUtils.currencyAmountToLocaleString(token.highDay) : Constants.dummyText
+                isLoading: RootStore.tokensLoading
             }
             Item {
                 Layout.fillWidth: true
@@ -293,28 +299,31 @@ Item {
                 readonly property double changePctHour: token.changePctHour ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
-                secondaryText: changePctHour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2)) : "---"
-                secondaryLabel.color: Math.sign(changePctHour) === 0 ? Theme.palette.directColor1 :
-                                                                       Math.sign(changePctHour) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                         Theme.palette.successColor1
+                secondaryText: changePctHour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2)) : Constants.dummyText
+                secondaryLabel.customColor: changePctHour === 0 ? Theme.palette.directColor1 :
+                                                                  changePctHour < 0 ? Theme.palette.dangerColor1 :
+                                                                                      Theme.palette.successColor1
+                isLoading: RootStore.tokensLoading
             }
             InformationTile {
                 readonly property double changePctDay: token.changePctDay ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
-                secondaryText: changePctDay ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2)) : "---"
-                secondaryLabel.color: Math.sign(changePctDay) === 0 ? Theme.palette.directColor1 :
-                                                                      Math.sign(changePctDay) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                       Theme.palette.successColor1
+                secondaryText: changePctDay ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2)) : Constants.dummyText
+                secondaryLabel.customColor: changePctDay === 0 ? Theme.palette.directColor1 :
+                                                                 changePctDay < 0 ? Theme.palette.dangerColor1 :
+                                                                                    Theme.palette.successColor1
+                isLoading: RootStore.tokensLoading
             }
             InformationTile {
                 readonly property double changePct24hour: token.changePct24hour ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
-                secondaryText: changePct24hour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2)) : "---"
-                secondaryLabel.color: Math.sign(changePct24hour) === 0 ? Theme.palette.directColor1 :
-                                                                         Math.sign(changePct24hour) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                             Theme.palette.successColor1
+                secondaryText: changePct24hour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2)) : Constants.dummyText
+                secondaryLabel.customColor: changePct24hour === 0 ? Theme.palette.directColor1 :
+                                                                    changePct24hour < 0 ? Theme.palette.dangerColor1 :
+                                                                                          Theme.palette.successColor1
+                isLoading: RootStore.tokensLoading
             }
         }
 
@@ -348,18 +357,19 @@ Item {
                     spacing: 24
 
                     width: scrollView.availableWidth
-                    StatusBaseText {
+                    StatusTextWithLoadingState {
                         id: tokenDescriptionText
                         width: Math.max(536 , scrollView.availableWidth - tagsLayout.width - 24)
 
                         font.pixelSize: 15
                         lineHeight: 22
                         lineHeightMode: Text.FixedHeight
-                        text: token.description ?? ""
-                        color: Theme.palette.directColor1
+                        text: token.description ?? Constants.dummyText
+                        customColor: Theme.palette.directColor1
                         elide: Text.ElideRight
                         wrapMode: Text.Wrap
                         textFormat: Qt.RichText
+                        loading: RootStore.tokensLoading
                     }
                     ColumnLayout {
                         id: tagsLayout

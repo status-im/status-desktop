@@ -24,6 +24,8 @@ import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/saved_address/service as saved_address_service
 import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/accounts/service as accounts_service
+import ../../../../app_service/service/node/service as node_service
+import ../../../../app_service/service/network_connection/service as network_connection_service
 
 import io_interface
 export io_interface
@@ -57,7 +59,9 @@ proc newModule*(
   savedAddressService: saved_address_service.Service,
   networkService: network_service.Service,
   accountsService: accounts_service.Service,
-  keycardService: keycard_service.Service
+  keycardService: keycard_service.Service,
+  nodeService: node_service.Service,
+  networkConnectionService: network_connection_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -68,7 +72,7 @@ proc newModule*(
 
   result.accountsModule = accounts_module.newModule(result, events, keycardService, walletAccountService, accountsService, networkService, tokenService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
-  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService, networkService)
+  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService, currencyService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
@@ -121,6 +125,8 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.setTotalCurrencyBalance()
     self.view.setTokensLoading(false)
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED) do(e:Args):
+    self.view.setTokensLoading(true)
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
 

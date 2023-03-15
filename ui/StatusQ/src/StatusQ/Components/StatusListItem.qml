@@ -34,6 +34,7 @@ Rectangle {
     property Component inlineTagDelegate
     property bool loading: false
     property bool loadingFailed: false
+    property bool errorMode: false
 
     property StatusAssetSettings asset: StatusAssetSettings {
         height: isImage ? 40 : 20
@@ -78,6 +79,7 @@ Rectangle {
     property alias statusListItemTagsSlot: statusListItemTagsSlot
     property alias statusListItemInlineTagsSlot: statusListItemTagsSlotInline
     property alias statusListItemLabel: statusListItemLabel
+    property alias errorIcon: errorIcon
 
     signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)
@@ -251,11 +253,24 @@ Rectangle {
                 anchors.leftMargin: 4
             }
 
+            StatusFlatRoundButton {
+                id: errorIcon
+                anchors.top: statusListItemTitle.bottom
+                width: 14
+                height: visible ? 14 : 0
+                icon.width: 14
+                icon.height: 14
+                icon.name: "tiny/warning"
+                icon.color: Theme.palette.dangerColor1
+                visible: root.errorMode && !!toolTip.text
+            }
+
             RowLayout {
                 id: statusListItemSubtitleTagsRow
                 anchors.top: statusListItemTitle.bottom
                 width: parent.width
                 spacing: 4
+                visible: !errorMode
 
                 StatusTextWithLoadingState {
                     id: statusListItemSubTitle

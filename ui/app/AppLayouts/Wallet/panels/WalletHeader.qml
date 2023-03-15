@@ -18,6 +18,7 @@ import "../stores"
 Item {
     id: root
 
+    property var networkConnectionStore
     property string currency: ""
     property var currentAccount
     property var store
@@ -47,6 +48,7 @@ Item {
                 customColor: Theme.palette.baseColor1
                 text: LocaleUtils.currencyAmountToLocaleString(root.currentAccount.currencyBalance)
                 loading: root.walletStore.tokensLoading
+                visible: !networkConnectionStore.tokenBalanceNotAvailable
             }
         }
 

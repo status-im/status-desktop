@@ -37,3 +37,6 @@ QtObject:
   proc setCollectibles*(self: View, collectibles: seq[Item], append: bool, allLoaded: bool) =
     self.model.setItems(collectibles, append)
     self.model.setAllCollectiblesLoaded(allLoaded)
+
+  proc noConnectionToOpenSea*(self: View) =
+    self.model.noConnectionToOpenSea()

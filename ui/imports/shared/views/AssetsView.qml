@@ -17,6 +17,7 @@ Item {
     id: root
 
     property var account
+    property var networkConnectionStore
     property bool assetDetailsLaunched: false
 
     signal assetClicked(var token)
@@ -32,8 +33,9 @@ Item {
         id: assetListView
         objectName: "assetViewStatusListView"
         anchors.fill: parent
-        model: RootStore.tokensLoading ? Constants.dummyModelItems : filteredModel
-        delegate: RootStore.tokensLoading ? loadingTokenDelegate : tokenDelegate
+        // To-do: will try to move the loading tokens to the nim side under this task https://github.com/status-im/status-desktop/issues/9648
+        model: RootStore.tokensLoading || networkConnectionStore.noBlockchainConnWithoutCache ? Constants.dummyModelItems : filteredModel
+        delegate: RootStore.tokensLoading || networkConnectionStore.noBlockchainConnWithoutCache ? loadingTokenDelegate : tokenDelegate
     }
 
     SortFilterProxyModel {
@@ -58,6 +60,8 @@ Item {
         TokenDelegate {
             objectName: "AssetView_TokenListItem_" + symbol
             readonly property string balance: "%1".arg(enabledNetworkBalance.amount) // Needed for the tests
+            errorTooltipText_1: networkConnectionStore.getBlockchainNetworkDownTextForToken(balances)
+            errorTooltipText_2: networkConnectionStore.getMarketNetworkDownText()
             width: ListView.view.width
             onClicked: {
                 RootStore.getHistoricalDataForToken(symbol, RootStore.currencyStore.currentCurrency)

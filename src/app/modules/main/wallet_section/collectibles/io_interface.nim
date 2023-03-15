@@ -31,3 +31,6 @@ method collectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
 
 method currentCollectibleModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method noConnectionToOpenSea*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

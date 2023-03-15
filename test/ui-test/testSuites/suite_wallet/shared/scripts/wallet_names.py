@@ -24,7 +24,7 @@ mainWallet_Network_Popup_Chain_Repeater_1 = {"container": statusDesktop_mainWind
 
 # Send popup:
 mainWallet_totalCurrencyBalance = {"container": statusDesktop_mainWindow, "objectName": "walletLeftListAmountValue", "type": "StyledTextEdit"}
-mainWallet_Footer_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "walletFooterSendButton", "type": "StatusFlatButton"}
+mainWallet_Footer_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "walletFooterSendButton", "type": "FooterTooltipButton"}
 mainWallet_Send_Popup_Main = {"container": statusDesktop_mainWindow, "objectName": "sendModalScroll", "type": "StatusScrollView"}
 mainWallet_Send_Popup_Amount_Input = {"container": statusDesktop_mainWindow, "objectName": "amountInput", "type": "TextEdit"}
 mainWallet_Send_Popup_My_Accounts_Tab = {"container": statusDesktop_mainWindow, "objectName": "myAccountsTab", "type": "StatusTabButton"}

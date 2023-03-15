@@ -19,6 +19,7 @@ Rectangle {
     property alias tagsDelegate: tags.delegate
     property int maxWidth: 0
     property bool copy: false
+    property bool isLoading: false
 
     signal copyClicked(string textToCopy)
 
@@ -43,13 +44,14 @@ Rectangle {
         }
         RowLayout {
             width: 100
-            StatusBaseText {
+            StatusTextWithLoadingState {
                 id: secondaryText
                 Layout.maximumWidth: root.maxWidth - Style.current.xlPadding - (root.copy ? 50 : 0)
                 font.pixelSize: 15
-                color: Theme.palette.directColor1
+                customColor: Theme.palette.directColor1
                 visible: text
                 elide: Text.ElideRight
+                loading: root.isLoading
             }
             CopyToClipBoardButton {
                 visible: root.copy
