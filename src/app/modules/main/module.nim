@@ -8,6 +8,7 @@ import ../shared_modules/keycard_popup/module as keycard_shared_module
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
+import ../../../constants as main_constants
 
 import chat_section/model as chat_model
 import chat_section/item as chat_item
@@ -414,7 +415,7 @@ method load*[T](
     hasNotification = false,
     notificationsCount = 0,
     active = false,
-    enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled(),
+    enabled = main_constants.WALLET_ENABLED,
   )
   self.view.model().addItem(walletSectionItem)
   if(activeSectionId == walletSectionItem.id):
@@ -710,11 +711,7 @@ proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, availa
     self.view.model().disableSection(sectionType)
 
 method toggleSection*[T](self: Module[T], sectionType: SectionType) =
-  if (sectionType == SectionType.Wallet):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setIsWalletEnabled(not enabled)
-  elif (sectionType == SectionType.Browser):
+  if (sectionType == SectionType.Browser):
     let enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()
     self.setSectionAvailability(sectionType, not enabled)
     singletonInstance.localAccountSensitiveSettings.setIsBrowserEnabled(not enabled)

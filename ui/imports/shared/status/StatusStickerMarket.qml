@@ -71,7 +71,7 @@ Item {
                 }
             }
 
-            readonly property bool walletEnabled: localAccountSensitiveSettings.isWalletEnabled
+            readonly property bool walletEnabled: SharedStores.RootStore.isWalletEnabled
             onWalletEnabledChanged: {
                 update()
             }

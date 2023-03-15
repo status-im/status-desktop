@@ -17,7 +17,8 @@ QtObject {
     property var appSettingsInst: Global.appIsReady && !!appSettings? appSettings : null
     property var accountSensitiveSettings: Global.appIsReady && !!localAccountSensitiveSettings? localAccountSensitiveSettings : null
     property real volume: !!appSettingsInst ? appSettingsInst.volume * 0.01 : 0.5
-    property bool isWalletEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isWalletEnabled : false
+    property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : false
+
     property bool notificationSoundsEnabled: !!appSettingsInst ? appSettingsInst.notificationSoundsEnabled : true
     property bool neverAskAboutUnfurlingAgain: !!accountSensitiveSettings ? accountSensitiveSettings.neverAskAboutUnfurlingAgain : false
     property bool isGifWidgetEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isGifWidgetEnabled : false
@@ -89,10 +90,6 @@ QtObject {
 
     function setNeverAskAboutUnfurlingAgain(value) {
         localAccountSensitiveSettings.neverAskAboutUnfurlingAgain = value;
-    }
-
-    function enableWallet() {
-        localAccountSensitiveSettings.isWalletEnabled = true;
     }
 
     function setIsTenorWarningAccepted(value) {

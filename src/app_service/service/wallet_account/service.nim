@@ -18,6 +18,7 @@ import ../../../backend/accounts as status_go_accounts
 import ../../../backend/backend as backend
 import ../../../backend/eth as status_go_eth
 import ../../../backend/transactions as status_go_transactions
+import ../../../constants as main_constants
 
 export dto, derived_address, key_pair_dto
 
@@ -221,8 +222,6 @@ QtObject:
       result = toSeq(self.walletAccounts.keys())
 
   proc init*(self: Service) =
-    signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
-    
     try:
       let accounts = self.fetchAccounts()
       for account in accounts:
@@ -270,13 +269,13 @@ QtObject:
         return i
 
   proc startWallet(self: Service) =
-    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+    if(not main_constants.WALLET_ENABLED):
       return
 
     discard backend.startWallet()
 
   proc checkConnected(self: Service) =
-    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+    if(not main_constants.WALLET_ENABLED):
       return
 
     try:
@@ -289,7 +288,7 @@ QtObject:
 
 
   proc checkRecentHistory*(self: Service) =
-    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+    if(not main_constants.WALLET_ENABLED):
       return
 
     try:
@@ -581,7 +580,7 @@ QtObject:
       error "error: ", procName="onAllTokensBuilt", errName = e.name, errDesription = e.msg
 
   proc buildAllTokens(self: Service, accounts: seq[string], store: bool) =
-    if not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled() or
+    if not main_constants.WALLET_ENABLED or
       accounts.len == 0:
         return
 
@@ -593,11 +592,6 @@ QtObject:
       storeResult: store
     )
     self.threadpool.start(arg)
-
-  proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
-    self.buildAllTokens(self.getAddresses(), store = true)
-    self.checkRecentHistory()
-    self.startWallet()
 
   proc getCurrentCurrencyIfEmpty(self: Service, currency = ""): string =
     if currency != "":
