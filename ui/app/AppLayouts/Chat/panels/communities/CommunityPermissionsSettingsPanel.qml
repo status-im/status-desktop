@@ -286,7 +286,6 @@ SettingsPageLayout {
             communityDetails: root.communityDetails
 
             viewWidth: root.viewWidth
-            height: root.height
 
             function setInitialValuesFromIndex(index) {
                 const item = ModelUtils.get(root.permissionsModel, index)
