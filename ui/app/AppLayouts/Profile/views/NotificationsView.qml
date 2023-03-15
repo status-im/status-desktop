@@ -239,7 +239,7 @@ SettingsContentBase {
 
         StatusListItem {
             Layout.preferredWidth: root.contentWidth
-            title: qsTr("Allow Notifications")
+            title: qsTr("Allow Notification Bubbles")
             components: [
                 StatusSwitch {
                     id: allowNotifSwitch
