@@ -7,7 +7,7 @@ import # vendor libs
 import # status-desktop libs
   ./common 
 
-export common, json_serialization
+export common, json_serialization, taskpools
 
 logScope:
   topics = "task-threadpool"
