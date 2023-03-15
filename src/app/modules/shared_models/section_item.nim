@@ -2,10 +2,11 @@ import strformat
 import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
 import ../main/communities/tokens/models/token_model as community_tokens_model
+import ../main/communities/tokens/models/token_item
+
 import ../../global/global_singleton
 
 import ../../../app_service/common/types
-import ../../../app_service/service/community_tokens/dto/community_token
 
 type
   SectionType* {.pure.} = enum
@@ -89,7 +90,7 @@ proc initItem*(
     pendingMemberRequests: seq[MemberItem] = @[],
     declinedMemberRequests: seq[MemberItem] = @[],
     encrypted: bool = false,
-    communityTokens: seq[CommunityTokenDto] = @[],
+    communityTokens: seq[TokenItem] = @[],
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -310,7 +311,7 @@ proc pinMessageAllMembersEnabled*(self: SectionItem): bool {.inline.} =
 proc encrypted*(self: SectionItem): bool {.inline.} =
   self.encrypted
 
-proc appendCommunityToken*(self: SectionItem, item: CommunityTokenDto) {.inline.} =
+proc appendCommunityToken*(self: SectionItem, item: TokenItem) {.inline.} =
   self.communityTokensModel.appendItem(item)
 
 proc updateCommunityTokenDeployState*(self: SectionItem, contractAddress: string, deployState: DeployState) {.inline.} =

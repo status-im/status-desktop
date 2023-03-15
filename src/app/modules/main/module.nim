@@ -21,6 +21,7 @@ import activity_center/module as activity_center_module
 import communities/module as communities_module
 import node_section/module as node_section_module
 import networks/module as networks_module
+import communities/tokens/models/token_item
 import ../../../app_service/service/contacts/dto/contacts
 
 import ../../../app_service/service/keychain/service as keychain_service
@@ -159,7 +160,8 @@ proc newModule*[T](
     nodeService,
     communityTokensService,
     walletAccountService,
-    tokenService
+    tokenService,
+    networkService
   )
   result.moduleLoaded = false
 
@@ -194,7 +196,7 @@ proc newModule*[T](
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService, networkService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
@@ -221,15 +223,28 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
+proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto, networks: seq[NetworkDto]) : TokenItem =
+  var chainName, chainIcon: string
+  for network in networks:
+    if network.chainId == tokenDto.chainId:
+      chainName = network.chainName
+      chainIcon = network.iconURL
+      break
+  result = initTokenItem(tokenDto, chainName, chainIcon)
+
 proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem =
   let isCommunity = c.channelGroupType == ChannelGroupType.Community
   var communityDetails: CommunityDto
   var unviewedCount, mentionsCount: int
-  var communityTokens: seq[CommunityTokenDto]
+  var communityTokensItems: seq[TokenItem]
+  let networks = self.controller.getNetworks()
   if (isCommunity):
     (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
     communityDetails = self.controller.getCommunityById(c.id)
-    communityTokens = self.controller.getCommunityTokens(c.id)
+    let communityTokens = self.controller.getCommunityTokens(c.id)
+    communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
+      result = self.createTokenItem(tokenDto, networks)
+    )
   else:
     let receivedContactRequests = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
     (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
@@ -341,7 +356,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       )
     ) else: @[],
     c.encrypted,
-    communityTokens
+    communityTokensItems
   )
 
 method load*[T](
@@ -905,7 +920,8 @@ method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdat
 method onCommunityTokenDeployed*[T](self: Module[T], communityToken: CommunityTokenDto) {.base.} =
   let item = self.view.model().getItemById(communityToken.communityId)
   if item.id != "":
-    item.appendCommunityToken(communityToken)
+    let networks = self.controller.getNetworks()
+    item.appendCommunityToken(self.createTokenItem(communityToken, networks))
 
 method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, contractAddress: string, deployState: DeployState) =
   let item = self.view.model().getItemById(communityId)

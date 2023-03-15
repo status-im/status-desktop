@@ -5,6 +5,7 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 
 type
@@ -14,6 +15,7 @@ type
     communityService: community_service.Service
     contactsService: contacts_service.Service
     communityTokensService: community_tokens_service.Service
+    networksService: networks_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -21,6 +23,7 @@ proc newController*(
     communityService: community_service.Service,
     contactsService: contacts_service.Service,
     communityTokensService: community_tokens_service.Service,
+    networksService: networks_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -28,6 +31,7 @@ proc newController*(
   result.communityService = communityService
   result.contactsService = contactsService
   result.communityTokensService = communityTokensService
+  result.networksService = networksService
 
 proc delete*(self: Controller) =
   discard
@@ -243,3 +247,6 @@ proc requestCancelDiscordCommunityImport*(self: Controller, id: string) =
 
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   self.communityTokensService.getCommunityTokens(communityId)
+
+proc getNetworks*(self:Controller): seq[NetworkDto] =
+  self.networksService.getNetworks()

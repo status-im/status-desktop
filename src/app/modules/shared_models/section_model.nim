@@ -3,7 +3,7 @@ import NimQml, Tables, strutils, strformat
 import json, json_serialization
 
 import section_item, member_model
-import ../../../app_service/service/community_tokens/dto/community_token
+import ../main/communities/tokens/models/token_item
 
 
 type
@@ -366,7 +366,7 @@ QtObject:
         self.notificationsCountChanged()
         return
 
-  proc appendCommunityToken*(self: SectionModel, id: string, item: CommunityTokenDto) =
+  proc appendCommunityToken*(self: SectionModel, id: string, item: TokenItem) =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)

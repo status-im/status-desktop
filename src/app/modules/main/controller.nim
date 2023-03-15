@@ -20,6 +20,7 @@ import ../../../app_service/service/node/service as node_service
 import ../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/token/service as token_service
+import ../../../app_service/service/network/service as networks_service
 
 import ../shared_models/section_item, io_interface
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -50,6 +51,7 @@ type
     authenticateUserFlowRequestedBy: string
     walletAccountService: wallet_account_service.Service
     tokenService: token_service.Service
+    networksService: networks_service.Service
 
 # Forward declaration
 proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
@@ -69,7 +71,8 @@ proc newController*(delegate: io_interface.AccessInterface,
   nodeService: node_service.Service,
   communityTokensService: community_tokens_service.Service,
   walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service
+  tokenService: token_service.Service,
+  networksService: networks_service.Service
 ):
   Controller =
   result = Controller()
@@ -89,6 +92,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.communityTokensService = communityTokensService
   result.walletAccountService = walletAccountService
   result.tokenService = tokenService
+  result.networksService = networksService
 
 proc delete*(self: Controller) =
   discard
@@ -427,3 +431,6 @@ proc getVerificationRequestFrom*(self: Controller, publicKey: string): Verificat
 
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   self.communityTokensService.getCommunityTokens(communityId)
+
+proc getNetworks*(self:Controller): seq[NetworkDto] =
+  self.networksService.getNetworks()

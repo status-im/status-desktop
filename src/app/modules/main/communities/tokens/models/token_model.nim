@@ -1,4 +1,5 @@
 import NimQml, Tables, strformat
+import token_item
 import ../../../../../../app_service/service/community_tokens/dto/community_token
 
 type
@@ -15,10 +16,12 @@ type
     ChainId
     DeployState
     Image
+    ChainName
+    ChainIcon
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
-    items*: seq[CommunityTokenDto]
+    items*: seq[TokenItem]
 
   proc setup(self: TokenModel) =
     self.QAbstractListModel.setup
@@ -33,21 +36,21 @@ QtObject:
 
   proc updateDeployState*(self: TokenModel, contractAddress: string, deployState: DeployState) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].address == contractAddress):
-        self.items[i].deployState = deployState
+      if(self.items[i].tokenDto.address == contractAddress):
+        self.items[i].tokenDto.deployState = deployState
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.DeployState.int])
         return
 
   proc countChanged(self: TokenModel) {.signal.}
 
-  proc setItems*(self: TokenModel, items: seq[CommunityTokenDto]) =
+  proc setItems*(self: TokenModel, items: seq[TokenItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
 
-  proc appendItem*(self: TokenModel, item: CommunityTokenDto) =
+  proc appendItem*(self: TokenModel, item: TokenItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -80,6 +83,8 @@ QtObject:
       ModelRole.ChainId.int:"chainId",
       ModelRole.DeployState.int:"deployState",
       ModelRole.Image.int:"image",
+      ModelRole.ChainName.int:"chainName",
+      ModelRole.ChainIcon.int:"chainIcon",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -91,29 +96,33 @@ QtObject:
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.TokenType:
-        result = newQVariant(item.tokenType.int)
+        result = newQVariant(item.tokenDto.tokenType.int)
       of ModelRole.TokenAddress:
-        result = newQVariant(item.address)
+        result = newQVariant(item.tokenDto.address)
       of ModelRole.Name:
-        result = newQVariant(item.name)
+        result = newQVariant(item.tokenDto.name)
       of ModelRole.Symbol:
-        result = newQVariant(item.symbol)
+        result = newQVariant(item.tokenDto.symbol)
       of ModelRole.Description:
-        result = newQVariant(item.description)
+        result = newQVariant(item.tokenDto.description)
       of ModelRole.Supply:
-        result = newQVariant(item.supply)
+        result = newQVariant(item.tokenDto.supply)
       of ModelRole.InfiniteSupply:
-        result = newQVariant(item.infiniteSupply)
+        result = newQVariant(item.tokenDto.infiniteSupply)
       of ModelRole.Transferable:
-        result = newQVariant(item.transferable)
+        result = newQVariant(item.tokenDto.transferable)
       of ModelRole.RemoteSelfDestruct:
-        result = newQVariant(item.remoteSelfDestruct)
+        result = newQVariant(item.tokenDto.remoteSelfDestruct)
       of ModelRole.ChainId:
-        result = newQVariant(item.chainId)
+        result = newQVariant(item.tokenDto.chainId)
       of ModelRole.DeployState:
-        result = newQVariant(item.deployState.int)
+        result = newQVariant(item.tokenDto.deployState.int)
       of ModelRole.Image:
-        result = newQVariant(item.image)
+        result = newQVariant(item.tokenDto.image)
+      of ModelRole.ChainName:
+        result = newQVariant(item.chainName)
+      of ModelRole.ChainIcon:
+        result = newQVariant(item.chainIcon)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:

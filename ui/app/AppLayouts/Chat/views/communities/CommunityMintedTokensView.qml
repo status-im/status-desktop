@@ -94,8 +94,9 @@ StatusScrollView {
                                             model.transferable,
                                             model.remoteSelfDestruct,
                                             model.chainId,
-                                            "Goerli", //model.chainName, TODO BACKEND
-                                            "network/Network=Custom")//model.chainIcon) TODO BACKEND
+                                            model.chainName,
+                                            model.chainIcon)
+
 
             }
         }
