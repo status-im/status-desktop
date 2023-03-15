@@ -4,6 +4,7 @@ import ../../../../../app_service/service/collectible/service as collectible_ser
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/network_connection/service as network_connection_service
+import ../../../../../app_service/service/node/service as node_service
 import ../../../../core/eventemitter
 
 type
@@ -13,13 +14,20 @@ type
     collectibleService: collectible_service.Service
     walletAccountService: wallet_account_service.Service
     networkService: network_service.Service
+    nodeService: node_service.Service
+    networkConnectionService: network_connection_service.Service
+
+  # Forward declaration
+proc resetOwnedCollectibles*(self: Controller, chainId: int, address: string)
 
 proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
-  networkService: network_service.Service
+  networkService: network_service.Service,
+  nodeService: node_service.Service,
+  networkConnectionService: network_connection_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -27,6 +35,8 @@ proc newController*(
   result.collectibleService = collectibleService
   result.walletAccountService = walletAccountService
   result.networkService = networkService
+  result.nodeService = nodeService
+  result.networkConnectionService = networkConnectionService
 
 proc delete*(self: Controller) =
   discard
@@ -37,6 +47,8 @@ proc refreshCollectibles(self: Controller, chainId: int, address: string) =
     self.delegate.setCollectibles(chainId, address, data)
   else:
     self.delegate.appendCollectibles(chainId, address, data)
+  if not self.nodeService.isConnected() or not self.networkConnectionService.checkIfConnected(COLLECTIBLES):
+    self.delegate.noConnectionToOpenSea()
 
 proc init*(self: Controller) =  
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_RESET) do(e:Args):
@@ -55,7 +67,15 @@ proc init*(self: Controller) =
     let args = RetryCollectibleArgs(e)
     let chainId = self.networkService.getNetworkForCollectibles().chainId
     for address in args.addresses:
-      self.refreshCollectibles(chainId, address)
+      self.resetOwnedCollectibles(chainId, address)
+
+  self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
+    self.delegate.noConnectionToOpenSea()
+
+  self.events.on(SIGNAL_CONNECTION_UPDATE) do(e:Args):
+    let args = NetworkConnectionsArgs(e)
+    if args.website == COLLECTIBLES and args.completelyDown:
+      self.delegate.noConnectionToOpenSea()
 
 proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)

@@ -3,10 +3,13 @@ import QtQuick 2.14
 import StatusQ.Core 0.1
 
 import utils 1.0
+import shared.stores 1.0
 
 ModuleWarning {
     id: root
 
+    readonly property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
+    readonly property string jointChainIdString: networkConnectionStore.getChainIdsJointString(chainIdsDown)
     property string websiteDown
     property int connectionState: -1
     property int autoTryTimerInSecs: 0
@@ -37,11 +40,11 @@ ModuleWarning {
     type: connectionState === Constants.ConnectionStatus.Success ? ModuleWarning.Success : ModuleWarning.Danger
     buttonText: connectionState === Constants.ConnectionStatus.Failure ? qsTr("Retry now") : ""
 
-    onClicked: appMain.rootStore.retryConnection(websiteDown)
+    onClicked: networkConnectionStore.retryConnection(websiteDown)
     onCloseClicked: hide()
 
     Connections {
-        target: appMain.rootStore.networkConnectionModuleInst
+        target: networkConnectionStore.networkConnectionModuleInst
         function onNetworkConnectionStatusUpdate(website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int, withCache: bool)  {
             if (website === websiteDown) {
                 root.connectionState = connectionState

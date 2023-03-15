@@ -14,6 +14,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.controls 1.0
 import shared.popups.keycard 1.0
+import shared.stores 1.0
 
 import "../controls"
 import "../popups"
@@ -22,6 +23,7 @@ import "../stores"
 Rectangle {
     id: root
 
+    readonly property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     property var changeSelectedAccount: function(){}
     property bool showSavedAddresses: false
     onShowSavedAddressesChanged: {
@@ -117,6 +119,20 @@ Rectangle {
                 font.weight: Font.Medium
                 font.pixelSize: 22
                 loading: RootStore.tokensLoading
+                visible: !networkConnectionStore.tokenBalanceNotAvailable
+            }
+
+            StatusFlatRoundButton {
+                id: errorIcon
+                width: 14
+                height: visible ? 14 : 0
+                icon.width: 14
+                icon.height: 14
+                icon.name: "tiny/warning"
+                icon.color: Theme.palette.dangerColor1
+                tooltip.text: networkConnectionStore.tokenBalanceNotAvailableText
+                tooltip.maxWidth: 200
+                visible: networkConnectionStore.tokenBalanceNotAvailable
             }
 
             StatusBaseText {
@@ -162,6 +178,9 @@ Rectangle {
                 statusListItemTitle.font.weight: Font.Medium
                 color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
                 statusListItemSubTitle.loading: RootStore.tokensLoading
+                errorMode: networkConnectionStore.tokenBalanceNotAvailable
+                errorIcon.tooltip.maxWidth: 300
+                errorIcon.tooltip.text: networkConnectionStore.tokenBalanceNotAvailableText
                 onClicked: {
                     changeSelectedAccount(index)
                     showSavedAddresses = false

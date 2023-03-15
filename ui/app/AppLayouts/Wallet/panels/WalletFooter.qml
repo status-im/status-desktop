@@ -9,12 +9,14 @@ import StatusQ.Core.Theme 0.1
 import utils 1.0
 
 import "../popups"
+import "../controls"
 
 Rectangle {
     id: walletFooter
 
     property var sendModal
     property var walletStore
+    property var networkConnectionStore
 
     height: 61
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
@@ -29,13 +31,15 @@ Rectangle {
         height: parent.height
         spacing:  Style.current.padding
 
-        StatusFlatButton {
-            objectName: "walletFooterSendButton"
-            icon.name: "send"
-            text: qsTr("Send")
-            onClicked: function() {
+        FooterTooltipButton {
+            button.objectName: "walletFooterSendButton"
+            button.icon.name: "send"
+            button.text: qsTr("Send")
+            button.enabled: networkConnectionStore.sendBuyBridgeEnabled
+            button.onClicked: function() {
                 sendModal.open()
             }
+            tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
         }
 
         StatusFlatButton {
@@ -46,14 +50,15 @@ Rectangle {
             }
         }
 
-        StatusFlatButton {
-            id: bridgeBtn
-            icon.name: "bridge"
-            text: qsTr("Bridge")
-            onClicked: function () {
+        FooterTooltipButton {
+            button.icon.name: "bridge"
+            button.text: qsTr("Bridge")
+            button.enabled: networkConnectionStore.sendBuyBridgeEnabled
+            button.onClicked: function() {
                 sendModal.isBridgeTx = true
                 sendModal.open()
             }
+            tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
         }
         
         StatusFlatButton {

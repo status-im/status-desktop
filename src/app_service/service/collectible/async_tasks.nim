@@ -11,7 +11,7 @@ const fetchOwnedCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, n
     "chainId": arg.chainId,
     "address": arg.address,
     "cursor": arg.cursor,
-    "collectibles": ""
+    "collectibles": {"assets":nil,"next":"","previous":""}
   }
   try:
     let response = collectibles.getOpenseaAssetsByOwnerWithCursor(arg.chainId, arg.address, arg.cursor, arg.limit)

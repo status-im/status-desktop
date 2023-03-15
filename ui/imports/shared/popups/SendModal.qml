@@ -120,6 +120,7 @@ StatusDialog {
                 popup.recalculateRoutesAndFees()
             }
         }
+        readonly property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
 
         onErrorTypeChanged: {
             if(errorType === Constants.SendAmountExceedsBalance)
@@ -165,6 +166,13 @@ StatusDialog {
         if(popup.isBridgeTx) {
             recipientSelector.input.text = popup.selectedAccount.address
             d.waitTimer.restart()
+        }
+
+        // add networks that are down to disabled list
+        if(!!d.networkConnectionStore.blockchainNetworksDown) {
+            for(let i in d.networkConnectionStore.blockchainNetworksDown) {
+                store.addRemoveDisabledToChain(parseInt(d.networkConnectionStore.blockchainNetworksDown[i]), true)
+            }
         }
     }
 

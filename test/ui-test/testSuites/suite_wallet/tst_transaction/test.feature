@@ -21,7 +21,7 @@ Feature: Status Desktop Transaction
 
     	Examples:
       	  | amount   | token | chain_name |
-      	  | 0.1		 | ETH   | Ethereum Mainnet     |
+          | 1		 | ETH   | Ethereum Mainnet     |
 #      	  | 1 		 | ETH   | Goerli               |
 #      	  | 1 		 | STT   | Goerli               |
 #      	  | 100      | STT   | Goerli               |
