@@ -266,6 +266,7 @@ QtObject:
     try:
       let accounts = self.fetchAccounts()
       for account in accounts:
+        let account = account # TODO https://github.com/nim-lang/Nim/issues/16740
         self.setEnsName(account)
         self.setRelatedAccountsToAccount(account)
         self.storeAccount(account)
@@ -335,6 +336,7 @@ QtObject:
     var newAccount: WalletAccountDto
     var found = false
     for account in accounts:
+      let account = account # TODO https://github.com/nim-lang/Nim/issues/16740
       if not self.walletAccountsContainsAddress(account.address):
         found = true
         newAccount = account

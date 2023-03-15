@@ -100,3 +100,4 @@ build/
 *.exe
 *.out
 *.app
+nimbus-build-system.paths

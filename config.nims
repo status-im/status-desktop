@@ -45,3 +45,6 @@ switch("warning", "ObservableStores:off")
 
 # Too many false positives for "Warning: method has lock level <unknown>, but another method has 0 [LockLevel]"
 switch("warning", "LockLevel:off")
+
+# No clean workaround for this warning in certain cases, waiting for better upstream support
+switch("warning", "BareExcept:off")

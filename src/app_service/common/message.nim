@@ -12,6 +12,7 @@ proc replacePubKeysWithDisplayNames*(allKnownContacts: seq[ContactsDto], message
     updatedMessage = updatedMessage.replaceWord(pair[1], pair[0])
 
   for pk in pubKeys:
+    let pk = pk # TODO https://github.com/nim-lang/Nim/issues/16740
     let listOfMatched = allKnownContacts.filter(x => "@" & x.id == pk)
     if(listOfMatched.len > 0):
       updatedMessage = updatedMessage.replaceWord(pk, "@" & listOfMatched[0].userDefaultDisplayName())
@@ -35,16 +36,19 @@ proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactsDto], message: st
   # In the following lines we're free to compare to `x.userDefaultDisplayName()` cause that's actually what we're displaying
   # in the mentions suggestion list.
   for mention in aliasMentions:
+    let mention = mention # TODO https://github.com/nim-lang/Nim/issues/16740
     let listOfMatched = allKnownContacts.filter(x => "@" & x.userDefaultDisplayName().toLowerAscii == mention.toLowerAscii)
     if(listOfMatched.len > 0):
       updatedMessage = updatedMessage.replaceWord(mention, '@' & listOfMatched[0].id)
 
   for mention in ensMentions:
+    let mention = mention # TODO https://github.com/nim-lang/Nim/issues/16740
     let listOfMatched = allKnownContacts.filter(x => "@" & x.name.toLowerAscii == mention.toLowerAscii)
     if(listOfMatched.len > 0):
       updatedMessage = updatedMessage.replaceWord(mention, '@' & listOfMatched[0].id)
 
   for mention in nameMentions:
+    let mention = mention # TODO https://github.com/nim-lang/Nim/issues/16740
     let listOfMatched = allKnownContacts.filter(x => x.userDefaultDisplayName().toLowerAscii == mention.toLowerAscii or
       "@" & x.userDefaultDisplayName().toLowerAscii == mention.toLowerAscii)
     if(listOfMatched.len > 0):

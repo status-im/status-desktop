@@ -7,7 +7,7 @@ import
   ./custom_urls/urls_manager
 
 export eventemitter
-export signals_manager, fleet_configuration
+export threadpool, signals_manager, fleet_configuration
 
 type StatusFoundation* = ref object
   events*: EventEmitter
