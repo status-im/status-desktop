@@ -1337,6 +1337,8 @@ Rectangle {
                                 }
                             }
 
+                            onEnabledChanged: if (!enabled) text = ""
+
                             cursorDelegate: Rectangle {
                                 color: Theme.palette.primaryColor1
                                 implicitWidth: 2
