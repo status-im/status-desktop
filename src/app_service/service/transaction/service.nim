@@ -24,6 +24,7 @@ import ./dto as transaction_dto
 import ./cryptoRampDto
 import ../eth/utils as eth_utils
 import ../../common/conversion
+import ../../../constants as main_constants
 
 
 export transaction_dto
@@ -129,8 +130,6 @@ QtObject:
     result.allTxLoaded = initTable[string, bool]()
 
   proc init*(self: Service) =
-    signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
-
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       case data.eventType:
@@ -511,7 +510,7 @@ QtObject:
     self.events.emit(SIGNAL_CRYPTO_SERVICES_READY, CryptoServicesArgs(data: cryptoServices))
 
   proc fetchCryptoServices*(self: Service) =
-    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+    if(not main_constants.WALLET_ENABLED):
       return
 
     let arg = GetCryptoServicesTaskArg(
@@ -536,6 +535,3 @@ QtObject:
     except Exception as e:
       error "Error getting latest block number", message = e.msg
       return ""
-  
-  proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
-    self.fetchCryptoServices()

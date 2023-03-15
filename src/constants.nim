@@ -3,6 +3,12 @@ import os, sequtils, strutils, strformat
 import # vendor libs
   confutils
 
+const DEFAULT_WALLET_ENABLED = true
+let WALLET_ENABLED* = if (existsEnv("ENABLE_WALLET")):
+              parseInt($getEnv("ENABLE_WALLET")) != 0
+            else:
+              DEFAULT_WALLET_ENABLED
+
 ## Added a constant here cause it's easier to check the app how it behaves 
 ## on other platform if we just change the value here
 const IS_MACOS* = defined(macosx)

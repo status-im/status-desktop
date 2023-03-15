@@ -68,7 +68,7 @@ QtObject {
     }
 
     property bool browserMenuItemEnabled: Global.appIsReady? localAccountSensitiveSettings.isBrowserEnabled : false
-    property bool walletMenuItemEnabled: Global.appIsReady? localAccountSensitiveSettings.isWalletEnabled : false
+    property bool walletMenuItemEnabled: profileStore.isWalletEnabled
 
     property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
     property var communitiesList: !!communitiesModuleInst? communitiesModuleInst.model : null

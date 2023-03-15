@@ -12,6 +12,7 @@ import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../common/cache
+import ../../../constants as main_constants
 import ./dto
 
 export dto
@@ -73,7 +74,7 @@ QtObject:
     result.tokensToAddressesMap = initTable[string, Table[int, string]]()
 
   proc loadData*(self: Service) =
-    if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+    if(not main_constants.WALLET_ENABLED):
       return
 
     try:
@@ -126,7 +127,6 @@ QtObject:
       error "Tokens init error", errDesription = e.msg
 
   proc init*(self: Service) =
-    signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
     self.loadData()
     
   proc getTokenList*(self: Service): seq[TokenDto] = 
@@ -138,9 +138,6 @@ QtObject:
   proc getContractAddressesForToken*(self: Service, symbol: string): Table[int, string] =
     if self.hasContractAddressesForToken(symbol):
       return self.tokensToAddressesMap[symbol]
-
-  proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
-    self.loadData()
 
   proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
     try:

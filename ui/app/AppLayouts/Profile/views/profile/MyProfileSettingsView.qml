@@ -180,7 +180,7 @@ ColumnLayout {
         }
 
         StatusTabButton {
-            enabled: localAccountSensitiveSettings.isWalletEnabled
+            enabled: root.profileStore.isWalletEnabled
             width: enabled ? implicitWidth : 0
             text: qsTr("Accounts")
             onEnabledChanged: showcaseTabBar.validateCurrentIndex()

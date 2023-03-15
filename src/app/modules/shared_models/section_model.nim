@@ -302,6 +302,10 @@ QtObject:
       if(it.sectionType == sectionType):
         return it
 
+  proc getItemEnabledBySectionType*(self: SectionModel, sectionType: int): bool {.slot.} =
+    let item = self.getItemBySectionType((SectionType)sectionType)
+    return not item.isEmpty() and item.enabled()
+
   proc setActiveSection*(self: SectionModel, id: string) =
     for i in 0 ..< self.items.len:
       if(self.items[i].active):
