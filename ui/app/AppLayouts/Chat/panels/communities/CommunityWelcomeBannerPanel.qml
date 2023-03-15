@@ -97,6 +97,7 @@ Rectangle {
 
     StatusFlatButton {
         id: manageBtn
+        objectName:"CommunityWelcomeBannerPanel_ManageCommunity"
         text: qsTr("Manage community")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: addMembersBtn.bottom

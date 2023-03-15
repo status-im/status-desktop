@@ -46,6 +46,10 @@ def step(context, category_name, channel_names, method):
 def step(context, category_name, channel_names):
     the_category_contains_channels(category_name, channel_names)     
 
+@Given("\"|any|\" is toggled on under Experimental features")
+def step(context: any, settings_type:str):
+    #TODO: Implement parameters for settings
+    _settingsScreen.activate_community_permission_settings()
 
 #########################
 ### ACTIONS region:
@@ -154,6 +158,11 @@ def step(context: any):
 def step(context, channel):
     _statusCommunityScreen.mark_as_read(channel)
 
+@When("\"|any|\" is clicked in the community sidebar")
+def step(context, community_sidebar_option:str):
+    _statusCommunityScreen.click_sidebar_option(community_sidebar_option)
+
+
 #########################
 ### VERIFICATIONS region:
 #########################
@@ -217,6 +226,11 @@ def step(context, communityDescription: str):
 @Then("the community overview color is \"|any|\"")
 def step(context, color: str):
     _statusCommunityScreen.verify_community_overview_color(color)
+    
+@Then("\"|any|\" should be an available option in Community Settings")
+def step(context, manage_community_option:str):
+    _statusCommunityScreen.verify_option_exists(manage_community_option)
+
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
