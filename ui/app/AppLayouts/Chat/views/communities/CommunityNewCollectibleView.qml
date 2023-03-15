@@ -169,7 +169,7 @@ StatusScrollView {
                 layer1Networks: root.layer1Networks
                 layer2Networks: root.layer2Networks
                 testNetworks: root.testNetworks
-                enabledNetworks: root.testNetworks
+                enabledNetworks: root.enabledNetworks
                 allNetworks: root.allNetworks
                 isChainVisible: false
                 multiSelection: false
