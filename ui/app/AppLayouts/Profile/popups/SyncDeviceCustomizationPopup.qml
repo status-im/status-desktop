@@ -30,6 +30,11 @@ StatusDialog {
     QtObject {
         id: d
         property string deviceName: ""
+
+        function saveNewName() {
+            root.devicesStore.setInstallationName(root.deviceModel.installationId, nameInput.text.trim())
+            root.close();
+        }
     }
 
     onOpened: {
@@ -41,6 +46,9 @@ StatusDialog {
             id: nameInput
             Layout.fillWidth: true
             label: qsTr("Device name")
+            Keys.onReturnPressed: {
+                d.saveNewName()
+            }
         }
     }
 
@@ -50,8 +58,7 @@ StatusDialog {
                 text: qsTr("Done")
                 enabled: nameInput.text !== ""
                 onClicked : {
-                    root.devicesStore.setName(nameInput.text.trim())
-                    root.close();
+                    d.saveNewName()
                 }
             }
         }

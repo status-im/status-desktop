@@ -122,5 +122,15 @@ QtObject:
     self.items[i].installation = installation
     self.dataChanged(first, last, @[])
 
+  proc updateItemName*(self: Model, installationId: string, name: string) =
+    var i = self.findIndexByInstallationId(installationId)
+    if(i == -1):
+      return
+
+    let first = self.createIndex(i, 0, nil)
+    let last = self.createIndex(i, 0, nil)
+    self.items[i].installation.metadata.name = name
+    self.dataChanged(first, last, @[ModelRole.Name.int])
+
   proc getIsDeviceSetup*(self: Model, installationId: string): bool =
     return anyIt(self.items, it.installation.id == installationId and it.name != "")

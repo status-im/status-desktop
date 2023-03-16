@@ -34,15 +34,19 @@ proc delete*(self: Controller) =
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_DEVICES_LOADED) do(e: Args):
-    var args = DevicesArg(e)
+    let args = DevicesArg(e)
     self.delegate.onDevicesLoaded(args.devices)
 
   self.events.on(SIGNAL_ERROR_LOADING_DEVICES) do(e: Args):
     self.delegate.onDevicesLoadingErrored()
 
   self.events.on(SIGNAL_UPDATE_DEVICE) do(e: Args):
-    var args = UpdateInstallationArgs(e)
+    let args = UpdateInstallationArgs(e)
     self.delegate.updateOrAddDevice(args.installation)
+    
+  self.events.on(SIGNAL_INSTALLATION_NAME_UPDATED) do(e: Args):
+    let args = UpdateInstallationNameArgs(e)
+    self.delegate.updateInstallationName(args.installationId, args.name)
     
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
@@ -51,11 +55,11 @@ proc init*(self: Controller) =
     self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
 
   self.events.on(SIGNAL_LOCAL_PAIRING_EVENT) do(e: Args):
-    var args = LocalPairingEventArgs(e)
+    let args = LocalPairingEventArgs(e)
     self.delegate.onLocalPairingEvent(args.eventType, args.action, args.error)
 
   self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
-    var args = LocalPairingStatus(e)
+    let args = LocalPairingStatus(e)
     self.delegate.onLocalPairingStatusUpdate(args)
 
 
@@ -68,8 +72,8 @@ proc asyncLoadDevices*(self: Controller) =
 proc getAllDevices*(self: Controller): seq[InstallationDto] =
   return self.devicesService.getAllDevices()
 
-proc setDeviceName*(self: Controller, name: string) =
-  self.devicesService.setDeviceName(name)
+proc setInstallationName*(self: Controller, installationId: string, name: string) =
+  self.devicesService.setInstallationName(installationId, name)
 
 proc syncAllDevices*(self: Controller) =
   self.devicesService.syncAllDevices()
