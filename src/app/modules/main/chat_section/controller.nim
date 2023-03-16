@@ -14,12 +14,14 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
+import ../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 import ../../../core/signals/types
 import ../../../global/app_signals
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
 
+const UNIQUE_MAIN_MODULE_AUTH_IDENTIFIER* = "MainModule-Action-Authentication"
 
 type
   Controller* = ref object of RootObj
@@ -40,6 +42,8 @@ type
     walletAccountService: wallet_account_service.Service
     tokenService: token_service.Service
     communityTokensService: community_tokens_service.Service
+    tmpRequestToJoinCommunityId: string
+    tmpRequestToJoinEnsName: string
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service, 
@@ -66,6 +70,8 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.walletAccountService = walletAccountService
   result.tokenService = tokenService
   result.communityTokensService = communityTokensService
+  result.tmpRequestToJoinCommunityId = ""
+  result.tmpRequestToJoinEnsName = ""
 
 proc delete*(self: Controller) =
   self.events.disconnect()
@@ -78,6 +84,25 @@ proc getIsCurrentSectionActive*(self: Controller): bool =
 
 proc setIsCurrentSectionActive*(self: Controller, active: bool) =
   self.isCurrentSectionActive = active
+
+proc requestToJoinCommunityAuthenticated*(self: Controller, password: string) =
+  self.communityService.requestToJoinCommunity(self.tmpRequestToJoinCommunityId, self.tmpRequestToJoinEnsName, password)
+  self.tmpRequestToJoinCommunityId = ""
+  self.tmpRequestToJoinEnsName = ""
+
+proc requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
+  self.communityService.requestToJoinCommunity(communityId, ensName, "")
+
+proc authenticate*(self: Controller, keyUid = "") =
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_MAIN_MODULE_AUTH_IDENTIFIER,
+    keyUid: keyUid)
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
+
+proc authenticateToRequestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
+  self.tmpRequestToJoinCommunityId = communityId
+  self.tmpRequestToJoinEnsName = ensName
+  self.authenticate()
+
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
@@ -146,6 +171,13 @@ proc init*(self: Controller) =
     self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService, self.nodeConfigurationService,
       self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
       self.mailserversService, setChatAsActive = true)
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_AUTH_IDENTIFIER:
+      return
+    if self.tmpRequestToJoinCommunityId == self.sectionId:
+      self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
 
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
