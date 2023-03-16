@@ -22,3 +22,4 @@ EditCroppedImagePanel 1.0 EditCroppedImagePanel.qml
 NoImageUploadedPanel 1.0 NoImageUploadedPanel.qml
 StatusAssetSelector 1.0 StatusAssetSelector.qml
 AcceptRejectOptionsButtonsPanel 1.0 AcceptRejectOptionsButtonsPanel.qml
+DidYouKnowSplashScreen 1.0 DidYouKnowSplashScreen.qml

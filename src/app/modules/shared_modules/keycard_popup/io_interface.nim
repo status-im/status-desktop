@@ -1,6 +1,7 @@
-import NimQml
+import NimQml, tables
 import ../../../../app/core/eventemitter
 from ../../../../app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyDetails
+from ../../../../app_service/service/wallet_account/service as wallet_account_service import WalletTokenDto
 import models/key_pair_item
 
 const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED_AND_WALLET_ADDRESS_GENERATED* = "sharedKeycarModuleUserAuthenticatedAndWalletAddressGenerated"
@@ -200,6 +201,9 @@ method syncKeycardBasedOnAppState*(self: AccessInterface, keyUid: string, pin: s
   raise newException(ValueError, "No implementation available")
 
 method getPin*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onTokensRebuilt*(self: AccessInterface, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

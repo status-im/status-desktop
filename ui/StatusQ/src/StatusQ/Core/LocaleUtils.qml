@@ -10,6 +10,27 @@ QtObject {
         if (Number.isInteger(num))
             return 0
 
+        // According to the JS Reference:
+        //
+        // Scientific notation is used if the radix is 10 and the number's
+        // magnitude (ignoring sign) is greater than or equal to 10^21 or less
+        // than 10^-6. In this case, the returned string always explicitly
+        // specifies the sign of the exponent.
+        //
+        // In order to take it into account, numbers in scientific notation
+        // is handled separately.
+
+        if (Math.abs(num) < 10**-6) {
+            const split = num.toString().split('e-')
+            const base = parseFloat(split[0])
+            const exp = parseInt(split[1])
+            return fractionalPartLength(base) + exp
+        }
+
+        if (num >= 10**21) {
+            return 0
+        }
+
         return num.toString().split('.')[1].length
     }
 
@@ -32,8 +53,20 @@ QtObject {
         try {
             return Number.fromLocaleString(locale, num)
         } catch (_) {
-            return parseFloat(num)
+            return NaN
         }
+    }
+
+    function getLocalizedDigitsCount(str, locale = null) {
+        if (!str)
+            return 0
+
+        locale = locale || Qt.locale()
+
+        if (d.nonDigitCharacterRegExpLocale !== locale)
+            d.nonDigitCharacterRegExpLocale = locale
+
+        return str.replace(d.nonDigitCharacterRegExp, "").length
     }
 
     function currencyAmountToLocaleString(currencyAmount, options = null, locale = null) {
@@ -45,25 +78,41 @@ QtObject {
         if (typeof(currencyAmount) !== "object") {
             console.warn("Wrong type for currencyAmount: " + JSON.stringify(currencyAmount))
             console.trace()
-            return NaN
+            return "N/A"
+        }
+
+        // Parse options
+        var optShowOnlyAmount = false
+        var optDisplayDecimals = currencyAmount.displayDecimals
+        var optStripTrailingZeroes = currencyAmount.stripTrailingZeroes
+        if (options) {
+            if (options.onlyAmount !== undefined) {
+                optShowOnlyAmount = true
+            }
+            if (options.minDecimals !== undefined && options.minDecimals > optDisplayDecimals) {
+                optDisplayDecimals = options.minDecimals
+            }
+            if (options.stripTrailingZeroes !== undefined) {
+                optStripTrailingZeroes = options.stripTrailingZeroes
+            }
         }
 
         var amountStr
-        let minAmount = 10**-currencyAmount.displayDecimals
-        if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !(options && options.onlyAmount))
+        let minAmount = 10**-optDisplayDecimals
+        if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !optShowOnlyAmount)
         {
             // Handle amounts smaller than resolution
-            amountStr = "<%1".arg(numberToLocaleString(minAmount, currencyAmount.displayDecimals, locale))
+            amountStr = "<%1".arg(numberToLocaleString(minAmount, optDisplayDecimals, locale))
         } else {
             // Normal formatting
-            amountStr = numberToLocaleString(currencyAmount.amount, currencyAmount.displayDecimals, locale)
-            if (currencyAmount.stripTrailingZeroes) {
+            amountStr = numberToLocaleString(currencyAmount.amount, optDisplayDecimals, locale)
+            if (optStripTrailingZeroes) {
                 amountStr = stripTrailingZeroes(amountStr, locale)
             }
         }
 
         // Add symbol
-        if (currencyAmount.symbol && !(options && options.onlyAmount)) {
+        if (currencyAmount.symbol && !optShowOnlyAmount) {
             amountStr = "%1 %2".arg(amountStr).arg(currencyAmount.symbol)
         }
 
@@ -75,6 +124,8 @@ QtObject {
         id: d
 
         readonly property var amPmFormatChars: ["AP", "A", "ap", "a"]
+
+        readonly property int msInADay: 86400000
 
         // try to parse date from a number or ISO string timestamp
         function readDate(value) {
@@ -99,6 +150,22 @@ QtObject {
                     result = result.concat(" ap")
                 return result
             }
+        }
+
+        // return full days between 2 dates
+        function daysBetween(firstDate, secondDate) {
+            firstDate.setHours(0, 0, 0) // discard time
+            secondDate.setHours(0, 0, 0)
+            return Math.round(Math.abs((firstDate - secondDate) / d.msInADay)) // Math.round: not all days are 24 hours long!
+        }
+
+        property var nonDigitCharacterRegExpLocale
+
+        readonly property var nonDigitCharacterRegExp: {
+            const localizedNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(
+                    n => LocaleUtils.numberToLocaleString(n, 0, nonDigitCharacterRegExpLocale))
+
+            return new RegExp(`[^${localizedNumbers.join("")}]`, "g")
         }
     }
 
@@ -158,6 +225,34 @@ QtObject {
             formatString = formatString.replace("yy", "yyyy")
 
         return value.toLocaleString(loc, formatString)
+    }
+
+    // TODO use JS Intl.RelativeTimeFormat in Qt 6?
+    function formatRelativeTimestamp(timestamp) {
+        const now = new Date()
+        const value = d.readDate(timestamp)
+        const loc = Qt.locale()
+        const formatString = d.fixupTimeFormatString(loc.timeFormat(Locale.ShortFormat)) // format string for the time part
+        const dayDifference = d.daysBetween(d.readDate(timestamp), now)
+
+        // within last day, 2 or 7 days
+        if (dayDifference < 1) // today -> "Today 14:23"
+            return qsTr("Today %1").arg(value.toLocaleTimeString(loc, formatString))
+
+        if (dayDifference < 2) // yesterday -> "Yesterday 14:23"
+            return qsTr("Yesterday %1").arg(value.toLocaleTimeString(loc, formatString))
+
+        if (dayDifference < 7) // last 7 days -> "Mon 14:23"
+            return qsTr("%1 %2").arg(loc.standaloneDayName(value.getDay(), Locale.ShortFormat)).arg(value.toLocaleTimeString(loc, formatString))
+
+        // otherwise
+        var fullFormatString = d.fixupTimeFormatString(loc.dateTimeFormat(Locale.ShortFormat))
+        if (now.getFullYear() === value.getFullYear())
+            fullFormatString = fullFormatString.replace(/y/g, "") // strip year part, if current year -> "31 December 09:41"
+        else
+            fullFormatString = fullFormatString.replace("yy", "yyyy") // different year -> "31 December 2022 09:41"
+
+        return value.toLocaleString(loc, fullFormatString)
     }
 
     function getTimeDifference(d1, d2) {

@@ -32,6 +32,11 @@ Input {
         id: d
 
         property real amount: 0
+
+        function getEffectiveDigitsCount(str) {
+            const digits = LocaleUtils.getLocalizedDigitsCount(text, root.locale)
+            return str.startsWith(locale.decimalPoint) ? digits + 1 : digits
+        }
     }
 
     validator: DoubleValidator {
@@ -53,16 +58,18 @@ Input {
             return
         }
 
-        if (text.length > root.maximumLength) {
+        if (d.getEffectiveDigitsCount(text) > root.maximumLength) {
             root.validationError = qsTr("The maximum number of characters is %1").arg(root.maximumLength)
             return
         }
 
-        try {
-            d.amount = LocaleUtils.numberFromLocaleString(text) || 0
+        let amount = LocaleUtils.numberFromLocaleString(text)
+        if (isNaN(amount)) {
+            d.amount = 0
+            root.validationError = qsTr("Invalid amount format")
+        } else {
+            d.amount = amount
             root.validationError = ""
-        } catch (err) {
-           root.validationError = qsTr("Invalid amount format")
         }
     }
 

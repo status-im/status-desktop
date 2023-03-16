@@ -5,6 +5,6 @@ proc currencyAmountToItem*(amount: float64, format: CurrencyFormatDto) : Currenc
   return newCurrencyAmount(
       amount,
       format.symbol,
-      format.displayDecimals,
+      int(format.displayDecimals),
       format.stripTrailingZeroes
     )

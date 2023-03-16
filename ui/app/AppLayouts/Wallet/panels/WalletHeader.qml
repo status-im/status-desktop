@@ -55,7 +55,13 @@ Item {
             id: networkFilter
             Layout.alignment: Qt.AlignTrailing
             Layout.rowSpan: 2
-            store: root.walletStore
+            layer1Networks: walletStore.layer1Networks
+            layer2Networks: walletStore.layer2Networks
+            testNetworks: walletStore.testNetworks
+            enabledNetworks: walletStore.enabledNetworks
+            allNetworks: walletStore.allNetworks
+
+            onToggleNetwork: walletStore.toggleNetwork(chainId)
         }
 
         StatusAddressPanel {

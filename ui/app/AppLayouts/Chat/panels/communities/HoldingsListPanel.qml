@@ -9,13 +9,15 @@ import StatusQ.Controls 0.1
 
 import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.controls.community 1.0
-
-import SortFilterProxyModel 0.2
+import AppLayouts.Chat.views.communities 1.0
 
 import utils 1.0
 
 Control {
     id: root
+
+    property var assetsModel
+    property var collectiblesModel
 
     property var model
     property string introText
@@ -47,6 +49,8 @@ Control {
             spacing: d.defaultHoldingsSpacing
 
             Repeater {
+                id: repeater
+
                 model: root.model
 
                 ColumnLayout {
@@ -57,19 +61,18 @@ Control {
                         spacing: 18 // by design
 
                         Repeater {
-                            model: SortFilterProxyModel {
+
+                            model: HoldingsSelectionModel {
                                 sourceModel: holdingsListModel
-                                proxyRoles: ExpressionRole {
-                                    name: "text"
-                                    // Direct call for singleton function is not handled properly by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
-                                    expression: d.holdingsTextFormat(model.name, model.amount)
-                                }
+
+                                assetsModel: root.assetsModel
+                                collectiblesModel: root.collectiblesModel
                             }
 
                             StatusListItemTag {
                                 enabled: false
                                 leftPadding: 2
-                                title: text
+                                title: model.text
                                 asset.name: model.imageSource
                                 asset.isImage: true
                                 asset.bgColor: "transparent"
@@ -87,7 +90,7 @@ Control {
                         Layout.alignment: Qt.AlignHCenter
                         text: qsTr("or")
                         textFormat: Text.StyledText
-                        visible: (index !== root.model.count - 1)
+                        visible: (index !== repeater.count - 1)
                     }
                 }
             }

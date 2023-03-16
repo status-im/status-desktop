@@ -50,6 +50,8 @@ type SignalType* {.pure.} = enum
   WakuFetchingBackupProgress = "waku.fetching.backup.progress"
   WakuBackedUpProfile = "waku.backedup.profile"
   WakuBackedUpSettings = "waku.backedup.settings"
+  WakuBackedUpKeycards = "waku.backedup.keycards"
+  LocalPairing = "localPairing"
   Unknown
 
 proc event*(self:SignalType):string =

@@ -1,67 +1,94 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 ListModel {
     ListElement {
-        itemId: 0
+        itemId: "_welcome"
+        isCategory: false
+        categoryId: ""
         name: "welcome"
-        isCategory: false
+        emoji: ""
         color: ""
-        colorId: 1
         icon: ""
+        colorId: 1
     }
     ListElement {
-        itemId: 1
+        itemId: "_announcements"
+        isCategory: false
+        categoryId: ""
         name: "announcements"
-        isCategory: false
+        emoji: ""
         color: ""
-        colorId: 1
         icon: ""
+        colorId: 1
     }
     ListElement {
-        name: "Discussion"
+        itemId: ""
         isCategory: true
-
-        subItems: [
-            ListElement {
-                itemId: 2
-                name: "general"
-                icon: ""
-                emoji: "👋"
-            },
-            ListElement {
-                itemId: 3
-                name: "help"
-                icon: ""
-                color: ""
-                colorId: 1
-                emoji: "⚽"
-            }
-        ]
+        categoryId: "_discussion"
+        name: "discussion"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 1
     }
     ListElement {
-        name: "Support"
-        isCategory: true
-
-        subItems: [
-            ListElement {
-                itemId: 4
-                name: "faq"
-                icon: ""
-                color: ""
-                colorId: 5
-            },
-            ListElement {
-                itemId: 5
-                name: "report-scam"
-                icon: ""
-                color: ""
-                colorId: 4
-            }
-        ]
+        itemId: "_general"
+        isCategory: false
+        categoryId: "_discussion"
+        name: "general"
+        emoji: "👋"
+        color: ""
+        icon: ""
+        colorId: 1
     }
     ListElement {
-        name: "Empty"
+        itemId: "_help"
+        isCategory: false
+        categoryId: "_discussion"
+        name: "help"
+        emoji: "⚽"
+        color: ""
+        icon: ""
+        colorId: 1
+    }
+    ListElement {
+        itemId: ""
         isCategory: true
-        subItems: []
+        categoryId: "_support"
+        name: "support"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 1
+    }
+    ListElement {
+        itemId: "_faq"
+        isCategory: false
+        categoryId: "_support"
+        name: "faq"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 5
+    }
+    ListElement {
+        itemId: "_report-scam"
+        isCategory: false
+        categoryId: "_support"
+        name: "report-scam"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 4
+    }
+    ListElement {
+        itemId: ""
+        isCategory: true
+        categoryId: "_faq"
+        name: "faq"
+        emoji: ""
+        color: ""
+        icon: ""
+        colorId: 5
     }
 }

@@ -10,6 +10,8 @@ const DEFAULT_THEME = 2 #system theme, from qml
 const LAS_KEY_GEOMETRY = "global/app_geometry"
 const LAS_KEY_VISIBILITY = "global/app_visibility"
 const DEFAULT_VISIBILITY = 2 #windowed visibility, from qml
+const LAS_KEY_FAKE_LOADING_SCREEN_ENABLED = "global/fake_loading_screen"
+const DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and (not existsEnv(TEST_ENVIRONMENT_VAR)) #enabled in production, disabled in development and e2e tests
 
 QtObject:
   type LocalAppSettings* = ref object of QObject
@@ -100,3 +102,16 @@ QtObject:
 
   QtProperty[bool] testEnvironment:
     read = getTestEnvironment
+
+  proc fakeLoadingScreenEnabledChanged*(self: LocalAppSettings) {.signal.}
+  proc getFakeLoadingScreenEnabled*(self: LocalAppSettings): bool {.slot.} =
+    self.settings.value(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(DEFAULT_FAKE_LOADING_SCREEN_ENABLED)).boolVal
+    
+  proc setFakeLoadingScreenEnabled*(self: LocalAppSettings, enabled: bool) {.slot.} =
+    self.settings.setValue(LAS_KEY_FAKE_LOADING_SCREEN_ENABLED, newQVariant(enabled))
+    self.fakeLoadingScreenEnabledChanged()
+
+  QtProperty[bool] fakeLoadingScreenEnabled:
+    read = getFakeLoadingScreenEnabled
+    write = setFakeLoadingScreenEnabled
+    notify = fakeLoadingScreenEnabledChanged

@@ -4,32 +4,44 @@ import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 
 import utils 1.0
 
 Control {
+    id: root
+
     property alias image : image
     property alias iconAsset : iconAsset
     property alias tagPrimaryLabel: tagPrimaryLabel
     property alias tagSecondaryLabel: tagSecondaryLabel
-    property alias controlBackground: controlBackground
     property alias rightComponent: rightComponent.sourceComponent
+    property bool loading: false
 
-    implicitWidth: 66
-    implicitHeight: 26
+    property Component customBackground: Component {
+        Rectangle {
+            color: "transparent"
+            border.width: 1
+            border.color: Theme.palette.baseColor2
+            radius: 36
+        }
+    }
+
+    QtObject {
+        id: d
+        property var loadingComponent: Component { LoadingComponent {}}
+    }
+
     horizontalPadding: Style.current.halfPadding
     verticalPadding: 5
 
-    background: Rectangle {
-        id: controlBackground
-        color: "transparent"
-        border.width: 1
-        border.color: Theme.palette.baseColor2
-        radius: 36
+    background: Loader {
+        sourceComponent: root.loading ? d.loadingComponent : root.customBackground
     }
 
     contentItem: RowLayout {
         spacing: 4
+        visible: !root.loading
         // FIXME this could be StatusIcon but it can't load images from an arbitrary URL
         Image {
             id: image

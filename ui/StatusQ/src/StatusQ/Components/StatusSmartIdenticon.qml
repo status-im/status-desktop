@@ -15,6 +15,7 @@ Loader {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
+        bgRadius: bgWidth / 2
     }
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
@@ -27,6 +28,10 @@ Loader {
                      !root.asset.isImage ? roundedIcon : roundedImage
 
     property bool loading: false
+    property bool hoverEnabled: false
+    readonly property bool hovered: (sourceComponent == roundedIcon && item) ?
+                     item.hovered : false
+    signal clicked(var mouse)
 
     Component {
         id: roundedImage
@@ -34,7 +39,6 @@ Loader {
         Item {
             width: root.asset.width
             height: root.asset.height
-
 
             StatusRoundedImage {
                 id: statusRoundImage
@@ -65,7 +69,9 @@ Loader {
 
     Component {
         id: roundedIcon
+
         StatusRoundIcon {
+            asset.bgRadius: root.asset.bgRadius
             asset.bgWidth: root.asset.bgWidth
             asset.bgHeight: root.asset.bgHeight
             asset.bgColor: root.asset.bgColor
@@ -74,6 +80,20 @@ Loader {
             asset.name: root.asset.name
             asset.rotation: root.asset.rotation
             asset.color: root.asset.color
+
+            signal clicked(var mouse)
+
+            property alias hovered: mouseArea.containsMouse
+
+            MouseArea {
+                id: mouseArea
+
+                anchors.fill: parent
+                hoverEnabled: root.hoverEnabled
+                cursorShape: loading ? Qt.ArrowCursor
+                                     : Qt.PointingHandCursor
+                onClicked: parent.clicked(mouse)
+            }
         }
     }
 
@@ -118,8 +138,18 @@ Loader {
         LoadingComponent {
             anchors.centerIn: parent
             radius: width/2
-            height: root.asset.height
-            width: root.asset.width
+            height: root.asset.isImage ? root.asset.height : root.asset.bgHeight
+            width: root.asset.isImage ? root.asset.width : root.asset.bgWidth
+        }
+    }
+
+    Connections {
+        target: item
+        enabled: status === Loader.Ready
+        ignoreUnknownSignals: true
+
+        function onClicked(mouse) {
+            root.clicked(mouse)
         }
     }
 }

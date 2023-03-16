@@ -2,17 +2,24 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
-import Storybook 1.0
-import Models 1.0
 import StatusQ.Core.Utils 0.1
+
+import AppLayouts.Chat.controls.community 1.0
 
 Flickable {
     id: root
 
     property var model
 
+    property var assetKeys: []
+    property var collectibleKeys: []
+    property var channelKeys: []
+
     QtObject {
         id: d
+
+        property int newType
+        property string newKey
         property string newName
         property double newAmount
         property string newImageSource
@@ -25,116 +32,129 @@ Flickable {
 
     ColumnLayout {
         id: globalContent
-        spacing: 10
+        spacing: 20
         anchors.fill: parent
 
         Repeater {
             model: root.model
 
-            Rectangle {
-                radius: 16
-                color: "whitesmoke"
+            GroupBox {
+                title: `Permission ${model.index}`
+
                 Layout.preferredHeight: content.implicitHeight + 50
                 Layout.fillWidth: true
 
                 ColumnLayout {
                     id: content
-                    spacing: 25
+                    spacing: 20
                     anchors.fill: parent
-                    anchors.margins: 20
 
-                    Label {
-                        Layout.fillWidth: true
-                        text: "Permission " + (model.index)
-                        font.weight: Font.Bold
-                        font.pixelSize: 17
-                    }
+                    Repeater {
+                        model: holdingsListModel
 
-                    ColumnLayout {
-                        Repeater {
-                            model: holdingsListModel
+                        GroupBox {
+                            Layout.fillWidth: true
+                            title: `Who holds [item ${model.index}]`
 
-                            CommunityPermissionsSettingItemEditor {
-                                Layout.fillWidth: true
-                                panelText: "Who holds [item " + model.index + "]"
-                                name: model.name
-                                icon: model.imageSource
+                            CommunityPermissionsHoldingItemEditor {
+                                anchors.fill: parent
+
+                                type: model.type
+                                key: model.key
                                 amountText: model.amount
-                                isAmountVisible: true
-                                iconsModel: AssetsCollectiblesIconsModel {}
-                                onNameChanged: model.name = name
-                                onIconChanged: model.imageSource = icon
+
+                                assetKeys: root.assetKeys
+                                collectibleKeys: root.collectibleKeys
+
+                                onTypeChanged: model.type = type
+                                onKeyChanged: model.key = key
                                 onAmountTextChanged: model.amount = parseFloat(amountText)
                             }
                         }
                     }
 
-                    CommunityPermissionsSettingItemEditor {
-                        panelText: "New holdings item"
-                        name: d.newName
-                        icon: d.newImageSource
-                        amountText: d.newAmount
-                        isAmountVisible: true
-                        iconsModel: AssetsCollectiblesIconsModel {}
-                        onNameChanged: d.newName = name
-                        onIconChanged: d.newImageSource = icon
-                        onAmountTextChanged: d.newAmount = parseFloat(amountText)
-                    }
-
-                    Button {
-                        enabled: d.newName && d.newAmount && d.newImageSource
+                    GroupBox {
                         Layout.fillWidth: true
-                        text: "Add new holding"
-                        onClicked: {
-                            model.holdingsListModel.append([{
-                                                                type: 1,
-                                                                key: d.newName,
-                                                                name: d.newName,
-                                                                amount: d.newAmount,
-                                                                imageSource: d.newImageSource
-                                                         }])
+                        title: "New holding item"
+
+                        ColumnLayout {
+                            anchors.fill: parent
+
+                            CommunityPermissionsHoldingItemEditor {
+                                Layout.fillWidth: true
+
+                                type: d.newType
+                                key: d.newKey
+                                amountText: d.newAmount
+
+                                assetKeys: root.assetKeys
+                                collectibleKeys: root.collectibleKeys
+
+                                onTypeChanged: d.newType = type
+                                onKeyChanged: d.newKey = key
+                                onAmountTextChanged: d.newAmount = parseFloat(amountText)
+                            }
+
+                            MenuSeparator {
+                                Layout.fillWidth: true
+                            }
+
+                            Button {
+                                enabled: d.newKey && (d.newAmount || d.newType === HoldingTypes.Type.Ens)
+                                Layout.fillWidth: true
+                                text: "Add new holding"
+
+                                onClicked: {
+                                    model.holdingsListModel.append({
+                                        type: d.newType,
+                                        key: d.newKey,
+                                        amount: d.newAmount
+                                    })
+                                }
+                            }
                         }
                     }
 
-                    ColumnLayout {
+
+                    MenuSeparator {
+                        Layout.fillWidth: true
+                    }
+
+                    Label {
+                        text: "Channels"
+                    }
+
+                    Flow {
+                        Layout.fillWidth: true
+
                         Repeater {
-                             model: channelsListModel
-                             CommunityPermissionsSettingItemEditor {
-                                 isEmojiSelectorVisible: true
+                            id: channelsRepeater
 
-                                 panelText: "In [item " + model.index + "]"
-                                 name: model.text
-                                 icon: model.iconSource ? model.iconSource : ""
-                                 emoji: model.emoji ? model.emoji : ""
-                                 iconsModel: AssetsCollectiblesIconsModel {}
-                                 onNameChanged: model.name = name
-                                 onIconChanged: model.iconSource = icon
-                                 onEmojiChanged: model.emoji = emoji
-                             }
-                        }
-                    }
+                            model: root.channelKeys
 
+                            CheckBox {
+                                text: modelData
 
-                    CommunityPermissionsSettingItemEditor {
-                        Layout.fillWidth: true
-                        panelText: "New In item"
-                        name: d.newChannelName
-                        icon: d.newChannelIconSource
-                        iconsModel: AssetsCollectiblesIconsModel {}
-                        onNameChanged: d.newChannelName = name
-                        onIconChanged: d.newChannelIconSource = icon
-                    }
+                                checked: ModelUtils.contains(
+                                             channelsListModel, "key", modelData)
 
-                    Button {
-                        enabled: d.newChannelIconSource && d.newChannelName
-                        Layout.fillWidth: true
-                        text: "Add new channel"
-                        onClicked: {
-                            model.channelsListModel.append([{
-                                                                key: d.newChannelName,
-                                                                name: d.newChannelName,
-                                                                iconSource: d.newChannelIconSource
-                                                         }])
+                                onToggled: {
+                                    const channels = []
+                                    const count = channelsRepeater.count
+
+                                    for (let i = 0; i < count; i++) {
+                                        const checked = channelsRepeater.itemAt(i).checked
+
+                                        if (checked) {
+                                            const key = root.channelKeys[i]
+                                            channels.push({ key })
+                                        }
+                                    }
+
+                                    channelsListModel.clear()
+                                    channelsListModel.append(channels)
+                                }
+                            }
                         }
                     }
 

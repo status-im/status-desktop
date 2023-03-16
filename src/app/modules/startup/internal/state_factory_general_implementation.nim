@@ -57,6 +57,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newKeycardEnterSeedPhraseWordsState(flowType, backState)
   if stateToBeCreated == StateType.KeycardNotEmpty:
     return newKeycardNotEmptyState(flowType, backState)
+  if stateToBeCreated == StateType.KeycardNoPCSCService:
+    return newKeycardNoPCSCServiceState(flowType, backState)
   if stateToBeCreated == StateType.KeycardNotKeycard:
     return newKeycardNotKeycardState(flowType, backState)
   if stateToBeCreated == StateType.KeycardEmpty:
@@ -103,6 +105,8 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newLoginKeycardMaxPairingSlotsReachedState(flowType, backState)
   if stateToBeCreated == StateType.LoginKeycardEmpty:
     return newLoginKeycardEmptyState(flowType, backState)
+  if stateToBeCreated == StateType.LoginNoPCSCService:
+    return newLoginNoPCSCServiceState(flowType, backState)
   if stateToBeCreated == StateType.LoginNotKeycard:
     return newLoginNotKeycardState(flowType, backState)
   if stateToBeCreated == StateType.ProfileFetching:
@@ -117,7 +121,10 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newRecoverOldUserState(flowType, backState)
   if stateToBeCreated == StateType.LostKeycardOptions:
     return newLostKeycardOptionsState(flowType, backState)
-  
+  if stateToBeCreated == StateType.SyncDeviceWithSyncCode:
+    return newSyncDeviceWithSyncCodeState(flowType, backState)
+  if stateToBeCreated == StateType.SyncDeviceResult:
+    return newSyncDeviceResultState(flowType, backState)
   error "No implementation available for state ", state=stateToBeCreated
 
 proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State =
@@ -127,5 +134,33 @@ proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType:
   while not state.isNil:
     if state.stateType == targetedStateType:
       return state
+    state = state.getBackState
+  return nil
+
+proc findBackStateWhichDoesNotBelongToAnyOfReadingStates*(currentState: State): State =
+  if currentState.isNil:
+    return nil
+  var state = currentState
+
+  const onboardingReadingStates = @[
+    StateType.KeycardPluginReader,
+    StateType.KeycardInsertKeycard,
+    StateType.KeycardInsertedKeycard,
+    StateType.KeycardReadingKeycard,
+    StateType.KeycardRecognizedKeycard
+  ]
+  const loginReadingStates = @[
+    StateType.Login,
+    StateType.LoginPlugin,
+    StateType.LoginKeycardInsertKeycard,
+    StateType.LoginKeycardInsertedKeycard,
+    StateType.LoginKeycardReadingKeycard,
+    StateType.LoginKeycardRecognizedKeycard
+  ]
+
+  while not state.isNil:
+    if not common_utils.arrayContains(onboardingReadingStates, state.stateType) and
+      not common_utils.arrayContains(loginReadingStates, state.stateType):
+        return state
     state = state.getBackState
   return nil

@@ -51,6 +51,7 @@ import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
+import ../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
 import ../../../app_service/service/keycard/service as keycard_service
@@ -79,6 +80,7 @@ type
     urlsManager: UrlsManager
     keycardService: keycard_service.Service
     settingsService: settings_service.Service
+    networkService: network_service.Service
     privacyService: privacy_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
@@ -132,6 +134,7 @@ proc newModule*[T](
   nodeService: node_service.Service,
   gifService: gif_service.Service,
   ensService: ens_service.Service,
+  communityTokensService: community_tokens_service.Service,
   networkService: network_service.Service,
   generalService: general_service.Service,
   keycardService: keycard_service.Service
@@ -154,6 +157,9 @@ proc newModule*[T](
     privacyService,
     mailserversService,
     nodeService,
+    communityTokensService,
+    walletAccountService,
+    tokenService
   )
   result.moduleLoaded = false
 
@@ -161,6 +167,7 @@ proc newModule*[T](
   result.urlsManager = urlsManager
   result.keycardService = keycardService
   result.settingsService = settingsService
+  result.networkService = networkService
   result.privacyService = privacyService
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
@@ -187,7 +194,7 @@ proc newModule*[T](
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
@@ -218,9 +225,11 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
   let isCommunity = c.channelGroupType == ChannelGroupType.Community
   var communityDetails: CommunityDto
   var unviewedCount, mentionsCount: int
+  var communityTokens: seq[CommunityTokenDto]
   if (isCommunity):
     (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
     communityDetails = self.controller.getCommunityById(c.id)
+    communityTokens = self.controller.getCommunityTokens(c.id)
   else:
     let receivedContactRequests = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
     (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
@@ -331,7 +340,8 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         requestToJoinId = requestDto.id
       )
     ) else: @[],
-    c.encrypted
+    c.encrypted,
+    communityTokens
   )
 
 method load*[T](
@@ -356,92 +366,109 @@ method load*[T](
     activeSectionId = singletonInstance.userProfile.getPubKey()
 
   # Communities Portal Section
-  let communitiesPortalSectionItem = initItem(conf.COMMUNITIESPORTAL_SECTION_ID, SectionType.CommunitiesPortal, conf.COMMUNITIESPORTAL_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  image = "",
-  icon = conf.COMMUNITIESPORTAL_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = true)
+  let communitiesPortalSectionItem = initItem(
+    conf.COMMUNITIESPORTAL_SECTION_ID,
+    SectionType.CommunitiesPortal,
+    conf.COMMUNITIESPORTAL_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    image = "",
+    icon = conf.COMMUNITIESPORTAL_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+  )
   self.view.model().addItem(communitiesPortalSectionItem)
   if(activeSectionId == communitiesPortalSectionItem.id):
     activeSection = communitiesPortalSectionItem
 
   # Wallet Section
-  let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  introMessage = "",
-  outroMessage = "",
-  image = "",
-  icon = conf.WALLET_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled())
+  let walletSectionItem = initItem(
+    conf.WALLET_SECTION_ID,
+    SectionType.Wallet,
+    conf.WALLET_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.WALLET_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled(),
+  )
   self.view.model().addItem(walletSectionItem)
   if(activeSectionId == walletSectionItem.id):
     activeSection = walletSectionItem
 
   # Browser Section
-  let browserSectionItem = initItem(conf.BROWSER_SECTION_ID, SectionType.Browser, conf.BROWSER_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  introMessage = "",
-  outroMessage = "",
-  image = "",
-  icon = conf.BROWSER_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled())
+  let browserSectionItem = initItem(
+    conf.BROWSER_SECTION_ID,
+    SectionType.Browser,
+    conf.BROWSER_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.BROWSER_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled(),
+  )
   self.view.model().addItem(browserSectionItem)
   if(activeSectionId == browserSectionItem.id):
     activeSection = browserSectionItem
 
   # Node Management Section
-  let nodeManagementSectionItem = initItem(conf.NODEMANAGEMENT_SECTION_ID, SectionType.NodeManagement,
-  conf.NODEMANAGEMENT_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  introMessage = "",
-  outroMessage = "",
-  image = "",
-  icon = conf.NODEMANAGEMENT_SECTION_ICON,
-  color = "",
-  hasNotification = false,
-  notificationsCount = 0,
-  active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled())
+  let nodeManagementSectionItem = initItem(
+    conf.NODEMANAGEMENT_SECTION_ID,
+    SectionType.NodeManagement,
+    conf.NODEMANAGEMENT_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.NODEMANAGEMENT_SECTION_ICON,
+    color = "",
+    hasNotification = false,
+    notificationsCount = 0,
+    active = false,
+    enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled(),
+  )
   self.view.model().addItem(nodeManagementSectionItem)
   if(activeSectionId == nodeManagementSectionItem.id):
     activeSection = nodeManagementSectionItem
 
   # Profile Section
-  let profileSettingsSectionItem = initItem(conf.SETTINGS_SECTION_ID, SectionType.ProfileSettings,
-  conf.SETTINGS_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  introMessage = "",
-  outroMessage = "",
-  image = "",
-  icon = conf.SETTINGS_SECTION_ICON,
-  color = "",
-  hasNotification = self.calculateProfileSectionHasNotification(),
-  notificationsCount = 0,
-  active = false,
-  enabled = true)
+  let profileSettingsSectionItem = initItem(
+    conf.SETTINGS_SECTION_ID,
+    SectionType.ProfileSettings,
+    conf.SETTINGS_SECTION_NAME,
+    amISectionAdmin = false,
+    description = "",
+    introMessage = "",
+    outroMessage = "",
+    image = "",
+    icon = conf.SETTINGS_SECTION_ICON,
+    color = "",
+    hasNotification = self.calculateProfileSectionHasNotification(),
+    notificationsCount = 0,
+    active = false,
+    enabled = true,
+  )
   self.view.model().addItem(profileSettingsSectionItem)
   if(activeSectionId == profileSettingsSectionItem.id):
     activeSection = profileSettingsSectionItem
 
   self.browserSectionModule.load()
-  # self.nodeManagementSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
   self.networksModule.load()
@@ -451,12 +478,27 @@ method load*[T](
   self.nodeSectionModule.load()
   # Load wallet last as it triggers events that are listened by other modules
   self.walletSectionModule.load()
-  #self.communitiesPortalSectionModule.load()
 
   # Set active section on app start
-  # If section is profile then open chat by default
+  # If section is empty or profile then open the loading section until chats are loaded
   if activeSection.isEmpty() or activeSection.sectionType == SectionType.ProfileSettings:
-    self.setActiveSection(self.view.model().getItemBySectionType(SectionType.Chat))
+    # Set bogus Item as active until the chat is loaded
+    let loadingItem = initItem(
+      LOADING_SECTION_ID,
+      SectionType.LoadingSection,
+      name = "",
+      amISectionAdmin = false,
+      description = "",
+      image = "",
+      icon = "",
+      color = "",
+      hasNotification = false,
+      notificationsCount = 0,
+      active = false,
+      enabled = true,
+    )
+    self.view.model().addItem(loadingItem)
+    self.setActiveSection(loadingItem, skipSavingInSettings = true)
   else:
     self.setActiveSection(activeSection)
 
@@ -472,6 +514,9 @@ method onChatsLoaded*[T](
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  tokenService: token_service.Service,
+  communityTokensService: community_tokens_service.Service
 ) =
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
@@ -491,7 +536,10 @@ method onChatsLoaded*[T](
       communityService,
       messageService,
       gifService,
-      mailserversService
+      mailserversService,
+      walletAccountService,
+      tokenService,
+      communityTokensService
     )
     let channelGroupItem = self.createChannelGroupItem(channelGroup)
     self.view.model().addItem(channelGroupItem)
@@ -504,6 +552,9 @@ method onChatsLoaded*[T](
   # Set active section if it is one of the channel sections
   if not activeSection.isEmpty():
     self.setActiveSection(activeSection)
+
+  # Remove old loading section
+  self.view.model().removeItem(LOADING_SECTION_ID)
 
   self.view.chatsLoaded()
 
@@ -602,11 +653,11 @@ method setCommunityIdToSpectate*[T](self: Module[T], communityId: string) =
 method getActiveSectionId*[T](self: Module[T]): string =
   return self.controller.getActiveSectionId()
 
-method setActiveSection*[T](self: Module[T], item: SectionItem) =
+method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSettings: bool = false) =
   if(item.isEmpty()):
     echo "section is empty and cannot be made as active one"
     return
-  self.controller.setActiveSection(item.id)
+  self.controller.setActiveSection(item.id, skipSavingInSettings)
 
 method setActiveSectionById*[T](self: Module[T], id: string) =
     let item = self.view.model().getItemById(id)
@@ -625,6 +676,12 @@ method activeSectionSet*[T](self: Module[T], sectionId: string) =
     # should never be here
     echo "main-module, incorrect section id: ", sectionId
     return
+
+  case sectionId:
+    of conf.COMMUNITIESPORTAL_SECTION_ID:
+      self.communitiesModule.onActivated()
+    of conf.BROWSER_SECTION_ID:
+      self.browserSectionModule.onActivated()
 
   self.view.model().setActiveSection(sectionId)
   self.view.activeSectionSet(item)
@@ -719,6 +776,9 @@ method communityJoined*[T](
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  tokenService: token_service.Service,
+  communityTokensService: community_tokens_service.Service,
   setActive: bool = false,
 ) =
   var firstCommunityJoined = false
@@ -736,7 +796,10 @@ method communityJoined*[T](
       communityService,
       messageService,
       gifService,
-      mailserversService
+      mailserversService,
+      walletAccountService,
+      tokenService,
+      communityTokensService
     )
   let channelGroup = community.toChannelGroupDto()
   self.channelGroupModules[community.id].load(channelGroup, events, settingsService, nodeConfigurationService, contactsService,
@@ -839,6 +902,16 @@ method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdat
     let status = toOnlineStatus(s.statusType)
     self.view.activeSection().setOnlineStatusForMember(s.publicKey, status)
 
+method onCommunityTokenDeployed*[T](self: Module[T], communityToken: CommunityTokenDto) {.base.} =
+  let item = self.view.model().getItemById(communityToken.communityId)
+  if item.id != "":
+    item.appendCommunityToken(communityToken)
+
+method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, contractAddress: string, deployState: DeployState) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updateCommunityTokenDeployState(contractAddress, deployState)
+
 method contactUpdated*[T](self: Module[T], publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.activeSection().updateMember(
@@ -901,6 +974,12 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =
   if(details.notificationType == NotificationType.NewMessage or 
     details.notificationType == NotificationType.NewMessageWithPersonalMention or
+    details.notificationType == NotificationType.CommunityTokenPermissionCreated or
+    details.notificationType == NotificationType.CommunityTokenPermissionUpdated or
+    details.notificationType == NotificationType.CommunityTokenPermissionDeleted or
+    details.notificationType == NotificationType.CommunityTokenPermissionCreationFailed or
+    details.notificationType == NotificationType.CommunityTokenPermissionUpdateFailed or
+    details.notificationType == NotificationType.CommunityTokenPermissionDeletionFailed or
     details.notificationType == NotificationType.NewMessageWithGlobalMention):
     self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
   
@@ -979,7 +1058,7 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
 
 proc createSharedKeycardModule[T](self: Module[T]) =
   self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_IDENTIFIER, 
-    self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService, 
     self.walletAccountService, self.keychainService)
 
 method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
@@ -1001,7 +1080,7 @@ method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](self: Module[T], las
 
 method tryKeycardSync*[T](self: Module[T], keyUid: string, pin: string) =
   self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER, 
-    self.events, self.keycardService, self.settingsService, self.privacyService, self.accountsService, 
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService, 
     self.walletAccountService, self.keychainService)
   if self.keycardSharedModuleKeycardSyncPurpose.isNil:
     return

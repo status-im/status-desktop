@@ -4,6 +4,8 @@ import QtQuick.Controls 2.14
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
 
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -16,6 +18,10 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
+import AppLayouts.Chat.stores 1.0
+
+import shared.stores 1.0
+
 import "../panels/communities"
 import "../popups/community"
 import "../layouts"
@@ -24,23 +30,22 @@ StatusSectionLayout {
     id: root
 
     notificationCount: activityCenterStore.unreadNotificationsCount
+    hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     // TODO: get this model from backend?
-    property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "show"},
-                                                                                 {name: qsTr("Members"), icon: "group-chat"},
-                                                                                 {name: qsTr("Permissions"), icon: "objects"}] :
-                                                                                   [{name: qsTr("Overview"), icon: "show"},
-                                                                                 {name: qsTr("Members"), icon: "group-chat"}]
+    property var settingsMenuModel: [{name: qsTr("Overview"), icon: "show", enabled: true},
+        {name: qsTr("Members"), icon: "group-chat", enabled: true},
+        {name: qsTr("Permissions"), icon: "objects", enabled: root.rootStore.communityPermissionsEnabled},
+        {name: qsTr("Mint Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled}]
     // TODO: Next community settings options:
-    //                        {name: qsTr("Tokens"), icon: "token"},
     //                        {name: qsTr("Airdrops"), icon: "airdrop"},
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
     //                        {name: qsTr("Subscriptions"), icon: "subscription"},
-
     property var rootStore
     property var community
     property var chatCommunitySectionModule
     property bool hasAddedContacts: false
+    property var transactionStore: TransactionStore {}
 
     readonly property string filteredSelectedTags: {
         var tagsArray = []
@@ -114,6 +119,8 @@ StatusSectionLayout {
                     asset.width: 24
                     selected: d.currentIndex === index
                     onClicked: d.currentIndex = index
+                    visible: modelData.enabled
+                    height: modelData.enabled ? implicitHeight : 0
                 }
             }
         }
@@ -165,7 +172,6 @@ StatusSectionLayout {
     centerPanel: Loader {
         id: centerPanelContentLoader
         anchors.fill: parent
-        anchors.bottomMargin: 16
         active: root.community
         sourceComponent: StackLayout {
             currentIndex: d.currentIndex
@@ -189,18 +195,18 @@ StatusSectionLayout {
 
                 onEdited: {
                     const error = root.chatCommunitySectionModule.editCommunity(
-                        StatusQUtils.Utils.filterXSS(item.name),
-                        StatusQUtils.Utils.filterXSS(item.description),
-                        StatusQUtils.Utils.filterXSS(item.introMessage),
-                        StatusQUtils.Utils.filterXSS(item.outroMessage),
-                        item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
-                        item.color.toString().toUpperCase(),
-                        item.selectedTags,
-                        Utils.getImageAndCropInfoJson(item.logoImagePath, item.logoCropRect),
-                        Utils.getImageAndCropInfoJson(item.bannerPath, item.bannerCropRect),
-                        item.options.archiveSupportEnabled,
-                        item.options.pinMessagesEnabled
-                    )
+                                    StatusQUtils.Utils.filterXSS(item.name),
+                                    StatusQUtils.Utils.filterXSS(item.description),
+                                    StatusQUtils.Utils.filterXSS(item.introMessage),
+                                    StatusQUtils.Utils.filterXSS(item.outroMessage),
+                                    item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
+                                    item.color.toString().toUpperCase(),
+                                    item.selectedTags,
+                                    Utils.getImageAndCropInfoJson(item.logoImagePath, item.logoCropRect),
+                                    Utils.getImageAndCropInfoJson(item.bannerPath, item.bannerCropRect),
+                                    item.options.archiveSupportEnabled,
+                                    item.options.pinMessagesEnabled
+                                    )
                     if (error) {
                         errorDialog.text = error.error
                         errorDialog.open()
@@ -216,8 +222,8 @@ StatusSectionLayout {
                 onAirdropTokensClicked: { /* TODO in future */ }
                 onBackUpClicked: {
                     Global.openPopup(transferOwnershipPopup, {
-                        privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
-                    })
+                                         privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
+                                     })
                 }
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
@@ -239,8 +245,69 @@ StatusSectionLayout {
             }
 
             CommunityPermissionsSettingsPanel {
-                rootStore: root.rootStore
+                readonly property PermissionsStore permissionsStore:
+                    rootStore.permissionsStore
+
+                permissionsModel: permissionsStore.permissionsModel
+
+                // temporary solution to provide icons for assets, similar
+                // method is used in wallet (constructing filename from asset's
+                // symbol) and is intended to be replaced by more robust
+                // solution soon.
+
+                assetsModel: rootStore.assetsModel
+                collectiblesModel: rootStore.collectiblesModel
+                channelsModel: rootStore.chatCommunitySectionModule.model
+
+                communityDetails: QtObject {
+                    readonly property var _activeSection:
+                        rootStore.mainModuleInst.activeSection
+
+                    readonly property string name: _activeSection.name
+                    readonly property string image: _activeSection.image
+                    readonly property string color: _activeSection.color
+                }
+
+                onCreatePermissionRequested:
+                    permissionsStore.createPermission(holdings, permissionType,
+                                                      isPrivate, channels)
+
+                onUpdatePermissionRequested:
+                    permissionsStore.editPermission(
+                        key, holdings, permissionType, channels, isPrivate)
+
+                onRemovePermissionRequested:
+                    permissionsStore.removePermission(key)
+
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
+            }
+
+            CommunityMintTokensSettingsPanel {
+                readonly property CommunityTokensStore communityTokensStore:
+                    rootStore.communityTokensStore
+
+                tokensModel: root.community.communityTokens
+                holdersModel: communityTokensStore.holdersModel
+                layer1Networks: communityTokensStore.layer1Networks
+                layer2Networks: communityTokensStore.layer2Networks
+                testNetworks: communityTokensStore.testNetworks
+                enabledNetworks: communityTokensStore.enabledNetworks
+                allNetworks: communityTokensStore.allNetworks
+
+                onPreviousPageNameChanged: root.backButtonName = previousPageName
+                onMintCollectible: {
+                    communityTokensStore.deployCollectible(root.community.id,
+                                                           root.transactionStore.currentAccount.address, /*TODO use address from SendModal*/
+                                                           name,
+                                                           symbol,
+                                                           description,
+                                                           supply,
+                                                           infiniteSupply,
+                                                           transferable,
+                                                           selfDestruct,
+                                                           chainId,
+                                                           artworkSource)
+                }
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName

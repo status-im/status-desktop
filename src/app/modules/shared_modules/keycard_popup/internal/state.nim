@@ -6,6 +6,7 @@ export FlowType, KeycardEvent, KeyDetails
 
 type StateType* {.pure.} = enum
   NoState = "NoState"
+  NoPCSCService = "NoPCSCService"
   PluginReader = "PluginReader"
   ReadingKeycard = "ReadingKeycard"
   InsertKeycard = "InsertKeycard"

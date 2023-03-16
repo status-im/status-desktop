@@ -17,14 +17,14 @@ QtObject {
         }
     }
 
-    property string pubkey: userProfile.pubKey
-    property string icon: userProfile.icon
-    property string preferredUsername: userProfile.preferredName
+    property string pubkey: !!Global.userProfile? Global.userProfile.pubKey : ""
+    property string icon: !!Global.userProfile? Global.userProfile.icon : ""
+    property string preferredUsername: !!Global.userProfile? Global.userProfile.preferredName : ""
     readonly property string chainId: ensUsernamesModule.chainId
 
-    property string username: userProfile.username
+    property string username: !!Global.userProfile? Global.userProfile.username : ""
 
-    property var walletAccounts: walletSectionAccounts.model
+    property var walletAccounts: Global.appIsReady? walletSectionAccounts.model : null
 
     function setPrefferedEnsUsername(ensName) {
         if(!root.ensUsernamesModule)

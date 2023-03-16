@@ -70,7 +70,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
 
             Label {
                 Layout.fillWidth: true
-                text: "Nadialogme"
+                text: "Community name"
                 font.weight: Font.Bold
             }
 

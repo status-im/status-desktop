@@ -17,13 +17,15 @@ RowLayout {
 
     property var store
     property var bestRoutes
-    property var amountToSend
+    property double amountToSend
+    property int minReceiveCryptoDecimals: 0
     property bool isLoading: false
     property bool isBridgeTx: false
     property var selectedAsset
     property var selectedAccount
     property var toNetworksList: []
     property var weiToEth: function(wei) {}
+    property var formatCurrencyAmount: function () {}
     property var reCalculateSuggestedRoute: function() {}
     property bool errorMode: false
     property int errorType: Constants.NoError
@@ -80,7 +82,7 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.smallPadding
-            amountToSend: root.amountToSend ? root.amountToSend.amount : 0.0
+            amountToSend: root.amountToSend
             errorType: root.errorType
             isLoading: root.isLoading && !root.isBridgeTx
         }
@@ -106,7 +108,7 @@ RowLayout {
                 else {
                     amountOut = root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
                 }
-                return LocaleUtils.currencyAmountToLocaleString(amountOut)
+                return root.formatCurrencyAmount(amountOut, selectedAsset.symbol, {"minDecimals": root.minReceiveCryptoDecimals})
             }
             statusListItemSubTitle.color: root.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             asset.width: 32
@@ -130,8 +132,8 @@ RowLayout {
                 implicitWidth: 410
                 title: chainName
                 property bool tokenBalanceOnChainValid: selectedAccount && selectedAccount !== undefined && selectedAsset !== undefined
-                property var tokenBalanceOnChain: tokenBalanceOnChainValid ? root.store.getTokenBalanceOnChain(selectedAccount, chainId, selectedAsset.symbol) : undefined
-                subTitle: tokenBalanceOnChain ? LocaleUtils.currencyAmountToLocaleString(tokenBalanceOnChain) : "N/A"
+                property double tokenBalanceOnChain: tokenBalanceOnChainValid ? root.store.getTokenBalanceOnChain(selectedAccount, chainId, selectedAsset.symbol).amount : 0.0
+                subTitle: tokenBalanceOnChainValid ? root.formatCurrencyAmount(tokenBalanceOnChain, selectedAsset.symbol) : "N/A"
                 statusListItemSubTitle.color: Theme.palette.primaryColor1
                 asset.width: 32
                 asset.height: 32

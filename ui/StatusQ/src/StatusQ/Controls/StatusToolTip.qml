@@ -18,11 +18,8 @@ ToolTip {
     property int offset: 0
     property alias arrow: arrow
 
-    implicitWidth: Math.min(maxWidth, contentItem.implicitWidth + 16)
-    leftPadding: 8
-    rightPadding: 8
-    topPadding: 8
-    bottomPadding: 8
+    implicitWidth: Math.min(maxWidth, implicitContentWidth + 16)
+    padding: 8
     delay: 200
     background: Item {
         id: statusToolTipBackground
@@ -67,11 +64,12 @@ ToolTip {
     contentItem: StatusBaseText {
         text: statusToolTip.text
         color: Theme.palette.white
+        linkColor: Theme.palette.white
         wrapMode: Text.WordWrap
         font.pixelSize: 13
         font.weight: Font.Medium
         horizontalAlignment: Text.AlignHCenter
         bottomPadding: 8
+        textFormat: Text.RichText
     }
 }
-

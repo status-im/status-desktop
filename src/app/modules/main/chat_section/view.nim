@@ -2,6 +2,11 @@ import NimQml, json, sequtils
 import model as chats_model
 import item, active_item
 import ../../shared_models/user_model as user_model
+import ../../shared_models/token_permissions_model
+import ../../shared_models/token_permission_item
+import ../../shared_models/token_list_model
+import ../../shared_models/token_list_item
+import ../../../../app_service/service/token/dto
 import io_interface
 
 QtObject:
@@ -20,6 +25,15 @@ QtObject:
       editCategoryChannelsModel: chats_model.Model
       editCategoryChannelsVariant: QVariant
       loadingHistoryMessagesInProgress: bool 
+      tokenPermissionsModel: TokenPermissionsModel
+      tokenPermissionsVariant: QVariant
+      tokenListModel: TokenListModel
+      tokenListModelVariant: QVariant
+      collectiblesListModel: TokenListModel
+      collectiblesListModelVariant: QVariant
+      allTokenRequirementsMet: bool
+      requiresTokenPermissionToJoin: bool
+      amIMember: bool
       
   proc delete*(self: View) =
     self.model.delete
@@ -32,6 +46,13 @@ QtObject:
     self.listOfMyContactsVariant.delete
     self.editCategoryChannelsModel.delete
     self.editCategoryChannelsVariant.delete
+    self.tokenPermissionsModel.delete
+    self.tokenPermissionsVariant.delete
+    self.tokenListModel.delete
+    self.tokenListModelVariant.delete
+    self.collectiblesListModel.delete
+    self.collectiblesListModelVariant.delete
+
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -49,6 +70,14 @@ QtObject:
     result.listOfMyContacts = user_model.newModel()
     result.listOfMyContactsVariant = newQVariant(result.listOfMyContacts)
     result.loadingHistoryMessagesInProgress = false
+    result.tokenPermissionsModel = newTokenPermissionsModel()
+    result.tokenPermissionsVariant = newQVariant(result.tokenPermissionsModel)
+    result.tokenListModel = newTokenListModel()
+    result.tokenListModelVariant = newQVariant(result.tokenListModel)
+    result.collectiblesListModel = newTokenListModel()
+    result.collectiblesListModelVariant = newQVariant(result.collectiblesListModel)
+    result.amIMember = false
+    result.requiresTokenPermissionToJoin = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -149,12 +178,6 @@ QtObject:
 
   proc getItemAsJson*(self: View, itemId: string): string {.slot.} =
     let jsonObj = self.model.getItemByIdAsJson(itemId)
-    if jsonObj == nil or jsonObj.kind != JObject:
-      return
-    return $jsonObj
-
-  proc getItemPartOfCategoryAsJsonById*(self: View, categoryId: string): string {.slot.} =
-    let jsonObj = self.model.getItemPartOfCategoryAsJsonById(categoryId)
     if jsonObj == nil or jsonObj.kind != JObject:
       return
     return $jsonObj
@@ -322,3 +345,87 @@ QtObject:
 
   proc downloadMessages*(self: View, chatId: string, filePath: string) {.slot.} =
     self.delegate.downloadMessages(chatId, filePath)
+
+  proc tokenListModel*(self: View): TokenListModel =
+    result = self.tokenListModel
+
+  proc getTokenListModel(self: View): QVariant{.slot.} =
+    return self.tokenListModelVariant
+
+  QtProperty[QVariant] tokenList:
+    read = getTokenListModel
+
+  proc setTokenListItems*(self: View, tokenListItems: seq[TokenListItem]) =
+    self.tokenListModel.setItems(tokenListItems)
+
+  proc collectiblesListModel*(self: View): TokenListModel =
+    result = self.collectiblesListModel
+
+  proc getCollectiblesListModel(self: View): QVariant{.slot.} =
+    return self.collectiblesListModelVariant
+
+  QtProperty[QVariant] collectiblesModel:
+    read = getCollectiblesListModel
+
+  proc setCollectiblesListItems*(self: View, tokenListItems: seq[TokenListItem]) =
+    self.collectiblesListModel.setItems(tokenListItems)
+
+  proc tokenPermissionsModel*(self: View): TokenPermissionsModel =
+    result = self.tokenPermissionsModel
+
+  proc getTokenPermissionsModel(self: View): QVariant{.slot.} =
+    return self.tokenPermissionsVariant
+
+  QtProperty[QVariant] permissionsModel:
+    read = getTokenPermissionsModel
+
+  proc createOrEditCommunityTokenPermission*(self: View, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, isPrivate: bool) {.slot.} =
+    self.delegate.createOrEditCommunityTokenPermission(communityId, permissionId, permissionType, tokenCriteriaJson, isPrivate)
+
+  proc deleteCommunityTokenPermission*(self: View, communityId: string, permissionId: string) {.slot.} =
+    self.delegate.deleteCommunityTokenPermission(communityId, permissionId)
+
+  proc requiresTokenPermissionToJoinChanged*(self: View) {.signal.}
+
+  proc getRequiresTokenPermissionToJoin(self: View): bool {.slot.} =
+    return self.requiresTokenPermissionToJoin
+
+  proc setRequiresTokenPermissionToJoin*(self: View, value: bool) =
+    if (value == self.requiresTokenPermissionToJoin):
+      return
+    self.requiresTokenPermissionToJoin = value
+    self.requiresTokenPermissionToJoinChanged()
+
+  QtProperty[bool] requiresTokenPermissionToJoin:
+    read = getRequiresTokenPermissionToJoin
+    notify = requiresTokenPermissionToJoinChanged
+
+  proc getAmIMember*(self: View): bool {.slot.} =
+    return self.amIMember
+
+  proc amIMemberChanged*(self: View) {.signal.}
+
+  proc setAmIMember*(self: View, value: bool) =
+    if (value == self.amIMember):
+      return
+    self.amIMember = value
+    self.amIMemberChanged()
+  
+  QtProperty[bool] amIMember:
+    read = getAmIMember
+    notify = amIMemberChanged
+
+  proc getAllTokenRequirementsMet*(self: View): bool {.slot.} =
+    return self.allTokenRequirementsMet
+
+  proc allTokenRequirementsMetChanged*(self: View) {.signal.}
+
+  proc setAllTokenRequirementsMet*(self: View, value: bool) =
+    if (value == self.allTokenRequirementsMet):
+      return
+    self.allTokenRequirementsMet = value
+    self.allTokenRequirementsMetChanged()
+  
+  QtProperty[bool] allTokenRequirementsMet:
+    read = getAllTokenRequirementsMet
+    notify = allTokenRequirementsMetChanged

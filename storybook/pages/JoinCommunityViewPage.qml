@@ -41,10 +41,13 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
         property bool isInvitationPending: true
         property bool isJoinRequestRejected: false
         property bool requiresRequest: false
-        property var communityHoldings: PermissionsModel.shortPermissionsModel
-        property var viewOnlyHoldings: PermissionsModel.shortPermissionsModel
-        property var viewAndPostHoldings: PermissionsModel.shortPermissionsModel
-        property var moderateHoldings: PermissionsModel.shortPermissionsModel
+
+        property var communityHoldingsModel: PermissionsModel.shortPermissionsModel
+        property var viewOnlyHoldingsModel: PermissionsModel.shortPermissionsModel
+        property var viewAndPostHoldingsModel: PermissionsModel.shortPermissionsModel
+        property var moderateHoldingsModel: PermissionsModel.shortPermissionsModel
+        property var assetsModel: AssetsModel {}
+        property var collectiblesModel: CollectiblesModel {}
 
         // Blur background:
         property int membersCount: 184
@@ -128,10 +131,13 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 requirementsMet: d.requirementsMet
                 isJoinRequestRejected: d.isJoinRequestRejected
                 requiresRequest: d.requiresRequest
-                communityHoldings: d.communityHoldings
-                viewOnlyHoldings: d.viewOnlyHoldings
-                viewAndPostHoldings: d.viewAndPostHoldings
-                moderateHoldings: d.moderateHoldings
+
+                communityHoldingsModel: d.communityHoldingsModel
+                viewOnlyHoldingsModel: d.viewOnlyHoldingsModel
+                viewAndPostHoldingsModel: d.viewAndPostHoldingsModel
+                moderateHoldingsModel: d.moderateHoldingsModel
+                assetsModel: d.assetsModel
+                collectiblesModel: d.collectiblesModel
 
                 onInfoButtonClicked: logs.logEvent("JoinCommunityView::onInfoButtonClicked()")
                 onAdHocChatButtonClicked: {
@@ -269,10 +275,10 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     onIsInvitationPendingChanged: d.isInvitationPending = isInvitationPending
                     onIsJoinRequestRejectedChanged: d.isJoinRequestRejected = isJoinRequestRejected
                     onRequiresRequestChanged: d.requiresRequest = requiresRequest
-                    onCommunityHoldingsChanged: d.communityHoldings = communityHoldings
-                    onViewOnlyHoldingsChanged: d.viewOnlyHoldings = viewOnlyHoldings
-                    onViewAndPostHoldingsChanged: d.viewAndPostHoldings = viewAndPostHoldings
-                    onModerateHoldingsChanged: d.moderateHoldings = moderateHoldings
+                    onCommunityHoldingsModelChanged: d.communityHoldingsModel = communityHoldingsModel
+                    onViewOnlyHoldingsModelChanged: d.viewOnlyHoldingsModel = viewOnlyHoldingsModel
+                    onViewAndPostHoldingsModelChanged: d.viewAndPostHoldingsModel = viewAndPostHoldingsModel
+                    onModerateHoldingsModelChanged: d.moderateHoldingsModel = moderateHoldingsModel
                 }
             }
         }

@@ -1,10 +1,11 @@
-import QtQuick 2.13
+import QtQuick 2.15
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
 import Qt.labs.qmlmodels 1.0
 import Qt.labs.platform 1.1
 import QtQml.Models 2.14
+import QtQml 2.15
 
 import AppLayouts.Wallet 1.0
 import AppLayouts.Node 1.0
@@ -161,6 +162,14 @@ Item {
             if (sectionType === Constants.appSection.profile) {
                 Global.settingsSubsection = subsection;
             }
+        }
+
+        function onOpenSendModal(address: string) {
+            sendModal.open(address)
+        }
+
+        function onSwitchToCommunity(communityId: string) {
+            communitiesPortalLayoutContainer.communitiesStore.setActiveCommunity(communityId)
         }
     }
 
@@ -737,7 +746,7 @@ Item {
                                     anchors.centerIn: parent
                                     spacing: 6
                                     StatusBaseText {
-                                        text: qsTr("Loading...")
+                                        text: qsTr("Loading chats...")
                                     }
                                     LoadingAnimation {}
                                 }
@@ -761,16 +770,23 @@ Item {
                             ChatLayout {
                                 id: chatLayoutContainer
 
+                                Binding {
+                                    target: rootDropAreaPanel
+                                    property: "enabled"
+                                    value: chatLayoutContainer.currentIndex === 0 // Meaning: Chats / channels view
+                                    when: visible
+                                    restoreMode: Binding.RestoreBindingOrValue
+                                }
+
                                 rootStore: appMain.rootChatStore
+                                emojiPopup: statusEmojiPopup
+                                stickersPopup: statusStickersPopupLoader.item
 
-                                chatView.emojiPopup: statusEmojiPopup
-                                chatView.stickersPopup: statusStickersPopupLoader.item
-
-                                chatView.onProfileButtonClicked: {
+                                onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
 
-                                chatView.onOpenAppSearch: {
+                                onOpenAppSearch: {
                                     appSearch.openSearchPopup()
                                 }
 
@@ -858,16 +874,26 @@ Item {
                                     Layout.fillHeight: true
 
                                     sourceComponent: ChatLayout {
-                                        chatView.emojiPopup: statusEmojiPopup
-                                        chatView.stickersPopup: statusStickersPopupLoader.item
+                                        id: chatLayoutComponent
+
+                                        Binding {
+                                            target: rootDropAreaPanel
+                                            property: "enabled"
+                                            value: chatLayoutComponent.currentIndex === 0 // Meaning: Chats / channels view
+                                            when: visible
+                                            restoreMode: Binding.RestoreBindingOrValue
+                                        }
+
+                                        emojiPopup: statusEmojiPopup
+                                        stickersPopup: statusStickersPopupLoader.item
 
                                         rootStore: appMain.rootChatStore
 
-                                        chatView.onProfileButtonClicked: {
+                                        onProfileButtonClicked: {
                                             Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                         }
 
-                                        chatView.onOpenAppSearch: {
+                                        onOpenAppSearch: {
                                             appSearch.openSearchPopup()
                                         }
 
@@ -1101,7 +1127,10 @@ Item {
                 this.open = false
             }
             onLinkActivated: {
-                Qt.openUrlExternally(link);
+                if (link.startsWith("#")) // internal link to section
+                    globalConns.onAppSectionBySectionTypeChanged(link.substring(1))
+                else
+                    Global.openLink(link)
             }
 
             onClose: {
@@ -1172,32 +1201,10 @@ Item {
         }
     }
 
-    Connections {
-        target: appMain.rootStore.mainModuleInst
-        function onActiveSectionChanged() {
-            let communitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
-            if (communitySectionModule)
-                rootDropAreaPanel.activeChatType = communitySectionModule.activeItem.type
-        }
-    }
-
     DropAreaPanel {
         id: rootDropAreaPanel
+
         width: appMain.width
         height: appMain.height
-        activeChatType: appMain.rootStore.mainModuleInst.getCommunitySectionModule() ? appMain.rootStore.mainModuleInst.getCommunitySectionModule().activeItem.type
-                                                                                     : 0
-        enabled: !drag.source && (
-                                // in chat view
-                                (appMain.rootStore.mainModuleInst.activeSection.sectionType === Constants.appSection.chat &&
-                                (
-                                    // in a one-to-one chat
-                                    activeChatType === Constants.chatType.oneToOne ||
-                                    // in a private group chat
-                                    activeChatType === Constants.chatType.privateGroupChat
-                                    )
-                                ) ||
-                                // In community section
-                                appMain.rootStore.mainModuleInst.activeSection.sectionType === Constants.appSection.community)
     }
 }

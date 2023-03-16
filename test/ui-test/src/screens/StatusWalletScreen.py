@@ -1,11 +1,12 @@
+from ast import Tuple
 from enum import Enum
 import time
 import os
 import sys
-from drivers.SquishDriver import *
-from drivers.SquishDriverVerification import *
 from common.SeedUtils import *
 from .StatusMainScreen import StatusMainScreen
+from .StatusMainScreen import authenticatePopupEnterPassword
+from drivers.SquishDriver import type_text as type_text
 
 class Tokens(Enum):
     ETH: str = "ETH"
@@ -43,6 +44,7 @@ class SavedAddressesScreen(Enum):
 class AddSavedAddressPopup(Enum):
     NAME_INPUT: str = "mainWallet_Saved_Addreses_Popup_Name_Input"
     ADDRESS_INPUT: str = "mainWallet_Saved_Addreses_Popup_Address_Input"
+    ADDRESS_INPUT_EDIT: str = "mainWallet_Saved_Addreses_Popup_Address_Input_Edit"
     ADD_BUTTON: str = "mainWallet_Saved_Addreses_Popup_Address_Add_Button"
 
 class SendPopup(Enum):
@@ -67,15 +69,13 @@ class AddAccountPopup(Enum):
     TYPE_SEED_PHRASE: str = "mainWallet_Add_Account_Popup_Type_Seed_Phrase"
     TYPE_PRIVATE_KEY: str = "mainWallet_Add_Account_Popup_Type_Private_Key"
     ADDRESS_INPUT: str = "mainWallet_Add_Account_Popup_Watch_Only_Address"
+    ADDRESS_INPUT_PLACEHOLDER: str = "mainWallet_Add_Account_Popup_Watch_Only_Address_Placeholder"
     PRIVATE_KEY_INPUT: str = "mainWallet_Add_Account_Popup_Private_Key"
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Popup_Footer_Add_Account"
     SEED_PHRASE_INPUT_TEMPLATE: str = "mainWindow_Add_Account_Popup_Seed_Phrase_"
     SEED_PHRASE_INPUT_LAST: str = "mainWindow_Add_Account_Popup_Seed_Phrase_12"
-
-class SharedPopup(Enum):
-    POPUP_CONTENT: str = "sharedPopup_Popup_Content"
-    PASSWORD_INPUT: str = "sharedPopup_Password_Input"
-    PRIMARY_BUTTON: str = "sharedPopup_Primary_Button"
+    FULLY_CUSTOM_PATH_CHECKBOX: str = "mainWallet_Add_Account_Popup_Advanced_Accept_Responsibility_Checkbox"
+    ADD_ACCOUNT_POPUP_ROOT: str = "mainWallet_Add_Account_Popup_Root"
 
 class CollectiblesView(Enum):
     COLLECTIONS_REPEATER: str =  "mainWallet_Collections_Repeater"
@@ -99,104 +99,97 @@ class StatusWalletScreen:
     def accept_signing_phrase(self):
         click_obj_by_name(SigningPhrasePopUp.OK_GOT_IT_BUTTON.value)
 
-    def add_watch_only_account(self, account_name: str, address: str):
+    def add_watch_only_account(self, account_name: str, address: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
 
-        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
+        type_text(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
 
-        click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
+        click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value, 2000)
 
-        click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
-        time.sleep(1)
-        click_obj_by_name(AddAccountPopup.TYPE_WATCH_ONLY.value)
+        # Found that all the involved controls are switching availability states very quickly based on the model data
+        # which makes it almost impossible to do a reliable check for different states, hence the retry for 10 seconds
+        # workaround.
+        # TODO remove workaround to retry after add account modal refactoring
+        max_expected_step_duration_ms = 10000
+        def scroll_and_type_fn():
+            try:
+                click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
+                click_obj_by_name(AddAccountPopup.TYPE_WATCH_ONLY.value)
 
-        scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.ADDRESS_INPUT.value)
-        type(AddAccountPopup.ADDRESS_INPUT.value, address)
-        click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
+                scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.ADDRESS_INPUT_PLACEHOLDER.value, 2000)
+                wait_for_object_and_type(AddAccountPopup.ADDRESS_INPUT_PLACEHOLDER.value, address)
+            except Exception as e:
+                log(f"Expected fail, ignore it for {max_expected_step_duration_ms/1000} seconds; exception {str(e)}")
+
+        do_until_validation_with_timeout(
+            scroll_and_type_fn,
+            lambda: is_loaded_visible_and_enabled(AddAccountPopup.ADDRESS_INPUT.value, 500)[0],
+            timeout_ms=max_expected_step_duration_ms,
+            message="Fill watch only account address")
+
+        click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value, 2000)
 
     def import_private_key(self, account_name: str, password: str, private_key: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
 
-        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
+        type_text(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
 
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
-        time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_PRIVATE_KEY.value)
 
         scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.PRIVATE_KEY_INPUT.value)
-        type(AddAccountPopup.PRIVATE_KEY_INPUT.value, private_key)
+        type_text(AddAccountPopup.PRIVATE_KEY_INPUT.value, private_key)
 
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
 
-        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
-        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
-
-        time.sleep(1)
+        authenticatePopupEnterPassword(password)
 
     def import_seed_phrase(self, account_name: str, password: str, mnemonic: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
 
-        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
+        type_text(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
 
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
-        time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
-        time.sleep(1)
         click_obj_by_name(AddAccountPopup.TYPE_SEED_PHRASE.value)
-        time.sleep(1)
 
-        for i in range(1, 5):
-            scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-            time.sleep(1)
+        is_loaded_visible_and_enabled(AddAccountPopup.SCROLL_BAR.value, 1000)
+        scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.SEED_PHRASE_INPUT_LAST.value)
 
         words = mnemonic.split()
         input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
-        time.sleep(1)
 
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
 
-        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
-        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
-
-        time.sleep(1)
+        authenticatePopupEnterPassword(password)
 
     def generate_new_account(self, account_name: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
 
-        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
-        time.sleep(1)
+        type_text(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
 
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
 
-        time.sleep(1)
-
-        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
-        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
-        time.sleep(1)
-
-    def verify_account_name_is_present(self, account_name: str):
-        verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
-        type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-        click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
+        authenticatePopupEnterPassword(password)
 
     def send_transaction(self, account_name, amount, token, chain_name, password):
+        is_loaded_visible_and_enabled(AssetView.LIST.value, 2000)
         list = get_obj(AssetView.LIST.value)
-        squish.waitFor("list.count > 0", 60*1000*2)
-        squish.waitFor("float(str(list.itemAtIndex(0).balance)) > 0", 60*1000*2)
+        # LoadingTokenDelegate will be visible until the balance is loaded verify_account_balance_is_positive checks for TokenDelegate
+        do_until_validation_with_timeout(lambda: time.sleep(0.1), lambda: self.verify_account_balance_is_positive(list, "ETH")[0], "Wait for tokens to load", 10000)
 
         click_obj_by_name(MainWalletScreen.SEND_BUTTON_FOOTER.value)
 
         self._click_repeater(SendPopup.HEADER_ACCOUNTS_LIST.value, account_name)
-        time.sleep(1)
-        type(SendPopup.AMOUNT_INPUT.value, amount)
+        is_loaded_visible_and_enabled(SendPopup.AMOUNT_INPUT.value, 1000)
+        type_text(SendPopup.AMOUNT_INPUT.value, amount)
 
         click_obj_by_name(SendPopup.ASSET_SELECTOR.value)
         asset_list = get_obj(SendPopup.ASSET_LIST.value)
         for index in range(asset_list.count):
             tokenObj = asset_list.itemAtIndex(index)
-            if(not squish.isNull(tokenObj) and tokenObj.objectName == "AssetSelector_ItemDelegate_" + token):
+            if(not is_null(tokenObj) and tokenObj.objectName == "AssetSelector_ItemDelegate_" + token):
                 click_obj(asset_list.itemAtIndex(index))
                 break
 
@@ -210,12 +203,10 @@ class StatusWalletScreen:
                 break
 
         scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(1)
 
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
-        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
 
-        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
+        authenticatePopupEnterPassword(password)
 
     def _click_repeater(self, repeater_object_name: str, object_name: str):
         repeater = get_obj(repeater_object_name)
@@ -227,8 +218,12 @@ class StatusWalletScreen:
     def add_saved_address(self, name: str, address: str):
         click_obj_by_name(MainWalletScreen.SAVED_ADDRESSES_BUTTON.value)
         click_obj_by_name(SavedAddressesScreen.ADD_BUTTON.value)
-        type(AddSavedAddressPopup.NAME_INPUT.value, name)
-        type(AddSavedAddressPopup.ADDRESS_INPUT.value, address)
+        type_text(AddSavedAddressPopup.NAME_INPUT.value, name)
+
+        type_text(AddSavedAddressPopup.ADDRESS_INPUT_EDIT.value, address)
+        addressInput = get_obj(AddSavedAddressPopup.ADDRESS_INPUT.value)
+        verify_equal(addressInput.plainText, address)
+        is_loaded_visible_and_enabled(AddSavedAddressPopup.ADD_BUTTON.value)
         click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
 
     def _get_saved_address_delegate_item(self, name: str):
@@ -243,14 +238,15 @@ class StatusWalletScreen:
 
     def _find_saved_address_and_open_menu(self, name: str):
         item = self._get_saved_address_delegate_item(name)
-        obj = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_MENU_BUTTON_OBJECT_NAME.value)
-        click_obj(obj)
+        menuButton = get_child_item_with_object_name(item, f"{SavedAddressesScreen.DELEGATE_MENU_BUTTON_OBJECT_NAME.value}_{name}")
+        is_object_loaded_visible_and_enabled(menuButton)
+        click_obj(menuButton)
 
     def edit_saved_address(self, name: str, new_name: str):
         self._find_saved_address_and_open_menu(name)
 
         click_obj_by_name(SavedAddressesScreen.EDIT.value)
-        type(AddSavedAddressPopup.NAME_INPUT.value, new_name)
+        type_text(AddSavedAddressPopup.NAME_INPUT.value, new_name)
         click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
 
     def delete_saved_address(self, name: str):
@@ -262,30 +258,27 @@ class StatusWalletScreen:
     def toggle_favourite_for_saved_address(self, name: str):
         # Find the saved address and click favourite to toggle
         item = self._get_saved_address_delegate_item(name)
-        favouriteButton = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_FAVOURITE_BUTTON_OBJECT_NAME.value)
+        favouriteButton = item.statusListItemIcon
+        is_object_loaded_visible_and_enabled(favouriteButton)
         click_obj(favouriteButton)
 
     def check_favourite_status_for_saved_address(self, name: str, favourite: bool):
         # Find the saved address
         item = self._get_saved_address_delegate_item(name)
-        favouriteButton = get_child_item_with_object_name(item, SavedAddressesScreen.DELEGATE_FAVOURITE_BUTTON_OBJECT_NAME.value)
-
-        # if favourite is true, check that the favourite shows "unfavourite" icon and vice versa
-        wait_for_prop_value(favouriteButton, "icon.name", ("unfavourite" if favourite else "favourite"))
-        wait_for_prop_value(item, "titleTextIcon", ("star-icon" if favourite else ""))
+        favouriteButton = item.statusListItemIcon
+        wait_for_prop_value(favouriteButton, "asset.name", ("star-icon" if favourite else "favourite"))
 
     def toggle_network(self, network_name: str):
-        time.sleep(2)
+        is_loaded_visible_and_enabled(MainWalletScreen.NETWORK_SELECTOR_BUTTON.value, 2000)
         click_obj_by_name(MainWalletScreen.NETWORK_SELECTOR_BUTTON.value)
-        time.sleep(2)
 
+        is_loaded_visible_and_enabled(NetworkSelectorPopup.LAYER_1_REPEATER.value, 2000)
         list = wait_and_get_obj(NetworkSelectorPopup.LAYER_1_REPEATER.value)
         for index in range(list.count):
             item = list.itemAt(index)
             if item.objectName == network_name:
                 click_obj(item)
                 click_obj_by_name(MainWalletScreen.ACCOUNT_NAME.value)
-                time.sleep(2)
                 return
 
         assert False, "network name not found"
@@ -299,29 +292,23 @@ class StatusWalletScreen:
     #####################################
 
     def verify_account_name_is_present(self, account_name: str):
-        verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
+        # Wait 2 second for UI text to update
+        test.verify(wait_for_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name, 2000), "Account name was updated and matches expected")
+
+    def verify_account_balance_is_positive(self, list, symbol: str) -> Tuple(bool, ):
+        if list is None:
+            return (False, )
+
+        for index in range(list.count):
+            tokenListItem = list.itemAtIndex(index)
+            if tokenListItem != None and tokenListItem.objectName == "AssetView_TokenListItem_" + symbol and tokenListItem.balance != "0":
+                return (True, tokenListItem)
+        return (False, )
 
     def verify_positive_balance(self, symbol: str):
-        time.sleep(5) # TODO: remove when it is faster @alaibe!
+        is_loaded_visible_and_enabled(AssetView.LIST.value, 5000)
         list = get_obj(AssetView.LIST.value)
-        reset = 0
-        while (reset < 3):
-            found = False
-            for index in range(list.count):
-                tokenListItem = list.itemAtIndex(index)
-                if tokenListItem.objectName == "AssetView_TokenListItem_" + symbol:
-                    found = True
-                    if (tokenListItem.balance == "0" and reset < 3):
-                        break
-
-                    return
-
-            if not found:
-                verify_failure("Symbol " + symbol + " not found in the asset list")
-            reset += 1
-            time.sleep(5)
-
-        verify_failure("Balance was not positive")
+        do_until_validation_with_timeout(lambda: time.sleep(0.1), lambda: self.verify_account_balance_is_positive(list, symbol)[0], "Symbol " + symbol + " not found in the asset list", 5000)
 
     def verify_saved_address_exists(self, name: str):
         list = wait_and_get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
@@ -365,7 +352,7 @@ class StatusWalletScreen:
 
         transaction_list_view = get_obj(TransactionsView.TRANSACTIONS_LISTVIEW.value)
 
-        squish.waitFor("transaction_list_view.count > 0", 60*1000)
+        wait_for("transaction_list_view.count > 0", 60*1000)
         verify(transaction_list_view.count > 1, "Transactions not retrieved for the account")
 
         transaction_item = transaction_list_view.itemAtIndex(1)

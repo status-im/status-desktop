@@ -81,19 +81,16 @@ StatusListView {
         width: ListView.view.width
         key: model.key
         name: model.name
-        shortName: !!model.shortName ? model.shortName : ""
-        iconSource: model.iconSource
+        shortName: model.shortName ?? ""
+        iconSource: model.iconSource ?? ""
         subItems: model.subItems
         selected: root.checkedKeys.includes(model.key)
 
-        onItemClicked: root.itemClicked(model.key,
-                                        model.name,
-                                        model.shortName,
-                                        model.iconSource,
-                                        model.subItems)
+        onItemClicked: root.itemClicked(
+                           key, name, shortName, iconSource, subItems)
     }
 
-    section.property: root.searchMode ? "" : "category"
+    section.property: root.searchMode ? "" : "categoryLabel"
     section.criteria: ViewSection.FullString
 
     section.delegate: Item {
@@ -125,7 +122,7 @@ StatusListView {
         Item {
             id: sectionDelegateRoot
 
-            property string section: root.model && root.model.count ?
+            property string section: root.count ?
                                          qsTr("Search result") :
                                          qsTr("No results")
 

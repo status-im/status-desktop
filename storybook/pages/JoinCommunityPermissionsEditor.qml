@@ -9,20 +9,22 @@ import utils 1.0
 ColumnLayout {
     id: root
 
+    property bool isOnlyChannelPanelEditor: false
     property string channelName: "#vip"
     property bool joinCommunity: true // Otherwise, enter channel
     property bool requirementsMet: true
     property bool isInvitationPending: false
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
-    property var communityHoldings: PermissionsModel.shortPermissionsModel
-    property var viewOnlyHoldings: PermissionsModel.shortPermissionsModel
-    property var viewAndPostHoldings: PermissionsModel.shortPermissionsModel
-    property var moderateHoldings: PermissionsModel.shortPermissionsModel
+    property var communityHoldingsModel: PermissionsModel.shortPermissionsModel
+    property var viewOnlyHoldingsModel: PermissionsModel.shortPermissionsModel
+    property var viewAndPostHoldingsModel: PermissionsModel.shortPermissionsModel
+    property var moderateHoldingsModel: PermissionsModel.shortPermissionsModel
 
     spacing: 16
 
     ColumnLayout {
+        visible: !isOnlyChannelPanelEditor
         Label {
             Layout.fillWidth: true
             text: "View type:"
@@ -33,6 +35,7 @@ ColumnLayout {
             text: "Join community"
             onCheckedChanged: if(checked) d.joinCommunity =  true
         }
+
         RadioButton {
             text: "Enter channel"
             onCheckedChanged: if(checked) d.joinCommunity = false
@@ -40,6 +43,7 @@ ColumnLayout {
     }
 
     ColumnLayout {
+        visible: !isOnlyChannelPanelEditor
         Label {
             Layout.fillWidth: true
             text: "Requirements met:"
@@ -52,6 +56,7 @@ ColumnLayout {
     }
 
     ColumnLayout {
+        visible: !isOnlyChannelPanelEditor
         Label {
             Layout.fillWidth: true
             text: "Request pending:"
@@ -64,6 +69,7 @@ ColumnLayout {
     }
 
     ColumnLayout {
+        visible: !isOnlyChannelPanelEditor
         Label {
             Layout.fillWidth: true
             text: "Request rejected:"
@@ -76,7 +82,7 @@ ColumnLayout {
     }
 
     ColumnLayout {
-        visible: root.joinCommunity
+        visible: !isOnlyChannelPanelEditor && root.joinCommunity
         Label {
             Layout.fillWidth: true
             text: "Requires request:"
@@ -98,12 +104,12 @@ ColumnLayout {
         RadioButton {
             checked: true
             text: "Short model"
-            onCheckedChanged: if(checked) root.communityHoldings = PermissionsModel.shortPermissionsModel
+            onCheckedChanged: if(checked) root.communityHoldingsModel = PermissionsModel.shortPermissionsModel
         }
 
         RadioButton {
             text: "Long model"
-            onCheckedChanged: if(checked) root.communityHoldings = PermissionsModel.longPermissionsModel
+            onCheckedChanged: if(checked) root.communityHoldingsModel = PermissionsModel.longPermissionsModel
         }
     }
 
@@ -134,17 +140,17 @@ ColumnLayout {
         RadioButton {
             checked: true
             text: "Short model"
-            onCheckedChanged: if(checked) root.viewOnlyHoldings = PermissionsModel.shortPermissionsModel
+            onCheckedChanged: if(checked) root.viewOnlyHoldingsModel = PermissionsModel.shortPermissionsModel
         }
 
         RadioButton {
             text: "Long model"
-            onCheckedChanged: if(checked) root.viewOnlyHoldings = PermissionsModel.longPermissionsModel
+            onCheckedChanged: if(checked) root.viewOnlyHoldingsModel = PermissionsModel.longPermissionsModel
         }
 
         RadioButton {
             text: "None"
-            onCheckedChanged: if(checked) root.viewOnlyHoldings = undefined
+            onCheckedChanged: if(checked) root.viewOnlyHoldingsModel = undefined
         }
     }
 
@@ -159,17 +165,17 @@ ColumnLayout {
         RadioButton {
             checked: true
             text: "Short model"
-            onCheckedChanged: if(checked) root.viewAndPostHoldings = PermissionsModel.shortPermissionsModel
+            onCheckedChanged: if(checked) root.viewAndPostHoldingsModel = PermissionsModel.shortPermissionsModel
         }
 
         RadioButton {
             text: "Long model"
-            onCheckedChanged: if(checked) root.viewAndPostHoldings = PermissionsModel.longPermissionsModel
+            onCheckedChanged: if(checked) root.viewAndPostHoldingsModel = PermissionsModel.longPermissionsModel
         }
 
         RadioButton {
             text: "None"
-            onCheckedChanged: if(checked) root.viewAndPostHoldings = undefined
+            onCheckedChanged: if(checked) root.viewAndPostHoldingsModel = undefined
         }
     }
 
@@ -184,17 +190,17 @@ ColumnLayout {
         RadioButton {
             checked: true
             text: "Short model"
-            onCheckedChanged: if(checked) root.moderateHoldings = PermissionsModel.shortPermissionsModel
+            onCheckedChanged: if(checked) root.moderateHoldingsModel = PermissionsModel.shortPermissionsModel
         }
 
         RadioButton {
             text: "Long model"
-            onCheckedChanged: if(checked) root.moderateHoldings = PermissionsModel.longPermissionsModel
+            onCheckedChanged: if(checked) root.moderateHoldingsModel = PermissionsModel.longPermissionsModel
         }
 
         RadioButton {
             text: "None"
-            onCheckedChanged: if(checked) root.moderateHoldings = undefined
+            onCheckedChanged: if(checked) root.moderateHoldingsModel = undefined
         }
     }
 }

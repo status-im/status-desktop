@@ -9,6 +9,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       packsLoaded*: bool
+      installedStickerPacksLoaded*: bool
       packsLoadFailed*: bool
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
@@ -24,6 +25,7 @@ QtObject:
     result.delegate = delegate
     result.stickerPacks = newStickerPackList(result.delegate)
     result.recentStickers = newStickerList(result.delegate)
+    result.installedStickerPacksLoaded = false
 
   proc load*(self: View, signingPhrase: string, stickersMarketAddress: string) =
     self.signingPhrase = signingPhrase
@@ -78,7 +80,8 @@ QtObject:
 
   proc populateInstalledStickerPacks*(self: View, installedStickerPacks: seq[PackItem]) =
     for stickerPack in installedStickerPacks:
-      self.addStickerPackToList(stickerPack, isInstalled = true, isBought = true, isPending = false)
+      if not self.stickerPacks.hasKey(stickerPack.id):
+        self.addStickerPackToList(stickerPack, isInstalled = true, isBought = true, isPending = false)
 
   proc getNumInstalledStickerPacks(self: View): int {.slot.} =
     self.delegate.getNumInstalledStickerPacks()
@@ -98,6 +101,12 @@ QtObject:
   proc resetBuyAttempt*(self: View, packId: string) {.slot.} =
     self.stickerPacks.updateStickerPackInList(packId, false, false)
 
+  proc setInstalledStickerPacksLoaded*(self: View, flag: bool) =
+    self.installedStickerPacksLoaded = flag
+
+  proc getInstalledStickerPacksLoaded*(self: View): bool =
+    return self.installedStickerPacksloaded
+
   proc uninstall*(self: View, packId: string) {.slot.} =
     self.delegate.uninstallStickerPack(packId)
     self.delegate.removeRecentStickers(packId)
@@ -108,6 +117,7 @@ QtObject:
 
   proc addRecentStickerToList*(self: View, sticker: Item) =
     self.recentStickers.addStickerToList(sticker)
+    self.recentStickersUpdated()
 
   proc getAllPacksLoaded(self: View): bool {.slot.} =
     self.packsLoaded
@@ -142,6 +152,13 @@ QtObject:
     self.packsLoadFailedChanged()
 
     self.delegate.obtainMarketStickerPacks()
+
+  proc getRecentStickers(self: View) {.slot.} =
+    self.delegate.getRecentStickers()
+
+  proc getInstalledStickerPacks(self: View) {.slot.} =
+    if not self.installedStickerPacksLoaded:
+      self.delegate.getInstalledStickerPacks()
 
   proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: string, url: string) {.slot.} =
     let sticker = initItem(hash, pack, url)

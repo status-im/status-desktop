@@ -33,6 +33,7 @@ ColumnLayout {
             font.pixelSize: isNarrowMode ? 15 : 22
             lineHeight: isNarrowMode ? 22 : 30
             lineHeightMode: Text.FixedHeight
+            elide: Text.ElideRight
             color: Theme.palette.baseColor1
         }
     }
@@ -57,6 +58,7 @@ ColumnLayout {
             id: collectibleIdTopRow
             sourceComponent: collectibleIdComponent
             visible: !root.isNarrowMode
+            Layout.fillWidth: true
 
             Binding {
                 target: collectibleIdTopRow.item
@@ -74,6 +76,7 @@ ColumnLayout {
             id: collectibleIdBottomRow
             sourceComponent: collectibleIdComponent
             visible: root.isNarrowMode
+            Layout.maximumWidth: root.width - parent.spacing - networkTag.width
 
             Binding {
                 target: collectibleIdBottomRow.item

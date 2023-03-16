@@ -43,6 +43,14 @@ def is_loaded_visible_and_enabled(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEO
     except LookupError:
         return False, obj
 
+# Waits for the given object is loaded, visible and enabled.
+# It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
+def is_object_loaded_visible_and_enabled(obj: object, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
+    try:
+        squish.waitForObject(obj, timeout)
+        return True
+    except LookupError:
+        return False
 
 # Waits for the given object is loaded and might be not visible and/or not enabled:
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
@@ -120,8 +128,12 @@ def hover_and_click_object_by_name(objName: str):
     squish.mouseClick(obj, squish.Qt.LeftButton)
 
 # It executes the left-click action into object with given object name:
-def click_obj_by_name(objName: str):
-    obj = squish.waitForObject(getattr(names, objName))
+# If timeout is 0, it will use the default timeout (testSettings.waitForObjectTimeout)
+def click_obj_by_name(objName: str, timeout: int=0):
+    if timeout > 0:
+        obj = squish.waitForObject(getattr(names, objName), timeout)
+    else:
+        obj = squish.waitForObject(getattr(names, objName))
     squish.mouseClick(obj, squish.Qt.LeftButton)
 
 # It executes the click action into the given object at particular coordinates:
@@ -184,25 +196,49 @@ def reset_scroll_obj_by_name(objName: str):
 # execute do_fn until validation_fn returns True or timeout is reached
 def do_until_validation_with_timeout(do_fn, validation_fn, message: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
     start_time = time.time()
-    while(not validation_fn()):
+    while True:
+        do_fn()
+        if validation_fn():
+            break
         if ((time.time() - start_time) * 1000) > timeout_ms:
             raise Exception("Timeout reached while validating: " + message)
-        do_fn()
 
 def scroll_item_until_item_is_visible(itemToScrollObjName: str, itemToBeVisibleObjName: str, timeout_ms: int=_MAX_WAIT_OBJ_TIMEOUT * 2):
-    is_item_visible_fn = lambda: is_loaded_visible_and_enabled(itemToBeVisibleObjName, 10)[0]
+    # It seems the underlying squish.waitForObject sometimes takes more than 300 ms to validate the object is visible
+    is_item_visible_fn = lambda: is_loaded_visible_and_enabled(itemToBeVisibleObjName, 500)[0]
     scroll_item_fn = lambda: scroll_obj_by_name(itemToScrollObjName)
     do_until_validation_with_timeout(scroll_item_fn, is_item_visible_fn, f'Scrolling {itemToScrollObjName} until {itemToBeVisibleObjName} is visible', timeout_ms)
+
+def wait_until_item_not_visible_and_enabled(itemObjName: str, timeout_ms: int=2000):
+    is_item_invisible_fn = lambda: not is_loaded_visible_and_enabled(itemObjName, 100)[0]
+    do_until_validation_with_timeout(lambda: time.sleep(0.05), is_item_invisible_fn, f'Waiting until {itemObjName} is not visible', timeout_ms)
 
 def check_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
     obj.checked = True
 
 
-def is_text_matching(objName: str, text: str):
+def is_text_matching(objName: str, text: str, timeout: int=0):
     try:
         obj = squish.waitForObject(getattr(names, objName))
         test.compare(obj.text, text, "Found the following text " + str(obj.text) + " Wanted: " + text)
+        return True
+    except LookupError:
+        print(objName + " is not found, please check app for correct object and update object mapper")
+        return False
+
+def wait_for_text_matching(objName: str, text: str, timeout: int=0):
+    try:
+        start_time = time.time()
+        time_run_out = False
+        while not time_run_out:
+            obj = squish.waitForObject(getattr(names, objName))
+            if obj.text == text:
+                break
+            if timeout > 0:
+                time_run_out = ((time.time() - start_time) * 1000) > timeout
+
+        test.compare(obj.text, text, f'Found the following text {str(obj.text)} + Wanted: {text} {("; Aborted after " + str(int(time.time() - start_time)) + "s") if time_run_out else ""}')
         return True
     except LookupError:
         print(objName + " is not found, please check app for correct object and update object mapper")
@@ -219,7 +255,7 @@ def is_text_matching_insensitive(obj, text: str):
 
 
 # It types the specified text into the given object (as if the user had used the keyboard):
-def type(objName: str, text: str):
+def type_text(objName: str, text: str):
     try:
         obj = squish.findObject(getattr(names, objName))
         squish.type(obj, text)
@@ -227,17 +263,20 @@ def type(objName: str, text: str):
     except LookupError:
         return False
 
-
 # It types the specified text in the currently focus input (like if the keyboard was typed on)
 def native_type(text: str):
     squish.nativeType(text)
 
 # Wait for the object to appears and
 # It types the specified text into the given object (as if the user had used the keyboard):
-def wait_for_object_and_type(objName: str, text: str):
+# If timeout is 0, it will use the default timeout (testSettings.waitForObjectTimeout)
+def wait_for_object_and_type(objName: str, text: str, timeout: int=0):
     try:
-        obj = squish.waitForObject(getattr(names, objName))
-        squish.type(obj, text)        
+        if timeout > 0:
+            obj = squish.waitForObject(getattr(names, objName), timeout)
+        else:
+            obj = squish.waitForObject(getattr(names, objName))
+        squish.type(obj, text)
         return True
     except LookupError:
         return False
@@ -363,3 +402,6 @@ def get_child_item_with_object_name(item, objectName: str):
 
 def sleep_test(seconds: float):
     squish.snooze(seconds)
+
+def wait_for(py_condition_to_check: str, timeout_msec: int = 500):
+    squish.waitFor(py_condition_to_check, timeout_msec)

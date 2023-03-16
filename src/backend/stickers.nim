@@ -1,6 +1,6 @@
 import json
 import ./eth
-import ./utils
+import ../app_service/common/utils
 import ./core, ./response_type
 import web3/[ethtypes, conversions]
 

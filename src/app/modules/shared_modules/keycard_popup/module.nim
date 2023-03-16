@@ -1,4 +1,4 @@
-import NimQml, random, strutils, marshal, sequtils, sugar, chronicles
+import NimQml, tables, random, strutils, sequtils, sugar, chronicles
 
 import io_interface
 import view, controller
@@ -11,6 +11,7 @@ import ../../../../app_service/common/utils
 import ../../../../app_service/service/keycard/constants
 import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -43,6 +44,7 @@ proc newModule*[T](delegate: T,
   events: EventEmitter,
   keycardService: keycard_service.Service,
   settingsService: settings_service.Service,
+  networkService: network_service.Service,
   privacyService: privacy_service.Service,
   accountsService: accounts_service.Service,
   walletAccountService: wallet_account_service.Service,
@@ -53,7 +55,7 @@ proc newModule*[T](delegate: T,
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, uniqueIdentifier, events, keycardService, settingsService,
-    privacyService, accountsService, walletAccountService, keychainService)
+    networkService, privacyService, accountsService, walletAccountService, keychainService)
   result.initialized = false
   result.authenticationPopupIsAlreadyRunning = false
   result.derivingAccountDetails.deriveAddressAfterAuthentication = false
@@ -64,10 +66,10 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-proc init[T](self: Module[T]) =
+proc init[T](self: Module[T], fullConnect = true) =
   if not self.initialized:
     self.initialized = true
-    self.controller.init()
+    self.controller.init(fullConnect)
 
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
@@ -239,13 +241,20 @@ proc handleKeycardSyncing[T](self: Module[T]) =
         accountsAddresses: @[],
         keyUid: flowEvent.keyUid)
       let alreadySetKeycards = self.controller.getAllKnownKeycards().filter(kp => kp.keycardUid == flowEvent.instanceUID)
-      if alreadySetKeycards.len == 1:
-        var accountsToRemove = alreadySetKeycards[0].accountsAddresses
+      if alreadySetKeycards.len <= 1:
+        var accountsToRemove: seq[string]
+        if alreadySetKeycards.len == 1:
+          accountsToRemove = alreadySetKeycards[0].accountsAddresses
         let appAccounts = self.controller.getWalletAccounts()
         var activeValidPathsToStoreToAKeycard: seq[string]
+        var containsPathOutOfTheDefaultStatusDerivationTree = false
         for appAcc in appAccounts:
           if appAcc.keyUid != flowEvent.keyUid:
             continue
+          # do not sync if any wallet's account has path out of the default Status derivation tree
+          if utils.isPathOutOfTheDefaultStatusDerivationTree(appAcc.path):
+            containsPathOutOfTheDefaultStatusDerivationTree = true
+            break
           activeValidPathsToStoreToAKeycard.add(appAcc.path)
           var index = -1
           var found = false
@@ -262,24 +271,25 @@ proc handleKeycardSyncing[T](self: Module[T]) =
             # we store to db only accounts we haven't stored before, accounts which are already on a keycard (in metadata)
             # we assume they are already in the db
             kpDto.accountsAddresses.add(appAcc.address)
-        if accountsToRemove.len > 0:
-          self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
-        if kpDto.accountsAddresses.len > 0:
-          self.controller.addMigratedKeyPair(kpDto)
-        # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
-        # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
-        if activeValidPathsToStoreToAKeycard.len > 0:
-          ##  we need to store paths to a keycard if the num of paths in the app and on a keycard is diffrent
-          ## or if the paths are different
-          var storeToKeycard = activeValidPathsToStoreToAKeycard.len != flowEvent.cardMetadata.walletAccounts.len
-          if not storeToKeycard:
-            for wa in flowEvent.cardMetadata.walletAccounts:
-              if not utils.arrayContains(activeValidPathsToStoreToAKeycard, wa.path):
-                storeToKeycard = true
-                break
-          if storeToKeycard:
-            self.controller.runStoreMetadataFlow(flowEvent.cardMetadata.name, self.controller.getPin(), activeValidPathsToStoreToAKeycard)
-            return
+        if not containsPathOutOfTheDefaultStatusDerivationTree:
+          if accountsToRemove.len > 0:
+            self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
+          if kpDto.accountsAddresses.len > 0:
+            self.controller.addMigratedKeyPair(kpDto)
+          # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
+          # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
+          if activeValidPathsToStoreToAKeycard.len > 0:
+            ##  we need to store paths to a keycard if the num of paths in the app and on a keycard is diffrent
+            ## or if the paths are different
+            var storeToKeycard = activeValidPathsToStoreToAKeycard.len != flowEvent.cardMetadata.walletAccounts.len
+            if not storeToKeycard:
+              for wa in flowEvent.cardMetadata.walletAccounts:
+                if not utils.arrayContains(activeValidPathsToStoreToAKeycard, wa.path):
+                  storeToKeycard = true
+                  break
+            if storeToKeycard:
+              self.controller.runStoreMetadataFlow(flowEvent.cardMetadata.name, self.controller.getPin(), activeValidPathsToStoreToAKeycard)
+              return
       elif alreadySetKeycards.len > 1:
         error "it's impossible to have more then one keycard with the same uid", keycarUid=flowEvent.instanceUID
   self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
@@ -293,7 +303,7 @@ method syncKeycardBasedOnAppState*[T](self: Module[T], keyUid: string, pin: stri
   if keyUid.len == 0:
     debug "cannot sync with the empty keyUid"
     return
-  self.init()
+  self.init(fullConnect = false)
   self.controller.setKeyUidWhichIsBeingSyncing(keyUid)
   self.controller.setPin(pin)
   self.controller.setKeycardSyncingInProgress(true)
@@ -409,6 +419,9 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
       if(items[i].getPairType() == keyPairType.int):
         result.inc
 
+  let containsItemWithDerivationPath = proc(items: seq[KeyPairItem], derivedFromAddress: string): bool =
+    return items.any(x => cmpIgnoreCase(x.getDerivedFrom(), derivedFromAddress) == 0)
+
   let accounts = self.controller.getWalletAccounts()
   var items: seq[KeyPairItem]
   for a in accounts:
@@ -432,7 +445,7 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
         item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon, balance = 0.0))
       items.insert(item, 0) # Status Account must be at first place
       continue
-    if a.walletType == WalletTypeSeed:
+    if a.walletType == WalletTypeSeed and not containsItemWithDerivationPath(items, a.derivedfrom):
       let diffImports = countOfKeyPairsForType(items, KeyPairType.SeedImport)
       var item = newKeyPairItem(keyUid = a.keyUid,
         pubKey = a.publicKey,
@@ -448,7 +461,7 @@ proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): s
         item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon = "", balance = 0.0))
       items.add(item)
       continue
-    if a.walletType == WalletTypeKey:
+    if a.walletType == WalletTypeKey and not containsItemWithDerivationPath(items, a.derivedfrom):
       let diffImports = countOfKeyPairsForType(items, KeyPairType.PrivateKeyImport)
       var item = newKeyPairItem(keyUid = a.keyUid,
         pubKey = a.publicKey,
@@ -624,9 +637,18 @@ proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: 
     if a.walletType == WalletTypeDefaultStatusAccount:
       icon = "wallet"
     item.setKeyUid(a.keyUid)
-    item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.color, icon, balance = 0.0))
+    item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.color, icon, balance = 0.0, balanceFetched = true))
     return true
   return false
+
+method onTokensRebuilt*[T](self: Module[T], accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
+  if self.getKeyPairForProcessing().isNil:
+    return
+  let chainIds = self.controller.getChainIdsOfAllKnownNetworks()
+  let currency = self.controller.getCurrency()
+  for address, tokens in accountsTokens.pairs:
+    let balance = tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
+    self.getKeyPairForProcessing().setBalanceForAddress(address, balance)
 
 proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardMetadata): 
   tuple[item: KeyPairItem, knownKeyPair: bool] =
@@ -646,9 +668,10 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
   for wa in cardMetadata.walletAccounts:
     if self.updateKeyPairItemIfDataAreKnown(wa.address, result.item):
       continue
-    let balance = self.controller.getCurrencyBalanceForAddress(wa.address)
+    let (balance, balanceFetched) = self.controller.getOrFetchBalanceForAddressInPreferredCurrency(wa.address)
     result.knownKeyPair = false
-    result.item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = wa.publicKey, emoji = "", color = self.generateRandomColor(), icon = "wallet", balance))
+    result.item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = wa.publicKey, emoji = "", 
+      color = self.generateRandomColor(), icon = "wallet", balance, balanceFetched))
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
   let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)

@@ -1,5 +1,6 @@
 import chronicles
 import io_interface
+import json
 
 import ../../../../../../app/global/global_singleton
 import ../../../../../../app_service/service/contacts/service as contact_service
@@ -184,7 +185,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED) do(e: Args):
     let args = LinkPreviewDataArgs(e)
-    self.delegate.onPreviewDataLoaded(args.response)
+    self.delegate.onPreviewDataLoaded($(args.response), args.uuid)
 
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
     let args = ActiveSectionChatArgs(e)
@@ -270,8 +271,8 @@ proc deleteMessage*(self: Controller, messageId: string) =
 proc editMessage*(self: Controller, messageId: string, contentType: int, updatedMsg: string) =
   self.messageService.editMessage(messageId, contentType, updatedMsg)
 
-proc getLinkPreviewData*(self: Controller, link: string, uuid: string): string =
-  self.messageService.asyncGetLinkPreviewData(link, uuid)
+proc getLinkPreviewData*(self: Controller, link: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string =
+  self.messageService.asyncGetLinkPreviewData(link, uuid, whiteListedSites, whiteListedImgExtensions, unfurlImages)
 
 proc getSearchedMessageId*(self: Controller): string =
   return self.searchedMessageId

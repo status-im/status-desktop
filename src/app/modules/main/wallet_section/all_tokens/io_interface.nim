@@ -20,7 +20,7 @@ method getHistoricalDataForToken*(self: AccessInterface, symbol: string, currenc
 method tokenHistoricalDataResolved*(self: AccessInterface, tokenDetails: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchHistoricalBalanceForTokenAsJson*(self: AccessInterface, address: string, symbol: string, timeIntervalEnum: int) {.base.} =
+method fetchHistoricalBalanceForTokenAsJson*(self: AccessInterface, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method tokenBalanceHistoryDataResolved*(self: AccessInterface, balanceHistoryJson: string) {.base.} =

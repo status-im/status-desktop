@@ -125,9 +125,6 @@ method onUserAuthenticated*(self: Module, password: string) =
       self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, false, true)
     self.view.transactionWasSent($(%*{"success": success, "result": response}))
 
-method getInstalledStickerPacks*(self: Module): Table[string, StickerPackDto] =
-  self.controller.getInstalledStickerPacks()
-
 method obtainMarketStickerPacks*(self: Module) =
   self.controller.obtainMarketStickerPacks()
 
@@ -139,6 +136,9 @@ method installStickerPack*(self: Module, packId: string) =
 
 method onStickerPackInstalled*(self: Module, packId: string) =
   self.view.onStickerPackInstalled(packId)
+
+method installedStickerPacksLoaded*(self: Module) =
+  self.view.setInstalledStickerPacksLoaded(true)
 
 method uninstallStickerPack*(self: Module, packId: string) =
   self.controller.uninstallStickerPack(packId)
@@ -162,6 +162,12 @@ method estimate*(self: Module, packId: string, address: string, price: string, u
 
 method addRecentStickerToList*(self: Module, sticker: StickerDto) =
   self.view.addRecentStickerToList(initItem(sticker.hash, sticker.packId, sticker.url))
+
+method getRecentStickers*(self: Module) =
+  self.controller.loadRecentStickers()
+
+method getInstalledStickerPacks*(self: Module) =
+  self.controller.loadInstalledStickerPacks()
 
 method clearStickerPacks*(self: Module) =
   self.view.clearStickerPacks()

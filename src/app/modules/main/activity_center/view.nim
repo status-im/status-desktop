@@ -1,4 +1,4 @@
-import NimQml, json, strutils, json_serialization, sequtils, strformat
+import NimQml, json, strutils, json_serialization, sequtils, strformat, std/tables
 import ../../../../app_service/service/activity_center/service as activity_center_service
 
 import ./model
@@ -10,6 +10,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
+      groupCounters: Table[ActivityCenterGroup, int]
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -20,6 +21,7 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
+    result.groupCounters = initTable[ActivityCenterGroup, int]()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -51,9 +53,14 @@ QtObject:
     read = unreadActivityCenterNotificationsCount
     notify = unreadActivityCenterNotificationsCountChanged
 
-  proc pushActivityCenterNotifications*(self:View, activityCenterNotifications: seq[Item]) =
-    self.model.addActivityNotificationItemsToList(activityCenterNotifications)
-    self.hasMoreToShowChanged()
+  proc hasUnseenActivityCenterNotificationsChanged*(self: View) {.signal.}
+
+  proc hasUnseenActivityCenterNotifications*(self: View): bool {.slot.}  =
+    self.delegate.hasUnseenActivityCenterNotifications()
+
+  QtProperty[bool] hasUnseenActivityCenterNotifications:
+    read = hasUnseenActivityCenterNotifications
+    notify = hasUnseenActivityCenterNotificationsChanged
 
   proc loadMoreNotifications(self: View) {.slot.} =
     self.delegate.fetchActivityCenterNotifications()
@@ -99,6 +106,10 @@ QtObject:
       nType
     )
 
+  proc markAsSeenActivityCenterNotifications(self: View): void {.slot.} =
+    self.delegate.markAsSeenActivityCenterNotifications()
+    self.hasUnseenActivityCenterNotificationsChanged()
+
   proc acceptActivityCenterNotifications(self: View, idsJson: string): string {.slot.} =
     let ids = map(parseJson(idsJson).getElems(), proc(x:JsonNode):string = x.getStr())
 
@@ -121,8 +132,11 @@ QtObject:
   proc dismissActivityCenterNotificationsDone*(self: View, notificationIds: seq[string]) =
     self.model.removeNotifications(notificationIds)
 
-  proc addActivityCenterNotification*(self: View, activityCenterNotifications: seq[Item]) =
+  proc addActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
     self.model.addActivityNotificationItemsToList(activityCenterNotifications)
+
+  proc resetActivityCenterNotifications*(self: View, activityCenterNotifications: seq[Item]) =
+    self.model.setNewData(activityCenterNotifications)
 
   proc switchTo*(self: View, sectionId: string, chatId: string, messageId: string) {.slot.} =
     self.delegate.switchTo(sectionId, chatId, messageId)
@@ -132,3 +146,79 @@ QtObject:
 
   proc getChatDetailsAsJson*(self: View, chatId: string): string {.slot.} =
     return self.delegate.getChatDetailsAsJson(chatId)
+
+  proc activeNotificationGroupChanged*(self: View) {.signal.}
+
+  proc setActiveNotificationGroup*(self: View, group: int) {.slot.} =
+    self.delegate.setActiveNotificationGroup(group)
+    self.activeNotificationGroupChanged()
+
+  proc getActiveNotificationGroup*(self: View): int {.slot.} =
+    return self.delegate.getActiveNotificationGroup()
+
+  QtProperty[int] activeNotificationGroup:
+    read = getActiveNotificationGroup
+    write = setActiveNotificationGroup
+    notify = activeNotificationGroupChanged
+
+  proc activityCenterReadTypeChanged*(self: View) {.signal.}
+
+  proc groupCountersChanged*(self: View) {.signal.}
+
+  proc setActivityCenterReadType*(self: View, readType: int) {.slot.} =
+    self.delegate.setActivityCenterReadType(readType)
+    self.activityCenterReadTypeChanged()
+
+  proc getActivityCenterReadType*(self: View): int {.slot.} =
+    return self.delegate.getActivityCenterReadType()
+
+  QtProperty[int] activityCenterReadType:
+    read = getActivityCenterReadType
+    write = setActivityCenterReadType
+    notify = activityCenterReadTypeChanged
+
+  proc getAdminCount*(self: View): int {.slot.} =
+    return self.groupCounters.getOrDefault(ActivityCenterGroup.Admin, 0)
+
+  QtProperty[int] adminCount:
+    read = getAdminCount
+    notify = groupCountersChanged
+
+  proc getMentionsCount*(self: View): int {.slot.} =
+    return self.groupCounters.getOrDefault(ActivityCenterGroup.Mentions, 0)
+
+  QtProperty[int] mentionsCount:
+    read = getMentionsCount
+    notify = groupCountersChanged
+
+  proc getRepliesCount*(self: View): int {.slot.} =
+    return self.groupCounters.getOrDefault(ActivityCenterGroup.Replies, 0)
+
+  QtProperty[int] repliesCount:
+    read = getRepliesCount
+    notify = groupCountersChanged
+
+  proc getContactRequestsCount*(self: View): int {.slot.} =
+    return self.groupCounters.getOrDefault(ActivityCenterGroup.ContactRequests, 0)
+
+  QtProperty[int] contactRequestsCount:
+    read = getContactRequestsCount
+    notify = groupCountersChanged
+
+  proc getIdentityVerificationCount*(self: View): int {.slot.} =
+    return self.groupCounters.getOrDefault(ActivityCenterGroup.IdentityVerification, 0)
+
+  QtProperty[int] identityVerificationCount:
+    read = getIdentityVerificationCount
+    notify = groupCountersChanged
+
+  proc getMembershipCount*(self: View): int {.slot.} =
+    return self.groupCounters.getOrDefault(ActivityCenterGroup.Membership, 0)
+
+  QtProperty[int] membershipCount:
+    read = getMembershipCount
+    notify = groupCountersChanged
+
+  proc setActivityGroupCounters*(self: View, counters: Table[ActivityCenterGroup, int]) =
+    self.groupCounters = counters
+    self.groupCountersChanged()

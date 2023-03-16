@@ -27,7 +27,7 @@ userContextmenu_AutomaticButton= {"container": statusDesktop_mainWindow_overlay,
 userContextMenu_ViewMyProfileAction = {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusViewMyProfileAction", "type": "StatusMenuItem", "visible": True}
 
 # popups
-modal_Close_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "modalCloseButtonRectangle", "type": "Rectangle", "visible": True}
+modal_Close_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 delete_Channel_ConfirmationDialog_DeleteButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "deleteChatConfirmationDialogDeleteButton", "type": "StatusButton"}
 closeButton_StatusHeaderAction = {"container": statusDesktop_mainWindow_overlay, "objectName": "headerActionsCloseButton", "type": "StatusFlatRoundButton", "visible": True}
 

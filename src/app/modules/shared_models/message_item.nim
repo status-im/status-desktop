@@ -108,8 +108,8 @@ proc initItem*(
   result.senderColorHash = senderColorHash
   result.seen = seen
   result.outgoingStatus = outgoingStatus
-  result.messageText = if contentType == ContentType.Image : "" else: text
-  result.unparsedText = if contentType == ContentType.Image : "" else: unparsedText
+  result.messageText = text
+  result.unparsedText = unparsedText
   result.messageImage = image
   result.messageContainsMentions = messageContainsMentions
   result.timestamp = timestamp

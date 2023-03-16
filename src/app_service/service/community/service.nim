@@ -1,4 +1,5 @@
 import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strutils, chronicles, json_serialization, sugar
+import json_serialization/std/tables as ser_tables
 
 import ./dto/community as community_dto
 
@@ -20,16 +21,11 @@ export community_dto
 logScope:
   topics = "community-service"
 
-include ../../common/json_utils
-
 type
   CommunityArgs* = ref object of Args
     community*: CommunityDto
     error*: string
     fromUserAction*: bool
-
-  CuratedCommunityArgs* = ref object of Args
-    curatedCommunity*: CuratedCommunity
 
   CommunitiesArgs* = ref object of Args
     communities*: seq[CommunityDto]
@@ -80,6 +76,19 @@ type
   CategoryArgs* = ref object of Args
     communityId*: string
     categoryId*: string
+
+  CommunityTokenPermissionArgs* = ref object of Args
+    communityId*: string
+    tokenPermission*: CommunityTokenPermissionDto
+    error*: string
+
+  CommunityTokenMetadataArgs* = ref object of Args
+    communityId*: string
+    tokenMetadata*: CommunityTokensMetadataDto
+
+  CommunityTokenPermissionRemovedArgs* = ref object of Args
+    communityId*: string
+    permissionId*: string
 
   DiscordCategoriesAndChannelsArgs* = ref object of Args
     categories*: seq[DiscordCategoryDto]
@@ -137,6 +146,20 @@ const SIGNAL_COMMUNITY_HISTORY_ARCHIVES_DOWNLOAD_FINISHED* = "communityHistoryAr
 const SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED* = "discordCategoriesAndChannelsExtracted"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED* = "discordCommunityImportFinished"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS* = "discordCommunityImportProgress"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED* = "communityTokenPermissionCreated"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED* = "communityTokenPermissionCreationFailed"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED* = "communityTokenPermissionUpdated"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED* = "communityTokenPermissionUpdateFailed"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED* = "communityTokenPermissionDeleted"
+const SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED* = "communityTokenPermissionDeletionFailed"
+const SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED* = "communityTokenMetadataAdded"
+
+const SIGNAL_CURATED_COMMUNITIES_LOADING* = "curatedCommunitiesLoading"
+const SIGNAL_CURATED_COMMUNITIES_LOADED* = "curatedCommunitiesLoaded"
+const SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED* = "curatedCommunitiesLoadingFailed"
+
+const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
+const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
 
 QtObject:
   type
@@ -147,17 +170,14 @@ QtObject:
       activityCenterService: activity_center_service.Service
       messageService: message_service.Service
       communityTags: string # JSON string contraining tags map
-      joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
-      curatedCommunities: Table[string, CuratedCommunity] # [community_id, CuratedCommunity]
-      allCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
+      communities: Table[string, CommunityDto] # [community_id, CommunityDto]
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
 
   # Forward declaration
   proc loadCommunityTags(self: Service): string
   proc loadAllCommunities(self: Service): seq[CommunityDto]
-  proc loadJoinedComunities(self: Service): seq[CommunityDto]
-  proc loadCuratedCommunities(self: Service): seq[CuratedCommunity]
+  proc asyncLoadCuratedCommunities*(self: Service)
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
   proc loadMyCanceledRequestsToJoin*(self: Service)
@@ -186,24 +206,32 @@ QtObject:
     result.activityCenterService = activityCenterService
     result.messageService = messageService
     result.communityTags = newString(0)
-    result.joinedCommunities = initTable[string, CommunityDto]()
-    result.curatedCommunities = initTable[string, CuratedCommunity]()
-    result.allCommunities = initTable[string, CommunityDto]()
+    result.communities = initTable[string, CommunityDto]()
     result.myCommunityRequests = @[]
     result.historyArchiveDownloadTaskCommunityIds = initHashSet[string]()
+
+  proc getFilteredJoinedCommunities(self: Service): Table[string, CommunityDto] =
+    result = initTable[string, CommunityDto]()
+    for communityId, community in self.communities.pairs:
+      if community.joined:
+        result[communityId] = community
+
+  proc getFilteredCuratedCommunities(self: Service): Table[string, CommunityDto] =
+    result = initTable[string, CommunityDto]()
+    for communityId, community in self.communities.pairs:
+      if community.listedInDirectory:
+        result[communityId] = community
 
   proc doConnect(self: Service) =
     self.events.on(SignalType.CommunityFound.event) do(e: Args):
       var receivedData = CommunitySignal(e)
-      self.allCommunities[receivedData.community.id] = receivedData.community
+      self.communities[receivedData.community.id] = receivedData.community
       self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: receivedData.community))
 
-      if self.curatedCommunities.contains(receivedData.community.id) and not self.curatedCommunities[receivedData.community.id].available:
-        let curatedCommunity = CuratedCommunity(available: true,
-                                                communityId: receivedData.community.id,
-                                                community: receivedData.community)
-        self.curatedCommunities[receivedData.community.id] = curatedCommunity
-        self.events.emit(SIGNAL_CURATED_COMMUNITY_FOUND, CuratedCommunityArgs(curatedCommunity: curatedCommunity))
+      if self.communities.contains(receivedData.community.id) and
+          self.communities[receivedData.community.id].listedInDirectory and not 
+          self.communities[receivedData.community.id].isAvailable:
+        self.events.emit(SIGNAL_CURATED_COMMUNITY_FOUND, CommunityArgs(community: self.communities[receivedData.community.id]))
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
@@ -218,15 +246,15 @@ QtObject:
       # Handling membership requests
       if(receivedData.membershipRequests.len > 0):
         for membershipRequest in receivedData.membershipRequests:
-          if (not self.joinedCommunities.contains(membershipRequest.communityId)):
+          if (not self.communities.contains(membershipRequest.communityId)):
             error "Received a membership request for an unknown community", communityId=membershipRequest.communityId
             continue
-          var community = self.joinedCommunities[membershipRequest.communityId]
+          var community = self.communities[membershipRequest.communityId]
 
           case RequestToJoinType(membershipRequest.state):
           of RequestToJoinType.Pending:
             community.pendingRequestsToJoin.add(membershipRequest)
-            self.joinedCommunities[membershipRequest.communityId] = community
+            self.communities[membershipRequest.communityId] = community
             self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
             self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
 
@@ -234,7 +262,7 @@ QtObject:
             let indexPending = self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id)
             if (indexPending != -1):
               community.pendingRequestsToJoin.delete(indexPending)
-              self.joinedCommunities[membershipRequest.communityId] = community
+              self.communities[membershipRequest.communityId] = community
               self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
           
           of RequestToJoinType.Declined:
@@ -312,6 +340,14 @@ QtObject:
         return idx
     return -1
 
+  proc findIndexBySymbol(symbol: string, tokenCriteria: seq[TokenCriteriaDto]): int =
+    var idx = -1
+    for tc in tokenCriteria:
+      inc idx
+      if(tc.symbol == symbol):
+        return idx
+    return -1
+
   proc findIndexById(id: string, categories: seq[Category]): int =
     var idx = -1
     for category in categories:
@@ -320,15 +356,23 @@ QtObject:
         return idx
     return -1
 
-  proc saveUpdatedJoinedCommunity(self: Service, community: var CommunityDto) =
+  proc findIndexBySymbol(symbol: string, tokens: seq[CommunityTokensMetadataDto]): int =
+    var idx = -1
+    for token in tokens:
+      inc idx
+      if(token.symbol == symbol):
+        return idx
+    return -1
+
+  proc saveUpdatedCommunity(self: Service, community: var CommunityDto) =
     # Community data we get from the signals and responses don't contgain the pending requests
     # therefore, we must keep the old one
-    community.pendingRequestsToJoin = self.joinedCommunities[community.id].pendingRequestsToJoin
-    community.declinedRequestsToJoin = self.joinedCommunities[community.id].declinedRequestsToJoin
-    community.canceledRequestsToJoin = self.joinedCommunities[community.id].canceledRequestsToJoin
+    community.pendingRequestsToJoin = self.communities[community.id].pendingRequestsToJoin
+    community.declinedRequestsToJoin = self.communities[community.id].declinedRequestsToJoin
+    community.canceledRequestsToJoin = self.communities[community.id].canceledRequestsToJoin
 
     # Update the joinded community list with the new data
-    self.joinedCommunities[community.id] = community
+    self.communities[community.id] = community
 
   proc getChatsInCategory(self: Service, community: var CommunityDto, categoryId: string): seq[ChatDto] =
     result = @[]
@@ -340,31 +384,46 @@ QtObject:
 
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto]) =
     for settings in communitiesSettings:
-      if self.allCommunities.hasKey(settings.id):
-        self.allCommunities[settings.id].settings = settings
-      if self.joinedCommunities.hasKey(settings.id):
-        self.joinedCommunities[settings.id].settings = settings
-        self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[settings.id]))
+      if self.communities.hasKey(settings.id):
+        self.communities[settings.id].settings = settings
+        if self.communities[settings.id].joined:
+          self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[settings.id]))
 
+  proc checkForCategoryPropertyUpdates(self: Service, community: CommunityDto, prev_community: CommunityDto) =
+    for category in community.categories:
+          # id is present
+          let index = findIndexById(category.id, prev_community.categories)
+          if index == -1:
+            continue
+          # but something is different
+          let prev_category = prev_community.categories[index]
+
+          if category.position != prev_category.position:
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
+              CommunityChatOrderArgs(
+                communityId: community.id,
+                categoryId: category.id,
+                position: category.position))
+          if category.name != prev_category.name:
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
+              CommunityCategoryArgs(communityId: community.id, category: category))
+
+    
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string]) =
     try:
       var community = communities[0]
-      if(not self.allCommunities.hasKey(community.id)):
-        self.allCommunities[community.id] = community
+      if not self.communities.hasKey(community.id):
+        self.communities[community.id] = community
         self.events.emit(SIGNAL_COMMUNITY_ADDED, CommunityArgs(community: community))
 
-        if(not self.joinedCommunities.hasKey(community.id)):
-          if (community.joined and community.isMember):
-            self.joinedCommunities[community.id] = community
-            self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
+        if (community.joined and community.isMember):
+          self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
+          # remove my pending requests
+          keepIf(self.myCommunityRequests, request => request.communityId != community.id)
 
         return
 
-      if(self.curatedCommunities.hasKey(community.id)):
-        self.curatedCommunities[community.id].available = true
-        self.curatedCommunities[community.id].community = community
-
-      let prev_community = self.allCommunities[community.id]
+      let prev_community = self.communities[community.id]
 
       # If there's settings without `id` it means the original
       # signal didn't include actual communitySettings, hence we
@@ -379,8 +438,7 @@ QtObject:
       if(community.categories.len > prev_community.categories.len):
         for category in community.categories:
           if findIndexById(category.id, prev_community.categories) == -1:
-            self.allCommunities[community.id].categories.add(category)
-            self.joinedCommunities[community.id].categories.add(category)
+            self.communities[community.id].categories.add(category)
             let chats = self.getChatsInCategory(community, category.id)
 
             self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
@@ -396,22 +454,7 @@ QtObject:
 
       # some property has changed
       else:
-        for category in community.categories:
-          # id is present
-          let index = findIndexById(category.id, prev_community.categories)
-          if index == -1:
-            continue
-          # but something is different
-          let prev_category = prev_community.categories[index]
-          if category.position != prev_category.position:
-            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
-              CommunityChatOrderArgs(
-                communityId: community.id,
-                categoryId: category.id,
-                position: category.position))
-          if category.name != prev_category.name:
-            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
-              CommunityCategoryArgs(communityId: community.id, category: category))
+        self.checkForCategoryPropertyUpdates(community, prev_community)
 
       # channel was added
       if(community.chats.len > prev_community.chats.len):
@@ -472,17 +515,67 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED, 
         CommunityMembersArgs(communityId: community.id, members: community.members))
 
-      self.allCommunities[community.id] = community
-      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
+      # token metadata was added
+      if community.communityTokensMetadata.len > prev_community.communityTokensMetadata.len:
+        for tokenMetadata in community.communityTokensMetadata:
+          if findIndexBySymbol(tokenMetadata.symbol, prev_community.communityTokensMetadata) == -1:
+            self.communities[community.id].communityTokensMetadata.add(tokenMetadata)
+            self.events.emit(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED,
+                             CommunityTokenMetadataArgs(communityId: community.id,
+                                                        tokenMetadata: tokenMetadata))
 
-      if(not self.joinedCommunities.hasKey(community.id)):
-        if (community.joined and community.isMember):
-          self.joinedCommunities[community.id] = community
-          self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
-          # remove my pending requests
-          keepIf(self.myCommunityRequests, request => request.communityId != community.id)
+      # tokenPermission was added
+      if community.tokenPermissions.len > prev_community.tokenPermissions.len:
+        for id, tokenPermission in community.tokenPermissions:
+          if not prev_community.tokenPermissions.hasKey(id):
+            self.communities[community.id].tokenPermissions[id] = tokenPermission
+
+            self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED,
+            CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
+      elif community.tokenPermissions.len < prev_community.tokenPermissions.len:
+        for id, prvTokenPermission in prev_community.tokenPermissions:
+          if not community.tokenPermissions.hasKey(id):
+            self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
+            CommunityTokenPermissionRemovedArgs(communityId: community.id, permissionId: id))
+
       else:
-        self.saveUpdatedJoinedCommunity(community)
+        for id, tokenPermission in community.tokenPermissions:
+          if not prev_community.tokenPermissions.hasKey(id):
+            continue
+
+          let prevTokenPermission = prev_community.tokenPermissions[id]
+
+          var permissionUpdated = false
+
+          if tokenPermission.tokenCriteria.len != prevTokenPermission.tokenCriteria.len or
+            tokenPermission.isPrivate != prevTokenPermission.isPrivate or
+            tokenPermission.`type` != prevTokenPermission.`type`:
+
+              permissionUpdated = true
+
+          for tc in tokenPermission.tokenCriteria:
+            let index = findIndexBySymbol(tc.symbol, prevTokenPermission.tokenCriteria)
+            if index == -1:
+              continue
+
+            let prevTc = prevTokenPermission.tokenCriteria[index]
+            if tc.amount != prevTc.amount or tc.ensPattern != prevTc.ensPattern:
+              permissionUpdated = true
+              break
+
+          if permissionUpdated:
+            self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, 
+              CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
+
+      let wasJoined = self.communities[community.id].joined
+
+      self.saveUpdatedCommunity(community)
+
+      # If the community was not joined before but is now, we signal it
+      if(not wasJoined and community.joined and community.isMember):
+        self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
+
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
     
     except Exception as e:
       error "Error handling community updates", msg = e.msg, communities, updatedChats, removedChats
@@ -490,28 +583,19 @@ QtObject:
   proc init*(self: Service) =
     self.doConnect()
     self.communityTags = self.loadCommunityTags();
-    let joinedCommunities = self.loadJoinedComunities()
-    for community in joinedCommunities:
-      self.joinedCommunities[community.id] = community
+
+    let communities = self.loadAllCommunities()
+    for community in communities:
+      self.communities[community.id] = community
       if (community.admin):
-        self.joinedCommunities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
-        self.joinedCommunities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
-        self.joinedCommunities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
-
-    let allCommunities = self.loadAllCommunities()
-    for community in allCommunities:
-      self.allCommunities[community.id] = community
-
-    let curatedCommunities = self.loadCuratedCommunities()
-    for curatedCommunity in curatedCommunities:
-      self.curatedCommunities[curatedCommunity.communityId] = curatedCommunity
+        self.communities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
+        self.communities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
+        self.communities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
 
     let communitiesSettings = self.loadCommunitiesSettings()
     for settings in communitiesSettings:
-      if self.allCommunities.hasKey(settings.id):
-        self.allCommunities[settings.id].settings = settings
-      if self.joinedCommunities.hasKey(settings.id):
-        self.joinedCommunities[settings.id].settings = settings
+      if self.communities.hasKey(settings.id):
+        self.communities[settings.id].settings = settings
 
     self.loadMyPendingRequestsToJoin()
 
@@ -530,24 +614,6 @@ QtObject:
       error "error loading all communities: ", errDesription
       return @[]
 
-  proc loadJoinedComunities(self: Service): seq[CommunityDto] =
-    try:
-      let response = status_go.getJoinedComunities()
-      return parseCommunities(response)
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-      return @[]
-
-  proc loadCuratedCommunities(self: Service): seq[CuratedCommunity] =
-    try:
-      let response = status_go.getCuratedCommunities()
-      return parseCuratedCommunities(response)
-    except Exception as e:
-      let errDesription = e.msg
-      error "error loading curated communities: ", errDesription
-      return @[]
-
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto] =
     try:
       let response = status_go.getCommunitiesSettings()
@@ -561,23 +627,23 @@ QtObject:
     return self.communityTags
 
   proc getJoinedCommunities*(self: Service): seq[CommunityDto] =
-    return toSeq(self.joinedCommunities.values)
+    return toSeq(self.getFilteredJoinedCommunities().values)
 
   proc getAllCommunities*(self: Service): seq[CommunityDto] =
-    return toSeq(self.allCommunities.values)
+    return toSeq(self.communities.values)
 
-  proc getCuratedCommunities*(self: Service): seq[CuratedCommunity] =
-    return toSeq(self.curatedCommunities.values)
+  proc getCuratedCommunities*(self: Service): seq[CommunityDto] =
+    return toSeq(self.getFilteredCuratedCommunities.values)
 
   proc getCommunityById*(self: Service, communityId: string): CommunityDto =
-    if(not self.joinedCommunities.hasKey(communityId)):
+    if(not self.communities.hasKey(communityId)):
       error "error: requested community doesn't exists", communityId
       return
 
-    return self.joinedCommunities[communityId]
+    return self.communities[communityId]
 
   proc getCommunityIds*(self: Service): seq[string] =
-    return toSeq(self.joinedCommunities.keys)
+    return toSeq(self.communities.keys)
 
   proc sortAsc[T](t1, t2: T): int =
     if(t1.position > t2.position):
@@ -596,20 +662,20 @@ QtObject:
       return 0
 
   proc getCategoryById*(self: Service, communityId: string, categoryId: string): Category = 
-    if(not self.joinedCommunities.contains(communityId)):
+    if(not self.communities.contains(communityId)):
       error "trying to get community categories for an unexisting community id"
       return
 
-    let categories = self.joinedCommunities[communityId].categories
+    let categories = self.communities[communityId].categories
     let categoryIndex = findIndexById(categoryId, categories)
     return categories[categoryIndex]
 
   proc getCategories*(self: Service, communityId: string, order: SortOrder = SortOrder.Ascending): seq[Category] =
-    if(not self.joinedCommunities.contains(communityId)):
+    if(not self.communities.contains(communityId)):
       error "trying to get community categories for an unexisting community id"
       return
 
-    result = self.joinedCommunities[communityId].categories
+    result = self.communities[communityId].categories
     if(order == SortOrder.Ascending):
       result.sort(sortAsc[Category])
     else:
@@ -619,11 +685,11 @@ QtObject:
     ## By default returns chats which don't belong to any category, for passed `communityId`.
     ## If `categoryId` is set then only chats belonging to that category for passed `communityId` will be returned.
     ## Returned chats are sorted by position following set `order` parameter.
-    if(not self.joinedCommunities.contains(communityId)):
+    if(not self.communities.contains(communityId)):
       error "trying to get community chats for an unexisting community id"
       return
 
-    for chat in self.joinedCommunities[communityId].chats:
+    for chat in self.communities[communityId].chats:
       if(chat.categoryId != categoryId):
         continue
 
@@ -637,11 +703,11 @@ QtObject:
   proc getAllChats*(self: Service, communityId: string, order = SortOrder.Ascending): seq[ChatDto] =
     ## Returns all chats belonging to the community with passed `communityId`, sorted by position.
     ## Returned chats are sorted by position following set `order` parameter.
-    if(not self.joinedCommunities.contains(communityId)):
+    if(not self.communities.contains(communityId)):
       error "trying to get all community chats for an unexisting community id"
       return
 
-    result = self.joinedCommunities[communityId].chats
+    result = self.communities[communityId].chats
 
     if(order == SortOrder.Ascending):
       result.sort(sortAsc[ChatDto])
@@ -649,19 +715,19 @@ QtObject:
       result.sort(sortDesc[ChatDto])
 
   proc isUserMemberOfCommunity*(self: Service, communityId: string): bool =
-    if(not self.allCommunities.contains(communityId)):
+    if(not self.communities.contains(communityId)):
       return false
-    return self.allCommunities[communityId].joined and self.allCommunities[communityId].isMember
+    return self.communities[communityId].joined and self.communities[communityId].isMember
 
   proc isUserSpectatingCommunity*(self: Service, communityId: string): bool =
-    if(not self.allCommunities.contains(communityId)):
+    if(not self.communities.contains(communityId)):
       return false
-    return self.allCommunities[communityId].spectated
+    return self.communities[communityId].spectated
 
   proc userCanJoin*(self: Service, communityId: string): bool =
-    if(not self.allCommunities.contains(communityId)):
+    if(not self.communities.contains(communityId)):
       return false
-    return self.allCommunities[communityId].canJoin
+    return self.communities[communityId].canJoin
 
   proc processRequestsToJoinCommunity(self: Service, responseResult: JsonNode): bool =
     if responseResult{"requestsToJoinCommunity"} == nil or responseResult{"requestsToJoinCommunity"}.kind == JNull:
@@ -702,7 +768,8 @@ QtObject:
       let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
       updatedCommunity.settings = communitySettings
-      self.allCommunities[communityId] = updatedCommunity
+      self.communities[communityId] = updatedCommunity
+      self.chatService.loadChats()
 
       for k, chat in updatedCommunity.chats:
         let fullChatId = communityId & chat.id
@@ -726,7 +793,7 @@ QtObject:
   proc requestToJoinCommunity*(self: Service, communityId: string, ensName: string) =
     try:
       let response = status_go.requestToJoinCommunity(communityId, ensName)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       if not self.processRequestsToJoinCommunity(response.result):
         error "error: ", procName="requestToJoinCommunity", errDesription = "no 'requestsToJoinCommunity' key in response"
@@ -794,7 +861,7 @@ QtObject:
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
       let response = status_go.leaveCommunity(communityId)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
@@ -806,14 +873,12 @@ QtObject:
 
       # Update community so that joined, member list and isMember are updated
       let updatedCommunity = response.result["communities"][0].toCommunityDto()
-      self.allCommunities[communityId] = updatedCommunity
+      self.communities[communityId] = updatedCommunity
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
 
       for chat in updatedCommunity.chats:
         self.messageService.resetMessageCursor(chat.id)
 
-      # remove this from the joinedCommunities list
-      self.joinedCommunities.del(communityId)
       self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: communityId))
 
       # remove related community requests
@@ -883,7 +948,8 @@ QtObject:
       bannerJsonStr: string,
       encrypted: bool) =
     try:
-      var image = singletonInstance.utils.formatImagePath(imageUrl)
+      var bannerJson = bannerJsonStr.parseJson
+      bannerJson{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(bannerJson["imagePath"].getStr))
       var tagsString = tags
       if len(tagsString) == 0:
         tagsString = "[]"
@@ -896,11 +962,11 @@ QtObject:
         access,
         color,
         tagsString,
-        image,
+        singletonInstance.utils.formatImagePath(imageUrl),
         aX, aY, bX, bY,
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled,
-        bannerJsonStr,
+        $bannerJson,
         encrypted)
 
       if response.error != nil:
@@ -913,8 +979,8 @@ QtObject:
 
 
         community.settings = communitySettings
-        # add this to the joinedCommunities list and communitiesSettings
-        self.joinedCommunities[community.id] = community
+        # add this to the communities list and communitiesSettings
+        self.communities[community.id] = community
         # add new community channel group and chats to chat service
         self.chatService.updateOrAddChannelGroup(community.toChannelGroupDto())
         for chat in community.chats: 
@@ -943,6 +1009,8 @@ QtObject:
       let logoJson = parseJson(logoJsonStr)
       let cropRectJson = logoJson["cropRect"]
       var tagsString = tags
+      var bannerJson = bannerJsonStr.parseJson
+      bannerJson{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(bannerJson["imagePath"].getStr))
       if len(tagsString) == 0:
         tagsString = "[]"
       let response = status_go.editCommunity(
@@ -954,12 +1022,12 @@ QtObject:
         access,
         color,
         tagsString,
-        logoJson["imagePath"].getStr(),
+        singletonInstance.utils.formatImagePath(logoJson["imagePath"].getStr()),
         int(cropRectJson["x"].getFloat()),
         int(cropRectJson["y"].getFloat()),
         int(cropRectJson["x"].getFloat() + cropRectJson["width"].getFloat()),
         int(cropRectJson["y"].getFloat() + cropRectJson["height"].getFloat()),
-        bannerJsonStr,
+        $bannerJson,
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled)
 
@@ -972,7 +1040,7 @@ QtObject:
         var communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
         community.settings = communitySettings
-        self.saveUpdatedJoinedCommunity(community)
+        self.saveUpdatedCommunity(community)
         self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
     except Exception as e:
       error "Error editing community", msg = e.msg
@@ -1007,7 +1075,7 @@ QtObject:
         var chatDto = chatObj.toChatDto(communityId)
         chatDto.position = maxPosition + 1
         self.chatService.updateOrAddChat(chatDto)
-        self.joinedCommunities[communityId].chats.add(chatDto)
+        self.communities[communityId].chats.add(chatDto)
         let data = CommunityChatArgs(chat: chatDto)
         self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
     except Exception as e:
@@ -1080,13 +1148,13 @@ QtObject:
       let updatedCommunity = response.result["communities"][0].toCommunityDto()
 
       for chat in updatedCommunity.chats:
-        let prev_chat_idx = findIndexById(chat.id, self.joinedCommunities[communityId].chats)
+        let prev_chat_idx = findIndexById(chat.id, self.communities[communityId].chats)
         if prev_chat_idx > -1:
-          let prev_chat = self.joinedCommunities[communityId].chats[prev_chat_idx]
+          let prev_chat = self.communities[communityId].chats[prev_chat_idx]
           if(chat.position != prev_chat.position and chat.categoryId == categoryId):
             var chatDetails = self.chatService.getChatById(chat.id) # we are free to do this cause channel must be created before we add it to a category
-            self.joinedCommunities[communityId].chats[prev_chat_idx].position = chat.position
-            chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[prev_chat_idx])
+            self.communities[communityId].chats[prev_chat_idx].position = chat.position
+            chatDetails.updateMissingFields(self.communities[communityId].chats[prev_chat_idx])
             self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: updatedCommunity.id, chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
@@ -1103,9 +1171,9 @@ QtObject:
       if response.result.isNil or response.result.kind == JNull:
         error "response is invalid", procName="deleteCommunityChat"
 
-      let idx = findIndexById(chatId, self.joinedCommunities[communityId].chats)
+      let idx = findIndexById(chatId, self.communities[communityId].chats)
       if (idx != -1):
-        self.joinedCommunities[communityId].chats.delete(idx)
+        self.communities[communityId].chats.delete(idx)
 
       self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(
         communityId: communityId, chatId: chatId))
@@ -1124,27 +1192,29 @@ QtObject:
         raise newException(RpcException, "Error creating community category: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
+        self.checkForCategoryPropertyUpdates(
+          response.result["communityChanges"].getElems()[0]["community"].toCommunityDto,
+          self.communities[communityId]
+        )
+
         var chats: seq[ChatDto] = @[]
         for chatId, v in response.result["communityChanges"].getElems()[0]["chatsModified"].pairs():
           let fullChatId = communityId & chatId
-          let idx = findIndexById(fullChatId, self.joinedCommunities[communityId].chats)
+          let idx = findIndexById(fullChatId, self.communities[communityId].chats)
           if idx > -1:
-            self.joinedCommunities[communityId].chats[idx].categoryId = v["CategoryModified"].getStr()
-            self.joinedCommunities[communityId].chats[idx].position = v["PositionModified"].getInt()
-            if self.joinedCommunities[communityId].chats[idx].categoryId.len > 0:
+            self.communities[communityId].chats[idx].categoryId = v["CategoryModified"].getStr()
+            self.communities[communityId].chats[idx].position = v["PositionModified"].getInt()
+            if self.communities[communityId].chats[idx].categoryId.len > 0:
               var chatDetails = self.chatService.getChatById(fullChatId) # we are free to do this cause channel must be created before we add it to a category
-              chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[idx])
+              chatDetails.updateMissingFields(self.communities[communityId].chats[idx])
               self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
               chats.add(chatDetails)
 
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesAdded"].pairs():
           let category = v.toCategory()
-          self.joinedCommunities[communityId].categories.add(category)
+          self.communities[communityId].categories.add(category)
           self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
             CommunityCategoryArgs(communityId: communityId, category: category, chats: chats))
-
-        # Update `allCommunities` to the new `joinedCommunity` value
-        self.allCommunities[communityId] = self.joinedCommunities[communityId]
     except Exception as e:
       error "Error creating community category", msg = e.msg, communityId, name
 
@@ -1164,15 +1234,23 @@ QtObject:
         var chats: seq[ChatDto] = @[]
         for chatId, v in response.result["communityChanges"].getElems()[0]["chatsModified"].pairs():
           let fullChatId = communityId & chatId
-          let idx = findIndexById(fullChatId, self.joinedCommunities[communityId].chats)
+          let idx = findIndexById(fullChatId, self.communities[communityId].chats)
           if idx > -1:
-            self.joinedCommunities[communityId].chats[idx].categoryId = v["CategoryModified"].getStr()
-            self.joinedCommunities[communityId].chats[idx].position = v["PositionModified"].getInt()
+            self.communities[communityId].chats[idx].categoryId = v["CategoryModified"].getStr()
+            self.communities[communityId].chats[idx].position = v["PositionModified"].getInt()
 
             var chatDetails = self.chatService.getChatById(fullChatId) # we are free to do this cause channel must be created before we add it to a category
-            chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[idx])
+            chatDetails.updateMissingFields(self.communities[communityId].chats[idx])
             self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
             chats.add(chatDetails)
+
+        # Update communities objects
+        let updatedCommunity = response.result["communities"][0].toCommunityDto         
+        self.checkForCategoryPropertyUpdates(
+          updatedCommunity,
+          self.communities[communityId]
+        )
+        self.communities[communityId] = updatedCommunity
 
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesModified"].pairs():
           let category = v.toCategory()
@@ -1190,10 +1268,14 @@ QtObject:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error deleting community category: " & error.message)
 
-      # Update communities objetcts
+      # Update communities objects
       let updatedCommunity = response.result["communities"][0].toCommunityDto
-      self.joinedCommunities[communityId] = updatedCommunity
-      self.allCommunities[communityId] = updatedCommunity
+            
+      self.checkForCategoryPropertyUpdates(
+        updatedCommunity,
+        self.communities[communityId]
+      )
+      self.communities[communityId] = updatedCommunity
 
       self.events.emit(SIGNAL_COMMUNITY_CATEGORY_DELETED,
         CommunityCategoryArgs(
@@ -1238,13 +1320,41 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(community: community, error: "Couldn't find community info"))
       return
     
-    self.allCommunities[community.id] = community
+    self.communities[community.id] = community
 
     if rpcResponseObj{"importing"}.getBool():
       self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: community))
 
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
 
+
+  proc asyncLoadCuratedCommunities*(self: Service) =
+    self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING, Args())
+    try:
+      let arg = AsyncLoadCuratedCommunitiesTaskArg(
+        tptr: cast[ByteAddress](asyncLoadCuratedCommunitiesTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncLoadCuratedCommunitiesDone",
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error loading curated communities", msg = e.msg 
+
+  proc onAsyncLoadCuratedCommunitiesDone*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+        error "Error requesting community info", msg = rpcResponseObj{"error"}.getStr
+        self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
+        return
+      let curatedCommunities = parseCuratedCommunities(rpcResponseObj["response"]["result"])
+      for curatedCommunity in curatedCommunities:
+        self.communities[curatedCommunity.id] = curatedCommunity
+      self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADED, CommunitiesArgs(communities: self.getCuratedCommunities()))
+    except Exception as e:
+      let errMsg = e.msg
+      error "error loading curated communities: ", errMsg
+      self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
 
   proc requestCommunityInfo*(self: Service, communityId: string, importing = false) =
 
@@ -1292,7 +1402,7 @@ QtObject:
       let communitySettingsDto = communitiesSettingsJArr[0].toCommunitySettingsDto()
 
       communityDto.settings = communitySettingsDto
-      self.joinedCommunities[communityDto.id] = communityDto
+      self.communities[communityDto.id] = communityDto
 
       var chatsJArr: JsonNode
       if(response.result.getProp("chats", chatsJArr)):
@@ -1323,7 +1433,7 @@ QtObject:
       error "Error exporting community", msg = e.msg
 
   proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int =
-    let community = self.joinedCommunities[communityId]
+    let community = self.communities[communityId]
     var i = 0
     for pendingRequest in community.pendingRequestsToJoin:
       if (pendingRequest.id == requestId):
@@ -1332,7 +1442,7 @@ QtObject:
     return -1
 
   proc getDeclinedRequestIndex(self: Service, communityId: string, requestId: string): int =
-    let community = self.joinedCommunities[communityId]
+    let community = self.communities[communityId]
     var i = 0
     for declinedRequest in community.declinedRequestsToJoin:
       if (declinedRequest.id == requestId):
@@ -1347,7 +1457,7 @@ QtObject:
     if (indexPending == -1 and indexDeclined == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
-    var community = self.joinedCommunities[communityId]
+    var community = self.communities[communityId]
 
     if (indexPending != -1):
       result = community.pendingRequestsToJoin[indexPending].publicKey
@@ -1356,20 +1466,20 @@ QtObject:
       result = community.declinedRequestsToJoin[indexDeclined].publicKey
       community.declinedRequestsToJoin.delete(indexDeclined)
 
-    self.joinedCommunities[communityId] = community
+    self.communities[communityId] = community
 
   proc moveRequestToDeclined*(self: Service, communityId: string, requestId: string) =
     let indexPending = self.getPendingRequestIndex(communityId, requestId)
     if (indexPending == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
-    var community = self.joinedCommunities[communityId]
+    var community = self.communities[communityId]
     if (indexPending != -1):
       let itemToMove = community.pendingRequestsToJoin[indexPending]
       community.declinedRequestsToJoin.add(itemToMove)
       community.pendingRequestsToJoin.delete(indexPending)
 
-    self.joinedCommunities[communityId] = community
+    self.communities[communityId] = community
 
   proc cancelRequestToJoinCommunity*(self: Service, communityId: string) =
     try:
@@ -1382,7 +1492,7 @@ QtObject:
             error "error while cancel membership request ", msg
             return
           self.myCommunityRequests.delete(i)
-          self.activityCenterService.parseACNotificationResponse(response)
+          self.activityCenterService.parseActivityCenterResponse(response)
           self.events.emit(SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED, Args())
           return
 
@@ -1394,7 +1504,7 @@ QtObject:
   proc acceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       let response = status_go.acceptRequestToJoinCommunity(requestId)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       let newMemberPubkey = self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId)
 
@@ -1409,11 +1519,11 @@ QtObject:
   proc declineRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       let response = status_go.declineRequestToJoinCommunity(requestId)
-      self.activityCenterService.parseACNotificationResponse(response)
+      self.activityCenterService.parseActivityCenterResponse(response)
 
       self.moveRequestToDeclined(communityId, requestId)
 
-      self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[communityId]))
+      self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[communityId]))
     except Exception as e:
       error "Error declining request to join community", msg = e.msg
 
@@ -1505,3 +1615,54 @@ QtObject:
     except Exception as e:
       error "Error extracting discord channels and categories", msg = e.msg
 
+  proc createOrEditCommunityTokenPermission*(self: Service, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+    try:
+      let editing = tokenPermission.id != ""
+
+      var response: RpcResponse[JsonNode]
+
+      if editing:
+        response = status_go.editCommunityTokenPermission(communityId, tokenPermission.id, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.isPrivate)
+      else:
+        response = status_go.createCommunityTokenPermission(communityId, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.isPrivate)
+
+      if response.result != nil and response.result.kind != JNull:
+        var changesField = TOKEN_PERMISSIONS_ADDED
+        if editing:
+          changesField = TOKEN_PERMISSIONS_MODIFIED
+
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][changesField].pairs():
+          let p = permission.toCommunityTokenPermissionDto()
+          self.communities[communityId].tokenPermissions[permissionId] = p
+
+          var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED
+          if editing:
+            signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED
+
+          self.events.emit(signal, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
+        return
+
+      var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED
+      if editing:
+        signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED
+
+      self.events.emit(signal, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: tokenPermission))
+    except Exception as e:
+      error "Error creating/editing community token permission", msg = e.msg
+
+  proc deleteCommunityTokenPermission*(self: Service, communityId: string, permissionId: string) =
+    try:
+      let response = status_go.deleteCommunityTokenPermission(communityId, permissionId)
+      if response.result != nil and response.result.kind != JNull:
+        for permissionId in response.result["communityChanges"].getElems()[0]["tokenPermissionsRemoved"].getElems():
+          if self.communities[communityId].tokenPermissions.hasKey(permissionId.getStr()):
+            self.communities[communityId].tokenPermissions.del(permissionId.getStr())
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
+        CommunityTokenPermissionRemovedArgs(communityId: communityId, permissionId: permissionId.getStr))
+        return
+      var tokenPermission = CommunityTokenPermissionDto()
+      tokenPermission.id = permissionId
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED,
+        CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: tokenPermission))
+    except Exception as e:
+      error "Error deleting community token permission", msg = e.msg

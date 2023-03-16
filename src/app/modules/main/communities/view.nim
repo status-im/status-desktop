@@ -25,6 +25,7 @@ QtObject:
       observedItem: ActiveSection
       curatedCommunitiesModel: CuratedCommunityModel
       curatedCommunitiesModelVariant: QVariant
+      curatedCommunitiesLoading: bool
       discordFileListModel: DiscordFileListModel
       discordFileListModelVariant: QVariant
       discordCategoriesModel: DiscordCategoriesModel
@@ -74,6 +75,7 @@ QtObject:
     result.modelVariant = newQVariant(result.model)
     result.curatedCommunitiesModel = newCuratedCommunityModel()
     result.curatedCommunitiesModelVariant = newQVariant(result.curatedCommunitiesModel)
+    result.curatedCommunitiesLoading = false
     result.discordFileListModel = newDiscordFileListModel()
     result.discordFileListModelVariant = newQVariant(result.discordFileListModel)
     result.discordCategoriesModel = newDiscordCategoriesModel()
@@ -283,6 +285,20 @@ QtObject:
 
   QtProperty[QVariant] curatedCommunities:
     read = getCuratedCommunitiesModel
+
+  proc curatedCommunitiesLoadingChanged*(self: View) {.signal.}
+
+  proc setCuratedCommunitiesLoading*(self: View, flag: bool) =
+    if (self.curatedCommunitiesLoading == flag): return
+    self.curatedCommunitiesLoading = flag
+    self.curatedCommunitiesLoadingChanged()
+
+  proc getCuratedCommunitiesLoading*(self: View): bool {.slot.} =
+    return self.curatedCommunitiesLoading
+
+  QtProperty[bool] curatedCommunitiesLoading:
+    read = getCuratedCommunitiesLoading
+    notify = curatedCommunitiesLoadingChanged
 
   proc discordFileListModel*(self: View): DiscordFileListModel =
     result = self.discordFileListModel

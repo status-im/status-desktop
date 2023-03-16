@@ -6,7 +6,6 @@ DropArea {
 
     property bool enabled: false
     property alias droppedUrls: rptDraggedPreviews.model
-    property int activeChatType
 
     signal droppedOnValidScreen(var drop)
 

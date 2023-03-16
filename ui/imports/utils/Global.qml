@@ -11,6 +11,7 @@ QtObject {
     property int settingsSubsection: Constants.settingsSubsection.profile
 
     property var userProfile
+    property bool appIsReady: false
 
     signal openPinnedMessagesPopupRequested(var store, var messageStore, var pinnedMessagesModel, string messageToPin)
     signal openCommunityProfilePopupRequested(var store, var community, var chatCommunitySectionModule)
@@ -45,6 +46,9 @@ QtObject {
 
     signal setNthEnabledSectionActive(int nthSection)
     signal appSectionBySectionTypeChanged(int sectionType, int subsection)
+
+    signal openSendModal(string address)
+    signal switchToCommunity(string communityId)
 
     signal playSendMessageSound()
     signal playNotificationSound()

@@ -43,6 +43,7 @@ QtObject {
         readonly property string userProfileEnterSeedPhrase: "UserProfileEnterSeedPhrase"
         readonly property string userProfileWrongSeedPhrase: "UserProfileWrongSeedPhrase"
         readonly property string biometrics: "Biometrics"
+        readonly property string keycardNoPCSCService: "KeycardNoPCSCService"
         readonly property string keycardPluginReader: "KeycardPluginReader"
         readonly property string keycardInsertKeycard: "KeycardInsertKeycard"
         readonly property string keycardInsertedKeycard: "KeycardInsertedKeycard"
@@ -67,6 +68,7 @@ QtObject {
         readonly property string keycardMaxPinRetriesReached: "KeycardMaxPinRetriesReached"
         readonly property string keycardMaxPukRetriesReached: "KeycardMaxPukRetriesReached"
         readonly property string login: "Login"
+        readonly property string loginNoPCSCService: "LoginNoPCSCService"
         readonly property string loginPlugin: "LoginPlugin"
         readonly property string loginKeycardInsertKeycard: "LoginKeycardInsertKeycard"
         readonly property string loginKeycardInsertedKeycard: "LoginKeycardInsertedKeycard"
@@ -88,6 +90,8 @@ QtObject {
         readonly property string profileFetchingTimeout: "ProfileFetchingTimeout"
         readonly property string profileFetchingAnnouncement: "ProfileFetchingAnnouncement"
         readonly property string lostKeycardOptions: "LostKeycardOptions"
+        readonly property string syncDeviceWithSyncCode: "SyncDeviceWithSyncCode"
+        readonly property string syncDeviceResult: "SyncDeviceResult"
     }
 
     readonly property QtObject predefinedKeycardData: QtObject {
@@ -120,6 +124,7 @@ QtObject {
     }
 
     readonly property QtObject keycardSharedState: QtObject {
+        readonly property string noPCSCService: "NoPCSCService"
         readonly property string noState: "NoState"
         readonly property string pluginReader: "PluginReader"
         readonly property string readingKeycard: "ReadingKeycard"
@@ -209,7 +214,7 @@ QtObject {
             readonly property string pattern: "keycard/card_insert/img-%1"
             readonly property int startImgIndexForTheFirstLoop: 0
             readonly property int startImgIndexForOtherLoops: 0
-            readonly property int endImgIndex: 16
+            readonly property int endImgIndex: 15
             readonly property int duration: 1000
             readonly property int loops: 1
         }
@@ -322,7 +327,7 @@ QtObject {
         property int appearance: 5
         property int language: 6
         property int notifications: 7
-        property int devicesSettings: 8
+        property int syncingSettings: 8
         property int browserSettings: 9
         property int advanced: 10
         property int about: 11
@@ -364,6 +369,7 @@ QtObject {
                 readonly property string contacts: "contacts"
                 readonly property string communities: "communities"
                 readonly property string settings: "settings"
+                readonly property string keycards: "keycards"
             }
         }
     }
@@ -581,6 +587,32 @@ QtObject {
         readonly property int telegram: 6
     }
 
+    readonly property QtObject localPairingEventType: QtObject {
+        readonly property int eventUnknown: -1
+        readonly property int eventConnectionError: 0
+        readonly property int eventConnectionSuccess: 1
+        readonly property int eventTransferError: 2
+        readonly property int eventTransferSuccess: 3
+        readonly property int eventReceivedAccount: 4
+        readonly property int eventProcessSuccess: 5
+        readonly property int eventProcessError: 6
+    }
+
+    readonly property QtObject localPairingAction: QtObject {
+        readonly property int actionUnknown: 0
+        readonly property int actionConnect: 1
+        readonly property int actionPairingAccount: 2
+        readonly property int actionSyncDevice: 3
+    }
+
+    enum LocalPairingState {
+        Idle = 0,
+        WaitingForConnection = 1,
+        Transferring = 2,
+        Error = 3,
+        Finished = 4
+    }
+
     readonly property QtObject regularExpressions: QtObject {
         readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_ ]+$/
     }
@@ -612,21 +644,6 @@ QtObject {
     readonly property int communityChatPublicAccess: 1
     readonly property int communityChatInvitationOnlyAccess: 2
     readonly property int communityChatOnRequestAccess: 3
-
-    readonly property int activityCenterNotificationTypeOneToOne: 1
-    readonly property int activityCenterNotificationTypeGroupRequest: 2
-    readonly property int activityCenterNotificationTypeMention: 3
-    readonly property int activityCenterNotificationTypeReply: 4
-    readonly property int activityCenterNotificationTypeContactRequest: 5
-    readonly property int activityCenterNotificationTypeCommunityInvitation: 6
-    readonly property int activityCenterNotificationTypeCommunityRequest: 7
-    readonly property int activityCenterNotificationTypeCommunityMembershipRequest: 8
-    readonly property int activityCenterNotificationTypeCommunityKicked: 9
-    readonly property int activityCenterNotificationTypeContactVerification: 10
-
-    readonly property int activityCenterMembershipStatusPending: 1
-    readonly property int activityCenterMembershipStatusAccepted: 2
-    readonly property int activityCenterMembershipStatusDeclined: 3
 
     readonly property int contactRequestStateNone: 0
     readonly property int contactRequestStatePending: 1

@@ -16,15 +16,17 @@ ColumnLayout {
 
     property var store
     property var selectedAccount
-    property var amountToSend
-    property var requiredGasInEth
+    property string ensAddressOrEmpty: ""
+    property double amountToSend
+    property int minSendCryptoDecimals: 0
+    property int minReceiveCryptoDecimals: 0
+    property double requiredGasInEth
     property bool customMode: false
     property var selectedAsset
     property var bestRoutes
     property bool isLoading: false
     property bool errorMode: networksLoader.item ? networksLoader.item.errorMode : false
     property var weiToEth: function(wei) {}
-    property var getCryptoCurrencyAmount: function(cryptoValue) {}
     property bool interactive: true
     property bool isBridgeTx: false
     property bool showUnpreferredNetworks: preferredToggleButton.checked
@@ -83,8 +85,11 @@ ColumnLayout {
                 sourceComponent: NetworkCardsComponent {
                     store: root.store
                     selectedAccount: root.selectedAccount
+                    ensAddressOrEmpty: root.ensAddressOrEmpty
                     allNetworks: root.store.allNetworks
                     amountToSend: root.amountToSend
+                    minSendCryptoDecimals: root.minSendCryptoDecimals
+                    minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                     customMode: root.customMode
                     requiredGasInEth: root.requiredGasInEth
                     selectedAsset: root.selectedAsset
@@ -94,7 +99,6 @@ ColumnLayout {
                     showPreferredChains: preferredToggleButton.checked
                     bestRoutes: root.bestRoutes
                     weiToEth: root.weiToEth
-                    getCryptoCurrencyAmount: root.getCryptoCurrencyAmount
                     interactive: root.interactive
                     errorType: root.errorType
                     isLoading: root.isLoading

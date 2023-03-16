@@ -2,6 +2,7 @@ import NimQml
 import ../../../app_service/service/accounts/service as accounts_service
 import models/login_account_item as login_acc_item
 from ../../../app_service/service/keycard/service import KeycardEvent, KeyDetails
+from ../../../app_service/service/devices/dto/local_pairing_status import LocalPairingStatus
 
 const UNIQUE_STARTUP_MODULE_IDENTIFIER* = "SartupModule"
 
@@ -166,6 +167,18 @@ method checkFetchingStatusAndProceedWithAppLoading*(self: AccessInterface) {.bas
   raise newException(ValueError, "No implementation available")
 
 method startAppAfterDelay*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getConnectionString*(self: AccessInterface): string {.base} =
+  raise newException(ValueError, "No implementation available")
+
+method setConnectionString*(self: AccessInterface, connectionString: string) {.base} =
+  raise newException(ValueError, "No implementation available")
+
+method validateLocalPairingConnectionString*(self: AccessInterface, connectionString: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

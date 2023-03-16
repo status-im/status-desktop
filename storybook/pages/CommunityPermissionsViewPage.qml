@@ -1,12 +1,14 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Chat.views.communities 1.0
-import AppLayouts.Chat.stores 1.0
 
-import Storybook 1.0
 import Models 1.0
-import StatusQ.Core.Theme 0.1
+import Storybook 1.0
+
 
 SplitView {
     Logs { id: logs }
@@ -19,37 +21,44 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
+
             CommunityPermissionsView {
                 anchors {
                     fill: parent
                     margins: 50
                 }
-                store: CommunitiesStore {
-                    id: mockedCommunity
-                    permissionsModel: PermissionsModel.permissionsModel
 
-                    function duplicatePermission(index) {
-                        logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
-                    }
+                permissionsModel: ListModel {
+                    id: permissionsModel
+
+                    Component.onCompleted: append(PermissionsModel.permissionsModelData)
                 }
 
-                rootStore: QtObject {
-                    readonly property QtObject chatCommunitySectionModule: QtObject {
-                        readonly property var model: ChannelsModel {}
-                    }
-
-                    readonly property QtObject mainModuleInst: QtObject {
-                        readonly property QtObject activeSection: QtObject {
-                            readonly property string name: "Socks"
-                            readonly property string image: ModelsData.icons.socks
-                            readonly property color color: "red"
-                        }
-                    }
+                assetsModel: AssetsModel {
+                    id: assetsModel
                 }
 
-                onEditPermission: logs.logEvent("CommunitiesStore::editPermission - index: " + index)
-                onRemovePermission: logs.logEvent("CommunitiesStore::removePermission - index: " + index)
+                collectiblesModel: CollectiblesModel {
+                    id: collectiblesModel
+                }
 
+                channelsModel: ChannelsModel {
+                    id: channelsModel
+                }
+
+                communityDetails: QtObject {
+                    readonly property string name: "Socks"
+                    readonly property string image: ModelsData.icons.socks
+                    readonly property string color: "red"
+                }
+
+                function log(method, index) {
+                    logs.logEvent(`CommunityPermissionsView::${method} - index: ${index}`)
+                }
+
+                onEditPermissionRequested: log("editPermissionRequested", index)
+                onRemovePermissionRequested: log("removePermissionRequested", index)
+                onDuplicatePermissionRequested: log("duplicatePermissionRequested", index)
             }
         }
 
@@ -69,7 +78,17 @@ SplitView {
 
         CommunityPermissionsSettingsPanelEditor {
             anchors.fill: parent
-            model: mockedCommunity.permissionsModel
+            model: permissionsModel
+
+            assetKeys: assetsModel.data.map(asset => asset.key)
+            collectibleKeys: collectiblesModel.data.map(collectible => collectible.key)
+            channelKeys: {
+                const array = ModelUtils.modelToArray(channelsModel,
+                                                      ["itemId", "isCategory"])
+                const channelsOnly = array.filter(channel => !channel.isCategory)
+
+                return channelsOnly.map(channel => channel.itemId)
+            }
         }
     }
 }

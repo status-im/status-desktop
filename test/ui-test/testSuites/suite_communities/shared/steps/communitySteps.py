@@ -61,7 +61,7 @@ def step(context, manage_community_option:str):
 
 @Given("\"|any|\" section is selected") 
 def step(context, section_option:str):
-    _statusCommunityScreen.select_community_settings_option(section_option) 
+    _statusCommunityScreen.select_community_settings_option(section_option)
 
 #########################
 ### ACTIONS region:
@@ -254,6 +254,11 @@ def step(context):
 #     test.warning("TODO implement \"Test-Community\" community exists")
 
 
+@Then("\"|any|\" should be an available option in Community Settings")
+def step(context, manage_community_option:str):
+    _statusCommunityScreen.verify_option_exists(manage_community_option)
+
+    
 @Then("\"|any|\" should be an available option in Community Settings")
 def step(context, manage_community_option:str):
     _statusCommunityScreen.verify_option_exists(manage_community_option)

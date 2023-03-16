@@ -10,6 +10,9 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/token/service as token_service
+import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 
 import ../../../core/signals/types
@@ -23,6 +26,7 @@ type
     sectionId: string
     isCommunitySection: bool
     activeItemId: string
+    isCurrentSectionActive: bool
     events: EventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
@@ -32,16 +36,23 @@ type
     messageService: message_service.Service
     gifService: gif_service.Service
     mailserversService: mailservers_service.Service
+    walletAccountService: wallet_account_service.Service
+    tokenService: token_service.Service
+    communityTokensService: community_tokens_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service, 
   contactService: contact_service.Service, chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service): Controller =
+  mailserversService: mailservers_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  tokenService: token_service.Service,
+  communityTokensService: community_tokens_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
   result.isCommunitySection = isCommunity
+  result.isCurrentSectionActive = false
   result.events = events
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
@@ -51,12 +62,21 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.messageService = messageService
   result.gifService = gifService
   result.mailserversService = mailserversService
+  result.walletAccountService = walletAccountService
+  result.tokenService = tokenService
+  result.communityTokensService = communityTokensService
 
 proc delete*(self: Controller) =
   discard
 
 proc getActiveChatId*(self: Controller): string =
   return self.activeItemId
+
+proc getIsCurrentSectionActive*(self: Controller): bool =
+  return self.isCurrentSectionActive
+
+proc setIsCurrentSectionActive*(self: Controller, active: bool) =
+  self.isCurrentSectionActive = active
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
@@ -194,6 +214,46 @@ proc init*(self: Controller) =
       if (args.communityId == self.sectionId):
         self.delegate.onCategoryUnmuted(args.categoryId)
 
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED) do(e: Args):
+      let args = CommunityTokenPermissionArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenPermissionCreated(args.communityId, args.tokenPermission)
+
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED) do(e: Args):
+      let args = CommunityTokenPermissionArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenPermissionCreationFailed(args.communityId)
+
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED) do(e: Args):
+      let args = CommunityTokenPermissionArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenPermissionUpdated(args.communityId, args.tokenPermission)
+
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED) do(e: Args):
+      let args = CommunityTokenPermissionArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenPermissionUpdateFailed(args.communityId)
+
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED) do(e: Args):
+      let args = CommunityTokenPermissionRemovedArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenPermissionDeleted(args.communityId, args.permissionId)
+
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED) do(e: Args):
+      let args = CommunityTokenPermissionArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenPermissionDeletionFailed(args.communityId)
+
+    self.events.on(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED) do(e: Args):
+      let args = CommunityTokenMetadataArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
+
+
+    self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
+      self.delegate.onWalletAccountTokensRebuilt()
+
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
@@ -250,11 +310,11 @@ proc getMySectionId*(self: Controller): string =
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
-proc getMyCommunity*(self: Controller): CommunityDto =
-  return self.communityService.getCommunityById(self.sectionId)
-
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
+
+proc getMyCommunity*(self: Controller): CommunityDto =
+  return self.getCommunityById(self.sectionId)
 
 proc getCategories*(self: Controller, communityId: string): seq[Category] =
   return self.communityService.getCategories(communityId)
@@ -282,6 +342,9 @@ proc getCommunityCategoryDetails*(self: Controller, communityId: string, categor
 
 proc setActiveItem*(self: Controller, itemId: string) =
   self.activeItemId = itemId
+  let isSectionActive = self.getIsCurrentSectionActive()
+  if not isSectionActive:
+    return
   if self.activeItemId != "":
     self.messageService.asyncLoadInitialMessagesForChat(self.activeItemId)
 
@@ -491,3 +554,25 @@ proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
 
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
+
+proc createOrEditCommunityTokenPermission*(self: Controller, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
+  self.communityService.createOrEditCommunityTokenPermission(communityId, tokenPermission)
+
+proc deleteCommunityTokenPermission*(self: Controller, communityId: string, permissionId: string) =
+  self.communityService.deleteCommunityTokenPermission(communityId, permissionId)
+
+proc allAccountsTokenBalance*(self: Controller, symbol: string): float64 =
+  return self.walletAccountService.allAccountsTokenBalance(symbol)
+
+proc getTokenList*(self: Controller): seq[TokenDto] =
+  return self.tokenService.getTokenList()
+
+proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int, string] =
+  var contractAddresses = self.tokenService.getContractAddressesForToken(symbol)
+  let communityToken = self.communityTokensService.getCommunityTokenBySymbol(self.getMySectionId(), symbol)
+  if communityToken.address != "":
+    contractAddresses[communityToken.chainId] = communityToken.address
+  return contractAddresses
+
+proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
+  return self.communityTokensService.getCommunityTokens(self.getMySectionId())

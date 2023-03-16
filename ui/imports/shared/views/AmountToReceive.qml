@@ -11,26 +11,29 @@ ColumnLayout {
     id: root
 
     property var store
-    property var selectedAsset
+    property string selectedSymbol
     property bool isLoading: false
-    property var cryptoValueToReceive
+    property double cryptoValueToReceive
     property bool isBridgeTx: false
     property bool inputIsFiat: false
     property string currentCurrency
+    property int minCryptoDecimals: 0
+    property int minFiatDecimals: 0
     property var getFiatValue: function(cryptoValue) {}
+    property var formatCurrencyAmount: function() {}
 
     QtObject {
         id: d
         readonly property string fiatValue: {
-            if(!root.selectedAsset || !cryptoValueToReceive)
+            if(!root.selectedSymbol || !cryptoValueToReceive)
                 return LocaleUtils.numberToLocaleString(0, 2)
-            let fiatValue = root.getFiatValue(cryptoValueToReceive.amount, root.selectedAsset.symbol, RootStore.currentCurrency)
-            return LocaleUtils.currencyAmountToLocaleString(fiatValue)
+            let fiatValue = root.getFiatValue(cryptoValueToReceive, root.selectedSymbol, root.currentCurrency)
+            return root.formatCurrencyAmount(fiatValue, root.currentCurrency, inputIsFiat ? {"minDecimals": root.minFiatDecimals, "stripTrailingZeroes": true} : {})
         }
         readonly property string cryptoValue: {
-            if(!root.selectedAsset || !cryptoValueToReceive)
+            if(!root.selectedSymbol || !cryptoValueToReceive)
                 return LocaleUtils.numberToLocaleString(0, 2)
-            return LocaleUtils.currencyAmountToLocaleString(cryptoValueToReceive)
+            return root.formatCurrencyAmount(cryptoValueToReceive, root.selectedSymbol, !inputIsFiat ? {"minDecimals": root.minCryptoDecimals, "stripTrailingZeroes": true} : {})
         }
     }
 

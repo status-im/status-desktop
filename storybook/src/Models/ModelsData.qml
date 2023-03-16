@@ -62,6 +62,15 @@ QtObject {
         readonly property string superRare: Style.png("collectibles/SuperRare")
         readonly property string custom: Style.png("collectibles/SNT")
     }
+
+    readonly property QtObject networks: QtObject {
+        readonly property string arbitrum: "network/Network=Arbitrum"
+        readonly property string custom: "network/Network=Custom"
+        readonly property string ethereum: "network/Network=Ethereum"
+        readonly property string hermez: "network/Network=Hermez"
+        readonly property string optimism: "network/Network=Optimism"
+        readonly property string testnet: "network/Network=Testnet"
+    }
 }
 
 

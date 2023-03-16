@@ -29,6 +29,9 @@ type
     name* {.serializedFieldName("name").}: string
     address* {.serializedFieldName("address").}: string
     favourite* {.serializedFieldName("favourite").}: bool
+    chainShortNames* {.serializedFieldName("chainShortNames").}: string
+    ens* {.serializedFieldName("ens").}: string
+    isTest* {.serializedFieldName("isTest").}: bool
 
   Network* = ref object of RootObj
     chainId* {.serializedFieldName("chainId").}: int
@@ -36,6 +39,7 @@ type
     layer* {.serializedFieldName("layer").}: int
     chainName* {.serializedFieldName("chainName").}: string
     rpcURL* {.serializedFieldName("rpcUrl").}: string
+    fallbackURL* {.serializedFieldName("fallbackUrl").}: string
     blockExplorerURL* {.serializedFieldName("blockExplorerUrl").}: string
     iconURL* {.serializedFieldName("iconUrl").}: string
     nativeCurrencyName* {.serializedFieldName("nativeCurrencyName").}: string
@@ -45,18 +49,18 @@ type
     chainColor* {.serializedFieldName("chainColor").}: string
     shortName* {.serializedFieldName("shortName").}: string
 
+  ActivityCenterNotificationsRequest* = ref object of RootObj
+    cursor* {.serializedFieldName("cursor").}: string
+    limit* {.serializedFieldName("limit").}: int
+    activityTypes* {.serializedFieldName("activityTypes").}: seq[int]
+    readType* {.serializedFieldName("readType").}: int
+
+  ActivityCenterCountRequest* = ref object of RootObj
+    activityTypes* {.serializedFieldName("activityTypes").}: seq[int]
+    readType* {.serializedFieldName("readType").}: int
+
 rpc(clientVersion, "web3"):
   discard
-
-rpc(getOpenseaCollectionsByOwner, "wallet"):
-  chainId: int
-  address: string
-
-rpc(getOpenseaAssetsByOwnerAndCollection, "wallet"):
-  chainId: int
-  address: string
-  collectionSlug: string
-  limit: int
 
 rpc(getEthereumChains, "wallet"):
   onlyEnabled: bool
@@ -71,8 +75,9 @@ rpc(upsertSavedAddress, "wakuext"):
   savedAddress: SavedAddress
 
 rpc(deleteSavedAddress, "wakuext"):
-  chainId: int
   address: string
+  ens: string
+  isTest: bool
 
 rpc(getSavedAddresses, "wallet"):
   discard
@@ -97,6 +102,9 @@ rpc(getWalletToken, "wallet"):
 rpc(startWallet, "wallet"):
   discard
 
+rpc(updateVisibleTokens, "wallet"):
+  symbols: seq[string]
+
 rpc(getTransactionEstimatedTime, "wallet"):
   chainId: int
   maxFeePerGas: float
@@ -104,9 +112,6 @@ rpc(getTransactionEstimatedTime, "wallet"):
 rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currencies: seq[string]
-
-rpc(getCachedPrices, "wallet"):
-  discard
 
 rpc(generateAccountWithDerivedPath, "accounts"):
   password: string
@@ -161,8 +166,10 @@ rpc(addAccountWatch, "accounts"):
   emoji: string
 
 rpc(activityCenterNotifications, "wakuext"):
-  cursorVal: JsonNode
-  limit: int
+  request: ActivityCenterNotificationsRequest
+
+rpc(activityCenterNotificationsCount, "wakuext"):
+  request: ActivityCenterCountRequest
 
 rpc(markAllActivityCenterNotificationsRead, "wakuext"):
   discard
@@ -179,10 +186,10 @@ rpc(acceptActivityCenterNotifications, "wakuext"):
 rpc(dismissActivityCenterNotifications, "wakuext"):
   ids: seq[string]
 
-rpc(unreadActivityCenterNotificationsCount, "wakuext"):
+rpc(hasUnseenActivityCenterNotifications, "wakuext"):
   discard
 
-rpc(unreadAndAcceptedActivityCenterNotificationsCount, "wakuext"):
+rpc(markAsSeenActivityCenterNotifications, "wakuext"):
   discard
 
 rpc(getBookmarks, "browsers"):
@@ -233,12 +240,12 @@ rpc(fetchMarketValues, "wallet"):
 rpc(fetchTokenDetails, "wallet"):
   symbols: seq[string]
 
-rpc(addMigratedKeyPair, "accounts"):
+rpc(addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded, "accounts"):
   keycardUid: string
   keyPairName: string
   keyUid: string
   accountAddresses: seq[string]
-  keyStoreDir: string
+  password: string
 
 rpc(removeMigratedAccountsForKeycard, "accounts"):
   keycardUid: string
@@ -288,12 +295,14 @@ rpc(getName, "ens"):
   address: string
 
 rpc(getBalanceHistory, "wallet"):
-  chainId: int
+  chainIds: seq[int]
   address: string
+  tokenSymbol: string
+  currencySymbol: string
   timeInterval: int
 
-rpc(isCurrencyFiat, "wallet"):
-  code: string
+rpc(getCachedCurrencyFormats, "wallet"):
+  discard
 
-rpc(getFiatCurrencyMinorUnit, "wallet"):
-  code: string
+rpc(fetchAllCurrencyFormats, "wallet"):
+  discard

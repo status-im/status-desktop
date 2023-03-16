@@ -20,7 +20,7 @@ StatusListItem {
 
     asset.isLetterIdenticon: true
     asset.letterSize: 12
-    asset.isImage: model.icon.includes("data")
+    asset.isImage: asset.name.includes("data")
     asset.width: 32
     asset.height: 32
 

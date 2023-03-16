@@ -36,4 +36,8 @@ QtObject {
     function tryRemoveFromKeyChain() {
         root.privacyModule.tryRemoveFromKeyChain()
     }
+
+    function backupData() {
+        return root.privacyModule.backupData()
+    }
 }

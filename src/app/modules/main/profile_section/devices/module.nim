@@ -2,6 +2,7 @@ import NimQml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
+import logging
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
@@ -43,35 +44,42 @@ method load*(self: Module) =
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
+method getMyInstallationId(self: Module): string =
+  return self.controller.getMyInstallationId()
+
 proc isMyDevice(self: Module, installationId: string): bool =
   let myInstallationId = self.controller.getMyInstallationId()
   return installationId == myInstallationId
 
-proc initModel(self: Module) =
-  var items: seq[Item]
-  let allDevices = self.controller.getAllDevices()
-  for d in allDevices:
-    let item = initItem(d.id, d.metadata.name, d.enabled, self.isMyDevice(d.id))
-    items.add(item)
+method loadDevices*(self: Module) =
+  self.view.setDevicesLoading(true)
+  self.controller.asyncLoadDevices()
 
+method onDevicesLoadingErrored*(self: Module) =
+  self.view.setDevicesLoading(false)
+  self.view.setDevicesLoadingError(true)
+
+method onDevicesLoaded*(self: Module, allDevices: seq[InstallationDto]) =
+  var items: seq[Item]
+  for d in allDevices:
+    let item = initItem(d, self.isMyDevice(d.id))
+    items.add(item)
   self.view.model().addItems(items)
+  self.view.setDevicesLoading(false)
+  self.view.deviceSetupChanged()
 
 method viewDidLoad*(self: Module) =
-  self.initModel()
   self.moduleLoaded = true
   self.delegate.devicesModuleDidLoad()
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method isDeviceSetup*(self: Module): bool =
-  return self.controller.isDeviceSetup()
-
 method setDeviceName*(self: Module, name: string) =
   self.controller.setDeviceName(name)
   # in future if we start getting more meaningful response form the `status-go` part, we may
   # move this call to the `onDeviceNameSet` slot and confirm change on the qml side that way.
-  self.view.emitDeviceSetupChangedSignal()
+  self.view.deviceSetupChanged()
 
 method syncAllDevices*(self: Module) =
   self.controller.syncAllDevices()
@@ -79,12 +87,34 @@ method syncAllDevices*(self: Module) =
 method advertise*(self: Module) =
   self.controller.advertise()
 
-method enableDevice*(self: Module, deviceId: string, enable: bool) =
-  self.controller.enableDevice(deviceId, enable)
+method enableDevice*(self: Module, installationId: string, enable: bool) =
+  self.controller.enableDevice(installationId, enable)
 
-method updateOrAddDevice*(self: Module, deviceId: string, name: string, enabled: bool) =
-  if(self.view.model().isItemWithInstallationIdAdded(deviceId)):
-    self.view.model().updateItem(deviceId, name, enabled)
+method updateOrAddDevice*(self: Module, installation: InstallationDto) =
+  if(self.view.model().isItemWithInstallationIdAdded(installation.id)):
+    self.view.model().updateItem(installation)
   else:
-    let item = initItem(deviceId, name, enabled, self.isMyDevice(deviceId))
+    let item = initItem(installation, self.isMyDevice(installation.id))
     self.view.model().addItem(item)
+
+
+method authenticateUser*(self: Module, keyUid: string) =
+  self.controller.authenticateUser(keyUid)
+
+method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+  self.view.emitUserAuthenticated(pin, password, keyUid)
+
+proc validateConnectionString*(self: Module, connectionString: string): string =
+  return self.controller.validateConnectionString(connectionString)
+
+method getConnectionStringForBootstrappingAnotherDevice*(self: Module, keyUid: string, password: string): string =
+  return self.controller.getConnectionStringForBootstrappingAnotherDevice(keyUid, password)
+
+method inputConnectionStringForBootstrapping*(self: Module, connectionString: string): string =
+  return self.controller.inputConnectionStringForBootstrapping(connectionString)
+
+method onLocalPairingEvent*(self: Module, eventType: EventType, action: Action, error: string) =
+  self.view.onLocalPairingEvent(eventType, action, error)
+
+method onLocalPairingStatusUpdate*(self: Module, status: LocalPairingStatus) =
+  self.view.onLocalPairingStatusUpdate(status)

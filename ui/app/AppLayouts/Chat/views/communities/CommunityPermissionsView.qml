@@ -2,117 +2,100 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
 
 import SortFilterProxyModel 0.2
-import utils 1.0
 import shared.popups 1.0
 
 import AppLayouts.Chat.controls.community 1.0
-import AppLayouts.Chat.helpers 1.0
 
 StatusScrollView {
     id: root
 
-    property var rootStore
-    property var store
+    required property var permissionsModel
+    required property var assetsModel
+    required property var collectiblesModel
+    required property var channelsModel
+
+    // name, image, color properties expected
+    required property var communityDetails
+
     property int viewWidth: 560 // by design
 
-    signal editPermission(int index, var holidings, var permission, var channels, bool isPrivate)
-    signal removePermission(int index)
+    signal editPermissionRequested(int index)
+    signal duplicatePermissionRequested(int index)
+    signal removePermissionRequested(int index)
 
     QtObject {
         id: d
+
         property int permissionIndexToRemove
-
-        function holdingsTextFormat(type, name, amount) {
-            return CommunityPermissionsHelpers.setHoldingsTextFormat(type, name, amount)
-        }
     }
 
-    contentWidth: mainLayout.width
-    contentHeight: mainLayout.height + mainLayout.anchors.topMargin
-
-    onRemovePermission: {
-        d.permissionIndexToRemove = index
-        Global.openPopup(deletePopup)
-    }
+    contentWidth: root.viewWidth
+    contentHeight: mainLayout.implicitHeight
 
     ColumnLayout {
         id: mainLayout
-        width: root.viewWidth
+        width: parent.width
         spacing: 24
 
         ListModel {
             id: communityItemModel
 
-            readonly property var communityData: rootStore.mainModuleInst.activeSection
-
             Component.onCompleted: {
                 append({
-                    text: communityData.name,
-                    imageSource: communityData.image,
-                    color: communityData.color
+                    text: root.communityDetails.name,
+                    imageSource: root.communityDetails.image,
+                    color: root.communityDetails.color
                 })
             }
         }
 
         Repeater {
-            model: root.store.permissionsModel
+            model: root.permissionsModel
+
             delegate: PermissionItem {
                 Layout.preferredWidth: root.viewWidth
-                holdingsListModel: SortFilterProxyModel {
+
+                holdingsListModel: HoldingsSelectionModel {
                     sourceModel: model.holdingsListModel
-
-                    proxyRoles: ExpressionRole {
-                        name: "text"
-                        // Direct call for singleton function is not handled properly
-                        // by SortFilterProxyModel that's why `holdingsTextFormat` is used instead.
-                        expression: d.holdingsTextFormat(model.type, model.name, model.amount)
-                   }
-                }
-                permissionName: model.permissionsObjectModel.text
-                permissionImageSource: model.permissionsObjectModel.imageSource
-
-                SortFilterProxyModel {
-                    id: proxiedChannelsModel
-
-                    sourceModel: model.channelsListModel
-
-                    proxyRoles: [
-                        ExpressionRole {
-                            name: "imageSource"
-                            expression: model.iconSource
-                        }
-                   ]
+                    assetsModel: root.assetsModel
+                    collectiblesModel: root.collectiblesModel
                 }
 
-                channelsListModel: proxiedChannelsModel.count
-                                   ? proxiedChannelsModel : communityItemModel
+                permissionType: model.permissionType
+
+                ChannelsSelectionModel {
+                    id: channelsSelectionModel
+
+                    sourceModel: model.channelsListModel ?? null
+                    channelsModel: root.channelsModel
+                }
+
+                channelsListModel: channelsSelectionModel.count
+                                   ? channelsSelectionModel : communityItemModel
                 isPrivate: model.isPrivate
 
-                onEditClicked: root.editPermission(model.index, model.holdingsListModel,
-                                                   model.permissionsObjectModel,
-                                                   model.channelsListModel, model.isPrivate)
+                onEditClicked: root.editPermissionRequested(model.index)
+                onDuplicateClicked: root.duplicatePermissionRequested(model.index)
 
-                onDuplicateClicked: store.duplicatePermission(model.index)
-                onRemoveClicked: root.removePermission(model.index)
+                onRemoveClicked: {
+                    d.permissionIndexToRemove = index
+                    declineAllDialog.open()
+                }
             }
         }
     }
 
-    Component {
-        id: deletePopup
-        ConfirmationDialog {
-            id: declineAllDialog
-            header.title: qsTr("Sure you want to delete permission")
-            confirmationText: qsTr("If you delete this permission, any of your community members who rely on this permission will loose the access this permission gives them.")
-            onConfirmButtonClicked: {
-                store.removePermission(d.permissionIndexToRemove)
-                close()
-            }
+    ConfirmationDialog {
+        id: declineAllDialog
+
+        header.title: qsTr("Sure you want to delete permission")
+        confirmationText: qsTr("If you delete this permission, any of your community members who rely on this permission will lose the access this permission gives them.")
+
+        onConfirmButtonClicked: {
+            root.removePermissionRequested(d.permissionIndexToRemove)
+            close()
         }
     }
-
 }

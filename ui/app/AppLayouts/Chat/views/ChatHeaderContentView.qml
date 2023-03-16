@@ -51,16 +51,9 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.right: d.selectingMembers ? parent.right : undefined
+        anchors.right: d.selectingMembers ? parent.right : actionButtons.left
 
         sourceComponent: d.selectingMembers ? membersSelector : statusChatInfoButton
-    }
-
-    Rectangle {
-        anchors.fill: actionButtons
-        visible: actionButtons.visible
-        opacity: 0.8
-        color: Style.current.background
     }
 
     RowLayout {

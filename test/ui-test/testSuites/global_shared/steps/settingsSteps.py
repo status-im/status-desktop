@@ -72,6 +72,7 @@ def step(context: any, settings_type:str):
 @Given("the user opens the community named \"|any|\"")
 def step(context, community_name:str):
     _settingsScreen.open_community(community_name)    
+
     
 #########################
 ### ACTIONS region:
@@ -287,7 +288,6 @@ def step(context):
 @Then("the user opens the community named \"|any|\"")
 def step(context, community_name:str):
     _settingsScreen.open_community(community_name)
-
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:

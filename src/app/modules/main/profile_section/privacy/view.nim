@@ -78,3 +78,5 @@ QtObject:
   proc tryRemoveFromKeyChain*(self: View) {.slot.} =
     self.delegate.tryRemoveFromKeyChain()
     
+  proc backupData*(self: View): int {.slot.} =
+    return self.delegate.backupData().int

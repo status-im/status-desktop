@@ -60,6 +60,7 @@ Control {
     property bool overrideBackground: false
     property bool profileClickable: true
     property bool hideMessage: false
+    property bool isInPinnedPopup
 
     property StatusMessageDetails messageDetails: StatusMessageDetails {}
     property StatusMessageDetails replyDetails: StatusMessageDetails {}
@@ -76,7 +77,7 @@ Control {
     signal stickerClicked()
     signal resendClicked()
 
-    signal editCompleted(var newMsgText)
+    signal editCompleted(string newMsgText)
     signal editCancelled()
     signal stickerLoaded()
     signal linkActivated(string link)
@@ -242,42 +243,58 @@ Control {
                             sender: root.messageDetails.sender
                             amISender: root.messageDetails.amISender
                             messageOriginInfo: root.messageDetails.messageOriginInfo
-                            showResendButton: root.hasExpired && root.messageDetails.amISender && !editMode
+                            showResendButton: root.hasExpired && root.messageDetails.amISender && !editMode && !root.isInPinnedPopup
                             showSendingLoader: root.isSending && root.messageDetails.amISender && !editMode
                             resendError: root.messageDetails.amISender && !editMode ? root.resendError : ""
                             onClicked: root.senderNameClicked(sender, mouse)
                             onResendClicked: root.resendClicked()
                             timestamp: root.timestamp
+                            showFullTimestamp: root.isInPinnedPopup
                             displayNameClickable: root.profileClickable
                         }
                     }
                     Loader {
                         Layout.fillWidth: true
                         active: (!root.editMode && !!root.messageDetails.messageText && !root.hideMessage
-                             && ((root.messageDetails.contentType === StatusMessage.ContentType.Text)
-                             || (root.messageDetails.contentType === StatusMessage.ContentType.Emoji) ||
-                                (root.messageDetails.contentType === StatusMessage.ContentType.DiscordMessage)))
+                                 && ((root.messageDetails.contentType === StatusMessage.ContentType.Text) ||
+                                     (root.messageDetails.contentType === StatusMessage.ContentType.Emoji) ||
+                                     (root.messageDetails.contentType === StatusMessage.ContentType.DiscordMessage) ||
+                                     (root.messageDetails.contentType === StatusMessage.ContentType.Invitation)))
                         visible: active
                         sourceComponent: StatusTextMessage {
                             objectName: "StatusMessage_textMessage"
                             messageDetails: root.messageDetails
                             isEdited: root.isEdited
+                            allowShowMore: !root.isInPinnedPopup
+                            textField.anchors.rightMargin: root.isInPinnedPopup ? /*Style.current.xlPadding*/ 32 : 0 // margin for the "Unpin" floating button
                             onLinkActivated: {
                                 root.linkActivated(link);
                             }
                         }
                     }
-
                     Loader {
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Image && !editMode
                         visible: active
-                        sourceComponent: StatusImageMessage {
-                            source: root.messageDetails.contentType === StatusMessage.ContentType.Image ? root.messageDetails.messageContent : ""
-                            onClicked: root.imageClicked(image, mouse, imageSource)
-                            shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                        sourceComponent: Column {
+                            spacing: 8
+                            Loader {
+                                active: root.messageDetails.messageText !== ""
+                                visible: active
+                                sourceComponent: StatusTextMessage {
+                                    messageDetails: root.messageDetails
+                                    onLinkActivated: {
+                                        root.linkActivated(link);
+                                    }
+                                }
+                            }
+
+                            StatusImageMessage {
+                                source: root.messageDetails.messageContent
+                                onClicked: root.imageClicked(image, mouse, imageSource)
+                                shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                            }
                         }
                     }
-
                     Loader {
                         active: root.messageAttachments && !editMode
                         visible: active
@@ -294,18 +311,13 @@ Control {
                             }
                         }
                     }
-
-                    Loader {
+                    StatusSticker {
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Sticker && !editMode
                         visible: active
-                        sourceComponent: StatusSticker {
-                            asset.isImage: true
-                            asset.name: root.messageDetails.messageContent
-                            onLoaded: root.stickerLoaded()
-                            onClicked: {
-                                root.stickerClicked()
-                            }
-                        }
+                        asset.isImage: true
+                        asset.name: root.messageDetails.messageContent
+                        onStickerLoaded: root.stickerLoaded()
+                        onClicked: root.stickerClicked()
                     }
                     Loader {
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Audio && !editMode
@@ -371,11 +383,8 @@ Control {
             anchors.rightMargin: 20
             anchors.top: parent.top
             anchors.topMargin: -8
-            sourceComponent: Component {
-                StatusMessageQuickActions {
-                    id: quickActionsPanel
-                    items: root.quickActions
-                }
+            sourceComponent: StatusMessageQuickActions {
+                items: root.quickActions
             }
         }
     }

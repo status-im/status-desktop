@@ -18,12 +18,7 @@ RowLayout {
     property Component messageSubheaderComponent: null
     property Component messageBadgeComponent: null
 
-    property StatusMessageDetails messageDetails: StatusMessageDetails {
-        sender.profileImage {
-            width: 40
-            height: 40
-        }
-    }
+    property StatusMessageDetails messageDetails: StatusMessageDetails {}
 
     signal openProfilePopup()
 

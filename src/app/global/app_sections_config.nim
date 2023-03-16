@@ -1,6 +1,8 @@
 const CHAT_SECTION_NAME* = "Messages"
 const CHAT_SECTION_ICON* = "chat"
 
+const LOADING_SECTION_ID* = "loadingSection"
+
 const COMMUNITIESPORTAL_SECTION_ID* = "communitiesPortal"
 const COMMUNITIESPORTAL_SECTION_NAME* = "Communities Portal"
 const COMMUNITIESPORTAL_SECTION_ICON* = "communities"

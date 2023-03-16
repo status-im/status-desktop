@@ -188,7 +188,7 @@ QtObject:
         watchOnly.add(item)
 
       # Accounts imported with Seed phrase
-      elif item.getWalletType() == SEED:
+      elif item.getWalletType() == SEED and imported.all(x => cmpIgnoreCase(x.getDerivedfrom(), item.getDerivedFrom()) != 0):
         var generatedAccs1: Model = newModel()
         var filterItems: seq[Item] = items.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0)
         generatedAccs1.setItems(filterItems)
@@ -246,6 +246,11 @@ QtObject:
     self.setDerivedAddressesLoading(false)
     self.derivedAddressesChanged()
 
+  proc getDerivedAddress*(self: View, password: string, derivedFrom: string, path: string, hashPassword: bool) {.slot.} =
+    self.setDerivedAddressesLoading(true)
+    self.setDerivedAddressesError("")
+    self.delegate.getDerivedAddress(password, derivedfrom, path, hashPassword)
+
   proc getDerivedAddressList*(self: View, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) {.slot.} =
     self.setDerivedAddressesLoading(true)
     self.setDerivedAddressesError("")
@@ -296,5 +301,5 @@ QtObject:
   proc destroySharedKeycarModule*(self: View) {.slot.} =
     self.delegate.destroySharedKeycarModule()
 
-  proc authenticateUserAndDeriveAddressOnKeycardForPath*(self: View, keyUid: string, derivationPath: string) {.slot.} =
-    self.delegate.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath)
+  proc authenticateUserAndDeriveAddressOnKeycardForPath*(self: View, keyUid: string, derivationPath: string, searchForFirstAvailableAddress: bool) {.slot.} =
+    self.delegate.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath, searchForFirstAvailableAddress)

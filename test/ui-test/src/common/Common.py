@@ -5,13 +5,13 @@ import drivers.SDKeyboardCommands as keyCommands
 
 def start_application(app_name: str):
     driver.start_application(app_name)
-    
+
 def click_on_an_object(objName: str):
-    driver.click_obj_by_name(objName)    
-    
+    driver.click_obj_by_name(objName)
+
 def input_text(text: str, objName: str):
-    driver.type(objName, text)    
-    
+    driver.type_text(objName, text)
+
 def object_not_enabled(objName: str):
     verification.verify_object_enabled(objName, 500, False)
 

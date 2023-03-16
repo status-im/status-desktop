@@ -4,11 +4,13 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/gif/service as gif_service
 import ../../../../../../app_service/service/gif/dto
+import ../../../../../core/eventemitter
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     sectionId: string
+    events: EventEmitter
     chatId: string
     belongsToCommunity: bool
     communityService: community_service.Service
@@ -17,6 +19,7 @@ type
 
 proc newController*(
     delegate: io_interface.AccessInterface,
+    events: EventEmitter,
     sectionId: string,
     chatId: string,
     belongsToCommunity: bool,
@@ -26,6 +29,7 @@ proc newController*(
     ): Controller =
   result = Controller()
   result.delegate = delegate
+  result.events = events
   result.sectionId = chatId
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
@@ -37,7 +41,13 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  discard
+  self.events.on(SIGNAL_LOAD_RECENT_GIFS_DONE) do(e:Args):
+    let args = GifsArgs(e)
+    self.delegate.loadRecentGifsDone(args.gifs)
+
+  self.events.on(SIGNAL_LOAD_FAVORITE_GIFS_DONE) do(e:Args):
+    let args = GifsArgs(e)
+    self.delegate.loadFavoriteGifsDone(args.gifs)
 
 proc getChatId*(self: Controller): string =
   return self.chatId
@@ -83,6 +93,12 @@ proc getTrendingsGifs*(self: Controller): seq[GifDto] =
 
 proc getRecentsGifs*(self: Controller): seq[GifDto] =
   return self.gifService.getRecents()
+
+proc loadRecentGifs*(self: Controller) =
+  self.gifService.asyncLoadRecentGifs()
+
+proc loadFavoriteGifs*(self: Controller) =
+  self.gifService.asyncLoadFavoriteGifs()
 
 proc getFavoritesGifs*(self: Controller): seq[GifDto] =
   return self.gifService.getFavorites()

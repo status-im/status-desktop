@@ -1,20 +1,24 @@
 proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
   if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-    keycardEvent.error.len > 0 and
-    keycardEvent.error == ErrorConnection:
-      controller.resumeCurrentFlowLater()
-      if state.stateType == StateType.LoginPlugin:
-        return nil
-      return createState(StateType.LoginPlugin, state.flowType, nil)
+    keycardEvent.error.len > 0:
+      if keycardEvent.error == ErrorPCSC:
+        return createState(StateType.LoginNoPCSCService, state.flowType, nil)
+      if keycardEvent.error == ErrorNoReader:
+        controller.reRunCurrentFlowLater()
+        if state.stateType == StateType.LoginPlugin:
+          return nil
+        return createState(StateType.LoginPlugin, state.flowType, nil)
   if keycardFlowType == ResponseTypeValueInsertCard and 
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
+      controller.reRunCurrentFlowLater()
       if state.stateType == StateType.LoginKeycardInsertKeycard:
+        controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = true))
         return nil
-      return createState(StateType.LoginKeycardInsertKeycard, state.flowType, state.getBackState)
+      return createState(StateType.LoginKeycardInsertKeycard, state.flowType, nil)
   if keycardFlowType == ResponseTypeValueCardInserted:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
-    return createState(StateType.LoginKeycardInsertedKeycard, state.flowType, state.getBackState)
+    return createState(StateType.LoginKeycardInsertedKeycard, state.flowType, nil)
 
 proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
   let ensureState = ensureReaderAndCardPresenceLogin(state, keycardFlowType, keycardEvent, controller)

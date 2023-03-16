@@ -5,6 +5,7 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/community_tokens/service as community_tokens_service
 
 type
   Controller* = ref object of RootObj
@@ -12,18 +13,21 @@ type
     events: EventEmitter
     communityService: community_service.Service
     contactsService: contacts_service.Service
+    communityTokensService: community_tokens_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service,
     contactsService: contacts_service.Service,
+    communityTokensService: community_tokens_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.communityService = communityService
   result.contactsService = contactsService
+  result.communityTokensService = communityTokensService
 
 proc delete*(self: Controller) =
   discard
@@ -42,8 +46,8 @@ proc init*(self: Controller) =
     self.delegate.onImportCommunityErrorOccured(args.community.id, args.error)
 
   self.events.on(SIGNAL_CURATED_COMMUNITY_FOUND) do(e:Args):
-    let args = CuratedCommunityArgs(e)
-    self.delegate.curatedCommunityAdded(args.curatedCommunity)
+    let args = CommunityArgs(e)
+    self.delegate.curatedCommunityAdded(args.community)
 
   self.events.on(SIGNAL_COMMUNITY_ADDED) do(e:Args):
     let args = CommunityArgs(e)
@@ -60,7 +64,7 @@ proc init*(self: Controller) =
     let args = CommunitiesArgs(e)
     for community in args.communities:
       self.delegate.communityEdited(community)
-      self.delegate.curatedCommunityEdited(CuratedCommunity(communityId: community.id, available: true, community:community))
+      self.delegate.curatedCommunityEdited(community)
 
   self.events.on(SIGNAL_COMMUNITY_MUTED) do(e:Args):
     let args = CommunityMutedArgs(e)
@@ -86,13 +90,23 @@ proc init*(self: Controller) =
     let args = CommunityIdArgs(e)
     self.delegate.communityHistoryArchivesDownloadFinished(args.communityId)
 
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADING) do(e:Args):
+    self.delegate.curatedCommunitiesLoading()
+
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED) do(e:Args):
+    self.delegate.curatedCommunitiesLoadingFailed()
+
+  self.events.on(SIGNAL_CURATED_COMMUNITIES_LOADED) do(e:Args):
+    let args = CommunitiesArgs(e)
+    self.delegate.curatedCommunitiesLoaded(args.communities)
+
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
 
 proc getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()
 
-proc getCuratedCommunities*(self: Controller): seq[CuratedCommunity] =
+proc getCuratedCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getCuratedCommunities()
 
 proc spectateCommunity*(self: Controller, communityId: string): string =
@@ -215,6 +229,9 @@ proc userCanJoin*(self: Controller, communityId: string): bool =
 proc isCommunityRequestPending*(self: Controller, communityId: string): bool =
   return self.communityService.isCommunityRequestPending(communityId)
 
+proc asyncLoadCuratedCommunities*(self: Controller) =
+  self.communityService.asyncLoadCuratedCommunities()
+
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)
 
@@ -223,3 +240,6 @@ proc requestExtractDiscordChannelsAndCategories*(self: Controller, filesToImport
 
 proc requestCancelDiscordCommunityImport*(self: Controller, id: string) =
   self.communityService.requestCancelDiscordCommunityImport(id)
+
+proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
+  self.communityTokensService.getCommunityTokens(communityId)

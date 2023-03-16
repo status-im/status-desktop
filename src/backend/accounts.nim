@@ -1,5 +1,5 @@
 import json, json_serialization, chronicles, strutils
-import ./core, ./utils
+import ./core, ../app_service/common/utils
 import ./response_type
 
 import status_go
@@ -300,6 +300,16 @@ proc verifyAccountPassword*(address: string, password: string, keystoreDir: stri
     error "error doing rpc request", methodName = "verifyAccountPassword", exception=e.msg
     raise newException(RpcException, e.msg)
 
+proc verifyDatabasePassword*(keyuid: string, hashedPassword: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.verifyDatabasePassword(keyuid, hashedPassword)
+    result.result = Json.decode(response, JsonNode)
+
+  except RpcException as e:
+    error "error doing rpc request", methodName = "verifyDatabasePassword", exception=e.msg
+    raise newException(RpcException, e.msg)
+
 proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [keyUID, imagePath, aX, aY, bX, bY]
@@ -312,6 +322,10 @@ proc deleteIdentityImage*(keyUID: string): RpcResponse[JsonNode] {.raises: [Exce
 proc setDisplayName*(displayName: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [displayName]
   result = core.callPrivateRPC("setDisplayName".prefix, payload)
+
+proc getDerivedAddress*(password: string, derivedFrom: string, path: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [password, derivedFrom, path]
+  result = core.callPrivateRPC("wallet_getDerivedAddressForPath", payload)
 
 proc getDerivedAddressList*(password: string, derivedFrom: string, path: string, pageSize: int = 0, pageNumber: int = 6,): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [password, derivedFrom, path, pageSize, pageNumber ]

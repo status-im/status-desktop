@@ -28,10 +28,10 @@ def step(context):
 ### ACTIONS region:
 #########################
 
-@When("the user adds watch only account \"|any|\" named \"|any|\"")
+@When("the user adds watch only account \"|any|\" named \"|any|\" and authenticated using password \"|any|\"")
 @verify_screenshot
-def step(context, address, account_name):
-    _walletScreen.add_watch_only_account(account_name, address)
+def step(context, address, account_name, root_password):
+    _walletScreen.add_watch_only_account(account_name, address, root_password)
 
 @When("an account named \"|any|\" is generated and authenticated using password \"|any|\"")
 def step(context, account_name, password):
@@ -39,11 +39,11 @@ def step(context, account_name, password):
 
 @When("an account named \"|any|\" is added via private key \"|any|\" and authenticated using password \"|any|\"")
 def step(context, account_name, private_key, password):
-    _walletScreen.import_private_key(account_name, password, private_key)  
+    _walletScreen.import_private_key(account_name, password, private_key)
     
-@When("an account named \"|any|\" is added via imported seed phrase \"|any|\" and authenticated using password \"|any|\"")     
+@When("an account named \"|any|\" is added via imported seed phrase \"|any|\" and authenticated using password \"|any|\"")
 def step(context, account_name, mnemonic, password):
-    _walletScreen.import_seed_phrase(account_name, password, mnemonic)  
+    _walletScreen.import_seed_phrase(account_name, password, mnemonic)
 
 @When("the user sends a transaction to himself from account \"|any|\" of \"|any|\" \"|any|\" on \"|any|\" with password \"|any|\"")
 def step(context, account_name, amount, token, chain_name, password):

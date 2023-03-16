@@ -4,10 +4,10 @@
 <context>
     <name>AppMain</name>
     <message numerus="yes">
-        <location filename="../app/mainui/AppMain.qml" line="672"/>
-        <location filename="../app/mainui/AppMain.qml" line="681"/>
-        <location filename="../app/mainui/AppMain.qml" line="672"/>
-        <location filename="../app/mainui/AppMain.qml" line="681"/>
+        <location filename="../app/mainui/AppMain.qml" line="541"/>
+        <location filename="../app/mainui/AppMain.qml" line="550"/>
+        <location filename="../app/mainui/AppMain.qml" line="541"/>
+        <location filename="../app/mainui/AppMain.qml" line="550"/>
         <source>%n issue(s)</source>
         <translation>
             <numerusform>%n issue</numerusform>
@@ -18,8 +18,8 @@
 <context>
     <name>ChatHeaderContentView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Chat/views/ChatHeaderContentView.qml" line="282"/>
-        <location filename="../app/AppLayouts/Chat/views/ChatHeaderContentView.qml" line="282"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatHeaderContentView.qml" line="277"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatHeaderContentView.qml" line="277"/>
         <source>%n member(s)</source>
         <translation>
             <numerusform>%n member</numerusform>
@@ -52,12 +52,22 @@
     </message>
 </context>
 <context>
-    <name>CommunityColumnView</name>
+    <name>CommunityColumnHeaderPanel</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="59"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="59"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityColumnHeaderPanel.qml" line="33"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityColumnHeaderPanel.qml" line="33"/>
         <source>%n member(s)</source>
         <translation>
+            <numerusform>%n member</numerusform>
+            <numerusform>%n members</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
+    <name>CommunityColumnView</name>
+    <message numerus="yes">
+        <source>%n member(s)</source>
+        <translation type="vanished">
             <numerusform>%n member</numerusform>
             <numerusform>%n members</numerusform>
         </translation>
@@ -90,8 +100,8 @@
 <context>
     <name>CommunitySettingsView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="89"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="89"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="95"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="95"/>
         <source>%n member(s)</source>
         <translation>
             <numerusform>%n member</numerusform>
@@ -102,8 +112,8 @@
 <context>
     <name>DiscordImportProgressContents</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="241"/>
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="241"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="245"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="245"/>
         <source>%n more issue(s) downloading assets</source>
         <translation>
             <numerusform>%n more issue downloading assets</numerusform>
@@ -111,8 +121,8 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="287"/>
-        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="287"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="292"/>
+        <location filename="../app/AppLayouts/CommunitiesPortal/popups/DiscordImportProgressContents.qml" line="292"/>
         <source>‘%1’ was imported with %n issue(s).</source>
         <translation>
             <numerusform>‘%1’ was imported with %n issue.</numerusform>
@@ -147,8 +157,8 @@
 <context>
     <name>InvitationBubbleView</name>
     <message numerus="yes">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="156"/>
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="156"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="165"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="165"/>
         <source>%n member(s)</source>
         <translation>
             <numerusform>%n member</numerusform>
@@ -180,10 +190,10 @@
 <context>
     <name>KeycardPin</name>
     <message numerus="yes">
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="274"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="309"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="274"/>
-        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="309"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="275"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="310"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="275"/>
+        <location filename="../imports/shared/popups/keycard/states/KeycardPin.qml" line="310"/>
         <source>%n attempt(s) remaining</source>
         <translation>
             <numerusform>%n attempt remaining</numerusform>
@@ -228,10 +238,78 @@
     </message>
 </context>
 <context>
+    <name>LocaleUtils</name>
+    <message numerus="yes">
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="229"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="229"/>
+        <source>%n year(s) ago</source>
+        <translation>
+            <numerusform>%n year ago</numerusform>
+            <numerusform>%n years ago</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="234"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="234"/>
+        <source>%n month(s) ago</source>
+        <translation>
+            <numerusform>%n month ago</numerusform>
+            <numerusform>%n months ago</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="239"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="239"/>
+        <source>%n week(s) ago</source>
+        <translation>
+            <numerusform>%n week ago</numerusform>
+            <numerusform>%n weeks ago</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="244"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="244"/>
+        <source>%n day(s) ago</source>
+        <translation>
+            <numerusform>yesterday</numerusform>
+            <numerusform>%n days ago</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="249"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="249"/>
+        <source>%n hour(s) ago</source>
+        <translation>
+            <numerusform>%n hour ago</numerusform>
+            <numerusform>%n hours ago</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="254"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="254"/>
+        <source>%n min(s) ago</source>
+        <comment>x minute(s) ago</comment>
+        <translation>
+            <numerusform>%n min ago</numerusform>
+            <numerusform>%n mins ago</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="259"/>
+        <location filename="../StatusQ/src/StatusQ/Core/LocaleUtils.qml" line="259"/>
+        <source>%n sec(s) ago</source>
+        <comment>x second(s) ago</comment>
+        <translation>
+            <numerusform>%n sec ago</numerusform>
+            <numerusform>%n secs ago</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>LoginView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1070"/>
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1070"/>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1102"/>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="1102"/>
         <source>%n attempt(s) remaining</source>
         <translation>
             <numerusform>%n attempt remaining</numerusform>
@@ -254,8 +332,8 @@
 <context>
     <name>NetworkFilter</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="39"/>
-        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="39"/>
+        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="50"/>
+        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="50"/>
         <source>%n network(s)</source>
         <translation>
             <numerusform>%n network</numerusform>
@@ -266,8 +344,8 @@
 <context>
     <name>NewMessagesMarker</name>
     <message numerus="yes">
-        <location filename="../imports/shared/views/chat/NewMessagesMarker.qml" line="33"/>
-        <location filename="../imports/shared/views/chat/NewMessagesMarker.qml" line="33"/>
+        <location filename="../imports/shared/views/chat/NewMessagesMarker.qml" line="35"/>
+        <location filename="../imports/shared/views/chat/NewMessagesMarker.qml" line="35"/>
         <source>%n missed message(s) since %1</source>
         <translation>
             <numerusform>%n missed message since %1</numerusform>
@@ -297,6 +375,27 @@
     </message>
 </context>
 <context>
+    <name>PermissionQualificationPanel</name>
+    <message numerus="yes">
+        <location filename="../app/AppLayouts/Chat/panels/communities/PermissionQualificationPanel.qml" line="54"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/PermissionQualificationPanel.qml" line="54"/>
+        <source>%L1% of the %Ln community member(s) with known addresses will qualify for this permission.</source>
+        <translation>
+            <numerusform>%L1% of the %Ln community member with known addresses will qualify for this permission.</numerusform>
+            <numerusform>%L1% of the %Ln community members with known addresses will qualify for this permission.</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../app/AppLayouts/Chat/panels/communities/PermissionQualificationPanel.qml" line="56"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/PermissionQualificationPanel.qml" line="56"/>
+        <source>The addresses of %Ln community member(s) are unknown.</source>
+        <translation>
+            <numerusform>The addresses of %Ln community member are unknown.</numerusform>
+            <numerusform>The addresses of %Ln community members are unknown.</numerusform>
+        </translation>
+    </message>
+</context>
+<context>
     <name>PinnedMessagesPopup</name>
     <message numerus="yes">
         <location filename="../app/AppLayouts/Chat/popups/PinnedMessagesPopup.qml" line="30"/>
@@ -311,8 +410,8 @@
 <context>
     <name>SeedPhraseInputView</name>
     <message numerus="yes">
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="99"/>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="99"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="118"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="118"/>
         <source>%n word(s)</source>
         <translation>
             <numerusform>%n word</numerusform>
@@ -335,8 +434,8 @@
 <context>
     <name>StatusChatInfoButton</name>
     <message numerus="yes">
-        <location filename="../StatusQ/src/StatusQ/Controls/StatusChatInfoButton.qml" line="180"/>
-        <location filename="../StatusQ/src/StatusQ/Controls/StatusChatInfoButton.qml" line="180"/>
+        <location filename="../StatusQ/src/StatusQ/Controls/StatusChatInfoButton.qml" line="194"/>
+        <location filename="../StatusQ/src/StatusQ/Controls/StatusChatInfoButton.qml" line="194"/>
         <source>%Ln pinned message(s)</source>
         <translation>
             <numerusform>%Ln pinned message</numerusform>
@@ -347,8 +446,8 @@
 <context>
     <name>Utils</name>
     <message numerus="yes">
-        <location filename="../imports/utils/Utils.qml" line="383"/>
-        <location filename="../imports/utils/Utils.qml" line="383"/>
+        <location filename="../imports/utils/Utils.qml" line="228"/>
+        <location filename="../imports/utils/Utils.qml" line="228"/>
         <source>Password needs to be %n character(s) or more</source>
         <translation>
             <numerusform>Password needs to be %n character or more</numerusform>

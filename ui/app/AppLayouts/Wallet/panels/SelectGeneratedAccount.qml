@@ -34,9 +34,9 @@ StatusSelect {
 
     QtObject {
         id: _internal
-        property string importSeedPhraseString : qsTr("Import new Seed Phrase")
-        property string importPrivateKeyString : qsTr("Generate from Private key")
-        property string addWatchOnlyAccountString : qsTr("Add a watch-only address")
+        property string importSeedPhraseID: "importNewSeedPhrase"
+        property string importPrivateKeyID: "generateFromPrivateKey"
+        property string addWatchOnlyAccountID: "watchOnlyAccount"
 
         property var delegateModel: DelegateModel {
             model: RootStore.generatedAccountsViewModel
@@ -60,9 +60,9 @@ StatusSelect {
                     }
                 }
                 generatedAccountsModel.append({"name": qsTr("Add new"), "iconName": "", "derivedfrom": "", "isHeader": true, "keyUid": "", "migratedToKeycard": false})
-                generatedAccountsModel.append({"name": _internal.importSeedPhraseString, "iconName": "seed-phrase", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false})
-                generatedAccountsModel.append({"name": _internal.importPrivateKeyString, "iconName": "password", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false})
-                generatedAccountsModel.append({"name": _internal.addWatchOnlyAccountString, "iconName": "show", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false})
+                generatedAccountsModel.append({"name": qsTr("Import new Seed Phrase"), "iconName": "seed-phrase", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false, "objectName": _internal.importSeedPhraseID})
+                generatedAccountsModel.append({"name": qsTr("Generate from Private key"), "iconName": "password", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false, "objectName": _internal.importPrivateKeyID})
+                generatedAccountsModel.append({"name": qsTr("Add a watch-only address"), "iconName": "show", "derivedfrom": "", "isHeader": false, "keyUid": "", "migratedToKeycard": false, "objectName": _internal.addWatchOnlyAccountID})
             }
         }
     }
@@ -89,6 +89,7 @@ StatusSelect {
     }
     menuDelegate: StatusListItem {
         id: defaultListItem
+        objectName: !!model.objectName ? model.objectName : ""
         title: model.name
         asset.name: model.iconName
         tagsModel : model.generatedModel
@@ -108,9 +109,9 @@ StatusSelect {
             titleText.color: Theme.palette.indirectColor1
         }
         onClicked: {
-            selectAccountType.addAccountType = (model.name === _internal.importSeedPhraseString) ? Constants.AddAccountType.ImportSeedPhrase :
-                                             (model.name === _internal.importPrivateKeyString) ? Constants.AddAccountType.ImportPrivateKey :
-                                             (model.name === _internal.addWatchOnlyAccountString) ? Constants.AddAccountType.WatchOnly :
+            selectAccountType.addAccountType = (model.objectName === _internal.importSeedPhraseID) ? Constants.AddAccountType.ImportSeedPhrase :
+                                             (model.objectName === _internal.importPrivateKeyID) ? Constants.AddAccountType.ImportPrivateKey :
+                                             (model.objectName === _internal.addWatchOnlyAccountID) ? Constants.AddAccountType.WatchOnly :
                                              Constants.AddAccountType.GenerateNew
             selectedItem.title = model.name
             selectedItem.asset.name = model.iconName

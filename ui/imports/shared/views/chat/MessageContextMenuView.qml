@@ -84,7 +84,8 @@ StatusMenu {
         if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
             return false
         }
-        return contactDetails.incomingVerificationStatus === Constants.verificationStatus.verifying
+        return contactDetails.incomingVerificationStatus === Constants.verificationStatus.verifying ||
+                contactDetails.incomingVerificationStatus === Constants.verificationStatus.verified
     }
     readonly property bool isVerificationRequestSent: {
         if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
@@ -167,8 +168,9 @@ StatusMenu {
     }
 
     ProfileHeader {
-        width: parent.width
         visible: root.isProfile
+        width: parent.width
+        height: visible ? implicitHeight : 0
 
         displayNameVisible: false
         displayNamePlusIconsVisible: true

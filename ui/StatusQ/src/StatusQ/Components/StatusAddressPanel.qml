@@ -20,7 +20,7 @@ import StatusQ.Controls 0.1
 
     \qmlproperty string address address to show
     \qmlproperty bool showCopy if \c true shows the copy action which triggers \c doCopy signal
-    \qmlproperty bool autHideCopyIcon if \c true shows the copy action when hovered. \see showCopy
+    \qmlproperty bool autHideCopyIcon if \c true and \c showCopy is \c true shows the copy action only when hovered. \see showCopy
     \qmlproperty alias showFrame if \c true displays frame and \c 0x prefix
     \qmlproperty bool expandable if \c true user can toggle between expanded and compact version; \see expanded
     \qmlproperty bool expanded if \c true show address in full; if \c false show the address in compact mode eliding in the middle
@@ -124,8 +124,7 @@ Item {
             StatusIcon {
                 icon: "copy"
 
-                visible: root.autHideCopyIcon ? (mainMouseArea.containsMouse || copyMouseArea.containsMouse )
-                                              : root.showCopy
+                visible: root.showCopy && (!root.autHideCopyIcon || (mainMouseArea.containsMouse || copyMouseArea.containsMouse ))
 
                 Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: (statusAddress.font.pixelSize * 1.2).toFixed()

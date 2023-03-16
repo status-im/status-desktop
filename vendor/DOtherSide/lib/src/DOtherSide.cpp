@@ -50,6 +50,7 @@
 #include <QTranslator>
 #include <QSettings>
 #include <QTimer>
+#include <QSysInfo>
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
 #endif
@@ -73,6 +74,7 @@
 #include "DOtherSide/Status/SoundManager.h"
 
 #include "StatusQ/QClipboardProxy.h"
+#include "StatusQ/modelutilsinternal.h"
 #include "StatusQ/rxvalidator.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
@@ -83,6 +85,7 @@
 #endif
 
 #include <qqmlsortfilterproxymodeltypes.h>
+#include <QZXing.h>
 
 namespace {
 
@@ -94,12 +97,14 @@ void register_meta_types()
     qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0 , 1, "StatusSyntaxHighlighter");
     qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
     qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
-
+    qmlRegisterSingletonType<ModelUtilsInternal>("StatusQ.Internal", 0 , 1, "ModelUtils",
+                                                 &ModelUtilsInternal::qmlInstance);
 #ifdef MONITORING
     qmlRegisterSingletonType<Monitor>("Monitoring", 1 , 0, "Monitor", &Monitor::qmlInstance);
 #endif
 
     qqsfpm::registerTypes();
+    QZXing::registerQMLTypes();
 }
 
 }
@@ -184,6 +189,16 @@ void dos_qguiapplication_enable_hdpi(const char *uiScaleFilePath)
 void dos_qguiapplication_initialize_opengl()
 {
     QGuiApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+}
+
+void dos_qguiapplication_try_enable_threaded_renderer()
+{
+    if(QSysInfo::buildCpuArchitecture() == "arm64" && QSysInfo::kernelType() == "darwin" && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    {
+        //Threaded renderer is crashing on M1 Macs
+        return;
+    }
+    qputenv("QSG_RENDER_LOOP", "threaded");
 }
 
 // This catches the QT and QML logs and outputs them.

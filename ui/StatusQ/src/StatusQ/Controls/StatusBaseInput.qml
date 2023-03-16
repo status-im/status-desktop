@@ -368,18 +368,23 @@ Item {
                         onCursorRectangleChanged: Utils.ensureVisible(flick, cursorRectangle)
                         onActiveFocusChanged: if (root.pristine) root.pristine = false
                         onTextChanged: {
-                            if (previousText === text) {
+                            if (previousText === text || (previousText === "" && length === 0 && length !== text.length)) {
                                 // Not sure why, but the textChanged event was triggered even if it didn't really
+
+                                // Avoid further processing on initial condition when previousText is empty
+                                // but text is set to default rich text, as it will mark input dirty and
+                                // trigger validation, with likely not valid state
                                 return
                             }
+
                             root.dirty = true
                             if (root.maximumLength > 0) {
                                 let utf8Length = Utils.encodeUtf8(text).length
                                 if (utf8Length > root.maximumLength) {
                                     var cursor = cursorPosition
                                     text = previousText
-                                    if (cursor > text.length) {
-                                        cursorPosition = text.length
+                                    if (cursor > edit.length) {
+                                        cursorPosition = edit.length
                                     } else {
                                         cursorPosition = cursor - 1
                                     }
@@ -405,7 +410,7 @@ Item {
 
                         StatusBaseText {
                             id: placeholder
-                            visible: (edit.text.length === 0)
+                            visible: (edit.length === 0)
                             anchors.fill: parent
                             verticalAlignment: parent.verticalAlignment
                             font.pixelSize: 15
@@ -436,7 +441,7 @@ Item {
         id: clearButton
 
         StatusFlatRoundButton {
-            visible: edit.text.length != 0 && root.clearable && !root.multiline
+            visible: edit.length != 0 && root.clearable && !root.multiline
                      && edit.activeFocus
             type: StatusFlatRoundButton.Type.Secondary
             width: 24

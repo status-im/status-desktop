@@ -8,6 +8,9 @@ import models/login_account_model as login_acc_model
 import models/login_account_item as login_acc_item
 import models/fetching_data_model as fetch_model
 
+import ../../../app_service/service/devices/dto/local_pairing_status as local_pairing_status
+import ../../../app_service/service/visual_identity/dto as visual_identity
+
 type
   AppState* {.pure.} = enum
     StartupState = 0
@@ -32,6 +35,7 @@ QtObject:
       remainingAttempts: int
       fetchingDataModel: fetch_model.Model
       fetchingDataModelVariant: QVariant
+      localPairingStatus: LocalPairingStatus
 
   proc delete*(self: View) =
     self.currentStartupStateVariant.delete
@@ -46,6 +50,7 @@ QtObject:
       self.fetchingDataModel.delete
     if not self.fetchingDataModelVariant.isNil:
       self.fetchingDataModelVariant.delete
+    self.localPairingStatus.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -63,6 +68,7 @@ QtObject:
     result.loginAccountsModel = login_acc_model.newModel()
     result.loginAccountsModelVariant = newQVariant(result.loginAccountsModel)
     result.remainingAttempts = -1
+    result.localPairingStatus = newLocalPairingStatus()
 
     signalConnect(result.currentStartupState, "backActionClicked()", result, "onBackActionClicked()", 2)
     signalConnect(result.currentStartupState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
@@ -296,3 +302,55 @@ QtObject:
       self.fetchingDataModelVariant = newQVariant(self.fetchingDataModel)
     self.fetchingDataModel.init(sections)
     self.fetchingDataModelChanged()
+
+  proc setConnectionString*(self: View, connectionString: string) {.slot.} =
+    self.delegate.setConnectionString(connectionString)
+
+  proc getConnectionString*(self: View): string {.slot.} =
+    return self.delegate.getConnectionString()
+
+  proc localPairingStatusChanged*(self: View) {.signal.}
+
+  proc getLocalPairingState*(self: View): int {.slot.} =
+    return self.localPairingStatus.state.int
+  QtProperty[int] localPairingState:
+    read = getLocalPairingState
+    notify = localPairingStatusChanged
+
+  proc getLocalPairingError*(self: View): string {.slot.}  =
+    return self.localPairingStatus.error
+  QtProperty[string] localPairingError:
+    read = getLocalPairingError
+    notify = localPairingStatusChanged
+
+  proc getLocalPairingName*(self: View): string {.slot.}  =
+    return self.localPairingStatus.account.name
+  QtProperty[string] localPairingName:
+    read = getLocalPairingName
+    notify = localPairingStatusChanged
+
+  proc getLocalPairingColorId*(self: View): int {.slot.}  =
+    return self.localPairingStatus.account.colorId
+  QtProperty[int] localPairingColorId:
+    read = getLocalPairingColorId
+    notify = localPairingStatusChanged
+
+  proc getLocalPairingColorHash*(self: View): string {.slot.}  =
+    return self.localPairingStatus.account.colorHash.toJson()
+  QtProperty[string] localPairingColorHash:
+    read = getLocalPairingColorHash
+    notify = localPairingStatusChanged
+
+  proc getLocalPairingImage*(self: View): string {.slot.}  =
+    if self.localPairingStatus.account.images.len != 0:
+      return self.localPairingStatus.account.images[0].uri
+  QtProperty[string] localPairingImage:
+    read = getLocalPairingImage
+    notify = localPairingStatusChanged
+
+  proc onLocalPairingStatusUpdate*(self: View, status: LocalPairingStatus) =
+    self.localPairingStatus = status
+    self.localPairingStatusChanged()
+
+  proc validateLocalPairingConnectionString*(self: View, connectionString: string): string {.slot.} =
+    return self.delegate.validateLocalPairingConnectionString(connectionString)

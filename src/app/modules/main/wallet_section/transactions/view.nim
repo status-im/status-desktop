@@ -48,14 +48,15 @@ QtObject:
 
   proc loadingTrxHistoryChanged*(self: View, isLoading: bool, address: string) {.signal.}
 
-  proc setHistoryFetchState*(self: View, address: string, isFetching: bool) =
+  proc setHistoryFetchState*(self: View, address: string, allTxLoaded: bool, isFetching: bool) =
+    if self.models.hasKey(address):
+      if not isFetching:
+        self.models[address].removePageSizeBuffer()
+      elif isFetching and self.models[address].getCount() == 0:
+        self.models[address].addPageSizeBuffer(20)
+      self.models[address].setHasMore(not allTxLoaded)
     self.fetchingHistoryState[address] = isFetching
     self.loadingTrxHistoryChanged(isFetching, address)
-
-  proc setHistoryFetchState*(self: View, accounts: seq[string], isFetching: bool) =
-    for acc in accounts:
-      self.fetchingHistoryState[acc] = isFetching
-      self.loadingTrxHistoryChanged(isFetching, acc)
 
   proc isFetchingHistory*(self: View, address: string): bool {.slot.} =
     if self.fetchingHistoryState.hasKey(address):
@@ -66,7 +67,9 @@ QtObject:
     return self.model.getCount() > 0
 
   proc loadTransactionsForAccount*(self: View, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) {.slot.} =
-    self.setHistoryFetchState(address, true)
+    if self.models.hasKey(address):
+      self.setHistoryFetchState(address, allTxLoaded=not self.models[address].getHasMore(), isFetching=true)
+      self.models[address].addPageSizeBuffer(limit)
     self.delegate.loadTransactions(address, toBlock, limit, loadMore)
 
   proc setTrxHistoryResult*(self: View, transactions: seq[Item], address: string, wasFetchMore: bool) =
@@ -74,10 +77,15 @@ QtObject:
       self.models[address] = newModel()
 
     self.models[address].addNewTransactions(transactions, wasFetchMore)
+    if self.fetchingHistoryState.hasKey(address) and self.fetchingHistoryState[address] and wasFetchMore:
+      self.models[address].addPageSizeBuffer(transactions.len)
 
   proc setHistoryFetchStateForAccounts*(self: View, addresses: seq[string], isFetching: bool) =
     for address in addresses:
-      self.setHistoryFetchState(address, isFetching)
+      if self.models.hasKey(address):
+        self.setHistoryFetchState(address, allTxLoaded = not self.models[address].getHasMore(), isFetching)
+      else:
+        self.setHistoryFetchState(address, allTxLoaded = false, isFetching)
 
   proc setModel*(self: View, address: string) {.slot.} =
     if not self.models.hasKey(address):
@@ -165,4 +173,4 @@ QtObject:
       let fromAddress = tx.getfrom()
       if not self.models.hasKey(fromAddress):
         self.models[fromAddress] = newModel()
-      self.models[fromAddress].addNewTransactions(@[tx], false)
+      self.models[fromAddress].addNewTransactions(@[tx], wasFetchMore=false)

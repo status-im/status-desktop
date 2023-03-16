@@ -90,6 +90,41 @@ Rectangle {
                     anchors.rightMargin: Style.current.padding
 
                     ColumnLayout {
+
+                        Component {
+                            id: balance
+                            StatusBaseText {
+
+                                text: {
+                                    return LocaleUtils.currencyAmountToLocaleString({
+                                                                                        amount: parseFloat(model.account.balance),
+                                                                                        symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
+                                                                                        displayDecimals: 2})
+                                }
+                                wrapMode: Text.WordWrap
+                                font.pixelSize: Constants.keycard.general.fontSize2
+                                color: Theme.palette.baseColor1
+                            }
+                        }
+
+                        Component {
+                            id: fetchingBalance
+                            StatusLoadingIndicator {
+                                width: 12
+                                height: 12
+                            }
+                        }
+
+                        Component {
+                            id: path
+                            StatusBaseText {
+                                text: model.account.path
+                                wrapMode: Text.WordWrap
+                                font.pixelSize: Constants.keycard.general.fontSize2
+                                color: Theme.palette.baseColor1
+                            }
+                        }
+
                         Row {
                             spacing: 0
                             padding: 0
@@ -113,11 +148,9 @@ Rectangle {
                             }
                         }
 
-                        StatusBaseText {
-                            text: model.account.path
-                            wrapMode: Text.WordWrap
-                            font.pixelSize: Constants.keycard.general.fontSize2
-                            color: Theme.palette.baseColor1
+                        Loader {
+                            active: Global.appIsReady
+                            sourceComponent: path
                         }
                     }
 
@@ -126,17 +159,11 @@ Rectangle {
                         Layout.preferredHeight: parent.height
                     }
 
-                    StatusBaseText {
+                    Loader {
                         Layout.alignment: Qt.AlignVCenter
-                        text: {
-                            return LocaleUtils.currencyAmountToLocaleString({
-                                        amount: parseFloat(model.account.balance.amount),
-                                        symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
-                                        displayDecimals: 2})
-                        }
-                        wrapMode: Text.WordWrap
-                        font.pixelSize: Constants.keycard.general.fontSize2
-                        color: Theme.palette.baseColor1
+                        sourceComponent: Global.appIsReady?
+                                             (model.account.balanceFetched? balance : fetchingBalance)
+                                           : path
                     }
                 }
             }

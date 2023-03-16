@@ -4,6 +4,7 @@ import QtQuick.Controls 2.13
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 
 import shared.panels 1.0
 import utils 1.0
@@ -15,9 +16,7 @@ Item {
     property var collectiblesModel
     width: parent.width
 
-    signal collectibleClicked(string collectionSlug, int collectibleId)
-
-    readonly property bool areCollectionsLoaded: root.collectiblesModel.collectionsLoaded
+    signal collectibleClicked(string address, string tokenId)
 
     Loader {
         id: contentLoader
@@ -25,7 +24,7 @@ Item {
         height: parent.height
 
         sourceComponent: {
-            if (root.areCollectionsLoaded && root.collectiblesModel.collectionCount === 0)
+            if (root.collectiblesModel.allCollectiblesLoaded && root.collectiblesModel.count === 0)
                 return empty;
             return loaded;
         }
@@ -49,18 +48,22 @@ Item {
         StatusGridView {
             id: gridView
             anchors.fill: parent
-            model: root.areCollectionsLoaded ? root.collectiblesModel : Constants.dummyModelItems
+            model: root.collectiblesModel
             cellHeight: 229
             cellWidth: 176
             delegate: CollectibleView {
                 height: gridView.cellHeight
                 width: gridView.cellWidth
-                collectibleModel: root.areCollectionsLoaded ? model : undefined
-                isLoadingDelegate: !root.areCollectionsLoaded
-                onCollectibleClicked: {
-                    root.collectibleClicked(slug, collectibleId);
-                }
+                title: model.name ? model.name : "..."
+                subTitle: model.collectionName ? model.collectionName : ""
+                imageUrl: model.imageUrl ? model.imageUrl : ""
+                backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
+                isLoading: model.isLoading
+
+                onClicked: root.collectibleClicked(model.address, model.tokenId)
             }
+
+            ScrollBar.vertical: StatusScrollBar {}
         }
     }
 }

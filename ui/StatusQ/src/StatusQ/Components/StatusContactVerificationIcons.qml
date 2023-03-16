@@ -18,6 +18,7 @@ Row {
         height: Math.min(bgHeight, dummyImage.height)
         bgWidth: root.tiny ? 10 : 16.5
         bgHeight: root.tiny ? 10 : 16.5
+        bgRadius: bgWidth / 2
         bgColor: Theme.palette.primaryColor1
         // Only used to get implicit width and height from the actual image
         property Image dummyImage: Image {
@@ -35,6 +36,7 @@ Row {
         height: Math.min(bgHeight, dummyImage.height)
         bgWidth: root.tiny ? 10 : 16
         bgHeight: root.tiny ? 10 : 16
+        bgRadius: bgWidth / 2
         bgColor: root.trustIndicator === StatusContactVerificationIcons.TrustedType.Verified ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
         // Only used to get implicit width and height from the actual image
         property Image dummyImage: Image {

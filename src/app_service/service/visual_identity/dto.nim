@@ -16,5 +16,11 @@ proc toColorHashDto*(jsonObj: JsonNode): ColorHashDto =
               )
   return
 
+proc toJson*(self: ColorHashDto): string =
+  let json = newJArray()
+  for segment in self:
+    json.add(%* {"segmentLength": segment.len, "colorId": segment.colorIdx})
+  return $json
+
 proc toColorId*(jsonObj: JsonNode): int =
   return jsonObj.getInt()

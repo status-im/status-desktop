@@ -24,23 +24,23 @@ type
     ens: string
 
 proc initItem*(
-  name: string,
-  address: string,
-  mixedCaseAddress: string,
-  path: string,
-  color: string,
-  publicKey: string,
-  walletType: string,
-  isWallet: bool,
-  isChat: bool,
-  currencyBalance: CurrencyAmount,
-  assets: token_model.Model,
-  emoji: string,
-  derivedfrom: string,
-  relatedAccounts: compact_model.Model,
-  keyUid: string,
-  migratedToKeycard: bool,
-  ens: string
+  name: string = "",
+  address: string = "",
+  mixedCaseAddress: string = "",
+  path: string = "",
+  color: string = "",
+  publicKey: string = "",
+  walletType: string = "",
+  isWallet: bool = true,
+  isChat: bool = false,
+  currencyBalance: CurrencyAmount = nil,
+  assets: token_model.Model = nil,
+  emoji: string = "",
+  derivedfrom: string = "",
+  relatedAccounts: compact_model.Model = nil,
+  keyUid: string = "",
+  migratedToKeycard: bool = false,
+  ens: string = ""
 ): Item =
   result.name = name
   result.address = address

@@ -22,7 +22,11 @@ find_package(
 
 include (../ui/StatusQ/StatusQSources.cmake)
 
-file(GLOB_RECURSE CORE_QML_FILES "../ui/StatusQ/*.qml" "../ui/app/*.qml" "../ui/imports/*.qml")
+file(GLOB_RECURSE CORE_QML_FILES
+    "../ui/StatusQ/*.qml" "../ui/app/*.qml" "../ui/imports/*.qml"
+    "../ui/StatusQ/*/qmldir" "../ui/app/*/qmldir" "../ui/imports/*/qmldir"
+)
+
 file(GLOB_RECURSE CORE_JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
 
 file(GLOB_RECURSE STORYBOOK_QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
@@ -55,6 +59,7 @@ add_executable(
   ${CORE_JS_FILES}
   ${STORYBOOK_QML_FILES}
   figma.json
+  README.md
 )
 
 target_compile_definitions(${PROJECT_NAME}
@@ -82,7 +87,7 @@ add_executable(QmlTests
 target_compile_definitions(QmlTests
                            PRIVATE QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
                            PRIVATE -DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
-target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml)
+target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml ${PROJECT_LIB})
 add_test(NAME QmlTests COMMAND QmlTests)
 
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")

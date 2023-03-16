@@ -25,6 +25,7 @@ SettingsContentBase {
     property ProfileStore profileStore
     property PrivacyStore privacyStore
     property ContactsStore contactsStore
+    property var communitiesModel
 
     titleRowComponentLoader.sourceComponent: StatusButton {
         objectName: "profileSettingsChangePasswordButton"
@@ -72,6 +73,7 @@ SettingsContentBase {
                 profileStore: root.profileStore
                 privacyStore: root.privacyStore
                 walletStore: root.walletStore
+                communitiesModel: root.communitiesModel
 
                 onVisibleChanged: if (visible) stackLayout.Layout.preferredHeight = settingsView.implicitHeight
                 Component.onCompleted: stackLayout.Layout.preferredHeight = Qt.binding(() => settingsView.implicitHeight)
@@ -82,6 +84,7 @@ SettingsContentBase {
 
                 profileStore: root.profileStore
                 contactsStore: root.contactsStore
+                communitiesModel: root.communitiesModel
                 dirtyValues: settingsView.dirtyValues
                 dirty: settingsView.dirty
 

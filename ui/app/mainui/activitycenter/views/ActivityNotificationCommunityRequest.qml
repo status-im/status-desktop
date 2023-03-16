@@ -11,11 +11,13 @@ import shared.controls 1.0
 import utils 1.0
 
 import "../controls"
+import "../stores"
 
 ActivityNotificationBase {
     id: root
 
     bodyComponent: RowLayout {
+        width: parent.width
         height: 50
         readonly property var community: notification ? 
                                 root.store.getCommunityDetailsAsJson(notification.communityId) :
@@ -48,17 +50,18 @@ ActivityNotificationBase {
             communityColor: community ? community.color : "black"
             onCommunityNameClicked: root.store.setActiveCommunity(notification.communityId)
             Layout.alignment: Qt.AlignVCenter
+            Layout.maximumWidth: 190
         }
 
         StatusBaseText {
             text: {
                 if (!notification)
                     return ""
-                if (notification.membershipStatus === Constants.activityCenterMembershipStatusPending)
+                if (notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Pending)
                     return qsTr("pending")
-                if (notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted)
+                if (notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Accepted)
                     return qsTr("accepted")
-                if (notification.membershipStatus === Constants.activityCenterMembershipStatusDeclined)
+                if (notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Declined)
                     return qsTr("declined")
                 return ""
             }
@@ -70,7 +73,7 @@ ActivityNotificationBase {
         }
     }
 
-    ctaComponent: notification && notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted ?
+    ctaComponent: notification && notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Accepted ?
                         visitComponent : null
 
     Component {

@@ -47,10 +47,11 @@ QtObject:
     threadpool: ThreadPool
     networkService: network_service.Service
     tokens: Table[int, seq[TokenDto]]
+    tokenList: seq[TokenDto]
+    tokensToAddressesMap: Table[string, Table[int, string]]
     priceCache: TimedCache[float64]
 
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
-  proc initTokenPrices(self: Service, prices: Table[string, Table[string, float64]])
   proc jsonToPricesMap(node: JsonNode): Table[string, Table[string, float64]] 
 
   proc delete*(self: Service) =
@@ -68,17 +69,12 @@ QtObject:
     result.networkService = networkService
     result.tokens = initTable[int, seq[TokenDto]]()
     result.priceCache = newTimedCache[float64]()
+    result.tokenList = @[]
+    result.tokensToAddressesMap = initTable[string, Table[int, string]]()
 
   proc loadData*(self: Service) =
     if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
       return
-
-    try:
-      let response = backend.getCachedPrices()
-      let prices = jsonToPricesMap(response.result)
-      self.initTokenPrices(prices)
-    except Exception as e:
-      error "Cached prices init error", errDesription = e.msg
 
     try:
       let networks = self.networkService.getNetworks()
@@ -100,6 +96,32 @@ QtObject:
         self.tokens[network.chainId] = default_tokens.filter(
           proc(x: TokenDto): bool = x.chainId == network.chainId
         )
+
+        let nativeToken = newTokenDto(
+          name = network.nativeCurrencyName,
+          chainId = network.chainId,
+          address = Address.fromHex("0x0000000000000000000000000000000000000000"),
+          symbol = network.nativeCurrencySymbol,
+          decimals = network.nativeCurrencyDecimals,
+          hasIcon = false,
+          pegSymbol = ""
+        )
+
+        if not self.tokensToAddressesMap.hasKey(network.nativeCurrencySymbol):
+          self.tokenList.add(nativeToken)
+          self.tokensToAddressesMap[nativeToken.symbol] = initTable[int, string]()
+
+        if not self.tokensToAddressesMap[nativeToken.symbol].hasKey(nativeToken.chainId):
+          self.tokensToAddressesMap[nativeToken.symbol][nativeToken.chainId] = $nativeToken.address
+
+        for token in default_tokens:
+          if not self.tokensToAddressesMap.hasKey(token.symbol):
+            self.tokenList.add(token)
+            self.tokensToAddressesMap[token.symbol] = initTable[int, string]()
+
+          if not self.tokensToAddressesMap[token.symbol].hasKey(token.chainId):
+            self.tokensToAddressesMap[token.symbol][token.chainId] = $token.address
+
     except Exception as e:
       error "Tokens init error", errDesription = e.msg
 
@@ -107,6 +129,16 @@ QtObject:
     signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
     self.loadData()
     
+  proc getTokenList*(self: Service): seq[TokenDto] = 
+    return self.tokenList
+
+  proc hasContractAddressesForToken*(self: Service, symbol: string): bool =
+    return self.tokensToAddressesMap.hasKey(symbol)
+
+  proc getContractAddressesForToken*(self: Service, symbol: string): Table[int, string] =
+    if self.hasContractAddressesForToken(symbol):
+      return self.tokensToAddressesMap[symbol]
+
   proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
     self.loadData()
 
@@ -117,7 +149,7 @@ QtObject:
           return token
     except Exception as e:
       error "Error finding token by symbol", msg = e.msg
-    
+
   proc findTokenByAddress*(self: Service, network: NetworkDto, address: Address): TokenDto =
     for token in self.tokens[network.chainId]:
       if token.address == address:
@@ -158,14 +190,6 @@ QtObject:
       for (currency, price) in pricePerCurrency.pairs:
         result[symbol][currency] = price.getFloat
 
-  proc initTokenPrices(self: Service, prices: Table[string, Table[string, float64]]) =
-    var cacheTable: Table[string, float64]
-    for token, pricesPerCurrency in prices:
-      for currency, price in pricesPerCurrency:
-        let cacheKey = getTokenPriceCacheKey(token, currency)
-        cacheTable[cacheKey] = price
-    self.priceCache.init(cacheTable)
-
   proc updateTokenPrices*(self: Service, tokens: seq[WalletTokenDto]) =
     # Use data fetched by walletAccountService to update local price cache
     for token in tokens:
@@ -184,7 +208,6 @@ QtObject:
     let cacheKey = getTokenPriceCacheKey(cryptoKey, fiatKey)
     if self.priceCache.isCached(cacheKey):
       return self.priceCache.get(cacheKey) * factor
-    var prices = initTable[string, Table[string, float]]()
 
     try:
       let response = backend.fetchPrices(@[cryptoKey], @[fiatKey])
@@ -196,7 +219,7 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return 0.0
-  
+
   proc getCachedTokenPrice*(self: Service, crypto: string, fiat: string, fetchIfNotPresent: bool = false): float64 =
     let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
 
@@ -242,31 +265,43 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-# Historical Balance
+  # Callback to process the response of fetchHistoricalBalanceForTokenAsJson call
   proc tokenBalanceHistoryDataResolved*(self: Service, response: string) {.slot.} =
-    # TODO
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
-      info "blance history response is not a json object"
+      warn "blance history response is not a json object"
       return
 
     self.events.emit(SIGNAL_BALANCE_HISTORY_DATA_READY, TokenBalanceHistoryDataArgs(
       result: response
     ))
 
-  proc fetchHistoricalBalanceForTokenAsJson*(self: Service, address: string, symbol: string, timeInterval: BalanceHistoryTimeInterval) =
+  proc fetchHistoricalBalanceForTokenAsJson*(self: Service, address: string, tokenSymbol: string, currencySymbol: string, timeInterval: BalanceHistoryTimeInterval) =
+    # create an empty list of chain ids
+    var chainIds: seq[int] = @[]
     let networks = self.networkService.getNetworks()
     for network in networks:
-      if network.enabled and network.nativeCurrencySymbol == symbol:
-        let arg = GetTokenBalanceHistoryDataTaskArg(
-          tptr: cast[ByteAddress](getTokenBalanceHistoryDataTask),
-          vptr: cast[ByteAddress](self.vptr),
-          slot: "tokenBalanceHistoryDataResolved",
-          chainId: network.chainId,
-          address: address,
-          symbol: symbol,
-          timeInterval: timeInterval
-        )
-        self.threadpool.start(arg)
-        return
-    error "faild to find a network with the symbol", symbol
+      if network.enabled:
+        if network.nativeCurrencySymbol == tokenSymbol:
+          chainIds.add(network.chainId)
+        else:
+          for token in self.tokens[network.chainId]:
+            if token.symbol == tokenSymbol:
+              chainIds.add(network.chainId)
+
+    if chainIds.len == 0:
+      error "faild to find a network with the symbol", tokenSymbol
+      return
+
+    let arg = GetTokenBalanceHistoryDataTaskArg(
+      tptr: cast[ByteAddress](getTokenBalanceHistoryDataTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "tokenBalanceHistoryDataResolved",
+      chainIds: chainIds,
+      address: address,
+      tokenSymbol: tokenSymbol,
+      currencySymbol: currencySymbol,
+      timeInterval: timeInterval
+    )
+    self.threadpool.start(arg)
+    return

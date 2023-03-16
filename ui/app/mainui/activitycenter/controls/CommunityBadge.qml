@@ -4,6 +4,7 @@ import QtGraphicalEffects 1.13
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import utils 1.0
@@ -30,6 +31,7 @@ Badge {
 
     RowLayout {
         id: layout
+        anchors.fill: parent
 
         anchors {
             fill: parent
@@ -61,21 +63,14 @@ Badge {
 
         RowLayout {
             spacing: 0
+            Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
 
-            StyledTextEdit {
-                Layout.maximumWidth: 300
+            StatusLinkText {
+                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
-                text: Utils.getLinkStyle(root.communityName, hoveredLink, Theme.palette.baseColor1)
-                readOnly: true
-                textFormat: Text.RichText
-                clip: true
-                color: Theme.palette.baseColor1
-                font.pixelSize: 13
-                font.weight: Font.Medium
-                onLinkActivated: {
-                    root.communityNameClicked()
-                }
+                text: root.communityName
+                onClicked: root.communityNameClicked()
             }
 
             StatusIcon {
@@ -86,20 +81,12 @@ Badge {
                 color: Theme.palette.baseColor1
             }
 
-            StyledTextEdit {
-                Layout.maximumWidth: 300
+            StatusLinkText {
+                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
                 visible: root.channelName.length > 0
-                text: Utils.getLinkStyle("#" + root.channelName, hoveredLink, Theme.palette.baseColor1)
-                readOnly: true
-                textFormat: Text.RichText
-                clip: true
-                color: Theme.palette.baseColor1
-                font.pixelSize: 13
-                font.weight: Font.Medium
-                onLinkActivated: {
-                    root.channelNameClicked()
-                }
+                text: "#" + root.channelName
+                onClicked: root.channelNameClicked()
             }
         }
     }

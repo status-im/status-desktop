@@ -24,6 +24,7 @@ Item {
         anchors.fill: parent
         sourceComponent: {
             switch (root.sharedKeycardModule.currentState.stateType) {
+            case Constants.keycardSharedState.noPCSCService:
             case Constants.keycardSharedState.pluginReader:
             case Constants.keycardSharedState.insertKeycard:
             case Constants.keycardSharedState.keycardInserted:

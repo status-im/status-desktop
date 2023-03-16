@@ -17,6 +17,7 @@ StatusListItem {
     property bool usedAsSelectOption: false
     property bool tagClickable: false
     property bool tagDisplayRemoveAccountButton: false
+    property bool canBeSelected: true
 
     property int keyPairType: Constants.keycard.keyPairType.unknown
     property string keyPairPubKey: ""
@@ -46,6 +47,10 @@ StatusListItem {
         }
         return t
     }
+    tertiaryTitle: !root.canBeSelected?
+                       qsTr("This Keypair contains an account which is created out of the Status wallet derivation tree") :
+                       ""
+    statusListItemTertiaryTitle.color: Theme.palette.dangerColor1
 
     asset {
         width: root.keyPairIcon? 24 : 40
@@ -98,29 +103,31 @@ StatusListItem {
         }
     }
 
-    components: [
-        StatusRadioButton {
-            id: radioButton
-            visible: root.usedAsSelectOption
-            ButtonGroup.group: root.buttonGroup
-            onCheckedChanged: {
-                if (!root.usedAsSelectOption)
-                    return
-                if (checked) {
-                    root.sharedKeycardModule.setSelectedKeyPair(root.keyPairPubKey)
-                    root.keyPairSelected()
-                }
-            }
-        }
-    ]
+    components: root.canBeSelected? d.components : []
 
     QtObject {
         id: d
         property string myPublicKey: userProfile.pubKey
+
+        property list<Item> components: [
+            StatusRadioButton {
+                id: radioButton
+                visible: root.usedAsSelectOption
+                ButtonGroup.group: root.buttonGroup
+                onCheckedChanged: {
+                    if (!root.usedAsSelectOption || !root.canBeSelected)
+                        return
+                    if (checked) {
+                        root.sharedKeycardModule.setSelectedKeyPair(root.keyPairPubKey)
+                        root.keyPairSelected()
+                    }
+                }
+            }
+        ]
     }
 
     onClicked: {
-        if (!root.usedAsSelectOption)
+        if (!root.usedAsSelectOption || !root.canBeSelected)
             return
         radioButton.checked = true
     }

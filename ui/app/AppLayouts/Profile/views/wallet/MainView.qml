@@ -20,6 +20,12 @@ Column {
     signal goToAccountView(address: string)
     signal goToDappPermissionsView()
 
+    Component.onCompleted: {
+        // TODO remove this call and handle it from the backend
+        //   once the profile is refactored and the navigation is driven from the backend
+        root.walletStore.loadDapps()
+    }
+
     Separator {
         height: 17
     }

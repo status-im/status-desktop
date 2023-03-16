@@ -51,7 +51,15 @@ StatusValidator {
     validatorObj: IntValidator { bottom: root.bottom; locale: root.locale.name; top: root.top }
 
     validate: function (t) {
-        // Basic validation management
-        return root.validatorObj.validate() === IntValidator.Acceptable
+        let value = parseInt(t)
+        let floatValue = parseFloat(t)
+        let nan = isNaN(t)
+
+        if(nan || value !== floatValue )
+           return false
+
+        if(value <= root.top && value >= root.bottom)
+            return true
+        return false
     }
 }

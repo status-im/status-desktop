@@ -38,6 +38,9 @@ method deleteAccount*(self: AccessInterface, keyUid: string, address: string) {.
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getDerivedAddress*(self: AccessInterface, password: string, derivedFrom: string, path: string, hashPassword: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getDerivedAddressList*(self: AccessInterface, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -62,7 +65,7 @@ method authenticateUser*(self: AccessInterface) {.base.} =
 method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method authenticateUserAndDeriveAddressOnKeycardForPath*(self: AccessInterface, keyUid: string, derivationPath: string) {.base.} =
+method authenticateUserAndDeriveAddressOnKeycardForPath*(self: AccessInterface, keyUid: string, derivationPath: string, searchForFirstAvailableAddress: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method createSharedKeycardModule*(self: AccessInterface) {.base.} =

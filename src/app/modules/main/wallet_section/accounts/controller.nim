@@ -96,6 +96,9 @@ proc deleteAccount*(self: Controller, address: string, password = "") =
 proc fetchDerivedAddressDetails*(self: Controller, address: string) =
   self.walletAccountService.fetchDerivedAddressDetails(address)
 
+method getDerivedAddress*(self: Controller, password: string, derivedFrom: string, path: string, hashPassword: bool)=
+  self.walletAccountService.getDerivedAddress(password, derivedFrom, path, hashPassword)
+
 method getDerivedAddressList*(self: Controller, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool)=
   self.walletAccountService.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword)
 

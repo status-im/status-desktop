@@ -1,6 +1,8 @@
 import NimQml, Tables, strformat, strutils
 import key_pair_account_item
 
+import ../../../../../app_service/common/utils
+
 export key_pair_account_item
 
 type
@@ -78,6 +80,12 @@ QtObject:
         return true
     return false
 
+  proc containsPathOutOfTheDefaultStatusDerivationTree*(self: KeyPairAccountModel): bool =
+    for it in self.items:
+      if utils.isPathOutOfTheDefaultStatusDerivationTree(it.getPath()):
+        return true
+    return false
+
   proc getItemAtIndex*(self: KeyPairAccountModel, index: int): KeyPairAccountItem =
     if index < 0 or index >= self.items.len:
       return newKeyPairAccountItem()
@@ -109,3 +117,9 @@ QtObject:
         if emoji.len > 0:
           self.items[i].setEmoji(emoji)
         return
+
+  proc setBalanceForAddress*(self: KeyPairAccountModel, address: string, balance: float) =
+    for i in 0 ..< self.items.len:
+      if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
+        self.items[i].setBalance(balance)
+      

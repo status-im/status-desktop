@@ -11,6 +11,7 @@ import ../../../app_service/service/accounts/service as accounts_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/keycard/service as keycard_service
+import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/common/account_constants
 
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -35,6 +36,7 @@ type
     keychainService: keychain_service.Service
     profileService: profile_service.Service
     keycardService: keycard_service.Service
+    devicesService: devices_service.Service
     connectionIds: seq[UUID]
     keychainConnectionIds: seq[UUID]
     tmpProfileImageDetails: ProfileImageDetails
@@ -53,6 +55,7 @@ type
     tmpCardMetadata: CardMetadata
     tmpKeychainErrorOccurred: bool
     tmpRecoverUsingSeedPhraseWhileLogin: bool
+    tmpConnectionString: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -60,7 +63,8 @@ proc newController*(delegate: io_interface.AccessInterface,
   accountsService: accounts_service.Service,
   keychainService: keychain_service.Service,
   profileService: profile_service.Service,
-  keycardService: keycard_service.Service):
+  keycardService: keycard_service.Service,
+  devicesService: devices_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate
@@ -70,6 +74,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.keychainService = keychainService
   result.profileService = profileService
   result.keycardService = keycardService
+  result.devicesService = devicesService
   result.tmpPinMatch = false
   result.tmpSeedPhraseLength = 0
   result.tmpKeychainErrorOccurred = false
@@ -158,6 +163,11 @@ proc init*(self: Controller) =
     if args.uniqueIdentifier != UNIQUE_STARTUP_MODULE_IDENTIFIER:
       return
     self.delegate.onDisplayKeycardSharedModuleFlow()
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
+    let args = LocalPairingStatus(e)
+    self.delegate.onLocalPairingStatusUpdate(args)
   self.connectionIds.add(handlerId)
 
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
@@ -507,8 +517,11 @@ proc runGetMetadataFlow*(self: Controller, resolveAddress = false, exportMasterA
 proc resumeCurrentFlow*(self: Controller) =
   self.keycardService.resumeCurrentFlow()
 
-proc resumeCurrentFlowLater*(self: Controller) =
-  self.keycardService.resumeCurrentFlowLater()
+proc reRunCurrentFlow*(self: Controller) =
+  self.keycardService.reRunCurrentFlow()
+
+proc reRunCurrentFlowLater*(self: Controller) =
+  self.keycardService.reRunCurrentFlowLater()
 
 proc runFactoryResetPopup*(self: Controller) =
   self.delegate.runFactoryResetPopup()
@@ -541,3 +554,15 @@ proc storeMetadataForNewKeycardUser(self: Controller) =
   ## Stores metadata, default Status account only, to the keycard for a newly created keycard user.
   let paths = @[account_constants.PATH_DEFAULT_WALLET]
   self.runStoreMetadataFlow(self.getDisplayName(), self.getPin(), paths)
+
+proc getConnectionString*(self: Controller): string =
+  return self.tmpConnectionString
+  
+proc setConnectionString*(self: Controller, connectionString: string) =
+  self.tmpConnectionString = connectionString
+
+proc validateLocalPairingConnectionString*(self: Controller, connectionString: string): string =
+  return self.devicesService.validateConnectionString(connectionString)
+
+proc inputConnectionStringForBootstrapping*(self: Controller, connectionString: string): string =
+  return self.devicesService.inputConnectionStringForBootstrapping(connectionString)

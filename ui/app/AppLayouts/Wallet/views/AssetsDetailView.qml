@@ -20,18 +20,12 @@ import shared.stores 1.0
 Item {
     id: root
 
-    property var token
+    property var token: ({})
     /*required*/ property string address: ""
-
-    function createStore(address) {
-        return balanceHistoryComponent.createObject(null, {address: address})
-    }
 
     QtObject {
         id: d
         property var marketValueStore : RootStore.marketValueStore
-        // TODO: Should be temporary until non native tokens are supported by balance history
-        property bool isNativeToken: typeof token !== "undefined" && token ? token.symbol === "ETH" : false
     }
 
     Connections {
@@ -57,7 +51,7 @@ Item {
         width: parent.width
         asset.name: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
         asset.isImage: true
-        primaryText: token ? token.name : ""
+        primaryText: token.name ?? ""
         secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance) : ""
         tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance) : ""
         balances: token && token.balances ? token.balances : null
@@ -115,11 +109,7 @@ Item {
 
             graphsModel: [
                     {text: qsTr("Price"), enabled: true, id: AssetsDetailView.GraphType.Price},
-                    {
-                        text: qsTr("Balance"),
-                        enabled: false, // TODO: Enable after adding ECR20 token support and DB cache. Current prototype implementation works only for d.isNativeToken
-                        id: AssetsDetailView.GraphType.Balance
-                    },
+                    {text: qsTr("Balance"), enabled: true, id: AssetsDetailView.GraphType.Balance},
                 ]
             defaultTimeRangeIndexShown: ChartStoreBase.TimeRange.All
             timeRangeModel: dataReady() && selectedStore.timeRangeTabsModel
@@ -129,11 +119,7 @@ Item {
                 }
 
                 if(graphDetail.selectedGraphType === AssetsDetailView.GraphType.Balance) {
-                    let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
-                    if(balanceStore.isTimeToRequest(selectedTimeRangeEnum)) {
-                        RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, selectedTimeRangeEnum)
-                        balanceStore.updateRequestTime(selectedTimeRangeEnum)
-                    }
+                    graphDetail.updateBalanceStore()
                 }
 
                 if(!isTimeRange) {
@@ -241,16 +227,32 @@ Item {
                 active: RootStore.marketHistoryIsLoading
             }
 
+            function updateBalanceStore() {
+                let selectedTimeRangeEnum = balanceStore.timeRangeStrToEnum(graphDetail.selectedTimeRange)
+
+                let currencySymbol = RootStore.currencyStore.currentCurrency
+                if(!balanceStore.hasData(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)) {
+                    RootStore.fetchHistoricalBalanceForTokenAsJson(root.address, token.symbol, currencySymbol, selectedTimeRangeEnum)
+                }
+            }
+
             TokenBalanceHistoryStore {
                 id: balanceStore
 
-                address: root.address
-
-                onNewDataReady: (timeRange) => {
-                    let selectedTimeRange = timeRangeStrToEnum(graphDetail.selectedTimeRange)
-                    if (timeRange === selectedTimeRange && address === root.address) {
+                onNewDataReady: (address, tokenSymbol, currencySymbol, timeRange) => {
+                    if (timeRange === timeRangeStrToEnum(graphDetail.selectedTimeRange)) {
                         chart.updateToNewData()
                     }
+                }
+
+                Connections {
+                    target: root
+                    function onAddressChanged() { graphDetail.updateBalanceStore() }
+                }
+
+                Connections {
+                    target: token
+                    function onSymbolChanged() { graphDetail.updateBalanceStore() }
                 }
             }
         }
@@ -288,31 +290,31 @@ Item {
                 Layout.fillWidth: true
             }
             InformationTile {
-                readonly property string changePctHour: token ? token.changePctHour.toFixed(2) : ""
+                readonly property double changePctHour: token.changePctHour ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
-                secondaryText: changePctHour ? "%1%".arg(changePctHour) : "---"
-                secondaryLabel.color: Math.sign(Number(changePctHour)) === 0 ? Theme.palette.directColor1 :
-                                                                               Math.sign(Number(changePctHour)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                         Theme.palette.successColor1
+                secondaryText: changePctHour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2)) : "---"
+                secondaryLabel.color: Math.sign(changePctHour) === 0 ? Theme.palette.directColor1 :
+                                                                       Math.sign(changePctHour) === -1 ? Theme.palette.dangerColor1 :
+                                                                                                         Theme.palette.successColor1
             }
             InformationTile {
-                readonly property string changePctDay: token ? token.changePctDay.toFixed(2) : ""
+                readonly property double changePctDay: token.changePctDay ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
-                secondaryText: changePctDay ? "%1%".arg(changePctDay) : "---"
-                secondaryLabel.color: Math.sign(Number(changePctDay)) === 0 ? Theme.palette.directColor1 :
-                                                                              Math.sign(Number(changePctDay)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                       Theme.palette.successColor1
+                secondaryText: changePctDay ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2)) : "---"
+                secondaryLabel.color: Math.sign(changePctDay) === 0 ? Theme.palette.directColor1 :
+                                                                      Math.sign(changePctDay) === -1 ? Theme.palette.dangerColor1 :
+                                                                                                       Theme.palette.successColor1
             }
             InformationTile {
-                readonly property string changePct24hour: token ? token.changePct24hour.toFixed(2) : ""
+                readonly property double changePct24hour: token.changePct24hour ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
-                secondaryText: changePct24hour ? "%1%".arg(changePct24hour) : "---"
-                secondaryLabel.color: Math.sign(Number(changePct24hour)) === 0 ? Theme.palette.directColor1 :
-                                                                                 Math.sign(Number(changePct24hour)) === -1 ? Theme.palette.dangerColor1 :
-                                                                                                                             Theme.palette.successColor1
+                secondaryText: changePct24hour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2)) : "---"
+                secondaryLabel.color: Math.sign(changePct24hour) === 0 ? Theme.palette.directColor1 :
+                                                                         Math.sign(changePct24hour) === -1 ? Theme.palette.dangerColor1 :
+                                                                                                             Theme.palette.successColor1
             }
         }
 
@@ -353,7 +355,7 @@ Item {
                         font.pixelSize: 15
                         lineHeight: 22
                         lineHeightMode: Text.FixedHeight
-                        text: token ? token.description : ""
+                        text: token.description ?? ""
                         color: Theme.palette.directColor1
                         elide: Text.ElideRight
                         wrapMode: Text.Wrap
@@ -367,9 +369,15 @@ Item {
                             Layout.alignment: detailsFlow.isOverflowing ? Qt.AlignLeft : Qt.AlignRight
                             iconAsset.icon: "browser"
                             tagPrimaryLabel.text: qsTr("Website")
-                            controlBackground.color: Theme.palette.baseColor2
-                            controlBackground.border.color: "transparent"
                             visible: typeof token != "undefined" && token && token.assetWebsiteUrl !== ""
+                            customBackground: Component {
+                                Rectangle {
+                                    color: Theme.palette.baseColor2
+                                    border.width: 1
+                                    border.color: "transparent"
+                                    radius: 36
+                                }
+                            }
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
@@ -382,10 +390,16 @@ Item {
 
                             image.source: token  && token.builtOn !== "" ? Style.svg("tiny/" + RootStore.getNetworkIconUrl(token.builtOn)) : ""
                             tagPrimaryLabel.text: token && token.builtOn !== "" ? RootStore.getNetworkName(token.builtOn) : "---"
-                            tagSecondaryLabel.text: token && token.address !== "" ? token.address : "---"
-                            controlBackground.color: Theme.palette.baseColor2
-                            controlBackground.border.color: "transparent"
+                            tagSecondaryLabel.text: token.address ?? "---"
                             visible: typeof token != "undefined" && token && token.builtOn !== "" && token.address !== ""
+                            customBackground: Component {
+                                Rectangle {
+                                    color: Theme.palette.baseColor2
+                                    border.width: 1
+                                    border.color: "transparent"
+                                    radius: 36
+                                }
+                            }
                         }
                     }
                 }

@@ -37,11 +37,17 @@ QtObject:
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
 
-  proc createOrUpdateSavedAddress*(self: View, name: string, address: string, favourite: bool): string {.slot.} =
-    return self.delegate.createOrUpdateSavedAddress(name, address, favourite)
+  proc createOrUpdateSavedAddress*(self: View, name: string, address: string, favourite: bool, chainShortNames: string, ens: string): string {.slot.} =
+    return self.delegate.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
 
-  proc deleteSavedAddress*(self: View, address: string): string {.slot.} =
-    return self.delegate.deleteSavedAddress(address)
+  proc deleteSavedAddress*(self: View, address: string, ens: string): string {.slot.} =
+    return self.delegate.deleteSavedAddress(address, ens)
 
   proc getNameByAddress*(self: View, address: string): string {.slot.} =
     return self.model.getNameByAddress(address)
+
+  proc getChainShortNamesForAddress*(self: View, address: string): string {.slot.} =
+    return self.model.getChainShortNamesForAddress(address)
+
+  proc getEnsForAddress*(self: View, address: string): string {.slot.} =
+    return self.model.getEnsForAddress(address)

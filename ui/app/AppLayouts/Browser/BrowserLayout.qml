@@ -37,6 +37,7 @@ StatusSectionLayout {
     }
 
     notificationCount: activityCenterStore.unreadNotificationsCount
+    hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
     QtObject {

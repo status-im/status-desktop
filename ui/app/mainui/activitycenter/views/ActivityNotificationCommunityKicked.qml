@@ -16,6 +16,7 @@ ActivityNotificationBase {
     id: root
 
     bodyComponent: RowLayout {
+        width: parent.width
         height: 50
         readonly property var community: notification ?
                                 root.store.getCommunityDetailsAsJson(notification.communityId) :
@@ -46,6 +47,7 @@ ActivityNotificationBase {
             communityColor: community ? community.color : "black"
             onCommunityNameClicked: root.store.setActiveCommunity(notification.communityId)
             Layout.alignment: Qt.AlignVCenter
+            Layout.maximumWidth: 190
         }
 
         Item {

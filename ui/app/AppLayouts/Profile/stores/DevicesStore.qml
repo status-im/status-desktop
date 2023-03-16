@@ -6,10 +6,17 @@ QtObject {
 
     property var devicesModule
 
-    property var devicesModel: devicesModule.model
+    property var devicesModel: devicesModule ?  devicesModule.model : null
 
     // Module Properties
-    property bool isDeviceSetup: devicesModule.isDeviceSetup
+    property bool isDeviceSetup: devicesModule ? devicesModule.isDeviceSetup : false
+
+    readonly property int localPairingState: devicesModule ? devicesModule.localPairingState : -1
+    readonly property string localPairingError: devicesModule ? devicesModule.localPairingError : ""
+
+    function loadDevices() {
+        return root.devicesModule.loadDevices()
+    }
 
     function setName(name) {
         return root.devicesModule.setName(name)
@@ -25,5 +32,22 @@ QtObject {
 
     function enableDevice(installationId, enable) {
         root.devicesModule.enableDevice(installationId, enable)
+    }
+
+    function authenticateUser() {
+        const keyUid = "" // TODO: Support Keycard
+        root.devicesModule.authenticateUser(keyUid)
+    }
+
+    function validateConnectionString(connectionString) {
+        return root.devicesModule.validateConnectionString(connectionString)
+    }
+
+    function getConnectionStringForBootstrappingAnotherDevice(keyUid, password) {
+        return root.devicesModule.getConnectionStringForBootstrappingAnotherDevice(keyUid, password)
+    }
+
+    function inputConnectionStringForBootstrapping(connectionString) {
+        return root.devicesModule.inputConnectionStringForBootstrapping(connectionString)
     }
 }

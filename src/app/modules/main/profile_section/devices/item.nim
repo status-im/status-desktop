@@ -1,31 +1,33 @@
+import ../../../../../app_service/service/devices/service as devices_service
+import ../../../../../app_service/service/devices/dto/[installation]
+
 type
   Item* = ref object
-    installationId: string
-    name: string
-    enabled: bool
+    installation: InstallationDto
     isCurrentDevice: bool
 
-proc initItem*(installationId, name: string, enabled, isCurrentDevice: bool): Item =
+proc initItem*(installation: InstallationDto, isCurrentDevice: bool): Item =
   result = Item()
-  result.installationId = installationId
-  result.name = name
-  result.enabled = enabled
+  result.installation = installation
   result.isCurrentDevice = isCurrentDevice
 
-proc installationId*(self: Item): string =
-  self.installationId
+proc installation*(self: Item): InstallationDto =
+  return self.installation
+
+proc `installation=`*(self: Item, installation: InstallationDto) =
+  self.installation = installation
 
 proc name*(self: Item): string =
-  self.name
+  self.installation.metadata.name
 
 proc `name=`*(self: Item, value: string) =
-  self.name = value
+  self.installation.metadata.name = value
 
 proc enabled*(self: Item): bool =
-  self.enabled
+  self.installation.enabled
 
 proc `enabled=`*(self: Item, value: bool) =
-  self.enabled = value
+  self.installation.enabled = value
 
 proc isCurrentDevice*(self: Item): bool =
   self.isCurrentDevice

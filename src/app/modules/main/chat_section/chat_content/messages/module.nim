@@ -199,14 +199,15 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
   pinnedMessages: seq[PinnedMessageDto]) =
   var viewItems: seq[Item]
 
+  var prevMessage = Item()
   if(messages.len > 0):
     for message in messages:
       # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
       # Now we just skip deleted messages
       if message.deleted or message.deletedForMe:
         continue
+
       let chatDetails = self.controller.getChatDetails()
-      let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
 
       let sender = self.controller.getContactDetails(message.`from`)
       var quotedMessageAuthorDetails = ContactDetails()
@@ -216,7 +217,16 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         else:
           quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
 
-      let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
+      var communityChats: seq[ChatDto]
+      if chatDetails.communityId != "":
+        communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+
+      var renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
+
+      # Skipping duplication text from image messages whith same text
+      if (prevMessage.contentType.ContentType == ContentType.Image and prevMessage.messageText == renderedMessageText):
+        renderedMessageText = ""
+
       var transactionContract = message.transactionParameters.contract
       var transactionValue = message.transactionParameters.value
       var isCurrentUser = sender.isCurrentUser
@@ -271,6 +281,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.quotedMessage.discordMessage,
         quotedMessageAuthorDetails
         )
+
+      prevMessage = item
 
       for r in reactions:
         if(r.messageId == message.id):
@@ -343,7 +355,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
     # https://github.com/status-im/status-desktop/issues/7632 will introduce deleteFroMe feature.
     # Now we just skip deleted messages
     if message.deleted or message.deletedForMe:
-      return
+      continue
 
     var item = initItem(
       message.id,
@@ -585,11 +597,11 @@ method updateChatFetchMoreMessages*(self: Module) =
   if (self.controller.getChatDetails().hasMoreMessagesToRequest()):
     self.view.model().insertItemBasedOnClock(self.createFetchMoreMessagesItem())
 
-method getLinkPreviewData*(self: Module, link: string, uuid: string): string =
-  return self.controller.getLinkPreviewData(link, uuid)
+method getLinkPreviewData*(self: Module, link: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string =
+  return self.controller.getLinkPreviewData(link, uuid, whiteListedSites, whiteListedImgExtensions, unfurlImages)
 
-method onPreviewDataLoaded*(self: Module, previewData: string) =
-  self.view.onPreviewDataLoaded(previewData)
+method onPreviewDataLoaded*(self: Module, previewData: string, uuid: string) =
+  self.view.onPreviewDataLoaded(previewData, uuid)
 
 method switchToMessage*(self: Module, messageId: string) =
   let index = self.view.model().findIndexForMessageId(messageId)

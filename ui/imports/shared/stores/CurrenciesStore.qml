@@ -1,6 +1,9 @@
-import QtQuick 2.13
+import QtQuick 2.15
+
+import StatusQ.Core 0.1
+
 import utils 1.0
-import "../../../app/AppLayouts/Profile/stores"
+import AppLayouts.Profile.stores 1.0
 
 QtObject {
     id: root
@@ -27,9 +30,9 @@ QtObject {
         return 0;
     }
 
-    property string currentCurrency: walletSection.currentCurrency
-    property int currentCurrencyModelIndex: getModelIndexForShortName(currentCurrency)
-    property string currentCurrencySymbol: currenciesModel.get(currentCurrencyModelIndex).symbol
+    readonly property string currentCurrency: Global.appIsReady ? walletSection.currentCurrency : ""
+    readonly property int currentCurrencyModelIndex: getModelIndexForShortName(currentCurrency)
+    readonly property string currentCurrencySymbol: currenciesModel.get(currentCurrencyModelIndex).symbol ?? Qt.locale().currencySymbol(Locale.CurrencySymbol)
 
     property ListModel currenciesModel: ListModel {
        ListElement {
@@ -315,6 +318,7 @@ QtObject {
            category: qsTr("Other Fiat")
            imageSource: "../../assets/twemoji/svg/1f1e8-1f1f4.svg"
            selected: false
+           isToken: false
        }
 
        ListElement {
@@ -962,40 +966,40 @@ QtObject {
             root.currenciesModel.get(0).selected = true
     }
 
-    function updateCurrency(newCurrenyKey) {
-        let index = getModelIndexForKey(newCurrenyKey)
+    function updateCurrency(newCurrencyKey) {
+        let index = getModelIndexForKey(newCurrencyKey)
         let shortName = root.currenciesModel.get(index).shortName
         walletSection.updateCurrency(shortName)
     }
 
+    // The object returned by this sometimes becomes null when used as part of a binding expression.
+    // Will probably be solved when moving to C++, for now avoid storing the result of this function and use
+    // formatCurrencyAmount at the visualization point instead, or move functionality over to the NIM side.
     function getCurrencyAmount(amount, symbol) {
+        walletSection.prepareCurrencyAmount(amount, symbol)
+        return walletSection.getPreparedCurrencyAmount()
+    }
+
+    function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
         if (isNaN(amount)) {
-            amount = 0
+            return "N/A"
         }
-        let obj = JSON.parse((walletSection.getCurrencyAmountAsJson(amount, symbol)))
-        if (obj.error) {
-            console.error("Error parsing currency amount json object, amount: ", amount, ", symbol ", symbol, " error: ", obj.error)
-            return {amount: nan, symbol: symbol}
-        }
-        return obj
+        var currencyAmount = getCurrencyAmount(amount, symbol)
+        return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options, locale)
     }
 
-    function getFiatValue(balance, cryptoSymbol, fiatSymbol) {
-        var amount = profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbol, fiatSymbol)
-        return getCurrencyAmount(parseFloat(amount), fiatSymbol)
+    function getFiatValue(cryptoAmount, cryptoSymbol, fiatSymbol) {
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getFiatValue(cryptoAmount, cryptoSymbol, fiatSymbol)
+        return parseFloat(amount)
     }
 
-    function getCryptoValue(balance, cryptoSymbol, fiatSymbol) {
-        var amount = profileSectionModule.ensUsernamesModule.getCryptoValue(balance, cryptoSymbol, fiatSymbol)
-        return getCurrencyAmount(parseFloat(amount), cryptoSymbol) 
+    function getCryptoValue(fiatAmount, cryptoSymbol, fiatSymbol) {
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getCryptoValue(fiatAmount, cryptoSymbol, fiatSymbol)
+        return parseFloat(amount)
     }
 
     function getGasEthValue(gweiValue, gasLimit) {
-        var amount = profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
-        return getCurrencyAmount(parseFloat(amount), "ETH") 
-    }
-
-    function formatCurrencyAmount(currencyAmount) {
-        return LocaleUtils.currencyAmountToLocaleString(currencyAmount)
+        var amount = profileSectionStore.profileSectionModuleInst.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
+        return parseFloat(amount)
     }
 }

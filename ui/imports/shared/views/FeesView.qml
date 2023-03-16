@@ -19,7 +19,7 @@ Rectangle {
     property var bestRoutes
     property var store
     property var currencyStore: store.currencyStore
-    property var selectedTokenSymbol
+    property string selectedTokenSymbol
     property int errorType: Constants.NoError
 
     radius: 13
@@ -60,7 +60,7 @@ Rectangle {
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.padding
                     id: totalFeesAdvanced
-                    text: root.isLoading ? "..." : LocaleUtils.currencyAmountToLocaleString(root.gasFiatAmount)
+                    text: root.isLoading ? "..." : root.currencyStore.formatCurrencyAmount(root.gasFiatAmount, root.currencyStore.currentCurrency)
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                     visible: !!root.bestRoutes && root.bestRoutes !== undefined && root.bestRoutes.length > 0
@@ -71,7 +71,7 @@ Rectangle {
                 width: parent.width
                 getGasEthValue: root.currencyStore.getGasEthValue
                 getFiatValue: root.currencyStore.getFiatValue
-                getCurrencyAmount: root.currencyStore.getCurrencyAmount
+                formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 currentCurrency: root.currencyStore.currentCurrency
                 visible: root.errorType === Constants.NoError && !root.isLoading
                 bestRoutes: root.bestRoutes

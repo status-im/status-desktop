@@ -1,12 +1,18 @@
-import NimQml, Tables
+import NimQml, Tables, sequtils
 import item
+import ../../../../../app_service/service/devices/dto/[installation]
 
 type
   ModelRole {.pure.} = enum
-    Name = UserRole + 1,
-    InstallationId
-    IsCurrentDevice
+    InstallationId = UserRole + 1,
+    Identity
+    Version
     Enabled
+    Timestamp
+    Name
+    DeviceType
+    FcmToken
+    IsCurrentDevice
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -35,10 +41,15 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Name.int:"name",
       ModelRole.InstallationId.int:"installationId",
+      ModelRole.Identity.int:"identity",
+      ModelRole.Version.int:"version",
+      ModelRole.Enabled.int:"enabled",
+      ModelRole.Timestamp.int:"timestamp",
+      ModelRole.Name.int:"name",
+      ModelRole.DeviceType.int:"deviceType",
+      ModelRole.FcmToken.int:"fcmToken",
       ModelRole.IsCurrentDevice.int:"isCurrentDevice",
-      ModelRole.Enabled.int:"enabled"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -50,14 +61,24 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-      of ModelRole.Name:
-        result = newQVariant(item.name)
       of ModelRole.InstallationId:
-        result = newQVariant(item.installationId)
+        result = newQVariant(item.installation.id)
+      of ModelRole.Identity:
+        result = newQVariant(item.installation.identity)
+      of ModelRole.Version:
+        result = newQVariant(item.installation.version)
+      of ModelRole.Enabled:
+        result = newQVariant(item.installation.enabled)
+      of ModelRole.Timestamp:
+        result = newQVariant(item.installation.timestamp)
+      of ModelRole.Name:
+        result = newQVariant(item.installation.metadata.name)
+      of ModelRole.DeviceType:
+        result = newQVariant(item.installation.metadata.deviceType)
+      of ModelRole.FcmToken:
+        result = newQVariant(item.installation.metadata.fcmToken)
       of ModelRole.IsCurrentDevice:
         result = newQVariant(item.isCurrentDevice)
-      of ModelRole.Enabled:
-        result = newQVariant(item.enabled)
 
   proc addItems*(self: Model, items: seq[Item]) =
     if(items.len == 0):
@@ -84,20 +105,22 @@ QtObject:
 
   proc findIndexByInstallationId(self: Model, installationId: string): int =
     for i in 0..<self.items.len:
-      if installationId == self.items[i].installationId():
+      if installationId == self.items[i].installation.id:
         return i
     return -1
 
   proc isItemWithInstallationIdAdded*(self: Model, installationId: string): bool =
     return self.findIndexByInstallationId(installationId) != -1
 
-  proc updateItem*(self: Model, installationId: string, name: string, enabled: bool) =
-    var i = self.findIndexByInstallationId(installationId)
+  proc updateItem*(self: Model, installation: InstallationDto) =
+    var i = self.findIndexByInstallationId(installation.id)
     if(i == -1):
       return
 
     let first = self.createIndex(i, 0, nil)
     let last = self.createIndex(i, 0, nil)
-    self.items[i].name = name
-    self.items[i].enabled = enabled
-    self.dataChanged(first, last, @[ModelRole.Name.int, ModelRole.Enabled.int])
+    self.items[i].installation = installation
+    self.dataChanged(first, last, @[])
+
+  proc getIsDeviceSetup*(self: Model, installationId: string): bool =
+    return anyIt(self.items, it.installation.id == installationId and it.name != "")

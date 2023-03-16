@@ -1,5 +1,5 @@
 import json, strmisc
-import core, utils
+import core, ../app_service/common/utils
 import response_type
 
 export response_type
@@ -109,6 +109,6 @@ proc cancelVerificationRequest*(requestId: string): RpcResponse[JsonNode] {.rais
 
 proc retractContactRequest*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[{
-    "contactId": pubkey
+    "id": pubkey
   }]
   result = callPrivateRPC("retractContactRequest".prefix, payload)

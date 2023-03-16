@@ -8,17 +8,33 @@ include ../../../common/json_utils
 include ../../../common/utils
 
 type ActivityCenterNotificationType* {.pure.}= enum
-  Unknown = 0,
+  NoType = 0,
   NewOneToOne = 1,
   NewPrivateGroupChat = 2,
   Mention = 3,
   Reply = 4,
-  ContactRequest = 5
-  CommunityInvitation = 6
-  CommunityRequest = 7
-  CommunityMembershipRequest = 8
-  CommunityKicked = 9
+  ContactRequest = 5,
+  CommunityInvitation = 6,
+  CommunityRequest = 7,
+  CommunityMembershipRequest = 8,
+  CommunityKicked = 9,
   ContactVerification = 10
+
+type ActivityCenterGroup* {.pure.}= enum
+  All = 0,
+  Mentions = 1,
+  Replies = 2,
+  Membership = 3,
+  Admin = 4,
+  ContactRequests = 5,
+  IdentityVerification = 6,
+  Transactions = 7,
+  System = 8
+
+type ActivityCenterReadType* {.pure.}= enum
+  Read = 1,
+  Unread = 2
+  All = 3
 
 type ActivityCenterMembershipStatus* {.pure.}= enum
   Idle = 0,
@@ -68,23 +84,23 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   result.membershipStatus = ActivityCenterMembershipStatus.Idle
   var membershipStatusInt: int
   if (jsonObj.getProp("membershipStatus", membershipStatusInt) and
-    (membershipStatusInt >= ord(low(ActivityCenterMembershipStatus)) or
+    (membershipStatusInt >= ord(low(ActivityCenterMembershipStatus)) and
     membershipStatusInt <= ord(high(ActivityCenterMembershipStatus)))):
       result.membershipStatus = ActivityCenterMembershipStatus(membershipStatusInt)
 
   result.verificationStatus = VerificationStatus.Unverified
   var verificationStatusInt: int
   if (jsonObj.getProp("contactVerificationStatus", verificationStatusInt) and
-    (verificationStatusInt >= ord(low(VerificationStatus)) or
+    (verificationStatusInt >= ord(low(VerificationStatus)) and
     verificationStatusInt <= ord(high(VerificationStatus)))):
       result.verificationStatus = VerificationStatus(verificationStatusInt)
 
   discard jsonObj.getProp("author", result.author)
 
-  result.notificationType = ActivityCenterNotificationType.Unknown
+  result.notificationType = ActivityCenterNotificationType.NoType
   var notificationTypeInt: int
   if (jsonObj.getProp("type", notificationTypeInt) and
-    (notificationTypeInt >= ord(low(ActivityCenterNotificationType)) or
+    (notificationTypeInt >= ord(low(ActivityCenterNotificationType)) and
     notificationTypeInt <= ord(high(ActivityCenterNotificationType)))):
       result.notificationType = ActivityCenterNotificationType(notificationTypeInt)
 
@@ -102,7 +118,6 @@ proc toActivityCenterNotificationDto*(jsonObj: JsonNode): ActivityCenterNotifica
   if jsonObj.contains("replyMessage") and jsonObj{"replyMessage"}.kind != JNull:
     result.replyMessage = jsonObj{"replyMessage"}.toMessageDto()
 
-
 proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[ActivityCenterNotificationDto]) =
   var notifs: seq[ActivityCenterNotificationDto] = @[]
   if rpcResult{"notifications"}.kind != JNull:
@@ -110,3 +125,37 @@ proc parseActivityCenterNotifications*(rpcResult: JsonNode): (string, seq[Activi
       notifs.add(jsonMsg.toActivityCenterNotificationDto())
   return (rpcResult{"cursor"}.getStr, notifs)
 
+proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[int] =
+  case group
+    of ActivityCenterGroup.All:
+      return @[
+        ActivityCenterNotificationType.NewPrivateGroupChat.int,
+        ActivityCenterNotificationType.Mention.int,
+        ActivityCenterNotificationType.Reply.int,
+        ActivityCenterNotificationType.ContactRequest.int,
+        ActivityCenterNotificationType.CommunityInvitation.int,
+        ActivityCenterNotificationType.CommunityRequest.int,
+        ActivityCenterNotificationType.CommunityMembershipRequest.int,
+        ActivityCenterNotificationType.CommunityKicked.int,
+        ActivityCenterNotificationType.ContactVerification.int
+      ]
+    of ActivityCenterGroup.Mentions:
+      return @[ActivityCenterNotificationType.Mention.int]
+    of ActivityCenterGroup.Replies:
+      return @[ActivityCenterNotificationType.Reply.int]
+    of ActivityCenterGroup.Membership:
+      return @[
+        ActivityCenterNotificationType.NewPrivateGroupChat.int,
+        ActivityCenterNotificationType.CommunityInvitation.int,
+        ActivityCenterNotificationType.CommunityRequest.int,
+        ActivityCenterNotificationType.CommunityMembershipRequest.int,
+        ActivityCenterNotificationType.CommunityKicked.int
+      ]
+    of ActivityCenterGroup.Admin:
+      return @[ActivityCenterNotificationType.CommunityMembershipRequest.int]
+    of ActivityCenterGroup.ContactRequests:
+      return @[ActivityCenterNotificationType.ContactRequest.int]
+    of ActivityCenterGroup.IdentityVerification:
+      return @[ActivityCenterNotificationType.ContactVerification.int]
+    else:
+      return @[]

@@ -633,6 +633,33 @@ Item {
             }
         },
         State {
+            name: Constants.keycardSharedState.noPCSCService
+            when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.noPCSCService
+            PropertyChanges {
+                target: title
+                text: qsTr("PCSC not available")
+                font.pixelSize: Constants.keycard.general.fontSize1
+                font.weight: Font.Bold
+                color: Theme.palette.dangerColor1
+            }
+            PropertyChanges {
+                target: image
+                pattern: Constants.keycardAnimations.strongError.pattern
+                source: ""
+                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
+                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
+                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
+                duration: Constants.keycardAnimations.strongError.duration
+                loops: Constants.keycardAnimations.strongError.loops
+            }
+            PropertyChanges {
+                target: message
+                text: qsTr("The Smartcard reader (PCSC service), required\nfor using Keycard, is not currently working.\nEnsure PCSC is installed and running and try again")
+                font.pixelSize: Constants.keycard.general.fontSize2
+                color: Theme.palette.dangerColor1
+            }
+        },
+        State {
             name: Constants.keycardSharedState.notKeycard
             when: root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.notKeycard
             PropertyChanges {

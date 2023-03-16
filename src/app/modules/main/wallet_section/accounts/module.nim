@@ -141,7 +141,16 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
+    self.refreshWalletAccounts()
+
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
+    let args = KeycardActivityArgs(e)
+    if not args.success:
+      return
+    self.refreshWalletAccounts()
+
+  self.events.on(SIGNAL_KEYCARDS_SYNCHRONIZED) do(e: Args):
     let args = KeycardActivityArgs(e)
     if not args.success:
       return
@@ -199,6 +208,9 @@ method deleteAccount*(self: Module, keyUid: string, address: string) =
   self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, address: address)
   self.authenticateActivityForKeyUid(keyUid, AuthenticationReason.DeleteAccountAuthentication)
 
+method getDerivedAddress*(self: Module, password: string, derivedFrom: string, path: string, hashPassword: bool) =
+  self.controller.getDerivedAddress(password, derivedFrom, path, hashPassword)
+
 method getDerivedAddressList*(self: Module, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) =
   self.controller.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword)
 
@@ -234,7 +246,7 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
 method createSharedKeycardModule*(self: Module) =
   if self.keycardSharedModule.isNil:
     self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_IDENTIFIER, 
-      self.events, self.keycardService, settingsService = nil, privacyService = nil, self.accountsService, 
+      self.events, self.keycardService, settingsService = nil, networkService = nil, privacyService = nil, self.accountsService, 
       self.walletAccountService, keychainService = nil)
 
 method destroySharedKeycarModule*(self: Module) =
@@ -266,11 +278,12 @@ proc findFirstAvaliablePathForWallet(self: Module, keyUid: string): string =
       return path
   error "we couldn't find available wallet account path"
   
-method authenticateUserAndDeriveAddressOnKeycardForPath*(self: Module, keyUid: string, derivationPath: string) =
+method authenticateUserAndDeriveAddressOnKeycardForPath*(self: Module, keyUid: string, derivationPath: string, searchForFirstAvailableAddress: bool) =
   self.authentiactionReason = AuthenticationReason.DeriveAccountForKeyPairAuthentication
   var finalPath = derivationPath
-  if self.checkIfWalletAccountIsAlreadyCreated(keyUid, finalPath):
-    finalPath = self.findFirstAvaliablePathForWallet(keyUid)
+  if searchForFirstAvailableAddress and
+    self.checkIfWalletAccountIsAlreadyCreated(keyUid, finalPath):
+      finalPath = self.findFirstAvaliablePathForWallet(keyUid)
   if self.keycardSharedModule.isNil:
     self.createSharedKeycardModule()
   self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, path: finalPath)

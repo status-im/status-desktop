@@ -32,9 +32,8 @@ Item {
         id: assetListView
         objectName: "assetViewStatusListView"
         anchors.fill: parent
-        model: RootStore.tokensLoading ? 25 : filteredModel
+        model: RootStore.tokensLoading ? Constants.dummyModelItems : filteredModel
         delegate: RootStore.tokensLoading ? loadingTokenDelegate : tokenDelegate
-        ScrollBar.vertical: StatusScrollBar {}
     }
 
     SortFilterProxyModel {

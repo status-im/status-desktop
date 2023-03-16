@@ -108,7 +108,7 @@ StatusDialog {
 
                 input.onTextChanged: {
                     const cursorPosition = input.cursorPosition
-                    input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text)
+                    input.text = Utils.convertSpacesToDashes(input.text)
                     input.cursorPosition = cursorPosition
                     if (root.channelEmoji === "") {
                         input.letterIconName = text;

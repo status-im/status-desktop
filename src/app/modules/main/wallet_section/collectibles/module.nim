@@ -11,8 +11,6 @@ import ../../../../../app_service/service/network/service as network_service
 
 import ./current_collectible/module as current_collectible_module
 
-import ./models/collections_item as collections_item
-import ./models/collections_utils
 import ./models/collectibles_item as collectibles_item
 import ./models/collectible_trait_item as collectible_trait_item
 import ./models/collectibles_utils
@@ -45,7 +43,6 @@ proc newModule*(
   result.moduleLoaded = false
   result.currentCollectibleModule = currentCollectibleModule.newModule(result, collectibleService)
 
-
 method delete*(self: Module) =
   self.view.delete
   self.currentCollectibleModule.delete
@@ -76,6 +73,9 @@ method viewDidLoad*(self: Module) =
 method currentCollectibleModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
+method fetchOwnedCollectibles*(self: Module, limit: int) =
+  self.controller.fetchOwnedCollectibles(self.chainId, self.address, limit)
+
 method switchAccount*(self: Module, accountIndex: int) =
   let network = self.controller.getNetwork()
   let account = self.controller.getWalletAccount(accountIndex)
@@ -83,40 +83,30 @@ method switchAccount*(self: Module, accountIndex: int) =
   self.chainId = network.chainId
   self.address = account.address
 
-  self.controller.refreshCollections(self.chainId, self.address)
-  self.controller.fetchCollections(self.chainId, self.address)
+  # TODO: Implement a way to reduce the number of full re-fetches. It could be only
+  # when NFT activity was detected for the given account, or if a certain amount of
+  # time has passed. For now, we fetch every time we select the account.
+  self.controller.resetOwnedCollectibles(self.chainId, self.address)
+
+  self.controller.refreshCollectibles(self.chainId, self.address)
 
   self.currentCollectibleModule.setCurrentAddress(network, self.address)
 
-proc collectionToItem(self: Module, collection: CollectionData) : collections_item.Item =
-    var item = collectionToItem(collection)
-    #[ Skeleton items are disabled until problem with OpenSea API is researched.
-      OpenSea is telling us the address owns a certain amount of NFTs from a certain collection, but
-      it doesn't give us the NFTs from that collection when trying to fetch them.
-    # Append skeleton collectibles if not yet fetched
-    let model = item.getCollectiblesModel()
-    let unfetchedCollectiblesCount = item.getOwnedAssetCount() - model.getCount()
-    if unfetchedCollectiblesCount > 0:
-      echo "unfetchedCollectiblesCount = ", unfetchedCollectiblesCount, " ", item.getSlug()
-      let skeletonItems = newSeqWith(unfetchedCollectiblesCount, collectibles_item.initItem())
-      model.appendItems(skeletonItems)
-    ]#
-    return item
+method refreshCollectibles*(self: Module, chainId: int, address: string, collectibles: CollectiblesData) =
+  if self.chainId == chainId and self.address == address:
+    var idsToAdd = newSeq[UniqueID]()
+    let append = not collectibles.lastLoadWasFromStart
 
-method setCollections*(self: Module, collections: CollectionsData) =
-  self.view.setCollections(
-    toSeq(collections.collections.values).map(c =>  self.collectionToItem(c)),
-    collections.collectionsLoaded
-  )
+    var startIdx = 0
+    if append:
+      for i in collectibles.ids.len - collectibles.lastLoadCount ..< collectibles.ids.len:
+        idsToAdd.add(collectibles.ids[i])
+    else:
+      idsToAdd = collectibles.ids
 
-method updateCollection*(self: Module, collection: CollectionData) =
-  self.view.setCollectibles(collection.collection.slug,
-    toSeq(collection.collectibles.values).map(c => collectibleToItem(c)),
-    collection.collectiblesLoaded
-  )
-
-method fetchCollections*(self: Module) =
-  self.controller.fetchCollections(self.chainId, self.address)
-
-method fetchCollectibles*(self: Module, collectionSlug: string) =
-  self.controller.fetchCollectibles(self.chainId, self.address, collectionSlug)
+    var newCollectibles = idsToAdd.map(id => (block:
+        let c = self.controller.getCollectible(self.chainId, id)
+        let co = self.controller.getCollection(self.chainId, c.collectionSlug)
+        return collectibleToItem(c, co)
+      ))
+    self.view.setCollectibles(newCollectibles, append, collectibles.allLoaded)

@@ -3,28 +3,31 @@ pragma Singleton
 import QtQml 2.14
 
 import StatusQ.Core 0.1
-
-import utils 1.0
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Chat.controls.community 1.0
 
 QtObject {
-
     function getTokenByKey(model, key) {
         if (!model)
             return null
 
-        for (let i = 0; i < model.count; i++) {
-            const item = model.get(i)
+        const count = model.rowCount()
+
+        for (let i = 0; i < count; i++) {
+            const item = ModelUtils.get(model, i)
+
             if (item.key === key)
                 return item
 
             if (item.subItems) {
                 const subitem = getTokenByKey(item.subItems, key)
+
                 if (subitem !== null)
                     return subitem
             }
         }
+
         return null
     }
 
@@ -38,14 +41,14 @@ QtObject {
     function getTokenShortNameByKey(model, key) {
         const item = getTokenByKey(model, key)
         if (item)
-            return item.shortName
+            return item.shortName ?? ""
         return ""
     }
 
     function getTokenIconByKey(model, key) {
         const item = getTokenByKey(model, key)
         if (item)
-            return item.iconSource
+            return item.iconSource ?? ""
         return ""
     }
 
