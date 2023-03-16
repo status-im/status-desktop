@@ -312,4 +312,8 @@ QtObject {
     function getMonthYear(value) {
         return formatDate(value, "MMM yyyy")
     }
+
+    function getDayName(value) {
+        return Qt.locale().dayName(value.getDay())
+    }
 }

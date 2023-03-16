@@ -16,7 +16,7 @@ StatusListItem {
     property string deviceName: ""
     property string deviceType: ""
     property bool isCurrentDevice: false
-    property int timestamp: 0
+    property real timestamp: 0
 
     signal itemClicked
     signal setupSyncingButtonClicked
@@ -30,26 +30,27 @@ StatusListItem {
 
     subTitle: {
         if (root.isCurrentDevice)
-            return qsTr("This device");
+            return qsTr("This device")
 
-        if (d.secondsFromSync <= 120)
-            return qsTr("Online now");
+        if (d.onlineNow)
+            return qsTr("Online now")
 
         if (d.minutesFromSync <= 60)
-            return qsTr("Online %n minutes(s) ago", "", d.minutesFromSync);
+            return qsTr("Online %n minute(s) ago", "", d.minutesFromSync)
 
         if (d.daysFromSync == 0)
-            return qsTr("Last seen earlier today");
+            return qsTr("Last seen earlier today")
 
         if (d.daysFromSync == 1)
-            return qsTr("Last online yesterday");
+            return qsTr("Last online yesterday")
+
+        const date = new Date(root.timestamp)
 
         if (d.daysFromSync <= 6)
-            return qsTr("Last online [%1]").arg(Qt.locale().dayName[d.lastSyncDate.getDay()]);
+            return qsTr("Last online [%1]").arg(LocaleUtils.getDayName(date))
 
-        return qsTr("Last online %1").arg(LocaleUtils.formatDate(lastSyncDate))
+        return qsTr("Last online %1").arg(LocaleUtils.formatDate(date))
     }
-
 
     subTitleBadgeComponent: root.isCurrentDevice ? null : onlineBadgeComponent
 
@@ -75,12 +76,22 @@ StatusListItem {
     QtObject {
         id: d
 
-        readonly property var lastSyncDate: new Date(root.timestamp)
-        readonly property int millisecondsFromSync: lastSyncDate - Date.now()
-        readonly property int secondsFromSync: millisecondsFromSync / 1000
+        property real now: 0
+        readonly property int secondsFromSync: (now - Math.max(0, root.timestamp)) / 1000
         readonly property int minutesFromSync: secondsFromSync / 60
-        readonly property int daysFromSync: new Date().getDay() - lastSyncDate.getDay()
-        readonly property bool onlineNow: d.secondsFromSync <= 120
+        readonly property int hoursFromSync: minutesFromSync / 60
+        readonly property int daysFromSync: hoursFromSync / 24
+        readonly property bool onlineNow: secondsFromSync <= 120
+    }
+
+    Timer {
+        interval: 1000
+        repeat: true
+        triggeredOnStart: true
+        running: !root.isCurrentDevice && root.visible
+        onTriggered: {
+            d.now = Date.now()
+        }
     }
 
     Component {
@@ -90,4 +101,6 @@ StatusListItem {
             online: d.onlineNow
         }
     }
+
+    tertiaryTitle: `${root.timestamp} ${d.now} --- ${d.secondsFromSync}`
 }

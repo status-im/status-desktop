@@ -103,12 +103,15 @@ SettingsContentBase {
 
         StatusBaseText {
             Layout.fillWidth: true
+            visible: root.devicesStore.devicesModule.devicesLoading
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("Loading devices...")
+
         }
 
         StatusBaseText {
             Layout.fillWidth: true
+            visible: root.devicesStore.devicesModule.devicesLoadingError
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("Error loading devices. Please try again later.")
             color: Theme.palette.dangerColor1
@@ -133,7 +136,7 @@ SettingsContentBase {
                 width: ListView.view.width
                 deviceName: model.name
                 deviceType: model.deviceType
-                timestamp: model.timestamp
+                timestamp: model.timestamp / 1000000
                 isCurrentDevice: model.isCurrentDevice
                 onSetupSyncingButtonClicked: {
                     d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
