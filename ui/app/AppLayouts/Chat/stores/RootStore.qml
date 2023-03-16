@@ -403,7 +403,7 @@ QtObject {
     }
 
     function requestToJoinCommunity(id, ensName) {
-        return communitiesModuleInst.requestToJoinCommunity(id, ensName)
+        chatCommunitySectionModule.requestToJoinCommunity(id, ensName)
     }
 
     function userCanJoin(id) {

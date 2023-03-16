@@ -368,3 +368,9 @@ method onJoinedCommunity*(self: AccessInterface) =
 
 method onAcceptRequestToJoinFailedNoPermission*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) =
+  raise newException(ValueError, "No implementation available")
+
+method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensName: string) =
+  raise newException(ValueError, "No implementation available")

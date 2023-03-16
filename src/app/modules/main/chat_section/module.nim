@@ -815,6 +815,9 @@ method onKickedFromCommunity*(self: Module) =
 method onJoinedCommunity*(self: Module) =
   self.view.setAmIMember(true)
 
+method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+  self.controller.requestToJoinCommunityAuthenticated(password)
+
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
   self.updateBadgeNotifications(chatId, hasUnreadMessages=false, unviewedMentionsCount=0)
   let chatDetails = self.controller.getChatDetails(chatId)
@@ -1182,6 +1185,9 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 
 method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =
   self.controller.deleteCommunityTokenPermission(communityId, permissionId)
+
+method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
+  self.controller.authenticateToRequestToJoinCommunity(communityId, ensName)
 
 proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem =
   var tokenCriteriaItems: seq[TokenCriteriaItem] = @[]

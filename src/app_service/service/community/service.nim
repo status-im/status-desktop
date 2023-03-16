@@ -813,9 +813,9 @@ QtObject:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
 
-  proc requestToJoinCommunity*(self: Service, communityId: string, ensName: string) =
+  proc requestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string) =
     try:
-      let response = status_go.requestToJoinCommunity(communityId, ensName)
+      let response = status_go.requestToJoinCommunity(communityId, ensName, password)
       self.activityCenterService.parseActivityCenterResponse(response)
 
       if not self.processRequestsToJoinCommunity(response.result):

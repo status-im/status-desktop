@@ -13,6 +13,9 @@ proc initUniqueUUIDEventEmitter*(events: EventEmitter): UniqueUUIDEventEmitter =
   result.events = events
   result.handlerId = genUUID()
 
+proc emit*(self: UniqueUUIDEventEmitter, name: string, args: Args): void =
+  self.events.emit(name, args)
+
 proc on*(self: UniqueUUIDEventEmitter, name: string, handler: Handler): void =
   self.events.onUsingUUID(self.handlerId, name, handler)
 

@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import utils 1.0
+import shared.popups 1.0
 
 import "views"
 import "views/communities"
@@ -69,7 +70,7 @@ StackLayout {
             collectiblesModel: root.rootStore.collectiblesModel
             isInvitationPending: root.rootStore.isCommunityRequestPending(communityData.id)
             onRevealAddressClicked: {
-                root.rootStore.requestToJoinCommunity(communityData.id, root.rootStore.userProfileInst.name)
+                communityIntroDialog.open()
             }
             onInvitationPendingClicked: {
                 root.rootStore.cancelPendingRequest(communityData.id)
@@ -84,7 +85,27 @@ StackLayout {
                     }
                 }
             }
+
+            CommunityIntroDialog {
+                id: communityIntroDialog
+
+                isInvitationPending: joinCommunityView.isInvitationPending
+                name: communityData.name
+                introMessage: communityData.introMessage
+                imageSrc: communityData.image
+                accessType: communityData.access
+
+                onJoined: {
+                    root.rootStore.requestToJoinCommunity(communityData.id, root.rootStore.userProfileInst.name)
+                }
+
+                onCancelMembershipRequest: {
+                    root.rootStore.cancelPendingRequest(communityData.id)
+                    joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
+                }
+            }
         }
+
 
     }
 
