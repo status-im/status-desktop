@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
-import QtGraphicalEffects 1.15
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
+import QtGraphicalEffects 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -9,7 +9,6 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
-import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 import shared.controls 1.0
@@ -17,23 +16,16 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
-import shared.views.profile 1.0
-
-import SortFilterProxyModel 0.2
-
-import AppLayouts.Wallet.stores 1.0 as WalletNS
 
 Pane {
     id: root
 
-    property bool readOnly // inside settings/profile/preview
+    property bool readOnly
 
     property string publicKey: contactsStore.myPublicKey
 
     property var profileStore
     property var contactsStore
-    property var walletStore: WalletNS.RootStore
-    property var communitiesModel
 
     property QtObject dirtyValues: null
     property bool dirty: false
@@ -76,8 +68,7 @@ Pane {
             outgoingVerificationStatus !== Constants.verificationStatus.unverified &&
             outgoingVerificationStatus !== Constants.verificationStatus.verified &&
             outgoingVerificationStatus !== Constants.verificationStatus.trusted
-        readonly property bool isVerificationRequestReceived: incomingVerificationStatus === Constants.verificationStatus.verifying ||
-                                                              incomingVerificationStatus === Constants.verificationStatus.verified
+        readonly property bool isVerificationRequestReceived: incomingVerificationStatus === Constants.verificationStatus.verifying
 
         readonly property bool isTrusted: outgoingVerificationStatus === Constants.verificationStatus.trusted ||
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
@@ -95,7 +86,7 @@ Pane {
         }
 
         readonly property var conns: Connections {
-            target: root.contactsStore.myContactsModel ?? null
+            target: root.contactsStore.myContactsModel
 
             function onItemChanged(pubKey) {
                 if (pubKey === root.publicKey)
@@ -105,7 +96,7 @@ Pane {
 
         // FIXME: use myContactsModel for identity verification
         readonly property var conns2: Connections {
-            target: root.contactsStore.receivedContactRequestsModel ?? null
+            target: root.contactsStore.receivedContactRequestsModel
 
             function onItemChanged(pubKey) {
                 if (pubKey === root.publicKey)
@@ -114,7 +105,7 @@ Pane {
         }
 
         readonly property var conns3: Connections {
-            target: root.contactsStore.sentContactRequestsModel ?? null
+            target: root.contactsStore.sentContactRequestsModel
 
             function onItemChanged(pubKey) {
                 if (pubKey === root.publicKey)
@@ -555,10 +546,8 @@ Pane {
 
         StatusScrollView {
             id: scrollView
-            implicitWidth: contentWidth + leftPadding + rightPadding
-            implicitHeight: contentHeight + topPadding + bottomPadding
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: contentHeight + topPadding + bottomPadding
             Layout.leftMargin: -column.anchors.leftMargin
             Layout.rightMargin: -column.anchors.rightMargin
             Layout.topMargin: -column.spacing
@@ -572,7 +561,8 @@ Pane {
                     Layout.fillWidth: true
                     Layout.leftMargin: column.anchors.leftMargin + Style.current.halfPadding
                     Layout.rightMargin: column.anchors.rightMargin + Style.current.halfPadding
-                    bio: root.dirty ? root.dirtyValues.bio : d.contactDetails.bio
+                    bio: root.dirty ? root.dirtyValues.bio
+                                    : d.contactDetails.bio
                     userSocialLinksJson: root.dirty ? root.profileStore.temporarySocialLinksJson
                                                     : d.contactDetails.socialLinks
                 }
@@ -675,17 +665,26 @@ Pane {
                             height: width
                             mipmap: true
                             smooth: false
-                            source: root.profileStore.getQrCodeSource(Utils.getCompressedPk(root.profileStore.pubkey))
+                            source: root.profileStore.getQrCodeSource(root.profileStore.pubkey)
                         }
                     }
                 }
 
                 StatusTabBar {
-                    id: showcaseTabBar
                     Layout.fillWidth: true
                     Layout.leftMargin: column.anchors.leftMargin
                     Layout.rightMargin: column.anchors.rightMargin
                     bottomPadding: -4
+
+                    StatusTabButton {
+                        leftPadding: 0
+                        width: implicitWidth
+                        text: qsTr("Assets")
+                    }
+                    StatusTabButton {
+                        width: implicitWidth
+                        text: qsTr("Collectibles")
+                    }
                     StatusTabButton {
                         width: implicitWidth
                         text: qsTr("Communities")
@@ -694,32 +693,27 @@ Pane {
                         width: implicitWidth
                         text: qsTr("Accounts")
                     }
-                    StatusTabButton {
-                        width: implicitWidth
-                        text: qsTr("Collectibles")
-                    }
-                    StatusTabButton {
-                        leftPadding: 0
-                        width: implicitWidth
-                        text: qsTr("Assets")
-                    }
                 }
 
-                // Profile Showcase
-                ProfileShowcaseView {
+                StatusDialogBackground {
                     Layout.fillWidth: true
                     Layout.topMargin: -column.spacing
                     Layout.preferredHeight: 300
+                    color: Theme.palette.baseColor4
 
-                    currentTabIndex: showcaseTabBar.currentIndex
-                    isCurrentUser: d.isCurrentUser
-                    mainDisplayName: d.mainDisplayName
-                    readOnly: root.readOnly
-                    profileStore: root.profileStore
-                    walletStore: root.walletStore
-                    communitiesModel: root.communitiesModel
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        height: parent.radius
+                        color: parent.color
+                    }
 
-                    onCloseRequested: root.closeRequested()
+                    StatusBaseText {
+                        anchors.centerIn: parent
+                        color: Theme.palette.baseColor1
+                        text: qsTr("More content to appear here soon...")
+                    }
                 }
             }
         }

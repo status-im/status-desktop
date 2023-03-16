@@ -18,9 +18,7 @@ import SortFilterProxyModel 0.2
 Item {
     id: root
 
-    property var assetsModel
-    property var collectiblesModel
-
+    property var store
     property var checkedKeys: []
     property int type: ExtendedDropdownContent.Type.Assets
 
@@ -101,20 +99,6 @@ Item {
                                     searcher.text.toLowerCase())
                     }
                 }
-
-                proxyRoles: ExpressionRole {
-                    name: "categoryLabel"
-
-                    function getCategoryLabelForType(category, type) {
-                        if (type === ExtendedDropdownContent.Type.Assets)
-                            return TokenCategories.getCategoryLabelForAsset(category)
-
-                        return TokenCategories.getCategoryLabelForCollectible(category)
-                    }
-
-                    expression: getCategoryLabelForType(model.category, root.type)
-
-               }
             }
         }
 
@@ -141,7 +125,7 @@ Item {
             PropertyChanges {
                 target: d
                 currentModel: root.type === ExtendedDropdownContent.Type.Assets
-                              ? root.assetsModel : root.collectiblesModel
+                              ? root.store.assetsModel : root.store.collectiblesModel
                 isFilterOptionVisible: false
             }
 

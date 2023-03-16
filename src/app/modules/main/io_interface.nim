@@ -8,10 +8,6 @@ import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/mailservers/service as mailservers_service
-import ../../../app_service/service/community_tokens/service as community_token_service
-import ../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../app_service/service/token/service as token_service
-import ../../../app_service/service/community_tokens/service as community_tokens_service
 from ../../../app_service/common/types import StatusType
 
 import ../../global/app_signals
@@ -83,10 +79,7 @@ method onChatsLoaded*(
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service)
+  mailserversService: mailservers_service.Service)
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -127,9 +120,6 @@ method communityJoined*(self: AccessInterface, community: CommunityDto, events: 
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service,
-  communityTokensService: community_tokens_service.Service,
   setActive: bool = false,) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -187,7 +177,7 @@ method onNetworkDisconnected*(self: AccessInterface) {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setActiveSection*(self: AccessInterface, item: SectionItem, skipSavingInSettings: bool = false) {.base.} =
+method setActiveSection*(self: AccessInterface, item: SectionItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setActiveSectionById*(self: AccessInterface, id: string) {.base.} =
@@ -258,12 +248,6 @@ method tryKeycardSync*(self: AccessInterface, keyUid: string, pin: string) {.bas
   raise newException(ValueError, "No implementation available")
 
 method onSharedKeycarModuleKeycardSyncPurposeTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onCommunityTokenDeployed*(self: AccessInterface, communityToken: CommunityTokenDto) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, contractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

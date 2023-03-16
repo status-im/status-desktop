@@ -92,8 +92,6 @@ Item {
                             return qsTr("Community membership")
                         case Constants.onboarding.profileFetching.entity.settings:
                             return qsTr("Settings")
-                        case Constants.onboarding.profileFetching.entity.keycards:
-                            return qsTr("Keycards")
                         }
                     }
                 }

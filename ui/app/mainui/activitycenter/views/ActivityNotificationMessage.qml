@@ -62,8 +62,7 @@ ActivityNotificationBase {
     }
 
     bodyComponent: MouseArea {
-        implicitWidth: parent.width
-        implicitHeight: messageView.implicitHeight
+        height: messageView.implicitHeight
         hoverEnabled: root.messageBadgeComponent
         cursorShape: Qt.PointingHandCursor
         onClicked: {

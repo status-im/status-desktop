@@ -110,9 +110,9 @@ Item {
     Component {
         id: sectionDelegateComponent
         Item {
-            width: ListView.view.width
+            width: parent.width
             height: 24
-            StatusBaseText {
+            StyledText {
                 anchors.fill: parent
                 anchors.leftMargin: Style.current.padding
                 verticalAlignment: Text.AlignVCenter

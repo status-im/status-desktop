@@ -89,7 +89,6 @@ include max_pin_retries_reached_state
 include max_puk_retries_reached_state
 include max_pairing_slots_reached_state
 include migrating_key_pair_state
-include no_pcsc_service_state 
 include not_keycard_state 
 include pin_set_state
 include pin_verified_state

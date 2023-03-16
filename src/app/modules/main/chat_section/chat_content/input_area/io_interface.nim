@@ -50,19 +50,7 @@ method getTrendingsGifs*(self: AccessInterface): seq[GifDto] {.base.} =
 method getRecentsGifs*(self: AccessInterface): seq[GifDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method loadRecentGifs*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method loadRecentGifsDone*(self: AccessInterface, gifs: seq[GifDto]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getFavoritesGifs*(self: AccessInterface): seq[GifDto] {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method loadFavoriteGifs*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method loadFavoriteGifsDone*(self: AccessInterface, gifs: seq[GifDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method toggleFavoriteGif*(self: AccessInterface, item: GifDto) {.base.} =

@@ -127,13 +127,11 @@ Button {
         StatusBaseText {
             Layout.alignment: root.textAlignment
             Layout.fillWidth: root.textFillWidth
-            opacity: !root.loading
+            opacity: !loading
             font: root.font
             text: root.text
             color: d.textColor
-            visible: text
             verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
         }
     }
 

@@ -1,5 +1,5 @@
 import json
-import core, ../app_service/common/utils
+import core, utils
 import response_type
 
 proc acceptRequestAddressForTransaction*(messageId: string, address: string): RpcResponse[JsonNode] {.raises: [Exception].} =

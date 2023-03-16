@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick 2.13
 import utils 1.0
 
 QtObject {
@@ -22,7 +22,6 @@ QtObject {
                             root.fleet === Constants.status_test ||
                             root.fleet === Constants.status_prod
 
-    readonly property bool isFakeLoadingScreenEnabled: localAppSettings.fakeLoadingScreenEnabled ?? false
     readonly property QtObject experimentalFeatures: QtObject {
         readonly property string wallet: "wallet"
         readonly property string browser: "browser"
@@ -35,7 +34,6 @@ QtObject {
         readonly property string communityPermissions: "communityPermissions"
         readonly property string discordImportTool: "discordImportTool"
         readonly property string wakuV2StoreEnabled: "wakuV2StoreEnabled"
-        readonly property string communityTokens: "communityTokens"
     }
 
     function logDir() {
@@ -139,15 +137,5 @@ QtObject {
         else if (feature === experimentalFeatures.discordImportTool) {
             localAccountSensitiveSettings.isDiscordImportToolEnabled = !localAccountSensitiveSettings.isDiscordImportToolEnabled
         }
-        else if (feature === experimentalFeatures.communityTokens) {
-            localAccountSensitiveSettings.isCommunityTokensEnabled = !localAccountSensitiveSettings.isCommunityTokensEnabled
-        }
-    }
-
-    function toggleFakeLoadingScreen() {
-        if(!localAppSettings)
-            return
-
-        localAppSettings.fakeLoadingScreenEnabled = !localAppSettings.fakeLoadingScreenEnabled
     }
 }

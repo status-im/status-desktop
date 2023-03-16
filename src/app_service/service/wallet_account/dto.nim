@@ -147,13 +147,6 @@ proc getAddress*(self: WalletTokenDto): string =
 
   return ""
 
-proc getTotalBalanceOfSupportedChains*(self: WalletTokenDto): float64 =
-  var sum = 0.0
-  for chainId, balanceDto in self.balancesPerChain:
-    sum += balanceDto.balance
-
-  return sum
-
 proc getBalances*(self: WalletTokenDto, chainIds: seq[int]): seq[BalanceDto] =
   for chainId in chainIds:
     if self.balancesPerChain.hasKey(chainId):

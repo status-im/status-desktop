@@ -1,7 +1,6 @@
 pragma Singleton
 
 import QtQuick 2.12
-import utils 1.0
 
 QtObject {
     id: root
@@ -12,10 +11,10 @@ QtObject {
 
     property var profileSectionModuleInst: profileSectionModule
     property var privacyModule: profileSectionModuleInst.privacyModule
-    property var userProfileInst: !!Global.userProfile? Global.userProfile : null
-    property var walletSectionInst: Global.appIsReady && !!walletSection? walletSection : null
-    property var appSettingsInst: Global.appIsReady && !!appSettings? appSettings : null
-    property var accountSensitiveSettings: Global.appIsReady && !!localAccountSensitiveSettings? localAccountSensitiveSettings : null
+    property var userProfileInst: !!userProfile ? userProfile : null
+    property var walletSectionInst: !!walletSection ? walletSection : null
+    property var appSettingsInst: !!appSettings ? appSettings : null
+    property var accountSensitiveSettings: !!localAccountSensitiveSettings ? localAccountSensitiveSettings : null
     property real volume: !!appSettingsInst ? appSettingsInst.volume * 0.01 : 0.5
     property bool isWalletEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isWalletEnabled : false
     property bool notificationSoundsEnabled: !!appSettingsInst ? appSettingsInst.notificationSoundsEnabled : true
@@ -29,18 +28,18 @@ QtObject {
 //    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
 
     property CurrenciesStore currencyStore: CurrenciesStore {}
-    property string currentCurrency: Global.appIsReady? walletSection.currentCurrency : ""
+    property string currentCurrency: walletSection.currentCurrency
 //    property string defaultCurrency: !!walletModelInst ? walletModelInst.balanceView.defaultCurrency : "0"
 //    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"
 //    property string cryptoValue: !!walletModelInst ? walletModelInst.balanceView.getCryptoValue : "0"
 
     property var history: typeof walletSectionTransactions !== "undefined" ? walletSectionTransactions
                                                                           : null
-    property var historyTransactions: Global.appIsReady? walletSectionTransactions.model : null
+    property var historyTransactions: walletSectionTransactions.model
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
-    property bool tokensLoading: Global.appIsReady? walletSection.tokensLoading : false
-    property var currentAccount: Global.appIsReady? walletSectionCurrent : null
+    property bool tokensLoading: walletSection.tokensLoading
+    property var currentAccount: walletSectionCurrent
     property var marketValueStore: TokenMarketValuesStore{}
 
     function getNetworkColor(chainId) {
@@ -184,29 +183,19 @@ QtObject {
     }
 
     function findTokenSymbolByAddress(address) {
-        if (Global.appIsReady)
-            return walletSectionAllTokens.findTokenSymbolByAddress(address)
-        return ""
+        return  walletSectionAllTokens.findTokenSymbolByAddress(address)
     }
 
     function getNameForSavedWalletAddress(address) {
         return walletSectionSavedAddresses.getNameByAddress(address)
     }
 
-    function getChainShortNamesForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getChainShortNamesForAddress(address)
+    function createOrUpdateSavedAddress(name, address, favourite) {
+        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite)
     }
 
-    function getEnsForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getEnsForAddress(address)
-    }
-
-    function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {
-        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
-    }
-
-    function deleteSavedAddress(addresse, ens) {
-        return walletSectionSavedAddresses.deleteSavedAddress(address, ens)
+    function deleteSavedAddress(address) {
+        return walletSectionSavedAddresses.deleteSavedAddress(address)
     }
 
     function getLatestBlockNumber() {
@@ -229,23 +218,21 @@ QtObject {
         return currencyStore.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
-        return currencyStore.formatCurrencyAmount(amount, symbol, options, locale)
+    function formatCurrencyAmount(currencyAmount) {
+        return currencyStore.formatCurrencyAmount(currencyAmount)
     }
 
     function getHistoricalDataForToken(symbol, currency) {
-        if (Global.appIsReady)
-            walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
+        walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
     }
 
-    property bool marketHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.marketHistoryIsLoading : false
+    property bool marketHistoryIsLoading: walletSectionAllTokens.marketHistoryIsLoading
 
     // TODO: range until we optimize to cache the data and abuse the requests
-    function fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum) {
-        if (Global.appIsReady)
-            walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)
+    function fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum) {
+        walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, symbol, timeIntervalEnum)
     }
 
-    property bool balanceHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.balanceHistoryIsLoading : false
+    property bool balanceHistoryIsLoading: walletSectionAllTokens.balanceHistoryIsLoading
 
 }

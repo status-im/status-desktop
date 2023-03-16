@@ -1,27 +1,12 @@
 #################################################
 # Async load derivedAddreses
 #################################################
+
 type
-  GetDerivedAddressTaskArg* = ref object of QObjectTaskArg
+  GetDerivedAddressesTaskArg* = ref object of QObjectTaskArg
     password: string
     derivedFrom: string
     path: string
-
-const getDerivedAddressTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[GetDerivedAddressTaskArg](argEncoded)
-  var output = %*{
-    "derivedAddress": "",
-    "error": ""
-  }
-  try:
-    let response = status_go_accounts.getDerivedAddress(arg.password, arg.derivedFrom, arg.path)
-    output["derivedAddresses"] = response.result
-  except Exception as e:
-    output["error"] = %* fmt"Error getting derived address list: {e.msg}"
-  arg.finish(output)
-
-type
-  GetDerivedAddressesTaskArg* = ref object of GetDerivedAddressTaskArg
     pageSize: int
     pageNumber: int
 
@@ -112,21 +97,11 @@ const fetchDerivedAddressDetailsTask*: Task = proc(argEncoded: string) {.gcsafe,
 type
   BuildTokensTaskArg = ref object of QObjectTaskArg
     accounts: seq[string]
-    storeResult: bool
 
 const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[BuildTokensTaskArg](argEncoded)
-  var output = %*{
-    "result": "",
-    "storeResult": false
-  }
-  try:
-    let response = backend.getWalletToken(arg.accounts)
-    output["result"] = response.result
-    output["storeResult"] = %* arg.storeResult
-  except Exception as e:
-    let err = fmt"Error getting wallet tokens"
-  arg.finish(output)
+  let response = backend.getWalletToken(arg.accounts)
+  arg.finish(response.result)
 
 #################################################
 # Async add migrated keypair
@@ -140,14 +115,14 @@ type
 const addMigratedKeyPairTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AddMigratedKeyPairTaskArg](argEncoded)
   try:
-    let response = backend.addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded(
+    let response = backend.addMigratedKeyPair(
       arg.keyPair.keycardUid,
       arg.keyPair.keycardName,
       arg.keyPair.keyUid,
       arg.keyPair.accountsAddresses,
       arg.password
       )
-    let success = responseHasNoErrors("addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded", response)
+    let success = responseHasNoErrors("addMigratedKeyPair", response)
     let responseJson = %*{
       "success": success,
       "keyPair": arg.keyPair.toJsonNode()

@@ -4,5 +4,3 @@ HoldingTypes 1.0 HoldingTypes.qml
 HoldingsDropdown 1.0 HoldingsDropdown.qml
 InDropdown 1.0 InDropdown.qml
 PermissionItem 1.0 PermissionItem.qml
-singleton PermissionTypes 1.0 PermissionTypes.qml
-singleton TokenCategories 1.0 TokenCategories.qml

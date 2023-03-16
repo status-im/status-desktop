@@ -12,7 +12,6 @@ import shared.views.chat 1.0
 
 import "../controls"
 import "../panels"
-import "../stores"
 
 ActivityNotificationMessage {
     id: root
@@ -43,13 +42,12 @@ ActivityNotificationMessage {
             root.store.setActiveCommunity(notification.communityId)
             root.closeActivityCenter()
         }
-        Layout.maximumWidth: 190
     }
 
     ctaComponent: MembershipCta {
-        pending: notification && notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Pending
-        accepted: notification && notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Accepted
-        declined: notification && notification.membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Declined
+        pending: notification && notification.membershipStatus === Constants.activityCenterMembershipStatusPending
+        accepted: notification && notification.membershipStatus === Constants.activityCenterMembershipStatusAccepted
+        declined: notification && notification.membershipStatus === Constants.activityCenterMembershipStatusDeclined
         onAcceptRequestToJoinCommunity: root.store.acceptRequestToJoinCommunity(notification.id, notification.communityId)
         onDeclineRequestToJoinCommunity: root.store.declineRequestToJoinCommunity(notification.id, notification.communityId)
     }

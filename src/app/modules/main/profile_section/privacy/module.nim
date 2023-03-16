@@ -118,6 +118,3 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
     self.controller.storeToKeychain(pin)
   else:
     self.controller.storeToKeychain(password)
-
-method backupData*(self: Module): int64 =
-  return self.controller.backupData()

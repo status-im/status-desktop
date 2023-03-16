@@ -14,6 +14,8 @@ import StatusQ.Core.Backpressure 1.0
 import shared.controls 1.0
 import utils 1.0
 
+import utils 1.0
+
 import "../controls"
 
 Item {

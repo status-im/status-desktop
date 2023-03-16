@@ -22,7 +22,7 @@ QtObject:
     result.setup
 
   proc formatImagePath*(self: Utils, imagePath: string): string =
-    result = uri.decodeUrl(replace(imagePath, "file://", ""), decodePlus=false)
+    result = uri.decodeUrl(replace(imagePath, "file://", ""))
     if defined(windows):
       # Windows doesn't work with paths starting with a slash
       result.removePrefix('/')

@@ -51,23 +51,12 @@ const SIGNAL_MARK_NOTIFICATIONS_AS_DISMISSED* = "markNotificationsAsDismissed"
 
 const DEFAULT_LIMIT = 20
 
-# NOTE: temporary disable Transactions and System and we don't count All group
-const ACTIVITY_GROUPS = @[
-  ActivityCenterGroup.Mentions,
-  ActivityCenterGroup.Replies,
-  ActivityCenterGroup.Membership,
-  ActivityCenterGroup.Admin,
-  ActivityCenterGroup.ContactRequests,
-  ActivityCenterGroup.IdentityVerification
-]
 
 QtObject:
   type Service* = ref object of QObject
     threadpool: ThreadPool
     events: EventEmitter
     cursor*: string
-    activeGroup: ActivityCenterGroup
-    readType: ActivityCenterReadType
 
   # Forward declaration
   proc asyncActivityNotificationLoad*(self: Service)
@@ -83,52 +72,32 @@ QtObject:
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.cursor = ""
-    result.activeGroup = ActivityCenterGroup.All
-    result.readType = ActivityCenterReadType.All
-
-  proc handleNewNotificationsLoaded(self: Service, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
-    # For now status-go notify about every notification update regardless active group so we need filter manulay on the desktop side
-    let groupTypes = activityCenterNotificationTypesByGroup(self.activeGroup)
-    let filteredNotifications = filter(activityCenterNotifications, proc(notification: ActivityCenterNotificationDto): bool =
-      return (self.readType == ActivityCenterReadType.All or not notification.read) and groupTypes.contains(notification.notificationType.int)
-    )
-
-    if (filteredNotifications.len > 0):
-      self.events.emit(
-        SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-        ActivityCenterNotificationsArgs(activityCenterNotifications: filteredNotifications)
-      )
-    # NOTE: this signal must fire even we have no new notifications to show
-    self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
   proc init*(self: Service) =
     self.asyncActivityNotificationLoad()
     self.events.on(SignalType.Message.event) do(e: Args):
       let receivedData = MessageSignal(e)
-      self.handleNewNotificationsLoaded(receivedData.activityCenterNotifications)
 
-  proc parseActivityCenterResponse*(self: Service, response: RpcResponse[JsonNode]) =
+      # Handling activityCenterNotifications updates
+      if (receivedData.activityCenterNotifications.len > 0):
+        self.events.emit(
+          SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+          ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications)
+        )
+        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
+
+  proc parseACNotificationResponse*(self: Service, response: RpcResponse[JsonNode]) =
     var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
     if response.result{"activityCenterNotifications"} != nil:
       for jsonMsg in response.result["activityCenterNotifications"]:
         activityCenterNotifications.add(jsonMsg.toActivityCenterNotificationDto)
-      self.handleNewNotificationsLoaded(activityCenterNotifications)
 
-  proc setActiveNotificationGroup*(self: Service, group: ActivityCenterGroup) =
-    self.activeGroup = group
-
-  proc getActiveNotificationGroup*(self: Service): ActivityCenterGroup =
-    return self.activeGroup
-
-  proc setActivityCenterReadType*(self: Service, readType: ActivityCenterReadType) =
-    self.readType = readType
-
-  proc getActivityCenterReadType*(self: Service): ActivityCenterReadType =
-    return self.readType
-
-  proc resetCursor*(self: Service) =
-    self.cursor = ""
+      if (activityCenterNotifications.len > 0):
+        self.events.emit(
+          SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
+          ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotifications)
+        )
+        self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
   proc hasMoreToShow*(self: Service): bool =
     return self.cursor != ""
@@ -138,76 +107,33 @@ QtObject:
       tptr: cast[ByteAddress](asyncActivityNotificationLoadTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "asyncActivityNotificationLoaded",
-      cursor: self.cursor,
-      limit: DEFAULT_LIMIT,
-      group: self.activeGroup,
-      readType: self.readType
+      cursor: "",
+      limit: DEFAULT_LIMIT
     )
     self.threadpool.start(arg)
 
   proc getActivityCenterNotifications*(self: Service): seq[ActivityCenterNotificationDto] =
-    try:
-      let activityTypes = activityCenterNotificationTypesByGroup(self.activeGroup)
-      let response = backend.activityCenterNotifications(
-        backend.ActivityCenterNotificationsRequest(
-          cursor: self.cursor,
-          limit: DEFAULT_LIMIT,
-          activityTypes: activityTypes,
-          readType: self.readType.int
-        )
-      )
-      let activityCenterNotificationsTuple = parseActivityCenterNotifications(response.result)
+    var cursorVal: JsonNode
 
-      self.cursor = activityCenterNotificationsTuple[0];
-      result = activityCenterNotificationsTuple[1]
+    if self.cursor == "":
+      cursorVal = newJNull()
+    else:
+      cursorVal = newJString(self.cursor)
 
-    except Exception as e:
-      error "Error getting activity center notifications", msg = e.msg
+    let callResult = backend.activityCenterNotifications(cursorVal, DEFAULT_LIMIT)
+    let activityCenterNotificationsTuple = parseActivityCenterNotifications(callResult.result)
 
-  proc getActivityCenterNotificationsCounters(self: Service, activityTypes: seq[int], readType: ActivityCenterReadType): Table[int, int] =
-    try:
-      let response = backend.activityCenterNotificationsCount(
-        backend.ActivityCenterCountRequest(
-          activityTypes: activityTypes,
-          readType: readType.int,
-        )
-      )
-      var counters = initTable[int, int]()
-      if response.result.kind != JNull:
-        for activityType in activityTypes:
-          if response.result.contains($activityType):
-            counters.add(activityType, response.result[$activityType].getInt)
-      return counters
-    except Exception as e:
-      error "Error getting unread activity center notifications count", msg = e.msg
-
-  proc getActivityGroupCounters*(self: Service): Table[ActivityCenterGroup, int] =
-    let allActivityTypes = activityCenterNotificationTypesByGroup(ActivityCenterGroup.All)
-    let counters = self.getActivityCenterNotificationsCounters(allActivityTypes, self.readType)
-    var groupCounters = initTable[ActivityCenterGroup, int]()
-    for group in ACTIVITY_GROUPS:
-      var groupTotal = 0
-      for activityType in activityCenterNotificationTypesByGroup(group):
-        groupTotal = groupTotal + counters.getOrDefault(activityType, 0)
-      groupCounters.add(group, groupTotal)
-    return groupCounters
+    self.cursor = activityCenterNotificationsTuple[0];
+    result = activityCenterNotificationsTuple[1]
 
   proc getUnreadActivityCenterNotificationsCount*(self: Service): int =
-    let activityTypes = activityCenterNotificationTypesByGroup(ActivityCenterGroup.All)
-    let counters = self.getActivityCenterNotificationsCounters(activityTypes, ActivityCenterReadType.Unread)
-    var total = 0
-    for activityType in activityTypes:
-      total = total + counters.getOrDefault(activityType, 0)
-    return total
-
-  proc getHasUnseenActivityCenterNotifications*(self: Service): bool =
     try:
-      let response = backend.hasUnseenActivityCenterNotifications()
+      let response = backend.unreadActivityCenterNotificationsCount()
 
       if response.result.kind != JNull:
-        return response.result.getBool
+        return response.result.getInt
     except Exception as e:
-      error "Error getting unseen activity center notifications", msg = e.msg
+      error "Error getting unread activity center unread count", msg = e.msg
 
   proc markActivityCenterNotificationRead*(
       self: Service,
@@ -251,12 +177,6 @@ QtObject:
       error "Error marking all as read", msg = e.msg
       result = e.msg
 
-  proc markAsSeenActivityCenterNotifications*(self: Service) =
-    try:
-      discard backend.markAsSeenActivityCenterNotifications()
-    except Exception as e:
-      error "Error marking as seen", msg = e.msg
-
   proc asyncActivityNotificationLoaded*(self: Service, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
 
@@ -287,3 +207,5 @@ QtObject:
     except Exception as e:
       error "Error marking as dismissed", msg = e.msg
       result = e.msg
+
+

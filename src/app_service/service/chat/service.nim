@@ -129,7 +129,6 @@ QtObject:
 
   # Forward declarations
   proc updateOrAddChat*(self: Service, chat: ChatDto)
-  proc hydrateChats*(self: Service, data: JsonNode)
   proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto)
 
   proc doConnect(self: Service) =
@@ -164,14 +163,6 @@ QtObject:
   proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
     return toSeq(self.channelGroups.values)
 
-  proc loadChats*(self: Service) =
-    try:
-      let response = status_chat.getChats()
-      self.hydrateChats(response.result)
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-
   proc asyncGetChats*(self: Service) =
     let arg = AsyncGetChatsTaskArg(
       tptr: cast[ByteAddress](asyncGetChatsTask),
@@ -185,26 +176,6 @@ QtObject:
     if (y[1].channelGroupType == Personal): return 1
     return 0
 
-  proc hydrateChats(self: Service, data: JsonNode) =
-    var chats: seq[ChatDto] = @[]
-    for (sectionId, section) in data.pairs:
-      var channelGroup = section.toChannelGroupDto()
-      channelGroup.id = sectionId
-      self.channelGroups[sectionId] = channelGroup
-      for (chatId, chat) in section["chats"].pairs:
-        chats.add(chat.toChatDto())
-
-    # Make the personal channelGroup the first one
-    self.channelGroups.sort(sortPersonnalChatAsFirst[string, ChannelGroupDto], SortOrder.Ascending)
-
-    for chat in chats:
-      if chat.active and chat.chatType != chat_dto.ChatType.Unknown:
-        if chat.chatType == chat_dto.ChatType.Public:
-          # Deactivate old public chats
-          discard status_chat.deactivateChat(chat.id)
-        else:
-          self.chats[chat.id] = chat
-
   proc onAsyncGetChatsResponse*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
@@ -212,7 +183,25 @@ QtObject:
       if(rpcResponseObj["channelGroups"].kind == JNull):
         raise newException(RpcException, "No channel groups returned")
 
-      self.hydrateChats(rpcResponseObj["channelGroups"])
+      var chats: seq[ChatDto] = @[]
+      for (sectionId, section) in rpcResponseObj["channelGroups"].pairs:
+        var channelGroup = section.toChannelGroupDto()
+        channelGroup.id = sectionId
+        self.channelGroups[sectionId] = channelGroup
+        for (chatId, chat) in section["chats"].pairs:
+          chats.add(chat.toChatDto())
+
+      # Make the personal channelGroup the first one
+      self.channelGroups.sort(sortPersonnalChatAsFirst[string, ChannelGroupDto], SortOrder.Ascending)
+
+      for chat in chats:
+        if chat.active and chat.chatType != chat_dto.ChatType.Unknown:
+          if chat.chatType == chat_dto.ChatType.Public:
+            # Deactivate old public chats
+            discard status_chat.deactivateChat(chat.id)
+          else:
+            self.chats[chat.id] = chat
+
       self.events.emit(SIGNAL_CHATS_LOADED, ChannelGroupsArgs(channelGroups: self.getChannelGroups()))
     except Exception as e:
       let errDesription = e.msg

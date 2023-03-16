@@ -2,15 +2,13 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
+import Storybook 1.0
+
 import utils 1.0
 import shared.views 1.0
 import mainui 1.0
 
 import StatusQ 0.1
-import StatusQ.Core.Utils 0.1 as CoreUtils
-
-import Storybook 1.0
-import Models 1.0
 
 SplitView {
     id: root
@@ -57,7 +55,7 @@ SplitView {
                                       alias: "Mock Alias Triplet",
                                       lastUpdated: Date.now(),
                                       lastUpdatedLocally: Date.now(),
-                                      localNickname: localNickname.text,
+                                      localNickname: "MockNickname",
                                       thumbnailImage: "",
                                       largeImage: userImage.checked ? Style.png("status-logo") : "",
                                       isContact: isContact.checked,
@@ -76,8 +74,8 @@ SplitView {
                                                          text: "__twitter",
                                                          url: "https://twitter.com/ethstatus",
                                                          icon: "twitter"
-                                                     },
-                                                     {
+                                                    },
+                                                    {
                                                          text: "__github",
                                                          url: "https://github.com/status-im",
                                                          icon: "github"
@@ -123,8 +121,6 @@ SplitView {
                         implicitWidth: 640
 
                         publicKey: switchOwnProfile.checked ? "0xdeadbeef" : "0xrandomguy"
-
-                        onCloseRequested: logs.logEvent("closeRequested()")
 
                         profileStore: QtObject {
                             readonly property string pubkey: "0xdeadbeef"
@@ -173,209 +169,6 @@ SplitView {
                                 logs.logEvent("contactsStore::verifiedUntrustworthy", ["publicKey"], arguments)
                             }
                         }
-
-                        communitiesModel: ListModel {
-                            ListElement {
-                                name: "Not the cool gang"
-                                amISectionAdmin: false
-                                description: "Nothing to write home about"
-                                color: "indigo"
-                                image: ""
-                                joined: true
-                                members: [
-                                    ListElement { displayName: "Joe" }
-                                ]
-                            }
-                            ListElement {
-                                name: "Awesome bunch"
-                                amISectionAdmin: true
-                                description: "Where the cool guys hang out & Nothing to write home about"
-                                color: "green"
-                                image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
-                                        nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-                                joined: true
-                                members: [
-                                    ListElement { displayName: "Alex" },
-                                    ListElement { displayName: "AlexJb" },
-                                    ListElement { displayName: "Michal" },
-                                    ListElement { displayName: "Noelia" },
-                                    ListElement { displayName: "Lukáš" }
-                                ]
-                            }
-                            ListElement {
-                                name: "Invisible community (should not display!)"
-                                amISectionAdmin: false
-                                description: "Get outta here"
-                                color: "red"
-                                image: ""
-                                joined: false
-                                members: []
-                            }
-                        }
-
-                        walletStore: QtObject {
-                            function switchAccountByAddress(address) {
-                                logs.logEvent("walletStore::switchAccountByAddress", ["address"], arguments)
-                            }
-
-                            function selectCollectible(slug, id) {
-                                logs.logEvent("walletStore::selectCollectible", ["slug", "id"], arguments)
-                            }
-
-                            readonly property var accounts: ListModel {
-                                ListElement {
-                                    name: "My Status Account"
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
-                                    color: "aliceblue"
-                                    emoji: "🇨🇿"
-                                    walletType: ""
-                                }
-                                ListElement {
-                                    name: "testing (no emoji, colored, saved, seed)"
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
-                                    color: "olive"
-                                    walletType: "seed"
-                                }
-                                ListElement {
-                                    name: "My Bro's Account"
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
-                                    color: "ghostwhite"
-                                    emoji: "🇸🇰"
-                                    walletType: "watch"
-                                }
-                                ListElement {
-                                    name: "Keycard"
-                                    address: "0xdeadbeef"
-                                    color: "red"
-                                    emoji: ""
-                                    walletType: "key"
-                                }
-                            }
-
-                            function getNameForSavedWalletAddress(address) {
-                                return CoreUtils.ModelUtils.getByKey(savedAddresses, "address", address, "name") ?? ""
-                            }
-
-                            function createOrUpdateSavedAddress(name, address, favourite) {
-                                logs.logEvent("walletStore::createOrUpdateSavedAddress", ["name", "address", "favourite"], arguments)
-                                savedAddresses.append({name, address, favourite, ens: false})
-                                return "" // no error
-                            }
-
-                            readonly property var savedAddresses: ListModel {
-                                ListElement {
-                                    name: "My Status Saved Account"
-                                    address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
-                                    favourite: true
-                                    ens: false
-                                }
-                            }
-
-                            readonly property var currentAccount: QtObject {
-                                readonly property var assets: ListModel {
-                                    readonly property var data: [
-                                        {
-                                            symbol: "MANA",
-                                            enabledNetworkBalance: {
-                                                amount: 301,
-                                                symbol: "MANA"
-                                            },
-                                            changePct24hour: -2.1,
-                                            visibleForNetworkWithPositiveBalance: true
-                                        },
-                                        {
-                                            symbol: "AAVE",
-                                            enabledNetworkBalance: {
-                                                amount: 23.3,
-                                                symbol: "AAVE"
-                                            },
-                                            changePct24hour: 4.56,
-                                            visibleForNetworkWithPositiveBalance: true
-                                        },
-                                        {
-                                            symbol: "POLY",
-                                            enabledNetworkBalance: {
-                                                amount: 3590,
-                                                symbol: "POLY"
-                                            },
-                                            changePct24hour: -11.6789,
-                                            visibleForNetworkWithPositiveBalance: true
-                                        },
-                                        {
-                                            symbol: "CDT",
-                                            enabledNetworkBalance: {
-                                                amount: 1000,
-                                                symbol: "CDT"
-                                            },
-                                            changePct24hour: 0,
-                                            visibleForNetworkWithPositiveBalance: true
-                                        },
-                                        {
-                                            symbol: "MKR",
-                                            enabledNetworkBalance: {
-                                                amount: 1.3,
-                                                symbol: "MKR"
-                                            },
-                                            //changePct24hour: undefined // NB 'undefined' on purpose
-                                            visibleForNetworkWithPositiveBalance: true
-                                        },
-                                        {
-                                            symbol: "InvisibleHere",
-                                            enabledNetworkBalance: {},
-                                            changePct24hour: 0,
-                                            visibleForNetworkWithPositiveBalance: false
-                                        }
-                                    ]
-                                    Component.onCompleted: append(data)
-                                }
-                            }
-
-                            readonly property var flatCollectibles: ListModel {
-                                readonly property var data: [
-                                    {
-                                        //id: 123,
-                                        name: "Crypto Kitties",
-                                        description: "Super Crypto Kitty",
-                                        backgroundColor: "",
-                                        imageUrl: ModelsData.collectibles.cryptoKitties,
-                                        permalink: ""
-                                    },
-                                    {
-                                        id: 34545656768,
-                                        name: "Kitty 1",
-                                        description: "",
-                                        backgroundColor: "green",
-                                        imageUrl: ModelsData.collectibles.kitty1Big,
-                                        permalink: ""
-                                    },
-                                    {
-                                        id: 123456,
-                                        name: "Kitty 2",
-                                        description: "",
-                                        backgroundColor: "",
-                                        imageUrl: ModelsData.collectibles.kitty2Big,
-                                        permalink: ""
-                                    },
-                                    {
-                                        id: 12345645459537432,
-                                        name: "",
-                                        description: "Kitty 3 description",
-                                        backgroundColor: "oink",
-                                        imageUrl: ModelsData.collectibles.kitty3Big,
-                                        permalink: ""
-                                    },
-                                    {
-                                        id: 691,
-                                        name: "KILLABEAR #691",
-                                        description: "Please note that weapons are not yet reflected in the rarity stats.",
-                                        backgroundColor: "#807c56",
-                                        imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
-                                        permalink: "https://opensea.io/assets/ethereum/0xc99c679c50033bbc5321eb88752e89a93e9e83c5/691"
-                                    }
-                                ]
-                                Component.onCompleted: append(data)
-                            }
-                        }
                     }
                 }
             }
@@ -399,12 +192,6 @@ SplitView {
                 }
                 RowLayout {
                     Layout.fillWidth: true
-                    Label { text: "localNickname:" }
-                    TextField {
-                        id: localNickname
-                        text: "MockNickname"
-                        placeholderText: "Local Nickname"
-                    }
                     Label { text: "displayName:" }
                     TextField {
                         id: displayName
@@ -450,7 +237,7 @@ SplitView {
                     TextField {
                         id: name
                         enabled: ensVerified.checked
-                        text: ensVerified.checked ? "mock-ens-name.eth" : ""
+                        text: ensVerified.checked ? "mock-ens-name" : ""
                         placeholderText: "ENS name"
                     }
                 }
@@ -503,7 +290,6 @@ SplitView {
                     TextField {
                         Layout.fillWidth: true
                         id: bio
-                        selectByMouse: true
                         text: "Hi, I am Alex. I'm an indie developer who mainly works on web products.
 
 I worked for several different companies and created a couple of my own products from scratch. Currently building Telescope and Prepacked.

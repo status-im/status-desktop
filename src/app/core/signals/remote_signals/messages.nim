@@ -8,10 +8,9 @@ import ../../../../app_service/service/bookmarks/dto/[bookmark]
 import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/activity_center/dto/[notification]
 import ../../../../app_service/service/contacts/dto/[contacts, status_update]
-import ../../../../app_service/service/devices/dto/[installation]
+import ../../../../app_service/service/devices/dto/[device]
 import ../../../../app_service/service/settings/dto/[settings]
 import ../../../../app_service/service/saved_address/[dto]
-import ../../../../app_service/service/wallet_account/[key_pair_dto]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
@@ -19,7 +18,7 @@ type MessageSignal* = ref object of Signal
   pinnedMessages*: seq[PinnedMessageUpdateDto]
   chats*: seq[ChatDto]
   contacts*: seq[ContactsDto]
-  installations*: seq[InstallationDto]
+  devices*: seq[DeviceDto]
   emojiReactions*: seq[ReactionDto]
   communities*: seq[CommunityDto]
   communitiesSettings*: seq[CommunitySettingsDto]
@@ -33,8 +32,6 @@ type MessageSignal* = ref object of Signal
   clearedHistories*: seq[ClearedHistoryDto]
   verificationRequests*: seq[VerificationRequest]
   savedAddresses*: seq[SavedAddressDto]
-  keycards*: seq[KeyPairDto]
-  keycardActions*: seq[KeycardActionDto]
 
 type MessageDeliveredSignal* = ref object of Signal
   chatId*: string
@@ -87,7 +84,7 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
 
   if event["event"]{"installations"} != nil:
     for jsonDevice in event["event"]["installations"]:
-      signal.installations.add(jsonDevice.toInstallationDto())
+      signal.devices.add(jsonDevice.toDeviceDto())
 
   if event["event"]{"emojiReactions"} != nil:
     for jsonReaction in event["event"]["emojiReactions"]:
@@ -132,14 +129,6 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"savedAddresses"} != nil:
     for jsonSavedAddress in event["event"]["savedAddresses"]:
       signal.savedAddresses.add(jsonSavedAddress.toSavedAddressDto())
-
-  if event["event"]{"keycards"} != nil:
-    for jsonKc in event["event"]["keycards"]:
-      signal.keycards.add(jsonKc.toKeyPairDto())
-
-  if event["event"]{"keycardActions"} != nil:
-    for jsonKc in event["event"]["keycardActions"]:
-      signal.keycardActions.add(jsonKc.toKeycardActionDto())
 
   result = signal
 

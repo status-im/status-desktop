@@ -39,237 +39,248 @@ Item {
         model: root.model
         spacing: 0
         interactive: height !== contentHeight
+        section.property: "categoryId"
+        section.criteria: ViewSection.FullString
 
-        delegate: Loader {
-            id: chatLoader
+        section.delegate: Loader {
+            id: statusChatListCategoryItemLoader
+            active: !!section
 
-            sourceComponent: {
-                if (model.isCategory) {
-                     return categoryItemComponent
+            required property string section
+
+            sourceComponent: StatusChatListCategoryItem {
+                id: statusChatListCategoryItem
+                
+                function setupPopup() {
+                    categoryPopupMenuSlot.item.categoryId = statusChatListCategoryItemLoader.section
                 }
-                return channelItemComponent
-            }
-            
-            Component {
-                id: categoryItemComponent
-                StatusChatListCategoryItem {
-                    id: statusChatListCategoryItem
-                    objectName: "categoryItem"
-                    
-                    function setupPopup() {
-                        categoryPopupMenuSlot.item.categoryItem = model
-                    }
 
-                    Connections {
-                        enabled: categoryPopupMenuSlot.active && statusChatListCategoryItem.highlighted
-                        target: categoryPopupMenuSlot.item
-                        function onClosed() {
-                            statusChatListCategoryItem.highlighted = false
-                            statusChatListCategoryItem.menuButton.highlighted = false
+                function toggleCategory() {
+                    root.model.sourceModel.changeCategoryOpened(statusChatListCategoryItemLoader.section, !opened)
+                    opened = root.model.sourceModel.getCategoryOpenedForCategoryId(statusChatListCategoryItemLoader.section)
+                }
+
+                Connections {
+                    enabled: categoryPopupMenuSlot.active && statusChatListCategoryItem.highlighted
+                    target: categoryPopupMenuSlot.item
+                    function onClosed() {
+                        statusChatListCategoryItem.highlighted = false
+                        statusChatListCategoryItem.menuButton.highlighted = false
+                    }
+                }
+
+                title: root.model.sourceModel.getCategoryNameForCategoryId(statusChatListCategoryItemLoader.section)
+
+                opened: root.model.sourceModel.getCategoryOpenedForCategoryId(statusChatListCategoryItemLoader.section)
+
+                sensor.pressAndHoldInterval: 150
+                propagateTitleClicks: true // title click is handled as a normal click (fallthru)
+                showAddButton: showCategoryActionButtons
+                showMenuButton: !!root.popupMenu
+                highlighted: false//statusChatListCategory.dragged // FIXME DND
+
+                hasUnreadMessages: root.model.sourceModel.getCategoryHasUnreadMessages(statusChatListCategoryItemLoader.section)
+                Connections {
+                    target: root.model.sourceModel
+                    function onCategoryHasUnreadMessagesChanged(categoryId: string, hasUnread: bool) {
+                        if (categoryId === statusChatListCategoryItemLoader.section) {
+                            statusChatListCategoryItem.hasUnreadMessages = hasUnread
                         }
                     }
+                }
 
-                    title: model.name
-
-                    opened: model.categoryOpened
-
-                    sensor.pressAndHoldInterval: 150
-                    propagateTitleClicks: true // title click is handled as a normal click (fallthru)
-                    showAddButton: showCategoryActionButtons
-                    showMenuButton: !!root.onPopupMenuChanged
-                    highlighted: false//statusChatListCategory.dragged // FIXME DND
-                    
-                    hasUnreadMessages: model.hasUnreadMessages
-                    
-                    onClicked: {
-                        if (!sensor.enabled) {
-                            return
-                        }
+                onClicked: {
+                    if (sensor.enabled) {
                         if (mouse.button === Qt.RightButton && showCategoryActionButtons && !!root.categoryPopupMenu) {
                             statusChatListCategoryItem.setupPopup()
                             highlighted = true;
                             categoryPopupMenuSlot.item.popup()
                         } else if (mouse.button === Qt.LeftButton) {
-                            root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                            toggleCategory()
                         }
-                    }
-                    onToggleButtonClicked: root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
-                    onMenuButtonClicked: {
-                        statusChatListCategoryItem.setupPopup()
-                        highlighted = true
-                        menuButton.highlighted = true
-                        categoryPopupMenuSlot.item.popup()
-                    }
-                    onAddButtonClicked: {
-                        root.categoryAddButtonClicked(categoryId)
                     }
                 }
+                onToggleButtonClicked: toggleCategory()
+                onMenuButtonClicked: {
+                    statusChatListCategoryItem.setupPopup()
+                    highlighted = true
+                    menuButton.highlighted = true
+                    let p = menuButton.mapToItem(statusChatListCategoryItem, menuButton.x, menuButton.y)
+                    let menuWidth = categoryPopupMenuSlot.item.width
+                    categoryPopupMenuSlot.item.popup()
+                }
+                onAddButtonClicked: {
+                    root.categoryAddButtonClicked(categoryId)
+                }
             }
-            
-            Component {
-                id: channelItemComponent
-                QC.Control {
-                    id: draggable
-                    objectName: model.name
-                    width: root.width
-                    height: model.categoryOpened ? statusChatListItem.height + 4 /*spacing between non-collapsed items*/ : 0
-                    visible: height
-                    verticalPadding: 2
+        }
 
-                    property alias chatListItem: statusChatListItem
+        delegate: Loader {
+            id: chatLoader
+            active: model.type !== d.chatTypeCategory
+            height: active && item ? item.height : 0
+            visible: height
 
-                    contentItem: MouseArea {
-                        id: dragSensor
+            sourceComponent: QC.Control {
+                id: draggable
+                objectName: model.name
+                width: root.width
+                height: model.categoryOpened ? statusChatListItem.height : 0
+                verticalPadding: 2
 
-                        anchors.fill: parent
-                        cursorShape: active ? Qt.ClosedHandCursor : Qt.PointingHandCursor
-                        hoverEnabled: true
-                        enabled: root.draggableItems
+                property alias chatListItem: statusChatListItem
 
-                        property bool active: false
-                        property real startY: 0
-                        property real startX: 0
+                contentItem: MouseArea {
+                    id: dragSensor
 
-                        drag.target: draggedListItemLoader.item
-                        drag.filterChildren: true
+                    anchors.fill: parent
+                    cursorShape: active ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+                    hoverEnabled: true
+                    enabled: root.draggableItems
 
-                        onPressed: {
-                            startY = mouseY
-                            startX = mouseX
+                    property bool active: false
+                    property real startY: 0
+                    property real startX: 0
+
+                    drag.target: draggedListItemLoader.item
+                    drag.filterChildren: true
+
+                    onPressed: {
+                        startY = mouseY
+                        startX = mouseX
+                    }
+                    onPressAndHold: active = true
+                    onReleased: {
+                        if (active && d.destinationPosition !== -1 && statusChatListItem.originalOrder !== d.destinationPosition) {
+                            root.chatItemReordered(statusChatListItem.chatId, statusChatListItem.originalOrder, d.destinationPosition)
                         }
-                        onPressAndHold: active = true
-                        onReleased: {
-                            if (active && d.destinationPosition !== -1 && statusChatListItem.originalOrder !== d.destinationPosition) {
-                                root.chatItemReordered(statusChatListItem.chatId, statusChatListItem.originalOrder, d.destinationPosition)
-                            }
-                            active = false
-                        }
-                        onMouseYChanged: {
-                            if ((Math.abs(startY - mouseY) > 1) && pressed) {
-                                active = true
-                            }
-                        }
-                        onMouseXChanged: {
-                            if ((Math.abs(startX - mouseX) > 1) && pressed) {
-                                active = true
-                            }
-                        }
-                        onActiveChanged: d.destinationPosition = -1
-
-                        StatusChatListItem {
-                            id: statusChatListItem
-
-                            width: parent.width
-                            opacity: dragSensor.active ? 0.0 : 1.0
-                            originalOrder: model.position
-                            chatId: model.itemId
-                            categoryId: model.categoryId
-                            name: model.name
-                            type: model.type ?? StatusChatListItem.Type.CommunityChat
-                            muted: model.muted
-                            hasUnreadMessages: model.hasUnreadMessages
-                            notificationsCount: model.notificationsCount
-                            highlightWhenCreated: !!model.highlight
-                            selected: (model.active && root.highlightItem)
-                            asset.emoji: !!model.emoji ? model.emoji : ""
-                            asset.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
-                            asset.isImage: model.icon.includes("data")
-                            asset.name: model.icon
-                            ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
-                            onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
-
-                            sensor.cursorShape: dragSensor.cursorShape
-
-                            onClicked: {
-                                highlightWhenCreated = false
-
-                                if (mouse.button === Qt.RightButton && !!root.popupMenu) {
-                                    statusChatListItem.highlighted = true
-
-                                    const originalOpenHandler = popupMenuSlot.item.openHandler
-                                    const originalCloseHandler = popupMenuSlot.item.closeHandler
-
-                                    popupMenuSlot.item.openHandler = function () {
-                                        if (!!originalOpenHandler) {
-                                            originalOpenHandler(statusChatListItem.chatId)
-                                        }
-                                    }
-
-                                    popupMenuSlot.item.closeHandler = function () {
-                                        if (statusChatListItem) {
-                                            statusChatListItem.highlighted = false
-                                        }
-                                        if (!!originalCloseHandler) {
-                                            originalCloseHandler()
-                                        }
-                                    }
-
-                                    const p = statusChatListItem.mapToItem(root, mouse.x, mouse.y)
-
-                                    popupMenuSlot.item.popup(p.x + 4, p.y + 6)
-                                    popupMenuSlot.item.openHandler = originalOpenHandler
-                                    return
-                                }
-                                if (!statusChatListItem.selected) {
-                                    root.chatItemSelected(statusChatListItem.categoryId, statusChatListItem.chatId)
-                                }
-                            }
-                            onUnmute: root.chatItemUnmuted(statusChatListItem.chatId)
+                        active = false
+                    }
+                    onMouseYChanged: {
+                        if ((Math.abs(startY - mouseY) > 1) && pressed) {
+                            active = true
                         }
                     }
+                    onMouseXChanged: {
+                        if ((Math.abs(startX - mouseX) > 1) && pressed) {
+                            active = true
+                        }
+                    }
+                    onActiveChanged: d.destinationPosition = -1
 
-                    DropArea {
-                        id: dropArea
-                        width: dragSensor.active ? 0 : parent.width
-                        height: dragSensor.active ? 0 : parent.height
-                        keys: ["chat-item-category-" + statusChatListItem.categoryId]
+                    StatusChatListItem {
+                        id: statusChatListItem
 
-                        onEntered: reorderDelay.start()
+                        width: parent.width
+                        opacity: dragSensor.active ? 0.0 : 1.0
+                        originalOrder: model.position
+                        chatId: model.itemId
+                        categoryId: model.categoryId
+                        name: model.name
+                        type: !!model.type ? model.type : StatusChatListItem.Type.CommunityChat
+                        muted: model.muted
+                        hasUnreadMessages: model.hasUnreadMessages
+                        notificationsCount: model.notificationsCount
+                        highlightWhenCreated: !!model.highlight
+                        selected: (model.active && root.highlightItem)
+                        asset.emoji: !!model.emoji ? model.emoji : ""
+                        asset.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
+                        asset.isImage: model.icon.includes("data")
+                        asset.name: model.icon
+                        ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
+                        onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
 
-                        Timer {
-                            id: reorderDelay
-                            interval: 100
-                            repeat: false
-                            onTriggered: {
-                                if (dropArea.containsDrag) {
-                                    d.destinationPosition = index;
+                        sensor.cursorShape: dragSensor.cursorShape
+
+                        onClicked: {
+                            highlightWhenCreated = false
+
+                            if (mouse.button === Qt.RightButton && !!root.popupMenu) {
+                                statusChatListItem.highlighted = true
+
+                                let originalOpenHandler = popupMenuSlot.item.openHandler
+                                let originalCloseHandler = popupMenuSlot.item.closeHandler
+
+                                popupMenuSlot.item.openHandler = function () {
+                                    if (!!originalOpenHandler) {
+                                        originalOpenHandler(statusChatListItem.chatId)
+                                    }
                                 }
+
+                                popupMenuSlot.item.closeHandler = function () {
+                                    if (statusChatListItem) {
+                                        statusChatListItem.highlighted = false
+                                    }
+                                    if (!!originalCloseHandler) {
+                                        originalCloseHandler()
+                                    }
+                                }
+
+                                let p = statusChatListItem.mapToItem(root, mouse.x, mouse.y)
+
+                                popupMenuSlot.item.popup(p.x + 4, p.y + 6)
+                                popupMenuSlot.item.openHandler = originalOpenHandler
+                                return
+                            }
+                            if (!statusChatListItem.selected) {
+                                root.chatItemSelected(statusChatListItem.categoryId, statusChatListItem.chatId)
+                            }
+                        }
+                        onUnmute: root.chatItemUnmuted(statusChatListItem.chatId)
+                    }
+                }
+
+                DropArea {
+                    id: dropArea
+                    width: dragSensor.active ? 0 : parent.width
+                    height: dragSensor.active ? 0 : parent.height
+                    keys: ["chat-item-category-" + statusChatListItem.categoryId]
+
+                    onEntered: reorderDelay.start()
+
+                    Timer {
+                        id: reorderDelay
+                        interval: 100
+                        repeat: false
+                        onTriggered: {
+                            if (dropArea.containsDrag) {
+                                d.destinationPosition = root.model.get(draggable.DelegateModel.itemsIndex).position
+                                statusChatListItems.items.move(dropArea.drag.source.DelegateModel.itemsIndex, draggable.DelegateModel.itemsIndex)
                             }
                         }
                     }
+                }
 
-                    Loader {
-                        id: draggedListItemLoader
-                        active: dragSensor.active
-                        sourceComponent: StatusChatListItem {
-                            property var globalPosition: Utils.getAbsolutePosition(draggable)
-                            parent: QC.Overlay.overlay
-                            sensor.cursorShape: dragSensor.cursorShape
-                            Drag.active: dragSensor.active
-                            Drag.hotSpot.x: width / 2
-                            Drag.hotSpot.y: height / 2
-                            Drag.keys: ["chat-item-category-" + categoryId]
-                            Drag.source: draggable
+                Loader {
+                    id: draggedListItemLoader
+                    active: dragSensor.active
+                    sourceComponent: StatusChatListItem {
+                        property var globalPosition: Utils.getAbsolutePosition(draggable)
+                        parent: QC.Overlay.overlay
+                        sensor.cursorShape: dragSensor.cursorShape
+                        Drag.active: dragSensor.active
+                        Drag.hotSpot.x: width / 2
+                        Drag.hotSpot.y: height / 2
+                        Drag.keys: ["chat-item-category-" + categoryId]
+                        Drag.source: draggable
 
-                            chatId: draggable.chatListItem.chatId
-                            categoryId: draggable.chatListItem.categoryId
-                            name: draggable.chatListItem.name
-                            type: draggable.chatListItem.type
-                            muted: draggable.chatListItem.muted
-                            dragged: true
-                            hasUnreadMessages: model.hasUnreadMessages
-                            notificationsCount: model.notificationsCount
-                            selected: draggable.chatListItem.selected
-
-                            asset.color: draggable.chatListItem.asset.color
-                            asset.imgIsIdenticon: draggable.chatListItem.asset.imgIsIdenticon
-                            asset.name: draggable.chatListItem.asset.name
-
-                            Component.onCompleted: {
-                                x = globalPosition.x
-                                y = globalPosition.y
-                            }
+                        Component.onCompleted: {
+                            x = globalPosition.x
+                            y = globalPosition.y
                         }
+                        chatId: draggable.chatListItem.chatId
+                        categoryId: draggable.chatListItem.categoryId
+                        name: draggable.chatListItem.name
+                        type: draggable.chatListItem.type
+                        muted: draggable.chatListItem.muted
+                        dragged: true
+                        hasUnreadMessages: model.hasUnreadMessages
+                        notificationsCount: model.notificationsCount
+                        selected: draggable.chatListItem.selected
+
+                        asset.color: draggable.chatListItem.asset.color
+                        asset.imgIsIdenticon: draggable.chatListItem.asset.imgIsIdenticon
+                        asset.name: draggable.chatListItem.asset.name
                     }
                 }
             }
@@ -292,6 +303,7 @@ Item {
         id: d
 
         property int destinationPosition: -1
+        readonly property int chatTypeCategory: -1
     }
 
     Loader {

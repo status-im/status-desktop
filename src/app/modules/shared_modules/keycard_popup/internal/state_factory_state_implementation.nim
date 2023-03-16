@@ -1,9 +1,4 @@
 proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
-  ## Check for some specific errors
-  if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-    keycardEvent.error.len > 0 and
-    keycardEvent.error == ErrorPCSC:
-      return createState(StateType.NoPCSCService, state.flowType, nil)
   ## Handling factory reset or authentication or unlock keycard flow
   if state.flowType == FlowType.FactoryReset or
     state.flowType == FlowType.Authentication or
@@ -19,15 +14,14 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
     state.flowType == FlowType.ImportFromKeycard:
       if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
         keycardEvent.error.len > 0 and
-        keycardEvent.error == ErrorNoReader:
-          controller.reRunCurrentFlowLater()
+        keycardEvent.error == ErrorConnection:
+          controller.resumeCurrentFlowLater()
           if state.stateType == StateType.PluginReader:
             return nil
           return createState(StateType.PluginReader, state.flowType, nil)
       if keycardFlowType == ResponseTypeValueInsertCard and
         keycardEvent.error.len > 0 and
         keycardEvent.error == ErrorConnection:
-          controller.reRunCurrentFlowLater()
           if state.stateType == StateType.InsertKeycard:
             return nil
           return createState(StateType.InsertKeycard, state.flowType, nil)
@@ -39,16 +33,14 @@ proc ensureReaderAndCardPresence*(state: State, keycardFlowType: string, keycard
   if state.flowType == FlowType.SetupNewKeycard:
     if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
       keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorConnection or 
-      keycardEvent.error == ErrorNoReader:
-        controller.reRunCurrentFlowLater()
+      keycardEvent.error == ErrorConnection:
+        controller.resumeCurrentFlowLater()
         if state.stateType == StateType.PluginReader:
           return nil
         return createState(StateType.PluginReader, state.flowType, state)
     if keycardFlowType == ResponseTypeValueInsertCard and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorConnection:
-        controller.reRunCurrentFlowLater()
         if state.stateType == StateType.InsertKeycard:
           return nil
         if state.stateType == StateType.SelectExistingKeyPair:

@@ -24,7 +24,7 @@ proc walletTokenToItem*(
     currencyAmountToItem(t.getCurrencyBalance(enabledChainIds, currency), currencyFormat),
     t.getVisibleForNetwork(enabledChainIds),
     t.getVisibleForNetworkWithPositiveBalance(enabledChainIds),
-    t.getBalances(chainIds).map(b => balanceToItem(b, tokenFormat)),
+    t.getBalances(enabledChainIds).map(b => balanceToItem(b, tokenFormat)),
     t.description,
     t.assetWebsiteUrl,
     t.builtOn,

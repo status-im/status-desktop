@@ -84,10 +84,6 @@ SettingsContentBase {
             Layout.preferredWidth: root.contentWidth
             keycardStore: root.keycardStore
             keyUid: d.observedKeyUid
-
-            onChangeSectionTitle: {
-                root.sectionTitle = title
-            }
         }
 
         Connections {

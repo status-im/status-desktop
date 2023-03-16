@@ -131,7 +131,7 @@ Rectangle {
 
         property int leftOfMentionIndex: -1
         property int rightOfMentionIndex: -1
-        readonly property int nbEmojisInClipboard: StatusQUtils.Emoji.nbEmojis(QClipboardProxy.html)
+
         readonly property StateGroup emojiPopupTakeover: StateGroup {
             states: State {
                 when: control.emojiPopupOpened
@@ -357,6 +357,10 @@ Rectangle {
         } else if (event.key === Qt.Key_Escape && control.isReply) {
             control.isReply = false
             event.accepted = true
+        } else if (event.key === Qt.Key_Up && messageInputField.length === 0) {
+            event.accepted = true
+            control.keyUpPress()
+            return
         }
 
         const symbolPressed = event.text.length > 0 &&
@@ -470,14 +474,13 @@ Rectangle {
                             }
                         }
                     }
+
                     insertInTextInput(d.copyTextStart, d.copiedTextFormatted)
                 } else {
                     d.copiedTextPlain = ""
                     d.copiedTextFormatted = ""
                     d.copiedMentionsPos = []
-                    messageInputField.insert(d.copyTextStart, ((d.nbEmojisInClipboard === 0) ?
-                    ("<div style='white-space: pre-wrap'>" + Utils.escapeHtml(QClipboardProxy.text) + "</div>")
-                    : StatusQUtils.Emoji.deparse(QClipboardProxy.html)));
+                    messageInputField.insert(d.copyTextStart, "<div style='white-space: pre-wrap'>" + Utils.escapeHtml(QClipboardProxy.text) + "</div>") // preserve formatting
                 }
             }
         }
@@ -712,7 +715,7 @@ Rectangle {
 
         if (messageInputField.readOnly) {
             messageInputField.readOnly = false;
-            messageInputField.cursorPosition = (d.copyTextStart + QClipboardProxy.text.length + d.nbEmojisInClipboard);
+            messageInputField.cursorPosition = d.copyTextStart + QClipboardProxy.text.length;
         }
     }
 
@@ -883,6 +886,7 @@ Rectangle {
 
     function showImageArea(imagePathsOrData) {
         isImage = true;
+        isReply = false;
 
         imageArea.imageSource = imagePathsOrData
         control.fileUrlsAndSources = imageArea.imageSource
@@ -1171,7 +1175,8 @@ Rectangle {
 
             ColumnLayout {
                 id: inputLayout
-                width: parent.width
+
+                anchors.fill: parent
                 spacing: 4
 
                 StatusChatInputReplyArea {
@@ -1202,15 +1207,17 @@ Rectangle {
 
                 RowLayout {
                     Layout.fillWidth: true
-                    Layout.minimumHeight: (messageInputField.contentHeight + messageInputField.topPadding + messageInputField.bottomPadding)
-                    Layout.maximumHeight: 112
+                    Layout.fillHeight: true
                     spacing: Style.current.radius
+
                     StatusScrollView {
                         id: inputScrollView
+
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.leftMargin: 12
                         Layout.rightMargin: 12
+                        Layout.maximumHeight: 112
                         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                         padding: 0
@@ -1240,18 +1247,6 @@ Rectangle {
                             bottomPadding: 9
                             leftPadding: 0
                             padding: 0
-                            Keys.onUpPressed: {
-                                if (isEdit) {
-                                    forceActiveFocus();
-                                } else {
-                                    if (messageInputField.length === 0) {
-                                        control.keyUpPress();
-                                    }
-                                }
-                                if (emojiSuggestions.visible) {
-                                    emojiSuggestions.listView.decrementCurrentIndex();
-                                }
-                            }
                             Keys.onPressed: {
                                 keyEvent = event;
                                 onKeyPress(event)
@@ -1290,14 +1285,13 @@ Rectangle {
                             onTextChanged: {
                                 if (length <= control.messageLimit) {
                                     var symbols = ":='xX><0O;*dB8-D#%\\";
-                                    var symbolIdx = ((cursorPosition > 2) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1)))!==-1))
-                                                    ? (cursorPosition -1) : (symbols.indexOf(getText(0, 1))!==-1) ? 2 : -1;
-                                    if ((getText(symbolIdx-2, (symbolIdx-1)) === " ") || (symbolIdx === 2)) {
+                                    if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
+                                            && (!getText((cursorPosition - 7), cursorPosition).includes("http"))) {
                                         const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
-                                            if (emoji.aliases_ascii.includes(getText((symbolIdx-1), (symbolIdx+1))) ||
-                                                emoji.aliases_ascii.includes(getText((symbolIdx-2), (symbolIdx+1)))) {
-                                                var has2Chars = emoji.aliases_ascii.includes(getText((symbolIdx-4), (symbolIdx-2)));
-                                                replaceWithEmoji("", getText((symbolIdx - (has2Chars ? 3 : 2)), symbolIdx), emoji.unicode);
+                                            if (emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition)) ||
+                                                    emoji.aliases_ascii.includes(getText((cursorPosition - 3), cursorPosition))) {
+                                                var has2Chars = emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition));
+                                                replaceWithEmoji("", getText(cursorPosition - (has2Chars ? 2 : 3), cursorPosition), emoji.unicode);
                                             }
                                         })
                                     }
@@ -1466,7 +1460,7 @@ Rectangle {
                                 color: "transparent"
                                 onClicked: {
                                     control.stickersPopupOpened = true
-
+                                    
                                     togglePopup(control.stickersPopup, stickersBtn)
                                 }
                             }

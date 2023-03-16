@@ -12,9 +12,9 @@ Control{
     id: root
 
     property var holdingsListModel
+    property string permissionName
+    property var permissionImageSource
     property var channelsListModel
-
-    property int permissionType: PermissionTypes.Type.None
     property bool isPrivate: false
 
     signal editClicked
@@ -121,8 +121,8 @@ Control{
 
             StatusListItemTag {
                 height: d.flowRowHeight
-                title: PermissionTypes.getName(root.permissionType)
-                asset.name: PermissionTypes.getIcon(root.permissionType)
+                title:  root.permissionName
+                asset.name: root.permissionImageSource
                 asset.isImage: false
                 asset.bgColor: "transparent"
                 closeButtonVisible: false

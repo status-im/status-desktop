@@ -8,6 +8,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 import shared.controls 1.0
+
 import SortFilterProxyModel 0.2
 
 StatusDropdown {
@@ -18,7 +19,7 @@ StatusDropdown {
 
     property string communityName
     property string communityImage
-    property string communityColor
+    property color communityColor
 
     property var model
 
@@ -49,10 +50,7 @@ StatusDropdown {
     QtObject {
         id: d
 
-        readonly property int defaultVMargin: 9
-        readonly property int maxHeightCountNo: 5
-        readonly property int itemStandardHeight: 44
-        readonly property var selectedChannels: new Set()
+        readonly property var selectedChannels: new Map()
 
         signal setSelectedChannels(var channels)
 
@@ -69,7 +67,12 @@ StatusDropdown {
         }
 
         function addToSelectedChannels(model) {
-            selectedChannels.add(model.itemId)
+            selectedChannels.set(model.itemId, {
+                itemId: model.itemId,
+                name: model.name,
+                color: d.resolveColor(model.color, model.colorId),
+                emoji: d.resolveEmoji(model.emoji)
+            })
         }
 
         function removeFromSelectedChannels(model) {
@@ -77,7 +80,11 @@ StatusDropdown {
         }
     }
 
-   contentItem: ColumnLayout {
+    ColumnLayout {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.left: parent.left
+
         spacing: 0
 
         SearchBox {
@@ -93,10 +100,11 @@ StatusDropdown {
 
         StatusListItem {
             Layout.fillWidth: true
-            Layout.topMargin: d.defaultVMargin
-            Layout.preferredHeight: d.itemStandardHeight
+            Layout.topMargin: 9
+            Layout.preferredHeight: 44
 
             visible: root.allowChoosingEntireCommunity
+
             title: root.communityName
             subTitle: qsTr("Community")
 
@@ -146,26 +154,29 @@ StatusDropdown {
 
             visible: root.allowChoosingEntireCommunity
         }
+
         StatusScrollView {
             id: scrollView
+
             Layout.fillWidth: true
-            Layout.minimumHeight: Math.min(d.maxHeightCountNo, topRepeater.count) * d.itemStandardHeight
-            Layout.maximumHeight: Layout.minimumHeight
-            contentHeight: scrollableColumn.implicitHeight
-            Layout.bottomMargin: d.defaultVMargin
+            Layout.fillHeight: true
+            Layout.bottomMargin: 9
             Layout.topMargin:
-                !root.allowChoosingEntireCommunity && !root.allowChoosingEntireCommunity ? d.defaultVMargin : 0
+                !root.allowChoosingEntireCommunity && !root.allowChoosingEntireCommunity ? 9 : 0
 
             padding: 0
 
             ColumnLayout {
-                id: scrollableColumn
-                width: scrollView.width
+                id: scollableColumn
+
                 spacing: 0
+                width: scrollView.width
 
                 StatusIconTextButton {
                     Layout.preferredHeight: 36
+
                     visible: root.showAddChannelButton
+
                     leftPadding: 8
                     spacing: 8
                     statusIcon: "add"
@@ -178,49 +189,30 @@ StatusDropdown {
 
                 Repeater {
                     id: topRepeater
+
                     model: SortFilterProxyModel {
                         id: topLevelModel
 
                         sourceModel: root.model
 
-                        filters: AnyOf {
-                            ValueFilter {
-                                roleName: "categoryId"
-                                value: ""
-                            }
-                            ValueFilter {
-                                roleName: "isCategory"
-                                value: true
-                            }
-                        }
-
                         sorters: [
-                            RoleSorter {
-                                roleName: "categoryPosition"
-                                priority: 2 // Higher number === higher priority
-                            },
-                            RoleSorter {
-                                roleName: "position"
-                                priority: 1
-                            }
+                            RoleSorter { roleName: "isCategory" },
+                            RoleSorter { roleName: "position" }
                         ]
                     }
 
                     ColumnLayout {
                         id: column
 
+                        Layout.fillWidth: true
+                        spacing: 0
+
                         readonly property var topModel: model
                         readonly property alias checkBox: loader.item
                         property int checkedCount: 0
 
-                        readonly property bool isCategory: model.isCategory
-                        readonly property string categoryId: model.categoryId
-
-                        Layout.fillWidth: true
-                        spacing: 0
-
                         visible: {
-                            if (!isCategory)
+                            if (!model.isCategory)
                                 return d.search(model.name, searcher.text)
                                         || checkBox.checked
 
@@ -240,9 +232,9 @@ StatusDropdown {
                             id: loader
 
                             Layout.fillWidth: true
-                            Layout.preferredHeight: d.itemStandardHeight
-                            Layout.topMargin: isCategory ? d.defaultVMargin : 0
-                            sourceComponent: isCategory
+                            Layout.topMargin: model.isCategory ? 9 : 0
+
+                            sourceComponent: model.isCategory
                                              ? communityCategoryDelegate
                                              : communityDelegate
 
@@ -253,6 +245,7 @@ StatusDropdown {
                                     const checkBox = loader.item.checkBox
                                     checkBox.checked = false
                                     checkBox.onToggled()
+
                                 }
                             }
 
@@ -264,7 +257,7 @@ StatusDropdown {
 
                                     title: "#" + model.name
 
-                                    asset.name: model.icon ?? ""
+                                    asset.name: model.icon
                                     asset.emoji: d.resolveEmoji(model.emoji)
                                     asset.color: d.resolveColor(model.color,
                                                                 model.colorId)
@@ -299,7 +292,7 @@ StatusDropdown {
                                     title: model.name
 
                                     checkState: {
-                                        if (checkedCount === subItems.count)
+                                        if (checkedCount === model.subItems.count)
                                             return Qt.Checked
                                         else if (checkedCount === 0)
                                             return Qt.Unchecked
@@ -317,31 +310,13 @@ StatusDropdown {
                             }
                         }
 
-                        SortFilterProxyModel {
-                            id: subItems
-
-                            sourceModel: isCategory ? root.model : null
-
-                            filters: AllOf {
-                                ValueFilter {
-                                    roleName: "categoryId"
-                                    value: column.categoryId
-                                }
-                                ValueFilter {
-                                    roleName: "isCategory"
-                                    value: false
-                                }
-                            }
-
-                            sorters: RoleSorter {
-                                roleName: "position"
-                            }
-                        }
-
                         Repeater {
                             id: subItemsRepeater
 
-                            model: subItems
+                            model: SortFilterProxyModel {
+                                sourceModel: topModel.isCategory ? topModel.subItems : null
+                                sorters: RoleSorter { roleName: "position" }
+                            }
 
                             function setAll(checkState) {
                                 const subItemsCount = count
@@ -354,16 +329,16 @@ StatusDropdown {
                             CommunityListItem {
                                 id: communitySubItem
 
-                                readonly property bool show:
-                                    d.search(model.name, searcher.text) || checked
-
                                 Layout.fillWidth: true
+
+                                readonly property bool show: d.search(model.name, searcher.text)
+                                                             || checked
 
                                 visible: show
 
                                 title: "#" + model.name
 
-                                asset.name: model.icon ?? ""
+                                asset.name: model.icon
                                 asset.emoji: d.resolveEmoji(model.emoji)
                                 asset.color: d.resolveColor(model.color,
                                                             model.colorId)

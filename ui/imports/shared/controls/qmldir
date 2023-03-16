@@ -16,7 +16,6 @@ SearchBox 1.0 SearchBox.qml
 SeedPhraseTextArea 1.0 SeedPhraseTextArea.qml
 SendToContractWarning 1.0 SendToContractWarning.qml
 SettingsRadioButton 1.0 SettingsRadioButton.qml
-StatusSyncingInstructions 1.0 StatusSyncingInstructions.qml
 StyledButton 1.0 StyledButton.qml
 StyledTextArea 1.0 StyledTextArea.qml
 StyledTextEdit 1.0 StyledTextEdit.qml
@@ -33,7 +32,3 @@ TransactionDetailsHeader.qml 1.0 TransactionDetailsHeader.qml
 TokenDelegate 1.0 TokenDelegate.qml
 StyledTextEditWithLoadingState 1.0 StyledTextEditWithLoadingState.qml
 LoadingTokenDelegate 1.0 LoadingTokenDelegate.qml
-StatusSyncCodeInput 1.0 StatusSyncCodeInput.qml
-GetSyncCodeMobileInstructions 1.0 GetSyncCodeMobileInstructions.qml
-GetSyncCodeDesktopInstructions 1.0 GetSyncCodeDesktopInstructions.qml
-ErrorDetails 1.0 ErrorDetails.qml

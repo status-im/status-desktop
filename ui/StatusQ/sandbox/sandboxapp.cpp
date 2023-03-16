@@ -6,17 +6,15 @@
 #include <QDirIterator>
 
 #include "StatusQ/typesregistration.h"
-#include <QZXing.h>
 
 SandboxApp::SandboxApp(int &argc, char **argv)
     : QGuiApplication(argc, argv)
 {
-    QZXing::registerQMLTypes();
-
 #ifdef QT_DEBUG
-    connect(&m_watcher, &QFileSystemWatcher::directoryChanged, this, [this](const QString&) {
+    connect(&m_watcher, &QFileSystemWatcher::directoryChanged, [this](const QString&) {
         restartEngine();
     });
+
 #endif
 }
 

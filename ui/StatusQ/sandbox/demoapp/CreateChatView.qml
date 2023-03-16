@@ -90,7 +90,6 @@ Page {
                 id: notificationButton
                 anchors.right: parent.right
                 unreadNotificationsCount: 3
-                hasUnseenNotifications: true
             }
         }
     }

@@ -32,7 +32,7 @@ Item {
 
     property var store
     property bool hasAddedContacts: false
-    property var communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || ({}) : ({})
+    property var communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || {} : {}
     property Component membershipRequestPopup
 
     signal infoButtonClicked
@@ -254,16 +254,35 @@ Item {
 
             categoryPopupMenu: StatusMenu {
 
-                property var categoryItem
+                property var itemWithCategory
+                property string categoryId
+
+                openHandler: function () {
+                    let jsonObj = root.communitySectionModule.getItemPartOfCategoryAsJsonById(categoryId)
+                    try {
+                        let obj = JSON.parse(jsonObj)
+                        if (obj.error) {
+                            console.error("error parsing chat item json object, id: ", categoryId, " error: ", obj.error)
+                            close()
+                            return
+                        }
+                        itemWithCategory = obj
+                    } catch (e) {
+                        console.error("error parsing chat item json object, id: ", categoryId, " error: ", e)
+                        close()
+                        return
+                    }
+                }
 
                 StatusAction {
-                    text: categoryItem.muted ? qsTr("Unmute category") : qsTr("Mute category")
+                    // TODO pass categoryMuted to Item
+                    text: itemWithCategory.muted ? qsTr("Unmute category") : qsTr("Mute category")
                     icon.name: "notification"
                     onTriggered: {
-                        if (categoryItem.muted) {
-                            root.communitySectionModule.unmuteCategory(categoryItem.itemId)
+                        if (itemWithCategory.muted) {
+                            root.communitySectionModule.unmuteCategory(itemWithCategory.categoryId)
                         } else {
-                            root.communitySectionModule.muteCategory(categoryItem.itemId)
+                            root.communitySectionModule.muteCategory(itemWithCategory.categoryId)
                         }
                     }
                 }
@@ -277,8 +296,8 @@ Item {
                        Global.openPopup(createCategoryPopup, {
                            isEdit: true,
                            channels: [],
-                           categoryId: categoryItem.itemId,
-                           categoryName: categoryItem.name
+                           categoryId: itemWithCategory.categoryId,
+                           categoryName: itemWithCategory.categoryName
                        })
                     }
                 }
@@ -295,10 +314,10 @@ Item {
                     type: StatusAction.Type.Danger
                     onTriggered: {
                         Global.openPopup(deleteCategoryConfirmationDialogComponent, {
-                            title: qsTr("Delete %1 category").arg(categoryItem.name),
+                            title: qsTr("Delete %1 category").arg(itemWithCategory.categoryName),
                             confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won't be deleted.")
-                                .arg(categoryItem.name),
-                            categoryId: categoryItem.itemId
+                                .arg(itemWithCategory.categoryName),
+                            categoryId: itemWithCategory.categoryId
                         })
                     }
                 }
@@ -308,7 +327,6 @@ Item {
                 id: chatContextMenuView
                 emojiPopup: root.emojiPopup
 
-                // TODO pass the chatModel in its entirety instead of fetching the JSOn using just the id
                 openHandler: function (id) {
                     try {
                         let jsonObj = root.communitySectionModule.getItemAsJson(id)

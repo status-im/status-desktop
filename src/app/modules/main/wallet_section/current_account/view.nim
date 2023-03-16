@@ -32,8 +32,6 @@ QtObject:
       derivedfrom: string
       relatedAccounts: compact_model.Model
       ens: string
-      tmpChainID: int  # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
-      tmpSymbol: string # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
 
   proc setup(self: View) =
     self.QObject.setup
@@ -244,13 +242,5 @@ QtObject:
   #proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): QVariant {.slot.} =
   #  return newQVariant(self.assets.getTokenBalanceOnChain(chainId, tokenSymbol))
 
-  # As a workaround, we do it in two steps: First call prepareTokenBalanceOnChain, then getPreparedTokenBalanceOnChain
-  proc prepareTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string) {.slot.} =
-    self.tmpChainId = chainId
-    self.tmpSymbol = tokenSymbol
-
-  proc getPreparedTokenBalanceOnChain*(self: View): QVariant {.slot.} =
-    let currencyAmount = self.assets.getTokenBalanceOnChain(self.tmpChainId, self.tmpSymbol)
-    self.tmpChainId = 0
-    self.tmpSymbol = "ERROR"
-    return newQVariant(currencyAmount)
+  proc getTokenBalanceOnChainAsJson*(self: View, chainId: int, tokenSymbol: string): string {.slot.} =
+    return $self.assets.getTokenBalanceOnChain(chainId, tokenSymbol).toJsonNode()

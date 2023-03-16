@@ -40,7 +40,6 @@ Column {
 
     StatusToolBar {
         notificationCount: 1
-        hasUnseenNotifications: true
         width: 518
 
         headerContent: StatusChatInfoButton {
@@ -76,7 +75,6 @@ Column {
 
     StatusToolBar {
         notificationCount: 1
-        hasUnseenNotifications: true
         width: 518
 
         StatusTagSelector {

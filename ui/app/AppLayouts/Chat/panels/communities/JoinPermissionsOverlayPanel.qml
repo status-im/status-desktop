@@ -22,15 +22,11 @@ Control {
     property bool isInvitationPending: false
     property bool isJoinRequestRejected: false
     property string communityName
-    property var communityHoldingsModel
+    property var communityHoldings
     property string channelName
-    property var viewOnlyHoldingsModel
-    property var viewAndPostHoldingsModel
-    property var moderateHoldingsModel
-    property bool showOnlyPanels: false
-
-    property var assetsModel
-    property var collectiblesModel
+    property var viewOnlyHoldings
+    property var viewAndPostHoldings
+    property var moderateHoldings
 
     signal revealAddressClicked
     signal invitationPendingClicked
@@ -64,34 +60,30 @@ Control {
     spacing: 32 // default by design
     contentItem: ColumnLayout {
         id: column
-
         spacing: root.spacing
 
-        component CustomHoldingsListPanel: HoldingsListPanel {
+        HoldingsListPanel {
             Layout.fillWidth: true
-
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
-
             spacing: root.spacing
-        }
-
-        CustomHoldingsListPanel {
-            visible: root.joinCommunity && root.communityHoldingsModel
+            visible: root.joinCommunity && root.communityHoldings
             introText: qsTr("To join <b>%1</b> you need to prove that you hold").arg(root.communityName)
-            model: root.communityHoldingsModel
+            model: root.communityHoldings
         }
 
-        CustomHoldingsListPanel {
-            visible: !root.joinCommunity && !!root.viewOnlyHoldingsModel
+        HoldingsListPanel {
+            Layout.fillWidth: true
+            spacing: root.spacing
+            visible: !root.joinCommunity && !!root.viewOnlyHoldings
             introText: qsTr("To only view the <b>%1</b> channel you need to hold").arg(root.channelName)
-            model: root.viewOnlyHoldingsModel
+            model: root.viewOnlyHoldings
         }
 
-        CustomHoldingsListPanel {
-            visible: !root.joinCommunity && !!root.viewAndPostHoldingsModel
+        HoldingsListPanel {
+            Layout.fillWidth: true
+            spacing: root.spacing
+            visible: !root.joinCommunity && !!root.viewAndPostHoldings
             introText: qsTr("To view and post in the <b>%1</b> channel you need to hold").arg(root.channelName)
-            model: root.viewAndPostHoldingsModel
+            model: root.viewAndPostHoldings
         }
 
         HoldingsListPanel {
@@ -99,12 +91,12 @@ Control {
             spacing: root.spacing
             visible: !root.joinCommunity && !!root.moderateHoldings
             introText: qsTr("To moderate in the <b>%1</b> channel you need to hold").arg(root.channelName)
-            model: root.moderateHoldingsModel
+            model: root.moderateHoldings
         }
 
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
-            visible: !root.showOnlyPanels && !root.isJoinRequestRejected
+            visible: !root.isJoinRequestRejected
             text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
             font.pixelSize: 13
             enabled: root.requirementsMet
@@ -113,7 +105,7 @@ Control {
 
         StatusBaseText {
             Layout.alignment: Qt.AlignHCenter
-            visible: !root.showOnlyPanels && (root.isJoinRequestRejected || !root.requirementsMet)
+            visible: root.isJoinRequestRejected || !root.requirementsMet
             text: root.isJoinRequestRejected ? d.memberchipRequestRejectedText :
                                           (root.joinCommunity ? d.communityRequirementsNotMetText : d.channelRequirementsNotMetText)
             color: Theme.palette.dangerColor1

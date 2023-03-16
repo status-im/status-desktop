@@ -7,12 +7,6 @@ import model as chats_model
 import item as chat_item
 import ../../shared_models/user_item as user_item
 import ../../shared_models/user_model as user_model
-import ../../shared_models/token_permissions_model
-import ../../shared_models/token_permission_item
-import ../../shared_models/token_criteria_item
-import ../../shared_models/token_criteria_model
-import ../../shared_models/token_list_item
-import ../../shared_models/token_list_model
 
 import chat_content/module as chat_content_module
 import chat_content/users/module as users_module
@@ -30,14 +24,12 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/gif/service as gif_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/token/service as token_service
-import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
-import ../../../../app_service/service/community/dto/community as community_dto
 
 export io_interface
+
+const CATEGORY_ID_PREFIX = "cat-"
 
 logScope:
   topics = "chat-section-module"
@@ -65,10 +57,6 @@ proc buildChatSectionUI(self: Module,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service)
 
-proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem
-
-proc buildTokenList*(self: Module)
-
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
@@ -82,15 +70,12 @@ proc newModule*(
     communityService: community_service.Service,
     messageService: message_service.Service,
     gifService: gif_service.Service,
-    mailserversService: mailservers_service.Service,
-    walletAccountService: wallet_account_service.Service,
-    tokenService: token_service.Service,
-    communityTokensService: community_tokens_service.Service
+    mailserversService: mailservers_service.Service
   ): Module =
   result = Module()
   result.delegate = delegate
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, nodeConfigurationService,
-  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, communityTokensService)
+  contactService, chatService, communityService, messageService, gifService, mailserversService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
@@ -144,24 +129,26 @@ proc removeSubmodule(self: Module, chatId: string) =
   self.chatContentModules.del(chatId)
 
 
-proc addCategoryItem(self: Module, category: Category, amIAdmin: bool) =
+proc addEmptyChatItemForCategory(self: Module, category: Category) =
+  # Add an empty chat item that has the category info
   let emptyChatItem = chat_item.initItem(
-        id = category.id,
-        category.name,
+        id = CATEGORY_ID_PREFIX & category.id,
+        name = "",
         icon = "",
         color = "",
         emoji = "",
         description = "",
         `type` = chat_item.CATEGORY_TYPE,
-        amIAdmin,
+        amIChatAdmin = false,
         lastMessageTimestamp = 0,
         hasUnreadMessages = false,
         notificationsCount = 0,
         muted = false,
         blocked = false,
         active = false,
-        position = -1, # Set position as -1, so that the Category Item is on top of its Channels
+        position = 99,
         category.id,
+        category.name,
         category.position,
       )
   self.view.chatsModel().appendItem(emptyChatItem)
@@ -185,10 +172,6 @@ proc buildChatSectionUI(
   # If a category doesn't have a chat, we add it as an empty chat
   var categoriesWithAssociatedItems: seq[string] = @[]
 
-  for categoryDto in channelGroup.categories:
-    # Add items for the categories. We use a special type to identify categories
-    self.addCategoryItem(categoryDto, channelGroup.admin)
-
   for chatDto in channelGroup.chats:
     let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
     let notificationsCount = chatDto.unviewedMentionsCount
@@ -201,7 +184,9 @@ proc buildChatSectionUI(
     let isUsersListAvailable = chatDto.chatType != ChatType.OneToOne
     var blocked = false
     let belongToCommunity = chatDto.communityId != ""
+    var categoryName = ""
     var categoryPosition = -1
+    var chatPosition = chatDto.position
 
     if chatDto.chatType == ChatType.OneToOne:
       let contactDetails = self.controller.getContactDetails(chatDto.id)
@@ -233,8 +218,11 @@ proc buildChatSectionUI(
       for category in channelGroup.categories:
         if category.id == chatDto.categoryId:
           categoriesWithAssociatedItems.add(chatDto.categoryId)
+          categoryName = category.name
           categoryPosition = category.position
           break
+      if categoryName == "":
+        error "No category found in the channel group for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
 
     let newChatItem = chat_item.initItem(
       chatDto.id,
@@ -253,6 +241,7 @@ proc buildChatSectionUI(
       isActive,
       chatDto.position,
       chatDto.categoryId,
+      categoryName,
       categoryPosition,
       colorId,
       colorHash,
@@ -275,6 +264,19 @@ proc buildChatSectionUI(
       gifService,
       mailserversService,
     )
+
+  # Loop channelGroup categories to see if some of them don't have a chat
+  if categoriesWithAssociatedItems.len < channelGroup.categories.len:
+    for category in channelGroup.categories:
+      var found = false
+      for categoryId in categoriesWithAssociatedItems:
+        if categoryId == category.id:
+          found = true
+          break
+      if found:
+        continue
+
+      self.addEmptyChatItemForCategory(category)
 
   self.setActiveItem(selectedItemId)
 
@@ -304,69 +306,6 @@ proc initContactRequestsModel(self: Module) =
     contactsWhoAddedMe.add(item)
 
   self.view.contactRequestsModel().addItems(contactsWhoAddedMe)
-
-proc rebuildCommunityTokenPermissionsModel(self: Module) =
-  self.buildTokenList()
-
-  let community = self.controller.getMyCommunity()
-  var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
-  var allTokenRequirementsMet = false
-
-  for id, tokenPermission in community.tokenPermissions:
-    # TODO: for startes we only deal with "become member" permissions
-    if tokenPermission.`type` == TokenPermissionType.BecomeMember:
-      let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
-
-      # multiple permissions of the same type act as logical OR
-      # so if at least one of them is fulfilled we can mark the view
-      # as all lights green
-      if tokenPermissionItem.tokenCriteriaMet:
-          allTokenRequirementsMet = true
-
-      tokenPermissionsItems.add(tokenPermissionItem)
-
-  self.view.tokenPermissionsModel().setItems(tokenPermissionsItems)
-  self.view.setAllTokenRequirementsMet(allTokenRequirementsMet)
-  self.view.setRequiresTokenPermissionToJoin(tokenPermissionsItems.len > 0)
-
-proc initCommunityTokenPermissionsModel(self: Module) =
-  self.rebuildCommunityTokenPermissionsModel()
-
-proc buildTokenList(self: Module) =
-  var tokenListItems: seq[TokenListItem]
-  var collectiblesListItems: seq[TokenListItem]
-
-  let community = self.controller.getMyCommunity()
-  let erc20Tokens = self.controller.getTokenList()
-
-  for token in erc20Tokens:
-    let tokenListItem = initTokenListItem(
-      key = token.symbol,
-      name = token.name,
-      symbol = token.symbol,
-      color = token.color,
-      image = "",
-      category = ord(TokenListItemCategory.General)
-    )
-
-    tokenListItems.add(tokenListItem)
-
-  for token in community.communityTokensMetadata:
-    let tokenListItem = initTokenListItem(
-      key = token.symbol,
-      name = token.name,
-      symbol = token.symbol,
-      color = "", # community tokens don't have `color`
-      image = token.image,
-      category = ord(TokenListItemCategory.Community)
-    )
-    collectiblesListItems.add(tokenListItem)
-
-  self.view.setTokenListItems(tokenListItems)
-  self.view.setCollectiblesListItems(collectiblesListItems)
-
-method onWalletAccountTokensRebuilt*(self: Module) =
-  self.rebuildCommunityTokenPermissionsModel()
 
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
   return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
@@ -407,15 +346,11 @@ method load*(
     self.initContactRequestsModel()
   else:
     self.usersModule.load()
-    let community = self.controller.getMyCommunity()
-    self.view.setAmIMember(community.joined)
-    self.initCommunityTokenPermissionsModel()
 
   let activeChatId = self.controller.getActiveChatId()
-  let isCurrentSectionActive = self.controller.getIsCurrentSectionActive()
   for chatId, cModule in self.chatContentModules:
     cModule.load()
-    if isCurrentSectionActive and chatId == activeChatId:
+    if chatId == activeChatId:
       cModule.onMadeActive()
 
 proc checkIfModuleDidLoad(self: Module) =
@@ -510,15 +445,8 @@ method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTime
 
 method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
-    self.controller.setIsCurrentSectionActive(false)
     return
 
-  self.controller.setIsCurrentSectionActive(true)
-  let activeChatId = self.controller.getActiveChatId()
-  if activeChatId == "":
-    self.setFirstChannelAsActive()
-  else:
-    self.setActiveItem(activeChatId)
   self.delegate.onActiveChatChange(self.controller.getMySectionId(), self.controller.getActiveChatId())
 
 method chatsModel*(self: Module): chats_model.Model =
@@ -545,6 +473,7 @@ method addNewChat*(
   var colorHash: ColorHashDto = @[]
   var colorId: int = 0
   var onlineStatus = OnlineStatus.Inactive
+  var categoryName = ""
   var categoryPosition = -1
 
   var isUsersListAvailable = true
@@ -566,6 +495,7 @@ method addNewChat*(
     if category.id == "":
       error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
     else:
+      categoryName = category.name
       categoryPosition = category.position
 
   let chat_item = chat_item.initItem(
@@ -585,6 +515,7 @@ method addNewChat*(
     setChatAsActive,
     chatDto.position,
     chatDto.categoryId,
+    categoryName,
     categoryPosition,
     colorId,
     colorHash,
@@ -634,36 +565,44 @@ method removeCommunityChat*(self: Module, chatId: string) =
   self.controller.removeCommunityChat(chatId)
 
 method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDto]) =
-  # Update category itself
-  self.view.chatsModel().updateCategoryDetailsById(
-    cat.id,
-    cat.name,
-    cat.position
-  )
   # Update chat items that have that category
-  self.view.chatsModel().updateItemsWithCategoryDetailsById(
-    chats,
+  let chatIds = chats.filterIt(it.categoryId == cat.id).mapIt(it.id)
+  self.view.chatsModel().updateItemsWithCategoryDetailById(
+    chatIds,
     cat.id,
     cat.name,
     cat.position,
   )
+  
+  if chatIds.len == 0:
+    # New category with no chats associated, we created an empty chatItem with the category info
+    self.addEmptyChatItemForCategory(cat)
+    return
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
   if (self.doesCatOrChatExist(cat.id)):
     return
 
-  # TODO get admin status
-  self.addCategoryItem(cat, false)
-  # Update chat items that now belong to that category
-  self.view.chatsModel().updateItemsWithCategoryDetailsById(
-    chats,
-    cat.id,
-    cat.name,
-    cat.position,
-  )
+  if chats.len == 0:
+    # New category with no chats associated, we created an empty chatItem with the category info
+    self.addEmptyChatItemForCategory(cat)
+    return
+    
+  # Consider the new category as an edit, we just change the chat items with the new cat info
+  self.onCommunityCategoryEdited(cat, chats)
 
 method onCommunityCategoryDeleted*(self: Module, cat: Category, chats: seq[ChatDto]) =
-  self.view.chatsModel().removeCategory(cat.id, chats)
+  # Update chat positions and remove association with category
+  for chat in chats:
+    self.view.chatsModel().reorderChatById(
+      chat.id,
+      chat.position,
+      newCategoryId = "",
+      newCategoryName = "",
+      newCategoryPosition = -1,
+    )
+  self.view.chatsModel().removeItemById(CATEGORY_ID_PREFIX & cat.id)
+
 
 method setFirstChannelAsActive*(self: Module) =
   if(self.view.chatsModel().getCount() == 0):
@@ -672,19 +611,31 @@ method setFirstChannelAsActive*(self: Module) =
   let chat_item = self.view.chatsModel().getItemAtIndex(0)
   self.setActiveItem(chat_item.id)
 
+method onCommunityCategoryChannelChanged*(self: Module, channelId: string, newCategoryIdForChat: string) =
+  if channelId == self.controller.getActiveChatId():
+    if newCategoryIdForChat.len > 0:
+      self.setActiveItem(channelId)
+    else:
+      self.setActiveItem(channelId)
+
 method onReorderChat*(self: Module, chatId: string, position: int, newCategoryIdForChat: string, prevCategoryId: string, prevCategoryDeleted: bool) =
   var newCategoryName = ""
   var newCategoryPos = -1
   if newCategoryIdForChat != "":
     let newCategory = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), newCategoryIdForChat)
+    newCategoryName = newCategory.name
     newCategoryPos = newCategory.position
-  self.view.chatsModel().reorderChatById(chatId, position, newCategoryIdForChat, newCategoryPos)
+  self.view.chatsModel().reorderChatById(chatId, position, newCategoryIdForChat, newCategoryName, newCategoryPos)
+  if prevCategoryId != "" and not prevCategoryDeleted:
+    if not self.view.chatsModel().hasEmptyChatItem(CATEGORY_ID_PREFIX & prevCategoryId):
+      let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), prevCategoryId)
+      self.addEmptyChatItemForCategory(category)
 
 method onReorderCategory*(self: Module, catId: string, position: int) =
   self.view.chatsModel().reorderCategoryById(catId, position)
 
 method onCategoryNameChanged*(self: Module, category: Category) =
-  self.view.chatsModel().renameCategory(category.id, category.name)
+  self.view.chatsModel().renameCategoryOnItems(category.id, category.name)
 
 method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -746,70 +697,6 @@ method onChatMuted*(self: Module, chatId: string) =
 
 method onChatUnmuted*(self: Module, chatId: string) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted=false)
-
-method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
-  self.view.tokenPermissionsModel().removeItemWithId(permissionId)
-  self.view.setRequiresTokenPermissionToJoin(self.view.tokenPermissionsModel().getCount() > 0)
-  singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
-
-method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  if tokenPermission.`type` == TokenPermissionType.BecomeMember:
-    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
-
-    if tokenPermissionItem.tokenCriteriaMet:
-      self.view.setAllTokenRequirementsMet(true)
-
-    self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
-    self.view.setRequiresTokenPermissionToJoin(true)
-  singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
-
-method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  if tokenPermission.`type` == TokenPermissionType.BecomeMember:
-    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
-    self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
-    if tokenPermissionItem.tokenCriteriaMet:
-      self.view.setAllTokenRequirementsMet(true)
-      return
-
-    # we now need to check whether any other permission criteria where met.
-    let community = self.controller.getMyCommunity()
-    for id, permission in community.tokenPermissions:
-      if id != tokenPermission.id:
-        for tc in permission.tokenCriteria:
-          let balance = self.controller.allAccountsTokenBalance(tc.symbol)
-          let amount = tc.amount.parseFloat
-          let tokenCriteriaMet = balance >= amount
-          if tokenCriteriaMet:
-            return
-
-    self.view.setAllTokenRequirementsMet(false)
-  singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
-
-method onCommunityTokenPermissionCreationFailed*(self: Module, communityId: string) =
-  singletonInstance.globalEvents.showCommunityTokenPermissionCreationFailedNotification(communityId, "Failed to create community permission", "Something went wrong")
-
-method onCommunityTokenPermissionUpdateFailed*(self: Module, communityId: string) =
-  singletonInstance.globalEvents.showCommunityTokenPermissionUpdateFailedNotification(communityId, "Failed to update community permission", "Something went wrong")
-
-method onCommunityTokenPermissionDeletionFailed*(self: Module, communityId: string) =
-  singletonInstance.globalEvents.showCommunityTokenPermissionDeletionFailedNotification(communityId, "Failed to delete community permission", "Something went wrong")
-
-method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) = 
-  let tokenListItem = initTokenListItem(
-    key = tokenMetadata.symbol,
-    name = tokenMetadata.name,
-    symbol = tokenMetadata.symbol,
-    color = "", # tokenMetadata doesn't provide a color
-    image = tokenMetadata.image,
-    category = ord(TokenListItemCategory.Community)
-  )
-
-  if tokenMetadata.tokenType == community_dto.TokenType.ERC721 and not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol):
-    self.view.collectiblesListModel.addItems(@[tokenListItem])
-    return
-
-  if tokenMetadata.tokenType == community_dto.TokenType.ERC20 and not self.view.tokenListModel().hasItem(tokenMetadata.symbol):
-    self.view.tokenListModel.addItems(@[tokenListItem])
 
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
   self.updateBadgeNotifications(chatId, hasUnreadMessages=false, unviewedMentionsCount=0)
@@ -1142,65 +1029,3 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
 method joinSpectatedCommunity*(self: Module) =
   if self.usersModule != nil:
     self.usersModule.updateMembersList()
-
-method createOrEditCommunityTokenPermission*(self: Module, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, isPrivate: bool) =
-  var tokenPermission = CommunityTokenPermissionDto()
-  tokenPermission.id = permissionId
-  tokenPermission.isPrivate = isPrivate
-  tokenPermission.`type` = TokenPermissionType(permissionType)
-
-  let tokenCriteriaJsonObj = tokenCriteriaJson.parseJson
-  for tokenCriteria in tokenCriteriaJsonObj:
-
-    let viewAmount = tokenCriteria{"amount"}.getFloat
-    var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
-    let contractAddresses = self.controller.getContractAddressesForToken(tokenCriteriaDto.symbol)
-    if contractAddresses.len == 0 and tokenCriteriaDto.`type` != community_dto.TokenType.ENS:
-      if permissionId == "":
-        self.onCommunityTokenPermissionCreationFailed(communityId)
-        return 
-      self.onCommunityTokenPermissionUpdateFailed(communityId)
-      return
-
-    tokenCriteriaDto.amount = viewAmount.formatBiggestFloat(ffDecimal)
-    tokenCriteriaDto.contractAddresses = contractAddresses
-    tokenPermission.tokenCriteria.add(tokenCriteriaDto)
-  
-  self.controller.createOrEditCommunityTokenPermission(communityId, tokenPermission)
-
-method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =
-  self.controller.deleteCommunityTokenPermission(communityId, permissionId)
-
-proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem =
-  var tokenCriteriaItems: seq[TokenCriteriaItem] = @[]
-  var allTokenCriteriaMet = true
-
-  for tc in tokenPermission.tokenCriteria:
-
-    let balance = self.controller.allAccountsTokenBalance(tc.symbol)
-    let amount = tc.amount.parseFloat
-    let tokenCriteriaMet = balance >= amount
-    let tokenCriteriaItem = initTokenCriteriaItem(
-      tc.symbol,
-      tc.name,
-      amount,
-      tc.`type`.int,
-      tc.ensPattern,
-      tokenCriteriaMet
-    )
-    if not tokenCriteriaMet:
-      allTokenCriteriaMet = false
-
-    tokenCriteriaItems.add(tokenCriteriaItem)
-
-  let tokenPermissionItem = initTokenPermissionItem(
-      tokenPermission.id, 
-      tokenPermission.`type`.int, 
-      tokenCriteriaItems,
-      @[], # TODO: handle chat list items
-      tokenPermission.isPrivate,
-      allTokenCriteriaMet
-  )
-
-  return tokenPermissionItem
-

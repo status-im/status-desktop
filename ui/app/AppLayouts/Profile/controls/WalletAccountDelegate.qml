@@ -33,7 +33,8 @@ StatusListItem {
     StatusIcon {
         id: shevronIcon
         visible: root.showShevronIcon
-        icon: "next"
+        icon: "chevron-down"
+        rotation: 270
         color: Theme.palette.baseColor1
     }
 }

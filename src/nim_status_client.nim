@@ -93,7 +93,6 @@ proc mainProc() =
   let statusFoundation = newStatusFoundation(fleetConfig)
   let uiScaleFilePath = joinPath(DATADIR, "ui-scale")
   enableHDPI(uiScaleFilePath)
-  tryEnableThreadedRenderer()
   initializeOpenGL()
 
   let imageCert = imageServerTLSCert()
@@ -151,8 +150,8 @@ proc mainProc() =
     networkAccessFactory.delete()
     dockShowAppEvent.delete()
     osThemeEvent.delete()
-    appController.delete()
     statusFoundation.delete()
+    appController.delete()
     singleInstance.delete()
     app.delete()
 

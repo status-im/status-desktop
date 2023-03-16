@@ -1,8 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
 
 import AppLayouts.Chat.views.communities 1.0
+import AppLayouts.Chat.stores 1.0
 
 import Storybook 1.0
 import Models 1.0
@@ -14,31 +14,50 @@ SplitView {
     Logs { id: logs }
 
     Pane {
-        SplitView.fillWidth: true
-        SplitView.fillHeight: true
+        id: root
 
         CommunityNewPermissionView {
-            id: communityNewPermissionView
 
-            anchors.fill: parent
+            store: CommunitiesStore {
+                readonly property var assetsModel: AssetsModel {}
+                readonly property var collectiblesModel: CollectiblesModel {}
+                readonly property var channelsModel: ChannelsModel {}
+                readonly property var permissionConflict: QtObject {
+                    property bool exists: true
+                    property string holdings: "1 ETH"
+                    property string permissions: "View and Post"
+                    property string channels: "#general"
 
-            isEditState: isEditStateCheckBox.checked
-            isPrivate: isPrivateCheckBox.checked
-            isOwner: isOwnerCheckBox.checked
-            duplicationWarningVisible: isDuplicationWarningVisibleCheckBox.checked
+                }
 
-            assetsModel: AssetsModel {}
-            collectiblesModel: CollectiblesModel {}
-            channelsModel: ChannelsModel {}
+                readonly property bool isOwner: isOwnerCheckBox.checked
 
-            communityDetails: QtObject {
-                readonly property string name: "Socks"
-                readonly property string image: ModelsData.icons.socks
-                readonly property string color: "red"
+                function editPermission(index, holdings, permissions, channels, isPrivate) {
+                    logs.logEvent("CommunitiesStore::editPermission - index: " + index)
+                }
+
+                function duplicatePermission(index) {
+                    logs.logEvent("CommunitiesStore::duplicatePermission - index: " + index)
+                }
+
+                function removePermission(index) {
+                    logs.logEvent("CommunitiesStore::removePermission - index: " + index)
+                }
             }
 
-            onCreatePermissionClicked: {
-                logs.logEvent("CommunityNewPermissionView::onCreatePermissionClicked")
+            rootStore: QtObject {
+                readonly property QtObject chatCommunitySectionModule: QtObject {
+                    readonly property var model: ChannelsModel {}
+                }
+
+                readonly property QtObject mainModuleInst: QtObject {
+
+                    readonly property QtObject activeSection: QtObject {
+                        readonly property string name: "Socks"
+                        readonly property string image: ModelsData.icons.socks
+                        readonly property color color: "red"
+                    }
+                }
             }
         }
     }
@@ -47,52 +66,14 @@ SplitView {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 160
+        SplitView.preferredHeight: 150
 
         logsView.logText: logs.logText
 
-        ColumnLayout {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
+        CheckBox {
+            id: isOwnerCheckBox
 
-            RowLayout {
-                Layout.fillWidth: true
-
-                CheckBox {
-                    id: isOwnerCheckBox
-
-                    text: "Is owner"
-                }
-
-                CheckBox {
-                    id: isEditStateCheckBox
-
-                    text: "Is edit state"
-                }
-
-                CheckBox {
-                    id: isPrivateCheckBox
-
-                    text: "Is private"
-                }
-
-                CheckBox {
-                    id: isDuplicationWarningVisibleCheckBox
-
-                    text: "Is duplication warning visible"
-                }
-            }
-
-            Button {
-                text: "Reset changes"
-
-                onClicked: communityNewPermissionView.resetChanges()
-            }
-
-            Label {
-                text: "Is dirty: " + communityNewPermissionView.dirty
-            }
+            text: "Is owner"
         }
     }
 }

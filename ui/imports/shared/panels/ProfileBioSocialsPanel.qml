@@ -101,7 +101,6 @@ Control {
             Layout.maximumHeight: 108
             Layout.fillWidth: true
             contentHeight: bioText.height
-            implicitHeight: contentHeight
             ScrollBar.vertical: StatusScrollBar {
                 id: scrollBar
 

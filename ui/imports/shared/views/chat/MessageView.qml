@@ -100,7 +100,7 @@ Loader {
     property bool hasMention: false
 
     property bool stickersLoaded: false
-    property string sticker
+    property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
     property int stickerPack: -1
 
     property bool isEmoji: messageContentType === Constants.messageContentType.emojiType
@@ -207,7 +207,11 @@ Loader {
         id: d
 
         readonly property int chatButtonSize: 32
-        property bool hideMessage: false
+
+        readonly property bool isSingleImage: linkUrlsModel.count === 1 && linkUrlsModel.get(0).isImage
+                                              && `<p>${linkUrlsModel.get(0).link}</p>` === root.messageText
+
+        property int unfurledLinksCount: 0
 
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
@@ -229,15 +233,6 @@ Loader {
             }
         }
 
-        function nextMessageHasHeader() {
-            if(!root.nextMessageAsJsonObj) {
-                return false
-            }
-            return root.senderId !== root.nextMessageAsJsonObj.senderId ||
-                   d.getShouldRepeatHeader(root.nextMessageAsJsonObj.timeStamp, root.messageTimestamp, root.nextMessageAsJsonObj.outgoingStatus) ||
-                   root.nextMessageAsJsonObj.responseToMessageWithId !== ""
-        }
-
         function getShouldRepeatHeader(messageTimeStamp, prevMessageTimeStamp, messageOutgoingStatus) {
             return ((messageTimeStamp - prevMessageTimeStamp) / 60 / 1000) > Constants.repeatHeaderInterval 
                 || d.getIsExpired(messageTimeStamp, messageOutgoingStatus)
@@ -246,39 +241,21 @@ Loader {
         function getIsExpired(messageTimeStamp, messageOutgoingStatus) {
             return (messageOutgoingStatus === Constants.sending && (Math.floor(messageTimeStamp) + 180000) < Date.now()) || messageOutgoingStatus === Constants.expired
         }
-
-        function convertContentType(value) {
-            switch (value) {
-            case Constants.messageContentType.messageType:
-                return StatusMessage.ContentType.Text;
-            case Constants.messageContentType.stickerType:
-                return StatusMessage.ContentType.Sticker;
-            case Constants.messageContentType.emojiType:
-                return StatusMessage.ContentType.Emoji;
-            case Constants.messageContentType.transactionType:
-                return StatusMessage.ContentType.Transaction;
-            case Constants.messageContentType.imageType:
-                return StatusMessage.ContentType.Image;
-            case Constants.messageContentType.audioType:
-                return StatusMessage.ContentType.Audio;
-            case Constants.messageContentType.communityInviteType:
-                return StatusMessage.ContentType.Invitation;
-            case Constants.messageContentType.discordMessageType:
-                return StatusMessage.ContentType.DiscordMessage;
-            case Constants.messageContentType.fetchMoreMessagesButton:
-            case Constants.messageContentType.chatIdentifier:
-            case Constants.messageContentType.unknownContentType:
-            case Constants.messageContentType.statusType:
-            case Constants.messageContentType.systemMessagePrivateGroupType:
-            case Constants.messageContentType.gapType:
-            case Constants.messageContentType.editType:
-            default:
-                return StatusMessage.ContentType.Unknown;
-            }
-        }
     }
 
+    onLinkUrlsChanged: {
+        linkUrlsModel.clear()
+        if (!root.linkUrls) {
+            return
+        }
+        root.linkUrls.split(" ").forEach(link => {
+            linkUrlsModel.append({link, isImage: Utils.hasImageExtension(link)})
+        })
+    }
 
+    ListModel {
+        id: linkUrlsModel
+    }
 
     Connections {
         enabled: d.isMessageActive
@@ -380,16 +357,48 @@ Loader {
                 Layout.bottomMargin: 16
                 messageTimestamp: root.messageTimestamp
                 previousMessageTimestamp: root.prevMessageIndex === -1 ? 0 : root.prevMessageTimestamp
-                visible: text !== "" && !root.isInPinnedPopup
+                visible: text !== ""
             }
 
             StatusMessage {
                 id: delegate
                 Layout.fillWidth: true
-                Layout.topMargin: showHeader && !root.isInPinnedPopup ? 2 : 0
-                Layout.bottomMargin: !root.isInPinnedPopup ? 2 : 0
+                Layout.topMargin: 2
+                Layout.bottomMargin: 2
 
-                readonly property int contentType: d.convertContentType(root.messageContentType)
+                function convertContentType(value) {
+                    switch (value) {
+                    case Constants.messageContentType.messageType:
+                        return StatusMessage.ContentType.Text;
+                    case Constants.messageContentType.stickerType:
+                        return StatusMessage.ContentType.Sticker;
+                    case Constants.messageContentType.emojiType:
+                        return StatusMessage.ContentType.Emoji;
+                    case Constants.messageContentType.transactionType:
+                        return StatusMessage.ContentType.Transaction;
+                    case Constants.messageContentType.imageType:
+                        return StatusMessage.ContentType.Image;
+                    case Constants.messageContentType.audioType:
+                        return StatusMessage.ContentType.Audio;
+                    case Constants.messageContentType.communityInviteType:
+                        return StatusMessage.ContentType.Invitation;
+                    case Constants.messageContentType.discordMessageType:
+                        return StatusMessage.ContentType.DiscordMessage;
+                    case Constants.messageContentType.fetchMoreMessagesButton:
+                    case Constants.messageContentType.chatIdentifier:
+                    case Constants.messageContentType.unknownContentType:
+                    case Constants.messageContentType.statusType:
+                    case Constants.messageContentType.systemMessagePrivateGroupType:
+                    case Constants.messageContentType.gapType:
+                    case Constants.messageContentType.editType:
+                    default:
+                        return StatusMessage.ContentType.Unknown;
+                    }
+                }
+
+                readonly property int contentType: convertContentType(root.messageContentType)
+                readonly property bool isReply: root.responseToMessageWithId !== ""
+
                 property string originalMessageText: ""
 
                 function editCancelledHandler() {
@@ -413,6 +422,15 @@ Loader {
                     root.messageStore.editMessage(root.messageId, root.messageContentType, interpretedMessage)
                 }
 
+                function nextMessageHasHeader() {
+                    if(!root.nextMessageAsJsonObj) {
+                        return false
+                    }
+                    return root.senderId !== root.nextMessageAsJsonObj.senderId ||
+                           d.getShouldRepeatHeader(root.nextMessageAsJsonObj.timeStamp, root.messageTimestamp, root.nextMessageAsJsonObj.outgoingStatus) ||
+                           root.nextMessageAsJsonObj.responseToMessageWithId !== ""
+                }
+
                 pinnedMsgInfoText: root.isDiscordMessage ? qsTr("Pinned") : qsTr("Pinned by")
                 reactionIcons: [
                     Style.svg("emojiReactions/heart"),
@@ -425,7 +443,7 @@ Loader {
 
                 timestamp: root.messageTimestamp
                 editMode: root.editModeOn
-                isAReply: root.responseToMessageWithId !== ""
+                isAReply: delegate.isReply
                 isEdited: root.isEdited
                 hasMention: root.hasMention
                 isPinned: root.pinnedMessage
@@ -436,7 +454,6 @@ Loader {
                     const ensName = contact.ensVerified ? contact.name : ""
                     return ProfileUtils.displayName(contact.localNickname, ensName, contact.displayName, contact.alias)
                 }
-                isInPinnedPopup: root.isInPinnedPopup
                 hasExpired: root.isExpired
                 isSending: root.isSending
                 resendError: root.resendError
@@ -445,8 +462,8 @@ Loader {
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
                             (root.prevMessageContentType !== Constants.messageContentType.systemMessagePrivateGroupType && root.senderId !== root.prevMessageSenderId)
                 isActiveMessage: d.isMessageActive
-                topPadding: showHeader ? Style.current.halfPadding : 0
-                bottomPadding: showHeader && d.nextMessageHasHeader() ? Style.current.halfPadding : 2
+                topPadding: showHeader ? Style.current.halfPadding : 2
+                bottomPadding: showHeader && nextMessageHasHeader() ? Style.current.halfPadding : 2
                 disableHover: root.disableHover ||
                               (root.chatLogView && root.chatLogView.moving) ||
                               (root.messageContextMenu && root.messageContextMenu.opened) ||
@@ -458,7 +475,7 @@ Loader {
                                   root.editModeOn ||
                                   !root.rootStore.mainModuleInst.activeSection.joined
 
-                hideMessage: d.hideMessage
+                hideMessage: d.isSingleImage && d.unfurledLinksCount === 1
 
                 overrideBackground: root.placeholderMessage
                 profileClickable: !root.isDiscordMessage
@@ -571,7 +588,7 @@ Loader {
                             return root.messageImage;
                         }
                         if (root.isDiscordMessage && root.messageImage != "") {
-                            return root.messageImage
+                          return root.messageImage
                         }
                         return "";
                     }
@@ -605,7 +622,7 @@ Loader {
                         }
                         return root.quotedMessageText
                     }
-                    contentType: d.convertContentType(root.quotedMessageContentType)
+                    contentType: delegate.convertContentType(root.quotedMessageContentType)
                     messageContent: {
                         if (contentType !== StatusMessage.ContentType.Sticker && contentType !== StatusMessage.ContentType.Image) {
                             return ""
@@ -677,23 +694,20 @@ Loader {
                     }
                 }
 
-                hasLinks: !!root.linkUrls
+                hasLinks: linkUrlsModel.count
                 linksComponent: Component {
                     LinksMessageView {
-                        id: linksMessageView
-                        links: root.linkUrls
+                        linksModel: linkUrlsModel
+                        container: root
                         messageStore: root.messageStore
                         store: root.rootStore
                         isCurrentUser: root.amISender
                         onImageClicked: {
                             root.imageClicked(image);
                         }
-                        onLinksLoaded: {
-                            // If there is only one image and no links, hide the message
-                            // Handled in linksLoaded signal to evaulate it only once
-                            d.hideMessage = linksMessageView.unfurledImagesCount === 1 && linksMessageView.unfurledLinksCount === 0 
-                                            && `<p>${root.linkUrls}</p>` === root.messageText
-                        }
+
+                        Component.onCompleted: d.unfurledLinksCount = Qt.binding(() => unfurledLinksCount)
+                        Component.onDestruction: d.unfurledLinksCount = 0
                     }
                 }
 

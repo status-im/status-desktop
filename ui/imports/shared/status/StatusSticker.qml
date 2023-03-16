@@ -1,6 +1,6 @@
-import QtQuick 2.14
-
+import QtQuick 2.3
 import shared.panels 1.0
+
 import utils 1.0
 
 Loader {
@@ -9,8 +9,7 @@ Loader {
     property string stickerData: ""
     property int imageHeight: 140
     property int imageWidth: 140
-
-    signal stickerLoaded()
+    signal loaded()
 
     id: root
     active: contentType === Constants.messageContentType.stickerType
@@ -18,7 +17,7 @@ Loader {
     sourceComponent: Component {
         ImageLoader {
             color: root.color
-            onLoaded: root.stickerLoaded()
+            onLoaded: root.loaded()
 
             width: imageWidth
             height: this.visible ? imageHeight : 0

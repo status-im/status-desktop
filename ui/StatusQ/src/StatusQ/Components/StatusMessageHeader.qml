@@ -27,7 +27,6 @@ Item {
     property bool amISender: false
     property bool displayNameClickable: true
     property string messageOriginInfo: ""
-    property bool showFullTimestamp
 
     signal clicked(var sender, var mouse)
     signal resendClicked()
@@ -132,7 +131,6 @@ Item {
             verticalAlignment: Text.AlignVCenter
             id: timestampText
             timestamp: root.timestamp
-            showFullTimestamp: root.showFullTimestamp
         }
 
         Loader {

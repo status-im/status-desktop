@@ -7,13 +7,12 @@ import ./dto/generated_accounts as dto_generated_accounts
 from ../keycard/service import KeycardEvent, KeyDetails 
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
-import ../../../backend/privacy as status_privacy
 
 import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/fleets/fleet_configuration
-import ../../common/[account_constants, network_constants, utils]
+import ../../common/[account_constants, network_constants, utils, string_utils]
 import ../../../constants as main_constants
 
 import ../settings/dto/settings as settings
@@ -320,11 +319,20 @@ QtObject:
     result["UpstreamConfig"]["Enabled"] = true.newJBool()
     result["UpstreamConfig"]["URL"] = NETWORKS[0]{"rpcUrl"}
     result["ShhextConfig"]["InstallationID"] = newJString(installationId)
+    result["NoDiscovery"] = true.newJBool()
+    result["Rendezvous"] = false.newJBool()
 
     # TODO: fleet.status.im should have different sections depending on the node type
     #       or maybe it's not necessary because a node has the identify protocol
     result["ClusterConfig"]["WakuNodes"] = %* dnsDiscoveryURL
     result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* dnsDiscoveryURL
+
+    result["WakuV2Config"]["EnableDiscV5"] = true.newJBool()
+    result["WakuV2Config"]["DiscoveryLimit"] = 20.newJInt()
+    result["WakuV2Config"]["Rendezvous"] = true.newJBool()
+    result["WakuV2Config"]["Enabled"] = true.newJBool()
+
+    result["WakuConfig"]["Enabled"] = false.newJBool()
 
     if TEST_PEER_ENR != "":
       let testPeerENRArr = %* @[TEST_PEER_ENR]
@@ -369,7 +377,7 @@ QtObject:
         error "error: ", procName="setupAccount", errDesription = description
         return description
 
-      let hashedPassword = hashPassword(password)
+      let hashedPassword = hashString(password)
       discard self.storeAccount(accountId, hashedPassword)
       discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
       self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, 
@@ -419,7 +427,7 @@ QtObject:
       let alias = generateAliasFromPk(whisperPublicKey)
       
       var accountDataJson = %* {
-        "name": if displayName == "": alias else: displayName,
+        "name": alias,
         "display-name": displayName,
         "address": address,
         "key-uid": keyUid,
@@ -442,7 +450,7 @@ QtObject:
         {
           "public-key": whisperPublicKey,
           "address": whisperAddress,
-          "name": if displayName == "": alias else: displayName,
+          "name": alias,
           "path": PATH_WHISPER,
           "chat": true,
           "derived-from": ""
@@ -541,35 +549,9 @@ QtObject:
       error "error: ", procName="importMnemonic", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
-    try:
-      let response = status_account.verifyAccountPassword(account, password, self.keyStoreDir)
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
-        if(errMsg.len == 0):
-          return true
-        else:
-          error "error: ", procName="verifyAccountPassword", errDesription = errMsg
-      return false
-    except Exception as e:
-      error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
-
-  proc verifyDatabasePassword*(self: Service, keyuid: string, hashedPassword: string): bool =
-    try:
-      let response = status_account.verifyDatabasePassword(keyuid, hashedPassword)
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr
-        if(errMsg.len == 0):
-          return true
-        else:
-          error "error: ", procName="verifyDatabasePassword", errDesription = errMsg
-      return false
-    except Exception as e:
-      error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
-
   proc login*(self: Service, account: AccountDto, password: string): string =
     try:
-      let hashedPassword = hashPassword(password)
+      let hashedPassword = hashString(password)
       var thumbnailImage: string
       var largeImage: string
       for img in account.images:
@@ -633,21 +615,17 @@ QtObject:
           "DiscV5BootstrapNodes": @[]
         }
 
+      let response = status_account.login(account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage,
+        largeImage, $nodeCfg)
+      var error = "response doesn't contain \"error\""
+      if(response.result.contains("error")):
+        error = response.result["error"].getStr
+        if error == "":
+          debug "Account logged in"
+          self.loggedInAccount = account
+          self.setLocalAccountSettingsFile()
 
-      let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashPassword(password, lower=false))
-      if isOldHashPassword:
-        discard status_privacy.lowerDatabasePassword(account.keyUid, password)
-      
-      let response = status_account.login(
-        account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage, largeImage, $nodeCfg
-      )
-      if response.result{"error"}.getStr == "":
-        debug "Account logged in"
-        self.loggedInAccount = account
-        self.setLocalAccountSettingsFile()
-        return ""
-
-      return response.result{"error"}.getStr
+      return error
 
     except Exception as e:
       error "error: ", procName="login", errName = e.name, errDesription = e.msg
@@ -683,6 +661,20 @@ QtObject:
       error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
       return e.msg
 
+  proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
+    try:
+      let response = status_account.verifyAccountPassword(account, password, self.keyStoreDir)
+      if(response.result.contains("error")):
+        let errMsg = response.result["error"].getStr
+        if(errMsg.len == 0):
+          return true
+        else:
+          error "error: ", procName="verifyAccountPassword", errDesription = errMsg
+      return false
+    except Exception as e:
+      error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg
+
+
   proc convertToKeycardAccount*(self: Service, currentPassword: string, newPassword: string) = 
     var accountDataJson = %* {
       "key-uid": self.getLoggedInAccount().keyUid,
@@ -697,7 +689,7 @@ QtObject:
       error "error: ", procName="convertToKeycardAccount", errDesription = description
       return
 
-    let hashedCurrentPassword = hashPassword(currentPassword)
+    let hashedCurrentPassword = hashString(currentPassword)
     let arg = ConvertToKeycardAccountTaskArg(
       tptr: cast[ByteAddress](convertToKeycardAccountTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -726,7 +718,7 @@ QtObject:
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
   proc convertToRegularAccount*(self: Service, mnemonic: string, currentPassword: string, newPassword: string): string = 
-    let hashedPassword = hashPassword(newPassword)
+    let hashedPassword = hashString(newPassword)
     try:
       let response = status_account.convertToRegularAccount(mnemonic, currentPassword, hashedPassword)
       var errMsg = ""
@@ -741,7 +733,7 @@ QtObject:
 
   proc verifyPassword*(self: Service, password: string): bool =
     try:
-      let hashedPassword = hashPassword(password)
+      let hashedPassword = hashString(password)
       let response = status_account.verifyPassword(hashedPassword)
       return response.result.getBool
     except Exception as e:

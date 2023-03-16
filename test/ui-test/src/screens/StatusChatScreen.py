@@ -131,7 +131,7 @@ class StatusChatScreen:
     ### Screen actions region:
     #####################################
     def type_message(self, message: str):
-        type_text(ChatComponents.MESSAGE_INPUT.value, message)
+        type(ChatComponents.MESSAGE_INPUT.value, message)
 
     def press_enter(self):
         press_enter(ChatComponents.MESSAGE_INPUT.value)
@@ -222,7 +222,7 @@ class StatusChatScreen:
         move_mouse_over_object(found_edit_button)
         click_obj(found_edit_button)
         wait_for_object_and_type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, "<Ctrl+a>")
-        type_text(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, message)
+        type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, message)
         press_enter(ChatComponents.EDIT_MESSAGE_TEXTAREA.value)
         
     def switch_to_chat(self, chatName: str):

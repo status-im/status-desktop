@@ -13,57 +13,58 @@ ColumnLayout {
     id: root
 
     property alias input: topAmountToSendInput
-    readonly property bool inputNumberValid: !!input.text && !isNaN(d.inputNumber)
-    readonly property double inputNumber: inputNumberValid ? d.inputNumber : 0
-    readonly property int minSendCryptoDecimals: !inputIsFiat ? LocaleUtils.fractionalPartLength(inputNumber) : 0 
-    readonly property int minReceiveCryptoDecimals: !inputIsFiat ? minSendCryptoDecimals + 1 : 0 
-    readonly property int minSendFiatDecimals: inputIsFiat ? LocaleUtils.fractionalPartLength(inputNumber) : 0 
-    readonly property int minReceiveFiatDecimals: inputIsFiat ? minSendFiatDecimals + 1 : 0 
 
-    property string selectedSymbol
+    property var selectedAsset
     property bool isBridgeTx: false
     property bool interactive: false
-    property double maxInputBalance
+    property var maxFiatBalance
     property bool inputIsFiat: false
-    property double cryptoValueToSend
+    property var cryptoValueToSend
     Binding {
         target: root
         property: "cryptoValueToSend"
         value: {
-            const value = !inputIsFiat ? inputNumber : getCryptoValue(fiatValueToSend)
-            return root.selectedSymbol, value
+            const value = !inputIsFiat ? getCryptoCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getCryptoValue(fiatValueToSend ? fiatValueToSend.amount : 0.0)
+            return root.selectedAsset, value
         }
         delayed: true
     }
-    property double fiatValueToSend
+    property var fiatValueToSend
     Binding {
         target: root
         property: "fiatValueToSend"
         value: {
-            const value = inputIsFiat ? inputNumber : getFiatValue(cryptoValueToSend)
-            return root.selectedSymbol, value
+            const value = inputIsFiat ? getFiatCurrencyAmount(LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)) : getFiatValue(cryptoValueToSend ? cryptoValueToSend.amount : 0.0)
+            return root.selectedAsset, value
         }
         delayed: true
     }
     property string currentCurrency
     property var getFiatValue: function(cryptoValue) {}
     property var getCryptoValue: function(fiatValue) {}
-    property var formatCurrencyAmount: function() {}
+    property var getFiatCurrencyAmount: function(fiatValue) {}
+    property var getCryptoCurrencyAmount: function(cryptoValue) {}
 
     signal reCalculateSuggestedRoute()
 
     QtObject {
         id: d
         readonly property string zeroString: LocaleUtils.numberToLocaleString(0, 2)
-        readonly property double inputNumber: LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)
         property Timer waitTimer: Timer {
             interval: 1000
             onTriggered: reCalculateSuggestedRoute()
         }
+
+        function formatValue(value) {
+            if (!value) {
+                return zeroString
+            }
+            return LocaleUtils.currencyAmountToLocaleString(value)
+        }
     }
 
-    onMaxInputBalanceChanged: {
-        floatValidator.top = maxInputBalance
+    onMaxFiatBalanceChanged: {
+        floatValidator.top = maxFiatBalance ? maxFiatBalance.amount : 0.0
         input.validate()
     }
 
@@ -77,8 +78,7 @@ ColumnLayout {
     }
     RowLayout {
         id: topItem
-        property double topAmountToSend: !inputIsFiat ? cryptoValueToSend : fiatValueToSend
-        property string topAmountSymbol: !inputIsFiat ? root.selectedSymbol : root.currentCurrency
+        property var topAmountToSend: !inputIsFiat ? cryptoValueToSend : fiatValueToSend
         Layout.alignment: Qt.AlignLeft
         AmountInputWithCursor {
             id: topAmountToSendInput
@@ -92,7 +92,7 @@ ColumnLayout {
                 StatusFloatValidator {
                     id: floatValidator
                     bottom: 0
-                    top: root.maxInputBalance
+                    top: root.maxFiatBalance.amount
                     errorMessage: ""
                 }
             ]
@@ -102,8 +102,8 @@ ColumnLayout {
                 font: topAmountToSendInput.input.placeholder.font
             }
             Keys.onReleased: {
-                const amount = LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)
-                if (isNaN(amount)) {
+                const amount = topAmountToSendInput.text.trim()
+                if (!Utils.containsOnlyDigits(amount) || isNaN(amount)) {
                     return
                 }
                 d.waitTimer.restart()
@@ -112,8 +112,7 @@ ColumnLayout {
     }
     Item {
         id: bottomItem
-        property double bottomAmountToSend: inputIsFiat ? cryptoValueToSend : fiatValueToSend
-        property string bottomAmountSymbol: inputIsFiat ? selectedSymbol : currentCurrency
+        property var bottomAmountToSend: inputIsFiat ? cryptoValueToSend : fiatValueToSend
         Layout.alignment: Qt.AlignLeft | Qt.AlignBottom
         Layout.preferredWidth: txtBottom.width
         Layout.preferredHeight: txtBottom.height
@@ -121,7 +120,7 @@ ColumnLayout {
             id: txtBottom
             anchors.top: parent.top
             anchors.left: parent.left
-            text: root.formatCurrencyAmount(bottomItem.bottomAmountToSend, bottomItem.bottomAmountSymbol)
+            text: d.formatValue(bottomItem.bottomAmountToSend)
             font.pixelSize: 13
             color: Theme.palette.directColor5
         }
@@ -131,7 +130,7 @@ ColumnLayout {
             onClicked: {
                 topAmountToSendInput.validate()
                 if(!!topAmountToSendInput.text) {
-                    topAmountToSendInput.text = root.formatCurrencyAmount(bottomItem.bottomAmountToSend, bottomItem.bottomAmountSymbol, {onlyAmount: true})
+                    topAmountToSendInput.text = LocaleUtils.currencyAmountToLocaleString(bottomItem.bottomAmountToSend, {onlyAmount: true})
                 }
                 inputIsFiat = !inputIsFiat
                 d.waitTimer.restart()

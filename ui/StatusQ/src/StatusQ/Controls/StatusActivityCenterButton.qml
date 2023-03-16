@@ -23,13 +23,7 @@ import StatusQ.Components 0.1
 */
 
 StatusFlatRoundButton {
-    id: root
-
-    /*!
-       \qmlproperty bool StatusActivityCenterButton::hasUnseenNotifications
-       This property indicates whether there are unseen notifications
-    */
-    property bool hasUnseenNotifications: false
+    id: notificationButton
 
     /*!
        \qmlproperty int StatusActivityCenterButton::unreadNotificationsCount
@@ -50,9 +44,8 @@ StatusFlatRoundButton {
         id: statusBadge
         visible: value > 0
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: -(icon.height / 2.5)
-        anchors.horizontalCenterOffset: (width / 2.5)
-        color: root.hasUnseenNotifications ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+        anchors.verticalCenterOffset: -(icon.height/2.5)
+        anchors.horizontalCenterOffset: (width/2.5)
         border.width: 2
         border.color: parent.hovered ? Theme.palette.baseColor2 : Theme.palette.statusAppLayout.backgroundColor
     }

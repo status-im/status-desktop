@@ -22,16 +22,7 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method authenticateAndBuy*(self: AccessInterface, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, eip1559Enabled: bool){.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getRecentStickers*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method loadRecentStickers*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getInstalledStickerPacks*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method installedStickerPacksLoaded*(self: AccessInterface) {.base.} =
+method getInstalledStickerPacks*(self: AccessInterface): Table[string, StickerPackDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method obtainMarketStickerPacks*(self: AccessInterface) {.base.} =

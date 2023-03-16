@@ -54,5 +54,3 @@ StatusTextArea 0.1 StatusTextArea.qml
 StatusBackButton 0.1 StatusBackButton.qml
 StatusPasswordInput 0.1 StatusPasswordInput.qml
 StatusTextWithLoadingState 0.1 StatusTextWithLoadingState.qml
-StatusLinkText 0.1 StatusLinkText.qml
-StatusImageSelector 0.1 StatusImageSelector.qml

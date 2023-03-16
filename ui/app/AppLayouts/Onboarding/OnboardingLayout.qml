@@ -12,7 +12,6 @@ import shared.popups.keycard 1.0
 import "controls"
 import "views"
 import "stores"
-import "../Profile/stores"
 
 OnboardingBasePage {
     id: root
@@ -67,7 +66,6 @@ OnboardingBasePage {
                 return seedPhraseInputViewComponent
 
             case Constants.startupState.login:
-            case Constants.startupState.loginNoPCSCService:
             case Constants.startupState.loginPlugin:
             case Constants.startupState.loginKeycardInsertKeycard:
             case Constants.startupState.loginKeycardInsertedKeycard:
@@ -106,7 +104,6 @@ OnboardingBasePage {
             case Constants.startupState.keycardEnterSeedPhraseWords:
                 return seedphraseWordsInputViewComponent
 
-            case Constants.startupState.keycardNoPCSCService:
             case Constants.startupState.keycardNotEmpty:
             case Constants.startupState.keycardNotKeycard:
             case Constants.startupState.keycardEmpty:
@@ -133,12 +130,6 @@ OnboardingBasePage {
             case Constants.startupState.profileFetchingSuccess:
             case Constants.startupState.profileFetchingTimeout:
                 return fetchingDataViewComponent
-
-            case Constants.startupState.syncDeviceWithSyncCode:
-                return syncDeviceViewComponent
-
-            case Constants.startupState.syncDeviceResult:
-                return syncDeviceResultComponent
             }
 
             return undefined
@@ -152,7 +143,7 @@ OnboardingBasePage {
             if (errType === Constants.startupErrorType.setupAccError) {
                 if (error === Constants.existingAccountError) {
                     msgDialog.title = qsTr("Keys for this account already exist")
-                    msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost \
+                    msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost\
 your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase.")
                 } else {
                     msgDialog.title = qsTr("Login failed")
@@ -162,8 +153,8 @@ your password, passcode or Keycard, uninstall the app, reinstall and access your
             else if (errType === Constants.startupErrorType.importAccError) {
                 if (error === Constants.existingAccountError) {
                     msgDialog.title = qsTr("Keys for this account already exist")
-                    msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost \
-your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase. In \
+                    msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost\
+your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase. In\
 case of Keycard try recovering using PUK or reinstall the app and try login with the Keycard option.")
                 } else {
                     msgDialog.title = qsTr("Error importing seed")
@@ -321,20 +312,6 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
     Component {
         id: fetchingDataViewComponent
         ProfileFetchingView {
-            startupStore: root.startupStore
-        }
-    }
-
-    Component {
-        id: syncDeviceViewComponent
-        SyncCodeView {
-            startupStore: root.startupStore
-        }
-    }
-
-    Component {
-        id: syncDeviceResultComponent
-        SyncDeviceResult {
             startupStore: root.startupStore
         }
     }

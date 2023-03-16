@@ -1,6 +1,5 @@
 import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math, random
 
-import ../../../backend/collectibles as collectibles
 import ../../../backend/transactions as transactions
 import ../../../backend/backend
 import ../../../backend/eth
@@ -17,7 +16,6 @@ import ../wallet_account/service as wallet_account_service
 import ../network/service as network_service
 import ../token/service as token_service
 import ../settings/service as settings_service
-import ../collectible/dto
 import ../eth/dto/transaction as transaction_data_dto
 import ../eth/dto/[method_dto, coder, method_dto]
 import ./dto as transaction_dto
@@ -33,9 +31,6 @@ logScope:
 
 include async_tasks
 include ../../common/json_utils
-
-# Maximum number of collectibles to be fetched at a time
-const collectiblesLimit = 200 
 
 # Signals which may be emitted by this service:
 const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
@@ -73,11 +68,8 @@ type
 type
   TransactionsLoadedArgs* = ref object of Args
     transactions*: seq[TransactionDto]
-    collectibles*: seq[CollectibleDto]
     address*: string
     wasFetchMore*: bool
-    allTxLoaded*: bool
-    tempLoadingTx*: int
 
 type
   TransactionSentArgs* = ref object of Args
@@ -94,6 +86,7 @@ type
 type
   CryptoServicesArgs* = ref object of Args
     data*: seq[CryptoRampDto]
+  
 
 QtObject:
   type Service* = ref object of QObject
@@ -103,7 +96,6 @@ QtObject:
     settingsService: settings_service.Service
     tokenService: token_service.Service
     txCounter: Table[string, seq[int]]
-    allTxLoaded: Table[string, bool]
 
   # Forward declaration
   proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
@@ -114,7 +106,7 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      networkService: network_service.Service,
+      networkService: network_service.Service,  
       settingsService: settings_service.Service,
       tokenService: token_service.Service,
   ): Service =
@@ -126,7 +118,6 @@ QtObject:
     result.settingsService = settingsService
     result.tokenService = tokenService
     result.txCounter = initTable[string, seq[int]]()
-    result.allTxLoaded = initTable[string, bool]()
 
   proc init*(self: Service) =
     signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
@@ -158,16 +149,6 @@ QtObject:
       error "error: ", errDescription
       return
 
-  proc getMultiTransactions*(self: Service, transactionIDs: seq[int]): seq[MultiTransactionDto] =
-    try:
-      let response = transactions.getMultiTransactions(transactionIDs).result
-
-      return response.getElems().map(x => x.toMultiTransactionDto())
-    except Exception as e:
-      let errDescription = e.msg
-      error "error: ", errDescription
-      return
-
   proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
     let watchTxResult = parseJson(watchTxResult)
     let success = watchTxResult["isSuccessfull"].getBool
@@ -177,7 +158,7 @@ QtObject:
       let address = watchTxResult["address"].getStr
       let transactionReceipt = transactions.getTransactionReceipt(chainId, hash).result
       if transactionReceipt != nil and transactionReceipt.kind != JNull:
-        # Pending transaction will be deleted by backend after transfering multi-transaction info to history
+        discard transactions.deletePendingTransaction(chainId, hash)
         echo watchTxResult["data"].getStr
         let ev = TransactionMinedArgs(
           data: watchTxResult["data"].getStr,
@@ -216,50 +197,33 @@ QtObject:
       self.watchTransaction(tx.txHash, tx.fromAddress, tx.to, tx.typeValue, tx.input, tx.chainId, track = false)
     return pendingTransactions
 
-  proc onTransactionsLoaded*(self: Service, historyJSON: string) {.slot.} =
+  proc setTrxHistoryResult*(self: Service, historyJSON: string) {.slot.} =
     let historyData = parseJson(historyJSON)
     let address = historyData["address"].getStr
     let chainID = historyData["chainId"].getInt
     let wasFetchMore = historyData["loadMore"].getBool
-    let allTxLoaded = historyData["allTxLoaded"].getBool
     var transactions: seq[TransactionDto] = @[]
-    var collectibles: seq[CollectibleDto] = @[]
-    for tx in historyData["history"].getElems():
+    for tx in historyData["history"]["result"].getElems():
       transactions.add(tx.toTransactionDto())
-
-    let collectiblesContainerJson = historyData["collectibles"]
-    if collectiblesContainerJson.kind == JObject:
-      let collectiblesJson = collectiblesContainerJson["assets"]
-      if collectiblesJson.kind == JArray:
-        for c in collectiblesJson.getElems():
-          collectibles.add(c.toCollectibleDto())
-
-    if self.allTxLoaded.hasKey(address):
-      self.allTxLoaded[address] = self.allTxLoaded[address] and allTxLoaded
-    else:
-      self.allTxLoaded[address] = allTxLoaded
 
     # emit event
     self.events.emit(SIGNAL_TRANSACTIONS_LOADED, TransactionsLoadedArgs(
       transactions: transactions,
-      collectibles: collectibles,
       address: address,
       wasFetchMore: wasFetchMore
     ))
 
     # when requests for all networks are completed then set loading state as completed
-    if self.txCounter.hasKey(address) and self.allTxLoaded.hasKey(address) :
+    if self.txCounter.hasKey(address):
       var chainIDs = self.txCounter[address]
       chainIDs.del(chainIDs.find(chainID))
       self.txCounter[address] = chainIDs
       if self.txCounter[address].len == 0:
         self.txCounter.del(address)
-        self.events.emit(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS, TransactionsLoadedArgs(address: address, allTxLoaded: self.allTxLoaded[address]))
+        self.events.emit(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS, TransactionsLoadedArgs(address: address))
 
   proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
     let networks = self.networkService.getNetworks()
-    self.allTxLoaded.del(address)
-
     if not self.txCounter.hasKey(address):
       var networkChains: seq[int] = @[]
       self.txCounter[address] = networkChains
@@ -269,10 +233,9 @@ QtObject:
           address: address,
           tptr: cast[ByteAddress](loadTransactionsTask),
           vptr: cast[ByteAddress](self.vptr),
-          slot: "onTransactionsLoaded",
+          slot: "setTrxHistoryResult",
           toBlock: toBlock,
           limit: limit,
-          collectiblesLimit: collectiblesLimit,
           loadMore: loadMore,
           chainId: network.chainId,
         )

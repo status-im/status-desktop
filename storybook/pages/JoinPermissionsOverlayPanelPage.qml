@@ -25,14 +25,10 @@ SplitView {
         property bool isInvitationPending: false
         property bool isJoinRequestRejected: false
         property bool requiresRequest: false
-
-        property var communityHoldingsModel: PermissionsModel.shortPermissionsModel
-        property var viewOnlyHoldingsModel: PermissionsModel.shortPermissionsModel
-        property var viewAndPostHoldingsModel: PermissionsModel.shortPermissionsModel
-        property var moderateHoldingsModel: PermissionsModel.shortPermissionsModel
-
-        property var assetsModel: AssetsModel {}
-        property var collectiblesModel: CollectiblesModel {}
+        property var communityHoldings: PermissionsModel.shortPermissionsModel
+        property var viewOnlyHoldings: PermissionsModel.shortPermissionsModel
+        property var viewAndPostHoldings: PermissionsModel.shortPermissionsModel
+        property var moderateHoldings: PermissionsModel.shortPermissionsModel
     }
 
     Logs { id: logs }
@@ -71,9 +67,6 @@ SplitView {
                         JoinPermissionsOverlayPanel {
                             id: overlayPannel
 
-                            assetsModel: d.assetsModel
-                            collectiblesModel: d.collectiblesModel
-
                             anchors.centerIn: parent
                             joinCommunity: d.joinCommunity
                             requirementsMet: d.requirementsMet
@@ -81,11 +74,11 @@ SplitView {
                             isJoinRequestRejected: d.isJoinRequestRejected
                             requiresRequest: d.requiresRequest
                             communityName: d.name
-                            communityHoldingsModel: d.communityHoldingsModel
+                            communityHoldings: d.communityHoldings
                             channelName: d.channelName
-                            viewOnlyHoldingsModel: d.viewOnlyHoldingsModel
-                            viewAndPostHoldingsModel: d.viewAndPostHoldingsModel
-                            moderateHoldingsModel: d.moderateHoldingsModel
+                            viewOnlyHoldings: d.viewOnlyHoldings
+                            viewAndPostHoldings: d.viewAndPostHoldings
+                            moderateHoldings: d.moderateHoldings
 
                             onRevealAddressClicked: logs.logEvent("JoinPermissionsOverlayPanel::onRevealAddressClicked()")
                             onInvitationPendingClicked: logs.logEvent("JoinPermissionsOverlayPanel::onInvitationPendingClicked()")
@@ -164,10 +157,10 @@ SplitView {
                 onIsInvitationPendingChanged: d.isInvitationPending = isInvitationPending
                 onIsJoinRequestRejectedChanged: d.isJoinRequestRejected = isJoinRequestRejected
                 onRequiresRequestChanged: d.requiresRequest = requiresRequest
-                onCommunityHoldingsModelChanged: d.communityHoldingsModel = communityHoldingsModel
-                onViewOnlyHoldingsModelChanged: d.viewOnlyHoldingsModel = viewOnlyHoldingsModel
-                onViewAndPostHoldingsModelChanged: d.viewAndPostHoldingsModel = viewAndPostHoldingsModel
-                onModerateHoldingsModelChanged: d.moderateHoldingsModel = moderateHoldingsModel
+                onCommunityHoldingsChanged: d.communityHoldings = communityHoldings
+                onViewOnlyHoldingsChanged: d.viewOnlyHoldings = viewOnlyHoldings
+                onViewAndPostHoldingsChanged: d.viewAndPostHoldings = viewAndPostHoldings
+                onModerateHoldingsChanged: d.moderateHoldings = moderateHoldings
             }
         }
     }

@@ -1,4 +1,5 @@
-import QtQuick 2.14
+import QtQuick 2.3
+import QtGraphicalEffects 1.13
 
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
@@ -14,8 +15,10 @@ Loader {
         height: 140
     }
 
-    signal stickerLoaded()
+    signal loaded()
     signal clicked()
+
+    active: visible
 
     sourceComponent: Rectangle {
         id: root
@@ -49,11 +52,12 @@ Loader {
             anchors.fill: parent
             horizontalAlignment: Image.AlignHCenter
             verticalAlignment: Image.AlignVCenter
+            cache: true
             source: asset.name
 
             onStatusChanged: {
                 if (status === Image.Ready) {
-                    statusSticker.stickerLoaded()
+                    statusSticker.loaded()
                 }
             }
             MouseArea {

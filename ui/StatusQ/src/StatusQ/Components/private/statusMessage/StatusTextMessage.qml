@@ -80,10 +80,10 @@ Item {
                                                ? 200
                                                : chatText.implicitHeight
 
+        width: parent.width
         height: effectiveHeight + d.showMoreHeight / 2
         anchors.left: parent.left
         anchors.leftMargin: d.isQuote ? 8 : 0
-        anchors.right: parent.right
         opacity: !showMoreOpacityMask.active && !horizontalOpacityMask.active ? 1 : 0
         text: d.text
         selectedTextColor: Theme.palette.directColor1

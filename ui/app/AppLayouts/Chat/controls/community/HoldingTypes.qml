@@ -2,7 +2,7 @@ import QtQml 2.14
 
 QtObject {
     enum Type {
-        Unknown, Asset, Collectible, Ens
+        Asset, Collectible, Ens
     }
 
     enum Mode {

@@ -34,18 +34,6 @@ ListModel {
          section: "Views"
     }
     ListElement {
-         title: "CommunityNewCollectibleView"
-         section: "Views"
-    }
-    ListElement {
-         title: "CommunityCollectibleView"
-         section: "Views"
-    }
-    ListElement {
-         title: "CommunityMintedTokensView"
-         section: "Views"
-    }
-    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }
@@ -82,14 +70,6 @@ ListModel {
          section: "Panels"
     }
     ListElement {
-        title: "DidYouKnowSplashScreen"
-        section: "Panels"
-    }
-    ListElement {
-         title: "CommunityMintTokensSettingsPanel"
-         section: "Panels"
-    }
-    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
@@ -107,10 +87,6 @@ ListModel {
     }
     ListElement {
          title: "CommunityIntroDialog"
-         section: "Popups"
-    }
-    ListElement {
-         title: "CommunityTokenPermissionsPopup"
          section: "Popups"
     }
     ListElement {
@@ -139,10 +115,6 @@ ListModel {
     }
     ListElement {
         title: "StatusMessage"
-        section: "Components"
-    }
-    ListElement {
-        title: "StatusDotsLoadingIndicator"
         section: "Components"
     }
     ListElement {

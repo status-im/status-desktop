@@ -41,14 +41,10 @@ proc newController*(
 proc delete*(self: Controller) =
   discard
 
-proc updateActivityGroupCounters*(self: Controller) =
-  let counters = self.activityCenterService.getActivityGroupCounters()
-  self.delegate.setActivityGroupCounters(counters)
-
 proc init*(self: Controller) =
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED) do(e: Args):
     let args = ActivityCenterNotificationsArgs(e)
-    self.delegate.addActivityCenterNotifications(args.activityCenterNotifications)
+    self.delegate.addActivityCenterNotification(args.activityCenterNotifications)
 
   self.events.on(activity_center_service.SIGNAL_MARK_NOTIFICATIONS_AS_ACCEPTED) do(e: Args):
     var evArgs = MarkAsAcceptedNotificationProperties(e)
@@ -73,17 +69,12 @@ proc init*(self: Controller) =
 
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED) do(e: Args):
     self.delegate.unreadActivityCenterNotificationsCountChanged()
-    self.delegate.hasUnseenActivityCenterNotificationsChanged()
-    self.updateActivityGroupCounters()
 
 proc hasMoreToShow*(self: Controller): bool =
    return self.activityCenterService.hasMoreToShow()
 
 proc unreadActivityCenterNotificationsCount*(self: Controller): int =
    return self.activityCenterService.getUnreadActivityCenterNotificationsCount()
-
-proc hasUnseenActivityCenterNotifications*(self: Controller): bool =
-   return self.activityCenterService.getHasUnseenActivityCenterNotifications()
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
    return self.contactsService.getContactDetails(contactId)
@@ -110,9 +101,6 @@ proc markActivityCenterNotificationUnread*(
     markAsUnreadProps: MarkAsUnreadNotificationProperties
     ): string =
    return self.activityCenterService.markActivityCenterNotificationUnread(notificationId, markAsUnreadProps)
-
-proc markAsSeenActivityCenterNotifications*(self: Controller) =
-   self.activityCenterService.markAsSeenActivityCenterNotifications()
 
 proc acceptActivityCenterNotifications*(self: Controller, notificationIds: seq[string]): string =
    return self.activityCenterService.acceptActivityCenterNotifications(notificationIds)
@@ -145,23 +133,3 @@ proc getMessageById*(self: Controller, chatId, messageId: string): MessageDto =
   if(err.len > 0):
     return MessageDto()
   return message
-
-proc setActiveNotificationGroup*(self: Controller, group: ActivityCenterGroup) =
-  self.activityCenterService.setActiveNotificationGroup(group)
-  self.activityCenterService.resetCursor()
-  let activityCenterNotifications = self.activityCenterService.getActivityCenterNotifications()
-  self.delegate.resetActivityCenterNotifications(activityCenterNotifications)
-
-proc getActiveNotificationGroup*(self: Controller): ActivityCenterGroup =
-  return self.activityCenterService.getActiveNotificationGroup()
-
-proc setActivityCenterReadType*(self: Controller, readType: ActivityCenterReadType) =
-  self.activityCenterService.setActivityCenterReadType(readType)
-  self.activityCenterService.resetCursor()
-  let activityCenterNotifications = self.activityCenterService.getActivityCenterNotifications()
-  self.delegate.resetActivityCenterNotifications(activityCenterNotifications)
-  self.updateActivityGroupCounters()
-
-proc getActivityCenterReadType*(self: Controller): ActivityCenterReadType =
-  return self.activityCenterService.getActivityCenterReadType()
-

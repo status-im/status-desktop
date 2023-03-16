@@ -1,15 +1,12 @@
 import strformat
 import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
-import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../../global/global_singleton
 
 import ../../../app_service/common/types
-import ../../../app_service/service/community_tokens/dto/community_token
 
 type
   SectionType* {.pure.} = enum
-    LoadingSection = -1
     Chat = 0
     Community,
     Wallet,
@@ -53,7 +50,6 @@ type
     pendingMemberRequestsModel: member_model.Model
     declinedMemberRequestsModel: member_model.Model
     encrypted: bool
-    communityTokensModel: community_tokens_model.TokenModel
 
 proc initItem*(
     id: string,
@@ -89,7 +85,6 @@ proc initItem*(
     pendingMemberRequests: seq[MemberItem] = @[],
     declinedMemberRequests: seq[MemberItem] = @[],
     encrypted: bool = false,
-    communityTokens: seq[CommunityTokenDto] = @[],
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -129,8 +124,6 @@ proc initItem*(
   result.declinedMemberRequestsModel = newModel()
   result.declinedMemberRequestsModel.setItems(declinedMemberRequests)
   result.encrypted = encrypted
-  result.communityTokensModel = newTokenModel()
-  result.communityTokensModel.setItems(communityTokens)
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -169,7 +162,6 @@ proc `$`*(self: SectionItem): string =
     pendingMemberRequests:{self.pendingMemberRequestsModel},
     declinedMemberRequests:{self.declinedMemberRequestsModel},
     encrypted:{self.encrypted},
-    communityTokensModel:{self.communityTokensModel},
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} =
@@ -309,12 +301,3 @@ proc pinMessageAllMembersEnabled*(self: SectionItem): bool {.inline.} =
 
 proc encrypted*(self: SectionItem): bool {.inline.} =
   self.encrypted
-
-proc appendCommunityToken*(self: SectionItem, item: CommunityTokenDto) {.inline.} =
-  self.communityTokensModel.appendItem(item)
-
-proc updateCommunityTokenDeployState*(self: SectionItem, contractAddress: string, deployState: DeployState) {.inline.} =
-  self.communityTokensModel.updateDeployState(contractAddress, deployState)
-
-proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.inline.} =
-  self.communityTokensModel

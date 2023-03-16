@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<SectionsDecoratorModel>("Storybook", 1, 0, "SectionsDecoratorModel");
     qmlRegisterType<FigmaDecoratorModel>("Storybook", 1, 0, "FigmaDecoratorModel");
     qmlRegisterType<FigmaLinksSource>("Storybook", 1, 0, "FigmaLinksSource");
-    qmlRegisterUncreatableType<FigmaLinks>("Storybook", 1, 0, "FigmaLinks", {});
+    qmlRegisterUncreatableType<FigmaLinks>("Storybook", 1, 0, "FigmaLinks", "");
 
     registerStatusQTypes();
 

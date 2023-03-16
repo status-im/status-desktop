@@ -71,7 +71,7 @@ StatusScrollView {
             name: model.name
             description: model.description
             members: model.members
-            activeUsers: model.activeMembers ?? 0
+            activeUsers: model.activeMembers ? model.activeMembers : 0
             popularity: model.popularity
             categories: tagsJson.model
 
@@ -86,7 +86,6 @@ StatusScrollView {
             id: featuredLabel
             visible: !root.searchLayout && featuredRepeater.count
             Layout.topMargin: d.scrollViewTopMargin
-            //: Featured communities
             text: qsTr("Featured")
             font.weight: Font.Bold
             font.pixelSize: d.subtitlePixelSize
@@ -112,8 +111,7 @@ StatusScrollView {
         StatusBaseText {
             visible: !root.searchLayout && popularRepeater.count
             Layout.topMargin: 20
-            //: All communities
-            text: qsTr("All")
+            text: qsTr("Popular")
             font.weight: Font.Bold
             font.pixelSize: d.subtitlePixelSize
             color: Theme.palette.directColor1

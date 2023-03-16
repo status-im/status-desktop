@@ -73,17 +73,19 @@ Item {
                     duration: 150
                     direction: RotationAnimation.Clockwise
                     easing.type: Easing.InCubic
+                    running: visible
                 }
             },
             Transition {
-                from: "pressed"
-                to: "default"
-                RotationAnimation {
-                    duration: 150
-                    direction: RotationAnimation.Counterclockwise
-                    easing.type: Easing.OutCubic
-                }
-            }
+								from: "pressed"
+								to: "default"
+								RotationAnimation {
+										duration: 150
+										direction: RotationAnimation.Counterclockwise
+										easing.type: Easing.OutCubic
+										running: visible
+								}
+        		}
         ]
 
         onClicked: {

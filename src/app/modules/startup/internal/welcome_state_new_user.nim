@@ -1,4 +1,4 @@
- type
+type
   WelcomeStateNewUser* = ref object of State
 
 proc newWelcomeStateNewUser*(flowType: FlowType, backState: State): WelcomeStateNewUser =

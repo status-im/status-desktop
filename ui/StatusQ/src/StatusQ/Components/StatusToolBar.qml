@@ -11,7 +11,6 @@ ToolBar {
 
     property string backButtonName: ""
     property int notificationCount: 0
-    property bool hasUnseenNotifications: false
     property Item headerContent
     property alias notificationButton: notificationButton
 
@@ -56,9 +55,7 @@ ToolBar {
 
         StatusActivityCenterButton {
             id: notificationButton
-            Layout.leftMargin: 8
             unreadNotificationsCount: root.notificationCount
-            hasUnseenNotifications: root.hasUnseenNotifications
             onClicked: root.notificationButtonClicked()
         }
     }

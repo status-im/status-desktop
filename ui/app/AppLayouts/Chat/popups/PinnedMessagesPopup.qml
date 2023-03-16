@@ -5,7 +5,6 @@ import QtQml.Models 2.14
 import QtGraphicalEffects 1.14
 
 import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 
@@ -20,6 +19,7 @@ StatusDialog {
     property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
     property string messageToPin
     property string messageToUnpin
+    property var emojiReactionsModel
 
     width: 800
     height: 428
@@ -83,8 +83,6 @@ StatusDialog {
                     messageContentType: model.contentType
                     pinnedMessage: model.pinned
                     messagePinnedBy: model.pinnedBy
-                    sticker: model.sticker
-                    stickerPack: model.stickerPack
                     linkUrls: model.links
                     transactionParams: model.transactionParameters
                     quotedMessageText: model.quotedMessageParsedText
@@ -107,13 +105,12 @@ StatusDialog {
 
                     // Additional params
                     isInPinnedPopup: true
+                    disableHover: !!root.messageToPin
                     shouldRepeatHeader: true
                 }
 
                 MouseArea {
-                    id: mouseArea
                     anchors.fill: parent
-                    hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     z: 55
                     onClicked: {
@@ -127,27 +124,9 @@ StatusDialog {
                     }
                 }
 
-                StatusFlatRoundButton {
-                    id: unpinButton
-                    anchors.top: parent.top
-                    anchors.topMargin: Style.current.bigPadding
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.current.bigPadding
-                    z: mouseArea.z + 1
-                    width: 32
-                    height: 32
-                    visible: !root.messageToPin && (hovered || mouseArea.containsMouse)
-                    icon.name: "unpin"
-                    tooltip.text: qsTr("Unpin")
-                    color: hovered ? Theme.palette.primaryColor2 : Theme.palette.indirectColor1
-                    onClicked: {
-                        root.messageStore.unpinMessage(model.id)
-                    }
-                }
-
                 StatusRadioButton {
                     id: radio
-                    visible: root.messageToPin
+                    visible: !!root.messageToPin
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.bigPadding
                     anchors.verticalCenter: parent.verticalCenter
@@ -161,6 +140,7 @@ StatusDialog {
 
         MessageContextMenuView {
             id: msgContextMenu
+            reactionModel: root.emojiReactionsModel
             store: root.store
             pinnedPopup: true
             pinnedMessage: true
@@ -177,7 +157,7 @@ StatusDialog {
             }
         }
 
-        layer.enabled: root.visible && !root.messageToPin
+        layer.enabled: root.visible
         layer.effect: OpacityMask {
             maskSource: Rectangle {
                 width: column.width

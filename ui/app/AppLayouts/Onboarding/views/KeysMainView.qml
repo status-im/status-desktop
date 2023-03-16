@@ -305,7 +305,7 @@ Item {
             }
             PropertyChanges {
                 target: txtTitle
-                text: qsTr("Sign in by syncing")
+                text: qsTr("Sync to other device")
             }
             PropertyChanges {
                 target: txtDesc
@@ -314,7 +314,8 @@ Item {
             }
             PropertyChanges {
                 target: button1
-                text: qsTr("Scan or enter a sync code")
+                text: qsTr("Scan sync code")
+                enabled: false // TODO: we don't have the sync flow developed yet
             }
             PropertyChanges {
                 target: button2

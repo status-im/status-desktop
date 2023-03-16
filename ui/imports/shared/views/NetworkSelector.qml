@@ -20,11 +20,8 @@ Item {
     property var store
     property var currencyStore : store.currencyStore
     property var selectedAccount
-    property string ensAddressOrEmpty: ""
     property var selectedAsset
     property var amountToSend
-    property int minSendCryptoDecimals: 0
-    property int minReceiveCryptoDecimals: 0
     property var requiredGasInEth
     property var bestRoutes
     property bool isLoading: false
@@ -81,7 +78,6 @@ Item {
                 bestRoutes: root.bestRoutes
                 isBridgeTx: root.isBridgeTx
                 amountToSend: root.amountToSend
-                minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading
                 store: root.store
                 selectedAsset: root.selectedAsset
@@ -90,9 +86,8 @@ Item {
                 errorType: root.errorType
                 toNetworksList: root.toNetworksList
                 weiToEth: function(wei) {
-                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
+                    return root.currencyStore.getCurrencyAmount(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)), selectedAsset.symbol)
                 }
-                formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 reCalculateSuggestedRoute: function() {
                     root.reCalculateSuggestedRoute()
                 }
@@ -111,11 +106,8 @@ Item {
                 store: root.store
                 customMode: tabBar.currentIndex === 2
                 selectedAccount: root.selectedAccount
-                ensAddressOrEmpty: root.ensAddressOrEmpty
                 amountToSend: root.amountToSend
                 requiredGasInEth: root.requiredGasInEth
-                minSendCryptoDecimals: root.minSendCryptoDecimals
-                minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 selectedAsset: root.selectedAsset
                 onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
                 bestRoutes: root.bestRoutes
@@ -124,7 +116,10 @@ Item {
                 isBridgeTx: root.isBridgeTx
                 errorType: root.errorType
                 weiToEth: function(wei) {
-                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
+                    return root.currencyStore.getCurrencyAmount(parseFloat(store.getWei2Eth(wei, selectedAsset.decimals)), selectedAsset.symbol)
+                }
+                getCryptoCurrencyAmount: function(cryptoValue) {
+                    return selectedAsset ? root.currencyStore.getCurrencyAmount(parseFloat(cryptoValue), selectedAsset.symbol) : undefined
                 }
             }
         }

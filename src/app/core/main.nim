@@ -1,13 +1,14 @@
-import NimQml
+import NimQml, task_runner
 import
   eventemitter,
   ./fleets/fleet_configuration,
+  ./tasks/marathon,
   ./tasks/threadpool,
   ./signals/signals_manager,
   ./custom_urls/urls_manager
 
 export eventemitter
-export signals_manager, fleet_configuration
+export marathon, task_runner, signals_manager, fleet_configuration
 
 type StatusFoundation* = ref object
   events*: EventEmitter

@@ -1,11 +1,9 @@
 {.used.}
 
-import json, sequtils, sugar, tables, strutils, json_serialization
+import json, sequtils, sugar, tables
 
 import ../../../../backend/communities
 include ../../../common/json_utils
-import ../../../common/types
-import ../../../common/conversion
 
 import ../../chat/dto/chat
 
@@ -31,42 +29,6 @@ type CommunitySettingsDto* = object
 type CommunityAdminSettingsDto* = object
   pinMessageAllMembersEnabled*: bool
 
-type TokenPermissionType* {.pure.}= enum
-  Unknown = 0,
-  BecomeAdmin = 1,
-  BecomeMember = 2
-
-type TokenType* {.pure.}= enum
-  Unknown = 0,
-  ERC20 = 1,
-  ERC721 = 2,
-  ENS = 3 # ENS is also ERC721 but we want to distinguish without heuristics
-
-type TokenCriteriaDto* = object
-  contractAddresses* {.serializedFieldName("contract_addresses").}: Table[int, string]
-  `type`* {.serializedFieldName("type").}: TokenType
-  symbol* {.serializedFieldName("symbol").}: string
-  name* {.serializedFieldName("name").}: string
-  amount* {.serializedFieldName("amount").}: string
-  decimals* {.serializedFieldName("decimals").}: int
-  tokenIds* {.serializedFieldName("tokenIds").}: seq[string]
-  ensPattern* {.serializedFieldName("ens_pattern").}: string
-
-type CommunityTokenPermissionDto* = object
-  id*: string
-  `type`*: TokenPermissionType
-  tokenCriteria*: seq[TokenCriteriaDto]
-  chatIds*: seq[string]
-  isPrivate*: bool
-
-type CommunityTokensMetadataDto* = object
-  addresses*: Table[int, string]
-  description*: string
-  image*: string
-  symbol*: string
-  name*: string
-  tokenType*: TokenType
-
 type CommunityDto* = object
   id*: string
   admin*: bool
@@ -91,7 +53,6 @@ type CommunityDto* = object
   requestedToJoinAt*: int64
   isMember*: bool
   muted*: bool
-  listedInDirectory*: bool
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
   settings*: CommunitySettingsDto
   adminSettings*: CommunityAdminSettingsDto
@@ -99,11 +60,11 @@ type CommunityDto* = object
   declinedRequestsToJoin*: seq[CommunityMembershipRequestDto]
   encrypted*: bool
   canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]  
-  tokenPermissions*: Table[string, CommunityTokenPermissionDto]
-  communityTokensMetadata*: seq[CommunityTokensMetadataDto]
 
-proc isAvailable*(communityDto: CommunityDto): bool =
-  return communityDto.name != "" and communityDto.description != ""
+type CuratedCommunity* = object
+    available*: bool
+    communityId*: string
+    community*: CommunityDto
 
 type DiscordCategoryDto* = object
   id*: string
@@ -156,23 +117,6 @@ proc toDiscordImportError*(jsonObj: JsonNode): DiscordImportError =
   discard jsonObj.getProp("code", result.code)
   discard jsonObj.getProp("message", result.message)
 
-proc toCommunityTokenAdresses*(jsonObj: JsonNode): Table[int, string] =
-  for i in jsonObj.keys():
-    result[parseInt(i)] = jsonObj[i].getStr()
-
-proc toCommunityTokensMetadataDto*(jsonObj: JsonNode): CommunityTokensMetadataDto =
-  result = CommunityTokensMetadataDto()
-  discard jsonObj.getProp("description", result.description)
-  discard jsonObj.getProp("image", result.image)
-  discard jsonObj.getProp("symbol", result.symbol)
-  discard jsonObj.getProp("name", result.name)
-  var tokenTypeInt: int
-  discard jsonObj.getProp("tokenType", tokenTypeInt)
-  result.tokenType = intToEnum(tokenTypeInt, TokenType.ERC721)
-  var addressesObj: JsonNode
-  discard jsonObj.getProp("contract_addresses", addressesObj)
-  result.addresses = toCommunityTokenAdresses(addressesObj)
-
 proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress =
   result = DiscordImportTaskProgress()
   result.`type` = jsonObj{"type"}.getStr()
@@ -187,62 +131,6 @@ proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress 
     for error in importErrorsObj:
       let importError = error.toDiscordImportError()
       result.errors.add(importError)
-
-proc toTokenCriteriaDto*(jsonObj: JsonNode): TokenCriteriaDto =
-  result = TokenCriteriaDto()
-  discard jsonObj.getProp("amount", result.amount)
-  discard jsonObj.getProp("decimals", result.decimals)
-  discard jsonObj.getProp("symbol", result.symbol)
-  discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("ens_pattern", result.ensPattern)
-
-  var typeInt: int
-  discard jsonObj.getProp("type", typeInt)
-  if (typeInt >= ord(low(TokenType)) and typeInt <= ord(high(TokenType))):
-      result.`type` = TokenType(typeInt)
-
-  var contractAddressesObj: JsonNode
-  if(jsonObj.getProp("contractAddresses", contractAddressesObj) and contractAddressesObj.kind == JObject):
-    result.contractAddresses = initTable[int, string]()
-    for chainId, contractAddress in contractAddressesObj:
-      result.contractAddresses[parseInt(chainId)] = contractAddress.getStr
-
-  var tokenIdsObj: JsonNode
-  if(jsonObj.getProp("tokenIds", tokenIdsObj) and tokenIdsObj.kind == JArray):
-    for tokenId in tokenIdsObj:
-      result.tokenIds.add(tokenId.getStr)
-
-  # When `toTokenCriteriaDto` is called with data coming from
-  # the front-end, there's a key field we have to account for
-  if jsonObj.hasKey("key"):
-    if result.`type` == TokenType.ENS:
-      discard jsonObj.getProp("key", result.ensPattern)
-    else:
-      discard jsonObj.getProp("key", result.symbol)
-
-proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermissionDto =
-  result = CommunityTokenPermissionDto()
-  discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("isPrivate", result.isPrivate)
-  var tokenPermissionTypeInt: int
-  discard jsonObj.getProp("type", tokenPermissionTypeInt)
-  if (tokenPermissionTypeInt >= ord(low(TokenPermissionType)) or tokenPermissionTypeInt <= ord(high(TokenPermissionType))):
-      result.`type` = TokenPermissionType(tokenPermissionTypeInt)
-
-  var tokenCriteriaObj: JsonNode
-  if(jsonObj.getProp("token_criteria", tokenCriteriaObj)):
-    for tokenCriteria in tokenCriteriaObj:
-      result.tokenCriteria.add(tokenCriteria.toTokenCriteriaDto)
-
-  var chatIdsObj: JsonNode
-  if(jsonObj.getProp("chatIds", chatIdsObj) and chatIdsObj.kind == JArray):
-    for chatId in chatIdsObj:
-      result.chatIds.add(chatId.getStr)
-
-  # When `toTokenPermissionDto` is called with data coming from
-  # the front-end, there's a key field we have to account for
-  if jsonObj.hasKey("key"):
-    discard jsonObj.getProp("key", result.id)
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
@@ -277,12 +165,6 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   if(jsonObj.getProp("permissions", permissionObj)):
     result.permissions = toPermission(permissionObj)
 
-  var tokenPermissionsObj: JsonNode
-  if(jsonObj.getProp("tokenPermissions", tokenPermissionsObj) and tokenPermissionsObj.kind == JObject):
-    result.tokenPermissions = initTable[string, CommunityTokenPermissionDto]()
-    for tokenPermissionId, tokenPermission in tokenPermissionsObj:
-      result.tokenPermissions[tokenPermissionId] = toCommunityTokenPermissionDto(tokenPermission)
-
   var adminSettingsObj: JsonNode
   if(jsonObj.getProp("adminSettings", adminSettingsObj)):
     result.adminSettings = toCommunityAdminSettingsDto(adminSettingsObj)
@@ -312,11 +194,6 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("requestedToJoinAt", result.requestedToJoinAt)
   discard jsonObj.getProp("muted", result.muted)
 
-  var communityTokensMetadataObj: JsonNode
-  if(jsonObj.getProp("communityTokensMetadata", communityTokensMetadataObj) and communityTokensMetadataObj.kind == JArray):
-    for tokenObj in communityTokensMetadataObj:
-      result.communityTokensMetadata.add(tokenObj.toCommunityTokensMetadataDto())
-
 proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipRequestDto =
   result = CommunityMembershipRequestDto()
   discard jsonObj.getProp("id", result.id)
@@ -335,24 +212,20 @@ proc parseCommunities*(response: RpcResponse[JsonNode]): seq[CommunityDto] =
   result = map(response.result.getElems(),
     proc(x: JsonNode): CommunityDto = x.toCommunityDto())
 
-proc parseKnownCuratedCommunities(jsonCommunities: JsonNode): seq[CommunityDto] =
-  for _, communityJson in jsonCommunities.pairs():
-    var community = communityJson.toCommunityDto()
-    community.listedInDirectory = true
-    result.add(community)
-
-proc parseUnknownCuratedCommunities(jsonCommunities: JsonNode): seq[CommunityDto] =
-  for communityId in jsonCommunities.items():
-    var community = CommunityDto()
-    community.id = communityId.getStr
-    community.listedInDirectory = true
-    result.add(community)
-
-proc parseCuratedCommunities*(response: JsonNode): seq[CommunityDto] =
-  if (response["communities"].kind == JObject):
-    result = parseKnownCuratedCommunities(response["communities"])
-  if (response["unknownCommunities"].kind == JArray):
-    result = concat(result, parseUnknownCuratedCommunities(response["unknownCommunities"]))
+proc parseCuratedCommunities*(response: RpcResponse[JsonNode]): seq[CuratedCommunity] =
+  if (response.result["communities"].kind == JObject):
+    for (communityId, communityJson) in response.result["communities"].pairs():
+      result.add(CuratedCommunity(
+        available: true,
+        communityId: communityId,
+        community: communityJson.toCommunityDto()
+      ))
+  if (response.result["unknownCommunities"].kind == JArray):
+    for communityId in response.result["unknownCommunities"].items():
+      result.add(CuratedCOmmunity(
+        available: false,
+        communityId: communityId.getStr()
+      ))
   
 proc contains(arrayToSearch: seq[int], searched: int): bool =
   for element in arrayToSearch:

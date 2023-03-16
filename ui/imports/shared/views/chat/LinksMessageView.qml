@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 
@@ -18,102 +18,199 @@ Column {
 
     property var store
     property var messageStore
+    property var container
 
-    //receiving space separated url list
-    property string links: ""
+    property alias linksModel: linksRepeater.model
     readonly property alias unfurledLinksCount: d.unfurledLinksCount
-    readonly property alias unfurledImagesCount: d.unfurledImagesCount
+
     property bool isCurrentUser: false
 
     signal imageClicked(var image)
-    signal linksLoaded()
 
     spacing: 4
 
-    Repeater {
-        id: linksRepeater
-        model: linksModel
-        delegate: Loader {
-            id: linkMessageLoader
-            required property var result
-            required property string link
-            required property int index
-            required property bool unfurl
-            required property bool success
-            required property bool isStatusDeepLink
-            readonly property bool isImage: result.contentType ? result.contentType.startsWith("image/") : false
-            readonly property bool neverAskAboutUnfurlingAgain: RootStore.neverAskAboutUnfurlingAgain
-            
-            active: success
-            asynchronous: true
-            StateGroup {
-                //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
-                id: linkPreviewLoaderState
-                states:[
-                    State {
-                        name: "neverAskAboutUnfurling"
-                        when: !unfurl && neverAskAboutUnfurlingAgain
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: undefined; }
-                        StateChangeScript { name: "removeFromModel"; script: linksModel.remove(index)}
-                    },
-                    State { 
-                        name: "askToEnableUnfurling"
-                        when: !unfurl && !neverAskAboutUnfurlingAgain
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: enableLinkComponent }
-                    },
-                    State { 
-                        name: "loadImage"
-                        when: unfurl && isImage
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledImageComponent }
-                    },
-                    State { 
-                        name: "loadLinkPreview"
-                        when: unfurl && !isImage && !isStatusDeepLink
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledLinkComponent }
-                    },
-                    State { 
-                        name: "statusInvitation"
-                        when: unfurl && isStatusDeepLink
-                        PropertyChanges { target: linkMessageLoader; sourceComponent: invitationBubble }
-                    }
-                ]
-            }
-        }
-    }
-
     QtObject {
         id: d
-        property bool hasImageLink: false
+
+        property bool isImageLink: false
         property int unfurledLinksCount: 0
-        property int unfurledImagesCount: 0
-        readonly property string uuid: Utils.uuid()
-        readonly property string whiteListedImgExtensions: Constants.acceptedImageExtensions.toString()
-        readonly property string whiteListedUrls: JSON.stringify(localAccountSensitiveSettings.whitelistedUnfurlingSites)
-        readonly property string getLinkPreviewDataId: messageStore.messageModule.getLinkPreviewData(root.links, d.uuid, whiteListedUrls, whiteListedImgExtensions, localAccountSensitiveSettings.displayChatImages)
-        onGetLinkPreviewDataIdChanged: { linkFetchConnections.enabled = true }
     }
 
-    Connections {
-        id: linkFetchConnections
-        enabled: false
-        target: root.messageStore.messageModule
-        function onLinkPreviewDataWasReceived(previewData, uuid) {
-            if(d.uuid != uuid) return
-            linkFetchConnections.enabled = false
-            try {  linksModel.rawData = JSON.parse(previewData) }
-            catch(e) { console.warn("error parsing link preview data", previewData) }
-        }
-    }
+    Repeater {
+        id: linksRepeater
 
-    ListModel {
-        id: linksModel
-        property var rawData
-        onRawDataChanged: {
-            linksModel.clear()
-            rawData.links.forEach((link) => {
-                linksModel.append(link)
-            })
-            root.linksLoaded()
+        delegate: Loader {
+            id: linkMessageLoader
+            property bool fetched: false
+            property var linkData
+            readonly property string uuid: Utils.uuid()
+
+            property bool loadingFailed: false
+
+            active: true
+
+            Connections {
+                target: localAccountSensitiveSettings
+                function onWhitelistedUnfurlingSitesChanged() {
+                    fetched = false
+                    linkMessageLoader.sourceComponent = undefined
+                    linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
+                }
+                function onNeverAskAboutUnfurlingAgainChanged() {
+                    linkMessageLoader.sourceComponent = undefined
+                    linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
+                }
+                function onDisplayChatImagesChanged() {
+                    linkMessageLoader.sourceComponent = undefined
+                    linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
+                }
+            }
+
+            Connections {
+                id: linkFetchConnections
+                enabled: false
+                target: root.messageStore.messageModule
+                function onLinkPreviewDataWasReceived(previewData: string) {
+                    let response = {}
+                    try {
+                        response = JSON.parse(previewData)
+                    } catch (e) {
+                        console.error(previewData, e)
+                        linkMessageLoader.loadingFailed = true
+                        return
+                    }
+                    if (response.uuid !== linkMessageLoader.uuid) return
+                    linkFetchConnections.enabled = false
+
+                    if (!response.success) {
+                        console.error("could not get preview data")
+                        linkMessageLoader.loadingFailed = true
+                        return
+                    }
+
+                    linkData = response.result
+                    linkMessageLoader.loadingFailed = false
+
+                    linkMessageLoader.height = undefined // Reset height so it's not 0
+                    if (linkData.contentType.startsWith("image/")) {
+                        return linkMessageLoader.sourceComponent = unfurledImageComponent
+                    }
+                    if (linkData.site && linkData.title) {
+                        linkData.address = link
+                        return linkMessageLoader.sourceComponent = unfurledLinkComponent
+                    }
+                }
+            }
+
+            Connections {
+                id: linkCommunityFetchConnections
+                enabled: false
+                target: root.store.communitiesModuleInst
+                function onCommunityAdded(communityId: string) {
+                    if (communityId !== linkData.communityId) {
+                        return
+                    }
+                    linkCommunityFetchConnections.enabled = false
+                    const data = root.store.getLinkDataForStatusLinks(link)
+                    if (data) {
+                        linkData = data
+                        if (!data.fetching && data.communityId) {
+                            return linkMessageLoader.sourceComponent = invitationBubble
+                        }
+                        // do not show unfurledLinkComponent
+                        return
+                    }
+                }
+            }
+
+            Connections {
+                target: root.store.mainModuleInst
+                enabled: linkMessageLoader.loadingFailed
+
+                function onIsOnlineChanged() {
+                    if (!root.store.mainModuleInst.isOnline)
+                        return
+
+                    linkMessageLoader.fetched = false
+                    linkMessageLoader.sourceComponent = undefined
+                    linkMessageLoader.sourceComponent = linkMessageLoader.getSourceComponent()
+                }
+            }
+
+            function getSourceComponent() {
+                // Reset the height in case we set it to 0 below. See note below
+                // for more information
+                this.height = undefined
+                const linkHostname = Utils.getHostname(link)
+                if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
+                    localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
+                }
+
+                const whitelistHosts = Object.keys(localAccountSensitiveSettings.whitelistedUnfurlingSites)
+
+                const linkExists = whitelistHosts.some(hostname => linkHostname.endsWith(hostname))
+
+                const linkWhiteListed = linkExists && whitelistHosts.some(hostname =>
+                    linkHostname.endsWith(hostname) && localAccountSensitiveSettings.whitelistedUnfurlingSites[hostname] === true)
+
+                if (!linkWhiteListed && linkExists && !RootStore.neverAskAboutUnfurlingAgain && !model.isImage) {
+                    return enableLinkComponent
+                }
+
+                if (linkWhiteListed) {
+                    if (fetched) {
+                        if (linkData.communityId) {
+                            return invitationBubble
+                        }
+
+                        return unfurledLinkComponent
+                    }
+                    fetched = true
+
+                    const data = root.store.getLinkDataForStatusLinks(link)
+                    if (data) {
+                        linkData = data
+                        if (data.fetching && data.communityId) {
+                            linkCommunityFetchConnections.enabled = true
+                            return
+                        }
+                        if (data.communityId) {
+                            return invitationBubble
+                        }
+
+                        // do not show unfurledLinkComponent
+                        return
+                    }
+
+                    linkFetchConnections.enabled = true
+                    root.messageStore.getLinkPreviewData(link, linkMessageLoader.uuid)
+                }
+
+                if (model.isImage) {
+                    if (RootStore.displayChatImages) {
+                        linkData = {
+                            thumbnailUrl: link
+                        }
+                        return unfurledImageComponent
+                    }
+                    else if (!(RootStore.neverAskAboutUnfurlingAgain || (d.isImageLink && index > 0))) {
+                        d.isImageLink = true
+                        return enableLinkComponent
+                    }
+                }
+
+                // setting the height to 0 allows the "enable link" dialog to
+                // disappear correctly when RootStore.neverAskAboutUnfurlingAgain
+                // is true. The height is reset at the top of this method.
+                this.height = 0
+                return undefined
+            }
+
+            Component.onCompleted: {
+                // putting this is onCompleted prevents automatic binding, where
+                // QML warns of a binding loop detected
+                this.sourceComponent = linkMessageLoader.getSourceComponent()
+            }
         }
     }
 
@@ -127,73 +224,28 @@ Column {
 
             StatusChatImageLoader {
                 id: linkImage
-                readonly property bool globalAnimationEnabled: root.messageStore.playAnimation
-                property bool localAnimationEnabled: true
                 objectName: "LinksMessageView_unfurledImageComponent_linkImage"
                 anchors.centerIn: parent
-                source: result.thumbnailUrl
+                container: root.container
+                source: linkData.thumbnailUrl
                 imageWidth: 300
                 isCurrentUser: root.isCurrentUser
-                playing: globalAnimationEnabled && localAnimationEnabled
+                onClicked: imageClicked(linkImage.imageAlias)
+                playing: root.messageStore.playAnimation
                 isOnline: root.store.mainModuleInst.isOnline
-                asynchronous: true
-                isAnimated: result.contentType ? result.contentType.toLowerCase().endsWith("gif") : false
-                onClicked: isAnimated && !playing ? localAnimationEnabled = true : root.imageClicked(linkImage.imageAlias)
-                Loader {
-                    width: 45
-                    height: 38
-                    anchors.left: parent.left
-                    anchors.leftMargin: 12
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 12
-                    active: linkImage.isAnimated && !linkImage.playing
-                    sourceComponent: Item {
-                        anchors.fill: parent
-                        Rectangle {
-                            anchors.fill: parent
-                            color: "black"
-                            radius: Style.current.radius
-                            opacity: .4
-                        }
-                        StatusBaseText {
-                            anchors.centerIn: parent
-                            text: "GIF"
-                            font.pixelSize: 13
-                            color: "white"
-                        }
-                    }
-                }
-                Timer {
-                    id: animationPlayingTimer
-                    interval: 10000
-                    running: linkImage.isAnimated && linkImage.playing
-                    onTriggered: { linkImage.localAnimationEnabled = false }
-                }
             }
 
-            Component.onCompleted: d.unfurledImagesCount++
-            Component.onDestruction: d.unfurledImagesCount--
+            Component.onCompleted: d.unfurledLinksCount++
+            Component.onDestruction: d.unfurledLinksCount--
         }
     }
 
     Component {
         id: invitationBubble
         InvitationBubbleView {
-            property var invitationData: root.store.getLinkDataForStatusLinks(link)
-            onInvitationDataChanged: { if(!invitationData) linksModel.remove(index) }
             store: root.store
-            communityId: invitationData ? invitationData.communityId : ""
+            communityId: linkData.communityId
             anchors.left: parent.left
-            visible: !!invitationData && !invitationData.fetching
-
-            Connections {
-                enabled: !!invitationData && invitationData.fetching
-                target: root.store.communitiesModuleInst
-                function onCommunityAdded(communityId:  string) {
-                    if (communityId !== invitationData.communityId) return
-                    invitationData = root.store.getLinkDataForStatusLinks(link)
-                }
-            }
         }
     }
 
@@ -201,41 +253,97 @@ Column {
         id: unfurledLinkComponent
         MessageBorder {
             id: unfurledLink
+            readonly property bool isGIFImage: linkData.thumbnailUrl.endsWith(".gif")
             width: linkImage.visible ? linkImage.width + 2 : 300
             height: {
                 if (linkImage.visible) {
-                    return linkImage.height + (Style.current.smallPadding * 2) + (linkTitle.height + 2 + linkSite.height)
+                    return linkImage.height + (!unfurledLink.isGIFImage ?
+                           ((Style.current.smallPadding * 2) + (linkTitle.height + 2 + linkSite.height)) : 0)
                 }
-                return (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
+                return (Style.current.smallPadding * 2) + (!unfurledLink.isGIFImage ?
+                        (linkTitle.height + 2 + linkSite.height) : 0)
             }
             isCurrentUser: root.isCurrentUser
 
             StatusChatImageLoader {
                 id: linkImage
                 objectName: "LinksMessageView_unfurledLinkComponent_linkImage"
-                source: result.thumbnailUrl
-                visible: result.thumbnailUrl.length
-                readonly property int previewWidth: parseInt(result.width)
+                container: root.container
+                source: linkData.thumbnailUrl
+                visible: linkData.thumbnailUrl.length
+                readonly property int previewWidth: parseInt(linkData.width)
                 imageWidth: Math.min(300, previewWidth > 0 ? previewWidth : 300)
                 isCurrentUser: root.isCurrentUser
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 isOnline: root.store.mainModuleInst.isOnline
-                asynchronous: true
                 onClicked: {
-                    if (!!result.callback) {
-                        return result.callback()
+                    if (unfurledLink.isGIFImage) {
+                        if (playing) {
+                            imageClicked(linkImage.imageAlias);
+                        } else {
+                            if (root.messageStore.playAnimation) {
+                                linkImage.playing = true;
+                                animationPlayingTimer.restart();
+                            }
+                        }
+                    } else {
+                        if (!!linkData.callback) {
+                            return linkData.callback()
+                        }
+                        Global.openLink(linkData.address)
                     }
-                    Global.openLink(result.address)
+                }
+
+                onImageLoadedChanged: {
+                    if (imageLoaded && root.messageStore.playAnimation) {
+                        playing = true;
+                        animationPlayingTimer.start();
+                    }
+                }
+                Timer {
+                    id: animationPlayingTimer
+                    interval: 10000
+                    running: false
+                    onTriggered: {
+                        if (root.messageStore.playAnimation) {
+                            linkImage.playing = false;
+                        }
+                    }
+                }
+            }
+
+            Loader {
+                width: 45
+                height: 38
+                anchors.left: parent.left
+                anchors.leftMargin: 12
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 12
+                active: !linkImage.playing
+                sourceComponent: Item {
+                    anchors.fill: parent
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "black"
+                        radius: Style.current.radius
+                        opacity: .4
+                    }
+                    StatusBaseText {
+                        anchors.centerIn: parent
+                        text: "GIF"
+                        font.pixelSize: 13
+                    }
                 }
             }
 
             StatusBaseText {
                 id: linkTitle
-                text: result.title
+                text: linkData.title
                 font.pixelSize: 13
                 font.weight: Font.Medium
                 wrapMode: Text.Wrap
+                visible: !unfurledLink.isGIFImage
                 anchors.top: linkImage.visible ? linkImage.bottom : parent.top
                 anchors.topMargin: Style.current.smallPadding
                 anchors.left: parent.left
@@ -246,7 +354,8 @@ Column {
 
             StatusBaseText {
                 id: linkSite
-                text: result.site
+                visible: !unfurledLink.isGIFImage
+                text: linkData.site
                 font.pixelSize: 12
                 font.weight: Font.Thin
                 color: Theme.palette.baseColor1
@@ -254,20 +363,6 @@ Column {
                 anchors.topMargin: 2
                 anchors.left: linkTitle.left
                 anchors.bottomMargin: Style.current.halfPadding
-            }
-
-            MouseArea {
-                anchors.top: linkImage.visible ? linkImage.top : linkTitle.top
-                anchors.left: linkImage.visible ? linkImage.left : linkTitle.left
-                anchors.right: linkImage.visible ? linkImage.right : linkTitle.right
-                anchors.bottom: linkSite.bottom
-                cursorShape: Qt.PointingHandCursor
-                onClicked:  {
-                    if (!!result.callback) {
-                        return result.callback()
-                    }
-                    Global.openLink(link)
-                }
             }
 
             Component.onCompleted: d.unfurledLinksCount++
@@ -294,7 +389,10 @@ Column {
                 icon.width: 20
                 icon.height: 20
                 icon.name: "close-circle"
-                onClicked: linksModel.remove(index)
+                onClicked: {
+                    enableLinkRoot.height = 0
+                    enableLinkRoot.visible = false
+                }
             }
 
             Image {
@@ -309,8 +407,8 @@ Column {
 
             StatusBaseText {
                 id: enableText
-                text: isImage ? qsTr("Enable automatic image unfurling") :
-                                    qsTr("Enable link previews in chat?")
+                text: d.isImageLink ? qsTr("Enable automatic image unfurling") :
+                                      qsTr("Enable link previews in chat?")
                 horizontalAlignment: Text.AlignHCenter
                 width: parent.width
                 wrapMode: Text.WordWrap
@@ -376,7 +474,9 @@ Column {
                             text: qsTr("Don't ask me again")
                         }
                     }
-                    onClicked: RootStore.setNeverAskAboutUnfurlingAgain(true)
+                    onClicked: {
+                        RootStore.setNeverAskAboutUnfurlingAgain(true);
+                    }
                     Component.onCompleted: {
                         background.radius = Style.current.padding;
                     }

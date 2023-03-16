@@ -15,7 +15,6 @@ StatusSectionLayout {
     property bool createChat: false
 
     notificationCount: 1
-    hasUnseenNotifications: true
     onNotificationButtonClicked: { notificationCount = 0; }
     showHeader: !root.createChat
 

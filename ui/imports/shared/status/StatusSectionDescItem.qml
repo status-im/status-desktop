@@ -47,7 +47,7 @@ Item {
             anchors.left: parent.right
             anchors.leftMargin: Style.current.smallPadding
             color: Style.current.transparent
-            onCopyClicked: root.store.copyToClipboard(textToCopy)
+            store: root.store
         }
     }
 }

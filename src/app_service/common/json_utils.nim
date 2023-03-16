@@ -17,14 +17,6 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[int64]): bool 
 
   success
 
-template getProp(obj: JsonNode, prop: string, value: var typedesc[uint]): bool =
-  var success = false
-  if (obj.kind == JObject and obj.contains(prop)):
-    value = uint(obj[prop].getInt)
-    success = true
-
-  success
-
 template getProp(obj: JsonNode, prop: string, value: var typedesc[uint64]): bool =
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):

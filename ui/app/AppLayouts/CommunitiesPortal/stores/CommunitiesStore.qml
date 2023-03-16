@@ -10,7 +10,6 @@ QtObject {
     property var mainModuleInst: mainModule
 
     readonly property var curatedCommunitiesModel: root.communitiesModuleInst.curatedCommunities
-    readonly property bool curatedCommunitiesLoading: root.communitiesModuleInst.curatedCommunitiesLoading
 
     property var discordFileList: root.communitiesModuleInst.discordFileList
     property var discordCategoriesModel: root.communitiesModuleInst.discordCategories
@@ -101,7 +100,7 @@ QtObject {
     }
 
     function setActiveCommunity(communityId) {
-        root.mainModuleInst.setActiveSectionById(communityId);
+        mainModule.setActiveSectionById(communityId);
     }
 
     function navigateToCommunity(communityId) {

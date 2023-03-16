@@ -40,9 +40,6 @@ QtObject:
     read = getDappsModel
     notify = modelChanged
 
-  proc loadDapps(self: View) {.slot.} =
-    self.delegate.loadDapps()
-
   proc hasPermission(self: View, hostname: string, address: string, permission: string): bool {.slot.} =
     return self.delegate.hasPermission(hostname, address, permission)
 

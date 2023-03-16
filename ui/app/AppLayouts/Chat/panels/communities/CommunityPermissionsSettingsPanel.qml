@@ -1,48 +1,31 @@
 import QtQuick 2.14
 
-import AppLayouts.Chat.controls.community 1.0
 import AppLayouts.Chat.layouts 1.0
-import AppLayouts.Chat.stores 1.0
 import AppLayouts.Chat.views.communities 1.0
-
-import StatusQ.Core.Utils 0.1
-import utils 1.0
+import AppLayouts.Chat.stores 1.0
 
 SettingsPageLayout {
     id: root
 
-    required property var permissionsModel
-    required property var assetsModel
-    required property var collectiblesModel
-    required property var channelsModel
-
-    // name, image, color properties expected
-    required property var communityDetails
-
-    property bool isOwner: false
-
+    property var rootStore
+    property var store: CommunitiesStore {}
     property int viewWidth: 560 // by design
-
-    signal createPermissionRequested(
-        int permissionType, var holdings, var channels, bool isPrivate)
-
-    signal updatePermissionRequested(
-        string key, int permissionType, var holdings, var channels, bool isPrivate)
-
-    signal removePermissionRequested(string key)
 
     function navigateBack() {
         if (root.state === d.newPermissionViewState) {
-            root.state = d.initialState
-        } else if (root.state === d.permissionsViewState) {
+            root.state = d.getInitialState()
+        } else if(root.state === d.permissionsViewState) {
             root.state = d.newPermissionViewState
-        } else if (root.state === d.editPermissionViewState) {
+        } else if(root.state === d.editPermissionViewState) {
             if (root.dirty) {
                 root.notifyDirty()
             } else {
-                root.state = d.initialState
+                root.state = d.getInitialState()
             }
         }
+
+        d.saveChanges = false
+        d.resetChanges = false
     }
 
     QtObject {
@@ -52,31 +35,31 @@ SettingsPageLayout {
         readonly property string newPermissionViewState: "NEW_PERMISSION"
         readonly property string permissionsViewState: "PERMISSIONS"
         readonly property string editPermissionViewState: "EDIT_PERMISSION"
-        readonly property bool permissionsExist: root.permissionsModel.count > 0
+        readonly property bool permissionsExist: store.permissionsModel.count > 0
+        property bool saveChanges: false
+        property bool resetChanges: false
 
-        signal saveChanges
-        signal resetChanges
-
-        property string permissionKeyToEdit
-
-        property var holdingsToEditModel
-        property int permissionTypeToEdit: PermissionTypes.Type.None
-        property var channelsToEditModel
+        property int permissionIndexToEdit
+        property ListModel holdingsToEditModel: ListModel {}
+        property var permissionsToEditObject
+        property ListModel channelsToEditModel: ListModel {}
         property bool isPrivateToEditValue: false
 
         onPermissionsExistChanged: {
             // Navigate back to welcome permissions view if all existing permissions are removed.
             if(root.state === d.permissionsViewState && !permissionsExist) {
-                root.state = d.welcomeViewState;
+                root.state =  d.welcomeViewState;
             }
         }
 
-        readonly property string initialState: d.permissionsExist ? d.permissionsViewState : d.welcomeViewState
+        function getInitialState() {
+            return root.store.permissionsModel.count > 0 ? d.permissionsViewState : d.welcomeViewState
+        }
 
         function initializeData() {
-            holdingsToEditModel = emptyModel
-            channelsToEditModel = emptyModel
-            permissionTypeToEdit = PermissionTypes.Type.None
+            holdingsToEditModel = defaultListObject.createObject(d)
+            permissionsToEditObject = null
+            channelsToEditModel = defaultListObject.createObject(d)
             isPrivateToEditValue = false
         }
     }
@@ -84,7 +67,7 @@ SettingsPageLayout {
     saveChangesButtonEnabled: true
     saveChangesText: qsTr("Update permission")
     cancelChangesText: qsTr("Revert changes")
-    state: d.initialState
+    state: d.getInitialState()
     states: [
         State {
             name: d.welcomeViewState
@@ -130,193 +113,64 @@ SettingsPageLayout {
     }
 
     onSaveChangesClicked: {
-        d.saveChanges()
-        d.resetChanges()
-
+        d.saveChanges = true
+        d.resetChanges = true
         root.navigateBack()
     }
 
     onResetChangesClicked: {
-        d.resetChanges()
-
+        d.resetChanges = true
         root.navigateBack()
     }
 
     // Community Permissions possible view contents:
     Component {
         id: welcomeView
-
-        CommunityWelcomeSettingsView {
+        CommunityWelcomePermissionsView {
             viewWidth: root.viewWidth
-            image: Style.png("community/permissions2_3")
-            title: qsTr("Permissions")
-            subtitle: qsTr("You can manage your community by creating and issuing membership and access permissions")
-            checkersModel: [
-                qsTr("Give individual members access to private channels"),
-                qsTr("Monetise your community with subscriptions and fees"),
-                qsTr("Require holding a token or NFT to obtain exclusive membership rights")
-            ]
         }
     }
 
     Component {
         id: newPermissionView
-
         CommunityNewPermissionView {
-            id: communityNewPermissionView
-
+            id: newPermissionViewItem
             viewWidth: root.viewWidth
-
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
-            channelsModel: root.channelsModel
-            communityDetails: root.communityDetails
-            isOwner: root.isOwner
-
+            rootStore: root.rootStore
+            store: root.store
+            onPermissionCreated: root.state = d.permissionsViewState
             isEditState: root.state === d.editPermissionViewState
-
-            selectedHoldingsModel: d.holdingsToEditModel
-            selectedChannelsModel: d.channelsToEditModel
-
-            permissionType: d.permissionTypeToEdit
+            permissionIndex: d.permissionIndexToEdit
+            holdingsModel: d.holdingsToEditModel
+            permissionObject: d.permissionsToEditObject
+            channelsModel: d.channelsToEditModel
             isPrivate: d.isPrivateToEditValue
+            saveChanges: d.saveChanges
+            resetChanges: d.resetChanges
 
-            duplicationWarningVisible: {
-                // dependencies
-                holdingsTracker.revision
-                channelsTracker.revision
-                communityNewPermissionView.dirtyValues.permissionType
-                communityNewPermissionView.dirtyValues.isPrivate
-                const model = root.permissionsModel
-                const count = model.rowCount()
-
-                for (let i = 0; i < count; i++) {
-                    const item = ModelUtils.get(model, i)
-
-                    if (root.state === d.editPermissionViewState
-                            && d.permissionKeyToEdit === item.key)
-                        continue
-
-                    const holdings = item.holdingsListModel
-                    const channels = item.channelsListModel
-                    const permissionType = item.permissionType
-
-                    const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
-
-                    if (same(dirtyValues.selectedHoldingsModel, holdings)
-                            && same(dirtyValues.selectedChannelsModel, channels)
-                            && dirtyValues.permissionType === permissionType)
-                        return true
-                }
-
-                return false
-            }
-
-            onCreatePermissionClicked: {
-                const holdings = ModelUtils.modelToArray(
-                                   dirtyValues.selectedHoldingsModel,
-                                   ["key", "type", "amount"])
-
-                const channels = ModelUtils.modelToArray(
-                                   dirtyValues.selectedChannelsModel, ["key"])
-
-                root.createPermissionRequested(
-                            dirtyValues.permissionType, holdings, channels,
-                            dirtyValues.isPrivate)
-
-                root.state = d.permissionsViewState
-            }
-
-            Connections {
-                target: d
-
-                function onSaveChanges() {
-                    const holdings = ModelUtils.modelToArray(
-                                       dirtyValues.selectedHoldingsModel,
-                                       ["key", "type", "amount"])
-
-                    const channels = ModelUtils.modelToArray(
-                                       dirtyValues.selectedChannelsModel, ["key"])
-
-                    root.updatePermissionRequested(
-                                d.permissionKeyToEdit, dirtyValues.permissionType,
-                                holdings, channels, dirtyValues.isPrivate)
-                }
-
-                function onResetChanges() {
-                    resetChanges()
-                }
-            }
-
-            Binding {
-                target: root
-                property: "dirty"
-                value: isEditState && dirty
-            }
-
-            ModelChangeTracker {
-                id: holdingsTracker
-
-                model: communityNewPermissionView.dirtyValues.selectedHoldingsModel
-            }
-
-            ModelChangeTracker {
-                id: channelsTracker
-
-                model: communityNewPermissionView.dirtyValues.selectedChannelsModel
-            }
-
-            Binding {
-                target: root
-                property: "saveChangesButtonEnabled"
-                value: !communityNewPermissionView.duplicationWarningVisible
-                       && communityNewPermissionView.isFullyFilled
-            }
+            Component.onCompleted: { root.dirty = Qt.binding(() => newPermissionViewItem.isEditState && newPermissionViewItem.dirty) }
         }
     }
 
     Component {
         id: permissionsView
-
         CommunityPermissionsView {
-            permissionsModel: root.permissionsModel
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
-            channelsModel: root.channelsModel
-            communityDetails: root.communityDetails
-
             viewWidth: root.viewWidth
-            height: root.height
-
-            function setInitialValuesFromIndex(index) {
-                const item = ModelUtils.get(root.permissionsModel, index)
-
-                d.holdingsToEditModel = item.holdingsListModel
-                d.channelsToEditModel = item.channelsListModel
-                d.permissionTypeToEdit = item.permissionType
-                d.isPrivateToEditValue = item.isPrivate
-            }
-
-            onEditPermissionRequested: {
-                setInitialValuesFromIndex(index)
-                d.permissionKeyToEdit = ModelUtils.get(
-                            root.permissionsModel, index, "key")
+            rootStore: root.rootStore
+            store: root.store
+            onEditPermission: {
+                d.permissionIndexToEdit = index
+                d.holdingsToEditModel = holidings
+                d.permissionsToEditObject = permission
+                d.channelsToEditModel = channels
+                d.isPrivateToEditValue = isPrivate
                 root.state = d.editPermissionViewState
-            }
-
-            onDuplicatePermissionRequested: {
-                setInitialValuesFromIndex(index)
-                root.state = d.newPermissionViewState
-            }
-
-            onRemovePermissionRequested: {
-                const key = ModelUtils.get(root.permissionsModel, index, "key")
-                root.removePermissionRequested(key)
             }
         }
     }
 
-    ListModel {
-        id: emptyModel
+    Component {
+        id: defaultListObject
+        ListModel {}
     }
 }

@@ -15,7 +15,6 @@ type
     ReleaseENS = "ReleaseENS",
     BuyStickerPack = "BuyStickerPack"
     WalletTransfer = "WalletTransfer"
-    CollectibleDeployment = "CollectibleDeployment"
 
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self
@@ -33,7 +32,7 @@ type MultiTransactionDto* = ref object of RootObj
   toAsset* {.serializedFieldName("toAsset").}: string
   fromAmount* {.serializedFieldName("fromAmount").}: string
   multiTxtype* {.serializedFieldName("type").}: MultiTransactionType
-
+  
 type
   TransactionDto* = ref object of RootObj
     id*: string
@@ -49,10 +48,9 @@ type
     nonce*: string
     txStatus*: string
     value*: string
-    tokenId*: UInt256
     fromAddress*: string
     to*: string
-    chainId*: int
+    chainId*: int    
     maxFeePerGas*: string
     maxPriorityFeePerGas*: string
     input*: string
@@ -78,7 +76,6 @@ proc getMaxTotalFees(maxFee: string, gasLimit: string): string =
 proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()
   result.timestamp = stint.fromHex(UInt256, jsonObj{"timestamp"}.getStr)
-  result.tokenId = stint.fromHex(UInt256, jsonObj{"tokenId"}.getStr)
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("type", result.typeValue)
   discard jsonObj.getProp("address", result.address)
@@ -103,42 +100,10 @@ proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result.totalFees = getTotalFees(result.maxPriorityFeePerGas, result.baseGasFees, result.gasUsed, result.maxFeePerGas)
   result.maxTotalFees = getMaxTotalFees(result.maxFeePerGas, result.gasLimit)
 
-proc `$`*(self: TransactionDto): string =
-  return fmt"""TransactionDto(
-    id:{self.id},
-    typeValue:{self.typeValue},
-    address:{self.address},
-    blockNumber:{self.blockNumber},
-    blockHash:{self.blockHash},
-    contract:{self.contract},
-    timestamp:{self.timestamp},
-    gasPrice:{self.gasPrice},
-    gasLimit:{self.gasLimit},
-    gasUsed:{self.gasUsed},
-    nonce:{self.nonce},
-    txStatus:{self.txStatus},
-    value:{self.value},
-    tokenId:{self.tokenId},
-    fromAddress:{self.fromAddress},
-    to:{self.to},
-    chainId:{self.chainId},
-    maxFeePerGas:{self.maxFeePerGas},
-    maxPriorityFeePerGas:{self.maxPriorityFeePerGas},
-    input:{self.input},
-    txHash:{self.txHash},
-    multiTransactionID:{self.multiTransactionID},
-    baseGasFees:{self.baseGasFees},
-    totalFees:{self.totalFees},
-    maxTotalFees:{self.maxTotalFees},
-    additionalData:{self.additionalData},
-    symbol:{self.symbol}
-  )"""
-
 proc toPendingTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()
   result.value = "0x" & toHex(toUInt256(parseFloat(jsonObj{"value"}.getStr)))
   result.timestamp = u256(jsonObj{"timestamp"}.getInt)
-  result.tokenId = stint.fromHex(UInt256, jsonObj{"tokenId"}.getStr)
   discard jsonObj.getProp("hash", result.txHash)
   discard jsonObj.getProp("from", result.fromAddress)
   discard jsonObj.getProp("to", result.to)
@@ -150,20 +115,6 @@ proc toPendingTransactionDto*(jsonObj: JsonNode): TransactionDto =
   discard jsonObj.getProp("additionalData", result.additionalData)
   discard jsonObj.getProp("data", result.input)
   discard jsonObj.getProp("symbol", result.symbol)
-
-proc toMultiTransactionDto*(jsonObj: JsonNode): MultiTransactionDto =
-  result = MultiTransactionDto()
-
-  discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("timestamp", result.timestamp)
-  discard jsonObj.getProp("fromAddress", result.fromAddress)
-  discard jsonObj.getProp("toAddress", result.toAddress)
-  discard jsonObj.getProp("fromAsset", result.fromAsset)
-  discard jsonObj.getProp("toAsset", result.toAsset)
-  discard jsonObj.getProp("fromAmount", result.fromAmount)
-  var multiTxType: int
-  discard jsonObj.getProp("type", multiTxType)
-  result.multiTxtype = cast[MultiTransactionType](multiTxType)
 
 proc cmpTransactions*(x, y: TransactionDto): int =
   # Sort proc to compare transactions from a single account.

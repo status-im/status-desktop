@@ -15,18 +15,6 @@ QtObject:
 
   proc showTestNotification*(self: GlobalEvents, title: string, message: string) {.signal.}
   
-  proc showCommunityTokenPermissionCreatedNotification*(self: GlobalEvents, sectionId: string, title: string, message: string) {.signal.}
-
-  proc showCommunityTokenPermissionUpdatedNotification*(self: GlobalEvents, sectionId: string, title: string, message: string) {.signal.}
-
-  proc showCommunityTokenPermissionDeletedNotification*(self: GlobalEvents, sectionId: string, title: string, message: string) {.signal.}
-
-  proc showCommunityTokenPermissionCreationFailedNotification*(self: GlobalEvents, sectionId: string, title: string, message: string) {.signal.}
-
-  proc showCommunityTokenPermissionUpdateFailedNotification*(self: GlobalEvents, sectionId: string, title: string, message: string) {.signal.}
-
-  proc showCommunityTokenPermissionDeletionFailedNotification*(self: GlobalEvents, sectionId: string, title: string, message: string) {.signal.}
-
   proc showMessageNotification*(self: GlobalEvents, title: string, message: string, sectionId: string, 
     isCommunitySection: bool, isSectionActive: bool, chatId: string, isChatActive: bool, messageId: string, 
     notificationType: int, isOneToOne: bool, isGroupChat: bool) {.signal.}

@@ -18,7 +18,6 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
-    dappsLoaded: bool
     controller: Controller
 
 proc newModule*(
@@ -31,7 +30,6 @@ proc newModule*(
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.dappsLoaded = false
   result.controller = controller.newController(result, dappPermissionsService, walletAccountServive)
 
 method delete*(self: Module) =
@@ -76,20 +74,9 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
+  self.fetchDapps()
   self.moduleLoaded = true
   self.delegate.dappsDidLoad()
-
-
-method loadDapps*(self: Module) =
-  if self.dappsLoaded:
-    return
-
-  self.fetchDapps()
-
-  self.dappsLoaded = true
-
-method onActivated*(self: Module) =
-    self.loadDapps()
 
 method hasPermission*(self: Module, hostname: string, address: string, permission: string): bool =
   self.controller.hasPermission(hostname, address, permission.toPermission())

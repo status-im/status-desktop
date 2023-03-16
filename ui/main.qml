@@ -25,7 +25,7 @@ StatusWindow {
 
     id: applicationWindow
     objectName: "mainWindow"
-    minimumWidth: 1200
+    minimumWidth: 900
     minimumHeight: 680
     color: Style.current.background
     title: {
@@ -71,8 +71,8 @@ StatusWindow {
         if (visibility === Window.Windowed) {
             applicationWindow.x = geometry.x;
             applicationWindow.y = geometry.y;
-            applicationWindow.width = Math.max(geometry.width, applicationWindow.minimumWidth)
-            applicationWindow.height = Math.max(geometry.height, applicationWindow.minimumHeight)
+            applicationWindow.width = geometry.width;
+            applicationWindow.height = geometry.height;
         }
     }
 
@@ -156,16 +156,12 @@ StatusWindow {
                 startupOnboarding.visible = true
             }
             else if(state === Constants.appState.appLoading) {
-                loader.sourceComponent = undefined
-                appLoadingAnimation.active = true
+                loader.sourceComponent = appLoadingAnimation
                 startupOnboarding.visible = false
             }
             else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
-                appLoadingAnimation.active = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
-                appLoadingAnimation.runningProgressAnimation = localAppSettings && localAppSettings.fakeLoadingScreenEnabled
                 Global.userProfile = userProfile
-                Global.appIsReady = true
 
                 loader.sourceComponent = app
 
@@ -195,7 +191,7 @@ StatusWindow {
     Connections {
         target: applicationWindow
         function onClosing(close) {
-            if (Qt.platform.os === Constants.mac) {
+            if (Qt.platform.os === "osx") {
                 loader.sourceComponent = undefined
                 close.accepted = true
             } else {
@@ -261,12 +257,12 @@ StatusWindow {
         visible: true
         icon.source: {
             if (production) {
-                if (Qt.platform.os == Constants.mac)
+                if (Qt.platform.os == "osx")
                     return "imports/assets/icons/status-logo-round-rect.svg"
                 else
                     return "imports/assets/icons/status-logo-circle.svg"
             } else {
-                if (Qt.platform.os == Constants.mac)
+                if (Qt.platform.os == "osx")
                     return "imports/assets/icons/status-logo-dev-round-rect.svg"
                 else
                     return "imports/assets/icons/status-logo-dev-circle.svg"
@@ -319,19 +315,10 @@ StatusWindow {
         }
     }
 
-    Loader {
+    Component {
         id: appLoadingAnimation
-        property bool runningProgressAnimation: false
-        anchors.fill: parent
-        active: false
-        sourceComponent: DidYouKnowSplashScreen {
+        SplashScreen {
             objectName: "splashScreen"
-            NumberAnimation on progress { from: 0.0; to: 1; duration: 30000; running: runningProgressAnimation }
-            onProgressChanged: {
-                if (progress === 1) {
-                    appLoadingAnimation.active = false
-                }
-            }
         }
     }
 
@@ -345,12 +332,13 @@ StatusWindow {
         id: notificationWindow
     }
 
-    MacTrafficLights { // FIXME should be a direct part of StatusAppNavBar
+    MacTrafficLights {
+//        parent: Overlay.overlay
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 13
 
-        visible: Qt.platform.os === Constants.mac && !applicationWindow.isFullScreen
+        visible: Qt.platform.os === "osx" && !applicationWindow.isFullScreen
 
         onClose: {
             if (loader.sourceComponent != app) {
@@ -374,3 +362,9 @@ StatusWindow {
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.5}
+}
+##^##*/

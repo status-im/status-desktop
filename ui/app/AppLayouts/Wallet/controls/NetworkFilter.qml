@@ -16,23 +16,7 @@ Item {
     implicitWidth: 130
     implicitHeight: parent.height
 
-    property var layer1Networks
-    property var layer2Networks
-    property var testNetworks
-    property var enabledNetworks
-    property var allNetworks
-    property bool isChainVisible: true
-    property bool multiSelection: true
-
-    signal toggleNetwork(int chainId)
-    signal singleNetworkSelected(int chainId, string chainName, string chainIcon)
-
-    QtObject {
-        id: d
-
-        property string selectedChainName: ""
-        property string selectedIconUrl: ""
-    }
+    property var store
 
     Item {
         id: selectRectangleItem
@@ -52,12 +36,7 @@ Item {
             statusListItemTitle.font.pixelSize: 13
             statusListItemTitle.font.weight: Font.Medium
             statusListItemTitle.color: Theme.palette.baseColor1
-            title: root.multiSelection ? (root.enabledNetworks.count === root.allNetworks.count ? qsTr("All networks") : qsTr("%n network(s)", "", root.enabledNetworks.count)) :
-                                         d.selectedChainName
-            asset.height: 24
-            asset.width: asset.height
-            asset.isImage: !root.multiSelection
-            asset.name: !root.multiSelection ? Style.svg(d.selectedIconUrl) : ""
+            title: store.enabledNetworks.count === store.allNetworks.count ? qsTr("All networks") : qsTr("%n network(s)", "", store.enabledNetworks.count)
             components:[
                 StatusIcon {
                     width: 16
@@ -81,11 +60,11 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.halfPadding
         spacing: Style.current.smallPadding
-        visible: root.isChainVisible && chainRepeater.count > 0
+        visible: chainRepeater.count > 0
 
         Repeater {
             id: chainRepeater
-            model: root.enabledNetworks
+            model: store.enabledNetworks
             delegate: InformationTag {
                 tagPrimaryLabel.text: model.shortName
                 tagPrimaryLabel.color: model.chainColor
@@ -98,19 +77,12 @@ Item {
         id: selectPopup
         x: (parent.width - width + 5)
         y: (selectRectangleItem.height + 5)
-        layer1Networks: root.layer1Networks
-        layer2Networks: root.layer2Networks
-        testNetworks: root.testNetworks
-        multiSelection: root.multiSelection
+        layer1Networks: store.layer1Networks
+        layer2Networks: store.layer2Networks
+        testNetworks: store.testNetworks
 
         onToggleNetwork: {
-            root.toggleNetwork(network.chainId)
-        }
-
-        onSingleNetworkSelected: {
-            d.selectedChainName = chainName
-            d.selectedIconUrl = iconUrl
-            root.singleNetworkSelected(chainId, chainName, iconUrl)
+            store.toggleNetwork(chainId)
         }
     }
 }

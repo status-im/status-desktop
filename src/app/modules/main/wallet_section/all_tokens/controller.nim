@@ -33,15 +33,11 @@ proc init*(self: Controller) =
     let args = TokenHistoricalDataArgs(e)
     self.delegate.tokenHistoricalDataResolved(args.result)
 
-  self.events.on(SIGNAL_BALANCE_HISTORY_DATA_READY) do(e:Args):
-    let args = TokenBalanceHistoryDataArgs(e)
-    self.delegate.tokenBalanceHistoryDataResolved(args.result)
-
 method findTokenSymbolByAddress*(self: Controller, address: string): string =
   return self.walletAccountService.findTokenSymbolByAddress(address)
 
 method getHistoricalDataForToken*(self: Controller, symbol: string, currency: string, range: int) =
   self.tokenService.getHistoricalDataForToken(symbol, currency, range)
 
-method fetchHistoricalBalanceForTokenAsJson*(self: Controller, address: string, tokenSymbol: string, currencySymbol: string, timeIntervalEnum: int) =
-  self.tokenService.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, BalanceHistoryTimeInterval(timeIntervalEnum))
+method fetchHistoricalBalanceForTokenAsJson*(self: Controller, address: string, symbol: string, timeIntervalEnum: int) =
+  self.tokenService.fetchHistoricalBalanceForTokenAsJson(address, symbol, BalanceHistoryTimeInterval(timeIntervalEnum))

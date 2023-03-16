@@ -53,12 +53,6 @@ proc init*(self: Controller) =
       return
     self.delegate.onNewKeycardSet(args.keyPair)
 
-  self.events.on(SIGNAL_KEYCARDS_SYNCHRONIZED) do(e: Args):
-    let args = KeycardActivityArgs(e)
-    if not args.success:
-      return
-    self.delegate.onKeycardsSynchronized()
-
   self.events.on(SIGNAL_KEYCARD_LOCKED) do(e: Args):
     let args = KeycardActivityArgs(e)
     self.delegate.onKeycardLocked(args.keyPair.keyUid, args.keyPair.keycardUid)

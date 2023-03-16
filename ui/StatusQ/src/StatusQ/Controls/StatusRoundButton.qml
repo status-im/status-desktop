@@ -23,8 +23,6 @@ Rectangle {
                 return Theme.palette.primaryColor1;
             case StatusRoundButton.Type.Quaternary:
                 return Theme.palette.dangerColor1;
-            case StatusRoundButton.Type.Quinary:
-                return Theme.palette.directColor1;
             }
         }
 
@@ -38,8 +36,6 @@ Rectangle {
                 return Theme.palette.baseColor1;
             case StatusRoundButton.Type.Quaternary:
                 return Theme.palette.dangerColor1;
-            case StatusRoundButton.Type.Quinary:
-                return Theme.palette.directColor1;
             }
         }
 
@@ -53,8 +49,6 @@ Rectangle {
                 return Theme.palette.baseColor1;
             case StatusRoundButton.Type.Quaternary:
                 return Theme.palette.baseColor1;
-            case StatusRoundButton.Type.Quinary:
-                return Theme.palette.baseColor1;
             }
         }
     }
@@ -62,7 +56,6 @@ Rectangle {
     property bool loading: false
 
     property alias hovered: sensor.containsMouse
-    property alias hoverEnabled: sensor.hoverEnabled
 
     property bool highlighted: false
 
@@ -77,8 +70,7 @@ Rectangle {
         Primary,
         Secondary,
         Tertiary,
-        Quaternary,
-        Quinary
+        Quaternary
     }
     /// Implementation
 
@@ -95,8 +87,6 @@ Rectangle {
                 return "transparent";
             case StatusRoundButton.Type.Quaternary:
                 return Theme.palette.dangerColor3;
-            case StatusRoundButton.Type.Quinary:
-                return "transparent";
             }
         }
 
@@ -110,8 +100,6 @@ Rectangle {
                 return Theme.palette.primaryColor3;
             case StatusRoundButton.Type.Quaternary:
                 return Theme.palette.dangerColor2;
-            case StatusRoundButton.Type.Quinary:
-                return Theme.palette.primaryColor3;
             }
         }
 
@@ -125,8 +113,6 @@ Rectangle {
                 return "transparent";
             case StatusRoundButton.Type.Quaternary:
                 return Theme.palette.baseColor2;
-            case StatusRoundButton.Type.Quinary:
-                return "transparent";
             }
         }
     }

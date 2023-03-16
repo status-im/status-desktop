@@ -210,7 +210,7 @@ Rectangle {
 
                         asset.height: root.asset.height
                         asset.width: root.asset.width
-                        asset.name: root.useLetterIdenticons ? model.text : (model.imageSource ?? "")
+                        asset.name: root.useLetterIdenticons ? model.text : model.imageSource
                         asset.isImage: root.asset.isImage
                         asset.bgColor: root.asset.bgColor
                         asset.emoji: model.emoji ? model.emoji : ""

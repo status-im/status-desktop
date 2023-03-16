@@ -140,7 +140,7 @@ Control {
         This signal is emitted when the ToastMessage contains a url and this url
         is clicked by the user.
     */
-    signal linkActivated(string link)
+    signal linkActivated(var link)
 
     QtObject {
         id: d

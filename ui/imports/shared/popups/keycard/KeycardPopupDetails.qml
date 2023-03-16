@@ -13,14 +13,15 @@ QtObject {
     property bool primaryButtonEnabled: false
 
     // disables action buttons (back, cancel, primary, secondary) and close button (upper right "X" button) as well
-    readonly property bool disableActionPopupButtons: {
-        if (root.sharedKeycardModule.disablePopup) {
+    readonly property bool disableActionPopupButtons: root.sharedKeycardModule.disablePopup
+
+    readonly property bool disablePopupClose: { // disables popup close button (upper right "X" button)
+        if (root.disableActionPopupButtons) {
             return true
         }
 
         switch (root.sharedKeycardModule.currentState.stateType) {
 
-        case Constants.keycardSharedState.keycardInserted:
         case Constants.keycardSharedState.readingKeycard:
         case Constants.keycardSharedState.recognizedKeycard:
         case Constants.keycardSharedState.renamingKeycard:
@@ -34,14 +35,6 @@ QtObject {
         case Constants.keycardSharedState.importingFromKeycard:
         case Constants.keycardSharedState.copyingKeycard:
             return true
-        }
-
-        return false
-    }
-
-    // disables only close button (upper right "X" button)
-    readonly property bool disableCloseButton: {
-        switch (root.sharedKeycardModule.currentState.stateType) {
 
         case Constants.keycardSharedState.keyPairMigrateSuccess:
             return root.sharedKeycardModule.migratingProfileKeyPair()
@@ -71,10 +64,6 @@ QtObject {
             normalColor: "transparent"
             text: qsTr("Cancel")
             visible: {
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.noPCSCService) {
-                    return true
-                }
-
                 switch (root.sharedKeycardModule.currentState.flowType) {
 
                 case Constants.keycardSharedFlow.setupNewKeycard:
@@ -475,6 +464,8 @@ QtObject {
                         switch (root.sharedKeycardModule.currentState.stateType) {
                         case Constants.keycardSharedState.pluginReader:
                         case Constants.keycardSharedState.insertKeycard:
+                        case Constants.keycardSharedState.keycardInserted:
+                        case Constants.keycardSharedState.readingKeycard:
                         case Constants.keycardSharedState.notKeycard:
                         case Constants.keycardSharedState.wrongKeycard:
                         case Constants.keycardSharedState.keycardEmpty:
@@ -520,10 +511,6 @@ QtObject {
             objectName: "PrimaryButton"
             height: Constants.keycard.general.footerButtonsHeight
             text: {
-                if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.noPCSCService) {
-                    return qsTr("Retry")
-                }
-
                 switch (root.sharedKeycardModule.currentState.flowType) {
 
                 case Constants.keycardSharedFlow.setupNewKeycard:
@@ -1012,6 +999,7 @@ QtObject {
 
                     case Constants.keycardSharedState.pluginReader:
                     case Constants.keycardSharedState.insertKeycard:
+                    case Constants.keycardSharedState.keycardInserted:
                     case Constants.keycardSharedState.recognizedKeycard:
                     case Constants.keycardSharedState.createPin:
                     case Constants.keycardSharedState.repeatPin:
@@ -1073,7 +1061,9 @@ QtObject {
                     switch (root.sharedKeycardModule.currentState.stateType) {
 
                     case Constants.keycardSharedState.pluginReader:
+                    case Constants.keycardSharedState.readingKeycard:
                     case Constants.keycardSharedState.insertKeycard:
+                    case Constants.keycardSharedState.keycardInserted:
                     case Constants.keycardSharedState.wrongPin:
                     case Constants.keycardSharedState.wrongKeychainPin:
                     case Constants.keycardSharedState.notKeycard:

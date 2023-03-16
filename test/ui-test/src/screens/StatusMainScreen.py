@@ -42,50 +42,44 @@ class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
     DISPLAY_NAME = "ProfilePopup_displayName"
     EDIT_PROFILE_BUTTON = "ProfilePopup_editButton"
-
+    
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
     START_CHAT_BTN = "startChat_Btn"
 
-class SharedPopup(Enum):
-    POPUP_CONTENT: str = "sharedPopup_Popup_Content"
-    PASSWORD_INPUT: str = "sharedPopup_Password_Input"
-    PRIMARY_BUTTON: str = "sharedPopup_Primary_Button"
-
-def authenticatePopupEnterPassword(password):
-    wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
-    click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
 
 class StatusMainScreen:
 
     def __init__(self):
         verify_screen(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value)
-
+        
     # Main screen is ready to interact with it (Splash screen animation not present)
     def is_ready(self):
         self.wait_for_splash_animation_ends()
-        verify(is_displayed(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value, 15000), "Verifying if the Messages headline is displayed")
-
+        verify(is_displayed(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value), "Verifying if the Messages headline is displayed")
+        
     def wait_for_splash_animation_ends(self, timeoutMSec: int = 10000):
-        do_until_validation_with_timeout(
-            do_fn = lambda: time.sleep(0.5),
-            validation_fn = lambda: not is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value, 1000)[0],
-            message = "Splash screen animation has ended",
-            timeout_ms = timeoutMSec)
+        start = time.time()
+        [loaded, obj] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value)
+        while loaded and (start + timeoutMSec / 1000 > time.time()):
+            log("Splash screen animation present!")
+            [loaded, obj] = is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value, 1000)            
+            sleep_test(0.5)
+        verify_equal(loaded, False, "Checking splash screen animation has ended.")
 
     def open_chat_section(self):
         click_obj_by_name(MainScreenComponents.CHAT_NAVBAR_ICON.value)
-
+        
     def open_community_portal(self):
         click_obj_by_name(MainScreenComponents.COMMUNITY_PORTAL_BUTTON.value)
-
+    
     def open_settings(self):
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
         time.sleep(0.5)
-
+        
     def open_start_chat_view(self):
         click_obj_by_name(MainScreenComponents.START_CHAT_BTN.value)
-
+        
     def open_chat(self, chatName: str):
         [loaded, chat_button] = self._find_chat(chatName)
         if loaded:
@@ -102,7 +96,7 @@ class StatusMainScreen:
             for index in range(chat_lists.statusChatListItems.count):
                 chat = chat_lists.statusChatListItems.itemAtIndex(index)
                 if(chat.objectName == chatName):
-                    return True, chat
+                    return True, chat        
         return False, None
 
     def open_wallet(self):
@@ -129,19 +123,19 @@ class StatusMainScreen:
     def user_is_offline(self):
         profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
         verify_equal(profileButton.badge.color.name, "#7f8990", "The user is not offline")
-
+        
     def user_is_set_to_automatic(self):
         profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
         verify_equal(profileButton.badge.color.name, "#4ebc60", "The user is not online by default")
-
+        
     def set_user_state_offline(self):
         click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
         click_obj_by_name(MainScreenComponents.USERSTATUSMENU_INACTIVE_ACTION.value)
-
+        
     def set_user_state_online(self):
         click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
         click_obj_by_name(MainScreenComponents.USERSTATUSMENU_ALWAYS_ACTIVE_ACTION.value)
-
+        
     def set_user_state_to_automatic(self):
         click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
         click_obj_by_name(MainScreenComponents.USERSTATUSMENU_AUTOMATIC_ACTION.value)
@@ -152,21 +146,21 @@ class StatusMainScreen:
 
     def verify_profile_popup_display_name(self, display_name: str):
         verify_text_matching(ProfilePopup.DISPLAY_NAME.value, display_name)
-
+        
     def click_escape(self):
-        press_escape(MainScreenComponents.MAIN_WINDOW.value)
-
-    def click_tool_bar_back_button(self):
-        click_obj_by_name(MainScreenComponents.TOOLBAR_BACK_BUTTON.value)
+        press_escape(MainScreenComponents.MAIN_WINDOW.value)        
+    
+    def click_tool_bar_back_button(self):   
+        click_obj_by_name(MainScreenComponents.TOOLBAR_BACK_BUTTON.value)  
 
     def leave_chat(self, chatName: str):
         [loaded, chat_button] = self._find_chat(chatName)
         if loaded:
             right_click_obj(chat_button)
             hover_and_click_object_by_name(MainScreenComponents.LEAVE_CHAT_MENUITEM.value)
-
+            
         verify(loaded, "Trying to get chat: " + chatName)
-
+    
     def profile_image_is_updated(self):
         # open profile popup and check image on profileNavBarButton and profileNavBarPopup
         profileNavBarButton = wait_and_get_obj(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
@@ -174,22 +168,22 @@ class StatusMainScreen:
         profilePopupImage = wait_and_get_obj(ProfilePopup.USER_IMAGE.value)
         image_present("loginUserName", True, 95, 75, 100, True, profileNavBarButton)
         image_present("loginUserName", True, 95, 75, 100, True, profilePopupImage)
-
+        
     def profile_modal_image_is_updated(self):
         click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
         click_obj_by_name(MainScreenComponents.USERSTATUSMENU_OPEN_PROFILE_POPUP.value)
         image_present("profiletestimage", True, 97, 95, 100, True)
-
+        
     def profile_settings_image_is_updated(self):
         # first time clicking on settings button closes the my profile modal
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
         myProfileSettingsObject = wait_and_get_obj(MainScreenComponents.PROFILE_SETTINGS_VIEW.value)
         image_present("profiletestimage", True, 95, 100, 183, True, myProfileSettingsObject)
-
+        
     def navigate_to_edit_profile(self):
         click_obj_by_name(ProfilePopup.EDIT_PROFILE_BUTTON.value)
-
+        
     def close_popup(self):
         # Click in the corner of the overlay to close the popup
         click_obj_by_name_at_coordinates(MainScreenComponents.POPUP_OVERLAY.value, 1, 1)

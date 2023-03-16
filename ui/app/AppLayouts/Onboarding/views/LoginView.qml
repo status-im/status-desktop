@@ -1215,58 +1215,6 @@ Item {
             }
         },
         State {
-            name: Constants.startupState.loginNoPCSCService
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginNoPCSCService
-            PropertyChanges {
-                target: image
-                pattern: Constants.keycardAnimations.strongError.pattern
-                source: ""
-                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
-                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
-                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
-                duration: Constants.keycardAnimations.strongError.duration
-                loops: Constants.keycardAnimations.strongError.loops
-            }
-            PropertyChanges {
-                target: title
-                text: ""
-                visible: false
-            }
-            PropertyChanges {
-                target: passwordSection
-                visible: false
-            }
-            PropertyChanges {
-                target: pinSection
-                visible: false
-            }
-            PropertyChanges {
-                target: info
-                text: qsTr("PCSC not available")
-                visible: true
-                font.pixelSize: Constants.keycard.general.fontSize2
-                color: Theme.palette.dangerColor1
-                height: Constants.keycard.general.loginInfoHeight1
-                icon: ""
-            }
-            PropertyChanges {
-                target: message
-                text: qsTr("The Smartcard reader (PCSC service), required\nfor using Keycard, is not currently working.\nEnsure PCSC is installed and running and try again")
-                visible: true
-                font.pixelSize: Constants.keycard.general.fontSize2
-                color: Theme.palette.baseColor1
-            }
-            PropertyChanges {
-                target: button
-                text: qsTr("Retry")
-            }
-            PropertyChanges {
-                target: link
-                text: ""
-                visible: false
-            }
-        },
-        State {
             name: Constants.startupState.loginNotKeycard
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.loginNotKeycard
             PropertyChanges {

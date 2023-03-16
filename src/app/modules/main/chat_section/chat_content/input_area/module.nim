@@ -3,7 +3,6 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller
 import ../../../../../global/global_singleton
-import ../../../../../core/eventemitter
 
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
@@ -22,7 +21,6 @@ type
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
-    events: EventEmitter,
     sectionId: string,
     chatId: string,
     belongsToCommunity: bool,
@@ -35,7 +33,7 @@ proc newModule*(
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService)
+  result.controller = controller.newController(result, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -100,20 +98,8 @@ method getTrendingsGifs*(self: Module): seq[GifDto] =
 method getRecentsGifs*(self: Module): seq[GifDto] =
   return self.controller.getRecentsGifs()
 
-method loadRecentGifs*(self: Module) =
-  self.controller.loadRecentGifs()
-
-method loadRecentGifsDone*(self: Module, gifs: seq[GifDto]) =
-  self.view.updateGifColumns(gifs)
-
 method getFavoritesGifs*(self: Module): seq[GifDto] =
   return self.controller.getFavoritesGifs()
-
-method loadFavoriteGifs*(self: Module) =
-  self.controller.loadFavoriteGifs()
-
-method loadFavoriteGifsDone*(self: Module, gifs: seq[GifDto]) =
-  self.view.updateGifColumns(gifs)
 
 method toggleFavoriteGif*(self: Module, item: GifDto) =
   self.controller.toggleFavoriteGif(item)

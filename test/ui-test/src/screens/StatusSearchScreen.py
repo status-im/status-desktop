@@ -37,7 +37,7 @@ class StatusSearchScreen:
 
     def search_for(self, search_term: str):
         click_obj_by_name(SearchPopupComponents.RESET_BUTTON.value)
-        type_text(SearchPopupComponents.SEARCH_INPUT.value, search_term)
+        type(SearchPopupComponents.SEARCH_INPUT.value, search_term)
         self.wait_for_loading_done()
         
     def verify_number_of_results(self, amount: int):

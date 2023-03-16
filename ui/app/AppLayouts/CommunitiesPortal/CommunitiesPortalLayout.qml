@@ -57,9 +57,6 @@ StatusSectionLayout {
         id: filteredCommunitiesModel
 
         function selectedTagsPredicate(selectedTagsNames, tagsJSON) {
-            if (!tagsJSON) {
-                return true
-            }
             const tags = JSON.parse(tagsJSON)
             for (const i in tags) {
                 selectedTagsNames = selectedTagsNames.filter(name => name !== tags[i].name)

@@ -1,10 +1,5 @@
-import json, Tables, stint, strformat, strutils
+import json, Tables, strformat, strutils
 
-# Unique identifier for collectible on a specific chain
-type
-  UniqueID* = object
-    contractAddress*: string
-    tokenId*: UInt256
 
 type CollectibleTraitType* {.pure.} = enum
   Properties = 0,
@@ -16,6 +11,7 @@ type CollectionTrait* = ref object
 
 type CollectionDto* = ref object
     name*, slug*, imageUrl*: string
+    ownedAssetCount*: int
     trait*: Table[string, CollectionTrait]
 
 type CollectibleTrait* = ref object
@@ -23,25 +19,8 @@ type CollectibleTrait* = ref object
 
 type CollectibleDto* = ref object
     id*: int
-    tokenId*: Uint256
-    address*, collectionSlug*, name*, description*, permalink*, imageThumbnailUrl*, imageUrl*, backgroundColor*: string
+    name*, description*, permalink*, imageThumbnailUrl*, imageUrl*, address*, backgroundColor*: string
     properties*, rankings*, statistics*: seq[CollectibleTrait]
-
-proc newCollectibleDto*: CollectibleDto =
-  return CollectibleDto(
-    id: -1
-  )
-
-proc isValid*(self: CollectibleDto): bool =
-  return self.id >= 0
-
-proc newCollectionDto*: CollectionDto =
-  return CollectionDto(
-    slug: ""
-  )
-
-proc isValid*(self: CollectionDto): bool =
-  return self.slug != ""
 
 proc isNumeric(s: string): bool =
   try:
@@ -51,14 +30,14 @@ proc isNumeric(s: string): bool =
     result = false
 
 proc `$`*(self: CollectionDto): string =
-  return fmt"CollectionDto(name:{self.name}, slug:{self.slug})"
+  return fmt"CollectionDto(name:{self.name}, slug:{self.slug}, owned asset count:{self.ownedAssetCount})"
 
 proc `$`*(self: CollectibleDto): string =
-  return fmt"CollectibleDto(id:{self.id}, address:{self.address}, tokenId:{self.tokenId}, collectionSlug:{self.collectionSlug}, name:{self.name}, description:{self.description}, permalink:{self.permalink}, imageUrl: {self.imageUrl}, imageThumbnailUrl: {self.imageThumbnailUrl}, backgroundColor: {self.backgroundColor})"
+  return fmt"CollectibleDto(id:{self.id}, name:{self.name}, description:{self.description}, permalink:{self.permalink}, address:{self.address}, imageUrl: {self.imageUrl}, imageThumbnailUrl: {self.imageThumbnailUrl}, backgroundColor: {self.backgroundColor})"
 
 proc getCollectionTraits*(jsonCollection: JsonNode): Table[string, CollectionTrait] =
     var traitList: Table[string, CollectionTrait] = initTable[string, CollectionTrait]()
-    for key, value in jsonCollection{"traits"}.getFields():
+    for key, value in jsonCollection{"traits"}:
         traitList[key] = CollectionTrait(min: value{"min"}.getFloat, max: value{"max"}.getFloat)
     return traitList
 
@@ -67,6 +46,7 @@ proc toCollectionDto*(jsonCollection: JsonNode): CollectionDto =
         name: jsonCollection{"name"}.getStr,
         slug: jsonCollection{"slug"}.getStr,
         imageUrl: jsonCollection{"image_url"}.getStr,
+        ownedAssetCount: jsonCollection{"owned_asset_count"}.getInt,
         trait: getCollectionTraits(jsonCollection)
     )
 
@@ -90,14 +70,12 @@ proc getTrait*(jsonAsset: JsonNode, traitType: CollectibleTraitType): seq[Collec
 proc toCollectibleDto*(jsonAsset: JsonNode): CollectibleDto =
     return CollectibleDto(
         id: jsonAsset{"id"}.getInt,
-        address: jsonAsset{"asset_contract"}{"address"}.getStr,
-        tokenId: stint.parse(jsonAsset{"token_id"}.getStr, Uint256),
-        collectionSlug: jsonAsset{"collection"}{"slug"}.getStr,
         name: jsonAsset{"name"}.getStr,
         description: jsonAsset{"description"}.getStr,
         permalink: jsonAsset{"permalink"}.getStr,
         imageThumbnailUrl: jsonAsset{"image_thumbnail_url"}.getStr,
         imageUrl: jsonAsset{"image_url"}.getStr,
+        address: jsonAsset{"asset_contract"}{"address"}.getStr,
         backgroundColor: jsonAsset{"background_color"}.getStr,
         properties: getTrait(jsonAsset, CollectibleTraitType.Properties),
         rankings: getTrait(jsonAsset, CollectibleTraitType.Rankings),

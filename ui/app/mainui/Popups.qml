@@ -287,7 +287,6 @@ QtObject {
                 id: profilePopup
                 profileStore: rootStore.profileSectionStore.profileStore
                 contactsStore: rootStore.profileSectionStore.contactsStore
-                communitiesModel: rootStore.profileSectionStore.communitiesList
 
                 onClosed: {
                     if (profilePopup.parentPopup) {
@@ -345,6 +344,7 @@ QtObject {
         Component {
             id: pinnedMessagesPopup
             PinnedMessagesPopup {
+                emojiReactionsModel: rootStore.emojiReactionsModel
                 onClosed: destroy()
             }
         },

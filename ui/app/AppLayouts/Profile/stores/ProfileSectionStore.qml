@@ -67,11 +67,11 @@ QtObject {
         stickersModule: stickersModuleInst
     }
 
-    property bool browserMenuItemEnabled: Global.appIsReady? localAccountSensitiveSettings.isBrowserEnabled : false
-    property bool walletMenuItemEnabled: Global.appIsReady? localAccountSensitiveSettings.isWalletEnabled : false
+    property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
+    property bool walletMenuItemEnabled: localAccountSensitiveSettings.isWalletEnabled
 
-    property var communitiesModuleInst: Global.appIsReady? communitiesModule : null
-    property var communitiesList: !!communitiesModuleInst? communitiesModuleInst.model : null
+    property var communitiesModuleInst: communitiesModule
+    property var communitiesList: communitiesModuleInst.model
     property var communitiesProfileModule: profileSectionModuleInst.communitiesModule
 
     property ListModel mainMenuItems: ListModel {
@@ -88,9 +88,6 @@ QtObject {
             append({subsection: Constants.settingsSubsection.ensUsernames,
                        text: qsTr("ENS usernames"),
                        icon: "username"})
-            append({subsection: Constants.settingsSubsection.syncingSettings,
-                       text: qsTr("Syncing"),
-                       icon: "rotate"})
         }
     }
 
@@ -122,6 +119,9 @@ QtObject {
             append({subsection: Constants.settingsSubsection.language,
                        text: qsTr("Language & Currency"),
                        icon: "language"})
+            append({subsection: Constants.settingsSubsection.devicesSettings,
+                       text: qsTr("Devices settings"),
+                       icon: "mobile"})
             append({subsection: Constants.settingsSubsection.advanced,
                        text: qsTr("Advanced"),
                        icon: "settings"})

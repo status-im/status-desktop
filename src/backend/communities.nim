@@ -1,5 +1,5 @@
 import json, strutils
-import core, ../app_service/common/utils
+import core, utils
 import response_type
 
 import interpret/cropped_image
@@ -16,6 +16,10 @@ proc muteCategory*(communityId: string, categoryId: string): RpcResponse[JsonNod
 proc unmuteCategory*(communityId: string, categoryId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [communityId, categoryId]
   result = callPrivateRPC("unmuteCommunityCategory".prefix, payload)
+
+proc getJoinedComunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  result = callPrivateRPC("joinedCommunities".prefix, payload)
 
 proc getCuratedCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
@@ -170,29 +174,6 @@ proc requestImportDiscordCommunity*(
       "encrypted": encrypted,
     }])
 
-proc createCommunityTokenPermission*(communityId: string, permissionType: int, tokenCriteria: string, isPrivate: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("createCommunityTokenPermission".prefix, %*[{
-    "communityId": communityId,
-    "type": permissionType,
-    "tokenCriteria": parseJson(tokenCriteria),
-    "isPrivate": isPrivate
-  }])
-
-proc editCommunityTokenPermission*(communityId: string, permissionId: string, permissionType: int, tokenCriteria: string, isPrivate: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("editCommunityTokenPermission".prefix, %*[{
-    "communityId": communityId,
-    "permissionId": permissionId,
-    "type": permissionType,
-    "tokenCriteria": parseJson(tokenCriteria),
-    "isPrivate": isPrivate
-  }])
-
-proc deleteCommunityTokenPermission*(communityId: string, permissionId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("deleteCommunityTokenPermission".prefix, %*[{
-    "communityId": communityId,
-    "permissionId": permissionId
-  }])
-  
 proc requestCancelDiscordCommunityImport*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestCancelDiscordCommunityImport".prefix, %*[communityId])
 

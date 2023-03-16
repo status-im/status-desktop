@@ -71,14 +71,8 @@ method hasMoreToShow*(self: Module): bool =
 method unreadActivityCenterNotificationsCount*(self: Module): int =
   self.controller.unreadActivityCenterNotificationsCount()
 
-method hasUnseenActivityCenterNotifications*(self: Module): bool =
-  self.controller.hasUnseenActivityCenterNotifications()
-
 method unreadActivityCenterNotificationsCountChanged*(self: Module) =
   self.view.unreadActivityCenterNotificationsCountChanged()
-
-method hasUnseenActivityCenterNotificationsChanged*(self: Module) =
-  self.view.hasUnseenActivityCenterNotificationsChanged()
 
 proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: ChatDto): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)
@@ -181,7 +175,7 @@ method convertToItems*(
 
 method fetchActivityCenterNotifications*(self: Module) =
   let activityCenterNotifications = self.controller.getActivityCenterNotifications()
-  self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+  self.view.pushActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 
 method markAllActivityCenterNotificationsRead*(self: Module): string =
   self.controller.markAllActivityCenterNotificationsRead()
@@ -209,14 +203,17 @@ method markActivityCenterNotificationReadDone*(self: Module, notificationIds: se
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationReadDone(notificationId)
 
-method markAsSeenActivityCenterNotifications*(self: Module) =
-  self.controller.markAsSeenActivityCenterNotifications()
+method pushActivityCenterNotifications*(
+    self: Module,
+    activityCenterNotifications: seq[ActivityCenterNotificationDto]
+    ) =
+  self.view.pushActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 
-method addActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
-  self.view.addActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
-
-method resetActivityCenterNotifications*(self: Module, activityCenterNotifications: seq[ActivityCenterNotificationDto]) =
-  self.view.resetActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
+method addActivityCenterNotification*(
+    self: Module,
+    activityCenterNotifications: seq[ActivityCenterNotificationDto]
+    ) =
+  self.view.addActivityCenterNotification(self.convertToItems(activityCenterNotifications))
 
 method markActivityCenterNotificationUnread*(
     self: Module,
@@ -290,18 +287,3 @@ method getChatDetailsAsJson*(self: Module, chatId: string): string =
   jsonObject["color"] = %* chatDto.color
   jsonObject["emoji"] = %* chatDto.emoji
   return $jsonObject
-
-method setActiveNotificationGroup*(self: Module, group: int) =
-  self.controller.setActiveNotificationGroup(ActivityCenterGroup(group))
-
-method getActiveNotificationGroup*(self: Module): int =
-  return self.controller.getActiveNotificationGroup().int
-
-method setActivityCenterReadType*(self: Module, readType: int) =
-  self.controller.setActivityCenterReadType(ActivityCenterReadType(readType))
-
-method getActivityCenterReadType*(self: Module): int =
-  return self.controller.getActivityCenterReadType().int
-
-method setActivityGroupCounters*(self: Module, counters: Table[ActivityCenterGroup, int]) =
-  self.view.setActivityGroupCounters(counters)

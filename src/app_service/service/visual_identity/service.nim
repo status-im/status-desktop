@@ -48,5 +48,8 @@ proc getEmojiHashAsJson*(publicKey: string): string =
   return $$emojiHashOf(publicKey)
 
 proc getColorHashAsJson*(publicKey: string): string =
-  return colorHashOf(publicKey).toJson()
-
+  let colorHash =  colorHashOf(publicKey)
+  let json = newJArray()
+  for segment in colorHash:
+    json.add(%* {"segmentLength": segment.len, "colorId": segment.colorIdx})
+  return $json

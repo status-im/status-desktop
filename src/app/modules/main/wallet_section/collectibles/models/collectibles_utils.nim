@@ -2,11 +2,9 @@ import sequtils, sugar
 import ../../../../../../app_service/service/collectible/dto
 import collectibles_item, collectible_trait_item
 
-proc collectibleToItem*(c: CollectibleDto, co: CollectionDto) : Item =
+proc collectibleToItem*(c: CollectibleDto) : Item =
   return initItem(
     c.id,
-    c.address,
-    c.tokenId,
     c.name,
     c.imageUrl,
     c.backgroundColor,
@@ -14,8 +12,5 @@ proc collectibleToItem*(c: CollectibleDto, co: CollectionDto) : Item =
     c.permalink,
     c.properties.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)),
     c.rankings.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)),
-    c.statistics.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)),
-    co.name,
-    co.slug,
-    co.imageUrl
+    c.statistics.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue))
   )

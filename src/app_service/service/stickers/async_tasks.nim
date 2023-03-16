@@ -9,24 +9,13 @@ type
     uuid*: string
   ObtainMarketStickerPacksTaskArg = ref object of QObjectTaskArg
     chainId*: int
+    running*: ByteAddress # pointer to threadpool's `.running` Atomic[bool]
   InstallStickerPackTaskArg = ref object of QObjectTaskArg
     packId*: string
     chainId*: int
     hasKey*: bool
-  AsyncGetRecentStickersTaskArg* = ref object of QObjectTaskArg
-  AsyncGetInstalledStickerPacksTaskArg* = ref object of QObjectTaskArg
 
-const asyncGetRecentStickersTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncGetRecentStickersTaskArg](argEncoded)
-  let response = status_stickers.recent()
-  arg.finish(response)
-
-const asyncGetInstalledStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncGetInstalledStickerPacksTaskArg](argEncoded)
-  let response = status_stickers.installed()
-  arg.finish(response)
-
-proc getMarketStickerPacks*(chainId: int): 
+proc getMarketStickerPacks*(running: var Atomic[bool], chainId: int): 
     tuple[stickers: Table[string, StickerPackDto], error: string] =
   result = (initTable[string, StickerPackDto](), "")
   try:
@@ -59,7 +48,8 @@ const estimateTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 
 const obtainMarketStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[ObtainMarketStickerPacksTaskArg](argEncoded)
-  let (marketStickerPacks, error) = getMarketStickerPacks(arg.chainId)
+  var running = cast[ptr Atomic[bool]](arg.running)
+  let (marketStickerPacks, error) = getMarketStickerPacks(running[], arg.chainId)
   var packs: seq[StickerPackDto] = @[]
   for packId, stickerPack in marketStickerPacks.pairs:
     packs.add(stickerPack)

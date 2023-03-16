@@ -1,24 +1,31 @@
 proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
-  let backState = findBackStateWhichDoesNotBelongToAnyOfReadingStates(state)
+  var defaultBackState = state
+  if state.flowType == FlowType.FirstRunNewUserNewKeycardKeys and
+    state.stateType == StateType.KeycardEmpty:
+      ## `KeycardEmpty` state is known in the context of `FirstRunNewUserNewKeycardKeys` only if we jump to it from 
+      ## `FirstRunOldUserKeycardImport` flow, in that case we need to set back state appropriatelly respecting different flow.
+      defaultBackState = state.getBackState
+
   if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-    keycardEvent.error.len > 0:
-      if keycardEvent.error == ErrorPCSC:
-        return createState(StateType.KeycardNoPCSCService, state.flowType, backState)
-      if keycardEvent.error == ErrorNoReader:
-        controller.reRunCurrentFlowLater()
-        if state.stateType == StateType.KeycardPluginReader:
-          return nil
-        return createState(StateType.KeycardPluginReader, state.flowType, backState)
+    keycardEvent.error.len > 0 and
+    keycardEvent.error == ErrorConnection:
+      controller.resumeCurrentFlowLater()
+      if state.stateType == StateType.KeycardPluginReader:
+        return nil
+      return createState(StateType.KeycardPluginReader, state.flowType, defaultBackState)
   if keycardFlowType == ResponseTypeValueInsertCard and 
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
-      controller.reRunCurrentFlowLater()
       if state.stateType == StateType.KeycardInsertKeycard:
         return nil
-      return createState(StateType.KeycardInsertKeycard, state.flowType, backState)
+      if state.stateType == StateType.KeycardPluginReader:
+        return createState(StateType.KeycardInsertKeycard, state.flowType, state.getBackState)
+      return createState(StateType.KeycardInsertKeycard, state.flowType, defaultBackState)
   if keycardFlowType == ResponseTypeValueCardInserted:
     controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.WronglyInsertedCard, add = false))
-    return createState(StateType.KeycardInsertedKeycard, state.flowType, backState)
+    if state.stateType == StateType.KeycardInsertKeycard:
+      return createState(StateType.KeycardInsertedKeycard, state.flowType, state.getBackState)
+    return createState(StateType.KeycardInsertedKeycard, state.flowType, defaultBackState)
 
 proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
   let ensureState = ensureReaderAndCardPresenceOnboarding(state, keycardFlowType, keycardEvent, controller)

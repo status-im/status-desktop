@@ -19,7 +19,6 @@ from drivers.SquishDriverVerification import *
 from utils.ObjectAccess import *
 from .StatusMainScreen import MainScreenComponents
 from .StatusMainScreen import StatusMainScreen
-from .StatusMainScreen import authenticatePopupEnterPassword
 
 class SettingsScreenComponents(Enum):
     SAVE_BUTTON: str = "settingsSave_StatusButton"
@@ -130,21 +129,17 @@ class BackupSeedPhrasePopup(Enum):
     CONFIRM_SECOND_WORD_INPUT: str = "backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord_inputText"
     CONFIRM_YOU_STORED_CHECKBOX: str = "backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck"
     CONFIRM_YOU_STORED_BUTTON: str = "backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton"
-
+    
+class SharedPopup(Enum):
+    POPUP_CONTENT: str = "sharedPopup_Popup_Content"
+    PASSWORD_INPUT: str = "sharedPopup_Password_Input"
+    PRIMARY_BUTTON: str = "sharedPopup_Primary_Button"
 
 class SettingsScreen:
     __pid = 0
-
+    
     def __init__(self):
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
-
-    def open_advanced_settings(self):
-        click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
-        
-    def activate_community_permission_settings(self):
-        click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS.value)
-        click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-        
     
     def open_advanced_settings(self):
         click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
@@ -165,28 +160,29 @@ class SettingsScreen:
         verify_object_enabled(SidebarComponents.WALLET_OPTION.value)
 
     def activate_open_wallet_section(self):
-        self.activate_wallet_option()
+        self.activate_wallet_option()    
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
-
+    
     def delete_account(self, account_name: str, password: str):
         self.open_wallet_settings()
-
+        
         index = self._find_account_index(account_name)
-
+            
         if index == -1:
             raise Exception("Account not found")
-
+        
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         click_obj(accounts.itemAtIndex(index))
         click_obj_by_name(WalletSettingsScreen.DELETE_ACCOUNT.value)
         click_obj_by_name(WalletSettingsScreen.DELETE_ACCOUNT_CONFIRM.value)
-
-        authenticatePopupEnterPassword(password)
-
+        
+        wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
+        click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
+        
     def verify_no_account(self, account_name: str):
         index = self._find_account_index(account_name)
         verify_equal(index, -1)
-
+        
     def verify_address(self, address: str):
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         verify_text_matching_insensitive(accounts.itemAtIndex(0).statusListItemSubTitle, address)
@@ -236,7 +232,7 @@ class SettingsScreen:
         for _ in range(4):
             name += string.ascii_lowercase[random.randrange(26)]
             
-        type_text(ENSScreen.ENS_SEARCH_INPUT.value, name)
+        type(ENSScreen.ENS_SEARCH_INPUT.value, name)
         time.sleep(1)
         
         click_obj_by_name(ENSScreen.NEXT_BUTTON.value)
@@ -245,7 +241,7 @@ class SettingsScreen:
         click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
         click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
         
-        type_text(ENSScreen.PASSWORD_INPUT.value, password)
+        type(ENSScreen.PASSWORD_INPUT.value, password)
         click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
     
     def _find_account_index(self, account_name: str) -> int:
@@ -269,7 +265,7 @@ class SettingsScreen:
         click_obj_by_name(WalletSettingsScreen.EDIT_ACCOUNT_BUTTON.value)
 
     def edit_account(self, account_name: str, account_color: str):
-        type_text(WalletSettingsScreen.EDIT_ACCOUNT_NAME_INPUT.value, account_name)
+        type(WalletSettingsScreen.EDIT_ACCOUNT_NAME_INPUT.value, account_name)
         colorList = get_obj(WalletSettingsScreen.EDIT_ACCOUNT_COLOR_REPEATER.value)
         for index in range(colorList.count):
             color = colorList.itemAt(index)
@@ -447,11 +443,11 @@ class SettingsScreen:
     def change_user_password(self, oldPassword: str, newPassword: str):
         get_and_click_obj(ProfileSettingsScreen.CHANGE_PASSWORD_BUTTON.value)
         
-        type_text(ChangePasswordMenu.CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT.value, oldPassword)
+        type(ChangePasswordMenu.CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT.value, oldPassword)
         
-        type_text(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_INPUT.value, newPassword)
+        type(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_INPUT.value, newPassword)
 
-        type_text(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT.value, newPassword)
+        type(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT.value, newPassword)
 
         click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUBMIT_BUTTON.value)
         click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON.value)
@@ -459,14 +455,14 @@ class SettingsScreen:
     def add_contact_by_chat_key(self, chat_key: str, who_you_are: str):
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_BTN.value)
         
-        type_text(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_INPUT.value, chat_key)
-        type_text(ContactsViewScreen.CONTACT_REQUEST_SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
+        type(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_INPUT.value, chat_key)
+        type(ContactsViewScreen.CONTACT_REQUEST_SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
         
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_SEND_BUTTON.value)
 
     def send_contact_request_via_profile_popup(self, who_you_are: str):
         click_obj_by_name(ProfilePopupScreen.PROFILE_POPUP_SEND_CONTACT_REQUEST_BUTTON.value)
-        type_text(ProfilePopupScreen.SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
+        type(ProfilePopupScreen.SAY_WHO_YOU_ARE_INPUT.value, who_you_are)
         
         click_obj_by_name(ProfilePopupScreen.SEND_CONTACT_REQUEST_BUTTON.value)
 
@@ -491,6 +487,7 @@ class SettingsScreen:
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_PENDING_REQUEST_TAB_BUTTON.value)
         contact_list = get_obj(ContactsViewScreen.RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW.value)
         verify_equal(contact_list.count, 1, "Checking if there is exactly one pending contact request") 
+        
     
     def open_community(self, community_name: str):
         communities_list = get_obj(CommunitiesSettingsScreen.LIST_PANEL.value)
@@ -500,4 +497,7 @@ class SettingsScreen:
             if str(delegate.title) == community_name:
                 click_obj(delegate)
                 return
-        verify(False, "Community not found")        
+        verify(False, "Community ")
+      
+    #def click_on_community(community_name:str):
+              

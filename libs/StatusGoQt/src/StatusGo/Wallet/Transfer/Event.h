@@ -22,11 +22,6 @@ struct Events
     static const EventType RecentHistoryReady;
     static const EventType FetchingHistoryError;
     static const EventType NonArchivalNodeDetected;
-
-    static const EventType WalletTickReload;
-    static const EventType EventBalanceHistoryUpdateStarted;
-    static const EventType EventBalanceHistoryUpdateFinished;
-    static const EventType EventBalanceHistoryUpdateFinishedWithError;
 };
 
 /// \see status-go's Event@events.go in services/wallet/transfer module
@@ -41,4 +36,4 @@ struct Event
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Event, type, blockNumber, accounts, message);
 
-} // namespace Status::StatusGo::Wallet::Transfer
+} // namespace Status

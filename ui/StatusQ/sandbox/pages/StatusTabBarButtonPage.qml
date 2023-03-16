@@ -4,6 +4,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import Sandbox 0.1
+
 Column {
     spacing: 8
 

@@ -38,20 +38,16 @@ proc walletAccountToItem*(
   tokenFormats: Table[string, CurrencyFormatDto],
   ) : item.Item =
   let assets = token_model.newModel()
-  let relatedAccounts = compact_model.newModel()
-
-  if w.isNil:
-    return item.initItem()
-
   assets.setItems(
     w.tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, tokenFormats[t.symbol]))
   )
 
+  let relatedAccounts = compact_model.newModel()
   relatedAccounts.setItems(
     w.relatedAccounts.map(x => walletAccountToCompactItem(x, enabledChainIds, currency, currencyFormat))
   )
 
-  return item.initItem(
+  result = initItem(
     w.name,
     w.address,
     w.mixedCaseAddress,

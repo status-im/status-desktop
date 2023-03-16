@@ -11,13 +11,6 @@ QtObject {
     property var fetchingDataModel: startupModuleInst ? startupModuleInst.fetchingDataModel
                                                          : null
 
-    readonly property int localPairingState: startupModuleInst ? startupModuleInst.localPairingState : -1
-    readonly property string localPairingError: startupModuleInst ? startupModuleInst.localPairingError : ""
-    readonly property string localPairingName: startupModuleInst ? startupModuleInst.localPairingName : ""
-    readonly property string localPairingImage: startupModuleInst ? startupModuleInst.localPairingImage : ""
-    readonly property int localPairingColorId: startupModuleInst ? startupModuleInst.localPairingColorId : 0
-    readonly property string localPairingColorHash: startupModuleInst ? startupModuleInst.localPairingColorHash : ""
-
     function backAction() {
         root.currentStartupState.backAction()
     }
@@ -109,13 +102,5 @@ QtObject {
 
     function getSeedPhrase() {
         return root.startupModuleInst.getSeedPhrase()
-    }
-
-    function validateLocalPairingConnectionString(connectionString) {
-        return root.startupModuleInst.validateLocalPairingConnectionString(connectionString)
-    }
-
-    function setConnectionString(connectionString) {
-        root.startupModuleInst.setConnectionString(connectionString)
     }
 }

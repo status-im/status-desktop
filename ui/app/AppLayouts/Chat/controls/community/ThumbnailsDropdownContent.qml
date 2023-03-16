@@ -37,7 +37,7 @@ StatusScrollView {
             Layout.leftMargin: 8
             Layout.topMargin: 8
 
-            visible: repeater.count === 0
+            visible: !!model ? model.count === 0 : false
 
             Layout.fillWidth: true
 
@@ -56,8 +56,6 @@ StatusScrollView {
             columns: d.columns
 
             Repeater {
-                id: repeater
-
                 model: root.model
                 delegate: ColumnLayout {
                     spacing: 4

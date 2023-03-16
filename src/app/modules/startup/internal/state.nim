@@ -32,7 +32,6 @@ type StateType* {.pure.} = enum
   UserProfileEnterSeedPhrase = "UserProfileEnterSeedPhrase"
   UserProfileWrongSeedPhrase = "UserProfileWrongSeedPhrase"
   Biometrics = "Biometrics"
-  KeycardNoPCSCService = "KeycardNoPCSCService"
   KeycardPluginReader = "KeycardPluginReader"
   KeycardInsertKeycard = "KeycardInsertKeycard"
   KeycardInsertedKeycard = "KeycardInsertedKeycard"
@@ -57,7 +56,6 @@ type StateType* {.pure.} = enum
   KeycardMaxPinRetriesReached = "KeycardMaxPinRetriesReached"
   KeycardMaxPukRetriesReached = "KeycardMaxPukRetriesReached"
   Login = "Login"
-  LoginNoPCSCService = "LoginNoPCSCService"
   LoginPlugin = "LoginPlugin"
   LoginKeycardInsertKeycard = "LoginKeycardInsertKeycard"
   LoginKeycardInsertedKeycard = "LoginKeycardInsertedKeycard"
@@ -79,8 +77,6 @@ type StateType* {.pure.} = enum
   ProfileFetchingTimeout = "ProfileFetchingTimeout"
   ProfileFetchingAnnouncement = "ProfileFetchingAnnouncement"
   LostKeycardOptions = "LostKeycardOptions"
-  SyncDeviceWithSyncCode = "SyncDeviceWithSyncCode"
-  SyncDeviceResult = "SyncDeviceResult"
 
 
 ## This is the base class for all state we may have in onboarding/login flow.

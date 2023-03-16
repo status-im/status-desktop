@@ -8,8 +8,6 @@ type
     Address
     Favourite
     Ens
-    ChainShortNames
-    IsTest
 
 QtObject:
   type
@@ -49,8 +47,6 @@ QtObject:
       ModelRole.Address.int:"address",
       ModelRole.Favourite.int:"favourite",
       ModelRole.Ens.int:"ens",
-      ModelRole.ChainShortNames.int:"chainShortNames",
-      ModelRole.IsTest.int:"isTest",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -72,10 +68,6 @@ QtObject:
       result = newQVariant(item.getFavourite())
     of ModelRole.Ens:
       result = newQVariant(item.getEns())
-    of ModelRole.ChainShortNames:
-      result = newQVariant(item.getChainShortNames())
-    of ModelRole.IsTest:
-      result = newQVariant(item.getIsTest())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -86,8 +78,6 @@ QtObject:
       of "address": result = $item.getAddress()
       of "favourite": result = $item.getFavourite()
       of "ens": result = $item.getEns()
-      of "chainShortNames": result = $item.getChainShortNames()
-      of "isTest": result = $item.getIsTest()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
@@ -99,16 +89,4 @@ QtObject:
     for item in self.items:
       if(item.getAddress() == address):
         return item.getName()
-    return ""
-
-  proc getChainShortNamesForAddress*(self: Model, address: string): string =
-    for item in self.items:
-      if(item.getAddress() == address):
-        return item.getChainShortNames()
-    return ""
-
-  proc getEnsForAddress*(self: Model, address: string): string =
-    for item in self.items:
-      if(item.getAddress() == address):
-        return item.getEns()
     return ""

@@ -23,7 +23,7 @@ Item {
     property alias wrongInputValidationError: contactFieldAndList.wrongInputValidationError
     property alias ownAddressError: contactFieldAndList.ownAddressError
 
-    implicitHeight: contactFieldAndList.chatKey.height
+    height: contactFieldAndList.chatKey.height
 
     onSelectedAddressChanged: validate()
 

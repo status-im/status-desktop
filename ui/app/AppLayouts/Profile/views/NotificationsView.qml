@@ -305,7 +305,7 @@ SettingsContentBase {
         StatusListItem {
             Layout.preferredWidth: root.contentWidth
             title: qsTr("Global @ Mentions")
-            tertiaryTitle: qsTr("Messages containing @everyone")
+            tertiaryTitle: qsTr("Messages containing @here and @channel")
             components: [
                 NotificationSelect {
                     selected: appSettings.notifSettingGlobalMentions

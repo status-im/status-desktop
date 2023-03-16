@@ -5,7 +5,6 @@ import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.14
 import Qt.labs.settings 1.0
 import QtQml.Models 2.14
-import QtMultimedia 5.14
 
 import StatusQ 0.1
 
@@ -50,7 +49,6 @@ StatusWindow {
         readonly property int apiDocumentation: 100
         readonly property int examples: 101
         readonly property int demoApp: 102
-        readonly property int qrScanner: 103
     }
 
     function setActiveItem(sectionId) {
@@ -98,10 +96,6 @@ StatusWindow {
                     else if(model.sectionType === appSectionType.demoApp)
                     {
                         stackView.push(demoAppCmp)
-                    }
-                    else if (model.sectionType === appSectionType.qrScanner)
-                    {
-                        stackView.push(qrScannerComponent)
                     }
                     rootWindow.setActiveItem(model.sectionId)
                 }
@@ -539,50 +533,6 @@ StatusWindow {
                 radius: 20
                 samples: 20
                 color: "#22000000"
-            }
-        }
-    }
-
-    Component {
-        id: qrScannerComponent
-
-        Rectangle {
-            anchors.fill: parent
-            color: Theme.palette.baseColor3
-
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 20
-                spacing: 10
-
-                StatusQrCodeScanner {
-                    id: qrScanner
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: width / sourceRatio
-                }
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 10
-
-                    StatusBaseText {
-                        text: qsTr("Last tag: ")
-                    }
-
-                    StatusInput {
-                        id: lastTagText
-                        Layout.fillWidth: true
-                        input.enabled: false
-                        text: qrScanner.lastTag
-                        input.rightPadding: 10
-                    }
-
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
             }
         }
     }

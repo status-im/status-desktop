@@ -28,7 +28,6 @@ Control {
         bgWidth: 15
         bgHeight: 15
         bgColor: Theme.palette.primaryColor3
-        bgRadius: bgWidth / 2
         imgIsIdenticon: false
     }
 

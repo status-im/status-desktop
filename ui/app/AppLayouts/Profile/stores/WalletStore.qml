@@ -1,12 +1,11 @@
 import QtQuick 2.13
 
 import "../../Wallet/stores"
-import utils 1.0
 
 QtObject {
     id: root
 
-    property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
+    property var accountSensitiveSettings: localAccountSensitiveSettings
 
     property var areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var layer1Networks: networksModule.layer1
@@ -17,12 +16,12 @@ QtObject {
         networksModule.toggleTestNetworksEnabled()
     }
 
-    property var accounts: Global.appIsReady? walletSectionAccounts.model : null
-    property var importedAccounts: Global.appIsReady? walletSectionAccounts.imported : null
-    property var generatedAccounts: Global.appIsReady? walletSectionAccounts.generated : null
-    property var watchOnlyAccounts: Global.appIsReady? walletSectionAccounts.watchOnly : null
+    property var accounts: walletSectionAccounts.model
+    property var importedAccounts: walletSectionAccounts.imported
+    property var generatedAccounts: walletSectionAccounts.generated
+    property var watchOnlyAccounts: walletSectionAccounts.watchOnly
     
-    property var currentAccount: Global.appIsReady? walletSectionCurrent : null
+    property var currentAccount: walletSectionCurrent
 
     function switchAccountByAddress(address) {
         walletSection.switchAccountByAddress(address)
@@ -36,7 +35,7 @@ QtObject {
         return walletSectionCurrent.update(address, accountName, color, emoji)
     }
 
-    property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
+    property var dappList: dappPermissionsModule.dapps
 
     function disconnect(dappName) {
         dappPermissionsModule.disconnect(dappName)
@@ -48,9 +47,5 @@ QtObject {
 
     function disconnectAddress(dappName, address) {
         return dappPermissionsModule.disconnectAddress(dappName, address)
-    }
-
-    function loadDapps() {
-        dappPermissionsModule.loadDapps()
     }
 }

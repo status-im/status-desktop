@@ -3,7 +3,6 @@ import json, stint, chronicles, nimcrypto
 import ../app_service/service/transaction/dto
 import ../app_service/service/eth/dto/transaction
 import ./core as core
-import ../app_service/common/utils
 
 proc checkRecentHistory*(chainIds: seq[int], addresses: seq[string]) {.raises: [Exception].} =
   let payload = %* [chainIds, addresses]
@@ -32,23 +31,20 @@ proc trackPendingTransaction*(hash: string, fromAddress: string, toAddress: stri
   }]
   core.callPrivateRPC("wallet_storePendingTransaction", payload)
 
-proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =    
   core.callPrivateRPCWithChainId("eth_getTransactionReceipt", chainId, %* [transactionHash])
-
-proc deletePendingTransaction*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  
+proc deletePendingTransaction*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =    
   let payload = %* [chainId, transactionHash]
   result = core.callPrivateRPC("wallet_deletePendingTransactionByChainID", payload)
-
+  
 proc fetchCryptoServices*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
-
+  
 proc createMultiTransaction*(multiTransaction: MultiTransactionDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [multiTransaction, data, hashPassword(password)]
+  var hashed_password = "0x" & $keccak_256.digest(password)
+  let payload = %* [multiTransaction, data, hashed_password]
   result = core.callPrivateRPC("wallet_createMultiTransaction", payload)
-
-proc getMultiTransactions*(transactionIDs: seq[int]): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [transactionIDs]
-  result = core.callPrivateRPC("wallet_getMultiTransactions", payload)
 
 proc watchTransaction*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, hash]

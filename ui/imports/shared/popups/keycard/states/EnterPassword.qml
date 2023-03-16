@@ -79,7 +79,7 @@ Item {
 
         StatusPasswordInput {
             id: password
-            objectName: "keycardPasswordInput"
+            objectName: "Password"
             Layout.alignment: Qt.AlignHCenter
             signingPhrase: root.sharedKeycardModule.getSigningPhrase()
             placeholderText: qsTr("Password")

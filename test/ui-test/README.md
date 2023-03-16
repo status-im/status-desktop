@@ -28,19 +28,7 @@ Now you should be able to create new suites, test cases and run the existing one
 | 5.15.2 | 7.0.1 | 5.15 | KO | KO |
 | 5.15.2 | 7.1.0 | 5.14 | KO | KO |
 | 5.15.2 | 7.1.0 | 5.15 | KO | KO |
-| 5.15.2 | 7.1.-20230222-1555 (SNAPSHOT) | 5.15 | OK | OK (manual extension removal*) |
 
-*NOTE 1*: KO means the test execution hangs on `squish.waitForObject()` or `squish.findObject()`. Seen this behaviour particularly in `Onboarding / Create Password Screen`. 
+NOTE: KO means the test execution hangs on `squish.waitForObject()` or `squish.findObject()`. Seen this behaviour particularly in `Onboarding / Create Password Screen`. 
 
-*NOTE 2*: The `7.1-SNAPSHOT` version for `linux` needs a manual interaction (if not the app crashes when the test execution starts). It is needed to rename library in:
-
-SQUISHDIR\lib\extensions
-
-     squishqtwaylandcompositor.ext
-
-to
-
-     squishqtwaylandcompositor_off.ext
-
-
-Last status app tested: Master branch - Commit: `d31acbfb48fe7027657a08c648836d9a8f11240c`
+Last status app tested: Master branch - Commit: `5f4000b7a57cd5c268c3ebf847e2b3ef1a8ff96a`

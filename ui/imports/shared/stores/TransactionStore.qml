@@ -140,12 +140,10 @@ QtObject {
         return networksModule.getMainnetChainId()
     }
 
-    // We should move all this over to nim
     function addPreferredChains(preferredchains, showUnpreferredNetworks) {
-        let tempPreferredChains = preferredChainIds
         for(const chain of preferredchains) {
-            if(!tempPreferredChains.includes(chain)) {
-                tempPreferredChains.push(chain)
+            if(!preferredChainIds.includes(chain)) {
+                preferredChainIds.push(chain)
                 // remove from disabled accounts as it was added as preferred
                 addRemoveDisabledToChain(chain, false)
             }
@@ -153,15 +151,13 @@ QtObject {
 
         // here we are trying to remove chains that are not preferred from the list and
         // also disable them incase the showUnpreferredNetworks toggle is turned off
-        for(var i = 0; i < tempPreferredChains.length; i++) {
-            if(!preferredchains.includes(tempPreferredChains[i])) {
+        for(var i = 0; i < preferredChainIds.length; i++) {
+            if(!preferredchains.includes(preferredChainIds[i])) {
                 if(!showUnpreferredNetworks)
-                    addRemoveDisabledToChain(tempPreferredChains[i], true)
-                tempPreferredChains.splice(i, 1)
+                    addRemoveDisabledToChain(preferredChainIds[i], true)
+                preferredChainIds.splice(i, 1)
             }
         }
-
-        preferredChainIds = tempPreferredChains
     }
 
     function addUnpreferredChainsToDisabledChains() {
@@ -256,7 +252,6 @@ QtObject {
             return undefined
         }
 
-        selectedAccount.prepareTokenBalanceOnChain(chainId, tokenSymbol)
-        return selectedAccount.getPreparedTokenBalanceOnChain()
+        return JSON.parse(selectedAccount.getTokenBalanceOnChainAsJson(chainId, tokenSymbol))
     }
 }

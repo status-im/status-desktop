@@ -28,15 +28,6 @@ Control {
         id: d
 
         property var invitedCommunity
-    
-        readonly property string communityName:         !!d.invitedCommunity ? d.invitedCommunity.name : ""
-        readonly property string communityDescription:  !!d.invitedCommunity ? d.invitedCommunity.description : ""
-        readonly property string communityImage:        !!d.invitedCommunity ? d.invitedCommunity.image : ""
-        readonly property string communityColor:        !!d.invitedCommunity ? d.invitedCommunity.color : ""
-        readonly property int    communityNbMembers:    !!d.invitedCommunity ? d.invitedCommunity.nbMembers : 0
-        readonly property bool   communityVerified:     false //!!d.invitedCommunity ? d.invitedCommunity.verified : false TODO: add this to the community object if we should support verified communities
-        readonly property bool   communityJoined:       !!d.invitedCommunity ? d.invitedCommunity.joined : false
-        readonly property bool   communitySpectated:    !!d.invitedCommunity ? d.invitedCommunity.spectated : false
 
         readonly property int margin: 12
         readonly property int radius: 16
@@ -100,8 +91,8 @@ Control {
             Layout.topMargin: 8
             Layout.bottomMargin: 8
 
-            text: d.communityVerified ? qsTr("Verified community invitation") : qsTr("Community invitation")
-            color: d.communityVerified ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+            text: d.invitedCommunity.verifed ? qsTr("Verified community invitation") : qsTr("Community invitation")
+            color: d.invitedCommunity.verifed ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
             font.weight: Font.Medium
             font.pixelSize: 13
         }
@@ -127,13 +118,13 @@ Control {
                 Layout.preferredWidth: 40
                 Layout.preferredHeight: 40
 
-                name: d.communityName
+                name: d.invitedCommunity.name
 
                 asset {
                     width: 40
                     height: 40
-                    name: d.communityImage
-                    color: d.communityColor
+                    name: d.invitedCommunity.image
+                    color: d.invitedCommunity.color
                     isImage: true
                 }
             }
@@ -144,7 +135,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: d.communityName
+                    text: d.invitedCommunity.name
                     font.weight: Font.Bold
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     font.pixelSize: 17
@@ -154,7 +145,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: d.communityDescription
+                    text: d.invitedCommunity.description
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     color: Theme.palette.directColor1
                 }
@@ -162,7 +153,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: qsTr("%n member(s)", "", d.communityNbMembers)
+                    text: qsTr("%n member(s)", "", d.invitedCommunity.nbMembers)
                     font.pixelSize: 13
                     font.weight: Font.Medium
                     color: Theme.palette.baseColor1
@@ -186,7 +177,7 @@ Control {
             radius: d.radius - 1 // We do -1, otherwise there's a gap between border and button
 
             onClicked: {
-                if (d.communityJoined || d.communitySpectated) {
+                if (d.invitedCommunity.joined || d.invitedCommunity.spectated) {
                     root.store.setActiveCommunity(communityId)
                 } else {
                     root.store.spectateCommunity(communityId, userProfile.name)

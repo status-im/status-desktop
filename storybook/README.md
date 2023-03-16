@@ -1,8 +1,6 @@
-# Building Storybook
-
-For regular usage of **Storybook** it's enough to open `status-desktop/storybook/CMakeLists.txt` in QtCreator. Please **`do not use StoryBook.pro`** which is intended for WebAssembly builds. Please make sure that selected run target is `Storybook`.
-
 # Building Storybook with Webassembly and Qt 5.14
+
+
 
 ## Configuring the environment
 ### Install Emscripten v1.38.27

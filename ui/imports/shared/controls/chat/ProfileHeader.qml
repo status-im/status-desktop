@@ -47,7 +47,7 @@ Item {
         value: icon
     }
 
-    implicitWidth: contentContainer.implicitWidth
+    height: visible ? contentContainer.height : 0
     implicitHeight: contentContainer.implicitHeight
 
     QtObject {
@@ -113,7 +113,7 @@ Item {
                 pubkey: root.pubkey
                 image: root.previewIcon
                 interactive: false
-                imageWidth: d.getSize(36, 64, 170)
+                imageWidth: d.getSize(36, 64, 160)
                 imageHeight: imageWidth
                 ensVerified: root.userIsEnsVerified
             }
@@ -121,7 +121,7 @@ Item {
             StatusRoundButton {
                 id: editButton
                 visible: root.editImageButtonVisible
-                anchors.top: userImage.top
+                anchors.bottom: userImage.bottom
                 anchors.right: userImage.right
                 anchors.rightMargin: Math.round(userImage.width / 10)
 
@@ -130,8 +130,8 @@ Item {
 
                 type: StatusRoundButton.Type.Secondary
                 icon.name: "edit_pencil"
-                icon.width: d.getSize(8, 12, 24)
-                icon.height: d.getSize(8, 12, 24)
+                icon.width: d.getSize(8, 12, 20)
+                icon.height: d.getSize(8, 12, 20)
 
                 onClicked: {
                     if (!!root.store.profileLargeImage)
@@ -234,7 +234,7 @@ Item {
                 Layout.preferredHeight: 20
                 color: Style.current.transparent
                 textToCopy: pubkey
-                onCopyClicked: root.store.copyToClipboard(textToCopy)
+                store: root.store
             }
         }
 
@@ -249,22 +249,13 @@ Item {
 
     StatusMenu {
         id: imageEditMenu
-        width: 200
 
         StatusAction {
-            text: qsTr("Select different image")
-            assetSettings.name: "image"
+            text: qsTr("Upload a file")
+            assetSettings.name: "download"
+            assetSettings.rotation: 180
             onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
         }
-
-        StatusAction {
-            text: qsTr("Use an NFT")
-            assetSettings.name: "nft-profile"
-            onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
-            enabled: false // TODO enable this with the profile showcase
-        }
-
-        StatusMenuSeparator {}
 
         StatusAction {
             text: qsTr("Remove image")

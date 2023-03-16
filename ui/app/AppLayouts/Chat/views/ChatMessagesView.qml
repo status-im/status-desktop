@@ -154,7 +154,18 @@ Item {
         anchors.right: parent.right
         spacing: 0
         verticalLayoutDirection: ListView.BottomToTop
-        cacheBuffer: height * 2 // cache 2 screens worth of items
+
+        function checkHeaderHeight() {
+            if (!chatLogView.headerItem) {
+                return
+            }
+
+            if (chatLogView.contentItem.height - chatLogView.headerItem.height < chatLogView.height) {
+                chatLogView.headerItem.height = chatLogView.height - (chatLogView.contentItem.height - chatLogView.headerItem.height) - 36
+            } else {
+                chatLogView.headerItem.height = 0
+            }
+        }
 
         model: messageStore.messagesModel
 
@@ -171,8 +182,22 @@ Item {
             visible: chatLogView.visibleArea.heightRatio < 1
         }
 
+        // This header and Connections is to create an invisible padding so that the chat identifier is at the top
+        // The Connections is necessary, because doing the check inside the header created a binding loop (the contentHeight includes the header height
+        // If the content height is smaller than the full height, we "show" the padding so that the chat identifier is at the top, otherwise we disable the Connections
+        header: Item {
+            height: 0
+            width: chatLogView.width
+        }
+
+        Timer {
+            id: timer
+        }
+
         Button {
             id: scrollDownButton
+
+            readonly property int buttonPadding: 5
 
             anchors.bottom: parent.bottom
             anchors.right: parent.right

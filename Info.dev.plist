@@ -37,7 +37,5 @@
         <integer>0</integer>
         <key>NSHighResolutionCapable</key>
         <string>True</string>
-        <key>NSCameraUsageDescription</key>
-        <string>Scan QR codes</string>
     </dict>
 </plist>

@@ -13,13 +13,12 @@ Rectangle {
         bgWidth: 40
         bgHeight: 40
         bgColor: Theme.palette.primaryColor3
-        bgRadius: bgWidth / 2
     }
 
     color: asset.bgColor
     implicitWidth: asset.bgWidth
     implicitHeight: asset.bgHeight
-    radius: asset.bgRadius
+    radius: asset.bgWidth / 2
 
 
     StatusIcon {

@@ -9,7 +9,6 @@ type NetworkDto* = ref object
   layer* {.serializedFieldName("layer").}: int
   chainName* {.serializedFieldName("chainName").}: string
   rpcURL* {.serializedFieldName("rpcUrl").}: string
-  fallbackURL* {.serializedFieldName("fallbackUrl").}: string
   blockExplorerURL* {.serializedFieldName("blockExplorerUrl").}: string
   iconURL* {.serializedFieldName("iconUrl").}: string
   nativeCurrencyName* {.serializedFieldName("nativeCurrencyName").}: string
@@ -27,7 +26,6 @@ proc `$`*(self: NetworkDto): string =
     chainName:{self.chainName},
     name:{self.chainName},
     rpcURL:{self.rpcURL},
-    fallbackURL:{self.rpcURL},
     blockExplorerURL:{self.blockExplorerURL},
     iconURL:{self.iconURL},
     nativeCurrencyName:{self.nativeCurrencyName},

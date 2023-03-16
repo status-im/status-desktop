@@ -83,7 +83,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         color: Style.current.transparent
         textToCopy: root.address
-        onCopyClicked: root.store.copyToClipboard(textToCopy)
+        store: root.store
         MouseArea {
             anchors.fill: parent
             propagateComposedEvents: true

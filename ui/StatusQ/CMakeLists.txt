@@ -13,18 +13,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(QZXING_USE_QML ON)
-set(QZXING_MULTIMEDIA ON)
-set(QZXING_USE_DECODER_QR_CODE ON)
-
 # https://doc.qt.io/qtcreator/creator-qml-modules-with-plugins.html#importing-qml-modules
 set(QML_IMPORT_PATH
     ${CMAKE_SOURCE_DIR}/src;${QML_IMPORT_PATH}
     CACHE STRING "")
 
-
 add_subdirectory(vendor/SortFilterProxyModel)
-add_subdirectory(vendor/qzxing/src)
 add_subdirectory(sandbox)
 add_subdirectory(sanity_checker)
 add_subdirectory(tests)

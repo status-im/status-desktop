@@ -69,10 +69,6 @@ method load*(self: Module) =
   self.dappsModule.load()
   self.view.load()
 
-method onActivated*(self: Module) =
-  self.bookmarkModule.onActivated()
-  self.dappsModule.onActivated()
-
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 

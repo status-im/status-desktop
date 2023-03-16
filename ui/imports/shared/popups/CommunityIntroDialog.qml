@@ -23,6 +23,26 @@ StatusDialog {
     signal joined
     signal cancelMembershipRequest
 
+    QtObject {
+        id: d
+
+        readonly property int maxWidth: 640
+        readonly property int minWidth: 300
+        readonly property int maxHeight: 640
+
+        function getHorizontalPaddings() {
+            return root.leftPadding + root.rightPadding
+        }
+
+        function getVerticalPaddings() {
+            return  root.topPadding + root.bottomPadding
+        }
+
+        function getMaxMinWidth() {
+            return Math.max(introText.implicitWidth, d.minWidth - d.getHorizontalPaddings())
+        }
+    }
+
     title: qsTr("Welcome to %1").arg(name)
 
     footer: StatusDialogFooter {
@@ -35,7 +55,6 @@ StatusDialog {
                 type: root.isInvitationPending ? StatusBaseButton.Type.Danger
                                                : StatusBaseButton.Type.Normal
                 enabled: checkBox.checked || root.isInvitationPending
-                textFillWidth: true
                 onClicked: {
                     if (root.isInvitationPending) {
                         root.cancelMembershipRequest()
@@ -49,16 +68,20 @@ StatusDialog {
         }
     }
 
-    contentItem: StatusScrollView {
+    implicitWidth: Math.min(d.getMaxMinWidth(), d.maxWidth - d.getHorizontalPaddings())
+    implicitHeight: Math.min(columnContent.height + footer.height + header.height + d.getVerticalPaddings(), d.maxHeight)
+
+    StatusScrollView {
+        anchors.fill: parent
+        contentHeight: columnContent.height
+        contentWidth: columnContent.width
         padding: 0
-        implicitWidth: 640 // by design
-        implicitHeight: columnContent.childrenRect.height
 
         ColumnLayout {
             id: columnContent
 
             spacing: 24
-            width: root.availableWidth
+            width: Math.max(root.width - d.getHorizontalPaddings(), d.minWidth - d.getHorizontalPaddings())
 
             StatusRoundedImage {
                 id: roundImage

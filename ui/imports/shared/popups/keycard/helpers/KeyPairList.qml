@@ -40,7 +40,6 @@ Item {
             sharedKeycardModule: root.sharedKeycardModule
             buttonGroup: root.buttonGroup
             usedAsSelectOption: true
-            canBeSelected: !model.keyPair.containsPathOutOfTheDefaultStatusDerivationTree()
 
             keyPairType: model.keyPair.pairType
             keyPairPubKey: model.keyPair.pubKey

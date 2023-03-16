@@ -200,43 +200,6 @@ Item {
             }
         },
         State {
-            name: Constants.startupState.keycardNoPCSCService
-            when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNoPCSCService
-            PropertyChanges {
-                target: image
-                pattern: Constants.keycardAnimations.strongError.pattern
-                source: ""
-                startImgIndexForTheFirstLoop: Constants.keycardAnimations.strongError.startImgIndexForTheFirstLoop
-                startImgIndexForOtherLoops: Constants.keycardAnimations.strongError.startImgIndexForOtherLoops
-                endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
-                duration: Constants.keycardAnimations.strongError.duration
-                loops: Constants.keycardAnimations.strongError.loops
-            }
-            PropertyChanges {
-                target: title
-                text: qsTr("PCSC not available")
-                color: Theme.palette.directColor1
-                font.pixelSize: Constants.keycard.general.fontSize1
-            }
-            PropertyChanges {
-                target: info
-                text: qsTr("The Smartcard reader (PCSC service), required\nfor using Keycard, is not currently working.\nEnsure PCSC is installed and running and try again")
-                color: Theme.palette.directColor1
-            }
-            PropertyChanges {
-                target: button
-                text: qsTr("Retry")
-            }
-            PropertyChanges {
-                target: link
-                text: ""
-            }
-            PropertyChanges {
-                target: message
-                text: ""
-            }
-        },
-        State {
             name: Constants.startupState.keycardNotKeycard
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardNotKeycard
             PropertyChanges {

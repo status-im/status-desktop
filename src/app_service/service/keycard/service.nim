@@ -380,14 +380,5 @@ QtObject:
     var payload = %* { }
     self.resumeFlow(payload)
 
-  proc reRunCurrentFlow*(self: Service) =
-    let tmpFlow = self.currentFlow
-    self.cancelCurrentFlow()
-    self.currentFlow = tmpFlow
-    self.startFlow(self.setPayloadForCurrentFlow)
-
-  proc reRunCurrentFlowLater*(self: Service) =
-    let tmpFlow = self.currentFlow
-    self.cancelCurrentFlow()
-    self.currentFlow = tmpFlow
+  proc resumeCurrentFlowLater*(self: Service) =
     self.runTimer()

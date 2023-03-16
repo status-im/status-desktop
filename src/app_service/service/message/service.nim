@@ -1,4 +1,4 @@
-import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles, times, oids
+import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles, times
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
@@ -111,8 +111,7 @@ type
     message*: MessageDto
 
   LinkPreviewDataArgs* = ref object of Args
-    response*: JsonNode
-    uuid*: string
+    response*: string
 
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
@@ -247,12 +246,11 @@ QtObject:
           continue
 
         # Ignore messages older than current chat cursor
-        if(self.isChatCursorInitialized(chatId)):
-          let currentChatCursor = self.initOrGetMessageCursor(chatId)
-          let msgCursorValue = initCursorValue(msg.id, msg.clock)
-          if(not currentChatCursor.isLessThan(msgCursorValue)):
-            currentChatCursor.makeObsolete()
-            continue
+        let currentChatCursor = self.initOrGetMessageCursor(chatId)
+        let msgCursorValue = initCursorValue(msg.id, msg.clock)
+        if(not currentChatCursor.isLessThan(msgCursorValue)):
+          currentChatCursor.makeObsolete()
+          continue
 
         if(msg.editedAt > 0):
           let data = MessageEditedArgs(chatId: msg.localChatId, message: msg)
@@ -673,27 +671,17 @@ QtObject:
           errDesription = e.msg
 
   proc onAsyncGetLinkPreviewData*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "expected response is not a json object", methodName="onAsyncGetLinkPreviewData"
-      return
+    self.events.emit(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED, LinkPreviewDataArgs(response: response))
 
-    self.events.emit(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED, LinkPreviewDataArgs(response: responseObj["previewData"], uuid: responseObj["uuid"].getStr()))
-
-  proc asyncGetLinkPreviewData*(self: Service, links: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string =
+  proc asyncGetLinkPreviewData*(self: Service, link: string, uuid: string) =
     let arg = AsyncGetLinkPreviewDataTaskArg(
       tptr: cast[ByteAddress](asyncGetLinkPreviewDataTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncGetLinkPreviewData",
-      links: links,
-      whiteListedUrls: whiteListedSites,
-      whiteListedImgExtensions: whiteListedImgExtensions,
-      unfurlImages: unfurlImages,
+      link: link,
       uuid: uuid
     )
-
     self.threadpool.start(arg)
-    return $genOid()
 
 # See render-inline in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
 proc renderInline(self: Service, parsedText: ParsedText, communityChats: seq[ChatDto]): string =

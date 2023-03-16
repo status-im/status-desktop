@@ -14,8 +14,6 @@ import utils 1.0
 import shared.stores 1.0
 
 import "../controls"
-import "../stores" as WalletStores
-import ".."
 
 Item {
     id: root
@@ -29,13 +27,10 @@ Item {
     QtObject {
         id: d
         readonly property bool isIncoming: root.isTransactionValid ? root.transaction.to === currentAccount.address : false
-        readonly property bool isNFT: root.isTransactionValid ? root.transaction.isNFT : false
         readonly property string savedAddressNameTo: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.to) : ""
         readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.from): ""
         readonly property string from: root.isTransactionValid ? !!savedAddressNameFrom ? savedAddressNameFrom : Utils.compactAddress(transaction.from, 4): ""
         readonly property string to: root.isTransactionValid ? !!savedAddressNameTo ? savedAddressNameTo : Utils.compactAddress(transaction.to, 4): ""
-        readonly property string savedAddressEns: RootStore.getEnsForSavedWalletAddress(isIncoming ? transaction.from : transaction.to)
-        readonly property string savedAddressChains: RootStore.getChainShortNamesForSavedWalletAddress(isIncoming ? transaction.from : transaction.to)
 
         function getNameForSavedWalletAddress(address) {
             return RootStore.getNameForSavedWalletAddress(address)
@@ -64,18 +59,17 @@ Item {
 
                 modelData: transaction
                 isIncoming: d.isIncoming
-                currentCurrency: RootStore.currentCurrency
-                cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
-                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
+                cryptoValue: root.isTransactionValid ? transaction.value : undefined
+                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency): undefined
                 networkIcon: root.isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId): ""
                 networkColor: root.isTransactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
                 networkName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
                 symbol: root.isTransactionValid ? transaction.symbol : ""
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
                 shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
-                isSummary: false
+                savedAddressName: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                title: d.isIncoming ? qsTr("Received %1 from %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.from) :
+                                    qsTr("Sent %1 to %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.to)
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 state: "big"
@@ -86,18 +80,16 @@ Item {
 
                 name: d.isIncoming ? d.savedAddressNameFrom : d.savedAddressNameTo
                 address:  root.isTransactionValid ? d.isIncoming ? transaction.from : transaction.to : ""
-                ens: d.savedAddressEns
-                chainShortNames: d.savedAddressChains
                 title: d.isIncoming ? d.from : d.to
                 subTitle:  root.isTransactionValid ? d.isIncoming ? !!d.savedAddressNameFrom ? Utils.compactAddress(transaction.from, 4) : "" : !!d.savedAddressNameTo ? Utils.compactAddress(transaction.to, 4) : "": ""
-                store: WalletStores.RootStore
+                store: RootStore
                 contactsStore: root.contactsStore
                 onOpenSendModal: root.sendModal.open(address);
-                saveAddress: function(name, address, favourite, chainShortNames, ens) {
-                    RootStore.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+                saveAddress: function(name, address, favourite) {
+                    RootStore.createOrUpdateSavedAddress(name, address, favourite)
                 }
-                deleteSavedAddress: function(address, ens) {
-                    RootStore.deleteSavedAddress(address, ens)
+                deleteSavedAddress: function(address) {
+                    RootStore.deleteSavedAddress(address)
                 }
             }
 
@@ -124,12 +116,30 @@ Item {
                 expanded: true
             }
 
-            InformationTile {
-                maxWidth: parent.width
-                primaryText: qsTr("Data")
-                secondaryText: root.isTransactionValid ? root.transaction.input : ""
-                copy: true
-                onCopyClicked: RootStore.copyToClipboard(textToCopy)
+            StatusListItem {
+                id: data
+                width: parent.width
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                color: "transparent"
+                border.width: 1
+                border.color: Theme.palette.directColor8
+
+                statusListItemTitle.color: Theme.palette.baseColor1
+
+                title: qsTr("Data" )
+                subTitle: root.isTransactionValid ? root.transaction.input : ""
+                components: [
+                    CopyToClipBoardButton {
+                        icon.width: 15
+                        icon.height: 15
+                        type: StatusRoundButton.Type.Tertiary
+                        color: "transparent"
+                        icon.color: data.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                        store: RootStore
+                        textToCopy: data.subTitle
+                    }
+                ]
             }
         }
     }
@@ -145,18 +155,17 @@ Item {
                 width: parent.width
                 modelData: transaction
                 isIncoming: d.isIncoming
-                currentCurrency: RootStore.currentCurrency
-                cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
-                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
+                cryptoValue: root.isTransactionValid ? transaction.value: undefined
+                fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue.amount, symbol, RootStore.currentCurrency): undefined
                 networkIcon: root.isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : ""
                 networkColor: root.isTransactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
                 networkName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
                 symbol: root.isTransactionValid ? transaction.symbol : ""
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
                 shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
-                isSummary: false
+                savedAddressName: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                title: d.isIncoming ? qsTr("Received %1 from %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.from) :
+                                    qsTr("Sent %1 to %2").arg(LocaleUtils.currencyAmountToLocaleString(cryptoValue)).arg(d.to)
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 border.width: 1
@@ -185,12 +194,6 @@ Item {
                     maxWidth: parent.width
                     primaryText: qsTr("Nonce")
                     secondaryText: root.isTransactionValid ? RootStore.hex2Dec(root.transaction.nonce) : ""
-                }
-                InformationTile {
-                    maxWidth: parent.width
-                    primaryText: qsTr("TokenID")
-                    secondaryText: root.isTransactionValid ? root.transaction.tokenID : ""
-                    visible: root.isTransactionValid && d.isNFT
                 }
             }
         }

@@ -1,9 +1,12 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtGraphicalEffects 1.15
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtGraphicalEffects 1.13
+import Qt.labs.qmlmodels 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+
+import SortFilterProxyModel 0.2
 
 import shared 1.0
 import shared.popups 1.0
@@ -18,15 +21,93 @@ import "../stores"
 Popup {
     id: root
 
+   // NOTE: temporary enum until we have different categories on UI and status-go sides
+    enum ActivityCategory {
+        All,
+        Admin,
+        Mentions,
+        Replies,
+        ContactRequests,
+        IdentityVerification,
+        Transactions,
+        Membership,
+        System
+    }
+    property int currentActivityCategory: ActivityCenterPopup.ActivityCategory.All
+    property int adminCount: 0
+    property int mentionsCount: 0
+    property int repliesCount: 0
+    property int contactRequestsCount: 0
+    property int identityRequestsCount: 0
+    property int membershipCount: 0
+
     property ActivityCenterStore activityCenterStore
     property var store
+
+    readonly property int unreadNotificationsCount: root.activityCenterStore.unreadNotificationsCount
+
+    function filterActivityCategories(notificationType) {
+        switch (root.currentActivityCategory) {
+        case ActivityCenterPopup.ActivityCategory.All:
+            return true
+        case ActivityCenterPopup.ActivityCategory.Admin:
+            return notificationType === Constants.activityCenterNotificationTypeCommunityMembershipRequest
+        case ActivityCenterPopup.ActivityCategory.Mentions:
+            return notificationType === Constants.activityCenterNotificationTypeMention
+        case ActivityCenterPopup.ActivityCategory.Replies:
+            return notificationType === Constants.activityCenterNotificationTypeReply
+        case ActivityCenterPopup.ActivityCategory.ContactRequests:
+            return notificationType === Constants.activityCenterNotificationTypeContactRequest
+        case ActivityCenterPopup.ActivityCategory.IdentityVerification:
+            return notificationType === Constants.activityCenterNotificationTypeContactVerification
+        case ActivityCenterPopup.ActivityCategory.Membership:
+            return notificationType === Constants.activityCenterNotificationTypeCommunityInvitation ||
+                   notificationType === Constants.activityCenterNotificationTypeCommunityMembershipRequest ||
+                   notificationType === Constants.activityCenterNotificationTypeCommunityRequest ||
+                   notificationType === Constants.activityCenterNotificationTypeCommunityKicked
+        default:
+            return false
+        }
+    }
+
+    function calcNotificationType(notificationType, cnt) {
+        switch (notificationType) {
+        case Constants.activityCenterNotificationTypeMention:
+            root.mentionsCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeReply:
+            root.repliesCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeContactRequest:
+            root.contactRequestsCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeContactVerification:
+            root.identityRequestsCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeCommunityInvitation:
+            root.membershipCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeCommunityMembershipRequest:
+            // NOTE: not a typo, membership requests are shown in both categories
+            root.membershipCount += cnt;
+            root.adminCount += cnt;
+            break;
+        case Constants.activityCenterNotificationTypeCommunityRequest:
+            root.membershipCount += cnt;
+            break;
+        case Constants.ActivityCenterNotificationTypeCommunityKicked:
+            root.membershipCount += cnt;
+            break;
+        default:
+            break;
+        }
+    }
 
     onOpened: {
         Global.popupOpened = true
     }
     onClosed: {
         Global.popupOpened = false
-        activityCenterStore.markAsSeenActivityCenterNotifications()
     }
 
     x: Global.applicationWindow.width - root.width - Style.current.halfPadding
@@ -52,23 +133,31 @@ Popup {
         }
     }
 
+    Repeater {
+        id: notificationTypeCounter
+        model: root.activityCenterStore.activityCenterList
+
+        delegate: Item {
+            Component.onCompleted: calcNotificationType(model.notificationType, 1)
+            Component.onDestruction: calcNotificationType(model.notificationType, -1)
+        }
+    }
+
     ActivityCenterPopupTopBarPanel {
         id: activityCenterTopBar
         width: parent.width
-        unreadNotificationsCount: activityCenterStore.unreadNotificationsCount
-        hasAdmin: activityCenterStore.adminCount > 0
-        hasReplies: activityCenterStore.repliesCount > 0
-        hasMentions: activityCenterStore.mentionsCount > 0
-        hasContactRequests: activityCenterStore.contactRequestsCount > 0
-        hasIdentityVerification: activityCenterStore.identityVerificationCount > 0
-        hasMembership: activityCenterStore.membershipCount > 0
-        hideReadNotifications: activityCenterStore.activityCenterReadType === ActivityCenterStore.ActivityCenterReadType.Unread
-        activeGroup: activityCenterStore.activeNotificationGroup
-        onGroupTriggered: activityCenterStore.setActiveNotificationGroup(group)
-        onMarkAllReadClicked: activityCenterStore.markAllActivityCenterNotificationsRead()
-        onShowHideReadNotifications: activityCenterStore.setActivityCenterReadType(hideReadNotifications ?
-                                                                                        ActivityCenterStore.ActivityCenterReadType.Unread :
-                                                                                        ActivityCenterStore.ActivityCenterReadType.All)
+        unreadNotificationsCount: root.unreadNotificationsCount
+        hasAdmin: root.adminCount > 0
+        hasReplies: root.repliesCount > 0
+        hasMentions: root.mentionsCount > 0
+        hasContactRequests: root.contactRequestsCount > 0
+        hasIdentityRequests: root.identityRequestsCount > 0
+        hasMembership: root.membershipCount > 0
+        hideReadNotifications: activityCenterStore.hideReadNotifications
+        currentActivityCategory: root.currentActivityCategory
+        onCategoryTriggered: root.currentActivityCategory = category
+        onMarkAllReadClicked: root.activityCenterStore.markAllActivityCenterNotificationsRead()
+        onShowHideReadNotifications: activityCenterStore.hideReadNotifications = hideReadNotifications
     }
 
     StatusListView {
@@ -80,7 +169,19 @@ Popup {
         anchors.margins: Style.current.smallPadding
         spacing: 1
 
-        model: root.activityCenterStore.activityCenterNotifications
+        model: SortFilterProxyModel {
+            sourceModel: root.activityCenterStore.activityCenterList
+
+            filters: ExpressionFilter { expression: filterActivityCategories(model.notificationType) &&
+                                                    !(activityCenterStore.hideReadNotifications && model.read) }
+
+            sorters: [
+                RoleSorter {
+                    roleName: "timestamp"
+                    sortOrder: Qt.DescendingOrder
+                }
+            ]
+        }
 
         delegate: Loader {
             width: listView.availableWidth
@@ -90,21 +191,21 @@ Popup {
 
             sourceComponent: {
                 switch (model.notificationType) {
-                    case ActivityCenterStore.ActivityCenterNotificationType.Mention:
+                    case Constants.activityCenterNotificationTypeMention:
                         return mentionNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.Reply:
+                    case Constants.activityCenterNotificationTypeReply:
                         return replyNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRequest:
+                    case Constants.activityCenterNotificationTypeContactRequest:
                         return contactRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.ContactVerification:
+                    case Constants.activityCenterNotificationTypeContactVerification:
                         return verificationRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityInvitation:
+                    case Constants.activityCenterNotificationTypeCommunityInvitation:
                         return communityInvitationNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityMembershipRequest:
+                    case Constants.activityCenterNotificationTypeCommunityMembershipRequest:
                         return membershipRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityRequest:
+                    case Constants.activityCenterNotificationTypeCommunityRequest:
                         return communityRequestNotificationComponent
-                    case ActivityCenterStore.ActivityCenterNotificationType.CommunityKicked:
+                    case Constants.activityCenterNotificationTypeCommunityKicked:
                         return communityKickedNotificationComponent
                     default:
                         return null

@@ -65,7 +65,6 @@ Item {
         width: root.width
         backButtonName: RootStore.backButtonName
         notificationCount: activityCenterStore.unreadNotificationsCount
-        
         onNotificationButtonClicked: Global.openActivityCenterPopup()
         onBackButtonClicked: {
             rightPanelStackView.currentItem.resetStack();

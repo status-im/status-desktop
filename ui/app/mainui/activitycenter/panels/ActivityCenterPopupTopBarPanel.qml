@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import utils 1.0
 
@@ -9,7 +9,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
-import "../stores"
+import "../popups"
 
 Item {
     id: root
@@ -18,17 +18,17 @@ Item {
     property bool hasMentions: false
     property bool hasReplies: false
     property bool hasContactRequests: false
-    property bool hasIdentityVerification: false
+    property bool hasIdentityRequests: false
     property bool hasMembership: false
 
     property bool hideReadNotifications: false
     property int unreadNotificationsCount: 0
 
-    property int activeGroup: ActivityCenterStore.ActivityCenterGroup.All
+    property int currentActivityCategory: ActivityCenterPopup.ActivityCategory.All
 
     property alias errorText: errorText.text
 
-    signal groupTriggered(int group)
+    signal categoryTriggered(int category)
     signal markAllReadClicked()
     signal showHideReadNotifications(bool hideReadNotifications)
 
@@ -49,24 +49,24 @@ Item {
 
                 Repeater {
                     // NOTE: some entries are hidden until implimentation
-                    model: [ { text: qsTr("All"), group: ActivityCenterStore.ActivityCenterGroup.All, visible: true, enabled: true },
-                             { text: qsTr("Admin"), group: ActivityCenterStore.ActivityCenterGroup.Admin, visible: root.hasAdmin, enabled: root.hasAdmin },
-                             { text: qsTr("Mentions"), group: ActivityCenterStore.ActivityCenterGroup.Mentions, visible: true, enabled: root.hasMentions },
-                             { text: qsTr("Replies"), group: ActivityCenterStore.ActivityCenterGroup.Replies, visible: true, enabled: root.hasReplies },
-                             { text: qsTr("Contact requests"), group: ActivityCenterStore.ActivityCenterGroup.ContactRequests, visible: true, enabled: root.hasContactRequests },
-                             { text: qsTr("Identity verification"), group: ActivityCenterStore.ActivityCenterGroup.IdentityVerification, visible: true, enabled: root.hasIdentityVerification },
-                             { text: qsTr("Transactions"), group: ActivityCenterStore.ActivityCenterGroup.Transactions, visible: false, enabled: true },
-                             { text: qsTr("Membership"), group: ActivityCenterStore.ActivityCenterGroup.Membership, visible: true, enabled: root.hasMembership },
-                             { text: qsTr("System"), group: ActivityCenterStore.ActivityCenterGroup.System, visible: false, enabled: true } ]
+                    model: [ { text: qsTr("All"), category: ActivityCenterPopup.ActivityCategory.All, visible: true, enabled: true },
+                             { text: qsTr("Admin"), category: ActivityCenterPopup.ActivityCategory.Admin, visible: root.hasAdmin, enabled: root.hasAdmin },
+                             { text: qsTr("Mentions"), category: ActivityCenterPopup.ActivityCategory.Mentions, visible: true, enabled: root.hasMentions },
+                             { text: qsTr("Replies"), category: ActivityCenterPopup.ActivityCategory.Replies, visible: true, enabled: root.hasReplies },
+                             { text: qsTr("Contact requests"), category: ActivityCenterPopup.ActivityCategory.ContactRequests, visible: true, enabled: root.hasContactRequests },
+                             { text: qsTr("Identity verification"), category: ActivityCenterPopup.ActivityCategory.IdentityVerification, visible: true, enabled: root.hasIdentityRequests },
+                             { text: qsTr("Transactions"), category: ActivityCenterPopup.ActivityCategory.Transactions, visible: false, enabled: true },
+                             { text: qsTr("Membership"), category: ActivityCenterPopup.ActivityCategory.Membership, visible: true, enabled: root.hasMembership },
+                             { text: qsTr("System"), category: ActivityCenterPopup.ActivityCategory.System, visible: false, enabled: true } ]
 
                     StatusFlatButton {
                         enabled: modelData.enabled
                         visible: modelData.visible
                         text: modelData.text
                         size: StatusBaseButton.Size.Small
-                        highlighted: modelData.group === root.activeGroup
-                        onClicked: root.groupTriggered(modelData.group)
-                        onEnabledChanged: if (!enabled && highlighted) root.groupTriggered(ActivityCenterStore.ActivityCenterGroup.All)
+                        highlighted: modelData.category === root.currentActivityCategory
+                        onClicked: root.categoryTriggered(modelData.category)
+                        onEnabledChanged: if (!enabled && highlighted) root.categoryTriggered(ActivityCenterPopup.ActivityCategory.All)
                         Layout.preferredWidth: visible ? implicitWidth : 0
                     }
                 }

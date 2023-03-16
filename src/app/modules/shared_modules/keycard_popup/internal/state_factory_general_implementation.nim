@@ -145,8 +145,6 @@ proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: St
     return newMaxPairingSlotsReachedState(flowType, backState)
   if stateToBeCreated == StateType.MigratingKeyPair:
     return newMigratingKeyPairState(flowType, backState)
-  if stateToBeCreated == StateType.NoPCSCService:
-    return newNoPCSCServiceState(flowType, backState)
   if stateToBeCreated == StateType.NotKeycard:
     return newNotKeycardState(flowType, backState)
   if stateToBeCreated == StateType.ManageKeycardAccounts:

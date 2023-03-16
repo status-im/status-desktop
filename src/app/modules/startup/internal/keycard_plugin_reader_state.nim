@@ -17,5 +17,4 @@ method executeBackCommand*(self: KeycardPluginReaderState, controller: Controlle
 
 method resolveKeycardNextState*(self: KeycardPluginReaderState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
-  controller.setKeycardData("")
   return ensureReaderAndCardPresenceAndResolveNextOnboardingState(self, keycardFlowType, keycardEvent, controller)

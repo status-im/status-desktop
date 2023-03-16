@@ -76,8 +76,7 @@ StatusModal {
         property bool selectedKeyUidMigratedToKeycard: RootStore.defaultSelectedKeyUidMigratedToKeycard
         property string selectedPath: ""
         property string selectedAddress: ""
-        property bool selectedAddressAvailable: false
-        property bool useFullyCustomPath: false
+        property bool selectedAddressAvailable: true
 
         readonly property bool authenticationNeeded: d.selectedAccountType !== Constants.AddAccountType.WatchOnly &&
                                                      d.password === ""
@@ -91,22 +90,16 @@ StatusModal {
         }
 
         function getDerivedAddressList() {
-            if (d.useFullyCustomPath) {
-                if(!!d.selectedPath && !!d.selectedAccountDerivedFromAddress
-                          && (d.password.length > 0)) {
-                    RootStore.getDerivedAddressList(d.password, d.selectedAccountDerivedFromAddress,
-                                                    d.selectedPath, numOfItems, pageNumber,
-                                                    !(d.selectedKeyUidMigratedToKeycard || userProfile.isKeycardUser))
-                }
-            } else if(d.selectedAccountType === Constants.AddAccountType.ImportSeedPhrase
+            if(d.selectedAccountType === Constants.AddAccountType.ImportSeedPhrase
                     && !!advancedSelection.expandableItem.path
                     && !!advancedSelection.expandableItem.mnemonicText) {
                 RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText,
-                                                            advancedSelection.expandableItem.path, numOfItems, pageNumber)
+                                                           advancedSelection.expandableItem.path, numOfItems, pageNumber)
             } else if(!!d.selectedPath && !!d.selectedAccountDerivedFromAddress
                       && (d.password.length > 0)) {
-                RootStore.getDerivedAddress(d.password, d.selectedAccountDerivedFromAddress, d.selectedPath,
-                                            !(d.selectedKeyUidMigratedToKeycard || userProfile.isKeycardUser))
+                RootStore.getDerivedAddressList(d.password, d.selectedAccountDerivedFromAddress,
+                                                d.selectedPath, numOfItems, pageNumber,
+                                                !(d.selectedKeyUidMigratedToKeycard || userProfile.isKeycardUser))
             }
         }
 
@@ -128,13 +121,9 @@ StatusModal {
                                                                                    accountNameInput.input.asset.emoji)
                 }
                 else {
-                    let finalFullPath = advancedSelection.expandableItem.completePath
-                    if (!d.useFullyCustomPath) {
-                        finalFullPath = d.selectedPath
-                    }
-                    errMessage = RootStore.generateNewAccount(d.password, accountNameInput.text, colorSelectionGrid.selectedColor,
-                                                              accountNameInput.input.asset.emoji, finalFullPath,
-                                                              advancedSelection.expandableItem.derivedFromAddress)
+                errMessage = RootStore.generateNewAccount(d.password, accountNameInput.text, colorSelectionGrid.selectedColor,
+                                                          accountNameInput.input.asset.emoji, advancedSelection.expandableItem.completePath,
+                                                          advancedSelection.expandableItem.derivedFromAddress)
                 }
                 break
             case Constants.AddAccountType.ImportSeedPhrase:
@@ -168,7 +157,7 @@ StatusModal {
                 d.password = ""
                 if (d.selectedKeyUidMigratedToKeycard &&
                         d.selectedAccountType === Constants.AddAccountType.GenerateNew) {
-                    RootStore.authenticateUserAndDeriveAddressOnKeycardForPath(d.selectedKeyUid, d.selectedPath, true)
+                    RootStore.authenticateUserAndDeriveAddressOnKeycardForPath(d.selectedKeyUid, d.selectedPath)
                 }
                 else {
                     RootStore.authenticateUser()
@@ -289,8 +278,6 @@ StatusModal {
                 expandableComponent: AdvancedAddAccountView {
                     width: parent.width
                     onCalculateDerivedPath: {
-                        d.selectedAccountDerivedFromAddress = derivedFromAddress
-                        d.selectedPath = path
                         if (d.selectedKeyUidMigratedToKeycard) {
                             d.password = ""
                             validationError.text = ""
@@ -315,7 +302,6 @@ StatusModal {
                         d.selectedPath = Qt.binding(() => path)
                         d.selectedAddress = Qt.binding(() => selectedAddress)
                         d.selectedAddressAvailable = Qt.binding(() => selectedAddressAvailable)
-                        d.useFullyCustomPath = Qt.binding(() => useFullyCustomPath)
                         advancedSelection.isValid = Qt.binding(() => isValid)
                     }
                 }
@@ -334,10 +320,12 @@ StatusModal {
                 return qsTr("Add account")
             }
 
+
             enabled: {
-                if (!accountNameInput.valid ||
-                        loading ||
-                        ((root.authenticationNeeded && !d.useFullyCustomPath) && !d.selectedAddressAvailable)) {
+                if (!accountNameInput.valid) {
+                    return false
+                }
+                if (loading) {
                     return false
                 }
                 return advancedSelection.isValid

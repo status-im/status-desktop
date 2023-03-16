@@ -62,7 +62,6 @@ proc upsertNetwork*(self: Service, network: NetworkDto) =
     layer: network.layer,
     chainName: network.chainName,
     rpcURL: network.rpcURL,
-    fallbackURL: network.fallbackURL,
     blockExplorerURL: network.blockExplorerURL,
     iconURL: network.iconURL,
     nativeCurrencyName: network.nativeCurrencyName,

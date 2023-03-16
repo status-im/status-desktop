@@ -148,7 +148,7 @@ Rectangle {
                 width: ListView.view.width - Style.current.padding * 2
                 highlighted: !ListView.view.footerItem.button.highlighted &&
                              RootStore.currentAccount.name === model.name
-                anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
+                anchors.horizontalCenter: parent.horizontalCenter
                 title: model.name
                 subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
                 asset.emoji: !!model.emoji ? model.emoji: ""
@@ -169,9 +169,9 @@ Rectangle {
                 components: [
                     StatusIcon {
                         icon: {
-                            if (model.walletType === Constants.watchWalletType)
+                            if (model.walletType == "watch")
                                 return "show"
-                            if (model.walletType === Constants.keyWalletType)
+                            else if (model.walletType == "key")
                                 return "keycard"
 
                             return ""

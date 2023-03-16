@@ -118,13 +118,13 @@ QtObject:
   proc editMessage*(self: View, messageId: string, contentType: int, updatedMsg: string) {.slot.} =
     self.delegate.editMessage(messageId, contentType, updatedMsg)
 
-  proc getLinkPreviewData*(self: View, link: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string {.slot.} =
-    return self.delegate.getLinkPreviewData(link, uuid, whiteListedSites, whiteListedImgExtensions, unfurlImages)
+  proc getLinkPreviewData*(self: View, link: string, uuid: string): string {.slot.} =
+    return self.delegate.getLinkPreviewData(link, uuid)
 
-  proc linkPreviewDataWasReceived*(self: View, previewData: string, uuid: string) {.signal.}
+  proc linkPreviewDataWasReceived*(self: View, previewData: string) {.signal.}
 
-  proc onPreviewDataLoaded*(self: View, previewData: string, uuid: string) {.slot.} =
-    self.linkPreviewDataWasReceived(previewData, uuid)
+  proc onPreviewDataLoaded*(self: View, previewData: string) {.slot.} =
+    self.linkPreviewDataWasReceived(previewData)
 
   proc switchToMessage(self: View, messageIndex: int) {.signal.}
   proc emitSwitchToMessageSignal*(self: View, messageIndex: int) =

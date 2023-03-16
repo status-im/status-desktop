@@ -7,27 +7,10 @@ import utils 1.0
 ChartStoreBase {
     id: root
 
-    readonly property alias address: d.address
-    readonly property alias tokenSymbol: d.tokenSymbol
-    readonly property alias currencySymbol: d.currencySymbol
-
-    QtObject {
-        id: d
-
-        // Data identity received from backend
-        property var chainIds: []
-        property string address
-        property string tokenSymbol
-        property string currencySymbol
-    }
-
-    function hasData(address, tokenSymbol, currencySymbol, timeRangeEnum) {
-        return address === d.address && tokenSymbol === d.tokenSymbol && currencySymbol === d.currencySymbol
-                && root.dataRange[root.timeRangeEnumToTimeIndex(timeRangeEnum)][root.timeRangeEnumToStr(timeRangeEnum)].length > 0
-    }
+    /*required*/ property string address: ""
 
     /// \arg timeRange: of type ChartStoreBase.TimeRange
-    function setData(address, tokenSymbol, currencySymbol, timeRange, timeRangeData, balanceData) {
+    function setData(timeRange, timeRangeData, balanceData) {
         switch(timeRange) {
             case ChartStoreBase.TimeRange.Weekly:
                 root.weeklyData = balanceData
@@ -56,41 +39,37 @@ ChartStoreBase {
             break;
             default:
                 console.warn("Invalid or unsupported time range")
-                return
+            break;
         }
-
-        d.address = address
-        d.tokenSymbol = tokenSymbol
-        d.currencySymbol = currencySymbol
-
-        root.newDataReady(address, tokenSymbol, currencySymbol, timeRange)
+        root.newDataReady(timeRange)
     }
 
-    function resetAllData(address, tokenSymbol, currencySymbol) {
-        for (let tR = ChartStoreBase.TimeRange.Weekly; tR <= ChartStoreBase.TimeRange.All; tR++) {
-            root.setData(address, tokenSymbol, currencySymbol, tR, [], [])
-        }
+    /// \arg timeRange: of type ChartStoreBase.TimeRange
+    function resetData(timeRange) {
+        root.setData(timeRange, [], [])
     }
 
     Connections {
         target: walletSectionAllTokens
-
-        function onTokenBalanceHistoryDataReady(balanceHistoryJson: string) {
-            // chainIds, address, tokenSymbol, currencySymbol, timeInterval
-            let response = JSON.parse(balanceHistoryJson)
-            if(typeof response.error !== "undefined") {
-                console.warn("error in balance history: " + response.error)
+        function onTokenBalanceHistoryDataReady(balanceHistory: string) {
+           // chainId, address, symbol, timeInterval
+            let response = JSON.parse(balanceHistory)
+            if (response === null) {
+                console.warn("error parsing balance history json message data")
+                root.resetRequestTime()
                 return
-            }
-
-            if(d.address != response.address || d.tokenSymbol != response.tokenSymbol || d.currencySymbol != response.currencySymbol) {
-                root.resetAllData(response.address, response.tokenSymbol, response.currencySymbol)
             }
 
             if(typeof response.historicalData === "undefined" || response.historicalData === null || response.historicalData.length == 0) {
-                console.info("no data in balance history")
+                console.warn("error no data in balance history. Must be an error from status-go")
+                root.resetRequestTime()
+                return
+            } else if(response.address !== root.address) {
+                // Ignore data for other addresses. Will be handled by other instances of this store
                 return
             }
+
+            root.resetData(response.timeInterval)
 
             var tmpTimeRange = []
             var tmpDataValues = []
@@ -102,10 +81,11 @@ ChartStoreBase {
                     : LocaleUtils.getMonthYear(dataEntry.time * 1000)
                 tmpTimeRange.push(dateString)
 
-                tmpDataValues.push(dataEntry.value)
+                tmpDataValues.push(parseFloat(globalUtils.wei2Eth(dataEntry.value, 18)))
             }
 
-            root.setData(response.address, response.tokenSymbol, response.currencySymbol, response.timeInterval, tmpTimeRange, tmpDataValues)
+            root.setData(response.timeInterval, tmpTimeRange, tmpDataValues)
+            root.updateRequestTime(response.timeInterval)
         }
     }
 }

@@ -60,13 +60,8 @@ ctest --test-dir ./build
 
 ### Build with QtCreator
 
-Go to QtCreator's preferences navigate to Environment -> System -> Environment -> Change add GOBIN to the PATH
-
-### MacOS instructions
-
-If go is installed with `brew` use the following configuration otherwise adapt it to your environment. Also this will allow access to conan if installed by brew
-
-Use this in the Environment section of the QtCreator's preferences:
+If go is installed with brew use the following configuration otherwise adapt the configuration.
+Go to QtCreator's preferences navigate to Environment -> System -> Environment -> Change and paste
 
 ```ini
 GOBIN=${GOPATH}/bin

@@ -15,20 +15,20 @@ Feature: Status Desktop One to One Chat Flows
     [Cleanup] Also each scenario ends with:
     ** when the user leaves the current chat
 
+    @mayfail
     # Fails on CI. Issue #9335
-#    @mayfail
-#    Scenario: The user can create a one to chat
-#        When the user creates a one to one chat with "Athletic"
-#        Then the chat title is "Athletic"
-#        When the user sends a chat message "Test message"
-#        Then the last chat message contains "Test message"
-#
-#    Scenario: After sending a message the user sees chats order by most recent activity
-#        When the user creates a one to one chat with "Athletic"
-#        And the user creates a one to one chat with "Nervous"
-#        And the user switches to "Athletic" chat
-#        And the user sends a random chat message
-#        Then the random chat message is displayed
-#        And the user chats are sorted accordingly
-#        | Athletic |
-#        | Nervous  |
+    Scenario: The user can create a one to chat
+        When the user creates a one to one chat with "Athletic"
+        Then the chat title is "Athletic"
+        When the user sends a chat message "Test message"
+        Then the last chat message contains "Test message"
+
+    Scenario: After sending a message the user sees chats order by most recent activity
+        When the user creates a one to one chat with "Athletic"
+        And the user creates a one to one chat with "Nervous"
+        And the user switches to "Athletic" chat
+        And the user sends a random chat message
+        Then the random chat message is displayed
+        And the user chats are sorted accordingly
+        | Athletic |
+        | Nervous  |

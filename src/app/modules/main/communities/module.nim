@@ -21,9 +21,7 @@ import ../../../core/eventemitter
 import ../../../../app_service/common/types
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
-import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/chat/dto/chat
-import ./tokens/module as community_tokens_module
 
 export io_interface
 
@@ -40,20 +38,17 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
-    curatedCommunitiesLoaded: bool
-    communityTokensModule: community_tokens_module.AccessInterface
 
 # Forward declaration
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
-method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
+method setCuratedCommunities*(self: Module, curatedCommunities: seq[CuratedCommunity])
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service,
-    contactsService: contacts_service.Service,
-    communityTokensService: community_tokens_service.Service): Module =
+    contactsService: contacts_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
@@ -63,22 +58,17 @@ proc newModule*(
     events,
     communityService,
     contactsService,
-    communityTokensService,
   )
-  result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService)
   result.moduleLoaded = false
-  result.curatedCommunitiesLoaded = false
 
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
-  self.communityTokensModule.delete
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("communitiesModule", self.viewVariant)
   self.controller.init()
-  self.communityTokensModule.load()
   self.view.load()
 
 method isLoaded*(self: Module): bool =
@@ -89,26 +79,9 @@ method viewDidLoad*(self: Module) =
 
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
+  self.setCuratedCommunities(self.controller.getCuratedCommunities())
 
   self.delegate.communitiesModuleDidLoad()
-
-method onActivated*(self: Module) =
-  if self.curatedCommunitiesLoaded:
-    return
-  self.controller.asyncLoadCuratedCommunities()
-
-method curatedCommunitiesLoaded*(self: Module, curatedCommunities: seq[CommunityDto]) =
-  self.curatedCommunitiesLoaded = true
-  self.setCuratedCommunities(curatedCommunities)
-  self.view.setCuratedCommunitiesLoading(false)
-
-method curatedCommunitiesLoading*(self: Module) =
-  self.view.setCuratedCommunitiesLoading(true)
-
-method curatedCommunitiesLoadingFailed*(self: Module) =
-  # TODO we probably want to show an error in the UI later
-  self.curatedCommunitiesLoaded = true
-  self.view.setCuratedCommunitiesLoading(false)
 
 proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
@@ -163,20 +136,19 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
       encrypted = c.encrypted,
-      communityTokens = self.controller.getCommunityTokens(c.id)
     )
 
-method getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityItem =
+method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommunityItem =
   return initCuratedCommunityItem(
-      c.id,
-      c.name,
-      c.description,
-      c.isAvailable,
-      c.images.thumbnail,
-      c.images.banner,
-      c.color,
-      c.tags,
-      len(c.members))
+      c.communityId,
+      c.community.name,
+      c.community.description,
+      c.available,
+      c.community.images.thumbnail,
+      c.community.images.banner,
+      c.community.color,
+      c.community.tags,
+      len(c.community.members))
 
 method getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
   return initDiscordCategoryItem(
@@ -217,14 +189,14 @@ method communityEdited*(self: Module, community: CommunityDto) =
   self.view.model().editItem(self.getCommunityItem(community))
   self.view.communityChanged(community.id)
 
-method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto]) =
+method setCuratedCommunities*(self: Module, curatedCommunities: seq[CuratedCommunity]) =
   for community in curatedCommunities:
     self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
-method curatedCommunityAdded*(self: Module, community: CommunityDto) =
+method curatedCommunityAdded*(self: Module, community: CuratedCommunity) =
   self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
-method curatedCommunityEdited*(self: Module, community: CommunityDto) =
+method curatedCommunityEdited*(self: Module, community: CuratedCommunity) =
   self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
 method requestAdded*(self: Module) =

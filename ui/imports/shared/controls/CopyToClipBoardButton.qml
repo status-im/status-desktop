@@ -10,8 +10,7 @@ StatusRoundButton {
     property var onClick: function() {}
     property string textToCopy: ""
     property bool tooltipUnder: false
-
-    signal copyClicked(string textToCopy)
+    property var store
 
     icon.name: "copy"
 
@@ -22,7 +21,7 @@ StatusRoundButton {
     }
     onClicked: {
         if (textToCopy) {
-            copyToClipboardButton.copyClicked(textToCopy)
+            store.copyToClipboard(textToCopy)
         }
         onClick()
     }

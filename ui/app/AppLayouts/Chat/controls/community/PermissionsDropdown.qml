@@ -21,7 +21,7 @@ StatusDropdown {
         Add, Update
     }
 
-    signal done(int permissionType)
+    signal done(int permissionType, string title, string asset)
 
     width: d.width
     padding: d.padding
@@ -54,35 +54,6 @@ StatusDropdown {
         readonly property int descriptionLineHeight: 18
 
         readonly property int buttonTopMargin: 32
-
-        component CustomSeparator: Item {
-            property alias text: baseText.text
-
-            StatusBaseText {
-                id: baseText
-
-                anchors.margins: d.extraMarginForText
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-
-                color: Theme.palette.baseColor1
-                font.pixelSize: d.sectionFontSize
-                elide: Text.ElideRight
-            }
-        }
-
-        component CustomPermissionListItem: PermissionListItem {
-            required property int permissionType
-            required property string description
-
-            title: PermissionTypes.getName(permissionType)
-            description: PermissionTypes.getDescription(permissionType)
-            asset.name: PermissionTypes.getIcon(permissionType)
-            checked: d.initialPermissionType === permissionType
-
-            buttonGroup: group
-        }
     }
 
     ButtonGroup {
@@ -92,47 +63,107 @@ StatusDropdown {
     contentItem: ColumnLayout {
         spacing: 0
 
-        CustomSeparator {
+        Item {
             Layout.fillWidth: true
             Layout.preferredHeight: d.sectionHeight
 
-            text: qsTr("Community")
+            StatusBaseText {
+                anchors.margins: d.extraMarginForText
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                text: qsTr("Community")
+                color: Theme.palette.baseColor1
+                font.pixelSize: d.sectionFontSize
+                elide: Text.ElideRight
+            }
         }
 
-        CustomPermissionListItem {
-            permissionType: PermissionTypes.Type.Admin
+        PermissionListItem {
+            readonly property int permissionType: PermissionTypes.Type.Admin
+            readonly property string description: {
+                const generalInfo = qsTr("Members who meet the requirements will be allowed to create and edit permissions, token sales, airdrops and subscriptions")
+                const warning = qsTr("Be careful with assigning this permission.")
+                const warningExplanation = qsTr("Only the community owner can modify admin permissions")
+
+                const warningStyled = `<font color="${Theme.palette.dangerColor1}">${warning}</font>`
+                return `${generalInfo}<br><br>${warningStyled} ${warningExplanation}`
+            }
+
+            title: qsTr("Become admin")
+            asset.name: "admin"
+            checked: d.initialPermissionType === permissionType
+            buttonGroup: group
+
             enabled: root.enableAdminPermission
 
             Layout.fillWidth: true
         }
 
-        CustomPermissionListItem {
-            permissionType: PermissionTypes.Type.Member
+        PermissionListItem {
+            readonly property int permissionType: PermissionTypes.Type.Member
+            readonly property string description:
+                qsTr("Anyone who meets the requirements will be allowed to join your community")
+
+            title: qsTr("Become member")
+            asset.name: "in-contacts"
+            checked: d.initialPermissionType === permissionType
+            buttonGroup: group
 
             Layout.fillWidth: true
         }
 
-        CustomSeparator {
+        Item {
             Layout.fillWidth: true
             Layout.preferredHeight: d.sectionHeight
 
-            text: qsTr("Channels")
+            StatusBaseText {
+                anchors.margins: d.extraMarginForText
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                text: qsTr("Channels")
+                color: Theme.palette.baseColor1
+                font.pixelSize: d.sectionFontSize
+                elide: Text.ElideRight
+            }
         }
 
-        CustomPermissionListItem {
-            permissionType: PermissionTypes.Type.Moderator
+        PermissionListItem {
+            readonly property int permissionType: PermissionTypes.Type.Moderator
+            readonly property string description:
+                qsTr("Members who meet the requirements will be allowed to read, write, ban members and pin messages in the selected channels")
+
+            title: qsTr("Moderate")
+            asset.name: "arbitrator"
+            checked: d.initialPermissionType === permissionType
+            buttonGroup: group
 
             Layout.fillWidth: true
         }
 
-        CustomPermissionListItem {
-            permissionType: PermissionTypes.Type.ViewAndPost
+        PermissionListItem {
+            readonly property int permissionType: PermissionTypes.Type.ViewAndPost
+            readonly property string description:
+                qsTr("Members who meet the requirements will be allowed to read and write in the selected channels")
+
+            title: qsTr("View and post")
+            asset.name: "edit"
+            checked: d.initialPermissionType === permissionType
+            buttonGroup: group
 
             Layout.fillWidth: true
         }
 
-        CustomPermissionListItem {
-            permissionType: PermissionTypes.Type.Read
+        PermissionListItem {
+            readonly property int permissionType: PermissionTypes.Type.Read
+            readonly property string description:
+                qsTr("Members who meet the requirements will be allowed to read the selected channels")
+
+            title: qsTr("View only")
+            asset.name: "show"
+            checked: d.initialPermissionType === permissionType
+            buttonGroup: group
 
             Layout.fillWidth: true
         }
@@ -167,7 +198,9 @@ StatusDropdown {
             text: root.mode === PermissionsDropdown.Mode.Add ? qsTr("Add") : qsTr("Update")
             enabled: !!group.checkedButton
 
-            onClicked: root.done(group.checkedButton.item.permissionType)
+            onClicked: root.done(group.checkedButton.item.permissionType,
+                                 group.checkedButton.item.title,
+                                 group.checkedButton.item.asset.name)
         }
     }
 }

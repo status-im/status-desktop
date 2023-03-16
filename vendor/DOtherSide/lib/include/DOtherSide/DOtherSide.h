@@ -60,8 +60,6 @@ DOS_API void DOS_CALL dos_qguiapplication_enable_hdpi(const char *uiScaleFilePat
 
 DOS_API void DOS_CALL dos_qguiapplication_initialize_opengl(void);
 
-DOS_API void DOS_CALL dos_qguiapplication_try_enable_threaded_renderer();
-
 /// \brief Create a QGuiApplication
 /// \note The created QGuiApplication should be freed by calling dos_qguiapplication_delete()
 DOS_API void DOS_CALL dos_qguiapplication_create();

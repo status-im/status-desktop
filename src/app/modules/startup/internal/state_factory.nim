@@ -1,7 +1,6 @@
 import sequtils, sugar, chronicles
 import ../../../global/global_singleton
 import ../../../../constants as main_constants
-import ../../../../app_service/common/utils as common_utils
 import ../../../../app_service/service/keycard/constants
 import ../controller
 from ../../../../app_service/service/keycard/service import KCSFlowType
@@ -19,7 +18,6 @@ logScope:
 # General section
 proc createState*(stateToBeCreated: StateType, flowType: FlowType, backState: State): State
 proc findBackStateWithTargetedStateType*(currentState: State, targetedStateType: StateType): State
-proc findBackStateWhichDoesNotBelongToAnyOfReadingStates*(currentState: State): State
 # Resolve state section
 proc ensureReaderAndCardPresenceOnboarding*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
 proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
@@ -27,7 +25,6 @@ proc ensureReaderAndCardPresenceAndResolveNextOnboardingState*(state: State, key
 proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State
 
 include biometrics_state 
-include keycard_no_pcsc_service_state 
 include keycard_create_pin_state 
 include keycard_display_seed_phrase_state 
 include keycard_empty_state
@@ -64,7 +61,6 @@ include welcome_state_new_user
 include welcome_state_old_user
 include welcome_state
 include login_state
-include login_no_pcsc_service_state 
 include login_plugin_state
 include login_keycard_converted_to_regular_account_state
 include login_keycard_insert_keycard_state
@@ -87,8 +83,6 @@ include profile_fetching_timeout_state
 include profile_fetching_announcement_state
 include recover_old_user_state
 include lost_keycard_options_state
-include sync_device_with_sync_code
-include sync_device_result
 
 include state_factory_general_implementation
 include state_factory_onboarding_implementation

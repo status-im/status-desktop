@@ -5,9 +5,12 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import Sandbox 0.1
 
-ColumnLayout {
-    spacing: 5
+GridLayout {
+    columns: 1
+    columnSpacing: 5
+    rowSpacing: 5
 
     StatusSelectableText {
         color: Theme.palette.baseColor1
@@ -143,7 +146,7 @@ ColumnLayout {
     }
 
     Item {
-        implicitWidth: 140
+        implicitWidth: 100
         implicitHeight: 48
         StatusChatInfoButton {
             title: "Iuri Matias elided"
@@ -154,7 +157,7 @@ ColumnLayout {
             type: StatusChatInfoButton.Type.OneToOneChat
             muted: true
             pinnedMessagesCount: 10
-            width: parent.width
+            width: 100
         }
     }
 
@@ -180,7 +183,6 @@ ColumnLayout {
         pinnedMessagesCount: 1
         asset.color: Theme.palette.miscColor7
         type: StatusChatInfoButton.Type.GroupChat
-        muted: true
     }
 
     StatusChatInfoButton {
@@ -191,17 +193,11 @@ ColumnLayout {
     }
 
     StatusChatInfoButton {
-        title: "public-chat-type"
-        subTitle: "Some very long description text with hover disabled to see how the whole item wraps or elides"
+        title: "community-channel"
+        subTitle: "Some very long description text to see how the whole item wraps or elides"
         asset.color: Theme.palette.miscColor7
-        type: StatusChatInfoButton.Type.PublicChat
+        type: StatusChatInfoButton.Type.CommunityChat
         pinnedMessagesCount: 3
-        hoverEnabled: false
-    }
-
-    StatusChatInfoButton {
-        title: "No subtitle and no type"
-        asset.color: Theme.palette.miscColor7
     }
 
     StatusSlider {

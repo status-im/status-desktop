@@ -1,7 +1,6 @@
 import QtQuick 2.14
 
 import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
 
 /*!
    \qmltype StatusFloatValidator
@@ -54,9 +53,8 @@ StatusValidator {
     name: "floatValidator"
     errorMessage: qsTr("Please enter a valid numeric value.")
 
-    validate: function (tStr) {
-         var t = LocaleUtils.numberFromLocaleString(tStr, root.locale)
-         return !isNaN(t) && t >= bottom && t <= top  ? true : {
+    validate: function (t) {
+        return !isNaN(t) && t >= bottom && t <= top  ? true : {
                                              bottom: bottom,
                                              top: top,
                                              actual: t

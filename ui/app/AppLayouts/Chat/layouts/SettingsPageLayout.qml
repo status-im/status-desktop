@@ -16,9 +16,7 @@ Item {
     property string title
     property Component content
 
-
     // optional
-    property Component footer
     property bool dirty: false
     property bool editable: false
     property bool headerButtonVisible: false
@@ -90,12 +88,6 @@ Item {
             Layout.rightMargin: 24
 
             sourceComponent: root.content
-        }
-
-        Loader {
-            visible: !!root.footer
-            Layout.fillWidth: true
-            sourceComponent: root.footer
         }
     }
 

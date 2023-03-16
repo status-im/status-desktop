@@ -3,9 +3,7 @@ pragma Singleton
 import QtQuick 2.13
 
 import utils 1.0
-import SortFilterProxyModel 0.2
-import StatusQ.Core.Theme 0.1
-
+import "../panels"
 
 QtObject {
     id: root
@@ -28,33 +26,11 @@ QtObject {
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
-    property var flatCollectibles: walletSectionCollectibles.model
+    property var collections: walletSectionCollectibles.model
+    property var flatCollectibles: walletSectionCollectibles.flatModel
     property var currentCollectible: walletSectionCurrentCollectible
 
-    property var savedAddresses: SortFilterProxyModel {
-        sourceModel: walletSectionSavedAddresses.model
-        filters: [
-            ValueFilter {
-                roleName: "isTest"
-                value: networksModule.areTestNetworksEnabled
-            }
-        ]
-    }
-
-    property QtObject _d: QtObject {
-        id: d
-        property var chainColors: ({})
-
-        function initChainColors(model) {
-            for (let i = 0; i < model.count; i++) {
-                chainColors[model.rowData(i, "shortName")] = model.rowData(i, "chainColor")
-            }
-        }
-    }
-
-    function colorForChainShortName(chainShortName) {
-        return d.chainColors[chainShortName]
-    }
+    property var savedAddresses: walletSectionSavedAddresses.model
 
     // Used for new wallet account generation
     property var generatedAccountsViewModel: walletSectionAccounts.generatedAccounts
@@ -65,9 +41,6 @@ QtObject {
     property var testNetworks: networksModule.test
     property var enabledNetworks: networksModule.enabled
     property var allNetworks: networksModule.all
-    onAllNetworksChanged: {
-        d.initChainColors(allNetworks)
-    }
     property var layer1NetworksProxy: networksModule.layer1Proxy
     property var layer2NetworksProxy: networksModule.layer2Proxy
 
@@ -140,10 +113,6 @@ QtObject {
             walletSection.switchAccount(newIndex)
     }
 
-    function switchAccountByAddress(address) {
-        walletSection.switchAccountByAddress(address)
-    }
-
     function generateNewAccount(password, accountName, color, emoji, path, derivedFrom) {
         return walletSectionAccounts.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
     }
@@ -184,6 +153,10 @@ QtObject {
         return globalUtils.hex2Dec(value)
     }
 
+    function fetchCollectibles(slug) {
+        walletSectionCollectibles.fetchCollectibles(slug)
+    }
+
     function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {
         // Not Refactored Yet
 //        if(maxValue !== "")
@@ -193,20 +166,16 @@ QtObject {
 //            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
     }
 
-    function selectCollectible(address, tokenId) {
-        walletSectionCurrentCollectible.update(address, tokenId)
+    function selectCollectible(slug, id) {
+        walletSectionCurrentCollectible.update(slug, id)
     }
 
-    function getNameForSavedWalletAddress(address) {
-        return walletSectionSavedAddresses.getNameByAddress(address)
+    function createOrUpdateSavedAddress(name, address, favourite) {
+        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite)
     }
 
-    function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {
-        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
-    }
-
-    function deleteSavedAddress(address, ens) {
-        return walletSectionSavedAddresses.deleteSavedAddress(address, ens)
+    function deleteSavedAddress(address) {
+        return walletSectionSavedAddresses.deleteSavedAddress(address)
     }
 
     function toggleNetwork(chainId) {
@@ -215,10 +184,6 @@ QtObject {
 
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
-    }
-
-    function getDerivedAddress(password, derivedFrom, path, hashPassword) {
-        walletSectionAccounts.getDerivedAddress(password, derivedFrom, path, hashPassword)
     }
 
     function getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword) {
@@ -281,7 +246,7 @@ QtObject {
         walletSectionAccounts.destroySharedKeycarModule()
     }
 
-    function authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath, searchForFirstAvailableAddress) {
-        walletSectionAccounts.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath, searchForFirstAvailableAddress)
+    function authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath) {
+        walletSectionAccounts.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath)
     }
 }

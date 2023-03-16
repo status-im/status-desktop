@@ -53,6 +53,12 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  let recentStickers = self.stickerService.getRecentStickers()
+  for sticker in recentStickers:
+    self.delegate.addRecentStickerToList(sticker)
+
+  let installedStickers = self.stickerService.getInstalledStickerPacks()
+  self.delegate.populateInstalledStickerPacks(installedStickers)
 
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
     self.disconnected = true
@@ -68,11 +74,6 @@ proc init*(self: Controller) =
       self.obtainMarketStickerPacks()
       self.disconnected = false
 
-  self.events.on(SIGNAL_LOAD_RECENT_STICKERS_DONE) do(e: Args):
-    let args = StickersArgs(e)
-    for sticker in args.stickers:
-      self.delegate.addRecentStickerToList(sticker)
-
   self.events.on(SIGNAL_STICKER_PACK_LOADED) do(e: Args):
     let args = StickerPackLoadedArgs(e)
     self.delegate.addStickerPackToList(
@@ -81,11 +82,6 @@ proc init*(self: Controller) =
       args.isBought,
       args.isPending
     )
-
-  self.events.on(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE) do(e: Args):
-    let args = StickerPacksArgs(e)
-    self.delegate.installedStickerPacksLoaded()
-    self.delegate.populateInstalledStickerPacks(args.packs)
 
   self.events.on(SIGNAL_ALL_STICKER_PACKS_LOADED) do(e: Args):
     self.delegate.allPacksLoaded()
@@ -117,15 +113,6 @@ proc init*(self: Controller) =
 
 proc buy*(self: Controller, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
   self.stickerService.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
-
-proc getRecentStickers*(self: Controller): seq[StickerDto] = 
-  return self.stickerService.getRecentStickers()
-
-proc loadRecentStickers*(self: Controller) =
-  self.stickerService.asyncLoadRecentStickers()
-
-proc loadInstalledStickerPacks*(self: Controller) =
-  self.stickerService.asyncLoadInstalledStickerPacks()
 
 proc estimate*(self: Controller, packId: string, address: string, price: string, uuid: string) =
   self.stickerService.estimate(packId, address, price, uuid)

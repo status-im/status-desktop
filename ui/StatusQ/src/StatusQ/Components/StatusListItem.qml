@@ -10,7 +10,7 @@ import QtGraphicalEffects 1.14
 import "private"
 
 Rectangle {
-    id: root
+    id: statusListItem
 
     property string itemId: ""
     property string titleId: ""
@@ -46,7 +46,6 @@ Rectangle {
             Theme.palette.dangerColor1 : Theme.palette.primaryColor1
         bgWidth: 40
         bgHeight: 40
-        bgRadius: bgWidth / 2
         bgColor: {
             if (sensor.containsMouse) {
                 return type === StatusListItem.Type.Secondary ||
@@ -81,7 +80,6 @@ Rectangle {
 
     signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)
-    signal iconClicked(var mouse)
 
     enum Type {
         Primary,
@@ -97,7 +95,7 @@ Rectangle {
         return Math.max(64, statusListItemTitleArea.height + 90)
     }
     color: {
-        if (sensor.containsMouse || root.highlighted) {
+        if (sensor.containsMouse || statusListItem.highlighted) {
             switch(type) {
                 case StatusListItem.Type.Primary:
                     return Theme.palette.baseColor2
@@ -123,7 +121,7 @@ Rectangle {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
-            root.clicked(root.itemId, mouse)
+            statusListItem.clicked(statusListItem.itemId, mouse)
         }
     }
 
@@ -138,18 +136,16 @@ Rectangle {
         StatusSmartIdenticon {
             id: iconOrImage
             anchors.left: parent.left
-            anchors.leftMargin: root.leftPadding
+            anchors.leftMargin: statusListItem.leftPadding
             anchors.verticalCenter: parent.verticalCenter
-            asset: root.asset
-            name: root.title
-            active: root.asset.isLetterIdenticon ||
-                    !!root.asset.name ||
-                    !!root.asset.emoji
-            badge.border.color: root.color
-            ringSettings: root.ringSettings
-            loading: root.loading
-
-            onClicked: root.iconClicked(mouse)
+            asset: statusListItem.asset
+            name: statusListItem.title
+            active: statusListItem.asset.isLetterIdenticon ||
+                    !!statusListItem.asset.name ||
+                    !!statusListItem.asset.emoji
+            badge.border.color: statusListItem.color
+            ringSettings: statusListItem.ringSettings
+            loading: statusListItem.loading
         }
 
         Item {
@@ -160,20 +156,20 @@ Rectangle {
                 if(titleIconsRow.item) {
                     isIconsRowVisible = true//titleIconsRow.item.visible
                 }
-                return !root.titleAsideText && !isIconsRowVisible ? statusListItemTitleArea.right : undefined
+                return !statusListItem.titleAsideText && !isIconsRowVisible ? statusListItemTitleArea.right : undefined
             }
 
             anchors.left: iconOrImage.active ? iconOrImage.right : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
-            anchors.leftMargin: iconOrImage.active ? 16 : root.leftPadding
-            anchors.rightMargin: Math.max(root.rightPadding, titleIconsRow.requiredWidth)
+            anchors.leftMargin: iconOrImage.active ? 16 : statusListItem.leftPadding
+            anchors.rightMargin: Math.max(statusListItem.rightPadding, titleIconsRow.requiredWidth)
             anchors.verticalCenter:  bottomModel.length === 0 ? parent.verticalCenter : undefined
 
             height: childrenRect.height
 
             StatusTextWithLoadingState {
                 id: statusListItemTitle
-                text: root.title
+                text: statusListItem.title
                 font.pixelSize: 15
                 height: visible ? contentHeight : 0
                 elide: Text.ElideRight
@@ -182,10 +178,10 @@ Rectangle {
                 anchors.topMargin: bottomModel.length === 0 ? undefined : 20
                 width: Math.min(implicitWidth, parent.width)
                 customColor: {
-                    if (!root.enabled) {
+                    if (!statusListItem.enabled) {
                         return Theme.palette.baseColor1
                     }
-                    switch (root.type) {
+                    switch (statusListItem.type) {
                         case StatusListItem.Type.Primary:
                             return Theme.palette.directColor1
                         case StatusListItem.Type.Secondary:
@@ -194,16 +190,16 @@ Rectangle {
                             return Theme.palette.dangerColor1
                     }
                 }
-                loading: root.loading
+                loading: statusListItem.loading
 
                 StatusIcon {
                     width: visible ? 12 : 0
                     height: visible ? 12 : 0
-                    visible: !!root.titleTextIcon
+                    visible: !!statusListItem.titleTextIcon
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: statusListItemTitle.contentWidth + 6
-                    icon: root.titleTextIcon
+                    icon: statusListItem.titleTextIcon
                 }
 
                 StatusToolTip {
@@ -216,12 +212,12 @@ Rectangle {
                 MouseArea {
                     id: statusListItemTitleMouseArea
                     anchors.fill: parent
-                    enabled: root.enabled
+                    enabled: statusListItem.enabled
                     cursorShape: sensor.enabled && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
-                    propagateComposedEvents: root.propagateTitleClicks
+                    propagateComposedEvents: statusListItem.propagateTitleClicks
                     onClicked: {
-                        root.titleClicked(root.titleId)
+                        statusListItem.titleClicked(statusListItem.titleId)
                         mouse.accepted = false
                     }
                 }
@@ -234,11 +230,11 @@ Rectangle {
                 anchors.verticalCenter: statusListItemTitle.verticalCenter
                 anchors.top: bottomModel.length === 0 ? undefined:  parent.top
                 anchors.topMargin: bottomModel.length === 0 ? undefined : 20
-                text: root.titleAsideText
+                text: statusListItem.titleAsideText
                 font.pixelSize: 10
                 customColor: Theme.palette.baseColor1
-                visible: !!root.titleAsideText
-                loading: root.loading
+                visible: !!statusListItem.titleAsideText
+                loading: statusListItem.loading
             }
 
             Loader {
@@ -246,7 +242,7 @@ Rectangle {
 
                 readonly property int requiredWidth: active ? width + anchors.leftMargin * 2 : 0
 
-                anchors.left: !root.titleAsideText ? statusListItemTitle.right : statusListItemTitleAsideText.right
+                anchors.left: !statusListItem.titleAsideText ? statusListItemTitle.right : statusListItemTitleAsideText.right
                 anchors.verticalCenter: statusListItemTitle.verticalCenter
                 anchors.leftMargin: 4
             }
@@ -264,15 +260,13 @@ Rectangle {
                     Layout.alignment: Qt.AlignVCenter
                     Layout.preferredWidth: inlineTagModelRepeater.count > 0 ? contentWidth : parent.width
 
-                    text: root.subTitle
+                    text: statusListItem.subTitle
                     font.pixelSize: 15
-                    customColor: !root.enabled || !root.tertiaryTitle ?
+                    customColor: !statusListItem.enabled || !statusListItem.tertiaryTitle ?
                                      Theme.palette.baseColor1 : Theme.palette.directColor1
-                    visible: !!root.subTitle
+                    visible: !!statusListItem.subTitle
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    loading: root.loading
-                    maximumLineCount: 3
-                    elide: Text.ElideRight
+                    loading: statusListItem.loading
                 }
 
                 StatusTextWithLoadingState {
@@ -287,6 +281,7 @@ Rectangle {
                     lineHeight: 24
 
                     visible: inlineTagModelRepeater.count > 0
+                    loading: statusListItem.loading
                 }
 
                 StatusScrollView {
@@ -316,12 +311,12 @@ Rectangle {
                 anchors.top: statusListItemSubtitleTagsRow.bottom
                 width: parent.width
                 height: visible ? contentHeight : 0
-                text: root.tertiaryTitle
+                text: statusListItem.tertiaryTitle
                 customColor: Theme.palette.baseColor1
                 font.pixelSize: 13
-                visible: !!root.tertiaryTitle
+                visible: !!statusListItem.tertiaryTitle
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                loading: root.loading
+                loading: statusListItem.loading
             }
 
             StatusListItemBadge {
@@ -376,17 +371,17 @@ Rectangle {
             anchors.right: statusListItemComponentsSlot.left
             anchors.rightMargin: statusListItemComponentsSlot.width > 0 ? 10 : 0
 
-            text: root.label
+            text: statusListItem.label
             font.pixelSize: 15
             customColor: Theme.palette.baseColor1
-            visible: !!root.label
-            loading: root.loading
+            visible: !!statusListItem.label
+            loading: statusListItem.loading
         }
 
         Row {
             id: statusListItemComponentsSlot
             anchors.right: parent.right
-            anchors.rightMargin: root.rightPadding
+            anchors.rightMargin: statusListItem.rightPadding
             anchors.verticalCenter: bottomModel.length === 0 ? parent.verticalCenter : undefined
             anchors.top: bottomModel.length === 0 ? undefined:  parent.top
             anchors.topMargin: bottomModel.length === 0 ? undefined : 12

@@ -15,7 +15,6 @@ StatusEmoji 0.1 StatusEmoji.qml
 StatusContactVerificationIcons 0.1 StatusContactVerificationIcons.qml
 StatusDateGroupLabel 0.1 StatusDateGroupLabel.qml
 StatusDescriptionListItem 0.1 StatusDescriptionListItem.qml
-StatusDotsLoadingIndicator 0.1 StatusDotsLoadingIndicator.qml
 StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml
 StatusListItem 0.1 StatusListItem.qml
 StatusListSectionHeadline 0.1 StatusListSectionHeadline.qml
@@ -49,5 +48,3 @@ StatusChart 0.1 StatusChart.qml
 StatusChartPanel 0.1 StatusChartPanel.qml
 StatusStepper 0.1 StatusStepper.qml
 LoadingComponent 0.1 LoadingComponent.qml
-StatusQrCodeScanner 0.1 StatusQrCodeScanner.qml
-StatusSyncDeviceDelegate 0.1 StatusSyncDeviceDelegate.qml

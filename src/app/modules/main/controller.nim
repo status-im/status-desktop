@@ -17,9 +17,6 @@ import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/node/service as node_service
-import ../../../app_service/service/community_tokens/service as community_tokens_service
-import ../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../app_service/service/token/service as token_service
 
 import ../shared_models/section_item, io_interface
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -45,14 +42,11 @@ type
     privacyService: privacy_service.Service
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
-    communityTokensService: community_tokens_service.Service
     activeSectionId: string
     authenticateUserFlowRequestedBy: string
-    walletAccountService: wallet_account_service.Service
-    tokenService: token_service.Service
 
 # Forward declaration
-proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
+proc setActiveSection*(self: Controller, sectionId: string)
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -67,9 +61,6 @@ proc newController*(delegate: io_interface.AccessInterface,
   privacyService: privacy_service.Service,
   mailserversService: mailservers_service.Service,
   nodeService: node_service.Service,
-  communityTokensService: community_tokens_service.Service,
-  walletAccountService: wallet_account_service.Service,
-  tokenService: token_service.Service
 ):
   Controller =
   result = Controller()
@@ -86,9 +77,6 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.privacyService = privacyService
   result.nodeService = nodeService
   result.mailserversService = mailserversService
-  result.communityTokensService = communityTokensService
-  result.walletAccountService = walletAccountService
-  result.tokenService = tokenService
 
 proc delete*(self: Controller) =
   discard
@@ -111,9 +99,6 @@ proc init*(self: Controller) =
       self.messageService,
       self.gifService,
       self.mailserversService,
-      self.walletAccountService,
-      self.tokenService,
-      self.communityTokensService
     )
 
   self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e:Args):
@@ -146,9 +131,6 @@ proc init*(self: Controller) =
       self.messageService,
       self.gifService,
       self.mailserversService,
-      self.walletAccountService,
-      self.tokenService,
-      self.communityTokensService,
       setActive = args.fromUserAction
     )
 
@@ -165,9 +147,6 @@ proc init*(self: Controller) =
       self.messageService,
       self.gifService,
       self.mailserversService,
-      self.walletAccountService,
-      self.tokenService,
-      self.communityTokensService,
       setActive = args.fromUserAction
     )
 
@@ -188,9 +167,6 @@ proc init*(self: Controller) =
       self.messageService,
       self.gifService,
       self.mailserversService,
-      self.walletAccountService,
-      self.tokenService,
-      self.communityTokensService,
       setActive = true
     )
 
@@ -209,9 +185,6 @@ proc init*(self: Controller) =
       self.messageService,
       self.gifService,
       self.mailserversService,
-      self.walletAccountService,
-      self.tokenService,
-      self.communityTokensService,
       setActive = false
     )
 
@@ -305,14 +278,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_ADDED) do(e: Args):
     self.delegate.onMyRequestAdded();
 
-  self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYED) do(e: Args):
-    let args = CommunityTokenDeployedArgs(e)
-    self.delegate.onCommunityTokenDeployed(args.communityToken)
-
-  self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
-    let args = CommunityTokenDeployedStatusArgs(e)
-    self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.contractAddress, args.deployState)
-
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER:
@@ -355,11 +320,10 @@ proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
 
-proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false) =
+proc setActiveSection*(self: Controller, sectionId: string) =
   self.activeSectionId = sectionId
-  if not skipSavingInSettings:
-    let sectionIdToSave = if (sectionId == conf.SETTINGS_SECTION_ID): "" else: sectionId
-    singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionIdToSave)
+  let sectionIdToSave = if (sectionId == conf.SETTINGS_SECTION_ID): "" else: sectionId
+  singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionIdToSave)
   self.delegate.activeSectionSet(self.activeSectionId)
 
 proc getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentions:int] =
@@ -424,6 +388,3 @@ proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpda
 
 proc getVerificationRequestFrom*(self: Controller, publicKey: string): VerificationRequest =
   self.contactsService.getVerificationRequestFrom(publicKey)
-
-proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
-  self.communityTokensService.getCommunityTokens(communityId)

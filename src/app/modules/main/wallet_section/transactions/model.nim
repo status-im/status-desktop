@@ -16,6 +16,7 @@ type
     GasUsed
     Nonce
     TxStatus
+    Value
     From
     To
     Contract
@@ -26,18 +27,10 @@ type
     TxHash
     MultiTransactionID
     IsTimeStamp
-    IsNFT
     BaseGasFees
     TotalFees
     MaxTotalFees
-    LoadingTransaction
-    # Applies only to IsNFT == false
-    Value
     Symbol
-    # Applies only to IsNFT == true
-    TokenID
-    NFTName
-    NFTImageURL
 
 QtObject:
   type
@@ -99,15 +92,10 @@ QtObject:
       ModelRole.TxHash.int:"txHash",
       ModelRole.MultiTransactionID.int:"multiTransactionID",
       ModelRole.IsTimeStamp.int: "isTimeStamp",
-      ModelRole.IsNFT.int: "isNFT",
       ModelRole.BaseGasFees.int: "baseGasFees",
       ModelRole.TotalFees.int: "totalFees",
       ModelRole.MaxTotalFees.int: "maxTotalFees",
-      ModelRole.Symbol.int: "symbol",
-      ModelRole.LoadingTransaction.int: "loadingTransaction",
-      ModelRole.TokenID.int: "tokenID",
-      ModelRole.NFTName.int: "nftName",
-      ModelRole.NFTImageURL.int: "nftImageUrl"
+      ModelRole.Symbol.int: "symbol"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -164,9 +152,7 @@ QtObject:
     of ModelRole.MultiTransactionID:
       result = newQVariant(item.getMultiTransactionID())
     of ModelRole.IsTimeStamp:
-      result = newQVariant(item.getIsTimeStamp())
-    of ModelRole.IsNFT:
-      result = newQVariant(item.getIsNFT())
+      result = newQVariant(item.getIsTimeStamp())      
     of ModelRole.BaseGasFees:
       result = newQVariant(item.getBaseGasFees())
     of ModelRole.TotalFees:
@@ -175,14 +161,6 @@ QtObject:
       result = newQVariant(item.getMaxTotalFees())
     of ModelRole.Symbol:
       result = newQVariant(item.getSymbol())
-    of ModelRole.LoadingTransaction:
-      result = newQVariant(item.getLoadingTransaction())
-    of ModelRole.TokenID:
-      result = newQVariant(item.getTokenID().toString())
-    of ModelRole.NFTName:
-      result = newQVariant(item.getNFTName())
-    of ModelRole.NFTImageURL:
-      result = newQVariant(item.getNFTImageURL())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
@@ -207,7 +185,7 @@ QtObject:
   QtProperty[bool] hasMore:
     read = getHasMore
     write = setHasMore
-    notify = hasMoreChanged
+    notify = currentTransactionsChanged
 
   proc cmpTransactions*(x, y: Item): int =
     # Sort proc to compare transactions from a single account.
@@ -235,27 +213,8 @@ QtObject:
         if(durationInDays != 0):
           itemsWithDateHeaders.add(initTimestampItem(tx.getTimestamp()))
         itemsWithDateHeaders.add(tx)
-        tempTimeStamp = fromUnix(tx.getTimestamp())             
+        tempTimeStamp = fromUnix(tx.getTimestamp())
 
       self.items = allTxs
       self.setItems(itemsWithDateHeaders)
       self.setHasMore(true)
-
-  proc addPageSizeBuffer*(self: Model, pageSize: int) =
-    if pageSize > 0:
-      var itemsWithDateHeaders: seq[Item] = @[]
-      itemsWithDateHeaders.add(initTimestampItem(0))
-      for i in 0 ..< pageSize:
-        self.beginInsertRows(newQModelIndex(), self.itemsWithDateHeaders.len, self.itemsWithDateHeaders.len)
-        self.itemsWithDateHeaders.add(initLoadingItem())
-        self.endInsertRows()
-        self.countChanged()
-
-  proc removePageSizeBuffer*(self: Model) =
-    for i in 0 ..< self.itemsWithDateHeaders.len:
-      if self.itemsWithDateHeaders[i].getLoadingTransaction():
-        self.beginRemoveRows(newQModelIndex(), i, self.itemsWithDateHeaders.len-1)
-        self.itemsWithDateHeaders.delete(i, self.itemsWithDateHeaders.len-1)
-        self.endRemoveRows()
-        self.countChanged()
-        return

@@ -70,7 +70,7 @@ Item {
             textSelectedAddress.text = selectedAccount.address
         }
         if (selectedAccount.currencyBalance) {
-            textSelectedAddressFiatBalance.text = LocaleUtils.currencyAmountToLocaleString(selectedAccount.currencyBalance)
+            textSelectedAddressFiatBalance.text = selectedAccount.currencyBalance + " " + currency.toUpperCase()
         }
         if (selectedAccount.assets && showBalanceForAssetSymbol) {
             assetFound = Utils.findAssetByChainAndSymbol(root.chainId, selectedAccount.assets, showBalanceForAssetSymbol)
@@ -239,7 +239,7 @@ Item {
                     id: txtFiatBalance
                     Layout.rightMargin: 4
                     font.pixelSize: 15
-                    text: LocaleUtils.currencyAmountToLocaleString(currencyBalance, {onlyAmount: true})
+                    text: currencyBalance
                     color: Theme.palette.directColor1
                 }
                 StatusBaseText {

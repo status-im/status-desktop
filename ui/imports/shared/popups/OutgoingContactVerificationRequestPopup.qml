@@ -67,12 +67,12 @@ StatusDialog {
 
     contentItem: StatusScrollView {
         padding: 0
-        implicitWidth: 560
-        implicitHeight: layout.childrenRect.height
+        contentWidth: 480
 
         ColumnLayout {
-            id: layout
-            width: root.availableWidth
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: Style.current.bigPadding
             spacing: Style.current.padding
 
             SimplifiedMessageView {
@@ -104,10 +104,11 @@ StatusDialog {
 
             StatusBaseText {
                 id: waitingForText
-                visible: !responseMessage.visible
+                visible: !root.verificationResponse
                 text: qsTr("Waiting for %1's response...").arg(root.verificationResponseDisplayName)
                 font.pixelSize: Style.current.additionalTextSize
                 horizontalAlignment : Text.AlignHCenter
+                Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
                 color: Theme.palette.baseColor1

@@ -34,6 +34,7 @@ StatusListItem {
                 id: localeCurrencyBalance
                 anchors.right: parent.right
                 font.pixelSize: 15
+                font.strikeout: false
                 text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance)
             }
             Row {
@@ -42,6 +43,7 @@ StatusListItem {
                 StatusTextWithLoadingState {
                     id: change24HourText
                     font.pixelSize: 15
+                    font.strikeout: false
                     customColor: root.textColor
                     text: LocaleUtils.currencyAmountToLocaleString(currencyPrice)
                 }
@@ -53,8 +55,9 @@ StatusListItem {
                 StatusTextWithLoadingState {
                     id: change24HourPercentageText
                     font.pixelSize: 15
+                    font.strikeout: false
                     customColor: root.textColor
-                    text: changePct24hour !== "" ? "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2)) : "---"
+                    text: changePct24hour !== "" ? changePct24hour.toFixed(2) + "%" : "---"
                 }
             }
         }

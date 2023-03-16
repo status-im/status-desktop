@@ -4,104 +4,51 @@ import QtQuick.Layouts 1.3
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
-import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared 1.0
-import shared.stores 1.0
 
 StatusListItem {
     id: root
 
-    property alias cryptoValueText: cryptoValueText
-    property alias fiatValueText: fiatValueText
-
     property var modelData
     property string symbol
     property bool isIncoming
-    property string currentCurrency
     property int transferStatus
-    property double cryptoValue
-    property double fiatValue
+    property var cryptoValue
+    property var fiatValue
     property string networkIcon
     property string networkColor
     property string networkName
     property string shortTimeStamp
-    property string savedAddressNameTo
-    property string savedAddressNameFrom
-    property bool isSummary: false
+    property string savedAddressName
 
-    readonly property bool isModelDataValid: modelData !== undefined && !!modelData
-    readonly property bool isNFT: isModelDataValid && modelData.isNFT
-    readonly property string name: isModelDataValid ?
-                                        root.isNFT ?
-                                            modelData.nftName ? 
-                                                modelData.nftName : 
-                                                "#" + modelData.tokenID :
-                                            root.isSummary ? root.symbol : RootStore.formatCurrencyAmount(cryptoValue, symbol) :
-                                        "N/A"
-
-    readonly property string image: isModelDataValid ?
-                                        root.isNFT ?
-                                            modelData.nftImageUrl ? 
-                                                modelData.nftImageUrl : 
-                                                "" :
-                                            root.symbol ?
-                                                Style.png("tokens/%1".arg(root.symbol)) :
-                                                "" :
-                                        ""
-    
-    readonly property string toAddress: !!savedAddressNameTo ?
-                                            savedAddressNameTo :
-                                            isModelDataValid ?
-                                                Utils.compactAddress(modelData.to, 4) :
-                                                ""
-
-    readonly property string fromAddress: !!savedAddressNameFrom ?
-                                            savedAddressNameFrom :
-                                            isModelDataValid ?
-                                                Utils.compactAddress(modelData.from, 4) :
-                                                ""
     state: "normal"
-    asset.isImage: !loading
-    asset.name: root.image
-    asset.isLetterIdenticon: loading
-    title: root.isModelDataValid ?
-                isIncoming ? 
-                    isSummary ?
-                        qsTr("Receive %1").arg(root.name) :
-                        qsTr("Received %1 from %2").arg(root.name).arg(root.fromAddress):
-                    isSummary ?
-                        qsTr("Send %1 to %2").arg(root.name).arg(root.toAddress) :
-                        qsTr("Sent %1 to %2").arg(root.name).arg(root.toAddress) :
-                ""
+    asset.isImage: true
+    asset.name: root.symbol ? Style.png("tokens/%1".arg(root.symbol)) : ""
+    title: modelData !== undefined && !!modelData ?
+               isIncoming ? qsTr("Receive %1").arg(root.symbol) : !!savedAddressName ?
+                            qsTr("Send %1 to %2").arg(root.symbol).arg(savedAddressName) :
+                            qsTr("Send %1 to %2").arg(root.symbol).arg(Utils.compactAddress(modelData.to, 4)): ""
     subTitle: shortTimeStamp
     inlineTagModel: 1
     inlineTagDelegate: InformationTag {
         tagPrimaryLabel.text: networkName
         tagPrimaryLabel.color: networkColor
         image.source: !!networkIcon ? Style.svg("tiny/%1".arg(networkIcon)) : ""
-        customBackground: Component {
-            Rectangle {
-                color: "transparent"
-                border.width: 1
-                border.color: Theme.palette.baseColor2
-                radius: 36
-            }
+        background: Rectangle {
+            id: controlBackground
+            implicitWidth: 51
+            implicitHeight: 24
+            color: "transparent"
+            border.width: 1
+            border.color: Theme.palette.baseColor2
+            radius: 36
         }
-        width: 51
-        height: root.loading ? textMetrics.tightBoundingRect.height : 24
         rightComponent: transferStatus === Constants.TransactionStatus.Success ? completedIcon : loadingIndicator
-        loading: root.loading
-    }
-    TextMetrics {
-        id: textMetrics
-        font: statusListItemSubTitle.font
-        text: statusListItemSubTitle.text
     }
     components: [
         ColumnLayout {
-            visible: !root.isNFT
             Row {
                 Layout.alignment: Qt.AlignRight
                 spacing: 4
@@ -110,23 +57,18 @@ StatusListItem {
                     icon: "arrow-up"
                     rotation: isIncoming ? 135 : 45
                     height: 18
-                    visible: !root.loading
                 }
-                StatusTextWithLoadingState {
+                StatusBaseText {
                     id: cryptoValueText
-                    text: RootStore.formatCurrencyAmount(cryptoValue, root.symbol)
+                    text: LocaleUtils.currencyAmountToLocaleString(cryptoValue)
                     color: Theme.palette.directColor1
-                    loading: root.loading
                 }
-
             }
-            StatusTextWithLoadingState {
-                id: fiatValueText
+            StatusBaseText {
                 Layout.alignment: Qt.AlignRight
-                text: RootStore.formatCurrencyAmount(fiatValue, root.currentCurrency)
+                text: LocaleUtils.currencyAmountToLocaleString(fiatValue)
                 font.pixelSize: 15
-                customColor: Theme.palette.baseColor1
-                loading: root.loading
+                color: Theme.palette.baseColor1
             }
         }
     ]

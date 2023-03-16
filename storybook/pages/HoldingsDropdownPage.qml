@@ -39,8 +39,10 @@ Pane {
         parent: root
         anchors.centerIn: root
 
-        collectiblesModel: CollectiblesModel {}
-        assetsModel: AssetsModel {}
+        store: QtObject {
+            readonly property var collectiblesModel: CollectiblesModel {}
+            readonly property var assetsModel: AssetsModel {}
+        }
 
         onOpened: contentItem.parent.parent = root
         Component.onCompleted: {

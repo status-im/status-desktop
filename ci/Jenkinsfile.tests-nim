@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.6.8'
+library 'status-jenkins-lib@v1.6.3'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -7,7 +7,7 @@ pipeline {
   agent {
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.2.1-qt5.15.2'
+      image 'statusteam/nim-status-client-build:1.2.0-qt5.15.2'
     }
   }
 

@@ -155,7 +155,7 @@ Popup {
             anchors.topMargin: Style.current.padding
             color: Style.current.transparent
             textToCopy: accountSelector.selectedAccount.address
-            onCopyClicked: RootStore.copyToClipboard(textToCopy)
+            store: RootStore
         }
 
         StatusFlatRoundButton {

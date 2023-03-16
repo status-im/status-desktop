@@ -25,7 +25,6 @@ Rectangle {
         color: Theme.palette.directColor1
         bgWidth: 32
         bgHeight: 32
-        bgRadius: bgWidth / 2
         bgColor: Theme.palette.primaryColor2
     }
 

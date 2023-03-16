@@ -1,6 +1,6 @@
 import json, random, times, strutils, sugar, os, re, chronicles
 import nimcrypto
-import signing_phrases, account_constants
+import signing_phrases
 
 import ../../constants as main_constants
 
@@ -10,18 +10,8 @@ const ETH_DOMAIN* = ".eth"
 proc arrayContains*[T](arr: seq[T], value: T): bool = 
   return arr.any(x => x == value)
 
-proc hashPassword*(password: string, lower: bool = true): string =
-  let hashed = "0x" & $keccak_256.digest(password)
-  
-  if lower:
-    return hashed.toLowerAscii()
-
-  return hashed
-
-proc prefix*(methodName: string, isExt:bool = true): string =
-  result = "waku"
-  result = result & (if isExt: "ext_" else: "_")
-  result = result & methodName
+proc hashPassword*(password: string): string =
+  result = "0x" & $keccak_256.digest(password)
 
 proc generateSigningPhrase*(count: int): string =
   let now = getTime()
@@ -74,10 +64,3 @@ proc validateLink*(link: string): bool =
         link, re"[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", 0):
       error "Invalid social link", errDescription = link
       result = false
-
-proc isPathOutOfTheDefaultStatusDerivationTree*(path: string): bool =
-  if not path.startsWith(account_constants.PATH_WALLET_ROOT&"/") or
-    path.count("'") != 3 or
-    path.count("/") != 5: 
-      return true
-  return false

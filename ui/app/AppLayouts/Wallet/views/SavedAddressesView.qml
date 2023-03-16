@@ -6,6 +6,7 @@ import utils 1.0
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 import shared.controls 1.0
@@ -26,20 +27,15 @@ Item {
         id: _internal
         property bool loading: false
         property string error: ""
-        property var lastCreatedAddress // used to display animation for the newly saved address
-        function saveAddress(name, address, favourite, chainShortNames, ens) {
+        function saveAddress(name, address, favourite) {
             loading = true
-            error = RootStore.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
+            error = RootStore.createOrUpdateSavedAddress(name, address, favourite)
             loading = false
         }
-        function deleteSavedAddress(address, ens) {
+        function deleteSavedAddress(address) {
             loading = true
-            error = RootStore.deleteSavedAddress(address, ens)
+            error = RootStore.deleteSavedAddress(address)
             loading = false
-        }
-
-        function resetLastCreatedAddress() {
-            lastCreatedAddress = undefined
         }
     }
 
@@ -109,46 +105,21 @@ Item {
         spacing: 5
         model: RootStore.savedAddresses
         delegate: SavedAddressesDelegate {
-            id: savedAddressDelegate
-
             objectName: "savedAddressView_Delegate_" + name
 
             name: model.name
             address: model.address
-            chainShortNames: model.chainShortNames
             ens: model.ens
             favourite: model.favourite
             store: RootStore
             contactsStore: root.contactsStore
-            onOpenSendModal: root.sendModal.open(recipient);
-            saveAddress: function(name, address, favourite, chainShortNames, ens) {
-                _internal.saveAddress(name, address, favourite, chainShortNames, ens)
+            onOpenSendModal: root.sendModal.open(address);
+            saveAddress: function(name, address, favourite) {
+                _internal.saveAddress(name, address, favourite)
             }
-            deleteSavedAddress: function(address, ens) {
-                _internal.deleteSavedAddress(address, ens)
+            deleteSavedAddress: function(address) {
+                _internal.deleteSavedAddress(address)
             }
-
-            states: [
-                State {
-                    name: "highlighted"
-                    when: _internal.lastCreatedAddress ? (_internal.lastCreatedAddress.address.toLowerCase() === address.toLowerCase() &&
-                          _internal.lastCreatedAddress.ens === ens) : false
-                    PropertyChanges { target: savedAddressDelegate; color: Theme.palette.baseColor2 }
-                    StateChangeScript {
-                        script: Qt.callLater(_internal.resetLastCreatedAddress)
-                    }
-                }
-            ]
-
-            transitions: [
-                Transition {
-                    from: "highlighted"
-                    ColorAnimation {
-                        target: savedAddressDelegate
-                        duration: 3000
-                    }
-                }
-            ]
         }
     }
 
@@ -159,10 +130,8 @@ Item {
             anchors.centerIn: parent
             onClosed: destroy()
             contactsStore: root.contactsStore
-            store: RootStore
             onSave: {
-                 _internal.lastCreatedAddress = { address: address, ens: ens }
-                 _internal.saveAddress(name, address, favourite, chainShortNames, ens)
+                 _internal.saveAddress(name, address, favourite)
                 close()
             }
         }

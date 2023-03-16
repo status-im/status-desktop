@@ -262,15 +262,14 @@ Item {
             return
         }
 
-        let valid = true
-        const rawText = statusBaseInput.edit.getText(0, statusBaseInput.edit.length)
+        statusBaseInput.valid = true
         if (validators.length) {
             for (let idx in validators) {
                 let validator = validators[idx]
-                let result = validator.validate(rawText)
+                let result = validator.validate(statusBaseInput.text)
 
                 if (typeof result === "boolean" && result) {
-                    valid = valid && true
+                    statusBaseInput.valid = statusBaseInput.valid && true
                     delete errors[validator.name]
                 } else {
                     if (!errors) {
@@ -285,9 +284,9 @@ Item {
 
                     // the only way to trigger bindings for var property
                     errors = errors
-
                     result.errorMessage = validator.errorMessage
-                    valid = false
+
+                    statusBaseInput.valid = statusBaseInput.valid && false
                 }
             }
             if (errors){
@@ -298,8 +297,8 @@ Item {
                         // Undo the last input
                         const cursor = statusBaseInput.cursorPosition;
                         statusBaseInput.text = _previousText;
-                        if (statusBaseInput.cursor > statusBaseInput.edit.length) {
-                            statusBaseInput.cursorPosition = statusBaseInput.edit.length;
+                        if (statusBaseInput.cursor > statusBaseInput.text.length) {
+                            statusBaseInput.cursorPosition = statusBaseInput.text.length;
                         } else {
                             statusBaseInput.cursorPosition = cursor-1;
                         }
@@ -312,8 +311,6 @@ Item {
             _previousText = text
         }
 
-        statusBaseInput.valid = valid
-
         if (asyncValidators.length && !Object.values(errors).length) {
             for (let idx in asyncValidators) {
                 let asyncValidator = asyncValidators[idx]
@@ -322,7 +319,7 @@ Item {
                 })
                 root.pending = true
                 pendingValidators.push(asyncValidator.name)
-                asyncValidator.asyncOperationInternal(rawText)
+                asyncValidator.asyncOperationInternal(statusBaseInput.text)
             }
         } else if (!asyncValidators.length && !Object.values(errors).length) {
             root.validatedValue = root.text

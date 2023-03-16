@@ -84,7 +84,7 @@ Rectangle {
 
     StatusFlatRoundButton {
         id: closeButton
-        objectName: "headerCloseButton"
+        objectName: "headerClosebutton"
         anchors.right: parent.right
         anchors.rightMargin: 16
         anchors.top: parent.top

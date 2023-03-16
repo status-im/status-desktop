@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Platform 0.1
 
+import Sandbox 0.1
+
 Column {
     spacing: 8
 

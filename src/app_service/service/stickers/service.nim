@@ -51,10 +51,6 @@ type
     transactionType*: string
   StickerPackInstalledArgs* = ref object of Args
     packId*: string
-  StickersArgs* = ref object of Args
-    stickers*: seq[StickerDto]
-  StickerPacksArgs* = ref object of Args
-    packs*: Table[string, StickerPackDto]
 
 # Signals which may be emitted by this service:
 const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
@@ -64,12 +60,6 @@ const SIGNAL_STICKER_GAS_ESTIMATED* = "stickerGasEstimated"
 const SIGNAL_STICKER_TRANSACTION_CONFIRMED* = "stickerTransactionConfirmed"
 const SIGNAL_STICKER_TRANSACTION_REVERTED* = "stickerTransactionReverted"
 const SIGNAL_STICKER_PACK_INSTALLED* = "stickerPackInstalled"
-const SIGNAL_LOAD_RECENT_STICKERS_STARTED* = "loadRecentStickersStarted"
-const SIGNAL_LOAD_RECENT_STICKERS_FAILED* = "loadRecentStickersFailed"
-const SIGNAL_LOAD_RECENT_STICKERS_DONE* = "loadRecentStickersDone"
-const SIGNAL_LOAD_INSTALLED_STICKER_PACKS_STARTED* = "loadInstalledStickerPacksStarted"
-const SIGNAL_LOAD_INSTALLED_STICKER_PACKS_FAILED* = "loadInstalledStickerPacksFailed"
-const SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE* = "loadInstalledStickerPacksDone"
 
 QtObject:
   type Service* = ref object of QObject
@@ -83,7 +73,6 @@ QtObject:
     networkService: network_service.Service
     chatService: chat_service.Service
     tokenService: token_service.Service
-    installedStickerPacks: Table[string, StickerPackDto]
 
   # Forward declaration
   proc obtainMarketStickerPacks*(self: Service)
@@ -113,10 +102,15 @@ QtObject:
     result.chatService = chatService
     result.marketStickerPacks = initTable[string, StickerPackDto]()
     result.recentStickers = @[]
-    result.installedStickerPacks = initTable[string, StickerPackDto]()
 
   proc getInstalledStickerPacks*(self: Service): Table[string, StickerPackDto] =
-    return self.installedStickerPacks
+    result = initTable[string, StickerPackDto]()
+    try:
+      let installedResponse = status_stickers.installed()
+      for (packID, stickerPackJson) in installedResponse.result.pairs():
+        result[packID] = stickerPackJson.toStickerPackDto()
+    except RpcException:
+      error "Error obtaining installed stickers", message = getCurrentExceptionMsg()
     
   proc getStickerMarketAddress*(self: Service): string =
     try:
@@ -292,6 +286,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "setMarketStickerPacks",
       chainId: chainId,
+      running: cast[ByteAddress](addr self.threadpool.running)
     )
     self.threadpool.start(arg)
 
@@ -335,62 +330,6 @@ QtObject:
         result = stickerJson.toStickerDto() & result
     except RpcException:
       error "Error getting recent stickers", message = getCurrentExceptionMsg()
-
-  proc asyncLoadRecentStickers*(self: Service) =
-    self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_STARTED, Args())
-    try:
-      let arg = AsyncGetRecentStickersTaskArg(
-        tptr: cast[ByteAddress](asyncGetRecentStickersTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onAsyncGetRecentStickersDone"
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error loading recent stickers", msg = e.msg
-
-  proc onAsyncGetRecentStickersDone*(self: Service, response: string) {.slot.} =
-    try:
-      let rpcResponseObj = response.parseJson
-      if (rpcResponseObj{"error"}.kind != JNull):
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "error loading recent stickers", msg = error.message
-        return
-
-      let recentStickers = map(rpcResponseObj{"result"}.getElems(), toStickerDto)
-      self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_DONE, StickersArgs(stickers: recentStickers))
-    except Exception as e:
-      let errMsg = e.msg
-      error "error: ", errMsg
-      self.events.emit(SIGNAL_LOAD_RECENT_STICKERS_FAILED, Args())
-
-  proc asyncLoadInstalledStickerPacks*(self: Service) =
-    self.events.emit(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_STARTED, Args())
-    try:
-      let arg = AsyncGetInstalledStickerPacksTaskArg(
-        tptr: cast[ByteAddress](asyncGetInstalledStickerPacksTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onAsyncGetInstalledStickerPacksDone"
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error loading installed sticker packs", msg = e.msg
-
-  proc onAsyncGetInstalledStickerPacksDone*(self: Service, response: string) {.slot.} =
-    try:
-      let rpcResponseObj = response.parseJson
-      if (rpcResponseObj{"error"}.kind != JNull):
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "error loading installed sticker packs", msg = error.message
-        return
-
-      var stickerPacks: Table[string, StickerPackDto] = initTable[string, StickerPackDto]()
-      for (packID, stickerPackJson) in rpcResponseObj{"result"}.pairs():
-        self.installedStickerPacks[packID] = stickerPackJson.toStickerPackDto()
-      self.events.emit(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_DONE, StickerPacksArgs(packs: self.installedStickerPacks))
-    except Exception as e:
-      let errMsg = e.msg
-      error "error: ", errMsg
-      self.events.emit(SIGNAL_LOAD_INSTALLED_STICKER_PACKS_FAILED, Args())
 
   proc getNumInstalledStickerPacks*(self: Service): int =
     try:

@@ -94,10 +94,3 @@ QtObject:
         error "could not set display name"
     except Exception as e:
       error "error: ", procName="fetchWakuMessages", errName = e.name, errDesription = e.msg
-
-  proc backupData*(self: Service): int64 =
-    try:
-      let response =  status_general.backupData()
-      return response.result.getInt
-    except Exception as e:
-      error "error: ", procName="backupData", errName = e.name, errDesription = e.msg

@@ -373,7 +373,7 @@ Rectangle {
             name: "default"
             PropertyChanges {
                 target: root
-                color: disabled ? Theme.palette.baseColor4 : Theme.palette.indirectColor1
+                color: disabled ? Theme.palette.baseColor4 : "transparent"
             }
             PropertyChanges {
                 target: root
@@ -447,7 +447,7 @@ Rectangle {
             name: "error"
             PropertyChanges {
                 target: root
-                color: disabled ? Theme.palette.baseColor4 : Theme.palette.indirectColor1
+                color: disabled ? Theme.palette.baseColor4 : "transparent"
             }
             PropertyChanges {
                 target: root
@@ -520,7 +520,7 @@ Rectangle {
             name: "unpreferred"
             PropertyChanges {
                 target: root
-                color: disabled ? Theme.palette.baseColor4 : Theme.palette.indirectColor1
+                color: disabled ? Theme.palette.baseColor4 : "transparent"
             }
             PropertyChanges {
                 target: root

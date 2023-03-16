@@ -51,9 +51,7 @@ Item {
         anchors.top: dateGroupLabel.visible ? dateGroupLabel.bottom : parent.top
         anchors.topMargin: Style.current.smallPadding
         anchors.right: ctaLoader.left
-        anchors.rightMargin: Style.current.smallPadding
         anchors.left: parent.left
-        clip: true
     }
 
     Loader {

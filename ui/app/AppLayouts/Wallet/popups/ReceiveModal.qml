@@ -238,8 +238,8 @@ StatusModal {
                 spacing: 5
                 CopyToClipBoardButton {
                     id: copyToClipBoard
+                    store: RootStore
                     textToCopy: txtWalletAddress.text
-                    onCopyClicked: RootStore.copyToClipboard(textToCopy)
                 }
                 StatusBaseText {
                     anchors.horizontalCenter: parent.horizontalCenter

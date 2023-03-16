@@ -121,7 +121,7 @@ StatusModal {
                         
                         sourceComponent: StatusListItem {
                             readonly property bool checked: channelItemCheckbox.checked
-                            objectName: "category_item_name_" + model.name
+                            objectName: model.name
                             anchors.horizontalCenter: parent.horizontalCenter
                             height: visible ? implicitHeight : 0
                             title: "#" + model.name

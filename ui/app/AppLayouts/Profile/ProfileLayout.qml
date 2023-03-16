@@ -24,7 +24,6 @@ StatusSectionLayout {
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
-    hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
 
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     onBackButtonClicked: {
@@ -107,7 +106,6 @@ StatusSectionLayout {
                 profileStore: root.store.profileStore
                 privacyStore: root.store.privacyStore
                 contactsStore: root.store.contactsStore
-                communitiesModel: root.store.communitiesList
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
             }
@@ -219,14 +217,12 @@ StatusSectionLayout {
         Loader {
             active: false
             asynchronous: true
-            sourceComponent: SyncingView {
+            sourceComponent: DevicesView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileStore: root.store.profileStore
                 devicesStore: root.store.devicesStore
-                privacyStore: root.store.privacyStore
-                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.syncingSettings)
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
                 contentWidth: d.contentWidth
             }
         }

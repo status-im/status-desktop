@@ -19,7 +19,6 @@ const SIGNAL_BOOKMARK_UPDATED* = "bookmarkUpdated"
 type
   Service* = ref object of RootObj
     bookmarks: Table[string, BookmarkDto] # [url, BookmarkDto]
-    bookmarksFetched: bool
     events: EventEmitter
 
 type R = Result[BookmarkDto, string]
@@ -39,9 +38,18 @@ proc newService*(events: EventEmitter): Service =
   result = Service()
   result.events = events
   result.bookmarks = initTable[string, BookmarkDto]()
-  result.bookmarksFetched = false
 
 proc init*(self: Service) =
+  try:
+    let response = backend.getBookmarks()
+    for bookmark in response.result.getElems().mapIt(it.toBookmarkDto()):
+      if not bookmark.removed:
+        self.bookmarks[bookmark.url] = bookmark
+
+  except Exception as e:
+    let errDescription = e.msg
+    error "error: ", errDescription
+
   self.events.on(SignalType.Message.event) do(e: Args):
     var receivedData = MessageSignal(e)
     if receivedData.bookmarks.len > 0:
@@ -69,20 +77,7 @@ proc init*(self: Service) =
 
         self.events.emit(SIGNAL_BOOKMARK_ADDED, BookmarkArgs(bookmark: self.bookmarks[url]))
 
-proc fetchBookmarks*(self: Service) =
-  # TODO later we can make this async, but it's not worth it for now
-  try:
-    let response = backend.getBookmarks()
-    for bookmark in response.result.getElems().mapIt(it.toBookmarkDto()):
-      if not bookmark.removed:
-        self.bookmarks[bookmark.url] = bookmark
-    self.bookmarksFetched = true
-  except Exception as e:
-    error "error fetching bookmarks: ", msg=e.msg
-
 proc getBookmarks*(self: Service): seq[BookmarkDto] =
-  if not self.bookmarksFetched:
-    self.fetchBookmarks()
   return toSeq(self.bookmarks.values)
 
 proc storeBookmark*(self: Service, url, name: string): R =

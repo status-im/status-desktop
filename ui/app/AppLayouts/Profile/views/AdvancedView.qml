@@ -169,23 +169,6 @@ SettingsContentBase {
                 }
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Community Tokens")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isCommunityTokensEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isCommunityTokensEnabled) {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communityTokens
-                        confirmationPopup.open()
-                    } else {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communityTokens)
-                    }
-                }
-            }
-
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
@@ -454,17 +437,6 @@ SettingsContentBase {
                 switchChecked: root.advancedStore.isAutoMessageEnabled
                 onClicked: {
                     Global.openPopup(enableAutoMessageConfirmationDialogComponent)
-                }
-            }
-
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Fake loading screen")
-                isSwitch: true
-                switchChecked: root.advancedStore.isFakeLoadingScreenEnabled
-                onClicked: {
-                    root.advancedStore.toggleFakeLoadingScreen()
                 }
             }
         }

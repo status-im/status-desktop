@@ -1,6 +1,6 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
-import QtQuick.Layouts 1.15
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -28,7 +28,7 @@ Button {
     property int type: StatusChatInfoButton.Type.Unknown0
     property alias tooltip: statusToolTip
 
-    signal pinnedMessagesCountClicked()
+    signal pinnedMessagesCountClicked(var mouse)
     signal unmute()
     signal linkActivated(string link)
 
@@ -50,29 +50,10 @@ Button {
         radius: 8
         color: root.enabled && root.hovered ? Theme.palette.baseColor2 : "transparent"
 
-        HoverHandler {
-            enabled: root.hoverEnabled
-            cursorShape: enabled ? Qt.PointingHandCursor : undefined
-        }
-    }
-
-    component TruncatedTextWithTooltip: StatusBaseText {
-        readonly property alias hovered: truncatedHandler.hovered
-        property alias cursorShape: truncatedHandler.cursorShape
-
-        elide: Text.ElideRight
-
-        StatusToolTip {
-            text: parent.text
-            visible: truncatedHandler.hovered && parent.truncated
-            orientation: StatusToolTip.Orientation.Bottom
-            delay: 500
-            y: parent.height + 12
-        }
-
-        HoverHandler {
-            id: truncatedHandler
-            cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : undefined
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.NoButton
+            cursorShape: root.hovered ? Qt.PointingHandCursor : undefined
         }
     }
 
@@ -98,29 +79,28 @@ Button {
                 spacing: 1
 
                 StatusIcon {
-                    visible: root.type !== StatusChatInfoButton.Type.OneToOneChat && !forceHideTypeIcon && icon
+                    visible: root.type !== StatusChatInfoButton.Type.OneToOneChat && !forceHideTypeIcon
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 14
                     color: root.muted ? Theme.palette.baseColor1 : Theme.palette.directColor1
                     icon: {
                         switch (root.type) {
-                        case StatusChatInfoButton.Type.PublicChat:
+                        case StatusChatInfoButton.Type.PublicCat:
                             return "tiny/public-chat"
                         case StatusChatInfoButton.Type.GroupChat:
                             return "tiny/group"
                         case StatusChatInfoButton.Type.CommunityChat:
                             return "tiny/channel"
                         default:
-                            return ""
+                            return "tiny/public-chat"
                         }
                     }
                 }
 
-                TruncatedTextWithTooltip {
-                    Layout.fillWidth: true
-                    Layout.maximumWidth: Math.ceil(implicitWidth)
-                    Layout.alignment: Qt.AlignVCenter
+                StatusBaseText {
                     objectName: "statusChatInfoButtonNameText"
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
                     text: root.title
                     color: root.muted ? Theme.palette.directColor5 : Theme.palette.directColor1
                     font.weight: Font.Medium
@@ -154,22 +134,23 @@ Button {
 
             // subtitle
             RowLayout {
+                id: subtitleRow
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignLeading | Qt.AlignTop
-                visible: root.subTitle || root.pinnedMessagesCount
+                Layout.rightMargin: 4
                 spacing: 0
 
-                TruncatedTextWithTooltip {
-                    Layout.fillWidth: true
-                    Layout.maximumWidth: Math.ceil(implicitWidth)
+                StatusSelectableText {
+                    Layout.fillWidth: implicitWidth + separator.width + pinIcon.width + pinText.width > subtitleRow.width
                     text: root.subTitle
-                    visible: text
+                    visible: root.subTitle
                     color: Theme.palette.baseColor1
                     font.pixelSize: 12
                     onLinkActivated: root.linkActivated(link)
                 }
 
                 Rectangle {
+                    id: separator
                     Layout.preferredHeight: 12
                     Layout.preferredWidth: 1
                     Layout.leftMargin: 4
@@ -179,31 +160,44 @@ Button {
                 }
 
                 StatusIcon {
+                    id: pinIcon
                     Layout.preferredHeight: 14
                     Layout.preferredWidth: 14
-                    visible: root.pinnedMessagesCount
+                    visible: root.pinnedMessagesCount > 0
                     icon: "pin"
-                    color: pinText.hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    color: Theme.palette.baseColor1
                 }
 
-                TruncatedTextWithTooltip {
+                StatusBaseText {
                     id: pinText
+                    TextMetrics {
+                         id: tm
+                         font: pinText.font
+                         elide: Text.ElideRight
+                         elideWidth: pinText.width
+                         text: qsTr("%Ln pinned message(s)", "", root.pinnedMessagesCount)
+                     }
+
                     objectName: "StatusChatInfo_pinText"
                     Layout.fillWidth: true
-                    Layout.maximumWidth: Math.ceil(implicitWidth)
-                    text: qsTr("%Ln pinned message(s)", "", root.pinnedMessagesCount)
+                    text: tm.elidedText !== tm.text ? root.pinnedMessagesCount : tm.text
                     font.pixelSize: 12
-                    font.underline: hovered
+                    font.underline: pinCountSensor.containsMouse
                     visible: root.pinnedMessagesCount
-                    color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
-                    cursorShape: Qt.PointingHandCursor
-                    TapHandler {
-                        onSingleTapped: root.pinnedMessagesCountClicked()
+                    color: pinCountSensor.containsMouse ? Theme.palette.directColor1 : Theme.palette.baseColor1
+
+                    MouseArea {
+                        objectName: "pinMessagesCounterSensor"
+                        id: pinCountSensor
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.pinnedMessagesCountClicked(mouse)
                     }
                 }
+
+                Item { Layout.fillWidth: true }
             }
         }
-
-        Item { Layout.fillWidth: true }
     }
 }
