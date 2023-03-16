@@ -41,6 +41,11 @@ type
   TokenBalanceHistoryDataArgs* = ref object of Args
     result*: string
 
+type 
+  TokenData* = ref object of RootObj
+    addresses*: Table[int, string]
+    decimals*: int
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -48,7 +53,7 @@ QtObject:
     networkService: network_service.Service
     tokens: Table[int, seq[TokenDto]]
     tokenList: seq[TokenDto]
-    tokensToAddressesMap: Table[string, Table[int, string]]
+    tokensToAddressesMap: Table[string, TokenData]
     priceCache: TimedCache[float64]
 
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
@@ -70,7 +75,7 @@ QtObject:
     result.tokens = initTable[int, seq[TokenDto]]()
     result.priceCache = newTimedCache[float64]()
     result.tokenList = @[]
-    result.tokensToAddressesMap = initTable[string, Table[int, string]]()
+    result.tokensToAddressesMap = initTable[string, TokenData]()
 
   proc loadData*(self: Service) =
     if(not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
@@ -109,18 +114,22 @@ QtObject:
 
         if not self.tokensToAddressesMap.hasKey(network.nativeCurrencySymbol):
           self.tokenList.add(nativeToken)
-          self.tokensToAddressesMap[nativeToken.symbol] = initTable[int, string]()
+          self.tokensToAddressesMap[nativeToken.symbol] = TokenData(
+            addresses: initTable[int, string](),
+          )
 
-        if not self.tokensToAddressesMap[nativeToken.symbol].hasKey(nativeToken.chainId):
-          self.tokensToAddressesMap[nativeToken.symbol][nativeToken.chainId] = $nativeToken.address
+        if not self.tokensToAddressesMap[nativeToken.symbol].addresses.hasKey(nativeToken.chainId):
+          self.tokensToAddressesMap[nativeToken.symbol].addresses[nativeToken.chainId] = $nativeToken.address
+          self.tokensToAddressesMap[nativeToken.symbol].decimals = nativeToken.decimals
 
         for token in default_tokens:
           if not self.tokensToAddressesMap.hasKey(token.symbol):
             self.tokenList.add(token)
-            self.tokensToAddressesMap[token.symbol] = initTable[int, string]()
+            self.tokensToAddressesMap[token.symbol].addresses = initTable[int, string]()
 
-          if not self.tokensToAddressesMap[token.symbol].hasKey(token.chainId):
-            self.tokensToAddressesMap[token.symbol][token.chainId] = $token.address
+          if not self.tokensToAddressesMap[token.symbol].addresses.hasKey(token.chainId):
+            self.tokensToAddressesMap[token.symbol].addresses[token.chainId] = $token.address
+            self.tokensToAddressesMap[token.symbol].decimals = token.decimals
 
     except Exception as e:
       error "Tokens init error", errDesription = e.msg
@@ -135,9 +144,13 @@ QtObject:
   proc hasContractAddressesForToken*(self: Service, symbol: string): bool =
     return self.tokensToAddressesMap.hasKey(symbol)
 
+  proc getTokenDecimals*(self: Service, symbol: string): int =
+    if self.hasContractAddressesForToken(symbol):
+      return self.tokensToAddressesMap[symbol].decimals
+
   proc getContractAddressesForToken*(self: Service, symbol: string): Table[int, string] =
     if self.hasContractAddressesForToken(symbol):
-      return self.tokensToAddressesMap[symbol]
+      return self.tokensToAddressesMap[symbol].addresses
 
   proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
     self.loadData()

@@ -576,6 +576,9 @@ proc allAccountsTokenBalance*(self: Controller, symbol: string): float64 =
 proc getTokenList*(self: Controller): seq[TokenDto] =
   return self.tokenService.getTokenList()
 
+proc getTokenDecimals*(self: Controller, symbol: string): int =
+  return self.tokenService.getTokenDecimals(symbol)
+
 proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int, string] =
   var contractAddresses = self.tokenService.getContractAddressesForToken(symbol)
   let communityToken = self.communityTokensService.getCommunityTokenBySymbol(self.getMySectionId(), symbol)
