@@ -94,20 +94,24 @@ SettingsContentBase {
 
         StatusBaseText {
             Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             text: qsTr("Devices")
-            font.pixelSize: 15
+            font.pixelSize: Constants.settingsSection.subHeaderFontSize
+            color: Theme.palette.baseColor1
         }
 
         StatusBaseText {
             Layout.fillWidth: true
-            visible: root.devicesStore.devicesModule.devicesLoading
+            horizontalAlignment: Text.AlignHCenter
             text: qsTr("Loading devices...")
         }
 
         StatusBaseText {
             Layout.fillWidth: true
-            visible: root.devicesStore.devicesModule.devicesLoadingError
+            horizontalAlignment: Text.AlignHCenter
             text: qsTr("Error loading devices. Please try again later.")
+            color: Theme.palette.dangerColor1
         }
 
         ListView {

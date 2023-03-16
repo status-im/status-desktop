@@ -33,7 +33,6 @@ Rectangle {
     property var inlineTagModel: []
     property Component inlineTagDelegate
     property bool loading: false
-    property bool loadingFailed: false
 
     property StatusAssetSettings asset: StatusAssetSettings {
         height: isImage ? 40 : 20
@@ -78,6 +77,7 @@ Rectangle {
     property alias statusListItemTagsSlot: statusListItemTagsSlot
     property alias statusListItemInlineTagsSlot: statusListItemTagsSlotInline
     property alias statusListItemLabel: statusListItemLabel
+    property alias subTitleBadgeComponent: subTitleBadgeLoader.sourceComponent
 
     signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)
@@ -256,6 +256,12 @@ Rectangle {
                 anchors.top: statusListItemTitle.bottom
                 width: parent.width
                 spacing: 4
+
+                Loader {
+                    id: subTitleBadgeLoader
+                    Layout.alignment: Qt.AlignVCenter
+                    visible: sourceComponent
+                }
 
                 StatusTextWithLoadingState {
                     id: statusListItemSubTitle

@@ -544,34 +544,34 @@ ColumnLayout {
     StatusBaseText {
         Layout.fillWidth: true
         Layout.topMargin: 16
-        text: "Loading features:"
+        text: "Device delegate with online badge"
         font.pixelSize: 17
     }
 
-    StatusListItem {
+    component DeviceListItem: StatusListItem {
         title: "Nokia 3310"
-        subTitle: "Incoming device"
-        label: "loading: true"
-        asset.width: 40
-        asset.height: 40
-        asset.emoji: "😁"
-        asset.color: "hotpink"
-        asset.letterSize: 14
-        asset.isLetterIdenticon: true
-        loading: true
+        asset.name: "mobile"
+        asset.bgColor: Theme.palette.primaryColor3
+        asset.color: Theme.palette.primaryColor1
     }
 
-    StatusListItem {
-        title: "Nokia 3310"
-        subTitle: "Device"
-        label: "loadingFailed: true"
-        asset.width: 40
-        asset.height: 40
-        asset.emoji: "😁"
-        asset.color: "hotpink"
-        asset.letterSize: 14
-        asset.isLetterIdenticon: true
-        loadingFailed: true
+    DeviceListItem {
+        subTitle: "Online now"
+        subTitleBadgeComponent: StatusOnlineBadge {
+            online: true
+        }
+    }
+
+    DeviceListItem {
+        subTitle: "Online 47 minutes ago"
+        subTitleBadgeComponent: StatusOnlineBadge {
+            online: false
+        }
+    }
+
+    DeviceListItem {
+        subTitle: "This device"
+        subTitleBadgeComponent: null
     }
 
     StatusListItem {

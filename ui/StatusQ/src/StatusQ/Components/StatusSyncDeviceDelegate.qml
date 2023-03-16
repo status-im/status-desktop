@@ -50,15 +50,8 @@ StatusListItem {
         return qsTr("Last online %1").arg(LocaleUtils.formatDate(lastSyncDate))
     }
 
-    QtObject {
-        id: d
 
-        readonly property var lastSyncDate: new Date(root.timestamp)
-        readonly property int millisecondsFromSync: lastSyncDate - Date.now()
-        readonly property int secondsFromSync: millisecondsFromSync / 1000
-        readonly property int minutesFromSync: secondsFromSync / 60
-        readonly property int daysFromSync: new Date().getDay() - lastSyncDate.getDay()
-    }
+    subTitleBadgeComponent: root.isCurrentDevice ? null : onlineBadgeComponent
 
     components: [
         StatusButton {
@@ -78,4 +71,23 @@ StatusListItem {
             color: Theme.palette.baseColor1
         }
     ]
+
+    QtObject {
+        id: d
+
+        readonly property var lastSyncDate: new Date(root.timestamp)
+        readonly property int millisecondsFromSync: lastSyncDate - Date.now()
+        readonly property int secondsFromSync: millisecondsFromSync / 1000
+        readonly property int minutesFromSync: secondsFromSync / 60
+        readonly property int daysFromSync: new Date().getDay() - lastSyncDate.getDay()
+        readonly property bool onlineNow: d.secondsFromSync <= 120
+    }
+
+    Component {
+        id: onlineBadgeComponent
+
+        StatusOnlineBadge {
+            online: d.onlineNow
+        }
+    }
 }
