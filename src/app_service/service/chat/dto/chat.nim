@@ -104,6 +104,8 @@ type ChannelGroupDto* = object
   pinMessageAllMembersEnabled*: bool
   bannedMembersIds*: seq[string]
   encrypted*: bool
+  unviewedMessagesCount*: int
+  unviewedMentionsCount*: int
 
 type ClearedHistoryDto* = object
   chatId*: string
@@ -273,6 +275,8 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   discard jsonObj.getProp("introMessage", result.introMessage)
   discard jsonObj.getProp("outroMessage", result.outroMessage)
   discard jsonObj.getProp("encrypted", result.encrypted)
+  discard jsonObj.getProp("unviewedMessagesCount", result.unviewedMessagesCount)
+  discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
 
   result.channelGroupType = ChannelGroupType.Unknown
   var channelGroupTypeString: string

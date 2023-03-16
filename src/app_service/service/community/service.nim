@@ -792,7 +792,7 @@ QtObject:
 
       updatedCommunity.settings = communitySettings
       self.communities[communityId] = updatedCommunity
-      self.chatService.loadChats()
+      self.chatService.loadChannelGroupById(communityId)
 
       for k, chat in updatedCommunity.chats:
         let fullChatId = communityId & chat.id

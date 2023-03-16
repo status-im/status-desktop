@@ -1,5 +1,6 @@
 import NimQml
 
+import ../item as chat_item
 import ../../../../../app_service/service/message/dto/pinned_message
 import ../../../../../app_service/service/chat/dto/chat
 
@@ -9,7 +10,7 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface) {.base.} =
+method load*(self: AccessInterface, chatItem: chat_item.Item) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method isLoaded*(self: AccessInterface): bool {.base.} =

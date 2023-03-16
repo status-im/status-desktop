@@ -245,39 +245,34 @@ proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto, networks: 
       break
   result = initTokenItem(tokenDto, chainName, chainIcon)
 
-proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem =
-  let isCommunity = c.channelGroupType == ChannelGroupType.Community
+proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
+  let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
   var communityDetails: CommunityDto
-  var unviewedCount, mentionsCount: int
   var communityTokensItems: seq[TokenItem]
   let networks = self.controller.getNetworks()
   if (isCommunity):
-    (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
-    communityDetails = self.controller.getCommunityById(c.id)
-    let communityTokens = self.controller.getCommunityTokens(c.id)
+    communityDetails = self.controller.getCommunityById(channelGroup.id)
+    let communityTokens = self.controller.getCommunityTokens(channelGroup.id)
     communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
       result = self.createTokenItem(tokenDto, networks)
     )
-  else:
-    let receivedContactRequests = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
-    (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
-    mentionsCount = mentionsCount + receivedContactRequests.len
 
-  let hasNotification = unviewedCount > 0 or mentionsCount > 0
-  let notificationsCount = mentionsCount
-  let active = self.getActiveSectionId() == c.id # We must pass on if the current item section is currently active to keep that property as it is
+  let unviewedCount = channelGroup.unviewedMessagesCount
+  let notificationsCount = channelGroup.unviewedMentionsCount
+  let hasNotification = unviewedCount > 0 or notificationsCount > 0
+  let active = self.getActiveSectionId() == channelGroup.id # We must pass on if the current item section is currently active to keep that property as it is
   result = initItem(
-    c.id,
+    channelGroup.id,
     if isCommunity: SectionType.Community else: SectionType.Chat,
-    if isCommunity: c.name else: conf.CHAT_SECTION_NAME,
-    c.admin,
-    c.description,
-    c.introMessage,
-    c.outroMessage,
-    c.images.thumbnail,
-    c.images.banner,
+    if isCommunity: channelGroup.name else: conf.CHAT_SECTION_NAME,
+    channelGroup.admin,
+    channelGroup.description,
+    channelGroup.introMessage,
+    channelGroup.outroMessage,
+    channelGroup.images.thumbnail,
+    channelGroup.images.banner,
     icon = if (isCommunity): "" else: conf.CHAT_SECTION_ICON,
-    c.color,
+    channelGroup.color,
     if isCommunity: communityDetails.tags else: "",
     hasNotification,
     notificationsCount,
@@ -286,13 +281,13 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     if (isCommunity): communityDetails.joined else: true,
     if (isCommunity): communityDetails.canJoin else: true,
     if (isCommunity): communityDetails.spectated else: false,
-    c.canManageUsers,
+    channelGroup.canManageUsers,
     if (isCommunity): communityDetails.canRequestAccess else: true,
     if (isCommunity): communityDetails.isMember else: true,
-    c.permissions.access,
-    c.permissions.ensOnly,
-    c.muted,
-    c.members.map(proc(member: ChatMember): MemberItem =
+    channelGroup.permissions.access,
+    channelGroup.permissions.ensOnly,
+    channelGroup.muted,
+    channelGroup.members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
       result = initMemberItem(
         pubKey = member.id,
@@ -318,7 +313,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     )) else: @[],
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
-    c.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem=
+    channelGroup.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem=
       let contactDetails = self.controller.getContactDetails(bannedMemberId)
       result = initMemberItem(
         pubKey = bannedMemberId,
@@ -368,9 +363,9 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         requestToJoinId = requestDto.id
       )
     ) else: @[],
-    c.encrypted,
+    channelGroup.encrypted,
     communityTokensItems,
-    loaderActive = active
+    loaderActive = active,
   )
 
 method load*[T](
@@ -532,7 +527,7 @@ method load*[T](
   else:
     self.setActiveSection(activeSection)
 
-method onChatsLoaded*[T](
+method onChannelGroupsLoaded*[T](
   self: Module[T],
   channelGroups: seq[ChannelGroupDto],
   events: EventEmitter,
@@ -589,7 +584,7 @@ method onChatsLoaded*[T](
   # Remove old loading section
   self.view.model().removeItem(LOADING_SECTION_ID)
 
-  self.view.chatsLoaded()
+  self.view.sectionsLoaded()
 
 method onCommunityDataLoaded*[T](
   self: Module[T],
@@ -610,7 +605,7 @@ method onCommunityDataLoaded*[T](
   if not self.chatsLoaded:
     return
 
-  self.onChatsLoaded(
+  self.onChannelGroupsLoaded(
     self.controller.getChannelGroups(),
     events,
     settingsService,
@@ -819,7 +814,7 @@ method onChatLeft*[T](self: Module[T], chatId: string) =
   self.appSearchModule.updateSearchLocationIfPointToChatWithId(chatId)
 
 method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool,
-  sectionNotificationCount: int) =
+    sectionNotificationCount: int) =
   self.view.model().updateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
 
 method onNetworkConnected[T](self: Module[T]) =

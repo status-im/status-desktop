@@ -114,6 +114,11 @@ Item {
 
             clip: true
 
+            ChatsLoadingPanel {
+                chatSectionModule: root.chatSectionModule
+                width: parent.width
+            }
+
             // chat list
             StatusScrollView {
                 id: scroll

@@ -15,6 +15,7 @@ import shared 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import "../popups/community"
+import "../panels"
 import "../panels/communities"
 
 // FIXME: Rework me to use ColumnLayout instead of anchors!!
@@ -138,6 +139,13 @@ Item {
                 })
             }
         }
+    }
+
+    ChatsLoadingPanel {
+        chatSectionModule: root.communitySectionModule
+        width: parent.width
+        anchors.top: membershipRequests.bottom
+        anchors.topMargin: active ? 8 : 0
     }
 
     StatusMenu {

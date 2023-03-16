@@ -51,12 +51,13 @@ type
     controller: Controller
     chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
+    chatsLoaded: bool
     usersModule: users_module.AccessInterface
 
 # Forward declaration
 proc buildChatSectionUI(self: Module,
   channelGroup: ChannelGroupDto,
-  events: EventEmitter,
+  events: UniqueUUIDEventEmitter,
   settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service,
   contactService: contact_service.Service,
@@ -66,6 +67,21 @@ proc buildChatSectionUI(self: Module,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service)
 
+proc addChatIfDontExist(self: Module,
+    chat: ChatDto,
+    channelGroup: ChannelGroupDto,
+    belongsToCommunity: bool,
+    events: UniqueUUIDEventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+    setChatAsActive: bool = true)
+
 proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem
 
 proc buildTokenList*(self: Module)
@@ -74,7 +90,6 @@ proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     sectionId: string,
-    # channels: seq[ChatDto],
     isCommunity: bool,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
@@ -95,6 +110,7 @@ proc newModule*(
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
+  result.chatsLoaded = false
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
 
@@ -170,7 +186,7 @@ proc addCategoryItem(self: Module, category: Category, amIAdmin: bool) =
 proc buildChatSectionUI(
     self: Module,
     channelGroup: ChannelGroupDto,
-    events: EventEmitter,
+    events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,
@@ -182,47 +198,14 @@ proc buildChatSectionUI(
   var selectedItemId = ""
   let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
 
-  # Keep a list of categories that have been associated correctly to a chat
-  # If a category doesn't have a chat, we add it as an empty chat
-  var categoriesWithAssociatedItems: seq[string] = @[]
-
   for categoryDto in channelGroup.categories:
     # Add items for the categories. We use a special type to identify categories
     self.addCategoryItem(categoryDto, channelGroup.admin)
 
   for chatDto in channelGroup.chats:
-    let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
-    let notificationsCount = chatDto.unviewedMentionsCount
-
-    var chatName = chatDto.name
-    var chatImage = ""
-    var colorHash: ColorHashDto = @[]
-    var colorId: int = 0
-    var onlineStatus = OnlineStatus.Inactive
-    let isUsersListAvailable = chatDto.chatType != ChatType.OneToOne
-    var blocked = false
-    let belongToCommunity = chatDto.communityId != ""
     var categoryPosition = -1
 
-    if chatDto.chatType == ChatType.OneToOne:
-      let contactDetails = self.controller.getContactDetails(chatDto.id)
-      chatName = contactDetails.defaultDisplayName
-      chatImage = contactDetails.icon
-      blocked = contactDetails.details.isBlocked()
-      colorHash = self.controller.getColorHash(chatDto.id)
-      colorId = self.controller.getColorId(chatDto.id)
-      onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(chatDto.id).statusType)
-
-    elif chatDto.chatType == ChatType.PrivateGroupChat:
-      chatImage = chatDto.icon
-
-    # for group chats only member.admin should be checked,
-    # because channelGroup.admin is alway true
-    var amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
-    if chatDto.chatType != ChatType.PrivateGroupChat:
-      amIChatAdmin = amIChatAdmin or channelGroup.admin
-
-      # Add an empty chat item that has the category info
+    # Add an empty chat item that has the category info
     var isActive = false
     # restore on a startup last open channel for the section or
     # make the first channel which doesn't belong to any category active
@@ -233,40 +216,13 @@ proc buildChatSectionUI(
     if chatDto.categoryId != "":
       for category in channelGroup.categories:
         if category.id == chatDto.categoryId:
-          categoriesWithAssociatedItems.add(chatDto.categoryId)
           categoryPosition = category.position
           break
 
-    let newChatItem = chat_item.initItem(
-      chatDto.id,
-      chatName,
-      chatImage,
-      chatDto.color,
-      chatDto.emoji,
-      chatDto.description,
-      chatDto.chatType.int,
-      amIChatAdmin,
-      chatDto.timestamp.int,
-      hasNotification,
-      notificationsCount,
-      chatDto.muted,
-      blocked,
-      isActive,
-      chatDto.position,
-      chatDto.categoryId,
-      categoryPosition,
-      colorId,
-      colorHash,
-      onlineStatus = onlineStatus,
-      loaderActive = isActive
-    )
-
-    self.view.chatsModel().appendItem(newChatItem)
-
-    self.addSubmodule(
-      chatDto.id,
-      belongToCommunity,
-      isUsersListAvailable,
+    self.addChatIfDontExist(
+      chatDto,
+      channelGroup,
+      belongsToCommunity = chatDto.communityId.len > 0,
       events,
       settingsService,
       nodeConfigurationService,
@@ -276,6 +232,7 @@ proc buildChatSectionUI(
       messageService,
       gifService,
       mailserversService,
+      setChatAsActive = false,
     )
 
   self.setActiveItem(selectedItemId)
@@ -401,6 +358,20 @@ method load*(
   self.controller.init()
   self.view.load()
 
+method onChatsLoaded*(
+    self: Module,
+    channelGroup: ChannelGroupDto,
+    events: UniqueUUIDEventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+  ) =
+  self.chatsLoaded = true
   self.buildChatSectionUI(channelGroup, events, settingsService, nodeConfigurationService,
     contactService, chatService, communityService, messageService, gifService, mailserversService)
 
@@ -416,9 +387,10 @@ method load*(
   let activeChatId = self.controller.getActiveChatId()
   let isCurrentSectionActive = self.controller.getIsCurrentSectionActive()
   for chatId, cModule in self.chatContentModules:
-    cModule.load()
     if isCurrentSectionActive and chatId == activeChatId:
       cModule.onMadeActive()
+
+  self.view.chatsLoaded()
 
 proc checkIfModuleDidLoad(self: Module) =
   if self.moduleLoaded:
@@ -495,11 +467,12 @@ method getChatContentModule*(self: Module, chatId: string): QVariant =
 
   return self.chatContentModules[chatId].getModuleAsVariant()
 
-proc updateParentBadgeNotifications(self: Module) =
-  var (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
-  if(not self.controller.isCommunity()):
-    sectionHasUnreadMessages = sectionHasUnreadMessages or sectionNotificationCount > 0
-  self.delegate.onNotificationsUpdated(self.controller.getMySectionId(), sectionHasUnreadMessages, sectionNotificationCount)
+proc updateParentBadgeNotifications(self: Module, sectionHasUnreadMessagesArg: bool = false, unviewedMentionsCountArg: int = 0) =
+  self.delegate.onNotificationsUpdated(
+    self.controller.getMySectionId(),
+    sectionHasUnreadMessagesArg,
+    unviewedMentionsCountArg
+  )
 
 proc updateBadgeNotifications(self: Module, chatId: string, hasUnreadMessages: bool, unviewedMentionsCount: int) =
   # update model of this module (appropriate chat from the chats list (chats model))
@@ -508,7 +481,7 @@ proc updateBadgeNotifications(self: Module, chatId: string, hasUnreadMessages: b
   if (self.chatContentModules.contains(chatId)):
     self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
   # update parent module
-  self.updateParentBadgeNotifications()
+  self.updateParentBadgeNotifications(hasUnreadMessages, unviewedMentionsCount)
 
 method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTimestamp: int) =
   self.view.chatsModel().updateLastMessageTimestampOnItemById(chatId, lastMessageTimestamp)
@@ -517,6 +490,9 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
   if(sectionId != self.controller.getMySectionId()):
     self.controller.setIsCurrentSectionActive(false)
     return
+
+  if not self.view.getChatsLoaded:
+    self.controller.asyncGetChats()
 
   self.controller.setIsCurrentSectionActive(true)
   let activeChatId = self.controller.getActiveChatId()
@@ -532,6 +508,7 @@ method chatsModel*(self: Module): chats_model.Model =
 method addNewChat*(
     self: Module,
     chatDto: ChatDto,
+    channelGroup: ChannelGroupDto,
     belongsToCommunity: bool,
     events: EventEmitter,
     settingsService: settings_service.Service,
@@ -543,37 +520,49 @@ method addNewChat*(
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     setChatAsActive: bool = true) =
-  let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
+  let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
   let notificationsCount = chatDto.unviewedMentionsCount
+
   var chatName = chatDto.name
   var chatImage = chatDto.icon
+  var blocked = false
   var colorHash: ColorHashDto = @[]
   var colorId: int = 0
   var onlineStatus = OnlineStatus.Inactive
   var categoryPosition = -1
 
   var isUsersListAvailable = true
-  if(chatDto.chatType == ChatType.OneToOne):
+  if chatDto.chatType == ChatType.OneToOne:
+    let contactDetails = self.controller.getContactDetails(chatDto.id)
+    chatName = contactDetails.defaultDisplayName
+    chatImage = contactDetails.icon
+    blocked = contactDetails.details.isBlocked()
     isUsersListAvailable = false
-    (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
     colorHash = self.controller.getColorHash(chatDto.id)
     colorId = self.controller.getColorId(chatDto.id)
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(chatDto.id).statusType)
 
-  var amIChatAdmin = false
-  if(belongsToCommunity):
-    amIChatAdmin = self.controller.getMyCommunity().admin
-  else:
-    amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
+  elif chatDto.chatType == ChatType.PrivateGroupChat:
+    chatImage = chatDto.icon
+
+  var amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
+  if chatDto.chatType != ChatType.PrivateGroupChat:
+    amIChatAdmin = amIChatAdmin or channelGroup.admin
 
   if chatDto.categoryId != "":
-    let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), chatDto.categoryId)
-    if category.id == "":
-      error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
+    if channelGroup.id != "":
+      for category in channelGroup.categories:
+        if category.id == chatDto.categoryId:
+          categoryPosition = category.position
+          break
     else:
-      categoryPosition = category.position
+      let category = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), chatDto.categoryId)
+      if category.id == "":
+        error "No category found for chat", chatName=chatDto.name, categoryId=chatDto.categoryId
+      else:
+        categoryPosition = category.position
 
-  let chat_item = chat_item.initItem(
+  let chatItem = chat_item.initItem(
     chatDto.id,
     chatName,
     chatImage,
@@ -586,7 +575,7 @@ method addNewChat*(
     hasNotification,
     notificationsCount,
     chatDto.muted,
-    blocked=false,
+    blocked,
     setChatAsActive,
     chatDto.position,
     chatDto.categoryId,
@@ -611,10 +600,10 @@ method addNewChat*(
     gifService,
     mailserversService,
   )
-  self.chatContentModules[chatDto.id].load()
-  self.view.chatsModel().appendItem(chat_item)
+  self.chatContentModules[chatDto.id].load(chatItem)
+  self.view.chatsModel().appendItem(chatItem)
   if setChatAsActive:
-    self.setActiveItem(chat_item.id)
+    self.setActiveItem(chatItem.id)
 
 method switchToChannel*(self: Module, channelName: string) =
   if(not self.controller.isCommunity()):
@@ -1123,6 +1112,51 @@ method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, p
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
 
+proc addChatIfDontExist(self: Module,
+    chat: ChatDto,
+    channelGroup: ChannelGroupDto,
+    belongsToCommunity: bool,
+    events: UniqueUUIDEventEmitter,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service,
+    setChatAsActive: bool = true) =
+  if not self.chatsLoaded:
+    return
+
+  let sectionId = self.controller.getMySectionId()
+  if(belongsToCommunity and sectionId != chat.communityId or
+    not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey()):
+    return
+
+  if self.doesCatOrChatExist(chat.id):
+    if (chat.chatType == ChatType.PrivateGroupChat):
+      self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)
+    elif (chat.chatType != ChatType.OneToOne):
+      self.onChatRenamed(chat.id, chat.name)
+    return
+
+  self.addNewChat(
+      chat,
+      channelGroup,
+      belongsToCommunity,
+      events.eventsEmitter(),
+      settingsService,
+      nodeConfigurationService,
+      contactService,
+      chatService,
+      communityService,
+      messageService,
+      gifService,
+      mailserversService,
+      setChatAsActive,
+    )
+
 method addChatIfDontExist*(self: Module,
     chat: ChatDto,
     belongsToCommunity: bool,
@@ -1136,20 +1170,21 @@ method addChatIfDontExist*(self: Module,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     setChatAsActive: bool = true) =
-  let sectionId = self.controller.getMySectionId()
-  if(belongsToCommunity and sectionId != chat.communityId or
-    not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey()):
-    return
-
-  if self.doesCatOrChatExist(chat.id):
-    if (chat.chatType == ChatType.PrivateGroupChat):
-      self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)
-    elif (chat.chatType != ChatType.OneToOne):
-      self.onChatRenamed(chat.id, chat.name)
-    return
-  self.addNewChat(chat, belongsToCommunity, events.eventsEmitter(), settingsService, nodeConfigurationService,
-    contactService, chatService, communityService, messageService, gifService, mailserversService,
-    setChatAsActive)
+ self.addChatIfDontExist(
+    chat,
+    ChannelGroupDto(),
+    belongsToCommunity,
+    events,
+    settingsService,
+    nodeConfigurationService,
+    contactService,
+    chatService,
+    communityService,
+    messageService,
+    gifService,
+    mailserversService,
+    setChatAsActive,
+  )
 
 method downloadMessages*(self: Module, chatId: string, filePath: string) =
   if(not self.chatContentModules.contains(chatId)):

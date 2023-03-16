@@ -227,7 +227,7 @@ Item {
 
     Loader {
         id: statusStickersPopupLoader
-        active: appMain.rootStore.mainModuleInst.chatsLoaded
+        active: appMain.rootStore.mainModuleInst.sectionsLoaded
         sourceComponent: StatusStickersPopup {
             id: statusStickersPopup
             store: appMain.rootChatStore
@@ -830,7 +830,7 @@ Item {
                             if (appMain.rootStore.mainModuleInst.chatsLoadingFailed) {
                                 return errorStateComponent
                             }
-                            if (appMain.rootStore.mainModuleInst.chatsLoaded) {
+                            if (appMain.rootStore.mainModuleInst.sectionsLoaded) {
                                 return personalChatLayoutComponent
                             }
                             return loadingStateComponent
@@ -845,7 +845,7 @@ Item {
                                     anchors.centerIn: parent
                                     spacing: 6
                                     StatusBaseText {
-                                        text: qsTr("Loading chats...")
+                                        text: qsTr("Loading sections...")
                                     }
                                     LoadingAnimation {}
                                 }
@@ -1026,7 +1026,7 @@ Item {
                     id: createChatView
 
                     property bool opened: false
-                    active: appMain.rootStore.mainModuleInst.chatsLoaded && opened
+                    active: appMain.rootStore.mainModuleInst.sectionsLoaded && opened
 
                     asynchronous: true
                     anchors.top: parent.top

@@ -102,9 +102,9 @@ proc init*(self: Controller) =
     let d9 = 9*86400 # 9 days
     discard self.settingsService.setDefaultSyncPeriod(d9)
 
-  self.events.on(SIGNAL_CHATS_LOADED) do(e:Args):
+  self.events.on(SIGNAL_CHANNEL_GROUPS_LOADED) do(e:Args):
     let args = ChannelGroupsArgs(e)
-    self.delegate.onChatsLoaded(
+    self.delegate.onChannelGroupsLoaded(
       args.channelGroups,
       self.events,
       self.settingsService,
@@ -136,7 +136,7 @@ proc init*(self: Controller) =
       self.communityTokensService
     )
 
-  self.events.on(SIGNAL_CHATS_LOADING_FAILED) do(e:Args):
+  self.events.on(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED) do(e:Args):
     self.delegate.onChatsLoadingFailed()
 
   self.events.on(SIGNAL_ACTIVE_MAILSERVER_CHANGED) do(e:Args):

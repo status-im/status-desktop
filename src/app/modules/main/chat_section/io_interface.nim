@@ -36,6 +36,19 @@ method load*(self: AccessInterface,
   mailserversService: mailservers_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onChatsLoaded*(self: AccessInterface,
+  channelGroup: ChannelGroupDto,
+  events: UniqueUUIDEventEmitter,
+  settingsService: settings_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
+  contactService: contact_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  gifService: gif_service.Service,
+  mailserversService: mailservers_service.Service) {.base.} =
+  raise newException(ValueError, "No implementation available rip")
+
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
