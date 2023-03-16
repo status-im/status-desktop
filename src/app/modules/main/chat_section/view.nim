@@ -34,6 +34,7 @@ QtObject:
       allTokenRequirementsMet: bool
       requiresTokenPermissionToJoin: bool
       amIMember: bool
+      chatsLoaded: bool
       
   proc delete*(self: View) =
     self.model.delete
@@ -78,6 +79,7 @@ QtObject:
     result.collectiblesListModelVariant = newQVariant(result.collectiblesListModel)
     result.amIMember = false
     result.requiresTokenPermissionToJoin = false
+    result.chatsLoaded = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -96,6 +98,18 @@ QtObject:
 
   QtProperty[QVariant] model:
     read = getModel
+
+  proc chatsLoadedChanged(self: View) {.signal.}
+
+  proc chatsLoaded*(self: View) =
+    self.chatsLoaded = true
+    self.chatsLoadedChanged()
+
+  proc getChatsLoaded*(self: View): bool {.slot.} =
+    return self.chatsLoaded
+  QtProperty[bool] chatsLoaded:
+    read = getChatsLoaded
+    notify = chatsLoadedChanged
 
   proc editCategoryChannelsModel*(self: View): chats_model.Model =
     return self.editCategoryChannelsModel

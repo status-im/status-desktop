@@ -2,6 +2,8 @@ import NimQml, chronicles, sequtils, sugar
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
+
+import ../item as chat_item
 import ../../../shared_models/message_model as pinned_msg_model
 import ../../../shared_models/message_item as pinned_msg_item
 import ../../../shared_models/message_transaction_parameters_item
@@ -70,17 +72,14 @@ method delete*(self: Module) =
   if self.usersModule != nil:
     self.usersModule.delete
 
-method load*(self: Module) =
+method load*(self: Module, chatItem: chat_item.Item) =
   self.controller.init()
 
-  let chatDto = self.controller.getChatDetails()
-  let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
-  let notificationsCount = chatDto.unviewedMentionsCount
-  var chatName = chatDto.name
-  var chatImage = chatDto.icon
+  var chatName = chatItem.name
+  var chatImage = chatItem.icon
   var isContact = false
   var trustStatus = TrustStatus.Unknown
-  if(chatDto.chatType == ChatType.OneToOne):
+  if(chatItem.`type` == ChatType.OneToOne.int):
     let contactDto = self.controller.getContactById(self.controller.getMyChatId())
     chatName = contactDto.userDefaultDisplayName()
     isContact = contactDto.isContact
@@ -90,10 +89,10 @@ method load*(self: Module) =
 
   self.usersModule.load()
 
-  self.view.load(chatDto.id, chatDto.chatType.int, self.controller.belongsToCommunity(),
+  self.view.load(chatItem.id, chatItem.`type`, self.controller.belongsToCommunity(),
     self.controller.isUsersListAvailable(), chatName, chatImage,
-    chatDto.color, chatDto.description, chatDto.emoji, hasNotification, notificationsCount,
-    chatDto.muted, chatDto.position, isUntrustworthy = trustStatus == TrustStatus.Untrustworthy,
+    chatItem.color, chatItem.description, chatItem.emoji, chatItem.hasUnreadMessages, chatItem.notificationsCount,
+    chatItem.muted, chatItem.position, isUntrustworthy = trustStatus == TrustStatus.Untrustworthy,
     isContact)
 
   self.inputAreaModule.load()

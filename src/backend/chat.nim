@@ -32,9 +32,13 @@ proc saveChat*(
     }
   ])
 
-proc getChats*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getChannelGroups*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
-  result = callPrivateRPC("chat_getChats", payload)
+  result = callPrivateRPC("chat_getChannelGroups", payload)
+
+proc getChatsByChannelGroupId*(channelGroupId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [channelGroupId]
+  result = callPrivateRPC("chat_getChatsByChannelGroupID", payload)
 
 proc createOneToOneChat*(chatId: string, ensName: string = ""): RpcResponse[JsonNode] {.raises: [Exception].} =
   let communityId = ""

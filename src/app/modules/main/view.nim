@@ -14,7 +14,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: section_model.SectionModel
       modelVariant: QVariant
-      chatsLoaded: bool
+      sectionsLoaded: bool
       chatsLoadingFailed: bool
       activeSection: ActiveSection
       activeSectionVariant: QVariant
@@ -42,7 +42,7 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.model = section_model.newModel()
-    result.chatsLoaded = false
+    result.sectionsLoaded = false
     result.chatsLoadingFailed = false
     result.modelVariant = newQVariant(result.model)
     result.activeSection = newActiveSection()
@@ -159,17 +159,17 @@ QtObject:
   proc setCurrentUserStatus*(self: View, status: int) {.slot.} =
     self.delegate.setCurrentUserStatus(intToEnum(status, StatusType.Unknown))
 
-  proc chatsLoadedChanged(self: View) {.signal.}
+  proc sectionsLoadedChanged(self: View) {.signal.}
 
-  proc chatsLoaded*(self: View) =
-    self.chatsLoaded = true
-    self.chatsLoadedChanged()
+  proc sectionsLoaded*(self: View) =
+    self.sectionsLoaded = true
+    self.sectionsLoadedChanged()
 
-  proc getChatsLoaded(self: View): bool {.slot.} =
-    return self.chatsLoaded
-  QtProperty[bool] chatsLoaded:
-    read = getChatsLoaded
-    notify = chatsLoadedChanged
+  proc getSectionsLoaded(self: View): bool {.slot.} =
+    return self.sectionsLoaded
+  QtProperty[bool] sectionsLoaded:
+    read = getSectionsLoaded
+    notify = sectionsLoadedChanged
 
   proc chatsLoadingFailedChanged(self: View) {.signal.}
 

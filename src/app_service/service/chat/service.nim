@@ -31,6 +31,9 @@ type
   ChannelGroupsArgs* = ref object of Args
     channelGroups*: seq[ChannelGroupDto]
 
+  ChannelGroupArgs* = ref object of Args
+    channelGroup*: ChannelGroupDto
+
   ChatUpdateArgs* = ref object of Args
     chats*: seq[ChatDto]
     messages*: seq[MessageDto]
@@ -83,7 +86,9 @@ type
 
 
 # Signals which may be emitted by this service:
+const SIGNAL_CHANNEL_GROUPS_LOADED* = "channelGroupsLoaded"
 const SIGNAL_CHATS_LOADED* = "chatsLoaded"
+const SIGNAL_CHANNEL_GROUPS_LOADING_FAILED* = "channelGroupsLoadingFailed"
 const SIGNAL_CHATS_LOADING_FAILED* = "chatsLoadingFailed"
 const SIGNAL_CHAT_UPDATE* = "chatUpdate"
 const SIGNAL_CHAT_LEFT* = "channelLeft"
@@ -129,7 +134,7 @@ QtObject:
 
   # Forward declarations
   proc updateOrAddChat*(self: Service, chat: ChatDto)
-  proc hydrateChats*(self: Service, data: JsonNode)
+  proc hydrateChannelGroups*(self: Service, data: JsonNode)
   proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto)
 
   proc doConnect(self: Service) =
@@ -164,19 +169,38 @@ QtObject:
   proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
     return toSeq(self.channelGroups.values)
 
-  proc loadChats*(self: Service) =
+  proc loadChannelGroups*(self: Service) =
     try:
-      let response = status_chat.getChats()
-      self.hydrateChats(response.result)
+      let response = status_chat.getChannelGroups()
+      self.hydrateChannelGroups(response.result)
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
 
-  proc asyncGetChats*(self: Service) =
-    let arg = AsyncGetChatsTaskArg(
-      tptr: cast[ByteAddress](asyncGetChatsTask),
+  proc loadChannelGroupById*(self: Service, channelGroupId: string) =
+    try:
+      let response = status_chat.getChatsByChannelGroupId(channelGroupId)
+      self.hydrateChannelGroups(%*{
+        channelGroupId: response.result
+      })
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+
+  proc asyncGetChannelGroups*(self: Service) =
+    let arg = AsyncGetChannelGroupsTaskArg(
+      tptr: cast[ByteAddress](asyncGetChannelGroupsTask),
       vptr: cast[ByteAddress](self.vptr),
-      slot: "onAsyncGetChatsResponse",
+      slot: "onAsyncGetChannelGroupsResponse",
+    )
+    self.threadpool.start(arg)
+
+  proc asyncGetChatsByChannelGroupId*(self: Service, channelGroupId: string) =
+    let arg = AsyncGetChatsByChannelGroupIdTaskArg(
+      tptr: cast[ByteAddress](asyncGetChatsByChannelGroupIdTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncGetChatsByChannelGroupIdResponse",
+      channelGroupId: channelGroupId,
     )
     self.threadpool.start(arg)
 
@@ -185,7 +209,7 @@ QtObject:
     if (y[1].channelGroupType == Personal): return 1
     return 0
 
-  proc hydrateChats(self: Service, data: JsonNode) =
+  proc hydrateChannelGroups(self: Service, data: JsonNode) =
     var chats: seq[ChatDto] = @[]
     for (sectionId, section) in data.pairs:
       var channelGroup = section.toChannelGroupDto()
@@ -205,24 +229,41 @@ QtObject:
         else:
           self.chats[chat.id] = chat
 
-  proc onAsyncGetChatsResponse*(self: Service, response: string) {.slot.} =
+  proc onAsyncGetChannelGroupsResponse*(self: Service, response: string) {.slot.} =
     try:
       let rpcResponseObj = response.parseJson
 
       if(rpcResponseObj["channelGroups"].kind == JNull):
         raise newException(RpcException, "No channel groups returned")
 
-      self.hydrateChats(rpcResponseObj["channelGroups"])
-      self.events.emit(SIGNAL_CHATS_LOADED, ChannelGroupsArgs(channelGroups: self.getChannelGroups()))
+      self.hydrateChannelGroups(rpcResponseObj["channelGroups"])
+      self.events.emit(SIGNAL_CHANNEL_GROUPS_LOADED, ChannelGroupsArgs(channelGroups: self.getChannelGroups()))
     except Exception as e:
       let errDesription = e.msg
-      error "error: ", errDesription
+      error "error get channel groups: ", errDesription
+      self.events.emit(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED, Args())
+
+  proc onAsyncGetChatsByChannelGroupIdResponse*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+
+      if(rpcResponseObj["channelGroup"].kind == JNull):
+        raise newException(RpcException, "No channel group returned")
+
+      let channelGroupId = rpcResponseObj["channelGroupId"].getStr
+      self.hydrateChannelGroups(%*{
+        channelGroupId: rpcResponseObj["channelGroup"]
+      })
+      self.events.emit(SIGNAL_CHATS_LOADED, ChannelGroupArgs(channelGroup: self.channelGroups[channelGroupId]))
+    except Exception as e:
+      let errDesription = e.msg
+      error "error get chats by channel group: ", errDesription
       self.events.emit(SIGNAL_CHATS_LOADING_FAILED, Args())
 
   proc init*(self: Service) =
     self.doConnect()
 
-    self.asyncGetChats()
+    self.asyncGetChannelGroups()
 
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)

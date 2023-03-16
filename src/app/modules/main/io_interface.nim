@@ -75,7 +75,7 @@ method chatSectionDidLoad*(self: AccessInterface) {.base.} =
 method communitySectionDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatsLoaded*(
+method onChannelGroupsLoaded*(
   self: AccessInterface,
   channelGroups: seq[ChannelGroupDto],
   events: EventEmitter,
@@ -117,6 +117,10 @@ method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: str
   raise newException(ValueError, "No implementation available")
 
 method onNotificationsUpdated*(self: AccessInterface, sectionId: string, sectionHasUnreadMessages: bool,
+  sectionNotificationCount: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onNotificationsIncreased*(self: AccessInterface, sectionId: string, addedSectionNotificationCount: bool,
   sectionNotificationCount: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
