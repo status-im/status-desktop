@@ -65,11 +65,12 @@ ToolTip {
         text: statusToolTip.text
         color: Theme.palette.white
         linkColor: Theme.palette.white
-        wrapMode: Text.WordWrap
+        wrapMode: Text.Wrap
         font.pixelSize: 13
         font.weight: Font.Medium
         horizontalAlignment: Text.AlignHCenter
         bottomPadding: 8
         textFormat: Text.RichText
+        elide: Text.ElideRight
     }
 }
