@@ -253,6 +253,15 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
       self.delegate.onWalletAccountTokensRebuilt()
 
+    self.events.on(SIGNAL_COMMUNITY_KICKED) do (e: Args):
+      let args = CommunityArgs(e)
+      if (args.community.id == self.sectionId):
+        self.delegate.onKickedFromCommunity()
+
+    self.events.on(SIGNAL_COMMUNITY_JOINED) do (e: Args):
+      let args = CommunityArgs(e)
+      if (args.community.id == self.sectionId):
+        self.delegate.onJoinedCommunity()
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)

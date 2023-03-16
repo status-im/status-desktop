@@ -358,3 +358,9 @@ method onCommunityTokenMetadataAdded*(self: AccessInterface, communityId: string
 
 method onWalletAccountTokensRebuilt*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
+
+method onKickedFromCommunity*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
+
+method onJoinedCommunity*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
