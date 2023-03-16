@@ -134,6 +134,7 @@ const SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED* = "communityChannelCategoryChan
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
 const SIGNAL_COMMUNITY_MEMBERS_CHANGED* = "communityMembersChanged"
+const SIGNAL_COMMUNITY_KICKED* = "communityKicked"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_REQUEST_TO_JOIN_COMMUNITY_CANCELED* = "requestToJoinCommunityCanceled"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
@@ -576,6 +577,8 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
+      if wasJoined and not community.joined and not community.isMember:
+        self.events.emit(SIGNAL_COMMUNITY_KICKED, CommunityArgs(community: community))
     
     except Exception as e:
       error "Error handling community updates", msg = e.msg, communities, updatedChats, removedChats

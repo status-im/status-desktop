@@ -66,6 +66,13 @@ StackLayout {
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
             isInvitationPending: root.rootStore.isCommunityRequestPending(communityData.id)
+            onRevealAddressClicked: {
+                root.rootStore.requestToJoinCommunity(communityData.id, root.rootStore.userProfileInst.name)
+            }
+            onInvitationPendingClicked: {
+                root.rootStore.cancelPendingRequest(communityData.id)
+                joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
+            }
 
             Connections {
                 target: root.rootStore.communitiesModuleInst

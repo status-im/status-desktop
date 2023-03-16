@@ -811,6 +811,12 @@ method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMe
   if tokenMetadata.tokenType == community_dto.TokenType.ERC20 and not self.view.tokenListModel().hasItem(tokenMetadata.symbol):
     self.view.tokenListModel.addItems(@[tokenListItem])
 
+method onKickedFromCommunity*(self: Module) =
+  self.view.setAmIMember(false)
+
+method onJoinedCommunity*(self: Module) =
+  self.view.setAmIMember(true)
+
 method onMarkAllMessagesRead*(self: Module, chatId: string) =
   self.updateBadgeNotifications(chatId, hasUnreadMessages=false, unviewedMentionsCount=0)
   let chatDetails = self.controller.getChatDetails(chatId)
