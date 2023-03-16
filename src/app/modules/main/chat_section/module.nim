@@ -1160,6 +1160,9 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 
     let viewAmount = tokenCriteria{"amount"}.getFloat
     var tokenCriteriaDto = tokenCriteria.toTokenCriteriaDto
+    if tokenCriteriaDto.`type` == community_dto.TokenType.ERC20:
+      tokenCriteriaDto.decimals = self.controller.getTokenDecimals(tokenCriteriaDto.symbol)
+
     let contractAddresses = self.controller.getContractAddressesForToken(tokenCriteriaDto.symbol)
     if contractAddresses.len == 0 and tokenCriteriaDto.`type` != community_dto.TokenType.ENS:
       if permissionId == "":
