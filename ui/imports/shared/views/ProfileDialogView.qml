@@ -469,16 +469,6 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Reverse Contact Rejection")
-                        icon.name: "refresh"
-                        enabled: d.contactDetails.removed
-                        onTriggered: {
-                            moreMenu.close()
-                            root.contactsStore.removeContactRequestRejection(root.publicKey)
-                            d.reload()
-                        }
-                    }
-                    StatusAction {
                         text: qsTr("Copy Link to Profile")
                         icon.name: "copy"
                         onTriggered: {
