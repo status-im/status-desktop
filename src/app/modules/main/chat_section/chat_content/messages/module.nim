@@ -51,9 +51,9 @@ proc createFetchMoreMessagesItem(self: Module): Item
 proc setChatDetails(self: Module, chatDetails: ChatDto)
 
 method delete*(self: Module) =
+  self.controller.delete
   self.view.delete
   self.viewVariant.delete
-  self.controller.delete
 
 method load*(self: Module) =
   self.controller.init()

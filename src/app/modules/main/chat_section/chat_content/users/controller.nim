@@ -7,11 +7,12 @@ import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/chat/service as chat_service
 
 import ../../../../../core/eventemitter
+import ../../../../../core/unique_event_emitter
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
-    events: EventEmitter
+    events: UniqueUUIDEventEmitter
     sectionId: string
     chatId: string
     belongsToCommunity: bool
@@ -32,7 +33,7 @@ proc newController*(
 ): Controller =
   result = Controller()
   result.delegate = delegate
-  result.events = events
+  result.events = initUniqueUUIDEventEmitter(events)
   result.sectionId = sectionId
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
@@ -44,7 +45,7 @@ proc newController*(
   result.chatService = chatService
 
 proc delete*(self: Controller) =
-  discard
+  self.events.disconnect()
 
 proc handleCommunityOnlyConnections(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):

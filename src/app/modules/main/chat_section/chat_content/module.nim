@@ -62,12 +62,13 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
     else: communityUsersModule
 
 method delete*(self: Module) =
-  self.inputAreaModule.delete
-  self.messagesModule.delete
-  self.usersModule.delete
+  self.controller.delete
   self.view.delete
   self.viewVariant.delete
-  self.controller.delete
+  self.inputAreaModule.delete
+  self.messagesModule.delete
+  if self.usersModule != nil:
+    self.usersModule.delete
 
 method load*(self: Module) =
   self.controller.init()

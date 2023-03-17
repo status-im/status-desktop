@@ -1,4 +1,4 @@
-import NimQml, strutils, sequtils, sugar
+import NimQml, strutils, sequtils, sugar, chronicles
 import io_interface
 import view, controller
 import ../../../../shared_models/[member_model, member_item]
@@ -40,9 +40,9 @@ proc newModule*(
   result.moduleLoaded = false
 
 method delete*(self: Module) =
+  self.controller.delete
   self.view.delete
   self.viewVariant.delete
-  self.controller.delete
 
 method load*(self: Module) =
   if not self.moduleLoaded:

@@ -32,6 +32,9 @@ proc once*(this:EventEmitter, name:string, handler:Handler): void =
     handler(a)
     this.events[name].del handlerId
 
+proc onUsingUUID*(this: EventEmitter, handlerId: UUID, name: string, handler: Handler): void =
+  this.on(name, handlerId, handler)
+
 proc onWithUUID*(this: EventEmitter, name: string, handler: Handler): UUID =
   var handlerId = genUUID()
   this.on(name, handlerId, handler)
@@ -41,7 +44,6 @@ proc disconnect*(this: EventEmitter, handlerId: UUID) =
   for k, v in this.events:
     if v.hasKey(handlerId):
       this.events[k].del handlerId
-      return
 
 proc emit*(this:EventEmitter, name:string, args:Args): void  =
   if this.events.hasKey(name):

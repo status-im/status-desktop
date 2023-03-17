@@ -882,10 +882,10 @@ QtObject:
       for chat in updatedCommunity.chats:
         self.messageService.resetMessageCursor(chat.id)
 
-      self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: communityId))
-
       # remove related community requests
       keepIf(self.myCommunityRequests, request => request.communityId != communityId)
+
+      self.events.emit(SIGNAL_COMMUNITY_LEFT, CommunityIdArgs(communityId: communityId))
 
     except Exception as e:
       error "Error leaving community", msg = e.msg, communityId

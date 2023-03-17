@@ -20,6 +20,7 @@ import chat_content/users/module as users_module
 import ../../../global/app_sections_config as conf
 import ../../../global/global_singleton
 import ../../../core/eventemitter
+import ../../../core/unique_event_emitter
 import ../../../core/notifications/details as notification_details
 import ../../../../app_service/common/types
 import ../../../../app_service/service/settings/service as settings_service
@@ -104,12 +105,12 @@ proc newModule*(
       contactService, chat_service, communityService, messageService)
 
 method delete*(self: Module) =
+  self.controller.delete
+  self.view.delete
+  self.viewVariant.delete
   for cModule in self.chatContentModules.values:
     cModule.delete
   self.chatContentModules.clear
-  self.view.delete
-  self.viewVariant.delete
-  self.controller.delete
   if self.usersModule != nil:
     self.usersModule.delete
 
@@ -1108,7 +1109,7 @@ method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
 method addChatIfDontExist*(self: Module,
     chat: ChatDto,
     belongsToCommunity: bool,
-    events: EventEmitter,
+    events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,
@@ -1129,7 +1130,7 @@ method addChatIfDontExist*(self: Module,
     elif (chat.chatType != ChatType.OneToOne):
       self.onChatRenamed(chat.id, chat.name)
     return
-  self.addNewChat(chat, belongsToCommunity, events, settingsService, nodeConfigurationService,
+  self.addNewChat(chat, belongsToCommunity, events.eventsEmitter(), settingsService, nodeConfigurationService,
     contactService, chatService, communityService, messageService, gifService, mailserversService,
     setChatAsActive)
 
