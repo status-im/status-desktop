@@ -18,6 +18,7 @@ type
     collectionSlug: string
     collectionImageUrl: string
     isLoading: bool
+    isPinned: bool
 
 proc initItem*(
   id: int,
@@ -33,7 +34,8 @@ proc initItem*(
   stats: seq[CollectibleTrait],
   collectionName: string,
   collectionSlug: string,
-  collectionImageUrl: string
+  collectionImageUrl: string,
+  isPinned: bool
 ): Item =
   result.id = id
   result.address = address
@@ -50,9 +52,10 @@ proc initItem*(
   result.collectionSlug = collectionSlug
   result.collectionImageUrl = collectionImageUrl
   result.isLoading = false
+  result.isPinned = isPinned
 
 proc initItem*: Item =
-  result = initItem(-1, "", u256(0), "", "", "transparent", "Collectibles", "", @[], @[], @[], "", "", "")
+  result = initItem(-1, "", u256(0), "", "", "transparent", "Collectibles", "", @[], @[], @[], "", "", "", false)
 
 proc initLoadingItem*: Item =
   result = initItem()
@@ -71,6 +74,8 @@ proc `$`*(self: Item): string =
     collectionName: {self.collectionName},
     collectionSlug: {self.collectionSlug},
     collectionImageUrl: {self.collectionImageUrl},
+    isLoading: {self.isLoading},
+    isPinned: {self.isPinned},
     ]"""
 
 proc getId*(self: Item): int =
@@ -117,3 +122,6 @@ proc getCollectionImageUrl*(self: Item): string =
 
 proc getIsLoading*(self: Item): bool =
   return self.isLoading
+
+proc getIsPinned*(self: Item): bool =
+  return self.isPinned

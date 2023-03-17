@@ -24,6 +24,13 @@ rpc(getOpenseaAssetsByOwnerWithCursor, "wallet"):
   cursor: string
   limit: int
 
+rpc(getOpenseaAssetsByOwnerAndContractAddressWithCursor, "wallet"):
+  chainId: int
+  address: string
+  contractAddresses: seq[string]
+  cursor: string
+  limit: int
+
 rpc(getOpenseaAssetsByNFTUniqueID, "wallet"):
   chainId: int
   uniqueIds: seq[NFTUniqueID]

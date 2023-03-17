@@ -1,5 +1,6 @@
-import NimQml, Tables, chronicles, sequtils, json, sugar, stint, hashes, strformat, times
+import NimQml, Tables, chronicles, sequtils, json, sugar, stint, hashes, strformat, times, strutils
 import ../../../app/core/eventemitter
+import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
 
 import dto
@@ -16,9 +17,16 @@ logScope:
   topics = "collectible-service"
 
 # Signals which may be emitted by this service:
+const SIGNAL_OWNED_COLLECTIBLES_RESET* = "ownedCollectiblesReset"
 const SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED* = "ownedCollectiblesUpdateStarted"
 const SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED* = "ownedCollectiblesUpdateFinished"
+const SIGNAL_OWNED_COLLECTIBLES_FROM_WATCHED_CONTRACTS_FETCHED* = "ownedCollectiblesFromWatchedContractsFetched"
 const SIGNAL_COLLECTIBLES_UPDATED* = "collectiblesUpdated"
+
+const INVALID_TIMESTAMP* = fromUnix(0)
+
+# Maximum number of owned collectibles to be fetched at a time
+const ownedCollectiblesFetchLimit = 200
 
 type
   OwnedCollectiblesUpdateArgs* = ref object of Args
@@ -31,44 +39,76 @@ type
     ids*: seq[UniqueID]
 
 type
+  OwnedCollectible* = ref object of Args
+    id*: UniqueID
+    isFromWatchedContract*: bool
+
+proc `$`*(self: OwnedCollectible): string =
+  return fmt"""OwnedCollectible(
+    id:{self.id}, 
+    isFromWatchedContract:{self.isFromWatchedContract}
+  )"""
+
+type
   CollectiblesData* = ref object
     isFetching*: bool
+    anyLoaded*: bool
     allLoaded*: bool
     lastLoadWasFromStart*: bool
     lastLoadFromStartTimestamp*: DateTime
     lastLoadCount*: int
     previousCursor*: string
     nextCursor*: string
-    ids*: seq[UniqueID]
+    collectibles*: seq[OwnedCollectible]
+    collectiblesFromWatchedContracts: seq[OwnedCollectible]
   
-proc newCollectiblesData*(): CollectiblesData =
+proc newCollectiblesData(): CollectiblesData =
   new(result)
   result.isFetching = false
+  result.anyLoaded = false
   result.allLoaded = false
   result.lastLoadWasFromStart = false
-  result.lastLoadFromStartTimestamp = now() - initDuration(weeks = 1)
+  result.lastLoadFromStartTimestamp = INVALID_TIMESTAMP.utc()
   result.lastLoadCount = 0
   result.previousCursor = ""
   result.nextCursor = ""
-  result.ids = @[]
+  result.collectibles = @[]
+  result.collectiblesFromWatchedContracts = @[]
 
 proc `$`*(self: CollectiblesData): string =
   return fmt"""CollectiblesData(
     isFetching:{self.isFetching}, 
+    anyLoaded:{self.anyLoaded}, 
     allLoaded:{self.allLoaded}, 
     lastLoadWasFromStart:{self.lastLoadWasFromStart},
     lastLoadFromStartTimestamp:{self.lastLoadFromStartTimestamp},
     lastLoadCount:{self.lastLoadCount}, 
     previousCursor:{self.previousCursor}, 
     nextCursor:{self.nextCursor}, 
-    ids:{self.ids}
+    collectibles:{self.collectibles}
   )"""
 
 type
-  AdressesData = TableRef[string, CollectiblesData]  # [address, CollectiblesData]
+  OwnershipData* = ref object
+    data*: CollectiblesData
+    watchedContractAddresses*: seq[string]
+
+proc newOwnershipData(): OwnershipData =
+  new(result)
+  result.data = newCollectiblesData()
+  result.watchedContractAddresses = @[]
 
 type
-  ChainsData = TableRef[int, AdressesData]  # [chainId, AdressesData]
+  AddressesData = TableRef[string, OwnershipData]  # [address, OwnershipData]
+
+proc newAddressesData(): AddressesData =
+  result = newTable[string, OwnershipData]()
+
+type
+  ChainsData = TableRef[int, AddressesData]  # [chainId, AddressesData]
+
+proc newChainsData(): ChainsData =
+  result = newTable[int, AddressesData]()
 
 type
   CollectiblesResult = tuple[success: bool, collectibles: seq[CollectibleDto], collections: seq[CollectionDto], previousCursor: string, nextCursor: string]
@@ -83,9 +123,13 @@ QtObject:
       events: EventEmitter
       threadpool: ThreadPool
       networkService: network_service.Service
-      ownershipData: ChainsData
+      accountsOwnershipData: ChainsData
       collectibles: TableRef[int, TableRef[UniqueID, CollectibleDto]]  # [chainId, [UniqueID, CollectibleDto]]
       collections: TableRef[int, TableRef[string, CollectionDto]]  # [chainId, [slug, CollectionDto]]
+
+  # Forward declarations
+  proc resetOwnedCollectibles*(self: Service, chainId: int, address: string)
+  proc resetAllOwnedCollectibles*(self: Service)
 
   proc delete*(self: Service) =
       self.QObject.delete
@@ -100,33 +144,49 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.networkService = networkService
-    result.ownershipData = newTable[int, AdressesData]()
+    result.accountsOwnershipData = newChainsData()
     result.collectibles = newTable[int, TableRef[UniqueID, CollectibleDto]]()
     result.collections = newTable[int, TableRef[string, CollectionDto]]()
 
   proc init*(self: Service) =
-    discard
+    self.events.on(SignalType.Wallet.event) do(e:Args):
+      var data = WalletSignal(e)
+      case data.eventType:
+        of "wallet-tick-reload":
+          self.resetAllOwnedCollectibles()
 
-  proc prepareOwnershipData(self: Service, chainId: int, address: string, reset: bool = false) =
-    if not self.ownershipData.hasKey(chainId):
-      self.ownershipData[chainId] = newTable[string, CollectiblesData]()
+  proc prepareOwnershipData(self: Service, chainId: int, address: string) =
+    if not self.accountsOwnershipData.hasKey(chainId):
+      self.accountsOwnershipData[chainId] = newAddressesData()
 
-    let chainData = self.ownershipData[chainId]
-    if reset or not chainData.hasKey(address):
-      chainData[address] = newCollectiblesData()
+    let chainData = self.accountsOwnershipData[chainId]
+    if not chainData.hasKey(address):
+      chainData[address] = newOwnershipData()
 
-    let addressData = self.ownershipData[chainId][address]
-    addressData.lastLoadWasFromStart = reset
-    if reset:
-      addressData.lastLoadFromStartTimestamp = now()
-
-
-  proc updateOwnedCollectibles(self: Service, chainId: int, address: string, previousCursor: string, nextCursor: string, collectibles: seq[CollectibleDto]) =
+  proc updateOwnedCollectibles(self: Service, chainId: int, address: string, previousCursor: string, nextCursor: string, collectibles: seq[CollectibleDto], isFromWatchedContract: bool) =
+    let ownershipData = self.accountsOwnershipData[chainId][address]
+    let collectiblesData = ownershipData.data
     try:
-      let collectiblesData = self.ownershipData[chainId][address]
-      collectiblesData.previousCursor = previousCursor
-      collectiblesData.nextCursor = nextCursor
-      collectiblesData.allLoaded = (nextCursor == "")
+      if not (collectiblesData.nextCursor == previousCursor):
+        # Async response from an old fetch request, disregard
+        return
+      if not collectiblesData.anyLoaded:
+        collectiblesData.lastLoadWasFromStart = true
+        collectiblesData.lastLoadFromStartTimestamp = now()
+      else:
+        collectiblesData.lastLoadWasFromStart = false
+      
+      collectiblesData.anyLoaded = true
+
+      if isFromWatchedContract:
+        # All fetched in one go, ignore cursors
+        collectiblesData.previousCursor = ""
+        collectiblesData.nextCursor = ""
+        collectiblesData.allLoaded = false
+      else:
+        collectiblesData.previousCursor = previousCursor
+        collectiblesData.nextCursor = nextCursor
+        collectiblesData.allLoaded = (nextCursor == "")
 
       var count = 0
       for collectible in collectibles:
@@ -134,8 +194,15 @@ QtObject:
           contractAddress: collectible.address,
           tokenId: collectible.tokenId
         )
-        if not collectiblesData.ids.any(id => newId == id):
-          collectiblesData.ids.add(newId)
+        if not collectiblesData.collectibles.any(c => newId == c.id):
+          let ownedCollectible = OwnedCollectible(
+            id: newId,
+            isFromWatchedContract: isFromWatchedContract
+          )
+          collectiblesData.collectibles.add(ownedCollectible)
+          if isFromWatchedContract:
+            collectiblesData.collectiblesFromWatchedContracts.add(ownedCollectible)
+
           count = count + 1
       collectiblesData.lastLoadCount = count
     except Exception as e:
@@ -156,7 +223,6 @@ QtObject:
       let slug = collection.slug
       self.collections[chainId][slug] = collection
 
-
     for collectible in collectibles:
       let id = UniqueID(
         contractAddress: collectible.address,
@@ -167,12 +233,15 @@ QtObject:
     
     self.events.emit(SIGNAL_COLLECTIBLES_UPDATED, data)
 
+  proc setWatchedContracts*(self: Service, chainId: int, address: string, contractAddresses: seq[string]) =
+    self.prepareOwnershipData(chainId, address)
+    self.accountsOwnershipData[chainId][address].watchedContractAddresses = contractAddresses
+    # Re-fetch
+    self.resetOwnedCollectibles(chainId, address)
+
   proc getOwnedCollectibles*(self: Service, chainId: int, address: string) : CollectiblesData =
-    try:
-      return self.ownershipData[chainId][address]
-    except:
-      discard
-    return newCollectiblesData()
+    self.prepareOwnershipData(chainId, address)
+    return self.accountsOwnershipData[chainId][address].data
 
   proc getCollectible*(self: Service, chainId: int, id: UniqueID) : CollectibleDto =
     try:
@@ -238,7 +307,7 @@ QtObject:
       limit: len(ids)
     )
     self.threadpool.start(arg)
-  
+
   proc onRxOwnedCollectibles(self: Service, response: string) {.slot.} =
     var data = OwnedCollectiblesUpdateArgs()
     try:
@@ -250,27 +319,80 @@ QtObject:
           addressJson.kind == JString):
           data.chainId = chainIdJson.getInt()
           data.address = addressJson.getStr()
-          self.ownershipData[data.chainId][data.address].isFetching = false
+          let collectiblesData = self.accountsOwnershipData[data.chainId][data.address].data
+          collectiblesData.isFetching = false
           let (success, collectibles, collections, prevCursor, nextCursor) = processCollectiblesResult(responseObj)
           if success:
             self.updateCollectiblesCache(data.chainId, collectibles, collections)
-            self.updateOwnedCollectibles(data.chainId, data.address, prevCursor, nextCursor, collectibles)
+            self.updateOwnedCollectibles(data.chainId, data.address, prevCursor, nextCursor, collectibles, false)
     except Exception as e:
       let errDescription = e.msg
       error "error onRxOwnedCollectibles: ", errDescription
     self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED, data)
 
-  proc resetOwnedCollectibles*(self: Service, chainId: int, address: string) =
-    self.prepareOwnershipData(chainId, address, true)
+  proc fetchNextOwnedCollectiblesChunk(self: Service, chainId: int, address: string, limit: int = ownedCollectiblesFetchLimit) =
+    self.prepareOwnershipData(chainId, address)
+
+    let ownershipData = self.accountsOwnershipData[chainId][address]
+    let collectiblesData = ownershipData.data
+
+    var cursor = collectiblesData.nextCursor
+
+    let arg = FetchOwnedCollectiblesTaskArg(
+      tptr: cast[ByteAddress](fetchOwnedCollectiblesTaskArg),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onRxOwnedCollectibles",
+      chainId: chainId,
+      address: address,
+      cursor: cursor,
+      limit: limit
+    )
+    self.threadpool.start(arg)
+
+  proc onRxOwnedCollectiblesFromWatchedContractAddresses(self: Service, response: string) {.slot.} =
     var data = OwnedCollectiblesUpdateArgs()
-    data.chainId = chainId
-    data.address = address
+    try:
+      let responseObj = response.parseJson
+      if (responseObj.kind == JObject):
+        let chainIdJson = responseObj["chainId"]
+        let addressJson = responseObj["address"]
+        if (chainIdJson.kind == JInt and
+          addressJson.kind == JString):
+          data.chainId = chainIdJson.getInt()
+          data.address = addressJson.getStr()
+          let collectiblesData = self.accountsOwnershipData[data.chainId][data.address].data
+          collectiblesData.isFetching = false
+          let (success, collectibles, collections, prevCursor, nextCursor) = processCollectiblesResult(responseObj)
+          if success:
+            self.updateCollectiblesCache(data.chainId, collectibles, collections)
+            self.updateOwnedCollectibles(data.chainId, data.address, prevCursor, nextCursor, collectibles, true)
+    except Exception as e:
+      let errDescription = e.msg
+      error "error onRxOwnedCollectiblesFromWatchedContractAddresses: ", errDescription
+    self.events.emit(SIGNAL_OWNED_COLLECTIBLES_FROM_WATCHED_CONTRACTS_FETCHED, data)
     self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED, data)
 
-  proc fetchOwnedCollectibles*(self: Service, chainId: int, address: string, limit: int) =
-    self.prepareOwnershipData(chainId, address, false)
+  proc fetchOwnedCollectiblesFromWatchedContracts(self: Service, chainId: int, address: string) =
+    let watchedContractAddresses = self.accountsOwnershipData[chainId][address].watchedContractAddresses
 
-    let collectiblesData = self.ownershipData[chainId][address]
+    let arg = FetchOwnedCollectiblesFromContractAddressesTaskArg(
+      tptr: cast[ByteAddress](fetchOwnedCollectiblesFromContractAddressesTaskArg),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onRxOwnedCollectiblesFromWatchedContractAddresses",
+      chainId: chainId,
+      address: address,
+      contractAddresses: watchedContractAddresses,
+      cursor: "", # Always fetch from the beginning
+      limit: 0 # Always fetch the complete list
+    )
+    self.threadpool.start(arg)
+
+  proc fetchOwnedCollectibles*(self: Service, chainId: int, address: string, limit: int = ownedCollectiblesFetchLimit) =
+    self.prepareOwnershipData(chainId, address)
+
+    let ownershipData = self.accountsOwnershipData[chainId][address]
+    let watchedContractAddresses = ownershipData.watchedContractAddresses
+    let collectiblesData = ownershipData.data
 
     if collectiblesData.isFetching:
       return
@@ -279,19 +401,31 @@ QtObject:
       return
 
     collectiblesData.isFetching = true
-
     var data = OwnedCollectiblesUpdateArgs()
     data.chainId = chainId
     data.address = address
     self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED, data)
 
-    let arg = FetchOwnedCollectiblesTaskArg(
-      tptr: cast[ByteAddress](fetchOwnedCollectiblesTaskArg),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onRxOwnedCollectibles",
-      chainId: chainId,
-      address: address,
-      cursor: collectiblesData.nextCursor,
-      limit: limit
-    )
-    self.threadpool.start(arg)
+    # Full list of collectibles from watched contracts always get loaded first
+    if not collectiblesData.anyLoaded and len(watchedContractAddresses) > 0:
+      self.fetchOwnedCollectiblesFromWatchedContracts(chainId, address)
+    else:
+      self.fetchNextOwnedCollectiblesChunk(chainId, address)
+
+  proc resetOwnedCollectibles*(self: Service, chainId: int, address: string) =
+    self.prepareOwnershipData(chainId, address)
+
+    let ownershipData = self.accountsOwnershipData[chainId][address]
+    ownershipData.data = newCollectiblesData()
+
+    var data = OwnedCollectiblesUpdateArgs()
+    data.chainId = chainId
+    data.address = address
+    self.events.emit(SIGNAL_OWNED_COLLECTIBLES_RESET, data)
+
+    self.fetchOwnedCollectibles(chainId, address)
+
+  proc resetAllOwnedCollectibles*(self: Service) =
+    for chainId, addressesData in self.accountsOwnershipData:
+      for address, _ in addressesData:
+        self.resetOwnedCollectibles(chainId, address)

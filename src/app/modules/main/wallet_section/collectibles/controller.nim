@@ -30,11 +30,22 @@ proc newController*(
 proc delete*(self: Controller) =
   discard
 
-proc refreshCollectibles*(self: Controller, chainId: int, address: string) =
-  let collectibles = self.collectibleService.getOwnedCollectibles(chainId, address)
-  self.delegate.refreshCollectibles(chainId, address, collectibles)
+proc refreshCollectibles(self: Controller, chainId: int, address: string) =
+  let data = self.collectibleService.getOwnedCollectibles(chainId, address)
+  if not data.anyLoaded or data.lastLoadWasFromStart:
+    self.delegate.setCollectibles(chainId, address, data)
+  else:
+    self.delegate.appendCollectibles(chainId, address, data)
 
 proc init*(self: Controller) =  
+  self.events.on(SIGNAL_OWNED_COLLECTIBLES_RESET) do(e:Args):
+    let args = OwnedCollectiblesUpdateArgs(e)
+    self.refreshCollectibles(args.chainId, args.address)
+
+  self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED) do(e:Args):
+    let args = OwnedCollectiblesUpdateArgs(e)
+    self.delegate.onFetchStarted(args.chainId, args.address)
+
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
     self.refreshCollectibles(args.chainId, args.address)
@@ -45,11 +56,14 @@ proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_serv
 proc getNetwork*(self: Controller): network_service.NetworkDto =
   return self.networkService.getNetworkForCollectibles()
 
+proc getOwnedCollectibles*(self: Controller, chainId: int, address: string): CollectiblesData =
+  return self.collectibleService.getOwnedCollectibles(chainId, address)
+
 proc resetOwnedCollectibles*(self: Controller, chainId: int, address: string) =
   self.collectibleService.resetOwnedCollectibles(chainId, address)
 
-proc fetchOwnedCollectibles*(self: Controller, chainId: int, address: string, limit: int) =
-  self.collectibleService.fetchOwnedCollectibles(chainId, address, limit)
+proc fetchOwnedCollectibles*(self: Controller, chainId: int, address: string) =
+  self.collectibleService.fetchOwnedCollectibles(chainId, address)
 
 proc getCollectible*(self: Controller, chainId: int, id: UniqueID) : CollectibleDto =
   self.collectibleService.getCollectible(chainId, id)
