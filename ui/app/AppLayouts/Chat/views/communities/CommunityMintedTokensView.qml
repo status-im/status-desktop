@@ -26,7 +26,8 @@ StatusScrollView {
                        bool remoteSelfDestruct,
                        int chainId,
                        string chainName,
-                       string chainIcon)
+                       string chainIcon,
+                       string accountName)
 
 
     enum DeployState {
@@ -81,7 +82,7 @@ StatusScrollView {
                 subTitle: d.getStateText(model.deployState)
                 imageUrl: model.image ? model.image : ""
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent" // TODO BACKEND
-                isLoading: false// model.isLoading // TODO BACKEND
+                isLoading: false
                 navigationIconVisible: true
 
                 onClicked: root.itemClicked(model.deployState,
@@ -95,7 +96,8 @@ StatusScrollView {
                                             model.remoteSelfDestruct,
                                             model.chainId,
                                             model.chainName,
-                                            model.chainIcon)
+                                            model.chainIcon,
+                                            model.accountName)
 
 
             }

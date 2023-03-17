@@ -31,6 +31,7 @@ StatusScrollView {
     property int chainId
     property string chainIcon
     property int deployState
+    property alias accountName: accountBox.value
 
     signal mintCollectible(url artworkSource,
                            string name,
@@ -40,7 +41,8 @@ StatusScrollView {
                            bool infiniteSupply,
                            bool transferable,
                            bool selfDestruct,
-                           int chainId)
+                           int chainId,
+                           string accountName)
 
     QtObject {
         id: d
@@ -167,6 +169,13 @@ StatusScrollView {
                 leftAlignment: false
             }
 
+            CustomPreviewBox {
+                id: accountBox
+
+                label: qsTr("Account")
+                leftAlignment: false
+            }
+
             Rectangle {
                 height: symbolBox.height
                 width: rowChain.implicitWidth + 2 * Style.current.padding
@@ -240,7 +249,8 @@ StatusScrollView {
                                      root.infiniteSupply,
                                      root.transferable,
                                      root.selfDestruct,
-                                     root.chainId)
+                                     root.chainId,
+                                     root.accountName)
             }
         }
 

@@ -293,11 +293,12 @@ StatusSectionLayout {
                 testNetworks: communityTokensStore.testNetworks
                 enabledNetworks: communityTokensStore.enabledNetworks
                 allNetworks: communityTokensStore.allNetworks
+                accounts: root.rootStore.accounts
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
                 onMintCollectible: {
                     communityTokensStore.deployCollectible(root.community.id,
-                                                           root.transactionStore.currentAccount.address, /*TODO use address from SendModal*/
+                                                           accountAddress,
                                                            name,
                                                            symbol,
                                                            description,
@@ -306,7 +307,8 @@ StatusSectionLayout {
                                                            transferable,
                                                            selfDestruct,
                                                            chainId,
-                                                           artworkSource)
+                                                           artworkSource,
+                                                           accountName)
                 }
             }
 

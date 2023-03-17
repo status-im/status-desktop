@@ -32,6 +32,7 @@ SplitView {
                 testNetworks: NetworksModel.testNetworks
                 enabledNetworks: NetworksModel.enabledNetworks
                 allNetworks: enabledNetworks
+                accounts: WalletAccountsModel {}
 
                 onPreviewClicked: logs.logEvent("CommunityNewCollectibleView::previewClicked")
             }

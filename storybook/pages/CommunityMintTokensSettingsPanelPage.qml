@@ -29,7 +29,8 @@ SplitView {
             layer2Networks: NetworksModel.layer2Networks
             testNetworks: NetworksModel.testNetworks
             enabledNetworks: NetworksModel.enabledNetworks
-            allNetworks: enabledNetworks
+            allNetworks: enabledNetworks            
+            accounts: WalletAccountsModel {}
 
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
        }
