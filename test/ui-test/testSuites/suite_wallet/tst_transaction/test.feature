@@ -10,7 +10,6 @@ Feature: Status Desktop Transaction
 	** and the user signs up with username "tester123" and password "qqqqqqqqqq"
 	** and the user lands on the signed in app
 	** and the user opens app settings screen
-	** and the user activates wallet
 	** and the user opens the wallet settings
 	** and the user toggles test networks
 	** and the user opens wallet screen

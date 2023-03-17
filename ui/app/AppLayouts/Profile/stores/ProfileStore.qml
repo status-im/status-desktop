@@ -25,7 +25,7 @@ QtObject {
     readonly property var temporarySocialLinksJson: profileModule.temporarySocialLinksJson
     readonly property bool socialLinksDirty: profileModule.socialLinksDirty
 
-    readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : false
+    readonly property bool isWalletEnabled: Global.appIsReady? mainModule.sectionsModel.getItemEnabledBySectionType(Constants.appSection.wallet) : true
 
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {

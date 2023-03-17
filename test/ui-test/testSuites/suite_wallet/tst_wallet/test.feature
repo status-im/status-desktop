@@ -9,7 +9,7 @@ Feature: Status Desktop Wallet
     ** and the user lands on the signed in app
 
     ** given the user opens app settings screen
-    ** and the user activates wallet and opens the wallet section
+    ** and the user opens the wallet section
     ** and the user accepts the signing phrase
 
     Background: Navigation to main wallet screen
