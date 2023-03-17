@@ -17,6 +17,8 @@ import shared.panels 1.0
 import shared.controls 1.0
 import shared.controls.chat 1.0
 
+import SortFilterProxyModel 0.2
+
 import "../stores"
 import "../popups"
 import "../controls"
@@ -37,6 +39,7 @@ SettingsContentBase {
 
     ColumnLayout {
         width: root.contentWidth
+        height: root.contentHeight
         spacing: Style.current.padding
 
         QtObject {
@@ -117,7 +120,7 @@ SettingsContentBase {
             color: Theme.palette.dangerColor1
         }
 
-        ListView {
+        StatusListView {
             id: listView
             Layout.fillWidth: true
             Layout.topMargin: 17
@@ -126,11 +129,17 @@ SettingsContentBase {
             implicitHeight: contentHeight
 
             spacing: Style.current.padding
-            model: root.devicesStore.devicesModel
-
             visible: !root.devicesStore.devicesModule.devicesLoading &&
                 !root.devicesStore.devicesModule.devicesLoadingError &&
                 root.devicesStore.isDeviceSetup
+
+            model: SortFilterProxyModel {
+                sourceModel: root.devicesStore.devicesModel
+                sorters: StringSorter {
+                    roleName: "isCurrentDevice"
+                    sortOrder: Qt.DescendingOrder
+                }
+            }
 
             delegate: StatusSyncDeviceDelegate {
                 width: ListView.view.width
@@ -225,7 +234,6 @@ SettingsContentBase {
                 }
 
                 StatusButton {
-//                    type: StatusRoundButton.Type.Secondary
                     Layout.alignment: Qt.AlignHCenter
                     normalColor: Theme.palette.primaryColor1
                     hoverColor: Theme.palette.miscColor1;

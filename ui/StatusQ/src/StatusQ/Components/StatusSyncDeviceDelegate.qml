@@ -101,6 +101,4 @@ StatusListItem {
             online: d.onlineNow
         }
     }
-
-    tertiaryTitle: `${root.timestamp} ${d.now} --- ${d.secondsFromSync}`
 }
