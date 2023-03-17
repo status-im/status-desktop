@@ -14,7 +14,7 @@ Item {
 
     property string sectionTitle
     property int contentWidth
-    readonly property int contentHeight: (root.height - d.topHeaderHeight - d.titleRowHeight)
+    readonly property int contentHeight: root.height - titleRow.height - Style.current.padding
 
     property alias titleRowComponentLoader: loader
     property list<Item> headerComponents
@@ -35,7 +35,6 @@ Item {
     QtObject {
         id: d
 
-        readonly property int topHeaderHeight: 56
         readonly property int titleRowHeight: 56
     }
 
@@ -119,6 +118,12 @@ Item {
                         duration: 150
                         easing.type: Easing.InOutQuad
                     }
+                }
+
+                Rectangle {
+                    color: "red"
+                    opacity: 0.2
+                    anchors.fill: parent
                 }
             }
         }

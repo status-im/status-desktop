@@ -179,7 +179,7 @@ Item {
                     enabled: false
                     deviceName: model.name
                     deviceType: model.deviceType
-                    timestamp: model.timestamp / 1000000
+                    timestamp: model.timestamp
                     isCurrentDevice: model.isCurrentDevice
                 }
             }

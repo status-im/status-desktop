@@ -44,7 +44,7 @@ StatusListItem {
         if (d.daysFromSync == 1)
             return qsTr("Last online yesterday")
 
-        const date = new Date(root.timestamp)
+        const date = new Date(d.deviceLastTimestamp)
 
         if (d.daysFromSync <= 6)
             return qsTr("Last online [%1]").arg(LocaleUtils.getDayName(date))
@@ -77,7 +77,8 @@ StatusListItem {
         id: d
 
         property real now: 0
-        readonly property int secondsFromSync: (now - Math.max(0, root.timestamp)) / 1000
+        readonly property int deviceLastTimestamp: root.timestamp / 1000000
+        readonly property int secondsFromSync: (now - Math.max(0, d.deviceLastTimestamp)) / 1000
         readonly property int minutesFromSync: secondsFromSync / 60
         readonly property int hoursFromSync: minutesFromSync / 60
         readonly property int daysFromSync: hoursFromSync / 24

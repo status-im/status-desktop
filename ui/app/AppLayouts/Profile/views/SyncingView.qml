@@ -31,38 +31,24 @@ SettingsContentBase {
     property ProfileStore profileStore
     property PrivacyStore privacyStore
 
-    property bool isSyncing: false
-
     Component.onCompleted: {
         root.devicesStore.loadDevices()
     }
 
     ColumnLayout {
+        id: layout
         width: root.contentWidth
-        height: root.contentHeight
+//        height: root.contentHeight
         spacing: Style.current.padding
 
         QtObject {
             id: d
 
-            /*
-                Device INFO:
-                    id: "abcdabcd-1234-5678-9012-12a34b5cd678",
-                    identity: ""
-                    version: 1
-                    enabled: true
-                    timestamp: 0
-                    metadata:
-                        name: "MacBook-1"
-                        deviceType: "macosx"
-                        fcmToken: ""
-            */
-
             readonly property var instructionsModel: [
-                                        qsTr("Verify your login with password or KeyCard"),
-                                        qsTr("Reveal a temporary QR and Sync Code") + "*",
-                                        qsTr("Share that information with your new device"),
-                                    ]
+                qsTr("Verify your login with password or KeyCard"),
+                qsTr("Reveal a temporary QR and Sync Code") + "*",
+                qsTr("Share that information with your new device"),
+            ]
 
 
             function personalizeDevice(model) {
@@ -109,7 +95,6 @@ SettingsContentBase {
             visible: root.devicesStore.devicesModule.devicesLoading
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("Loading devices...")
-
         }
 
         StatusBaseText {
@@ -121,17 +106,17 @@ SettingsContentBase {
         }
 
         StatusListView {
-            id: listView
             Layout.fillWidth: true
-            Layout.topMargin: 17
-            Layout.bottomMargin: 17
+//            Layout.fillHeight: true
+//            Layout.maximumHeight: implicitHeight
 
             implicitHeight: contentHeight
 
-            spacing: Style.current.padding
+            interactive: false
+            spacing: 0
             visible: !root.devicesStore.devicesModule.devicesLoading &&
-                !root.devicesStore.devicesModule.devicesLoadingError &&
-                root.devicesStore.isDeviceSetup
+                     !root.devicesStore.devicesModule.devicesLoadingError &&
+                     root.devicesStore.isDeviceSetup
 
             model: SortFilterProxyModel {
                 sourceModel: root.devicesStore.devicesModel
@@ -145,7 +130,7 @@ SettingsContentBase {
                 width: ListView.view.width
                 deviceName: model.name
                 deviceType: model.deviceType
-                timestamp: model.timestamp / 1000000
+                timestamp: model.timestamp
                 isCurrentDevice: model.isCurrentDevice
                 onSetupSyncingButtonClicked: {
                     d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
@@ -255,16 +240,15 @@ SettingsContentBase {
             }
         }
 
-        StatusButton {
-            id: backupBtn
-            Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 17
-            text: qsTr("Backup Data")
-            onClicked : {
-                let lastUpdate = root.privacyStore.backupData() * 1000
-                console.log("Backup done at: ", LocaleUtils.formatDateTime(lastUpdate))
-            }
-        }
+//        StatusButton {
+//            id: backupBtn
+//            Layout.alignment: Qt.AlignHCenter
+//            text: qsTr("Backup Data")
+//            onClicked : {
+//                let lastUpdate = root.privacyStore.backupData() * 1000
+//                console.log("Backup done at: ", LocaleUtils.formatDateTime(lastUpdate))
+//            }
+//        }
 
         Component {
             id: personalizeDevicePopup
@@ -283,6 +267,11 @@ SettingsContentBase {
                 devicesStore: root.devicesStore
                 profileStore: root.profileStore
             }
+        }
+
+        Item {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
         }
     }
 }
