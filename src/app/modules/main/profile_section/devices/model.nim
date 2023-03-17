@@ -117,20 +117,22 @@ QtObject:
     if(i == -1):
       return
 
-    let first = self.createIndex(i, 0, nil)
-    let last = self.createIndex(i, 0, nil)
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+
     self.items[i].installation = installation
-    self.dataChanged(first, last, @[])
+    self.dataChanged(index, index, @[])
 
   proc updateItemName*(self: Model, installationId: string, name: string) =
     var i = self.findIndexByInstallationId(installationId)
     if(i == -1):
       return
 
-    let first = self.createIndex(i, 0, nil)
-    let last = self.createIndex(i, 0, nil)
+    let index = self.createIndex(i, 0, nil)
+    defer: index.delete
+
     self.items[i].installation.metadata.name = name
-    self.dataChanged(first, last, @[ModelRole.Name.int])
+    self.dataChanged(index, index, @[ModelRole.Name.int])
 
   proc getIsDeviceSetup*(self: Model, installationId: string): bool =
     return anyIt(self.items, it.installation.id == installationId and it.name != "")
