@@ -18,6 +18,8 @@ StackLayout {
     readonly property var contactsStore: rootStore.contactsStore
     readonly property var permissionsStore: rootStore.permissionsStore
 
+    property var sectionItemModel
+
     property var emojiPopup
     property var stickersPopup
     signal importCommunityClicked()
@@ -34,7 +36,7 @@ StackLayout {
         MembershipRequestsPopup {
             anchors.centerIn: parent
             store: root.rootStore
-            communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || {} : {}
+            communityData: sectionItemModel
             onClosed: {
                 destroy()
             }
@@ -51,7 +53,7 @@ StackLayout {
         id: joinCommunityViewComponent
         JoinCommunityView {
             id: joinCommunityView
-            readonly property var communityData: root.rootStore.mainModuleInst ? root.rootStore.mainModuleInst.activeSection || {} : {}
+            readonly property var communityData: sectionItemModel
             name: communityData.name
             communityDesc: communityData.description
             color: communityData.color
@@ -87,6 +89,7 @@ StackLayout {
             stickersPopup: root.stickersPopup
             contactsStore: root.contactsStore
             rootStore: root.rootStore
+            sectionItemModel: root.sectionItemModel
             membershipRequestPopup: membershipRequestPopupComponent
 
             onCommunityInfoButtonClicked: root.currentIndex = 1
@@ -115,8 +118,7 @@ StackLayout {
 
             hasAddedContacts: root.contactsStore.myContactsModel.count > 0
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
-            community: root.rootStore.mainModuleInst ? root.rootStore.mainModuleInst.activeSection
-                                                       || ({}) : ({})
+            community: sectionItemModel
 
             onBackToCommunityClicked: root.currentIndex = 0
 

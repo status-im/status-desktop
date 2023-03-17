@@ -778,7 +778,12 @@ Item {
                                     restoreMode: Binding.RestoreBindingOrValue
                                 }
 
-                                rootStore: appMain.rootChatStore
+                                rootStore: ChatStores.RootStore {
+                                    contactsStore: appMain.rootStore.contactStore
+                                    emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                    openCreateChat: createChatView.opened
+                                    chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                                }
                                 emojiPopup: statusEmojiPopup
                                 stickersPopup: statusStickersPopupLoader.item
 
@@ -799,7 +804,10 @@ Item {
                                 }
 
                                 Component.onCompleted: {
-                                    rootStore.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getChatSectionModule()
+                                    // Do not unload section data from the memory in order not
+                                    // to reset scroll, not send text input and etc during the
+                                    // sections switching
+                                    personalChatLayoutLoader.active = true
                                 }
                             }
                         }
@@ -866,9 +874,12 @@ Item {
                                 roleValue: Constants.appSection.community
 
                                 delegate: Loader {
+                                    id: communityLoader
                                     readonly property string sectionId: model.id
-                                    active: sectionId === appMain.rootStore.mainModuleInst.activeSection.id
+
                                     asynchronous: true
+                                    active: sectionId === appMain.rootStore.mainModuleInst.activeSection.id
+
                                     Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                                     Layout.fillHeight: true
@@ -886,8 +897,17 @@ Item {
 
                                         emojiPopup: statusEmojiPopup
                                         stickersPopup: statusStickersPopupLoader.item
+                                        sectionItemModel: model
 
-                                        rootStore: appMain.rootChatStore
+                                        rootStore: ChatStores.RootStore {
+                                            contactsStore: appMain.rootStore.contactStore
+                                            emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                            openCreateChat: createChatView.opened
+                                            chatCommunitySectionModule: {
+                                                appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
+                                                return appMain.rootStore.mainModuleInst.getCommunitySectionModule()
+                                            }
+                                        }
 
                                         onProfileButtonClicked: {
                                             Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -898,10 +918,10 @@ Item {
                                         }
 
                                         Component.onCompleted: {
-                                            // we cannot return QVariant if we pass another parameter in a function call
-                                            // that's why we're using it this way
-                                            appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
-                                            rootStore.chatCommunitySectionModule = appMain.rootStore.mainModuleInst.getCommunitySectionModule()
+                                            // Do not unload section data from the memory in order not
+                                            // to reset scroll, not send text input and etc during the
+                                            // sections switching
+                                            communityLoader.active = true
                                         }
                                     }
                                 }
@@ -927,7 +947,13 @@ Item {
                             anchors.rightMargin - anchors.leftMargin : 0
 
                     sourceComponent: CreateChatView {
-                        rootStore: appMain.rootChatStore
+                        rootStore: ChatStores.RootStore {
+                            contactsStore: appMain.rootStore.contactStore
+                            emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                            openCreateChat: createChatView.opened
+                            chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+
+                        }
                         emojiPopup: statusEmojiPopup
                         stickersPopup: statusStickersPopupLoader.item
                     }
