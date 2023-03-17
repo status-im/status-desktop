@@ -5,12 +5,13 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/gif/service as gif_service
 import ../../../../../../app_service/service/gif/dto
 import ../../../../../core/eventemitter
+import ../../../../../core/unique_event_emitter
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     sectionId: string
-    events: EventEmitter
+    events: UniqueUUIDEventEmitter
     chatId: string
     belongsToCommunity: bool
     communityService: community_service.Service
@@ -29,7 +30,7 @@ proc newController*(
     ): Controller =
   result = Controller()
   result.delegate = delegate
-  result.events = events
+  result.events = initUniqueUUIDEventEmitter(events)
   result.sectionId = chatId
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
@@ -38,7 +39,7 @@ proc newController*(
   result.gifService = gifService
 
 proc delete*(self: Controller) =
-  discard
+  self.events.disconnect()
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_LOAD_RECENT_GIFS_DONE) do(e:Args):

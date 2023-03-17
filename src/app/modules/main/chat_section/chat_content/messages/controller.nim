@@ -13,6 +13,7 @@ import ../../../../../../app_service/service/eth/utils as eth_utils
 import ../../../../../global/app_signals
 import ../../../../../core/signals/types
 import ../../../../../core/eventemitter
+import ../../../../../core/unique_event_emitter
 
 logScope:
   topics = "messages-controller"
@@ -20,7 +21,7 @@ logScope:
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
-    events: EventEmitter
+    events: UniqueUUIDEventEmitter
     sectionId: string
     chatId: string
     belongsToCommunity: bool
@@ -38,7 +39,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   Controller =
   result = Controller()
   result.delegate = delegate
-  result.events = events
+  result.events = initUniqueUUIDEventEmitter(events)
   result.sectionId = sectionId
   result.chatId = chatId
   result.loadingMessagesPerPageFactor = 1
@@ -50,7 +51,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.mailserversService = mailserversService
 
 proc delete*(self: Controller) =
-  discard
+  self.events.disconnect()
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):

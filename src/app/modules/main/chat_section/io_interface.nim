@@ -13,6 +13,7 @@ import ../../../../app_service/service/token/service as token_service
 import model as chats_model
 
 import ../../../core/eventemitter
+import ../../../core/unique_event_emitter
 import ../../shared_models/token_list_item
 
 
@@ -75,7 +76,7 @@ method doesTopLevelChatExist*(self: AccessInterface, chatId: string): bool {.bas
 method addChatIfDontExist*(self: AccessInterface,
     chat: ChatDto,
     belongsToCommunity: bool,
-    events: EventEmitter,
+    events: UniqueUUIDEventEmitter,
     settingsService: settings_service.Service,
     nodeConfigurationService: node_configuration_service.Service,
     contactService: contact_service.Service,

@@ -14,13 +14,14 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
+import ../../../../core/unique_event_emitter
 import ../../../shared_models/message_item
 
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
-    events: EventEmitter
+    events: UniqueUUIDEventEmitter
     sectionId: string
     chatId: string
     belongsToCommunity: bool
@@ -41,7 +42,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   communityService: community_service.Service, messageService: message_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
-  result.events = events
+  result.events = initUniqueUUIDEventEmitter(events)
   result.sectionId = sectionId
   result.chatId = chatId
   result.belongsToCommunity = belongsToCommunity
@@ -54,7 +55,7 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.messageService = messageService
 
 proc delete*(self: Controller) =
-  discard
+  self.events.disconnect()
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):

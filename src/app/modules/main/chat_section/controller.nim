@@ -18,6 +18,7 @@ import ../../../../app_service/service/visual_identity/service as procs_from_vis
 import ../../../core/signals/types
 import ../../../global/app_signals
 import ../../../core/eventemitter
+import ../../../core/unique_event_emitter
 
 
 type
@@ -27,7 +28,7 @@ type
     isCommunitySection: bool
     activeItemId: string
     isCurrentSectionActive: bool
-    events: EventEmitter
+    events: UniqueUUIDEventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
     contactService: contact_service.Service
@@ -53,7 +54,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.sectionId = sectionId
   result.isCommunitySection = isCommunity
   result.isCurrentSectionActive = false
-  result.events = events
+  result.events = initUniqueUUIDEventEmitter(events)
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
   result.contactService = contactService
@@ -67,7 +68,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.communityTokensService = communityTokensService
 
 proc delete*(self: Controller) =
-  discard
+  self.events.disconnect()
 
 proc getActiveChatId*(self: Controller): string =
   return self.activeItemId

@@ -204,6 +204,7 @@ proc newModule*[T](
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
 
 method delete*[T](self: Module[T]) =
+  self.controller.delete
   self.profileSectionModule.delete
   self.stickersModule.delete
   self.activityCenterModule.delete
@@ -222,7 +223,6 @@ method delete*[T](self: Module[T]) =
     self.keycardSharedModuleKeycardSyncPurpose.delete
   self.view.delete
   self.viewVariant.delete
-  self.controller.delete
 
 proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto, networks: seq[NetworkDto]) : TokenItem =
   var chainName, chainIcon: string
@@ -845,6 +845,11 @@ method communityLeft*[T](self: Module[T], communityId: string) =
   if (self.controller.getActiveSectionId() == communityId):
     let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
     self.setActiveSection(item)
+
+  var moduleToDelete: chat_section_module.AccessInterface
+  discard self.channelGroupModules.pop(communityId, moduleToDelete)
+  moduleToDelete.delete
+  moduleToDelete = nil
 
 method communityEdited*[T](
     self: Module[T],
