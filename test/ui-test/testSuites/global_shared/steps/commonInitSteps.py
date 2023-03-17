@@ -27,11 +27,11 @@ _status_data_folder = "status_data_folder_path"
 _fixtures_root = "fixtures_root"
 _search_images = "search_images"
 _feature_name = "feature_name"
-    
+
 def context_init(context, testSettings, screenshot_on_fail = True):
     # With this property it is enabled that every test failure will cause Squish to take a screenshot of the desktop when the failure occurred
     testSettings.logScreenshotOnFail = screenshot_on_fail
-    
+
     filesMngr.erase_directory(_status_qt_path)
     context.userData = {}
     context.userData[_aut_name] = _status_desktop_app_name
@@ -53,7 +53,7 @@ def context_init(context, testSettings, screenshot_on_fail = True):
     for path_part in split_path:
         joined_path += path_part + "/"
 
-    context.userData[_fixtures_root] = os.path.join(joined_path, "fixtures/") 
+    context.userData[_fixtures_root] = os.path.join(joined_path, "fixtures/")
 
 def a_first_time_user_lands_on(context):
     filesMngr.erase_directory(context.userData[_status_data_folder])
@@ -72,13 +72,13 @@ def a_first_time_user_lands_on_and_generates_new_key(context):
 def a_user_lands_on_and_generates_new_key(context):
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.generate_new_key()
-    
+
 def a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context):
     filesMngr.erase_directory(context.userData[_status_data_folder])
     filesMngr.start_application(context.userData[_aut_name])
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.agree_terms_conditions_and_navigate_to_import_seed_phrase()
-    
+
 def the_user_inputs_username(username: str):
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.input_username(username)
@@ -90,20 +90,20 @@ def the_user_signs_up(user: str, password: str):
 def the_user_signs_again_up(user: str, password: str):
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.input_username_and_password_again_and_finalize_sign_up(user, password)
-    
+
 def the_user_lands_on_the_signed_in_app():
     main_screen = StatusMainScreen()
     main_screen.is_ready()
-    
+
 def signs_up_process_steps(context, user: str, password: str):
     a_first_time_user_lands_on_and_generates_new_key(context)
     the_user_signs_up(user, password)
     the_user_lands_on_the_signed_in_app()
-    
+
 def the_user_inputs_the_seed_phrase(seed_phrase: str):
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.input_seed_phrase(seed_phrase)
-    
+
 def the_user_clicks_on_the_following_ui_component(component: str):
     common.click_on_an_object(component)
 
@@ -115,16 +115,16 @@ def signs_up_with_seed_phrase_process_steps(context, seed_phrase: str, user: str
     the_user_lands_on_the_signed_in_app()
 
 def the_user_opens_the_chat_section():
-    main_screen = StatusMainScreen()        
+    main_screen = StatusMainScreen()
     main_screen.open_chat_section()
-    
+
 def the_user_opens_the_community_portal_section():
     main_screen = StatusMainScreen()
     main_screen.open_community_portal()
-    
+
 def the_user_lands_on_the_community_portal_section():
     StatusCommunityPortalScreen()
-    
+
 def the_user_creates_a_community(name: str, description: str, intro: str, outro: str):
     communitity_portal_screen = StatusCommunityPortalScreen()
     communitity_portal_screen.create_community(name, description, intro, outro)
@@ -149,21 +149,21 @@ def login_process_steps(context, user: str, password: str, data_dir_path: str):
     a_user_starts_the_application_with_a_specific_data_folder(context, data_dir_path)
     the_user_logs_in(user, password)
     the_user_lands_on_the_signed_in_app()
-    
+
 def the_user_opens_app_settings_screen():
     main_screen = StatusMainScreen()
     main_screen.open_settings()
-    
+
 def the_user_navigates_back_to_user_profile_page():
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.navigate_back_to_user_profile_page()
-    
-def the_user_activates_wallet_and_opens_the_wallet_section():
+
+def the_user_opens_the_wallet_section():
     settings_screen = SettingsScreen()
-    settings_screen.activate_open_wallet_section()
+    settings_screen.open_wallet_section()
 
 def the_user_toggles_test_networks():
     settings_screen = SettingsScreen()
-    settings_screen.toggle_test_networks()    
+    settings_screen.toggle_test_networks()
     main_screen = StatusMainScreen()
     main_screen.click_tool_bar_back_button()

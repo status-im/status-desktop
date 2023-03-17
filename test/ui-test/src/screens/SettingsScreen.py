@@ -36,7 +36,6 @@ class SidebarComponents(Enum):
 
 
 class AdvancedOptionScreen(Enum):
-    ACTIVATE_OR_DEACTIVATE_WALLET: str = "walletSettingsLineButton"
     ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS: str = "communitySettingsLineButton"
     I_UNDERSTAND_POP_UP: str = "i_understand_StatusBaseText"
 
@@ -149,15 +148,7 @@ class SettingsScreen:
     def open_wallet_settings(self):
         click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
 
-    def activate_wallet_option(self):
-        if not is_loaded_visible_and_enabled(SidebarComponents.WALLET_OPTION.value):
-            click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
-            click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
-            click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-            verify_object_enabled(SidebarComponents.WALLET_OPTION.value)
-
-    def activate_open_wallet_section(self):
-        self.activate_wallet_option()
+    def open_wallet_section(self):
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
 
     def delete_account(self, account_name: str, password: str):

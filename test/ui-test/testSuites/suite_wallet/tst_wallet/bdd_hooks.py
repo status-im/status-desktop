@@ -16,7 +16,7 @@ _password = "TesTEr16843/!@00"
 def hook(context):
     init_steps.context_init(context, testSettings)
     init_steps.signs_up_process_steps(context, _user, _password)
-    wallet_init_steps.activate_and_open_wallet()
+    wallet_init_steps.open_wallet()
 
 @OnFeatureEnd
 def hook(context):

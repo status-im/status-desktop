@@ -15,8 +15,7 @@ Feature: Status Desktop Main Settings Section
 	# TODO: It is also unstable. Needs to be checked.
     @mayfail
     Scenario: The user can backup seed phrase
-        Given the user activates wallet
-		And the user opens the wallet settings
+        Given the user opens the wallet settings
         When the user backs up the wallet seed phrase
         Then the backup seed phrase indicator is not displayed
 
