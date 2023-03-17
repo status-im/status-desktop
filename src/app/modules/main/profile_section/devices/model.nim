@@ -80,18 +80,13 @@ QtObject:
       of ModelRole.IsCurrentDevice:
         result = newQVariant(item.isCurrentDevice)
 
-  proc addItems*(self: Model, items: seq[Item]) =
+  proc setItems*(self: Model, items: seq[Item]) =
     if(items.len == 0):
       return
 
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let first = self.items.len
-    let last = first + items.len - 1
-    self.beginInsertRows(parentModelIndex, first, last)
-    self.items.add(items)
-    self.endInsertRows()
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
     self.countChanged()
 
   proc addItem*(self: Model, item: Item) =
