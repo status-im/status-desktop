@@ -42,8 +42,8 @@ StatusSectionLayout {
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
     //                        {name: qsTr("Subscriptions"), icon: "subscription"},
     property var rootStore
-    property var community
     property var chatCommunitySectionModule
+    property var community
     property bool hasAddedContacts: false
     property var transactionStore: TransactionStore {}
 
@@ -231,7 +231,7 @@ StatusSectionLayout {
             CommunityMembersSettingsPanel {
                 membersModel: root.community.members
                 bannedMembersModel: root.community.bannedMembers
-                pendingMemberRequestsModel: root.community.pendingMemberRequests
+                pendingMemberRequestsModel: root.community.pendingRequestsToJoin
                 declinedMemberRequestsModel: root.community.declinedMemberRequests
                 editable: root.community.amISectionAdmin
                 communityName: root.community.name

@@ -28,6 +28,7 @@ StatusSectionLayout {
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
 
     property RootStore rootStore
+    property var sectionItemModel
 
     property Component membershipRequestPopup
     property var emojiPopup
@@ -156,6 +157,7 @@ StatusSectionLayout {
         id: communtiyColumnComponent
         CommunityColumnView {
             communitySectionModule: root.rootStore.chatCommunitySectionModule
+            communityData: sectionItemModel
             store: root.rootStore
             emojiPopup: root.emojiPopup
             hasAddedContacts: root.hasAddedContacts
