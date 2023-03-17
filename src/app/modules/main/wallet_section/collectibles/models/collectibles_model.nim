@@ -19,9 +19,9 @@ type
     CollectionSlug
     CollectionImageUrl
     IsLoading
+    IsPinned
 
-# Maximum number of owned collectibles to be fetched at a time
-const ownedCollectiblesFetchLimit = 200
+const loadingItemsCount = 50
 
 QtObject:
   type
@@ -64,7 +64,7 @@ QtObject:
   QtProperty[bool] isFetching:
     read = getIsFetching
     notify = isFetchingChanged
-  proc setIsFetching(self: Model, value: bool) =
+  proc setIsFetching*(self: Model, value: bool) =
     if value == self.isFetching:
       return
     if value:
@@ -89,11 +89,10 @@ QtObject:
   method canFetchMore*(self: Model, parent: QModelIndex): bool =
     return not self.allCollectiblesLoaded and not self.isFetching
 
-  proc requestFetch(self: Model, limit: int) {.signal.}
+  proc requestFetch(self: Model) {.signal.}
   method fetchMore*(self: Model, parent: QModelIndex) =
     if not self.isFetching:
-      self.setIsFetching(true)
-      self.requestFetch(ownedCollectiblesFetchLimit)
+      self.requestFetch()
 
   method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.items.len
@@ -115,6 +114,7 @@ QtObject:
       CollectibleRole.CollectionSlug.int:"collectionSlug",
       CollectibleRole.CollectionImageUrl.int:"collectionImageUrl",
       CollectibleRole.IsLoading.int:"isLoading",
+      CollectibleRole.IsPinned.int:"isPinned",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -164,37 +164,42 @@ QtObject:
       result = newQVariant(item.getCollectionImageUrl())
     of CollectibleRole.IsLoading:
       result = newQVariant(item.getIsLoading())
+    of CollectibleRole.IsPinned:
+      result = newQVariant(item.getIsPinned())
 
   proc addLoadingItems(self: Model) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
     let loadingItem = initLoadingItem()
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + ownedCollectiblesFetchLimit - 1)
-    for i in 1..ownedCollectiblesFetchLimit:
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + loadingItemsCount - 1)
+    for i in 1..loadingItemsCount:
       self.items.add(loadingItem)
     self.endInsertRows()
     self.countChanged()
 
   proc removeLoadingItems(self: Model) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+  
     for i in 0 ..< self.items.len:
       if self.items[i].getIsLoading():
-        self.beginRemoveRows(newQModelIndex(), i, self.items.len-1)
-        self.items.delete(i, self.items.len-1)
+        self.beginRemoveRows(parentModelIndex, i, i + loadingItemsCount - 1)
+        self.items.delete(i, i + loadingItemsCount - 1)
         self.endRemoveRows()
         self.countChanged()
         return
 
-  proc setItems*(self: Model, items: seq[Item], append: bool) =
-    self.setIsFetching(false)
-    if append:
-      let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
-      self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + items.len - 1)
-      self.items = concat(self.items, items)
-      self.endInsertRows()
-    else:
-      self.beginResetModel()
-      self.items = items
-      self.endResetModel()
+  proc setItems*(self: Model, items: seq[Item]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
+    self.countChanged()
+
+  proc appendItems*(self: Model, items: seq[Item]) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + items.len - 1)
+    self.items = concat(self.items, items)
+    self.endInsertRows()
     self.countChanged()

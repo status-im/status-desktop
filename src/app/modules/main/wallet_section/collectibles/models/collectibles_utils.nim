@@ -1,8 +1,8 @@
-import sequtils, sugar
+import sequtils, sugar, times
 import ../../../../../../app_service/service/collectible/dto
 import collectibles_item, collectible_trait_item
 
-proc collectibleToItem*(c: CollectibleDto, co: CollectionDto) : Item =
+proc collectibleToItem*(c: CollectibleDto, co: CollectionDto, isPinned: bool = false) : Item =
   return initItem(
     c.id,
     c.address,
@@ -17,5 +17,6 @@ proc collectibleToItem*(c: CollectibleDto, co: CollectionDto) : Item =
     c.statistics.map(t => initTrait(t.traitType, t.value, t.displayType, t.maxValue)),
     co.name,
     co.slug,
-    co.imageUrl
+    co.imageUrl,
+    isPinned
   )

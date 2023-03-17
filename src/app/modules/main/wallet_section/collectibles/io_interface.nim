@@ -16,10 +16,16 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchOwnedCollectibles*(self: AccessInterface, limit: int) {.base.} =
+method fetchOwnedCollectibles*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method refreshCollectibles*(self: AccessInterface, chainId: int, address: string, collectibles: CollectiblesData) {.base.} =
+method onFetchStarted*(self: AccessInterface, chainId: int, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setCollectibles*(self: AccessInterface, chainId: int, address: string, data: CollectiblesData) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method appendCollectibles*(self: AccessInterface, chainId: int, address: string, data: CollectiblesData) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =

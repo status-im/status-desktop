@@ -22,6 +22,30 @@ const fetchOwnedCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, n
   arg.finish(output)
 
 type
+  FetchOwnedCollectiblesFromContractAddressesTaskArg = ref object of QObjectTaskArg
+    chainId*: int
+    address*: string
+    contractAddresses*: seq[string]
+    cursor: string
+    limit: int
+
+const fetchOwnedCollectiblesFromContractAddressesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchOwnedCollectiblesFromContractAddressesTaskArg](argEncoded)
+  let output = %* {
+    "chainId": arg.chainId,
+    "address": arg.address,
+    "cursor": arg.cursor,
+    "collectibles": ""
+  }
+  try:
+    let response = collectibles.getOpenseaAssetsByOwnerAndContractAddressWithCursor(arg.chainId, arg.address, arg.contractAddresses, arg.cursor, arg.limit)
+    output["collectibles"] = response.result
+  except Exception as e:
+    let errDesription = e.msg
+    error "error fetchOwnedCollectiblesFromContractAddressesTaskArg: ", errDesription
+  arg.finish(output)
+
+type
   FetchCollectiblesTaskArg = ref object of QObjectTaskArg
     chainId*: int
     ids*: seq[collectibles.NFTUniqueID]

@@ -73,8 +73,8 @@ method viewDidLoad*(self: Module) =
 method currentCollectibleModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method fetchOwnedCollectibles*(self: Module, limit: int) =
-  self.controller.fetchOwnedCollectibles(self.chainId, self.address, limit)
+method fetchOwnedCollectibles*(self: Module) =
+  self.controller.fetchOwnedCollectibles(self.chainId, self.address)
 
 method switchAccount*(self: Module, accountIndex: int) =
   let network = self.controller.getNetwork()
@@ -83,30 +83,42 @@ method switchAccount*(self: Module, accountIndex: int) =
   self.chainId = network.chainId
   self.address = account.address
 
-  # TODO: Implement a way to reduce the number of full re-fetches. It could be only
-  # when NFT activity was detected for the given account, or if a certain amount of
-  # time has passed. For now, we fetch every time we select the account.
-  self.controller.resetOwnedCollectibles(self.chainId, self.address)
-
-  self.controller.refreshCollectibles(self.chainId, self.address)
-
   self.currentCollectibleModule.setCurrentAddress(network, self.address)
 
-method refreshCollectibles*(self: Module, chainId: int, address: string, collectibles: CollectiblesData) =
+  let data = self.controller.getOwnedCollectibles(self.chainId, self.address)
+
+  # Trigger a fetch the first time we switch to an account
+  if not data.anyLoaded:
+    self.controller.fetchOwnedCollectibles(self.chainId, self.address)
+
+  self.setCollectibles(self.chainId, self.address, data)
+
+proc ownedCollectibleToItem(self: Module, oc: OwnedCollectible): Item =
+  let c = self.controller.getCollectible(self.chainId, oc.id)
+  let col = self.controller.getCollection(self.chainId, c.collectionSlug)
+  return collectibleToItem(c, col, oc.isFromWatchedContract)
+
+method onFetchStarted*(self: Module, chainId: int, address: string) =
   if self.chainId == chainId and self.address == address:
-    var idsToAdd = newSeq[UniqueID]()
-    let append = not collectibles.lastLoadWasFromStart
+    self.view.setIsFetching(true)
 
-    var startIdx = 0
-    if append:
-      for i in collectibles.ids.len - collectibles.lastLoadCount ..< collectibles.ids.len:
-        idsToAdd.add(collectibles.ids[i])
-    else:
-      idsToAdd = collectibles.ids
+method setCollectibles*(self: Module, chainId: int, address: string, data: CollectiblesData) =
+  if self.chainId == chainId and self.address == address:
+    self.view.setIsFetching(data.isFetching)
+    var newCollectibles = data.collectibles.map(oc => self.ownedCollectibleToItem(oc))
+    self.view.setCollectibles(newCollectibles)
+    self.view.setAllLoaded(data.allLoaded)
 
-    var newCollectibles = idsToAdd.map(id => (block:
-        let c = self.controller.getCollectible(self.chainId, id)
-        let co = self.controller.getCollection(self.chainId, c.collectionSlug)
-        return collectibleToItem(c, co)
-      ))
-    self.view.setCollectibles(newCollectibles, append, collectibles.allLoaded)
+
+method appendCollectibles*(self: Module, chainId: int, address: string, data: CollectiblesData) =
+  if self.chainId == chainId and self.address == address:
+    self.view.setIsFetching(data.isFetching)
+
+    var ownedCollectiblesToAdd = newSeq[OwnedCollectible]()
+    for i in data.collectibles.len - data.lastLoadCount ..< data.collectibles.len:
+      ownedCollectiblesToAdd.add(data.collectibles[i])
+
+    let newCollectibles = ownedCollectiblesToAdd.map(oc => self.ownedCollectibleToItem(oc))
+
+    self.view.appendCollectibles(newCollectibles)
+    self.view.setAllLoaded(data.allLoaded)
