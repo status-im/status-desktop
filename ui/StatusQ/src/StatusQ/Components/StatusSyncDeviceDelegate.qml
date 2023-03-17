@@ -15,8 +15,9 @@ StatusListItem {
 
     property string deviceName: ""
     property string deviceType: ""
-    property bool isCurrentDevice: false
     property real timestamp: 0
+    property bool isCurrentDevice: false
+    property bool showOnlineBadge: !isCurrentDevice
 
     signal itemClicked
     signal setupSyncingButtonClicked
@@ -52,7 +53,7 @@ StatusListItem {
         return qsTr("Last online %1").arg(LocaleUtils.formatDate(date))
     }
 
-    subTitleBadgeComponent: root.isCurrentDevice ? null : onlineBadgeComponent
+    subTitleBadgeComponent: root.showOnlineBadge ? onlineBadgeComponent : null
 
     components: [
         StatusButton {
@@ -89,7 +90,7 @@ StatusListItem {
         interval: 1000
         repeat: true
         triggeredOnStart: true
-        running: !root.isCurrentDevice && root.visible
+        running: root.showOnlineBadge && root.visible
         onTriggered: {
             d.now = Date.now()
         }

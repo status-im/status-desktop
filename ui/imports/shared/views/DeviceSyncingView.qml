@@ -130,6 +130,7 @@ Item {
             loading: d.pairingInProgress
             deviceName: qsTr("No device name")
             isCurrentDevice: false
+            showOnlineBadge: false
         }
 
         ErrorDetails {
@@ -166,14 +167,14 @@ Item {
             implicitWidth: contentWidth + leftPadding + rightPadding
             implicitHeight: contentHeight + topPadding + bottomPadding
 
-            ListView {
+            StatusListView {
                 id: listView
 
                 width: scrollView.availableWidth
                 height: scrollView.availableHeight
-
                 spacing: 4
                 clip: true
+
                 delegate: StatusSyncDeviceDelegate {
                     width: ListView.view.width
                     enabled: false

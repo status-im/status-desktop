@@ -57,6 +57,7 @@ Item {
         id: titleRow
         width: root.contentWidth
         spacing: 0
+
         RowLayout {
             Layout.preferredWidth: (parent.width - Style.current.padding)
             Layout.preferredHeight: visible ? d.titleRowHeight : 0

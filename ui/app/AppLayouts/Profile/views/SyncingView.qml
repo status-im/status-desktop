@@ -240,15 +240,15 @@ SettingsContentBase {
             }
         }
 
-//        StatusButton {
-//            id: backupBtn
-//            Layout.alignment: Qt.AlignHCenter
-//            text: qsTr("Backup Data")
-//            onClicked : {
-//                let lastUpdate = root.privacyStore.backupData() * 1000
-//                console.log("Backup done at: ", LocaleUtils.formatDateTime(lastUpdate))
-//            }
-//        }
+        StatusButton {
+            id: backupBtn
+            Layout.alignment: Qt.AlignHCenter
+            text: qsTr("Backup Data")
+            onClicked : {
+                const lastUpdate = root.privacyStore.backupData() * 1000
+                console.log("Backup done at: ", LocaleUtils.formatDateTime(lastUpdate))
+            }
+        }
 
         Component {
             id: personalizeDevicePopup
