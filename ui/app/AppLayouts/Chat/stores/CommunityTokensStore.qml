@@ -7,10 +7,11 @@ QtObject {
     property var communityTokensModuleInst: communityTokensModule ?? null
 
     // Minting tokens:
-    function deployCollectible(communityId, address, name, symbol, description, supply,
-                             infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
+    function deployCollectible(communityId, accountAddress, name, symbol, description, supply,
+                             infiniteSupply, transferable, selfDestruct, chainId, artworkSource, accountName)
     {
-        communityTokensModuleInst.deployCollectible(communityId, address, name, symbol, description, supply,
+        // TODO: Backend needs to create new role `accountName` and update this call accordingly
+        communityTokensModuleInst.deployCollectible(communityId, accountAddress, name, symbol, description, supply,
                                                     infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     }
 

@@ -27,6 +27,9 @@ SettingsPageLayout {
     property var enabledNetworks
     property var allNetworks
 
+    // Account expected roles: address, name, color, emoji
+    property var accounts
+
     property int viewWidth: 560 // by design
 
     signal mintCollectible(url artworkSource,
@@ -37,7 +40,9 @@ SettingsPageLayout {
                            bool infiniteSupply,
                            bool transferable,
                            bool selfDestruct,
-                           int chainId)
+                           int chainId,
+                           string accountName,
+                           string accountAddress)
 
     function navigateBack() {
         stackManager.pop(StackView.Immediate)
@@ -59,6 +64,7 @@ SettingsPageLayout {
 
         property bool preview: false
         property string collectibleName
+        property string accountAddress
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
     }
 
@@ -145,9 +151,11 @@ SettingsPageLayout {
             testNetworks: root.testNetworks
             enabledNetworks: root.testNetworks
             allNetworks: root.allNetworks
+            accounts: root.accounts
 
             onPreviewClicked: {
                 d.collectibleName = name
+                d.accountAddress = accountAddress
                 stackManager.push(d.previewCollectibleViewState,
                                   collectibleView,
                                   {
@@ -161,7 +169,8 @@ SettingsPageLayout {
                                       selfDestruct,
                                       chainId,
                                       chainName,
-                                      chainIcon
+                                      chainIcon,
+                                      accountName
                                   },
                                   StackView.Immediate)
             }
@@ -186,7 +195,9 @@ SettingsPageLayout {
                                      infiniteSupply,
                                      transferable,
                                      selfDestruct,
-                                     chainId)
+                                     chainId,
+                                     accountName,
+                                     d.accountAddress)
 
                 stackManager.clear(d.initialViewState, StackView.Immediate)
             }
@@ -226,7 +237,8 @@ SettingsPageLayout {
                                       remoteSelfDestruct,
                                       chainId,
                                       chainName,
-                                      chainIcon
+                                      chainIcon,
+                                      accountName
                                   },
                                   StackView.Immediate)
             }

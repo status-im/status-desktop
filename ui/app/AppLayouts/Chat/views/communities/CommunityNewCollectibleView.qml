@@ -5,6 +5,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
+import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 
@@ -17,13 +19,13 @@ StatusScrollView {
     property int viewWidth: 560 // by design
 
     // Collectible properties
-    property alias name: nameInput.text
-    property alias symbol: symbolInput.text
-    property alias description: descriptionInput.text
-    property alias supplyText: supplyInput.text
-    property alias infiniteSupply: unlimitedSupplyChecker.checked
-    property alias transferable: transferableChecker.checked
-    property alias selfDestruct: selfDestructChecker.checked
+    readonly property alias name: nameInput.text
+    readonly property alias symbol: symbolInput.text
+    readonly property alias description: descriptionInput.text
+    readonly property alias supplyText: supplyInput.text
+    readonly property alias infiniteSupply: unlimitedSupplyChecker.checked
+    readonly property alias transferable: transferableChecker.checked
+    readonly property alias selfDestruct: selfDestructChecker.checked
     property url artworkSource
     property int chainId
     property string chainName
@@ -35,6 +37,12 @@ StatusScrollView {
     property var testNetworks
     property var enabledNetworks
     property var allNetworks
+
+    // Account related properties:
+    // Account expected roles: address, name, color, emoji
+    property var accounts
+    readonly property string accountAddress: accountsComboBox.address
+    readonly property string accountName: accountsComboBox.control.displayText
 
     signal chooseArtWork
     signal previewClicked
@@ -74,25 +82,6 @@ StatusScrollView {
             onFileSelected: root.artworkSource = file
         }
 
-        component CustomStatusInput: StatusInput {
-            id: customInput
-
-            property string errorText
-
-            Layout.fillWidth: true
-            validators: [
-                StatusMinLengthValidator {
-                    minLength: 1
-                    errorMessage: Utils.getErrorMessage(root.errors,
-                                                        customInput.errorText)
-                },
-                StatusRegularExpressionValidator {
-                    regularExpression: Constants.regularExpressions.alphanumericalExpanded
-                    errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
-                }
-            ]
-        }
-
         CustomStatusInput {
             id: nameInput
 
@@ -125,71 +114,31 @@ StatusScrollView {
             errorText: qsTr("Token symbol")
         }
 
-        component CustomRowComponent: RowLayout {
-            id: rowComponent
+        CustomLabelDescriptionComponent {
+            Layout.topMargin: Style.current.padding
+            label: qsTr("Select account")
+            description: qsTr("The account on which this token will be minted")
+        }
 
-            property string label
-            property string description
-            property bool checked
-            property bool isSwitchCase: true
+        StatusEmojiAndColorComboBox {
+            id: accountsComboBox
+
+            readonly property string address: ModelUtils.get(root.accounts, currentIndex, "address")
 
             Layout.fillWidth: true
-            Layout.topMargin: 24
-            spacing: rowComponent.isSwitchCase ? 64 : 32
-
-            ColumnLayout {
-                Layout.fillWidth: true
-
-                StatusBaseText {
-                    text: rowComponent.label
-                    color: Theme.palette.directColor1
-                    font.pixelSize: Theme.primaryTextFontSize
-                }
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    text: rowComponent.description
-                    color: Theme.palette.baseColor1
-                    font.pixelSize: Theme.primaryTextFontSize
-                    lineHeight: 1.2
-                    wrapMode: Text.WordWrap
-                }
-            }
-
-            StatusSwitch {
-                visible: rowComponent.isSwitchCase
-                checked: rowComponent.checked
-                onToggled: rowComponent.checked = checked
-            }
-
-            NetworkFilter {
-                visible: !rowComponent.isSwitchCase
-                Layout.preferredWidth: 160
-                layer1Networks: root.layer1Networks
-                layer2Networks: root.layer2Networks
-                testNetworks: root.testNetworks
-                enabledNetworks: root.enabledNetworks
-                allNetworks: root.allNetworks
-                isChainVisible: false
-                multiSelection: false
-
-                onSingleNetworkSelected: {
-                    root.chainId = chainId
-                    root.chainName = chainName
-                    root.chainIcon = chainIcon
-                }
-            }
+            model: root.accounts
+            type: StatusComboBox.Type.Secondary
+            size: StatusComboBox.Size.Small
+            implicitHeight: 44
+            defaultAssetName: "filled-account"
         }
 
-        CustomRowComponent {
+        CustomNetworkFilterRowComponent {
             label: qsTr("Select network")
             description: qsTr("The network on which this token will be minted")
-            checked: true
-            isSwitchCase: false
         }
 
-        CustomRowComponent {
+        CustomSwitchRowComponent {
             id: unlimitedSupplyChecker
 
             label: qsTr("Unlimited supply")
@@ -206,15 +155,15 @@ StatusScrollView {
             validators: StatusIntValidator{bottom: 1; top: 999999999;}
         }
 
-        CustomRowComponent {
+        CustomSwitchRowComponent {
             id: transferableChecker
 
-            label: qsTr("Not transferable (Soulbound)")
+            label: checked ? qsTr("Not transferable (Soulbound)") : qsTr("Transferable")
             description: qsTr("If enabled, the token is locked to the first address it is sent to and can never be transferred to another address. Useful for tokens that represent Admin permissions")
             checked: true
         }
 
-        CustomRowComponent {
+        CustomSwitchRowComponent {
             id: selfDestructChecker
 
             label: qsTr("Remote self-destruct")
@@ -232,6 +181,105 @@ StatusScrollView {
             enabled: d.isFullyFilled
 
             onClicked: root.previewClicked()
+        }
+    }
+
+    // Inline components definition:
+    component CustomStatusInput: StatusInput {
+        id: customInput
+
+        property string errorText
+
+        Layout.fillWidth: true
+        validators: [
+            StatusMinLengthValidator {
+                minLength: 1
+                errorMessage: Utils.getErrorMessage(customInput.errors,
+                                                    customInput.errorText)
+            },
+            StatusRegularExpressionValidator {
+                regularExpression: Constants.regularExpressions.alphanumericalExpanded
+                errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
+            }
+        ]
+    }
+
+    component CustomLabelDescriptionComponent: ColumnLayout {
+        id: labelDescComponent
+
+        property string label
+        property string description
+
+        Layout.fillWidth: true
+
+        StatusBaseText {
+            text: labelDescComponent.label
+            color: Theme.palette.directColor1
+            font.pixelSize: Theme.primaryTextFontSize
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            text: labelDescComponent.description
+            color: Theme.palette.baseColor1
+            font.pixelSize: Theme.primaryTextFontSize
+            lineHeight: 1.2
+            wrapMode: Text.WordWrap
+        }
+    }
+
+    component CustomSwitchRowComponent: RowLayout {
+        id: rowComponent
+
+        property string label
+        property string description
+        property alias checked: switch_.checked
+
+        Layout.fillWidth: true
+        Layout.topMargin: Style.current.padding
+        spacing: 64
+
+        CustomLabelDescriptionComponent {
+            label: rowComponent.label
+            description: rowComponent.description
+        }
+
+        StatusSwitch {
+            id: switch_
+        }
+    }
+
+    component CustomNetworkFilterRowComponent: RowLayout {
+        id: networkComponent
+
+        property string label
+        property string description
+
+        Layout.fillWidth: true
+        Layout.topMargin: Style.current.padding
+        spacing: 32
+
+        CustomLabelDescriptionComponent {
+            label: networkComponent.label
+            description: networkComponent.description
+        }
+
+        NetworkFilter {
+            Layout.preferredWidth: 160
+            layer1Networks: root.layer1Networks
+            layer2Networks: root.layer2Networks
+            testNetworks: root.testNetworks
+            enabledNetworks: root.enabledNetworks
+            allNetworks: root.allNetworks
+            isChainVisible: false
+            multiSelection: false
+
+            onSingleNetworkSelected: {
+                root.chainId = chainId
+                root.chainName = chainName
+                root.chainIcon = chainIcon
+            }
         }
     }
 }

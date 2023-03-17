@@ -38,6 +38,7 @@ SplitView {
                 chainId: 1
                 chainName: "Ethereum Mainnet"
                 chainIcon: ModelsData.networks.ethereum
+                accountName: "helloworld"
 
                 onMintCollectible: logs.logEvent("CommunityCollectibleView::mintCollectible: \n"
                                                  + "artworkSource: " + artworkSource + "\n"
