@@ -113,7 +113,6 @@ Control {
                     height: 32
                     text: model.text
                     url: model.url
-                    linkType: model.linkType
                     icon: model.icon
                 }
             }

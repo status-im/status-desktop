@@ -90,9 +90,9 @@ Item {
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         padding: 0
-        width: root.contentWidth
-        contentWidth: availableWidth
-        contentHeight: contentLayout.implicitHeight
+        width: root.width
+        contentWidth: root.contentWidth
+        contentHeight: contentLayout.implicitHeight + Style.current.bigPadding
 
         Column {
             id: contentLayout

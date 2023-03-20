@@ -50,9 +50,7 @@ StatusSectionLayout {
     QtObject {
         id: d
 
-        readonly property int bottomMargin: 56
         readonly property int leftMargin: 64
-        readonly property int rightMargin: 64
 
         readonly property int contentWidth: 560
     }
@@ -74,9 +72,7 @@ StatusSectionLayout {
         readonly property var currentItem: (currentIndex >= 0 && currentIndex < children.length) ? children[currentIndex].item : null
 
         anchors.fill: parent
-        anchors.bottomMargin: d.bottomMargin
         anchors.leftMargin: d.leftMargin
-        anchors.rightMargin: d.rightMargin
 
         currentIndex: Global.settingsSubsection
 

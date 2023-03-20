@@ -31,7 +31,7 @@ Shape {
 
     property string text
 
-    readonly property int radius: Style.current.radius
+    property int radius: Style.current.radius
     readonly property alias path: path
 
     asynchronous: true
@@ -44,6 +44,8 @@ Shape {
         anchors.centerIn: parent
         color: Theme.palette.baseColor1
         text: root.text
+        font.pixelSize: 13
+        visible: text
     }
 
     ShapePath {

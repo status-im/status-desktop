@@ -28,11 +28,9 @@ Item {
 
     StatusScrollView {
         contentWidth: availableWidth
-        contentHeight: profileMenu.height + 24
+        contentHeight: profileMenu.height + Style.current.bigPadding
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.smallPadding
         anchors.left: parent.left
-        anchors.leftMargin: 0
         anchors.top: title.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.bottom: parent.bottom

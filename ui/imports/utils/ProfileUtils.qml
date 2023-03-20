@@ -60,4 +60,19 @@ QtObject {
         if (text === "__telegram") return Constants.socialLinkType.telegram
         return Constants.socialLinkType.custom
     }
+
+    // showcase
+    function visibilityIcon(showcaseVisibility) {
+        switch (showcaseVisibility) {
+        case Constants.ShowcaseVisibility.IdVerifiedContacts:
+            return "checkmark-circle"
+        case Constants.ShowcaseVisibility.Contacts:
+            return "profile"
+        case Constants.ShowcaseVisibility.Everyone:
+            return "language"
+        case Constants.ShowcaseVisibility.NoOne:
+        default:
+            return "hide"
+        }
+    }
 }

@@ -155,6 +155,7 @@ Item {
         Item {
             Layout.fillWidth: true
             implicitHeight: displayNameLabel.implicitHeight
+            visible: root.displayNameVisible
 
             StyledText {
                 id: displayNameLabel

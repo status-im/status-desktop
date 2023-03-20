@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Shapes 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -21,8 +20,6 @@ Control {
     property var socialLinksModel
 
     background: null
-
-    implicitHeight: layout.implicitHeight + linksView.contentHeight
 
     Component {
         id: addSocialLinkModalComponent
@@ -80,8 +77,9 @@ Control {
         StatusListView {
             id: linksView
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: contentHeight
             model: root.socialLinksModel
+            interactive: false
 
             displaced: Transition {
                 NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
@@ -128,11 +126,13 @@ Control {
                     visualIndex: delegateRoot.visualIndex
                     draggable: linksView.count > 1
                     title: ProfileUtils.linkTypeToText(model.linkType) || model.text
+                    hasIcon: true
                     icon.name: model.icon
                     icon.color: ProfileUtils.linkTypeColor(model.linkType)
                     actions: [
                         StatusLinkText {
                             Layout.fillWidth: true
+                            Layout.maximumWidth: Math.ceil(implicitWidth)
                             Layout.alignment: Qt.AlignRight
                             horizontalAlignment: Text.AlignRight
                             font.pixelSize: Theme.primaryTextFontSize

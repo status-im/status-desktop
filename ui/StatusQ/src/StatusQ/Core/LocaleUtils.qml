@@ -82,6 +82,8 @@ QtObject {
             console.trace()
             return "N/A"
         }
+        if (typeof currencyAmount.amount === "undefined")
+            return "N/A"
 
         // Parse options
         var optShowOnlyAmount = false

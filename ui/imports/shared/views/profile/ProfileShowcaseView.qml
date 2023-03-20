@@ -375,12 +375,7 @@ Control {
                             width: 40
                             height: 40
                             anchors.verticalCenter: parent.verticalCenter
-                            source: Style.png("tokens/" + model.symbol)
-                            onStatusChanged: {
-                                if (status === Image.Error) {
-                                    source = Style.png("tokens/DEFAULT-TOKEN")
-                                }
-                            }
+                            source: Constants.tokenIcon(model.symbol)
                         }
                     ]
                     onClicked: {

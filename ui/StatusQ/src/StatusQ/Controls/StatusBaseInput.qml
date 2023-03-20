@@ -345,12 +345,12 @@ Item {
                     implicitHeight: edit.implicitHeight
 
                     boundsBehavior: Flickable.StopAtBounds
-                    QC.ScrollBar.vertical: QC.ScrollBar {
+                    QC.ScrollBar.vertical: StatusScrollBar {
                         interactive: multiline
                         enabled: multiline
                     }
                     clip: true
-                    interactive: multiline
+                    interactive: multiline && edit.activeFocus
 
                     TextEdit {
                         id: edit

@@ -12,7 +12,6 @@ Rectangle {
 
     property string text
     property string url
-    property int linkType: 1
     property string icon
 
     implicitWidth: layout.implicitWidth + 16
