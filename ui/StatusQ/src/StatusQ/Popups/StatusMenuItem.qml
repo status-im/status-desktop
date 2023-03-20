@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -83,9 +84,9 @@ MenuItem {
             rotation: 0
             // Link to standard Qt properties. Not because it's a good idea,
             // but because it we use it in some places and it will make refactor easier.
-            name: d.isSubMenu ? "" : root.action.icon.name
-            source: d.isSubMenu ? "" : root.action.icon.source
-            color: d.isSubMenu ? "" : root.action.icon.color
+            name: d.isSubMenu ? "" : (d.hasAction ? root.action.icon.name : root.icon.name)
+            source: d.isSubMenu ? "" : (d.hasAction ? root.action.icon.source : root.icon.source)
+            color: d.isSubMenu ? "" : (d.hasAction ? root.action.icon.color : root.icon.color)
         }
 
         readonly property StatusFontSettings defaultFontSettings: StatusFontSettings {
@@ -119,26 +120,35 @@ MenuItem {
         }
     }
 
-    contentItem: StatusBaseText {
-        readonly property real arrowPadding: root.spacing + (root.subMenu && root.arrow ? root.arrow.width : 0)
-        readonly property real indicatorPadding: root.spacing + (root.indicator.visible ? root.indicator.width : 0)
+    contentItem: RowLayout {
+        StatusBaseText {
+            Layout.fillWidth: true
+            readonly property real arrowPadding: root.spacing + (root.subMenu && root.arrow ? root.arrow.width : 0)
+            readonly property real indicatorPadding: root.spacing + (root.indicator.visible ? root.indicator.width : 0)
 
-        leftPadding: !root.mirrored ? indicatorPadding : arrowPadding
-        rightPadding: root.mirrored ? indicatorPadding : arrowPadding
+            leftPadding: !root.mirrored ? indicatorPadding : arrowPadding
+            rightPadding: root.mirrored ? indicatorPadding : arrowPadding
 
-        horizontalAlignment: Text.AlignLeft
-        verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignLeft
+            verticalAlignment: Text.AlignVCenter
 
-        text: root.text
-        color: !root.enabled ? Theme.palette.baseColor1
-                             : d.isStatusDangerAction ? Theme.palette.dangerColor1
-                                                      : d.isStatusSuccessAction?
-                                                            Theme.palette.successColor1 : Theme.palette.directColor1
+            text: root.text
+            color: !root.enabled ? Theme.palette.baseColor1
+                                 : d.isStatusDangerAction ? Theme.palette.dangerColor1
+                                                          : d.isStatusSuccessAction ? Theme.palette.successColor1 : Theme.palette.directColor1
 
-        font.pixelSize: d.fontSettings ? d.fontSettings.pixelSize : d.defaultFontSettings.pixelSize
-        font.bold: d.fontSettings ? d.fontSettings.bold : d.defaultFontSettings.bold
-        font.italic: d.fontSettings ? d.fontSettings.italic : d.defaultFontSettings.italic
-        elide: Text.ElideRight
+            font.pixelSize: d.fontSettings ? d.fontSettings.pixelSize : d.defaultFontSettings.pixelSize
+            font.bold: d.fontSettings ? d.fontSettings.bold : d.defaultFontSettings.bold
+            font.italic: d.fontSettings ? d.fontSettings.italic : d.defaultFontSettings.italic
+            elide: Text.ElideRight
+        }
+        StatusIcon {
+            Layout.preferredHeight: 16
+            Layout.alignment: Qt.AlignRight
+            visible: root.checkable && root.checked
+            icon: "checkmark"
+            color: Theme.palette.primaryColor1
+        }
     }
 
     arrow: StatusIcon {
