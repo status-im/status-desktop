@@ -41,10 +41,10 @@ method acceptRequestAddressForTransaction*(self: AccessInterface, messageId: str
 method acceptRequestTransaction*(self: AccessInterface, transactionHash: string, messageId: string, signature: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method searchGifs*(self: AccessInterface, query: string): seq[GifDto] {.base.} =
+method searchGifs*(self: AccessInterface, query: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTrendingsGifs*(self: AccessInterface): seq[GifDto] {.base.} =
+method getTrendingsGifs*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getRecentsGifs*(self: AccessInterface): seq[GifDto] {.base.} =
@@ -54,6 +54,24 @@ method loadRecentGifs*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method loadRecentGifsDone*(self: AccessInterface, gifs: seq[GifDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadTrendingGifsStarted*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadTrendingGifsError*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadTrendingGifsDone*(self: AccessInterface, gifs: seq[GifDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method searchGifsStarted*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method searchGifsError*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method serachGifsDone*(self: AccessInterface, gifs: seq[GifDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getFavoritesGifs*(self: AccessInterface): seq[GifDto] {.base.} =

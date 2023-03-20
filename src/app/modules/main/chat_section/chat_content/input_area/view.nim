@@ -12,6 +12,7 @@ QtObject:
       gifColumnAModel: GifColumnModel
       gifColumnBModel: GifColumnModel
       gifColumnCModel: GifColumnModel
+      gifLoading: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -25,6 +26,7 @@ QtObject:
     result.gifColumnAModel = newGifColumnModel()
     result.gifColumnBModel = newGifColumnModel()
     result.gifColumnCModel = newGifColumnModel()
+    result.gifLoading = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -105,13 +107,22 @@ QtObject:
     self.gifColumnCModel.setNewData(columnCData)
     self.gifLoaded()
 
+  proc gifLoadingChanged*(self: View) {.signal.}
+  proc setGifLoading*(self: View, value: bool) =
+    self.gifLoading = value
+    self.gifLoadingChanged()
+  proc getGifLoading*(self: View): bool {.slot.} =
+    result = self.gifLoading
+
+  QtProperty[bool] gifLoading:
+    read = getGifLoading
+    notify = gifLoadingChanged
+
   proc searchGifs*(self: View, query: string) {.slot.} =
-    let data = self.delegate.searchGifs(query)
-    self.updateGifColumns(data)
+    self.delegate.searchGifs(query)
 
   proc getTrendingsGifs*(self: View) {.slot.} =
-    let data = self.delegate.getTrendingsGifs()
-    self.updateGifColumns(data)
+    self.delegate.getTrendingsGifs()
 
   proc getRecentsGifs*(self: View) {.slot.} =
     let data = self.delegate.getRecentsGifs()

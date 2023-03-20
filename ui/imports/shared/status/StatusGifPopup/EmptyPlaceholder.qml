@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
@@ -10,7 +10,8 @@ import utils 1.0
 Rectangle {
     id: root
 
-    /*required*/ property int currentCategory: GifPopupDefinitions.Category.Trending
+    required property int currentCategory;
+    property bool loading: false
 
     signal doRetry()
 
@@ -20,9 +21,13 @@ Rectangle {
         id: emptyText
         anchors.centerIn: parent
         text: {
-            if(root.currentCategory === GifPopupDefinitions.Category.Favorite) {
+            if (root.loading) {
+                return qsTr("Loading gifs...")
+            }
+            if (root.currentCategory === GifPopupDefinitions.Category.Favorite) {
                 return qsTr("Favorite GIFs will appear here")
-            } else if(root.currentCategory === GifPopupDefinitions.Category.Recent) {
+            }
+            if (root.currentCategory === GifPopupDefinitions.Category.Recent) {
                 return qsTr("Recent GIFs will appear here")
             }
 
@@ -35,7 +40,9 @@ Rectangle {
     StatusButton {
         text: qsTr("Retry")
 
-        visible: root.currentCategory === GifPopupDefinitions.Category.Trending || root.currentCategory === GifPopupDefinitions.Category.Search
+        visible: !root.loading &&
+            (root.currentCategory === GifPopupDefinitions.Category.Trending ||
+            root.currentCategory === GifPopupDefinitions.Category.Search)
 
         anchors.top: emptyText.bottom
         anchors.topMargin: Style.current.padding
