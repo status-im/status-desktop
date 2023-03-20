@@ -28,6 +28,10 @@ Item {
 
     signal itemClicked(string key, string name, url iconSource)
     signal navigateDeep(string key, var subItems)
+    signal layoutChanged()
+
+    implicitHeight: content.implicitHeight
+    implicitWidth: content.implicitWidth
 
     enum Type{
         Assets,
@@ -317,6 +321,7 @@ Item {
     // List elements content
 
     ColumnLayout {
+        id: content
         anchors.fill: parent
 
         SearchBox {
@@ -360,6 +365,7 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+            onItemChanged: root.layoutChanged()
         }
     }
 
@@ -380,6 +386,12 @@ Item {
                 else if(key === "IMPORT") console.log("TODO: Import existing asset")
             }
             onItemClicked: root.itemClicked(key, shortName, iconSource)
+            onImplicitHeightChanged: root.layoutChanged()
+            Binding on implicitHeight {
+                value: contentHeight
+                //avoid too many changes of the implicit height
+                delayed: true
+            }
         }
     }
 
@@ -414,6 +426,12 @@ Item {
                     root.itemClicked(key, name, iconSource)
                 }
             }
+            onImplicitHeightChanged: root.layoutChanged()
+            Binding on implicitHeight {
+                value: contentHeight
+                //avoid too many changes of the implicit height
+                delayed: true
+            }
         }
     }
 
@@ -430,6 +448,12 @@ Item {
             onItemClicked: {
                 d.reset()
                 root.itemClicked(key, name, iconSource)
+            }
+            onImplicitHeightChanged: root.layoutChanged()
+            Binding on implicitHeight {
+                value: contentHeight
+                //avoid too many changes of the implicit height
+                delayed: true
             }
         }
     }
