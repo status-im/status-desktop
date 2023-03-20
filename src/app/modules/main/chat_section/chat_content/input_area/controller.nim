@@ -50,6 +50,26 @@ proc init*(self: Controller) =
     let args = GifsArgs(e)
     self.delegate.loadFavoriteGifsDone(args.gifs)
 
+  self.events.on(SIGNAL_LOAD_TRENDING_GIFS_STARTED) do(e:Args):
+    self.delegate.loadTrendingGifsStarted()
+
+  self.events.on(SIGNAL_LOAD_TRENDING_GIFS_DONE) do(e:Args):
+    let args = GifsArgs(e)
+    self.delegate.loadTrendingGifsDone(args.gifs)
+
+  self.events.on(SIGNAL_LOAD_TRENDING_GIFS_ERROR) do(e:Args):
+    self.delegate.loadTrendingGifsError()
+
+  self.events.on(SIGNAL_SEARCH_GIFS_STARTED) do(e:Args):
+    self.delegate.searchGifsStarted()
+
+  self.events.on(SIGNAL_SEARCH_GIFS_DONE) do(e:Args):
+    let args = GifsArgs(e)
+    self.delegate.serachGifsDone(args.gifs)
+
+  self.events.on(SIGNAL_SEARCH_GIFS_ERROR) do(e:Args):
+    self.delegate.searchGifsError()
+
 proc getChatId*(self: Controller): string =
   return self.chatId
 
@@ -86,11 +106,11 @@ proc acceptRequestAddressForTransaction*(self: Controller, messageId: string, ad
 proc acceptRequestTransaction*(self: Controller, transactionHash: string, messageId: string, signature: string) =
   self.chatService.acceptRequestTransaction(transactionHash, messageId, signature)
 
-proc searchGifs*(self: Controller, query: string): seq[GifDto] =
-  return self.gifService.search(query)
+proc searchGifs*(self: Controller, query: string) =
+  self.gifService.search(query)
 
-proc getTrendingsGifs*(self: Controller): seq[GifDto] =
-  return self.gifService.getTrendings()
+proc getTrendingsGifs*(self: Controller) =
+  self.gifService.getTrending()
 
 proc getRecentsGifs*(self: Controller): seq[GifDto] =
   return self.gifService.getRecents()

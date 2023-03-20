@@ -8,7 +8,7 @@ import NimQml
 
 import ../settings/service as settings_service
 import ../../../app/core/eventemitter
-import ../../../backend/backend
+import ../../../backend/backend as status_go
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/[main]
 import ./dto
@@ -35,6 +35,14 @@ const SIGNAL_LOAD_RECENT_GIFS_DONE* = "loadRecentGifsDone"
 const SIGNAL_LOAD_FAVORITE_GIFS_STARTED* = "loadFavoriteGifsStarted"
 const SIGNAL_LOAD_FAVORITE_GIFS_DONE* = "loadFavoriteGifsDone"
 
+const SIGNAL_LOAD_TRENDING_GIFS_STARTED* = "loadTrendingGifsStarted"
+const SIGNAL_LOAD_TRENDING_GIFS_DONE* = "loadTrendingGifsDone"
+const SIGNAL_LOAD_TRENDING_GIFS_ERROR* = "loadTrendingGifsError"
+
+const SIGNAL_SEARCH_GIFS_STARTED* = "searchGifsStarted"
+const SIGNAL_SEARCH_GIFS_DONE* = "searchGifsDone"
+const SIGNAL_SEARCH_GIFS_ERROR* = "searchGifsError"
+
 type
   GifsArgs* = ref object of Args
     gifs*: seq[GifDto]
@@ -47,7 +55,9 @@ QtObject:
       settingsService: settings_service.Service
       favorites: seq[GifDto]
       recents: seq[GifDto]
+      trending: seq[GifDto]
       events: EventEmitter
+      apiKeySet: bool
 
   proc delete*(self: Service) =
     discard
@@ -60,39 +70,7 @@ QtObject:
     result.threadpool = threadpool
     result.favorites = @[]
     result.recents = @[]
-
-  proc setTenorAPIKey(self: Service) =
-    try:
-      let response = backend.setTenorAPIKey(TENOR_API_KEY_RESOLVED)
-      if(not response.error.isNil):
-        error "error setTenorAPIKey: ", errDescription = response.error.message
-
-    except Exception as e:
-      error "error: ", procName="setTenorAPIKey", errName = e.name, errDesription = e.msg
-
-  proc getRecentGifs(self: Service) =
-    try:
-      let response = backend.getRecentGifs()
-
-      if(not response.error.isNil):
-        error "error getRecentGifs: ", errDescription = response.error.message
-
-      self.recents = map(response.result.getElems(), settingToGifDto)
-
-    except Exception as e:
-      error "error: ", procName="getRecentGifs", errName = e.name, errDesription = e.msg
-
-  proc getFavoriteGifs(self: Service) =
-    try:
-      let response = backend.getFavoriteGifs()
-
-      if(not response.error.isNil):
-        error "error getFavoriteGifs: ", errDescription = response.error.message
-
-      self.favorites = map(response.result.getElems(), settingToGifDto)
-
-    except Exception as e:
-      error "error: ", procName="getFavoriteGifs", errName = e.name, errDesription = e.msg
+    result.apiKeySet = false
 
   proc asyncLoadRecentGifs*(self: Service) =
     self.events.emit(SIGNAL_LOAD_RECENT_GIFS_STARTED, Args())
@@ -147,27 +125,68 @@ QtObject:
       error "error: ", errMsg
 
   proc init*(self: Service) =
-    # set Tenor API Key
-    self.setTenorAPIKey()
+    discard
 
-  proc tenorQuery(self: Service, path: string): seq[GifDto] =
+  proc search*(self: Service, query: string) =
     try:
-      let response = backend.fetchGifs(path)
-      let doc = response.result.str.parseJson()
+      self.events.emit(SIGNAL_SEARCH_GIFS_STARTED, Args())
+      let arg = AsyncTenorQueryArg(
+        tptr: cast[ByteAddress](asyncTenorQuery),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncTenorQueryDone",
+        apiKeySet: self.apiKeySet,
+        apiKey: TENOR_API_KEY_RESOLVED,
+        query: fmt("search?q={encodeUrl(query)}"),
+        event: SIGNAL_SEARCH_GIFS_DONE,
+        errorEvent: SIGNAL_SEARCH_GIFS_ERROR,
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error getting trending gifs", msg = e.msg
+
+  proc getTrending*(self: Service) =
+    if self.trending.len > 0:
+      self.events.emit(SIGNAL_LOAD_TRENDING_GIFS_DONE, GifsArgs(gifs: self.trending))
+      return
+    try:
+      self.events.emit(SIGNAL_LOAD_TRENDING_GIFS_STARTED, Args())
+      let arg = AsyncTenorQueryArg(
+        tptr: cast[ByteAddress](asyncTenorQuery),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncTenorQueryDone",
+        apiKeySet: self.apiKeySet,
+        apiKey: TENOR_API_KEY_RESOLVED,
+        query: "trending?",
+        event: SIGNAL_LOAD_TRENDING_GIFS_DONE,
+        errorEvent: SIGNAL_LOAD_TRENDING_GIFS_ERROR,
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error getting trending gifs", msg = e.msg
+
+  proc onAsyncTenorQueryDone*(self: Service, response: string) {.slot.} =
+    let rpcResponseObj = response.parseJson
+    try:
+      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+        raise newException(RpcException, rpcResponseObj{"error"}.getStr)
+
+      self.apiKeySet = true
+
+      let itemsJson = rpcResponseObj["items"]
 
       var items: seq[GifDto] = @[]
-      for json in doc["results"]:
-        items.add(tenorToGifDto(json))
+      for itemJson in itemsJson.items:
+        items.add(itemJson.settingToGifDto)
 
-      return items
-    except:
-      return @[]
-
-  proc search*(self: Service, query: string): seq[GifDto] =
-    return self.tenorQuery(fmt("search?q={encodeUrl(query)}"))
-
-  proc getTrendings*(self: Service): seq[GifDto] =
-    return self.tenorQuery("trending?")
+      if rpcResponseObj["event"].getStr == SIGNAL_LOAD_TRENDING_GIFS_DONE:
+        # Save trending gifs in a local cache to not have to fetch them multiple times
+        self.trending = items
+     
+      self.events.emit(rpcResponseObj["event"].getStr, GifsArgs(gifs: items))
+    except Exception as e:
+      let errMsg = e.msg
+      error "Error requesting sending query to Tenor", msg = errMsg
+      self.events.emit(rpcResponseObj["errorEvent"].getStr, GifsArgs(error: errMsg))
 
   proc getRecents*(self: Service): seq[GifDto] =
     return self.recents
@@ -190,7 +209,7 @@ QtObject:
 
     self.recents = newRecents
     let recent = %*{"items": map(newRecents, toJsonNode)}
-    discard backend.updateRecentGifs(recent)
+    discard status_go.updateRecentGifs(recent)
 
   proc getFavorites*(self: Service): seq[GifDto] =
     return self.favorites
@@ -217,4 +236,4 @@ QtObject:
 
     self.favorites = newFavorites
     let favorites = %*{"items": map(newFavorites, toJsonNode)}
-    discard backend.updateFavoriteGifs(favorites)
+    discard status_go.updateFavoriteGifs(favorites)

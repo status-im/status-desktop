@@ -39,6 +39,7 @@ Popup {
     property alias searchString: searchBox.text
     property int currentCategory: GifPopupDefinitions.Category.Trending
     property int previousCategory: GifPopupDefinitions.Category.Trending
+    property bool loading: RootStore.gifLoading
 
     modal: false
     width: 360
@@ -264,6 +265,7 @@ Popup {
 
         EmptyPlaceholder {
             currentCategory: root.currentCategory
+            loading: root.loading
             onDoRetry: searchBox.text === ""
                         ? RootStore.getTrendingsGifs()
                         : searchGif(searchBox.text)

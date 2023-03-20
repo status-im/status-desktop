@@ -108,6 +108,8 @@ QtObject {
                                                                  : null
     property var gifColumnC: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifColumnC
                                                                  : null
+    property bool gifLoading: chatSectionChatContentInputAreaInst ? chatSectionChatContentInputArea.gifLoading
+                                                                 : false
 
     function searchGifs(query) {
         if (chatSectionChatContentInputAreaInst)
