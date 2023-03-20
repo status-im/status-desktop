@@ -26,6 +26,19 @@ Item {
 
     property string popupContentItemObjectName: ""
 
+    property int size: StatusComboBox.Size.Large
+    property int type: StatusComboBox.Type.Primary
+
+    enum Size {
+        Small,
+        Large
+    }
+
+    enum Type {
+        Primary,
+        Secondary
+    }
+
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
 
@@ -66,16 +79,24 @@ Item {
             background: Rectangle {
                 implicitHeight: 56
                 implicitWidth: 448
-                color: Theme.palette.baseColor2
+                color: root.type === StatusComboBox.Type.Secondary ? "transparent" : Theme.palette.baseColor2
                 radius: 8
-                border.width: !!root.validationError || comboBox.hovered || comboBox.down || comboBox.activeFocus ? 1 : 0
-                border.color: !!root.validationError
-                              ? Theme.palette.dangerColor1
-                              : comboBox.activeFocus
-                                ? Theme.palette.primaryColor1
-                                : comboBox.hovered
-                                  ? Theme.palette.primaryColor2
-                                  : "transparent"
+                border.width: (!!root.validationError || comboBox.hovered || comboBox.down || comboBox.activeFocus || root.type === StatusComboBox.Type.Secondary) ? 1 : 0
+                border.color: {
+                    if (!!root.validationError)
+                        return Theme.palette.dangerColor1
+
+                    if (comboBox.activeFocus)
+                        return Theme.palette.primaryColor1
+
+                    if (comboBox.hovered)
+                        return Theme.palette.primaryColor2
+
+                    if (root.type === StatusComboBox.Type.Secondary)
+                        return Theme.palette.directColor7
+
+                    return "transparent"
+                }
 
                 MouseArea {
                     anchors.fill: parent
@@ -96,8 +117,8 @@ Item {
             indicator: StatusIcon {
                 x: comboBox.mirrored ? comboBox.padding : comboBox.width - width - comboBox.padding
                 y: comboBox.topPadding + (comboBox.availableHeight - height) / 2
-                width: 24
-                height: 24
+                width: root.size === StatusComboBox.Size.Large ? 24 : 16
+                height: width
                 icon: "chevron-down"
                 color: Theme.palette.baseColor1
             }
@@ -151,7 +172,6 @@ Item {
                                        : modelData
             }
         }
-
 
         StatusBaseText {
             id: validationErrorItem
