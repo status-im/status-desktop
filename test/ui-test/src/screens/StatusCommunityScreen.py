@@ -29,7 +29,12 @@ class CommunityScreenComponents(Enum):
     CHAT_LOG = "chatView_log"  
     COMMUNITY_HEADER_BUTTON = "mainWindow_communityHeader_StatusChatInfoButton"
     COMMUNITY_HEADER_NAME_TEXT= "community_ChatInfo_Name_Text"
-    COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON = "mainWindow_createChannelOrCategoryBtn_StatusBaseText"
+    COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON = "ma.
+
+
+
+
+    inWindow_createChannelOrCategoryBtn_StatusBaseText"
     COMMUNITY_CREATE_CHANNEL_MENU_ITEM = "create_channel_StatusMenuItem"
     COMMUNITY_CREATE_CATEGORY_MENU_ITEM = "create_category_StatusMenuItem"
     COMMUNITY_EDIT_CATEGORY_MENU_ITEM = "edit_сategory_StatusMenuItem"
@@ -114,7 +119,7 @@ class StatusCommunityScreen:
             chat_or_cat_loader = chat_and_category_list.itemAtIndex(i)
             if not chat_or_cat_loader or chat_or_cat_loader.item.objectName != "categoryItem":
                 continue
-            if str(chat_or_cat_loader.item.title).lower() == community_category_name.lower():
+            if str(chat_or_cat_loader.item.text).lower() == community_category_name.lower():
                 return True, chat_or_cat_loader.item
 
         return False, None
@@ -436,13 +441,13 @@ class StatusCommunityScreen:
         found = False
         verify(chat_lists.count > 0, "At least one chat exists")
         for i in range(chat_lists.count):
-            chat = chat_lists.itemAtIndex(i)
-            chat_list_items = get_children_with_object_name(chat, "chatItem")
-            verify(len(chat_list_items) > 0, "StatusChatListItem exists")
-            if str(chat_list_items[0].name) == chatName:
-                right_click_obj(chat)
-                found = True
-                break
+            draggable_item = chat_lists.itemAtIndex(i)
+            chat = draggable_item.item
+            if chat != None:
+                if chat.text == chatName:
+                    right_click_obj(draggable_item)
+                    found = True
+                    break
 
         if not found:
             test.fail("Chat is not loaded")
