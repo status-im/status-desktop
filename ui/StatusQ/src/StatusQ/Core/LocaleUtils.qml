@@ -314,6 +314,6 @@ QtObject {
     }
 
     function getDayName(value) {
-        return Qt.locale().dayName(value.getDay())
+        return Qt.locale().standaloneDayName(value.getDay())
     }
 }

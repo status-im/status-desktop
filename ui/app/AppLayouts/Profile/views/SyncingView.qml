@@ -38,7 +38,6 @@ SettingsContentBase {
     ColumnLayout {
         id: layout
         width: root.contentWidth
-//        height: root.contentHeight
         spacing: Style.current.padding
 
         QtObject {
@@ -107,9 +106,6 @@ SettingsContentBase {
 
         StatusListView {
             Layout.fillWidth: true
-//            Layout.fillHeight: true
-//            Layout.maximumHeight: implicitHeight
-
             implicitHeight: contentHeight
 
             interactive: false

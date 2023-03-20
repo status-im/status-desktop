@@ -120,12 +120,6 @@ Item {
                         easing.type: Easing.InOutQuad
                     }
                 }
-
-                Rectangle {
-                    color: "red"
-                    opacity: 0.2
-                    anchors.fill: parent
-                }
             }
         }
     }
