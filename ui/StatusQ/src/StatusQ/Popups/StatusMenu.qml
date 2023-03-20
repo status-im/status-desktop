@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -56,6 +56,16 @@ Menu {
     property var closeHandler
 
     signal menuItemClicked(int menuIndex)
+
+    function checkIfEmpty() {
+        for (let i = 0; i < root.contentItem.count; ++i) {
+            const menuItem = root.contentItem.itemAtIndex(i)
+            if (menuItem.text !== undefined && menuItem.enabled) { // skip menu separators
+                return false
+            }
+        }
+        return true
+    }
 
     dim: false
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape

@@ -1337,7 +1337,12 @@ Rectangle {
                                 }
                             }
 
-                            onEnabledChanged: if (!enabled) text = ""
+                            onEnabledChanged: {
+                                if (!enabled) {
+                                    text = ""
+                                    control.hideExtendedArea()
+                                }
+                            }
 
                             cursorDelegate: Rectangle {
                                 color: Theme.palette.primaryColor1

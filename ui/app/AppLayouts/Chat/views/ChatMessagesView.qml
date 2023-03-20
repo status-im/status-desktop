@@ -36,6 +36,7 @@ Item {
     property alias chatLogView: chatLogView
     property bool isChatBlocked: false
     property bool isActiveChannel: false
+    property bool isUserAdded: true
 
     property var messageContextMenu
 
@@ -225,7 +226,7 @@ Item {
             chatLogView: ListView.view
 
             isActiveChannel: root.isActiveChannel
-            isChatBlocked: root.isChatBlocked
+            isChatBlocked: root.isChatBlocked || !root.isUserAdded
             messageContextMenu: root.messageContextMenu
 
             messageId: model.id

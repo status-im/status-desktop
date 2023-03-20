@@ -86,6 +86,8 @@ ColumnLayout {
         id: contextmenu
         store: root.rootStore
         reactionModel: root.rootStore.emojiReactionsModel
+        disabledForChat: chatType === Constants.chatType.oneToOne && !root.isUserAdded
+
         onPinMessage: {
             messageStore.pinMessage(messageId)
         }
@@ -150,6 +152,7 @@ ColumnLayout {
             isChatBlocked: root.isBlocked
             channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
             isActiveChannel: root.isActiveChannel
+            isUserAdded: root.isUserAdded
             onShowReplyArea: {
                 let obj = messageStore.getMessageByIdAsJson(messageId)
                 if (!obj) {
