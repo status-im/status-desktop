@@ -12,7 +12,7 @@ import StatusQ.Core.Theme 0.1
    \since StatusQ.Components 0.1
    \brief It is a list item with the ability to be dragged and dropped to reorder within a list view. Inherits from \c QtQuickControls::ItemDelegate.
 
-   The \c StatusDraggableListItem is a list item with an icon, title and a subtitle on the left side, and optional actions on the right.
+   The \c StatusDraggableListItem is a list item with a (smartident)icon, title and a subtitle on the left side, and optional actions on the right.
 
    It displays a drag handle on its left side
 
@@ -145,9 +145,49 @@ ItemDelegate {
     */
     property bool draggable
 
+    /*!
+       \qmlproperty int StatusDraggableListItem::dragAxis
+       This property holds whether this item can be dragged along the x-axis (Drag.XAxis), y-axis (Drag.YAxis),
+       or both (Drag.XAndYAxis). Defaults to Drag.YAxis
+    */
+    property int dragAxis: Drag.YAxis
+
+    /*!
+       \qmlproperty bool StatusDraggableListItem::hasIcon
+       This property holds whether this item wants to display an icon (using a StatusIcon); use `icon.name`
+       Defaults to false
+    */
+    property bool hasIcon: false
+    /*!
+       \qmlproperty bool StatusDraggableListItem::hasImage
+       This property holds whether this item wants to display an image (using a StatusRoundedImage); use `icon.source`
+       Specifying `icon.name` adds a fallback to a letter identicon (using StatusLetterIdenticon).
+       Defaults to false
+    */
+    property bool hasImage: false
+    /*!
+       \qmlproperty bool StatusDraggableListItem::hasEmoji
+       This property holds whether this item wants to display an emoji (using a StatusLetterIdenticon); use `icon.name`
+       Defaults to false
+    */
+    property bool hasEmoji: false
+
+    /*!
+       \qmlproperty int StatusDraggableListItem::bgRadius
+       This property holds the background corner radius in pixels (if the background is visible)
+       Defaults to "rounded", half of the icon width or height
+    */
+    property int bgRadius: icon.height/2
+    /*!
+       \qmlproperty color StatusDraggableListItem::bgColor
+       This property holds background color, if any
+       Defaults to "transparent" (ie no background)
+    */
+    property color bgColor: "transparent"
+
     Drag.dragType: Drag.Automatic
-    Drag.hotSpot.x: root.width/2
-    Drag.hotSpot.y: root.height/2
+    Drag.hotSpot.x: dragHandler.mouseX
+    Drag.hotSpot.y: dragHandler.mouseY
     Drag.keys: ["x-status-draggable-list-item-internal"]
 
     /*!
@@ -179,7 +219,7 @@ ItemDelegate {
     ]
 
     background: Rectangle {
-        color: "transparent"
+        color: root.dragActive ? Theme.palette.indirectColor2 : "transparent"
         border.width: 1
         border.color: Theme.palette.baseColor2
         radius: 8
@@ -188,10 +228,10 @@ ItemDelegate {
             id: dragHandler
             anchors.fill: parent
             drag.target: root
-            drag.axis: Drag.YAxis
+            drag.axis: root.dragAxis
             preventStealing: true // otherwise DND is broken inside a Flickable/ScrollView
             hoverEnabled: true
-            cursorShape: root.dragActive ? Qt.ClosedHandCursor : Qt.PointingHandCursor
+            cursorShape: root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
         }
     }
 
@@ -210,31 +250,86 @@ ItemDelegate {
         spacing: root.spacing
 
         StatusIcon {
+            Layout.preferredWidth: 20
+            Layout.preferredHeight: 20
             icon: "justify"
             visible: root.draggable
         }
 
-        StatusIcon {
-            Layout.preferredWidth: root.icon.width
-            Layout.preferredHeight: root.icon.height
+        Loader {
             Layout.leftMargin: root.spacing/2
-            icon: root.icon.name
-            color: root.icon.color
+            asynchronous: true
+            active: !!root.icon.name || !!root.icon.source
+            visible: active
+            sourceComponent: root.hasIcon ? iconComponent : root.hasImage ? imageComponent : letterIdenticonComponent
         }
 
-        StatusBaseText {
+        ColumnLayout {
             Layout.fillWidth: true
-            text: root.title
-            elide: Text.ElideRight
-            maximumLineCount: 1
-        }
+            Layout.leftMargin: root.secondaryTitle ? 4 : 0
 
-        // TODO secondaryTitle
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: root.title
+                visible: text
+                elide: Text.ElideRight
+                maximumLineCount: 1
+                font.weight: root.highlighted ? Font.Medium : Font.Normal
+            }
+
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: root.secondaryTitle
+                visible: text
+                color: Theme.palette.baseColor1
+                elide: Text.ElideRight
+                maximumLineCount: 1
+            }
+        }
 
         RowLayout {
             id: actionsRow
             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
             spacing: 12
+        }
+    }
+
+    Component {
+        id: iconComponent
+        StatusIcon {
+            width: root.icon.width
+            height: root.icon.height
+            icon: root.icon.name
+            color: root.icon.color
+            source: root.icon.source
+        }
+    }
+
+    Component {
+        id: imageComponent
+        StatusRoundedImage {
+            radius: root.bgRadius
+            color: root.bgColor
+            width: root.icon.width
+            height: root.icon.height
+            image.source: root.icon.source
+            image.sourceSize: Qt.size(width, height)
+            image.smooth: false
+            image.mipmap: true
+            showLoadingIndicator: true
+            image.fillMode: Image.PreserveAspectCrop
+        }
+    }
+
+    Component {
+        id: letterIdenticonComponent
+        StatusLetterIdenticon {
+            letterSize: 14
+            width: root.icon.width
+            height: root.icon.height
+            emoji: root.hasEmoji ? root.icon.name : ""
+            name: !root.hasEmoji ? root.icon.name : ""
+            color: root.icon.color
         }
     }
 }

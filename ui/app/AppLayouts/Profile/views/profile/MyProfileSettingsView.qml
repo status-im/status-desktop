@@ -76,7 +76,7 @@ ColumnLayout {
     }
 
     Connections {
-        target: Qt.platform.os === Constants.mac? root.privacyStore.privacyModule : null
+        target: Qt.platform.os === Constants.mac ? root.privacyStore.privacyModule : null
 
         function onStoreToKeychainError(errorDescription: string) {
             root.reset()
@@ -126,8 +126,6 @@ ColumnLayout {
     }
 
     ProfileSocialLinksPanel {
-        id: socialLinksPanel
-
         Layout.fillWidth: true
         profileStore: root.profileStore
         socialLinksModel: root.profileStore.temporarySocialLinksModel
@@ -135,6 +133,12 @@ ColumnLayout {
 
     Separator {
         Layout.fillWidth: true
+    }
+
+    StatusBaseText {
+        visible: Qt.platform.os === Constants.mac
+        text: qsTr("Security")
+        color: Theme.palette.baseColor1
     }
 
     StatusListItem {
@@ -156,85 +160,64 @@ ColumnLayout {
         visible: Qt.platform.os === Constants.mac
     }
 
+    StatusBaseText {
+        text: qsTr("Showcase (demo only)")
+        color: Theme.palette.baseColor1
+    }
+
     StatusTabBar {
         id: showcaseTabBar
-        Layout.fillWidth: true
-
-        function validateCurrentIndex() {
-
-            let processedButtons = 0;
-
-            while (!itemAt(currentIndex).enabled) {
-                if (++processedButtons === count) {
-                    currentIndex = -1;
-                    break;
-                }
-                currentIndex = (currentIndex + 1) % count;
-            }
-        }
 
         StatusTabButton {
-            width: enabled ? implicitWidth : 0
+            width: implicitWidth
+            leftPadding: 0
             text: qsTr("Communities")
-            onEnabledChanged: showcaseTabBar.validateCurrentIndex()
         }
 
         StatusTabButton {
-            enabled: root.profileStore.isWalletEnabled
-            width: enabled ? implicitWidth : 0
+            width: implicitWidth
             text: qsTr("Accounts")
-            onEnabledChanged: showcaseTabBar.validateCurrentIndex()
+        }
+
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Collectibles")
+        }
+
+        StatusTabButton {
+            width: implicitWidth
+            text: qsTr("Assets")
         }
     }
 
     StackLayout {
+        id: showcaseStack
         Layout.fillWidth: true
         currentIndex: showcaseTabBar.currentIndex
 
-        Column {
-            Layout.fillWidth: true
-
-            StatusBaseText {
-                visible: communitiesRepeater.count == 0
-                width: parent.width
-                horizontalAlignment: Text.AlignHCenter
-                color: Theme.palette.directColor1
-                text: qsTr("You haven't joined any communities yet")
-            }
-
-            Repeater {
-                id: communitiesRepeater
-                model: root.communitiesModel
-
-                CommunityDelegate {
-                    width: parent.width
-                    visible: joined
-                    community: model
-                    sensor.enabled: false
-                }
-            }
+        ProfileShowcaseCommunitiesPanel {
+            Layout.minimumHeight: implicitHeight
+            Layout.maximumHeight: implicitHeight
+            baseModel: root.communitiesModel
         }
 
-        Column {
-            StatusBaseText {
-                visible: accountsRepeater.count == 0
-                width: parent.width
-                horizontalAlignment: Text.AlignHCenter
-                color: Theme.palette.directColor1
-                text: qsTr("You don't have any wallet accounts yet")
-            }
+        ProfileShowcaseAccountsPanel {
+            Layout.minimumHeight: implicitHeight
+            Layout.maximumHeight: implicitHeight
+            baseModel: root.walletStore.accounts
+            currentWallet: root.walletStore.currentAccount.address
+        }
 
-            Repeater {
-                id: accountsRepeater
-                model: root.walletStore.accounts
+        ProfileShowcaseCollectiblesPanel {
+            Layout.minimumHeight: implicitHeight
+            Layout.maximumHeight: implicitHeight
+            baseModel: root.walletStore.flatCollectibles
+        }
 
-                WalletAccountDelegate {
-                    width: parent.width
-                    account: model
-                    showShevronIcon: false
-                    sensor.enabled: false
-                }
-            }
+        ProfileShowcaseAssetsPanel {
+            Layout.minimumHeight: implicitHeight
+            Layout.maximumHeight: implicitHeight
+            baseModel: root.walletStore.currentAccount.assets
         }
     }
 }

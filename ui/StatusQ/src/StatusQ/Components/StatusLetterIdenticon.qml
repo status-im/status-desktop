@@ -38,7 +38,7 @@ Rectangle {
 
         font.weight: Font.Bold
         font.pixelSize: root.letterSize
-        color: d.luminance(root.color) > 0.5 ? Qt.rgba(0, 0, 0, 0.5) : Qt.rgba(255, 255, 255, 0.7)
+        color: d.luminance(root.color) > 0.5 ? Qt.rgba(0, 0, 0, 0.5) : Qt.rgba(1, 1, 1, 0.7)
 
         text: {
             const shift = (root.name.charAt(0) === "#") ||

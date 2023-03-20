@@ -338,7 +338,8 @@ SplitView {
                                         description: "Super Crypto Kitty",
                                         backgroundColor: "",
                                         imageUrl: ModelsData.collectibles.cryptoKitties,
-                                        permalink: ""
+                                        permalink: "",
+                                        isLoading: false
                                     },
                                     {
                                         id: 34545656768,
@@ -346,7 +347,8 @@ SplitView {
                                         description: "",
                                         backgroundColor: "green",
                                         imageUrl: ModelsData.collectibles.kitty1Big,
-                                        permalink: ""
+                                        permalink: "",
+                                        isLoading: false
                                     },
                                     {
                                         id: 123456,
@@ -354,7 +356,8 @@ SplitView {
                                         description: "",
                                         backgroundColor: "",
                                         imageUrl: ModelsData.collectibles.kitty2Big,
-                                        permalink: ""
+                                        permalink: "",
+                                        isLoading: false
                                     },
                                     {
                                         id: 12345645459537432,
@@ -362,7 +365,8 @@ SplitView {
                                         description: "Kitty 3 description",
                                         backgroundColor: "oink",
                                         imageUrl: ModelsData.collectibles.kitty3Big,
-                                        permalink: ""
+                                        permalink: "",
+                                        isLoading: false
                                     },
                                     {
                                         id: 691,
@@ -370,7 +374,8 @@ SplitView {
                                         description: "Please note that weapons are not yet reflected in the rarity stats.",
                                         backgroundColor: "#807c56",
                                         imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
-                                        permalink: "https://opensea.io/assets/ethereum/0xc99c679c50033bbc5321eb88752e89a93e9e83c5/691"
+                                        permalink: "https://opensea.io/assets/ethereum/0xc99c679c50033bbc5321eb88752e89a93e9e83c5/691",
+                                        isLoading: true
                                     }
                                 ]
                                 Component.onCompleted: append(data)

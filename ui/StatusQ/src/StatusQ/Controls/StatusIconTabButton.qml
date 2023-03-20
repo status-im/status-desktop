@@ -1,6 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -24,8 +24,7 @@ TabButton {
         anchors.fill: parent
         StatusSmartIdenticon {
             id: identicon
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.centerIn: parent
             asset.isImage: (statusIconTabButton.icon.source.toString() !== "")
             asset.name: asset.isImage ?
                         statusIconTabButton.icon.source : statusIconTabButton.icon.name
@@ -47,7 +46,7 @@ TabButton {
     MouseArea {
         cursorShape: Qt.PointingHandCursor
         anchors.fill: parent
-        onPressed: mouse.accepted = false
+        acceptedButtons: Qt.NoButton
     }
 }
 

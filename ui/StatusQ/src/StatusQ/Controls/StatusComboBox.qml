@@ -124,7 +124,7 @@ Item {
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 y: comboBox.height + 8
 
-                width: comboBox.width
+                implicitWidth: comboBox.width
                 height: Math.min(implicitContentHeight + topPadding + bottomPadding,
                                  comboBox.Window.height - topMargin - bottomMargin)
                 margins: 8

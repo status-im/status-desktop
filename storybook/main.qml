@@ -16,6 +16,10 @@ ApplicationWindow {
 
     property string currentPage
 
+    palette.window: Theme.palette.statusAppLayout.backgroundColor
+    palette.text: Theme.palette.directColor1
+    palette.windowText: Theme.palette.directColor1
+    palette.base: Theme.palette.indirectColor1
     font.pixelSize: 13
 
     PagesModel {

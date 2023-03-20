@@ -1,3 +1,6 @@
-CommunityDelegate 1.0 CommunityDelegate.qml
+CommunityShowcaseDelegate 1.0 CommunityShowcaseDelegate.qml
+CollectibleShowcaseDelegate 1.0 CollectibleShowcaseDelegate.qml
+AccountShowcaseDelegate 1.0 AccountShowcaseDelegate.qml
+AssetShowcaseDelegate 1.0 AssetShowcaseDelegate.qml
 WalletAccountDelegate 1.0 WalletAccountDelegate.qml
 StaticSocialLinkInput 1.0 StaticSocialLinkInput.qml

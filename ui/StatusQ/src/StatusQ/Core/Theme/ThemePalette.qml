@@ -250,7 +250,7 @@ QtObject {
 
     property QtObject statusSelect: QtObject {
         property color menuItemBackgroundColor
-        property color menuItemHoeverBackgroundColor
+        property color menuItemHoverBackgroundColor
     }
 
     property QtObject statusMessage: QtObject {

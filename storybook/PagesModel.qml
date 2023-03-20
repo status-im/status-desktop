@@ -102,6 +102,26 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+        title: "ProfileSocialLinksPanel"
+        section: "Panels"
+    }
+    ListElement {
+        title: "ProfileShowcaseCommunitiesPanel"
+        section: "Panels"
+    }
+    ListElement {
+        title: "ProfileShowcaseAccountsPanel"
+        section: "Panels"
+    }
+    ListElement {
+        title: "ProfileShowcaseCollectiblesPanel"
+        section: "Panels"
+    }
+    ListElement {
+        title: "ProfileShowcaseAssetsPanel"
+        section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
@@ -212,9 +232,5 @@ ListModel {
     ListElement {
         title: "LanguageCurrencySettings"
         section: "Settings"
-    }
-    ListElement {
-        title: "ProfileSocialLinksPanel"
-        section: "Panels"
     }
 }

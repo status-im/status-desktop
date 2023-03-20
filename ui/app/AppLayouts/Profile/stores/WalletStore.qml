@@ -21,6 +21,8 @@ QtObject {
     property var importedAccounts: Global.appIsReady? walletSectionAccounts.imported : null
     property var generatedAccounts: Global.appIsReady? walletSectionAccounts.generated : null
     property var watchOnlyAccounts: Global.appIsReady? walletSectionAccounts.watchOnly : null
+
+    property var flatCollectibles: Global.appIsReady ? walletSectionCollectibles.model : null
     
     property var currentAccount: Global.appIsReady? walletSectionCurrent : null
 
