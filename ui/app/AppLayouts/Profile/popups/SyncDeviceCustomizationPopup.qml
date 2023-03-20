@@ -51,7 +51,7 @@ StatusDialog {
             label: qsTr("Device name")
             validators: [
                 StatusValidator {
-                    errorMessage: "Device name can not be empty"
+                    errorMessage: qsTr("Device name can not be empty")
                     validate: (value) => {
                                   return value.trim() !== ""
                               }
