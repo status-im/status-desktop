@@ -40,7 +40,6 @@ Control {
     property bool editMode: false
     property bool isAReply: false
     property bool isEdited: false
-    property bool isChatBlocked: false
 
     property bool hasMention: false
     property bool isPinned: false
@@ -56,6 +55,7 @@ Control {
     property bool isActiveMessage: false
     property bool disableHover: false
     property bool hideQuickActions: false
+    property bool disableEmojis: false
     property color overrideBackgroundColor: "transparent"
     property bool overrideBackground: false
     property bool profileClickable: true
@@ -395,7 +395,7 @@ Control {
                         visible: active
                         sourceComponent: StatusMessageEmojiReactions {
                             id: emojiReactionsPanel
-
+                            enabled: !root.disableEmojis
                             emojiReactionsModel: root.reactionsModel
                             icons: root.reactionIcons
 

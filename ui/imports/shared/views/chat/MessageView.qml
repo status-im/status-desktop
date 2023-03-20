@@ -134,7 +134,7 @@ Loader {
                                                imageSource = "") {
 
         if (placeholderMessage || !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
-            return
+            return false
         }
 
         messageContextMenu.myPublicKey = userProfile.pubKey
@@ -164,7 +164,7 @@ Loader {
         if (isReply) {
             if (!quotedMessageFrom) {
                 // The responseTo message was deleted so we don't eneble to right click the unaviable profile
-                return
+                return false
             }
             messageContextMenu.messageSenderId = quotedMessageFrom
             messageContextMenu.selectedUserPublicKey = quotedMessageFrom
@@ -172,8 +172,14 @@ Loader {
             messageContextMenu.selectedUserIcon = quotedMessageAuthorDetailsThumbnailImage
         }
 
-        messageContextMenu.parent = sender;
-        messageContextMenu.popup(point);
+        // Emoji container is not a menu item of messageContextMenu so checking it separatly
+        if (messageContextMenu.checkIfEmpty() && !isEmoji) {
+            return false
+        }
+
+        messageContextMenu.parent = sender
+        messageContextMenu.popup(point)
+        return true
     }
 
     signal showReplyArea(string messageId, string author)
@@ -462,6 +468,7 @@ Loader {
                                   root.editModeOn ||
                                   !root.rootStore.mainModuleInst.activeSection.joined
 
+                disableEmojis: root.isChatBlocked
                 hideMessage: d.hideMessage
 
                 overrideBackground: root.placeholderMessage
@@ -504,13 +511,13 @@ Loader {
                 }
 
                 onProfilePictureClicked: {
-                    d.setMessageActive(root.messageId, true);
-                    root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true);
+                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true))
+                        d.setMessageActive(root.messageId, true)
                 }
 
                 onReplyProfileClicked: {
-                    d.setMessageActive(root.messageId, true);
-                    root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true, false, false, null, false, false, true);
+                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true, false, false, null, false, false, true))
+                        d.setMessageActive(root.messageId, true)
                 }
 
                 onReplyMessageClicked: {
@@ -518,8 +525,8 @@ Loader {
                 }
 
                 onSenderNameClicked: {
-                    d.setMessageActive(root.messageId, true);
-                    root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true);
+                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true))
+                        d.setMessageActive(root.messageId, true)
                 }
 
                 onToggleReactionClicked: {
@@ -536,10 +543,10 @@ Loader {
 
                 onAddReactionClicked: {
                     if (root.isChatBlocked)
-                        return;
+                        return
 
-                    d.setMessageActive(root.messageId, true);
-                    root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), false, false, false, null, true, false);
+                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), false, false, false, null, true, false))
+                        d.setMessageActive(root.messageId, true)
                 }
 
                 onStickerClicked: {
@@ -556,9 +563,9 @@ Loader {
                              !root.placeholderMessage &&
                              delegate.contentType !== StatusMessage.ContentType.Image
                     onClicked: {
-                        d.setMessageActive(root.messageId, true);
-                        root.messageClickHandler(this, Qt.point(mouse.x, mouse.y),
-                                                 false, false, false, null, root.isEmoji, false, false, false, "");
+                        if (root.messageClickHandler(this, Qt.point(mouse.x, mouse.y),
+                            false, false, false, null, root.isEmoji, false, false, false, ""))
+                            d.setMessageActive(root.messageId, true)
                     }
                 }
 
@@ -729,8 +736,8 @@ Loader {
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Add reaction")
                             onClicked: {
-                                d.setMessageActive(root.messageId, true)
-                                root.messageClickHandler(delegate, mapToItem(delegate, mouse.x, mouse.y), false, false, false, null, true, false)
+                                if (root.messageClickHandler(delegate, mapToItem(delegate, mouse.x, mouse.y), false, false, false, null, true, false))
+                                    d.setMessageActive(root.messageId, true)
                             }
                         }
                     },

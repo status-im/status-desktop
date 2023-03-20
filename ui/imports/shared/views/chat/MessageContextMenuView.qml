@@ -24,6 +24,7 @@ StatusMenu {
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
+    property bool disabledForChat: false
 
     property string selectedUserPublicKey: ""
     property string selectedUserDisplayName: ""
@@ -144,7 +145,8 @@ StatusMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.hideEmojiPicker && (root.isEmoji || !root.isProfile) && !root.pinnedPopup
+        visible: !root.hideEmojiPicker && (root.isEmoji || !root.isProfile) && !root.pinnedPopup && !root.disabledForChat
+
         Row {
             id: emojiRow
             spacing: Style.current.halfPadding
@@ -190,7 +192,7 @@ StatusMenu {
         height: visible ? root.topPadding : 0
     }
 
-    Separator {
+    StatusMenuSeparator {
         anchors.bottom: viewProfileAction.top
         visible: !root.isEmoji && !root.hideEmojiPicker && !pinnedPopup
     }
@@ -238,6 +240,7 @@ StatusMenu {
     }
 
     SendContactRequestMenuItem {
+        id: sendContactRequestMenuItem
         enabled: root.isProfile && !root.isMe && !root.isContact
                                 && !root.isBlockedContact && !root.hasPendingContactRequest
         onTriggered: {
@@ -247,6 +250,7 @@ StatusMenu {
     }
 
     StatusAction {
+        id: verifyIdentityAction
         text: qsTr("Verify Identity")
         icon.name: "checkmark-circle"
         enabled: root.isProfile && !root.isMe && root.isContact
@@ -260,7 +264,8 @@ StatusMenu {
     }
 
     StatusAction {
-         text: isVerificationRequestSent ||
+        id: pendingIdentityAction
+        text: isVerificationRequestSent ||
             root.incomingVerificationStatus === Constants.verificationStatus.verified ?
             qsTr("ID Request Pending....") :
             qsTr("Respond to ID Request...")
@@ -281,6 +286,7 @@ StatusMenu {
     }
 
     StatusAction {
+        id: renameAction
         text: qsTr("Rename")
         icon.name: "edit_pencil"
         enabled: root.isProfile && !root.isMe
@@ -292,6 +298,7 @@ StatusMenu {
     }
 
     StatusAction {
+        id: unblockAction
         text: qsTr("Unblock User")
         icon.name: "remove-circle"
         enabled: root.isProfile && !root.isMe && root.isBlockedContact
@@ -340,7 +347,8 @@ StatusMenu {
                   !root.isEmoji &&
                   !root.isProfile &&
                   !root.pinnedPopup &&
-                  !root.isRightClickOnImage)
+                  !root.isRightClickOnImage &&
+                  !root.disabledForChat)
     }
 
     StatusAction {
@@ -356,7 +364,8 @@ StatusMenu {
                  !root.isSticker &&
                  !root.isProfile &&
                  !root.pinnedPopup &&
-                 !root.isRightClickOnImage
+                 !root.isRightClickOnImage &&
+                 !root.disabledForChat
     }
 
     StatusAction {
@@ -406,7 +415,7 @@ StatusMenu {
         }
         icon.name: "pin"
         enabled: {
-            if(root.isProfile || root.isEmoji || root.isRightClickOnImage)
+            if (root.isProfile || root.isEmoji || root.isRightClickOnImage || root.disabledForChat)
                 return false
 
             if (root.pinnedPopup)
@@ -440,6 +449,7 @@ StatusMenu {
     StatusAction {
         id: deleteMessageAction
         enabled: (root.isMyMessage || root.amIChatAdmin) &&
+                 !root.disabledForChat &&
                  !root.isProfile &&
                  !root.isEmoji &&
                  !root.pinnedPopup &&
