@@ -1,5 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQml 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -108,6 +109,7 @@ StatusDropdown {
         readonly property int backButtonWidth: 56
         readonly property int backButtonHeight: 24
         readonly property int backButtonToContentSpace: 8
+        readonly property int bottomInset: 20
 
         function setInitialFlow() {
             statesStack.clear()
@@ -123,6 +125,11 @@ StatusDropdown {
             root.assetAmount = 0
             root.collectibleAmount = 1
         }
+
+        function forceLayout() {
+            root.height = 0         //setting height to 0 before because Popup cannot properly resize if the current contentHeight exceeds the available height
+            root.height = undefined //use implicit height
+        }
     }
 
     StatesStack {
@@ -131,7 +138,9 @@ StatusDropdown {
 
     width: d.defaultWidth
     padding: d.padding
-    margins: 0  // force keeping within the bounds of the enclosing window
+    bottomInset: d.bottomInset
+    bottomPadding: d.padding + d.bottomInset
+
     contentItem: ColumnLayout {
         id: content
 
@@ -165,19 +174,16 @@ StatusDropdown {
                 State {
                     name: HoldingTypes.Type.Asset
                     PropertyChanges {target: loader; sourceComponent: listLayout}
-                    PropertyChanges {target: root; height: d.extendedContentHeight}
                     PropertyChanges {target: d; extendedDropdownType: ExtendedDropdownContent.Type.Assets}
                 },
                 State {
                     name: HoldingTypes.Type.Collectible
                     PropertyChanges {target: loader; sourceComponent: listLayout}
-                    PropertyChanges {target: root; height: d.extendedContentHeight}
                     PropertyChanges {target: d; extendedDropdownType: ExtendedDropdownContent.Type.Collectibles}
                 },
                 State {
                     name: HoldingTypes.Type.Ens
                     PropertyChanges {target: loader; sourceComponent: ensLayout}
-                    PropertyChanges {target: root; height: undefined} // use implicit height
                 }
             ]
 
@@ -203,6 +209,7 @@ StatusDropdown {
             id: loader
             Layout.fillWidth: true
             Layout.fillHeight: true
+            onItemChanged: d.forceLayout()
         }
 
         states: [
@@ -210,12 +217,10 @@ StatusDropdown {
                 name: HoldingsDropdown.FlowType.Selected
                 PropertyChanges {target: loader; sourceComponent: (d.currentHoldingType === HoldingTypes.Type.Asset) ? assetLayout :
                                                                                                                        ((d.currentHoldingType === HoldingTypes.Type.Collectible) ? collectibleLayout : ensLayout) }
-                PropertyChanges {target: root; height: undefined} // use implicit height
             },
             State {
                 name: HoldingsDropdown.FlowType.List_Deep1
                 PropertyChanges {target: loader; sourceComponent: listLayout}
-                PropertyChanges {target: root; height: d.extendedContentHeight}
                 PropertyChanges {target: d; extendedDeepNavigation: false}
             },
             State {
@@ -271,6 +276,8 @@ StatusDropdown {
                 d.currentItemKey = key
                 statesStack.push(HoldingsDropdown.FlowType.List_Deep2)
             }
+
+            onLayoutChanged: d.forceLayout()
 
             Component.onCompleted: {
                 if(d.extendedDeepNavigation)
