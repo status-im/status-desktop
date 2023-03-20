@@ -144,6 +144,16 @@ ItemDelegate {
        This property holds whether this item can be dragged (and whether the drag handle is displayed)
     */
     property bool draggable
+    /*!
+       \qmlproperty bool StatusDraggableListItem::customizable
+       This property holds whether this item can be customized
+    */
+    property bool customizable: false
+    /*!
+        \qmlsignal
+        This signal is emitted when the StatusDraggableListItem is clicked.
+    */
+    signal clicked(var mouse)
 
     /*!
        \qmlproperty int StatusDraggableListItem::dragAxis
@@ -219,19 +229,23 @@ ItemDelegate {
     ]
 
     background: Rectangle {
-        color: root.dragActive ? Theme.palette.indirectColor2 : "transparent"
-        border.width: 1
+        color: root.dragActive && !root.customizable ? Theme.palette.indirectColor2 : "transparent"
+        border.width: root.customizable ? 0 : 1
         border.color: Theme.palette.baseColor2
-        radius: 8
+        radius: customizable ? 0 : 8
 
         MouseArea {
             id: dragHandler
             anchors.fill: parent
-            drag.target: root
+            drag.target: root.draggable ? root : null
             drag.axis: root.dragAxis
             preventStealing: true // otherwise DND is broken inside a Flickable/ScrollView
             hoverEnabled: true
             cursorShape: root.dragActive ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onClicked: {
+                root.clicked(mouse);
+            }
         }
     }
 
@@ -253,7 +267,7 @@ ItemDelegate {
             Layout.preferredWidth: 20
             Layout.preferredHeight: 20
             icon: "justify"
-            visible: root.draggable
+            visible: root.draggable && !root.customizable
         }
 
         Loader {

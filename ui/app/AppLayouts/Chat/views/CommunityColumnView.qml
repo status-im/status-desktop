@@ -38,15 +38,13 @@ Item {
     signal infoButtonClicked
     signal manageButtonClicked
 
-    MouseArea {
+    TapHandler {
         enabled: communityData.amISectionAdmin
-        anchors.fill: parent
-        z: 0
         acceptedButtons: Qt.RightButton
-        onClicked: {
+        onTapped: {
             adminPopupMenu.showInviteButton = true
-            adminPopupMenu.x = mouse.x + 4
-            adminPopupMenu.y = mouse.y + 4
+            adminPopupMenu.x = eventPoint.position.x + 4
+            adminPopupMenu.y = eventPoint.position.y + 4
             adminPopupMenu.open()
         }
     }
@@ -219,8 +217,8 @@ Item {
             showPopupMenu: communityData.amISectionAdmin && communityData.canManageUsers
 
             onChatItemUnmuted: root.communitySectionModule.unmuteChat(id)
-            onChatItemReordered: function(categoryId, chatId, from, to){
-                root.store.reorderCommunityChat(categoryId, chatId, to)
+            onChatItemReordered: function(categoryId, chatId, to) {
+                root.store.reorderCommunityChat(categoryId, chatId, to);
             }
             onChatListCategoryReordered: root.store.reorderCommunityCategories(categoryId, to)
 

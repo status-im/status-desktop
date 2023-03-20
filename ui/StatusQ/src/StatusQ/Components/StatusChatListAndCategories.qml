@@ -37,8 +37,8 @@ Item {
 
     signal chatItemSelected(string categoryId, string id)
     signal chatItemUnmuted(string id)
-    signal chatItemReordered(string categoryId, string chatId, int from, int to)
-    signal chatListCategoryReordered(string categoryId, int from, int to)
+    signal chatItemReordered(string categoryId, string chatId, int to)
+    signal chatListCategoryReordered(string categoryId, int to)
     signal categoryAddButtonClicked(string id)
 
     onPopupMenuChanged: {
@@ -73,7 +73,10 @@ Item {
                 visible: statusChatList.model.count > 0
                 onChatItemSelected: root.chatItemSelected(categoryId, id)
                 onChatItemUnmuted: root.chatItemUnmuted(id)
-                onChatItemReordered: root.chatItemReordered(categoryId, id, from, to)
+                onChatItemReordered: {
+                    root.chatItemReordered(categoryId, chatId, to)
+                }
+                onCategoryReordered: root.chatListCategoryReordered(categoryId, to)
                 draggableItems: root.draggableItems
                 showCategoryActionButtons: root.showCategoryActionButtons
                 onCategoryAddButtonClicked: {

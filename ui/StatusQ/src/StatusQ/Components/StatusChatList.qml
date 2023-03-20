@@ -28,7 +28,8 @@ Item {
 
     signal chatItemSelected(string categoryId, string id)
     signal chatItemUnmuted(string id)
-    signal chatItemReordered(string id, int from, int to)
+    signal categoryReordered(string categoryId, int to)
+    signal chatItemReordered(string categoryId, string chatId, int to)
     signal categoryAddButtonClicked(string id)
 
     StatusListView {
@@ -40,238 +41,170 @@ Item {
         spacing: 0
         interactive: height !== contentHeight
 
-        delegate: Loader {
-            id: chatLoader
+        delegate: DropArea {
+            id: chatListDelegate
+            objectName: model.name
+            width: model.isCategory ? statusChatListCategoryItem.width : statusChatListItem.width
+            height: model.isCategory ? statusChatListCategoryItem.height : statusChatListItem.height
+            keys: ["x-status-draggable-chat-list-item-and-categories"]
 
-            sourceComponent: {
-                if (model.isCategory) {
-                     return categoryItemComponent
-                }
-                return channelItemComponent
+            property int visualIndex: index
+            property string chatId: model.itemId
+            property string categoryId: model.categoryId
+            property string isCategory: model.isCategory
+            property Item item: isCategory ? draggableItem.actions[0] : draggableItem.actions[1]
+
+            onEntered: function(drag) {
+                drag.accept();
+                statusChatListCategoryItem.highlighted = true;
+                statusChatListItem.highlighted = true;
             }
-            
-            Component {
-                id: categoryItemComponent
-                StatusChatListCategoryItem {
-                    id: statusChatListCategoryItem
-                    objectName: "categoryItem"
-                    
-                    function setupPopup() {
-                        categoryPopupMenuSlot.item.categoryItem = model
+            onExited: {
+                statusChatListCategoryItem.highlighted = false;
+                statusChatListItem.highlighted = false;
+            }
+
+            onDropped: function(drop) {
+                const from = drop.source.visualIndex;
+                const to = chatListDelegate.visualIndex;
+                if (to === from)
+                    return;
+                if (!model.isCategory) {
+                    root.chatItemReordered(statusChatListItems.itemAtIndex(from).categoryId, statusChatListItems.itemAtIndex(from).chatId, to);
+                } else {
+                    root.categoryReordered(statusChatListItems.itemAtIndex(from).categoryId, to);
+                }
+            }
+
+            StatusDraggableListItem {
+                id: draggableItem
+                width: parent.width
+                height: visible ? implicitHeight : 0
+                dragParent: root.draggableItems ? statusChatListItems : null
+                visualIndex: chatListDelegate.visualIndex
+                draggable: (root.draggableItems && (statusChatListItems.count > 1))
+                horizontalPadding: 0
+                verticalPadding: 0
+                icon.width: 0
+                icon.height: 0
+                spacing: 0
+                topInset: 0
+                bottomInset: 0
+                customizable: true
+                Drag.keys: chatListDelegate.keys
+                onClicked: {
+                    if (model.isCategory) {
+                        statusChatListCategoryItem.clicked(mouse);
+                    } else {
+                        statusChatListItem.clicked(mouse);
                     }
+                }
 
-                    Connections {
-                        enabled: categoryPopupMenuSlot.active && statusChatListCategoryItem.highlighted
-                        target: categoryPopupMenuSlot.item
-                        function onClosed() {
-                            statusChatListCategoryItem.highlighted = false
-                            statusChatListCategoryItem.menuButton.highlighted = false
+                actions: [
+                   StatusChatListCategoryItem {
+                        id: statusChatListCategoryItem
+                        objectName: "categoryItem"
+                        visible: model.isCategory
+
+                        function setupPopup() {
+                            categoryPopupMenuSlot.item.categoryItem = model
                         }
-                    }
-
-                    title: model.name
-
-                    opened: model.categoryOpened
-
-                    sensor.pressAndHoldInterval: 150
-                    propagateTitleClicks: true // title click is handled as a normal click (fallthru)
-                    showAddButton: showCategoryActionButtons
-                    showMenuButton: !!root.onPopupMenuChanged
-                    highlighted: false//statusChatListCategory.dragged // FIXME DND
-                    
-                    hasUnreadMessages: model.hasUnreadMessages
-                    
-                    onClicked: {
-                        if (!sensor.enabled) {
-                            return
+                        Connections {
+                            enabled: categoryPopupMenuSlot.active && statusChatListCategoryItem.highlighted
+                            target: categoryPopupMenuSlot.item
+                            function onClosed() {
+                                statusChatListCategoryItem.highlighted = false
+                                statusChatListCategoryItem.menuButton.highlighted = false
+                            }
                         }
-                        if (mouse.button === Qt.RightButton && showCategoryActionButtons && !!root.categoryPopupMenu) {
+                        text: model.name
+                        opened: model.categoryOpened
+                        highlighted: draggableItem.dragActive
+                        showAddButton: showCategoryActionButtons
+                        showMenuButton: !!root.onPopupMenuChanged
+                        hasUnreadMessages: model.hasUnreadMessages
+                        onClicked: {
+                            if (mouse.button === Qt.RightButton && showCategoryActionButtons && !!root.categoryPopupMenu) {
+                                statusChatListCategoryItem.setupPopup()
+                                highlighted = true;
+                                categoryPopupMenuSlot.item.popup()
+                            } else if (mouse.button === Qt.LeftButton) {
+                                root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                            }
+                        }
+                        onToggleButtonClicked: root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                        onMenuButtonClicked: {
                             statusChatListCategoryItem.setupPopup()
-                            highlighted = true;
+                            highlighted = true
+                            menuButton.highlighted = true
                             categoryPopupMenuSlot.item.popup()
-                        } else if (mouse.button === Qt.LeftButton) {
-                            root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
                         }
-                    }
-                    onToggleButtonClicked: root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
-                    onMenuButtonClicked: {
-                        statusChatListCategoryItem.setupPopup()
-                        highlighted = true
-                        menuButton.highlighted = true
-                        categoryPopupMenuSlot.item.popup()
-                    }
-                    onAddButtonClicked: {
-                        root.categoryAddButtonClicked(categoryId)
-                    }
-                }
-            }
-            
-            Component {
-                id: channelItemComponent
-                QC.Control {
-                    id: draggable
-                    objectName: model.name
-                    width: root.width
-                    height: model.categoryOpened ? statusChatListItem.height + 4 /*spacing between non-collapsed items*/ : 0
-                    visible: height
-                    verticalPadding: 2
-
-                    property alias chatListItem: statusChatListItem
-
-                    contentItem: MouseArea {
-                        id: dragSensor
-
-                        anchors.fill: parent
-                        cursorShape: active ? Qt.ClosedHandCursor : Qt.PointingHandCursor
-                        hoverEnabled: true
-                        enabled: root.draggableItems
-
-                        property bool active: false
-                        property real startY: 0
-                        property real startX: 0
-
-                        drag.target: draggedListItemLoader.item
-                        drag.filterChildren: true
-
-                        onPressed: {
-                            startY = mouseY
-                            startX = mouseX
+                        onAddButtonClicked: {
+                            root.categoryAddButtonClicked(categoryId)
                         }
-                        onPressAndHold: active = true
-                        onReleased: {
-                            if (active && d.destinationPosition !== -1 && statusChatListItem.originalOrder !== d.destinationPosition) {
-                                root.chatItemReordered(statusChatListItem.chatId, statusChatListItem.originalOrder, d.destinationPosition)
-                            }
-                            active = false
-                        }
-                        onMouseYChanged: {
-                            if ((Math.abs(startY - mouseY) > 1) && pressed) {
-                                active = true
-                            }
-                        }
-                        onMouseXChanged: {
-                            if ((Math.abs(startX - mouseX) > 1) && pressed) {
-                                active = true
-                            }
-                        }
-                        onActiveChanged: d.destinationPosition = -1
+                    },
+                    StatusChatListItem {
+                        id: statusChatListItem
+                        objectName: model.name
+                        width: root.width
+                        height: visible ? (statusChatListItem.implicitHeight + 4) /*spacing between non-collapsed items*/ : 0
+                        visible: (!model.isCategory && model.categoryOpened)
+                        originalOrder: model.position
+                        chatId: model.itemId
+                        categoryId: model.categoryId
+                        name: model.name
+                        type: model.type ?? StatusChatListItem.Type.CommunityChat
+                        muted: model.muted
+                        hasUnreadMessages: model.hasUnreadMessages
+                        notificationsCount: model.notificationsCount
+                        highlightWhenCreated: !!model.highlight
+                        selected: (model.active && root.highlightItem)
+                        asset.emoji: !!model.emoji ? model.emoji : ""
+                        asset.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
+                        asset.isImage: model.icon.includes("data")
+                        asset.name: model.icon
+                        ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
+                        onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
+                        sensor.enabled: draggableItem.dragActive
+                        dragged: draggableItem.dragActive
+                        onClicked: {
+                            highlightWhenCreated = false
 
-                        StatusChatListItem {
-                            id: statusChatListItem
+                            if (mouse.button === Qt.RightButton && !!root.popupMenu) {
+                                statusChatListItem.highlighted = true
 
-                            width: parent.width
-                            opacity: dragSensor.active ? 0.0 : 1.0
-                            originalOrder: model.position
-                            chatId: model.itemId
-                            categoryId: model.categoryId
-                            name: model.name
-                            type: model.type ?? StatusChatListItem.Type.CommunityChat
-                            muted: model.muted
-                            hasUnreadMessages: model.hasUnreadMessages
-                            notificationsCount: model.notificationsCount
-                            highlightWhenCreated: !!model.highlight
-                            selected: (model.active && root.highlightItem)
-                            asset.emoji: !!model.emoji ? model.emoji : ""
-                            asset.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
-                            asset.isImage: model.icon.includes("data")
-                            asset.name: model.icon
-                            ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
-                            onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
+                                const originalOpenHandler = popupMenuSlot.item.openHandler
+                                const originalCloseHandler = popupMenuSlot.item.closeHandler
 
-                            sensor.cursorShape: dragSensor.cursorShape
-
-                            onClicked: {
-                                highlightWhenCreated = false
-
-                                if (mouse.button === Qt.RightButton && !!root.popupMenu) {
-                                    statusChatListItem.highlighted = true
-
-                                    const originalOpenHandler = popupMenuSlot.item.openHandler
-                                    const originalCloseHandler = popupMenuSlot.item.closeHandler
-
-                                    popupMenuSlot.item.openHandler = function () {
-                                        if (!!originalOpenHandler) {
-                                            originalOpenHandler(statusChatListItem.chatId)
-                                        }
+                                popupMenuSlot.item.openHandler = function () {
+                                    if (!!originalOpenHandler) {
+                                        originalOpenHandler(statusChatListItem.chatId)
                                     }
+                                }
 
-                                    popupMenuSlot.item.closeHandler = function () {
-                                        if (statusChatListItem) {
-                                            statusChatListItem.highlighted = false
-                                        }
-                                        if (!!originalCloseHandler) {
-                                            originalCloseHandler()
-                                        }
+                                popupMenuSlot.item.closeHandler = function () {
+                                    if (statusChatListItem) {
+                                        statusChatListItem.highlighted = false
                                     }
-
-                                    const p = statusChatListItem.mapToItem(root, mouse.x, mouse.y)
-
-                                    popupMenuSlot.item.popup(p.x + 4, p.y + 6)
-                                    popupMenuSlot.item.openHandler = originalOpenHandler
-                                    return
+                                    if (!!originalCloseHandler) {
+                                        originalCloseHandler()
+                                    }
                                 }
-                                if (!statusChatListItem.selected) {
-                                    root.chatItemSelected(statusChatListItem.categoryId, statusChatListItem.chatId)
-                                }
+
+                                const p = statusChatListItem.mapToItem(root, mouse.x, mouse.y)
+
+                                popupMenuSlot.item.popup(p.x + 4, p.y + 6)
+                                popupMenuSlot.item.openHandler = originalOpenHandler
+                                return
                             }
-                            onUnmute: root.chatItemUnmuted(statusChatListItem.chatId)
-                        }
-                    }
-
-                    DropArea {
-                        id: dropArea
-                        width: dragSensor.active ? 0 : parent.width
-                        height: dragSensor.active ? 0 : parent.height
-                        keys: ["chat-item-category-" + statusChatListItem.categoryId]
-
-                        onEntered: reorderDelay.start()
-
-                        Timer {
-                            id: reorderDelay
-                            interval: 100
-                            repeat: false
-                            onTriggered: {
-                                if (dropArea.containsDrag) {
-                                    d.destinationPosition = index;
-                                }
+                            if (!statusChatListItem.selected) {
+                                root.chatItemSelected(statusChatListItem.categoryId, statusChatListItem.chatId)
                             }
                         }
+
+                        onUnmute: root.chatItemUnmuted(statusChatListItem.chatId)
                     }
-
-                    Loader {
-                        id: draggedListItemLoader
-                        active: dragSensor.active
-                        sourceComponent: StatusChatListItem {
-                            property var globalPosition: Utils.getAbsolutePosition(draggable)
-                            parent: QC.Overlay.overlay
-                            sensor.cursorShape: dragSensor.cursorShape
-                            Drag.active: dragSensor.active
-                            Drag.hotSpot.x: width / 2
-                            Drag.hotSpot.y: height / 2
-                            Drag.keys: ["chat-item-category-" + categoryId]
-                            Drag.source: draggable
-
-                            chatId: draggable.chatListItem.chatId
-                            categoryId: draggable.chatListItem.categoryId
-                            name: draggable.chatListItem.name
-                            type: draggable.chatListItem.type
-                            muted: draggable.chatListItem.muted
-                            dragged: true
-                            hasUnreadMessages: model.hasUnreadMessages
-                            notificationsCount: model.notificationsCount
-                            selected: draggable.chatListItem.selected
-
-                            asset.color: draggable.chatListItem.asset.color
-                            asset.imgIsIdenticon: draggable.chatListItem.asset.imgIsIdenticon
-                            asset.name: draggable.chatListItem.asset.name
-
-                            Component.onCompleted: {
-                                x = globalPosition.x
-                                y = globalPosition.y
-                            }
-                        }
-                    }
-                }
+                ]
             }
         }
     }
@@ -290,7 +223,6 @@ Item {
 
     QtObject {
         id: d
-
         property int destinationPosition: -1
     }
 
