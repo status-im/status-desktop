@@ -81,9 +81,6 @@ QtObject:
         result = newQVariant(item.isCurrentDevice)
 
   proc setItems*(self: Model, items: seq[Item]) =
-    if(items.len == 0):
-      return
-
     self.beginResetModel()
     self.items = items
     self.endResetModel()
