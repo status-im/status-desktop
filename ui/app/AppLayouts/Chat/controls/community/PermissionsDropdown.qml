@@ -112,6 +112,9 @@ StatusDropdown {
             Layout.fillWidth: true
         }
 
+        // TODO: Channel-level permissions are temporarily hidden until they are
+        // supported by the backend. Uncomment when backend functionality is ready.
+        /*
         CustomSeparator {
             Layout.fillWidth: true
             Layout.preferredHeight: d.sectionHeight
@@ -136,6 +139,7 @@ StatusDropdown {
 
             Layout.fillWidth: true
         }
+        */
 
         Separator {
             visible: !!group.checkedButton
