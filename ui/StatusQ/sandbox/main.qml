@@ -546,44 +546,8 @@ StatusWindow {
     Component {
         id: qrScannerComponent
 
-        Rectangle {
+        QrCodeScannerPage {
             anchors.fill: parent
-            color: Theme.palette.baseColor3
-
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 20
-                spacing: 10
-
-                StatusQrCodeScanner {
-                    id: qrScanner
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: width / sourceRatio
-                }
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 10
-
-                    StatusBaseText {
-                        text: qsTr("Last tag: ")
-                    }
-
-                    StatusInput {
-                        id: lastTagText
-                        Layout.fillWidth: true
-                        input.enabled: false
-                        text: qrScanner.lastTag
-                        input.rightPadding: 10
-                    }
-
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                }
-            }
         }
     }
 

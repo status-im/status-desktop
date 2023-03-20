@@ -56,7 +56,7 @@ Item {
         id: layout
 
         anchors.centerIn: parent
-        width: 400
+        width: 330
         spacing: 24
 
         StatusBaseText {
@@ -84,13 +84,10 @@ Item {
         }
 
         StackLayout {
-            width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
-
-            implicitWidth: Math.max(mobileSync.implicitWidth, desktopSync.implicitWidth)
-            implicitHeight: Math.max(mobileSync.implicitHeight, desktopSync.implicitHeight)
+            width: parent.width
+            height: Math.max(mobileSync.implicitHeight, desktopSync.implicitHeight)
             currentIndex: switchTabBar.currentIndex
-            clip: true
 
             // StackLayout doesn't support alignment, so we create an `Item` wrappers
 
@@ -98,17 +95,21 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                implicitWidth: mobileSync.implicitWidth
-                implicitHeight: mobileSync.implicitHeight
-
                 SyncDeviceFromMobile {
                     id: mobileSync
-                    anchors {
-                        verticalCenter: parent.verticalCenter
-                        horizontalCenter: parent.horizontalCenter
-                    }
-                    onConnectionStringFound: {
-                        d.processConnectionString(connectionString)
+                    anchors.fill: parent
+                    validators: [
+                        StatusValidator {
+                            name: "isConnectionString"
+                            errorMessage: qsTr("Oops! This is not a sync QR code")
+                            validate: (value) => {
+                                          return d.validateConnectionString(value)
+                                      }
+                        }
+                    ]
+                    onQrCodeScanned: {
+                        d.connectionString = desktopSync.input.text
+                        nextStateDelay.start()
                     }
                 }
             }
@@ -116,9 +117,6 @@ Item {
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                implicitWidth: desktopSync.implicitWidth
-                implicitHeight: desktopSync.implicitHeight
 
                 SyncDeviceFromDesktop {
                     id: desktopSync

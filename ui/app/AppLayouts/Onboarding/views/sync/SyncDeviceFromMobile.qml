@@ -3,29 +3,74 @@ import QtQuick.Layouts 1.12
 import QtQuick.Controls 2.13
 
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-Rectangle {
+Column {
     id: root
 
-    signal connectionStringFound(connectionString: string)
+    property list<StatusValidator> validators
 
-    implicitWidth: 330
-    implicitHeight: 330
+    signal qrCodeScanned(value: string)
 
-    radius: 16
-    color: Theme.palette.baseColor4
+    spacing: 12
 
+    QtObject {
+        id: d
+
+        property string errorMessage
+        property string lastTag
+        property int counter: 0
+    }
+
+    StatusQrCodeScanner {
+        id: scanner
+
+        width: parent.width
+        implicitHeight: 330
+
+        onTagFound: {
+//            if (tag === d.lastTag) {
+//                console.log("<<< equals to last tag", tag, counter++)
+//                return
+//            }
+
+            console.log("<<< validating", tag)
+
+            d.lastTag = tag
+
+            for (let i in validators) {
+                const validator = validators[i]
+                if (!validator.validate(tag)) {
+                    d.errorMessage = validator.errorMessage
+                    return
+                }
+                d.errorMessage = ""
+                root.qrCodeScanned(value)
+            }
+        }
+    }
+
+    Item {
+        width: parent.width
+        height: 16
+    }
 
     StatusBaseText {
-        id: text
-        anchors.fill: parent
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        font.pixelSize: 15
+        width: parent.width
+        wrapMode: Text.WordWrap
         color: Theme.palette.dangerColor1
-        text: qsTr("QR code scanning is not available yet")
+        horizontalAlignment: Text.AlignHCenter
+        text: d.errorMessage
+    }
+
+    StatusBaseText {
+        width: parent.width
+        wrapMode: Text.WordWrap
+        color: Theme.palette.baseColor1
+        horizontalAlignment: Text.AlignHCenter
+        text: qsTr("Ensure that the QR code is in focus to scan")
     }
 }

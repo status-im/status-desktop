@@ -10,7 +10,7 @@ Column {
 
     StatusSyncCodeInput {
         id: codeInput
-        implicitWidth: 400
+        width: parent.width
         mode: StatusSyncCodeInput.WriteMode
     }
 }
