@@ -27,6 +27,7 @@ type
     IsAdmin
     Joined
     RequestToJoinId
+    RequestToJoinLoading
 
 QtObject:
   type
@@ -92,6 +93,7 @@ QtObject:
       ModelRole.IsAdmin.int: "isAdmin",
       ModelRole.Joined.int: "joined",
       ModelRole.RequestToJoinId.int: "requestToJoinId",
+      ModelRole.RequestToJoinLoading.int: "requestToJoinLoading",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -143,6 +145,8 @@ QtObject:
       result = newQVariant(item.joined)
     of ModelRole.RequestToJoinId:
       result = newQVariant(item.requestToJoinId)
+    of ModelRole.RequestToJoinLoading:
+      result = newQVariant(item.requestToJoinLoading)
 
   proc addItem*(self: Model, item: MemberItem) =
     self.beginInsertRows(newQModelIndex(), self.items.len, self.items.len)
@@ -301,3 +305,15 @@ QtObject:
 # TODO: rename me to getItemsAsPubkeys
   proc getItemIds*(self: Model): seq[string] =
     return self.items.map(i => i.pubKey)
+
+  proc updateLoadingState*(self: Model, memberKey: string, requestToJoinLoading: bool) =
+    let idx = self.findIndexForMember(memberKey)
+    if(idx == -1):
+      return
+
+    self.items[idx].requestToJoinLoading = requestToJoinLoading
+    let index = self.createIndex(idx, 0, nil)
+    self.dataChanged(index, index, @[
+      ModelRole.RequestToJoinLoading.int
+    ])
+

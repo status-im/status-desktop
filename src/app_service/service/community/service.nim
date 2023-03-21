@@ -64,6 +64,7 @@ type
   CommunityMemberArgs* = ref object of Args
     communityId*: string
     pubKey*: string
+    requestId*: string
 
   CommunityMembersArgs* = ref object of Args
     communityId*: string
@@ -160,6 +161,10 @@ const SIGNAL_CURATED_COMMUNITIES_LOADING* = "curatedCommunitiesLoading"
 const SIGNAL_CURATED_COMMUNITIES_LOADED* = "curatedCommunitiesLoaded"
 const SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED* = "curatedCommunitiesLoadingFailed"
 
+const SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING* = "acceptRequestToJoinLoading"
+const SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED* = "acceptRequestToJoinFailed"
+const SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION* = "acceptRequestToJoinFailedNoPermission"
+
 const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
 const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
 
@@ -179,12 +184,15 @@ QtObject:
   # Forward declaration
   proc loadCommunityTags(self: Service): string
   proc asyncLoadCuratedCommunities*(self: Service)
+  proc asyncAcceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string])
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int
+  proc removeMembershipRequestFromCommunityAndGetMemberPubkey*(self: Service, communityId: string, requestId: string): string
+  proc getUserPubKeyFromPendingRequest*(self: Service, communityId: string, requestId: string): string
 
   proc delete*(self: Service) =
     discard
@@ -1318,6 +1326,48 @@ QtObject:
 
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
 
+  proc asyncAcceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
+    try:
+      let userKey = self.getUserPubKeyFromPendingRequest(communityId, requestId)
+      self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING, CommunityMemberArgs(communityId: communityId, pubKey: userKey))
+      let arg = AsyncAcceptRequestToJoinCommunityTaskArg(
+        tptr: cast[ByteAddress](asyncAcceptRequestToJoinCommunityTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncAcceptRequestToJoinCommunityDone",
+        communityId: communityId,
+        requestId: requestId
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error accepting request to join community", msg = e.msg 
+
+  proc onAsyncAcceptRequestToJoinCommunityDone*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+      let communityId = rpcResponseObj{"communityId"}.getStr
+      let requestId = rpcResponseObj{"requestId"}.getStr
+      let userKey = self.getUserPubKeyFromPendingRequest(communityId, requestId)
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        let errorMessage = rpcResponseObj{"error"}.getStr
+
+        if errorMessage.contains("has no permission to join"):
+          self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
+        else:
+          self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
+        return
+    
+      discard self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId)
+
+      if (userKey == ""):
+        error "Did not find pubkey in the pending request"
+        return
+
+      self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
+
+    except Exception as e:
+      let errMsg = e.msg
+      error "error accepting request to join: ", errMsg
+      self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED, Args())
 
   proc asyncLoadCuratedCommunities*(self: Service) =
     self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING, Args())
@@ -1492,21 +1542,6 @@ QtObject:
     except Exception as e:
       error "Error canceled request to join community", msg = e.msg
 
-  proc acceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
-    try:
-      let response = status_go.acceptRequestToJoinCommunity(requestId)
-      self.activityCenterService.parseActivityCenterResponse(response)
-
-      let newMemberPubkey = self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId)
-
-      if (newMemberPubkey == ""):
-        error "Did not find pubkey in the pending request"
-        return
-
-      self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED, CommunityMemberArgs(communityId: communityId, pubKey: newMemberPubkey))
-    except Exception as e:
-      error "Error accepting request to join community", msg = e.msg
-
   proc declineRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
       let response = status_go.declineRequestToJoinCommunity(requestId)
@@ -1657,3 +1692,11 @@ QtObject:
         CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: tokenPermission))
     except Exception as e:
       error "Error deleting community token permission", msg = e.msg
+
+  proc getUserPubKeyFromPendingRequest*(self: Service, communityId: string, requestId: string): string =
+    let indexPending = self.getPendingRequestIndex(communityId, requestId)
+    if (indexPending == -1):
+      raise newException(RpcException, fmt"Community request not found: {requestId}")
+
+    let community = self.communities[communityId]
+    return community.pendingRequestsToJoin[indexPending].publicKey

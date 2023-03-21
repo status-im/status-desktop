@@ -972,6 +972,26 @@ method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: stri
   if item.id != "":
     item.updateCommunityTokenDeployState(contractAddress, deployState)
 
+method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, memberKey: string) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updatePendingRequestLoadingState(memberKey, true)
+
+method onAcceptRequestToJoinFailed*[T](self: Module[T], communityId: string, memberKey: string) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updatePendingRequestLoadingState(memberKey, false)
+
+method onAcceptRequestToJoinFailedNoPermission*[T](self: Module[T], communityId: string, memberKey: string, requestId: string) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updatePendingRequestLoadingState(memberKey, false)
+
+method onAcceptRequestToJoinSuccess*[T](self: Module[T], communityId: string, memberKey: string, requestId: string) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updatePendingRequestLoadingState(memberKey, false)
+
 method contactUpdated*[T](self: Module[T], publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.activeSection().updateMember(

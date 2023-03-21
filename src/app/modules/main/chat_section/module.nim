@@ -998,6 +998,11 @@ method acceptRequestToJoinCommunity*(self: Module, requestId: string, communityI
 method declineRequestToJoinCommunity*(self: Module, requestId: string, communityId: string) =
   self.controller.declineRequestToJoinCommunity(requestId, communityId)
 
+method onAcceptRequestToJoinFailedNoPermission*(self: Module, communityId: string, memberKey: string, requestId: string) =
+  let community = self.controller.getCommunityById(communityId)
+  let contact = self.controller.getContactById(memberKey)
+  self.view.emitOpenNoPermissionsToJoinPopupSignal(community.name, contact.displayName,  community.id, requestId)
+
 method createCommunityChannel*(self: Module, name, description, emoji, color, categoryId: string) =
   self.controller.createCommunityChannel(name, description, emoji, color, categoryId)
 

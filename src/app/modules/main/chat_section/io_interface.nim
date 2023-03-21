@@ -365,3 +365,6 @@ method onKickedFromCommunity*(self: AccessInterface) =
 
 method onJoinedCommunity*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
+
+method onAcceptRequestToJoinFailedNoPermission*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -54,3 +54,20 @@ const asyncLoadCuratedCommunitiesTask: Task = proc(argEncoded: string) {.gcsafe,
       "error": e.msg,
     })
 
+type
+  AsyncAcceptRequestToJoinCommunityTaskArg = ref object of QObjectTaskArg
+    communityId: string
+    requestId: string
+
+const asyncAcceptRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncAcceptRequestToJoinCommunityTaskArg](argEncoded)
+  try:
+    let response = status_go.acceptRequestToJoinCommunity(arg.requestId)
+    let tpl: tuple[communityId: string, requestId: string, response: RpcResponse[JsonNode], error: string] = (arg.communityId, arg.requestId, response, "")
+    arg.finish(tpl)
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "communityId": arg.communityId,
+      "requestId": arg.requestId
+    })

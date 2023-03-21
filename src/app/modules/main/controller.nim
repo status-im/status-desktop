@@ -333,6 +333,22 @@ proc init*(self: Controller) =
     let args = CommunityTokenDeployedStatusArgs(e)
     self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.contractAddress, args.deployState)
 
+  self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING) do(e: Args):
+    var args = CommunityMemberArgs(e)
+    self.delegate.onAcceptRequestToJoinLoading(args.communityId, args.pubKey)
+
+  self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED) do(e: Args):
+    var args = CommunityMemberArgs(e)
+    self.delegate.onAcceptRequestToJoinFailed(args.communityId, args.pubKey, args.requestId)
+
+  self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION) do(e: Args):
+    var args = CommunityMemberArgs(e)
+    self.delegate.onAcceptRequestToJoinFailedNoPermission(args.communityId, args.pubKey, args.requestId)
+
+  self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):
+    var args = CommunityMemberArgs(e)
+    self.delegate.onAcceptRequestToJoinSuccess(args.communityId, args.pubKey, args.requestId)
+
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER:

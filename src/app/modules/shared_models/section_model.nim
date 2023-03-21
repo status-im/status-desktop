@@ -40,6 +40,7 @@ type
     BannedMembersModel
     Encrypted
     CommunityTokensModel
+    PendingMemberRequestsModel
     DeclinedMemberRequestsModel
     AmIBanned
 
@@ -111,6 +112,7 @@ QtObject:
       ModelRole.BannedMembersModel.int:"bannedMembers",
       ModelRole.Encrypted.int:"encrypted",
       ModelRole.CommunityTokensModel.int:"communityTokens",
+      ModelRole.PendingMemberRequestsModel.int:"pendingMemberRequests",
       ModelRole.DeclinedMemberRequestsModel.int:"declinedMemberRequests",
       ModelRole.AmIBanned.int:"amIBanned"
     }.toTable
@@ -190,6 +192,8 @@ QtObject:
       result = newQVariant(item.encrypted)
     of ModelRole.CommunityTokensModel:
       result = newQVariant(item.communityTokens)
+    of ModelRole.PendingMemberRequestsModel:
+      result = newQVariant(item.pendingMemberRequests)
     of ModelRole.DeclinedMemberRequestsModel:
       result = newQVariant(item.declinedMemberRequests)
     of ModelRole.AmIBanned:
@@ -287,6 +291,7 @@ QtObject:
       ModelRole.BannedMembersModel.int,
       ModelRole.Encrypted.int,
       ModelRole.CommunityTokensModel.int,
+      ModelRole.PendingMemberRequestsModel.int,
       ModelRole.DeclinedMemberRequestsModel.int,
       ModelRole.AmIBanned.int
       ])

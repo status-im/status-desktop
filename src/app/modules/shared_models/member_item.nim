@@ -10,6 +10,7 @@ type
     isAdmin: bool
     joined: bool
     requestToJoinId: string
+    requestToJoinLoading*: bool
 
 # FIXME: remove defaults
 proc initMemberItem*(
@@ -32,11 +33,13 @@ proc initMemberItem*(
   isAdmin: bool = false,
   joined: bool = false,
   requestToJoinId: string = "",
+  requestToJoinLoading: bool = false
 ): MemberItem =
   result = MemberItem()
   result.isAdmin = isAdmin
   result.joined = joined
   result.requestToJoinId = requestToJoinId
+  result.requestToJoinLoading = requestToJoinLoading
   result.UserItem.setup(
     pubKey = pubKey,
     displayName = displayName,
@@ -96,3 +99,6 @@ proc requestToJoinId*(self: MemberItem): string {.inline.} =
 
 proc `requestToJoinId=`*(self: MemberItem, value: string) {.inline.} =
   self.requestToJoinId = value
+
+proc requestToJoinLoading*(self: MemberItem): bool {.inline.} =
+  self.requestToJoinLoading

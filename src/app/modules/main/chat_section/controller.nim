@@ -264,6 +264,10 @@ proc init*(self: Controller) =
       if (args.community.id == self.sectionId):
         self.delegate.onJoinedCommunity()
 
+    self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION) do(e: Args):
+      var args = CommunityMemberArgs(e)
+      self.delegate.onAcceptRequestToJoinFailedNoPermission(args.communityId, args.pubKey, args.requestId)
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
@@ -453,7 +457,7 @@ proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: s
       self.gifService, self.mailserversService)
 
 proc acceptRequestToJoinCommunity*(self: Controller, requestId: string, communityId: string) =
-  self.communityService.acceptRequestToJoinCommunity(communityId, requestId)
+  self.communityService.asyncAcceptRequestToJoinCommunity(communityId, requestId)
 
 proc declineRequestToJoinCommunity*(self: Controller, requestId: string, communityId: string) =
   self.communityService.declineRequestToJoinCommunity(communityId, requestId)
