@@ -10,6 +10,7 @@ Rectangle {
 
     property ObjectModel leftButtons
     property ObjectModel rightButtons
+    property int spacing: 5
 
     color: Theme.palette.statusModal.backgroundColor
     radius: 8
@@ -20,6 +21,7 @@ Rectangle {
     RowLayout {
         id: layout
 
+        spacing: root.spacing
         clip: true
 
         anchors {
