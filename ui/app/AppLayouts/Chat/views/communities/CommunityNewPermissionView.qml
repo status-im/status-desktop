@@ -335,28 +335,47 @@ StatusScrollView {
             Layout.preferredHeight: 24
             color: Style.current.separator
         }
-        StatusItemSelector {
+        StatusFlowSelector {
             id: permissionsSelector
 
             Layout.fillWidth: true
-            icon: Style.svg("profile/security")
-            iconSize: 24
-            useIcons: true
+
             title: qsTr("Is allowed to")
             placeholderText: qsTr("Example: View and post")
+            icon: Style.svg("profile/security")
 
-            QtObject {
-                id: permissionItemModelData
+            readonly property bool empty:
+                d.dirtyValues.permissionType === PermissionTypes.Type.None
 
+            placeholderItem.visible: empty
+            addButton.visible: empty
+
+            StatusListItemTag {
                 readonly property int key: d.dirtyValues.permissionType
-                readonly property string text: PermissionTypes.getName(key)
-                readonly property string imageSource: PermissionTypes.getIcon(key)
+
+                title: PermissionTypes.getName(key)
+                visible: !permissionsSelector.empty
+
+                asset.name: PermissionTypes.getIcon(key)
+                asset.bgColor: "transparent"
+                closeButtonVisible: false
+                titleText.color: Theme.palette.primaryColor1
+                titleText.font.pixelSize: Theme.primaryTextFontSize
+                leftPadding: 6
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: {
+                        permissionsDropdown.mode = PermissionsDropdown.Mode.Update
+                        permissionsDropdown.parent = parent
+                        permissionsDropdown.x = mouse.x + d.dropdownHorizontalOffset
+                        permissionsDropdown.y = d.dropdownVerticalOffset
+                        permissionsDropdown.open()
+                    }
+                }
             }
-
-            model: d.dirtyValues.permissionType !== PermissionTypes.Type.None
-                   ? permissionItemModelData : null
-
-            addButton.visible: d.dirtyValues.permissionType === PermissionTypes.Type.None
 
             PermissionsDropdown {
                 id: permissionsDropdown
@@ -383,17 +402,6 @@ StatusScrollView {
                 permissionsDropdown.y = 0
                 permissionsDropdown.open()
             }
-
-            onItemClicked: {
-                if (mouse.button !== Qt.LeftButton)
-                    return
-
-                permissionsDropdown.mode = PermissionsDropdown.Mode.Update
-                permissionsDropdown.parent = item
-                permissionsDropdown.x = mouse.x + d.dropdownHorizontalOffset
-                permissionsDropdown.y = d.dropdownVerticalOffset
-                permissionsDropdown.open()
-            }
         }
         Rectangle {
             Layout.leftMargin: 16
@@ -411,7 +419,6 @@ StatusScrollView {
 
             Layout.fillWidth: true
             icon: d.isCommunityPermission ? Style.svg("communities") : Style.svg("create-category")
-            iconSize: 24
             title: qsTr("In")
             placeholderText: qsTr("Example: `#general` channel")
 

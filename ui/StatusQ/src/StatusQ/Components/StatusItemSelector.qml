@@ -154,7 +154,7 @@ StatusFlowSelector {
                 asset.isLetterIdenticon: root.useLetterIdenticons
                 closeButtonVisible: false
                 titleText.color: Theme.palette.primaryColor1
-                titleText.font.pixelSize: 15
+                titleText.font.pixelSize: Theme.primaryTextFontSize
                 leftPadding: root.tagLeftPadding
 
                 MouseArea {
