@@ -617,10 +617,7 @@ method switchToChannel*(self: Module, channelName: string) =
   let chats = self.controller.getAllChats(self.controller.getMySectionId())
   for c in chats:
     if c.name == channelName:
-      if c.categoryId == "":
-        self.setActiveItem(c.id)
-      else:
-        self.setActiveItem(c.categoryId)
+      self.setActiveItem(c.id)
       return
 
 method doesCatOrChatExist*(self: Module, id: string): bool =
