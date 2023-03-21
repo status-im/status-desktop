@@ -283,6 +283,18 @@ method onCommunityTokenDeployed*(self: AccessInterface, communityToken: Communit
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, contractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onAcceptRequestToJoinFailed*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onAcceptRequestToJoinFailedNoPermission*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onAcceptRequestToJoinLoading*(self: AccessInterface, communityId: string, memberKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onAcceptRequestToJoinSuccess*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

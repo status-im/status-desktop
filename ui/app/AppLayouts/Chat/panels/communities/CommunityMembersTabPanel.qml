@@ -102,6 +102,15 @@ Item {
                     },
 
                     StatusButton {
+                        visible: (root.panelType === CommunityMembersTabPanel.TabType.PendingRequests) && isHovered
+                        text: qsTr("Reject")
+                        type: StatusBaseButton.Type.Danger
+                        icon.name: "close-circle"
+                        icon.color: Style.current.danger
+                        onClicked: root.declineRequestToJoin(model.requestToJoinId)
+                    },
+
+                    StatusButton {
                         visible: (root.panelType === CommunityMembersTabPanel.TabType.PendingRequests ||
                                   root.panelType === CommunityMembersTabPanel.TabType.DeclinedRequests) && isHovered
                         text: qsTr("Accept")
@@ -110,17 +119,10 @@ Item {
                         normalColor: Theme.palette.successColor2
                         hoverColor: Theme.palette.successColor3
                         textColor: Theme.palette.successColor1
+                        loading: model.requestToJoinLoading
                         onClicked: root.acceptRequestToJoin(model.requestToJoinId)
-                    },
-
-                    StatusButton {
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.PendingRequests) && isHovered
-                        text: qsTr("Reject")
-                        type: StatusBaseButton.Type.Danger
-                        icon.name: "close-circle"
-                        icon.color: Style.current.danger
-                        onClicked: root.declineRequestToJoin(model.requestToJoinId)
                     }
+
                 ]
 
                 width: membersList.width

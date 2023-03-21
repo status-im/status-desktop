@@ -25,3 +25,4 @@ DisplayNamePopup 1.0 DisplayNamePopup.qml
 SendContactRequestModal 1.0 SendContactRequestModal.qml
 AccountsModalHeader 1.0 AccountsModalHeader.qml
 GetSyncCodeInstructionsPopup 1.0 GetSyncCodeInstructionsPopup.qml
+NoPermissionsToJoinPopup 1.0 NoPermissionsToJoinPopup.qml

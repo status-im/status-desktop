@@ -251,6 +251,10 @@ QtObject:
   proc declineRequestToJoinCommunity*(self: View, requestId: string, communityId: string) {.slot.} =
     self.delegate.declineRequestToJoinCommunity(requestId, communityId)
 
+  proc openNoPermissionsToJoinPopup*(self:View, communityName: string, userName: string, communityId: string, requestId: string) {.signal.}
+  proc emitOpenNoPermissionsToJoinPopupSignal*(self: View, communityName: string, userName: string, communityId: string, requestId: string) =
+    self.openNoPermissionsToJoinPopup(communityName, userName, communityId, requestId)
+
   proc createCommunityChannel*(
       self: View,
       name: string,

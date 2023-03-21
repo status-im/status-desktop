@@ -231,7 +231,7 @@ StatusSectionLayout {
             CommunityMembersSettingsPanel {
                 membersModel: root.community.members
                 bannedMembersModel: root.community.bannedMembers
-                pendingMemberRequestsModel: root.community.pendingRequestsToJoin
+                pendingMemberRequestsModel: root.community.pendingMemberRequests
                 declinedMemberRequestsModel: root.community.declinedMemberRequests
                 editable: root.community.amISectionAdmin
                 communityName: root.community.name
@@ -240,8 +240,8 @@ StatusSectionLayout {
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id)
                 onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
-                onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.communityId)
-                onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.communityId)
+                onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id, root.community.id)
+                onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.community.id)
             }
 
             CommunityPermissionsSettingsPanel {
@@ -347,5 +347,29 @@ StatusSectionLayout {
             anchors.centerIn: parent
             store: root.rootStore
         }
+    }
+
+    Component {
+        id: noPermissionsPopupCmp
+        NoPermissionsToJoinPopup {
+            onRejectButtonClicked: {
+                root.rootStore.declineRequestToJoinCommunity(requestId, communityId)
+                close()
+            }
+            onClosed: destroy()
+        }
+    }
+
+    Connections {
+        target: root.chatCommunitySectionModule
+        function onOpenNoPermissionsToJoinPopup(communityName: string, userName: string, communityId: string, requestId: string) {
+            Global.openPopup(noPermissionsPopupCmp, {
+                communityName: communityName,
+                userName: userName,
+                communityId: communityId,
+                requestId: requestId
+            })
+        }
+
     }
 }

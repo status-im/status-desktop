@@ -51,7 +51,7 @@ type
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
     bannedMembersModel: member_model.Model
-    pendingMemberRequestsModel: member_model.Model
+    pendingMemberRequestsModel*: member_model.Model
     declinedMemberRequestsModel: member_model.Model
     encrypted: bool
     communityTokensModel: community_tokens_model.TokenModel
@@ -319,3 +319,6 @@ proc updateCommunityTokenDeployState*(self: SectionItem, contractAddress: string
 
 proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.inline.} =
   self.communityTokensModel
+
+proc updatePendingRequestLoadingState*(self: SectionItem, memberKey: string, loading: bool) {.inline.} =
+  self.pendingMemberRequestsModel.updateLoadingState(memberKey, loading)
