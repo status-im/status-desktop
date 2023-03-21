@@ -114,6 +114,7 @@ StatusScrollView {
 
                 radius: 8
                 border.color: Theme.palette.baseColor2
+                color: "transparent"
                 implicitWidth: Math.min(boxContent.implicitWidth + Style.current.padding, mainLayout.width)
                 implicitHeight: boxContent.implicitHeight + Style.current.padding
 
