@@ -136,8 +136,6 @@ StackLayout {
 
             onBackToCommunityClicked: root.currentIndex = 0
 
-            // TODO: remove me when migration to new settings is done
-            onOpenLegacyPopupClicked: Global.openCommunityProfilePopupRequested(root.rootStore, community, chatCommunitySectionModule)
             Connections {
                 target: root.rootStore
                 function onGoToMembershipRequestsPage() {
