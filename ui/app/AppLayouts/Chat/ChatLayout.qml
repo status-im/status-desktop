@@ -69,6 +69,11 @@ StackLayout {
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
             isInvitationPending: root.rootStore.isCommunityRequestPending(communityData.id)
+            notificationCount: activityCenterStore.unreadNotificationsCount
+            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+            openCreateChat: rootStore.openCreateChat
+            onNotificationButtonClicked: Global.openActivityCenterPopup()
+            onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
             onRevealAddressClicked: {
                 communityIntroDialog.open()
             }
