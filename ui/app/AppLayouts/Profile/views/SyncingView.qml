@@ -17,6 +17,8 @@ import shared.panels 1.0
 import shared.controls 1.0
 import shared.controls.chat 1.0
 
+import SortFilterProxyModel 0.2
+
 import "../stores"
 import "../popups"
 import "../controls"
@@ -29,37 +31,23 @@ SettingsContentBase {
     property ProfileStore profileStore
     property PrivacyStore privacyStore
 
-    property bool isSyncing: false
-
     Component.onCompleted: {
         root.devicesStore.loadDevices()
     }
 
     ColumnLayout {
+        id: layout
         width: root.contentWidth
         spacing: Style.current.padding
 
         QtObject {
             id: d
 
-            /*
-                Device INFO:
-                    id: "abcdabcd-1234-5678-9012-12a34b5cd678",
-                    identity: ""
-                    version: 1
-                    enabled: true
-                    timestamp: 0
-                    metadata:
-                        name: "MacBook-1"
-                        deviceType: "macosx"
-                        fcmToken: ""
-            */
-
             readonly property var instructionsModel: [
-                                        qsTr("Verify your login with password or KeyCard"),
-                                        qsTr("Reveal a temporary QR and Sync Code") + "*",
-                                        qsTr("Share that information with your new device"),
-                                    ]
+                qsTr("Verify your login with password or KeyCard"),
+                qsTr("Reveal a temporary QR and Sync Code") + "*",
+                qsTr("Share that information with your new device"),
+            ]
 
 
             function personalizeDevice(model) {
@@ -94,36 +82,45 @@ SettingsContentBase {
 
         StatusBaseText {
             Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             text: qsTr("Devices")
-            font.pixelSize: 15
+            font.pixelSize: Constants.settingsSection.subHeaderFontSize
+            color: Theme.palette.baseColor1
         }
 
         StatusBaseText {
             Layout.fillWidth: true
             visible: root.devicesStore.devicesModule.devicesLoading
+            horizontalAlignment: Text.AlignHCenter
             text: qsTr("Loading devices...")
         }
 
         StatusBaseText {
             Layout.fillWidth: true
             visible: root.devicesStore.devicesModule.devicesLoadingError
+            horizontalAlignment: Text.AlignHCenter
             text: qsTr("Error loading devices. Please try again later.")
+            color: Theme.palette.dangerColor1
         }
 
-        ListView {
-            id: listView
+        StatusListView {
             Layout.fillWidth: true
-            Layout.topMargin: 17
-            Layout.bottomMargin: 17
-
             implicitHeight: contentHeight
 
-            spacing: Style.current.padding
-            model: root.devicesStore.devicesModel
-
+            interactive: false
+            spacing: 0
             visible: !root.devicesStore.devicesModule.devicesLoading &&
-                !root.devicesStore.devicesModule.devicesLoadingError &&
-                root.devicesStore.isDeviceSetup
+                     !root.devicesStore.devicesModule.devicesLoadingError &&
+                     root.devicesStore.isDeviceSetup
+
+            model: SortFilterProxyModel {
+                sourceModel: root.devicesStore.devicesModel
+                sorters: StringSorter {
+                    roleName: "isCurrentDevice"
+                    sortOrder: Qt.DescendingOrder
+                }
+            }
 
             delegate: StatusSyncDeviceDelegate {
                 width: ListView.view.width
@@ -218,7 +215,6 @@ SettingsContentBase {
                 }
 
                 StatusButton {
-//                    type: StatusRoundButton.Type.Secondary
                     Layout.alignment: Qt.AlignHCenter
                     normalColor: Theme.palette.primaryColor1
                     hoverColor: Theme.palette.miscColor1;
@@ -243,10 +239,9 @@ SettingsContentBase {
         StatusButton {
             id: backupBtn
             Layout.alignment: Qt.AlignHCenter
-            Layout.topMargin: 17
             text: qsTr("Backup Data")
             onClicked : {
-                let lastUpdate = root.privacyStore.backupData() * 1000
+                const lastUpdate = root.privacyStore.backupData() * 1000
                 console.log("Backup done at: ", LocaleUtils.formatDateTime(lastUpdate))
             }
         }
@@ -268,6 +263,11 @@ SettingsContentBase {
                 devicesStore: root.devicesStore
                 profileStore: root.profileStore
             }
+        }
+
+        Item {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
         }
     }
 }

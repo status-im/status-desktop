@@ -14,7 +14,7 @@ Item {
 
     property string sectionTitle
     property int contentWidth
-    readonly property int contentHeight: (root.height - d.topHeaderHeight - d.titleRowHeight)
+    readonly property int contentHeight: root.height - titleRow.height - Style.current.padding
 
     property alias titleRowComponentLoader: loader
     property list<Item> headerComponents
@@ -35,7 +35,6 @@ Item {
     QtObject {
         id: d
 
-        readonly property int topHeaderHeight: 56
         readonly property int titleRowHeight: 56
     }
 
@@ -58,6 +57,7 @@ Item {
         id: titleRow
         width: root.contentWidth
         spacing: 0
+
         RowLayout {
             Layout.preferredWidth: (parent.width - Style.current.padding)
             Layout.preferredHeight: visible ? d.titleRowHeight : 0

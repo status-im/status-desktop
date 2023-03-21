@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
@@ -26,7 +26,7 @@ Column {
         width: 200
     }
 
-    StatusListItem {
+    component DeviceListItem: StatusListItem {
         title: "Nokia 3310"
         subTitle: "Incoming device"
         asset.width: 40
@@ -35,34 +35,20 @@ Column {
         asset.color: "hotpink"
         asset.letterSize: 14
         asset.isLetterIdenticon: true
+    }
+
+    DeviceListItem {
         statusListItemSubTitle.loading: loadingButton.checked
     }
 
-    StatusListItem {
-        title: "Nokia 3310"
-        subTitle: "Incoming device"
-        asset.width: 40
-        asset.height: 40
-        asset.emoji: "😁"
-        asset.color: "hotpink"
-        asset.letterSize: 14
-        asset.isLetterIdenticon: true
+    DeviceListItem {
         statusListItemSubTitle.loading: loadingButton.checked
         statusListItemIcon.loading: loadingButton.checked
     }
 
-    StatusListItem {
-        title: "Nokia 3310"
-        subTitle: "Incoming device"
-        asset.width: 40
-        asset.height: 40
-        asset.emoji: "😁"
-        asset.color: "hotpink"
-        asset.letterSize: 14
-        asset.isLetterIdenticon: true
+    DeviceListItem {
         statusListItemTitle.loading: loadingButton.checked
         statusListItemSubTitle.loading: loadingButton.checked
         statusListItemIcon.loading: loadingButton.checked
     }
-
 }

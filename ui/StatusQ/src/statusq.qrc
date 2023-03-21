@@ -197,5 +197,6 @@
         <file>StatusQ/Core/Utils/ModelsComparator.qml</file>
         <file>StatusQ/Core/Utils/ModelChangeTracker.qml</file>
         <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
+        <file>StatusQ/Components/StatusOnlineBadge.qml</file>
     </qresource>
 </RCC>

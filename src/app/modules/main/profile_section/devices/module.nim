@@ -64,7 +64,7 @@ method onDevicesLoaded*(self: Module, allDevices: seq[InstallationDto]) =
   for d in allDevices:
     let item = initItem(d, self.isMyDevice(d.id))
     items.add(item)
-  self.view.model().addItems(items)
+  self.view.model().setItems(items)
   self.view.setDevicesLoading(false)
   self.view.deviceSetupChanged()
 
