@@ -67,7 +67,6 @@ StatusSectionLayout {
     }
 
     signal backToCommunityClicked
-    signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
 
     //navigate to a specific section and subsection
     function goTo(section: int, subSection: int) {
@@ -133,46 +132,23 @@ StatusSectionLayout {
             }
         }
 
-        // TODO: remove me when migration to new settings is done. Only keep back button and anchor to it.
-        ColumnLayout {
-            id: footer
-
+        StatusBaseText {
+            objectName: "communitySettingsBackToCommunityButton"
             anchors {
                 bottom: parent.bottom
                 bottomMargin: 16
+                horizontalCenter: parent.horizontalCenter
             }
-            width: parent.width
-            spacing: 16
+            text: "<- " + qsTr("Back to community")
+            color: Theme.palette.baseColor1
+            font.pixelSize: 15
+            font.underline: true
 
-            // TODO: remove me when migration to new settings is done
-            StatusBaseText {
-                Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Open legacy popup (to be removed)")
-                color: Theme.palette.baseColor1
-                font.pixelSize: 10
-                font.underline: true
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.openLegacyPopupClicked()
-                }
-            }
-
-            StatusBaseText {
-                objectName: "communitySettingsBackToCommunityButton"
-                Layout.alignment: Qt.AlignHCenter
-                text: "<- " + qsTr("Back to community")
-                color: Theme.palette.baseColor1
-                font.pixelSize: 15
-                font.underline: true
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.backToCommunityClicked()
-                    hoverEnabled: true
-                }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.backToCommunityClicked()
+                hoverEnabled: true
             }
         }
     }
