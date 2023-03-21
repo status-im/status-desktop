@@ -333,12 +333,11 @@ proc init*(self: Controller) =
     if (self.sectionId != args.sectionId):
       return
     self.delegate.makeChatWithIdActive(args.chatId)
-
-  self.events.on(SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT) do(e:Args):
-    let args = ChatExtArgs(e)
-    if (self.isCommunitySection):
-      return
-    self.delegate.createOneToOneChat(args.communityId, args.chatId, args.ensName)
+    
+  if (not self.isCommunitySection):
+    self.events.on(SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT) do(e:Args):
+      let args = ChatExtArgs(e)
+      self.delegate.createOneToOneChat(args.communityId, args.chatId, args.ensName)
 
   self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
     let args = ContactsStatusUpdatedArgs(e)
