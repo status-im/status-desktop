@@ -708,7 +708,10 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
 
 method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
   # One To One chat is available only in the `Chat` section
-  if(self.controller.getMySectionId() != singletonInstance.userProfile.getPubKey()):
+  if (self.controller.getMySectionId() == singletonInstance.userProfile.getPubKey()) and (self.delegate.getActiveSectionId() != self.controller.getMySectionId()):
+    self.delegate.setActiveSectionById(self.controller.getMySectionId())
+  # if its not `Chat` section - skip
+  else:
     return
 
   if(self.chatContentModules.hasKey(chatId)):
@@ -719,9 +722,9 @@ method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
 
 method createOneToOneChat*(self: Module, communityID: string, chatId: string, ensName: string) =
   if(self.controller.isCommunity()):
-    # initiate chat creation in the `Chat` seciton module.
-    self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
-    return
+     # initiate chat creation in the `Chat` seciton module.
+     self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
+     return
 
   # Adding this call here we have the same as we had before (didn't inspect what are all cases when this
   # `createOneToOneChat` is called), but I am sure that after checking all cases and inspecting them, this can be improved.
