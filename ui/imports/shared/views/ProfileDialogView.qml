@@ -531,17 +531,6 @@ Pane {
                         }
                     }
                     StatusAction {
-                        text: qsTr("Cancel Contact Request")
-                        icon.name: "cancel"
-                        type: StatusAction.Type.Danger
-                        enabled: !d.isContact && d.isContactRequestSent && !d.contactDetails.removed
-                        onTriggered: {
-                            moreMenu.close()
-                            root.contactsStore.removeContact(root.publicKey)
-                            d.reload()
-                        }
-                    }
-                    StatusAction {
                         text: qsTr("Block User")
                         icon.name: "cancel"
                         type: StatusAction.Type.Danger
