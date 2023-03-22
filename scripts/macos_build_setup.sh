@@ -5,6 +5,9 @@ GO_VERSION="1.19.5"
 GO_INSTALL_DIR="/usr/local/go"
 QT_VERSION="5.15.2"
 QT_INSTALL_DIR="/usr/local/qt"
+if [[ $(uname -m) == "arm64" ]]; then
+    QT_INSTALL_DIR="/opt/qt"
+fi
 
 function check_version {
   if [[ "$(uname -s)" != "Darwin" ]]; then
