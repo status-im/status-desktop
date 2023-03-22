@@ -46,8 +46,8 @@ Item {
                 font.pixelSize: 28
                 font.bold: true
                 customColor: Theme.palette.baseColor1
-                text: LocaleUtils.currencyAmountToLocaleString(root.currentAccount.currencyBalance)
-                loading: root.walletStore.tokensLoading
+                text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(root.currentAccount.currencyBalance)
+                loading: root.currentAccount.assetsLoading
                 visible: !networkConnectionStore.tokenBalanceNotAvailable
             }
         }

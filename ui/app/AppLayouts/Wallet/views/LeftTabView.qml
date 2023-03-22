@@ -118,7 +118,7 @@ Rectangle {
                 width: parent.width
                 font.weight: Font.Medium
                 font.pixelSize: 22
-                loading: RootStore.tokensLoading
+                loading: RootStore.currentAccount.assetsLoading
                 visible: !networkConnectionStore.tokenBalanceNotAvailable
             }
 
@@ -177,7 +177,7 @@ Rectangle {
                 asset.bgColor: Theme.palette.primaryColor3
                 statusListItemTitle.font.weight: Font.Medium
                 color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
-                statusListItemSubTitle.loading: RootStore.tokensLoading
+                statusListItemSubTitle.loading: model.assetsLoading
                 errorMode: networkConnectionStore.tokenBalanceNotAvailable
                 errorIcon.tooltip.maxWidth: 300
                 errorIcon.tooltip.text: networkConnectionStore.tokenBalanceNotAvailableText

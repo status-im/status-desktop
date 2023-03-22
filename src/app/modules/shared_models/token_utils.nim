@@ -38,5 +38,5 @@ proc walletTokenToItem*(
     marketValues.change24hour,
     currencyAmountToItem(marketValues.price, currencyFormat),
     t.decimals,
-    t.pegSymbol
+    loading = false
     )

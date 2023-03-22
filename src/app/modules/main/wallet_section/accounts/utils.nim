@@ -68,5 +68,6 @@ proc walletAccountToItem*(
     relatedAccounts,
     w.keyUid,
     keyPairMigrated,
-    w.ens
+    w.ens,
+    w.assetsLoading
   )

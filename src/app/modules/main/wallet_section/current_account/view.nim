@@ -34,6 +34,7 @@ QtObject:
       ens: string
       tmpChainID: int  # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
       tmpSymbol: string # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
+      assetsLoading: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -182,6 +183,18 @@ QtObject:
     read = getRelatedAccounts
     notify = relatedAccountsChanged
 
+  proc getAssetsLoading(self: View): QVariant {.slot.} =
+    return newQVariant(self.assetsLoading)
+  proc assetsLoadingChanged(self: View) {.signal.}
+  QtProperty[QVariant] assetsLoading:
+    read = getAssetsLoading
+    notify = assetsLoadingChanged
+
+  proc setAssetsLoading*(self:View, assetLoading: bool) =
+    if assetLoading != self.assetsLoading:
+      self.assetsLoading = assetLoading
+      self.assetsLoadingChanged()
+
   proc update(self: View, address: string, accountName: string, color: string, emoji: string) {.slot.} =
     self.delegate.update(address, accountName, color, emoji)
 
@@ -230,6 +243,7 @@ QtObject:
     if(self.ens != item.getEns()):
       self.ens = item.getEns()
       self.ensChanged()
+    self.setAssetsLoading(item.getAssetsLoading())
     # Set related accounts
     self.relatedAccounts = item.getRelatedAccounts()
     self.relatedAccountsChanged()

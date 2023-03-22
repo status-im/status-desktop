@@ -262,7 +262,7 @@ Rectangle {
                 icon.height: 14
                 icon.name: "tiny/warning"
                 icon.color: Theme.palette.dangerColor1
-                visible: root.errorMode && !!toolTip.text
+                visible: root.errorMode && !!errorIcon.tooltip.text
             }
 
             RowLayout {

@@ -18,7 +18,8 @@ type
     DerivedFrom,
     RelatedAccounts,
     KeyUid,
-    MigratedToKeycard
+    MigratedToKeycard,
+    AssetsLoading
 
 QtObject:
   type
@@ -68,7 +69,8 @@ QtObject:
       ModelRole.DerivedFrom.int: "derivedfrom",
       ModelRole.RelatedAccounts.int: "relatedAccounts",
       ModelRole.KeyUid.int: "keyUid",
-      ModelRole.MigratedToKeycard.int: "migratedToKeycard"
+      ModelRole.MigratedToKeycard.int: "migratedToKeycard",
+      ModelRole.AssetsLoading.int: "assetsLoading"
     }.toTable
 
 
@@ -119,6 +121,8 @@ QtObject:
       result = newQVariant(item.getKeyUid())
     of ModelRole.MigratedToKeycard:
       result = newQVariant(item.getMigratedToKeycard())
+    of ModelRole.AssetsLoading:
+      result = newQVariant(item.getAssetsLoading())
 
   proc getAccountNameByAddress*(self: Model, address: string): string =
     for account in self.items:

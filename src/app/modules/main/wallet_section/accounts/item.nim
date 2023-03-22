@@ -22,6 +22,7 @@ type
     keyUid: string
     migratedToKeycard: bool
     ens: string
+    assetsLoading: bool
 
 proc initItem*(
   name: string = "",
@@ -40,7 +41,8 @@ proc initItem*(
   relatedAccounts: compact_model.Model = nil,
   keyUid: string = "",
   migratedToKeycard: bool = false,
-  ens: string = ""
+  ens: string = "",
+  assetsLoading: bool  = true
 ): Item =
   result.name = name
   result.address = address
@@ -59,6 +61,7 @@ proc initItem*(
   result.keyUid = keyUid
   result.migratedToKeycard = migratedToKeycard
   result.ens = ens
+  result.assetsLoading = assetsLoading
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
@@ -78,7 +81,8 @@ proc `$`*(self: Item): string =
     relatedAccounts: {self.relatedAccounts}
     keyUid: {self.keyUid},
     migratedToKeycard: {self.migratedToKeycard},
-    ens: {self.ens}
+    ens: {self.ens},
+    assetsLoading: {self.assetsLoading}
     ]"""
 
 proc getName*(self: Item): string =
@@ -131,3 +135,6 @@ proc getMigratedToKeycard*(self: Item): bool =
 
 proc getEns*(self: Item): string =
   return self.ens
+
+proc getAssetsLoading*(self: Item): bool =
+  return self.assetsLoading

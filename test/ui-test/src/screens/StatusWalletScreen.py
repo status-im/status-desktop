@@ -301,9 +301,9 @@ class StatusWalletScreen:
 
         for index in range(list.count):
             tokenListItem = list.itemAtIndex(index)
-            if tokenListItem != None and tokenListItem.objectName == "AssetView_LoadingTokenDelegate_"+str(index):
+            if tokenListItem != None and tokenListItem.item != None and tokenListItem.item.objectName == "AssetView_LoadingTokenDelegate_"+str(index):
                 return (False, )
-            if tokenListItem != None and tokenListItem.objectName == "AssetView_TokenListItem_" + symbol and tokenListItem.balance != "0":
+            if tokenListItem != None and tokenListItem.item != None and tokenListItem.item.objectName == "AssetView_TokenListItem_" + symbol and tokenListItem.item.balance != "0":
                 return (True, tokenListItem)
         return (False, )
 

@@ -27,7 +27,7 @@ type
     Change24hour
     CurrencyPrice
     Decimals
-    PegSymbol
+    Loading
 
 QtObject:
   type
@@ -85,7 +85,7 @@ QtObject:
       ModelRole.Change24hour.int:"change24hour",
       ModelRole.CurrencyPrice.int:"currencyPrice",
       ModelRole.Decimals.int:"decimals",
-      ModelRole.PegSymbol.int:"pegSymbol",
+      ModelRole.Loading.int:"loading",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -143,8 +143,8 @@ QtObject:
       result = newQVariant(item.getCurrencyPrice())
     of ModelRole.Decimals:
       result = newQVariant(item.getDecimals())
-    of ModelRole.PegSymbol:
-      result = newQVariant(item.getPegSymbol())
+    of ModelRole.Loading:
+      result = newQVariant(item.getLoading())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -172,7 +172,7 @@ QtObject:
       of "change24hour": result = $item.getChange24hour()
       of "currencyPrice": result = $item.getCurrencyPrice()
       of "decimals": result = $item.getDecimals()
-      of "pegSymbol": result = $item.getPegSymbol()
+      of "loading": result = $item.getLoading()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

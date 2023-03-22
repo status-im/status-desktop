@@ -23,7 +23,6 @@ type
     color*: string
     isCustom* {.dontSerialize.}: bool
     isVisible* {.dontSerialize.}: bool
-    pegSymbol*: string
 
 proc newTokenDto*(
   name: string,
@@ -32,7 +31,6 @@ proc newTokenDto*(
   symbol: string,
   decimals: int,
   hasIcon: bool,
-  pegSymbol: string,
   isCustom: bool = false,
 ): TokenDto =
   return TokenDto(
@@ -42,7 +40,6 @@ proc newTokenDto*(
     symbol: symbol,
     decimals: decimals,
     hasIcon: hasIcon,
-    pegSymbol: pegSymbol,
     isCustom: isCustom
   )
 
@@ -57,7 +54,6 @@ proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCu
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("decimals", result.decimals)
   discard jsonObj.getProp("color", result.color)
-  discard jsonObj.getProp("pegSymbol", result.pegSymbol)
   result.isVisible = isVisible
 
 proc addressAsString*(self: TokenDto): string =

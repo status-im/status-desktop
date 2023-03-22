@@ -128,9 +128,6 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-  
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 

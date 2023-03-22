@@ -40,7 +40,6 @@ QtObject {
     property var historyTransactions: Global.appIsReady? walletSectionTransactions.model : null
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
-    property bool tokensLoading: Global.appIsReady? walletSection.tokensLoading : false
     property var currentAccount: Global.appIsReady? walletSectionCurrent : null
     property var marketValueStore: TokenMarketValuesStore{}
 
