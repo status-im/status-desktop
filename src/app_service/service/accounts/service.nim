@@ -1,4 +1,4 @@
-import NimQml, os, json, sequtils, strutils, uuids, times
+import NimQml, Tables, os, json, strformat, sequtils, strutils, uuids, times
 import json_serialization, chronicles
 
 import ../../../app/global/global_singleton
@@ -35,9 +35,14 @@ const KDF_ITERATIONS* {.intdefine.} = 256_000
 let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
 
 const SIGNAL_CONVERTING_PROFILE_KEYPAIR* = "convertingProfileKeypair"
+const SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED* = "derivedAddressesFromNotImportedMnemonicFetched"
 
 type ResultArgs* = ref object of Args
   success*: bool
+
+type DerivedAddressesFromNotImportedMnemonicArgs* = ref object of Args
+  error*: string
+  derivations*: Table[string, DerivedAccountDetails]
 
 include utils
 include async_tasks
@@ -496,7 +501,20 @@ QtObject:
     except Exception as e:
       error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
 
+  proc createAccountFromPrivateKey*(self: Service, privateKey: string): GeneratedAccountDto =
+    if privateKey.len == 0:
+      error "empty private key"
+      return
+    try:
+      let response = status_account.createAccountFromPrivateKey(privateKey)
+      return toGeneratedAccountDto(response.result)
+    except Exception as e:
+      error "error: ", procName="createAccountFromPrivateKey", errName = e.name, errDesription = e.msg
+
   proc createAccountFromMnemonic*(self: Service, mnemonic: string, paths: seq[string]): GeneratedAccountDto =
+    if mnemonic.len == 0:
+      error "empty mnemonic"
+      return
     try:
       let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(mnemonic, paths)
       return toGeneratedAccountDto(response.result)
@@ -505,9 +523,6 @@ QtObject:
 
   proc createAccountFromMnemonic*(self: Service, mnemonic: string, includeEncryption = false, includeWhisper = false,
     includeRoot = false, includeDefaultWallet = false, includeEip1581 = false): GeneratedAccountDto =
-    if mnemonic.len == 0:
-      error "empty mnemonic"
-      return
     var paths: seq[string]
     if includeEncryption:
       paths.add(PATH_ENCRYPTION)
@@ -519,7 +534,29 @@ QtObject:
       paths.add(PATH_DEFAULT_WALLET)
     if includeEip1581:
       paths.add(PATH_EIP_1581)
-    return self.createAccountFromMnemonic(mnemonic, paths)    
+    return self.createAccountFromMnemonic(mnemonic, paths)
+
+  proc fetchAddressesFromNotImportedMnemonic*(self: Service, mnemonic: string, paths: seq[string])=
+    let arg = FetchAddressesFromNotImportedMnemonicArg(
+      mnemonic: mnemonic,
+      paths: paths,
+      tptr: cast[ByteAddress](fetchAddressesFromNotImportedMnemonicTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAddressesFromNotImportedMnemonicFetched",
+    )
+    self.threadpool.start(arg)
+
+  proc onAddressesFromNotImportedMnemonicFetched*(self: Service, jsonString: string) {.slot.} =
+    var data = DerivedAddressesFromNotImportedMnemonicArgs()
+    try:
+      let response = parseJson(jsonString)
+      data.error = response["error"].getStr()
+      if data.error.len == 0:
+        data.derivations = toGeneratedAccountDto(response["derivedAddresses"]).derivedAccounts.derivations
+    except Exception as e:
+      error "error: ", procName="fetchAddressesFromNotImportedMnemonic", errName = e.name, errDesription = e.msg
+      data.error = e.msg
+    self.events.emit(SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED, data)
 
   proc importMnemonic*(self: Service, mnemonic: string): string =
     if mnemonic.len == 0:
