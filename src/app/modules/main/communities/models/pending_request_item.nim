@@ -1,3 +1,5 @@
+import strformat
+
 type
   PendingRequestItem* = ref object
     id: string
@@ -40,3 +42,13 @@ proc state*(self: PendingRequestItem): int =
 
 proc our*(self: PendingRequestItem): string =
   self.our
+
+proc `$`*(self: PendingRequestItem): string =
+  result = fmt"""PendingRequestItem(
+    id: {self.id},
+    publicKey: {$self.publicKey},
+    chatId: {$self.chatId},
+    communityId: {$self.communityId},
+    state: {$self.state},
+    our: {$self.our},
+    ]"""

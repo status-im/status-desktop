@@ -222,7 +222,7 @@ StatusSectionLayout {
                 onAirdropTokensClicked: { /* TODO in future */ }
                 onBackUpClicked: {
                     Global.openPopup(transferOwnershipPopup, {
-                                         privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
+                                         privateKey: root.chatCommunitySectionModule.exportCommunity(root.community.id),
                                      })
                 }
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
