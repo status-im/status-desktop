@@ -123,7 +123,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         text: model.numberOfReactions
                         font.pixelSize: 12
-                        color: model.didIReactWithThisEmoji ? Theme.palette.indirectColor1 : Theme.palette.directColor1
+                        color: model.didIReactWithThisEmoji ? Theme.palette.white : Theme.palette.directColor1
                     }
 
                 }
