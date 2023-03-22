@@ -254,8 +254,9 @@ StatusScrollView {
             }
         }
 
+        // Disabled until backend is ready (milestone 12)
         TokenHoldersPanel {
-            visible: !root.preview
+            visible: false//!root.preview
             tokenName: root.name
             model: root.holdersModel
             Layout.topMargin: Style.current.padding
