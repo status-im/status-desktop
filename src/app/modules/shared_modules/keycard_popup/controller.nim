@@ -433,15 +433,6 @@ proc setPinForKeycardCopy*(self: Controller, value: string) =
 proc getPinForKeycardCopy*(self: Controller): string =
   return self.tmpKeycardCopyPin
 
-proc notifyAboutGeneratedWalletAccount*(self: Controller, generatedWalletAccount: GeneratedWalletAccount, derivedFrom: string) =
-  let data = SharedKeycarModuleUserAuthenticatedAndWalletAddressGeneratedArgs(uniqueIdentifier: self.uniqueIdentifier,
-    address: generatedWalletAccount.address,
-    publicKey: generatedWalletAccount.publicKey,
-    derivedFrom: derivedFrom,
-    password: self.getPassword()
-  )
-  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED_AND_WALLET_ADDRESS_GENERATED, data)
-
 proc runSharedModuleFlow*(self: Controller, flowToRun: FlowType, keyUid = "") =
   self.delegate.runFlow(flowToRun, keyUid)
 
