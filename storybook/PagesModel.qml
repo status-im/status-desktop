@@ -162,6 +162,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusEmojiAndColorComboBox"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
