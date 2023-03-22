@@ -287,6 +287,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     channelGroup.permissions.access,
     channelGroup.permissions.ensOnly,
     channelGroup.muted,
+    # members
     channelGroup.members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
       result = initMemberItem(
@@ -303,6 +304,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         isVerified = contactDetails.details.isContactVerified(),
         isAdmin = member.admin
         )),
+    # pendingRequestsToJoin
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
       x.publicKey,
@@ -313,6 +315,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     )) else: @[],
     communityDetails.settings.historyArchiveSupportEnabled,
     communityDetails.adminSettings.pinMessageAllMembersEnabled,
+    # bannedMembers
     channelGroup.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem=
       let contactDetails = self.controller.getContactDetails(bannedMemberId)
       result = initMemberItem(
@@ -329,6 +332,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         isVerified = contactDetails.details.isContactVerified()
       )
     ),
+    # pendingMemberRequests
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
       let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
       result = initMemberItem(
@@ -346,6 +350,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         requestToJoinId = requestDto.id
       )
     ) else: @[],
+    # declinedMemberRequests
     if (isCommunity): communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
       let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
       result = initMemberItem(
