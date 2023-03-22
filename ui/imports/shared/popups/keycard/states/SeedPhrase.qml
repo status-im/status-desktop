@@ -9,20 +9,13 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
+import shared.panels 1.0 as SharedPanels
 
 Item {
     id: root
 
     property var sharedKeycardModule
-    property bool hideSeed: true
-
-    signal seedPhraseRevealed()
-
-    QtObject {
-        id: d
-
-        readonly property var seedPhrase: root.sharedKeycardModule.getMnemonic().split(" ")
-    }
+    property alias seedPhraseRevealed: displaySeed.seedPhraseRevealed
 
     ColumnLayout {
         anchors.fill: parent
@@ -48,55 +41,12 @@ Item {
             wrapMode: Text.WordWrap
         }
 
-        Item {
+        SharedPanels.SeedPhrase {
+            id: displaySeed
             Layout.preferredWidth: parent.width
             Layout.fillHeight: true
 
-            StatusGridView {
-                id: grid
-                anchors.fill: parent
-                visible: !root.hideSeed
-                cellWidth: parent.width * 0.5
-                cellHeight: 48
-                interactive: false
-                model: 12
-                readonly property var wordIndex: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-                readonly property int spacing: 4
-                delegate: StatusSeedPhraseInput {
-                    width: (grid.cellWidth - grid.spacing)
-                    height: (grid.cellHeight - grid.spacing)
-                    textEdit.input.edit.enabled: false
-                    text: {
-                        const idx = parseInt(leftComponentText) - 1;
-                        if (!d.seedPhrase || idx < 0 || idx > d.seedPhrase.length - 1)
-                            return "";
-                        return d.seedPhrase[idx];
-                    }
-                    leftComponentText: grid.wordIndex[index]
-                }
-            }
-
-            GaussianBlur {
-                id: blur
-                anchors.fill: grid
-                visible: root.hideSeed
-                source: grid
-                radius: 16
-                samples: 16
-                transparentBorder: true
-            }
-
-            StatusButton {
-                anchors.centerIn: parent
-                visible: root.hideSeed
-                type: StatusBaseButton.Type.Primary
-                icon.name: "view"
-                text: qsTr("Reveal seed phrase")
-                onClicked: {
-                    root.hideSeed = false;
-                    root.seedPhraseRevealed()
-                }
-            }
+            property var seedPhrase: root.sharedKeycardModule.getMnemonic().split(" ")
         }
     }
 

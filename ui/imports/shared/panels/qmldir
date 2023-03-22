@@ -24,3 +24,5 @@ StatusAssetSelector 1.0 StatusAssetSelector.qml
 AcceptRejectOptionsButtonsPanel 1.0 AcceptRejectOptionsButtonsPanel.qml
 DidYouKnowSplashScreen 1.0 DidYouKnowSplashScreen.qml
 ConnectionWarnings 1.0 ConnectionWarnings.qml
+EnterSeedPhrase 1.0 EnterSeedPhrase.qml
+SeedPhrase 1.0 SeedPhrase.qml
