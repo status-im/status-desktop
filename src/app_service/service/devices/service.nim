@@ -157,8 +157,11 @@ QtObject:
   # Local Pairing
   #
 
-  proc inputConnectionStringForBootstrappingFinished(self: Service, result: string) =
-    discard
+  proc inputConnectionStringForBootstrappingFinished*(self: Service, responseJson: string) {.slot.} =
+    let response = responseJson.parseJson
+    let errorDescription = response["error"].getStr
+    if len(errorDescription) > 0:
+      error "failed to start bootstrapping device", errorDescription
 
   proc validateConnectionString*(self: Service, connectionString: string): string =
     return status_go.validateConnectionString(connectionString)

@@ -34,21 +34,36 @@ Item {
     QtObject {
         id: d
 
-        property string connectionString
+        readonly property list<StatusValidator> syncCodeValidators: [
+            StatusValidator {
+                name: "isConnectionString"
+                errorMessage: qsTr("This does not look like a sync code")
+                validate: (value) => {
+                              return d.validateConnectionString(value)
+                          }
+            }
+        ]
 
         function validateConnectionString(connectionString) {
             const result = root.startupStore.validateLocalPairingConnectionString(connectionString)
             return result === ""
         }
+
+        function onConnectionStringFound(connectionString) {
+            root.startupStore.setConnectionString(connectionString)
+            root.startupStore.doPrimaryAction()
+        }
     }
 
     Timer {
         id: nextStateDelay
+
+        property string connectionString
+
         interval: 1000
         repeat: false
         onTriggered: {
-            root.startupStore.setConnectionString(d.connectionString)
-            root.startupStore.doPrimaryAction()
+            d.onConnectionStringFound(connectionString)
         }
     }
 
@@ -56,7 +71,7 @@ Item {
         id: layout
 
         anchors.centerIn: parent
-        width: 330
+        width: 400
         spacing: 24
 
         StatusBaseText {
@@ -97,19 +112,14 @@ Item {
 
                 SyncDeviceFromMobile {
                     id: mobileSync
-                    anchors.fill: parent
-                    validators: [
-                        StatusValidator {
-                            name: "isConnectionString"
-                            errorMessage: qsTr("Oops! This is not a sync QR code")
-                            validate: (value) => {
-                                          return d.validateConnectionString(value)
-                                      }
-                        }
-                    ]
-                    onQrCodeScanned: {
-                        d.connectionString = desktopSync.input.text
-                        nextStateDelay.start()
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        verticalCenter: parent.verticalCenter
+                    }
+                    validators: d.syncCodeValidators
+                    onConnectionStringFound: {
+                        d.onConnectionStringFound(connectionString)
                     }
                 }
             }
@@ -126,21 +136,11 @@ Item {
                         verticalCenter: parent.verticalCenter
                     }
                     input.readOnly: nextStateDelay.running
-                    input.validators: [
-                        StatusValidator {
-                            name: "asyncConnectionString"
-                            errorMessage: qsTr("This does not look like a sync code")
-                            validate: (value) => {
-                                          return d.validateConnectionString(value)
-                                      }
-                        }
-                    ]
+                    input.validators: d.syncCodeValidators
                     input.onValidChanged: {
-                        if (!input.valid) {
-                            d.connectionString = ""
+                        if (!input.valid)
                             return
-                        }
-                        d.connectionString = desktopSync.input.text
+                        nextStateDelay.connectionString = desktopSync.input.text
                         nextStateDelay.start()
                     }
                 }

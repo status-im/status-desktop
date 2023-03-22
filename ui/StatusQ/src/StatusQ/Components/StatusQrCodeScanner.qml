@@ -192,11 +192,8 @@ Item {
 
             decoder {
                 enabledDecoders: QZXing.DecoderFormat_QR_CODE
-                tryHarder: true
                 onTagFound: {
                     d.currentTag = tag
-                    if (tag === d.lastTag)
-                        return
                     d.lastTag = tag
                     root.tagFound(tag)
                 }

@@ -13,7 +13,7 @@ Column {
 
     property list<StatusValidator> validators
 
-    signal qrCodeScanned(value: string)
+    signal connectionStringFound(connectionString: string)
 
     spacing: 12
 
@@ -23,33 +23,27 @@ Column {
         property string errorMessage
         property string lastTag
         property int counter: 0
-    }
 
-    StatusQrCodeScanner {
-        id: scanner
-
-        width: parent.width
-        implicitHeight: 330
-
-        onTagFound: {
-//            if (tag === d.lastTag) {
-//                console.log("<<< equals to last tag", tag, counter++)
-//                return
-//            }
-
-            console.log("<<< validating", tag)
-
-            d.lastTag = tag
-
-            for (let i in validators) {
-                const validator = validators[i]
-                if (!validator.validate(tag)) {
+        function validateConnectionString(connectionString) {
+            for (let i in root.validators) {
+                const validator = root.validators[i]
+                if (!validator.validate(connectionString)) {
                     d.errorMessage = validator.errorMessage
                     return
                 }
                 d.errorMessage = ""
-                root.qrCodeScanned(value)
+                root.connectionStringFound(connectionString)
             }
+        }
+    }
+
+    StatusQrCodeScanner {
+        id: scanner
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: 330
+        height: 330
+        onLastTagChanged: {
+            d.validateConnectionString(lastTag)
         }
     }
 
@@ -60,6 +54,7 @@ Column {
 
     StatusBaseText {
         width: parent.width
+        opacity: scanner.currentTag ? 1 : 0
         wrapMode: Text.WordWrap
         color: Theme.palette.dangerColor1
         horizontalAlignment: Text.AlignHCenter
@@ -68,6 +63,7 @@ Column {
 
     StatusBaseText {
         width: parent.width
+        opacity: scanner.camera ? 1 : 0
         wrapMode: Text.WordWrap
         color: Theme.palette.baseColor1
         horizontalAlignment: Text.AlignHCenter
