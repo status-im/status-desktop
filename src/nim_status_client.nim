@@ -34,7 +34,7 @@ proc determineStatusAppIconPath(): string =
   if defined(production):
     if main_constants.IS_MACOS:
       return "" # not used in macOS
-    elif main_constants.IS_MACOS:
+    elif defined(windows):
       return "/../resources/status.svg"
     else:
       return "/../status.svg"
