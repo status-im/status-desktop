@@ -970,7 +970,12 @@ Item {
                 x: parent.width - width - Style.current.smallPadding
                 y: parent.y + _buttonSize
                 height: appView.height - _buttonSize * 2
-                store: appMain.rootChatStore
+                store: ChatStores.RootStore {
+                    contactsStore: appMain.rootStore.contactStore
+                    emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                    openCreateChat: createChatView.opened
+                    chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                }
                 activityCenterStore: appMain.activityCenterStore
             }
         }
