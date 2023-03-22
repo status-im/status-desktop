@@ -1,7 +1,7 @@
 import NimQml, strformat
-import key_pair_item
+import ../../../shared_models/keypair_item
 
-export key_pair_item
+export keypair_item
 
 QtObject:
   type KeycardItem* = ref object of KeyPairItem
@@ -19,10 +19,13 @@ QtObject:
       image = "",
       icon = "",
       pairType = KeyPairType.Unknown,
-      derivedFrom = ""
+      derivedFrom = "",
+      lastUsedDerivationIndex = 0,
+      migratedToKeycard = true
       ): KeycardItem =
     new(result, delete)
-    result.KeyPairItem.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom)
+    result.KeyPairItem.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom,lastUsedDerivationIndex,
+      migratedToKeycard)
     result.keycardUid = keycardUid
 
   proc `$`*(self: KeycardItem): string =

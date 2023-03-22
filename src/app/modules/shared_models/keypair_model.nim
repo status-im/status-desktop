@@ -1,7 +1,7 @@
 import NimQml, Tables, strformat
-import key_pair_item
+import keypair_item
 
-export key_pair_item
+export keypair_item
 
 type
   ModelRole {.pure.} = enum
@@ -30,12 +30,6 @@ QtObject:
     read = getCount
     notify = countChanged
 
-  proc setItems*(self: KeyPairModel, items: seq[KeyPairItem]) =
-    self.beginResetModel()
-    self.items = items
-    self.endResetModel()
-    self.countChanged()
-
   proc `$`*(self: KeyPairModel): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""KeyPairModel:
@@ -61,8 +55,28 @@ QtObject:
     of ModelRole.KeyPair:
       result = newQVariant(item)
 
+  proc setItems*(self: KeyPairModel, items: seq[KeyPairItem]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
+    self.countChanged()
+
+  proc addItem*(self: KeyPairModel, item: KeyPairItem) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
+    self.countChanged()
+
   proc findItemByPublicKey*(self: KeyPairModel, publicKey: string): KeyPairItem =
     for i in 0 ..< self.items.len:
       if(self.items[i].getPubKey() == publicKey):
+        return self.items[i]
+    return nil
+
+  proc findItemByKeyUid*(self: KeyPairModel, keyUid: string): KeyPairItem =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getKeyUid() == keyUid):
         return self.items[i]
     return nil
