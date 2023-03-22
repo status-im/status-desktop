@@ -32,40 +32,7 @@ Rectangle {
 
     property var emojiPopup: null
 
-    function onAfterAddAccount () {
-        root.changeSelectedAccount(RootStore.accounts.rowCount() - 1)
-    }
-
     color: Style.current.secondaryMenuBackground
-
-    Loader {
-        id: addAccountModal
-        active: false
-        asynchronous: true
-
-        function open() {
-            if (!active) {
-                RootStore.createSharedKeycardModule()
-                active = true
-            }
-            item.open()
-        }
-
-        function close() {
-            if (item) {
-                RootStore.destroySharedKeycarModule()
-                item.close()
-            }
-            active = false
-        }
-
-        sourceComponent: AddAccountModal {
-            anchors.centerIn: parent
-            onAfterAddAccount: root.onAfterAddAccount()
-            emojiPopup: root.emojiPopup
-            onClosed: addAccountModal.close()
-        }
-    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -96,7 +63,6 @@ Rectangle {
                 height: parent.height * 2
                 color: hovered || highlighted ? Theme.palette.primaryColor3
                                               : "transparent"
-                onClicked: addAccountModal.open()
             }
         }
 

@@ -18,7 +18,6 @@ QtObject {
     property string backButtonName: ""
     property var currentAccount: Constants.isCppApp ? walletSectionAccounts.currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
-    property var generatedAccounts: walletSectionAccounts.generated
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
@@ -54,10 +53,6 @@ QtObject {
     function colorForChainShortName(chainShortName) {
         return d.chainColors[chainShortName]
     }
-
-    // Used for new wallet account generation
-    property var generatedAccountsViewModel: walletSectionAccounts.generatedAccounts
-    property var derivedAddressesList: walletSectionAccounts.derivedAddresses
 
     property var layer1Networks: networksModule.layer1
     property var layer2Networks: networksModule.layer2
@@ -114,9 +109,6 @@ QtObject {
         }
     }
 
-    property bool derivedAddressesLoading: walletSectionAccounts.derivedAddressesLoading
-    property string derivedAddressesError: walletSectionAccounts.derivedAddressesError
-
     function setHideSignPhraseModal(value) {
         localAccountSensitiveSettings.hideSignPhraseModal = value;
     }
@@ -141,26 +133,6 @@ QtObject {
 
     function switchAccountByAddress(address) {
         walletSection.switchAccountByAddress(address)
-    }
-
-    function generateNewAccount(password, accountName, color, emoji, path, derivedFrom) {
-        return walletSectionAccounts.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
-    }
-
-    function addNewWalletAccountGeneratedFromKeycard(accountType, accountName, color, emoji) {
-        return walletSectionAccounts.addNewWalletAccountGeneratedFromKeycard(accountType, accountName, color, emoji)
-    }
-
-    function addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji) {
-        return walletSectionAccounts.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
-    }
-
-    function addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path) {
-        return walletSectionAccounts.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path)
-    }
-
-    function addWatchOnlyAccount(address, accountName,color, emoji) {
-        return walletSectionAccounts.addWatchOnlyAccount(address, accountName, color, emoji)
     }
 
     function deleteAccount(address) {
@@ -214,73 +186,5 @@ QtObject {
 
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
-    }
-
-    function getDerivedAddress(password, derivedFrom, path, hashPassword) {
-        walletSectionAccounts.getDerivedAddress(password, derivedFrom, path, hashPassword)
-    }
-
-    function getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword) {
-        walletSectionAccounts.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber, hashPassword)
-    }
-
-    function getDerivedAddressData(index) {
-        return walletSectionAccounts.getDerivedAddressAtIndex(index)
-    }
-
-    function getDerivedAddressPathData(index) {
-        return walletSectionAccounts.getDerivedAddressPathAtIndex(index)
-    }
-
-    function getDerivedAddressHasActivityData(index) {
-        return walletSectionAccounts.getDerivedAddressHasActivityAtIndex(index)
-    }
-
-    function getDerivedAddressAlreadyCreatedData(index) {
-        return walletSectionAccounts.getDerivedAddressAlreadyCreatedAtIndex(index)
-    }
-
-    function getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber) {
-        walletSectionAccounts.getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber)
-    }
-
-    function getDerivedAddressForPrivateKey(privateKey) {
-        walletSectionAccounts.getDerivedAddressForPrivateKey(privateKey)
-    }
-
-    function resetDerivedAddressModel() {
-        walletSectionAccounts.resetDerivedAddressModel()
-    }
-
-    function validSeedPhrase(mnemonic) {
-        return walletSectionAccounts.validSeedPhrase(mnemonic)
-    }
-
-    function getNextSelectableDerivedAddressIndex() {
-        return walletSectionAccounts.getNextSelectableDerivedAddressIndex()
-    }
-
-    function authenticateUser() {
-        walletSectionAccounts.authenticateUser()
-    }
-
-    function loggedInUserUsesBiometricLogin() {
-        return userProfile.usingBiometricLogin
-    }
-
-    function loggedInUserIsKeycardUser() {
-        return userProfile.isKeycardUser
-    }
-
-    function createSharedKeycardModule() {
-        walletSectionAccounts.createSharedKeycardModule()
-    }
-
-    function destroySharedKeycarModule() {
-        walletSectionAccounts.destroySharedKeycarModule()
-    }
-
-    function authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath, searchForFirstAvailableAddress) {
-        walletSectionAccounts.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath, searchForFirstAvailableAddress)
     }
 }
