@@ -19,6 +19,7 @@ import shared.stores 1.0
 import "../controls"
 import "../popups"
 import "../stores"
+import "../addaccount"
 
 Rectangle {
     id: root
@@ -33,6 +34,34 @@ Rectangle {
     property var emojiPopup: null
 
     color: Style.current.secondaryMenuBackground
+
+    Loader {
+        id: addAccount
+        active: false
+        asynchronous: true
+
+        sourceComponent: AddAccountPopup {
+            store: RootStore.addAccountStore
+            anchors.centerIn: parent
+        }
+
+        onLoaded: {
+            addAccount.item.open()
+        }
+    }
+
+    Connections {
+        target: walletSection
+
+        function onDisplayAddAccountPopup() {
+            RootStore.addAccountStore.emojiPopup = root.emojiPopup
+            RootStore.addAccountStore.addAccountModule = walletSection.addAccountModule
+            addAccount.active = true
+        }
+        function onDestroyAddAccountPopup() {
+            addAccount.active = false
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -63,6 +92,7 @@ Rectangle {
                 height: parent.height * 2
                 color: hovered || highlighted ? Theme.palette.primaryColor3
                                               : "transparent"
+                onClicked: RootStore.runAddAccountPopup()
             }
         }
 

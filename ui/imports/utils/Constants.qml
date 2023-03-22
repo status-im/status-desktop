@@ -608,6 +608,48 @@ QtObject {
         readonly property int eventProcessError: 6
     }
 
+    readonly property QtObject addAccountPopup: QtObject {
+        readonly property int popupWidth: 480
+        readonly property int contentHeight1: 554
+        readonly property int contentHeight2: 642
+        readonly property int itemHeight: 64
+        readonly property int labelFontSize1: 15
+        readonly property int labelFontSize2: 13
+        readonly property int footerButtonsHeight: 44
+        readonly property int keyPairNameMaxLength: 20
+        readonly property int stepperWidth: 242
+        readonly property int stepperHeight: 30
+
+        readonly property QtObject keyPairType: QtObject {
+            readonly property int unknown: -1
+            readonly property int profile: 0
+            readonly property int seedImport: 1
+            readonly property int privateKeyImport: 2
+        }
+
+        readonly property QtObject predefinedPaths: QtObject {
+            readonly property string custom: "m/44'"
+            readonly property string ethereum: "m/44'/60'/0'/0"
+            readonly property string ethereumRopsten: "m/44'/1'/0'/0"
+            readonly property string ethereumLedger: "m/44'/60'/0'"
+            readonly property string ethereumLedgerLive: "m/44'/60'"
+        }
+
+        readonly property QtObject state: QtObject {
+            readonly property string noState: "NoState"
+            readonly property string main: "Main"
+            readonly property string selectMasterKey: "SelectMasterKey"
+            readonly property string enterSeedPhrase: "EnterSeedPhrase"
+            readonly property string enterSeedPhraseWord1: "EnterSeedPhraseWord1"
+            readonly property string enterSeedPhraseWord2: "EnterSeedPhraseWord2"
+            readonly property string enterPrivateKey: "EnterPrivateKey"
+            readonly property string enterKeypairName: "EnterKeypairName"
+            readonly property string displaySeedPhrase: "DisplaySeedPhrase"
+            readonly property string confirmAddingNewMasterKey: "ConfirmAddingNewMasterKey"
+            readonly property string confirmSeedPhraseBackup: "ConfirmSeedPhraseBackup"
+        }
+    }
+
     readonly property QtObject localPairingAction: QtObject {
         readonly property int actionUnknown: 0
         readonly property int actionConnect: 1
@@ -842,12 +884,10 @@ QtObject {
         readonly property string loginAccountsListAddNewUser: "LOGIN-ACCOUNTS-LIST-ADD-NEW-USER"
         readonly property string loginAccountsListAddExistingUser: "LOGIN-ACCOUNTS-LIST-ADD-EXISTING-USER"
         readonly property string loginAccountsListLostKeycard: "LOGIN-ACCOUNTS-LIST-LOST-KEYCARD"
-    }
-
-    readonly property var appTranslationMap: ({})
-    Component.onCompleted: {
-        appTranslationMap[appTranslatableConstants.loginAccountsListAddNewUser] = qsTr("Add new user")
-        appTranslationMap[appTranslatableConstants.loginAccountsListAddExistingUser] = qsTr("Add existing Status user")
-        appTranslationMap[appTranslatableConstants.loginAccountsListLostKeycard] = qsTr("Lost Keycard")
+        readonly property string addAccountLabelNewWatchOnlyAccount: "LABEL-NEW-WATCH-ONLY-ACCOUNT"
+        readonly property string addAccountLabelExisting: "LABEL-EXISTING"
+        readonly property string addAccountLabelImportNew: "LABEL-IMPORT-NEW"
+        readonly property string addAccountLabelOptionAddNewMasterKey: "LABEL-OPTION-ADD-NEW-MASTER-KEY"
+        readonly property string addAccountLabelOptionAddWatchOnlyAcc: "LABEL-OPTION-ADD-WATCH-ONLY-ACC"
     }
 }

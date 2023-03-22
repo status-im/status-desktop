@@ -97,3 +97,19 @@ QtObject:
     self.signingPhrase = signingPhrase
     self.isMnemonicBackedUp = mnemonicBackedUp
     self.currentCurrencyChanged()
+
+  proc runAddAccountPopup*(self: View) {.slot.} =
+    self.delegate.runAddAccountPopup()
+
+  proc getAddAccountModule(self: View): QVariant {.slot.} =
+    return self.delegate.getAddAccountModule()
+  QtProperty[QVariant] addAccountModule:
+    read = getAddAccountModule
+
+  proc displayAddAccountPopup*(self: View) {.signal.}
+  proc emitDisplayAddAccountPopup*(self: View) =
+    self.displayAddAccountPopup()
+
+  proc destroyAddAccountPopup*(self: View) {.signal.}
+  proc emitDestroyAddAccountPopup*(self: View) =
+    self.destroyAddAccountPopup()

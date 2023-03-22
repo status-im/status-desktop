@@ -138,7 +138,7 @@ ThemePalette {
     }
 
     statusMenu: QtObject {
-        property color backgroundColor: baseColor2
+        property color backgroundColor: baseColor3
         property color hoverBackgroundColor: directColor7
         property color separatorColor: directColor7
     }

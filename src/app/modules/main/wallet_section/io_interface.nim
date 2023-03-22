@@ -1,3 +1,4 @@
+import NimQml
 import ../../shared_models/currency_amount
 export CurrencyAmount
 
@@ -55,4 +56,16 @@ method savedAddressesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method buySellCryptoModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runAddAccountPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getAddAccountModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onAddAccountModuleLoaded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method destroyAddAccountPopup*(self: AccessInterface, switchToAccWithAddress: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, chronicles
 
 import ./controller, ./view
 import ./io_interface as io_interface
@@ -11,6 +11,7 @@ import ./current_account/module as current_account_module
 import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
+import ./add_account/module as add_account_module
 
 import ../../../global/global_singleton
 import ../../../core/eventemitter
@@ -26,6 +27,9 @@ import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/node/service as node_service
 import ../../../../app_service/service/network_connection/service as network_connection_service
+
+logScope:
+  topics = "wallet-section-module"
 
 import io_interface
 export io_interface
@@ -45,7 +49,10 @@ type
     transactionsModule: transactions_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
+    addAccountModule: add_account_module.AccessInterface
+    keycardService: keycard_service.Service
     accountsService: accounts_service.Service
+    walletAccountService: wallet_account_service.Service
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -66,6 +73,9 @@ proc newModule*(
   result = Module()
   result.delegate = delegate
   result.events = events
+  result.keycardService = keycardService
+  result.accountsService = accountsService
+  result.walletAccountService = walletAccountService
   result.moduleLoaded = false
   result.controller = newController(result, settingsService, walletAccountService, currencyService)
   result.view = newView(result)
@@ -88,6 +98,8 @@ method delete*(self: Module) =
   self.buySellCryptoModule.delete
   self.controller.delete
   self.view.delete
+  if not self.addAccountModule.isNil:
+    self.addAccountModule.delete
 
 method updateCurrency*(self: Module, currency: string) =
   self.controller.updateCurrency(currency)
@@ -193,3 +205,25 @@ method savedAddressesModuleDidLoad*(self: Module) =
 
 method buySellCryptoModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
+
+method destroyAddAccountPopup*(self: Module, switchToAccWithAddress: string = "") =
+  if not self.addAccountModule.isNil:
+    if switchToAccWithAddress.len > 0:
+      self.switchAccountByAddress(switchToAccWithAddress)
+    self.view.emitDestroyAddAccountPopup()
+    self.addAccountModule.delete
+    self.addAccountModule = nil
+
+method runAddAccountPopup*(self: Module) =
+  self.destroyAddAccountPopup()
+  self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService, 
+    self.walletAccountService)
+  self.addAccountModule.load()
+
+method getAddAccountModule*(self: Module): QVariant =
+  if self.addAccountModule.isNil:
+    return newQVariant()
+  return self.addAccountModule.getModuleAsVariant()
+
+method onAddAccountModuleLoaded*(self: Module) =
+  self.view.emitDisplayAddAccountPopup()
