@@ -13,18 +13,22 @@ proc delete*(self: ImportingFromKeycardState) =
 proc addAccountsToWallet(self: ImportingFromKeycardState, controller: Controller): bool =
   let kpForProcessing = controller.getKeyPairForProcessing()
   let kpHelper = controller.getKeyPairHelper()
+  var index = 0
   for account in kpForProcessing.getAccountsModel().getItems():
     self.addresses.add(account.getAddress())
     if not controller.addWalletAccount(name = account.getName(), 
+      keyPairName = kpForProcessing.getName(),
       address = account.getAddress(), 
       path = account.getPath(), 
-      addressAccountIsDerivedFrom = kpForProcessing.getDerivedFrom(), 
+      lastUsedDerivationIndex = index,
+      rootWalletMasterKey = kpForProcessing.getDerivedFrom(), 
       publicKey = account.getPubKey(), 
       keyUid = kpForProcessing.getKeyUid(), 
-      accountType = if account.getPath() == PATH_DEFAULT_WALLET: SEED else: GENERATED,
+      accountType = SEED,
       color = account.getColor(), 
       emoji = account.getEmoji()):
         return false
+    index.inc
   return true
 
 proc doMigration(self: ImportingFromKeycardState, controller: Controller) =

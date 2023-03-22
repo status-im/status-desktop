@@ -684,12 +684,12 @@ proc updateKeycardUid*(self: Controller, keyUid: string, keycardUid: string) =
       self.tmpKeycardUid = keycardUid
       info "update keycard uid failed", oldKeycardUid=self.tmpKeycardUid, newKeycardUid=keycardUid
 
-proc addWalletAccount*(self: Controller, name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, 
-    color, emoji: string): bool =
+proc addWalletAccount*(self: Controller, name, keyPairName, address, path: string, lastUsedDerivationIndex: int, 
+  rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): bool =
   if not serviceApplicable(self.walletAccountService):
     return false
-  let err = self.walletAccountService.addWalletAccount(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, 
-    accountType, color, emoji)
+  let err = self.walletAccountService.addWalletAccount(password = "", doPasswordHashing = false, name, keyPairName, 
+    address, path, lastUsedDerivationIndex, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji)
   if err.len > 0:
     info "adding wallet account failed", name=name, path=path
     return false
