@@ -573,9 +573,13 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
     lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
   if lastStepInTheCurrentFlow:
     let exportedEncryptionPubKey = flowEvent.generatedWalletAccount.publicKey
-    self.tmpFlowData.password = if exportedEncryptionPubKey.len > 0: exportedEncryptionPubKey else: self.getPassword()
-    self.tmpFlowData.pin = self.getPin()
-    self.tmpFlowData.keyUid = flowEvent.keyUid
+    if exportedEncryptionPubKey.len > 0:
+      self.tmpFlowData.password = exportedEncryptionPubKey
+      self.tmpFlowData.pin = self.getPin()
+      self.tmpFlowData.keyUid = flowEvent.keyUid
+    else:
+      self.tmpFlowData.password = self.getPassword()
+      self.tmpFlowData.keyUid = singletonInstance.userProfile.getKeyUid()
 
   ## we're trying to sync a keycard state on popup close if:
   ## - shared module is not run from the onboarding flow
