@@ -76,8 +76,8 @@ QtObject:
   proc loadDevices*(self: View) {.slot.} =
     self.delegate.loadDevices()
 
-  proc setName*(self: View, deviceName: string) {.slot.} =
-    self.delegate.setDeviceName(deviceName)
+  proc setInstallationName*(self: View, installationId: string, name: string) {.slot.} =
+    self.delegate.setInstallationName(installationId, name)
 
   proc syncAll*(self: View) {.slot.} =
     self.delegate.syncAllDevices()

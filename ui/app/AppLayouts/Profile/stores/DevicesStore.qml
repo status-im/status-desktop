@@ -18,8 +18,8 @@ QtObject {
         return root.devicesModule.loadDevices()
     }
 
-    function setName(name) {
-        return root.devicesModule.setName(name)
+    function setInstallationName(installationId, name) {
+        return root.devicesModule.setInstallationName(installationId, name)
     }
 
     function syncAll() {

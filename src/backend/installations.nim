@@ -12,6 +12,11 @@ proc setInstallationMetadata*(installationId: string, deviceName: string, device
   }]
   result = callPrivateRPC("setInstallationMetadata".prefix, payload)
 
+proc setInstallationName*(installationId: string, name: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [installationId, name]
+  result = callPrivateRPC("setInstallationName".prefix, payload)
+
 proc getOurInstallations*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("getOurInstallations".prefix, payload)

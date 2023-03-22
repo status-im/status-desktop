@@ -20,6 +20,9 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method updateOrAddDevice*(self: AccessInterface, installation: InstallationDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updateInstallationName*(self: AccessInterface, installationId: string, name: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -35,7 +38,7 @@ method onDevicesLoadingErrored*(self: AccessInterface) {.base.} =
 method loadDevices*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setDeviceName*(self: AccessInterface, name: string) {.base.} =
+method setInstallationName*(self: AccessInterface, installationId: string, name: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method syncAllDevices*(self: AccessInterface) {.base.} =

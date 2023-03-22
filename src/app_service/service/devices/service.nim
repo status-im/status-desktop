@@ -34,6 +34,11 @@ type
     installation*: InstallationDto
 
 type
+  UpdateInstallationNameArgs* = ref object of Args
+    installationId*: string
+    name*: string
+
+type
   DevicesArg* = ref object of Args
     devices*: seq[InstallationDto]
 
@@ -43,6 +48,7 @@ const SIGNAL_DEVICES_LOADED* = "devicesLoaded"
 const SIGNAL_ERROR_LOADING_DEVICES* = "devicesErrorLoading"
 const SIGNAL_LOCAL_PAIRING_EVENT* = "localPairingEvent"
 const SIGNAL_LOCAL_PAIRING_STATUS_UPDATE* = "localPairingStatusUpdate"
+const SIGNAL_INSTALLATION_NAME_UPDATED* = "installationNameUpdated"
 
 QtObject:
   type Service* = ref object of QObject
@@ -105,8 +111,7 @@ QtObject:
       let installations = map(rpcResponse.result.getElems(), proc(x: JsonNode): InstallationDto = x.toInstallationDto())
       self.events.emit(SIGNAL_DEVICES_LOADED, DevicesArg(devices: installations))
     except Exception as e:
-      let errDesription = e.msg
-      error "error loading devices: ", errDesription
+      error "error loading devices: ", desription = e.msg
       self.events.emit(SIGNAL_ERROR_LOADING_DEVICES, Args())
 
   proc getAllDevices*(self: Service): seq[InstallationDto] =
@@ -114,13 +119,20 @@ QtObject:
       let response = status_installations.getOurInstallations()
       return map(response.result.getElems(), proc(x: JsonNode): InstallationDto = x.toInstallationDto())
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
+      error "error: ", desription = e.msg
 
-  proc setDeviceName*(self: Service, name: string) =
-    let installationId = self.settingsService.getInstallationId()
+  proc setInstallationName*(self: Service, installationId: string, name: string) =
     # Once we get more info from `status-go` we may emit success/failed signal from here.
-    discard status_installations.setInstallationMetadata(installationId, name, hostOs)
+    try:
+      let response = status_installations.setInstallationName(installationId, name)
+      if response.error != nil:
+        let e = Json.decode($response.error, RpcError)
+        error "error: ", errorDescription = e.message
+        return
+      let data = UpdateInstallationNameArgs(installationId: installationId, name: name)
+      self.events.emit(SIGNAL_INSTALLATION_NAME_UPDATED, data)
+    except Exception as e:
+      error "error: ", desription = e.msg
 
   proc syncAllDevices*(self: Service) =
     let preferredName = self.settingsService.getPreferredName()

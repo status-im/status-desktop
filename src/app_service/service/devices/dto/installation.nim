@@ -16,7 +16,7 @@ type InstallationMetadata* = object
   deviceType*: string
   fcmToken*: string
 
-type InstallationDto* = object
+type InstallationDto* = ref object
   id*: string
   identity*: string
   version*: int

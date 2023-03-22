@@ -75,12 +75,9 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method setDeviceName*(self: Module, name: string) =
-  self.controller.setDeviceName(name)
-  # in future if we start getting more meaningful response form the `status-go` part, we may
-  # move this call to the `onDeviceNameSet` slot and confirm change on the qml side that way.
-  self.view.deviceSetupChanged()
-
+method setInstallationName*(self: Module, installationId: string, name: string) =
+  self.controller.setInstallationName(installationId, name)
+  
 method syncAllDevices*(self: Module) =
   self.controller.syncAllDevices()
 
@@ -97,6 +94,8 @@ method updateOrAddDevice*(self: Module, installation: InstallationDto) =
     let item = initItem(installation, self.isMyDevice(installation.id))
     self.view.model().addItem(item)
 
+method updateInstallationName*(self: Module, installationId: string, name: string) =
+  self.view.model().updateItemName(installationId, name)
 
 method authenticateUser*(self: Module, keyUid: string) =
   self.controller.authenticateUser(keyUid)
