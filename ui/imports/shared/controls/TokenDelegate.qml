@@ -17,16 +17,19 @@ StatusListItem {
     property alias change24HourPercentage: change24HourPercentageText
 
     property string currentCurrencySymbol
-    property string textColor: changePct24hour === undefined  ? Theme.palette.baseColor1 :
-                               Math.sign(changePct24hour) === 0 ? Theme.palette.baseColor1 :
-                               Math.sign(changePct24hour) === -1 ? Theme.palette.dangerColor1 :
-                                                                           Theme.palette.successColor1
+    property string textColor: modelData.changePct24hour === undefined  ?
+                                   Theme.palette.baseColor1 :
+                                   modelData.changePct24hour === 0 ?
+                                       Theme.palette.baseColor1 :
+                                       modelData.changePct24hour < 0 ?
+                                           Theme.palette.dangerColor1 :
+                                           Theme.palette.successColor1
     property string errorTooltipText_1
     property string errorTooltipText_2
 
-    title: name
-    subTitle: LocaleUtils.currencyAmountToLocaleString(enabledNetworkBalance)
-    asset.name: symbol ? Style.png("tokens/" + symbol) : ""
+    title: modelData.name
+    subTitle: LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
+    asset.name: modelData.symbol ? Style.png("tokens/" + modelData.symbol) : ""
     asset.isImage: true
 
     statusListItemTitleIcons.sourceComponent: StatusFlatRoundButton {
@@ -60,7 +63,7 @@ StatusListItem {
                 id: localeCurrencyBalance
                 anchors.right: parent.right
                 font.pixelSize: 15
-                text: LocaleUtils.currencyAmountToLocaleString(enabledNetworkCurrencyBalance)
+                text: LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkCurrencyBalance)
                 visible: !errorIcon.visible
             }
             Row {
@@ -71,7 +74,7 @@ StatusListItem {
                     id: change24HourText
                     font.pixelSize: 15
                     customColor: root.textColor
-                    text: LocaleUtils.currencyAmountToLocaleString(currencyPrice)
+                    text: LocaleUtils.currencyAmountToLocaleString(modelData.currencyPrice)
                 }
                 Rectangle {
                     width: 1
@@ -82,7 +85,7 @@ StatusListItem {
                     id: change24HourPercentageText
                     font.pixelSize: 15
                     customColor: root.textColor
-                    text: changePct24hour !== "" ? "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2)) : "---"
+                    text: modelData.changePct24hour !== "" ? "%1%".arg(LocaleUtils.numberToLocaleString(modelData.changePct24hour, 2)) : "---"
                 }
             }
         }

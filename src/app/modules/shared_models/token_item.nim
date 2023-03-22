@@ -29,7 +29,7 @@ type
     change24hour: float64
     currencyPrice: CurrencyAmount
     decimals: int
-    pegSymbol: string
+    loading: bool
 
 proc initItem*(
   name, symbol: string,
@@ -53,7 +53,7 @@ proc initItem*(
   change24hour: float64,
   currencyPrice: CurrencyAmount,
   decimals: int,
-  pegSymbol: string,
+  loading: bool = false
 ): Item =
   result.name = name
   result.symbol = symbol
@@ -78,7 +78,7 @@ proc initItem*(
   result.change24hour = change24hour
   result.currencyPrice = currencyPrice
   result.decimals = decimals
-  result.pegSymbol = pegSymbol
+  result.loading = loading
 
 proc `$`*(self: Item): string =
   result = fmt"""AllTokensItem(
@@ -103,8 +103,35 @@ proc `$`*(self: Item): string =
     change24hour: {self.change24hour},
     currencyPrice: {self.currencyPrice},
     decimals: {self.decimals},
-    pegSymbol: {self.pegSymbol},
+    loading: {self.loading},
     ]"""
+
+proc initLoadingItem*(): Item =
+  return initItem(
+    name = "",
+    symbol = "",
+    totalBalance = newCurrencyAmount(),
+    totalCurrencyBalance = newCurrencyAmount(),
+    enabledNetworkBalance = newCurrencyAmount(),
+    enabledNetworkCurrencyBalance = newCurrencyAmount(),
+    visibleForNetwork = false,
+    visibleForNetworkWithPositiveBalance = false,
+    balances = @[],
+    description = "",
+    assetWebsiteUrl = "",
+    builtOn = "",
+    address = "",
+    marketCap = newCurrencyAmount(),
+    highDay = newCurrencyAmount(),
+    lowDay = newCurrencyAmount(),
+    changePctHour = 0,
+    changePctDay = 0,
+    changePct24hour = 0,
+    change24hour = 0,
+    currencyPrice = newCurrencyAmount(),
+    decimals = 0,
+    loading = true
+  )
 
 proc getName*(self: Item): string =
   return self.name
@@ -172,5 +199,5 @@ proc getCurrencyPrice*(self: Item): CurrencyAmount =
 proc getDecimals*(self: Item): int =
   return self.decimals
 
-proc getPegSymbol*(self: Item): string =
-  return self.pegSymbol
+proc getLoading*(self: Item): bool =
+  return self.loading

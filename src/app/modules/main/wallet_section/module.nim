@@ -118,15 +118,10 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
     self.view.setCurrentCurrency(self.controller.getCurrency())
     self.setTotalCurrencyBalance()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED) do(e:Args):
-    self.setTotalCurrencyBalance()
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.setTotalCurrencyBalance()
-    self.view.setTokensLoading(false)
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED) do(e:Args):
-    self.view.setTokensLoading(true)
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
 

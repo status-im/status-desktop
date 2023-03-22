@@ -75,7 +75,6 @@ type
     description*: string
     assetWebsiteUrl*: string
     builtOn*: string
-    pegSymbol*: string
     marketValuesPerCurrency*: Table[string, TokenMarketValuesDto]
 
 type
@@ -95,6 +94,7 @@ type
     derivedfrom*: string
     relatedAccounts*: seq[WalletAccountDto]
     ens*: string
+    assetsLoading*: bool
 
 proc newDto*(
   name: string,
@@ -137,6 +137,7 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("type", result.walletType)
   discard jsonObj.getProp("emoji", result.emoji)
   discard jsonObj.getProp("derived-from", result.derivedfrom)
+  result.assetsLoading = true
 
 proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =
   return self.balance * currencyPrice
@@ -211,7 +212,6 @@ proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("assetWebsiteUrl", result.assetWebsiteUrl)
   discard jsonObj.getProp("builtOn", result.builtOn)
-  discard jsonObj.getProp("pegSymbol", result.pegSymbol)
 
   var marketValuesPerCurrencyObj: JsonNode
   if(jsonObj.getProp("marketValuesPerCurrency", marketValuesPerCurrencyObj)):

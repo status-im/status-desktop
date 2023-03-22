@@ -127,6 +127,7 @@ Item {
                 Layout.fillHeight: true
                 visible: (stack.currentIndex === 2)
 
+                account: RootStore.currentAccount
                 address:  RootStore.currentAccount.mixedcaseAddress
                 networkConnectionStore: root.networkConnectionStore
             }

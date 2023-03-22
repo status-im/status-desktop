@@ -23,6 +23,7 @@ Item {
     property var token: ({})
     property var networkConnectionStore
     /*required*/ property string address: ""
+    property var account
 
     QtObject {
         id: d
@@ -56,8 +57,8 @@ Item {
         secondaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkBalance) : Constants.dummyText
         tertiaryText: token ? LocaleUtils.currencyAmountToLocaleString(token.enabledNetworkCurrencyBalance) : Constants.dummyText
         balances: token && token.balances ? token.balances : null
-        isLoading: RootStore.tokensLoading
-        errorTooltipText: token && token.balances ? networkConnectionStore.getNetworkDownTextForToken(token.balances): ""
+        isLoading: account.assetsLoading
+        errorTooltipText: token && token.balances ? networkConnectionStore.getBlockchainNetworkDownTextForToken(token.balances): ""
         getNetworkColor: function(chainId){
             return RootStore.getNetworkColor(chainId)
         }
@@ -278,19 +279,19 @@ Item {
                 maxWidth: parent.width
                 primaryText: qsTr("Market Cap")
                 secondaryText: token && token.marketCap ? LocaleUtils.currencyAmountToLocaleString(token.marketCap) : Constants.dummyText
-                isLoading: RootStore.tokensLoading
+                isLoading: account.assetsLoading
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day Low")
                 secondaryText: token && token.lowDay ? LocaleUtils.currencyAmountToLocaleString(token.lowDay) : Constants.dummyText
-                isLoading: RootStore.tokensLoading
+                isLoading: account.assetsLoading
             }
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Day High")
                 secondaryText: token && token.highDay ? LocaleUtils.currencyAmountToLocaleString(token.highDay) : Constants.dummyText
-                isLoading: RootStore.tokensLoading
+                isLoading: account.assetsLoading
             }
             Item {
                 Layout.fillWidth: true
@@ -303,7 +304,7 @@ Item {
                 secondaryLabel.customColor: changePctHour === 0 ? Theme.palette.directColor1 :
                                                                   changePctHour < 0 ? Theme.palette.dangerColor1 :
                                                                                       Theme.palette.successColor1
-                isLoading: RootStore.tokensLoading
+                isLoading: account.assetsLoading
             }
             InformationTile {
                 readonly property double changePctDay: token.changePctDay ?? 0
@@ -313,7 +314,7 @@ Item {
                 secondaryLabel.customColor: changePctDay === 0 ? Theme.palette.directColor1 :
                                                                  changePctDay < 0 ? Theme.palette.dangerColor1 :
                                                                                     Theme.palette.successColor1
-                isLoading: RootStore.tokensLoading
+                isLoading: account.assetsLoading
             }
             InformationTile {
                 readonly property double changePct24hour: token.changePct24hour ?? 0
@@ -323,7 +324,7 @@ Item {
                 secondaryLabel.customColor: changePct24hour === 0 ? Theme.palette.directColor1 :
                                                                     changePct24hour < 0 ? Theme.palette.dangerColor1 :
                                                                                           Theme.palette.successColor1
-                isLoading: RootStore.tokensLoading
+                isLoading: account.assetsLoading
             }
         }
 
@@ -369,7 +370,7 @@ Item {
                         elide: Text.ElideRight
                         wrapMode: Text.Wrap
                         textFormat: Qt.RichText
-                        loading: RootStore.tokensLoading
+                        loading: account.assetsLoading
                     }
                     ColumnLayout {
                         id: tagsLayout

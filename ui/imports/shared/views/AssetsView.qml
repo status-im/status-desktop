@@ -33,9 +33,8 @@ Item {
         id: assetListView
         objectName: "assetViewStatusListView"
         anchors.fill: parent
-        // To-do: will try to move the loading tokens to the nim side under this task https://github.com/status-im/status-desktop/issues/9648
-        model: RootStore.tokensLoading || networkConnectionStore.noBlockchainConnWithoutCache ? Constants.dummyModelItems : filteredModel
-        delegate: RootStore.tokensLoading || networkConnectionStore.noBlockchainConnWithoutCache ? loadingTokenDelegate : tokenDelegate
+        model: filteredModel
+        delegate: delegateLoader
     }
 
     SortFilterProxyModel {
@@ -43,36 +42,44 @@ Item {
         sourceModel: account.assets
         filters: [
             ExpressionFilter {
-                expression: visibleForNetworkWithPositiveBalance
+                expression: visibleForNetworkWithPositiveBalance || loading
             }
         ]
+    }
+
+    Component {
+        id: delegateLoader
+        Loader {
+            property var modelData: model
+            property int index: index
+            width: ListView.view.width
+            sourceComponent: loading ? loadingTokenDelegate: tokenDelegate
+        }
     }
 
     Component {
         id: loadingTokenDelegate
         LoadingTokenDelegate {
             objectName: "AssetView_LoadingTokenDelegate_" + index
-            width: ListView.view.width
         }
     }
 
     Component {
         id: tokenDelegate
         TokenDelegate {
-            objectName: "AssetView_TokenListItem_" + symbol
-            readonly property string balance: "%1".arg(enabledNetworkBalance.amount) // Needed for the tests
-            errorTooltipText_1: networkConnectionStore.getBlockchainNetworkDownTextForToken(balances)
+            objectName: "AssetView_TokenListItem_" + modelData.symbol
+            readonly property string balance: "%1".arg(modelData.enabledNetworkBalance.amount) // Needed for the tests
+            errorTooltipText_1: networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances)
             errorTooltipText_2: networkConnectionStore.getMarketNetworkDownText()
-            width: ListView.view.width
             onClicked: {
-                RootStore.getHistoricalDataForToken(symbol, RootStore.currencyStore.currentCurrency)
+                RootStore.getHistoricalDataForToken(modelData.symbol, RootStore.currencyStore.currentCurrency)
                 d.selectedAssetIndex = index
-                assetClicked(model)
+                assetClicked(modelData)
             }
             Component.onCompleted: {
                 // on Model reset if the detail view is shown, update the data in background.
                 if(root.assetDetailsLaunched && index === d.selectedAssetIndex)
-                    assetClicked(model)
+                    assetClicked(modelData)
             }
         }
     }

@@ -109,8 +109,7 @@ QtObject:
           address = Address.fromHex("0x0000000000000000000000000000000000000000"),
           symbol = network.nativeCurrencySymbol,
           decimals = network.nativeCurrencyDecimals,
-          hasIcon = false,
-          pegSymbol = ""
+          hasIcon = false
         )
 
         if not self.tokensToAddressesMap.hasKey(network.nativeCurrencySymbol):
@@ -246,14 +245,6 @@ QtObject:
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64) =
     let cacheKey = getTokenPriceCacheKey(crypto, fiat)
     self.priceCache.set(cacheKey, price)
-  
-  proc getTokenPegSymbol*(self: Service, symbol: string): string = 
-    for _, tokens in self.tokens:
-      for token in tokens:
-        if token.symbol == symbol:
-          return token.pegSymbol
-    
-    return ""
 
 # History Data
   proc tokenHistoricalDataResolved*(self: Service, response: string) {.slot.} =

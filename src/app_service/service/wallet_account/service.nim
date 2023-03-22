@@ -28,12 +28,10 @@ logScope:
 const SIGNAL_WALLET_ACCOUNT_SAVED* = "walletAccount/accountSaved"
 const SIGNAL_WALLET_ACCOUNT_DELETED* = "walletAccount/accountDeleted"
 const SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED* = "walletAccount/currencyUpdated"
-const SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED* = "walletAccount/tokenVisibilityUpdated"
 const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
 const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddressesReady"
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
-const SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED* = "walletAccount/tokenFetching"
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED* = "walletAccount/derivedAddressDetailsFetched"
 
 const SIGNAL_KEYCARDS_SYNCHRONIZED* = "keycardsSynchronized"
@@ -536,6 +534,11 @@ QtObject:
       data.error = e.msg
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED, data)
 
+  proc updateAssetsLoadingState(self: Service, wAddress: string, loading: bool) =
+    withLock self.walletAccountsLock:
+      if self.walletAccounts.hasKey(wAddress):
+        self.walletAccounts[wAddress].assetsLoading = loading
+
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
     try:
       var visibleSymbols: seq[string]
@@ -555,6 +558,10 @@ QtObject:
             tokens = map(tokensDetailsObj.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
             tokens.sort(priorityTokenCmp)
             data.accountsTokens[wAddress] = tokens
+
+            # set assetsLoading to false once the tokens are loaded
+            self.updateAssetsLoadingState(wAddress, false)
+
             if storeResult:
               self.storeTokensForAccount(wAddress, tokens)
               self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
@@ -580,7 +587,11 @@ QtObject:
       accounts: accounts,
       storeResult: store
     )
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED, Args())
+
+    # set assetsLoading to true as the tokens are being loaded
+    for waddress in accounts:
+      self.updateAssetsLoadingState(waddress, true)
+
     self.threadpool.start(arg)
 
   proc getCurrentCurrencyIfEmpty(self: Service, currency = ""): string =

@@ -690,7 +690,6 @@ QtObject {
     }
 
     readonly property string dummyText: "Dummy"
-    readonly property int dummyModelItems: 25
 
     readonly property string windows: "windows"
     readonly property string linux: "linux"

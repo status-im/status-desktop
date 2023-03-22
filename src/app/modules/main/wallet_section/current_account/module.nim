@@ -6,7 +6,10 @@ import ../../../../../app_service/service/token/service as token_service
 import ../../../../../app_service/service/currency/service as currency_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
+import ../../../../../app_service/service/node/service as node_service
+import ../../../../../app_service/service/network_connection/service as network_connection
 import ../../../shared_models/currency_amount_utils
+import ../../../shared_models/currency_amount
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
 import ../../../shared_models/token_utils
@@ -52,6 +55,13 @@ proc newModule*(
 method delete*(self: Module) =
   self.view.delete
 
+proc setLoadingAssets(self: Module) =
+  var loadingTokenItems: seq[token_item.Item]
+  for i in 0 ..< 25:
+    loadingTokenItems.add(token_item.initLoadingItem())
+  self.view.getAssetsModel().setItems(loadingTokenItems)
+  self.view.setCurrencyBalance(newCurrencyAmount())
+
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionCurrent", newQVariant(self.view))
 
@@ -70,9 +80,6 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
     self.switchAccount(self.currentAccountIndex)
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED) do(e:Args):
-    self.switchAccount(self.currentAccountIndex)
-
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.switchAccount(self.currentAccountIndex)
 
@@ -82,6 +89,15 @@ method load*(self: Module) =
   
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.onCurrencyFormatsUpdated()
+
+  self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
+    if self.view.getAssetsModel().getCount() == 0:
+      self.setLoadingAssets()
+
+  self.events.on(SIGNAL_CONNECTION_UPDATE) do(e:Args):
+    let args = NetworkConnectionsArgs(e)
+    if args.website == BLOCKCHAINS and args.completelyDown and self.view.getAssetsModel().getCount() == 0:
+      self.setLoadingAssets()
 
   self.controller.init()
   self.view.load()
@@ -157,7 +173,11 @@ method switchAccount*(self: Module, accountIndex: int) =
       )
 
     self.view.setData(accountItem)
-    self.setAssetsAndBalance(walletAccount.tokens)
+
+    if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
+      self.setLoadingAssets()
+    else:
+      self.setAssetsAndBalance(walletAccount.tokens)
 
 method update*(self: Module, address: string, accountName: string, color: string, emoji: string) =
   self.controller.update(address, accountName, color, emoji)
@@ -166,12 +186,16 @@ proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[Wall
   let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
   if not accountsTokens.contains(walletAccount.address):
     return
+  self.view.setAssetsLoading(false)
   self.setAssetsAndBalance(accountsTokens[walletAccount.address])
 
 proc onCurrencyFormatsUpdated(self: Module) =
   # Update assets
   let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
-  self.setAssetsAndBalance(walletAccount.tokens)
+  if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
+      self.setLoadingAssets()
+  else:
+    self.setAssetsAndBalance(walletAccount.tokens)
 
 method findTokenSymbolByAddress*(self: Module, address: string): string =
   return self.controller.findTokenSymbolByAddress(address)

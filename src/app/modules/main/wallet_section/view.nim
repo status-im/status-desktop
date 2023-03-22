@@ -11,7 +11,6 @@ QtObject:
       totalCurrencyBalance: CurrencyAmount
       signingPhrase: string
       isMnemonicBackedUp: bool
-      tokensLoading: bool
       tmpAmount: float  # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
       tmpSymbol: string # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
 
@@ -24,7 +23,6 @@ QtObject:
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.delegate = delegate
-    result.tokensLoading = true
     result.setup()
 
   proc load*(self: View) =
@@ -52,15 +50,6 @@ QtObject:
   QtProperty[QVariant] totalCurrencyBalance:
     read = getTotalCurrencyBalance
     notify = totalCurrencyBalanceChanged
-
-  proc tokensLoadingChanged*(self: View) {.signal.}
-
-  proc getTokensLoading(self: View): QVariant {.slot.} =
-    return newQVariant(self.tokensLoading)
-
-  QtProperty[QVariant] tokensLoading:
-    read = getTokensLoading
-    notify = tokensLoadingChanged
 
   proc getSigningPhrase(self: View): QVariant {.slot.} =
     return newQVariant(self.signingPhrase)
@@ -102,10 +91,6 @@ QtObject:
     self.tmpAmount = 0
     self.tmpSymbol = "ERROR"
     return newQVariant(currencyAmount)
-
-  proc setTokensLoading*(self: View, loading: bool) =
-    self.tokensLoading = loading
-    self.tokensLoadingChanged()
 
   proc setData*(self: View, currency, signingPhrase: string, mnemonicBackedUp: bool) =
     self.currentCurrency = currency

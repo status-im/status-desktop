@@ -11,8 +11,6 @@ QtObject {
 
     readonly property var blockchainNetworksDown: networkConnectionModule.blockchainNetworkConnection.chainIds.split(";")
     readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length <  networksModule.all.count
-    readonly property bool noBlockchainConnWithoutCache: (!mainModule.isOnline || networkConnectionModule.blockchainNetworkConnection.completelyDown) &&
-                                                !walletSection.tokensLoading && walletSectionCurrent.assets.count === 0
 
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (mainModule.isOnline &&
                                         (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
@@ -29,7 +27,7 @@ QtObject {
 
 
     readonly property bool tokenBalanceNotAvailable: ((!mainModule.isOnline || networkConnectionModule.blockchainNetworkConnection.completelyDown) &&
-                                            !walletSection.tokensLoading && walletSectionCurrent.assets.count === 0) ||
+                                            !walletSectionCurrent.assetsLoading && walletSectionCurrent.assets.count === 0) ||
                                              (networkConnectionModule.marketValuesNetworkConnection.completelyDown &&
                                               !networkConnectionModule.marketValuesNetworkConnection.withCache)
     readonly property string tokenBalanceNotAvailableText: !mainModule.isOnline ?
@@ -59,7 +57,7 @@ QtObject {
 
     function getMarketNetworkDownText() {
         if(networkConnectionModule.blockchainNetworkConnection.completelyDown &&
-                !walletSection.tokensLoading && walletSectionCurrent.assets.count === 0 &&
+                !walletSectionCurrent.assetsLoading && walletSectionCurrent.assets.count === 0 &&
                 networkConnectionModule.marketValuesNetworkConnection.completelyDown &&
                 !networkConnectionModule.marketValuesNetworkConnection.withCache)
             return qsTr("Market values and token balances use CryptoCompare/CoinGecko and POKT/Infura which are all currently unavailable.")
