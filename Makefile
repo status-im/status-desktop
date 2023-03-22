@@ -181,23 +181,18 @@ ifneq ($(detected_OS),Windows)
    NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
   endif
  endif
- # We manually link QZXing to Nim application,
- # because static libraries are not compiled into other static libraries (DOtherSide).
- QZXING := vendor/DOtherSide/build/qzxing/libqzxing.a
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
  # order matters here, due to "-Wl,-as-needed"
- NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(QZXING)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
+ NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
  ifneq ($(QML_DEBUG), false)
-  QZXING := vendor/DOtherSide/build/qzxing/Debug/qzxing.lib
   DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
  else
-  QZXING := vendor/DOtherSide/build/qzxing/Release/qzxing.lib
   DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
  endif
  DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
- NIM_PARAMS += -L:$(DOTHERSIDE) -L:$(QZXING)
+ NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
 
@@ -258,6 +253,11 @@ $(DOTHERSIDE): | deps
 			-DQZXING_USE_DECODER_QR_CODE=ON \
 			.. $(HANDLE_OUTPUT) && \
 		$(DOTHERSIDE_BUILD_CMD)
+
+QZXING := vendor/DOtherSide/build/qzxing/libqzxing.dylib
+QZXING_LIBDIR := $(shell pwd)/$(shell dirname "$(QZXING)")
+export QZXING_LIBDIR
+# We don't create qzxing target, it's build as DOtherSide cmake subdirectory
 
 STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
@@ -393,12 +393,16 @@ endif
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
+		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(QZXING_LIBDIR)" --passL:"-lqzxing" --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
 		(([[ $(detected_OS) = Darwin ]] && \
 		install_name_tool -change \
 			libstatus.dylib \
 			@rpath/libstatus.dylib \
+			bin/nim_status_client && \
+		install_name_tool -change \
+			$(QZXING) \
+			@rpath/libqzxing.dylib \
 			bin/nim_status_client && \
 		install_name_tool -change \
 			libkeycard.dylib \
@@ -596,7 +600,7 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp bin/nim_windows_launcher.exe $(OUTPUT)/Status.exe
 	rcedit $(OUTPUT)/bin/Status.exe --set-icon $(OUTPUT)/resources/status.ico
 	rcedit $(OUTPUT)/Status.exe --set-icon $(OUTPUT)/resources/status.ico
-	cp $(DOTHERSIDE) $(STATUSGO) $(STATUSKEYCARDGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
+	cp $(DOTHERSIDE) $(QZXING) $(STATUSGO) $(STATUSKEYCARDGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
 	cp "$(shell which libgcc_s_seh-1.dll)" $(OUTPUT)/bin/
 	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
 	echo -e $(BUILD_MSG) "deployable folder"
@@ -661,7 +665,7 @@ ICON_TOOL := node_modules/.bin/fileicon
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(QZXING_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)" \
 	./bin/nim_status_client
 
 run-macos: nim_status_client
@@ -676,7 +680,7 @@ run-macos: nim_status_client
 
 run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
-	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
+	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(QZXING_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
 tests-nim-linux: | $(DOTHERSIDE)
