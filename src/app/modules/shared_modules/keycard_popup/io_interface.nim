@@ -4,8 +4,6 @@ from ../../../../app_service/service/keycard/service import KeycardEvent, CardMe
 from ../../../../app_service/service/wallet_account/service as wallet_account_service import WalletTokenDto
 import ../../shared_models/keypair_item
 
-const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED_AND_WALLET_ADDRESS_GENERATED* = "sharedKeycarModuleUserAuthenticatedAndWalletAddressGenerated"
-
 const SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP* = "sharedKeycarModuleDisplayPopup"
 const SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED* = "sharedKeycarModuleFlowTerminated"
 const SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER* = "sharedKeycarModuleAuthenticateUser"
@@ -24,7 +22,7 @@ const SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED* = "sharedKeycarModul
 ## result, when authentication gets done `SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED` signal with properly set `SharedKeycarModuleArgs` 
 ## and props there will be emitted:
 ## -- `uniqueIdentifier` - will be the same as one used for running authentication process
-## -- in case of success of a regular user authentication `password` will be sent, otherwise it will be empty
+## -- in case of success of a regular user authentication `keyUid`, `password` will be sent, otherwise it will be empty
 ## -- in case of success of a keycard user authentication `keyUid`, `pin` and `password` will be sent, otherwise they will be empty
 ##
 ## TLDR: when you need to authenticate user, from the module where it's needed you have to send `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER`
@@ -48,13 +46,6 @@ type
   SharedKeycarModuleAuthenticationArgs* = ref object of SharedKeycarModuleBaseArgs
     keyUid*: string
 
-type
-  SharedKeycarModuleUserAuthenticatedAndWalletAddressGeneratedArgs* = ref object of Args
-    uniqueIdentifier*: string
-    address*: string
-    publicKey*: string
-    derivedFrom*: string
-    password*: string
 
 type FlowType* {.pure.} = enum
   General = "General"
@@ -70,7 +61,6 @@ type FlowType* {.pure.} = enum
   ChangeKeycardPin = "ChangeKeycardPin"
   ChangeKeycardPuk = "ChangeKeycardPuk"
   ChangePairingCode = "ChangePairingCode"
-  AuthenticateAndDeriveAccountAddress = "AuthenticateAndDeriveAccountAddress"
   CreateCopyOfAKeycard = "CreateCopyOfAKeycard"
 
 # For the following flows we don't run card syncing.
@@ -82,8 +72,7 @@ const FlowsWeShouldNotTryAKeycardSyncFor* = @[
   FlowType.SetupNewKeycardNewSeedPhrase,
   FlowType.SetupNewKeycardOldSeedPhrase, 
   FlowType.ImportFromKeycard, 
-  FlowType.Authentication,
-  FlowType.AuthenticateAndDeriveAccountAddress
+  FlowType.Authentication
 ]
 
 type
