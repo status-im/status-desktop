@@ -30,9 +30,11 @@ const SIGNAL_WALLET_ACCOUNT_DELETED* = "walletAccount/accountDeleted"
 const SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED* = "walletAccount/currencyUpdated"
 const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
 const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
-const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddressesReady"
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
-const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED* = "walletAccount/derivedAddressDetailsFetched"
+const SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED* = "walletAccount/tokenFetching"
+const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED* = "walletAccount/derivedAddressesFetched"
+const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED* = "walletAccount/derivedAddressesFromMnemonicFetched"
+const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* = "walletAccount/addressDetailsFetched"
 
 const SIGNAL_KEYCARDS_SYNCHRONIZED* = "keycardsSynchronized"
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
@@ -83,6 +85,7 @@ type WalletAccountUpdated* = ref object of Args
   account*: WalletAccountDto
 
 type DerivedAddressesArgs* = ref object of Args
+  uniqueId*: string 
   derivedAddresses*: seq[DerivedAddressDto]
   error*: string
 
@@ -264,7 +267,7 @@ QtObject:
 
   proc getIndex*(self: Service, address: string): int =
     let accounts = self.getWalletAccounts()
-    for i in 0..accounts.len:
+    for i in 0 ..< accounts.len:
       if(accounts[i].address == address):
         return i
 
@@ -308,101 +311,77 @@ QtObject:
     self.buildAllTokens(@[newAccount.address], store = true)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
-  proc addOrReplaceWalletAccount(self: Service, name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, 
-    color, emoji: string, walletDefaultAccount = false, chatDefaultAccount = false): string =
+  ## if password is not provided local keystore file won't be created
+  proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, keyPairName, address, path: string, 
+    lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): string =
     try:
-      let response = status_go_accounts.saveAccount(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, 
-        accountType, color, emoji, walletDefaultAccount, chatDefaultAccount)
+      var response: RpcResponse[JsonNode]
+      if password.len == 0:
+        response = status_go_accounts.addAccountWithoutKeystoreFileCreation(name, keyPairName, address, path, lastUsedDerivationIndex, 
+          rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji)
+      else:
+        var finalPassword = password
+        if doPasswordHashing:
+          finalPassword = utils.hashPassword(password)
+        response = status_go_accounts.addAccount(finalPassword, name, keyPairName, address, path, 
+          lastUsedDerivationIndex, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji)
       if not response.error.isNil:
-        return "(" & $response.error.code & ") " & response.error.message
+        error "status-go error", procName="addWalletAccount", errCode=response.error.code, errDesription=response.error.message
+        return response.error.message
+      self.addNewAccountToLocalStore()
+      return ""
     except Exception as e:
-      error "error: ", procName="addWalletAccount", errName = e.name, errDesription = e.msg
-      return "error: " & e.msg
+      error "error: ", procName="addWalletAccount", errName=e.name, errDesription=e.msg
+      return e.msg
 
-  proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string, 
-    path: string, derivedFrom: string, skipPasswordVerification: bool): string =
+  proc addNewPrivateKeyAccount*(self: Service, privateKey, password: string, doPasswordHashing: bool, name, keyPairName, address, path: string, 
+    lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): string =
+    if password.len == 0:
+      error "for adding new private key account, password must be provided"
+      return
+    var finalPassword = password
+    if doPasswordHashing:
+      finalPassword = utils.hashPassword(password)
     try:
-      if skipPasswordVerification:
-        discard backend.generateAccountWithDerivedPathPasswordVerified(
-          password,
-          accountName,
-          color,
-          emoji,
-          path,
-          derivedFrom)
-      else:
-        discard backend.generateAccountWithDerivedPath(
-          utils.hashPassword(password),
-          accountName,
-          color,
-          emoji,
-          path,
-          derivedFrom)
+      let response = status_go_accounts.importPrivateKey(privateKey, finalPassword)
+      if not response.error.isNil:
+        error "status-go error importing private key", procName="addNewPrivateKeyAccount", errCode=response.error.code, errDesription=response.error.message
+        return response.error.message
+      return self.addWalletAccount(password, doPasswordHashing, name, keyPairName, address, path, lastUsedDerivationIndex, rootWalletMasterKey, publicKey, 
+        keyUid, accountType, color, emoji)
     except Exception as e:
-      return fmt"Error generating new account: {e.msg}"
+      error "error: ", procName="addNewPrivateKeyAccount", errName=e.name, errDesription=e.msg
+      return e.msg
 
-    self.addNewAccountToLocalStore()
-
-  proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, 
-    emoji: string, skipPasswordVerification: bool): string =
+  proc addNewSeedPhraseAccount*(self: Service, seedPhrase, password: string, doPasswordHashing: bool, name, keyPairName, address, path: string, 
+    lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): string =
+    if password.len == 0:
+      error "for adding new seed phrase account, password must be provided"
+      return
+    var finalPassword = password
+    if doPasswordHashing:
+      finalPassword = utils.hashPassword(password)
     try:
-      if skipPasswordVerification:
-        discard backend.addAccountWithPrivateKeyPasswordVerified(
-          privateKey,
-          password,
-          accountName,
-          color,
-          emoji)
-      else:
-        discard backend.addAccountWithPrivateKey(
-          privateKey,
-          utils.hashPassword(password),
-          accountName,
-          color,
-          emoji)
+      let response = status_go_accounts.importMnemonic(seedPhrase, finalPassword)
+      if not response.error.isNil:
+        error "status-go error importing private key", procName="addNewSeedPhraseAccount", errCode=response.error.code, errDesription=response.error.message
+        return response.error.message
+      return self.addWalletAccount(password, doPasswordHashing, name, keyPairName, address, path, lastUsedDerivationIndex, rootWalletMasterKey, publicKey, 
+        keyUid, accountType, color, emoji)
     except Exception as e:
-      return fmt"Error adding account with private key: {e.msg}"
+      error "error: ", procName="addNewSeedPhraseAccount", errName=e.name, errDesription=e.msg
+      return e.msg
 
-    self.addNewAccountToLocalStore()
-
-  proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, 
-    emoji: string, path: string, skipPasswordVerification: bool): string =
+  proc getRandomMnemonic*(self: Service): string =
     try:
-      if skipPasswordVerification:
-        discard backend.addAccountWithMnemonicAndPathPasswordVerified(
-          mnemonic,
-          password,
-          accountName,
-          color,
-          emoji,
-          path
-        )
-      else:
-        discard backend.addAccountWithMnemonicAndPath(
-          mnemonic,
-          utils.hashPassword(password),
-          accountName,
-          color,
-          emoji,
-          path
-        )
+      let response = status_go_accounts.getRandomMnemonic()
+      if not response.error.isNil:
+        error "status-go error", procName="getRandomMnemonic", errCode=response.error.code, errDesription=response.error.message
+        return ""
+      return response.result.getStr
     except Exception as e:
-      return fmt"Error adding account with mnemonic: {e.msg}"
-
-    self.addNewAccountToLocalStore()
-
-  proc addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): string =
-    try:
-      discard backend.addAccountWatch(
-        address,
-        accountName,
-        color,
-        emoji
-      )
-    except Exception as e:
-      return fmt"Error adding account with mnemonic: {e.msg}"
-
-    self.addNewAccountToLocalStore()
+      error "error: ", procName="getRandomMnemonic", errName=e.name, errDesription=e.msg
+      return ""
 
   proc deleteAccount*(self: Service, address: string, password = "") =
     try:
@@ -437,102 +416,83 @@ QtObject:
     if not self.walletAccountsContainsAddress(address):
       error "account's address is not among known addresses: ", address=address
       return
-    var account = self.getAccountByAddress(address)
-    let res = self.addOrReplaceWalletAccount(accountName, account.address, account.path, account.derivedfrom, 
-      account.publicKey, account.keyUid, account.walletType, color, emoji, account.isWallet, account.isChat)
-    if res.len == 0:
+    try:
+      var account = self.getAccountByAddress(address)
+      let response = status_go_accounts.updateAccount(accountName, account.keyPairName, account.address, account.path, account.lastUsedDerivationIndex,
+        account.derivedfrom, account.publicKey, account.keyUid, account.walletType, color, emoji, account.isWallet, account.isChat)
+      if not response.error.isNil:
+        error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
+        return
       account.name = accountName
       account.color = color
       account.emoji = emoji
       self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
+    except Exception as e:
+      error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
 
-  proc getDerivedAddress*(self: Service, password: string, derivedFrom: string, path: string, hashPassword: bool)=
-    let arg = GetDerivedAddressTaskArg(
+  proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string, paths: seq[string], hashPassword: bool)=
+    let arg = FetchDerivedAddressesTaskArg(
       password: if hashPassword: utils.hashPassword(password) else: password,
       derivedFrom: derivedFrom,
-      path: path,
-      tptr: cast[ByteAddress](getDerivedAddressTask),
+      paths: paths,
+      tptr: cast[ByteAddress](fetchDerivedAddressesTask),
       vptr: cast[ByteAddress](self.vptr),
-      slot: "setDerivedAddress",
+      slot: "onDerivedAddressesFetched",
     )
     self.threadpool.start(arg)
 
-  proc getDerivedAddressList*(self: Service, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool)=
-    let arg = GetDerivedAddressesTaskArg(
-      password: if hashPassword: utils.hashPassword(password) else: password,
-      derivedFrom: derivedFrom,
-      path: path,
-      pageSize: pageSize,
-      pageNumber: pageNumber,
-      tptr: cast[ByteAddress](getDerivedAddressesTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "setDerivedAddresses",
-    )
-    self.threadpool.start(arg)
-
-  proc getDerivedAddressListForMnemonic*(self: Service, mnemonic: string, path: string, pageSize: int, pageNumber: int) =
-    let arg = GetDerivedAddressesForMnemonicTaskArg(
-      mnemonic: mnemonic,
-      path: path,
-      pageSize: pageSize,
-      pageNumber: pageNumber,
-      tptr: cast[ByteAddress](getDerivedAddressesForMnemonicTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "setDerivedAddresses",
-    )
-    self.threadpool.start(arg)
-
-  proc getDerivedAddressForPrivateKey*(self: Service, privateKey: string) =
-    let arg = GetDerivedAddressForPrivateKeyTaskArg(
-      privateKey: privateKey,
-      tptr: cast[ByteAddress](getDerivedAddressForPrivateKeyTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "setDerivedAddresses",
-    )
-    self.threadpool.start(arg)
-
-  proc setDerivedAddresses*(self: Service, derivedAddressesJson: string) {.slot.} =
-    let response = parseJson(derivedAddressesJson)
+  proc onDerivedAddressesFetched*(self: Service, jsonString: string) {.slot.} =
+    let response = parseJson(jsonString)
     var derivedAddress: seq[DerivedAddressDto] = @[]
     derivedAddress = response["derivedAddresses"].getElems().map(x => x.toDerivedAddressDto())
     let error = response["error"].getStr()
-
-    # emit event
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY, DerivedAddressesArgs(
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED, DerivedAddressesArgs(
       derivedAddresses: derivedAddress,
       error: error
     ))
 
-  proc setDerivedAddress*(self: Service, derivedAddressesJson: string) {.slot.} =
-    let response = parseJson(derivedAddressesJson)
-    let derivedAddress = response["derivedAddresses"].toDerivedAddressDto()
-    let error = response["error"].getStr()
-    # emit event
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY, DerivedAddressesArgs(
-      derivedAddresses: @[derivedAddress],
-      error: error
-    ))
-
-  proc fetchDerivedAddressDetails*(self: Service, address: string) =
-    let arg = FetchDerivedAddressDetailsTaskArg(
-      address: address,
-      tptr: cast[ByteAddress](fetchDerivedAddressDetailsTask),
+  proc fetchDerivedAddressesForMnemonic*(self: Service, mnemonic: string, paths: seq[string])=
+    let arg = FetchDerivedAddressesForMnemonicTaskArg(
+      mnemonic: mnemonic,
+      paths: paths,
+      tptr: cast[ByteAddress](fetchDerivedAddressesForMnemonicTask),
       vptr: cast[ByteAddress](self.vptr),
-      slot: "onDerivedAddressDetailsFetched",
+      slot: "onDerivedAddressesForMnemonicFetched",
     )
     self.threadpool.start(arg)
 
-  proc onDerivedAddressDetailsFetched*(self: Service, jsonString: string) {.slot.} =
+  proc onDerivedAddressesForMnemonicFetched*(self: Service, jsonString: string) {.slot.} =
+    let response = parseJson(jsonString)
+    var derivedAddress: seq[DerivedAddressDto] = @[]
+    derivedAddress = response["derivedAddresses"].getElems().map(x => x.toDerivedAddressDto())
+    let error = response["error"].getStr()
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED, DerivedAddressesArgs(
+      derivedAddresses: derivedAddress,
+      error: error
+    ))
+
+  proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[string]) =
+    let arg = FetchDetailsForAddressesTaskArg(
+      uniqueId: uniqueId,
+      addresses: addresses,
+      tptr: cast[ByteAddress](fetchDetailsForAddressesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAddressDetailsFetched",
+    )
+    self.threadpool.start(arg)
+
+  proc onAddressDetailsFetched*(self: Service, jsonString: string) {.slot.} =
     var data = DerivedAddressesArgs()
     try:
       let response = parseJson(jsonString)
+      data.uniqueId = response["uniqueId"].getStr()
       let addrDto = response{"details"}.toDerivedAddressDto()
       data.derivedAddresses.add(addrDto)
       data.error = response["error"].getStr()
     except Exception as e:
-      error "error: ", procName="getDerivedAddressDetails", errName = e.name, errDesription = e.msg
+      error "error: ", procName="fetchAddressDetails", errName = e.name, errDesription = e.msg
       data.error = e.msg
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_DETAILS_FETCHED, data)
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED, data)
 
   proc updateAssetsLoadingState(self: Service, wAddress: string, loading: bool) =
     withLock self.walletAccountsLock:
@@ -808,13 +768,6 @@ QtObject:
     except Exception as e:
       error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
     return false
-
-  proc addWalletAccount*(self: Service, name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, 
-    color, emoji: string): string =
-    result = self.addOrReplaceWalletAccount(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, 
-      accountType, color, emoji)
-    if result.len == 0:
-      self.addNewAccountToLocalStore()
 
   proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto]) =
     if keycardActions.len == 0:

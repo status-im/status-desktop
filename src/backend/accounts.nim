@@ -1,5 +1,6 @@
 import json, json_serialization, chronicles, strutils
 import ./core, ../app_service/common/utils
+import ../app_service/common/account_constants
 import ./response_type
 
 import status_go
@@ -25,22 +26,64 @@ proc deleteAccount*(address: string, password: string): RpcResponse[JsonNode] {.
   let payload = %* [address, password]
   return core.callPrivateRPC("accounts_deleteAccount", payload)
 
-proc saveAccount*(name, address, path, addressAccountIsDerivedFrom, publicKey, keyUid, accountType, color, emoji: string,
-  walletDefaultAccount: bool, chatDefaultAccount: bool): 
+## Adds a new account and creates a Keystore file if password is provided, otherwise it only creates a new account
+proc addAccount*(password, name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
+  keyUid, accountType, color, emoji: string): 
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [
+    password,
+    {
+      "address": address,
+      "key-uid": keyUid,
+      "wallet": false, #this refers to the default wallet account and it's set at the moment of Status chat account creation, cannot be changed later
+      "chat": false, #this refers to Status chat account, set when the Status account is created, cannot be changed later
+      "type": accountType,
+      #"storage" present on the status-go side, but we don't use it
+      "path": path,
+      "public-key": publicKey,
+      "name": name,
+      "emoji": emoji,
+      "color": color,
+      #"hidden" present on the status-go side, but we don't use it
+      "derived-from": rootWalletMasterKey,
+      #"clock" we leave this empty, if needed should be set on the status-go side
+      #"removed" present on the status-go side, used for synchronization, no need to set it here
+      "keypair-name": keyPairName,
+      "last-used-derivation-index": lastUsedDerivationIndex
+    }
+  ]
+  return core.callPrivateRPC("accounts_addAccount", payload)
+
+## Adds a new account without creating a Keystore file
+proc addAccountWithoutKeystoreFileCreation*(name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
+  keyUid, accountType, color, emoji: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  return addAccount(password = "", name, keyPairName, address, path, lastUsedDerivationIndex, rootWalletMasterKey, publicKey, 
+    keyUid, accountType, color, emoji)
+
+## Updates either regular or keycard account, without interaction to a Keystore file
+proc updateAccount*(name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
+  keyUid, accountType, color, emoji: string, walletDefaultAccount: bool, chatDefaultAccount: bool):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [
     [{
-      "name": name,
       "address": address,
-      "path": path,
-      "derived-from": addressAccountIsDerivedFrom,
-      "public-key": publicKey,
       "key-uid": keyUid,
-      "type": accountType,
-      "color": color,
-      "emoji": emoji,
       "wallet": walletDefaultAccount,
-      "chat": chatDefaultAccount
+      "chat": chatDefaultAccount,
+      "type": accountType,
+      #"storage" present on the status-go side, but we don't use it
+      "path": path,
+      "public-key": publicKey,
+      "name": name,
+      "emoji": emoji,
+      "color": color,
+      #"hidden" present on the status-go side, but we don't use it
+      "derived-from": rootWalletMasterKey,
+      #"clock" we leave this empty, if needed should be set on the status-go side
+      #"removed" present on the status-go side, used for synchronization, no need to set it here
+      "keypair-name": keyPairName,
+      "last-used-derivation-index": lastUsedDerivationIndex
     }]
   ]
   return core.callPrivateRPC("accounts_saveAccounts", payload)
@@ -130,6 +173,10 @@ proc isAlias*(value: string): bool =
   let r = Json.decode(response, JsonNode)
   return r["result"].getBool()
 
+proc getRandomMnemonic*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  return core.callPrivateRPC("accounts_getRandomMnemonic", payload)
+
 proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
     "mnemonicPhrase": mnemonic,
@@ -144,6 +191,12 @@ proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.rais
     error "error doing rpc request", methodName = "multiAccountImportMnemonic", exception=e.msg
     raise newException(RpcException, e.msg)
 
+## Imports a new mnemonic and creates local keystore file.
+proc importMnemonic*(mnemonic, password: string): 
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [mnemonic, password]
+  return core.callPrivateRPC("accounts_importMnemonic", payload)
+
 proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
     "mnemonicPhrase": mnemonic,
@@ -156,6 +209,21 @@ proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error doing rpc request", methodName = "createAccountFromMnemonicAndDeriveAccountsForPaths", exception=e.msg
+    raise newException(RpcException, e.msg)
+
+## Imports a new private key and creates local keystore file.
+proc importPrivateKey*(privateKey, password: string): 
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [privateKey, password]
+  return core.callPrivateRPC("accounts_importPrivateKey", payload)
+
+proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* {"privateKey": privateKey}
+  try:
+    let response = status_go.createAccountFromPrivateKey($payload)
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error doing rpc request", methodName = "createAccountFromPrivateKey", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc deriveAccounts*(accountId: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -323,25 +391,17 @@ proc setDisplayName*(displayName: string): RpcResponse[JsonNode] {.raises: [Exce
   let payload = %* [displayName]
   result = core.callPrivateRPC("setDisplayName".prefix, payload)
 
-proc getDerivedAddress*(password: string, derivedFrom: string, path: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [password, derivedFrom, path]
-  result = core.callPrivateRPC("wallet_getDerivedAddressForPath", payload)
+proc getDerivedAddresses*(password: string, derivedFrom: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [password, derivedFrom, paths]
+  result = core.callPrivateRPC("wallet_getDerivedAddresses", payload)
 
-proc getDerivedAddressList*(password: string, derivedFrom: string, path: string, pageSize: int = 0, pageNumber: int = 6,): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [password, derivedFrom, path, pageSize, pageNumber ]
-  result = core.callPrivateRPC("wallet_getDerivedAddressesForPath", payload)
+proc getDerivedAddressesForMnemonic*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [mnemonic, paths]
+  result = core.callPrivateRPC("wallet_getDerivedAddressesForMnemonic", payload)
 
-proc getDerivedAddressListForMnemonic*(mnemonic: string, path: string, pageSize: int = 0, pageNumber: int = 6,): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [mnemonic, path, pageSize, pageNumber ]
-  result = core.callPrivateRPC("wallet_getDerivedAddressesForMnemonicWithPath", payload)
-
-proc getDerivedAddressForPrivateKey*(privateKey: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [privateKey]
-  result = core.callPrivateRPC("wallet_getDerivedAddressForPrivateKey", payload)
-
-proc getDerivedAddressDetails*(address: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getAddressDetails*(address: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [address]
-  result = core.callPrivateRPC("wallet_getDerivedAddressDetails", payload)
+  result = core.callPrivateRPC("wallet_getAddressDetails", payload)
 
 proc verifyPassword*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [password]

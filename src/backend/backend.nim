@@ -113,58 +113,6 @@ rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currencies: seq[string]
 
-rpc(generateAccountWithDerivedPath, "accounts"):
-  password: string
-  name: string
-  color: string
-  emoji: string
-  path: string
-  derivedFrom: string
-
-rpc(generateAccountWithDerivedPathPasswordVerified, "accounts"):
-  password: string
-  name: string
-  color: string
-  emoji: string
-  path: string
-  derivedFrom: string
-
-rpc(addAccountWithMnemonicAndPath, "accounts"):
-  mnemonic: string
-  password: string
-  name: string
-  color: string
-  emoji: string
-  path: string
-
-rpc(addAccountWithMnemonicAndPathPasswordVerified, "accounts"):
-  mnemonic: string
-  password: string
-  name: string
-  color: string
-  emoji: string
-  path: string
-
-rpc(addAccountWithPrivateKey, "accounts"):
-  privateKey: string
-  password: string
-  name: string
-  color: string
-  emoji: string
-
-rpc(addAccountWithPrivateKeyPasswordVerified, "accounts"):
-  privateKey: string
-  password: string
-  name: string
-  color: string
-  emoji: string
-
-rpc(addAccountWatch, "accounts"):
-  address: string
-  name: string
-  color: string
-  emoji: string
-
 rpc(activityCenterNotifications, "wakuext"):
   request: ActivityCenterNotificationsRequest
 

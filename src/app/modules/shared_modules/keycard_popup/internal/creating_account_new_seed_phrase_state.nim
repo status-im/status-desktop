@@ -43,17 +43,21 @@ proc resolveAddresses(self: CreatingAccountNewSeedPhraseState, controller: Contr
 
 proc addAccountsToWallet(self: CreatingAccountNewSeedPhraseState, controller: Controller): bool =
   let kpForProcessing = controller.getKeyPairForProcessing()
+  var index = 0
   for account in kpForProcessing.getAccountsModel().getItems():
     if not controller.addWalletAccount(name = account.getName(), 
+      keyPairName = kpForProcessing.getName(),
       address = account.getAddress(), 
       path = account.getPath(), 
-      addressAccountIsDerivedFrom = kpForProcessing.getDerivedFrom(), 
+      lastUsedDerivationIndex = index,
+      rootWalletMasterKey = kpForProcessing.getDerivedFrom(), 
       publicKey = account.getPubKey(), 
       keyUid = kpForProcessing.getKeyUid(), 
-      accountType = if account.getPath() == PATH_DEFAULT_WALLET: SEED else: GENERATED,
+      accountType = SEED,
       color = account.getColor(), 
       emoji = account.getEmoji()):
       return false
+    index.inc
   return true
 
 proc doMigration(self: CreatingAccountNewSeedPhraseState, controller: Controller) =

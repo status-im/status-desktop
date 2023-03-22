@@ -18,3 +18,26 @@ const convertToKeycardAccountTask*: Task = proc(argEncoded: string) {.gcsafe, ni
   except Exception as e:
     error "error converting profile keypair: ", message = e.msg  
     arg.finish("")
+
+
+#################################################
+# Async load derived addreses
+#################################################
+
+type
+  FetchAddressesFromNotImportedMnemonicArg* = ref object of QObjectTaskArg
+    mnemonic: string
+    paths: seq[string]
+
+const fetchAddressesFromNotImportedMnemonicTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchAddressesFromNotImportedMnemonicArg](argEncoded)
+  var output = %*{
+    "derivedAddress": "",
+    "error": ""
+  }
+  try:
+    let response = status_account.createAccountFromMnemonicAndDeriveAccountsForPaths(arg.mnemonic, arg.paths)
+    output["derivedAddresses"] = response.result
+  except Exception as e:
+    output["error"] = %* fmt"Error fetching address from not imported mnemonic: {e.msg}"
+  arg.finish(output)

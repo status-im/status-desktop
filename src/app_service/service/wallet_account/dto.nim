@@ -95,6 +95,8 @@ type
     relatedAccounts*: seq[WalletAccountDto]
     ens*: string
     assetsLoading*: bool
+    keypairName*: string
+    lastUsedDerivationIndex*: int
 
 proc newDto*(
   name: string,
@@ -137,6 +139,8 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("type", result.walletType)
   discard jsonObj.getProp("emoji", result.emoji)
   discard jsonObj.getProp("derived-from", result.derivedfrom)
+  discard jsonObj.getProp("keypair-name", result.keypairName)
+  discard jsonObj.getProp("last-used-derivation-index", result.lastUsedDerivationIndex)
   result.assetsLoading = true
 
 proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =
