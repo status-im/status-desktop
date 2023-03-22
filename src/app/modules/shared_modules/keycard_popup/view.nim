@@ -1,7 +1,7 @@
 import NimQml
 import io_interface
 import internal/[state, state_wrapper]
-import models/[key_pair_model, key_pair_item]
+import ../../shared_models/[keypair_model, keypair_item]
 
 QtObject:
   type

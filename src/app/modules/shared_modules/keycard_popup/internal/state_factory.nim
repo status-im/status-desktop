@@ -7,7 +7,7 @@ from ../../../../../app_service/service/keycard/service import PUKLengthForStatu
 import ../../../../../app_service/common/account_constants
 import ../../../../../app_service/service/wallet_account/key_pair_dto
 import ../controller
-import ../models/[key_pair_model]
+import ../../../shared_models/[keypair_model]
 import state
 
 logScope:

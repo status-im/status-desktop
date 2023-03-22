@@ -3,7 +3,7 @@ import NimQml, tables, random, strutils, sequtils, sugar, chronicles
 import io_interface
 import view, controller
 import internal/[state, state_factory]
-import models/[key_pair_model, key_pair_item]
+import ../../shared_models/[keypair_model, keypair_item]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 

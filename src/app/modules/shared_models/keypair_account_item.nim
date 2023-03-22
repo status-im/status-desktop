@@ -38,7 +38,6 @@ QtObject:
       emoji: {self.emoji},
       color: {self.color},
       icon: {self.icon},
-      icon: {$self.icon},
       balance: {self.balance},
       balanceFetched: {self.balanceFetched}
       ]"""

@@ -1,9 +1,9 @@
 import NimQml, Tables, strformat, strutils
-import key_pair_account_item
+import keypair_account_item
 
-import ../../../../../app_service/common/utils
+import ../../../app_service/common/utils
 
-export key_pair_account_item
+export keypair_account_item
 
 type
   ModelRole {.pure.} = enum
@@ -77,6 +77,12 @@ QtObject:
   proc containsAccountAddress*(self: KeyPairAccountModel, address: string): bool =
     for it in self.items:
       if cmpIgnoreCase(it.getAddress(), address) == 0:
+        return true
+    return false
+
+  proc containsAccountPath*(self: KeyPairAccountModel, path: string): bool =
+    for it in self.items:
+      if it.getPath() == path:
         return true
     return false
 

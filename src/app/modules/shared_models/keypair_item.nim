@@ -1,7 +1,7 @@
 import NimQml, strformat
-import key_pair_account_model
+import keypair_account_model
 
-export key_pair_account_model
+export keypair_account_model
 
 type
   KeyPairType* {.pure.} = enum
@@ -20,6 +20,8 @@ QtObject:
     icon: string
     pairType: KeyPairType
     derivedFrom: string
+    lastUsedDerivationIndex: int
+    migratedToKeycard: bool
     accounts: KeyPairAccountModel
     observedAccount: KeyPairAccountItem
 
@@ -31,7 +33,9 @@ QtObject:
     image: string,
     icon: string,
     pairType: KeyPairType,
-    derivedFrom: string
+    derivedFrom: string,
+    lastUsedDerivationIndex: int,
+    migratedToKeycard: bool
     ) =
     self.QObject.setup
     self.keyUid = keyUid
@@ -42,6 +46,8 @@ QtObject:
     self.icon = icon
     self.pairType = pairType
     self.derivedFrom = derivedFrom
+    self.lastUsedDerivationIndex = lastUsedDerivationIndex
+    self.migratedToKeycard = migratedToKeycard
     self.accounts = newKeyPairAccountModel()
 
   proc delete*(self: KeyPairItem) =
@@ -54,9 +60,11 @@ QtObject:
     image = "",
     icon = "",
     pairType = KeyPairType.Unknown,
-    derivedFrom = ""): KeyPairItem =
+    derivedFrom = "",
+    lastUsedDerivationIndex = 0,
+    migratedToKeycard = false): KeyPairItem =
     new(result, delete)
-    result.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom)
+    result.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom, lastUsedDerivationIndex, migratedToKeycard)
 
   proc `$`*(self: KeyPairItem): string =
     result = fmt"""KeyPairItem[
@@ -68,6 +76,8 @@ QtObject:
       icon: {self.icon},
       pairType: {$self.pairType},
       derivedFrom: {self.derivedFrom},
+      lastUsedDerivationIndex: {self.lastUsedDerivationIndex},
+      migratedToKeycard: {self.migratedToKeycard},
       accounts: {$self.accounts}
       ]"""
 
@@ -159,6 +169,28 @@ QtObject:
     write = setDerivedFrom
     notify = derivedFromChanged
 
+  proc lastUsedDerivationIndexChanged*(self: KeyPairItem) {.signal.}
+  proc getLastUsedDerivationIndex*(self: KeyPairItem): int {.slot.} =
+    return self.lastUsedDerivationIndex
+  proc setLastUsedDerivationIndex*(self: KeyPairItem, value: int) {.slot.} =
+    self.lastUsedDerivationIndex = value
+    self.lastUsedDerivationIndexChanged()
+  QtProperty[int] lastUsedDerivationIndex:
+    read = getLastUsedDerivationIndex
+    write = setLastUsedDerivationIndex
+    notify = lastUsedDerivationIndexChanged
+
+  proc migratedToKeycardChanged*(self: KeyPairItem) {.signal.}
+  proc getMigratedToKeycard*(self: KeyPairItem): bool {.slot.} =
+    return self.migratedToKeycard
+  proc setMigratedToKeycard*(self: KeyPairItem, value: bool) {.slot.} =
+    self.migratedToKeycard = value
+    self.migratedToKeycardChanged()
+  QtProperty[bool] migratedToKeycard:
+    read = getMigratedToKeycard
+    write = setMigratedToKeycard
+    notify = migratedToKeycardChanged
+
   proc observedAccountChanged*(self: KeyPairItem) {.signal.}
   proc getObservedAccountAsVariant*(self: KeyPairItem): QVariant {.slot.} =
     return newQVariant(self.observedAccount)
@@ -192,6 +224,8 @@ QtObject:
     self.setLastAccountAsObservedAccount()
   proc containsAccountAddress*(self: KeyPairItem, address: string): bool =
     return self.accounts.containsAccountAddress(address)
+  proc containsAccountPath*(self: KeyPairItem, path: string): bool =
+    return self.accounts.containsAccountPath(path)
   proc containsPathOutOfTheDefaultStatusDerivationTree*(self: KeyPairItem): bool {.slot.} =
     return self.accounts.containsPathOutOfTheDefaultStatusDerivationTree()
   proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, color, emoji: string) =
@@ -208,5 +242,7 @@ QtObject:
     self.setIcon(item.getIcon())
     self.setPairType(item.getPairType())
     self.setDerivedFrom(item.getDerivedFrom())
+    self.setMigratedToKeycard(item.getMigratedToKeycard())
+    self.setLastUsedDerivationIndex(item.getLastUsedDerivationIndex())
     self.setAccounts(item.getAccountsModel().getItems())
     self.setLastAccountAsObservedAccount()

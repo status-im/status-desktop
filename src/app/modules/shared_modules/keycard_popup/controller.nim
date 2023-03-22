@@ -18,7 +18,7 @@ import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/keychain/service as keychain_service
 
-import models/[key_pair_item]
+import ../../shared_models/[keypair_item]
 
 logScope:
   topics = "keycard-popup-controller"
