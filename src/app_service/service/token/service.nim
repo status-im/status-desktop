@@ -126,7 +126,9 @@ QtObject:
         for token in default_tokens:
           if not self.tokensToAddressesMap.hasKey(token.symbol):
             self.tokenList.add(token)
-            self.tokensToAddressesMap[token.symbol].addresses = initTable[int, string]()
+            self.tokensToAddressesMap[token.symbol] = TokenData(
+              addresses: initTable[int, string](),
+            )
 
           if not self.tokensToAddressesMap[token.symbol].addresses.hasKey(token.chainId):
             self.tokensToAddressesMap[token.symbol].addresses[token.chainId] = $token.address
