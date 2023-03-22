@@ -35,6 +35,9 @@ method setTrxHistoryResult*(self: AccessInterface, transactions: seq[Transaction
 method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFetching: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFetching: bool, hasMore: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setHistoryFetchState*(self: AccessInterface, address: string, allTxLoaded: bool, isFetching: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 

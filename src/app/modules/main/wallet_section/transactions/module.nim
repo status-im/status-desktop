@@ -140,8 +140,12 @@ method setTrxHistoryResult*(self: Module, transactions: seq[TransactionDto], col
 method setHistoryFetchState*(self: Module, addresses: seq[string], isFetching: bool) =
   self.view.setHistoryFetchStateForAccounts(addresses, isFetching)
 
+method setHistoryFetchState*(self: Module, addresses: seq[string], isFetching: bool, hasMore: bool) =
+  self.view.setHistoryFetchStateForAccounts(addresses, isFetching, hasMore)
+
 method setHistoryFetchState*(self: Module, address: string, allTxLoaded: bool, isFetching: bool) =
   self.view.setHistoryFetchState(address, allTxLoaded, isFetching)
+  
 
 method setIsNonArchivalNode*(self: Module, isNonArchivalNode: bool) =
   self.view.setIsNonArchivalNode(isNonArchivalNode)
