@@ -453,18 +453,24 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     return
   if flowToRun == FlowType.Authentication:
     self.controller.connectKeychainSignals()
-    if keyUid.len > 0:
+    if keyUid.len == 0 or keyUid == singletonInstance.userProfile.getKeyUid():
+      if singletonInstance.userProfile.getUsingBiometricLogin():
+        self.controller.tryToObtainDataFromKeychain()
+        return
+      if singletonInstance.userProfile.getIsKeycardUser():
+        self.prepareKeyPairItemForAuthentication(singletonInstance.userProfile.getKeyUid())
+        self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
+        self.controller.runAuthenticationFlow(singletonInstance.userProfile.getKeyUid())
+        return
+      self.view.setCurrentState(newEnterPasswordState(flowToRun, nil))
+      self.authenticationPopupIsAlreadyRunning = true
+      self.controller.readyToDisplayPopup()
+      return
+    else:
       self.prepareKeyPairItemForAuthentication(keyUid)
       self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
       self.controller.runAuthenticationFlow(keyUid)
-      return
-    if singletonInstance.userProfile.getUsingBiometricLogin():
-      self.controller.tryToObtainDataFromKeychain()
-      return
-    self.view.setCurrentState(newEnterPasswordState(flowToRun, nil))
-    self.authenticationPopupIsAlreadyRunning = true
-    self.controller.readyToDisplayPopup()
-    return
+      return    
   if flowToRun == FlowType.UnlockKeycard:
     ## since we can run unlock keycard flow from an already running flow, in order to avoid changing displayed keypair
     ## (locked keypair) we have to set keycard uid of a keycard used in the flow we're jumping from to `UnlockKeycard` flow.

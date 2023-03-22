@@ -423,8 +423,8 @@ Item {
                             anchors.fill: parent
                             verticalAlignment: parent.verticalAlignment
                             font.pixelSize: 15
-                            wrapMode: root.multiline ? Text.WordWrap : Text.NoWrap
-                            elide: StatusBaseText.ElideRight
+                            wrapMode: root.multiline ? Text.WrapAnywhere : Text.NoWrap
+                            elide: root.multiline? Text.ElideNone : Text.ElideRight
                             color: root.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
                         }
                     }

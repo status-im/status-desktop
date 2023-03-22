@@ -6,6 +6,7 @@ import utils 1.0
 import SortFilterProxyModel 0.2
 import StatusQ.Core.Theme 0.1
 
+import "../addaccount/stores"
 
 QtObject {
     id: root
@@ -186,5 +187,12 @@ QtObject {
 
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
+    }
+
+    property AddAccountStore addAccountStore: AddAccountStore {
+    }
+
+    function runAddAccountPopup() {
+        walletSection.runAddAccountPopup()
     }
 }

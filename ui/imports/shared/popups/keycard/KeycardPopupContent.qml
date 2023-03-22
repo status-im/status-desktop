@@ -16,7 +16,6 @@ Item {
     QtObject {
         id: d
         property bool primaryButtonEnabled: false
-        property bool seedPhraseRevealed: false
     }
 
     Loader {
@@ -226,12 +225,11 @@ Item {
             sharedKeycardModule: root.sharedKeycardModule
 
             Component.onCompleted: {
-                hideSeed = !d.seedPhraseRevealed
-                d.primaryButtonEnabled = Qt.binding(function(){ return d.seedPhraseRevealed })
+                seedPhraseRevealed = false
             }
 
-            onSeedPhraseRevealed: {
-                d.seedPhraseRevealed = true
+            onSeedPhraseRevealedChanged: {
+                d.primaryButtonEnabled = seedPhraseRevealed
             }
         }
     }

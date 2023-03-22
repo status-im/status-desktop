@@ -321,7 +321,7 @@ Item {
                             if (model.username === Constants.appTranslatableConstants.loginAccountsListAddNewUser ||
                                     model.username === Constants.appTranslatableConstants.loginAccountsListAddExistingUser ||
                                     model.username === Constants.appTranslatableConstants.loginAccountsListLostKeycard) {
-                                return Constants.appTranslationMap[model.username]
+                                return Utils.appTranslation(model.username)
                             }
                             return model.username
                         }

@@ -617,6 +617,29 @@ QtObject {
         return result
     }
 
+    function appTranslation(key) {
+        switch(key) {
+        case Constants.appTranslatableConstants.loginAccountsListAddNewUser:
+            return qsTr("Add new user")
+        case Constants.appTranslatableConstants.loginAccountsListAddExistingUser:
+            return qsTr("Add existing Status user")
+        case Constants.appTranslatableConstants.loginAccountsListLostKeycard:
+            return qsTr("Lost Keycard")
+        case Constants.appTranslatableConstants.addAccountLabelNewWatchOnlyAccount:
+            return qsTr("New watch-only account")
+        case Constants.appTranslatableConstants.addAccountLabelExisting:
+            return qsTr("Existing")
+        case Constants.appTranslatableConstants.addAccountLabelImportNew:
+            return qsTr("Import new")
+        case Constants.appTranslatableConstants.addAccountLabelOptionAddNewMasterKey:
+            return qsTr("Add new master key")
+        case Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc:
+            return qsTr("Add watch-only account")
+        }
+
+        return key
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
