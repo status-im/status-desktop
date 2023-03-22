@@ -62,7 +62,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_HISTORY_ERROR) do (e:Args):
     let accounts = self.getWalletAccounts()
     let addresses = accounts.map(account => account.address)
-    self.delegate.setHistoryFetchState(addresses, isFetching = false)
+    self.delegate.setHistoryFetchState(addresses, isFetching = false, hasMore = false)
 
   self.events.on(SIGNAL_TRANSACTIONS_LOADED) do(e:Args):
     let args = TransactionsLoadedArgs(e)

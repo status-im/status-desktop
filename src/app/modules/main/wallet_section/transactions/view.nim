@@ -87,6 +87,10 @@ QtObject:
       else:
         self.setHistoryFetchState(address, allTxLoaded = false, isFetching)
 
+  proc setHistoryFetchStateForAccounts*(self: View, addresses: seq[string], isFetching: bool, hasMore: bool) =
+    for address in addresses:
+        self.setHistoryFetchState(address, allTxLoaded = not hasMore, isFetching)
+
   proc setModel*(self: View, address: string) {.slot.} =
     if not self.models.hasKey(address):
       self.models[address] = newModel()
