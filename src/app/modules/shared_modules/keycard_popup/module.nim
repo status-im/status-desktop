@@ -3,6 +3,7 @@ import NimQml, tables, random, strutils, sequtils, sugar, chronicles
 import io_interface
 import view, controller
 import internal/[state, state_factory]
+import ../../shared/keypairs
 import ../../shared_models/[keypair_model, keypair_item]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
@@ -405,82 +406,10 @@ method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEv
   self.view.setCurrentState(nextState)
   debug "sm_on_keycard_response - set state", setCurrFlow=nextState.flowType(), setCurrState=nextState.stateType()
 
-proc buildKeyPairsList[T](self: Module[T], excludeAlreadyMigratedPairs: bool): seq[KeyPairItem] =
-  let keyPairMigrated = proc(keyUid: string): bool =
-    result = false
-    let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
-    for kp in migratedKeyPairs:
-      if kp.keyUid == keyUid:
-        return true
-
-  let countOfKeyPairsForType = proc(items: seq[KeyPairItem], keyPairType: KeyPairType): int =
-    result = 0
-    for i in 0 ..< items.len:
-      if(items[i].getPairType() == keyPairType.int):
-        result.inc
-
-  let containsItemWithDerivationPath = proc(items: seq[KeyPairItem], derivedFromAddress: string): bool =
-    return items.any(x => cmpIgnoreCase(x.getDerivedFrom(), derivedFromAddress) == 0)
-
-  let accounts = self.controller.getWalletAccounts()
-  var items: seq[KeyPairItem]
-  for a in accounts:
-    if a.isChat or a.walletType == WalletTypeWatch or (excludeAlreadyMigratedPairs and keyPairMigrated(a.keyUid)):
-      continue
-    if a.walletType == WalletTypeDefaultStatusAccount:
-      var item = newKeyPairItem(keyUid = a.keyUid,
-        pubKey = a.publicKey,
-        locked = false,
-        name = singletonInstance.userProfile.getName(),
-        image = singletonInstance.userProfile.getIcon(),
-        icon = "",
-        pairType = KeyPairType.Profile,
-        derivedFrom = a.derivedfrom)
-      for ga in accounts:
-        if cmpIgnoreCase(ga.derivedfrom, a.derivedfrom) != 0:
-          continue
-        var icon = ""
-        if a.walletType == WalletTypeDefaultStatusAccount:
-          icon = "wallet"
-        item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon, balance = 0.0))
-      items.insert(item, 0) # Status Account must be at first place
-      continue
-    if a.walletType == WalletTypeSeed and not containsItemWithDerivationPath(items, a.derivedfrom):
-      let diffImports = countOfKeyPairsForType(items, KeyPairType.SeedImport)
-      var item = newKeyPairItem(keyUid = a.keyUid,
-        pubKey = a.publicKey,
-        locked = false,
-        name = "Seed Phrase " & $(diffImports + 1), # string created here should be transalted, but so far it's like it is
-        image = "",
-        icon = "key_pair_seed_phrase",
-        pairType = KeyPairType.SeedImport,
-        derivedFrom = a.derivedfrom)
-      for ga in accounts:
-        if cmpIgnoreCase(ga.derivedfrom, a.derivedfrom) != 0:
-          continue
-        item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon = "", balance = 0.0))
-      items.add(item)
-      continue
-    if a.walletType == WalletTypeKey and not containsItemWithDerivationPath(items, a.derivedfrom):
-      let diffImports = countOfKeyPairsForType(items, KeyPairType.PrivateKeyImport)
-      var item = newKeyPairItem(keyUid = a.keyUid,
-        pubKey = a.publicKey,
-        locked = false,
-        name = "Key " & $(diffImports + 1), # string created here should be transalted, but so far it's like it is
-        image = "",
-        icon = "key_pair_private_key",
-        pairType = KeyPairType.PrivateKeyImport,
-        derivedFrom = a.derivedfrom)
-      item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.color, icon = "", balance = 0.0))
-      items.add(item)
-      continue
-  if items.len == 0:
-    debug "sm_there is no any key pair for the logged in user that is not already migrated to a keycard"
-  return items
-
 proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
   var item = newKeyPairItem()
-  let items = self.buildKeyPairsList(excludeAlreadyMigratedPairs = false)
+  let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
+    excludeAlreadyMigratedPairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
       item = it
@@ -501,7 +430,8 @@ method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
 
 method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardUid = "") =
   var item = newKeyPairItem()
-  let items = self.buildKeyPairsList(excludeAlreadyMigratedPairs = false)
+  let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
+    excludeAlreadyMigratedPairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
       item = it
@@ -531,7 +461,8 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycard:
-    let items = self.buildKeyPairsList(excludeAlreadyMigratedPairs = true)
+    let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(),
+      excludeAlreadyMigratedPairs = true)
     self.view.createKeyPairModel(items)
     self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))
     self.controller.readyToDisplayPopup()
