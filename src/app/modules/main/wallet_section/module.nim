@@ -4,7 +4,7 @@ import ./controller, ./view
 import ./io_interface as io_interface
 import ../io_interface as delegate_interface
 
-import ./accounts/module as accountsModule
+import ./accounts/module as accounts_module
 import ./all_tokens/module as all_tokens_module
 import ./collectibles/module as collectibles_module
 import ./current_account/module as current_account_module
@@ -70,7 +70,7 @@ proc newModule*(
   result.controller = newController(result, settingsService, walletAccountService, currencyService)
   result.view = newView(result)
 
-  result.accountsModule = accounts_module.newModule(result, events, keycardService, walletAccountService, accountsService, networkService, tokenService, currencyService)
+  result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)

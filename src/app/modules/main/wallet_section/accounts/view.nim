@@ -24,15 +24,11 @@ QtObject:
       watchOnly: Model
       imported: Model
       generatedAccounts: GeneratedWalletModel
-      derivedAddresses: DerivedAddressModel
-      derivedAddressesLoading: bool
-      derivedAddressesError: string
       modelVariant: QVariant
       generatedVariant: QVariant
       importedVariant: QVariant
       watchOnlyVariant: QVariant
       generatedAccountsVariant: QVariant
-      derivedAddressesVariant: QVariant
       tmpAddress: string
 
   proc delete*(self: View) =
@@ -46,8 +42,6 @@ QtObject:
     self.watchOnlyVariant.delete
     self.generatedAccounts.delete
     self.generatedAccountsVariant.delete
-    self.derivedAddresses.delete
-    self.derivedAddressesVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -64,10 +58,6 @@ QtObject:
     result.watchOnlyVariant = newQVariant(result.watchOnly)
     result.generatedAccounts = newGeneratedWalletModel()
     result.generatedAccountsVariant = newQVariant(result.generatedAccounts)
-    result.derivedAddresses = newDerivedAddressModel()
-    result.derivedAddressesLoading = false
-    result.derivedAddressesError = ""
-    result.derivedAddressesVariant = newQVariant(result.derivedAddresses)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -116,44 +106,6 @@ QtObject:
   QtProperty[QVariant] generatedAccounts:
     read = getGeneratedAccounts
     notify = generatedAccountsChanged
-
-  proc derivedAddressesChanged*(self: View) {.signal.}
-
-  proc getDerivedAddresses(self: View): QVariant {.slot.} =
-    return self.derivedAddressesVariant
-
-  QtProperty[QVariant] derivedAddresses:
-    read = getDerivedAddresses
-    notify = derivedAddressesChanged
-
-  proc derivedAddressesLoadingChanged*(self: View) {.signal.}
-
-  proc getDerivedAddressesLoading(self: View): bool {.slot.} =
-    return self.derivedAddressesLoading
-
-  proc setDerivedAddressesLoading*(self: View, loading: bool) {.slot.} =
-    if self.derivedAddressesLoading != loading:
-      self.derivedAddressesLoading = loading
-      self.derivedAddressesLoadingChanged()
-
-  QtProperty[bool] derivedAddressesLoading:
-    read = getDerivedAddressesLoading
-    write = setDerivedAddressesLoading
-    notify = derivedAddressesLoadingChanged
-
-  proc derivedAddressErrorChanged*(self: View) {.signal.}
-
-  proc getDerivedAddressesError(self: View): string {.slot.} =
-    return self.derivedAddressesError
-
-  proc setDerivedAddressesError*(self: View, error: string) {.slot.} =
-    self.derivedAddressesError = error
-    self.derivedAddressErrorChanged()
-
-  QtProperty[string] derivedAddressesError:
-    read = getDerivedAddressesError
-    write = setDerivedAddressesError
-    notify = derivedAddressErrorChanged
 
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
@@ -206,22 +158,6 @@ QtObject:
     self.generated.setItems(generated)
     self.generatedAccounts.setItems(generatedAccounts)
 
-  proc generateNewAccount*(self: View, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string {.slot.} =
-    return self.delegate.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
-
-  proc addNewWalletAccountGeneratedFromKeycard*(self: View, accountType: string, accountName: string, color: string, 
-    emoji: string): string {.slot.} =
-    return self.delegate.addNewWalletAccountGeneratedFromKeycard(accountType, accountName, color, emoji)
-
-  proc addAccountsFromPrivateKey*(self: View, privateKey: string, password: string, accountName: string, color: string, emoji: string): string {.slot.} =
-    return self.delegate.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
-
-  proc addAccountsFromSeed*(self: View, seedPhrase: string, password: string, accountName: string, color: string, emoji: string, path: string): string {.slot.} =
-    return self.delegate.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path)
-
-  proc addWatchOnlyAccount*(self: View, address: string, accountName: string, color: string, emoji: string): string {.slot.} =
-    return self.delegate.addWatchOnlyAccount(address, accountName, color, emoji)
-
   proc deleteAccount*(self: View, keyUid: string, address: string) {.slot.} =
     self.delegate.deleteAccount(keyUid, address)
 
@@ -236,70 +172,3 @@ QtObject:
 
   proc getAccountAssetsByAddress*(self: View): QVariant {.slot.} =
     return self.model.getAccountAssetsByAddress(self.tmpAddress)
-
-  proc setDerivedAddresses*(self: View, derivedAddresses: seq[wallet_account_service.DerivedAddressDto], error: string) =
-    var items: seq[DerivedAddressItem] = @[]
-    for item in derivedAddresses:
-      items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity, item.alreadyCreated))
-    self.derivedAddresses.setItems(items)
-    self.setDerivedAddressesError(error)
-    self.setDerivedAddressesLoading(false)
-    self.derivedAddressesChanged()
-
-  proc getDerivedAddress*(self: View, password: string, derivedFrom: string, path: string, hashPassword: bool) {.slot.} =
-    self.setDerivedAddressesLoading(true)
-    self.setDerivedAddressesError("")
-    self.delegate.getDerivedAddress(password, derivedfrom, path, hashPassword)
-
-  proc getDerivedAddressList*(self: View, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int, hashPassword: bool) {.slot.} =
-    self.setDerivedAddressesLoading(true)
-    self.setDerivedAddressesError("")
-    self.delegate.getDerivedAddressList(password, derivedfrom, path, pageSize, pageNumber, hashPassword)
-
-  proc getDerivedAddressListForMnemonic*(self: View, mnemonic: string, path: string, pageSize: int, pageNumber: int) {.slot.} =
-    self.setDerivedAddressesLoading(true)
-    self.setDerivedAddressesError("")
-    self.delegate.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
-
-  proc getDerivedAddressForPrivateKey*(self: View, privateKey: string) {.slot.} =
-    self.setDerivedAddressesLoading(true)
-    self.setDerivedAddressesError("")
-    self.delegate.getDerivedAddressForPrivateKey(privateKey)
-
-  proc resetDerivedAddressModel*(self: View) {.slot.} =
-    var items: seq[DerivedAddressItem] = @[]
-    self.derivedAddresses.setItems(items)
-    self.derivedAddressesChanged()
-
-  proc getDerivedAddressAtIndex*(self: View, index: int): string {.slot.} =
-    return self.derivedAddresses.getDerivedAddressAtIndex(index)
-
-  proc getDerivedAddressPathAtIndex*(self: View, index: int): string {.slot.} =
-    return self.derivedAddresses.getDerivedAddressPathAtIndex(index)
-
-  proc getDerivedAddressHasActivityAtIndex*(self: View, index: int): bool {.slot.} =
-    return self.derivedAddresses.getDerivedAddressHasActivityAtIndex(index)
-
-  proc getDerivedAddressAlreadyCreatedAtIndex*(self: View, index: int): bool {.slot.} =
-    return self.derivedAddresses.getDerivedAddressAlreadyCreatedAtIndex(index)
-
-  proc getNextSelectableDerivedAddressIndex*(self: View): int {.slot.} =
-    return self.derivedAddresses.getNextSelectableDerivedAddressIndex()
-
-  proc validSeedPhrase*(self: View, value: string): bool {.slot.} =
-    return self.delegate.validSeedPhrase(value)
-
-  proc userAuthenticationSuccess*(self: View, password: string) {.signal.}
-  proc userAuthentiactionFail*(self: View) {.signal.}
-
-  proc authenticateUser*(self: View) {.slot.} =
-    self.delegate.authenticateUser()
-
-  proc createSharedKeycardModule*(self: View) {.slot.} =
-    self.delegate.createSharedKeycardModule()
-
-  proc destroySharedKeycarModule*(self: View) {.slot.} =
-    self.delegate.destroySharedKeycarModule()
-
-  proc authenticateUserAndDeriveAddressOnKeycardForPath*(self: View, keyUid: string, derivationPath: string, searchForFirstAvailableAddress: bool) {.slot.} =
-    self.delegate.authenticateUserAndDeriveAddressOnKeycardForPath(keyUid, derivationPath, searchForFirstAvailableAddress)
