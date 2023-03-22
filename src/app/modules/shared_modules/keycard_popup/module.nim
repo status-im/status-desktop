@@ -23,12 +23,6 @@ export io_interface
 logScope:
   topics = "keycard-popup-module"
 
-type DerivingAccountDetails = object
-  keyUid: string
-  path: string
-  deriveAddressAfterAuthentication: bool
-  addressRequested: bool
-
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
@@ -38,7 +32,6 @@ type
     initialized: bool
     tmpLocalState: State # used when flow is run, until response arrives to determine next state appropriatelly
     authenticationPopupIsAlreadyRunning: bool
-    derivingAccountDetails: DerivingAccountDetails
 
 proc newModule*[T](delegate: T,
   uniqueIdentifier: string,
@@ -59,8 +52,6 @@ proc newModule*[T](delegate: T,
     networkService, privacyService, accountsService, walletAccountService, keychainService)
   result.initialized = false
   result.authenticationPopupIsAlreadyRunning = false
-  result.derivingAccountDetails.deriveAddressAfterAuthentication = false
-  result.derivingAccountDetails.addressRequested = false
 
 method delete*[T](self: Module[T]) =
   self.view.delete
@@ -373,13 +364,6 @@ method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEv
   if self.controller.keycardSyncingInProgress():
     self.handleKeycardSyncing()
     return
-  if self.derivingAccountDetails.deriveAddressAfterAuthentication and
-    self.derivingAccountDetails.addressRequested:
-      # clearing...
-      self.derivingAccountDetails = DerivingAccountDetails()
-      # notify about generated address
-      self.controller.notifyAboutGeneratedWalletAccount(keycardEvent.generatedWalletAccount, keycardEvent.masterKeyAddress)
-      return
   ## Check local state first, in case postponed flow is run
   if not self.tmpLocalState.isNil:
     let nextState = self.tmpLocalState.resolveKeycardNextState(keycardFlowType, keycardEvent, self.controller)
@@ -512,16 +496,6 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
     self.controller.runChangePairingFlow()
     return
-  if flowToRun == FlowType.AuthenticateAndDeriveAccountAddress:
-    self.prepareKeyPairForProcessing(keyUid) ## needed for keycard sync
-    self.derivingAccountDetails = DerivingAccountDetails(
-      keyUid: keyUid,
-      path: bip44Path,
-      deriveAddressAfterAuthentication: true,
-      addressRequested: false
-    )
-    self.controller.authenticateUser(keyUid)
-    return
   if flowToRun == FlowType.CreateCopyOfAKeycard:
     self.prepareKeyPairForProcessing(keyUid)
     self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
@@ -588,9 +562,7 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
     locked = false,
     name = cardMetadata.name,
     image = "",
-    icon = "keycard",
-    pairType = KeyPairType.Unknown,
-    derivedFrom = "")
+    icon = "keycard")
   let currKp = self.getKeyPairForProcessing()
   if not currKp.isNil:
     result.item.setKeyUid(currKp.getKeyUid())
@@ -615,12 +587,6 @@ method updateKeyPairHelper*[T](self: Module[T], cardMetadata: CardMetadata) =
   self.view.setKeyPairHelper(item)
 
 method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
-  if self.derivingAccountDetails.deriveAddressAfterAuthentication:
-    self.derivingAccountDetails.addressRequested = true
-    self.controller.setPassword(password)
-    self.controller.setPin(pin) # we need to keep it in case new acc is added we need to sync accounts on the Keycard 
-    self.controller.runDeriveAccountFlow(self.derivingAccountDetails.path, pin)
-    return
   let flowType = self.getCurrentFlowType()
   if flowType == FlowType.SetupNewKeycard:
     self.controller.setPassword(password)
