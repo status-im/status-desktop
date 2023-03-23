@@ -62,19 +62,18 @@ QtObject:
   proc refreshCollectiblesValues*(self: View) {.slot.} =
     self.delegate.refreshCollectiblesValues()
 
-  proc networkConnectionStatusUpdate*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int, withCache: bool) {.signal.}
+  proc networkConnectionStatusUpdate*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int) {.signal.}
 
-  proc updateNetworkConnectionStatus*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int, withCache: bool) =
+  proc updateNetworkConnectionStatus*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int) =
     case website:
       of BLOCKCHAINS:
-        self.blockchainNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs, withCache)
+        self.blockchainNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
         self.blockchainNetworkConnectionChanged()
       of COLLECTIBLES:
-        self.collectiblesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs, withCache)
+        self.collectiblesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
         self.collectiblesNetworkConnectionChanged()
       of MARKET:
-        self.marketValuesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs, withCache)
+        self.marketValuesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
         self.marketValuesNetworkConnectionChanged()
-    self.networkConnectionStatusUpdate(website, completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs, withCache)
-
+    self.networkConnectionStatusUpdate(website, completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
 

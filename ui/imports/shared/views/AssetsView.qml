@@ -71,6 +71,9 @@ Item {
             readonly property string balance: "%1".arg(modelData.enabledNetworkBalance.amount) // Needed for the tests
             errorTooltipText_1: networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances)
             errorTooltipText_2: networkConnectionStore.getMarketNetworkDownText()
+            subTitle: networkConnectionStore.noTokenBalanceAvailable ? "" :  LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
+            errorMode: networkConnectionStore.noBlockchainConnectionAndNoCache && !networkConnectionStore.noMarketConnectionAndNoCache
+            errorIcon.tooltip.text: networkConnectionStore.noBlockchainConnectionAndNoCacheText
             onClicked: {
                 RootStore.getHistoricalDataForToken(modelData.symbol, RootStore.currencyStore.currentCurrency)
                 d.selectedAssetIndex = index

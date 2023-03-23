@@ -126,5 +126,5 @@ method appendCollectibles*(self: Module, chainId: int, address: string, data: Co
     self.view.appendCollectibles(newCollectibles)
     self.view.setAllLoaded(data.allLoaded)
 
-method noConnectionToOpenSea*(self: Module) =
-   self.view.noConnectionToOpenSea()
+method connectionToOpenSea*(self: Module, connected: bool) =
+   self.view.connectionToOpenSea(connected)

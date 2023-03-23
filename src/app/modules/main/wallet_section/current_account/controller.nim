@@ -56,3 +56,6 @@ proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
 
 proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   return self.walletAccountService.getAllMigratedKeyPairs()
+
+proc getHasCollectiblesCache*(self: Controller, address: string): bool  =
+  return self.walletAccountService.getHasCollectiblesCache(address)

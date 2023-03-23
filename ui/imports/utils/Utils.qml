@@ -618,7 +618,7 @@ QtObject {
     function getTimerString(timeInSecs) {
         let result = ""
         const hour = Math.floor(timeInSecs/60/60)
-        const mins = Math.floor(timeInSecs/60)
+        const mins = Math.floor(timeInSecs/60%60)
         const secs = Math.floor(timeInSecs%60)
         if(hour > 0 )
             result += qsTr(" %n hour(s) ", "", hour)

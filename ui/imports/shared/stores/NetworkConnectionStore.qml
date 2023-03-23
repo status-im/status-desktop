@@ -9,13 +9,19 @@ QtObject {
 
     readonly property var networkConnectionModuleInst: networkConnectionModule
 
+    readonly property bool isOnline: mainModule.isOnline
+
+    readonly property bool balanceCache: walletSectionCurrent.hasBalanceCache
+    readonly property bool marketValuesCache: walletSectionCurrent.hasMarketValuesCache
+    readonly property bool collectiblesCache: walletSectionCurrent.getHasCollectiblesCache()
+
     readonly property var blockchainNetworksDown: networkConnectionModule.blockchainNetworkConnection.chainIds.split(";")
     readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length <  networksModule.all.count
 
-    readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (mainModule.isOnline &&
+    readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
                                         (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
                                         !networkConnectionModule.marketValuesNetworkConnection.completelyDown)
-    readonly property string sendBuyBridgeToolTipText: !mainModule.isOnline ?
+    readonly property string sendBuyBridgeToolTipText: !isOnline ?
                                                   qsTr("Requires internet connection") :
                                                   networkConnectionModule.blockchainNetworkConnection.completelyDown ||
                                                    (!networkConnectionModule.blockchainNetworkConnection.completelyDown &&
@@ -26,20 +32,28 @@ QtObject {
                                                   qsTr("Requires POKT/ Infura and CryptoCompare/CoinGecko, which are all currently unavailable")
 
 
-    readonly property bool tokenBalanceNotAvailable: ((!mainModule.isOnline || networkConnectionModule.blockchainNetworkConnection.completelyDown) &&
-                                            !walletSectionCurrent.assetsLoading && walletSectionCurrent.assets.count === 0) ||
-                                             (networkConnectionModule.marketValuesNetworkConnection.completelyDown &&
-                                              !networkConnectionModule.marketValuesNetworkConnection.withCache)
-    readonly property string tokenBalanceNotAvailableText: !mainModule.isOnline ?
-                                                          qsTr("Internet connection lost. Data could not be retrieved.") :
-                                                          networkConnectionModule.blockchainNetworkConnection.completelyDown ?
-                                                          qsTr("Token balances are fetched from Pocket Network (POKT) and Infura which are both curently unavailable") :
-                                                          networkConnectionModule.marketValuesNetworkConnection.completelyDown ?
-                                                          qsTr("Market values are fetched from CryptoCompare and CoinGecko which are both currently unavailable") :
-                                                          qsTr("Market values and token balances use CryptoCompare/CoinGecko and POKT/Infura which are all currently unavailable.")
+    readonly property bool notOnlineWithNoCache: !isOnline && !walletSectionCurrent.hasBalanceCache && !walletSectionCurrent.hasMarketValuesCache
+    readonly property string notOnlineWithNoCacheText: qsTr("Internet connection lost. Data could not be retrieved.")
+
+    readonly property bool noBlockchainConnectionAndNoCache: networkConnectionModule.blockchainNetworkConnection.completelyDown && !walletSectionCurrent.hasBalanceCache
+    readonly property string noBlockchainConnectionAndNoCacheText: qsTr("Token balances are fetched from Pocket Network (POKT) and Infura which are both curently unavailable")
+
+    readonly property bool noMarketConnectionAndNoCache: networkConnectionModule.marketValuesNetworkConnection.completelyDown && !walletSectionCurrent.hasMarketValuesCache
+    readonly property string noMarketConnectionAndNoCacheText: qsTr("Market values are fetched from CryptoCompare and CoinGecko which are both currently unavailable")
+
+    readonly property bool noBlockchainAndMarketConnectionAndNoCache: noBlockchainConnectionAndNoCache && noMarketConnectionAndNoCache
+    readonly property string noBlockchainAndMarketConnectionAndNoCacheText:  qsTr("Market values and token balances use CryptoCompare/CoinGecko and POKT/Infura which are all currently unavailable.")
+
+    readonly property bool accountBalanceNotAvailable: notOnlineWithNoCache || noBlockchainConnectionAndNoCache || noMarketConnectionAndNoCache
+    readonly property string accountBalanceNotAvailableText: !isOnline ? notOnlineWithNoCacheText :
+                                                             noBlockchainAndMarketConnectionAndNoCache ? noBlockchainAndMarketConnectionAndNoCacheText :
+                                                             networkConnectionModule.blockchainNetworkConnection.completelyDown ? noBlockchainConnectionAndNoCacheText :
+                                                             networkConnectionModule.marketValuesNetworkConnection.completelyDown ? noBlockchainAndMarketConnectionAndNoCacheText : ""
+
+    property bool noTokenBalanceAvailable: networkConnectionStore.notOnlineWithNoCache || networkConnectionStore.noBlockchainConnectionAndNoCache
 
     function getBlockchainNetworkDownTextForToken(balances) {
-        if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown) {
+        if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !networkConnectionStore.notOnlineWithNoCache) {
             let chainIdsDown = []
             for (var i =0; i<balances.count; i++) {
                 let chainId = balances.rowData(i, "chainId")
@@ -56,14 +70,12 @@ QtObject {
     }
 
     function getMarketNetworkDownText() {
-        if(networkConnectionModule.blockchainNetworkConnection.completelyDown &&
-                !walletSectionCurrent.assetsLoading && walletSectionCurrent.assets.count === 0 &&
-                networkConnectionModule.marketValuesNetworkConnection.completelyDown &&
-                !networkConnectionModule.marketValuesNetworkConnection.withCache)
-            return qsTr("Market values and token balances use CryptoCompare/CoinGecko and POKT/Infura which are all currently unavailable.")
-        else if(networkConnectionModule.marketValuesNetworkConnection.completelyDown &&
-                !networkConnectionModule.marketValuesNetworkConnection.withCache)
-            return qsTr("Market values are fetched from CryptoCompare and CoinGecko which are both currently unavailable")
+        if(networkConnectionStore.notOnlineWithNoCache)
+            return networkConnectionStore.notOnlineWithNoCacheText
+        else if(noBlockchainAndMarketConnectionAndNoCache)
+            return noBlockchainAndMarketConnectionAndNoCacheText
+        else if(noMarketConnectionAndNoCache)
+            return noMarketConnectionAndNoCacheText
         else
             return ""
     }

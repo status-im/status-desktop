@@ -23,6 +23,8 @@ type
     migratedToKeycard: bool
     ens: string
     assetsLoading: bool
+    hasBalanceCache: bool
+    hasMarketValuesCache: bool
 
 proc initItem*(
   name: string = "",
@@ -42,7 +44,9 @@ proc initItem*(
   keyUid: string = "",
   migratedToKeycard: bool = false,
   ens: string = "",
-  assetsLoading: bool  = true
+  assetsLoading: bool  = true,
+  hasBalanceCache: bool = false,
+  hasMarketValuesCache: bool = false
 ): Item =
   result.name = name
   result.address = address
@@ -62,6 +66,8 @@ proc initItem*(
   result.migratedToKeycard = migratedToKeycard
   result.ens = ens
   result.assetsLoading = assetsLoading
+  result.hasBalanceCache = hasBalanceCache
+  result.hasMarketValuesCache = hasMarketValuesCache
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
@@ -82,7 +88,9 @@ proc `$`*(self: Item): string =
     keyUid: {self.keyUid},
     migratedToKeycard: {self.migratedToKeycard},
     ens: {self.ens},
-    assetsLoading: {self.assetsLoading}
+    assetsLoading: {self.assetsLoading},
+    hasBalanceCache: {self.hasBalanceCache},
+    hasMarketValuesCache: {self.hasMarketValuesCache},
     ]"""
 
 proc getName*(self: Item): string =
@@ -138,3 +146,9 @@ proc getEns*(self: Item): string =
 
 proc getAssetsLoading*(self: Item): bool =
   return self.assetsLoading
+
+proc getHasBalanceCache*(self: Item): bool =
+  return self.hasBalanceCache
+
+proc getHasMarketValuesCache*(self: Item): bool =
+  return self.hasMarketValuesCache
