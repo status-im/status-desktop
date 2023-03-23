@@ -19,7 +19,9 @@ type
     RelatedAccounts,
     KeyUid,
     MigratedToKeycard,
-    AssetsLoading
+    AssetsLoading,
+    HasBalanceCache,
+    HasMarketValuesCache
 
 QtObject:
   type
@@ -70,7 +72,9 @@ QtObject:
       ModelRole.RelatedAccounts.int: "relatedAccounts",
       ModelRole.KeyUid.int: "keyUid",
       ModelRole.MigratedToKeycard.int: "migratedToKeycard",
-      ModelRole.AssetsLoading.int: "assetsLoading"
+      ModelRole.AssetsLoading.int: "assetsLoading",
+      ModelRole.HasBalanceCache.int: "hasBalanceCache",
+      ModelRole.HasMarketValuesCache.int: "hasMarketValuesCache"
     }.toTable
 
 
@@ -123,6 +127,10 @@ QtObject:
       result = newQVariant(item.getMigratedToKeycard())
     of ModelRole.AssetsLoading:
       result = newQVariant(item.getAssetsLoading())
+    of ModelRole.HasBalanceCache:
+      result = newQVariant(item.getHasBalanceCache())
+    of ModelRole.HasMarketValuesCache:
+      result = newQVariant(item.getHasMarketValuesCache())
 
   proc getAccountNameByAddress*(self: Model, address: string): string =
     for account in self.items:

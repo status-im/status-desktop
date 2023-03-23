@@ -48,7 +48,7 @@ Item {
                 customColor: Theme.palette.baseColor1
                 text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(root.currentAccount.currencyBalance)
                 loading: root.currentAccount.assetsLoading
-                visible: !networkConnectionStore.tokenBalanceNotAvailable
+                visible: !networkConnectionStore.accountBalanceNotAvailable
             }
         }
 

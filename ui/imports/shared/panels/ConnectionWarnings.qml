@@ -37,6 +37,12 @@ ModuleWarning {
             showFor(3000)
     }
 
+    QtObject {
+        id: d
+        property bool isOnline: networkConnectionStore.isOnline
+        onIsOnlineChanged: if(!isOnline) root.hide()
+    }
+
     type: connectionState === Constants.ConnectionStatus.Success ? ModuleWarning.Success : ModuleWarning.Danger
     buttonText: connectionState === Constants.ConnectionStatus.Failure ? qsTr("Retry now") : ""
 
@@ -45,13 +51,12 @@ ModuleWarning {
 
     Connections {
         target: networkConnectionStore.networkConnectionModuleInst
-        function onNetworkConnectionStatusUpdate(website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int, withCache: bool)  {
+        function onNetworkConnectionStatusUpdate(website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int)  {
             if (website === websiteDown) {
                 root.connectionState = connectionState
                 root.autoTryTimerInSecs = timeToAutoRetryInSecs
                 root.chainIdsDown = chainIds.split(";")
                 root.completelyDown = completelyDown
-                root.withCache = withCache
                 root.lastCheckedAt = LocaleUtils.formatDateTime(new Date(lastCheckedAt*1000))
                 root.updateBanner()
             }

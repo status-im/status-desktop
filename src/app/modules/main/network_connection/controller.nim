@@ -27,10 +27,13 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(SIGNAL_CONNECTION_UPDATE) do(e:Args):
     let args = NetworkConnectionsArgs(e)
-    self.delegate.networkConnectionStatusUpdate(args.website, args.completelyDown, ord(args.connectionState), args.chainIds, args.lastCheckedAt, args.timeToAutoRetryInSecs, args.withCache)
+    self.delegate.networkConnectionStatusUpdate(args.website, args.completelyDown, ord(args.connectionState), args.chainIds, args.lastCheckedAt, args.timeToAutoRetryInSecs)
 
   self.events.on(SIGNAL_NETWORK_CONNECTED) do(e: Args):
-    self.networkConnectionService.networkConnected()
+    self.networkConnectionService.networkConnected(true)
+
+  self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
+    self.networkConnectionService.networkConnected(false)
 
 proc refreshBlockchainValues*(self: Controller) =
   self.networkConnectionService.blockchainsRetry()

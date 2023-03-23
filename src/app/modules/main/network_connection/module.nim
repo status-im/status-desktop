@@ -49,8 +49,8 @@ proc checkIfModuleDidLoad(self: Module) =
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method networkConnectionStatusUpdate*(self: Module, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int, withCache: bool) =
-  self.view.updateNetworkConnectionStatus(website, completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs, withCache)
+method networkConnectionStatusUpdate*(self: Module, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int) =
+  self.view.updateNetworkConnectionStatus(website, completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
 
 method refreshBlockchainValues*(self: Module) =
   self.controller.refreshBlockchainValues()
