@@ -13,4 +13,4 @@ method executePrimaryCommand*(self: SyncDeviceWithSyncCodeState, controller: Con
   discard controller.inputConnectionStringForBootstrapping(connectionString)
 
 method getNextPrimaryState*(self: SyncDeviceWithSyncCodeState, controller: Controller): State =
-  return createState(StateType.SyncDeviceResult, self.flowType, nil)
+  return createState(StateType.SyncDeviceResult, self.flowType, self)
