@@ -268,6 +268,9 @@ Item {
     */
     signal editClicked()
 
+    onFocusChanged: {
+        if(focus) edit.forceActiveFocus()
+    }
 
     Rectangle {
         id: background
@@ -356,8 +359,14 @@ Item {
                         font.family: Theme.palette.baseFont.name
                         color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1 
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
-                        Keys.onReturnPressed: event.accepted = !multiline && !acceptReturn
-                        Keys.onEnterPressed: event.accepted = !multiline && !acceptReturn
+                        Keys.onReturnPressed: {
+                            root.keyPressed(event)
+                            event.accepted = !multiline && !acceptReturn
+                        }
+                        Keys.onEnterPressed: {
+                            root.keyPressed(event)
+                            event.accepted = !multiline && !acceptReturn
+                        }
                         Keys.forwardTo: [root]
                         KeyNavigation.priority: !!root.tabNavItem ? KeyNavigation.BeforeItem : KeyNavigation.AfterItem
                         KeyNavigation.tab: root.tabNavItem
