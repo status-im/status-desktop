@@ -55,6 +55,7 @@ type
     declinedMemberRequestsModel: member_model.Model
     encrypted: bool
     communityTokensModel: community_tokens_model.TokenModel
+    loaderActive: bool
 
 proc initItem*(
     id: string,
@@ -91,6 +92,7 @@ proc initItem*(
     declinedMemberRequests: seq[MemberItem] = @[],
     encrypted: bool = false,
     communityTokens: seq[TokenItem] = @[],
+    loaderActive = false,
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -132,6 +134,7 @@ proc initItem*(
   result.encrypted = encrypted
   result.communityTokensModel = newTokenModel()
   result.communityTokensModel.setItems(communityTokens)
+  result.loaderActive = loaderActive
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -171,6 +174,7 @@ proc `$`*(self: SectionItem): string =
     declinedMemberRequests:{self.declinedMemberRequestsModel},
     encrypted:{self.encrypted},
     communityTokensModel:{self.communityTokensModel},
+    loaderActive:{self.loaderActive},
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} =
@@ -322,3 +326,9 @@ proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.in
 
 proc updatePendingRequestLoadingState*(self: SectionItem, memberKey: string, loading: bool) {.inline.} =
   self.pendingMemberRequestsModel.updateLoadingState(memberKey, loading)
+
+proc loaderActive*(self: SectionItem): bool {.inline.} = 
+  self.loaderActive
+
+proc `loaderActive=`*(self: var SectionItem, value: bool) {.inline.} = 
+  self.loaderActive = value

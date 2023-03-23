@@ -374,3 +374,6 @@ method onUserAuthenticated*(self: AccessInterface, pin: string, password: string
 
 method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensName: string) =
   raise newException(ValueError, "No implementation available")
+
+method onDeactivateChatLoader*(self: AccessInterface, chatId: string) =
+  raise newException(ValueError, "No implementation available")

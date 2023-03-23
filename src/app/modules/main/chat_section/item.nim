@@ -32,6 +32,7 @@ type
     highlight: bool
     trustStatus: TrustStatus
     onlineStatus: OnlineStatus
+    loaderActive: bool
 
 proc initItem*(
     id,
@@ -56,7 +57,8 @@ proc initItem*(
     highlight: bool = false,
     categoryOpened: bool = true,
     trustStatus: TrustStatus = TrustStatus.Unknown,
-    onlineStatus = OnlineStatus.Inactive
+    onlineStatus = OnlineStatus.Inactive,
+    loaderActive = false
     ): Item =
   result = Item()
   result.id = id
@@ -83,6 +85,7 @@ proc initItem*(
   result.categoryOpened = categoryOpened
   result.trustStatus = trustStatus
   result.onlineStatus = onlineStatus
+  result.loaderActive = loaderActive
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
@@ -108,6 +111,7 @@ proc `$`*(self: Item): string =
     categoryOpened: {$self.categoryOpened},
     trustStatus: {$self.trustStatus},
     onlineStatus: {$self.onlineStatus},
+    loaderActive: {$self.loaderActive},
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
@@ -132,7 +136,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "highlight": self.highlight,
     "categoryOpened": self.categoryOpened,
     "trustStatus": self.trustStatus,
-    "onlineStatus": self.onlineStatus
+    "onlineStatus": self.onlineStatus,
+    "loaderActive": self.loaderActive
   }
 
 proc delete*(self: Item) =
@@ -263,3 +268,9 @@ proc `onlineStatus=`*(self: var Item, value: OnlineStatus) =
 
 proc setHasUnreadMessages*(self: Item, value: bool) =
   self.hasUnreadMessages = value
+
+proc loaderActive*(self: Item): bool =
+  self.loaderActive
+
+proc `loaderActive=`*(self: var Item, value: bool) =
+  self.loaderActive = value

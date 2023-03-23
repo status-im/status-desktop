@@ -124,20 +124,10 @@ Item {
             id: chatLoader
 
             // Channels/chats are not loaded by default and only load when first put active
-            active: false
+            active: model.loaderActive
             width: parent.width
             height: parent.height
             visible: model.active
-
-            // Removing the binding in order not to unload the content:
-            // It is done for keeping:
-            //   - the last channel/chat scroll position
-            //   - the last typed but not sent text
-            Binding on active {
-                when: !chatLoader.active
-                restoreMode: Binding.RestoreNone
-                value: model.itemId && root.isSectionActive && (model.itemId === root.activeChatId || model.itemId === root.activeSubItemId)
-            }
 
             sourceComponent: ChatContentView {
                 visible: !root.rootStore.openCreateChat && isActiveChannel
