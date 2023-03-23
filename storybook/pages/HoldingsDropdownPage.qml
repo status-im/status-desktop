@@ -50,6 +50,7 @@ SplitView {
             collectiblesModel: CollectiblesModel {}
             assetsModel: AssetsModel {}
             isENSTab: isEnsTabChecker.checked
+            isCollectiblesOnly: isCollectiblesOnlyChecker.checked
 
             onOpened: contentItem.parent.parent = container
             Component.onCompleted: {
@@ -64,10 +65,18 @@ SplitView {
         SplitView.minimumHeight: 100
         SplitView.preferredHeight: 250
 
-        CheckBox {
-            id: isEnsTabChecker
-            text: "Is ENS tab visible?"
-            checked: true
+        RowLayout {
+            CheckBox {
+                id: isEnsTabChecker
+                text: "Is ENS tab visible?"
+                checked: true
+            }
+
+            CheckBox {
+                id: isCollectiblesOnlyChecker
+                text: "Is collectibles only visible?"
+                checked: false
+            }
         }
     }
 }
