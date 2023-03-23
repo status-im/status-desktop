@@ -16,6 +16,7 @@ StatusDropdown {
     property var assetsModel
     property var collectiblesModel
     property bool isENSTab: true
+    property bool isCollectiblesOnly: false
 
     property var usedTokens: []
     property var usedEnsNames: []
@@ -54,11 +55,11 @@ StatusDropdown {
     }
 
     function setActiveTab(holdingType) {
-        d.currentHoldingType = holdingType
+        d.currentHoldingType = root.isCollectiblesOnly ? HoldingTypes.Type.Collectible : holdingType
     }
 
     function reset() {
-        d.currentHoldingType = HoldingTypes.Type.Asset
+        d.currentHoldingType = root.isCollectiblesOnly ? HoldingTypes.Type.Collectible : HoldingTypes.Type.Asset
         d.initialHoldingMode = HoldingTypes.Mode.Add
 
         root.assetKey = ""
@@ -83,7 +84,7 @@ StatusDropdown {
         readonly property bool ensReady: d.ensDomainNameValid
 
         property int extendedDropdownType: ExtendedDropdownContent.Type.Assets
-        property int currentHoldingType: HoldingTypes.Type.Asset
+        property int currentHoldingType: root.isCollectiblesOnly ? HoldingTypes.Type.Collectible : HoldingTypes.Type.Asset
 
         property bool updateSelected: false
 
@@ -165,7 +166,7 @@ StatusDropdown {
         StatusSwitchTabBar {
             id: tabBar
 
-            visible: !backButton.visible
+            visible: !root.isCollectiblesOnly && !backButton.visible
             Layout.preferredHeight: d.tabBarHeigh
             Layout.fillWidth: true
             currentIndex: d.holdingTypes.indexOf(d.currentHoldingType)
@@ -189,7 +190,7 @@ StatusDropdown {
 
             onCurrentIndexChanged: {
                 if(currentIndex >= 0) {
-                    d.currentHoldingType = d.holdingTypes[currentIndex]
+                    d.currentHoldingType = root.isCollectiblesOnly ? HoldingTypes.Type.Collectible : d.holdingTypes[currentIndex]
                     d.setInitialFlow()
                 }
             }
@@ -232,6 +233,8 @@ StatusDropdown {
     }
 
     onClosed: root.reset()
+    onIsCollectiblesOnlyChanged: root.reset()
+    onIsENSTabChanged: root.reset()
 
     Component {
         id: listLayout
