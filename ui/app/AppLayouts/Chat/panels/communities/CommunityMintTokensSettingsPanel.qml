@@ -10,6 +10,7 @@ import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Chat.layouts 1.0
 import AppLayouts.Chat.views.communities 1.0
+import AppLayouts.Chat.popups.community 1.0
 
 import utils 1.0
 
@@ -19,6 +20,8 @@ SettingsPageLayout {
     // Models:
     property var tokensModel
     property var holdersModel
+    property string feeText
+    property bool isFeeLoading: true
 
     // Network related properties:
     property var layer1Networks
@@ -44,6 +47,8 @@ SettingsPageLayout {
                            string accountName,
                            string accountAddress)
 
+    signal signMintTransactionOpened
+
     function navigateBack() {
         stackManager.pop(StackView.Immediate)
     }
@@ -63,7 +68,6 @@ SettingsPageLayout {
         readonly property string backTokensText: qsTr("Tokens")
 
         property bool preview: false
-        property string collectibleName
         property string accountAddress
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
     }
@@ -94,15 +98,12 @@ SettingsPageLayout {
         },
         State {
             name: d.previewCollectibleViewState
-            PropertyChanges {target: root; title: d.collectibleName}
             PropertyChanges {target: root; previousPageName: d.backButtonText}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
-            PropertyChanges {target: d; preview: true}
         },
         State {
             name: d.collectibleViewState
-            PropertyChanges {target: root; title: d.collectibleName}
             PropertyChanges {target: root; previousPageName: d.backTokensText}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
@@ -154,11 +155,11 @@ SettingsPageLayout {
             accounts: root.accounts
 
             onPreviewClicked: {
-                d.collectibleName = name
                 d.accountAddress = accountAddress
                 stackManager.push(d.previewCollectibleViewState,
                                   collectibleView,
                                   {
+                                      preview: true,
                                       name,
                                       artworkSource,
                                       symbol,
@@ -181,17 +182,16 @@ SettingsPageLayout {
         id: collectibleView
 
         CommunityCollectibleView {
-            viewWidth: root.viewWidth
-            preview: d.preview
-            holdersModel: root.holdersModel
+            id: view
 
-            onMintCollectible: {
-                d.collectibleName = name
+            function signMintTransaction() {
+                root.isFeeLoading = true
+                root.feeText = ""
                 root.mintCollectible(artworkSource,
                                      name,
                                      symbol,
                                      description,
-                                     supply,
+                                     parseInt(supplyText),
                                      infiniteSupply,
                                      transferable,
                                      selfDestruct,
@@ -200,6 +200,32 @@ SettingsPageLayout {
                                      d.accountAddress)
 
                 stackManager.clear(d.initialViewState, StackView.Immediate)
+            }
+
+            viewWidth: root.viewWidth
+            holdersModel: root.holdersModel
+
+            onMintCollectible: popup.open()
+
+            Binding {
+                target: root
+                property: "title"
+                value: view.name
+            }
+
+            SignMintTokenTransactionPopup {
+                id: popup
+
+                anchors.centerIn: Overlay.overlay
+                collectibleName: parent.name
+                accountName: parent.accountName
+                networkName: parent.chainName
+                feeText: root.feeText
+                isFeeLoading: root.isFeeLoading
+
+                onOpened: root.signMintTransactionOpened()
+                onCancelClicked: close()
+                onSignTransactionClicked: parent.signMintTransaction()
             }
         }
     }
@@ -222,11 +248,11 @@ SettingsPageLayout {
             viewWidth: root.viewWidth
             model: root.tokensModel
             onItemClicked: {
-                d.collectibleName = name
                 stackManager.push(d.collectibleViewState,
                                   collectibleView,
                                   {
-                                      deployState: Qt.binding(() => deployState),
+                                      preview: false,
+                                      deployState,
                                       name,
                                       artworkSource,
                                       symbol,
