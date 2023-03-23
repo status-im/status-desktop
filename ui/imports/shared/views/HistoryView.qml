@@ -7,6 +7,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 
 import "../panels"
@@ -69,31 +71,87 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
 
-        model: RootStore.historyTransactions
+        property string firstSection
+
+        model: SortFilterProxyModel {
+            id: txModel
+
+            sourceModel: RootStore.historyTransactions
+
+            // LocaleUtils is not accessable from inside expression, but local function works
+            property var formatDate: (ms) => LocaleUtils.formatDate(ms, Locale.ShortFormat)
+            sorters: RoleSorter {
+                roleName: "timestamp"
+                sortOrder: Qt.DescendingOrder
+            }
+            proxyRoles: ExpressionRole {
+                name: "date"
+                expression: {
+                    return timestamp > 0 ? txModel.formatDate(timestamp * 1000) : ""
+                }
+            }
+        }
+
         delegate: Loader {
             width: ListView.view.width
-            sourceComponent: isTimeStamp ? dateHeader : transactionDelegate
+            sourceComponent: transactionDelegate
             onLoaded:  {
                 item.modelData = model
+
+                if (index == 0)
+                    ListView.view.firstSection = date
             }
         }
         footer: footerComp
 
+        displaced: Transition {
+            NumberAnimation { properties: "y"; duration: 250; easing.type: Easing.Linear; alwaysRunToEnd: true }
+        }
+
+        readonly property point lastVisibleItemPos: Qt.point(0, contentY + height - 1)
+        property int lastVisibleIndex: indexAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
+
+        onCountChanged: {
+            const lastVisibleItem = itemAtIndex(lastVisibleIndex)
+            const newItem = itemAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
+            const lastVisibleItemY = lastVisibleItem ? lastVisibleItem.y : -1
+            if (newItem) {
+                if (newItem.y < lastVisibleItemY) { // item inserted higher than last visible
+                    lastVisibleIndex = indexAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
+                }
+            }
+        }
+        currentIndex: 0
+
+        property bool userScrolled: false
+
+        onMovingVerticallyChanged: {
+            if (!userScrolled) {
+                userScrolled = true
+                currentIndex = Qt.binding(() => lastVisibleIndex >= 0 ? lastVisibleIndex : (count - 1))
+            }
+
+            lastVisibleIndex = indexAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
+        }
+
         ScrollBar.vertical: StatusScrollBar {}
 
-        onAtYEndChanged: if(atYEnd && RootStore.historyTransactions.hasMore) fetchHistory()
-    }
+        section.property: "date"
+        section.delegate: Item {
+            width: ListView.view.width
+            height: ListView.view.firstSection === section || section.length > 0 ? 40 : 0
+            visible: height > 0
 
-    Component {
-        id: dateHeader
-        StatusListItem {
-            property var modelData
-            height: 40
-            title: modelData !== undefined && !!modelData ? LocaleUtils.formatDate(modelData.timestamp * 1000, Locale.ShortFormat) : ""
-            statusListItemTitle.color: Theme.palette.baseColor1
-            color: Theme.palette.statusListItem.backgroundColor
-            sensor.enabled: false
+            required property string section
+
+            StatusBaseText {
+                anchors.verticalCenter: parent.verticalCenter
+                text: parent.section
+                color: Theme.palette.baseColor1
+                font.pixelSize: 15
+            }
         }
+        onAtYEndChanged: if (atYEnd && RootStore.historyTransactions.hasMore) fetchHistory()
     }
 
     Component {
