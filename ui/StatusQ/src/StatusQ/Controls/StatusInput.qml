@@ -377,6 +377,11 @@ Item {
         validate()
     }
 
+    onFocusChanged: {
+        if(focus)
+            statusBaseInput.forceActiveFocus()
+    }
+
     ColumnLayout {
         id: inputLayout
         anchors.fill: parent
