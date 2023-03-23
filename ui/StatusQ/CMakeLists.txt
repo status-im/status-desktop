@@ -23,8 +23,8 @@ set(QML_IMPORT_PATH
     CACHE STRING "")
 
 
-add_subdirectory(vendor/SortFilterProxyModel)
-add_subdirectory(vendor/qzxing/src)
+add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
+add_subdirectory(../../vendor/qzxing/src qzxing)
 add_subdirectory(sandbox)
 add_subdirectory(sanity_checker)
 add_subdirectory(tests)
