@@ -23,6 +23,7 @@ Item {
 
     property var checkedKeys: []
     property int type: ExtendedDropdownContent.Type.Assets
+    property string noDataText: qsTr("No data found")
 
     readonly property bool canGoBack: root.state !== d.depth1_ListState
 
@@ -81,6 +82,13 @@ Item {
         property url currentItemSource: ""
 
         readonly property bool searchMode: searcher.text.length > 0
+        readonly property bool availableData: {
+            if(root.type === ExtendedDropdownContent.Type.Assets && root.assetsModel && root.assetsModel.count > 0)
+                return true
+            if(root.type === ExtendedDropdownContent.Type.Collectibles && root.collectiblesModel && root.collectiblesModel.count > 0)
+                return true
+            return false
+        }
 
         onCurrentModelChanged: {
             // Workaround for a bug in SortFilterProxyModel causing that model
@@ -337,6 +345,7 @@ Item {
             Layout.fillWidth: true
             Layout.topMargin: root.state === d.depth1_ListState ? 0 : 8
 
+            visible: d.availableData
             topPadding: 0
             bottomPadding: 0
             minimumHeight: 36
@@ -388,6 +397,8 @@ Item {
         id: assetsListView
 
         ListDropdownContent {
+            availableData: d.availableData
+            noDataText: root.noDataText
             headerModel: ListModel {
                 ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint asset"); rotation: 0; spacing: 8 }
                 ListElement { key: "IMPORT"; icon: "invite-users"; iconSize: 16; description: qsTr("Import existing asset"); rotation: 180; spacing: 8 }
@@ -414,6 +425,8 @@ Item {
         id: collectiblesListView
 
         ListDropdownContent {
+            availableData: d.availableData
+            noDataText: root.noDataText
             areHeaderButtonsVisible: root.state === d.depth1_ListState
             headerModel: ListModel {
                ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint collectible"); rotation: 0; spacing: 8 }

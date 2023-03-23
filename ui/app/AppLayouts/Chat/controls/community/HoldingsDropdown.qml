@@ -17,6 +17,13 @@ StatusDropdown {
     property var collectiblesModel
     property bool isENSTab: true
     property bool isCollectiblesOnly: false
+    property string noDataText: {
+        if(d.currentHoldingType  ===  HoldingTypes.Type.Asset)
+            return qsTr("No assets found")
+        if(d.currentHoldingType === HoldingTypes.Type.Collectible)
+            return qsTr("No collectibles found")
+        return qsTr("No data found")
+    }
 
     property var usedTokens: []
     property var usedEnsNames: []
@@ -244,6 +251,7 @@ StatusDropdown {
 
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
+            noDataText: root.noDataText
 
             checkedKeys: root.usedTokens.map(entry => entry.key)
             type: d.extendedDropdownType
