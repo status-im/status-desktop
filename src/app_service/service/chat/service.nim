@@ -601,7 +601,9 @@ QtObject:
 
   proc updateGroupChatDetails*(self: Service, communityID: string, chatID: string, name: string, color: string, imageJson: string) =
     try:
-      let response = status_chat.editChat(communityID, chatID, name, color, imageJson)
+      var parsedImage = imageJson.parseJson
+      parsedImage["imagePath"] = %singletonInstance.utils.formatImagePath(parsedImage["imagePath"].getStr)
+      let response = status_chat.editChat(communityID, chatID, name, color, $parsedImage)
       if (not response.error.isNil):
         let msg = response.error.message & " chatId=" & chatId
         error "error while editing group chat details", msg
