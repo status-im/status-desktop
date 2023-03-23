@@ -43,12 +43,10 @@ QtObject:
   type
     Model* = ref object of QAbstractListModel
       items: seq[Item]
-      itemsWithDateHeaders: seq[Item]
       hasMore: bool
 
   proc delete(self: Model) =
     self.items = @[]
-    self.itemsWithDateHeaders = @[]
     self.QAbstractListModel.delete
 
   proc setup(self: Model) =
@@ -60,20 +58,20 @@ QtObject:
     result.hasMore = true
 
   proc `$`*(self: Model): string =
-    for i in 0 ..< self.itemsWithDateHeaders.len:
-      result &= fmt"""[{i}]:({$self.itemsWithDateHeaders[i]})"""
+    for i in 0 ..< self.items.len:
+      result &= fmt"""[{i}]:({$self.items[i]})"""
 
   proc countChanged(self: Model) {.signal.}
 
   proc getCount*(self: Model): int {.slot.} =
-    self.itemsWithDateHeaders.len
+    self.items.len
 
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
   method rowCount(self: Model, index: QModelIndex = nil): int =
-    return self.itemsWithDateHeaders.len
+    return self.items.len
 
   method roleNames(self: Model): Table[int, string] =
     {
@@ -114,10 +112,10 @@ QtObject:
     if (not index.isValid):
       return
 
-    if (index.row < 0 or index.row >= self.itemsWithDateHeaders.len):
+    if (index.row < 0 or index.row >= self.items.len):
       return
 
-    let item = self.itemsWithDateHeaders[index.row]
+    let item = self.items[index.row]
     let enumRole = role.ModelRole
 
     case enumRole:
@@ -186,14 +184,14 @@ QtObject:
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
-    self.itemsWithDateHeaders = items
+    self.items = items
     self.endResetModel()
     self.countChanged()
 
   proc getLastTxBlockNumber*(self: Model): string {.slot.} =
-    if (self.itemsWithDateHeaders.len == 0):
+    if (self.items.len == 0):
       return "0x0"
-    return self.itemsWithDateHeaders[^1].getBlockNumber()
+    return self.items[^1].getBlockNumber()
 
   proc hasMoreChanged*(self: Model) {.signal.}
 
@@ -219,43 +217,49 @@ QtObject:
       result = cmp(x.getNonce(), y.getNonce())
 
   proc addNewTransactions*(self: Model, transactions: seq[Item], wasFetchMore: bool) =
-    let existingTxIds = self.items.map(tx => tx.getId())
-    let hasNewTxs = transactions.len > 0 and transactions.any(tx => not existingTxIds.contains(tx.getId()))
+    if transactions.len == 0:
+      return
 
-    if hasNewTxs or not wasFetchMore:
-      var allTxs = self.items.concat(transactions)
-      allTxs.sort(cmpTransactions, SortOrder.Descending)
-      eth_service_utils.deduplicate(allTxs, tx => tx.getTxHash())
+    var txs = transactions
 
-      # add day headers to the transaction list
-      var itemsWithDateHeaders: seq[Item] = @[]
-      var tempTimeStamp: Time
-      for tx in allTxs:
-        let durationInDays =  (tempTimeStamp.toTimeInterval() - fromUnix(tx.getTimestamp()).toTimeInterval()).days
-        if(durationInDays != 0):
-          itemsWithDateHeaders.add(initTimestampItem(tx.getTimestamp()))
-        itemsWithDateHeaders.add(tx)
-        tempTimeStamp = fromUnix(tx.getTimestamp())             
+    # Reset the model if empty
+    if self.items.len == 0:
+      eth_service_utils.deduplicate(txs, tx => tx.getTxHash())
+      self.setItems(txs)
+      return
 
-      self.items = allTxs
-      self.setItems(itemsWithDateHeaders)
-      self.setHasMore(true)
+    # Concatenate existing and new, filter out duplicates
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    var newItems = concat(self.items, txs)
+    eth_service_utils.deduplicate(newItems, tx => tx.getTxHash())
+
+    # Though we claim that we insert rows to preserve listview indices without
+    # model reset, we actually reset the list, but since old items order is not changed
+    # by deduplicate() call, the order is preserved and only new items are added
+    # to the end. For model it looks like we inserted.
+    # Unsorted, sorting is done on UI side
+    self.beginInsertRows(parentModelIndex, self.items.len, newItems.len - 1)
+    self.items = newItems
+    self.endInsertRows()
+
+    self.countChanged()
 
   proc addPageSizeBuffer*(self: Model, pageSize: int) =
     if pageSize > 0:
-      var itemsWithDateHeaders: seq[Item] = @[]
-      itemsWithDateHeaders.add(initTimestampItem(0))
+      self.beginInsertRows(newQModelIndex(), self.items.len, self.items.len + pageSize - 1)
       for i in 0 ..< pageSize:
-        self.beginInsertRows(newQModelIndex(), self.itemsWithDateHeaders.len, self.itemsWithDateHeaders.len)
-        self.itemsWithDateHeaders.add(initLoadingItem())
-        self.endInsertRows()
-        self.countChanged()
+        self.items.add(initLoadingItem())
+      self.endInsertRows()
+      self.countChanged()
 
   proc removePageSizeBuffer*(self: Model) =
-    for i in 0 ..< self.itemsWithDateHeaders.len:
-      if self.itemsWithDateHeaders[i].getLoadingTransaction():
-        self.beginRemoveRows(newQModelIndex(), i, self.itemsWithDateHeaders.len-1)
-        self.itemsWithDateHeaders.delete(i, self.itemsWithDateHeaders.len-1)
+    var removed = false
+    for i in 0 ..< self.items.len:
+      if self.items[i].getLoadingTransaction():
+        self.beginRemoveRows(newQModelIndex(), i, self.items.len-1)
+        self.items.delete(i, self.items.len-1)
         self.endRemoveRows()
         self.countChanged()
         return
