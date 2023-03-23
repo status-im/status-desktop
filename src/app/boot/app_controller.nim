@@ -180,7 +180,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.collectibleService = collectible_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService)
   result.walletAccountService = wallet_account_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,
-    result.tokenService, result.networkService,
+    result.tokenService, result.networkService, result.collectibleService
   )
   result.messageService = message_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.contactsService, result.tokenService, result.walletAccountService, result.networkService
@@ -218,7 +218,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.tokensService = tokens_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.transactionService, result.tokenService, result.settingsService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
-  result.networkConnectionService = network_connection_service.newService(statusFoundation.events, result.walletAccountService, result.networkService, result.collectibleService, result.nodeService)
+  result.networkConnectionService = network_connection_service.newService(statusFoundation.events, result.walletAccountService, result.networkService, result.nodeService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -428,6 +428,7 @@ proc load(self: AppController) =
   self.tokenService.init()
   self.currencyService.init()
   self.walletAccountService.init()
+  self.collectibleService.init()
 
   # Apply runtime log level settings
   if not existsEnv("LOG_LEVEL"):

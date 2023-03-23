@@ -205,6 +205,6 @@ QtObject:
     self.countChanged()
 
   # in case loading is still going on and no items are present, show loading items when there is no connection to opensea possible
-  proc noConnectionToOpenSea*(self: Model) =
+  proc connectionToOpenSea*(self: Model, connected: bool) =
     if self.items.len == 0:
-      self.setIsFetching(true)
+      self.setIsFetching(not connected)

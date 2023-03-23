@@ -31,7 +31,7 @@ type
     moduleLoaded: bool
     currentAccountIndex: int
 
-proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]])
+proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]], hasBalanceCache: bool, hasMarketValuesCache: bool)
 proc onCurrencyFormatsUpdated(self: Module)
 proc onAccountAdded(self: Module, account: WalletAccountDto)
 proc onAccountRemoved(self: Module, account: WalletAccountDto)
@@ -85,7 +85,7 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     let arg = TokensPerAccountArgs(e)
-    self.onTokensRebuilt(arg.accountsTokens)
+    self.onTokensRebuilt(arg.accountsTokens, arg.hasBalanceCache, arg.hasMarketValuesCache)
   
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.onCurrencyFormatsUpdated()
@@ -182,12 +182,13 @@ method switchAccount*(self: Module, accountIndex: int) =
 method update*(self: Module, address: string, accountName: string, color: string, emoji: string) =
   self.controller.update(address, accountName, color, emoji)
 
-proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
+proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]], hasBalanceCache: bool, hasMarketValuesCache: bool) =
   let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
   if not accountsTokens.contains(walletAccount.address):
     return
   self.view.setAssetsLoading(false)
   self.setAssetsAndBalance(accountsTokens[walletAccount.address])
+  self.view.setCacheValues(hasBalanceCache, hasMarketValuesCache)
 
 proc onCurrencyFormatsUpdated(self: Module) =
   # Update assets
@@ -205,3 +206,6 @@ proc onAccountAdded(self: Module, account: WalletAccountDto) =
 
 proc onAccountRemoved(self: Module, account: WalletAccountDto) =
   self.switchAccount(self.currentAccountIndex)
+
+method getHasCollectiblesCache*(self: Module, address: string): bool =
+  return self.controller.getHasCollectiblesCache(address)

@@ -682,6 +682,7 @@ Item {
                     objectName: "walletBlockchainConnectionBanner"
                     Layout.fillWidth: true
                     websiteDown: Constants.walletConnections.blockchains
+                    withCache: networkConnectionStore.balanceCache
                     text: {
                         switch(connectionState) {
                         case Constants.ConnectionStatus.Success:
@@ -731,6 +732,7 @@ Item {
                     objectName: "walletCollectiblesConnectionBanner"
                     Layout.fillWidth: true
                     websiteDown: Constants.walletConnections.collectibles
+                    withCache: networkConnectionStore.collectiblesCache
                     text: {
                         switch(connectionState) {
                         case Constants.ConnectionStatus.Success:
@@ -757,6 +759,7 @@ Item {
                     objectName: "walletMarketConnectionBanner"
                     Layout.fillWidth: true
                     websiteDown: Constants.walletConnections.market
+                    withCache: networkConnectionStore.marketValuesCache
                     text: {
                         switch(connectionState) {
                         case Constants.ConnectionStatus.Success:

@@ -35,6 +35,8 @@ QtObject:
       tmpChainID: int  # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
       tmpSymbol: string # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
       assetsLoading: bool
+      hasBalanceCache: bool
+      hasMarketValuesCache: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -195,6 +197,20 @@ QtObject:
       self.assetsLoading = assetLoading
       self.assetsLoadingChanged()
 
+  proc getHasBalanceCache(self: View): QVariant {.slot.} =
+    return newQVariant(self.hasBalanceCache)
+  proc hasBalanceCacheChanged(self: View) {.signal.}
+  QtProperty[QVariant] hasBalanceCache:
+    read = getHasBalanceCache
+    notify = hasBalanceCacheChanged
+
+  proc getHasMarketValuesCache(self: View): QVariant {.slot.} =
+    return newQVariant(self.hasMarketValuesCache)
+  proc hasMarketValuesCacheChanged(self: View) {.signal.}
+  QtProperty[QVariant] hasMarketValuesCache:
+    read = getHasMarketValuesCache
+    notify = hasMarketValuesCacheChanged
+
   proc update(self: View, address: string, accountName: string, color: string, emoji: string) {.slot.} =
     self.delegate.update(address, accountName, color, emoji)
 
@@ -243,7 +259,11 @@ QtObject:
     if(self.ens != item.getEns()):
       self.ens = item.getEns()
       self.ensChanged()
-    self.setAssetsLoading(item.getAssetsLoading())
+    self.setAssetsLoading(item.getAssetsLoading())  
+    self.hasBalanceCache = item.getHasBalanceCache()
+    self.hasBalanceCacheChanged()
+    self.hasMarketValuesCache = item.getHasMarketValuesCache()
+    self.hasMarketValuesCacheChanged()
     # Set related accounts
     self.relatedAccounts = item.getRelatedAccounts()
     self.relatedAccountsChanged()
@@ -268,3 +288,12 @@ QtObject:
     self.tmpChainId = 0
     self.tmpSymbol = "ERROR"
     return newQVariant(currencyAmount)
+
+  proc setCacheValues*(self: View, hasBalanceCache: bool, hasMarketValuesCache: bool) =
+    self.hasBalanceCache = hasBalanceCache
+    self.hasBalanceCacheChanged()
+    self.hasMarketValuesCache = hasMarketValuesCache
+    self.hasMarketValuesCacheChanged()   
+
+  proc getHasCollectiblesCache(self: View): bool {.slot.} =
+    return self.delegate.getHasCollectiblesCache(self.address)

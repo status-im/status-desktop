@@ -47,7 +47,7 @@ Control {
             border.color: Theme.palette.baseColor2
             border.width: 1
             showLoadingIndicator: true
-            color: root.backgroundColor
+            color: root.isLoading ? "transparent": root.backgroundColor
 
             Loader {
                 anchors.fill: parent
