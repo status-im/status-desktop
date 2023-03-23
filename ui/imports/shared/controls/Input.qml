@@ -60,6 +60,10 @@ Item {
         validationError = ""
     }
 
+    onFocusChanged: {
+        if(focus) inputField.forceActiveFocus()
+    }
+
     StyledText {
         id: inputLabel
         text: inputBox.label

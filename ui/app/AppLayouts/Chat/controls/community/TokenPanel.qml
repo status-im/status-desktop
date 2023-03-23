@@ -65,6 +65,20 @@ ColumnLayout {
         customHeight: d.defaultHeight
         allowDecimals: true
         keepHeight: true
+        onKeyPressed: {
+            if(!addOrUpdateButton.enabled) return
+
+            if(event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
+                addOrUpdateButton.clicked()
+        }
+        onVisibleChanged: {
+            if(visible)
+                forceActiveFocus()
+        }
+        Component.onCompleted: {
+            if(visible)
+                forceActiveFocus()
+        }
     }
 
     StatusButton {

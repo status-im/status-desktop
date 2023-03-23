@@ -55,12 +55,23 @@ ColumnLayout {
                         && !alreadyUsed
             }
         }
+        onVisibleChanged: {
+            if(visible)
+                forceActiveFocus()
+        }
+        onKeyPressed: {
+            if(!addOrUpdateButton.enabled) return
+
+            if(event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
+                addOrUpdateButton.clicked()
+        }
 
         Component.onCompleted: {
             if (text) {
                 input.dirty = true
                 validate()
             }
+            forceActiveFocus()
         }
     }
 

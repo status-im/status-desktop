@@ -51,6 +51,11 @@ Item {
                 ? d.depth2_ThumbnailsState : d.depth2_ListState
     }
 
+    onFocusChanged: {
+        if(focus)
+            searcher.forceActiveFocus()
+    }
+
     Settings {
         property alias useThumbnailsOnDepth2: d.useThumbnailsOnDepth2
     }
@@ -131,6 +136,8 @@ Item {
             root.state = d.depth1_ListState
         }
     }
+
+    onStateChanged: forceActiveFocus()
 
     state: d.depth1_ListState
     states: [
@@ -341,6 +348,14 @@ Item {
             Binding on placeholderText{
                 when: d.currentItemName !== ""
                 value: qsTr("Search %1").arg(d.currentItemName)
+            }
+            onVisibleChanged: {
+                if(visible)
+                    forceActiveFocus()
+            }
+            Component.onCompleted: {
+                if(visible)
+                    forceActiveFocus()
             }
         }
 
