@@ -244,6 +244,7 @@ StatusDropdown {
 
             checkedKeys: root.usedTokens.map(entry => entry.key)
             type: d.extendedDropdownType
+            onTypeChanged: forceActiveFocus()
 
             onItemClicked: {
                 d.assetAmountText = ""
