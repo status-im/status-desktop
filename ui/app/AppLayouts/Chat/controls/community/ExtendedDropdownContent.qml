@@ -23,19 +23,26 @@ Item {
 
     property var checkedKeys: []
     property int type: ExtendedDropdownContent.Type.Assets
+
     property string noDataText: qsTr("No data found")
+    property bool showAllTokensMode: false
 
     readonly property bool canGoBack: root.state !== d.depth1_ListState
 
     signal itemClicked(string key, string name, url iconSource)
+    signal footerButtonClicked
+
     signal navigateDeep(string key, var subItems)
+
     signal layoutChanged()
     signal navigateToMintTokenSettings
 
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth
 
-    enum Type{
+    onShowAllTokensModeChanged: searcher.text = ""
+
+    enum Type {
         Assets,
         Collectibles
     }
@@ -107,18 +114,39 @@ Item {
             id: filteredModel
 
             sourceComponent: SortFilterProxyModel {
-                filters: ExpressionFilter {
-                    expression: {
-                        searcher.text
+                filters: [
+                    ValueFilter {
+                        roleName: "category"
+                        value: TokenCategories.Category.General
+                        inverted: true
+                        enabled: !root.showAllTokensMode
+                    },
+                    AnyOf {
+                        enabled: root.showAllTokensMode
 
-                        if (model.shortName && model.shortName.toLowerCase()
-                                .includes(searcher.text.toLowerCase()))
-                            return true
+                        ValueFilter {
+                            roleName: "category"
+                            value: TokenCategories.Category.Own
+                        }
 
-                        return model.name.toLowerCase().includes(
-                                    searcher.text.toLowerCase())
+                        ValueFilter {
+                            roleName: "category"
+                            value: TokenCategories.Category.General
+                        }
+                    },
+                    ExpressionFilter {
+                        expression: {
+                            searcher.text
+
+                            if (model.shortName && model.shortName.toLowerCase()
+                                    .includes(searcher.text.toLowerCase()))
+                                return true
+
+                            return model.name.toLowerCase().includes(
+                                        searcher.text.toLowerCase())
+                        }
                     }
-                }
+                ]
 
                 proxyRoles: ExpressionRole {
                     name: "categoryLabel"
@@ -131,7 +159,6 @@ Item {
                     }
 
                     expression: getCategoryLabelForType(model.category, root.type)
-
                }
             }
         }
@@ -352,10 +379,21 @@ Item {
             minimumHeight: 36
             maximumHeight: 36
 
-            placeholderText: root.type === ExtendedDropdownContent.Type.Assets ?
-                                 qsTr("Search assets") : qsTr("Search collectibles")
+            placeholderText: {
+                if (root.type === ExtendedDropdownContent.Type.Assets) {
+                    if (root.showAllTokensMode)
+                        return qsTr("Search all listed assets")
 
-            Binding on placeholderText{
+                    return qsTr("Search assets")
+                }
+
+                if (root.showAllTokensMode)
+                    return qsTr("Search all collectibles")
+
+                return qsTr("Search collectibles")
+            }
+
+            Binding on placeholderText {
                 when: d.currentItemName !== ""
                 value: qsTr("Search %1").arg(d.currentItemName)
             }
@@ -408,12 +446,23 @@ Item {
             checkedKeys: root.checkedKeys
             searchMode: d.searchMode
 
+            footerButtonText: TokenCategories.getCategoryLabelForAsset(
+                                  TokenCategories.Category.General)
+
+            areSectionsVisible: !root.showAllTokensMode
+            isFooterButtonVisible: !root.showAllTokensMode && !d.searchMode
+                                   && filteredModel.item && d.currentModel.count > filteredModel.item.count
+
+            onFooterButtonClicked: root.footerButtonClicked()
+
             onHeaderItemClicked: {
                 if(key === "MINT") console.log("TODO: Mint asset")
                 else if(key === "IMPORT") console.log("TODO: Import existing asset")
             }
             onItemClicked: root.itemClicked(key, shortName, iconSource)
+
             onImplicitHeightChanged: root.layoutChanged()
+
             Binding on implicitHeight {
                 value: contentHeight
                 //avoid too many changes of the implicit height
@@ -429,14 +478,31 @@ Item {
             availableData: d.availableData
             noDataText: root.noDataText
             areHeaderButtonsVisible: root.state === d.depth1_ListState
+                                     && !root.showAllTokensMode
             headerModel: ListModel {
-               ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint collectible"); rotation: 0; spacing: 8 }
+               ListElement {
+                   key: "MINT"
+                   icon: "add"
+                   iconSize: 16
+                   description: qsTr("Mint collectible")
+                   rotation: 0
+                   spacing: 8
+               }
             }
 
             checkedKeys: root.checkedKeys
             searchMode: d.searchMode
 
+            footerButtonText: TokenCategories.getCategoryLabelForCollectible(
+                                  TokenCategories.Category.General)
+
+            areSectionsVisible: !root.showAllTokensMode
+            isFooterButtonVisible: !root.showAllTokensMode && !d.searchMode
+                                   && filteredModel.item && d.currentModel.count > filteredModel.item.count
+
             onHeaderItemClicked: root.navigateToMintTokenSettings()
+            onFooterButtonClicked: root.footerButtonClicked()
+
             onItemClicked: {
                 if(subItems && root.state === d.depth1_ListState) {
                     // One deep navigation

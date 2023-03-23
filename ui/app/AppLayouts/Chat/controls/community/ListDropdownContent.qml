@@ -15,8 +15,13 @@ StatusListView {
 
     property var checkedKeys: []
 
+    property string footerButtonText
+
     property var headerModel
     property bool areHeaderButtonsVisible: true
+    property bool isFooterButtonVisible: true
+    property bool areSectionsVisible: true
+
     property bool searchMode: false
     property bool availableData: false
     property string noDataText: qsTr("No data found")
@@ -25,6 +30,8 @@ StatusListView {
 
     signal headerItemClicked(string key)
     signal itemClicked(var key, string name, var shortName,  url iconSource, var subItems)
+
+    signal footerButtonClicked
 
     implicitWidth: 273
     implicitHeight: Math.min(contentHeight, root.maxHeight)
@@ -93,7 +100,8 @@ StatusListView {
                            key, name, shortName, iconSource, subItems)
     }
 
-    section.property: root.searchMode ? "" : "categoryLabel"
+    section.property: root.searchMode || !root.areSectionsVisible
+                      ? "" : "categoryLabel"
     section.criteria: ViewSection.FullString
 
     section.delegate: Item {
@@ -112,6 +120,48 @@ StatusListView {
             }
         }
     }
+
+    Component {
+        id: footerComponent
+
+        Item {
+            width: ListView.view ? ListView.view.width : 0
+            height: d.sectionHeight
+
+            Loader {
+                id: footerLoader
+
+                anchors.fill: parent
+                sourceComponent: sectionComponent
+
+                Binding {
+                    target: footerLoader.item
+                    property: "section"
+                    value: root.footerButtonText
+                }
+
+                StatusIcon {
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 16
+
+                    icon: "tiny/chevron-right"
+                    color: Theme.palette.baseColor1
+                    width: 16
+                    height: 16
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+
+                    onClicked: root.footerButtonClicked()
+                }
+            }
+        }
+    }
+
+    footer: root.isFooterButtonVisible ? footerComponent : null
 
     QtObject {
         id: d

@@ -38,6 +38,20 @@ ListModel {
             name: "Amp",
             shortName: "AMP",
             category: TokenCategories.Category.Own
+        },
+        {
+            key: "Dai",
+            iconSource: ModelsData.assets.dai,
+            name: "Dai",
+            shortName: "DAI",
+            category: TokenCategories.Category.General
+        },
+        {
+            key: "Dai2",
+            iconSource: ModelsData.assets.dai,
+            name: "Dai2",
+            shortName: "DAI2",
+            category: TokenCategories.Category.General
         }
     ]
 

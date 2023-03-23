@@ -48,7 +48,7 @@ StatusDropdown {
     signal navigateToMintTokenSettings
 
     enum FlowType {
-        Selected, List_Deep1, List_Deep2
+        Selected, List_Deep1, List_Deep1_All, List_Deep2
     }
 
     function openUpdateFlow() {
@@ -102,6 +102,8 @@ StatusDropdown {
                                            : (updateSelected ? HoldingTypes.Mode.Update : HoldingTypes.Mode.Add)
 
         property bool extendedDeepNavigation: false
+        property bool allTokensMode: false
+
         property var currentSubItems
         property string currentItemKey: ""
 
@@ -224,13 +226,26 @@ StatusDropdown {
         states: [
             State {
                 name: HoldingsDropdown.FlowType.Selected
-                PropertyChanges {target: loader; sourceComponent: (d.currentHoldingType === HoldingTypes.Type.Asset) ? assetLayout :
-                                                                                                                       ((d.currentHoldingType === HoldingTypes.Type.Collectible) ? collectibleLayout : ensLayout) }
+                PropertyChanges {
+                    target: loader
+                    sourceComponent: {
+                        if (d.currentHoldingType === HoldingTypes.Type.Asset)
+                            return assetLayout
+                        if (d.currentHoldingType === HoldingTypes.Type.Collectible)
+                            return collectibleLayout
+                        return ensLayout
+                    }
+                }
             },
             State {
                 name: HoldingsDropdown.FlowType.List_Deep1
                 PropertyChanges {target: loader; sourceComponent: listLayout}
                 PropertyChanges {target: d; extendedDeepNavigation: false}
+            },
+            State {
+                name: HoldingsDropdown.FlowType.List_Deep1_All
+                extend: HoldingsDropdown.FlowType.List_Deep1
+                PropertyChanges {target: d; extendedDeepNavigation: false; allTokensMode: true }
             },
             State {
                 name: HoldingsDropdown.FlowType.List_Deep2
@@ -256,7 +271,9 @@ StatusDropdown {
 
             checkedKeys: root.usedTokens.map(entry => entry.key)
             type: d.extendedDropdownType
-            onTypeChanged: forceActiveFocus()
+            showAllTokensMode: d.allTokensMode
+
+            onTypeChanged: forceActiveFocus()            
 
             onItemClicked: {
                 d.assetAmountText = ""
@@ -290,6 +307,9 @@ StatusDropdown {
                 statesStack.push(HoldingsDropdown.FlowType.List_Deep2)
             }
 
+            onFooterButtonClicked: statesStack.push(
+                                       HoldingsDropdown.FlowType.List_Deep1_All)
+
             onLayoutChanged: d.forceLayout()
 
             Component.onCompleted: {
@@ -308,6 +328,7 @@ StatusDropdown {
                 function onClicked() {
                     if (listPanel.canGoBack)
                         listPanel.goBack()
+
                     statesStack.pop()
                 }
             }
@@ -342,15 +363,15 @@ StatusDropdown {
             onUpdateClicked: root.updateAsset(root.assetKey, root.assetAmount)
             onRemoveClicked: root.removeClicked()
 
-            Component.onCompleted: {
-                if (d.assetAmountText.length === 0 && root.assetAmount)
-                    assetPanel.setAmount(root.assetAmount)
-            }
-
             Connections {
                 target: backButton
 
                 function onClicked() { statesStack.pop() }
+            }
+
+            Component.onCompleted: {
+                if (d.assetAmountText.length === 0 && root.assetAmount)
+                    assetPanel.setAmount(root.assetAmount)
             }
         }
     }
