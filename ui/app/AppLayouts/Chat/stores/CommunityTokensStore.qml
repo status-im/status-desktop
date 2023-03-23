@@ -5,15 +5,7 @@ QtObject {
     id: root
 
     property var communityTokensModuleInst: communityTokensModule ?? null
-
-    // Minting tokens:
-    function deployCollectible(communityId, accountAddress, name, symbol, description, supply,
-                             infiniteSupply, transferable, selfDestruct, chainId, artworkSource, accountName)
-    {
-        // TODO: Backend needs to create new role `accountName` and update this call accordingly
-        communityTokensModuleInst.deployCollectible(communityId, accountAddress, name, symbol, description, supply,
-                                                    infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
-    }
+    property string deployFee: "0.0015 ETH ($75.34)"//communityTokensModuleInst.computeFee // TODO: Backend
 
     // Network selection properties:
     property var layer1Networks: networksModule.layer1
@@ -55,6 +47,22 @@ QtObject {
                            amount: 1
                        }
                    ])
+    }
+
+    signal deployFeeUpdated(string value) // TO BE REMOVED
+
+    // Minting tokens:
+    function deployCollectible(communityId, accountAddress, name, symbol, description, supply,
+                             infiniteSupply, transferable, selfDestruct, chainId, artworkSource, accountName)
+    {
+        // TODO: Backend needs to create new role `accountName` and update this call accordingly
+        communityTokensModuleInst.deployCollectible(communityId, accountAddress, name, symbol, description, supply,
+                                                    infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
+    }
+
+    function computeDeployFee() {
+        // TODO: Backend compute minitng fee
+        root.deployFeeUpdated(root.deployFee) // TO BE REMOVED
     }
 
     // Airdrop tokens:

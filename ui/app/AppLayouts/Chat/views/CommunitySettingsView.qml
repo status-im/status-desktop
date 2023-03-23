@@ -283,6 +283,8 @@ StatusSectionLayout {
             }
 
             CommunityMintTokensSettingsPanel {
+                id: mintPanel
+
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
@@ -296,6 +298,7 @@ StatusSectionLayout {
                 accounts: root.rootStore.accounts
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
+                onSignMintTransactionOpened: communityTokensStore.computeDeployFee()
                 onMintCollectible: {
                     communityTokensStore.deployCollectible(root.community.id,
                                                            accountAddress,
@@ -309,6 +312,15 @@ StatusSectionLayout {
                                                            chainId,
                                                            artworkSource,
                                                            accountName)
+                }
+
+                // TODO: Review once backend is done
+                Connections {
+                    target: rootStore.communityTokensStore
+                    function onDeployFeeUpdated(value) {
+                        mintPanel.isFeeLoading = false
+                        mintPanel.feeText = value
+                    }
                 }
             }
 
