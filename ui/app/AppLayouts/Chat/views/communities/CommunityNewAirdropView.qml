@@ -77,6 +77,7 @@ StatusScrollView {
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
                 isENSTab: false
+                isCollectiblesOnly: true
 
                 function addItem(type, item, amount) {
                     const key = item.key
