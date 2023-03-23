@@ -30,6 +30,7 @@ type
     TrustStatus
     OnlineStatus
     IsCategory
+    LoaderActive
 
 QtObject:
   type
@@ -97,6 +98,7 @@ QtObject:
       ModelRole.TrustStatus.int:"trustStatus",
       ModelRole.OnlineStatus.int:"onlineStatus",
       ModelRole.IsCategory.int:"isCategory",
+      ModelRole.LoaderActive.int:"loaderActive",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -158,6 +160,8 @@ QtObject:
       result = newQVariant(item.onlineStatus.int)
     of ModelRole.IsCategory:
       result = newQVariant(item.`type` == CATEGORY_TYPE)
+    of ModelRole.LoaderActive:
+      result = newQVariant(item.loaderActive)
 
   proc appendItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
@@ -236,7 +240,11 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         # Set active channel to true and others to false
         self.items[i].active = isChannelToSetActive
-        self.dataChanged(index, index, @[ModelRole.Active.int])
+        if (isChannelToSetActive):
+          self.items[i].loaderActive = true
+          self.dataChanged(index, index, @[ModelRole.Active.int, ModelRole.LoaderActive.int])
+        else:
+          self.dataChanged(index, index, @[ModelRole.Active.int])
 
   proc changeMutedOnItemById*(self: Model, id: string, muted: bool) =
     let index = self.getItemIdxById(id)
@@ -501,3 +509,13 @@ QtObject:
       return
 
     return self.items[index].toJsonNode()
+
+  proc disableChatLoader*(self: Model, chatId: string) =
+    let index = self.getItemIdxById(chatId)
+    if index == -1:
+      return
+
+    self.items[index].loaderActive = false
+    self.items[index].active = false
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Active.int, ModelRole.LoaderActive.int])

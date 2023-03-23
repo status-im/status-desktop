@@ -226,7 +226,7 @@ proc buildChatSectionUI(
     var isActive = false
     # restore on a startup last open channel for the section or
     # make the first channel which doesn't belong to any category active
-    if selectedItemId.len == 0 or chatDto.id == sectionLastOpenChat:
+    if (selectedItemId.len == 0 and sectionLastOpenChat.len == 0) or chatDto.id == sectionLastOpenChat:
       selectedItemId = chatDto.id
       isActive = true
 
@@ -258,6 +258,7 @@ proc buildChatSectionUI(
       colorId,
       colorHash,
       onlineStatus = onlineStatus,
+      loaderActive = isActive
     )
 
     self.view.chatsModel().appendItem(newChatItem)
@@ -477,9 +478,12 @@ method activeItemSet*(self: Module, itemId: string) =
 
   # save last open chat in settings for restore on the next app launch
   singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(mySectionId, activeChatId)
+  
+  let (deactivateSectionId, deactivateChatId) = singletonInstance.loaderDeactivator.addChatInMemory(mySectionId, activeChatId)
 
   # notify parent module about active chat/channel
   self.delegate.onActiveChatChange(mySectionId, activeChatId)
+  self.delegate.onDeactivateSectionAndChatLoader(deactivateSectionId, deactivateChatId)
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
@@ -591,6 +595,7 @@ method addNewChat*(
     colorHash,
     chatDto.highlight,
     onlineStatus = onlineStatus,
+    loaderActive = setChatAsActive
   )
   self.addSubmodule(
     chatDto.id,
@@ -667,8 +672,12 @@ method setFirstChannelAsActive*(self: Module) =
   if(self.view.chatsModel().getCount() == 0):
     self.setActiveItem("")
     return
-  let chat_item = self.view.chatsModel().getItemAtIndex(0)
-  self.setActiveItem(chat_item.id)
+
+  let chat_items = self.view.chatsModel().items()
+  for chat_item in chat_items:
+    if chat_item.`type` != CATEGORY_TYPE:
+      self.setActiveItem(chat_item.id)
+      break    
 
 method onReorderChat*(self: Module, chatId: string, position: int, newCategoryIdForChat: string, prevCategoryId: string, prevCategoryDeleted: bool) =
   var newCategoryName = ""
@@ -1221,4 +1230,7 @@ proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPerm
   )
 
   return tokenPermissionItem
+
+method onDeactivateChatLoader*(self: Module, chatId: string) =
+  self.view.chatsModel().disableChatLoader(chatId)
 

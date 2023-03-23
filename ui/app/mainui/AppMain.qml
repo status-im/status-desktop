@@ -878,7 +878,7 @@ Item {
                                     readonly property string sectionId: model.id
 
                                     asynchronous: true
-                                    active: sectionId === appMain.rootStore.mainModuleInst.activeSection.id
+                                    active: model.loaderActive
 
                                     Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
@@ -915,13 +915,6 @@ Item {
 
                                         onOpenAppSearch: {
                                             appSearch.openSearchPopup()
-                                        }
-
-                                        Component.onCompleted: {
-                                            // Do not unload section data from the memory in order not
-                                            // to reset scroll, not send text input and etc during the
-                                            // sections switching
-                                            communityLoader.active = true
                                         }
                                     }
                                 }

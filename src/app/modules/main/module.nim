@@ -361,7 +361,8 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       )
     ) else: @[],
     c.encrypted,
-    communityTokensItems
+    communityTokensItems,
+    loaderActive = active
   )
 
 method load*[T](
@@ -718,8 +719,8 @@ method setActiveSection*[T](self: Module[T], item: SectionItem, skipSavingInSett
   self.controller.setActiveSection(item.id, skipSavingInSettings)
 
 method setActiveSectionById*[T](self: Module[T], id: string) =
-    let item = self.view.model().getItemById(id)
-    self.setActiveSection(item)
+  let item = self.view.model().getItemById(id)
+  self.setActiveSection(item)
 
 proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
   for cModule in self.channelGroupModules.values:
@@ -1172,3 +1173,9 @@ method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
   let linkToActivate = self.urlsManager.convertExternalLinkToInternal(statusDeepLink)
   self.urlsManager.onUrlActivated(linkToActivate)
+
+method onDeactivateSectionAndChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =
+  if (sectionId.len > 0 and self.channelGroupModules.contains(sectionId)):
+    self.channelGroupModules[sectionId].onDeactivateChatLoader(chatId)
+    if (singletonInstance.loaderDeactivator.unloadSection(sectionId)):
+      self.view.model().disableSectionLoader(sectionId)

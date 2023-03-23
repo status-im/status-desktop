@@ -6,6 +6,7 @@ import local_app_settings
 import user_profile
 import utils
 import global_events
+import loader_deactivator
 
 export local_account_settings
 export local_account_sensitive_settings
@@ -13,6 +14,7 @@ export local_app_settings
 export user_profile
 export utils
 export global_events
+export loader_deactivator
 
 type
   GlobalSingleton = object
@@ -63,9 +65,16 @@ proc globalEvents*(self: GlobalSingleton): GlobalEvents =
     globalEvents = newGlobalEvents()
   return globalEvents
 
+proc loaderDeactivator*(self: GlobalSingleton): LoaderDeactivator =
+  var loaderDeactivator {.global.}: LoaderDeactivator
+  if (loaderDeactivator.isNil):
+    loaderDeactivator = newLoaderDeactivator()
+  return loaderDeactivator
+
 proc delete*(self: GlobalSingleton) =
   self.engine.delete()
   self.localAccountSettings.delete()
   self.localAccountSensitiveSettings.delete()
   self.localAppSettings.delete()
   self.userProfile.delete()
+  self.loaderDeactivator.delete()
