@@ -156,10 +156,10 @@ QtObject:
           self.resetAllOwnedCollectibles()
 
   # needs to be re-written once cache for colletibles works
-  proc areCollectionsLoaded*(self: Service): bool =
+  proc areCollectionsLoaded*(self: Service, address: string): bool =
     for chainId, adressesData in self.accountsOwnershipData:
-      for address, ownershipData in adressesData:
-        if ownershipData.data.anyLoaded:
+      for addressData, ownershipData in adressesData:
+        if addressData == address and ownershipData.data.anyLoaded:
           return true
     return false
 

@@ -31,6 +31,7 @@ StatusListItem {
     subTitle: LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
     asset.name: modelData.symbol ? Style.png("tokens/" + modelData.symbol) : ""
     asset.isImage: true
+    errorIcon.tooltip.maxWidth: 300
 
     statusListItemTitleIcons.sourceComponent: StatusFlatRoundButton {
         width: 14

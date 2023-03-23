@@ -6,6 +6,7 @@ import ../settings/service as settings_service
 import ../accounts/service as accounts_service
 import ../token/service as token_service
 import ../network/service as network_service
+import ../collectible/service as collectible_service
 import ../../common/[account_constants, utils]
 import ../../../app/global/global_singleton
 
@@ -91,6 +92,8 @@ type DerivedAddressesArgs* = ref object of Args
 
 type TokensPerAccountArgs* = ref object of Args
   accountsTokens*: OrderedTable[string, seq[WalletTokenDto]] # [wallet address, list of tokens]
+  hasBalanceCache*: bool
+  hasMarketValuesCache*: bool
 
 type KeycardActivityArgs* = ref object of Args
   success*: bool
@@ -120,6 +123,7 @@ QtObject:
     accountsService: accounts_service.Service
     tokenService: token_service.Service
     networkService: network_service.Service
+    collectibleService: collectible_service.Service
     processedKeyPair: KeyPairDto
     walletAccountsLock: Lock
     walletAccounts {.guard: walletAccountsLock.}: OrderedTable[string, WalletAccountDto]
@@ -142,6 +146,7 @@ QtObject:
     accountsService: accounts_service.Service,
     tokenService: token_service.Service,
     networkService: network_service.Service,
+    collectibleService: collectible_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -152,6 +157,7 @@ QtObject:
     result.accountsService = accountsService
     result.tokenService = tokenService
     result.networkService = networkService
+    result.collectibleService = collectibleService
     initLock(result.walletAccountsLock)
     withLock result.walletAccountsLock:
       result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
@@ -190,10 +196,37 @@ QtObject:
     withLock self.walletAccountsLock:
       self.walletAccounts[account.address] = account
 
-  proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto]) =
+  proc getCachedValuesForAccount*(self: Service, address: string): (bool, bool) =
+    var areBalancesCached = false
+    var areMarketValuesCached = false
+    withLock self.walletAccountsLock:
+      if self.walletAccounts.hasKey(address):
+        areBalancesCached = self.walletAccounts[address].hasBalanceCache
+        areMarketValuesCached = self.walletAccounts[address].hasMarketValuesCache
+    return (areBalancesCached, areMarketValuesCached)
+
+  proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto], areBalancesCached: bool, areMarketValuesCached: bool) =
     withLock self.walletAccountsLock:
       if self.walletAccounts.hasKey(address):
         self.walletAccounts[address].tokens = tokens
+        self.walletAccounts[address].hasBalanceCache = areBalancesCached
+        self.walletAccounts[address].hasMarketValuesCache = areMarketValuesCached
+
+  proc updateOrReplaceBalancesAndCollectibles*(self: Service, address: string, tokens: seq[WalletTokenDto], ignoreBalances: bool, ignoreMarketValues: bool): seq[WalletTokenDto] =
+    withLock self.walletAccountsLock:
+      if self.walletAccounts.hasKey(address):
+        if self.walletAccounts[address].tokens.len == 0 or (not ignoreBalances and not ignoreMarketValues):
+          return tokens
+        else:
+          var updatedTokens: seq[WalletTokenDto] = self.walletAccounts[address].tokens
+          for i in 0 ..< updatedTokens.len:
+            for token in tokens:
+              if token.name == updatedTokens[i].name:
+                if ignoreBalances and not ignoreMarketValues:
+                  updatedTokens[i].marketValuesPerCurrency = token.marketValuesPerCurrency
+                elif ignoreMarketValues and not ignoreBalances:
+                  updatedTokens[i].balancesPerChain = token.balancesPerChain
+          return updatedTokens
 
   proc removeAccount*(self: Service, address: string): WalletAccountDto =
     result = WalletAccountDto()
@@ -499,6 +532,24 @@ QtObject:
       if self.walletAccounts.hasKey(wAddress):
         self.walletAccounts[wAddress].assetsLoading = loading
 
+  proc checkIfBalancesHaveError*(self: Service, tokens: seq[WalletTokenDto]): bool =
+    var hasError: bool = true
+    for token in tokens:
+      for chainId, balanceDto in token.balancesPerChain:
+        if not balanceDto.hasError:
+          hasError = false
+          continue
+    return hasError
+
+  proc checkIfMarketValuesHaveError*(self: Service, tokens: seq[WalletTokenDto]): bool =
+    var hasError: bool = true
+    for token in tokens:
+      for currency, marketDto in token.marketValuesPerCurrency:
+        if not marketDto.hasError:
+          hasError = false
+          continue
+    return hasError
+
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
     try:
       var visibleSymbols: seq[string]
@@ -516,17 +567,34 @@ QtObject:
           if tokensDetailsObj.kind == JArray:
             var tokens: seq[WalletTokenDto]
             tokens = map(tokensDetailsObj.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
+
+            let balancesHasError = self.checkIfBalancesHaveError(tokens)
+            let marketValuesHasError = self.checkIfMarketValuesHaveError(tokens)
+
+            var (areBalancesCached, areMarketValuesCached) = self.getCachedValuesForAccount(wAddress)
+            let ignoreNewBalances = areBalancesCached and balancesHasError
+            let ignoreNewMarketValues = areMarketValuesCached and marketValuesHasError
+            # once the balances/market values are retreived correctly we always have cache
+            if not areBalancesCached:
+                areBalancesCached = not balancesHasError
+            if not areMarketValuesCached :
+                areMarketValuesCached = not marketValuesHasError
+
             tokens.sort(priorityTokenCmp)
-            data.accountsTokens[wAddress] = tokens
+            let updatedTokens = self.updateOrReplaceBalancesAndCollectibles(wAddress, tokens, ignoreNewBalances, ignoreNewMarketValues)
+
+            data.accountsTokens[wAddress] = updatedTokens
+            data.hasBalanceCache = areBalancesCached
+            data.hasMarketValuesCache = areMarketValuesCached
 
             # set assetsLoading to false once the tokens are loaded
             self.updateAssetsLoadingState(wAddress, false)
 
             if storeResult:
-              self.storeTokensForAccount(wAddress, tokens)
-              self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
+              self.storeTokensForAccount(wAddress, updatedTokens, areBalancesCached, areMarketValuesCached)
+              self.tokenService.updateTokenPrices(updatedTokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
               # Gather symbol for visible tokens
-              for token in tokens:
+              for token in updatedTokens:
                 if token.getVisibleForNetworkWithPositiveBalance(chainIds) and find(visibleSymbols, token.symbol) == -1:
                   visibleSymbols.add(token.symbol)
       self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
@@ -808,22 +876,7 @@ QtObject:
           if token.symbol == symbol:
             totalTokenBalance += token.getTotalBalanceOfSupportedChains()
 
-    return totalTokenBalance
+    return totalTokenBalance   
 
-  # needs to be re-written once cache for market, blockchain and collectibles is implemented
-  proc hasCache*(self: Service): bool =
-    withLock self.walletAccountsLock:
-      for address, accountDto in self.walletAccounts:
-        if self.walletAccounts[address].tokens.len > 0:
-          return true
-    return false
-
-  proc hasMarketCache*(self: Service): bool =
-    withLock self.walletAccountsLock:
-      for address, accountDto in self.walletAccounts:
-        for token in self.walletAccounts[address].tokens:
-          for currency, marketValues in token.marketValuesPerCurrency:
-            if marketValues.highDay > 0:
-              return true
-    return false
-
+  proc getHasCollectiblesCache*(self: Service, address: string): bool =
+    return self.collectibleService.areCollectionsLoaded(address)

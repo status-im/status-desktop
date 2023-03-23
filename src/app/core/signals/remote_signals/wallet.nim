@@ -10,6 +10,9 @@ type WalletSignal* = ref object of Signal
   accounts*: seq[string]
   # newTransactions*: ???
   erc20*: bool
+  at*: int
+  chainID*: int
+  message*: string
 
 proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal =
   result = WalletSignal()
@@ -23,3 +26,6 @@ proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal =
     if jsonSignal["event"]["accounts"].kind != JNull:
       for account in jsonSignal["event"]["accounts"]:
         result.accounts.add(account.getStr)
+    result.at = jsonSignal["event"]{"at"}.getInt
+    result.chainID = jsonSignal["event"]{"chainID"}.getInt
+    result.message = jsonSignal["event"]{"message"}.getStr

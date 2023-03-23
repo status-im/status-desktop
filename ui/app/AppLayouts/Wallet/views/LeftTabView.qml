@@ -114,7 +114,7 @@ Rectangle {
                 font.weight: Font.Medium
                 font.pixelSize: 22
                 loading: RootStore.currentAccount.assetsLoading
-                visible: !networkConnectionStore.tokenBalanceNotAvailable
+                visible: !networkConnectionStore.accountBalanceNotAvailable
             }
 
             StatusFlatRoundButton {
@@ -125,9 +125,9 @@ Rectangle {
                 icon.height: 14
                 icon.name: "tiny/warning"
                 icon.color: Theme.palette.dangerColor1
-                tooltip.text: networkConnectionStore.tokenBalanceNotAvailableText
+                tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
                 tooltip.maxWidth: 200
-                visible: networkConnectionStore.tokenBalanceNotAvailable
+                visible: networkConnectionStore.accountBalanceNotAvailable
             }
 
             StatusBaseText {
@@ -173,9 +173,9 @@ Rectangle {
                 statusListItemTitle.font.weight: Font.Medium
                 color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
                 statusListItemSubTitle.loading: model.assetsLoading
-                errorMode: networkConnectionStore.tokenBalanceNotAvailable
+                errorMode: networkConnectionStore.accountBalanceNotAvailable
                 errorIcon.tooltip.maxWidth: 300
-                errorIcon.tooltip.text: networkConnectionStore.tokenBalanceNotAvailableText
+                errorIcon.tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
                 onClicked: {
                     changeSelectedAccount(index)
                     showSavedAddresses = false

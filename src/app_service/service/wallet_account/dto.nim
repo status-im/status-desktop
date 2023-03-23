@@ -21,6 +21,7 @@ type BalanceDto* = object
   balance*: float64
   address*: string
   chainId*: int
+  hasError*: bool
 
 type
   TokenMarketValuesDto* = object
@@ -32,6 +33,7 @@ type
     changePct24hour*: float64
     change24hour*: float64
     price*: float64
+    hasError*: bool
 
 proc newTokenMarketValuesDto*(
   marketCap: float64,
@@ -41,7 +43,8 @@ proc newTokenMarketValuesDto*(
   changePctDay: float64,
   changePct24hour: float64,
   change24hour: float64,
-  price: float64
+  price: float64,
+  hasError: bool
 ): TokenMarketValuesDto =
   return TokenMarketValuesDto(
     marketCap: marketCap,
@@ -52,6 +55,7 @@ proc newTokenMarketValuesDto*(
     changePct24hour: changePct24hour,
     change24hour: change24hour,
     price: price,
+    hasError: hasError,
   )
 
 proc toTokenMarketValuesDto*(jsonObj: JsonNode): TokenMarketValuesDto =
@@ -64,6 +68,7 @@ proc toTokenMarketValuesDto*(jsonObj: JsonNode): TokenMarketValuesDto =
   discard jsonObj.getProp("changePct24hour", result.changePct24hour)
   discard jsonObj.getProp("change24hour", result.change24hour)
   discard jsonObj.getProp("price", result.price)
+  discard jsonObj.getProp("hasError", result.hasError)
 
 type
   WalletTokenDto* = object
@@ -97,6 +102,8 @@ type
     assetsLoading*: bool
     keypairName*: string
     lastUsedDerivationIndex*: int
+    hasBalanceCache*: bool
+    hasMarketValuesCache*: bool
 
 proc newDto*(
   name: string,
@@ -142,6 +149,8 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("keypair-name", result.keypairName)
   discard jsonObj.getProp("last-used-derivation-index", result.lastUsedDerivationIndex)
   result.assetsLoading = true
+  result.hasBalanceCache = false
+  result.hasMarketValuesCache = false
 
 proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =
   return self.balance * currencyPrice
@@ -206,6 +215,7 @@ proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   result.balance = jsonObj{"balance"}.getStr.parseFloat()
   discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("hasError", result.hasError)
 
 proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   result = WalletTokenDto()

@@ -7,12 +7,11 @@ QtObject:
     chainIds: string
     lastCheckedAt: int
     timeToAutoRetryInSecs: int
-    withCache: bool
 
   proc delete*(self: NetworkConnectionItem) =
     self.QObject.delete
 
-  proc newNetworkConnectionItem*(completelyDown = false, connectionState = 0, chainIds = "", lastCheckedAt = 0, timeToAutoRetryInSecs = 0, withCache = false,): NetworkConnectionItem =
+  proc newNetworkConnectionItem*(completelyDown = false, connectionState = 0, chainIds = "", lastCheckedAt = 0, timeToAutoRetryInSecs = 0): NetworkConnectionItem =
     new(result, delete)
     result.QObject.setup
     result.completelyDown = completelyDown
@@ -20,7 +19,6 @@ QtObject:
     result.chainIds = chainIds
     result.lastCheckedAt = lastCheckedAt
     result.timeToAutoRetryInSecs = timeToAutoRetryInSecs
-    result.withCache = withCache
 
   proc `$`*(self: NetworkConnectionItem): string =
     result = fmt"""NetworkConnectionItem[
@@ -28,8 +26,7 @@ QtObject:
       connectionState: {self.connectionState},
       chainIds: {self.chainIds},
       lastCheckedAt: {self.lastCheckedAt},
-      timeToAutoRetryInSecs: {self.timeToAutoRetryInSecs},
-      withCache: {self.withCache}
+      timeToAutoRetryInSecs: {self.timeToAutoRetryInSecs}
       ]"""
 
   proc completelyDownChanged*(self: NetworkConnectionItem) {.signal.}
@@ -67,15 +64,8 @@ QtObject:
     read = getTimeToAutoRetryInSecs
     notify = timeToAutoRetryInSecsChanged
 
-  proc withCacheChanged*(self: NetworkConnectionItem) {.signal.}
-  proc getWithCache*(self: NetworkConnectionItem): bool {.slot.} =
-    return self.withCache
-  QtProperty[bool] withCache:
-    read = getWithCache
-    notify = withCacheChanged
-
   proc updateValues*(self: NetworkConnectionItem, completelyDown: bool, connectionState: int,
-    chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int, withCache: bool) =
+    chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int) =
       if self.completelyDown != completelyDown :
         self.completelyDown = completelyDown
         self.completelyDownChanged()
@@ -95,7 +85,3 @@ QtObject:
       if self.timeToAutoRetryInSecs != timeToAutoRetryInSecs :
         self.timeToAutoRetryInSecs = timeToAutoRetryInSecs
         self.timeToAutoRetryInSecsChanged()
-
-      if self.withCache != withCache :
-        self.withCache = withCache
-        self.withCacheChanged()
