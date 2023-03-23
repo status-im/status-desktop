@@ -24,7 +24,7 @@ StatusScrollView {
     readonly property alias description: descriptionInput.text
     readonly property alias supplyText: supplyInput.text
     readonly property alias infiniteSupply: unlimitedSupplyChecker.checked
-    readonly property alias transferable: transferableChecker.checked
+    readonly property alias notTransferable: transferableChecker.checked
     readonly property alias selfDestruct: selfDestructChecker.checked
     property url artworkSource
     property int chainId
