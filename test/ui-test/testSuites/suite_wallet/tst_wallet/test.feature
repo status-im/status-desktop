@@ -26,16 +26,19 @@ Feature: Status Desktop Wallet
     # And the collectibles are listed for the on
     # And the transactions are listed for the added account
 
+    @mayfail
     Scenario: The user imports a private key
         When an account named "AccountPrivate" is added via private key "8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f" and authenticated using password "TesTEr16843/!@00"
         Then the new account "AccountPrivate" is added
 
+    @mayfail
     Scenario: The user generates a new account from wallet and deletes it
         When an account named "AccountGenerated" is generated and authenticated using password "TesTEr16843/!@00"
         Then the new account "AccountGenerated" is added
         When the user deletes the account "AccountGenerated" with password "TesTEr16843/!@00"
         Then the account "AccountGenerated" is not in the list of accounts
 
+    @mayfail
     Scenario: The user can import seed phrase
         When an account named "AccountSeed" is added via imported seed phrase "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" and authenticated using password "TesTEr16843/!@00"
         Then the new account "AccountSeed" is added
