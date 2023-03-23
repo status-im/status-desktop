@@ -32,8 +32,8 @@ MembersSelectorBase {
         d.removeMember(delegate._pubKey)
     }
 
-    onTextPasted: {
-        d.lookupContact(text);
+    edit.onTextChanged: {
+        d.lookupContact(edit.text)
     }
 
     model: SortFilterProxyModel {
@@ -57,7 +57,9 @@ MembersSelectorBase {
         function lookupContact(value) {
             if (value.startsWith(Constants.userLinkPrefix))
                 value = value.slice(Constants.userLinkPrefix.length)
-            root.rootStore.contactsStore.resolveENS(value)
+
+            if (Utils.isCompressedPubKey(value))
+                root.rootStore.contactsStore.resolveENS(value)
         }
 
         function addMember(pubKey, displayName, localNickname) {
@@ -95,6 +97,7 @@ MembersSelectorBase {
             }
 
             const contactDetails = Utils.getContactDetailsAsJson(resolvedPubKey, false)
+
 
             if (contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey ||
                 contactDetails.isBlocked) {
