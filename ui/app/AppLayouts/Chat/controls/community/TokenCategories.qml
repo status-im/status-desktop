@@ -14,7 +14,7 @@ QtObject {
             case TokenCategories.Category.Own:
                 return qsTr("Your assets")
             case TokenCategories.Category.General:
-                return qsTr("All assets")
+                return qsTr("All listed assets")
         }
 
         return ""
