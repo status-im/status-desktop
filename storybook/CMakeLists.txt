@@ -106,4 +106,4 @@ if (APPLE)
   target_link_libraries(${PROJECT_LIB} PRIVATE ${AppKit} ${Foundation})
 endif()
 
-add_subdirectory(../ui/StatusQ/vendor/SortFilterProxyModel ./SortFilterProxyModel)
+add_subdirectory(../vendor/SortFilterProxyModel ./SortFilterProxyModel)

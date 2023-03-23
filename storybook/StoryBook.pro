@@ -66,7 +66,7 @@ QML_IMPORT_PATH += "$$QMLPATHS"
 DEFINES += QML_IMPORT_ROOT=\\\"qrc:/storybook\\\"
 
 #Include SortFilterProxyModel plugin
-include(../ui/StatusQ/vendor/SortFilterProxyModel/SortFilterProxyModel.pri)
+include(../vendor/SortFilterProxyModel/SortFilterProxyModel.pri)
 
 #We need to explicitly set -s TOTAL_MEMORY at least to the linker, otherwise the linking step will fail
 #while validating the resulted .js file
