@@ -15,7 +15,9 @@ Control {
     property string title: ""
     property string subTitle: ""
     property string backgroundColor: "transparent"
-    property url imageUrl : ""
+    property url mediaUrl : ""
+    property string mediaType: ""
+    property url fallbackImageUrl : ""
     property bool isLoading: false
     property bool navigationIconVisible: false
 
@@ -35,7 +37,7 @@ Control {
     contentItem: ColumnLayout {
         spacing: 0
 
-        StatusRoundedImage {
+        StatusRoundedMedia {
             id: image
 
             Layout.alignment: Qt.AlignHCenter
@@ -43,7 +45,9 @@ Control {
             Layout.fillWidth: true
             Layout.preferredHeight: width
             radius: 12
-            image.source: root.imageUrl
+            mediaUrl: root.mediaUrl
+            mediaType: root.mediaType
+            fallbackImageUrl: root.fallbackImageUrl
             border.color: Theme.palette.baseColor2
             border.width: 1
             showLoadingIndicator: true

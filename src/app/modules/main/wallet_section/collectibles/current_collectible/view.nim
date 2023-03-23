@@ -65,113 +65,91 @@ QtObject:
     read = getNetworkIconUrl
     notify = networkIconUrlChanged
 
+  proc currentCollectibleChanged(self: View) {.signal.}
+
   proc getName(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getName())
-
-  proc nameChanged(self: View) {.signal.}
-
   QtProperty[QVariant] name:
     read = getName
-    notify = nameChanged
+    notify = currentCollectibleChanged
 
   proc getID(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getId())
-
-  proc idChanged(self: View) {.signal.}
-
   QtProperty[QVariant] id:
     read = getID
-    notify = idChanged
+    notify = currentCollectibleChanged
 
   proc getTokenID(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getTokenId().toString())
-
-  proc tokenIdChanged(self: View) {.signal.}
-
   QtProperty[QVariant] tokenId:
     read = getTokenID
-    notify = tokenIdChanged
+    notify = currentCollectibleChanged
 
   proc getDescription(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getDescription())
-
-  proc descriptionChanged(self: View) {.signal.}
-
   QtProperty[QVariant] description:
     read = getDescription
-    notify = descriptionChanged
+    notify = currentCollectibleChanged
 
   proc getBackgroundColor(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getBackgroundColor())
-
-  proc backgroundColorChanged(self: View) {.signal.}
-
   QtProperty[QVariant] backgroundColor:
     read = getBackgroundColor
-    notify = backgroundColorChanged
+    notify = currentCollectibleChanged
+
+  proc getMediaUrl(self: View): QVariant {.slot.} =
+    return newQVariant(self.collectible.getMediaUrl())
+  QtProperty[QVariant] mediaUrl:
+    read = getMediaUrl
+    notify = currentCollectibleChanged
+
+  proc getMediaType(self: View): QVariant {.slot.} =
+    return newQVariant(self.collectible.getMediaType())
+  QtProperty[QVariant] mediaType:
+    read = getMediaType
+    notify = currentCollectibleChanged
 
   proc getImageUrl(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getImageUrl())
-
-  proc imageUrlChanged(self: View) {.signal.}
-
   QtProperty[QVariant] imageUrl:
     read = getImageUrl
-    notify = imageUrlChanged
+    notify = currentCollectibleChanged
 
   proc getCollectionName(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getCollectionName())
-
-  proc collectionNameChanged(self: View) {.signal.}
-
   QtProperty[QVariant] collectionName:
     read = getCollectionName
-    notify = collectionNameChanged
+    notify = currentCollectibleChanged
 
   proc getCollectionImageUrl(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getCollectionImageUrl())
-
-  proc collectionImageUrlChanged(self: View) {.signal.}
-
   QtProperty[QVariant] collectionImageUrl:
     read = getCollectionImageUrl
-    notify = collectionImageUrlChanged
+    notify = currentCollectibleChanged
 
   proc getPermalink(self: View): QVariant {.slot.} =
     return newQVariant(self.collectible.getPermalink())
-
-  proc permalinkChanged(self: View) {.signal.}
-
   QtProperty[QVariant] permalink:
     read = getPermalink
-    notify = permalinkChanged
-
-  proc propertiesChanged(self: View) {.signal.}
+    notify = currentCollectibleChanged
 
   proc getProperties*(self: View): QVariant {.slot.} =
     return newQVariant(self.propertiesModel)
-
   QtProperty[QVariant] properties:
     read = getProperties
-    notify = propertiesChanged
-
-  proc rankingsChanged(self: View) {.signal.}
+    notify = currentCollectibleChanged
 
   proc getRankings*(self: View): QVariant {.slot.} =
     return newQVariant(self.rankingsModel)
-
   QtProperty[QVariant] rankings:
     read = getRankings
-    notify = rankingsChanged
-
-  proc statsChanged(self: View) {.signal.}
+    notify = currentCollectibleChanged
 
   proc getStats*(self: View): QVariant {.slot.} =
     return newQVariant(self.statsModel)
-
   QtProperty[QVariant] stats:
     read = getStats
-    notify = statsChanged
+    notify = currentCollectibleChanged
 
   proc update*(self: View, address: string, tokenId: string) {.slot.} =
     self.delegate.update(address, parse(tokenId, Uint256))
@@ -190,20 +168,8 @@ QtObject:
       self.networkIconUrlChanged()
 
     self.collectible = collectible
-    self.collectionNameChanged()
-    self.collectionImageUrlChanged()
-    self.nameChanged()
-    self.idChanged()
-    self.tokenIdChanged()
-    self.descriptionChanged()
-    self.backgroundColorChanged()
-    self.imageUrlChanged()
-
     self.propertiesModel.setItems(collectible.getProperties())
-    self.propertiesChanged()
-
     self.rankingsModel.setItems(collectible.getRankings())
-    self.rankingsChanged()
-
     self.statsModel.setItems(collectible.getStats())
-    self.statsChanged()
+
+    self.currentCollectibleChanged()

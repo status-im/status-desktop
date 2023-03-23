@@ -56,7 +56,9 @@ Item {
                 width: gridView.cellWidth
                 title: model.name ? model.name : "..."
                 subTitle: model.collectionName ? model.collectionName : ""
-                imageUrl: model.imageUrl ? model.imageUrl : ""
+                mediaUrl: model.mediaUrl ? model.mediaUrl : ""
+                mediaType: model.mediaType ? model.mediaType : ""
+                fallbackImageUrl: model.imageUrl
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
                 isLoading: model.isLoading
 

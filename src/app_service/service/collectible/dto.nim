@@ -24,7 +24,7 @@ type CollectibleTrait* = ref object
 type CollectibleDto* = ref object
     id*: int
     tokenId*: Uint256
-    address*, collectionSlug*, name*, description*, permalink*, imageThumbnailUrl*, imageUrl*, backgroundColor*: string
+    address*, collectionSlug*, name*, description*, permalink*, imageThumbnailUrl*, imageUrl*, animationUrl*, animationMediaType*, backgroundColor*: string
     properties*, rankings*, statistics*: seq[CollectibleTrait]
 
 proc newCollectibleDto*: CollectibleDto =
@@ -51,10 +51,27 @@ proc isNumeric(s: string): bool =
     result = false
 
 proc `$`*(self: CollectionDto): string =
-  return fmt"CollectionDto(name:{self.name}, slug:{self.slug})"
+  return fmt"""CollectionDto(
+    name:{self.name}, 
+    slug:{self.slug}, 
+    imageUrl:{self.imageUrl}
+    """
 
 proc `$`*(self: CollectibleDto): string =
-  return fmt"CollectibleDto(id:{self.id}, address:{self.address}, tokenId:{self.tokenId}, collectionSlug:{self.collectionSlug}, name:{self.name}, description:{self.description}, permalink:{self.permalink}, imageUrl: {self.imageUrl}, imageThumbnailUrl: {self.imageThumbnailUrl}, backgroundColor: {self.backgroundColor})"
+  return fmt"""CollectibleDto(
+    id:{self.id}, 
+    address:{self.address}, 
+    tokenId:{self.tokenId}, 
+    collectionSlug:{self.collectionSlug}, 
+    name:{self.name}, 
+    description:{self.description}, 
+    permalink:{self.permalink}, 
+    imageUrl: {self.imageUrl}, 
+    imageThumbnailUrl: {self.imageThumbnailUrl}, 
+    animationUrl: {self.animationUrl}, 
+    animationMediaType: {self.animationMediaType}, 
+    backgroundColor: {self.backgroundColor})
+    """
 
 proc getCollectionTraits*(jsonCollection: JsonNode): Table[string, CollectionTrait] =
     var traitList: Table[string, CollectionTrait] = initTable[string, CollectionTrait]()
@@ -98,6 +115,8 @@ proc toCollectibleDto*(jsonAsset: JsonNode): CollectibleDto =
         permalink: jsonAsset{"permalink"}.getStr,
         imageThumbnailUrl: jsonAsset{"image_thumbnail_url"}.getStr,
         imageUrl: jsonAsset{"image_url"}.getStr,
+        animationUrl: jsonAsset{"animation_url"}.getStr,
+        animationMediaType: jsonAsset{"animation_media_type"}.getStr,
         backgroundColor: jsonAsset{"background_color"}.getStr,
         properties: getTrait(jsonAsset, CollectibleTraitType.Properties),
         rankings: getTrait(jsonAsset, CollectibleTraitType.Rankings),
