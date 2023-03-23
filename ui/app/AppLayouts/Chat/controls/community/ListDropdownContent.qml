@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
+import utils 1.0
 
 StatusListView {
     id: root
@@ -17,6 +18,8 @@ StatusListView {
     property var headerModel
     property bool areHeaderButtonsVisible: true
     property bool searchMode: false
+    property bool availableData: false
+    property string noDataText: qsTr("No data found")
 
     property int maxHeight: 381 // default by design
 
@@ -72,7 +75,7 @@ StatusListView {
             Layout.preferredHeight: visible ? d.sectionHeight : 0
             Layout.fillWidth: true
 
-            visible: root.searchMode
+            visible: !root.availableData || root.searchMode
             sourceComponent: sectionComponent
         }
     }
@@ -122,18 +125,25 @@ StatusListView {
         Item {
             id: sectionDelegateRoot
 
-            property string section: root.count ?
-                                         qsTr("Search result") :
-                                         qsTr("No results")
+            property string section: {
+                if(!root.availableData)
+                    return root.noDataText
+                if(root.count)
+                    return qsTr("Search result")
+                return qsTr("No results")
+            }
 
             StatusBaseText {
-                anchors.leftMargin: 8
+                anchors.leftMargin: Style.current.halfPadding
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
+                width: parent.width
                 text: sectionDelegateRoot.section
                 color: Theme.palette.baseColor1
                 font.pixelSize: 12
                 elide: Text.ElideRight
+                wrapMode: Text.WordWrap
+                lineHeight: 1.2
             }
         }
     }

@@ -78,6 +78,7 @@ StatusScrollView {
                 collectiblesModel: root.collectiblesModel
                 isENSTab: false
                 isCollectiblesOnly: true
+                noDataText: qsTr("First you need to mint or import a collectible before you can perform an airdrop")
 
                 function addItem(type, item, amount) {
                     const key = item.key
