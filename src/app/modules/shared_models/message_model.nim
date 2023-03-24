@@ -319,9 +319,15 @@ QtObject:
     if messageId.len == 0:
       return
     for i in 0 ..< self.items.len:
-      if(self.items[i].id == messageId):
+      let item = self.items[i]
+      if(item.id == messageId):
         result = i
         return
+      elif item.albumId != "":
+        for j in 0 ..< item.albumMessageIds.len:
+          if(item.albumMessageIds[j] == messageId):
+            result = i
+            return
 
   proc findIdsOfTheMessagesWhichRespondedToMessageWithId*(self: Model, messageId: string): seq[string] =
     for i in 0 ..< self.items.len:
