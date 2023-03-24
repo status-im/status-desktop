@@ -273,6 +273,22 @@ StatusDropdown {
             type: d.extendedDropdownType
             showAllTokensMode: d.allTokensMode
 
+            Binding on showAllTokensMode {
+                value: true
+
+                when: d.extendedDropdownType === ExtendedDropdownContent.Type.Assets
+                      && root.assetsModel.rowCount() > 0
+                      && ModelUtils.get(root.assetsModel, 0, "category") === TokenCategories.Category.General
+            }
+
+            Binding on showAllTokensMode {
+                value: true
+
+                when: d.extendedDropdownType === ExtendedDropdownContent.Type.Collectibles
+                      && root.collectiblesModel.rowCount() > 0
+                      && ModelUtils.get(root.collectiblesModel, 0, "category") === TokenCategories.Category.General
+            }
+
             onTypeChanged: forceActiveFocus()            
 
             onItemClicked: {
