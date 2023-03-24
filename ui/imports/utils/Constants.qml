@@ -613,6 +613,7 @@ QtObject {
         readonly property int contentHeight1: 554
         readonly property int contentHeight2: 642
         readonly property int itemHeight: 64
+        readonly property int importPrivateKeyWarningHeight: 86
         readonly property int labelFontSize1: 15
         readonly property int labelFontSize2: 13
         readonly property int footerButtonsHeight: 44

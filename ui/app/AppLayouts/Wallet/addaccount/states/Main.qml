@@ -171,10 +171,20 @@ Item {
             store: root.store
         }
 
+        AddressWithAddressDetails {
+            id: addressWithDetails
+            Layout.fillWidth: true
+            Layout.margins: Style.current.padding
+            spacing: Style.current.halfPadding
+            visible: root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.privateKeyImport
+
+            addressDetailsItem: root.store.privateKeyAccAddress
+        }
+
         Loader {
             Layout.preferredHeight: Style.current.padding
             Layout.fillWidth: true
-            visible: derivationPathSection.visible
+            visible: derivationPathSection.visible || addressWithDetails.visible
             sourceComponent: spacer
         }
     }

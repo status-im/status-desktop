@@ -77,7 +77,7 @@ method load*[T](self: Module[T]) =
   self.view.setCurrentState(newMainState(nil))
 
   var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
-    excludeAlreadyMigratedPairs = false)
+    excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = true)
   if items.len == 0:
     error "list of identified keypairs is empty, but it must have at least a profile keypair"
     return
