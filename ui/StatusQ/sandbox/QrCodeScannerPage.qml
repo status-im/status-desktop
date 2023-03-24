@@ -89,7 +89,7 @@ Rectangle {
 
         ValueIndicator {
             Layout.fillWidth: true
-            title: qsTr("Last tag:")
+            title: "Last tag:"
             value: qrScanner.lastTag
         }
 
@@ -98,12 +98,12 @@ Rectangle {
 
             ValueIndicator {
                 Layout.fillWidth: true
-                title: qsTr("Current tag:")
+                title: "Current tag:"
                 value: qrScanner.currentTag
             }
 
             ValueIndicator {
-                title: qsTr("Last decode time, ms:")
+                title: "Last decode time, ms:"
                 value: qrScanner.decodeTime
             }
         }
@@ -114,25 +114,25 @@ Rectangle {
 
             ValueIndicator {
                 Layout.fillWidth: true
-                title: qsTr("Source size:")
+                title: "Source size:"
                 value: d.sizeToString(qrScanner.sourceSize)
             }
 
             ValueIndicator {
                 Layout.fillWidth: true
-                title: qsTr("Source size:")
+                title: "Source size:"
                 value: d.sizeToString(qrScanner.contentSize)
             }
 
             ValueIndicator {
                 Layout.fillWidth: true
-                title: qsTr("View size:")
+                title: "View size:"
                 value: d.whToString(qrScanner.width, qrScanner.height)
             }
 
             ValueIndicator {
                 Layout.fillWidth: true
-                title: qsTr("Capture rect:")
+                title: "Capture rect:"
                 value: d.rectToString(qrScanner.captureRectangle)
             }
         }
@@ -143,13 +143,13 @@ Rectangle {
 
             ValueIndicator {
                 Layout.fillWidth: true
-                title: qsTr("Camera state:")
+                title: "Camera state:"
                 value: qrScanner.camera ? d.cameraStateString(qrScanner.camera.cameraState) : ""
             }
 
             ValueIndicator {
                 Layout.fillWidth: true
-                title: qsTr("Camera status:")
+                title: "Camera status:"
                 value: qrScanner.camera ? d.cameraStatusString(qrScanner.camera.cameraStatus) : ""
             }
         }

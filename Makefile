@@ -183,19 +183,29 @@ ifneq ($(detected_OS),Windows)
  endif
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
+ # We don't create qzxing target, it's build as DOtherSide cmake subdirectory  
+ QZXING := vendor/DOtherSide/build/qzxing/libqzxing.$(LIBSTATUS_EXT)
  # order matters here, due to "-Wl,-as-needed"
  NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
  ifneq ($(QML_DEBUG), false)
   DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
+  QZXING := vendor/DOtherSide/build/qzxing/Debug/qzxing.dll
  else
   DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
+  QZXING := vendor/DOtherSide/build/qzxing/Release/qzxing.dll
  endif
- DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
+ 
+ DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF \
+ 							-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON # This is for qzxing, as it doesn't export any symbols
  NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
 
+QZXING_LIBDIR := $(shell pwd)/$(shell dirname "$(QZXING)")
+export QZXING_LIBDIR
+
+NIM_PARAMS += --passL:"-L$(QZXING_LIBDIR)" --passL:"-lqzxing" 
 
 ifeq ($(detected_OS),Darwin)
  ifeq ("$(shell sysctl -nq hw.optional.arm64)","1")
@@ -246,18 +256,9 @@ $(DOTHERSIDE): | deps
 		cd build && \
 		rm -f CMakeCache.txt && \
 		cmake $(DOTHERSIDE_CMAKE_PARAMS)\
-			-DENABLE_DOCS=OFF \
-			-DENABLE_TESTS=OFF \
-			-DQZXING_USE_QML=ON \
-			-DQZXING_MULTIMEDIA=ON \
-			-DQZXING_USE_DECODER_QR_CODE=ON \
+			-DENABLE_DOCS=OFF -DENABLE_TESTS=OFF -DQZXING_USE_QML=ON -DQZXING_MULTIMEDIA=ON -DQZXING_USE_DECODER_QR_CODE=ON \
 			.. $(HANDLE_OUTPUT) && \
 		$(DOTHERSIDE_BUILD_CMD)
-
-QZXING := vendor/DOtherSide/build/qzxing/libqzxing.dylib
-QZXING_LIBDIR := $(shell pwd)/$(shell dirname "$(QZXING)")
-export QZXING_LIBDIR
-# We don't create qzxing target, it's build as DOtherSide cmake subdirectory
 
 STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
@@ -393,7 +394,7 @@ endif
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
 	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(QZXING_LIBDIR)" --passL:"-lqzxing" --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
+		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
 		(([[ $(detected_OS) = Darwin ]] && \
 		install_name_tool -change \
@@ -478,6 +479,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
 	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
+	cp $(QZXING) tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
@@ -605,6 +607,8 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
 	echo -e $(BUILD_MSG) "deployable folder"
 	windeployqt --compiler-runtime --qmldir ui --release \
+		tmp/windows/dist/Status/bin/qzxing.dll
+	windeployqt --compiler-runtime --qmldir ui --release \
 		tmp/windows/dist/Status/bin/DOtherSide.dll
 	mv tmp/windows/dist/Status/bin/vc_redist.x64.exe tmp/windows/dist/Status/vendor/
 	cp status.iss $(OUTPUT)/status.iss
@@ -684,7 +688,7 @@ run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	./bin/nim_status_client.exe
 
 tests-nim-linux: | $(DOTHERSIDE)
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(QZXING_LIBDIR)" \
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
 
 statusq-sanity-checker:
