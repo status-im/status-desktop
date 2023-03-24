@@ -260,7 +260,7 @@ SettingsPageLayout {
                                       supplyText: supply.toString(),
                                       infiniteSupply,
                                       transferable,
-                                      selfDestruct: remoteSelfDestruct,
+                                      selfDestruct,
                                       chainId,
                                       chainName,
                                       chainIcon,

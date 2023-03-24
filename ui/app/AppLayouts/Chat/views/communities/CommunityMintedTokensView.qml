@@ -23,7 +23,7 @@ StatusScrollView {
                        int supply,
                        bool infiniteSupply,
                        bool transferable,
-                       bool remoteSelfDestruct,
+                       bool selfDestruct,
                        int chainId,
                        string chainName,
                        string chainIcon,
