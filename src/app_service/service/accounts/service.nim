@@ -337,6 +337,7 @@ QtObject:
       result["Rendezvous"] = newJBool(false)
 
     result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
+    result["RootDataDir"] = newJString(main_constants.STATUSGODIR)
 
   proc setLocalAccountSettingsFile(self: Service) =
     if(main_constants.IS_MACOS and self.getLoggedInAccount.isValid()):
@@ -747,3 +748,6 @@ QtObject:
     except Exception as e:
       error "error: ", procName="verifyPassword", errName = e.name, errDesription = e.msg
     return false
+
+  proc getKdfIterations*(self: Service): int =
+    return KDF_ITERATIONS

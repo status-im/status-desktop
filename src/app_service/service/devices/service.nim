@@ -165,11 +165,15 @@ QtObject:
 
   proc getConnectionStringForBootstrappingAnotherDevice*(self: Service, keyUid: string, password: string): string =
     let configJSON = %* {
-      "keyUID": keyUid,
-      "keystorePath": joinPath(main_constants.ROOTKEYSTOREDIR, keyUid),
-      "deviceType": hostOs,
-      "password": utils.hashPassword(password),
-      "timeout": 5 * 60 * 1000,
+      "senderConfig": %* {
+        "keystorePath": joinPath(main_constants.ROOTKEYSTOREDIR, keyUid),
+        "deviceType": hostOs,
+        "keyUID": keyUid,
+        "password": utils.hashPassword(password),
+      },
+      "serverConfig": %* {
+        "timeout": 5 * 60 * 1000,
+      }
     }
     self.localPairingStatus.mode = LocalPairingMode.BootstrapingOtherDevice
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
@@ -177,12 +181,15 @@ QtObject:
   proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string): string =
     let installationId = $genUUID()
     let nodeConfigJson = self.accountsService.getDefaultNodeConfig(installationId)
-        
     let configJSON = %* {
-      "keystorePath": main_constants.ROOTKEYSTOREDIR,
-      "nodeConfig": nodeConfigJson,
-      "deviceType": hostOs,
-      "RootDataDir": main_constants.STATUSGODIR
+      "receiverConfig": %* {
+        "keystorePath": main_constants.ROOTKEYSTOREDIR,
+        "deviceType" : hostOs,
+        "nodeConfig": nodeConfigJson,
+        "kdfIterations": self.accountsService.getKdfIterations(),
+        "settingCurrentNetwork": ""
+      },
+      "clientConfig": %* {}
     }
     self.localPairingStatus.mode = LocalPairingMode.BootstrapingThisDevice
 
