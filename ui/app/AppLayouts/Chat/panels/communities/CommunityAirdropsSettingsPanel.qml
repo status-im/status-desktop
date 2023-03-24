@@ -20,6 +20,7 @@ SettingsPageLayout {
     property int viewWidth: 560 // by design
 
     signal airdropClicked(var airdropTokens, string address)
+    signal navigateToMintTokenSettings
 
     // TODO: Update with stackmanager when #8736 is integrated
     function navigateBack() {
@@ -98,6 +99,7 @@ SettingsPageLayout {
                 root.airdropClicked(airdropTokens, address)
                 stackManager.clear(d.welcomeViewState, StackView.Immediate)
             }
+            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
         }
     }
 }

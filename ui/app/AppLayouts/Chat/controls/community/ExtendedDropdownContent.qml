@@ -30,6 +30,7 @@ Item {
     signal itemClicked(string key, string name, url iconSource)
     signal navigateDeep(string key, var subItems)
     signal layoutChanged()
+    signal navigateToMintTokenSettings
 
     implicitHeight: content.implicitHeight
     implicitWidth: content.implicitWidth
@@ -435,9 +436,7 @@ Item {
             checkedKeys: root.checkedKeys
             searchMode: d.searchMode
 
-            onHeaderItemClicked: {
-                if(key === "MINT") console.log("TODO: Mint collectible")
-            }
+            onHeaderItemClicked: root.navigateToMintTokenSettings()
             onItemClicked: {
                 if(subItems && root.state === d.depth1_ListState) {
                     // One deep navigation
