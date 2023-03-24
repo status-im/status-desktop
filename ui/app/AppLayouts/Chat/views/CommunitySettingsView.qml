@@ -280,6 +280,8 @@ StatusSectionLayout {
                     permissionsStore.removePermission(key)
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
+
+                onNavigateToMintTokenSettings: d.currentIndex = d.mintTokensSettingsIndex
             }
 
             CommunityMintTokensSettingsPanel {
@@ -313,6 +315,12 @@ StatusSectionLayout {
                                                            artworkSource,
                                                            accountName)
                 }
+                                
+                Binding {
+                   target: d
+                   property: "mintTokensSettingsIndex"
+                   value: communityMintTokensSettingsPanel.StackView.index
+                }
 
                 // TODO: Review once backend is done
                 Connections {
@@ -333,6 +341,7 @@ StatusSectionLayout {
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
                 onAirdropClicked: communityTokensStore.airdrop(airdropTokens, chainId, address)
+                onNavigateToMintTokenSettings: d.currentIndex = d.mintTokensSettingsIndex
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
@@ -343,7 +352,9 @@ StatusSectionLayout {
 
     QtObject {
         id: d
+
         property int currentIndex: 0
+        property int mintTokensSettingsIndex
     }
 
     MessageDialog {

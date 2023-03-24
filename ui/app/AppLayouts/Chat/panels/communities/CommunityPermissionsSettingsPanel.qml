@@ -31,6 +31,8 @@ SettingsPageLayout {
 
     signal removePermissionRequested(string key)
 
+    signal navigateToMintTokenSettings
+
     function navigateBack() {
         if (root.state === d.newPermissionViewState) {
             root.state = d.initialState
@@ -244,6 +246,8 @@ SettingsPageLayout {
 
                 root.state = d.permissionsViewState
             }
+
+            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
 
             Connections {
                 target: d

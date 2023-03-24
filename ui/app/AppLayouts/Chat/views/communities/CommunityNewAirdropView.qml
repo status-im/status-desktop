@@ -32,6 +32,7 @@ StatusScrollView {
                                           addressess.model.count > 0
 
     signal airdropClicked(var airdropTokens, string address)
+    signal navigateToMintTokenSettings
 
     QtObject {
         id: d
@@ -145,6 +146,11 @@ StatusScrollView {
                 onRemoveClicked: {
                     root.selectedHoldingsModel.remove(tokensSelector.editedIndex)
                     dropdown.close()
+                }
+
+                onNavigateToMintTokenSettings: {
+                    root.navigateToMintTokenSettings()
+                    close()
                 }
             }
 

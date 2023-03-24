@@ -45,6 +45,7 @@ StatusDropdown {
     signal updateEns(string domain)
 
     signal removeClicked
+    signal navigateToMintTokenSettings
 
     enum FlowType {
         Selected, List_Deep1, List_Deep2
@@ -298,6 +299,8 @@ StatusDropdown {
                                         CommunityPermissionsHelpers.getTokenIconByKey(root.collectiblesModel, d.currentItemKey),
                                         d.currentSubItems)
             }
+
+            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
 
             Connections {
                 target: backButton

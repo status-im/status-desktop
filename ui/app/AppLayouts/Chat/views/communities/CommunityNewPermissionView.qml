@@ -56,6 +56,7 @@ StatusScrollView {
     property bool permissionTypeLimitReached: false
 
     signal createPermissionClicked
+    signal navigateToMintTokenSettings
 
     function resetChanges() {
         d.loadInitValues()
@@ -285,6 +286,11 @@ StatusScrollView {
                 onRemoveClicked: {
                     d.dirtyValues.selectedHoldingsModel.remove(tokensSelector.editedIndex)
                     dropdown.close()
+                }
+
+                onNavigateToMintTokenSettings: {
+                    root.navigateToMintTokenSettings()
+                    close()
                 }
             }
 
