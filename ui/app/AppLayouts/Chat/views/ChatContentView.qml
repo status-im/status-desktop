@@ -101,7 +101,7 @@ ColumnLayout {
                 console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
                 return
             }
-            Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId)
+            Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, chatContentModule.getMyChatId())
         }
 
         onToggleReaction: {

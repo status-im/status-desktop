@@ -168,9 +168,14 @@ QtObject {
         openPopup(sendContactRequestPopupComponent, popupProperties, cb)
     }
 
-    function openPinnedMessagesPopup(store, messageStore, pinnedMessagesModel, messageToPin) {
-        openPopup(pinnedMessagesPopup, { store: store, messageStore: messageStore,
-                      pinnedMessagesModel: pinnedMessagesModel, messageToPin: messageToPin})
+    function openPinnedMessagesPopup(store, messageStore, pinnedMessagesModel, messageToPin, chatId) {
+        openPopup(pinnedMessagesPopup, {
+            store: store,
+            messageStore: messageStore,
+            pinnedMessagesModel: pinnedMessagesModel,
+            messageToPin: messageToPin,
+            chatId: chatId
+        })
     }
 
     function openCommunityPopup(store, community, chatCommunitySectionModule) {

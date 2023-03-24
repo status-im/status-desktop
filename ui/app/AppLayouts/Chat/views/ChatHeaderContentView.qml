@@ -302,7 +302,7 @@ Item {
                     console.warn("error on open pinned messages - chat content module is not set")
                     return
                 }
-                Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, "")
+                Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, "", chatContentModule.chatDetails.id)
             }
             onUnmute: {
                 if(!chatContentModule) {
