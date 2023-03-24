@@ -11,7 +11,7 @@ logScope:
   topics = "shared-keypairs"
 
 proc buildKeyPairsList*(allWalletAccounts: seq[WalletAccountDto], allMigratedKeypairs: seq[KeyPairDto], 
-  excludeAlreadyMigratedPairs: bool): seq[KeyPairItem] =
+  excludeAlreadyMigratedPairs: bool, excludePrivateKeyKeypairs: bool): seq[KeyPairItem] =
   let keyPairMigrated = proc(keyUid: string): bool =
     result = false
     for kp in allMigratedKeypairs:
@@ -63,7 +63,7 @@ proc buildKeyPairsList*(allWalletAccounts: seq[WalletAccountDto], allMigratedKey
         item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon = "", balance = 0.0))
       items.add(item)
       continue
-    if a.walletType == WalletTypeKey and not containsItemWithKeyUid(items, a.keyUid):
+    if a.walletType == WalletTypeKey and not excludePrivateKeyKeypairs and not containsItemWithKeyUid(items, a.keyUid):
       var item = newKeyPairItem(keyUid = a.keyUid,
         pubKey = a.publicKey,
         locked = false,
