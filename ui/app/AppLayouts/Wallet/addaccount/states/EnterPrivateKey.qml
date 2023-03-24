@@ -104,31 +104,34 @@ Item {
             }
         }
 
-        Column {
+        StatusInput {
+            width: privKeyInput.width
+            maximumHeight: Constants.addAccountPopup.importPrivateKeyWarningHeight
+            minimumHeight: Constants.addAccountPopup.importPrivateKeyWarningHeight
+            visible: !d.addressResolved
+            multiline: true
+            leftPadding: Style.current.padding
+            font.pixelSize: Constants.addAccountPopup.labelFontSize2
+            text: qsTr("New addresses cannot be derived from an account imported from a private key. Import using a seed phrase if you wish to derive addresses.")
+            input.edit.enabled: false
+            input.enabled: false
+            input.background.color: "transparent"
+            input.background.border.color: Theme.palette.baseColor2
+            input.leftComponent: StatusIcon {
+                icon: "info"
+                height: 20
+                width: 20
+                color: Theme.palette.baseColor1
+            }
+        }
+
+        AddressWithAddressDetails {
             width: parent.width
             spacing: Style.current.halfPadding
             visible: d.addressResolved
 
-            StatusBaseText {
-                text: qsTr("Public address of private key")
-                font.pixelSize: Constants.addAccountPopup.labelFontSize1
-            }
-
-            StatusInput {
-                width: parent.width
-                input.edit.enabled: false
-                text: root.store.privateKeyAccAddress.address
-                input.enabled: false
-                input.background.color: "transparent"
-                input.background.border.color: Theme.palette.baseColor2
-            }
-
-            AddressDetails {
-                width: parent.width
-                addressDetailsItem: root.store.privateKeyAccAddress
-                defaultMessage: ""
-                defaultMessageCondition: !d.addressResolved
-            }
+            addressDetailsItem: root.store.privateKeyAccAddress
+            addressResolved: d.addressResolved
         }
 
         StatusModalDivider {

@@ -393,7 +393,7 @@ method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEv
 proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
   var item = newKeyPairItem()
   let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
-    excludeAlreadyMigratedPairs = false)
+    excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
       item = it
@@ -415,7 +415,7 @@ method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
 method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardUid = "") =
   var item = newKeyPairItem()
   let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
-    excludeAlreadyMigratedPairs = false)
+    excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
       item = it
@@ -446,7 +446,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     return
   if flowToRun == FlowType.SetupNewKeycard:
     let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(),
-      excludeAlreadyMigratedPairs = true)
+      excludeAlreadyMigratedPairs = true, excludePrivateKeyKeypairs = false)
     self.view.createKeyPairModel(items)
     self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))
     self.controller.readyToDisplayPopup()
