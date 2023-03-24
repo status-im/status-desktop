@@ -488,7 +488,7 @@ QtObject {
         const communityName = getSectionNameById(result.communityId)
         if (!communityName) {
             // Unknown community, fetch the info if possible
-            root.requestCommunityInfo(communityId)
+            root.requestCommunityInfo(result.communityId)
             return result
         }
 
