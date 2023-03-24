@@ -259,6 +259,9 @@ QtObject:
   proc requestToJoinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
     self.delegate.requestToJoinCommunity(communityId, ensName)
 
+  proc requestToJoinCommunityWithAuthentication*(self: View, communityId: string, ensName: string) {.slot.} =
+    self.delegate.requestToJoinCommunityWithAuthentication(communityId, ensName)
+
   proc joinGroupChatFromInvitation*(self: View, groupName: string, chatId: string, adminPK: string) {.slot.} =
     self.delegate.joinGroupChatFromInvitation(groupName, chatId, adminPK)
 
