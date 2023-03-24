@@ -1,6 +1,7 @@
 import ./io_interface as community_tokens_module_interface
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/community/dto/community
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
@@ -14,16 +15,19 @@ type
     communityTokensModule: community_tokens_module_interface.AccessInterface
     events: EventEmitter
     communityTokensService: community_tokens_service.Service
+    transactionService: transaction_service.Service
 
 proc newCommunityTokensController*(
     communityTokensModule: community_tokens_module_interface.AccessInterface,
     events: EventEmitter,
-    communityTokensService: community_tokens_service.Service
+    communityTokensService: community_tokens_service.Service,
+    transactionService: transaction_service.Service
     ): Controller =
   result = Controller()
   result.communityTokensModule = communityTokensModule
   result.events = events
   result.communityTokensService = communityTokensService
+  result.transactionService = transactionService
 
 proc delete*(self: Controller) =
   discard
@@ -44,3 +48,9 @@ proc authenticateUser*(self: Controller, keyUid = "") =
 
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(communityId)
+
+proc getSuggestedFees*(self: Controller, chainId: int): SuggestedFeesDto =
+  return self.transactionService.suggestedFees(chainId)
+
+proc getFiatValue*(self: Controller, cryptoBalance: string, cryptoSymbol: string): string =
+  return self.communityTokensService.getFiatValue(cryptoBalance, cryptoSymbol)

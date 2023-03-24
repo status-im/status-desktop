@@ -1,7 +1,9 @@
-import NimQml, json
+import NimQml, json, stint, strformat, strutils
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/community/dto/community
+import ../../../../../app_service/common/conversion
 import ../../../../core/eventemitter
 import ../../../../global/global_singleton
 import ../io_interface as parent_interface
@@ -24,12 +26,13 @@ type
 proc newCommunityTokensModule*(
     parent: parent_interface.AccessInterface,
     events: EventEmitter,
-    communityTokensService: community_tokens_service.Service): Module =
+    communityTokensService: community_tokens_service.Service,
+    transactionService: transaction_service.Service): Module =
   result = Module()
   result.parent = parent
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newCommunityTokensController(result, events, communityTokensService)
+  result.controller = controller.newCommunityTokensController(result, events, communityTokensService, transactionService)
 
 method delete*(self: Module) =
   self.view.delete
@@ -74,3 +77,20 @@ method onUserAuthenticated*(self: Module, password: string) =
     #TODO signalize somehow
   else:
     self.controller.deployCollectibles(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempChainId)
+
+method computeDeployFee*(self: Module, chainId: int): string =
+  let suggestedFees = self.controller.getSuggestedFees(chainId)
+  if suggestedFees == nil:
+    return "-"
+
+  let contractGasUnits = 3702411 # this should go from status-go
+  let maxFees = suggestedFees.maxFeePerGasM
+  let gasPrice = if suggestedFees.eip1559Enabled: maxFees else: suggestedFees.gasPrice
+
+  let weiValue = gwei2Wei(gasPrice) * contractGasUnits.u256
+  let ethValueStr = wei2Eth(weiValue)
+  let ethValue = parseFloat(ethValueStr)
+
+  let fiatValue = self.controller.getFiatValue(ethValueStr, "ETH")
+
+  return fmt"{ethValue:.4f}ETH (${fiatValue})"

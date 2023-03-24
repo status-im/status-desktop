@@ -300,7 +300,7 @@ StatusSectionLayout {
                 accounts: root.rootStore.accounts
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
-                onSignMintTransactionOpened: communityTokensStore.computeDeployFee()
+                onSignMintTransactionOpened: communityTokensStore.computeDeployFee(chainId)
                 onMintCollectible: {
                     communityTokensStore.deployCollectible(root.community.id,
                                                            accountAddress,
@@ -326,8 +326,13 @@ StatusSectionLayout {
                 Connections {
                     target: rootStore.communityTokensStore
                     function onDeployFeeUpdated(value) {
-                        mintPanel.isFeeLoading = false
-                        mintPanel.feeText = value
+                        // TODO better error handling
+                        if (value === "-") {
+                            mintPanel.isFeeLoading = true
+                        } else {
+                            mintPanel.isFeeLoading = false
+                            mintPanel.feeText = value
+                        }
                     }
                 }
             }

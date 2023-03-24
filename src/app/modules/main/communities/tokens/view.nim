@@ -6,6 +6,7 @@ QtObject:
   type
     View* = ref object of QObject
       communityTokensModule: community_tokens_module_interface.AccessInterface
+      deployFee: string
 
   proc load*(self: View) =
     discard
@@ -21,7 +22,16 @@ QtObject:
   proc deployCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, image: string) {.slot.} =
     self.communityTokensModule.deployCollectible(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, transferable, selfDestruct, chainId, image)
 
+  proc deployFeeUpdated*(self: View) {.signal.}
 
+  proc computeDeployFee*(self: View, chainId: int) {.slot.} =
+    self.deployFee = self.communityTokensModule.computeDeployFee(chainId)
+    self.deployFeeUpdated()
 
+  proc getDeployFee(self: View): QVariant {.slot.} =
+    return newQVariant(self.deployFee)
 
+  QtProperty[QVariant] deployFee:
+    read = getDeployFee
+    notify = deployFeeUpdated
 
