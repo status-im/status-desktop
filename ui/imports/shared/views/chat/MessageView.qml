@@ -814,7 +814,7 @@ Loader {
                                     return;
                                 }
 
-                                Global.openPinnedMessagesPopupRequested(root.rootStore, messageStore, chatContentModule.pinnedMessagesModel, root.messageId)
+                                Global.openPinnedMessagesPopupRequested(root.rootStore, messageStore, chatContentModule.pinnedMessagesModel, root.messageId, root.messageStore.getChatId())
                             }
                         }
                     },

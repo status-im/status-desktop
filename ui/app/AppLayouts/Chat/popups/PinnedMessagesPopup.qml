@@ -20,6 +20,26 @@ StatusDialog {
     property var pinnedMessagesModel //this doesn't belong to the messageStore, it is a part of the ChatContentStore, but we didn't introduce it yet.
     property string messageToPin
     property string messageToUnpin
+    property string chatId
+
+    property bool isChatBlocked: false
+
+    function updateIsChatBlocked() {
+        const contactDetails = Utils.getContactDetailsAsJson(chatId, false)
+        isChatBlocked = contactDetails && !contactDetails.isContact
+    }
+
+    Connections {
+        target: root.store.contactsStore.myContactsModel
+
+        function onItemChanged(pubKey) {
+            if (chatId === pubKey) {
+                updateIsChatBlocked()
+            }
+        }
+    }
+
+    Component.onCompleted: updateIsChatBlocked()
 
     width: 800
     height: 428
@@ -101,9 +121,9 @@ StatusDialog {
                     // This is possible since we have all data loaded before we load qml.
                     // When we fetch messages to fulfill a gap we have to set them at once.
                     prevMessageIndex: index - 1
-                    prevMessageAsJsonObj: root.messageStore? root.messageStore.getMessageByIndexAsJson(index - 1) : {}
+                    prevMessageAsJsonObj: root.messageStore ? root.messageStore.getMessageByIndexAsJson(index - 1) : {}
                     nextMessageIndex: index + 1
-                    nextMessageAsJsonObj: root.messageStore? root.messageStore.getMessageByIndexAsJson(index + 1) : {}
+                    nextMessageAsJsonObj: root.messageStore ? root.messageStore.getMessageByIndexAsJson(index + 1) : {}
 
                     // Additional params
                     isInPinnedPopup: true
@@ -136,7 +156,7 @@ StatusDialog {
                     z: mouseArea.z + 1
                     width: 32
                     height: 32
-                    visible: !root.messageToPin && (hovered || mouseArea.containsMouse)
+                    visible: !root.isChatBlocked && !root.messageToPin && (hovered || mouseArea.containsMouse)
                     icon.name: "unpin"
                     tooltip.text: qsTr("Unpin")
                     color: hovered ? Theme.palette.primaryColor2 : Theme.palette.indirectColor1
