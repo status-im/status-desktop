@@ -411,6 +411,10 @@ QtObject {
         chatCommunitySectionModule.requestToJoinCommunity(id, ensName)
     }
 
+    function requestToJoinCommunityWithAuthentication(id, ensName) {
+        chatCommunitySectionModule.requestToJoinCommunityWithAuthentication(id, ensName)
+    }
+
     function userCanJoin(id) {
         return communitiesModuleInst.userCanJoin(id)
     }

@@ -101,7 +101,7 @@ StackLayout {
                 accessType: communityData.access
 
                 onJoined: {
-                    root.rootStore.requestToJoinCommunity(communityData.id, root.rootStore.userProfileInst.name)
+                    root.rootStore.requestToJoinCommunityWithAuthentication(communityData.id, root.rootStore.userProfileInst.name)
                 }
 
                 onCancelMembershipRequest: {

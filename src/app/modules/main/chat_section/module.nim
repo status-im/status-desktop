@@ -1199,6 +1199,9 @@ method deleteCommunityTokenPermission*(self: Module, communityId: string, permis
   self.controller.deleteCommunityTokenPermission(communityId, permissionId)
 
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
+  self.controller.requestToJoinCommunity(communityId, ensName)
+
+method requestToJoinCommunityWithAuthentication*(self: Module, communityId: string, ensName: string) =
   self.controller.authenticateToRequestToJoinCommunity(communityId, ensName)
 
 proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem =
