@@ -9,7 +9,7 @@ QtObject {
     property string backButtonName
 
     property var aboutModuleInst: aboutModule
-
+    property var mainModuleInst: mainModule
     property var profileSectionModuleInst: profileSectionModule
 
     readonly property bool fetchingUpdate: aboutModuleInst.fetching
@@ -141,6 +141,14 @@ QtObject {
 
     function importCommunity(communityKey) {
         root.communitiesModuleInst.importCommunity(communityKey);
+    }
+
+    function requestCommunityInfo(communityKey, importing = false) {
+        const publicKey = Utils.isCompressedPubKey(communityKey)
+                            ? Utils.changeCommunityKeyCompression(communityKey)
+                            : communityKey
+        root.mainModuleInst.setCommunityIdToSpectate(publicKey)
+        root.communitiesModuleInst.requestCommunityInfo(publicKey, importing)
     }
 
     function getCurrentVersion() {
