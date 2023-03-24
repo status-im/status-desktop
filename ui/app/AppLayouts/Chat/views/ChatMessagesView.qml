@@ -83,6 +83,13 @@ Item {
             chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation()
         }
 
+        function onScrollToFirstUnreadMessage(messageIndex) {
+            if (d.isMostRecentMessageInViewport) {
+                chatLogView.positionViewAtIndex(messageIndex, ListView.Center)
+                chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation()
+            }
+        }
+
         function onMessageSearchOngoingChanged() {
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()
         }
@@ -145,8 +152,27 @@ Item {
         }
     }
 
+    Loader {
+        id: loadingMessagesView
+
+        readonly property bool show: !messageStore.messageModule.firstUnseenMessageLoaded ||
+                                     !messageStore.messageModule.initialMessagesLoaded
+        active: show
+        visible: show
+        anchors.top: loadingMessagesIndicator.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        sourceComponent:
+            MessagesLoadingView {
+            anchors.margins: 16
+            anchors.fill: parent
+            }
+    }
+
     StatusListView {
         id: chatLogView
+        visible: !loadingMessagesView.visible
         objectName: "chatLogView"
         anchors.top: loadingMessagesIndicator.bottom
         anchors.bottom: parent.bottom
@@ -270,7 +296,7 @@ Item {
             quotedMessageAuthorDetailsEnsVerified: model.quotedMessageAuthorEnsVerified
             quotedMessageAuthorDetailsIsContact: model.quotedMessageAuthorIsContact
             quotedMessageAuthorDetailsColorHash: model.quotedMessageAuthorColorHash
-            
+
             gapFrom: model.gapFrom
             gapTo: model.gapTo
 

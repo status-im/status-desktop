@@ -17,6 +17,7 @@ QtObject:
       chatColor: string
       chatIcon: string
       chatType: int
+      firstUnseenMessageLoaded: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -234,3 +235,18 @@ QtObject:
   proc setChatType*(self: View, value: int) =
     self.chatType = value
     self.chatTypeChanged()
+
+  proc firstUnseenMessageLoadedChanged*(self: View) {.signal.}
+  proc getFirstUnseenMessageLoaded*(self: View): bool {.slot.} =
+    return self.firstUnseenMessageLoaded
+  proc setFirstUnseenMessageLoaded*(self: View, value: bool) =
+    self.firstUnseenMessageLoaded = value
+    self.firstUnseenMessageLoadedChanged()
+  
+  QtProperty[bool] firstUnseenMessageLoaded:
+    read = getFirstUnseenMessageLoaded
+    notify = firstUnseenMessageLoadedChanged
+
+  proc scrollToFirstUnreadMessage(self: View, messageIndex: int) {.signal.}
+  proc emitScrollToFirstUnreadMessageSignal*(self: View, messageIndex: int) =
+    self.scrollToFirstUnreadMessage(messageIndex)

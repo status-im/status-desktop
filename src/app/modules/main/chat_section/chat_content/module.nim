@@ -387,7 +387,6 @@ method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustwort
 
 method onMadeActive*(self: Module) =
   self.messagesModule.resetNewMessagesMarker()
-  self.messagesModule.scrollToNewMessagesMarker()
   self.view.setActive()
 
 method onMadeInactive*(self: Module) =
