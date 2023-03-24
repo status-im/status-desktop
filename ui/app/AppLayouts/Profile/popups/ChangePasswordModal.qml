@@ -62,7 +62,8 @@ StatusModal {
 
     width: 480
     height: 546
-    closePolicy: Popup.NoAutoClose
+    closePolicy: submitBtn.loading? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    hasCloseButton: !submitBtn.loading
     header.title: qsTr("Change password")
 
     onOpened: view.reset()

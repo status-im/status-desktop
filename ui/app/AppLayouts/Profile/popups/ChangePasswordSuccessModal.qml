@@ -15,6 +15,7 @@ StatusModal {
     height: 248
 
     closePolicy: Popup.NoAutoClose
+    hasCloseButton: false
 
     showHeader: false
     contentItem: ColumnLayout {
