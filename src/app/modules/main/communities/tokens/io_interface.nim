@@ -18,3 +18,6 @@ method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
 
 method resetTempValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method computeDeployFee*(self: AccessInterface, chainId: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")

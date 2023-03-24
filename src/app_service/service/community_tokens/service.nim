@@ -1,9 +1,11 @@
-import NimQml, Tables, chronicles, json, stint
+import NimQml, Tables, chronicles, json, stint, strutils, strformat
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
 import ../../../backend/community_tokens as tokens_backend
 import ../transaction/service as transaction_service
+import ../token/service as token_service
+import ../settings/service as settings_service
 import ../ens/utils as ens_utils
 import ../eth/dto/transaction
 
@@ -41,6 +43,8 @@ QtObject:
       events: EventEmitter
       threadpool: ThreadPool
       transactionService: transaction_service.Service
+      tokenService: token_service.Service
+      settingsService: settings_service.Service
 
   proc delete*(self: Service) =
       self.QObject.delete
@@ -48,13 +52,17 @@ QtObject:
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
-    transactionService: transaction_service.Service
+    transactionService: transaction_service.Service,
+    tokenService: token_service.Service,
+    settingsService: settings_service.Service
   ): Service =
     result = Service()
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.transactionService = transactionService
+    result.tokenService = tokenService
+    result.settingsService = settingsService
 
   proc init*(self: Service) =
     self.events.on(PendingTransactionTypeDto.CollectibleDeployment.event) do(e: Args):
@@ -139,3 +147,12 @@ QtObject:
       if token.symbol == symbol:
         return token
 
+  proc getFiatValue*(self: Service, cryptoBalance: string, cryptoSymbol: string): string =
+    if (cryptoBalance == "" or cryptoSymbol == ""):
+      return "0.00"
+
+    let currentCurrency = self.settingsService.getCurrency()
+
+    let price = self.tokenService.getTokenPrice(cryptoSymbol, currentCurrency)
+    let value = parseFloat(cryptoBalance) * price
+    return fmt"{value:.2f}"

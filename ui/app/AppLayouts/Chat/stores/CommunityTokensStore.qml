@@ -5,7 +5,7 @@ QtObject {
     id: root
 
     property var communityTokensModuleInst: communityTokensModule ?? null
-    property string deployFee: "0.0015 ETH ($75.34)"//communityTokensModuleInst.computeFee // TODO: Backend
+    property string deployFee: communityTokensModuleInst.deployFee
 
     // Network selection properties:
     property var layer1Networks: networksModule.layer1
@@ -60,9 +60,10 @@ QtObject {
                                                     infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     }
 
-    function computeDeployFee() {
-        // TODO: Backend compute minitng fee
-        root.deployFeeUpdated(root.deployFee) // TO BE REMOVED
+    function computeDeployFee(chainId) {
+        // TODO this call will be async
+        communityTokensModuleInst.computeDeployFee(chainId)
+        root.deployFeeUpdated(root.deployFee)
     }
 
     // Airdrop tokens:

@@ -47,7 +47,7 @@ SettingsPageLayout {
                            string accountName,
                            string accountAddress)
 
-    signal signMintTransactionOpened
+    signal signMintTransactionOpened(int chainId)
 
     function navigateBack() {
         stackManager.pop(StackView.Immediate)
@@ -223,7 +223,7 @@ SettingsPageLayout {
                 feeText: root.feeText
                 isFeeLoading: root.isFeeLoading
 
-                onOpened: root.signMintTransactionOpened()
+                onOpened: root.signMintTransactionOpened(parent.chainId)
                 onCancelClicked: close()
                 onSignTransactionClicked: parent.signMintTransaction()
             }
