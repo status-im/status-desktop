@@ -212,6 +212,12 @@ proc init*(self: Controller) =
       if (community.id == self.sectionId):
         self.delegate.updateCommunityDetails(community)
 
+  self.events.on(SIGNAL_MESSAGE_FIRST_UNSEEN) do(e: Args):
+    let args = MessageFirstUnseen(e)
+    if (args.chatId != self.chatId):
+      return
+    self.delegate.onFirstUnseenMessageId(args.messageId)
+
 proc getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -280,8 +286,8 @@ proc setSearchedMessageId*(self: Controller, searchedMessageId: string) =
 proc clearSearchedMessageId*(self: Controller) =
   self.setSearchedMessageId("")
 
-proc getFirstUnseenMessageId*(self: Controller): string =
-  self.messageService.getFirstUnseenMessageIdFor(self.chatId)
+proc getAsyncFirstUnseenMessageId*(self: Controller) =
+  self.messageService.getAsyncFirstUnseenMessageId(self.chatId)
 
 proc getLoadingMessagesPerPageFactor*(self: Controller): int =
   return self.loadingMessagesPerPageFactor

@@ -40,6 +40,7 @@ const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
+const SIGNAL_MESSAGE_FIRST_UNSEEN* = "messageFirstUnseen"
 const SIGNAL_NEW_MESSAGE_RECEIVED* = "newMessageReceived"
 const SIGNAL_MESSAGE_PINNED* = "messagePinned"
 const SIGNAL_MESSAGE_UNPINNED* = "messageUnpinned"
@@ -117,6 +118,10 @@ type
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
 
+  MessageFirstUnseen* = ref object of Args
+    chatId*: string
+    messageId*: string
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -188,9 +193,6 @@ QtObject:
     let pinnedMsgCursorValue = if (pinnedMsgCursor.isFetchable()): pinnedMsgCursor.getValue() else: CURSOR_VALUE_IGNORE
 
     if(msgCursorValue == CURSOR_VALUE_IGNORE and pinnedMsgCursorValue == CURSOR_VALUE_IGNORE):
-      # it's important to emit signal in case we are not fetching messages, so we can update the view appropriatelly.
-      let data = MessagesLoadedArgs(chatId: chatId)
-      self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
 
     if(msgCursorValue != CURSOR_VALUE_IGNORE):
@@ -386,7 +388,6 @@ QtObject:
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
       info "load more messages response is not a json object"
-
       # notify view, this is important
       self.events.emit(SIGNAL_MESSAGES_LOADED, MessagesLoadedArgs())
       return
@@ -654,18 +655,37 @@ QtObject:
 
     self.threadpool.start(arg)
 
-  proc getFirstUnseenMessageIdFor*(self: Service, chatId: string): string =
+  proc getAsyncFirstUnseenMessageId*(self: Service, chatId: string) =
+    let arg = AsyncGetFirstUnseenMessageIdForTaskArg(
+      tptr: cast[ByteAddress](asyncGetFirstUnseenMessageIdForTaskArg),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onGetFirstUnseenMessageIdFor",
+      chatId: chatId,
+    )
+
+    self.threadpool.start(arg)
+
+  proc onGetFirstUnseenMessageIdFor*(self: Service, response: string) {.slot.} =
     try:
-      let response = status_go.firstUnseenMessageID(chatId)
+      let responseObj = response.parseJson
 
-      if(not response.error.isNil):
-        error "error getFirstUnseenMessageIdFor: ", errDescription = response.error.message
+      var error: string
+      discard responseObj.getProp("error", error)
 
-      result = response.result.getStr()
+      var chatId: string
+      discard responseObj.getProp("chatId", chatId)
 
+      var messageId = ""
+
+      if(error.len > 0):
+        error "error: ", procName="onGetFirstUnseenMessageIdFor", errDescription=error
+      else:
+        discard responseObj.getProp("messageId", messageId)
+
+      self.events.emit(SIGNAL_MESSAGE_FIRST_UNSEEN, MessageFirstUnseen(chatId: chatId, messageId: messageId))
+    
     except Exception as e:
-      error "error: ", procName = "getFirstUnseenMessageIdFor", errName = e.name,
-          errDesription = e.msg
+      error "error: ", procName="onGetFirstUnseenMessageIdFor", errName = e.name, errDesription = e.msg
 
   proc onAsyncGetLinkPreviewData*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson

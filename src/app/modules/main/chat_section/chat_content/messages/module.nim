@@ -681,15 +681,11 @@ method resendChatMessage*(self: Module, messageId: string): string =
   return self.controller.resendChatMessage(messageId)
 
 method resetNewMessagesMarker*(self: Module) =
-  self.view.model().setFirstUnseenMessageId(self.controller.getFirstUnseenMessageId())
-  self.view.model().resetNewMessagesMarker()
+  self.controller.getAsyncFirstUnseenMessageId()
 
 method removeNewMessagesMarker*(self: Module) =
   self.view.model().setFirstUnseenMessageId("")
   self.view.model().resetNewMessagesMarker()
-
-method scrollToNewMessagesMarker*(self: Module) =
-  self.scrollToMessage(self.view.model().getFirstUnseenMessageId())
 
 method markAllMessagesRead*(self: Module) =
   self.view.model().markAllAsSeen()
@@ -721,3 +717,11 @@ proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto)
         items[i] = item
         return true
   return false
+
+method onFirstUnseenMessageId*(self: Module, messageId: string) =
+  self.view.model().setFirstUnseenMessageId(messageId)
+  self.view.model().resetNewMessagesMarker()
+  let index = self.view.model().findIndexForMessageId(messageId)
+  if (index != -1):
+    self.view.emitScrollToFirstUnreadMessageSignal(index)
+  self.view.setFirstUnseenMessageLoaded(true)
