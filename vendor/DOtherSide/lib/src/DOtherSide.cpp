@@ -73,19 +73,10 @@
 #include "DOtherSide/Status/KeychainManager.h"
 #include "DOtherSide/Status/SoundManager.h"
 
-#include "StatusQ/QClipboardProxy.h"
-#include "StatusQ/modelutilsinternal.h"
-#include "StatusQ/rxvalidator.h"
-#include "StatusQ/statussyntaxhighlighter.h"
-#include "StatusQ/statuswindow.h"
-
 #ifdef MONITORING
 #include <QProcessEnvironment>
 #include "StatusDesktop/Monitoring/Monitor.h"
 #endif
-
-#include <qqmlsortfilterproxymodeltypes.h>
-#include <QZXing.h>
 
 namespace {
 
@@ -93,18 +84,9 @@ void register_meta_types()
 {
     qRegisterMetaType<QVector<int>>();
 
-    qmlRegisterType<StatusWindow>("StatusQ", 0 , 1, "StatusWindow");
-    qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0 , 1, "StatusSyntaxHighlighter");
-    qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
-    qmlRegisterSingletonType<QClipboardProxy>("StatusQ", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
-    qmlRegisterSingletonType<ModelUtilsInternal>("StatusQ.Internal", 0 , 1, "ModelUtils",
-                                                 &ModelUtilsInternal::qmlInstance);
 #ifdef MONITORING
     qmlRegisterSingletonType<Monitor>("Monitoring", 1 , 0, "Monitor", &Monitor::qmlInstance);
 #endif
-
-    qqsfpm::registerTypes();
-    QZXing::registerQMLTypes();
 }
 
 }

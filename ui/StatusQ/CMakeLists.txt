@@ -17,6 +17,10 @@ set(QZXING_USE_QML ON)
 set(QZXING_MULTIMEDIA ON)
 set(QZXING_USE_DECODER_QR_CODE ON)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # https://doc.qt.io/qtcreator/creator-qml-modules-with-plugins.html#importing-qml-modules
 set(QML_IMPORT_PATH
     ${CMAKE_SOURCE_DIR}/src;${QML_IMPORT_PATH}
@@ -28,3 +32,75 @@ add_subdirectory(../../vendor/qzxing/src qzxing)
 add_subdirectory(sandbox)
 add_subdirectory(sanity_checker)
 add_subdirectory(tests)
+
+# StatusQ library
+
+#qt5_add_big_resources(QRC_COMPILED
+#        src/statusq.qrc
+#        src/assets.qrc)
+
+add_library(StatusQ SHARED
+#        ${QRC_COMPILED}
+        src/plugin.cpp
+        src/statusq.qrc
+        src/assets.qrc
+        include/StatusQ/QClipboardProxy.h
+        include/StatusQ/modelutilsinternal.h
+        include/StatusQ/rxvalidator.h
+        include/StatusQ/statussyntaxhighlighter.h
+        include/StatusQ/statuswindow.h
+        src/QClipboardProxy.cpp
+        src/modelutilsinternal.cpp
+        src/rxvalidator.cpp
+        src/statussyntaxhighlighter.cpp
+        src/statuswindow.cpp
+        )
+
+if(APPLE)
+    find_library(AppKit AppKit)
+    find_library(Foundation Foundation)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation})
+    target_sources(StatusQ PRIVATE src/statuswindow_osx.mm)
+else()
+    target_sources(StatusQ PRIVATE src/statuswindow_other.cpp)
+endif()
+
+set(STATUSQ_QML_MODULE_BINARY_DIR ${CMAKE_BINARY_DIR}/bin/StatusQ)
+
+set_target_properties(StatusQ PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_QML_MODULE_BINARY_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${STATUSQ_QML_MODULE_BINARY_DIR}
+        )
+
+set(COPY_QMLDIR_COMMAND
+        ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ/qmldir
+        ${STATUSQ_QML_MODULE_BINARY_DIR}/qmldir)
+
+add_custom_command(
+        TARGET StatusQ
+        POST_BUILD
+        COMMAND ${COPY_QMLDIR_COMMAND}
+        COMMENT "Copying qmldir to binary directory")
+
+
+find_package(Qt5 COMPONENTS Core Qml Quick QuickControls2 REQUIRED)
+
+target_link_libraries(StatusQ PRIVATE
+        Qt5::Core
+        Qt5::Qml
+        Qt5::Quick
+        Qt5::QuickControls2
+        SortFilterProxyModel
+        qzxing
+        )
+
+target_include_directories(StatusQ PRIVATE include)
+
+install(TARGETS StatusQ
+        LIBRARY DESTINATION StatusQ
+        )
+
+install(FILES src/StatusQ/qmldir
+        DESTINATION StatusQ
+        )

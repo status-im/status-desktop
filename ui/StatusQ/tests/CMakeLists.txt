@@ -10,11 +10,6 @@ enable_testing()
 
 set(CMAKE_AUTOMOC ON)
 
-# TODO: Workaround until we make StatusQ a CMake library
-list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../src/")
-set(QML_IMPORT_PATH "${QML_DIRS}" CACHE STRING "Qt Creator extra qml import paths")
-set(QML2_IMPORT_PATH "${QML_DIRS}" CACHE STRING "Qt Creator extra qml import paths")
-
 find_package(QT NAMES Qt6 Qt5 COMPONENTS QuickTest Qml Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest Qml Quick REQUIRED)
 

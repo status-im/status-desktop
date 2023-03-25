@@ -5,14 +5,9 @@
 #include <QDebug>
 #include <QDirIterator>
 
-#include "StatusQ/typesregistration.h"
-#include <QZXing.h>
-
 SandboxApp::SandboxApp(int &argc, char **argv)
     : QGuiApplication(argc, argv)
 {
-    QZXing::registerQMLTypes();
-
 #ifdef QT_DEBUG
     connect(&m_watcher, &QFileSystemWatcher::directoryChanged, this, [this](const QString&) {
         restartEngine();
@@ -22,8 +17,6 @@ SandboxApp::SandboxApp(int &argc, char **argv)
 
 void SandboxApp::startEngine()
 {
-    registerStatusQTypes();
-
 #ifdef QT_DEBUG
     const QUrl url = QUrl::fromLocalFile(SRC_DIR + QStringLiteral("/main.qml"));
     m_watcher.addPath(applicationDirPath() + "/../");

@@ -13,9 +13,16 @@ public:
 public slots:
     void qmlEngineAvailable(QQmlEngine *engine)
     {
-        // TODO: Workaround until we make StatusQ a CMake library
-        engine->addImportPath("../src/");
-        engine->addImportPath("./qml/");
+        engine->addImportPath(QStringLiteral(":/"));
+        qDebug() << QGuiApplication::applicationDirPath();
+        qDebug() << engine->importPathList();
+
+        QList<QQmlError> loadErrors;
+        qDebug() << engine->importPlugin(QGuiApplication::applicationDirPath() + "/StatusQ/libStatusQ.dylib", "StatusQ", &loadErrors);
+
+        for (const auto& error : loadErrors)
+            qWarning() << error;
+
         // TODO: Alternative to not yet supported QML_ELEMENT
         qmlRegisterType<MonitorQtOutput>("StatusQ.TestHelpers", 0, 1, "MonitorQtOutput");
     }
