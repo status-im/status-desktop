@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.19)
 
 project(StatusQ)
 
+option(STATUSQ_BUILD_SANDBOX "Enable to build StatusQ Sandbox application" ON)
+option(STATUSQ_BUILD_SANITY_CHECKER "Enable to build StatusQ Sanity Checker application" ON)
+option(STATUSQ_BUILD_TESTS "Enable to build StatusQ UI auto tests" ON)
+
 if (APPLE)
     set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=10.14)
     set(CMAKE_OSX_ARCHITECTURES "x86_64")
@@ -27,13 +31,23 @@ set(QML_IMPORT_PATH
     CACHE STRING "")
 
 
+if (${STATUSQ_BUILD_SANDBOX})
+    add_subdirectory(sandbox)
+endif()
+
+if (${STATUSQ_BUILD_SANITY_CHECKER})
+    add_subdirectory(sanity_checker)
+endif()
+
+if (${STATUSQ_BUILD_TESTS})
+    add_subdirectory(tests)
+endif()
+
 add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
 add_subdirectory(../../vendor/qzxing/src qzxing)
-add_subdirectory(sandbox)
-add_subdirectory(sanity_checker)
-add_subdirectory(tests)
 
-# StatusQ library
+### StatusQ library
+### TODO: Move to a subdirectory for readability and better structure
 
 #qt5_add_big_resources(QRC_COMPILED
 #        src/statusq.qrc

@@ -128,6 +128,7 @@
         <file>StatusQ/Core/Utils/emojiList.js</file>
         <file>StatusQ/Core/Utils/qmldir</file>
         <file>StatusQ/Core/Utils/Utils.qml</file>
+        <file>StatusQ/Core/Utils/StatesStack.qml</file>
         <file>StatusQ/Core/qmldir</file>
         <file>StatusQ/Core/LocaleUtils.qml</file>
         <file>StatusQ/Core/StatusAnimatedStack.qml</file>
@@ -201,5 +202,14 @@
         <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
         <file>StatusQ/Components/StatusOnlineBadge.qml</file>
         <file>StatusQ/Components/StatusGroupBox.qml</file>
+        <file>StatusQ/Components/StatusDotsLoadingIndicator.qml</file>
+        <file>StatusQ/Components/StatusDraggableListItem.qml</file>
+        <file>StatusQ/Components/StatusEmojiAndColorComboBox.qml</file>
+        <file>StatusQ/Components/StatusStepper.qml</file>
+        <file>StatusQ/Components/StatusSyncDeviceDelegate.qml</file>
+        <file>StatusQ/Controls/StatusImageSelector.qml</file>
+        <file>StatusQ/Controls/StatusLinkText.qml</file>
+        <file>StatusQ/Core/Utils/ModelChangeGuard.qml</file>
+        <file>StatusQ/Core/Utils/StackViewStates.qml</file>
     </qresource>
 </RCC>

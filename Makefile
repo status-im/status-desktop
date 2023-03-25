@@ -195,9 +195,7 @@ else
   DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
   QZXING := vendor/DOtherSide/build/qzxing/Release/qzxing.dll
  endif
- 
- DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF \
- 							-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON # This is for qzxing, as it doesn't export any symbols
+ DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
  NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
@@ -249,6 +247,18 @@ ifeq ($(OUTPUT_CSV), true)
   $(shell touch .update.timestamp)
 endif
 
+statusq: | deps
+	echo -e $(BUILD_MSG) "StatusQ"
+	+ cmake -DCMAKE_INSTALL_PREFIX=$(shell pwd)/bin \
+			-DSTATUSQ_BUILD_SANDBOX=OFF \
+			-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
+			-DSTATUSQ_BUILD_TESTS=OFF \
+			-B ui/StatusQ/build \
+			-S ui/StatusQ \
+			$(HANDLE_OUTPUT)
+	+ cmake --build ui/StatusQ/build $(HANDLE_OUTPUT)
+	+ cmake --install ui/StatusQ/build $(HANDLE_OUTPUT)
+
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
 	+ cd vendor/DOtherSide && \
@@ -256,7 +266,8 @@ $(DOTHERSIDE): | deps
 		cd build && \
 		rm -f CMakeCache.txt && \
 		cmake $(DOTHERSIDE_CMAKE_PARAMS)\
-			-DENABLE_DOCS=OFF -DENABLE_TESTS=OFF -DQZXING_USE_QML=ON -DQZXING_MULTIMEDIA=ON -DQZXING_USE_DECODER_QR_CODE=ON \
+			-DENABLE_DOCS=OFF \
+			-DENABLE_TESTS=OFF \
 			.. $(HANDLE_OUTPUT) && \
 		$(DOTHERSIDE_BUILD_CMD)
 
@@ -392,7 +403,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) statusq $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
@@ -692,9 +703,9 @@ tests-nim-linux: | $(DOTHERSIDE)
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
 
 statusq-sanity-checker:
-	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target SanityChecker
+	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target sanity_checker
 
 run-statusq-sanity-checker: statusq-sanity-checker
-	ui/StatusQ/build/sanity_checker/SanityChecker
+	ui/StatusQ/build/bin/sanity_checker
 
 endif # "variables.mk" was not included
