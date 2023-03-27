@@ -25,6 +25,7 @@ MenuItem {
         readonly property bool hasAction: !!root.action
         readonly property bool isStatusAction: d.hasAction && (root.action instanceof StatusAction)
         readonly property bool isStatusDangerAction: d.isStatusAction && root.action.type === StatusAction.Type.Danger
+        readonly property bool isStatusSuccessAction: d.isStatusAction && root.action.type === StatusAction.Type.Success
 
         readonly property StatusAssetSettings originalAssetSettings: d.isStatusSubMenu && root.subMenu.assetSettings
                                                              ? root.subMenu.assetSettings
@@ -130,7 +131,9 @@ MenuItem {
 
         text: root.text
         color: !root.enabled ? Theme.palette.baseColor1
-                             : d.isStatusDangerAction ? Theme.palette.dangerColor1 : Theme.palette.directColor1
+                             : d.isStatusDangerAction ? Theme.palette.dangerColor1
+                                                      : d.isStatusSuccessAction?
+                                                            Theme.palette.successColor1 : Theme.palette.directColor1
 
         font.pixelSize: d.fontSettings ? d.fontSettings.pixelSize : d.defaultFontSettings.pixelSize
         font.bold: d.fontSettings ? d.fontSettings.bold : d.defaultFontSettings.bold
@@ -155,6 +158,8 @@ MenuItem {
                 return "transparent"
             if (d.isStatusDangerAction)
                 return Theme.palette.dangerColor3;
+            if (d.isStatusSuccessAction)
+                return Theme.palette.successColor3;
             return Theme.palette.statusMenu.hoverBackgroundColor;
         }
     }

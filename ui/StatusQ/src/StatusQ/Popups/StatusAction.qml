@@ -9,7 +9,8 @@ Action {
 
     enum Type {
         Normal,
-        Danger
+        Danger,
+        Success
     }
 
     property int type: StatusAction.Type.Normal
@@ -37,6 +38,8 @@ Action {
             return Theme.palette.baseColor1
         if (type === StatusAction.Type.Danger)
             return Theme.palette.dangerColor1
+        if (type === StatusAction.Type.Success)
+            return Theme.palette.successColor1
         return Theme.palette.primaryColor1
     }
 }
