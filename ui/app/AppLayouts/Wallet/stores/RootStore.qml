@@ -190,6 +190,10 @@ QtObject {
     }
 
     function runAddAccountPopup() {
-        walletSection.runAddAccountPopup()
+        walletSection.runAddAccountPopup(false)
+    }
+
+    function runAddWatchOnlyAccountPopup() {
+        walletSection.runAddAccountPopup(true)
     }
 }

@@ -51,6 +51,19 @@ Rectangle {
         }
     }
 
+    Loader {
+        id: walletBckgAccountContextMenu
+        sourceComponent: AccountContextMenu {
+            onAddNewAccountClicked: {
+                RootStore.runAddAccountPopup()
+            }
+
+            onAddWatchOnlyAccountClicked: {
+                RootStore.runAddWatchOnlyAccountPopup()
+            }
+        }
+    }
+
     Connections {
         target: walletSection
 
@@ -59,6 +72,18 @@ Rectangle {
         }
         function onDestroyAddAccountPopup() {
             addAccount.active = false
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+
+        onClicked: {
+            if (mouse.button === Qt.RightButton) {
+                walletBckgAccountContextMenu.active = true
+                walletBckgAccountContextMenu.item.popup(mouse.x, mouse.y)
+            }
         }
     }
 
@@ -72,6 +97,14 @@ Rectangle {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             Layout.topMargin: Style.current.padding
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+                onClicked: {
+                    mouse.accepted = true
+                }
+            }
 
             StatusBaseText {
                 id: walletTitleText
@@ -99,6 +132,14 @@ Rectangle {
             height: childrenRect.height
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.RightButton
+                onClicked: {
+                    mouse.accepted = true
+                }
+            }
 
             StyledTextEditWithLoadingState {
                 id: walletAmountValue
@@ -177,6 +218,11 @@ Rectangle {
                 errorIcon.tooltip.maxWidth: 300
                 errorIcon.tooltip.text: networkConnectionStore.tokenBalanceNotAvailableText
                 onClicked: {
+                    if (mouse.button === Qt.RightButton) {
+                        accountContextMenu.active = true
+                        accountContextMenu.item.popup(mouse.x, mouse.y)
+                        return
+                    }
                     changeSelectedAccount(index)
                     showSavedAddresses = false
                 }
@@ -195,6 +241,27 @@ Rectangle {
                         height: 15
                     }
                 ]
+
+                Loader {
+                    id: accountContextMenu
+                    sourceComponent: AccountContextMenu {
+                        account: model
+
+                        onEditAccountClicked: {
+                        }
+
+                        onDeleteAccountClicked: {
+                        }
+
+                        onAddNewAccountClicked: {
+                            RootStore.runAddAccountPopup()
+                        }
+
+                        onAddWatchOnlyAccountClicked: {
+                            RootStore.runAddWatchOnlyAccountPopup()
+                        }
+                    }
+                }
             }
 
             readonly property bool footerOverlayed: contentHeight > availableHeight
@@ -253,6 +320,15 @@ Rectangle {
                     spacing: parent.ListView.view.firstItem.statusListItemTitleArea.anchors.leftMargin
                     onClicked: {
                         showSavedAddresses = true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.RightButton
+                        propagateComposedEvents: true
+                        onClicked: {
+                            mouse.accepted = true
+                        }
                     }
                 }
             }

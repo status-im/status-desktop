@@ -72,7 +72,7 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-method load*[T](self: Module[T]) =
+method load*[T](self: Module[T], addingWatchOnlyAccount: bool) =
   self.controller.init()
   self.view.setCurrentState(newMainState(nil))
 
@@ -91,12 +91,15 @@ method load*[T](self: Module[T]) =
   items.add(item)
   item = newKeyPairItem(keyUid = Label_OptionAddWatchOnlyAcc)
   item.setName(Label_NewWatchOnlyAccount)
-  item.setIcon("objects")
+  item.setIcon("show")
   items.add(item)
 
   self.view.setDisablePopup(false)
   self.view.setOriginModelItems(items)
-  self.changeSelectedOrigin(items[0].getKeyUid())
+  if addingWatchOnlyAccount:
+    self.changeSelectedOrigin(Label_OptionAddWatchOnlyAcc)
+  else:
+    self.changeSelectedOrigin(items[0].getKeyUid())
   self.delegate.onAddAccountModuleLoaded()
 
 proc tryKeycardSync[T](self: Module[T]) = 

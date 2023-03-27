@@ -214,11 +214,11 @@ method destroyAddAccountPopup*(self: Module, switchToAccWithAddress: string = ""
     self.addAccountModule.delete
     self.addAccountModule = nil
 
-method runAddAccountPopup*(self: Module) =
+method runAddAccountPopup*(self: Module, addingWatchOnlyAccount: bool) =
   self.destroyAddAccountPopup()
   self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService, 
     self.walletAccountService)
-  self.addAccountModule.load()
+  self.addAccountModule.load(addingWatchOnlyAccount)
 
 method getAddAccountModule*(self: Module): QVariant =
   if self.addAccountModule.isNil:

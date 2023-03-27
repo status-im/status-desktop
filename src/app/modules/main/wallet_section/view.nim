@@ -98,8 +98,8 @@ QtObject:
     self.isMnemonicBackedUp = mnemonicBackedUp
     self.currentCurrencyChanged()
 
-  proc runAddAccountPopup*(self: View) {.slot.} =
-    self.delegate.runAddAccountPopup()
+  proc runAddAccountPopup*(self: View, addingWatchOnlyAccount: bool) {.slot.} =
+    self.delegate.runAddAccountPopup(addingWatchOnlyAccount)
 
   proc getAddAccountModule(self: View): QVariant {.slot.} =
     return self.delegate.getAddAccountModule()
