@@ -32,7 +32,7 @@ DropArea {
         }
 
         // needed because drag.urls is not a normal js array
-        rptDraggedPreviews.model = drag.urls.filter(img => Utils.hasDragNDropImageExtension(img))
+        rptDraggedPreviews.model = drag.urls.filter(img => Utils.isValidDragNDropImage(img))
     }
     onPositionChanged: {
         rptDraggedPreviews.x = drag.x

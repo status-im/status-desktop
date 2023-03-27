@@ -10,6 +10,8 @@ QtObject {
     property var mainModuleInst: typeof mainModule !== "undefined" ? mainModule : null
     property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
 
+    readonly property int maxImgSizeBytes: Constants.maxUploadFilesizeMB * 1048576 /* 1 MB in bytes */
+
     function isDigit(value) {
       return /^\d$/.test(value);
     }
@@ -320,8 +322,18 @@ QtObject {
         return message.replace(/(?:https?|ftp):\/\/[\n\S]*(\.gif)+/gm, '');
     }
 
-    function hasDragNDropImageExtension(url) {
-        return Constants.acceptedDragNDropImageExtensions.some(ext => url.toLowerCase().includes(ext))
+    function isValidDragNDropImage(url) {
+        let lowerCaseUrl = url.toLowerCase()
+        return Constants.acceptedDragNDropImageExtensions.some(ext => lowerCaseUrl.endsWith(ext)) ||
+            lowerCaseUrl.startsWith(Constants.dataImagePrefix);
+    }
+
+    function isFilesizeValid(img) {
+        if (img.startsWith(Constants.dataImagePrefix)) {
+            return img.length < maxImgSizeBytes
+        }
+        let size = parseInt(globalUtils.getFileSize(img))
+        return size <= maxImgSizeBytes
     }
 
     function deduplicate(array) {
