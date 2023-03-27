@@ -1269,7 +1269,7 @@ QtObject:
 
       # Update communities objects
       let updatedCommunity = response.result["communities"][0].toCommunityDto
-            
+
       self.checkForCategoryPropertyUpdates(
         updatedCommunity,
         self.communities[communityId]

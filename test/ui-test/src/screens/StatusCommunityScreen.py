@@ -112,7 +112,7 @@ class StatusCommunityScreen:
         chat_and_category_list = get_obj(CommunityScreenComponents.CHAT_LIST.value)
         for i in range(chat_and_category_list.count):
             chat_or_cat_loader = chat_and_category_list.itemAtIndex(i)
-            if chat_or_cat_loader.item.objectName != "categoryItem":
+            if not chat_or_cat_loader or chat_or_cat_loader.item.objectName != "categoryItem":
                 continue
             if str(chat_or_cat_loader.item.title).lower() == community_category_name.lower():
                 return True, chat_or_cat_loader.item
@@ -227,13 +227,15 @@ class StatusCommunityScreen:
         verify(loaded, "Finding category: " + community_category_name)
 
         # For some reason it clicks on a first channel in category instead of category
-        click_obj(category.chatListCategory.statusChatListCategoryItem)
-        right_click_obj(category.chatListCategory.statusChatListCategoryItem)
+        click_obj(category)
+        right_click_obj(category)
 
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_DELETE_CATEGORY_MENU_ITEM.value)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CONFIRM_DELETE_CATEGORY_BUTTON.value)
 
     def verify_category_name_missing(self, community_category_name):
+        # Make sure the event was propagated
+        time.sleep(0.2)
         [result, _] = self._find_category_in_chat(community_category_name)
         verify_false(result, "Category " + community_category_name + " still exist")
 

@@ -59,8 +59,6 @@ Feature: Status Desktop community
             | test-channel-1 | test-category-1 | bottom_menu      |
             | test-channel-2 | test-category-2 | right_click_menu |
 
-	@mayfail
-	# TODO: It works standalone. There is an issue with the background sequence. Community Portal is not clicked sometimes.
     Scenario: The admin edits a community category
         Given the admin creates a community channel named "test-channel", with description "My description", with the method "bottom_menu"
         And the admin creates a community category named "test-category", with channels "test-channel" and with the method "bottom_menu"
@@ -69,8 +67,6 @@ Feature: Status Desktop community
         Then the category named "new-test-category" contains channels "general"
         And the category named "test-category" is missing
 
-	@mayfail
-	# TODO: It works standalone. There is an issue with the background sequence. Community Portal is not clicked sometimes.
     Scenario: The admin deletes a community category
         Given the admin creates a community channel named "test-channel", with description "My description", with the method "bottom_menu"
         And the admin creates a community category named "test-category", with channels "test-channel" and with the method "bottom_menu"
