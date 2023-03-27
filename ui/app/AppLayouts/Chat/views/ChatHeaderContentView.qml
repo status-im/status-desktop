@@ -293,7 +293,7 @@ Item {
             : ""
             asset.emoji: emojiIcon
             asset.emojiSize: "24x24"
-            type: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
+            type: chatContentModule ? chatContentModule.chatDetails.type : Constants.chatType.unknown
             pinnedMessagesCount: chatContentModule? chatContentModule.pinnedMessagesModel.count : 0
             muted: chatContentModule? chatContentModule.chatDetails.muted : false
 
@@ -302,7 +302,8 @@ Item {
                     console.warn("error on open pinned messages - chat content module is not set")
                     return
                 }
-                Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, "", chatContentModule.chatDetails.id)
+                const chatId = type === Constants.chatType.oneToOne ? chatContentModule.getMyChatId() : ""
+                Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, "", chatId)
             }
             onUnmute: {
                 if(!chatContentModule) {

@@ -22,11 +22,11 @@ StatusDialog {
     property string messageToUnpin
     property string chatId
 
-    property bool isChatBlocked: false
+    property bool isPinActionAvaliable: true
 
-    function updateIsChatBlocked() {
-        const contactDetails = Utils.getContactDetailsAsJson(chatId, false)
-        isChatBlocked = contactDetails && !contactDetails.isContact
+    function updatePinActionAvaliable() {
+        const contactDetails = chatId ? Utils.getContactDetailsAsJson(chatId, false) : null
+        isPinActionAvaliable = contactDetails ? contactDetails.isContact : true
     }
 
     Connections {
@@ -34,12 +34,12 @@ StatusDialog {
 
         function onItemChanged(pubKey) {
             if (chatId === pubKey) {
-                updateIsChatBlocked()
+                updatePinActionAvaliable()
             }
         }
     }
 
-    Component.onCompleted: updateIsChatBlocked()
+    Component.onCompleted: updatePinActionAvaliable()
 
     width: 800
     height: 428
@@ -156,7 +156,7 @@ StatusDialog {
                     z: mouseArea.z + 1
                     width: 32
                     height: 32
-                    visible: !root.isChatBlocked && !root.messageToPin && (hovered || mouseArea.containsMouse)
+                    visible: root.isPinActionAvaliable && !root.messageToPin && (hovered || mouseArea.containsMouse)
                     icon.name: "unpin"
                     tooltip.text: qsTr("Unpin")
                     color: hovered ? Theme.palette.primaryColor2 : Theme.palette.indirectColor1
