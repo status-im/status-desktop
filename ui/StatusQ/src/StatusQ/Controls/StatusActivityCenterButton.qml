@@ -45,6 +45,7 @@ StatusFlatRoundButton {
     tooltip.text: qsTr("Notifications")
     tooltip.orientation: StatusToolTip.Orientation.Bottom
     tooltip.y: parent.height + 12
+    tooltip.offset: -(tooltip.x + tooltip.width/2 - root.width/2) //position arrow center in root center
 
     StatusBadge {
         id: statusBadge

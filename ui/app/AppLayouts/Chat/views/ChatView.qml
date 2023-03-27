@@ -59,7 +59,6 @@ StatusSectionLayout {
         }
     }
 
-    notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList && headerContent.membersButton.visible ? 0 : 14
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     notificationCount: activityCenterStore.unreadNotificationsCount
     hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
