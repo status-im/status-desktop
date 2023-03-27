@@ -4,13 +4,11 @@ import utils 1.0
 
 StatusChatImageValidator {
     id: root
-    readonly property int maxImgSizeBytes: Constants.maxUploadFilesizeMB * 1048576 /* 1 MB in bytes */
 
     onImagesChanged: {
         let isValid = true
         root.validImages = images.filter(img => {
-            let size = parseInt(globalUtils.getFileSize(img))
-            const isSmallEnough = size <= maxImgSizeBytes
+            const isSmallEnough = Utils.isFilesizeValid(img)
             isValid = isValid && isSmallEnough
             return isSmallEnough
         })

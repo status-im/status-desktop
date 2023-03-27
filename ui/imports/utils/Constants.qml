@@ -797,6 +797,7 @@ QtObject {
 
     readonly property int maxNumberOfPins: 3
 
+    readonly property string dataImagePrefix: "data:image"
     readonly property var acceptedImageExtensions: [".png", ".jpg", ".jpeg", ".svg", ".gif"]
     readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg", ".heif", ".tif", ".tiff"]
 

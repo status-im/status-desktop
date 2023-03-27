@@ -436,7 +436,7 @@ Rectangle {
         if (event.matches(StandardKey.Paste)) {
             if (QClipboardProxy.hasImage) {
                 const clipboardImage = QClipboardProxy.imageBase64
-                showImageArea([clipboardImage])
+                validateImagesAndShowImageArea([clipboardImage])
                 event.accepted = true
             } else if (QClipboardProxy.hasText) {
                 messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
@@ -883,9 +883,20 @@ Rectangle {
 
     function showImageArea(imagePathsOrData) {
         isImage = true;
-
         imageArea.imageSource = imagePathsOrData
         control.fileUrlsAndSources = imageArea.imageSource
+    }
+
+    // Use this to validate and show the images. The concatanation of previous selected images is done automatically
+    // Returns true if the images were valid and added
+    function validateImagesAndShowImageArea(imagePaths) {
+        const validImages = validateImages(imagePaths)
+
+        if (validImages.length > 0) {
+            showImageArea(validImages)
+            return true
+        }
+        return false
     }
 
     function showReplyArea(messageId, userName, message, contentType, image, sticker) {
@@ -908,9 +919,7 @@ Rectangle {
         target: Global.dragArea
         ignoreUnknownSignals: true
         function onDroppedOnValidScreen(drop) {
-            let validImages = validateImages(drop.urls)
-            if (validImages.length > 0) {
-                showImageArea(validImages)
+            if (validateImagesAndShowImageArea(drop.urls)) {
                 drop.acceptProposedAction()
             }
         }
@@ -918,10 +927,7 @@ Rectangle {
 
     // This is used by Squish tests to not have to access the file dialog
     function selectImageString(filePath) {
-        let validImages = validateImages([filePath])
-        if (validImages.length > 0) {
-            control.showImageArea(validImages)
-        }
+        validateImagesAndShowImageArea([filePath])
         messageInputField.forceActiveFocus();
     }
 
@@ -935,10 +941,7 @@ Rectangle {
         ]
         onAccepted: {
             imageBtn.highlighted = false
-            let validImages = validateImages(imageDialog.fileUrls)
-            if (validImages.length > 0) {
-                control.showImageArea(validImages)
-            }
+            validateImagesAndShowImageArea(imageDialog.fileUrls)
             messageInputField.forceActiveFocus();
         }
         onRejected: {

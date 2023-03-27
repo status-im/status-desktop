@@ -15,7 +15,7 @@ StatusChatImageValidator {
     onImagesChanged: {
         let isValid = true
         root.validImages = images.filter(img => {
-            const isImage = Utils.hasDragNDropImageExtension(img)
+            const isImage = Utils.isValidDragNDropImage(img)
             isValid = isValid && isImage
             return isImage
         })
