@@ -371,7 +371,7 @@ Item {
                     id: txtAmountCurrency
                     font.pixelSize: 15
                     height: 22
-                    text: root.currency.toUpperCase()
+                    text: root.currency
                     color: Style.current.secondaryText
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -444,7 +444,7 @@ Item {
                         id: txtFeeCurrency
                         font.pixelSize: 15
                         height: 22
-                        text: root.currency.toUpperCase()
+                        text: root.currency
                         color: Style.current.secondaryText
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignRight

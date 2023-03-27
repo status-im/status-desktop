@@ -182,16 +182,11 @@ QtObject:
           return token.symbol
     return ""
 
-# Token
-  proc renameSymbol(symbol: string) : string =
-    return toUpperAscii(symbol)
-
   proc getTokenPriceCacheKey(crypto: string, fiat: string) : string =
-    return renameSymbol(crypto) & renameSymbol(fiat)
+    return crypto & fiat
 
   proc getCryptoKeyAndFactor(crypto: string) : (string, float64) =
-    let cryptoKey = renameSymbol(crypto)
-    return CRYPTO_SUB_UNITS_TO_FACTOR.getOrDefault(cryptoKey, (cryptoKey, 1.0))
+    return CRYPTO_SUB_UNITS_TO_FACTOR.getOrDefault(crypto, (crypto, 1.0))
 
   proc jsonToPricesMap(node: JsonNode) : Table[string, Table[string, float64]] =
     result = initTable[string, Table[string, float64]]()
@@ -213,19 +208,18 @@ QtObject:
     return self.priceCache.isCached(cacheKey)
 
   proc getTokenPrice*(self: Service, crypto: string, fiat: string): float64 =
-    let fiatKey = renameSymbol(fiat)
     let (cryptoKey, factor) = getCryptoKeyAndFactor(crypto)
 
-    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiatKey)
+    let cacheKey = getTokenPriceCacheKey(cryptoKey, fiat)
     if self.priceCache.isCached(cacheKey):
       return self.priceCache.get(cacheKey) * factor
 
     try:
-      let response = backend.fetchPrices(@[cryptoKey], @[fiatKey])
+      let response = backend.fetchPrices(@[cryptoKey], @[fiat])
       let prices = jsonToPricesMap(response.result)
 
-      self.updateCachedTokenPrice(cryptoKey, fiatKey, prices[cryptoKey][fiatKey])
-      return prices[cryptoKey][fiatKey] * factor
+      self.updateCachedTokenPrice(cryptoKey, fiat, prices[cryptoKey][fiat])
+      return prices[cryptoKey][fiat] * factor
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription

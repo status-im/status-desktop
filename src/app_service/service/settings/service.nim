@@ -98,7 +98,7 @@ QtObject:
 
   proc saveCurrency*(self: Service, value: string): bool =
     if(self.saveSetting(KEY_CURRENCY, value)):
-      self.settings.currency = value
+      self.settings.currency = value.toLowerAscii()
       return true
     return false
 

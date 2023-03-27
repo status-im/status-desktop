@@ -46,8 +46,8 @@ Item {
 
     onSelectedAssetChanged: {
         if (selectedAsset && selectedAsset.symbol) {
-            d.iconSource = tokenAssetSourceFn(selectedAsset.symbol.toUpperCase())
-            d.text = selectedAsset.symbol.toUpperCase()
+            d.iconSource = tokenAssetSourceFn(selectedAsset.symbol)
+            d.text = selectedAsset.symbol
         }
     }
 
