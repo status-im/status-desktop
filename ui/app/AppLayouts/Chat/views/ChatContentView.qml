@@ -101,7 +101,8 @@ ColumnLayout {
                 console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
                 return
             }
-            Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, chatContentModule.getMyChatId())
+            const chatId = chatType === Constants.chatType.oneToOne ? chatContentModule.getMyChatId() : ""
+            Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, chatId)
         }
 
         onToggleReaction: {
@@ -149,10 +150,9 @@ ColumnLayout {
             stickersPopup: root.stickersPopup
             usersStore: root.usersStore
             stickersLoaded: root.stickersLoaded
-            isChatBlocked: root.isBlocked
+            isChatBlocked: root.isBlocked || (chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne && !root.isUserAdded)
             channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
             isActiveChannel: root.isActiveChannel
-            isUserAdded: root.isUserAdded
             onShowReplyArea: {
                 let obj = messageStore.getMessageByIdAsJson(messageId)
                 if (!obj) {
@@ -192,7 +192,7 @@ ColumnLayout {
                 isContactBlocked: root.isBlocked
                 isActiveChannel: root.isActiveChannel
                 anchors.bottom: parent.bottom
-                chatType: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
+                chatType: chatContentModule ? chatContentModule.chatDetails.type : Constants.chatType.unknown
                 suggestions.suggestionFilter.addSystemSuggestions: chatType == Constants.chatType.communityChat
 
                 Binding on chatInputPlaceholder {
