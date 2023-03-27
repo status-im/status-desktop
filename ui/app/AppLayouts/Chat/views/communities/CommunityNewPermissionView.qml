@@ -475,6 +475,7 @@ StatusScrollView {
                 Component.onCompleted: {
                     append({
                         imageSource: inDropdown.communityImage,
+                        isIcon: false,
                         text: inDropdown.communityName,
                         operator: OperatorsUtils.Operators.None,
                         color: inDropdown.communityColor

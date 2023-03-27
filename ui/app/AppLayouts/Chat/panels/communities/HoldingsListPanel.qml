@@ -74,10 +74,13 @@ Control {
                                 leftPadding: 2
                                 title: model.text
                                 asset.name: model.imageSource
-                                asset.isImage: true
+                                asset.isImage: !model.isIcon
                                 asset.bgColor: "transparent"
                                 asset.height: 28
                                 asset.width: asset.height
+                                asset.bgWidth: asset.height
+                                asset.bgHeight: asset.height
+                                asset.color: asset.isImage ? "transparent" : titleText.color
                                 closeButtonVisible: false
                                 titleText.color: model.available ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
                                 bgColor: model.available ? Theme.palette.primaryColor2 :Theme.palette.dangerColor2
