@@ -17,7 +17,7 @@ Item {
     property bool showAccountDetails: !!selectedAccount
     property var accounts
     property var selectedAccount
-    property string currency: "usd"
+    property string currency: "USD"
 
     // set to asset symbol to display asset's balance top right
     // NOTE: if this asset is not selected as a wallet token in the UI, then

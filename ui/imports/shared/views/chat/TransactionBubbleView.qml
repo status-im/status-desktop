@@ -68,7 +68,7 @@ Item {
             return "0"
         }
         var defaultFiatSymbol = root.store.currentCurrency
-        return root.store.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol.toUpperCase()
+        return root.store.getFiatValue(tokenAmount, token.symbol, defaultFiatSymbol) + " " + defaultFiatSymbol
     }
     property int state: transactionParamsObject.commandState
 

@@ -221,7 +221,7 @@ Item {
 
         StyledText {
             id: txtFiatSymbol
-            text: root.currentCurrency.toUpperCase()
+            text: root.currentCurrency
             font.weight: Font.Medium
             font.pixelSize: 12
             color: Style.current.secondaryText
