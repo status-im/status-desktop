@@ -44,6 +44,7 @@ ColumnLayout {
                         model.append({
                             text: input.text,
                             imageSource: Style.png("tokens/SNT"),
+                            isIcon: false,
                             operator: model.count > 0 ? OperatorsUtils.Operators.Or
                                                       : OperatorsUtils.Operators.None
                         })

@@ -102,10 +102,13 @@ Control{
                     leftPadding: 2
                     title: model.text
                     asset.name: model.imageSource
-                    asset.isImage: true
+                    asset.isImage: !model.isIcon
                     asset.bgColor: "transparent"
+                    asset.color: asset.isImage ? "transparent" : titleText.color
                     asset.height: 28
                     asset.width: asset.height
+                    asset.bgHeight: asset.height
+                    asset.bgWidth: asset.height
                     closeButtonVisible: false
                     titleText.color: Theme.palette.primaryColor1
                     titleText.font.pixelSize: d.tagTextPixelSize

@@ -55,6 +55,7 @@ StatusFlowSelector {
             ListElement {
                 text: "Socks"
                 imageSource: "qrc:imports/assets/png/tokens/SOCKS.png"
+                isIcon: false
                 color: ""
                 emoji: ""
                 operator: Utils.Operator.None
@@ -62,6 +63,7 @@ StatusFlowSelector {
             ListElement {
                 text: "ZRX"
                 imageSource: "qrc:imports/assets/png/tokens/ZRX.png"
+                isIcon: false
                 color: ""
                 emoji: ""
                 operator: Utils.Operator.Or
@@ -69,6 +71,7 @@ StatusFlowSelector {
             ListElement {
                 text: "Custom Token"
                 imageSource: ""
+                isIcon: true
                 color: "red"
                 emoji: "⚽"
                 operator: Utils.Operator.Or
@@ -77,18 +80,13 @@ StatusFlowSelector {
        \endqml
     */
     property alias model: repeater.model
-    /*!
-       \qmlproperty bool StatusItemSelector::useIcons
-       This property determines if the imageSource role from the model will be handled as
-       an image or an icon.
-    */
-    property bool useIcons: false
 
     property StatusAssetSettings asset: StatusAssetSettings {
         height: 20
         width: 20
+        bgHeight: height
+        bgWidth: width
         bgColor: "transparent"
-        isImage: !root.useIcons
         isLetterIdenticon: root.useLetterIdenticons
     }
     property int tagLeftPadding: 6
@@ -146,11 +144,13 @@ StatusFlowSelector {
 
                 asset.height: root.asset.height
                 asset.width: root.asset.width
+                asset.bgHeight: root.asset.bgHeight
+                asset.bgWidth: root.asset.bgWidth
                 asset.name: root.useLetterIdenticons ? model.text : (model.imageSource ?? "")
-                asset.isImage: root.asset.isImage
+                asset.isImage: !model.isIcon
                 asset.bgColor: root.asset.bgColor
                 asset.emoji: model.emoji ? model.emoji : ""
-                asset.color: model.color ? model.color : ""
+                asset.color: model.color ? model.color : titleText.color
                 asset.isLetterIdenticon: root.useLetterIdenticons
                 closeButtonVisible: false
                 titleText.color: Theme.palette.primaryColor1
