@@ -1,10 +1,9 @@
 import NimQml, Tables, strutils, strformat
 
-import json, json_serialization
+import json
 
 import section_item, member_model
 import ../main/communities/tokens/models/token_item
-
 
 type
   ModelRole {.pure.} = enum
@@ -261,6 +260,7 @@ QtObject:
 
     self.items[index].muted = muted 
     let dataIndex = self.createIndex(index, 0, nil)
+    defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, @[ModelRole.Muted.int])
 
 
@@ -271,6 +271,7 @@ QtObject:
 
     self.items[index] = item
     let dataIndex = self.createIndex(index, 0, nil)
+    defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, @[
       ModelRole.Name.int,
       ModelRole.Description.int,
@@ -330,11 +331,13 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].active):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].active = false
         self.dataChanged(index, index, @[ModelRole.Active.int])
 
       if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].active = true
         self.items[i].loaderActive = true
 
@@ -349,6 +352,7 @@ QtObject:
       for i in 0 ..< self.items.len:
         if(self.items[i].sectionType == sectionType):
           let index = self.createIndex(i, 0, nil)
+          defer: index.delete
           self.items[i].enabled = value
           self.dataChanged(index, index, @[ModelRole.Enabled.int])
     else:
@@ -386,16 +390,30 @@ QtObject:
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].hasNotification = hasNotification
         self.items[i].notificationsCount = notificationsCount
         self.dataChanged(index, index, @[ModelRole.HasNotification.int, ModelRole.NotificationsCount.int])
         self.notificationsCountChanged()
         return
 
+  proc incrementNotifications*(self: SectionModel, id: string) =
+    let index = self.getItemIndex(id)
+    if (index == -1):
+      return
+
+    self.items[index].hasNotification = true
+    self.items[index].notificationsCount = self.items[index].notificationsCount + 1
+    let modelIndex = self.createIndex(index, 0, nil)
+    defer: modelIndex.delete
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasNotification.int, ModelRole.NotificationsCount.int])
+    self.notificationsCountChanged()
+
   proc appendCommunityToken*(self: SectionModel, id: string, item: TokenItem) =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.items[i].appendCommunityToken(item)
         self.dataChanged(index, index, @[ModelRole.CommunityTokensModel.int])
         return
@@ -443,5 +461,6 @@ QtObject:
     for i in 0 ..< self.items.len:
         if(self.items[i].id == sectionId):
           let index = self.createIndex(i, 0, nil)
+          defer: index.delete
           self.items[i].loaderActive = false
           self.dataChanged(index, index, @[ModelRole.LoaderActive.int])

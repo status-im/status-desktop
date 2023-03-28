@@ -822,6 +822,9 @@ method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasU
     sectionNotificationCount: int) =
   self.view.model().updateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
 
+method onNotificationsIncremented[T](self: Module[T], sectionId: string) =
+  self.view.model().incrementNotifications(sectionId)
+
 method onNetworkConnected[T](self: Module[T]) =
   self.view.setConnected(true)
 

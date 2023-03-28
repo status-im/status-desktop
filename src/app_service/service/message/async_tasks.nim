@@ -110,11 +110,10 @@ type
 const asyncMarkAllMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncMarkAllMessagesReadTaskArg](argEncoded)
 
-  discard status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
-
+  let response =  status_go.markAllMessagesFromChatWithIdAsRead(arg.chatId)
   let responseJson = %*{
     "chatId": arg.chatId,
-    "error": ""
+    "error": response.error
   }
   arg.finish(responseJson)
 #################################################

@@ -86,7 +86,7 @@ method doesCatOrChatExist*(self: AccessInterface, chatId: string): bool {.base.}
 method doesTopLevelChatExist*(self: AccessInterface, chatId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addChatIfDontExist*(self: AccessInterface,
+method addOrUpdateChat*(self: AccessInterface,
     chat: ChatDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
