@@ -7,7 +7,7 @@ QtObject {
         const fileRegex = /www\.figma\.com\/file\/([a-zA-Z0-9]+)/
         const fileMatch = link.match(fileRegex)
 
-        const nodeIdRegex = /node-id=([0-9A-Za-z%]+)/
+        const nodeIdRegex = /node-id=([0-9A-Za-z%-]+)/
         const nodeIdMatch = link.match(nodeIdRegex)
 
         return {
