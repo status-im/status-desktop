@@ -38,13 +38,13 @@ StatusComboBox {
     id: root
 
     /*!
-       \qmlproperty string StatusEmojiAndColorComboBox::v
+       \qmlproperty string StatusEmojiAndColorComboBox::defaultAssetName
        This property holds the default asset shown if no emoji provided.
     */
     property string defaultAssetName: "info"
 
     /*!
-       \qmlproperty string StatusEmojiAndColorComboBox::v
+       \qmlproperty int StatusEmojiAndColorComboBox::delegateHeight
        This property holds the delegate height value.
     */
     property int delegateHeight: 44
@@ -59,12 +59,11 @@ StatusComboBox {
     control.textRole: "name"
 
     contentItem: CustomComboItem {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.fill: parent
         text: root.control.displayText
         emoji: d.emoji
         color: d.color
+        onClicked: control.popup.opened ? control.popup.close() : control.popup.open()
     }
 
     delegate: CustomComboItem {
