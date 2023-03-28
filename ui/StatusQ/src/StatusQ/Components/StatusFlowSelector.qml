@@ -65,6 +65,18 @@ StatusGroupBox {
     property url placeholderImageSource
 
     /*!
+       \qmlproperty int StatusFlowSelector::flowSpacing
+       This property specifies spacing between items in the selector.
+    */
+    property alias flowSpacing: flow.spacing
+
+    /*!
+       \qmlproperty int StatusFlowSelector::placeholderItemHeight
+       This property specifies the height of the placeholder item.
+    */
+    property int placeholderItemHeight: 32
+
+    /*!
        \qmlproperty StatusListItemTag StatusFlowSelector::placeholder
        This property holds an alias to the placeholder item.
     */
@@ -75,12 +87,6 @@ StatusGroupBox {
        This property holds an alias to the `add` button.
     */
     readonly property alias addButton: addItemButton
-
-    /*!
-       \qmlproperty int StatusFlowSelector::flowSpacing
-       This property specifies spacing between items in the selector.
-    */
-    property alias flowSpacing: flow.spacing
 
     implicitWidth: 560
 
@@ -93,6 +99,9 @@ StatusGroupBox {
         StatusListItemTag {
             id: placeholderListItemTag
 
+            leftPadding: 12
+            rightPadding: 12
+
             bgColor: Theme.palette.baseColor2
             title: root.placeholderText
             asset.name: root.placeholderImageSource
@@ -100,6 +109,8 @@ StatusGroupBox {
             closeButtonVisible: false
             titleText.color: Theme.palette.baseColor1
             titleText.font.pixelSize: 15
+
+            height: root.placeholderItemHeight
         }
 
         onPositioningComplete: {
@@ -114,7 +125,7 @@ StatusGroupBox {
         StatusRoundButton {
             id: addItemButton
 
-            implicitHeight: 32
+            implicitHeight: root.placeholderItemHeight
             implicitWidth: implicitHeight
             height: width
             type: StatusRoundButton.Type.Secondary
