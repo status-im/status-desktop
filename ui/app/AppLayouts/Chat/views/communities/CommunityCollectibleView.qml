@@ -24,7 +24,7 @@ StatusScrollView {
     property alias description: descriptionItem.text
     property alias chainName: chainText.text
     property string name
-    property string supplyText
+    property int supplyAmount
     property bool infiniteSupply
     property bool transferable
     property bool selfDestruct
@@ -148,7 +148,7 @@ StatusScrollView {
 
             CustomPreviewBox {
                 label: root.infiniteSupply ? qsTr("Infinite supply") : qsTr("Total")
-                value: root.infiniteSupply ? qsTr("Yes") : root.supplyText
+                value: root.infiniteSupply ? qsTr("Yes") : LocaleUtils.numberToLocaleString(root.supplyAmount)
                 leftAlignment: root.infiniteSupply
             }
 
@@ -245,7 +245,7 @@ StatusScrollView {
                                      root.name,
                                      root.symbol,
                                      root.description,
-                                     parseInt(root.supplyText),
+                                     root.supplyAmount,
                                      root.infiniteSupply,
                                      root.transferable,
                                      root.selfDestruct,
