@@ -166,6 +166,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "AirdropTokensSelector"
+        section: "Components"
+    }
+    ListElement {
         title: "StatusEmojiAndColorComboBox"
         section: "Components"
     }
