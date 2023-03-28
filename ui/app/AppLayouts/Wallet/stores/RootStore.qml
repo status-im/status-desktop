@@ -189,9 +189,6 @@ QtObject {
         globalUtils.copyToClipboard(text)
     }
 
-    property AddAccountStore addAccountStore: AddAccountStore {
-    }
-
     function runAddAccountPopup() {
         walletSection.runAddAccountPopup()
     }

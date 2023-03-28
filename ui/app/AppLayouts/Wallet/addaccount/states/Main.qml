@@ -48,6 +48,20 @@ Item {
             }
             return 0
         }
+
+        function openEmojiPopup(showLeft) {
+            if (!root.store.emojiPopup) {
+                return
+            }
+            let inputCoords = accountName.mapToItem(appMain, 0, 0)
+            root.store.emojiPopup.open()
+            root.store.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
+            root.store.emojiPopup.x = inputCoords.x
+            if (!showLeft) {
+                root.store.emojiPopup.x += accountName.width - root.store.emojiPopup.width
+            }
+            root.store.emojiPopup.y = inputCoords.y + accountName.height + Style.current.halfPadding
+        }
     }
 
     Connections {
@@ -93,14 +107,18 @@ Item {
                 input.asset.color: root.store.addAccountModule.selectedColor
                 input.asset.emoji: root.store.addAccountModule.selectedEmoji
                 onIconClicked: {
-                    if (!root.store.emojiPopup) {
-                        return
+                    d.openEmojiPopup(true)
+                }
+                input.rightComponent: StatusFlatRoundButton {
+                    width: 30
+                    height: 30
+                    radius: 30
+                    icon.name: "emojis"
+                    icon.width: 24
+                    icon.height: 24
+                    onClicked: {
+                        d.openEmojiPopup(false)
                     }
-                    let inputCoords = accountName.mapToItem(appMain, 0, 0)
-                    root.store.emojiPopup.open()
-                    root.store.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
-                    root.store.emojiPopup.x = inputCoords.x
-                    root.store.emojiPopup.y = inputCoords.y + accountName.height + Style.current.halfPadding
                 }
 
                 onTextChanged: {

@@ -4,23 +4,23 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var addAccountModule
+    required property var addAccountModule
+    required property var emojiPopup
 
-    property var emojiPopup: null
     property string userProfilePublicKey: userProfile.pubKey
     property string userProfileKeyUid: userProfile.keyUid
     property bool userProfileIsKeycardUser: userProfile.isKeycardUser
     property bool userProfileUsingBiometricLogin: userProfile.usingBiometricLogin
 
     // Module Properties
-    property var currentState: root.addAccountModule? root.addAccountModule.currentState : null
-    property var originModel: root.addAccountModule? root.addAccountModule.originModel : []
-    property var selectedOrigin: root.addAccountModule? root.addAccountModule.selectedOrigin : null
-    property var derivedAddressModel: root.addAccountModule? root.addAccountModule.derivedAddressModel : []
-    property var selectedDerivedAddress: root.addAccountModule? root.addAccountModule.selectedDerivedAddress : null
-    property var watchOnlyAccAddress: root.addAccountModule? root.addAccountModule.watchOnlyAccAddress : null
-    property var privateKeyAccAddress: root.addAccountModule? root.addAccountModule.privateKeyAccAddress : null
-    property bool disablePopup: root.addAccountModule? root.addAccountModule.disablePopup : false
+    property var currentState: root.addAccountModule.currentState
+    property var originModel: root.addAccountModule.originModel
+    property var selectedOrigin: root.addAccountModule.selectedOrigin
+    property var derivedAddressModel: root.addAccountModule.derivedAddressModel
+    property var selectedDerivedAddress: root.addAccountModule.selectedDerivedAddress
+    property var watchOnlyAccAddress: root.addAccountModule.watchOnlyAccAddress
+    property var privateKeyAccAddress: root.addAccountModule.privateKeyAccAddress
+    property bool disablePopup: root.addAccountModule.disablePopup
 
     property bool enteredSeedPhraseIsValid: false
     property bool enteredPrivateKeyIsValid: false
@@ -64,16 +64,8 @@ QtObject {
         root.cleanSeedPhrase()
     }
 
-    function moduleInitialized() {
-        if (!root.addAccountModule) {
-            console.warn("addAccountModule not initialized")
-            return false
-        }
-        return true
-    }
-
     function submitAddAccount(event) {
-        if (!root.moduleInitialized() || !root.primaryPopupButtonEnabled) {
+        if (!root.primaryPopupButtonEnabled) {
             return
         }
 
@@ -87,118 +79,70 @@ QtObject {
     }
 
     function getSeedPhrase() {
-        if (!root.moduleInitialized()) {
-            return
-        }
         return root.addAccountModule.getSeedPhrase()
     }
 
     function changeSelectedOrigin(keyUid) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.changeSelectedOrigin(keyUid)
     }
 
     readonly property var changeDerivationPathPostponed: Backpressure.debounce(root, 400, function (path) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.changeDerivationPath(path)
     })
 
     readonly property var changeWatchOnlyAccountAddressPostponed: Backpressure.debounce(root, 400, function (address) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.changeWatchOnlyAccountAddress(address)
     })
 
     function cleanWatchOnlyAccountAddress() {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.changeWatchOnlyAccountAddress("")
     }
 
     readonly property var changePrivateKeyPostponed: Backpressure.debounce(root, 400, function (privateKey) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.changePrivateKey(privateKey)
     })
 
     function cleanPrivateKey() {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.enteredPrivateKeyIsValid = false
         root.addAccountModule.newKeyPairName = ""
         root.addAccountModule.changePrivateKey("")
     }
 
     function changeDerivationPath(path) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.changeDerivationPath(path)
     }
 
     function changeRootDerivationPath(rootPath) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.selectedRootPath = rootPath
         root.addAccountModule.derivationPath = "%1/".arg(rootPath)
     }
 
     function changeSelectedDerivedAddress(address) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.changeSelectedDerivedAddress(address)
     }
 
     function resetDerivationPath() {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.selectedRootPath = Constants.addAccountPopup.predefinedPaths.ethereum
         root.addAccountModule.resetDerivationPath()
     }
 
     function authenticateForEditingDerivationPath() {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.authenticateForEditingDerivationPath()
     }
 
     function startScanningForActivity() {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.startScanningForActivity()
     }
 
     function validSeedPhrase(seedPhrase) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         return root.addAccountModule.validSeedPhrase(seedPhrase)
     }
 
     function changeSeedPhrase(seedPhrase) {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.addAccountModule.changeSeedPhrase(seedPhrase)
     }
 
     function cleanSeedPhrase() {
-        if (!root.moduleInitialized()) {
-            return
-        }
         root.enteredSeedPhraseIsValid = false
         root.addAccountModule.newKeyPairName = ""
         root.changeSeedPhrase("")

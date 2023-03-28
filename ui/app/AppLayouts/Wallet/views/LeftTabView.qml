@@ -41,7 +41,8 @@ Rectangle {
         asynchronous: true
 
         sourceComponent: AddAccountPopup {
-            store: RootStore.addAccountStore
+            store.emojiPopup: root.emojiPopup
+            store.addAccountModule: walletSection.addAccountModule
             anchors.centerIn: parent
         }
 
@@ -54,8 +55,6 @@ Rectangle {
         target: walletSection
 
         function onDisplayAddAccountPopup() {
-            RootStore.addAccountStore.emojiPopup = root.emojiPopup
-            RootStore.addAccountStore.addAccountModule = walletSection.addAccountModule
             addAccount.active = true
         }
         function onDestroyAddAccountPopup() {
