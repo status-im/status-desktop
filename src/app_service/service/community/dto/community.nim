@@ -202,7 +202,7 @@ proc toTokenCriteriaDto*(jsonObj: JsonNode): TokenCriteriaDto =
       result.`type` = TokenType(typeInt)
 
   var contractAddressesObj: JsonNode
-  if(jsonObj.getProp("contractAddresses", contractAddressesObj) and contractAddressesObj.kind == JObject):
+  if(jsonObj.getProp("contract_addresses", contractAddressesObj) and contractAddressesObj.kind == JObject):
     result.contractAddresses = initTable[int, string]()
     for chainId, contractAddress in contractAddressesObj:
       result.contractAddresses[parseInt(chainId)] = contractAddress.getStr

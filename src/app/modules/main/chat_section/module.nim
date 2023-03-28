@@ -33,6 +33,7 @@ import ../../../../app_service/service/mailservers/service as mailservers_servic
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
+import ../../../../app_service/service/collectible/service as collectible_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
@@ -101,12 +102,13 @@ proc newModule*(
     mailserversService: mailservers_service.Service,
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,
-    communityTokensService: community_tokens_service.Service
+    collectibleService: collectible_service.Service,
+    communityTokensService: community_tokens_service.Service,
   ): Module =
   result = Module()
   result.delegate = delegate
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, nodeConfigurationService,
-  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, communityTokensService)
+  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, collectibleService, communityTokensService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
@@ -325,6 +327,9 @@ proc buildTokenList(self: Module) =
   self.view.setCollectiblesListItems(collectiblesListItems)
 
 method onWalletAccountTokensRebuilt*(self: Module) =
+  self.rebuildCommunityTokenPermissionsModel()
+
+method onOwnedcollectiblesUpdated*(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
 
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
@@ -1245,9 +1250,19 @@ proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPerm
 
   for tc in tokenPermission.tokenCriteria:
 
-    let balance = self.controller.allAccountsTokenBalance(tc.symbol)
+    var tokenCriteriaMet = false
     let amount = tc.amount.parseFloat
-    let tokenCriteriaMet = balance >= amount
+
+    if tc.`type` == TokenType.ERC20:
+      let balance = self.controller.allAccountsTokenBalance(tc.symbol)
+      tokenCriteriaMet = balance >= amount
+
+    if tc.`type` == TokenType.ERC721:
+      for chainId, address in tc.contractAddresses:
+        tokenCriteriaMet = self.controller.ownsCollectible(chainId, address, tc.tokenIds)
+        if tokenCriteriaMet:
+          break
+
     let tokenCriteriaItem = initTokenCriteriaItem(
       tc.symbol,
       tc.name,
