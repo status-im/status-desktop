@@ -31,7 +31,7 @@ SplitView {
                 name: nameText.text
                 symbol: symbolText.text
                 description: descriptionText.text
-                supplyText: supplyText.text
+                supplyAmount: parseInt(supplyText.text)
                 infiniteSupply: unlimitedSupplyChecker.checked
                 transferable: transferibleChecker.checked
                 selfDestruct: selfdestructChecker.checked

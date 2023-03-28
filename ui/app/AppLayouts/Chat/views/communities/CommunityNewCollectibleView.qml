@@ -22,10 +22,10 @@ StatusScrollView {
     readonly property alias name: nameInput.text
     readonly property alias symbol: symbolInput.text
     readonly property alias description: descriptionInput.text
-    readonly property alias supplyText: supplyInput.text
     readonly property alias infiniteSupply: unlimitedSupplyChecker.checked
     readonly property alias notTransferable: transferableChecker.checked
     readonly property alias selfDestruct: selfDestructChecker.checked
+    readonly property int supplyAmount: supplyInput.text ? parseInt(supplyInput.text) : 0
     property url artworkSource
     property int chainId
     property string chainName
@@ -54,7 +54,7 @@ StatusScrollView {
                                               && !!root.name
                                               && !!root.symbol
                                               && !!root.description
-                                              && (root.infiniteSupply || (!root.infiniteSupply && root.supplyText.length > 0))
+                                              && (root.infiniteSupply || (!root.infiniteSupply && root.supplyAmount > 0))
 
 
         readonly property int imageSelectorRectWidth: 280
