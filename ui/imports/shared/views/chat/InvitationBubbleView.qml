@@ -15,10 +15,7 @@ import shared.popups 1.0
 Control {
     id: root
 
-    implicitWidth: 270 // by design
-    implicitHeight: !d.invitedCommunity ? 0 : Math.max(implicitBackgroundHeight + topInset + bottomInset,
-                                                       implicitContentHeight + verticalPadding)
-
+    implicitWidth: d.invitedCommunity ? 270 /*by design*/ : 0
     padding: 1
 
     property var store
