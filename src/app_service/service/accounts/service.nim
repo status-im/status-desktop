@@ -124,14 +124,9 @@ QtObject:
   proc validateMnemonic*(self: Service, mnemonic: string): string =
     try:
       let response = status_general.validateMnemonic(mnemonic)
-
-      var error = "response doesn't contain \"error\""
-      if(response.result.contains("error")):
-        error = response.result["error"].getStr
-
-      # An empty error means that mnemonic is valid.
-      return error
-
+      if response.result.contains("error"):
+        return response.result["error"].getStr
+      return ""
     except Exception as e:
       error "error: ", procName="validateMnemonic", errName = e.name, errDesription = e.msg
 

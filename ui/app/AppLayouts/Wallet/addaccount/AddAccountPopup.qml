@@ -13,7 +13,7 @@ import "./states"
 StatusModal {
     id: root
 
-    property AddAccountStore store
+    property AddAccountStore store: AddAccountStore { }
 
     width: Constants.addAccountPopup.popupWidth
     height: {
