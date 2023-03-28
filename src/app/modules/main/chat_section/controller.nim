@@ -1,4 +1,4 @@
-import Tables
+import Tables, sugar, algorithm, sequtils, strutils
 
 import io_interface
 
@@ -13,6 +13,7 @@ import ../../../../app_service/service/mailservers/service as mailservers_servic
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../app_service/service/collectible/service as collectible_service
 import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 import ../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
@@ -41,6 +42,7 @@ type
     mailserversService: mailservers_service.Service
     walletAccountService: wallet_account_service.Service
     tokenService: token_service.Service
+    collectibleService: collectible_service.Service
     communityTokensService: community_tokens_service.Service
     tmpRequestToJoinCommunityId: string
     tmpRequestToJoinEnsName: string
@@ -52,6 +54,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
+  collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
@@ -69,6 +72,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.mailserversService = mailserversService
   result.walletAccountService = walletAccountService
   result.tokenService = tokenService
+  result.collectibleService = collectibleService
   result.communityTokensService = communityTokensService
   result.tmpRequestToJoinCommunityId = ""
   result.tmpRequestToJoinEnsName = ""
@@ -297,6 +301,9 @@ proc init*(self: Controller) =
       let args = CommunityTokenMetadataArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
+
+    self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e: Args):
+      self.delegate.onOwnedCollectiblesUpdated()
 
     self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
       self.delegate.onWalletAccountTokensRebuilt()
@@ -626,6 +633,17 @@ proc deleteCommunityTokenPermission*(self: Controller, communityId: string, perm
 
 proc allAccountsTokenBalance*(self: Controller, symbol: string): float64 =
   return self.walletAccountService.allAccountsTokenBalance(symbol)
+
+proc ownsCollectible*(self: Controller, chainId: int, contractAddress: string, tokenIds: seq[string]): bool =
+  let addresses = self.walletAccountService.getWalletAccounts().filter(a => a.walletType != WalletTypeWatch).map(a => a.address)
+
+  for address in addresses:
+    let data = self.collectibleService.getOwnedCollectibles(chainId, address)
+    for collectible in data.collectibles:
+      if collectible.id.contractAddress == contractAddress.toLowerAscii:
+        return true
+
+  return false
 
 proc getTokenList*(self: Controller): seq[TokenDto] =
   return self.tokenService.getTokenList()

@@ -169,7 +169,8 @@ proc newModule*[T](
     communityTokensService,
     walletAccountService,
     tokenService,
-    networkService
+    networkService,
+    collectibleService
   )
   result.moduleLoaded = false
   result.chatsLoaded = false
@@ -546,6 +547,7 @@ method onChannelGroupsLoaded*[T](
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
+  collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service
 ) =
   self.chatsLoaded = true
@@ -572,6 +574,7 @@ method onChannelGroupsLoaded*[T](
       mailserversService,
       walletAccountService,
       tokenService,
+      collectibleService,
       communityTokensService
     )
     let channelGroupItem = self.createChannelGroupItem(channelGroup)
@@ -604,6 +607,7 @@ method onCommunityDataLoaded*[T](
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
+  collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service
 ) =
   self.communityDataLoaded = true
@@ -623,6 +627,7 @@ method onCommunityDataLoaded*[T](
     mailserversService,
     walletAccountService,
     tokenService,
+    collectibleService,
     communityTokensService
   )
 
@@ -848,6 +853,7 @@ method communityJoined*[T](
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
+  collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service,
   setActive: bool = false,
 ) =
@@ -869,6 +875,7 @@ method communityJoined*[T](
       mailserversService,
       walletAccountService,
       tokenService,
+      collectibleService,
       communityTokensService
     )
   let channelGroup = community.toChannelGroupDto()
