@@ -15,20 +15,7 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property var model
 
-    signal itemClicked(int deployState,
-                       string name,
-                       string artworkSource,
-                       string symbol,
-                       string description,
-                       int supply,
-                       bool infiniteSupply,
-                       bool transferable,
-                       bool selfDestruct,
-                       int chainId,
-                       string chainName,
-                       string chainIcon,
-                       string accountName)
-
+    signal itemClicked(int index)
 
     enum DeployState {
           Failed,
@@ -85,21 +72,7 @@ StatusScrollView {
                 isLoading: false
                 navigationIconVisible: true
 
-                onClicked: root.itemClicked(model.deployState,
-                                            model.name,
-                                            model.image,
-                                            model.symbol,
-                                            model.description,
-                                            model.supply,
-                                            model.infiniteSupply,
-                                            model.transferable,
-                                            model.remoteSelfDestruct,
-                                            model.chainId,
-                                            model.chainName,
-                                            model.chainIcon,
-                                            model.accountName)
-
-
+                onClicked: root.itemClicked(model.index) // TODO: Replace to model.key when role exists in backend
             }
         }
     }
