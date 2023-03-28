@@ -13,6 +13,7 @@ import AppLayouts.Chat.views.communities 1.0
 import AppLayouts.Chat.popups.community 1.0
 
 import utils 1.0
+import SortFilterProxyModel 0.2
 
 SettingsPageLayout {
     id: root
@@ -157,7 +158,7 @@ SettingsPageLayout {
             onPreviewClicked: {
                 d.accountAddress = accountAddress
                 stackManager.push(d.previewCollectibleViewState,
-                                  collectibleView,
+                                  previewCollectibleView,
                                   {
                                       preview: true,
                                       name,
@@ -179,10 +180,10 @@ SettingsPageLayout {
     }
 
     Component {
-        id: collectibleView
+        id: previewCollectibleView
 
         CommunityCollectibleView {
-            id: view
+            id: preview
 
             function signMintTransaction() {
                 root.isFeeLoading = true
@@ -210,7 +211,7 @@ SettingsPageLayout {
             Binding {
                 target: root
                 property: "title"
-                value: view.name
+                value: preview.name
             }
 
             SignMintTokenTransactionPopup {
@@ -252,21 +253,57 @@ SettingsPageLayout {
                                   collectibleView,
                                   {
                                       preview: false,
-                                      deployState,
-                                      name,
-                                      artworkSource,
-                                      symbol,
-                                      description,
-                                      supplyAmount: supply,
-                                      infiniteSupply,
-                                      transferable,
-                                      selfDestruct,
-                                      chainId,
-                                      chainName,
-                                      chainIcon,
-                                      accountName
+                                      index
                                   },
                                   StackView.Immediate)
+            }
+        }
+    }
+
+    Component {
+        id: collectibleView
+
+        CommunityCollectibleView {
+            id: view
+
+            property int index // TODO: Update it to key when model has role key implemented
+
+            viewWidth: root.viewWidth
+            holdersModel: root.holdersModel
+
+            Binding {
+                target: root
+                property: "title"
+                value: view.name
+            }
+
+            Instantiator {
+                id: instantiator
+
+                model: SortFilterProxyModel {
+                    sourceModel: root.tokensModel
+                    filters: IndexFilter {
+                        minimumIndex: view.index
+                        maximumIndex: view.index
+                    }
+                }
+                delegate: QtObject {
+                    component Bind: Binding { target: view }
+                    readonly property list<Binding> bindings: [
+                        Bind { property: "deployState"; value: model.deployState },
+                        Bind { property: "name"; value: model.name },
+                        Bind { property: "artworkSource"; value: model.image },
+                        Bind { property: "symbol"; value: model.symbol },
+                        Bind { property: "description"; value: model.description },
+                        Bind { property: "supplyAmount"; value: model.supply },
+                        Bind { property: "infiniteSupply"; value: model.infiniteSupply },
+                        Bind { property: "selfDestruct"; value: model.remoteSelfDestruct },
+                        Bind { property: "chainId"; value: model.chainId },
+                        Bind { property: "chainName"; value: model.chainName },
+                        Bind { property: "chainIcon"; value: model.chainIcon },
+                        Bind { property: "accountName"; value: model.accountName }
+                    ]
+                }
             }
         }
     }
