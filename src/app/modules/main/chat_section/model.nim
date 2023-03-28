@@ -444,6 +444,13 @@ QtObject:
     let modelIndex = self.createIndex(index, 0, nil)
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
 
+  proc incrementNotificationsForItemByIdAndGetNotificationCount*(self: Model, id: string): int =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return 0
+    self.updateNotificationsForItemById(id, hasUnreadMessages = true, self.items[index].notificationsCount + 1)
+    return self.items[index].notificationsCount
+
   proc updateLastMessageTimestampOnItemById*(self: Model, id: string, lastMessageTimestamp: int) =
     let index = self.getItemIdxById(id)
     if index == -1:
@@ -453,13 +460,6 @@ QtObject:
     self.items[index].lastMessageTimestamp = lastMessageTimestamp
     let modelIndex = self.createIndex(index, 0, nil)
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.LastMessageTimestamp.int])
-
-  proc getAllNotifications*(self: Model): tuple[hasNotifications: bool, notificationsCount: int] =
-    result.hasNotifications = false
-    result.notificationsCount = 0
-    for i in 0 ..< self.items.len:
-      result.hasNotifications = result.hasNotifications or self.items[i].hasUnreadMessages
-      result.notificationsCount = result.notificationsCount + self.items[i].notificationsCount
 
   proc reorderChatById*(
       self: Model,

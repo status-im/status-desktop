@@ -68,7 +68,7 @@ proc buildChatSectionUI(self: Module,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service)
 
-proc addChatIfDontExist(self: Module,
+proc addOrUpdateChat(self: Module,
     chat: ChatDto,
     channelGroup: ChannelGroupDto,
     belongsToCommunity: bool,
@@ -221,7 +221,7 @@ proc buildChatSectionUI(
           categoryPosition = category.position
           break
 
-    self.addChatIfDontExist(
+    self.addOrUpdateChat(
       chatDto,
       channelGroup,
       belongsToCommunity = chatDto.communityId.len > 0,
@@ -472,12 +472,18 @@ method getChatContentModule*(self: Module, chatId: string): QVariant =
 
   return self.chatContentModules[chatId].getModuleAsVariant()
 
-proc updateParentBadgeNotifications(self: Module, sectionHasUnreadMessagesArg: bool = false, unviewedMentionsCountArg: int = 0) =
+proc updateParentBadgeNotifications(self: Module) =
+  let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
+    self.controller.getMySectionId()
+  )
   self.delegate.onNotificationsUpdated(
     self.controller.getMySectionId(),
-    sectionHasUnreadMessagesArg,
-    unviewedMentionsCountArg
+    unviewedMessagesCount > 0,
+    unviewedMentionsCount
   )
+
+proc incrementParentBadgeNotifications(self: Module) =
+  self.delegate.onNotificationsIncremented(self.controller.getMySectionId())
 
 proc updateBadgeNotifications(self: Module, chatId: string, hasUnreadMessages: bool, unviewedMentionsCount: int) =
   # update model of this module (appropriate chat from the chats list (chats model))
@@ -486,7 +492,16 @@ proc updateBadgeNotifications(self: Module, chatId: string, hasUnreadMessages: b
   if (self.chatContentModules.contains(chatId)):
     self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
   # update parent module
-  self.updateParentBadgeNotifications(hasUnreadMessages, unviewedMentionsCount)
+  self.updateParentBadgeNotifications()
+
+proc incrementBadgeNotifications(self: Module, chatId: string) =
+  if self.chatsLoaded:
+    let notificationCount = self.view.chatsModel().incrementNotificationsForItemByIdAndGetNotificationCount(chatId)
+    # update child module
+    if (self.chatContentModules.contains(chatId)):
+      self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages = true, notificationCount)
+  # update parent module
+  self.incrementParentBadgeNotifications()
 
 method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTimestamp: int) =
   self.view.chatsModel().updateLastMessageTimestampOnItemById(chatId, lastMessageTimestamp)
@@ -850,8 +865,6 @@ method onContactAdded*(self: Module, publicKey: string) =
   if (contact.isContact):
     self.switchToOrCreateOneToOneChat(publicKey)
 
-  self.updateParentBadgeNotifications()
-
 method acceptAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getItemIds()
   for pk in pubKeys:
@@ -862,7 +875,6 @@ method dismissContactRequest*(self: Module, publicKey: string) =
 
 method onContactRejected*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
-  self.updateParentBadgeNotifications()
 
 method dismissAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getItemIds()
@@ -875,7 +887,6 @@ method blockContact*(self: Module, publicKey: string) =
 method onContactBlocked*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
   self.view.chatsModel().changeBlockedOnItemById(publicKey, blocked=true)
-  self.updateParentBadgeNotifications()
 
 method onContactUnblocked*(self: Module, publicKey: string) =
   self.view.chatsModel().changeBlockedOnItemById(publicKey, blocked=false)
@@ -891,7 +902,6 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
     not self.view.contactRequestsModel().isContactWithIdAdded(publicKey)):
       let item = self.createItemFromPublicKey(publicKey)
       self.view.contactRequestsModel().addItem(item)
-      self.updateParentBadgeNotifications()
       singletonInstance.globalEvents.showNewContactRequestNotification("New Contact Request",
       fmt "{contactDetails.defaultDisplayName} added you as contact",
         singletonInstance.userProfile.getPubKey())
@@ -913,10 +923,6 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     return
 
   let chatDetails = self.controller.getChatDetails(chatIdMsgBelongsTo)
-
-  # Badge notification
-  let showBadge = (not chatDetails.muted and unviewedMessagesCount > 0) or unviewedMentionsCount > 0
-  self.updateBadgeNotifications(chatIdMsgBelongsTo, showBadge, unviewedMentionsCount)
 
   if (chatDetails.muted):
     # No need to send a notification
@@ -965,8 +971,8 @@ method onMeMentionedInEditedMessage*(self: Module, chatId: string, editedMessage
     (editedMessage.communityId.len > 0 and
     self.controller.getMySectionId() != editedMessage.communityId)):
     return
-  var (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
-  self.updateBadgeNotifications(chatId, sectionHasUnreadMessages, sectionNotificationCount + 1)
+
+  self.incrementBadgeNotifications(chatId)
 
 method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
   self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))
@@ -1117,7 +1123,7 @@ method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, p
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
 
-proc addChatIfDontExist(self: Module,
+proc addOrUpdateChat(self: Module,
     chat: ChatDto,
     channelGroup: ChannelGroupDto,
     belongsToCommunity: bool,
@@ -1131,15 +1137,25 @@ proc addChatIfDontExist(self: Module,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     setChatAsActive: bool = true) =
-  if not self.chatsLoaded:
-    return
 
   let sectionId = self.controller.getMySectionId()
   if(belongsToCommunity and sectionId != chat.communityId or
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey()):
     return
 
-  if self.doesCatOrChatExist(chat.id):
+  let chatExists = self.doesCatOrChatExist(chat.id)
+
+  if not self.chatsLoaded or chatExists:
+    # Update badges
+    var hasUnreadMessages = false
+    if not chat.muted:
+      hasUnreadMessages = chat.unviewedMessagesCount > 0
+    self.updateBadgeNotifications(chat.id, hasUnreadMessages, chat.unviewedMentionsCount)
+
+  if not self.chatsLoaded:
+    return
+
+  if chatExists:
     if (chat.chatType == ChatType.PrivateGroupChat):
       self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)
     elif (chat.chatType != ChatType.OneToOne):
@@ -1162,7 +1178,7 @@ proc addChatIfDontExist(self: Module,
       setChatAsActive,
     )
 
-method addChatIfDontExist*(self: Module,
+method addOrUpdateChat*(self: Module,
     chat: ChatDto,
     belongsToCommunity: bool,
     events: UniqueUUIDEventEmitter,
@@ -1175,7 +1191,7 @@ method addChatIfDontExist*(self: Module,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     setChatAsActive: bool = true) =
- self.addChatIfDontExist(
+ self.addOrUpdateChat(
     chat,
     ChannelGroupDto(),
     belongsToCommunity,

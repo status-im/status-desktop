@@ -277,7 +277,6 @@ QtObject:
       i.inc()
     return -1
       
-
   proc chatsWithCategoryHaveUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
     if communityId == "" or categoryId == "":
       return false
@@ -286,6 +285,20 @@ QtObject:
       if chat.unviewedMessagesCount > 0 or chat.unviewedMentionsCount > 0:
         return true
     return false
+
+  proc sectionUnreadMessagesAndMentionsCount*(self: Service, communityId: string):
+      tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
+    if communityId == "":
+      return
+
+    result.unviewedMentionsCount = 0
+    result.unviewedMessagesCount = 0
+    for chat in self.channelGroups[communityId].chats:
+      result.unviewedMentionsCount += chat.unviewedMentionsCount
+      if chat.muted:
+        continue
+      if chat.unviewedMessagesCount > 0:
+        result.unviewedMessagesCount = result.unviewedMessagesCount + chat.unviewedMessagesCount
 
   proc updateOrAddChat*(self: Service, chat: ChatDto) =
     # status-go doesn't seem to preserve categoryIDs from chat

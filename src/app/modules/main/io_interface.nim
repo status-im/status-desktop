@@ -123,6 +123,9 @@ method onNotificationsUpdated*(self: AccessInterface, sectionId: string, section
   sectionNotificationCount: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onNotificationsIncremented*(self: AccessInterface, sectionId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onNotificationsIncreased*(self: AccessInterface, sectionId: string, addedSectionNotificationCount: bool,
   sectionNotificationCount: int) {.base.} =
   raise newException(ValueError, "No implementation available")

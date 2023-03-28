@@ -727,7 +727,7 @@ QtObject:
     ## Returns all chats belonging to the community with passed `communityId`, sorted by position.
     ## Returned chats are sorted by position following set `order` parameter.
     if(not self.communities.contains(communityId)):
-      error "trying to get all community chats for an unexisting community id"
+      error "trying to get all community chats for an unexisting community id", communityId
       return
 
     result = self.communities[communityId].chats
