@@ -29,6 +29,7 @@ QtObject:
       items: seq[Item]
       allCollectiblesLoaded: bool
       isFetching: bool
+      isError: bool
 
   proc addLoadingItems(self: Model)
   proc removeLoadingItems(self: Model)
@@ -46,6 +47,7 @@ QtObject:
     result.items = @[]
     result.allCollectiblesLoaded = false
     result.isFetching = true
+    result.isError = false
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
@@ -74,6 +76,18 @@ QtObject:
     self.isFetching = value
     self.isFetchingChanged()
 
+  proc isErrorChanged(self: Model) {.signal.}
+  proc getIsError*(self: Model): bool {.slot.} =
+    self.isError
+  QtProperty[bool] isError:
+    read = getIsError
+    notify = isErrorChanged
+  proc setIsError*(self: Model, value: bool) =
+    if value == self.isError:
+      return
+    self.isError = value
+    self.isErrorChanged()
+
   proc allCollectiblesLoadedChanged(self: Model) {.signal.}
   proc getAllCollectiblesLoaded*(self: Model): bool {.slot.} =
     self.allCollectiblesLoaded
@@ -87,12 +101,11 @@ QtObject:
     self.allCollectiblesLoadedChanged()
 
   method canFetchMore*(self: Model, parent: QModelIndex): bool =
-    return not self.allCollectiblesLoaded and not self.isFetching
+    return not self.allCollectiblesLoaded and not self.isFetching and not self.isError
 
   proc requestFetch(self: Model) {.signal.}
   method fetchMore*(self: Model, parent: QModelIndex) =
-    if not self.isFetching:
-      self.requestFetch()
+    self.requestFetch()
 
   method rowCount*(self: Model, index: QModelIndex = nil): int =
     return self.items.len

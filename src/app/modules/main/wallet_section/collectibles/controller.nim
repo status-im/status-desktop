@@ -41,19 +41,21 @@ proc newController*(
 proc delete*(self: Controller) =
   discard
 
-proc refreshCollectibles(self: Controller, chainId: int, address: string) =
+proc resetCollectibles(self: Controller, chainId: int, address: string) =
   let data = self.collectibleService.getOwnedCollectibles(chainId, address)
-  if not data.anyLoaded or data.lastLoadWasFromStart:
-    self.delegate.setCollectibles(chainId, address, data)
-  else:
-    self.delegate.appendCollectibles(chainId, address, data)
+  self.delegate.setCollectibles(chainId, address, data)
+
+proc processNewCollectibles(self: Controller, chainId: int, address: string) =
+  let data = self.collectibleService.getOwnedCollectibles(chainId, address)
+  self.delegate.appendCollectibles(chainId, address, data)
+
   if not self.nodeService.isConnected() or not self.networkConnectionService.checkIfConnected(COLLECTIBLES):
     self.delegate.connectionToOpenSea(false)
 
 proc init*(self: Controller) =  
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_RESET) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
-    self.refreshCollectibles(args.chainId, args.address)
+    self.resetCollectibles(args.chainId, args.address)
 
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
@@ -61,7 +63,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
-    self.refreshCollectibles(args.chainId, args.address)
+    self.processNewCollectibles(args.chainId, args.address)
 
   self.events.on(SIGNAL_REFRESH_COLLECTIBLES) do(e:Args):
     self.collectibleService.resetAllOwnedCollectibles()
