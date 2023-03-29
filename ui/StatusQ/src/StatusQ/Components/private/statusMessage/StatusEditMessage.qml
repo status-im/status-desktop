@@ -59,7 +59,15 @@ Item {
                 size: StatusBaseButton.Size.Small
                 enabled: !!chatInputLoader.item && chatInputLoader.item.messageText.trim().length > 0
                 onClicked: {
-                    editCompleted(!chatInputLoader.item ? "" : chatInputLoader.item.messageText)
+                    let text = ""
+                    if (chatInputLoader.item) {
+                        if (chatInputLoader.item.getTextWithPublicKeys) {
+                            text = chatInputLoader.item.getTextWithPublicKeys()
+                        } else {
+                            text = chatInputLoader.item.messageText
+                        }
+                    }
+                    editCompleted(text)
                 }
             }
         }

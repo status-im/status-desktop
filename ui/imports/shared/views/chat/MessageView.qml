@@ -479,9 +479,7 @@ Loader {
                     delegate.editCancelledHandler()
                 }
 
-                onEditCompleted: {
-                    delegate.editCompletedHandler(newMsgText)
-                }
+                onEditCompleted: delegate.editCompletedHandler(newMsgText)
 
                 onImageClicked: {
                     switch (mouse.button) {
@@ -679,9 +677,7 @@ Loader {
                         chatType: root.messageStore.chatType
                         isEdit: true
 
-                        onSendMessage: {
-                            delegate.editCompletedHandler(editTextInput.textInput.text)
-                        }
+                        onSendMessage: delegate.editCompletedHandler(editTextInput.getTextWithPublicKeys())
 
                         Component.onCompleted: {
                             parseMessage(root.messageText);
