@@ -71,6 +71,16 @@ SettingsPageLayout {
         property bool preview: false
         property string accountAddress
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
+        onInitialItemChanged: updateInitialStackView()
+
+        function updateInitialStackView() {
+            if(stackManager.stackView) {
+                if(initialItem === welcomeView)
+                    stackManager.stackView.replace(mintedTokensView, welcomeView, StackView.Immediate)
+                if(initialItem === mintedTokensView)
+                    stackManager.stackView.replace(welcomeView, mintedTokensView, StackView.Immediate)
+            }
+        }
     }
 
     content: StackView {
@@ -114,11 +124,6 @@ SettingsPageLayout {
     ]
 
     onHeaderButtonClicked: stackManager.push(d.newCollectibleViewState, newCollectiblesView, null, StackView.Immediate)
-    onTokensModelChanged: {
-        if(root.tokensModel && root.tokensModel.count === 1) {
-            stackManager.stackView.replace(welcomeView, d.initialItem, StackView.Immediate)
-        }
-    }
 
     StackViewStates {
         id: stackManager
