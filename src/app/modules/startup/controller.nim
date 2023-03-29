@@ -170,6 +170,10 @@ proc init*(self: Controller) =
     self.delegate.onLocalPairingStatusUpdate(args)
   self.connectionIds.add(handlerId)
 
+  handlerId = self.events.onWithUUID(SIGNAL_REENCRYPTION_PROCESS_STARTED) do(e: Args):
+    self.delegate.onReencryptionProcessStarted()
+  self.connectionIds.add(handlerId)
+
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 

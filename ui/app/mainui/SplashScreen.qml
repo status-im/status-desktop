@@ -7,6 +7,7 @@ import utils 1.0
 import shared 1.0
 
 Item {
+    property alias text: loadingText.text
     ColumnLayout {
         anchors.centerIn: parent
         LoadingAnimation {
@@ -16,7 +17,9 @@ Item {
             source: Style.svg("status-logo-circle")
         }
         StatusBaseText {
+            id: loadingText
             Layout.alignment: Qt.AlignHCenter
+            horizontalAlignment: Qt.AlignHCenter
             text: qsTr("Loading Status...")
         }
     }

@@ -14,6 +14,7 @@ import shared.panels.private 1.0
 Pane {
     id: root
     property alias progress: progressBar.value
+    property alias splashScreenText: splashScreen.text
 
     contentItem: Item {
             SplashScreen {

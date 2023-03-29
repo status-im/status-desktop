@@ -181,6 +181,9 @@ method validateLocalPairingConnectionString*(self: AccessInterface, connectionSt
 method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onReencryptionProcessStarted*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

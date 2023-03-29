@@ -16,6 +16,7 @@ type
     StartupState = 0
     AppLoadingState
     MainAppState
+    AppEncryptionProcessState
 
 QtObject:
   type
@@ -354,3 +355,6 @@ QtObject:
 
   proc validateLocalPairingConnectionString*(self: View, connectionString: string): string {.slot.} =
     return self.delegate.validateLocalPairingConnectionString(connectionString)
+
+  proc onReencryptionProcessStarted*(self: View) =
+    self.setAppState(AppState.AppEncryptionProcessState)
