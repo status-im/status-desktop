@@ -27,7 +27,7 @@ SplitView {
             CommunityMintedTokensView {
                 anchors.fill: parent
                 anchors.margins: 50
-                model: MintedCollectiblesModel {}
+                model: MintedCollectiblesModel.mintedCollectibleModel
                 onItemClicked: logs.logEvent("CommunityMintedTokensView::itemClicked")
             }
         }
