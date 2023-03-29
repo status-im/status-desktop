@@ -34,6 +34,9 @@ QtObject:
   proc fetchMoreOwnedCollectibles*(self: View) {.slot.} =
     self.delegate.fetchOwnedCollectibles()
 
+  proc setIsError*(self: View, isError: bool) =
+    self.model.setIsError(isError)
+
   proc setIsFetching*(self: View, isFetching: bool) =
     self.model.setIsFetching(isFetching)
 
