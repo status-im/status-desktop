@@ -38,8 +38,8 @@ QtObject:
       contentType: int) {.slot.} =
     self.delegate.sendChatMessage(msg, replyTo, contentType)
 
-  proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string): string {.slot.} =
-    self.delegate.sendImages(imagePathsAndDataJson, msg)
+  proc sendImages*(self: View, imagePathsAndDataJson: string, msg: string, replyTo: string): string {.slot.} =
+    self.delegate.sendImages(imagePathsAndDataJson, msg, replyTo)
 
   proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
     self.delegate.acceptRequestAddressForTransaction(messageId, address)

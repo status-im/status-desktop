@@ -177,7 +177,7 @@ QtObject {
         }
 
         if (fileUrlsAndSources.length > 0) {
-            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources), textMsg.trim())
+            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrlsAndSources), textMsg.trim(), replyMessageId)
             result = true
 
         } else {
