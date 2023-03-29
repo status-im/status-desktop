@@ -36,6 +36,7 @@ let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
 
 const SIGNAL_CONVERTING_PROFILE_KEYPAIR* = "convertingProfileKeypair"
 const SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED* = "derivedAddressesFromNotImportedMnemonicFetched"
+const SIGNAL_REENCRYPTION_PROCESS_STARTED* = "reencryptionProcessStarted"
 
 type ResultArgs* = ref object of Args
   success*: bool
@@ -669,6 +670,7 @@ QtObject:
 
       let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashPassword(password, lower=false))
       if isOldHashPassword:
+        self.events.emit(SIGNAL_REENCRYPTION_PROCESS_STARTED, Args())
         discard status_privacy.lowerDatabasePassword(account.keyUid, password)
       
       let response = status_account.login(

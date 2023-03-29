@@ -514,3 +514,6 @@ method validateLocalPairingConnectionString*[T](self: Module[T], connectionStrin
 
 method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatus) =
   self.view.onLocalPairingStatusUpdate(status)
+
+method onReencryptionProcessStarted*[T](self: Module[T]) =
+  self.view.onReencryptionProcessStarted()
