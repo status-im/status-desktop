@@ -31,7 +31,7 @@ QtObject:
       isFetching: bool
       isError: bool
 
-  proc addLoadingItems(self: Model)
+  proc appendLoadingItems(self: Model)
   proc removeLoadingItems(self: Model)
 
   proc delete(self: Model) =
@@ -46,7 +46,7 @@ QtObject:
     result.setup
     result.items = @[]
     result.allCollectiblesLoaded = false
-    result.isFetching = true
+    result.isFetching = false
     result.isError = false
 
   proc `$`*(self: Model): string =
@@ -70,7 +70,7 @@ QtObject:
     if value == self.isFetching:
       return
     if value:
-      self.addLoadingItems()
+      self.appendLoadingItems()
     else:
       self.removeLoadingItems()
     self.isFetching = value
@@ -180,7 +180,7 @@ QtObject:
     of CollectibleRole.IsPinned:
       result = newQVariant(item.getIsPinned())
 
-  proc addLoadingItems(self: Model) =
+  proc appendLoadingItems(self: Model) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
@@ -204,18 +204,26 @@ QtObject:
         return
 
   proc setItems*(self: Model, items: seq[Item]) =
+    if self.isFetching:
+      self.removeLoadingItems()
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
+    if self.isFetching:
+      self.appendLoadingItems()
 
   proc appendItems*(self: Model, items: seq[Item]) =
+    if self.isFetching:
+      self.removeLoadingItems()
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + items.len - 1)
     self.items = concat(self.items, items)
     self.endInsertRows()
     self.countChanged()
+    if self.isFetching:
+      self.appendLoadingItems()
 
   # in case loading is still going on and no items are present, show loading items when there is no connection to opensea possible
   proc connectionToOpenSea*(self: Model, connected: bool) =
