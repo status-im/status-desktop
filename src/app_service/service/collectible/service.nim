@@ -27,7 +27,7 @@ const SIGNAL_COLLECTIBLES_UPDATED* = "collectiblesUpdated"
 const INVALID_TIMESTAMP* = fromUnix(0)
 
 # Maximum number of owned collectibles to be fetched at a time
-const ownedCollectiblesFetchLimit = 200
+const ownedCollectiblesFetchLimit = 100
 
 type
   OwnedCollectiblesUpdateArgs* = ref object of Args
