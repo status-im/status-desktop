@@ -66,6 +66,7 @@ Item {
             active: root.userPublicKey == ""
             Layout.alignment: Qt.AlignHCenter
             sourceComponent: UserImage {
+                opacity: name ? 1 : 0
                 name: root.userDisplayName
                 colorId: root.userColorId
                 colorHash: root.userColorHash
@@ -73,6 +74,10 @@ Item {
                 interactive: false
                 imageWidth: 80
                 imageHeight: 80
+
+                Behavior on opacity {
+                    NumberAnimation { duration: 250 }
+                }
             }
         }
 

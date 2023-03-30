@@ -61,9 +61,6 @@ Item {
         ComboBox {
             id: comboBox
 
-            property color bgColor: Theme.palette.baseColor2
-            property color bgColorHover: bgColor
-
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.topMargin: labelItem.visible ? 7 : 0
@@ -77,7 +74,7 @@ Item {
             spacing: 16
 
             background: Rectangle {
-                implicitHeight: 56
+                implicitHeight: 24 + comboBox.topPadding + comboBox.bottomPadding
                 implicitWidth: 448
                 color: root.type === StatusComboBox.Type.Secondary ? "transparent" : Theme.palette.baseColor2
                 radius: 8

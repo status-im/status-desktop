@@ -74,6 +74,11 @@ QtObject:
     result.accountsService = accountsService
     result.localPairingStatus = newLocalPairingStatus()
 
+  proc updateLocalPairingStatus(self: Service, data: LocalPairingEventArgs) =
+    self.events.emit(SIGNAL_LOCAL_PAIRING_EVENT, data)
+    self.localPairingStatus.update(data.eventType, data.action, data.account, data.error)
+    self.events.emit(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE, self.localPairingStatus)
+
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e:Args):
       let receivedData = MessageSignal(e)
@@ -89,10 +94,7 @@ QtObject:
         action: signalData.action.parse(),
         account: signalData.account,
         error: signalData.error)
-      self.events.emit(SIGNAL_LOCAL_PAIRING_EVENT, data)
-
-      self.localPairingStatus.update(data.eventType, data.action, data.account, data.error)
-      self.events.emit(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE, self.localPairingStatus)
+      self.updateLocalPairingStatus(data)
 
   proc init*(self: Service) =
     self.doConnect()
@@ -157,8 +159,18 @@ QtObject:
   # Local Pairing
   #
 
-  proc inputConnectionStringForBootstrappingFinished(self: Service, result: string) =
-    discard
+  proc inputConnectionStringForBootstrappingFinished*(self: Service, responseJson: string) {.slot.} =
+    let response = responseJson.parseJson
+    let errorDescription = response["error"].getStr
+    if len(errorDescription) == 0:
+      return
+    error "failed to start bootstrapping device", errorDescription
+    let data = LocalPairingEventArgs(
+      eventType: EventConnectionError,
+      action: ActionUnknown,
+      account: AccountDto(),
+      error: errorDescription)
+    self.updateLocalPairingStatus(data)
 
   proc validateConnectionString*(self: Service, connectionString: string): string =
     return status_go.validateConnectionString(connectionString)
@@ -187,7 +199,7 @@ QtObject:
         "deviceType" : hostOs,
         "nodeConfig": nodeConfigJson,
         "kdfIterations": self.accountsService.getKdfIterations(),
-        "settingCurrentNetwork": ""
+        "settingCurrentNetwork": "mainnet_rpc"
       },
       "clientConfig": %* {}
     }

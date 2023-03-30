@@ -34,21 +34,26 @@ Item {
     QtObject {
         id: d
 
-        property string connectionString
-
         function validateConnectionString(connectionString) {
             const result = root.startupStore.validateLocalPairingConnectionString(connectionString)
             return result === ""
+        }
+
+        function onConnectionStringFound(connectionString) {
+            root.startupStore.setConnectionString(connectionString)
+            root.startupStore.doPrimaryAction()
         }
     }
 
     Timer {
         id: nextStateDelay
+
+        property string connectionString
+
         interval: 1000
         repeat: false
         onTriggered: {
-            root.startupStore.setConnectionString(d.connectionString)
-            root.startupStore.doPrimaryAction()
+            d.onConnectionStringFound(connectionString)
         }
     }
 
@@ -84,13 +89,10 @@ Item {
         }
 
         StackLayout {
-            width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
-
-            implicitWidth: Math.max(mobileSync.implicitWidth, desktopSync.implicitWidth)
-            implicitHeight: Math.max(mobileSync.implicitHeight, desktopSync.implicitHeight)
+            width: parent.width
+            height: Math.max(mobileSync.implicitHeight, desktopSync.implicitHeight)
             currentIndex: switchTabBar.currentIndex
-            clip: true
 
             // StackLayout doesn't support alignment, so we create an `Item` wrappers
 
@@ -98,17 +100,22 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                implicitWidth: mobileSync.implicitWidth
-                implicitHeight: mobileSync.implicitHeight
-
                 SyncDeviceFromMobile {
                     id: mobileSync
                     anchors {
+                        left: parent.left
+                        right: parent.right
                         verticalCenter: parent.verticalCenter
-                        horizontalCenter: parent.horizontalCenter
                     }
+                    validators: [
+                        StatusValidator {
+                            name: "isSyncQrCode"
+                            errorMessage: qsTr("This does not look like a sync QR code")
+                            validate: d.validateConnectionString
+                        }
+                    ]
                     onConnectionStringFound: {
-                        d.processConnectionString(connectionString)
+                        d.onConnectionStringFound(connectionString)
                     }
                 }
             }
@@ -116,9 +123,6 @@ Item {
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                implicitWidth: desktopSync.implicitWidth
-                implicitHeight: desktopSync.implicitHeight
 
                 SyncDeviceFromDesktop {
                     id: desktopSync
@@ -130,19 +134,15 @@ Item {
                     input.readOnly: nextStateDelay.running
                     input.validators: [
                         StatusValidator {
-                            name: "asyncConnectionString"
+                            name: "isSyncCode"
                             errorMessage: qsTr("This does not look like a sync code")
-                            validate: (value) => {
-                                          return d.validateConnectionString(value)
-                                      }
+                            validate: d.validateConnectionString
                         }
                     ]
                     input.onValidChanged: {
-                        if (!input.valid) {
-                            d.connectionString = ""
+                        if (!input.valid)
                             return
-                        }
-                        d.connectionString = desktopSync.input.text
+                        nextStateDelay.connectionString = desktopSync.input.text
                         nextStateDelay.start()
                     }
                 }

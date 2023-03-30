@@ -79,5 +79,6 @@
         <file>pages/StatusComboBoxPage.qml</file>
         <file>pages/StatusChartPanelPage.qml</file>
         <file>pages/StatusTextAreaPage.qml</file>
+        <file>QrCodeScannerPage.qml</file>
     </qresource>
 </RCC>
