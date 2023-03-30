@@ -553,6 +553,7 @@ QtObject:
       elif community.tokenPermissions.len < prev_community.tokenPermissions.len:
         for id, prvTokenPermission in prev_community.tokenPermissions:
           if not community.tokenPermissions.hasKey(id):
+            self.communities[community.id].tokenPermissions.del(id)
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
             CommunityTokenPermissionRemovedArgs(communityId: community.id, permissionId: id))
 

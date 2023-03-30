@@ -771,8 +771,7 @@ method onChatUnmuted*(self: Module, chatId: string) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted=false)
 
 method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
-  self.view.tokenPermissionsModel().removeItemWithId(permissionId)
-  self.view.setRequiresTokenPermissionToJoin(self.view.tokenPermissionsModel().getCount() > 0)
+  self.rebuildCommunityTokenPermissionsModel()
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
