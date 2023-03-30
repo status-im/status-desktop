@@ -13,6 +13,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.controls 1.0
+import shared.popups 1.0
 import shared.popups.keycard 1.0
 import shared.stores 1.0
 
@@ -61,6 +62,41 @@ Rectangle {
             onAddWatchOnlyAccountClicked: {
                 RootStore.runAddWatchOnlyAccountPopup()
             }
+        }
+    }
+
+    Loader {
+        id: removeAccountConfirmation
+        active: false
+
+        property bool simple
+        property string accountKeyUid
+        property string accountName
+        property string accountAddress
+        property string accountDerivationPath
+
+        sourceComponent: RemoveAccountConfirmationPopup {
+            anchors.centerIn: parent
+            width: 400
+
+            simple: removeAccountConfirmation.simple
+            accountKeyUid: removeAccountConfirmation.accountKeyUid
+            accountName: removeAccountConfirmation.accountName
+            accountAddress: removeAccountConfirmation.accountAddress
+            accountDerivationPath: removeAccountConfirmation.accountDerivationPath
+
+            onClosed: {
+                removeAccountConfirmation.active = false
+            }
+
+            onRemoveAccount: {
+                close()
+                RootStore.deleteAccount(keyUid, address)
+            }
+        }
+
+        onLoaded: {
+            removeAccountConfirmation.item.open()
         }
     }
 
@@ -251,6 +287,12 @@ Rectangle {
                         }
 
                         onDeleteAccountClicked: {
+                            removeAccountConfirmation.simple = model.walletType === Constants.watchWalletType || model.walletType === Constants.keyWalletType
+                            removeAccountConfirmation.accountKeyUid = model.keyUid
+                            removeAccountConfirmation.accountName = model.name
+                            removeAccountConfirmation.accountAddress = model.address
+                            removeAccountConfirmation.accountDerivationPath = model.path
+                            removeAccountConfirmation.active = true
                         }
 
                         onAddNewAccountClicked: {

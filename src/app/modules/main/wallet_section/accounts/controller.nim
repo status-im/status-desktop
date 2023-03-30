@@ -73,3 +73,5 @@ proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
 proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
   return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
 
+proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
+  return self.walletAccountService.getAccountByAddress(address)
