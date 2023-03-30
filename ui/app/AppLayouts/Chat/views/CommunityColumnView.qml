@@ -109,30 +109,10 @@ Item {
         }
     }
 
-    Loader {
-        id: membershipRequests
-
-        readonly property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
-
-        anchors.top: joinCommunityButton.visible ? joinCommunityButton.bottom : communityHeader.bottom
-        anchors.topMargin: active ? Style.current.halfPadding : 0
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        active: communityData.amISectionAdmin && nbRequests > 0
-        height: nbRequests > 0 ? 64 : 0
-        sourceComponent: Component {
-            StatusContactRequestsIndicatorListItem {
-                title: qsTr("Membership requests")
-                requestsCount: membershipRequests.nbRequests
-                onClicked: root.store.goToMembershipRequestsPage()
-            }
-        }
-    }
-
     ChatsLoadingPanel {
         chatSectionModule: root.communitySectionModule
         width: parent.width
-        anchors.top: membershipRequests.bottom
+        anchors.top: joinCommunityButton.visible ? joinCommunityButton.bottom : communityHeader.bottom
         anchors.topMargin: active ? Style.current.halfPadding : 0
     }
 
@@ -177,7 +157,7 @@ Item {
 
     StatusScrollView {
         id: scrollView
-        anchors.top: membershipRequests.bottom
+        anchors.top: joinCommunityButton.visible ? joinCommunityButton.bottom : communityHeader.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.bottom: createChatOrCommunity.top
         anchors.horizontalCenter: parent.horizontalCenter
