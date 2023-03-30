@@ -101,6 +101,7 @@ type CommunityDto* = object
   canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]  
   tokenPermissions*: Table[string, CommunityTokenPermissionDto]
   communityTokensMetadata*: seq[CommunityTokensMetadataDto]
+  activeMembersCount*: int64
 
 proc isAvailable*(communityDto: CommunityDto): bool =
   return communityDto.name != "" and communityDto.description != ""
@@ -311,6 +312,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
 
   discard jsonObj.getProp("requestedToJoinAt", result.requestedToJoinAt)
   discard jsonObj.getProp("muted", result.muted)
+  discard jsonObj.getProp("activeMembersCount", result.activeMembersCount)
 
   var communityTokensMetadataObj: JsonNode
   if(jsonObj.getProp("communityTokensMetadata", communityTokensMetadataObj) and communityTokensMetadataObj.kind == JArray):
