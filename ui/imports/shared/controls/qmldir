@@ -37,3 +37,4 @@ StatusSyncCodeInput 1.0 StatusSyncCodeInput.qml
 GetSyncCodeMobileInstructions 1.0 GetSyncCodeMobileInstructions.qml
 GetSyncCodeDesktopInstructions 1.0 GetSyncCodeDesktopInstructions.qml
 ErrorDetails 1.0 ErrorDetails.qml
+CopyButton 1.0 CopyButton.qml
