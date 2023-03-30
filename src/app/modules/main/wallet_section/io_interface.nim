@@ -61,6 +61,9 @@ method buySellCryptoModuleDidLoad*(self: AccessInterface) {.base.} =
 method runAddAccountPopup*(self: AccessInterface, addingWatchOnlyAccount: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method runEditAccountPopup*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getAddAccountModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 

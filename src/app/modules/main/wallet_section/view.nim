@@ -101,6 +101,9 @@ QtObject:
   proc runAddAccountPopup*(self: View, addingWatchOnlyAccount: bool) {.slot.} =
     self.delegate.runAddAccountPopup(addingWatchOnlyAccount)
 
+  proc runEditAccountPopup*(self: View, address: string) {.slot.} =
+    self.delegate.runEditAccountPopup(address)
+
   proc getAddAccountModule(self: View): QVariant {.slot.} =
     return self.delegate.getAddAccountModule()
   QtProperty[QVariant] addAccountModule:

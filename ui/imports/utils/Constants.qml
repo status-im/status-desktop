@@ -894,6 +894,7 @@ QtObject {
         readonly property string loginAccountsListAddExistingUser: "LOGIN-ACCOUNTS-LIST-ADD-EXISTING-USER"
         readonly property string loginAccountsListLostKeycard: "LOGIN-ACCOUNTS-LIST-LOST-KEYCARD"
         readonly property string addAccountLabelNewWatchOnlyAccount: "LABEL-NEW-WATCH-ONLY-ACCOUNT"
+        readonly property string addAccountLabelWatchOnlyAccount: "LABEL-WATCH-ONLY-ACCOUNT"
         readonly property string addAccountLabelExisting: "LABEL-EXISTING"
         readonly property string addAccountLabelImportNew: "LABEL-IMPORT-NEW"
         readonly property string addAccountLabelOptionAddNewMasterKey: "LABEL-OPTION-ADD-NEW-MASTER-KEY"

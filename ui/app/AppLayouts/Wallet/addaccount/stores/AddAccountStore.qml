@@ -20,6 +20,7 @@ QtObject {
     property var selectedDerivedAddress: root.addAccountModule.selectedDerivedAddress
     property var watchOnlyAccAddress: root.addAccountModule.watchOnlyAccAddress
     property var privateKeyAccAddress: root.addAccountModule.privateKeyAccAddress
+    property bool editMode: root.addAccountModule.editMode
     property bool disablePopup: root.addAccountModule.disablePopup
 
     property bool enteredSeedPhraseIsValid: false
@@ -62,8 +63,22 @@ QtObject {
         root.derivationPathOutOfTheDefaultStatusDerivationTreeConfirmed = false
         root.selectedRootPath = Constants.addAccountPopup.predefinedPaths.ethereum
 
-        root.cleanPrivateKey()
-        root.cleanSeedPhrase()
+        if (!root.editMode) {
+            root.cleanPrivateKey()
+            root.cleanSeedPhrase()
+        }
+    }
+
+    function getStoredAccountName() {
+        return root.addAccountModule.getStoredAccountName()
+    }
+
+    function getStoredSelectedEmoji() {
+        return root.addAccountModule.getStoredSelectedEmoji()
+    }
+
+    function getStoredSelectedColor() {
+        return root.addAccountModule.getStoredSelectedColor()
     }
 
     function submitAddAccount(event) {
@@ -177,6 +192,15 @@ QtObject {
     readonly property bool primaryPopupButtonEnabled: {
         if (!root.addAccountModule || !root.currentState || root.disablePopup) {
             return false
+        }
+
+        if (root.editMode) {
+            return root.addAccountModule.accountName !== "" &&
+                    root.addAccountModule.accountName !== root.getStoredAccountName() ||
+                    root.addAccountModule.selectedColor !== "" &&
+                    root.addAccountModule.selectedColor !== root.getStoredSelectedColor() ||
+                    root.addAccountModule.selectedEmoji !== "" &&
+                    root.addAccountModule.selectedEmoji !== root.getStoredSelectedEmoji()
         }
 
         let valid = root.addAccountModule.accountName !== "" &&

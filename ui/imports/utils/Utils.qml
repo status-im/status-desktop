@@ -639,6 +639,8 @@ QtObject {
             return qsTr("Lost Keycard")
         case Constants.appTranslatableConstants.addAccountLabelNewWatchOnlyAccount:
             return qsTr("New watch-only account")
+        case Constants.appTranslatableConstants.addAccountLabelWatchOnlyAccount:
+            return qsTr("Watch-only account")
         case Constants.appTranslatableConstants.addAccountLabelExisting:
             return qsTr("Existing")
         case Constants.appTranslatableConstants.addAccountLabelImportNew:

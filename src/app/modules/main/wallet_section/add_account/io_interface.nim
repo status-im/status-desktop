@@ -10,7 +10,10 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface, addingWatchOnlyAccount: bool) {.base.} =
+method loadForAddingAccount*(self: AccessInterface, addingWatchOnlyAccount: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loadForEditingAccount*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method closeAddAccountPopup*(self: AccessInterface, switchToAccWithAddress: string = "") {.base.} =
@@ -40,7 +43,7 @@ method onQuaternaryActionClicked*(self: AccessInterface) {.base.} =
 method onCancelActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addAccount*(self: AccessInterface) {.base.} =
+method finalizeAction*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method authenticateForEditingDerivationPath*(self: AccessInterface) {.base.} =
