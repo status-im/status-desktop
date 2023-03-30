@@ -158,6 +158,10 @@ proc authenticateActivityForKeyUid(self: Module, keyUid: string, reason: Authent
       self.controller.authenticateKeyPair()
 
 method deleteAccount*(self: Module, keyUid: string, address: string) =
+  let accountDto = self.controller.getWalletAccount(address)
+  if accountDto.walletType == WalletTypeWatch:
+    self.controller.deleteAccount(address)
+    return
   self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, address: address)
   self.authenticateActivityForKeyUid(keyUid, AuthenticationReason.DeleteAccountAuthentication)
 
