@@ -55,7 +55,6 @@ const SIGNAL_MESSAGE_EDITED* = "messageEdited"
 const SIGNAL_ENVELOPE_SENT* = "envelopeSent"
 const SIGNAL_ENVELOPE_EXPIRED* = "envelopeExpired"
 const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
-const SIGNAL_MENTIONED_IN_EDITED_MESSAGE* = "mentionedInEditedMessage"
 const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
 
 include async_tasks
@@ -828,12 +827,6 @@ proc editMessage*(self: Service, messageId: string, contentType: int, msg: strin
 
 proc getWalletAccounts*(self: Service): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
-
-proc checkEditedMessageForMentions*(self: Service, chatId: string, editedMessage: MessageDto, oldMentions: seq[string]) =
-  let myPubKey = singletonInstance.userProfile.getPubKey()
-  if not oldMentions.contains(myPubKey) and editedMessage.mentionedUsersPks().contains(myPubKey):
-    let data = MessageEditedArgs(chatId: chatId, message: editedMessage)
-    self.events.emit(SIGNAL_MENTIONED_IN_EDITED_MESSAGE, data)
 
 proc resendChatMessage*(self: Service, messageId: string): string =
   try:
