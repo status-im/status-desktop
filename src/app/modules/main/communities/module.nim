@@ -194,7 +194,8 @@ method getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityI
       c.images.banner,
       c.color,
       c.tags,
-      len(c.members))
+      len(c.members),
+      int(c.activeMembersCount))
 
 method getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
   return initDiscordCategoryItem(

@@ -11,6 +11,7 @@ type
     Banner
     Featured
     Members
+    ActiveMembers
     Popularity
     Color
     Tags
@@ -57,6 +58,7 @@ QtObject:
       ModelRole.Banner.int:"banner",
       ModelRole.Featured.int:"featured",
       ModelRole.Members.int:"members",
+      ModelRole.ActiveMembers.int:"activeMembers",
       ModelRole.Color.int:"color",
       ModelRole.Popularity.int:"popularity",
       ModelRole.Tags.int:"tags"
@@ -84,6 +86,8 @@ QtObject:
         result = newQVariant(item.getBanner())
       of ModelRole.Members:
         result = newQVariant(item.getMembers())
+      of ModelRole.ActiveMembers:
+        result = newQVariant(item.getActiveMembers())
       of ModelRole.Color:
         result = newQVariant(item.getColor())
       of ModelRole.Popularity:
@@ -132,6 +136,7 @@ QtObject:
                                        ModelRole.Banner.int,
                                        ModelRole.Featured.int,
                                        ModelRole.Members.int,
+                                       ModelRole.ActiveMembers.int,
                                        ModelRole.Color.int,
                                        ModelRole.Popularity.int,
                                        ModelRole.Tags.int])
