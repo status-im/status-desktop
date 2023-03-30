@@ -140,6 +140,7 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("key-uid", result.keyUid)
   discard jsonObj.getProp("path", result.path)
   discard jsonObj.getProp("color", result.color)
+  result.color = result.color.toUpper() # to match `preDefinedWalletAccountColors` on the qml side
   discard jsonObj.getProp("wallet", result.isWallet)
   discard jsonObj.getProp("chat", result.isChat)
   discard jsonObj.getProp("public-key", result.publicKey)
