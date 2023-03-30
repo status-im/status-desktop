@@ -321,7 +321,6 @@ var NODE_CONFIG* = %* {
   "WakuConfig": {
     "Enabled": false,
     "BloomFilterMode": true,
-    "Enabled": true,
     "LightClient": true,
     "MinimumPoW": 0.001
   },
