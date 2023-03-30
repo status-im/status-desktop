@@ -114,14 +114,17 @@ proc getSeedPhrase*(self: Controller): string =
 proc closeAddAccountPopup*(self: Controller) =
   self.delegate.closeAddAccountPopup()
 
+proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
+  return self.walletAccountService.getAccountByAddress(address)
+
 proc getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
   return self.walletAccountService.fetchAccounts()
 
 proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   return self.walletAccountService.getAllMigratedKeyPairs()
 
-proc addAccount*(self: Controller) =
-  self.delegate.addAccount()
+proc finalizeAction*(self: Controller) =
+  self.delegate.finalizeAction()
 
 proc authenticateOrigin*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_ADD_ACCOUNTS_MODULE_IDENTIFIER,
@@ -181,6 +184,9 @@ proc addNewSeedPhraseAccount*(self: Controller, seedPhrase: string, doPasswordHa
     info "adding new wallet account from seed phrase failed", name=name, address=address
     return false
   return true
+
+proc updateAccount*(self: Controller, address: string, accountName: string, color: string, emoji: string): bool =
+  return self.walletAccountService.updateWalletAccount(address, accountName, color, emoji)
 
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)

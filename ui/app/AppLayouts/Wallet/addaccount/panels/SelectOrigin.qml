@@ -24,6 +24,7 @@ StatusSelect {
 
     selectedItemComponent: StatusListItem {
         title: Utils.appTranslation(root.selectedOrigin.name)
+        statusListItemTitle.color: Theme.palette.directColor1
         border.width: 1
         border.color: Theme.palette.baseColor2
 

@@ -284,6 +284,7 @@ Rectangle {
                         account: model
 
                         onEditAccountClicked: {
+                            RootStore.runEditAccountPopup(model.address)
                         }
 
                         onDeleteAccountClicked: {

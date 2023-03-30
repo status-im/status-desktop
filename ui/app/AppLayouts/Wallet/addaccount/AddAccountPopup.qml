@@ -24,7 +24,7 @@ StatusModal {
     closePolicy: root.store.disablePopup? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !root.store.disablePopup
 
-    header.title: qsTr("Add a new account")
+    header.title: root.store.editMode? qsTr("Edit account") : qsTr("Add a new account")
 
     onOpened: {
         root.store.resetStoreValues()
@@ -203,6 +203,10 @@ StatusModal {
                       StatusBaseButton.Type.Normal
             height: Constants.addAccountPopup.footerButtonsHeight
             text: {
+                if (root.store.editMode) {
+                    return qsTr("Save changes")
+                }
+
                 switch (root.store.currentState.stateType) {
 
                 case Constants.addAccountPopup.state.main:
@@ -226,6 +230,10 @@ StatusModal {
             enabled: root.store.primaryPopupButtonEnabled
 
             icon.name: {
+                if (root.store.editMode) {
+                    return ""
+                }
+
                 if (root.store.currentState.stateType === Constants.addAccountPopup.state.enterPrivateKey ||
                         root.store.currentState.stateType === Constants.addAccountPopup.state.enterSeedPhrase ||
                         root.store.currentState.stateType === Constants.addAccountPopup.state.confirmAddingNewMasterKey ||

@@ -130,8 +130,10 @@ Item {
             spacing: Style.current.halfPadding
             visible: d.addressResolved
 
+            addressText: qsTr("Public address of private key")
             addressDetailsItem: root.store.privateKeyAccAddress
             addressResolved: d.addressResolved
+            displayCopyButton: false
         }
 
         StatusModalDivider {

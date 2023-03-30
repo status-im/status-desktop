@@ -16,7 +16,13 @@ Column {
     property AddAccountStore store
 
     padding: Style.current.padding
-    state: root.store.addAccountModule.actionAuthenticated? d.expandedState : d.collapsedState
+    state: {
+        if (root.store.editMode) {
+            return d.expandedState
+        }
+
+        root.store.addAccountModule.actionAuthenticated? d.expandedState : d.collapsedState
+    }
 
     QtObject {
         id: d
@@ -28,6 +34,7 @@ Column {
     RowLayout {
         width: parent.width - 2 * root.padding
         height: 64
+        visible: !root.store.editMode
 
         StatusBaseText {
             font.pixelSize: Constants.addAccountPopup.labelFontSize1
@@ -90,6 +97,14 @@ Column {
 
     DerivationPath {
         id: derivationPathContent
+        visible: !root.store.editMode
+        width: parent.width - 2 * root.padding
+
+        store: root.store
+    }
+
+    DerivationPathDisplay {
+        visible: root.store.editMode
         width: parent.width - 2 * root.padding
 
         store: root.store
@@ -99,7 +114,7 @@ Column {
         State {
             name: d.expandedState
             PropertyChanges {target: expandImage; icon: "chevron-up"}
-            PropertyChanges {target: derivationPathContent; visible: true}
+            PropertyChanges {target: derivationPathContent; visible: !root.store.editMode}
         },
         State {
             name: d.collapsedState

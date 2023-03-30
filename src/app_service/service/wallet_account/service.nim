@@ -412,23 +412,25 @@ QtObject:
     self.checkRecentHistory()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
-  proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
+  proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): bool =
     if not self.walletAccountsContainsAddress(address):
       error "account's address is not among known addresses: ", address=address
-      return
+      return false
     try:
       var account = self.getAccountByAddress(address)
       let response = status_go_accounts.updateAccount(accountName, account.keyPairName, account.address, account.path, account.lastUsedDerivationIndex,
         account.derivedfrom, account.publicKey, account.keyUid, account.walletType, color, emoji, account.isWallet, account.isChat)
       if not response.error.isNil:
         error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
-        return
+        return false
       account.name = accountName
       account.color = color
       account.emoji = emoji
       self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
+      return true
     except Exception as e:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
+    return false
 
   proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string, paths: seq[string], hashPassword: bool)=
     let arg = FetchDerivedAddressesTaskArg(

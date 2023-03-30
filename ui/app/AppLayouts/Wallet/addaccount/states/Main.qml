@@ -148,8 +148,10 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 userProfilePublicKey: root.store.userProfilePublicKey
-                originModel: root.store.originModel
+                originModel: root.store.editMode? [] : root.store.originModel
                 selectedOrigin: root.store.selectedOrigin
+                caretVisible: !root.store.editMode
+                enabled: !root.store.editMode
 
                 onOriginSelected: {
                     if (keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddNewMasterKey) {
@@ -164,7 +166,8 @@ Item {
                 width: parent.width - 2 * Style.current.padding
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: Style.current.padding
-                visible: root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.unknown &&
+                visible: !root.store.editMode &&
+                         root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.unknown &&
                          root.store.selectedOrigin.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc
 
                 store: root.store
@@ -194,9 +197,18 @@ Item {
             Layout.fillWidth: true
             Layout.margins: Style.current.padding
             spacing: Style.current.halfPadding
-            visible: root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.privateKeyImport
+            visible: root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.privateKeyImport ||
+                     root.store.editMode &&
+                     root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.unknown &&
+                     root.store.selectedOrigin.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddWatchOnlyAcc
 
-            addressDetailsItem: root.store.privateKeyAccAddress
+            addressText: root.store.editMode? qsTr("Account") : qsTr("Public address of private key")
+            addressDetailsItem: root.store.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.privateKeyImport?
+                                    root.store.privateKeyAccAddress
+                                  : root.store.watchOnlyAccAddress
+            displayDetails: !root.store.editMode
+            displayCopyButton: root.store.editMode
+            addressColor: root.store.editMode? Theme.palette.baseColor1 : Theme.palette.directColor1
         }
 
         Loader {

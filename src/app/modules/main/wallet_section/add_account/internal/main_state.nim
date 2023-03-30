@@ -9,7 +9,7 @@ proc delete*(self: MainState) =
   self.State.delete
   
 method executePrePrimaryStateCommand*(self: MainState, controller: Controller) =
-  controller.addAccount()
+  controller.finalizeAction()
 
 method getNextSecondaryState*(self: MainState, controller: Controller): State =
   return createState(StateType.SelectMasterKey, self)

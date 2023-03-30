@@ -218,7 +218,13 @@ method runAddAccountPopup*(self: Module, addingWatchOnlyAccount: bool) =
   self.destroyAddAccountPopup()
   self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService, 
     self.walletAccountService)
-  self.addAccountModule.load(addingWatchOnlyAccount)
+  self.addAccountModule.loadForAddingAccount(addingWatchOnlyAccount)
+
+method runEditAccountPopup*(self: Module, address: string) =
+  self.destroyAddAccountPopup()
+  self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService, 
+    self.walletAccountService)
+  self.addAccountModule.loadForEditingAccount(address)
 
 method getAddAccountModule*(self: Module): QVariant =
   if self.addAccountModule.isNil:

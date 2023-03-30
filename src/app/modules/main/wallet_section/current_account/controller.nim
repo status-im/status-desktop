@@ -37,7 +37,7 @@ proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_serv
   return self.walletAccountService.getWalletAccount(accountIndex)
 
 proc update*(self: Controller, address: string, accountName: string, color: string, emoji: string) =
-  self.walletAccountService.updateWalletAccount(address, accountName, color, emoji)
+  discard self.walletAccountService.updateWalletAccount(address, accountName, color, emoji)
 
 method findTokenSymbolByAddress*(self: Controller, address: string): string =
   return self.walletAccountService.findTokenSymbolByAddress(address)

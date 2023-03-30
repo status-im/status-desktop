@@ -20,6 +20,7 @@ import ../../../../../app_service/service/keycard/service as keycard_service
 export io_interface
 
 const Label_NewWatchOnlyAccount = "LABEL-NEW-WATCH-ONLY-ACCOUNT"
+const Label_WatchOnlyAccount = "LABEL-WATCH-ONLY-ACCOUNT"
 const Label_Existing = "LABEL-EXISTING"
 const Label_ImportNew = "LABEL-IMPORT-NEW"
 const Label_OptionAddNewMasterKey = "LABEL-OPTION-ADD-NEW-MASTER-KEY"
@@ -50,7 +51,7 @@ type
     authenticationReason: AuthenticationReason
 
 ## Forward declaration
-proc doAddingAccount[T](self: Module[T])
+proc doAddAccount[T](self: Module[T])
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -72,8 +73,9 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-method load*[T](self: Module[T], addingWatchOnlyAccount: bool) =
+method loadForAddingAccount*[T](self: Module[T], addingWatchOnlyAccount: bool) =
   self.controller.init()
+  self.view.setEditMode(false)
   self.view.setCurrentState(newMainState(nil))
 
   var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
@@ -102,6 +104,62 @@ method load*[T](self: Module[T], addingWatchOnlyAccount: bool) =
     self.changeSelectedOrigin(items[0].getKeyUid())
   self.delegate.onAddAccountModuleLoaded()
 
+method loadForEditingAccount*[T](self: Module[T], address: string) =
+  self.controller.init()
+  self.view.setEditMode(true)
+  self.view.setCurrentState(newMainState(nil))
+
+  let accountDto = self.controller.getWalletAccount(address)
+  var addressDetailsItem = newDerivedAddressItem(order = 0, 
+    address = accountDto.address, 
+    path = accountDto.path, 
+    alreadyCreated = true,
+    hasActivity = false,
+    loaded = true)
+
+  self.view.setDisablePopup(false)
+  self.view.setStoredAccountName(accountDto.name)
+  self.view.setStoredSelectedColor(accountDto.color)
+  self.view.setStoredSelectedEmoji(accountDto.emoji)
+  self.view.setAccountName(accountDto.name) 
+  self.view.setSelectedColor(accountDto.color) 
+  self.view.setSelectedEmoji(accountDto.emoji)
+
+  if accountDto.walletType == WalletTypeWatch:
+    var item = newKeyPairItem(keyUid = Label_OptionAddWatchOnlyAcc)
+    item.setName(Label_WatchOnlyAccount)
+    item.setIcon("show")
+    self.view.setSelectedOrigin(item)
+    self.view.setWatchOnlyAccAddress(addressDetailsItem)
+  else:
+    var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
+      excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
+    if items.len == 0:
+      error "list of identified keypairs is empty, but it must have at least a profile keypair"
+      return
+
+    var selectedOrigin: KeyPairItem
+    for item in items:
+      if item.containsAccountAddress(address):
+        selectedOrigin = item
+        break
+    
+    if selectedOrigin.isNil or selectedOrigin.getKeyUid().len == 0:
+      error "selected address for editing is not known among identified keypairs", address=address
+      return
+
+    if selectedOrigin.getPairType() == KeyPairType.Profile.int or
+      selectedOrigin.getPairType() == KeyPairType.SeedImport.int:
+        self.view.setSelectedDerivedAddress(addressDetailsItem)
+    elif selectedOrigin.getPairType() == KeyPairType.PrivateKeyImport.int:
+      self.view.setPrivateKeyAccAddress(addressDetailsItem)
+
+    self.view.setOriginModelItems(items)
+    self.view.setDerivationPath(accountDto.path)
+    self.view.setSelectedOrigin(selectedOrigin)
+
+  self.delegate.onAddAccountModuleLoaded()  
+
 proc tryKeycardSync[T](self: Module[T]) = 
   if self.controller.getPin().len == 0:
     return
@@ -112,7 +170,8 @@ proc tryKeycardSync[T](self: Module[T]) =
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC, dataForKeycardToSync)
 
 method closeAddAccountPopup*[T](self: Module[T], switchToAccWithAddress: string = "") =
-  self.tryKeycardSync()
+  if not self.view.getEditMode():
+    self.tryKeycardSync()
   self.delegate.destroyAddAccountPopup(switchToAccWithAddress)
 
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
@@ -260,7 +319,7 @@ method onUserAuthenticated*[T](self: Module[T], pin: string, password: string, k
     self.view.setDisablePopup(true)
     let selectedOrigin = self.view.getSelectedOrigin()
     if selectedOrigin.getPairType() == KeyPairType.PrivateKeyImport.int:
-      self.doAddingAccount() # we're sure that we need to add an account from priv key from here, cause derivation is not possible for imported priv key
+      self.doAddAccount() # we're sure that we need to add an account from priv key from here, cause derivation is not possible for imported priv key
       return
     self.fetchAddressForDerivationPath()
     return
@@ -410,7 +469,7 @@ method onDerivedAddressesFetched*[T](self: Module[T], derivedAddresses: seq[Deri
       return
   self.setDerivedAddresses(derivedAddresses)
   if self.authenticationReason == AuthenticationReason.AddingAccount:
-    self.doAddingAccount()
+    self.doAddAccount()
 
 method onAddressesFromNotImportedMnemonicFetched*[T](self: Module[T], derivations: Table[string, DerivedAccountDetails], error: string) =
   if error.len > 0:
@@ -430,7 +489,7 @@ method onAddressesFromNotImportedMnemonicFetched*[T](self: Module[T], derivation
     )
   self.setDerivedAddresses(derivedAddresses)
   if self.authenticationReason == AuthenticationReason.AddingAccount:
-    self.doAddingAccount()
+    self.doAddAccount()
 
 method onDerivedAddressesFromKeycardFetched*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent,
   paths: seq[string]) =
@@ -453,7 +512,7 @@ method onDerivedAddressesFromKeycardFetched*[T](self: Module[T], keycardFlowType
       return
   self.setDerivedAddresses(derivedAddresses)
   if self.authenticationReason == AuthenticationReason.AddingAccount:
-    self.doAddingAccount()
+    self.doAddAccount()
 
 method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[DerivedAddressDto], error: string) =
   if not self.view.getScanningForActivityIsOngoing():
@@ -503,7 +562,7 @@ method startScanningForActivity*[T](self: Module[T]) =
 method authenticateForEditingDerivationPath*[T](self: Module[T]) =
   self.authenticateSelectedOrigin(AuthenticationReason.EditingDerivationPath)
 
-proc doAddingAccount[T](self: Module[T]) =
+proc doAddAccount[T](self: Module[T]) =
   self.view.setDisablePopup(true)
   let 
     selectedOrigin = self.view.getSelectedOrigin()
@@ -608,11 +667,36 @@ proc doAddingAccount[T](self: Module[T]) =
   else:
     self.closeAddAccountPopup()
 
-method addAccount*[T](self: Module[T]) =
+proc doEditAccount[T](self: Module[T]) =
+  self.view.setDisablePopup(true)
+  let selectedOrigin = self.view.getSelectedOrigin()
+  
+  var address = self.view.getWatchOnlyAccAddress().getAddress()
+  if selectedOrigin.getPairType() == KeyPairType.Profile.int or
+    selectedOrigin.getPairType() == KeyPairType.SeedImport.int:
+      let selectedAddrItem = self.view.getSelectedDerivedAddress()
+      address = selectedAddrItem.getAddress()
+  elif selectedOrigin.getPairType() == KeyPairType.PrivateKeyImport.int:
+      let selectedAddrItem = self.view.getPrivateKeyAccAddress()
+      address = selectedAddrItem.getAddress()
+  
+  if self.controller.updateAccount(
+    address = address,
+    accountName = self.view.getAccountName(),
+    color = self.view.getSelectedColor(),
+    emoji = self.view.getSelectedEmoji()):
+      self.closeAddAccountPopup(address)
+  else:
+    self.closeAddAccountPopup()
+
+method finalizeAction*[T](self: Module[T]) =
+  if self.view.getEditMode():
+    self.doEditAccount()
+    return
   if self.isAuthenticationNeededForSelectedOrigin():
     self.authenticateSelectedOrigin(AuthenticationReason.AddingAccount)
     return
-  self.doAddingAccount()
+  self.doAddAccount()
 
 method buildNewPrivateKeyKeypairAndAddItToOrigin*[T](self: Module[T]) =
   let genAcc = self.controller.getGeneratedAccount()

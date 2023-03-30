@@ -196,4 +196,8 @@ QtObject {
     function runAddWatchOnlyAccountPopup() {
         walletSection.runAddAccountPopup(true)
     }
+
+    function runEditAccountPopup(address) {
+        walletSection.runEditAccountPopup(address)
+    }
 }
