@@ -209,6 +209,10 @@ QtObject {
             if (root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.profile ||
                     root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.seedImport) {
                 return valid &&
+                        !!root.selectedDerivedAddress &&
+                        root.selectedDerivedAddress.loaded &&
+                        !root.selectedDerivedAddress.alreadyCreated &&
+                        root.selectedDerivedAddress.address !== "" &&
                         root.derivationPathRegEx.test(root.addAccountModule.derivationPath) &&
                         (!root.derivationPathOutOfTheDefaultStatusDerivationTree ||
                          root.derivationPathOutOfTheDefaultStatusDerivationTreeConfirmed)
