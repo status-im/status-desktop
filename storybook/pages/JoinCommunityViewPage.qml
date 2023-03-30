@@ -41,6 +41,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
         property bool isInvitationPending: true
         property bool isJoinRequestRejected: false
         property bool requiresRequest: false
+        property int loginType: Constants.LoginType.Biometrics
 
         property var communityHoldingsModel: PermissionsModel.shortPermissionsModel
         property var viewOnlyHoldingsModel: PermissionsModel.shortPermissionsModel
@@ -116,6 +117,7 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 joinCommunity: d.joinCommunity
                 accessType: d.accessType
                 isInvitationPending: d.isInvitationPending
+                loginType: d.loginType
 
                 // Blur background properties:
                 membersCount: d.membersCount
@@ -279,6 +281,21 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     onViewOnlyHoldingsModelChanged: d.viewOnlyHoldingsModel = viewOnlyHoldingsModel
                     onViewAndPostHoldingsModelChanged: d.viewAndPostHoldingsModel = viewAndPostHoldingsModel
                     onModerateHoldingsModelChanged: d.moderateHoldingsModel = moderateHoldingsModel
+                }
+
+                ColumnLayout {
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Login type"
+                    }
+
+                    ComboBox {
+                        id: loginTypeComboBox
+                        Layout.fillWidth: true
+                        model: ["Password","Biometrics","Keycard"]
+                        onActivated: d.loginType = currentIndex
+                        Component.onCompleted: currentIndex = d.loginType
+                    }
                 }
             }
         }

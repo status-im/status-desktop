@@ -11,6 +11,7 @@ import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.controls.community 1.0
 
 import SortFilterProxyModel 0.2
+import utils 1.0
 
 
 Control {
@@ -28,6 +29,7 @@ Control {
     property var viewAndPostHoldingsModel
     property var moderateHoldingsModel
     property bool showOnlyPanels: false
+    property int loginType: Constants.LoginType.Password
 
     property var assetsModel
     property var collectiblesModel
@@ -57,6 +59,11 @@ Control {
 
         function getRevealAddressText() {
             return root.joinCommunity ? (root.requiresRequest ? d.communityRevealAddressWithRequestText : d.communityRevealAddressText) : d.channelRevealAddressText
+        }
+
+        function getRevealAddressIcon() {
+            if(root.loginType == Constants.LoginType.Password) return "password"
+            return root.loginType == Constants.LoginType.Biometrics ? "touch-id" : "keycard"
         }
     }
 
@@ -106,6 +113,7 @@ Control {
             Layout.alignment: Qt.AlignHCenter
             visible: !root.showOnlyPanels && !root.isJoinRequestRejected
             text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
+            icon.name: root.isInvitationPending ? "" : d.getRevealAddressIcon()
             font.pixelSize: 13
             enabled: root.requirementsMet
             onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.revealAddressClicked()
