@@ -603,9 +603,6 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     message.mentionedUsersPks
     )
 
-  # ask service to send SIGNAL_MENTIONED_IN_EDITED_MESSAGE signal if there is a new user's mention
-  self.controller.checkEditedMessageForMentions(self.getChatId(), message, mentionedUsersPks)
-
 method onHistoryCleared*(self: Module) =
   self.view.model().clear()
 
