@@ -29,6 +29,7 @@ const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALL
 const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
 const output_csv {.booldefine.} = false
 const KDF_ITERATIONS* {.intdefine.} = 256_000
+const DEFAULT_COLOR_FOR_DEFAULT_WALLET_ACCOUNT = "#2946C4" # to match `preDefinedWalletAccountColors` on the qml side
 
 # allow runtime override via environment variable. core contributors can set a
 # specific peer to set for testing messaging and mailserver functionality with squish.
@@ -236,7 +237,7 @@ QtObject:
       {
         "public-key": account.derivedAccounts.defaultWallet.publicKey,
         "address": account.derivedAccounts.defaultWallet.address,
-        "color": "#4360df",
+        "color": DEFAULT_COLOR_FOR_DEFAULT_WALLET_ACCOUNT,
         "wallet": true,
         "path": PATH_DEFAULT_WALLET,
         "name": "Status account",
@@ -434,7 +435,7 @@ QtObject:
         {
           "public-key": walletPublicKey,
           "address": walletAddress,
-          "color": "#4360df",
+          "color": DEFAULT_COLOR_FOR_DEFAULT_WALLET_ACCOUNT,
           "wallet": true,
           "path": PATH_DEFAULT_WALLET,
           "name": "Status account",
