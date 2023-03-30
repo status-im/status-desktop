@@ -128,13 +128,8 @@ def hover_and_click_object_by_name(objName: str):
     squish.mouseClick(obj, squish.Qt.LeftButton)
 
 # It executes the left-click action into object with given object name:
-# If timeout is 0, it will use the default timeout (testSettings.waitForObjectTimeout)
-def click_obj_by_name(objName: str, timeout: int=0):
-    if timeout > 0:
-        obj = squish.waitForObject(getattr(names, objName), timeout)
-    else:
-        obj = squish.waitForObject(getattr(names, objName))
-    squish.mouseClick(obj, squish.Qt.LeftButton)
+def click_obj_by_name(objName: str, timeout: int = squish.testSettings.waitForObjectTimeout):
+    squish.mouseClick(squish.waitForObject(getattr(names, objName), timeout), squish.Qt.LeftButton)
 
 # It executes the click action into the given object at particular coordinates:
 def click_obj_by_name_at_coordinates(objName: str, x: int, y: int):

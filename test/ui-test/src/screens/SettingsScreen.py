@@ -129,6 +129,7 @@ class BackupSeedPhrasePopup(Enum):
     CONFIRM_SECOND_WORD_INPUT: str = "backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord_inputText"
     CONFIRM_YOU_STORED_CHECKBOX: str = "backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck"
     CONFIRM_YOU_STORED_BUTTON: str = "backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton"
+    STEP_TITLE: str = "backup_seed_phrase_popup_step_StyledText"
 
 
 class SettingsScreen:
@@ -398,7 +399,7 @@ class SettingsScreen:
         obj = wait_and_get_obj(BackupSeedPhrasePopup.STORE_IT_CHECKBOX.value)
         obj.checked = True
         click_obj_by_name(BackupSeedPhrasePopup.NEXT_BUTTON.value)
-
+        assert wait_for_text_matching(BackupSeedPhrasePopup.STEP_TITLE.value, 'Step 1 of 4'), 'Step Title not found'        
         # Show seed phrase
         click_obj_by_name(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
 

@@ -1,3 +1,4 @@
+from objectmaphelper import *
 from scripts.global_names import *
 from enum import Enum
 
@@ -150,6 +151,7 @@ backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord = {"container": st
 backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord_inputText = {"container": backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord, "objectName": "BackupSeedStepBase_inputText", "type": "TextEdit", "visible": True}
 backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmStoringSeedPhrasePanel_storeCheck", "type": "StatusCheckBox", "checkable": True, "visible": True}
 backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal_completeAndDeleteSeedPhraseButton", "type": "StatusButton", "visible": True}
+backup_seed_phrase_popup_step_StyledText = {"container": statusDesktop_mainWindow_overlay, "type": "StyledText", "unnamed": 1, "visible": True}
 
 # User Status Profile Menu
 userContextmenu_AlwaysActiveButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAlwaysOnlineAction", "type": "StatusMenuItem", "visible": True}
