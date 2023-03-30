@@ -34,16 +34,6 @@ Item {
     QtObject {
         id: d
 
-        readonly property list<StatusValidator> syncCodeValidators: [
-            StatusValidator {
-                name: "isConnectionString"
-                errorMessage: qsTr("This does not look like a sync code")
-                validate: (value) => {
-                              return d.validateConnectionString(value)
-                          }
-            }
-        ]
-
         function validateConnectionString(connectionString) {
             const result = root.startupStore.validateLocalPairingConnectionString(connectionString)
             return result === ""
@@ -117,7 +107,13 @@ Item {
                         right: parent.right
                         verticalCenter: parent.verticalCenter
                     }
-                    validators: d.syncCodeValidators
+                    validators: [
+                        StatusValidator {
+                            name: "isSyncQrCode"
+                            errorMessage: qsTr("This does not look like a sync QR code")
+                            validate: d.validateConnectionString
+                        }
+                    ]
                     onConnectionStringFound: {
                         d.onConnectionStringFound(connectionString)
                     }
@@ -136,7 +132,13 @@ Item {
                         verticalCenter: parent.verticalCenter
                     }
                     input.readOnly: nextStateDelay.running
-                    input.validators: d.syncCodeValidators
+                    input.validators: [
+                        StatusValidator {
+                            name: "isSyncCode"
+                            errorMessage: qsTr("This does not look like a sync code")
+                            validate: d.validateConnectionString
+                        }
+                    ]
                     input.onValidChanged: {
                         if (!input.valid)
                             return
