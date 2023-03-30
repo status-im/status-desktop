@@ -857,6 +857,12 @@ QtObject {
         NoError
     }
 
+    enum LoginType {
+        Password,
+        Biometrics,
+        Keycard
+    }
+
 
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"

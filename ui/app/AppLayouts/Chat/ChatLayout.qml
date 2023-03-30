@@ -72,6 +72,7 @@ StackLayout {
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             openCreateChat: rootStore.openCreateChat
+            loginType: root.rootStore.loginType
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
             onRevealAddressClicked: {

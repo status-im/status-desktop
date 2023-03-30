@@ -234,6 +234,8 @@ QtObject {
 
     property bool isDebugEnabled: advancedModule ? advancedModule.isDebugEnabled : false
 
+    readonly property int loginType: getLoginType()
+
     property var stickersStore: StickersStore {
         stickersModule: stickersModuleInst
     }
@@ -654,6 +656,17 @@ QtObject {
 
     function hex2Eth(value) {
         return globalUtilsInst.hex2Eth(value)
+    }
+
+    function getLoginType() {
+        if(!userProfileInst)
+            return Constants.LoginType.Password
+
+        if(userProfileInst.usingBiometricLogin)
+            return Constants.LoginType.Biometrics
+        else if(userProfileInst.isKeycardUser)
+            return Constants.LoginType.Keycard
+        else return Constants.LoginType.Password
     }
 
     readonly property Connections communitiesModuleConnections: Connections {

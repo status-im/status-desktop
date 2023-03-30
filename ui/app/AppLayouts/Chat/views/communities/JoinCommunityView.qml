@@ -36,6 +36,7 @@ StatusSectionLayout {
     property bool requirementsMet: true
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
+    property alias loginType: overlayPannel.loginType
 
     property var communityHoldingsModel
     property var viewOnlyHoldingsModel
