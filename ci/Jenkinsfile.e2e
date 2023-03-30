@@ -54,7 +54,7 @@ pipeline {
     QTDIR = '/opt/qt/5.15.2/gcc_64'
     PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Include library in order to compile the project */
-    LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
+    LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/DOtherSide/build/qzxing:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
     /* Container ports */
     RPC_PORT = "${8545 + env.EXECUTOR_NUMBER.toInteger()}"
     P2P_PORT = "${6010 + env.EXECUTOR_NUMBER.toInteger()}"
