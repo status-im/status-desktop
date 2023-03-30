@@ -397,18 +397,6 @@ QtObject:
         self.notificationsCountChanged()
         return
 
-  proc incrementNotifications*(self: SectionModel, id: string) =
-    let index = self.getItemIndex(id)
-    if (index == -1):
-      return
-
-    self.items[index].hasNotification = true
-    self.items[index].notificationsCount = self.items[index].notificationsCount + 1
-    let modelIndex = self.createIndex(index, 0, nil)
-    defer: modelIndex.delete
-    self.dataChanged(modelIndex, modelIndex, @[ModelRole.HasNotification.int, ModelRole.NotificationsCount.int])
-    self.notificationsCountChanged()
-
   proc appendCommunityToken*(self: SectionModel, id: string, item: TokenItem) =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):

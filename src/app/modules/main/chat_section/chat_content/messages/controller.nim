@@ -313,9 +313,5 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 proc leaveChat*(self: Controller) =
   self.chatService.leaveChat(self.chatId)
 
-method checkEditedMessageForMentions*(self: Controller, chatId: string,
-  editedMessage: MessageDto, oldMentions: seq[string]) =
-  self.messageService.checkEditedMessageForMentions(chatId, editedMessage, oldMentions)
-
 method resendChatMessage*(self: Controller, messageId: string): string =
   return self.messageService.resendChatMessage(messageId)

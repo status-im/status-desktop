@@ -482,9 +482,6 @@ proc updateParentBadgeNotifications(self: Module) =
     unviewedMentionsCount
   )
 
-proc incrementParentBadgeNotifications(self: Module) =
-  self.delegate.onNotificationsIncremented(self.controller.getMySectionId())
-
 proc updateBadgeNotifications(self: Module, chatId: string, hasUnreadMessages: bool, unviewedMentionsCount: int) =
   # update model of this module (appropriate chat from the chats list (chats model))
   self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
@@ -493,15 +490,6 @@ proc updateBadgeNotifications(self: Module, chatId: string, hasUnreadMessages: b
     self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
   # update parent module
   self.updateParentBadgeNotifications()
-
-proc incrementBadgeNotifications(self: Module, chatId: string) =
-  if self.chatsLoaded:
-    let notificationCount = self.view.chatsModel().incrementNotificationsForItemByIdAndGetNotificationCount(chatId)
-    # update child module
-    if (self.chatContentModules.contains(chatId)):
-      self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages = true, notificationCount)
-  # update parent module
-  self.incrementParentBadgeNotifications()
 
 method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTimestamp: int) =
   self.view.chatsModel().updateLastMessageTimestampOnItemById(chatId, lastMessageTimestamp)
@@ -964,15 +952,6 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat,
     message.id, notificationType.int, chatTypeMsgBelongsTo == ChatType.OneToOne,
     chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
-
-method onMeMentionedInEditedMessage*(self: Module, chatId: string, editedMessage : MessageDto) =
-  if((editedMessage.communityId.len == 0 and
-    self.controller.getMySectionId() != singletonInstance.userProfile.getPubKey()) or
-    (editedMessage.communityId.len > 0 and
-    self.controller.getMySectionId() != editedMessage.communityId)):
-    return
-
-  self.incrementBadgeNotifications(chatId)
 
 method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
   self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))
