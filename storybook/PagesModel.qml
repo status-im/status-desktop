@@ -130,6 +130,10 @@ ListModel {
          section: "Popups"
     }
     ListElement {
+         title: "RemoteSelfDestructPopup"
+         section: "Popups"
+    }
+    ListElement {
         title: "MembersSelector"
         section: "Components"
     }
