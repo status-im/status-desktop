@@ -275,15 +275,20 @@ Control {
                     Loader {
                         active: root.messageDetails.contentType === StatusMessage.ContentType.Image && !editMode
                         visible: active
+                        Layout.fillWidth: true
 
                         sourceComponent: Column {
                             id: imagesColumn
                             spacing: 8
                             Loader {
                                 active: root.messageDetails.messageText !== ""
+                                anchors.left: parent.left
+                                anchors.right: parent.right
                                 visible: active
                                 sourceComponent: StatusTextMessage {
                                     messageDetails: root.messageDetails
+                                    allowShowMore: !root.isInPinnedPopup
+                                    textField.anchors.rightMargin: root.isInPinnedPopup ? /*Style.current.xlPadding*/ 32 : 0 // margin for the "Unpin" floating button
                                     onLinkActivated: {
                                         root.linkActivated(link);
                                     }
