@@ -166,6 +166,18 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "AddressesInputList"
+        section: "Components"
+    }
+    ListElement {
+        title: "AddressesSelectorPanel"
+        section: "Components"
+    }
+    ListElement {
+        title: "AirdropRecipientsSelector"
+        section: "Components"
+    }
+    ListElement {
         title: "AirdropTokensSelector"
         section: "Components"
     }
