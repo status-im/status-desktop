@@ -18,7 +18,7 @@ type
     networkConnectionService: network_connection_service.Service
 
   # Forward declaration
-proc resetOwnedCollectibles*(self: Controller, chainId: int, address: string)
+proc refetchOwnedCollectibles*(self: Controller, chainId: int, address: string)
 
 proc newController*(
   delegate: io_interface.AccessInterface,
@@ -45,17 +45,18 @@ proc resetCollectibles(self: Controller, chainId: int, address: string) =
   let data = self.collectibleService.getOwnedCollectibles(chainId, address)
   self.delegate.setCollectibles(chainId, address, data)
 
-proc processNewCollectibles(self: Controller, chainId: int, address: string) =
+proc updateCollectibles(self: Controller, chainId: int, address: string) =
   let data = self.collectibleService.getOwnedCollectibles(chainId, address)
   self.delegate.appendCollectibles(chainId, address, data)
 
-  if not self.nodeService.isConnected() or not self.networkConnectionService.checkIfConnected(COLLECTIBLES):
-    self.delegate.connectionToOpenSea(false)
-
 proc init*(self: Controller) =  
-  self.events.on(SIGNAL_OWNED_COLLECTIBLES_RESET) do(e:Args):
+  self.events.on(SIGNAL_OWNED_COLLECTIBLES_REFETCH) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
     self.resetCollectibles(args.chainId, args.address)
+
+  self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_ERROR) do(e:Args):
+    let args = OwnedCollectiblesUpdateArgs(e)
+    self.updateCollectibles(args.chainId, args.address)
 
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
@@ -63,18 +64,10 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
-    self.processNewCollectibles(args.chainId, args.address)
+    self.updateCollectibles(args.chainId, args.address)
 
   self.events.on(SIGNAL_REFRESH_COLLECTIBLES) do(e:Args):
-    self.collectibleService.resetAllOwnedCollectibles()
-
-  self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
-    self.delegate.connectionToOpenSea(false)
-
-  self.events.on(SIGNAL_CONNECTION_UPDATE) do(e:Args):
-    let args = NetworkConnectionsArgs(e)
-    if args.website == COLLECTIBLES:
-      self.delegate.connectionToOpenSea(not args.completelyDown)
+    self.collectibleService.refetchAllOwnedCollectibles()
 
 proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
@@ -85,8 +78,8 @@ proc getNetwork*(self: Controller): network_service.NetworkDto =
 proc getOwnedCollectibles*(self: Controller, chainId: int, address: string): CollectiblesData =
   return self.collectibleService.getOwnedCollectibles(chainId, address)
 
-proc resetOwnedCollectibles*(self: Controller, chainId: int, address: string) =
-  self.collectibleService.resetOwnedCollectibles(chainId, address)
+proc refetchOwnedCollectibles*(self: Controller, chainId: int, address: string) =
+  self.collectibleService.refetchOwnedCollectibles(chainId, address)
 
 proc fetchOwnedCollectibles*(self: Controller, chainId: int, address: string) =
   self.collectibleService.fetchOwnedCollectibles(chainId, address)

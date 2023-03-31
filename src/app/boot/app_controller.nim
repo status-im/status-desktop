@@ -180,7 +180,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.collectibleService = collectible_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService)
   result.walletAccountService = wallet_account_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.accountsService,
-    result.tokenService, result.networkService, result.collectibleService
+    result.tokenService, result.networkService
   )
   result.messageService = message_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.contactsService, result.tokenService, result.walletAccountService, result.networkService

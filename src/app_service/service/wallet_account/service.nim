@@ -6,7 +6,6 @@ import ../settings/service as settings_service
 import ../accounts/service as accounts_service
 import ../token/service as token_service
 import ../network/service as network_service
-import ../collectible/service as collectible_service
 import ../../common/[account_constants, utils]
 import ../../../app/global/global_singleton
 
@@ -123,7 +122,6 @@ QtObject:
     accountsService: accounts_service.Service
     tokenService: token_service.Service
     networkService: network_service.Service
-    collectibleService: collectible_service.Service
     processedKeyPair: KeyPairDto
     walletAccountsLock: Lock
     walletAccounts {.guard: walletAccountsLock.}: OrderedTable[string, WalletAccountDto]
@@ -146,7 +144,6 @@ QtObject:
     accountsService: accounts_service.Service,
     tokenService: token_service.Service,
     networkService: network_service.Service,
-    collectibleService: collectible_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -157,7 +154,6 @@ QtObject:
     result.accountsService = accountsService
     result.tokenService = tokenService
     result.networkService = networkService
-    result.collectibleService = collectibleService
     initLock(result.walletAccountsLock)
     withLock result.walletAccountsLock:
       result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
@@ -879,6 +875,3 @@ QtObject:
             totalTokenBalance += token.getTotalBalanceOfSupportedChains()
 
     return totalTokenBalance   
-
-  proc getHasCollectiblesCache*(self: Service, address: string): bool =
-    return self.collectibleService.areCollectionsLoaded(address)

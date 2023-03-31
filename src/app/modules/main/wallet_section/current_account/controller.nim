@@ -4,6 +4,7 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/token/service as token_service
 import ../../../../../app_service/service/currency/service as currency_service
+import ../../../../../app_service/service/collectible/service as collectible_service
 
 type
   Controller* = ref object of RootObj
@@ -12,6 +13,7 @@ type
     networkService: network_service.Service
     tokenService: token_service.Service
     currencyService: currency_service.Service
+    collectibleService: collectible_service.Service
  
 proc newController*(
   delegate: io_interface.AccessInterface,
@@ -19,6 +21,7 @@ proc newController*(
   networkService: network_service.Service,
   tokenService: token_service.Service,
   currencyService: currency_service.Service,
+  collectibleService: collectible_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -26,6 +29,7 @@ proc newController*(
   result.networkService = networkService
   result.tokenService = tokenService
   result.currencyService = currencyService
+  result.collectibleService = collectibleService
 
 proc delete*(self: Controller) =
   discard
@@ -58,4 +62,4 @@ proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   return self.walletAccountService.getAllMigratedKeyPairs()
 
 proc getHasCollectiblesCache*(self: Controller, address: string): bool  =
-  return self.walletAccountService.getHasCollectiblesCache(address)
+  return self.collectibleService.areCollectionsLoaded(address)
