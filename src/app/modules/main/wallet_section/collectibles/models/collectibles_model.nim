@@ -30,6 +30,7 @@ QtObject:
       allCollectiblesLoaded: bool
       isFetching: bool
       isError: bool
+      loadingItemsStartIdx: int
 
   proc appendLoadingItems(self: Model)
   proc removeLoadingItems(self: Model)
@@ -48,6 +49,7 @@ QtObject:
     result.allCollectiblesLoaded = false
     result.isFetching = false
     result.isError = false
+    result.loadingItemsStartIdx = -1
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
@@ -181,27 +183,32 @@ QtObject:
       result = newQVariant(item.getIsPinned())
 
   proc appendLoadingItems(self: Model) =
+    if not self.loadingItemsStartIdx < 0:
+      return
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
     let loadingItem = initLoadingItem()
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + loadingItemsCount - 1)
+    self.loadingItemsStartIdx = self.items.len
+    self.beginInsertRows(parentModelIndex, self.loadingItemsStartIdx, self.loadingItemsStartIdx + loadingItemsCount - 1)
     for i in 1..loadingItemsCount:
       self.items.add(loadingItem)
     self.endInsertRows()
     self.countChanged()
 
   proc removeLoadingItems(self: Model) =
+    if self.loadingItemsStartIdx < 0:
+      return
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
   
-    for i in 0 ..< self.items.len:
-      if self.items[i].getIsLoading():
-        self.beginRemoveRows(parentModelIndex, i, i + loadingItemsCount - 1)
-        self.items.delete(i, i + loadingItemsCount - 1)
-        self.endRemoveRows()
-        self.countChanged()
-        return
+    self.beginRemoveRows(parentModelIndex, self.loadingItemsStartIdx, self.loadingItemsStartIdx + loadingItemsCount - 1)
+    self.items.delete(self.loadingItemsStartIdx, self.loadingItemsStartIdx + loadingItemsCount - 1)
+    self.loadingItemsStartIdx = -1
+    self.endRemoveRows()
+    self.countChanged()
 
   proc setItems*(self: Model, items: seq[Item]) =
     if self.isFetching:
@@ -224,8 +231,3 @@ QtObject:
     self.countChanged()
     if self.isFetching:
       self.appendLoadingItems()
-
-  # in case loading is still going on and no items are present, show loading items when there is no connection to opensea possible
-  proc connectionToOpenSea*(self: Model, connected: bool) =
-    if self.items.len == 0:
-      self.setIsFetching(not connected)

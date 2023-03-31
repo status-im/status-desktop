@@ -8,6 +8,7 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/node/service as node_service
 import ../../../../../app_service/service/network_connection/service as network_connection
+import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../shared_models/currency_amount_utils
 import ../../../shared_models/currency_amount
 import ../../../shared_models/token_model as token_model
@@ -43,13 +44,14 @@ proc newModule*(
   networkService: network_service.Service,
   tokenService: token_service.Service,
   currencyService: currency_service.Service,
+  collectibleService: collectible_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
   result.currentAccountIndex = 0
   result.view = newView(result)
-  result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService)
+  result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService, collectibleService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =

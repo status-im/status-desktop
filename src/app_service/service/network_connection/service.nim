@@ -108,7 +108,7 @@ QtObject:
         let connectionStatus = self.connectionStatus[BLOCKCHAINS]
         self.updateBlockchainsStatus(connectionStatus.completelyDown, connectionStatus.chainIds, connectionStatus.lastCheckedAt)
 
-    self.events.on(SIGNAL_OWNED_COLLECTIBLES_RESET) do(e:Args):
+    self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_ERROR) do(e:Args):
       if self.connectionStatus.hasKey(COLLECTIBLES):
         let connectionStatus = self.connectionStatus[COLLECTIBLES]
         self.updateMarketOrCollectibleStatus(COLLECTIBLES, connectionStatus.completelyDown, connectionStatus.lastCheckedAt)

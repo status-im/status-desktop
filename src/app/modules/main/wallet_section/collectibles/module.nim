@@ -108,8 +108,14 @@ method onFetchStarted*(self: Module, chainId: int, address: string) =
 
 method setCollectibles*(self: Module, chainId: int, address: string, data: CollectiblesData) =
   if self.chainId == chainId and self.address == address:
-    self.view.setIsFetching(data.isFetching)
     self.view.setIsError(data.isError)
+
+    if data.isError and not data.anyLoaded:
+      # If fetching failed before being able to get any collectibles info,
+      # show loading animation
+      self.view.setIsFetching(true)
+    else:
+      self.view.setIsFetching(data.isFetching)
 
     var newCollectibles = data.collectibles.map(oc => self.ownedCollectibleToItem(oc))
     self.view.setCollectibles(newCollectibles)
@@ -117,10 +123,16 @@ method setCollectibles*(self: Module, chainId: int, address: string, data: Colle
 
 method appendCollectibles*(self: Module, chainId: int, address: string, data: CollectiblesData) =
   if self.chainId == chainId and self.address == address:
-    self.view.setIsFetching(data.isFetching)
     self.view.setIsError(data.isError)
 
-    if not data.isError:
+    if data.isError and not data.anyLoaded:
+      # If fetching failed before being able to get any collectibles info,
+      # show loading animation
+      self.view.setIsFetching(true)
+    else:
+      self.view.setIsFetching(data.isFetching)
+
+    if data.lastLoadCount > 0:
       var ownedCollectiblesToAdd = newSeq[OwnedCollectible]()
       for i in data.collectibles.len - data.lastLoadCount ..< data.collectibles.len:
         ownedCollectiblesToAdd.add(data.collectibles[i])
@@ -128,7 +140,5 @@ method appendCollectibles*(self: Module, chainId: int, address: string, data: Co
       let newCollectibles = ownedCollectiblesToAdd.map(oc => self.ownedCollectibleToItem(oc))
 
       self.view.appendCollectibles(newCollectibles)
-      self.view.setAllLoaded(data.allLoaded)
 
-method connectionToOpenSea*(self: Module, connected: bool) =
-   self.view.connectionToOpenSea(connected)
+    self.view.setAllLoaded(data.allLoaded)
