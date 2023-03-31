@@ -98,6 +98,10 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+         title: "TokenHoldersPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
