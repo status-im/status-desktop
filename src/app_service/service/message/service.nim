@@ -248,18 +248,18 @@ QtObject:
           continue
 
         # Ignore messages older than current chat cursor
-        if(self.isChatCursorInitialized(chatId)):
+        if self.isChatCursorInitialized(chatId):
           let currentChatCursor = self.initOrGetMessageCursor(chatId)
           let msgCursorValue = initCursorValue(msg.id, msg.clock)
           if(not currentChatCursor.isLessThan(msgCursorValue)):
             currentChatCursor.makeObsolete()
             continue
 
-        if(msg.editedAt > 0):
+        if msg.editedAt > 0:
           let data = MessageEditedArgs(chatId: msg.localChatId, message: msg)
           self.events.emit(SIGNAL_MESSAGE_EDITED, data)
-
-        chatMessages.add(msg)
+        else:
+          chatMessages.add(msg)
 
       let data = MessagesArgs(
         sectionId: if chats[i].communityId.len != 0: chats[i].communityId else: singletonInstance.userProfile.getPubKey(),
