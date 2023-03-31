@@ -25,25 +25,33 @@ QtObject {
                            ensName: "carmen.eth",
                            walletAddress: "0xb794f5450ba39494ce839613fffba74279579268",
                            imageSource:image,
-                           amount: 3
+                           amount: 3,
+                           selfDestructAmount: 0,
+                           selfDestruct: false
                        },
                        {
                            ensName: "chris.eth",
                            walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579268",
                            imageSource: image,
-                           amount: 2
+                           amount: 2,
+                           selfDestructAmount: 0,
+                           selfDestruct: false
                        },
                        {
                            ensName: "emily.eth",
                            walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579268",
                            imageSource: image,
-                           amount: 2
+                           amount: 2,
+                           selfDestructAmount: 0,
+                           selfDestruct: false
                        },
                        {
                            ensName: "",
                            walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579268",
                            imageSource: "",
-                           amount: 1
+                           amount: 1,
+                           selfDestructAmount: 0,
+                           selfDestruct: false
                        }
                    ])
     }

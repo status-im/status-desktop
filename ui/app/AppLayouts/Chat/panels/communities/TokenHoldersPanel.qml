@@ -15,10 +15,14 @@ import shared.controls 1.0
 Control {
     id: root
 
-    // Expected roles: ensName, walletAddress, imageSource and amount
+    // Expected roles: ensName, walletAddress, imageSource, amount, selfDestructAmount and selfDestruct
     property var model
 
     property string tokenName
+    property bool isSelectorMode: false
+
+    signal selfDestructChanged()
+
 
     QtObject {
         id: d
@@ -29,15 +33,6 @@ Control {
     contentItem: ColumnLayout {
         anchors.fill: parent
         spacing: Style.current.padding
-
-        StatusBaseText {
-            visible: !root.preview
-            Layout.fillWidth: true
-            wrapMode: Text.Wrap
-            font.pixelSize: Style.current.primaryTextFontSize
-            color: Theme.palette.baseColor1
-            text: qsTr("All %1 token holders").arg(root.tokenName)
-        }
 
         SortFilterProxyModel {
             id: filteredModel
@@ -55,7 +50,9 @@ Control {
 
         SearchBox {
             id: searcher
+
             Layout.fillWidth: true
+
             topPadding: 0
             bottomPadding: 0
             minimumHeight: 36 // by design
@@ -64,26 +61,87 @@ Control {
             placeholderText: enabled ? qsTr("Search") : qsTr("No placeholders to search")
         }
 
-        StatusListView {
-            id: holders
+        StatusBaseText {
+            Layout.fillWidth: true
 
+            visible: !root.preview
+            wrapMode: Text.Wrap
+            font.pixelSize: Style.current.primaryTextFontSize
+            color: Theme.palette.baseColor1
+            text: searcher.text.length > 0 ? qsTr("Search results") : qsTr("All %1 token holders").arg(root.tokenName)
+        }
+
+        StatusListView {
             Layout.fillWidth: true
             Layout.preferredHeight: childrenRect.height
-            leftMargin: -Style.current.padding
-            model: filteredModel
-            delegate: StatusListItem {
-                readonly property bool unknownHolder: model.ensName === ""
-                readonly property string formattedTitle: unknownHolder ? "?" : model.ensName
 
-                sensor.enabled: false
+            model: filteredModel
+            delegate: RowLayout {
                 width: ListView.view.width
-                title: formattedTitle
-                statusListItemTitle.visible: !unknownHolder
-                subTitle: model.walletAddress
-                asset.name: model.imageSource
-                asset.isImage: true
-                asset.isLetterIdenticon: unknownHolder
-                asset.color: Theme.palette.userCustomizationColors[d.red2Color]
+                spacing: Style.current.padding
+
+                StatusListItem {
+                    readonly property bool unknownHolder: model.ensName === ""
+                    readonly property string formattedTitle: unknownHolder ? "?" : model.ensName
+
+                    Layout.fillWidth: true
+
+                    leftPadding: 0
+                    rightPadding: 0
+                    sensor.enabled: false
+                    title: formattedTitle
+                    statusListItemTitle.visible: !unknownHolder
+                    subTitle: model.walletAddress
+                    asset.name: model.imageSource
+                    asset.isImage: true
+                    asset.isLetterIdenticon: unknownHolder
+                    asset.color: Theme.palette.userCustomizationColors[d.red2Color]
+                }
+
+                StatusComboBox {
+                    id: combo
+
+                    Layout.preferredWidth: 70
+                    Layout.preferredHeight: 44
+
+                    visible: root.isSelectorMode && amount > 1
+                    control.spacing: Style.current.halfPadding / 2
+                    model: amount
+                    size: StatusComboBox.Size.Small
+                    type: StatusComboBox.Type.Secondary
+                    delegate: StatusItemDelegate {
+                        width: combo.control.width
+                        textHorizontalAligment: Text.AlignHCenter
+                        highlighted: combo.control.highlightedIndex === index
+                        font: combo.control.font
+                        text: Number(modelData) + 1
+                    }
+                    contentItem: StatusBaseText {
+                        font: combo.control.font
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                        text: Number(combo.control.displayText) + 1
+                        color: Theme.palette.baseColor1
+                    }
+
+                    control.onDisplayTextChanged: {
+                        selfDestructAmount = combo.currentIndex + 1
+                        root.selfDestructChanged()
+                    }
+                }
+
+                StatusCheckBox {
+                    id: checkBox
+
+                    Layout.leftMargin: Style.current.padding
+                    visible: root.isSelectorMode
+                    checked: root.isSelectorMode ? selfDestruct : false
+                    padding: 0
+                    onCheckStateChanged: {
+                        selfDestruct = checked
+                        root.selfDestructChanged()
+                    }
+                }
             }
         }
     }
