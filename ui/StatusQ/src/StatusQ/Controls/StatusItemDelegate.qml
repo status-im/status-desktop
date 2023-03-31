@@ -9,6 +9,8 @@ import StatusQ.Controls 0.1
 ItemDelegate {
     id: root
 
+    property alias textHorizontalAligment: textItem.horizontalAlignment
+
     padding: 8
     spacing: 8
 
