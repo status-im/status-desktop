@@ -15,7 +15,11 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property var model
 
-    signal itemClicked(int index)
+    signal itemClicked(int index,
+                       int chainId,
+                       string chainName,
+                       string accountName,
+                       string accountAddress)
 
     enum DeployState {
           Failed,
@@ -72,7 +76,7 @@ StatusScrollView {
                 isLoading: false
                 navigationIconVisible: true
 
-                onClicked: root.itemClicked(model.index) // TODO: Replace to model.key when role exists in backend
+                onClicked: root.itemClicked(model.index, model.chainId, model.chainName, model.accountName, model.address) // TODO: Replace to model.key when role exists in backend
             }
         }
     }

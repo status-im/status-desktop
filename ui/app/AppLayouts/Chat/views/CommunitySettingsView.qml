@@ -323,6 +323,13 @@ StatusSectionLayout {
                                                            artworkSource,
                                                            accountName)
                 }
+                onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(chainId)
+                onRemoteSelfDestructCollectibles: {
+                    communityTokensStore.remoteSelfDestructCollectibles(holdersModel,
+                                                                        chainId,
+                                                                        accountName,
+                                                                        accountAddress)
+                }
 
                 Connections {
                     target: rootStore.communityTokensStore
@@ -343,6 +350,17 @@ StatusSectionLayout {
 
                         mintPanel.errorText = qsTr("Unknown error")
                         mintPanel.isFeeLoading = true
+                    }
+
+                    // TODO: Self-destruct backend
+                    function onSelfDestructFeeUpdated(value) {
+                        // TODO better error handling
+                        if (value === "-") {
+                            mintPanel.isFeeLoading = true
+                        } else {
+                            mintPanel.isFeeLoading = false
+                            mintPanel.feeText = value
+                        }
                     }
                 }
             }
@@ -431,11 +449,11 @@ StatusSectionLayout {
         target: root.chatCommunitySectionModule
         function onOpenNoPermissionsToJoinPopup(communityName: string, userName: string, communityId: string, requestId: string) {
             Global.openPopup(noPermissionsPopupCmp, {
-                communityName: communityName,
-                userName: userName,
-                communityId: communityId,
-                requestId: requestId
-            })
+                                 communityName: communityName,
+                                 userName: userName,
+                                 communityId: communityId,
+                                 requestId: requestId
+                             })
         }
 
     }

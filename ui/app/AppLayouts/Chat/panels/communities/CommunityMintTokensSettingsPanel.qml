@@ -57,6 +57,13 @@ SettingsPageLayout {
         root.errorText = ""
     }
 
+    signal remoteSelfDestructCollectibles(var holdersModel,
+                                          int chainId,
+                                          string accountName,
+                                          string accountAddress)
+
+    signal signSelfDestructTransactionOpened(int chainId)
+
     function navigateBack() {
         stackManager.pop(StackView.Immediate)
     }
@@ -75,8 +82,11 @@ SettingsPageLayout {
         readonly property string backButtonText: qsTr("Back")
         readonly property string backTokensText: qsTr("Tokens")
 
-        property bool preview: false
         property string accountAddress
+        property string accountName
+        property int chainId
+        property string chainName
+
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
         onInitialItemChanged: updateInitialStackView()
 
@@ -126,7 +136,6 @@ SettingsPageLayout {
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
             PropertyChanges {target: root; footer: mintTokenFooter}
-            PropertyChanges {target: d; preview: false}
         }
     ]
 
@@ -250,10 +259,64 @@ SettingsPageLayout {
         id: mintTokenFooter
 
         MintTokensFooterPanel {
+            id: footerPanel
+
+            function closePopups() {
+                remoteSelfdestructPopup.close()
+                alertPopup.close()
+                signSelfDestructPopup.close()
+            }
+
             airdropEnabled: false
             retailEnabled: false
-            remotelySelfDestructEnabled: false
+            remotelySelfDestructEnabled: true
             burnEnabled: false
+
+            onRemotelySelfDestructClicked: remoteSelfdestructPopup.open()
+
+            RemoteSelfDestructPopup {
+                id: remoteSelfdestructPopup
+
+                collectibleName: root.title
+                model: root.holdersModel
+
+                onSelfDestructClicked: {
+                    alertPopup.tokenCount = tokenCount
+                    alertPopup.open()
+                }
+            }
+
+            SelfDestructAlertPopup {
+                id: alertPopup
+
+                onSelfDestructClicked: signSelfDestructPopup.open()
+            }
+
+            SignMintTokenTransactionPopup {
+                id: signSelfDestructPopup
+
+                function signSelfRemoteDestructTransaction() {
+                    root.isFeeLoading = true
+                    root.feeText = ""
+                    root.remoteSelfDestructCollectibles(root.holdersModel,
+                                                        d.chainId,
+                                                        d.accountName,
+                                                        d.accountAddress)
+
+                    footerPanel.closePopups()
+                }
+
+                title: qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title)
+                collectibleName: root.title
+                accountName: d.accountName
+                networkName: d.chainName
+                feeText: root.feeText
+                isFeeLoading: root.isFeeLoading
+
+                onOpened: root.signSelfDestructTransactionOpened(d.chainId)
+                onCancelClicked: close()
+                onSignTransactionClicked: signSelfRemoteDestructTransaction()
+            }
         }
     }
 
@@ -264,6 +327,10 @@ SettingsPageLayout {
             viewWidth: root.viewWidth
             model: root.tokensModel
             onItemClicked: {
+                d.accountAddress = accountAddress
+                d.chainId = chainId
+                d.chainName = chainName
+                d.accountName = accountName
                 stackManager.push(d.collectibleViewState,
                                   collectibleView,
                                   {
