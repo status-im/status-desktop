@@ -66,7 +66,7 @@ TextField {
     background: Rectangle {
         id: inputRectangle
         anchors.fill: parent
-        color: Theme.palette.baseColor5
+        color: Theme.palette.baseColor2
         radius: d.radius
         border.width: root.focus ? 1 : 0
         border.color: {
@@ -91,7 +91,7 @@ TextField {
             delegate: Rectangle {
                 width: signingPhraseWord.implicitWidth + 2 * d.signingPhraseWordPadding
                 height: d.signingPhraseWordsHeight
-                color: Theme.palette.indirectColor1
+                color: Theme.palette.statusListItem.backgroundColor
                 radius: d.radius
 
                 StatusBaseText {
