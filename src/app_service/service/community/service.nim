@@ -45,11 +45,11 @@ type
 
   CommunityChatOrderArgs* = ref object of Args
     communityId*: string
-    chatId*: string
-    categoryId*: string
-    position*: int
-    prevCategoryId*: string
-    prevCategoryDeleted*: bool
+    chat*: ChatDto
+
+  CommunityChatsOrderArgs* = ref object of Args
+    communityId*: string
+    chats*: seq[ChatDto]
 
   CommunityCategoryOrderArgs* = ref object of Args
     communityId*: string
@@ -126,6 +126,7 @@ const SIGNAL_COMMUNITIES_UPDATE* = "communityUpdated"
 const SIGNAL_COMMUNITY_CHANNEL_CREATED* = "communityChannelCreated"
 const SIGNAL_COMMUNITY_CHANNEL_EDITED* = "communityChannelEdited"
 const SIGNAL_COMMUNITY_CHANNEL_REORDERED* = "communityChannelReordered"
+const SIGNAL_COMMUNITY_CHANNELS_REORDERED* = "communityChannelsReordered"
 const SIGNAL_COMMUNITY_CHANNEL_DELETED* = "communityChannelDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_CREATED* = "communityCategoryCreated"
 const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
@@ -406,7 +407,7 @@ QtObject:
 
           if category.position != prev_category.position:
             self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
-              CommunityChatOrderArgs(
+              CommunityCategoryOrderArgs(
                 communityId: community.id,
                 categoryId: category.id,
                 position: category.position))
@@ -471,8 +472,12 @@ QtObject:
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
 
             # if the chat was created by the current user then it's already in the model and should be reordered if necessary
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
-              chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED,
+              CommunityChatOrderArgs(
+                communityId: community.id,
+                chat: chat,
+              )
+            )
 
       # channel was removed
       elif((community.chats.len-removedChats.len) < prev_community.chats.len):
@@ -491,8 +496,12 @@ QtObject:
           let prev_chat = prev_community.chats[index]
           # Handle position changes
           if chat.position != prev_chat.position:
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
-            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED,
+              CommunityChatOrderArgs(
+                communityId: community.id,
+                chat: chat,
+              )
+            )
 
           # Handle channel was added/removed to/from category
           if chat.categoryId != prev_chat.categoryId:
@@ -504,8 +513,12 @@ QtObject:
                   prevCategoryDeleted = true
                   break
 
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED, CommunityChatOrderArgs(communityId: community.id,
-                                                                                               chatId: chat.id, categoryId: chat.categoryId, position: chat.position, prevCategoryId: prev_chat.categoryId, prevCategoryDeleted: prevCategoryDeleted))
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CATEGORY_CHANGED,
+              CommunityChatOrderArgs(
+                communityId: community.id,
+                chat: chat,
+              )
+            )
 
           # Handle name/description changes
           if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color:
@@ -1146,17 +1159,31 @@ QtObject:
 
       let updatedCommunity = response.result["communities"][0].toCommunityDto()
 
+      var updatedChats: seq[ChatDto] = @[]
       for chat in updatedCommunity.chats:
         let prev_chat_idx = findIndexById(chat.id, self.communities[communityId].chats)
-        if prev_chat_idx > -1:
-          let prev_chat = self.communities[communityId].chats[prev_chat_idx]
-          if(chat.position != prev_chat.position and chat.categoryId == categoryId):
-            var chatDetails = self.chatService.getChatById(chat.id) # we are free to do this cause channel must be created before we add it to a category
-            self.communities[communityId].chats[prev_chat_idx].position = chat.position
-            chatDetails.updateMissingFields(self.communities[communityId].chats[prev_chat_idx])
-            self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
-            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: updatedCommunity.id, chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
+        if prev_chat_idx == -1:
+          continue
+        let prev_chat = self.communities[communityId].chats[prev_chat_idx]
 
+        # we are free to do this cause channel must be created before we add it to a category
+        var chatDetails = self.chatService.getChatById(chat.id)
+
+        if(chat.position != prev_chat.position and chat.categoryId == categoryId):
+          self.communities[communityId].chats[prev_chat_idx].position = chat.position
+        elif chat.categoryId != prev_chat.categoryId:
+          self.communities[communityId].chats[prev_chat_idx].categoryId = chat.categoryId
+        else:
+          continue
+
+        chatDetails.updateMissingFields(self.communities[communityId].chats[prev_chat_idx])
+        self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
+        updatedChats.add(chat)
+    
+      self.events.emit(SIGNAL_COMMUNITY_CHANNELS_REORDERED,
+        CommunityChatsOrderArgs(communityId: updatedCommunity.id, chats: updatedChats))
+
+      self.communities[communityId] = updatedCommunity
     except Exception as e:
       error "Error reordering community channel", msg = e.msg, communityId, chatId, position, procName="reorderCommunityChat"
 

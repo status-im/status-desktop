@@ -164,7 +164,7 @@ proc removeSubmodule(self: Module, chatId: string) =
 
 
 proc addCategoryItem(self: Module, category: Category, amIAdmin: bool) =
-  let emptyChatItem = chat_item.initItem(
+  let categoryItem = chat_item.initItem(
         id = category.id,
         category.name,
         icon = "",
@@ -183,7 +183,7 @@ proc addCategoryItem(self: Module, category: Category, amIAdmin: bool) =
         category.id,
         category.position,
       )
-  self.view.chatsModel().appendItem(emptyChatItem)
+  self.view.chatsModel().appendItem(categoryItem)
 
 proc buildChatSectionUI(
     self: Module,
@@ -676,13 +676,11 @@ method setFirstChannelAsActive*(self: Module) =
       self.setActiveItem(chat_item.id)
       break    
 
-method onReorderChat*(self: Module, chatId: string, position: int, newCategoryIdForChat: string, prevCategoryId: string, prevCategoryDeleted: bool) =
-  var newCategoryName = ""
-  var newCategoryPos = -1
-  if newCategoryIdForChat != "":
-    let newCategory = self.controller.getCommunityCategoryDetails(self.controller.getMySectionId(), newCategoryIdForChat)
-    newCategoryPos = newCategory.position
-  self.view.chatsModel().reorderChatById(chatId, position, newCategoryIdForChat, newCategoryPos)
+method onReorderChat*(self: Module, updatedChat: ChatDto) =
+  self.view.chatsModel().reorderChats(@[updatedChat])
+
+method onReorderChats*(self: Module, updatedChats: seq[ChatDto]) =
+  self.view.chatsModel().reorderChats(updatedChats)
 
 method onReorderCategory*(self: Module, catId: string, position: int) =
   self.view.chatsModel().reorderCategoryById(catId, position)
@@ -1096,8 +1094,21 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
 method reorderCommunityCategories*(self: Module, categoryId: string, position: int) =
   self.controller.reorderCommunityCategories(categoryId, position)
 
-method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, position: int): string =
-  self.controller.reorderCommunityChat(categoryId, chatId, position)
+method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, toPosition: int): string =
+  # Calculate actual position, since the position coming from the UI is assuming a single list where categories are items
+  # eg: if we have 2 categories with 2 channels each, then it means 6 items (2 categories, 2 chats)
+  #  if we move the 2nd channel of the 2nd category to the 1st position of the 2nd category, then the UI would say
+  #  that we move the chat from position 5 to position 4
+  #  We need to translate that to position 1 of category 2
+  let (category, categoryIndex) = self.view.chatsModel().getClosestCategoryAtIndex(toPosition + 1)
+  var categoryId = ""
+  var newPos = toPosition
+  if (categoryIndex > -1):
+    categoryId = category.id
+    newPos = toPosition - categoryIndex - 1 # position is 0 based
+  if newPos < 0:
+    newPos = 0
+  self.controller.reorderCommunityChat(categoryId, chatId, newPos)
 
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)

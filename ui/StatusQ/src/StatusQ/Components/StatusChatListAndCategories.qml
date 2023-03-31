@@ -7,8 +7,6 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 
-import SortFilterProxyModel 0.2
-
 Item {
     id: root
 
@@ -83,19 +81,7 @@ Item {
                     root.categoryAddButtonClicked(id)
                 }
 
-                model: SortFilterProxyModel {
-                    sourceModel: root.model
-                    sorters: [
-                        RoleSorter {
-                            roleName: "categoryPosition"
-                            priority: 2 // Higher number === higher priority
-                        },
-                        RoleSorter {
-                            roleName: "position"
-                            priority: 1
-                        }
-                    ]
-                }
+                model: root.model
 
                 popupMenu: root.chatListPopupMenu
                 categoryPopupMenu: root.categoryPopupMenu
