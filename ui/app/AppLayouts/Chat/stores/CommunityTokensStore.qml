@@ -56,6 +56,9 @@ QtObject {
                    ])
     }
 
+    signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
+    signal selfDestructFeeUpdated(string value) // TO BE REMOVED
+
     // Minting tokens:
     function deployCollectible(communityId, accountAddress, name, symbol, description, supply,
                              infiniteSupply, transferable, selfDestruct, chainId, artworkSource, accountName)
@@ -64,8 +67,6 @@ QtObject {
         communityTokensModuleInst.deployCollectible(communityId, accountAddress, name, symbol, description, supply,
                                                     infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     }
-
-    signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
 
     readonly property Connections connections: Connections {
       target: communityTokensModuleInst
@@ -76,6 +77,17 @@ QtObject {
 
     function computeDeployFee(chainId, accountAddress) {
         communityTokensModuleInst.computeDeployFee(chainId, accountAddress)
+    }
+
+    function computeSelfDestructFee(chainId) {
+        // TODO BACKEND
+        root.selfDestructFeeUpdated("0,0005 ETH")
+        console.warn("TODO: Compute self-destruct fee backend")
+    }
+
+    function remoteSelfDestructCollectibles(holdersModel, chainId, accountName, accountAddress) {
+        // TODO BACKEND
+        console.warn("TODO: Remote self-destruct collectible backend")
     }
 
     // Airdrop tokens:

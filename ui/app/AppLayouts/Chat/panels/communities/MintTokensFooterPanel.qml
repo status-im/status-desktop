@@ -48,6 +48,7 @@ Control {
                 id: retailButton
 
                 icon.name: "token-sale"
+                visible: false // TODO: Milestone 14
                 text: qsTr("Retail")
 
                 onClicked: root.retailClicked()
@@ -61,13 +62,14 @@ Control {
                 type: StatusBaseButton.Type.Danger
                 borderColor: "transparent"
 
-                onClicked: root.remoteSelfDestructClicked()
+                onClicked: root.remotelySelfDestructClicked()
             }
 
             StatusFlatButton {
                 id: burnButton
 
                 icon.name: "delete"
+                visible: false // Post MVP
                 text: qsTr("Burn")
                 type: StatusBaseButton.Type.Danger
                 borderColor: "transparent"
