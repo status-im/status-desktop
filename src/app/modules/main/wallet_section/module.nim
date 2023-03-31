@@ -83,7 +83,7 @@ proc newModule*(
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
-  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)
+  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService, collectibleService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService, currencyService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
