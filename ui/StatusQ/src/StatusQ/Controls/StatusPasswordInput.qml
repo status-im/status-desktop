@@ -54,7 +54,7 @@ TextField {
     verticalAlignment: Text.AlignVCenter
     implicitWidth: 480
     implicitHeight: 44
-
+    selectByMouse: true
 
     placeholderTextColor: Theme.palette.baseColor1
     echoMode: TextInput.Password
