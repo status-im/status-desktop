@@ -24,7 +24,7 @@ StatusModal {
 
     function onChangePasswordResponse(success, errorMsg) {
         if (success) {
-            if (Qt.platform.os === "osx" && localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.never) {
+            if (Qt.platform.os === Constants.mac && localAccountSettings.storeToKeychainValue !== Constants.keychain.storedValue.never) {
                 localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.notNow;
             }
             passwordChanged()
