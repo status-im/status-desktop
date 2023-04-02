@@ -187,7 +187,7 @@ StatusWindow {
                 Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
                 Style.changeFontSize(localAccountSensitiveSettings.fontSize)
                 Theme.updateFontSize(localAccountSensitiveSettings.fontSize)
-            } else if(state === Constansts.appState.appEncryptionProcess) {
+            } else if(state === Constants.appState.appEncryptionProcess) {
                 loader.sourceComponent = undefined
                 appLoadingAnimation.active = true
                 appLoadingAnimation.item.splashScreenText = qsTr("Database re-encryption in progress. Please do NOT close the app.\nThis may take up to 30 minutes. Sorry for the inconvenience.\n\n This process is a one time thing and is necessary for the proper functioning of the application.")
