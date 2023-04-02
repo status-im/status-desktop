@@ -11,6 +11,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+
 ColumnLayout {
     id: root
 
@@ -169,7 +170,7 @@ ColumnLayout {
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
         validator: d.validator
         rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
-        Keys.onReturnPressed: { root.returnPressed() }
+        onAccepted: root.returnPressed()
 
         StatusFlatRoundButton {
             id: showHideCurrentIcon
@@ -216,7 +217,7 @@ ColumnLayout {
                     root.checkPasswordMatches(false)
                 }
             }
-            Keys.onReturnPressed: { root.returnPressed() }
+            onAccepted: root.returnPressed()
 
             StatusFlatRoundButton {
                 id: showHideNewIcon
@@ -321,7 +322,7 @@ ColumnLayout {
                 root.checkPasswordMatches(false)
             }
         }
-        Keys.onReturnPressed: { root.returnPressed() }
+        onAccepted: root.returnPressed()
 
         StatusFlatRoundButton {
             id: showHideConfirmIcon
