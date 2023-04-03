@@ -35,8 +35,15 @@ Item {
             root.pubKey = root.startupStore.startupModuleInst.importedAccountPubKey;
         }
         nameInput.text = root.startupStore.getDisplayName();
-        nameInput.input.edit.forceActiveFocus();
         userImage.asset.name = root.startupStore.getCroppedProfileImage();
+    }
+
+    onStateChanged: {
+        if (state === Constants.startupState.userProfileCreate) {
+            nameInput.input.edit.forceActiveFocus()
+            return
+        }
+        nextBtn.forceActiveFocus()
     }
 
     Loader {
@@ -51,6 +58,21 @@ Item {
                     }
                 }
             }
+        }
+    }
+
+    QtObject {
+        id: d
+
+        function doAction() {
+            if(!nextBtn.enabled) {
+                return
+            }
+            if (root.state === Constants.startupState.userProfileCreate) {
+                root.startupStore.setDisplayName(nameInput.text)
+                root.displayName = nameInput.text;
+            }
+            root.startupStore.doPrimaryAction()
         }
     }
 
@@ -144,13 +166,10 @@ Item {
                 onTextChanged: {
                     userImage.name = text;
                 }
-                input.acceptReturn: true
-                onKeyPressed: {
-                    if (input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
+                Keys.onPressed: {
+                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                         event.accepted = true
-                        if(nextBtn.enabled) {
-                            nextBtn.clicked(null)
-                        }
+                        d.doAction()
                     }
                 }
             }
@@ -215,11 +234,13 @@ Item {
             font.weight: Font.Medium
             text: qsTr("Next")
             onClicked: {
-                if (root.state === Constants.startupState.userProfileCreate) {
-                    root.startupStore.setDisplayName(nameInput.text)
-                    root.displayName = nameInput.text;
+                d.doAction()
+            }
+            Keys.onPressed: {
+                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                    event.accepted = true
+                    d.doAction()
                 }
-                root.startupStore.doPrimaryAction()
             }
         }
 
@@ -269,6 +290,7 @@ Item {
             }
             PropertyChanges {
                 target: nameInputItem
+                enabled: true
                 visible: true
             }
         },
@@ -301,6 +323,7 @@ Item {
             }
             PropertyChanges {
                 target: nameInputItem
+                enabled: false
                 visible: false
             }
         }
