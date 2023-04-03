@@ -19,13 +19,16 @@ Item {
     Component.onCompleted: {
         if (root.startupStore.showBeforeGetStartedPopup()) {
             beforeGetStartedModal.open();
+            return
         }
+        btnNewUser.forceActiveFocus()
     }
 
     BeforeGetStartedModal {
         id: beforeGetStartedModal
         onClosed: {
             root.startupStore.beforeGetStartedPopupAccepted()
+            btnNewUser.forceActiveFocus()
         }
     }
 
@@ -78,6 +81,12 @@ Item {
             text: qsTr("I am new to Status")
             onClicked: {
                 root.startupStore.doPrimaryAction()
+            }
+            Keys.onPressed: {
+                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                    event.accepted = true
+                    root.startupStore.doPrimaryAction()
+                }
             }
         }
 
