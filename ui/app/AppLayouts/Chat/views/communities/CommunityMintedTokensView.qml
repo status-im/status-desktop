@@ -67,7 +67,7 @@ StatusScrollView {
                 width: gridView.cellWidth
                 title: model.name ? model.name : "..."
                 subTitle: d.getStateText(model.deployState)
-                imageUrl: model.image ? model.image : ""
+                fallbackImageUrl: model.image ? model.image : ""
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent" // TODO BACKEND
                 isLoading: false
                 navigationIconVisible: true

@@ -51,7 +51,7 @@ Item {
             Layout.preferredWidth: parent.width
             spacing: 24
 
-            StatusRoundedImage {
+            StatusRoundedMedia {
                 id: collectibleimage
                 readonly property int size : root.isNarrowMode ? 132 : 253
                 width: size
@@ -60,7 +60,9 @@ Item {
                 color: currentCollectible.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
-                image.source: currentCollectible.imageUrl
+                mediaUrl: currentCollectible.mediaUrl
+                mediaType: currentCollectible.mediaType
+                fallbackImageUrl: currentCollectible.imageUrl
             }
 
             Column {

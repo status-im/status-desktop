@@ -12,6 +12,7 @@
         <file>StatusQ/Components/qmldir</file>
         <file>StatusQ/Components/StatusAddress.qml</file>
         <file>StatusQ/Components/StatusAddressPanel.qml</file>
+        <file>StatusQ/Components/StatusAnimatedImage.qml</file>
         <file>StatusQ/Components/StatusBadge.qml</file>
         <file>StatusQ/Components/StatusCard.qml</file>
         <file>StatusQ/Components/StatusChatInfoToolBar.qml</file>
@@ -19,6 +20,7 @@
         <file>StatusQ/Components/StatusChatListAndCategories.qml</file>
         <file>StatusQ/Components/StatusChatListCategoryItem.qml</file>
         <file>StatusQ/Components/StatusChatListItem.qml</file>
+        <file>StatusQ/Components/StatusImage.qml</file>
         <file>StatusQ/Components/StatusToolBar.qml</file>
         <file>StatusQ/Components/StatusColorSpace.qml</file>
         <file>StatusQ/Components/StatusCommunityCard.qml</file>
@@ -46,11 +48,14 @@
         <file>StatusQ/Components/StatusMessageHeader.qml</file>
         <file>StatusQ/Components/StatusNavigationListItem.qml</file>
         <file>StatusQ/Components/StatusNavigationPanelHeadline.qml</file>
+        <file>StatusQ/Components/StatusRoundedComponent.qml</file>
         <file>StatusQ/Components/StatusRoundedImage.qml</file>
+        <file>StatusQ/Components/StatusRoundedMedia.qml</file>
         <file>StatusQ/Components/StatusRoundIcon.qml</file>
         <file>StatusQ/Components/StatusSmartIdenticon.qml</file>
         <file>StatusQ/Components/StatusTagSelector.qml</file>
         <file>StatusQ/Components/StatusToastMessage.qml</file>
+        <file>StatusQ/Components/StatusVideo.qml</file>
         <file>StatusQ/Components/StatusWizardStepper.qml</file>
         <file>StatusQ/Controls/Validators/qmldir</file>
         <file>StatusQ/Controls/Validators/StatusAddressOrEnsValidator.qml</file>

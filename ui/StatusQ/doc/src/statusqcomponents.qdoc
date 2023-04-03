@@ -9,6 +9,7 @@
 
    \list
        \li \l{StatusAddress}
+       \li \l{StatusAnimatedImage}
        \li \l{StatusBadge}
        \li \l{StatusChatInfoToolBar}
        \li \l{StatusChatListAndCategories}
@@ -22,6 +23,7 @@
        \li \l{StatusExpandableItem}
        \li \l{StatusFlowSelector}
        \li \l{StatusGroupBox}
+       \li \l{StatusImage}
        \li \l{StatusImageSettings}
        \li \l{StatusItemSelector}
        \li \l{StatusLetterIdenticon}
@@ -37,7 +39,9 @@
        \li \l{StatusNavigationListItem}
        \li \l{StatusNavigationPanelHeadline}
        \li \l{StatusRoundIcon}
+       \li \l{StatusRoundedComponent}
        \li \l{StatusRoundedImage}
+       \li \l{StatusRoundedMedia}
        \li \l{StatusMacWindowButtons}
        \li \l{StatusListItemBadge}
        \li \l{StatusExpandableItem}
@@ -45,6 +49,7 @@
        \li \l{StatusSmartIdenticon}
        \li \l{StatusTagSelector}
        \li \l{StatusToastMessage}
+       \li \l{StatusVideo}
        \li \l{StatusWizardStepper}
    \endlist
 */
