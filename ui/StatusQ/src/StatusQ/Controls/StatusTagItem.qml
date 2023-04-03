@@ -1,5 +1,6 @@
 import QtQuick 2.14
-
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -26,30 +27,30 @@ import StatusQ.Core.Theme 0.1
 
      For a list of components available see StatusQ.
   */
-Rectangle {
+Control {
     id: root
 
     /*!
-        \qmlproperty bool StatusTagItem::isReadonly
-        This property sets if the tag is readonly or not.
-    */
+    \qmlproperty bool StatusTagItem::isReadonly
+    This property sets if the tag is readonly or not.
+*/
     property bool isReadonly
     /*!
-        \qmlproperty string StatusTagItem::name
-        This property sets the tag text to display.
-    */
+    \qmlproperty string StatusTagItem::name
+    This property sets the tag text to display.
+*/
     property string text
     /*!
-        \qmlproperty string StatusTagItem::icon
-        This property sets the tag icon to display.
-    */
+    \qmlproperty string StatusTagItem::icon
+    This property sets the tag icon to display.
+*/
     property string icon
 
     /*!
-        \qmlsignal
-        This signal is emitted when the tag is clicked.
-    */
-    signal clicked()
+    \qmlsignal
+    This signal is emitted when the close button is clicked.
+*/
+    signal closed()
 
     QtObject {
         id: d
@@ -66,51 +67,45 @@ Rectangle {
         }
     }
 
-    width: tagRow.implicitWidth + 2 * d.tagMargins
-    height: 30
-    color: d.getTagColor(root.isReadonly)
-    radius: 8
-    Row {
+    implicitHeight: 30
+    horizontalPadding: d.tagMargins
+
+    background: Rectangle {
+        color: d.getTagColor(root.isReadonly)
+        radius: 8
+    }
+
+    contentItem: RowLayout {
         id: tagRow
-        height: parent.height
-        anchors.left: parent.left
-        anchors.leftMargin: d.tagMargins
-        anchors.rightMargin: d.tagMargins
         spacing: 2
 
         StatusIcon {
             visible: root.icon
-            anchors.verticalCenter: parent.verticalCenter
             color: Theme.palette.indirectColor1
             width: root.icon ? d.tagIconsSize : 0
             height: d.tagIconsSize
             icon: root.icon
         }
         StatusBaseText {
-            id: nameText
-            anchors.verticalCenter: parent.verticalCenter
             color: Theme.palette.indirectColor1
             font.pixelSize: 15
             text: root.text
         }
         StatusIcon {
-            id: closeIcon
+            Layout.leftMargin: d.tagMargins
             visible: !root.isReadonly
-            anchors.leftMargin: d.tagMargins
-            anchors.verticalCenter: parent.verticalCenter
             color: Theme.palette.indirectColor1
             width: d.tagIconsSize
             height: d.tagIconsSize
             icon: "close"
+            MouseArea {
+                id: mouseArea
+                enabled: !root.isReadonly
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                onClicked: { root.closed() }
+            }
         }
-    }
-
-    MouseArea {
-        id: mouseArea
-        enabled: !root.isReadonly
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: { root.clicked() }
     }
 }

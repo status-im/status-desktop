@@ -46,7 +46,7 @@ MembersSelectorBase {
         height: ListView.view.height
         text: root.tagText(model.localNickname, model.displayName, model.alias)
 
-        onClicked: root.entryRemoved(this)
+        onClosed: root.entryRemoved(this)
     }
 
     QtObject {

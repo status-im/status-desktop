@@ -282,7 +282,7 @@ Item {
                         text: model.name
                         icon: model.tagIcon
 
-                        onClicked: {
+                        onClosed: {
                             removeMember(model.pubKey);
                             namesModel.remove(index, 1);
                         }

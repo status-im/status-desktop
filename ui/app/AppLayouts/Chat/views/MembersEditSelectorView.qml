@@ -64,7 +64,7 @@ MembersSelectorBase {
         }
         icon: model.isAdmin ? "crown" : ""
 
-        onClicked: root.entryRemoved(this)
+        onClosed: root.entryRemoved(this)
     }
 
     Component.onCompleted: {
