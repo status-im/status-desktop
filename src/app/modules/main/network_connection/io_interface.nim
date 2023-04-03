@@ -19,7 +19,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method networkConnectionStatusUpdate*(self: AccessInterface, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int) {.base.} =
+method networkConnectionStatusUpdate*(self: AccessInterface, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method refreshBlockchainValues*(self: AccessInterface)  {.base.} =

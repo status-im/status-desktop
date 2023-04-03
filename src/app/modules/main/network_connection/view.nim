@@ -62,18 +62,18 @@ QtObject:
   proc refreshCollectiblesValues*(self: View) {.slot.} =
     self.delegate.refreshCollectiblesValues()
 
-  proc networkConnectionStatusUpdate*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int) {.signal.}
+  proc networkConnectionStatusUpdate*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int) {.signal.}
 
-  proc updateNetworkConnectionStatus*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int, timeToAutoRetryInSecs: int) =
+  proc updateNetworkConnectionStatus*(self: View, website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int) =
     case website:
       of BLOCKCHAINS:
-        self.blockchainNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
+        self.blockchainNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt)
         self.blockchainNetworkConnectionChanged()
       of COLLECTIBLES:
-        self.collectiblesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
+        self.collectiblesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt)
         self.collectiblesNetworkConnectionChanged()
       of MARKET:
-        self.marketValuesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
+        self.marketValuesNetworkConnection.updateValues(completelyDown, connectionState, chainIds, lastCheckedAt)
         self.marketValuesNetworkConnectionChanged()
-    self.networkConnectionStatusUpdate(website, completelyDown, connectionState, chainIds, lastCheckedAt, timeToAutoRetryInSecs)
+    self.networkConnectionStatusUpdate(website, completelyDown, connectionState, chainIds, lastCheckedAt)
 
