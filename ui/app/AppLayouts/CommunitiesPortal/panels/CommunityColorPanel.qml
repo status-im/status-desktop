@@ -12,8 +12,6 @@ import StatusQ.Popups 0.1
 StatusScrollView {
     id: root
 
-    contentWidth: column.implicitWidth
-    contentHeight: column.implicitHeight
     property string title: qsTr("Community Colour")
 
     property var rightButtons: StatusButton {
@@ -39,6 +37,10 @@ StatusScrollView {
         hexInput.text = color.toString();
     }
 
+    contentWidth: implicitWidth
+    contentHeight: implicitHeight
+    implicitWidth: column.childrenRect.width
+    implicitHeight: column.childrenRect.height
     padding: 0
     clip: false
 
