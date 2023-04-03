@@ -47,6 +47,7 @@ Column {
         columns: 6
         rowSpacing: 16
         columnSpacing: 32
+        anchors.horizontalCenter: parent.horizontalCenter
 
         Repeater {
             objectName: "statusColorRepeater"
