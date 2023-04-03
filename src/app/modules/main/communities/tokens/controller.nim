@@ -38,6 +38,9 @@ proc init*(self: Controller) =
     if args.uniqueIdentifier != UNIQUE_DEPLOY_COLLECTIBLES_COMMUNITY_TOKENS_MODULE_IDENTIFIER:
       return
     self.communityTokensModule.onUserAuthenticated(args.password)
+  self.events.on(SIGNAL_COMPUTE_DEPLOY_FEE) do(e:Args):
+    let args = ComputeDeployFeeArgs(e)
+    self.communityTokensModule.onDeployFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode)
 
 proc deployCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
   self.communityTokensService.deployCollectibles(communityId, addressFrom, password, deploymentParams, tokenMetadata, chainId)
@@ -52,11 +55,8 @@ proc authenticateUser*(self: Controller, keyUid = "") =
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(communityId)
 
-proc getSuggestedFees*(self: Controller, chainId: int): SuggestedFeesDto =
-  return self.transactionService.suggestedFees(chainId)
-
-proc getFiatValue*(self: Controller, cryptoBalance: string, cryptoSymbol: string): string =
-  return self.communityTokensService.getFiatValue(cryptoBalance, cryptoSymbol)
+proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string) =
+  self.communityTokensService.computeDeployFee(chainId, accountAddress)
 
 proc getCommunityTokenBySymbol*(self: Controller, communityId: string, symbol: string): CommunityTokenDto =
   return self.communityTokensService.getCommunityTokenBySymbol(communityId, symbol)

@@ -15,6 +15,7 @@ StatusDialog {
 
     property alias accountName: accountText.text
     property alias feeText: feeText.text
+    property alias errorText: errorTxt.text
     property alias isFeeLoading: feeLoading.visible
 
     property string collectibleName
@@ -99,6 +100,17 @@ StatusDialog {
                 font.pixelSize: Style.current.primaryTextFontSize
             }
         }
+
+        StatusBaseText {
+            id: errorTxt
+
+            Layout.fillWidth: true
+            horizontalAlignment: Text.AlignLeft
+            elide: Text.ElideRight
+            font.pixelSize: Style.current.primaryTextFontSize
+            color: Theme.palette.dangerColor1
+            visible: root.errorText !== ""
+        }
     }
 
     footer: StatusDialogFooter {
@@ -113,7 +125,7 @@ StatusDialog {
                 }
             }
             StatusButton {
-                enabled: !root.isFeeLoading
+                enabled: root.errorText === "" && !root.isFeeLoading
                 icon.name: "password"
                 text: qsTr("Sign transaction")
                 onClicked: {
