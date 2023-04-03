@@ -93,8 +93,8 @@ StatusScrollView {
 
                 StatusStackModal {
                     width: 640
-                    height: root.height
                     anchors.centerIn: parent
+                    leftButtons: []
                     replaceItem: CommunityColorPanel {
                         clip: true
                         Component.onCompleted: color = colorPicker.color
@@ -119,6 +119,7 @@ StatusScrollView {
 
                 StatusStackModal {
                     anchors.centerIn: parent
+                    leftButtons: []
                     width: 640
                     replaceItem: CommunityTagsPanel {
                         Component.onCompleted: {
