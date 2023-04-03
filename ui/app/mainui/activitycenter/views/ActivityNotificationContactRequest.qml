@@ -19,6 +19,8 @@ ActivityNotificationMessage {
     readonly property bool accepted: notification && notification.message.contactRequestState === Constants.contactRequestStateAccepted
     readonly property bool dismissed: notification && notification.message.contactRequestState === Constants.contactRequestStateDismissed
 
+    readonly property string contactRequestId: notification && notification.message ? notification.message.id : ""
+
     Connections {
         target: root.isOutgoingMessage ? root.store.contactsStore.sentContactRequestsModel :
                                          root.store.contactsStore.receivedContactRequestsModel
@@ -48,11 +50,11 @@ ActivityNotificationMessage {
         accepted: root.accepted
         dismissed: root.dismissed
         blocked: contactDetails && contactDetails.isBlocked
-        onAcceptClicked: root.store.contactsStore.acceptContactRequest(root.contactId)
-        onDeclineClicked: root.store.contactsStore.dismissContactRequest(root.contactId)
+        onAcceptClicked: root.store.contactsStore.acceptContactRequest(root.contactId, root.contactRequestId)
+        onDeclineClicked: root.store.contactsStore.dismissContactRequest(root.contactId, root.contactRequestId)
         onProfileClicked: Global.openProfilePopup(root.contactId)
         onBlockClicked: {
-            root.store.contactsStore.dismissContactRequest(root.contactId)
+            root.store.contactsStore.dismissContactRequest(root.contactId, root.contactRequestId)
             root.store.contactsStore.blockContact(root.contactId)
         }
         onDetailsClicked: {
@@ -68,8 +70,8 @@ ActivityNotificationMessage {
 
         ReviewContactRequestPopup {
             id: reviewRequestPopup
-            onAccepted: root.store.contactsStore.acceptContactRequest(root.contactId)
-            onDeclined: root.store.contactsStore.dismissContactRequest(root.contactId)
+            onAccepted: root.store.contactsStore.acceptContactRequest(root.contactId, root.contactRequestId)
+            onDeclined: root.store.contactsStore.dismissContactRequest(root.contactId, root.contactRequestId)
         }
     }
 }

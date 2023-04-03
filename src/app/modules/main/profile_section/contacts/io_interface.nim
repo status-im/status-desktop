@@ -30,10 +30,10 @@ method switchToOrCreateOneToOneChat*(self: AccessInterface, publicKey: string) {
 method sendContactRequest*(self: AccessInterface, publicKey: string, message: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
+method acceptContactRequest*(self: AccessInterface, publicKey: string, contactRequestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method dismissContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
+method dismissContactRequest*(self: AccessInterface, publicKey: string, contactRequestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method dismissContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =

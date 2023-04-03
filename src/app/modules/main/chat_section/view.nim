@@ -217,14 +217,14 @@ QtObject:
   proc getCurrentFleet*(self: View): string {.slot.} =
     self.delegate.getCurrentFleet()
 
-  proc acceptContactRequest*(self: View, publicKey: string) {.slot.} =
-    self.delegate.acceptContactRequest(publicKey)
+  proc acceptContactRequest*(self: View, publicKey: string, contactRequestId: string) {.slot.} =
+    self.delegate.acceptContactRequest(publicKey, contactRequestId)
 
   proc acceptAllContactRequests*(self: View) {.slot.} =
     self.delegate.acceptAllContactRequests()
 
-  proc dismissContactRequest*(self: View, publicKey: string) {.slot.} =
-    self.delegate.dismissContactRequest(publicKey)
+  proc dismissContactRequest*(self: View, publicKey: string, contactRequestId: string) {.slot.} =
+    self.delegate.dismissContactRequest(publicKey, contactRequestId)
 
   proc dismissAllContactRequests*(self: View) {.slot.} =
     self.delegate.dismissAllContactRequests()

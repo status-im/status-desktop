@@ -22,6 +22,10 @@ QtObject:
   proc setMessageItem*(self: MessageItem, messageItem: message_item.Item) =
     self.messageItem = messageItem
 
+  proc id*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.id
+  QtProperty[string] id:
+    read = id
+
   proc responseToMessageWithId*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.responseToMessageWithId
   QtProperty[string] responseToMessageWithId:
     read = responseToMessageWithId

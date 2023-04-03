@@ -202,11 +202,11 @@ SettingsContentBase {
                     }
 
                     onContactRequestAccepted: {
-                        root.contactsStore.acceptContactRequest(publicKey)
+                        root.contactsStore.acceptContactRequest(publicKey, "")
                     }
 
                     onContactRequestRejected: {
-                        root.contactsStore.dismissContactRequest(publicKey)
+                        root.contactsStore.dismissContactRequest(publicKey, "")
                     }
 
                     onShowVerificationRequest: {

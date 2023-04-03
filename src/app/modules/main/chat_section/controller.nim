@@ -474,11 +474,11 @@ proc getContactDetails*(self: Controller, id: string): ContactDetails =
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactService.getStatusForContactWithId(publicKey)
 
-proc acceptContactRequest*(self: Controller, publicKey: string) =
-  self.contactService.acceptContactRequest(publicKey)
+proc acceptContactRequest*(self: Controller, publicKey: string, contactRequestId: string) =
+  self.contactService.acceptContactRequest(publicKey, contactRequestId)
 
-proc dismissContactRequest*(self: Controller, publicKey: string) =
-  self.contactService.dismissContactRequest(publicKey)
+proc dismissContactRequest*(self: Controller, publicKey: string, contactRequestId: string) =
+  self.contactService.dismissContactRequest(publicKey, contactRequestId)
 
 proc blockContact*(self: Controller, publicKey: string) =
   self.contactService.blockContact(publicKey)

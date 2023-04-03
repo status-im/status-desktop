@@ -100,16 +100,16 @@ QtObject {
         return currentChatContentModule().amIChatAdmin()
     }
 
-    function acceptContactRequest(pubKey) {
-        chatCommunitySectionModule.acceptContactRequest(pubKey)
+    function acceptContactRequest(pubKey, contactRequestId) {
+        chatCommunitySectionModule.acceptContactRequest(pubKey, contactRequestId)
     }
 
     function acceptAllContactRequests() {
         chatCommunitySectionModule.acceptAllContactRequests()
     }
 
-    function dismissContactRequest(pubKey) {
-        chatCommunitySectionModule.dismissContactRequest(pubKey)
+    function dismissContactRequest(pubKey, contactRequestId) {
+        chatCommunitySectionModule.dismissContactRequest(pubKey, contactRequestId)
     }
 
     function dismissAllContactRequests() {

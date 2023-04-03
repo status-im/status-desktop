@@ -90,7 +90,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
       quotedMessageAuthorDetails = contactDetails
     else:
       quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
-      
+
   return msg_item_qobj.newMessageItem(msg_item.initItem(
     message.id,
     communityId, # we don't received community id via `activityCenterNotifications` api call
