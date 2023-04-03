@@ -705,11 +705,11 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
 
 method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
   # One To One chat is available only in the `Chat` section
-  if (self.controller.getMySectionId() == singletonInstance.userProfile.getPubKey()) and (self.delegate.getActiveSectionId() != self.controller.getMySectionId()):
-    self.delegate.setActiveSectionById(self.controller.getMySectionId())
-  # if its not `Chat` section - skip
-  else:
+  if (self.controller.getMySectionId() != singletonInstance.userProfile.getPubKey()):
     return
+
+  if (self.delegate.getActiveSectionId() != self.controller.getMySectionId()):
+    self.delegate.setActiveSectionById(self.controller.getMySectionId())
 
   if(self.chatContentModules.hasKey(chatId)):
     self.setActiveItem(chatId)
