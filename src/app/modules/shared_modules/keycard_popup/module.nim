@@ -454,13 +454,13 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
   if flowToRun == FlowType.Authentication:
     self.controller.connectKeychainSignals()
     if keyUid.len == 0 or keyUid == singletonInstance.userProfile.getKeyUid():
-      if singletonInstance.userProfile.getUsingBiometricLogin():
-        self.controller.tryToObtainDataFromKeychain()
-        return
       if singletonInstance.userProfile.getIsKeycardUser():
         self.prepareKeyPairItemForAuthentication(singletonInstance.userProfile.getKeyUid())
         self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
         self.controller.runAuthenticationFlow(singletonInstance.userProfile.getKeyUid())
+        return
+      if singletonInstance.userProfile.getUsingBiometricLogin():
+        self.controller.tryToObtainDataFromKeychain()
         return
       self.view.setCurrentState(newEnterPasswordState(flowToRun, nil))
       self.authenticationPopupIsAlreadyRunning = true
@@ -629,6 +629,7 @@ method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
       return
   if not currStateObj.isNil:
     if data.len == PINLengthForStatusApp:
+      self.controller.setPin(data)
       self.controller.enterKeycardPin(data)
     else:
       self.view.setCurrentState(newBiometricsPinInvalidState(FlowType.Authentication, nil))
