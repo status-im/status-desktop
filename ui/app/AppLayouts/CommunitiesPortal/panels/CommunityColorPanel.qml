@@ -47,7 +47,7 @@ StatusScrollView {
     ColumnLayout {
         id: column
         width: root.availableWidth
-        spacing: 12
+        spacing: 16
 
         StatusColorSpace {
             id: colorSpace
@@ -75,7 +75,7 @@ StatusScrollView {
             validators: [
                 StatusRegularExpressionValidator {
                     regularExpression: /^#(?:[0-9a-fA-F]{3}){1,2}$/
-                    errorMessage: qsTr("This is not a valid color")
+                    errorMessage: qsTr("This is not a valid colour")
                 }
             ]
             validationMode: StatusInput.ValidationMode.Always
@@ -106,26 +106,24 @@ StatusScrollView {
                 id: preview
                 x: 16
                 y: 16
-                text: qsTr("White text should be legible on top of this color")
+                text: qsTr("White text should be legible on top of this colour")
                 color: Theme.palette.white
                 font.pixelSize: 15
             }
         }
 
-        StatusBaseText {
-            text: qsTr("Standard colors")
-            font.pixelSize: 15
-        }
-
         StatusColorSelectorGrid {
             id: colorSelectionGrid
+            titleText: qsTr("Standard colours")
+            title.color: Theme.palette.directColor1
+            title.font.pixelSize: 15
             columns: 8
             model: ["#4360df", "#887af9", "#d37ef4", "#51d0f0", "#26a69a", "#7cda00", "#eab700", "#fa6565"]
             selectedColorIndex: -1
             onColorSelected: {
                 root.color = selectedColor;
             }
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
         }
     }
 }

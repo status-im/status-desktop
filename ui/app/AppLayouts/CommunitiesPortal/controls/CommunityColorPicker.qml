@@ -20,9 +20,8 @@ ColumnLayout {
 
     implicitHeight: childrenRect.height
     StatusBaseText {
-        text: qsTr("Community color")
+        text: qsTr("Community colour")
         font.pixelSize: 15
-        color: Theme.palette.directColor1
     }
 
     StatusPickerButton {
@@ -31,7 +30,7 @@ ColumnLayout {
         property string validationError: ""
 
         bgColor: root.color
-        contentColor: Theme.palette.indirectColor1
+        contentColor: Theme.palette.white
         text: root.color.toString()
         onClicked: root.pick()
 

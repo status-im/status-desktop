@@ -171,10 +171,8 @@ StatusDialog {
 
                     property string validationError: ""
 
-                    bgColor: colorDialog.colorSelected ?
-                                 colorDialog.color : Theme.palette.baseColor2
-                    // TODO adjust text color depending on the background color to make it readable
-                    // contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
+                    bgColor: colorDialog.colorSelected ? colorDialog.color : Theme.palette.baseColor2
+                    contentColor: colorDialog.colorSelected ? Theme.palette.white : Theme.palette.baseColor1
                     text: colorDialog.colorSelected ?
                               colorDialog.color.toString().toUpperCase() :
                               qsTr("Pick a colour")
@@ -191,8 +189,9 @@ StatusDialog {
                     id: colorDialog
                     anchors.centerIn: parent
                     property bool colorSelected: root.isEdit && root.channelColor
+                    header.title: qsTr("Channel Colour")
                     color: root.isEdit && root.channelColor ? root.channelColor :
-                                                                Theme.palette.primaryColor1
+                                                              Theme.palette.primaryColor1
                     onAccepted: colorSelected = true
                 }
 
