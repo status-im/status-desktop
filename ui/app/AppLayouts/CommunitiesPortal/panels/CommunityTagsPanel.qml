@@ -63,7 +63,10 @@ StatusScrollView {
     onSelectedTagsChanged: updateSelectedTags()
 
     padding: 0
-    contentWidth: column.width
+    contentWidth: implicitWidth
+    contentHeight: implicitHeight
+    implicitWidth: column.childrenRect.width
+    implicitHeight: column.childrenRect.height
     clip: false
 
     QtObject {
@@ -80,8 +83,6 @@ StatusScrollView {
 
         StatusInput {
             id: tagsFilter
-            leftPadding: 0
-            rightPadding: 0
             label: qsTr("Select tags that will fit your Community")
             labelPadding: Style.current.bigPadding
             font.pixelSize: 15
