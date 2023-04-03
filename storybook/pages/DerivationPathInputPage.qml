@@ -118,12 +118,21 @@ SplitView {
                 text: devTxtEdit.errorMessage
                 visible: devTxtEdit.errorMessage.length > 0
 
-                Layout.alignment: Qt.AlignLeft
                 Layout.fillWidth: true
 
                 font.pixelSize: 22
                 font.italic: true
                 color: "red"
+            }
+            Label {
+                text: devTxtEdit.warningMessage
+                visible: devTxtEdit.warningMessage.length > 0
+
+                Layout.fillWidth: true
+
+                font.pixelSize: 22
+                font.italic: true
+                color: "orange"
             }
             RowLayout {
                 Label { text: "Output: " }
@@ -183,13 +192,11 @@ SplitView {
 
                         Label {
                             text: name
-                            Layout.alignment: Qt.AlignLeft
                             Layout.fillWidth: true
                         }
 
                         Label {
                             text: derivationPath
-                            Layout.alignment: Qt.AlignRight
                             Layout.fillWidth: true
                         }
                     }

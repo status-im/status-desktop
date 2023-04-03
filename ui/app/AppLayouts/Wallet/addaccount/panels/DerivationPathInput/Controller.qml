@@ -9,21 +9,25 @@ Item {
     required property color enabledColor
     required property color frozenColor
     required property color errorColor
+    required property color warningColor
 
     /// Don't allow inserting more than \c levelsLimit Number elements
     property int levelsLimit: 0
 
     readonly property string inputError: qsTr("Please enter numbers only")
     readonly property string tooBigError: qsTr("Account number must be <100")
+    readonly property string nonEthCoinWarning: qsTr("Non-Ethereum cointype")
 
     QtObject {
         id: d
 
         // d flag and named capture groups not supported in Qt 5.15. Use multiple regexes instead
-        readonly property var derivationPathRegex: /^m\/44[’|'](?:\/(?<coin_type>.*?)[’|'])?(?:\/(?<account>.*?)[’|'])?(?:\/(?<change>.*?))?((?:\/.*?)?)$/
-        // Workaround to missing capture group offsets in Qt 5.15
-        readonly property var offsets: [6, 2, 2]
+        readonly property var derivationPathRegex: /^m\/44[’|']\/?(?:(?<coin_type_h>.*?)[’|'])?(?<coin_type_s>.*?)(?:\/(?<account>.*?)[’|']?)?(?:\/(?<change>.*?))?((?:\/.*?)?)$/
+        // The expected characters before each group. Workaround to missing capture group offsets in Qt 5.15
+        readonly property var offsets: [6, 0, 2, 2]
+
         readonly property int addressIndexStart: 3
+        readonly property int ethereumCoinType: 60
 
         // Reference derivation path used to normalize separators (hardened or not). The last separator will be used
         property var referenceElements: []
@@ -53,24 +57,34 @@ Item {
         var elements = []
         var groupIndex = 0
         var currentIndex = 0
-        var nextIndex = d.offsets[groupIndex]
-
-        elements.push(d.createElement(derivationPath.slice(currentIndex, nextIndex), currentIndex, nextIndex, Element.ContentType.Base))
 
         // Extract the captured groups
-        const coin_type = matches[1]
-        const account = matches[2]
-        const change = matches[3]
-        const addressIndexes = matches[4] != null && matches[4].length > 0 ? matches[4].substring(1) : ""; // remove the leading slash
-        if (coin_type != null) {
+        const coin_type_hardened = matches[1]
+        const coin_type_simple = matches[2]
+        const coin_type = coin_type_hardened || coin_type_simple
+        const account = matches[3]
+        const change = matches[4]
+        const addressIndexes = matches[5] ? matches[5].substring(1) : ""; // remove the leading slash
+
+        var nextIndex = coin_type != null ? d.offsets[groupIndex] : derivationPath.length
+        elements.push(d.createElement(derivationPath.slice(currentIndex, nextIndex), currentIndex, nextIndex, Element.ContentType.Base))
+
+        if (coin_type != null && nextIndex < derivationPath.length) {
             currentIndex = nextIndex
             nextIndex = currentIndex + coin_type.length
             elements.push(d.createElement(coin_type, currentIndex, nextIndex, Element.ContentType.Number))
-            groupIndex++
+            groupIndex += 2
 
+            if(coin_type_simple && derivationPath.length > nextIndex) {
+                return null
+            }
+
+            // Standard separator if there is an account otherwise keep the rest
             currentIndex = nextIndex
-            nextIndex = currentIndex + d.offsets[groupIndex]
-            elements.push(d.createElement(derivationPath.slice(currentIndex, nextIndex), currentIndex, nextIndex, Element.ContentType.Separator))
+            nextIndex = (account != null ? currentIndex + d.offsets[groupIndex] : derivationPath.length)
+            if(currentIndex < nextIndex) {
+                elements.push(d.createElement(derivationPath.slice(currentIndex, nextIndex), currentIndex, nextIndex, Element.ContentType.Separator))
+            }
 
             if(account != null) {
                 currentIndex = nextIndex
@@ -79,8 +93,10 @@ Item {
                 groupIndex++
 
                 currentIndex = nextIndex
-                nextIndex = currentIndex + d.offsets[groupIndex]
-                elements.push(d.createElement(derivationPath.slice(currentIndex, nextIndex), currentIndex, nextIndex, Element.ContentType.Separator))
+                nextIndex = (change != null ? currentIndex + d.offsets[groupIndex] : derivationPath.length)
+                if(currentIndex < nextIndex) {
+                    elements.push(d.createElement(derivationPath.slice(currentIndex, nextIndex), currentIndex, nextIndex, Element.ContentType.Separator))
+                }
 
                 if(change != null) {
                     currentIndex = nextIndex
@@ -88,7 +104,7 @@ Item {
                     elements.push(d.createElement(change, currentIndex, nextIndex, Element.ContentType.Number))
 
                     // Check if there are any address indexes
-                    if (matches[4] != null && matches[4].length > 0) {
+                    if (matches[5] != null && matches[5].length > 0) {
                         const addressIndexesParts = addressIndexes.split('/')
                         for (const addressIndex of addressIndexesParts) {
                             currentIndex = nextIndex
@@ -113,16 +129,18 @@ Item {
     }
 
     function generateHtmlFromElements(elements) {
-        // d class is disabled and e class is editable
-        var res = `<style>.d{color:${root.frozenColor};}.e{color:${root.enabledColor};}.f{color:${root.errorColor};}</style>`
+        // d class is disabled; e class is editable; f class is error; w class is warning
+        var res = `<style>.d{color:${root.frozenColor};}.e{color:${root.enabledColor};}.f{color:${root.errorColor};}.w{color:${root.warningColor};}</style>`
         const format = (content, cssClass) => `<span class="${cssClass}">${content}</span>`
 
         var numberLevel = 0
         for(var i = 0; i < elements.length; i++) {
             if (elements[i].isFrozen) {
                 res += format(elements[i].content, "d")
-            } else if(validateElement(elements[i], numberLevel)) {
+            } else if(validateElement(elements[i], elements[i].isNumber() ? numberLevel : -1).error.length > 0) {
                 res += format(elements[i].content, "f")
+            } else if(validateElement(elements[i], elements[i].isNumber() ? numberLevel : -1).warning.length > 0) {
+                res += format(elements[i].content, "w")
             } else {
                 res += format(elements[i].content, "e")
             }
@@ -371,27 +389,35 @@ Item {
         updateFollowingIndices(elements, 0)
     }
 
+    /// \return the object {error: "", warning: ""}
     function validateAllElements(elements) {
         var numberLevel = 0
+        var warningMessage = ""
         for(var i = 0; i < elements.length; i++) {
-            const error = validateElement(elements[i], numberLevel)
-            if(error.length > 0) {
-                return error
+            const res = validateElement(elements[i], elements[i].isNumber() ? numberLevel : -1)
+            if(res.error.length > 0) {
+                return res
+            } else if(res.warning.length > 0 && warningMessage === "") {
+                warningMessage = res.warning
             }
             if(elements[i].isNumber()) {
                 numberLevel++
             }
         }
-        return ""
+        return {error: "", warning: warningMessage}
     }
 
+    /// Expect -1 if not an number element
+    /// \return the object {error: "", warning: ""}
     function validateElement(element, numberLevel) {
-        if(!element.validateNumber() && !element.isEmptyNumber()) {
-            return root.inputError
+        if(numberLevel > -1 && !element.validateNumber() && !element.isEmptyNumber()) {
+            return {error: root.inputError, warning: ""}
+        } else if(numberLevel == 0 && !element.isEmptyNumber() && element.number() != d.ethereumCoinType) {
+            return {error: "", warning: root.nonEthCoinWarning}
         } else if(numberLevel >= d.addressIndexStart && element.number() >= 100) {
-            return root.tooBigError
+            return {error: root.tooBigError, warning: ""}
         }
-        return ""
+        return {error: "", warning: ""}
     }
 
 
