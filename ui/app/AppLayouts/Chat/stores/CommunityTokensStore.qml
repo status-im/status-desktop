@@ -1,11 +1,10 @@
 import QtQuick 2.15
 
-
 QtObject {
     id: root
 
+    property var rootStore
     property var communityTokensModuleInst: communityTokensModule ?? null
-    property string deployFee: communityTokensModuleInst.deployFee
 
     // Network selection properties:
     property var layer1Networks: networksModule.layer1
@@ -49,8 +48,6 @@ QtObject {
                    ])
     }
 
-    signal deployFeeUpdated(string value) // TO BE REMOVED
-
     // Minting tokens:
     function deployCollectible(communityId, accountAddress, name, symbol, description, supply,
                              infiniteSupply, transferable, selfDestruct, chainId, artworkSource, accountName)
@@ -60,10 +57,17 @@ QtObject {
                                                     infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     }
 
-    function computeDeployFee(chainId) {
-        // TODO this call will be async
-        communityTokensModuleInst.computeDeployFee(chainId)
-        root.deployFeeUpdated(root.deployFee)
+    signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
+
+    readonly property Connections connections: Connections {
+      target: communityTokensModuleInst
+      function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
+          root.deployFeeUpdated(ethCurrency, fiatCurrency, errorCode)
+      }
+    }
+
+    function computeDeployFee(chainId, accountAddress) {
+        communityTokensModuleInst.computeDeployFee(chainId, accountAddress)
     }
 
     // Airdrop tokens:

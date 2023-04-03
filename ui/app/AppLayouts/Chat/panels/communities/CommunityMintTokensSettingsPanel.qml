@@ -22,6 +22,7 @@ SettingsPageLayout {
     property var tokensModel
     property var holdersModel
     property string feeText
+    property string errorText
     property bool isFeeLoading: true
 
     // Network related properties:
@@ -48,7 +49,13 @@ SettingsPageLayout {
                            string accountName,
                            string accountAddress)
 
-    signal signMintTransactionOpened(int chainId)
+    signal signMintTransactionOpened(int chainId, string accountAddress)
+
+    function setFeeLoading() {
+        root.isFeeLoading = true
+        root.feeText = ""
+        root.errorText = ""
+    }
 
     function navigateBack() {
         stackManager.pop(StackView.Immediate)
@@ -191,8 +198,7 @@ SettingsPageLayout {
             id: preview
 
             function signMintTransaction() {
-                root.isFeeLoading = true
-                root.feeText = ""
+                root.setFeeLoading()
                 root.mintCollectible(artworkSource,
                                      name,
                                      symbol,
@@ -227,9 +233,13 @@ SettingsPageLayout {
                 accountName: parent.accountName
                 networkName: parent.chainName
                 feeText: root.feeText
+                errorText: root.errorText
                 isFeeLoading: root.isFeeLoading
 
-                onOpened: root.signMintTransactionOpened(parent.chainId)
+                onOpened: {
+                    root.setFeeLoading()
+                    root.signMintTransactionOpened(parent.chainId, d.accountAddress)
+                }
                 onCancelClicked: close()
                 onSignTransactionClicked: parent.signMintTransaction()
             }

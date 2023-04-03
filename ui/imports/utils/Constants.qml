@@ -864,6 +864,12 @@ QtObject {
         Keycard
     }
 
+    enum ComputeFeeErrorCode {
+        Success,
+        Infura,
+        Balance,
+        Other
+    }
 
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"

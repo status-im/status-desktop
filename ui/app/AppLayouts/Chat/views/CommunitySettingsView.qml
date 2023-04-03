@@ -300,7 +300,7 @@ StatusSectionLayout {
                 accounts: root.rootStore.accounts
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
-                onSignMintTransactionOpened: communityTokensStore.computeDeployFee(chainId)
+                onSignMintTransactionOpened: communityTokensStore.computeDeployFee(chainId, accountAddress)
                 onMintCollectible: {
                     communityTokensStore.deployCollectible(root.community.id,
                                                            accountAddress,
@@ -322,17 +322,25 @@ StatusSectionLayout {
                    value: communityMintTokensSettingsPanel.StackView.index
                 }
 
-                // TODO: Review once backend is done
                 Connections {
                     target: rootStore.communityTokensStore
-                    function onDeployFeeUpdated(value) {
-                        // TODO better error handling
-                        if (value === "-") {
-                            mintPanel.isFeeLoading = true
-                        } else {
+                    function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
+                        if (errorCode === Constants.ComputeFeeErrorCode.Success || errorCode === Constants.ComputeFeeErrorCode.Balance) {
+                            let valueStr = LocaleUtils.currencyAmountToLocaleString(ethCurrency) + "(" + LocaleUtils.currencyAmountToLocaleString(fiatCurrency) + ")"
+                            mintPanel.feeText = valueStr
+                            if (errorCode === Constants.ComputeFeeErrorCode.Balance) {
+                                mintPanel.errorText = qsTr("Not enough funds to make transaction")
+                            }
                             mintPanel.isFeeLoading = false
-                            mintPanel.feeText = value
+                            return
+                        } else if (errorCode === Constants.ComputeFeeErrorCode.Infura) {
+                            mintPanel.errorText = qsTr("Infura error")
+                            mintPanel.isFeeLoading = true
+                            return
                         }
+
+                        mintPanel.errorText = qsTr("Unknown error")
+                        mintPanel.isFeeLoading = true
                     }
                 }
             }

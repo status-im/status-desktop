@@ -1,4 +1,5 @@
-import ../../../../../app_service/service/community_tokens/dto/community_token
+import ../../../../../app_service/service/community_tokens/service
+import ../../../shared_models/currency_amount
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -22,5 +23,8 @@ method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
 method resetTempValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeDeployFee*(self: AccessInterface, chainId: int): string {.base.} =
+method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onDeployFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) {.base.} =
   raise newException(ValueError, "No implementation available")

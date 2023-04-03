@@ -1,12 +1,12 @@
-import NimQml, json, stint, strformat, strutils, chronicles
+import NimQml, json, stint, strutils, chronicles
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/community/dto/community
-import ../../../../../app_service/common/conversion
 import ../../../../../app_service/service/accounts/utils as utl
 import ../../../../core/eventemitter
 import ../../../../global/global_singleton
+import ../../../shared_models/currency_amount
 import ../io_interface as parent_interface
 import ./io_interface, ./view , ./controller
 
@@ -118,19 +118,8 @@ method onUserAuthenticated*(self: Module, password: string) =
     elif self.tempContractAction == ContractAction.Airdrop:
       self.controller.airdropCollectibles(self.tempCommunityId, password, self.tempTokenAndAmountList, self.tempWalletAddresses)
 
-method computeDeployFee*(self: Module, chainId: int): string =
-  let suggestedFees = self.controller.getSuggestedFees(chainId)
-  if suggestedFees == nil:
-    return "-"
+method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
+  self.view.updateDeployFee(ethCurrency, fiatCurrency, errorCode.int)
 
-  let contractGasUnits = 3702411 # this should go from status-go
-  let maxFees = suggestedFees.maxFeePerGasM
-  let gasPrice = if suggestedFees.eip1559Enabled: maxFees else: suggestedFees.gasPrice
-
-  let weiValue = gwei2Wei(gasPrice) * contractGasUnits.u256
-  let ethValueStr = wei2Eth(weiValue)
-  let ethValue = parseFloat(ethValueStr)
-
-  let fiatValue = self.controller.getFiatValue(ethValueStr, "ETH")
-
-  return fmt"{ethValue:.4f}ETH (${fiatValue})"
+method computeDeployFee*(self: Module, chainId: int, accountAddress: string) =
+  self.controller.computeDeployFee(chainId, accountAddress)

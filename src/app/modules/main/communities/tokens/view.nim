@@ -1,12 +1,12 @@
 import NimQml, json, strutils, sequtils
 
 import ./io_interface as community_tokens_module_interface
+import ../../../shared_models/currency_amount
 
 QtObject:
   type
     View* = ref object of QObject
       communityTokensModule: community_tokens_module_interface.AccessInterface
-      deployFee: string
 
   proc load*(self: View) =
     discard
@@ -25,16 +25,12 @@ QtObject:
   proc airdropCollectibles*(self: View, communityId: string, collectiblesJsonString: string, walletsJsonString: string) {.slot.} =
     self.communityTokensModule.airdropCollectibles(communityId, collectiblesJsonString, walletsJsonString)
 
-  proc deployFeeUpdated*(self: View) {.signal.}
+  proc deployFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
 
-  proc computeDeployFee*(self: View, chainId: int) {.slot.} =
-    self.deployFee = self.communityTokensModule.computeDeployFee(chainId)
-    self.deployFeeUpdated()
+  proc computeDeployFee*(self: View, chainId: int, accountAddress: string) {.slot.} =
+    self.communityTokensModule.computeDeployFee(chainId, accountAddress)
 
-  proc getDeployFee(self: View): QVariant {.slot.} =
-    return newQVariant(self.deployFee)
+  proc updateDeployFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
+    self.deployFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
 
-  QtProperty[QVariant] deployFee:
-    read = getDeployFee
-    notify = deployFeeUpdated
 

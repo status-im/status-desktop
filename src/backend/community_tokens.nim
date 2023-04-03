@@ -27,3 +27,7 @@ proc mintTo*(chainId: int, contractAddress: string, txData: JsonNode, password: 
 proc contractOwner*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, contractAddress]
   return core.callPrivateRPC("collectibles_contractOwner", payload)
+
+proc deployCollectiblesEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[]
+  return core.callPrivateRPC("collectibles_deployCollectiblesEstimate", payload)
