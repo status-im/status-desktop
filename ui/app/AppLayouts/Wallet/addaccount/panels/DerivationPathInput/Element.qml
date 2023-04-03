@@ -50,7 +50,7 @@ QtObject {
     function isSimilar(other) {
         return contentType === other.contentType
             && (contentType === Element.ContentType.Number
-                ? number() === other.number()
+                ? (number() === other.number()) || (isEmptyNumber() && other.isEmptyNumber())
                 : (isHardened() === other.isHardened()))
     }
 

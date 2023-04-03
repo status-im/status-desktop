@@ -23,6 +23,7 @@ Item {
     property alias levelsLimit: controller.levelsLimit
 
     property alias errorMessage: d.errorMessage
+    property alias warningMessage: d.warningMessage
 
     property alias input: input
 
@@ -38,7 +39,7 @@ Item {
         if(res.errorMessage) {
             return false
         }
-        d.resetErrorMessage()
+        d.resetMessages()
         d.elements = res.elements
         d.updateText(d.elements)
         input.cursorPosition = d.elements[d.elements.length - 1].endIndex
@@ -57,8 +58,9 @@ Item {
         property int cursorPositionToRestore: -1
 
         property string errorMessage: ""
+        property string warningMessage: ""
 
-        function resetErrorMessage() { errorMessage = "" }
+        function resetMessages() { errorMessage = ""; warningMessage = "" }
 
         readonly property bool selectionIsActive: Math.abs(input.selectionEnd - input.selectionStart) > 0
 
@@ -82,6 +84,7 @@ Item {
         enabledColor: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
         frozenColor: Theme.palette.getColor('grey5')
         errorColor: Theme.palette.dangerColor1
+        warningColor: Theme.palette.warningColor1
     }
 
     StatusBaseInput {
@@ -213,15 +216,16 @@ Item {
                 return
             }
             const currentText = edit.getText(0, text.length)
-            const errorText = controller.validateAllElements(d.elements)
+            const validationRes = controller.validateAllElements(d.elements)
 
             if(d.cursorPositionToRestore >= 0) {
                 input.cursorPosition = d.cursorPositionToRestore
                 d.cursorPositionToRestore = -1
             }
 
-            d.errorMessage = errorText
-            if(errorText.length > 0 || !d.elements.slice(0, -1).every(obj => obj.content.length > 0)) {
+            d.errorMessage = validationRes.error
+            d.warningMessage = validationRes.warning
+            if(d.errorMessage.length > 0 || !d.elements.slice(0, -1).every(obj => obj.content.length > 0)) {
                 d.currentDerivationPath = ""
             } else {
                 d.currentDerivationPath = currentText

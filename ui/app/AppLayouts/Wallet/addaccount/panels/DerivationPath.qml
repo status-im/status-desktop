@@ -181,7 +181,7 @@ GridLayout {
             id: basePathName
 
             Layout.fillWidth: true
-            visible: !errorMessageText.visible
+            visible: !errorMessageText.visible && !warningMessageText.visible
 
             font.pixelSize: Constants.addAccountPopup.labelFontSize2
             color: Theme.palette.baseColor1
@@ -197,6 +197,17 @@ GridLayout {
             color: Theme.palette.dangerColor1
 
             text: derivationPathInput.errorMessage
+        }
+        StatusBaseText {
+            id: warningMessageText
+
+            Layout.fillWidth: true
+            visible: !!derivationPathInput.warningMessage
+
+            font.pixelSize: basePathName.font.pixelSize
+            color: Theme.palette.warningColor1
+
+            text: derivationPathInput.warningMessage
         }
     }
 

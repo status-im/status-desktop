@@ -21,6 +21,7 @@ Item {
                 enabledColor: "white"
                 frozenColor: "black"
                 errorColor: "red"
+                warningColor: "orange"
             }
         }
 
@@ -33,7 +34,8 @@ Item {
         function test_parseRegularBases_data() {
             return [
                 {tag: "Ethereum Standard", base: "m/44'/60'/0'/0", expected: ["m/44'/", "60", "'/", "0", "'/", "0"]},
-                {tag: "Custom", base: "m/44'/", expected: ["m/44'/"]},
+                {tag: "Custom", base: "m/44'", expected: ["m/44'"]},
+                {tag: "Custom with separator", base: "m/44'/", expected: ["m/44'/"]},
                 {tag: "Ethereum Ledger", base: "m/44'/60'/0'", expected: ["m/44'/", "60", "'/", "0", "'"]},
                 {tag: "Ethereum Ledger Live", base: "m/44'/60'", expected: ["m/44'/", "60", "'"]},
             ]
@@ -54,22 +56,32 @@ Item {
                 {tag: "Ethereum Ledger", derivationPath: "m/44'/60'/0'/1/2", expected: ["m/44'/", "60", "'/", "0", "'/", "1", "/", "2"]},
                 {tag: "Ethereum Ledger Live", derivationPath: "m/44'/60'/1'/2/3", expected: ["m/44'/", "60", "'/", "1", "'/", "2", "/", "3"]},
                 {tag: "Empty entries", derivationPath: "m/44'/'/'//", expected: ["m/44'/", "", "'/", "", "'/", "", "/", ""]},
-                {tag: "Wrong entries", derivationPath: "m/44'/T<'/.?'/;/wrong", expected: ["m/44'/", "T<", "'/", ".?", "'/", ";", "/", "wrong"]}
+                {tag: "Wrong entries", derivationPath: "m/44'/T<'/.?'/;/wrong", expected: ["m/44'/", "T<", "'/", ".?", "'/", ";", "/", "wrong"]},
+                {tag: "Custom corner-case coin only", derivationPath: "m/44'/77", expected: ["m/44'/", "77"]},
+                {tag: "Custom corner-case hardened coin only", derivationPath: "m/44'/12'", expected: ["m/44'/", "12", "'"]},
+                {tag: "Custom corner-case coin and separator", derivationPath: "m/44'/12'/", expected: ["m/44'/", "12", "'/", ""]},
+                {tag: "Custom corner-case coin and address", derivationPath: "m/44'/12'/03", expected: ["m/44'/", "12", "'/", "03"]},
+                {tag: "Custom corner-case coin and hardened address", derivationPath: "m/44'/12'/03'", expected: ["m/44'/", "12", "'/", "03", "'"]},
+                {tag: "Custom corner-case coin, address and separator", derivationPath: "m/44'/12'/03'/", expected: ["m/44'/", "12", "'/", "03", "'/", ""]},
+                {tag: "Custom corner-case coin, address and change", derivationPath: "m/44'/12'/03'/83", expected: ["m/44'/", "12", "'/", "03", "'/", "83"]},
+                {tag: "Custom corner-case coin, address, change and separator", derivationPath: "m/44'/12'/03'/83/", expected: ["m/44'/", "12", "'/", "03", "'/", "83", "/", ""]},
             ]
         }
 
         function test_parseRegularDerivationPath(data) {
             let res = controller.parseDerivationPath(data.derivationPath)
-            compare(res.length, data.expected.length)
+            compare(res.length, data.expected.length, `expect same element count for: ${JSON.stringify(res)} vs ${JSON.stringify(data.expected)}`)
             for (const i in res) {
-                compare(data.expected[i], res[i].content)
+                compare(data.expected[i], res[i].content, `expect same element for [${i}]: ${JSON.stringify(res)} vs ${JSON.stringify(data.expected)}`)
             }
         }
         function test_completeDerivationPath_data() {
             return [
-                {name: "Ethereum", base: "m/44'/60'/0'/0", derivationPath: "m/44'/60'/0'/0/1", expected: ["m/44'/", "60", "'/", "0", "'/", "0", "/", "1"]},
-                {name: "Ending in separator", base: "m/44'/60'/0'/0", derivationPath: "m/44'/60'/0'/0/", expected: ["m/44'/", "60", "'/", "0", "'/", "0", "/", ""]},
-                {name: "Custom", base: "m/44'", derivationPath: "m/44'", expected: ["m/44'/", ""]},
+                {tag: "Ethereum", base: "m/44'/60'/0'/0", derivationPath: "m/44'/60'/0'/0/1", expected: ["m/44'/", "60", "'/", "0", "'/", "0", "/", "1"]},
+                {tag: "Ending in separator", base: "m/44'/60'/0'/0", derivationPath: "m/44'/60'/0'/0/", expected: ["m/44'/", "60", "'/", "0", "'/", "0", "/", ""]},
+                {tag: "Custom", base: "m/44'", derivationPath: "m/44'", expected: ["m/44'/", ""]},
+                {tag: "Ethereum Ledger", base: "m/44'", derivationPath: "m/44'/60'/0/1/2", expected: ["m/44'/", "60", "'/", "0", "'/", "1", "/", "2"]},
+                {tag: "Broken Ethereum", base: "m/44'", derivationPath: "m/44'/60/0'/0/1/2", expected: ["m/44'/", "60/0", "'/", "0", "/", "1", "/", "2"]},
             ]
         }
 
@@ -84,17 +96,44 @@ Item {
 
         function test_parseRegularWrongDerivationPath_data() {
             return [
-                {name: "Ethereum", derivationPath: "m'/46'/60'/0'/0/1"},
-                {name: "Ethereum", derivationPath: "m/44'/60/0'/0/1/2"},
-                {name: "Ethereum Ledger", derivationPath: "m/44'/60'/0/1/2"},
-                {name: "Incomplete", derivationPath: "m/44"},
-                {name: "Ethereum", derivationPath: "'/46'/60'/0'/0/1"},
+                {tag: "Other standard", derivationPath: "m/46'/60'/0'/0/1"},
+                {tag: "Incomplete", derivationPath: "m/44"},
+                {tag: "Ethereum", derivationPath: "'/46'/60'/0'/0/1"},
             ]
         }
 
         function test_parseRegularWrongDerivationPath(data) {
             let res = controller.parseDerivationPath(data.derivationPath)
             compare(res, null)
+        }
+
+        function test_validateAllElements_data() {
+            return [
+                {tag: "No error", derivationPath: "m/44'/60'/0'/0/1", error: "", warning: ""},
+                {tag: "No error regression", derivationPath: "m/44'/", error: "", warning: ""},
+                {tag: "Non-ethereum", derivationPath: "m/44'/83'/0'/0/1", error: "", warning: "Non-Ethereum cointype"},
+                {tag: "Numbers only", derivationPath: "m/44'/8d3'/0'/0/1", error: "Please enter numbers only", warning: ""},
+                {tag: "First address index too big", derivationPath: "m/44'/83'/0'/0/101", error: "Account number must be <100", warning: ""},
+                {tag: "Last address index too big", derivationPath: "m/44'/83'/0'/0/1/2/123", error: "Account number must be <100", warning: ""},
+            ]
+        }
+
+        function test_validateAllElements(data) {
+            const res = controller.completeDerivationPath("m/44'", data.derivationPath)
+            var validationResult = controller.validateAllElements(res.elements)
+            var expectAllOk = true
+            if(data.error) {
+                verify(validationResult.error, `expect error message, got "${validationResult.error}"`)
+                expectAllOk = false
+            }
+            if(data.warning) {
+                verify(validationResult.warning, `expect warning message, got "${validationResult.warning}"`)
+                expectAllOk = false
+            }
+            if(expectAllOk) {
+                verify(!validationResult.error, `expect no error message, got "${validationResult.error}"`)
+                verify(!validationResult.warning, `expect no warning message, got "${validationResult.warning}"`)
+            }
         }
 
         Component {
