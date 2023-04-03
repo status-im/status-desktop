@@ -19,6 +19,21 @@ StatusModal {
     readonly property int itemsCount: stackLayout.count
     readonly property var currentItem: stackLayout.currentItem
 
+    property Item backButton: StatusBackButton {
+        visible: replaceItem || stackLayout.currentIndex > 0
+        onClicked: {
+            if (replaceItem) {
+                replaceItem = null;
+            } else {
+                let prevAction = stackLayout.currentItem.prevAction
+                stackLayout.currentIndex--;
+                if (typeof(prevAction) == "function") {
+                    prevAction()
+                }
+            }
+        }
+    }
+
     property Item nextButton: StatusButton {
         text: qsTr("Next")
         onClicked: root.currentIndex++
@@ -52,21 +67,7 @@ StatusModal {
                                                 ? replaceLoader.item.title : stackTitle
     padding: 16
 
-    leftButtons: StatusBackButton {
-        id: backButton
-        visible: replaceItem || stackLayout.currentIndex > 0
-        onClicked: {
-            if (replaceItem) {
-              replaceItem = null;
-            } else {
-              let prevAction = stackLayout.currentItem.prevAction
-              stackLayout.currentIndex--;
-              if (typeof(prevAction) == "function") {
-                prevAction()
-              }
-            }
-        }
-    }
+    leftButtons: [ backButton ]
 
     rightButtons: [ nextButton, finishButton ]
 
