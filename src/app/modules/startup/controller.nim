@@ -82,7 +82,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.tmpSelectedLoginAccountIsKeycardAccount = false
 
 # Forward declaration
-proc cleanTmpData*(self: Controller)
+proc cleanTmpData(self: Controller)
 proc storeMetadataForNewKeycardUser(self: Controller)
 proc storeIdentityImage*(self: Controller): seq[Image]
 proc getSelectedLoginAccount*(self: Controller): AccountDto
@@ -133,6 +133,7 @@ proc init*(self: Controller) =
   var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     self.delegate.onNodeLogin(signal.event.error)
+    self.cleanTmpData()
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SignalType.NodeStopped.event) do(e:Args):
@@ -304,7 +305,7 @@ proc setRecoverUsingSeedPhraseWhileLogin*(self: Controller, value: bool) =
 proc getRecoverUsingSeedPhraseWhileLogin*(self: Controller): bool =
   return self.tmpRecoverUsingSeedPhraseWhileLogin
 
-proc cleanTmpData*(self: Controller) =
+proc cleanTmpData(self: Controller) =
   self.tmpSelectedLoginAccountKeyUid = ""
   self.tmpSelectedLoginAccountIsKeycardAccount = false
   self.tmpProfileImageDetails = ProfileImageDetails()
