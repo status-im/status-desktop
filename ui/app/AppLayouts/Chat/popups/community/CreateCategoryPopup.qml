@@ -123,10 +123,11 @@ StatusModal {
                             readonly property bool checked: channelItemCheckbox.checked
                             objectName: "category_item_name_" + model.name
                             anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.horizontalCenterOffset: 16
                             height: visible ? implicitHeight : 0
                             title: "#" + model.name
-                            asset.width: 30
-                            asset.height: 30
+                            asset.width: 40
+                            asset.height: 40
                             asset.emoji: model.emoji
                             asset.color: model.color
                             asset.imgIsIdenticon: false
@@ -156,29 +157,6 @@ StatusModal {
                         }
                     }
                 }
-            }
-        }
-
-        StatusModalDivider {
-            visible: deleteCategoryButton.visible
-            topPadding: 8
-            bottomPadding: 8
-        }
-
-        StatusListItem {
-            id: deleteCategoryButton
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: isEdit
-
-            title: qsTr("Delete category")
-            asset.name: "delete"
-            type: StatusListItem.Type.Danger
-            onClicked: {
-                Global.openPopup(deleteCategoryConfirmationDialogComponent, {
-                    title: qsTr("Delete %1 category").arg(root.contentItem.categoryName.input.text),
-                    confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.").arg(root.contentItem.categoryName.input.text)
-
-                })
             }
         }
 
@@ -212,6 +190,17 @@ StatusModal {
     }
 
     rightButtons: [
+        StatusButton {
+            visible: isEdit
+            type: StatusBaseButton.Type.Danger
+            text: qsTr("Delete Category")
+            onClicked: {
+                Global.openPopup(deleteCategoryConfirmationDialogComponent, {
+                    "header.title": qsTr("Delete '%1' category").arg(nameInput.text),
+                    confirmationText: qsTr("Are you sure you want to delete '%1' category? Channels inside the category won’t be deleted.").arg(nameInput.text)
+                })
+            }
+        },
         StatusButton {
             objectName: "createOrEditCommunityCategoryBtn"
             enabled: isFormValid()
