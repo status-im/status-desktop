@@ -303,8 +303,8 @@ Item {
                     type: StatusAction.Type.Danger
                     onTriggered: {
                         Global.openPopup(deleteCategoryConfirmationDialogComponent, {
-                            title: qsTr("Delete %1 category").arg(categoryItem.name),
-                            confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won't be deleted.")
+                            "header.title": qsTr("Delete '%1' category").arg(categoryItem.name),
+                            confirmationText: qsTr("Are you sure you want to delete '%1' category? Channels inside the category won't be deleted.")
                                 .arg(categoryItem.name),
                             categoryId: categoryItem.itemId
                         })
