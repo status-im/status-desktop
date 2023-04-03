@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 
@@ -30,15 +30,13 @@ RadioButton {
             radius: width/2
             color: selectionColor
             border.color: StatusColors.colors['grey3']
+            border.width: 1
         }
     }
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: true
+    HoverHandler {
+        enabled: control.enabled
         cursorShape: Qt.PointingHandCursor
-        onPressed: mouse.accepted = false
     }
 }
 
