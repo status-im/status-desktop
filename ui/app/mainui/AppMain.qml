@@ -22,6 +22,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.popups.keycard 1.0
 import shared.status 1.0
+import shared.stores 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -52,6 +53,7 @@ Item {
         openCreateChat: createChatView.opened
     }
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
+    property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     // set from main.qml
     property var sysPalette
 
@@ -683,28 +685,28 @@ Item {
                     Layout.fillWidth: true
                     websiteDown: Constants.walletConnections.blockchains
                     withCache: networkConnectionStore.balanceCache
-                    text: {
+                    networkConnectionStore: appMain.networkConnectionStore
+                    tooltipMessage: qsTr("Pocket Network (POKT) & Infura are currently both unavailable for %1. Balances for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
+                    toastText: {
                         switch(connectionState) {
                         case Constants.ConnectionStatus.Success:
                             return qsTr("Pocket Network (POKT) connection successful")
                         case Constants.ConnectionStatus.Failure:
                             if(completelyDown) {
-                                updateTimer.restart()
                                 if(withCache)
-                                    return qsTr("POKT & Infura down. Token balances are as of %1. Retrying in %2.").arg(lastCheckedAt).arg(Utils.getTimerString(autoTryTimerInSecs))
+                                    return qsTr("POKT & Infura down. Token balances are as of %1.").arg(lastCheckedAt)
                                 else
-                                    return qsTr("POKT & Infura down. Token balances cannot be retrieved. Retrying in %1.").arg(Utils.getTimerString(autoTryTimerInSecs))
+                                    return qsTr("POKT & Infura down. Token balances cannot be retrieved.")
                             }
                             else if(chainIdsDown.length > 0) {
-                                updateTimer.restart()
                                 if(chainIdsDown.length > 2) {
-                                    return qsTr("POKT & Infura down for <a href='#'>multiple chains </a>. Token balances for those chains cannot be retrieved. Retrying in %1.").arg(Utils.getTimerString(autoTryTimerInSecs))
+                                    return qsTr("POKT & Infura down for <a href='#'>multiple chains </a>. Token balances for those chains cannot be retrieved.")
                                 }
                                 else if(chainIdsDown.length === 1) {
-                                    return qsTr("POKT & Infura down for %1. %1 token balances are as of %2. Retrying in %3.").arg(jointChainIdString).arg(lastCheckedAt).arg(Utils.getTimerString(autoTryTimerInSecs))
+                                    return qsTr("POKT & Infura down for %1. %1 token balances are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
                                 }
                                 else {
-                                    return qsTr("POKT & Infura down for %1. %1 token balances cannot be retrieved. Retrying in %2.").arg(jointChainIdString).arg(Utils.getTimerString(autoTryTimerInSecs))
+                                    return qsTr("POKT & Infura down for %1. %1 token balances cannot be retrieved.").arg(jointChainIdString)
                                 }
                             }
                             else
@@ -715,16 +717,6 @@ Item {
                             return ""
                         }
                     }
-                    onLinkActivated: {
-                        let tootipMessage = qsTr("Pocket Network (POKT) & Infura are currently both unavailable for %1. Balances for those chains are as of %2.").arg(jointChainIdString).arg(lastCheckedAt)
-                        toolTip.show(tootipMessage, 3000)
-                    }
-
-                    StatusToolTip {
-                        id: toolTip
-                        orientation: StatusToolTip.Orientation.Bottom
-                        maxWidth: 300
-                    }
                 }
 
                 ConnectionWarnings {
@@ -733,17 +725,17 @@ Item {
                     Layout.fillWidth: true
                     websiteDown: Constants.walletConnections.collectibles
                     withCache: networkConnectionStore.collectiblesCache
-                    text: {
+                    networkConnectionStore: appMain.networkConnectionStore
+                    toastText: {
                         switch(connectionState) {
                         case Constants.ConnectionStatus.Success:
                             return qsTr("Opensea connection successful")
                         case Constants.ConnectionStatus.Failure:
-                            updateTimer.restart()
                             if(withCache){
-                                return qsTr("Opensea down. Collectibles are as of %1. Retrying in %2.").arg(lastCheckedAt).arg(Utils.getTimerString(autoTryTimerInSecs))
+                                return qsTr("Opensea down. Collectibles are as of %1.").arg(lastCheckedAt)
                             }
                             else {
-                                return qsTr("Opensea down. Retrying in %1.").arg(Utils.getTimerString(autoTryTimerInSecs))
+                                return qsTr("Opensea down.")
                             }
                         case Constants.ConnectionStatus.Retrying:
                             return qsTr("Retrying connection to Opensea...")
@@ -753,28 +745,29 @@ Item {
                     }
                 }
 
-
                 ConnectionWarnings {
                     id: walletMarketConnectionBanner
                     objectName: "walletMarketConnectionBanner"
                     Layout.fillWidth: true
                     websiteDown: Constants.walletConnections.market
                     withCache: networkConnectionStore.marketValuesCache
-                    text: {
+                    networkConnectionStore: appMain.networkConnectionStore
+                    toastText: {
                         switch(connectionState) {
                         case Constants.ConnectionStatus.Success:
                             return qsTr("CryptoCompare and CoinGecko connection successful")
                         case Constants.ConnectionStatus.Failure: {
-                            updateTimer.restart()
                             if(withCache) {
-                                return qsTr("CryptoCompare and CoinGecko down. Market values are as of %1. Retrying in %2.").arg(lastCheckedAt).arg(Utils.getTimerString(autoTryTimerInSecs))
+                                return qsTr("CryptoCompare and CoinGecko down. Market values are as of %1.").arg(lastCheckedAt)
                             }
                             else {
-                                return qsTr("CryptoCompare and CoinGecko down. Market values cannot be retrieved. Trying again in %1.").arg(Utils.getTimerString(autoTryTimerInSecs))
+                                return qsTr("CryptoCompare and CoinGecko down. Market values cannot be retrieved.")
                             }
                         }
                         case Constants.ConnectionStatus.Retrying:
                             return qsTr("Retrying connection to CryptoCompare and CoinGecko...")
+                        default:
+                            return ""
                         }
                     }
                 }

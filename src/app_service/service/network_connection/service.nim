@@ -23,8 +23,6 @@ type ConnectionStatus* = ref object of RootObj
     completelyDown*: bool
     chainIds*: seq[int]
     lastCheckedAt*: int
-    timeToAutoRetryInSecs*: int
-    timer*: QTimer
 
 const SIGNAL_CONNECTION_UPDATE* = "signalConnectionUpdate"
 const SIGNAL_REFRESH_COLLECTIBLES* = "signalRefreshCollectibles"
@@ -35,12 +33,10 @@ type NetworkConnectionsArgs* = ref object of Args
   connectionState*: ConnectionState
   chainIds*: string
   lastCheckedAt*: int
-  timeToAutoRetryInSecs*: int
 
 const BLOCKCHAINS* = "blockchains"
 const MARKET* = "market"
 const COLLECTIBLES* = "collectibles"
-const BACKOFF_TIMERS* = [30, 60, 180, 600, 3600, 10800]
 
 include  ../../common/json_utils
 
@@ -50,8 +46,6 @@ proc newConnectionStatus(): ConnectionStatus =
     completelyDown: false,
     chainIds: @[],
     lastCheckedAt: 0,
-    timeToAutoRetryInSecs: BACKOFF_TIMERS[0],
-    timer: newQTimer()
   )
 
 QtObject:
@@ -157,8 +151,7 @@ QtObject:
       completelyDown: connectionStatus.completelyDown,
       connectionState: connectionStatus.connectionState,
       chainIds: self.getFormattedStringForChainIds(connectionStatus.chainIds),
-      lastCheckedAt: connectionStatus.lastCheckedAt,
-      timeToAutoRetryInSecs: connectionStatus.timeToAutoRetryInSecs
+      lastCheckedAt: connectionStatus.lastCheckedAt
       )
 
   proc updateConnectionStatus(self: Service,
@@ -166,58 +159,31 @@ QtObject:
     connectionState: ConnectionState,
     completelyDown: bool,
     chainIds: seq[int],
-    lastCheckedAt: int,
-    timeToAutoRetryInSecs: int
+    lastCheckedAt: int
     ) =
       if self.connectionStatus.hasKey(website):
         self.connectionStatus[website].connectionState = connectionState
         self.connectionStatus[website].completelyDown = completelyDown
         self.connectionStatus[website].chainIds = chainIds
         self.connectionStatus[website].lastCheckedAt = lastCheckedAt
-        self.connectionStatus[website].timeToAutoRetryInSecs = timeToAutoRetryInSecs
-
-  proc increaseTimer(self: Service, connectionStatus: ConnectionStatus): int  =
-    var backOffTimer: int = connectionStatus.timeToAutoRetryInSecs
-     # Is down even after retry we need to increase the timer duration
-    if connectionStatus.connectionState == ConnectionState.Retrying:
-      let index = BACKOFF_TIMERS.find(backOffTimer)
-      if index != -1 and index < BACKOFF_TIMERS.len:
-        backOffTimer = BACKOFF_TIMERS[index + 1]
-    return backOffTimer
 
   proc updateMarketOrCollectibleStatus(self: Service, website: string, isDown: bool, at: int) =
     if self.connectionStatus.hasKey(website):
       if isDown:
-        self.updateConnectionStatus(website, ConnectionState.Failed, true, @[], at, self.increaseTimer(self.connectionStatus[website]))
-        # restart timer
-        signalConnect(self.connectionStatus[website].timer, "timeout()", self, website&"Retry()", 2)
-        self.connectionStatus[website].timer.setInterval(self.connectionStatus[website].timeToAutoRetryInSecs*1000)
-        self.connectionStatus[website].timer.start()
-
         # trigger event
+        self.updateConnectionStatus(website, ConnectionState.Failed, true, @[], at)
         self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(website, self.connectionStatus[website]))
       else:
-        # site was completely down and is back up now
+        # if site was completely down and is back up now, trigger event
         if self.connectionStatus[website].completelyDown:
           self.connectionStatus[website] = newConnectionStatus()
-          # trigger event
           self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(website, self.connectionStatus[website]))
-
 
   proc updateBlockchainsStatus(self: Service, completelyDown: bool, chaindIdsDown: seq[int], at: int) =
     if self.connectionStatus.hasKey(BLOCKCHAINS):
-      # if all the networks are down for the BLOCKCHAINS
+      # if all the networks are down for the BLOCKCHAINS, trigger event
       if completelyDown:
-        var backOffTimer: int = self.connectionStatus[BLOCKCHAINS].timeToAutoRetryInSecs
-        if self.connectionStatus[BLOCKCHAINS].completelyDown:
-          backOffTimer = self.increaseTimer(self.connectionStatus[BLOCKCHAINS])
-        self.updateConnectionStatus(BLOCKCHAINS, ConnectionState.Failed, true, chaindIdsDown, at, backOffTimer)
-        # restart timer
-        signalConnect(self.connectionStatus[BLOCKCHAINS].timer, "timeout()", self, BLOCKCHAINS&"Retry()", 2)
-        self.connectionStatus[BLOCKCHAINS].timer.setInterval(self.connectionStatus[BLOCKCHAINS].timeToAutoRetryInSecs*1000)
-        self.connectionStatus[BLOCKCHAINS].timer.start()
-
-        # trigger event
+        self.updateConnectionStatus(BLOCKCHAINS, ConnectionState.Failed, true, chaindIdsDown, at)
         self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(BLOCKCHAINS, self.connectionStatus[BLOCKCHAINS]))
 
       # if all the networks are not down for the website
@@ -227,34 +193,25 @@ QtObject:
           self.connectionStatus[BLOCKCHAINS] = newConnectionStatus()
           self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(BLOCKCHAINS, self.connectionStatus[BLOCKCHAINS]))
 
-        # case where a some of networks on the website are down
+        # case where a some of networks on the website are down, trigger event
         if chaindIdsDown.len > 0:
-          self.updateConnectionStatus(BLOCKCHAINS, ConnectionState.Failed, false, chaindIdsDown, at, self.increaseTimer(self.connectionStatus[BLOCKCHAINS]))
-          # restart timer
-          signalConnect(self.connectionStatus[BLOCKCHAINS].timer, "timeout()", self, BLOCKCHAINS&"Retry()", 2)
-          self.connectionStatus[BLOCKCHAINS].timer.setInterval(self.connectionStatus[BLOCKCHAINS].timeToAutoRetryInSecs*1000)
-          self.connectionStatus[BLOCKCHAINS].timer.start()
-
-          # trigger event
+          self.updateConnectionStatus(BLOCKCHAINS, ConnectionState.Failed, false, chaindIdsDown, at)
           self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(BLOCKCHAINS, self.connectionStatus[BLOCKCHAINS]))
 
   proc blockchainsRetry*(self: Service) {.slot.} =
     if(self.connectionStatus.hasKey(BLOCKCHAINS)):
-      self.connectionStatus[BLOCKCHAINS].timer.stop()
       self.connectionStatus[BLOCKCHAINS].connectionState = ConnectionState.Retrying
       self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(BLOCKCHAINS, self.connectionStatus[BLOCKCHAINS]))
       self.walletService.reloadAccountTokens()
 
   proc marketRetry*(self: Service) {.slot.} =
     if(self.connectionStatus.hasKey(MARKET)):
-      self.connectionStatus[MARKET].timer.stop()
       self.connectionStatus[MARKET].connectionState = ConnectionState.Retrying
       self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(MARKET, self.connectionStatus[MARKET]))
       self.walletService.reloadAccountTokens()
 
   proc collectiblesRetry*(self: Service) {.slot.} =
     if(self.connectionStatus.hasKey(COLLECTIBLES)):
-      self.connectionStatus[COLLECTIBLES].timer.stop()
       self.connectionStatus[COLLECTIBLES].connectionState = ConnectionState.Retrying
       self.events.emit(SIGNAL_CONNECTION_UPDATE, self.convertConnectionStatusToNetworkConnectionsArgs(COLLECTIBLES, self.connectionStatus[COLLECTIBLES]))
       self.events.emit(SIGNAL_REFRESH_COLLECTIBLES, Args())
@@ -265,13 +222,10 @@ QtObject:
       self.events.emit(SIGNAL_REFRESH_COLLECTIBLES, Args())
     else:
       if(self.connectionStatus.hasKey(BLOCKCHAINS)):
-        self.connectionStatus[BLOCKCHAINS].timer.stop()
         self.connectionStatus[BLOCKCHAINS] = newConnectionStatus()
       if(self.connectionStatus.hasKey(MARKET)):
-        self.connectionStatus[MARKET].timer.stop()
         self.connectionStatus[MARKET] = newConnectionStatus()
       if(self.connectionStatus.hasKey(COLLECTIBLES)):
-        self.connectionStatus[COLLECTIBLES].timer.stop()
         self.connectionStatus[COLLECTIBLES] = newConnectionStatus()
 
   proc checkIfConnected*(self: Service, website: string): bool =
