@@ -15,6 +15,10 @@ Item {
 
     property StartupStore startupStore
 
+    Component.onCompleted: {
+        btnOk.forceActiveFocus()
+    }
+
     QtObject {
         id: d
         readonly property int titlePixelSize: 22
@@ -66,6 +70,12 @@ Item {
         text: qsTr("Ok, got it")
         onClicked: {
             root.startupStore.doPrimaryAction()
+        }
+        Keys.onPressed: {
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                event.accepted = true
+                root.startupStore.doPrimaryAction()
+            }
         }
     }
 }

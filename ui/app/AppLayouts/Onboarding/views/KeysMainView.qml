@@ -21,6 +21,12 @@ Item {
 
     property StartupStore startupStore
 
+    Component.onCompleted: {
+        if (button1.visible) {
+            button1.forceActiveFocus()
+        }
+    }
+
     QtObject {
         id: d
         readonly property int infoWidth: 292
@@ -213,6 +219,12 @@ Item {
             visible: text !== ""
             onClicked: {
                 root.startupStore.doPrimaryAction()
+            }
+            Keys.onPressed: {
+                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                    event.accepted = true
+                    root.startupStore.doPrimaryAction()
+                }
             }
         }
 
