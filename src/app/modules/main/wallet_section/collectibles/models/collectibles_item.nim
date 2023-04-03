@@ -7,6 +7,8 @@ type
     address: string
     tokenId: UInt256
     name: string
+    mediaUrl: string
+    mediaType: string
     imageUrl: string
     backgroundColor: string
     description: string
@@ -25,6 +27,8 @@ proc initItem*(
   address: string,
   tokenId: UInt256,
   name: string,
+  mediaUrl: string,
+  mediaType: string,
   imageUrl: string,
   backgroundColor: string,
   description: string,
@@ -41,6 +45,8 @@ proc initItem*(
   result.address = address
   result.tokenId = tokenId
   result.name = if (name != ""): name else: ("#" & tokenId.toString())
+  result.mediaUrl = mediaUrl
+  result.mediaType = mediaType
   result.imageUrl = imageUrl
   result.backgroundColor = if (backgroundColor == ""): "transparent" else: ("#" & backgroundColor)
   result.description = description
@@ -55,7 +61,7 @@ proc initItem*(
   result.isPinned = isPinned
 
 proc initItem*: Item =
-  result = initItem(-1, "", u256(0), "", "", "transparent", "Collectibles", "", @[], @[], @[], "", "", "", false)
+  result = initItem(-1, "", u256(0), "", "", "", "", "transparent", "Collectibles", "", @[], @[], @[], "", "", "", false)
 
 proc initLoadingItem*: Item =
   result = initItem()
@@ -67,6 +73,8 @@ proc `$`*(self: Item): string =
     address: {self.address},
     tokenId: {self.tokenId},
     name: {self.name},
+    mediaUrl: {self.mediaUrl},
+    mediaType: {self.mediaType},
     imageUrl: {self.imageUrl},
     backgroundColor: {self.backgroundColor},
     description: {self.description},
@@ -89,6 +97,12 @@ proc getTokenId*(self: Item): UInt256 =
 
 proc getName*(self: Item): string =
   return self.name
+
+proc getMediaUrl*(self: Item): string =
+  return self.mediaUrl
+
+proc getMediaType*(self: Item): string =
+  return self.mediaType
 
 proc getImageUrl*(self: Item): string =
   return self.imageUrl

@@ -3,11 +3,19 @@ import ../../../../../../app_service/service/collectible/dto
 import collectibles_item, collectible_trait_item
 
 proc collectibleToItem*(c: CollectibleDto, co: CollectionDto, isPinned: bool = false) : Item =
+  var mediaUrl = c.animationUrl
+  var mediaType = c.animationMediaType
+  if mediaUrl == "":
+    mediaUrl = c.imageUrl
+    mediaType = "image"
+
   return initItem(
     c.id,
     c.address,
     c.tokenId,
     c.name,
+    mediaUrl,
+    mediaType,
     c.imageUrl,
     c.backgroundColor,
     c.description,

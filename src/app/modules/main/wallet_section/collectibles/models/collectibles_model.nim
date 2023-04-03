@@ -8,6 +8,8 @@ type
     Address
     TokenId
     Name
+    MediaUrl
+    MediaType
     ImageUrl
     BackgroundColor
     Description
@@ -118,6 +120,8 @@ QtObject:
       CollectibleRole.Address.int:"address",
       CollectibleRole.TokenId.int:"tokenId",
       CollectibleRole.Name.int:"name",
+      CollectibleRole.MediaUrl.int:"mediaUrl",
+      CollectibleRole.MediaType.int:"mediaType",
       CollectibleRole.ImageUrl.int:"imageUrl",
       CollectibleRole.BackgroundColor.int:"backgroundColor",
       CollectibleRole.Description.int:"description",
@@ -151,6 +155,10 @@ QtObject:
       result = newQVariant(item.getTokenId().toString())
     of CollectibleRole.Name:
       result = newQVariant(item.getName())
+    of CollectibleRole.MediaUrl:
+      result = newQVariant(item.getMediaUrl())
+    of CollectibleRole.MediaType:
+      result = newQVariant(item.getMediaType())
     of CollectibleRole.ImageUrl:
       result = newQVariant(item.getImageUrl())
     of CollectibleRole.BackgroundColor:

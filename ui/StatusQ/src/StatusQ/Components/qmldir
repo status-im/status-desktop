@@ -2,6 +2,7 @@ module StatusQ.Components
 
 StatusAddress 0.1 StatusAddress.qml
 StatusAddressPanel 0.1 StatusAddressPanel.qml
+StatusAnimatedImage 0.1 StatusAnimatedImage.qml
 StatusBadge 0.1 StatusBadge.qml
 StatusChatInfoToolBar 0.1 StatusChatInfoToolBar.qml
 StatusChatList 0.1 StatusChatList.qml
@@ -10,6 +11,7 @@ StatusChatListCategory 0.1 StatusChatListCategory.qml
 StatusChatListCategoryItem 0.1 StatusChatListCategoryItem.qml
 StatusChatListAndCategories 0.1 StatusChatListAndCategories.qml
 StatusCursorDelegate 0.1 StatusCursorDelegate.qml
+StatusImage 0.1 StatusImage.qml
 StatusToolBar 0.1 StatusToolBar.qml
 StatusContactRequestsIndicatorListItem 0.1 StatusContactRequestsIndicatorListItem.qml
 StatusEmoji 0.1 StatusEmoji.qml
@@ -26,7 +28,9 @@ StatusMemberListItem 0.1 StatusMemberListItem.qml
 StatusNavigationListItem 0.1 StatusNavigationListItem.qml
 StatusNavigationPanelHeadline 0.1 StatusNavigationPanelHeadline.qml
 StatusRoundIcon 0.1 StatusRoundIcon.qml
+StatusRoundedComponent 0.1 StatusRoundedComponent.qml
 StatusRoundedImage 0.1 StatusRoundedImage.qml
+StatusRoundedMedia 0.1 StatusRoundedMedia.qml
 StatusMacWindowButtons 0.1 StatusMacWindowButtons.qml
 StatusListItemBadge 0.1 StatusListItemBadge.qml
 StatusListItemTag 0.1 StatusListItemTag.qml
@@ -40,6 +44,7 @@ StatusMessageDetails 0.1 StatusMessageDetails.qml
 StatusMessageSenderDetails 0.1 StatusMessageSenderDetails.qml
 StatusTagSelector 0.1 StatusTagSelector.qml
 StatusToastMessage 0.1 StatusToastMessage.qml
+StatusVideo 0.1 StatusVideo.qml
 StatusWizardStepper 0.1 StatusWizardStepper.qml
 StatusImageCropPanel 0.1 StatusImageCropPanel.qml
 StatusColorSpace 0.0 StatusColorSpace.qml
