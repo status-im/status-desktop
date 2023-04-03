@@ -41,11 +41,23 @@ proc acceptLatestContactRequestForContact*(id: string): RpcResponse[JsonNode] {.
     }]
   result = callPrivateRPC("acceptLatestContactRequestForContact".prefix, payload)
 
+proc acceptContactRequest*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [{
+      "id": id
+    }]
+  result = callPrivateRPC("acceptContactRequest".prefix, payload)
+
 proc dismissLatestContactRequestForContact*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[{
     "id": id
   }]
   result = callPrivateRPC("dismissLatestContactRequestForContact".prefix, payload)
+
+proc declineContactRequest*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[{
+    "id": id
+  }]
+  result = callPrivateRPC("declineContactRequest".prefix, payload)
 
 proc sendContactUpdate*(publicKey, ensName, thumbnail: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [publicKey, ensName, thumbnail]

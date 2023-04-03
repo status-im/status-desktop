@@ -153,12 +153,12 @@ SplitView {
                                 logs.logEvent("contactsStore::removeContact", ["publicKey"], arguments)
                             }
 
-                            function acceptContactRequest(publicKey) {
-                                logs.logEvent("contactsStore::acceptContactRequest", ["publicKey"], arguments)
+                            function acceptContactRequest(publicKey, contactRequestId) {
+                                logs.logEvent("contactsStore::acceptContactRequest", ["publicKey, contactRequestId"], arguments)
                             }
 
-                            function dismissContactRequest(publicKey) {
-                                logs.logEvent("contactsStore::dismissContactRequest", ["publicKey"], arguments)
+                            function dismissContactRequest(publicKey, contactRequestId) {
+                                logs.logEvent("contactsStore::dismissContactRequest", ["publicKey, contactRequestId"], arguments)
                             }
 
                             function removeTrustStatus(publicKey) {

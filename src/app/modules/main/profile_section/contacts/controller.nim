@@ -121,11 +121,11 @@ proc changeContactNickname*(self: Controller, publicKey: string, nickname: strin
 proc sendContactRequest*(self: Controller, publicKey: string, message: string) =
   self.contactsService.sendContactRequest(publicKey, message)
 
-proc acceptContactRequest*(self: Controller, publicKey: string) =
-  self.contactsService.acceptContactRequest(publicKey)
+proc acceptContactRequest*(self: Controller, publicKey: string, contactRequestId: string) =
+  self.contactsService.acceptContactRequest(publicKey, contactRequestId)
 
-proc dismissContactRequest*(self: Controller, publicKey: string) =
-  self.contactsService.dismissContactRequest(publicKey)
+proc dismissContactRequest*(self: Controller, publicKey: string, contactRequestId: string) =
+  self.contactsService.dismissContactRequest(publicKey, contactRequestId)
 
 proc removeContactRequestRejection*(self: Controller, publicKey: string) =
   self.contactsService.removeContactRequestRejection(publicKey)

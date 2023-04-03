@@ -104,11 +104,11 @@ method getModuleAsVariant*(self: Module): QVariant =
 method sendContactRequest*(self: Module, publicKey: string, message: string) =
   self.controller.sendContactRequest(publicKey, message)
 
-method acceptContactRequest*(self: Module, publicKey: string) =
-  self.controller.acceptContactRequest(publicKey)
+method acceptContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
+  self.controller.acceptContactRequest(publicKey, contactRequestId)
 
-method dismissContactRequest*(self: Module, publicKey: string) =
-  self.controller.dismissContactRequest(publicKey)
+method dismissContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
+  self.controller.dismissContactRequest(publicKey, contactRequestId)
 
 method switchToOrCreateOneToOneChat*(self: Module, publicKey: string) =
   self.controller.switchToOrCreateOneToOneChat(publicKey)

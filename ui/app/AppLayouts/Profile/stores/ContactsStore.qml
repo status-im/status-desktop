@@ -69,12 +69,12 @@ QtObject {
         root.contactsModule.sendContactRequest(pubKey, message)
     }
 
-    function acceptContactRequest(pubKey) {
-        root.contactsModule.acceptContactRequest(pubKey)
+    function acceptContactRequest(pubKey, contactRequestId) {
+        root.contactsModule.acceptContactRequest(pubKey, contactRequestId)
     }
 
-    function dismissContactRequest(pubKey) {
-        root.contactsModule.dismissContactRequest(pubKey)
+    function dismissContactRequest(pubKey, contactRequestId) {
+        root.contactsModule.dismissContactRequest(pubKey, contactRequestId)
     }
 
     function removeContactRequestRejection(pubKey) {

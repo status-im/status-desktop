@@ -852,8 +852,8 @@ method clearChatHistory*(self: Module, chatId: string) =
 method getCurrentFleet*(self: Module): string =
   return self.controller.getCurrentFleet()
 
-method acceptContactRequest*(self: Module, publicKey: string) =
-  self.controller.acceptContactRequest(publicKey)
+method acceptContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
+  self.controller.acceptContactRequest(publicKey, contactRequestId)
 
 method onContactAdded*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
@@ -865,10 +865,10 @@ method onContactAdded*(self: Module, publicKey: string) =
 method acceptAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getItemIds()
   for pk in pubKeys:
-    self.acceptContactRequest(pk)
+    self.acceptContactRequest(pk, "")
 
-method dismissContactRequest*(self: Module, publicKey: string) =
-  self.controller.dismissContactRequest(publicKey)
+method dismissContactRequest*(self: Module, publicKey: string, contactRequestId: string) =
+  self.controller.dismissContactRequest(publicKey, contactRequestId)
 
 method onContactRejected*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
@@ -876,7 +876,7 @@ method onContactRejected*(self: Module, publicKey: string) =
 method dismissAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getItemIds()
   for pk in pubKeys:
-    self.dismissContactRequest(pk)
+    self.dismissContactRequest(pk, "")
 
 method blockContact*(self: Module, publicKey: string) =
   self.controller.blockContact(publicKey)

@@ -180,7 +180,7 @@ Pane {
             AcceptRejectOptionsButtonsPanel {
                 menuButton.visible: false
                 onAcceptClicked: {
-                    root.contactsStore.acceptContactRequest(root.publicKey)
+                    root.contactsStore.acceptContactRequest(root.publicKey, "")
                     d.reload()
                 }
                 onDeclineClicked: {

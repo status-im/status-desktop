@@ -228,13 +228,13 @@ method clearChatHistory*(self: AccessInterface, chatId: string) {.base.} =
 method getCurrentFleet*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
+method acceptContactRequest*(self: AccessInterface, publicKey: string, contactRequestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method acceptAllContactRequests*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method dismissContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
+method dismissContactRequest*(self: AccessInterface, publicKey: string, contactRequestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method dismissAllContactRequests*(self: AccessInterface) {.base.} =

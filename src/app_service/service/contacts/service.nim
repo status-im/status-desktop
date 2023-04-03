@@ -429,11 +429,16 @@ QtObject:
     except Exception as e:
       error "an error occurred while sending contact request", msg=e.msg
 
-  proc acceptContactRequest*(self: Service, publicKey: string) =
+  proc acceptContactRequest*(self: Service, publicKey: string, contactRequestId: string) =
     try:
       # NOTE: publicKey used for accepting last request
-      let response = status_contacts.acceptLatestContactRequestForContact(publicKey)
-      if(not response.error.isNil):
+      let response =
+        if contactRequestId.len > 0:
+          status_contacts.acceptContactRequest(contactRequestId)
+        else:
+          status_contacts.acceptLatestContactRequestForContact(publicKey)
+
+      if (not response.error.isNil):
         let msg = response.error.message
         error "error accepting contact request", msg
         return
@@ -448,10 +453,15 @@ QtObject:
     except Exception as e:
       error "an error occurred while accepting contact request", msg=e.msg
 
-  proc dismissContactRequest*(self: Service, publicKey: string) =
+  proc dismissContactRequest*(self: Service, publicKey: string, contactRequestId: string) =
     try:
       # NOTE: publicKey used for dismissing last request
-      let response = status_contacts.dismissLatestContactRequestForContact(publicKey)
+      let response =
+        if contactRequestId.len > 0:
+          status_contacts.declineContactRequest(contactRequestId)
+        else:
+          status_contacts.dismissLatestContactRequestForContact(publicKey)
+
       if(not response.error.isNil):
         let msg = response.error.message
         error "error dismissing contact ", msg
