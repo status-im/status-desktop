@@ -408,7 +408,6 @@ method onNodeLogin*[T](self: Module[T], error: string) =
         return
       if currStateObj.flowType() != FlowType.AppLogin:
         discard self.controller.storeIdentityImage()
-      self.controller.cleanTmpData()
       self.delegate.finishAppLoading()
   else:
     self.moveToStartupState()
@@ -476,7 +475,6 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
     self.keycardSharedModule.delete
     self.keycardSharedModule = nil
     if lastStepInTheCurrentFlow:
-      # self.controller.cleanTmpData()
       let currStateObj = self.view.currentStartupStateObj()
       if currStateObj.isNil:
         error "cannot resolve current state for onboarding/login flow continuation"
