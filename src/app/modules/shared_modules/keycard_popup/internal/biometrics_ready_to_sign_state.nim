@@ -26,4 +26,27 @@ method executeCancelCommand*(self: BiometricsReadyToSignState, controller: Contr
 
 method resolveKeycardNextState*(self: BiometricsReadyToSignState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
-  return ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
+  let state = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
+  if not state.isNil:
+    return state
+  if self.flowType == FlowType.Authentication:
+    if keycardFlowType == ResponseTypeValueEnterPIN and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorPIN:
+      controller.setRemainingAttempts(keycardEvent.pinRetries)
+      if keycardEvent.pinRetries > 0:
+        if singletonInstance.userProfile.getUsingBiometricLogin() and not controller.usePinFromBiometrics():
+          return createState(StateType.WrongKeychainPin, self.flowType, nil)
+        return createState(StateType.WrongPin, self.flowType, nil)
+      return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPIN and 
+      keycardEvent.error.len == 0:
+        return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueEnterPUK and 
+      keycardEvent.error.len == 0:
+        if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
+          return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult:
+      if keycardEvent.error.len == 0:
+        controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+        return nil

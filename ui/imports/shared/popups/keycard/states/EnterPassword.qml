@@ -169,7 +169,7 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Password changed on other device")
+                text: qsTr("Stored password doesn't match")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
@@ -194,7 +194,7 @@ Item {
             }
             PropertyChanges {
                 target: title
-                text: qsTr("Password changed on other device")
+                text: qsTr("Stored password doesn't match")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
