@@ -19,6 +19,10 @@ Item {
 
     property StartupStore startupStore
 
+    Component.onCompleted: {
+        button.forceActiveFocus()
+    }
+
     Item {
         id: container
         enabled: !dimBackground.active
@@ -83,6 +87,12 @@ Item {
                 onClicked: {
                     dimBackground.active = true
                     root.startupStore.doPrimaryAction()
+                }
+                Keys.onPressed: {
+                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                        event.accepted = true
+                        root.startupStore.doPrimaryAction()
+                    }
                 }
             }
             StatusBaseText {
