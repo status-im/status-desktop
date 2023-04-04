@@ -47,6 +47,10 @@ type
   VerificationRequestArgs* = ref object of Args
     verificationRequest*: VerificationRequest
 
+  ContactInfoRequestArgs* = ref object of Args
+    publicKey*: string
+    ok*: bool
+
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
 const SIGNAL_CONTACT_ADDED* = "contactAdded"
@@ -69,6 +73,7 @@ const SIGNAL_CONTACT_VERIFICATION_DECLINED* = "contactVerificationRequestDecline
 const SIGNAL_CONTACT_VERIFICATION_ACCEPTED* = "contactVerificationRequestAccepted"
 const SIGNAL_CONTACT_VERIFICATION_ADDED* = "contactVerificationRequestAdded"
 const SIGNAL_CONTACT_VERIFICATION_UPDATED* = "contactVerificationRequestUpdated"
+const SIGNAL_CONTACT_INFO_REQUEST_FINISHED* = "contactInfoRequestFinished"
 
 type
   ContactsGroup* {.pure.} = enum
@@ -761,3 +766,29 @@ QtObject:
       self.activityCenterService.parseActivityCenterResponse(response)
     except Exception as e:
       error "error declining contact verification request", msg=e.msg
+
+  proc asyncContactInfoLoaded*(self: Service, pubkeyAndRpcResponse: string) {.slot.} =
+    let rpcResponseObj = pubkeyAndRpcResponse.parseJson
+    let publicKey = $rpcResponseObj{"publicKey"}
+
+    if (rpcResponseObj{"response"}{"error"}.kind != JNull):
+      let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
+      error "Error requesting contact info", msg = error.message, publicKey
+      self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: false))
+      return
+
+    let contact = rpcResponseObj{"response"}{"result"}.toContactsDto()
+    self.saveContact(contact)
+    self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: true))
+
+  proc requestContactInfo*(self: Service, pubkey: string) =
+    try:
+      let arg = AsyncRequestContactInfoTaskArg(
+        tptr: cast[ByteAddress](asyncRequestContactInfoTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "asyncContactInfoLoaded",
+        pubkey: pubkey,
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error requesting contact info", msg = e.msg, pubkey

@@ -216,6 +216,7 @@ QtObject {
             id: sendIDRequestPopupComponent
             SendContactRequestModal {
                 anchors.centerIn: parent
+                rootStore: root.rootStore
                 onAccepted: root.rootStore.profileSectionStore.contactsStore.sendVerificationRequest(userPublicKey, message)
                 onClosed: destroy()
             }
@@ -237,6 +238,7 @@ QtObject {
 
             SendContactRequestModal {
                 anchors.centerIn: parent
+                rootStore: root.rootStore
                 onAccepted: root.rootStore.profileSectionStore.contactsStore.sendContactRequest(userPublicKey, message)
                 onClosed: destroy()
             }

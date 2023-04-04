@@ -277,3 +277,9 @@ method onVerificationRequestUpdatedOrAdded*(self: Module, request: VerificationR
     )
     return
   self.view.receivedContactRequestsModel.addItem(item)
+
+method requestContactInfo*(self: Module, publicKey: string) =
+  self.controller.requestContactInfo(publicKey)
+
+method onContactInfoRequestFinished*(self: Module, publicKey: string, ok: bool) =
+  self.view.onContactInfoRequestFinished(publicKey, ok)

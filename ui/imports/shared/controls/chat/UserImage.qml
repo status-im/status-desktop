@@ -20,6 +20,7 @@ Loader {
     property bool interactive: true
     property bool disabled: false
     property bool ensVerified: false
+    property bool loading: false
 
     property int colorId: Utils.colorIdForPubkey(pubkey)
     property var colorHash: Utils.getColorHashAsJson(pubkey, ensVerified)
@@ -39,6 +40,7 @@ Loader {
         ringSettings {
             ringSpecModel: root.showRing ? root.colorHash : undefined
         }
+        loading: root.loading
 
         Loader {
             anchors.fill: parent

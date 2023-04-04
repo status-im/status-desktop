@@ -122,4 +122,8 @@ QtObject {
     function verifiedUntrustworthy(pubKey) {
         root.contactsModule.verifiedUntrustworthy(pubKey);
     }
+
+    function requestContactInfo(publicKey) {
+        root.contactsModule.requestContactInfo(publicKey)
+    }
 }
