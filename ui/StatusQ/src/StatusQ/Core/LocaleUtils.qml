@@ -6,6 +6,8 @@ import Qt.labs.settings 1.0
 QtObject {
     id: root
 
+    readonly property var userInputLocale: Qt.locale("en_US")
+
     function fractionalPartLength(num) {
         if (Number.isInteger(num))
             return 0
