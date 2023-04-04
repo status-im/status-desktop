@@ -93,13 +93,14 @@ Item {
                 model: root.allNetworks
                 StatusCard {
                     id: fromNetwork
+                    locale: LocaleUtils.userInputLocale
                     objectName: model.chainId
                     property double amountToSend: 0
                     property int routeOnNetwork: 0
                     property bool selectedAssetValid: selectedAccount && selectedAccount !== undefined && selectedAsset !== undefined
                     property double tokenBalanceOnChain: selectedAssetValid ? root.store.getTokenBalanceOnChain(selectedAccount, model.chainId, root.selectedSymbol).amount : 0.0
                     property bool hasGas: selectedAssetValid && requiredGasInEth !== undefined ? selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth) : false
-                    property double advancedInputCurrencyAmount: selectedAssetValid && advancedInput.valid ? LocaleUtils.numberFromLocaleString(advancedInputText) : 0.0
+                    property double advancedInputCurrencyAmount: selectedAssetValid && advancedInput.valid ? LocaleUtils.numberFromLocaleString(advancedInputText, LocaleUtils.userInputLocale) : 0.0
 
                     primaryText: model.chainName
                     secondaryText: (tokenBalanceOnChain == 0 && root.amountToSend > 0) ?
@@ -110,9 +111,9 @@ Item {
                         let index  = store.lockedInAmounts.findIndex(lockedItem => lockedItem!== undefined && lockedItem.chainID === model.chainId)
                         if(locked && index !== -1) {
                             let amount = root.weiToEth(parseInt(store.lockedInAmounts[index].value, 16))
-                            return LocaleUtils.numberToLocaleString(amount)
+                            return LocaleUtils.numberToLocaleString(amount, -1, LocaleUtils.userInputLocale)
                         }
-                        else return LocaleUtils.numberToLocaleString(fromNetwork.amountToSend)
+                        else return LocaleUtils.numberToLocaleString(fromNetwork.amountToSend, -1, LocaleUtils.userInputLocale)
                     }
                     maxAdvancedValue: tokenBalanceOnChain
                     state: tokenBalanceOnChain === 0 || !hasGas ?
@@ -186,6 +187,7 @@ Item {
                 model: root.allNetworks
                 StatusCard {
                     id: toCard
+                    locale: LocaleUtils.userInputLocale
                     objectName: model.chainId
                     property int routeOnNetwork: 0
                     property int bentLine: 0

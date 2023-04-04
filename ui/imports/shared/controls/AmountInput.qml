@@ -25,7 +25,7 @@ Input {
                             + textField.leftPadding
 
     function setAmount(amount) {
-        root.text = LocaleUtils.numberToLocaleString(amount)
+        root.text = LocaleUtils.numberToLocaleString(amount, -1, root.locale)
     }
 
     QtObject {
@@ -63,7 +63,7 @@ Input {
             return
         }
 
-        let amount = LocaleUtils.numberFromLocaleString(text)
+        let amount = LocaleUtils.numberFromLocaleString(text, root.locale)
         if (isNaN(amount)) {
             d.amount = 0
             root.validationError = qsTr("Invalid amount format")
