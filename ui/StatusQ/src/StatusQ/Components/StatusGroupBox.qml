@@ -41,15 +41,15 @@ GroupBox {
         contentItem: RowLayout {
             spacing: 8
 
-            Image {
+            StatusIcon {
                 sourceSize.width: width || undefined
                 sourceSize.height: height || undefined
-                fillMode: Image.PreserveAspectFit
                 mipmap: true
                 antialiasing: true
                 width: root.iconSize
                 height: width
                 source: root.icon
+                color: enabled ? "transparent" : Theme.palette.baseColor1
             }
 
             StatusBaseText {
@@ -57,7 +57,7 @@ GroupBox {
                 Layout.fillWidth: true
 
                 text: root.title
-                color: Theme.palette.directColor1
+                color: enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
                 font.pixelSize: 17
 
                 elide: Text.ElideRight
