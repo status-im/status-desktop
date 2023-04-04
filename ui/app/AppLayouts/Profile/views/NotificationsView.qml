@@ -19,8 +19,8 @@ import "../popups"
 
 SettingsContentBase {
     id: root
+
     property NotificationsStore notificationsStore
-    property DevicesStore devicesStore
 
     content: ColumnLayout {
         id: contentColumn
@@ -164,7 +164,7 @@ SettingsContentBase {
         Rectangle {
             Layout.preferredWidth: root.contentWidth
             implicitHeight: col1.height + 2 * Style.current.padding
-            visible: Qt.platform.os == "osx"
+            visible: Qt.platform.os == Constants.mac
             radius: Constants.settingsSection.radius
             color: Theme.palette.primaryColor3
 
@@ -193,46 +193,6 @@ SettingsContentBase {
                     lineHeightMode: Text.FixedHeight
                     color: Theme.palette.baseColor1
                     wrapMode: Text.WordWrap
-                }
-            }
-        }
-
-        Rectangle {
-            Layout.preferredWidth: root.contentWidth
-            implicitHeight: row1.height + 2 * Style.current.padding
-            radius: Constants.settingsSection.radius
-            color: Theme.palette.pinColor2
-
-            RowLayout {
-                id: row1
-                anchors.margins: Style.current.padding
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                visible: root.devicesStore.devicesModel.count > 0
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: qsTr("Sync your devices to share notifications preferences")
-                    font.pixelSize: Constants.settingsSection.infoFontSize
-                    lineHeight: Constants.settingsSection.infoLineHeight
-                    lineHeightMode: Text.FixedHeight
-                    color: Theme.palette.pinColor1
-                }
-
-                StatusBaseText {
-                    text: qsTr("Syncing >")
-                    font.pixelSize: Constants.settingsSection.infoFontSize
-                    lineHeight: Constants.settingsSection.infoLineHeight
-                    lineHeightMode: Text.FixedHeight
-                    color: Theme.palette.pinColor1
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            root.devicesStore.syncAll()
-                        }
-                    }
                 }
             }
         }
@@ -545,7 +505,4 @@ SettingsContentBase {
             delegate: exemptionDelegateComponent
         }
     }
-    //}
-    // }
-    //}
 }
