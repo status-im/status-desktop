@@ -29,7 +29,7 @@ StatusListItem {
 
     signal openSendModal(string recipient)
 
-    implicitWidth: ListView.view.width
+    implicitWidth: ListView.view ? ListView.view.width : 0
 
     title: name
     objectName: name
