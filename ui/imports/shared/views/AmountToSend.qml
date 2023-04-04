@@ -54,8 +54,8 @@ ColumnLayout {
 
     QtObject {
         id: d
-        readonly property string zeroString: LocaleUtils.numberToLocaleString(0, 2)
-        readonly property double inputNumber: LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)
+        readonly property string zeroString: LocaleUtils.numberToLocaleString(0, 2, LocaleUtils.userInputLocale)
+        readonly property double inputNumber: LocaleUtils.numberFromLocaleString(topAmountToSendInput.text, LocaleUtils.userInputLocale)
         property Timer waitTimer: Timer {
             interval: 1000
             onTriggered: reCalculateSuggestedRoute()
@@ -94,6 +94,7 @@ ColumnLayout {
                     bottom: 0
                     top: root.maxInputBalance
                     errorMessage: ""
+                    locale: LocaleUtils.userInputLocale
                 }
             ]
             TextMetrics {
@@ -102,7 +103,7 @@ ColumnLayout {
                 font: topAmountToSendInput.input.placeholder.font
             }
             Keys.onReleased: {
-                const amount = LocaleUtils.numberFromLocaleString(topAmountToSendInput.text)
+                const amount = LocaleUtils.numberFromLocaleString(topAmountToSendInput.text, LocaleUtils.userInputLocale)
                 if (isNaN(amount)) {
                     return
                 }
@@ -131,7 +132,7 @@ ColumnLayout {
             onClicked: {
                 topAmountToSendInput.validate()
                 if(!!topAmountToSendInput.text) {
-                    topAmountToSendInput.text = root.formatCurrencyAmount(bottomItem.bottomAmountToSend, bottomItem.bottomAmountSymbol, {onlyAmount: true})
+                    topAmountToSendInput.text = root.formatCurrencyAmount(bottomItem.bottomAmountToSend, bottomItem.bottomAmountSymbol, {onlyAmount: true}, LocaleUtils.userInputLocale)
                 }
                 inputIsFiat = !inputIsFiat
                 d.waitTimer.restart()
