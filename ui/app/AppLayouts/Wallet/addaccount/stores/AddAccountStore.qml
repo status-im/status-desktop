@@ -208,16 +208,17 @@ QtObject {
             root.addAccountModule.selectedEmoji !== ""
 
         if (root.currentState.stateType === Constants.addAccountPopup.state.main) {
-            if(derivationPathEditingNotValid)
+            if(root.derivationPathEditingNotValid)
                 return false
 
             if (root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.profile ||
                     root.selectedOrigin.pairType === Constants.addAccountPopup.keyPairType.seedImport) {
                 return valid &&
+                        (!root.addAccountModule.actionAuthenticated ||
                         !!root.selectedDerivedAddress &&
                         root.selectedDerivedAddress.loaded &&
                         !root.selectedDerivedAddress.alreadyCreated &&
-                        root.selectedDerivedAddress.address !== "" &&
+                        root.selectedDerivedAddress.address !== "") &&
                         root.derivationPathRegEx.test(root.addAccountModule.derivationPath) &&
                         (!root.derivationPathOutOfTheDefaultStatusDerivationTree ||
                          root.derivationPathOutOfTheDefaultStatusDerivationTreeConfirmed)

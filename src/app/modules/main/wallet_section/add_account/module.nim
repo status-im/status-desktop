@@ -429,9 +429,11 @@ method changePrivateKey*[T](self: Module[T], privateKey: string) =
   self.controller.fetchDetailsForAddresses(@[genAccDto.address])
 
 method changeSeedPhrase*[T](self: Module[T], seedPhrase: string) =
-  let genAccDto = self.controller.createAccountFromSeedPhrase(seedPhrase)
   self.view.setSelectedDerivedAddress(newDerivedAddressItem())
-  if genAccDto.address.len == 0:
+  if seedPhrase.len == 0:
+    return
+  let genAccDto = self.controller.createAccountFromSeedPhrase(seedPhrase)
+  if seedPhrase.len > 0 and genAccDto.address.len == 0:
     error "unable to create an account from the provided seed phrase"
     return
 
