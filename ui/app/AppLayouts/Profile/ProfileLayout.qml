@@ -21,6 +21,7 @@ StatusSectionLayout {
     property var globalStore
     property var systemPalette
     property var emojiPopup
+    property var networkConnectionStore
 
     backButtonName: root.store.backButtonName
     notificationCount: activityCenterStore.unreadNotificationsCount
@@ -139,7 +140,7 @@ StatusSectionLayout {
                 ensUsernamesStore: root.store.ensUsernamesStore
                 contactsStore: root.store.contactsStore
                 stickersStore: root.store.stickersStore
-
+                networkConnectionStore: root.networkConnectionStore
                 profileContentWidth: d.contentWidth
             }
         }

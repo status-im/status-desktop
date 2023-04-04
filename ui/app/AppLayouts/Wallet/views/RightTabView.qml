@@ -20,7 +20,7 @@ Item {
     property var store
     property var contactsStore
     property var sendModal
-    readonly property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
+    property var networkConnectionStore
 
     function resetStack() {
         stack.currentIndex = 0;

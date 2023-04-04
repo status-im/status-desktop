@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
+import shared.controls 1.0
 
 import "../popups"
 import "../controls"
@@ -31,12 +32,13 @@ Rectangle {
         height: parent.height
         spacing:  Style.current.padding
 
-        FooterTooltipButton {
-            button.objectName: "walletFooterSendButton"
-            button.icon.name: "send"
-            button.text: qsTr("Send")
-            button.enabled: networkConnectionStore.sendBuyBridgeEnabled
-            button.onClicked: function() {
+        DisabledTooltipButton {
+            buttonType: DisabledTooltipButton.Flat
+            aliasedObjectName: "walletFooterSendButton"
+            icon: "send"
+            text: qsTr("Send")
+            interactive: networkConnectionStore.sendBuyBridgeEnabled
+            onClicked: function() {
                 sendModal.open()
             }
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
@@ -50,11 +52,12 @@ Rectangle {
             }
         }
 
-        FooterTooltipButton {
-            button.icon.name: "bridge"
-            button.text: qsTr("Bridge")
-            button.enabled: networkConnectionStore.sendBuyBridgeEnabled
-            button.onClicked: function() {
+        DisabledTooltipButton {
+            icon: "bridge"
+            buttonType: DisabledTooltipButton.Flat
+            text: qsTr("Bridge")
+            interactive: networkConnectionStore.sendBuyBridgeEnabled
+            onClicked: function() {
                 sendModal.isBridgeTx = true
                 sendModal.open()
             }

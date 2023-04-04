@@ -15,6 +15,7 @@ Item {
 
     property var contactsStore
     property var stickersStore
+    property var networkConnectionStore
 
     property int profileContentWidth
     property bool showSearchScreen: false
@@ -218,6 +219,8 @@ Item {
             username: ensView.ensUsernamesStore.username
             onStartBtnClicked: next(null)
             profileContentWidth: ensView.profileContentWidth
+            startButtonEnabled: ensView.networkConnectionStore.ensNetworkAvailable
+            tooltipText: ensView.networkConnectionStore.ensNetworkUnavailableText
         }
     }
 

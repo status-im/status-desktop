@@ -1,7 +1,10 @@
-import QtQuick 2.13
+import QtQuick 2.15
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
+
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared 1.0
@@ -13,6 +16,7 @@ Item {
         Default,
         LargeNoIcon
     }
+    property alias tooltip: tooltip
     property int style: StatusStickerButton.StyleType.Default
     property int packPrice: 0
     property bool isBought: false
@@ -22,14 +26,15 @@ Item {
     property bool isTimedOut: false
     property bool hasInsufficientFunds: false
     property bool enabled: true
+    property bool greyedOut: false
     property var icon: new Object({
         path: Style.svg("status-logo-no-bg"),
         rotation: 0,
         runAnimation: false
     })
     property string text: root.style === StatusStickerButton.StyleType.Default ? packPrice : qsTr("Buy for %1 SNT").arg(packPrice )
-    property color textColor: style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.buttonForegroundColor
-    property color bgColor: style === StatusStickerButton.StyleType.Default ? Style.current.blue : Style.current.secondaryBackground
+    property color textColor: root.greyedOut ? Theme.palette.baseColor1 : style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.buttonForegroundColor
+    property color bgColor: root.greyedOut ? Theme.palette.baseColor2 : style === StatusStickerButton.StyleType.Default ? Style.current.blue : Style.current.secondaryBackground
     signal uninstallClicked()
     signal installClicked()
     signal cancelClicked()
@@ -44,8 +49,8 @@ Item {
             PropertyChanges {
                 target: root;
                 text: root.style === StatusStickerButton.StyleType.Default ? "" : qsTr("Uninstall");
-                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.red;
-                bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.green : Style.current.lightRed;
+                textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : root.greyedOut ? Theme.palette.baseColor1 : Style.current.red;
+                bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.green : root.greyedOut ? Theme.palette.baseColor2 : Style.current.lightRed;
                 icon: new Object({
                     path: Style.svg("check"),
                     rotation: 0,
@@ -182,7 +187,7 @@ Item {
             ColorOverlay {
                 anchors.fill: roundedIconImage
                 source: roundedIconImage
-                color: Style.current.roundedButtonSecondaryForegroundColor
+                color:  root.greyedOut && !root.isInstalled ? Theme.palette.baseColor1 : Style.current.roundedButtonSecondaryForegroundColor
                 antialiasing: true
             }
             states: [
@@ -239,11 +244,23 @@ Item {
             ]
         }
 
+        // Tooltip only in case we are browsing an item to be installed/downloaded/bought
+        HoverHandler {
+            id: hoverHandler
+            enabled: root.greyedOut && !root.isInstalled
+            cursorShape: Qt.PointingHandCursor
+        }
+        StatusToolTip {
+            id: tooltip
+            visible: hoverHandler.hovered
+            maxWidth: 300
+        }
+
         MouseArea {
             id: mouseArea
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
-            enabled: !root.isPending
+            enabled: !root.isPending && !root.greyedOut
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 if (root.isPending) return;

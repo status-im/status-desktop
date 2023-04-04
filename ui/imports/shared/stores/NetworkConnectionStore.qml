@@ -21,16 +21,15 @@ QtObject {
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
                                         (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
                                         !networkConnectionModule.marketValuesNetworkConnection.completelyDown)
-    readonly property string sendBuyBridgeToolTipText: !isOnline ?
-                                                  qsTr("Requires internet connection") :
-                                                  networkConnectionModule.blockchainNetworkConnection.completelyDown ||
-                                                   (!networkConnectionModule.blockchainNetworkConnection.completelyDown &&
-                                                    !atleastOneBlockchainNetworkAvailable) ?
-                                                  qsTr("Requires Pocket Network(POKT) or Infura, both of which are currently unavailable") :
-                                                  networkConnectionModule.marketValuesNetworkConnection.completelyDown ?
-                                                  qsTr("Requires CryptoCompare or CoinGecko, both of which are currently unavailable"):
-                                                  qsTr("Requires POKT/ Infura and CryptoCompare/CoinGecko, which are all currently unavailable")
-
+    readonly property string sendBuyBridgeToolTipText: !isOnline ? qsTr("Requires internet connection") :
+                                                        noBlockchainAndMarketConnectionAndNoCache ?
+                                                        qsTr("Requires POKT/Infura and CryptoCompare/CoinGecko, which are all currently unavailable") :
+                                                        networkConnectionModule.blockchainNetworkConnection.completelyDown ||
+                                                        (!networkConnectionModule.blockchainNetworkConnection.completelyDown &&
+                                                        !atleastOneBlockchainNetworkAvailable) ?
+                                                        qsTr("Requires Pocket Network(POKT) or Infura, both of which are currently unavailable") :
+                                                        networkConnectionModule.marketValuesNetworkConnection.completelyDown ?
+                                                        qsTr("Requires CryptoCompare or CoinGecko, both of which are currently unavailable"): ""
 
     readonly property bool notOnlineWithNoCache: !isOnline && !walletSectionCurrent.hasBalanceCache && !walletSectionCurrent.hasMarketValuesCache
     readonly property string notOnlineWithNoCacheText: qsTr("Internet connection lost. Data could not be retrieved.")
@@ -50,7 +49,12 @@ QtObject {
                                                              networkConnectionModule.blockchainNetworkConnection.completelyDown ? noBlockchainConnectionAndNoCacheText :
                                                              networkConnectionModule.marketValuesNetworkConnection.completelyDown ? noBlockchainAndMarketConnectionAndNoCacheText : ""
 
-    property bool noTokenBalanceAvailable: networkConnectionStore.notOnlineWithNoCache || networkConnectionStore.noBlockchainConnectionAndNoCache
+    readonly property bool noTokenBalanceAvailable: networkConnectionStore.notOnlineWithNoCache || networkConnectionStore.noBlockchainConnectionAndNoCache
+
+    readonly property bool ensNetworkAvailable: !blockchainNetworksDown.includes(profileSectionModule.ensUsernamesModule.chainId.toString())
+    readonly property string ensNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg( networksModule.all.getNetworkFullName(profileSectionModule.ensUsernamesModule.chainId))
+    readonly property bool stickersNetworkAvailable: false//!blockchainNetworksDown.includes(stickersModule.getChainIdForStickers().toString())
+    readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg( networksModule.all.getNetworkFullName(stickersModule.getChainIdForStickers()))
 
     function getBlockchainNetworkDownTextForToken(balances) {
         if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !networkConnectionStore.notOnlineWithNoCache) {

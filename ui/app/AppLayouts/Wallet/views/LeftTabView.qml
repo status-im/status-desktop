@@ -25,7 +25,7 @@ import "../addaccount"
 Rectangle {
     id: root
 
-    readonly property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
+    property var networkConnectionStore
     property var changeSelectedAccount: function(){}
     property bool showSavedAddresses: false
     onShowSavedAddressesChanged: {

@@ -10,6 +10,8 @@ QtObject {
 
     property var contactsStore
 
+    property var networkConnectionStore
+
     readonly property PermissionsStore permissionsStore: PermissionsStore {
         activeSectionId: mainModuleInst.activeSection.id
         chatCommunitySectionModuleInst: chatCommunitySectionModule

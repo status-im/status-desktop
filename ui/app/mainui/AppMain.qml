@@ -51,6 +51,7 @@ Item {
         contactsStore: appMain.rootStore.contactStore
         emojiReactionsModel: appMain.rootStore.emojiReactionsModel
         openCreateChat: createChatView.opened
+        networkConnectionStore: appMain.networkConnectionStore
     }
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
@@ -878,6 +879,7 @@ Item {
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
                                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
+                                    networkConnectionStore: appMain.networkConnectionStore
                                 }
                                 emojiPopup: statusEmojiPopup
                                 stickersPopup: statusStickersPopupLoader.item
@@ -920,6 +922,7 @@ Item {
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                             emojiPopup: statusEmojiPopup
                             sendModalPopup: sendModal
+                            networkConnectionStore: appMain.networkConnectionStore
                         }
                         onLoaded: item.showSigningPhrasePopup()
                     }
@@ -951,6 +954,7 @@ Item {
                             globalStore: appMain.rootStore
                             systemPalette: appMain.sysPalette
                             emojiPopup: statusEmojiPopup
+                            networkConnectionStore: appMain.networkConnectionStore
                         }
                     }
 
