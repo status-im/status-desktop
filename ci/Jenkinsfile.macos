@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.6.8'
+library 'status-jenkins-lib@macos/use-nix-shell'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -55,7 +55,7 @@ pipeline {
   stages {
     stage('Deps') {
       steps {
-        sh 'make update'
+        nix.shell('make update', pure: false)
         withCredentials([
           usernamePassword( /* For fetching HomeBrew bottles. */
             credentialsId: "status-im-auto-pkgs",
@@ -63,14 +63,14 @@ pipeline {
             passwordVariable: 'GITHUB_TOKEN'
           )
         ]) {
-          sh 'make deps'
+          nix.shell('make deps', pure: false)
         }
       }
     }
 
     stage('status-go') {
       steps {
-        sh 'make status-go'
+        nix.shell('make status-go')
       }
     }
 
