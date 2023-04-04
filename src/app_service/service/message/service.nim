@@ -40,7 +40,7 @@ const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
-const SIGNAL_MESSAGE_FIRST_UNSEEN* = "messageFirstUnseen"
+const SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED* = "firstUnseenMessageLoaded"
 const SIGNAL_NEW_MESSAGE_RECEIVED* = "newMessageReceived"
 const SIGNAL_MESSAGE_PINNED* = "messagePinned"
 const SIGNAL_MESSAGE_UNPINNED* = "messageUnpinned"
@@ -117,7 +117,7 @@ type
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
 
-  MessageFirstUnseen* = ref object of Args
+  FirstUnseenMessageLoadedArgs* = ref object of Args
     chatId*: string
     messageId*: string
 
@@ -681,8 +681,8 @@ QtObject:
       else:
         discard responseObj.getProp("messageId", messageId)
 
-      self.events.emit(SIGNAL_MESSAGE_FIRST_UNSEEN, MessageFirstUnseen(chatId: chatId, messageId: messageId))
-    
+      self.events.emit(SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED, FirstUnseenMessageLoadedArgs(chatId: chatId, messageId: messageId))
+
     except Exception as e:
       error "error: ", procName="onGetFirstUnseenMessageIdFor", errName = e.name, errDesription = e.msg
 
