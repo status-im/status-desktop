@@ -37,35 +37,6 @@ mainWallet_Send_Popup_Asset_List = {"container": statusDesktop_mainWindow, "obje
 mainWallet_Send_Popup_GasPrice_Input = {"container": statusDesktop_mainWindow, "objectName": "gasPriceSelectorInput", "type": "StyledTextField"}
 
 # Add account popup:
-mainWallet_Add_Account_Popup_Main = {"container": statusDesktop_mainWindow, "objectName": "AddAccountModalContent", "type": "StatusScrollView", "visible": True}
-mainWallet_Add_Account_Popup_Password = {"container": mainWallet_Add_Account_Popup_Main, "text": "Enter your password...", "type": "PlaceholderText", "unnamed": 1, "visible": True}
-mainWallet_Add_Account_Popup_Advanced = {"container": mainWallet_Add_Account_Popup_Main, "objectName": "ExpandableItem", "type": "MouseArea", "visible": True}
-mainWallet_Add_Account_Popup_Type_Selector = {"container": mainWallet_Add_Account_Popup_Main, "objectName": "selectGeneratedAccount", "type": "SelectGeneratedAccount", "visible": True}
-mainWallet_Add_Account_Popup_Type_Watch_Only = {"container": statusDesktop_mainWindow, "objectName": "watchOnlyAccount", "type": "StatusListItem", "visible": True}
-mainWallet_Add_Account_Popup_Type_Private_Key = {"container": statusDesktop_mainWindow, "objectName": "generateFromPrivateKey", "type": "StatusListItem", "visible": True}
-mainWallet_Add_Account_Popup_Type_Seed_Phrase = {"container": statusDesktop_mainWindow, "objectName": "importNewSeedPhrase", "type": "StatusListItem", "visible": True}
-mainWallet_Add_Account_Popup_Account_Name = {"container": mainWallet_Add_Account_Popup_Main, "text": "Enter an account name...", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWallet_Add_Account_Popup_Root = {"container": mainWallet_Add_Account_Popup_Main, "objectName": "advancedAddAccountViewRoot", "type": "AdvancedAddAccountView", "visible": True}
-mainWallet_Add_Account_Popup_Watch_Only_Address = {"container": mainWallet_Add_Account_Popup_Main, "objectName": "advancedAddAccountViewAddressInput", "type": "StatusBaseInput", "visible": True}
-mainWallet_Add_Account_Popup_Watch_Only_Address_Placeholder = {"container": mainWallet_Add_Account_Popup_Main, "objectName": "advancedAddAccountViewAddressInputPlaceholder", "type": "StatusBaseText", "visible": True}
-mainWallet_Add_Account_Popup_Private_Key = {"container": mainWallet_Add_Account_Popup_Main, "text": "Paste the contents of your private key", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_1 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder0", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_2 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder1", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_3 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder2", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_4 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder3", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_5 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder4", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_6 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder5", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_7 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder6", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_8 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder7", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_9 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder8", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_10 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder9", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_11 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder10", "visible": True}
-mainWindow_Add_Account_Popup_Seed_Phrase_12 = {"container": mainWallet_Add_Account_Popup_Main, "type": "StatusBaseText", "objectName": "seedPhraseInputPlaceholder11", "visible": True}
-mainWallet_Add_Account_Popup_Advanced_Accept_Responsibility_Checkbox = {"container": mainWallet_Add_Account_Popup_Main, "objectName": "fullyCustomPathCheckBox", "type": "StatusCheckBox", "visible": True}
-
-mainWallet_Add_Account_Popup_Footer = {"container": statusDesktop_mainWindow, "type": "StatusModalFooter", "unnamed": 1, "visible": True}
-mainWallet_Authenticate_Popup_Footer_Add_Account = {"container": mainWallet_Add_Account_Popup_Footer, "text": "Authenticate", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWallet_Add_Account_Popup_Footer_Add_Account = {"container": mainWallet_Add_Account_Popup_Footer, "text": "Add account", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
 # saved address view
 mainWallet_Saved_Addreses_Add_Buttton = {"container": statusDesktop_mainWindow, "objectName": "addNewAddressBtn", "type": "StatusButton"}

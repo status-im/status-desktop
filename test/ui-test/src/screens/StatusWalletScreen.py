@@ -60,22 +60,6 @@ class SendPopup(Enum):
     HIGH_GAS_BUTTON: str = "mainWallet_Send_Popup_GasSelector_HighGas_Button"
 
 class AddAccountPopup(Enum):
-    SCROLL_BAR: str = "mainWallet_Add_Account_Popup_Main"
-    PASSWORD_INPUT: str = "mainWallet_Add_Account_Popup_Password"
-    ACCOUNT_NAME_INPUT: str = "mainWallet_Add_Account_Popup_Account_Name"
-    ADVANCE_SECTION: str = "mainWallet_Add_Account_Popup_Advanced"
-    TYPE_SELECTOR: str = "mainWallet_Add_Account_Popup_Type_Selector"
-    TYPE_WATCH_ONLY: str = "mainWallet_Add_Account_Popup_Type_Watch_Only"
-    TYPE_SEED_PHRASE: str = "mainWallet_Add_Account_Popup_Type_Seed_Phrase"
-    TYPE_PRIVATE_KEY: str = "mainWallet_Add_Account_Popup_Type_Private_Key"
-    ADDRESS_INPUT: str = "mainWallet_Add_Account_Popup_Watch_Only_Address"
-    ADDRESS_INPUT_PLACEHOLDER: str = "mainWallet_Add_Account_Popup_Watch_Only_Address_Placeholder"
-    PRIVATE_KEY_INPUT: str = "mainWallet_Add_Account_Popup_Private_Key"
-    ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Popup_Footer_Add_Account"
-    SEED_PHRASE_INPUT_TEMPLATE: str = "mainWindow_Add_Account_Popup_Seed_Phrase_"
-    SEED_PHRASE_INPUT_LAST: str = "mainWindow_Add_Account_Popup_Seed_Phrase_12"
-    FULLY_CUSTOM_PATH_CHECKBOX: str = "mainWallet_Add_Account_Popup_Advanced_Accept_Responsibility_Checkbox"
-    ADD_ACCOUNT_POPUP_ROOT: str = "mainWallet_Add_Account_Popup_Root"
 
 class CollectiblesView(Enum):
     COLLECTIONS_REPEATER: str =  "mainWallet_Collections_Repeater"
@@ -98,81 +82,7 @@ class StatusWalletScreen:
 
     def accept_signing_phrase(self):
         click_obj_by_name(SigningPhrasePopUp.OK_GOT_IT_BUTTON.value)
-
-    def add_watch_only_account(self, account_name: str, address: str, password: str):
-        click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
-
-        type_text(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
-        click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value, 2000)
-
-        # Found that all the involved controls are switching availability states very quickly based on the model data
-        # which makes it almost impossible to do a reliable check for different states, hence the retry for 10 seconds
-        # workaround.
-        # TODO remove workaround to retry after add account modal refactoring
-        max_expected_step_duration_ms = 10000
-        def scroll_and_type_fn():
-            try:
-                click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
-                click_obj_by_name(AddAccountPopup.TYPE_WATCH_ONLY.value)
-
-                scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.ADDRESS_INPUT_PLACEHOLDER.value, 2000)
-                wait_for_object_and_type(AddAccountPopup.ADDRESS_INPUT_PLACEHOLDER.value, address)
-            except Exception as e:
-                log(f"Expected fail, ignore it for {max_expected_step_duration_ms/1000} seconds; exception {str(e)}")
-
-        do_until_validation_with_timeout(
-            scroll_and_type_fn,
-            lambda: is_loaded_visible_and_enabled(AddAccountPopup.ADDRESS_INPUT.value, 500)[0],
-            timeout_ms=max_expected_step_duration_ms,
-            message="Fill watch only account address")
-
-        click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value, 2000)
-
-    def import_private_key(self, account_name: str, password: str, private_key: str):
-        click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
-
-        type_text(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
-        click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
-        click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
-        click_obj_by_name(AddAccountPopup.TYPE_PRIVATE_KEY.value)
-
-        scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.PRIVATE_KEY_INPUT.value)
-        type_text(AddAccountPopup.PRIVATE_KEY_INPUT.value, private_key)
-
-        click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
-
-        authenticatePopupEnterPassword(password)
-
-    def import_seed_phrase(self, account_name: str, password: str, mnemonic: str):
-        click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
-
-        type_text(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
-        click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
-        click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
-        click_obj_by_name(AddAccountPopup.TYPE_SEED_PHRASE.value)
-
-        is_loaded_visible_and_enabled(AddAccountPopup.SCROLL_BAR.value, 1000)
-        scroll_item_until_item_is_visible(AddAccountPopup.SCROLL_BAR.value, AddAccountPopup.SEED_PHRASE_INPUT_LAST.value)
-
-        words = mnemonic.split()
-        input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
-
-        click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
-
-        authenticatePopupEnterPassword(password)
-
-    def generate_new_account(self, account_name: str, password: str):
-        click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
-
-        type_text(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
-        click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
-
-        authenticatePopupEnterPassword(password)
-
+    
     def send_transaction(self, account_name, amount, token, chain_name, password):
         is_loaded_visible_and_enabled(AssetView.LIST.value, 2000)
         list = get_obj(AssetView.LIST.value)
