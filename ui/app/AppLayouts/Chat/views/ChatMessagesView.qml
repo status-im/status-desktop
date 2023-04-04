@@ -65,6 +65,11 @@ Item {
             }
         }
 
+        function goToMessage(messageIndex) {
+            chatLogView.currentIndex = -1
+            chatLogView.currentIndex = messageIndex
+        }
+
         onIsMostRecentMessageInViewportChanged: markAllMessagesReadIfMostRecentMessageIsInViewport()
     }
 
@@ -80,13 +85,12 @@ Item {
         }
 
         function onScrollToMessage(messageIndex) {
-            chatLogView.positionViewAtIndex(messageIndex, ListView.Center)
-            chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation()
+            d.goToMessage(messageIndex)
         }
 
         function onScrollToFirstUnreadMessage(messageIndex) {
             if (d.isMostRecentMessageInViewport) {
-                onScrollToMessage(messageIndex)
+                d.goToMessage(messageIndex)
             }
         }
     }
@@ -188,8 +192,13 @@ Item {
         anchors.right: parent.right
         spacing: 0
         verticalLayoutDirection: ListView.BottomToTop
-        cacheBuffer: height * 2 // cache 2 screens worth of items
+        cacheBuffer: height > 0 ? height * 2 : 0 // cache 2 screens worth of items
 
+        highlightRangeMode: ListView.ApplyRange
+        highlightMoveDuration: 200
+        preferredHighlightBegin: 0
+        preferredHighlightEnd: chatLogView.height/2
+        
         model: messageStore.messagesModel
 
         onContentYChanged: {
@@ -200,6 +209,12 @@ Item {
         onCountChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
 
         onVisibleChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+
+        onCurrentItemChanged: {
+            if(currentItem && currentIndex > 0) {
+                currentItem.startMessageFoundAnimation()
+            }
+        }
 
         ScrollBar.vertical: StatusScrollBar {
             visible: chatLogView.visibleArea.heightRatio < 1
