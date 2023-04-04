@@ -44,6 +44,8 @@ SplitView {
             icon: Style.png("tokens/SNT")
             iconSize: iconSizeSlider.value
 
+            label.enabled: labelEnabledCheckBox.checked
+
             width: undefinedSizeCheckBox.checked ? undefined
                                                  : widthSlider.value
             height: undefinedSizeCheckBox.checked ? undefined
@@ -110,10 +112,19 @@ SplitView {
                     text: "iconSize:"
                 }
 
-                TextField {
-                    id: titleTextEdit
+                RowLayout {
+                    TextField {
+                        id: titleTextEdit
 
-                    text: "Some title goes here"
+                        text: "Some title goes here"
+                    }
+
+                    CheckBox {
+                        id: labelEnabledCheckBox
+
+                        checked: true
+                        text: "label enabled"
+                    }
                 }
             }
         }
