@@ -40,6 +40,12 @@ Rectangle {
     id: root
 
     /*!
+       \qmlproperty var StatusCard::locale
+       This property holds the locale used to interpret the number.
+    */
+    property var locale: Qt.locale()
+
+    /*!
        \qmlproperty string StatusCard::disabledText
        This property is the text to be shown when the card is disabled
     */
@@ -318,6 +324,7 @@ Rectangle {
                     bottom: 0
                     top: root.maxAdvancedValue
                     errorMessage: ""
+                    locale: root.locale
                 }
             ]
             text: root.preCalculatedAdvancedText
