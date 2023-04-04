@@ -18,6 +18,8 @@ import ../community/dto/community
 
 import ./dto/deployment_parameters
 import ./dto/community_token
+import ./airdrop_details
+
 include async_tasks
 
 export community_token
@@ -105,6 +107,19 @@ QtObject:
       let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address, deployState: deployState)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
+    self.events.on(PendingTransactionTypeDto.CollectibleAirdrop.event) do(e: Args):
+      var receivedData = TransactionMinedArgs(e)
+      let airdropDetails = toAirdropDetails(parseJson(receivedData.data))
+      if not receivedData.success:
+        error "Collectible airdrop failed", contractAddress=airdropDetails.contractAddress
+        return
+      try:
+        # add holders to db
+        discard addTokenOwners(airdropDetails.chainId, airdropDetails.contractAddress,
+                               airdropDetails.walletAddresses, airdropDetails.amount)
+      except RpcException:
+        error "Error adding collectible token owners", message = getCurrentExceptionMsg()
+
   proc deployCollectiblesEstimate*(self: Service): int =
     try:
       let response = tokens_backend.deployCollectiblesEstimate()
@@ -129,8 +144,8 @@ QtObject:
       let response = tokens_backend.deployCollectibles(chainId, %deploymentParams, %txData, password)
       let contractAddress = response.result["contractAddress"].getStr()
       let transactionHash = response.result["transactionHash"].getStr()
-      echo "!!! Contract address ", contractAddress
-      echo "!!! Transaction hash ", transactionHash
+      debug "Deployed contract address ", contractAddress=contractAddress
+      debug "Deployment transaction hash ", transactionHash=transactionHash
 
       var communityToken: CommunityTokenDto
       communityToken.tokenType = TokenType.ERC721
@@ -193,7 +208,24 @@ QtObject:
         let addressFrom = self.contractOwner(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
         let txData = TransactionDataDto(source: parseAddress(addressFrom)) #TODO estimate fee in UI
         let response = tokens_backend.mintTo(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, password, walletAddresses, collectibleAndAmount.amount)
-        echo "!!! Transaction hash ", response.result.getStr()
+        let transactionHash = response.result.getStr()
+        debug "Deployment transaction hash ", transactionHash=transactionHash
+
+        let airdropDetails = AirdropDetails(
+              chainId: collectibleAndAmount.communityToken.chainId,
+              contractAddress: collectibleAndAmount.communityToken.address,
+              walletAddresses: walletAddresses,
+              amount: collectibleAndAmount.amount)
+
+        # observe transaction state
+        self.transactionService.watchTransaction(
+          transactionHash,
+          addressFrom,
+          collectibleAndAmount.communityToken.address,
+          $PendingTransactionTypeDto.CollectibleAirdrop,
+          $airdropDetails.toJsonNode(),
+          collectibleAndAmount.communityToken.chainId,
+        )
     except RpcException:
       error "Error minting collectibles", message = getCurrentExceptionMsg()
 

@@ -31,3 +31,7 @@ proc contractOwner*(chainId: int, contractAddress: string): RpcResponse[JsonNode
 proc deployCollectiblesEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[]
   return core.callPrivateRPC("collectibles_deployCollectiblesEstimate", payload)
+
+proc addTokenOwners*(chainId: int, contractAddress: string, walletAddresses: seq[string], amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, walletAddresses, amount]
+  return core.callPrivateRPC("collectibles_addTokenOwners", payload)

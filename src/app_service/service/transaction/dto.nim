@@ -16,6 +16,7 @@ type
     BuyStickerPack = "BuyStickerPack"
     WalletTransfer = "WalletTransfer"
     CollectibleDeployment = "CollectibleDeployment"
+    CollectibleAirdrop = "CollectibleAirdrop"
 
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self
