@@ -307,7 +307,8 @@ ifeq ($(REBUILD_UI),true)
  $(shell touch ui/main.qml)
 endif
 
-ifeq ($(detected_OS),Darwin)
+# Darwin version of find doesn't support -regextype.
+ifeq ($(shell find --version | grep findutils),)
  UI_SOURCES := $(shell find -E ui -type f -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc')
 else
  UI_SOURCES := $(shell find ui -type f -regextype egrep -iregex '.*(qmldir|qml|qrc)$$' -not -iname 'resources.qrc')

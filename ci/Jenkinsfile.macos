@@ -1,11 +1,11 @@
-library 'status-jenkins-lib@v1.6.8'
+library 'status-jenkins-lib@macos/use-nix-shell'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    label 'macos && x86_64 && qt-5.15.2'
+    label 'macos && nix-2.11 && xcode-14.3 && aarch64'
   }
 
   parameters {
@@ -44,8 +44,8 @@ pipeline {
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Qt location is pre-defined */
-    QTDIR = '/usr/local/qt/5.15.2/clang_64'
-    PATH = "${env.QTDIR}/bin:${env.PATH}"
+    //QTDIR = '/usr/local/qt/5.15.2/clang_64'
+    //PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Control output the filename */
     STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg')}"
     /* Apple Team ID for Notarization */
@@ -54,8 +54,8 @@ pipeline {
 
   stages {
     stage('Deps') {
-      steps {
-        sh 'make update'
+      steps { script {
+        nix.shell('make update', pure: false)
         withCredentials([
           usernamePassword( /* For fetching HomeBrew bottles. */
             credentialsId: "status-im-auto-pkgs",
@@ -63,15 +63,15 @@ pipeline {
             passwordVariable: 'GITHUB_TOKEN'
           )
         ]) {
-          sh 'make deps'
+          nix.shell('make deps', pure: false)
         }
-      }
+      } }
     }
 
     stage('status-go') {
-      steps {
-        sh 'make status-go'
-      }
+      steps { script {
+        nix.shell('make status-go', pure: true)
+      } }
     }
 
     stage('Package') {
@@ -106,6 +106,6 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    cleanup { sh './scripts/clean-git.sh' }
+    //cleanup { sh './scripts/clean-git.sh' }
   }
 }
