@@ -678,6 +678,7 @@ method resendChatMessage*(self: Module, messageId: string): string =
   return self.controller.resendChatMessage(messageId)
 
 method resetNewMessagesMarker*(self: Module) =
+  self.view.setFirstUnseenMessageLoaded(false)
   self.controller.getAsyncFirstUnseenMessageId()
 
 method removeNewMessagesMarker*(self: Module) =
