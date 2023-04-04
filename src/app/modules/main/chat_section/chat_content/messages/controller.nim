@@ -212,11 +212,11 @@ proc init*(self: Controller) =
       if (community.id == self.sectionId):
         self.delegate.updateCommunityDetails(community)
 
-  self.events.on(SIGNAL_MESSAGE_FIRST_UNSEEN) do(e: Args):
-    let args = MessageFirstUnseen(e)
+  self.events.on(SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED) do(e: Args):
+    let args = FirstUnseenMessageLoadedArgs(e)
     if (args.chatId != self.chatId):
       return
-    self.delegate.onFirstUnseenMessageId(args.messageId)
+    self.delegate.onFirstUnseenMessageLoaded(args.messageId)
 
 proc getMySectionId*(self: Controller): string =
   return self.sectionId

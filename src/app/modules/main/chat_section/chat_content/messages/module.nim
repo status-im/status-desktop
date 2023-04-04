@@ -716,7 +716,7 @@ proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto)
         return true
   return false
 
-method onFirstUnseenMessageId*(self: Module, messageId: string) =
+method onFirstUnseenMessageLoaded*(self: Module, messageId: string) =
   self.view.model().setFirstUnseenMessageId(messageId)
   self.view.model().resetNewMessagesMarker()
   let index = self.view.model().findIndexForMessageId(messageId)
