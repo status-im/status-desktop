@@ -11,6 +11,8 @@ QtObject {
     readonly property bool loadingHistoryMessagesInProgress: root.chatSectionModule? root.chatSectionModule.loadingHistoryMessagesInProgress : false
     readonly property int newMessagesCount: messagesModel ? messagesModel.newMessagesCount : 0
     readonly property bool messageSearchOngoing: messageModule ? messageModule.messageSearchOngoing : false
+    readonly property bool initialMessagesLoaded: messageModule ? messageModule.initialMessagesLoaded : false
+    readonly property bool firstUnseenMessageLoaded: messageModule ? messageModule.firstUnseenMessageLoaded : false
 
     readonly property bool amIChatAdmin: messageModule ? messageModule.amIChatAdmin : false
     readonly property bool isPinMessageAllowedForMembers: messageModule ? messageModule.isPinMessageAllowedForMembers : false

@@ -59,7 +59,8 @@ Item {
                 return
             }
 
-            if (chatDetails && chatDetails.active && chatDetails.hasUnreadMessages && !messageStore.messageSearchOngoing) {
+            if (chatDetails && chatDetails.active && chatDetails.hasUnreadMessages &&
+                !messageStore.messageSearchOngoing && messageStore.firstUnseenMessageLoaded) {
                 chatContentModule.markAllMessagesRead()
             }
         }
@@ -85,12 +86,19 @@ Item {
 
         function onScrollToFirstUnreadMessage(messageIndex) {
             if (d.isMostRecentMessageInViewport) {
-                chatLogView.positionViewAtIndex(messageIndex, ListView.Center)
-                chatLogView.itemAtIndex(messageIndex).startMessageFoundAnimation()
+                onScrollToMessage(messageIndex)
             }
         }
+    }
+
+    Connections {
+        target: root.messageStore
 
         function onMessageSearchOngoingChanged() {
+            d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+        }
+
+        function onFirstUnseenMessageLoadedChanged() {
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()
         }
     }
@@ -155,8 +163,8 @@ Item {
     Loader {
         id: loadingMessagesView
 
-        readonly property bool show: !messageStore.messageModule.firstUnseenMessageLoaded ||
-                                     !messageStore.messageModule.initialMessagesLoaded
+        readonly property bool show: !messageStore.firstUnseenMessageLoaded ||
+                                     !messageStore.initialMessagesLoaded
         active: show
         visible: show
         anchors.top: loadingMessagesIndicator.bottom
