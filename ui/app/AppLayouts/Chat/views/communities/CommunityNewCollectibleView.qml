@@ -109,9 +109,10 @@ StatusScrollView {
             id: symbolInput
 
             label: qsTr("Token symbol")
-            charLimit: 5
+            charLimit: 7
             placeholderText: qsTr("Letter token abbreviation e.g. ABC")
             errorText: qsTr("Token symbol")
+            validator.regularExpression: Constants.regularExpressions.asciiPrintable
         }
 
         CustomLabelDescriptionComponent {
@@ -189,6 +190,7 @@ StatusScrollView {
         id: customInput
 
         property string errorText
+        property alias validator: regexValidator
 
         Layout.fillWidth: true
         validators: [
@@ -198,8 +200,9 @@ StatusScrollView {
                                                     customInput.errorText)
             },
             StatusRegularExpressionValidator {
-                regularExpression: Constants.regularExpressions.alphanumericalExpanded
-                errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
+                id: regexValidator
+                regularExpression: Constants.regularExpressions.ascii
+                errorMessage: Constants.errorMessages.asciiRegExp
             }
         ]
     }
