@@ -210,7 +210,6 @@ StatusSectionLayout {
                 implicitHeight: parent.height
 
                 notificationsStore: root.store.notificationsStore
-                devicesStore: root.store.devicesStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
             }
