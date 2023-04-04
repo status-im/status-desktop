@@ -20,6 +20,7 @@ Item {
     property var contactsStore
     property var emojiPopup: null
     property var sendModalPopup
+    property var networkConnectionStore
 
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
@@ -56,6 +57,7 @@ Item {
             store: root.store
             contactsStore: root.contactsStore
             sendModal: root.sendModalPopup
+            networkConnectionStore: root.networkConnectionStore
         }
     }
 
@@ -96,6 +98,7 @@ Item {
                     rightPanelStackView.replace(walletContainer)
             }
             emojiPopup: root.emojiPopup
+            networkConnectionStore: root.networkConnectionStore
         }
 
         centerPanel: StackView {

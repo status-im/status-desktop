@@ -137,6 +137,8 @@ Item {
                         isInstalled: installed
                         isBought: bought
                         isPending: pending
+                        greyedOut: !root.store.networkConnectionStore.stickersNetworkAvailable
+                        tooltip.text: root.store.networkConnectionStore.stickersNetworkUnavailableText
                         onInstallClicked: root.installClicked(stickers, packId, index)
                         onUninstallClicked: root.uninstallClicked(packId)
                         onCancelClicked: root.cancelClicked(packId)
@@ -235,6 +237,8 @@ Item {
                         isInstalled: installed
                         isBought: bought
                         isPending: pending
+                        greyedOut: !root.store.networkConnectionStore.stickersNetworkAvailable
+                        tooltip.text: root.store.networkConnectionStore.stickersNetworkUnavailableText
                         onInstallClicked: root.installClicked(stickers, packId, index)
                         onUninstallClicked: root.uninstallClicked(packId)
                         onCancelClicked: root.cancelClicked(packId)

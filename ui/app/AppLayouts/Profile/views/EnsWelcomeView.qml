@@ -7,6 +7,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
+import shared.controls 1.0
 
 Item {
     id: root
@@ -15,6 +16,8 @@ Item {
 
     property string username: ""
     property int profileContentWidth
+    property bool startButtonEnabled: true
+    property string tooltipText
 
     StatusScrollView {
         id: sview
@@ -278,15 +281,16 @@ Item {
         }
     }
 
-    StatusButton {
+    DisabledTooltipButton {
         id: startBtn
-        objectName: "ensStartButton"
+        interactive: startButtonEnabled
+        buttonType: DisabledTooltipButton.Normal
+        aliasedObjectName: "ensStartButton"
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        text: enabled ?
-          qsTr("Start") :
-          qsTr("Only available on Mainnet")
+        text: qsTr("Start")
+        tooltipText: root.tooltipText
         onClicked: startBtnClicked()
     }
 }
