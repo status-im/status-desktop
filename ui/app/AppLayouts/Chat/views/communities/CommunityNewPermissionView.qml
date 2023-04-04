@@ -1,5 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQml 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -30,8 +31,13 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property bool isEditState: false
 
+    // TODO: temporary property, to be removed when no need to hide the switch
+    // in the app
+    property bool showWhoHoldsSwitch: false
+
     readonly property bool dirty:
-        !holdingsModelComparator.equal ||
+        root.holdingsRequired !== d.dirtyValues.holdingsRequired ||
+        (d.dirtyValues.holdingsRequired && !holdingsModelComparator.equal) ||
         !channelsModelComparator.equal ||
         root.isPrivate !== d.dirtyValues.isPrivate ||
         root.permissionType !== d.dirtyValues.permissionType
@@ -39,12 +45,13 @@ StatusScrollView {
     readonly property alias dirtyValues: d.dirtyValues
 
     readonly property bool isFullyFilled:
-        dirtyValues.selectedHoldingsModel.count > 0 &&
+        (dirtyValues.selectedHoldingsModel.count > 0 || !whoHoldsSwitch.checked) &&
         dirtyValues.permissionType !== PermissionTypes.Type.None &&
         (d.isCommunityPermission || dirtyValues.selectedChannelsModel.count > 0)
 
     property int permissionType: PermissionTypes.Type.None
     property bool isPrivate: false
+    property bool holdingsRequired: true
 
     // roles: type, key, name, amount, imageSource
     property var selectedHoldingsModel: ListModel {}
@@ -111,6 +118,7 @@ StatusScrollView {
 
             property int permissionType: PermissionTypes.Type.None
             property bool isPrivate: false
+            property bool holdingsRequired: true
 
             Binding on isPrivate {
                 value: (d.dirtyValues.permissionType === PermissionTypes.Type.Admin) ||
@@ -161,6 +169,9 @@ StatusScrollView {
 
             // Is private permission
             d.dirtyValues.isPrivate = root.isPrivate
+
+            // Are holdings required
+            d.dirtyValues.holdingsRequired = root.holdingsRequired
         }
     }
 
@@ -192,13 +203,44 @@ StatusScrollView {
             tagLeftPadding: 2
             asset.height: 28
             asset.width: asset.height
-            addButton.visible: model.count < d.maxHoldingsItems
+            addButton.visible: count < d.maxHoldingsItems &&
+                               whoHoldsSwitch.checked
 
             model: HoldingsSelectionModel {
                 sourceModel: d.dirtyValues.selectedHoldingsModel
 
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
+            }
+
+            label.enabled: whoHoldsSwitch.checked
+            placeholderItem.visible: count === 0 && whoHoldsSwitch.checked
+
+            Binding on model {
+                when: !whoHoldsSwitch.checked
+                value: 0
+                restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            Binding on bottomPadding {
+                when: !whoHoldsSwitch.checked
+                value: 0
+                restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            children: StatusSwitch {
+                id: whoHoldsSwitch
+
+                visible: root.showWhoHoldsSwitch
+
+                padding: 0
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.rightMargin: 12
+                anchors.topMargin: 10
+
+                checked: d.dirtyValues.holdingsRequired
+                onToggled: d.dirtyValues.holdingsRequired = checked
             }
 
             HoldingsDropdown {

@@ -79,6 +79,8 @@ SplitView {
 
             isOwner: isOwnerCheckBox.checked
 
+            showWhoHoldsSwitch: true
+
             onCreatePermissionRequested: {
                 permissionsStoreMock.createPermission(holdings, permissionType,
                                                       isPrivate, channels)

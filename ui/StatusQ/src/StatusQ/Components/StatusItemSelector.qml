@@ -105,6 +105,8 @@ StatusFlowSelector {
     */
     property bool itemsClickable: true
 
+    readonly property alias count: repeater.count
+
     /*!
        \qmlsignal StatusItemSelector::itemClicked
        This signal is emitted when the item is clicked.

@@ -28,6 +28,8 @@ SplitView {
             permissionDuplicated: isPermissionDuplicatedCheckBox.checked
             permissionTypeLimitReached: isLimitReachedCheckBox.checked
 
+            showWhoHoldsSwitch: true
+
             assetsModel: AssetsModel {}
             collectiblesModel: CollectiblesModel {}
             channelsModel: ChannelsModel {}

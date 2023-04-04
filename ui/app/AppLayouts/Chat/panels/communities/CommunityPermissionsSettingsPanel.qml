@@ -23,6 +23,10 @@ SettingsPageLayout {
 
     property int viewWidth: 560 // by design
 
+    // TODO: temporary property, to be removed when no need to hide the switch
+    // in the app
+    property bool showWhoHoldsSwitch: false
+
     signal createPermissionRequested(
         int permissionType, var holdings, var channels, bool isPrivate)
 
@@ -182,6 +186,10 @@ SettingsPageLayout {
 
             permissionType: d.permissionTypeToEdit
             isPrivate: d.isPrivateToEditValue
+            holdingsRequired: selectedHoldingsModel ? selectedHoldingsModel.count > 0
+                                                    : false
+
+            showWhoHoldsSwitch: root.showWhoHoldsSwitch
 
             permissionDuplicated: {
                 // dependencies
@@ -204,6 +212,12 @@ SettingsPageLayout {
                     const permissionType = item.permissionType
 
                     const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
+
+                    if (holdings.rowCount() === 0 && dirtyValues.holdingsRequired)
+                        continue
+
+                    if (holdings.rowCount() !== 0 && !dirtyValues.holdingsRequired)
+                        continue
 
                     if (same(dirtyValues.selectedHoldingsModel, holdings)
                             && same(dirtyValues.selectedChannelsModel, channels)
@@ -233,9 +247,11 @@ SettingsPageLayout {
             }
 
             onCreatePermissionClicked: {
-                const holdings = ModelUtils.modelToArray(
-                                   dirtyValues.selectedHoldingsModel,
-                                   ["key", "type", "amount"])
+                const holdings = dirtyValues.holdingsRequired ?
+                                   ModelUtils.modelToArray(
+                                       dirtyValues.selectedHoldingsModel,
+                                       ["key", "type", "amount"])
+                                 : []
 
                 const channels = ModelUtils.modelToArray(
                                    dirtyValues.selectedChannelsModel, ["key"])

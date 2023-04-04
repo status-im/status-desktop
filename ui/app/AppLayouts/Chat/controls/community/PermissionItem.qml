@@ -89,11 +89,14 @@ Control{
             StatusBaseText {
                 font.pixelSize: d.itemTextPixelSize
                 height: d.flowRowHeight
-                text: qsTr("Anyone who holds")
+                text: holdingsRepeater.count > 0 ? qsTr("Anyone who holds")
+                                                 : qsTr("Anyone")
                 verticalAlignment: Text.AlignVCenter
             }
 
             Repeater {
+                id: holdingsRepeater
+
                 model: root.holdingsListModel
 
                 StatusListItemTag {
