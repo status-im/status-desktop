@@ -34,8 +34,8 @@ Item {
         readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.from): ""
         readonly property string from: root.isTransactionValid ? !!savedAddressNameFrom ? savedAddressNameFrom : Utils.compactAddress(transaction.from, 4): ""
         readonly property string to: root.isTransactionValid ? !!savedAddressNameTo ? savedAddressNameTo : Utils.compactAddress(transaction.to, 4): ""
-        readonly property string savedAddressEns: RootStore.getEnsForSavedWalletAddress(isIncoming ? transaction.from : transaction.to)
-        readonly property string savedAddressChains: RootStore.getChainShortNamesForSavedWalletAddress(isIncoming ? transaction.from : transaction.to)
+        readonly property string savedAddressEns: root.isTransactionValid ? RootStore.getEnsForSavedWalletAddress(isIncoming ? transaction.from : transaction.to) : ""
+        readonly property string savedAddressChains: root.isTransactionValid ? RootStore.getChainShortNamesForSavedWalletAddress(isIncoming ? transaction.from : transaction.to) : ""
 
         function getNameForSavedWalletAddress(address) {
             return RootStore.getNameForSavedWalletAddress(address)

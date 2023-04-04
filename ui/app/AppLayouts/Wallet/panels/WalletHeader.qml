@@ -19,7 +19,6 @@ Item {
     id: root
 
     property var networkConnectionStore
-    property string currency: ""
     property var currentAccount
     property var store
     property var walletStore

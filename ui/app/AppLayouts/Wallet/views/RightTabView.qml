@@ -56,7 +56,6 @@ Item {
             ColumnLayout {
                 WalletHeader {
                     Layout.fillWidth: true
-                    currency: RootStore.currentCurrency
                     currentAccount: RootStore.currentAccount
                     store: root.store
                     walletStore: RootStore

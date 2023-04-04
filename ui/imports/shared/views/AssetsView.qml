@@ -67,11 +67,11 @@ Item {
     Component {
         id: tokenDelegate
         TokenDelegate {
-            objectName: "AssetView_TokenListItem_" + modelData.symbol
-            readonly property string balance: "%1".arg(modelData.enabledNetworkBalance.amount) // Needed for the tests
-            errorTooltipText_1: networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances)
+            objectName: "AssetView_TokenListItem_" + (modelData ? modelData.symbol : "")
+            readonly property string balance: modelData ? "%1".arg(modelData.enabledNetworkBalance.amount) : "" // Needed for the tests
+            errorTooltipText_1: modelData ? networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances) : ""
             errorTooltipText_2: networkConnectionStore.getMarketNetworkDownText()
-            subTitle: networkConnectionStore.noTokenBalanceAvailable ? "" :  LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
+            subTitle: !modelData || networkConnectionStore.noTokenBalanceAvailable ? "" :  LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
             errorMode: networkConnectionStore.noBlockchainConnectionAndNoCache && !networkConnectionStore.noMarketConnectionAndNoCache
             errorIcon.tooltip.text: networkConnectionStore.noBlockchainConnectionAndNoCacheText
             onClicked: {

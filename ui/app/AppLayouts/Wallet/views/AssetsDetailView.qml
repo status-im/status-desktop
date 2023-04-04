@@ -399,7 +399,13 @@ Item {
                             id: smartContractAddress
                             Layout.alignment: detailsFlow.isOverflowing ? Qt.AlignLeft : Qt.AlignRight
 
-                            image.source: token  && token.builtOn !== "" ? Style.svg("tiny/" + RootStore.getNetworkIconUrl(token.builtOn)) : ""
+                            image.source: {
+                                if (!token || token.builtOn === "") {
+                                    return ""
+                                }
+                                let networkIconUrl = RootStore.getNetworkIconUrl(token.builtOn)
+                                return networkIconUrl ? Style.svg("tiny/" + networkIconUrl) : ""
+                            }
                             tagPrimaryLabel.text: token && token.builtOn !== "" ? RootStore.getNetworkName(token.builtOn) : "---"
                             tagSecondaryLabel.text: token.address ?? "---"
                             visible: typeof token != "undefined" && token && token.builtOn !== "" && token.address !== ""
