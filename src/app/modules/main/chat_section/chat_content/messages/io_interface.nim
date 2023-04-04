@@ -159,5 +159,5 @@ method markAllMessagesRead*(self: AccessInterface) =
 method updateCommunityDetails*(self: AccessInterface, community: CommunityDto) =
   raise newException(ValueError, "No implementation available")
 
-method onFirstUnseenMessageId*(self: AccessInterface, messageId: string) =
+method onFirstUnseenMessageLoaded*(self: AccessInterface, messageId: string) =
   raise newException(ValueError, "No implementation available")
