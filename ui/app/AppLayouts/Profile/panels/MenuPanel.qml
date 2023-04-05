@@ -8,7 +8,7 @@ import utils 1.0
 
 Column {
     id: root
-    spacing: 4
+    spacing: 8
 
     property var privacyStore
     property var contactsStore
