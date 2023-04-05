@@ -1244,7 +1244,7 @@ Rectangle {
                             leftPadding: 0
                             padding: 0
                             Keys.onUpPressed: {
-                                if (isEdit) {
+                                if (isEdit && !activeFocus) {
                                     forceActiveFocus();
                                 } else {
                                     if (messageInputField.length === 0) {
@@ -1254,6 +1254,7 @@ Rectangle {
                                 if (emojiSuggestions.visible) {
                                     emojiSuggestions.listView.decrementCurrentIndex();
                                 }
+                                event.accepted = false
                             }
                             Keys.onPressed: {
                                 keyEvent = event;
