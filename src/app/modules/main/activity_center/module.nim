@@ -134,6 +134,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
     message.albumId,
     if (len(message.albumId) == 0): @[] else: @[message.image],
     if (len(message.albumId) == 0): @[] else: @[message.id],
+    message.albumImagesCount,
     ))
 
 method convertToItems*(

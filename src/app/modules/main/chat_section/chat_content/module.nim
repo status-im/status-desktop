@@ -223,6 +223,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     message.albumId,
     if (len(message.albumId) == 0): @[] else: @[message.image],
     if (len(message.albumId) == 0): @[] else: @[message.id],
+    message.albumImagesCount,
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

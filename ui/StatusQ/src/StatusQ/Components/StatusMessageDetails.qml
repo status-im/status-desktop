@@ -13,4 +13,5 @@ QtObject {
     property string messageContent: ""
     property string messageOriginInfo: ""
     property var album: []
+    property int albumCount: 0
 }

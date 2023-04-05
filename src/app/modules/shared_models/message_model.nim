@@ -62,6 +62,7 @@ type
     QuotedMessageAuthorIsContact
     QuotedMessageAuthorColorHash
     AlbumMessageImages
+    AlbumImagesCount
 
 QtObject:
   type
@@ -163,6 +164,7 @@ QtObject:
       ModelRole.QuotedMessageAuthorIsContact.int: "quotedMessageAuthorIsContact",
       ModelRole.QuotedMessageAuthorColorHash.int: "quotedMessageAuthorColorHash",
       ModelRole.AlbumMessageImages.int: "albumMessageImages",
+      ModelRole.AlbumImagesCount.int: "albumImagesCount",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -309,6 +311,8 @@ QtObject:
       result = newQVariant(item.messageAttachments.join(" "))
     of ModelRole.AlbumMessageImages:
       result = newQVariant(item.albumMessageImages.join(" "))
+    of ModelRole.AlbumImagesCount:
+      result = newQVariant(item.albumImagesCount)
 
   proc updateItemAtIndex(self: Model, index: int) =
     let ind = self.createIndex(index, 0, nil)
