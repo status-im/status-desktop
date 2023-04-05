@@ -1493,9 +1493,7 @@ Rectangle {
             visible: control.isContactBlocked
             text: qsTr("Unblock")
             type: StatusQ.StatusBaseButton.Type.Danger
-            onClicked: function (event) {
-                control.unblockChat()
-            }
+            onClicked: control.unblockChat()
         }
     }
 }
