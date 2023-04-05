@@ -306,8 +306,6 @@ proc getRecoverUsingSeedPhraseWhileLogin*(self: Controller): bool =
   return self.tmpRecoverUsingSeedPhraseWhileLogin
 
 proc cleanTmpData(self: Controller) =
-  self.tmpSelectedLoginAccountKeyUid = ""
-  self.tmpSelectedLoginAccountIsKeycardAccount = false
   self.tmpProfileImageDetails = ProfileImageDetails()
   self.tmpKeychainErrorOccurred = false
   self.setDisplayName("")
