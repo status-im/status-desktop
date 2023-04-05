@@ -98,6 +98,7 @@ Column {
         leftPadding: Style.current.padding
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding/2
+        visible: walletStore.importedAccounts.count > 0
     }
 
     Repeater {
@@ -115,6 +116,7 @@ Column {
         leftPadding: Style.current.padding
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding/2
+        visible: walletStore.watchOnlyAccounts.count > 0
     }
 
     Repeater {
