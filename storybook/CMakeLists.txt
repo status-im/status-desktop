@@ -16,17 +16,20 @@ endif()
 
 find_package(
   Qt5
-  COMPONENTS Core Quick QuickControls2 Test QuickTest Qml
+  COMPONENTS Core Gui Quick QuickControls2 Test QuickTest Qml
   REQUIRED)
 
-include (../ui/StatusQ/StatusQSources.cmake)
+set(STATUSQ_BUILD_SANDBOX OFF)
+set(STATUSQ_BUILD_SANITY_CHECKER OFF)
+set(STATUSQ_BUILD_TESTS OFF)
+add_subdirectory(../ui/StatusQ StatusQ)
 
 file(GLOB_RECURSE CORE_QML_FILES
-    "../ui/StatusQ/*.qml" "../ui/app/*.qml" "../ui/imports/*.qml"
-    "../ui/StatusQ/*/qmldir" "../ui/app/*/qmldir" "../ui/imports/*/qmldir"
+    "../ui/app/*.qml" "../ui/imports/*.qml"
+    "../ui/app/*/qmldir" "../ui/imports/*/qmldir"
 )
 
-file(GLOB_RECURSE CORE_JS_FILES "../ui/StatusQ/*.js" "../ui/app/*.js")
+file(GLOB_RECURSE CORE_JS_FILES "../ui/app/*.js")
 
 file(GLOB_RECURSE STORYBOOK_QML_FILES "stubs/*.qml" "mocks/*.qml" "pages/*.qml"
     "src/*.qml" "src/qmldir")
@@ -45,10 +48,7 @@ add_library(${PROJECT_LIB}
     figmalinkssource.cpp figmalinkssource.h
     modelutils.cpp modelutils.h
     sectionsdecoratormodel.cpp sectionsdecoratormodel.h
-    ${STATUSQ_HEADERS} ${STATUSQ_SOURCES}
 )
-
-target_include_directories(${PROJECT_LIB} PUBLIC ${STATUSQ_DIR}/include)
 
 add_executable(
   ${PROJECT_NAME}
@@ -61,13 +61,15 @@ add_executable(
   README.md
 )
 
-target_compile_definitions(${PROJECT_NAME}
-                           PRIVATE QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}")
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+        QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
+        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}")
 
 target_link_libraries(
-    ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Quick Qt5::QuickControls2)
+    ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2)
+
 target_link_libraries(
-    ${PROJECT_NAME} PRIVATE ${PROJECT_LIB} SortFilterProxyModel)
+        ${PROJECT_NAME} PRIVATE ${PROJECT_LIB})
 
 enable_testing()
 
@@ -83,9 +85,10 @@ add_executable(QmlTests
     qmlTests/main.cpp
     qmlTests/src/TextUtils.cpp qmlTests/src/TextUtils.h
     ${TEST_QML_FILES})
-target_compile_definitions(QmlTests
-                           PRIVATE QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
-                           PRIVATE -DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
+target_compile_definitions(QmlTests PRIVATE
+        QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
+        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
+        QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/qmlTests")
 target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml ${PROJECT_LIB})
 add_test(NAME QmlTests COMMAND QmlTests)
 
@@ -101,8 +104,5 @@ set(QML_IMPORT_PATH "${QML_DIRS}" CACHE STRING "Qt Creator extra QML import path
 if (APPLE)
   find_library(AppKit AppKit)
   find_library(Foundation Foundation)
-
   target_link_libraries(${PROJECT_LIB} PRIVATE ${AppKit} ${Foundation})
 endif()
-
-add_subdirectory(../vendor/SortFilterProxyModel ./SortFilterProxyModel)

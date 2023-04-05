@@ -2,8 +2,6 @@
 #include <QQmlEngine>
 #include "src/TextUtils.h"
 
-#include "StatusQ/typesregistration.h"
-
 class Setup : public QObject
 {
     Q_OBJECT
@@ -12,6 +10,7 @@ public slots:
     void qmlEngineAvailable(QQmlEngine *engine) {
         // custom code that needs QQmlEngine, register QML types, add import paths,...
         const QStringList additionalImportPaths {
+            STATUSQ_MODULE_IMPORT_PATH,
             QML_IMPORT_ROOT + QStringLiteral("/../ui/StatusQ/src"),
             QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
             QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
@@ -23,8 +22,6 @@ public slots:
             engine->addImportPath(path);
 
         qmlRegisterSingletonType<TextUtils>("TextUtils", 1, 0, "TextUtils", &TextUtils::qmlInstance);
-
-        registerStatusQTypes();
     }
 };
 

@@ -8,8 +8,6 @@
 #include "figmalinkssource.h"
 #include "sectionsdecoratormodel.h"
 
-#include "StatusQ/typesregistration.h"
-
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -27,7 +25,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     const QStringList additionalImportPaths {
-        QML_IMPORT_ROOT + QStringLiteral("/../ui/StatusQ/src"),
+        STATUSQ_MODULE_IMPORT_PATH,
         QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
         QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
         QML_IMPORT_ROOT + QStringLiteral("/src"),
@@ -43,8 +41,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<FigmaDecoratorModel>("Storybook", 1, 0, "FigmaDecoratorModel");
     qmlRegisterType<FigmaLinksSource>("Storybook", 1, 0, "FigmaLinksSource");
     qmlRegisterUncreatableType<FigmaLinks>("Storybook", 1, 0, "FigmaLinks", {});
-
-    registerStatusQTypes();
 
     auto watcherFactory = [additionalImportPaths](QQmlEngine*, QJSEngine*) {
         auto watcher = new DirectoriesWatcher();

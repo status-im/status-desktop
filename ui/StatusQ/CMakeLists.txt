@@ -76,6 +76,8 @@ else()
     set(STATUSQ_MODULE_IMPORT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
 endif()
 
+set(STATUSQ_MODULE_IMPORT_PATH "${STATUSQ_MODULE_IMPORT_PATH}" PARENT_SCOPE)
+
 if (${STATUSQ_SHADOW_BUILD})
 #    qt5_add_big_resources(STATUSQ_QRC_COMPILED
 #            src/statusq.qrc
