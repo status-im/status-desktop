@@ -255,7 +255,6 @@ QtObject:
       self.countChanged()
 
   proc removePageSizeBuffer*(self: Model) =
-    var removed = false
     for i in 0 ..< self.items.len:
       if self.items[i].getLoadingTransaction():
         self.beginRemoveRows(newQModelIndex(), i, self.items.len-1)

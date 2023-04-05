@@ -1,5 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQml 2.15
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -35,22 +36,22 @@ StatusListItem {
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
     readonly property string name: isModelDataValid ?
                                         root.isNFT ?
-                                            modelData.nftName ? 
-                                                modelData.nftName : 
+                                            modelData.nftName ?
+                                                modelData.nftName :
                                                 "#" + modelData.tokenID :
                                             root.isSummary ? root.symbol : RootStore.formatCurrencyAmount(cryptoValue, symbol) :
                                         "N/A"
 
     readonly property string image: isModelDataValid ?
                                         root.isNFT ?
-                                            modelData.nftImageUrl ? 
-                                                modelData.nftImageUrl : 
+                                            modelData.nftImageUrl ?
+                                                modelData.nftImageUrl :
                                                 "" :
                                             root.symbol ?
                                                 Style.png("tokens/%1".arg(root.symbol)) :
                                                 "" :
                                         ""
-    
+
     readonly property string toAddress: !!savedAddressNameTo ?
                                             savedAddressNameTo :
                                             isModelDataValid ?
@@ -67,7 +68,7 @@ StatusListItem {
     asset.name: root.image
     asset.isLetterIdenticon: loading
     title: root.isModelDataValid ?
-                isIncoming ? 
+                isIncoming ?
                     isSummary ?
                         qsTr("Receive %1").arg(root.name) :
                         qsTr("Received %1 from %2").arg(root.name).arg(root.fromAddress):
@@ -115,7 +116,12 @@ StatusListItem {
                 StatusTextWithLoadingState {
                     id: cryptoValueText
                     text: RootStore.formatCurrencyAmount(cryptoValue, root.symbol)
-                    color: Theme.palette.directColor1
+                    Binding on width {
+                        when: root.loading
+                        value: 111
+                        restoreMode: Binding.RestoreBindingOrValue
+                    }
+                    customColor: Theme.palette.directColor1
                     loading: root.loading
                 }
 
