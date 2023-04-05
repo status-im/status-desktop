@@ -2,6 +2,8 @@ pragma Singleton
 
 import QtQuick 2.14
 
+// Force import StatusQ plugin to load all StatusQ resources
+import StatusQ 0.1
 import StatusQ.Internal 0.1 as Internal
 
 QtObject {
