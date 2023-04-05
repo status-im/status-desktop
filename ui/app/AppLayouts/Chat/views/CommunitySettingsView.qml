@@ -116,6 +116,8 @@ StatusSectionLayout {
                 Layout.leftMargin: Style.current.padding
                 Layout.rightMargin: Style.current.padding
                 model: root.settingsMenuModel
+                spacing: 8
+
                 delegate: StatusNavigationListItem {
                     objectName: "CommunitySettingsView_NavigationListItem_" + modelData.name
                     width: listView.width
