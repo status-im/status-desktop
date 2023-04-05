@@ -1292,14 +1292,16 @@ Rectangle {
 
                             onTextChanged: {
                                 if (length <= control.messageLimit) {
-                                    var symbols = ":='xX><0O;*dB8-D#%\\";
-                                    var symbolIdx = ((cursorPosition > 2) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1)))!==-1))
+                                    const symbols = ":='xX><0O;*dB8-D#%\\";
+                                    const symbolIdx = ((cursorPosition > 2) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1)))!==-1))
                                                     ? (cursorPosition -1) : (symbols.indexOf(getText(0, 1))!==-1) ? 2 : -1;
                                     if ((getText(symbolIdx-2, (symbolIdx-1)) === " ") || (symbolIdx === 2)) {
+                                        const textBefore1 = getText((symbolIdx-1), (symbolIdx+1))
+                                        const textBefore2 = getText((symbolIdx-2), (symbolIdx+1))
+                                        const has2CharsText = getText((symbolIdx-4), (symbolIdx-2))
                                         const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
-                                            if (emoji.aliases_ascii.includes(getText((symbolIdx-1), (symbolIdx+1))) ||
-                                                emoji.aliases_ascii.includes(getText((symbolIdx-2), (symbolIdx+1)))) {
-                                                var has2Chars = emoji.aliases_ascii.includes(getText((symbolIdx-4), (symbolIdx-2)));
+                                            if (emoji.aliases_ascii.includes(textBefore1) || emoji.aliases_ascii.includes(textBefore2)) {
+                                                const has2Chars = emoji.aliases_ascii.includes(has2CharsText)
                                                 replaceWithEmoji("", getText((symbolIdx - (has2Chars ? 3 : 2)), symbolIdx), emoji.unicode);
                                             }
                                         })
@@ -1308,7 +1310,7 @@ Rectangle {
                                         mentionsPos = [];
                                     }
                                 } else {
-                                    var removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
+                                    const removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
                                     remove(removeFrom, cursorPosition);
                                 }
 
