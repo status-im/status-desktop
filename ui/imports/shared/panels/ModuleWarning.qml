@@ -149,6 +149,7 @@ Item {
             Button {
                 id: button
                 visible: text != ""
+                focusPolicy: Qt.NoFocus
                 padding: 5
                 onClicked: {
                     root.clicked()
