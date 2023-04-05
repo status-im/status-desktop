@@ -9,7 +9,7 @@ option(STATUSQ_BUILD_TESTS "Enable to build StatusQ UI auto tests" ON)
 if (APPLE)
     set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=10.14)
     set(CMAKE_OSX_ARCHITECTURES "x86_64")
-endif()
+endif ()
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -25,39 +25,68 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# https://doc.qt.io/qtcreator/creator-qml-modules-with-plugins.html#importing-qml-modules
-set(QML_IMPORT_PATH
-    ${CMAKE_SOURCE_DIR}/src;${QML_IMPORT_PATH}
-    CACHE STRING "")
-
-
-if (${STATUSQ_BUILD_SANDBOX})
-    add_subdirectory(sandbox)
-endif()
-
-if (${STATUSQ_BUILD_SANITY_CHECKER})
-    add_subdirectory(sanity_checker)
-endif()
-
-if (${STATUSQ_BUILD_TESTS})
-    add_subdirectory(tests)
-endif()
-
 add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
 add_subdirectory(../../vendor/qzxing/src qzxing)
 
 ### StatusQ library
 ### TODO: Move to a subdirectory for readability and better structure
 
-#qt5_add_big_resources(QRC_COMPILED
-#        src/statusq.qrc
-#        src/assets.qrc)
+#
+#   NOTE:
+#
+#
+#   StatusQ resources (`statusq.qrc` and `assets.qrc`)
+#   are only compiled into plugin resources in Release build.
+#    In Debug build the plugin is built in `src` directory
+#   without resources embedded.
+#
+#
+
+if (NOT DEFINED STATUSQ_SHADOW_BUILD)
+
+    #   About STATUSQ_SHADOW_BUILD option.
+    #
+    #   This is an option that defaults to OFF in Debug mode and ON otherwise.
+    #   When ON:
+    #     - resources are compiled into plugin
+    #     - plugin is compiled in the ${CMAKE_BINARY_DIR}/StatusQ
+    #   When OFF:
+    #     - no resources are compiled, it's expected to use QML/JS sources
+    #     - the plugin is compiled in src directory
+    #
+    #   STATUSQ_SHADOW_BUILD mode is created for sandbox/storybook hot reloading
+    #   without copying all qml files to build directory.
+    #
+    #   It's expected for the app to add ${STATUSQ_MODULE_IMPORT_PATH} to
+    #   QQmlApplicationEngine::addImportPath.
+    #
+
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(STATUSQ_SHADOW_BUILD OFF)
+    else()
+        set(STATUSQ_SHADOW_BUILD ON)
+    endif()
+endif()
+
+if (${STATUSQ_SHADOW_BUILD})
+    set(STATUSQ_MODULE_PATH "${CMAKE_BINARY_DIR}/bin/StatusQ")
+    set(STATUSQ_MODULE_IMPORT_PATH ":/")
+else()
+    set(STATUSQ_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ")
+    set(STATUSQ_MODULE_IMPORT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
+endif()
+
+if (${STATUSQ_SHADOW_BUILD})
+#    qt5_add_big_resources(STATUSQ_QRC_COMPILED
+#            src/statusq.qrc
+#            src/assets.qrc)
+endif()
 
 add_library(StatusQ SHARED
-        ${QRC_COMPILED}
-        src/plugin.cpp
-#        src/statusq.qrc
+#        ${STATUSQ_QRC_COMPILED} # Doesn't work for reasons unknown
+        src/statusq.qrc
         src/assets.qrc
+        src/plugin.cpp
         include/StatusQ/QClipboardProxy.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/rxvalidator.h
@@ -70,21 +99,32 @@ add_library(StatusQ SHARED
         src/statuswindow.cpp
         )
 
-if(APPLE)
+if (APPLE)
     find_library(AppKit AppKit)
     find_library(Foundation Foundation)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation})
     target_sources(StatusQ PRIVATE src/statuswindow_osx.mm)
-else()
+else ()
     target_sources(StatusQ PRIVATE src/statuswindow_other.cpp)
-endif()
+endif ()
 
-set(STATUSQ_QML_MODULE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set_target_properties(StatusQ PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
+        RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
+        LIBRARY_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
         )
+
+if (${STATUSQ_SHADOW_BUILD})
+    set(COPY_QMLDIR_COMMAND
+            ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ/qmldir
+            ${STATUSQ_MODULE_PATH}/qmldir)
+    add_custom_command(
+            TARGET StatusQ
+            POST_BUILD
+            COMMAND ${COPY_QMLDIR_COMMAND}
+            COMMENT "Copying qmldir to binary directory")
+endif ()
 
 find_package(Qt5 COMPONENTS
         Core Qml Quick QuickControls2 REQUIRED)
@@ -107,3 +147,22 @@ install(TARGETS StatusQ
 install(FILES src/StatusQ/qmldir
         DESTINATION StatusQ
         )
+
+# https://doc.qt.io/qtcreator/creator-qml-modules-with-plugins.html#importing-qml-modules
+set(QML_IMPORT_PATH
+        ${CMAKE_SOURCE_DIR}/src;${QML_IMPORT_PATH}
+        CACHE STRING "")
+
+### Add other subdirectories
+
+if (${STATUSQ_BUILD_SANDBOX})
+    add_subdirectory(sandbox)
+endif ()
+
+if (${STATUSQ_BUILD_SANITY_CHECKER})
+    add_subdirectory(sanity_checker)
+endif ()
+
+if (${STATUSQ_BUILD_TESTS})
+    add_subdirectory(tests)
+endif ()

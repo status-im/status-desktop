@@ -24,6 +24,14 @@ private:
 #ifdef QT_DEBUG
     QFileSystemWatcher m_watcher;
 #endif
+
+    const QUrl m_url {
+#ifdef QT_DEBUG
+        QUrl::fromLocalFile(SANDBOX_SRC_DIR + QStringLiteral("/main.qml"))
+#else
+        QStringLiteral("qrc:/main.qml")
+#endif
+    };
 };
 
 #endif // SANDBOXAPP_H

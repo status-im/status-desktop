@@ -19,8 +19,10 @@ add_executable(sandbox
         ${JS_FILES}
         )
 
-target_compile_definitions(sandbox
-        PRIVATE SRC_DIR="${CMAKE_CURRENT_LIST_DIR}")
+target_compile_definitions(sandbox PRIVATE
+        SANDBOX_SRC_DIR="${CMAKE_CURRENT_LIST_DIR}"
+        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
+        )
 
 target_link_libraries(sandbox PRIVATE
         Qt5::Core
