@@ -213,6 +213,12 @@ QtObject:
 
   proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
     if(self.isChatCursorInitialized(chatId)):
+      let data = MessagesLoadedArgs(chatId: chatId,
+        messages: @[],
+        pinnedMessages: @[],
+        reactions: @[])
+      
+      self.events.emit(SIGNAL_MESSAGES_LOADED, data)
       return
 
     self.asyncLoadMoreMessagesForChat(chatId)
