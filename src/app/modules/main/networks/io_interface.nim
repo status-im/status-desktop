@@ -19,7 +19,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleNetwork*(self: AccessInterface, chainId: int) {.base.} =
+method setNetworksState*(self: AccessInterface, chainIds: seq[int], enable: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method refreshNetworks*(self: AccessInterface) {.base.} =

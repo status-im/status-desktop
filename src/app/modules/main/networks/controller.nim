@@ -40,8 +40,8 @@ proc init*(self: Controller) =
 proc getNetworks*(self: Controller): seq[NetworkDto] =
   return self.networkService.getNetworks()
 
-proc toggleNetwork*(self: Controller, chainId: int) =
-  self.walletAccountService.toggleNetworkEnabled(chainId)
+proc setNetworksState*(self: Controller, chainIds: seq[int], enabled: bool) =
+  self.walletAccountService.setNetworksState(chainIds, enabled)
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.settingsService.areTestNetworksEnabled()

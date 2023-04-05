@@ -60,12 +60,12 @@ proc checkIfModuleDidLoad(self: Module) =
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method toggleNetwork*(self: Module, chainId: int) =
-  self.controller.toggleNetwork(chainId)
+method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
+  self.controller.setNetworksState(chainIds, enabled)
 
-method areTestNetworksEnabled*(self: Module): bool = 
+method areTestNetworksEnabled*(self: Module): bool =
   return self.controller.areTestNetworksEnabled()
 
-method toggleTestNetworksEnabled*(self: Module) = 
+method toggleTestNetworksEnabled*(self: Module) =
   self.controller.toggleTestNetworksEnabled()
   self.refreshNetworks()

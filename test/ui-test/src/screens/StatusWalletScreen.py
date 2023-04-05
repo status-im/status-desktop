@@ -431,6 +431,11 @@ class StatusWalletScreen:
         self._find_saved_address_and_open_menu(name)
 
         click_obj_by_name(SavedAddressesScreen.EDIT.value)
+
+        # Delete existing text
+        type_text(AddSavedAddressPopup.NAME_INPUT.value, "<Ctrl+A>")
+        type_text(AddSavedAddressPopup.NAME_INPUT.value, "<Del>")
+
         type_text(AddSavedAddressPopup.NAME_INPUT.value, new_name)
         click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
 
@@ -467,19 +472,19 @@ class StatusWalletScreen:
                 return
 
         assert False, "network name not found"
-    
+
     def click_default_wallet_account(self):
         accounts = get_obj(MainWalletScreen.WALLET_ACCOUNTS_LIST.value)
         click_obj(accounts.itemAtIndex(0))
-        
+
     def click_wallet_account(self, account_name: str):
         accounts = get_obj(MainWalletScreen.WALLET_ACCOUNTS_LIST.value)
         for index in range(accounts.count):
             if(accounts.itemAtIndex(index).objectName == "walletAccount-" + account_name):
                 click_obj(accounts.itemAtIndex(index))
                 return
-    
-    
+
+
     #####################################
     ### Verifications region:
     #####################################
