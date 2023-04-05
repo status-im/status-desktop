@@ -77,6 +77,7 @@ Loader {
     property var quotedMessageAuthorDetailsColorHash
 
     property var album: []
+    property int albumCount: 0
 
     // External behavior changers
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
@@ -586,6 +587,7 @@ Loader {
                         return "";
                     }
                     album: root.album
+                    albumCount: root.albumCount
 
                     amISender: root.amISender
                     sender.id: root.senderIsEnsVerified ? "" :  Utils.getCompressedPk(root.senderId)

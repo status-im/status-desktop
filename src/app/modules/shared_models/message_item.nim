@@ -59,6 +59,7 @@ type
     albumId: string
     albumMessageImages: seq[string]
     albumMessageIds: seq[string]
+    albumImagesCount: int
 
 proc initItem*(
     id,
@@ -103,6 +104,7 @@ proc initItem*(
     albumId: string,
     albumMessageImages: seq[string],
     albumMessageIds: seq[string],
+    albumImagesCount: int,
     ): Item =
   result = Item()
   result.id = id
@@ -152,6 +154,7 @@ proc initItem*(
   result.albumId = albumId
   result.albumMessageImages = albumMessageImages
   result.albumMessageIds = albumMessageIds
+  result.albumImagesCount = albumImagesCount
 
   if quotedMessageContentType == ContentType.DiscordMessage.int:
     result.quotedMessageAuthorDisplayName = quotedMessageDiscordMessage.author.name
@@ -226,6 +229,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     albumId = "",
     albumMessageImages = @[],
     albumMessageIds = @[],
+    albumImagesCount = 0,
   )
 
 proc `$`*(self: Item): string =
@@ -366,6 +370,9 @@ proc albumMessageIds*(self: Item): seq[string] {.inline.} =
 proc `albumMessageIds=`*(self: Item, value: seq[string]) {.inline.} =
   self.albumMessageIds = value
 
+proc albumImagesCount*(self: Item): int {.inline.} = 
+  self.albumImagesCount
+
 proc messageContainsMentions*(self: Item): bool {.inline.} =
   self.messageContainsMentions
 
@@ -491,6 +498,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "albumId": self.albumId,
     "albumMessageImages": self.albumMessageImages,
     "albumMessageIds": self.albumMessageIds,
+    "albumImagesCount": self.albumImagesCount,
   }
 
 proc editMode*(self: Item): bool {.inline.} =

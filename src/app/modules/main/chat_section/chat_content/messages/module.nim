@@ -122,6 +122,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     albumId = "",
     albumMessageImages = @[],
     albumMessageIds = @[],
+    albumImagesCount = 0,
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -180,6 +181,7 @@ proc createChatIdentifierItem(self: Module): Item =
     albumId = "",
     albumMessageImages = @[],
     albumMessageIds = @[],
+    albumImagesCount = 0,
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
@@ -296,6 +298,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.albumId,
         if (len(message.albumId) == 0): @[] else: @[message.image],
         if (len(message.albumId) == 0): @[] else: @[message.id],
+        message.albumImagesCount,
         )
 
       for r in reactions:
@@ -429,6 +432,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       message.albumId,
       if (len(message.albumId) == 0): @[] else: @[message.image],
       if (len(message.albumId) == 0): @[] else: @[message.id],
+      message.albumImagesCount,
     )
     items.add(item)
 
