@@ -187,6 +187,7 @@ ifneq ($(detected_OS),Windows)
  QZXING := vendor/DOtherSide/build/qzxing/libqzxing.$(LIBSTATUS_EXT)
  # order matters here, due to "-Wl,-as-needed"
  NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
+ STATUSQ := bin/StatusQ/libStatusQ.$(LIBSTATUS_EXT)
 else
  ifneq ($(QML_DEBUG), false)
   DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
@@ -198,6 +199,7 @@ else
  DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
  NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
+ STATUSQ := bin/StatusQ/StatusQ.$(LIBSTATUS_EXT)
 endif
 
 QZXING_LIBDIR := $(shell pwd)/$(shell dirname "$(QZXING)")
@@ -247,7 +249,7 @@ ifeq ($(OUTPUT_CSV), true)
   $(shell touch .update.timestamp)
 endif
 
-statusq: | deps
+$(STATUSQ): | deps
 	echo -e $(BUILD_MSG) "StatusQ"
 	+ cmake -DCMAKE_INSTALL_PREFIX=$(shell pwd)/bin \
 			-DSTATUSQ_BUILD_SANDBOX=OFF \
@@ -403,7 +405,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) statusq $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(STATUSQ) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \

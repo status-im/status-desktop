@@ -199,6 +199,7 @@
         <file>StatusQ/Core/Utils/ModelUtils.qml</file>
         <file>StatusQ/Core/Utils/ModelsComparator.qml</file>
         <file>StatusQ/Core/Utils/ModelChangeTracker.qml</file>
+        <file>StatusQ/Components/StatusPageIndicator.qml</file>
         <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
         <file>StatusQ/Components/StatusOnlineBadge.qml</file>
         <file>StatusQ/Components/StatusGroupBox.qml</file>
