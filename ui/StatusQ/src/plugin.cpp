@@ -15,7 +15,7 @@ class StatusQPlugin : public QQmlExtensionPlugin {
 public:
     void registerTypes(const char* uri) override
     {
-        qDebug() << "<<< registerTypes";
+        qDebug() << "StatusQ: registering types";
 
         Q_ASSERT(uri == QLatin1String("StatusQ"));
 

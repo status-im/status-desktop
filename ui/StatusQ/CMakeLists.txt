@@ -54,9 +54,9 @@ add_subdirectory(../../vendor/qzxing/src qzxing)
 #        src/assets.qrc)
 
 add_library(StatusQ SHARED
-#        ${QRC_COMPILED}
+        ${QRC_COMPILED}
         src/plugin.cpp
-        src/statusq.qrc
+#        src/statusq.qrc
         src/assets.qrc
         include/StatusQ/QClipboardProxy.h
         include/StatusQ/modelutilsinternal.h
@@ -79,26 +79,15 @@ else()
     target_sources(StatusQ PRIVATE src/statuswindow_other.cpp)
 endif()
 
-set(STATUSQ_QML_MODULE_BINARY_DIR ${CMAKE_BINARY_DIR}/bin/StatusQ)
+set(STATUSQ_QML_MODULE_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set_target_properties(StatusQ PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_QML_MODULE_BINARY_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${STATUSQ_QML_MODULE_BINARY_DIR}
+        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
         )
 
-set(COPY_QMLDIR_COMMAND
-        ${CMAKE_COMMAND} -E copy
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ/qmldir
-        ${STATUSQ_QML_MODULE_BINARY_DIR}/qmldir)
-
-add_custom_command(
-        TARGET StatusQ
-        POST_BUILD
-        COMMAND ${COPY_QMLDIR_COMMAND}
-        COMMENT "Copying qmldir to binary directory")
-
-
-find_package(Qt5 COMPONENTS Core Qml Quick QuickControls2 REQUIRED)
+find_package(Qt5 COMPONENTS
+        Core Qml Quick QuickControls2 REQUIRED)
 
 target_link_libraries(StatusQ PRIVATE
         Qt5::Core
