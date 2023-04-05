@@ -1342,7 +1342,7 @@ Rectangle {
 
                             onEnabledChanged: {
                                 if (!enabled) {
-                                    text = ""
+                                    clear()
                                     control.hideExtendedArea()
                                 }
                             }
