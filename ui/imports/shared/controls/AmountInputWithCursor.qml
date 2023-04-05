@@ -10,8 +10,6 @@ import utils 1.0
 StatusInput {
     id: cursorInput
 
-    property string cursorColor: Theme.palette.primaryColor1
-
     leftPadding: 0
     rightPadding: 0
     topPadding: 0
@@ -25,40 +23,4 @@ StatusInput {
     input.edit.padding: 0
     input.background.color: "transparent"
     input.background.border.width: 0
-    // To-do this needs to be removed once https://github.com/status-im/StatusQ/issues/578 is implemented and cursor is moved to StatusInput
-    input.edit.cursorDelegate: Rectangle {
-        id: cursor
-        visible: input.edit.cursorVisible
-        color: cursorColor
-        width: 2
-
-        SequentialAnimation {
-            loops: Animation.Infinite
-            running: input.edit.cursorVisible
-
-            PropertyAction {
-                target: cursor
-                property: 'visible'
-                value: true
-            }
-
-            PauseAnimation {
-                duration: 600
-            }
-
-            PropertyAction {
-                target: cursor
-                property: 'visible'
-                value: false
-            }
-
-            PauseAnimation {
-                duration: 600
-            }
-
-            onStopped: {
-                cursor.visible = false
-            }
-        }
-    }
 }
