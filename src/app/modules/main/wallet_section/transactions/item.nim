@@ -155,19 +155,6 @@ proc initNFTItem*(
   result.nftName = nftName
   result.nftImageUrl = nftImageUrl
 
-proc initTimestampItem*(timestamp: int): Item =
-  result.timestamp = timestamp
-  result.gasPrice = newCurrencyAmount()
-  result.value = newCurrencyAmount()
-  result.chainId = 0
-  result.maxFeePerGas = newCurrencyAmount()
-  result.maxPriorityFeePerGas = newCurrencyAmount()
-  result.multiTransactionID = 0
-  result.isTimeStamp = true
-  result.baseGasFees = newCurrencyAmount()
-  result.totalFees = newCurrencyAmount()
-  result.maxTotalFees = newCurrencyAmount()
-
 proc initLoadingItem*(): Item =
   result.timestamp = 0
   result.gasPrice = newCurrencyAmount()

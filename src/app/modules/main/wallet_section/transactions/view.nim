@@ -76,6 +76,7 @@ QtObject:
     if not self.models.hasKey(address):
       self.models[address] = newModel()
 
+    self.models[address].removePageSizeBuffer()
     self.models[address].addNewTransactions(transactions, wasFetchMore)
     if self.fetchingHistoryState.hasKey(address) and self.fetchingHistoryState[address] and wasFetchMore:
       self.models[address].addPageSizeBuffer(transactions.len)

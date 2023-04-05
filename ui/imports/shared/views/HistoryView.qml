@@ -1,6 +1,7 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.1
-import QtQuick.Layouts 1.3
+import QtQuick 2.15
+import QtQml 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
@@ -87,24 +88,16 @@ ColumnLayout {
             proxyRoles: ExpressionRole {
                 name: "date"
                 expression: {
-                    return timestamp > 0 ? txModel.formatDate(timestamp * 1000) : ""
+                    return timestamp > 0 ? txModel.formatDate(timestamp * 1000) : (d.isLoading ? " " : "") //  not empty, because section will not be displayed when loading if empty
                 }
             }
         }
 
-        delegate: Loader {
-            width: ListView.view.width
-            sourceComponent: transactionDelegate
-            onLoaded:  {
-                item.modelData = model
+        delegate: transactionDelegate
 
-                if (index == 0)
-                    ListView.view.firstSection = date
-            }
-        }
         footer: footerComp
 
-        displaced: Transition {
+        displaced: Transition { // TODO Remove animation when ordered fetching of transactions is implemented
             NumberAnimation { properties: "y"; duration: 250; easing.type: Easing.Linear; alwaysRunToEnd: true }
         }
 
@@ -112,6 +105,10 @@ ColumnLayout {
         property int lastVisibleIndex: indexAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
 
         onCountChanged: {
+            // Preserve last visible item in view when more items added at the end or
+            // inbetween
+            // TODO Remove this logic, when new activity design is implemented
+            // and items are loaded in order
             const lastVisibleItem = itemAtIndex(lastVisibleIndex)
             const newItem = itemAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
             const lastVisibleItemY = lastVisibleItem ? lastVisibleItem.y : -1
@@ -125,6 +122,8 @@ ColumnLayout {
 
         property bool userScrolled: false
 
+        // TODO Remove this logic, when new activity design is implemented
+        // and items are loaded in order
         onMovingVerticallyChanged: {
             if (!userScrolled) {
                 userScrolled = true
@@ -138,17 +137,37 @@ ColumnLayout {
 
         section.property: "date"
         section.delegate: Item {
+            id: sectionDelegate
+
+            readonly property bool isFirstSection: ListView.view.firstSection === section
+
             width: ListView.view.width
-            height: ListView.view.firstSection === section || section.length > 0 ? 40 : 0
-            visible: height > 0
+            height: isFirstSection || section.length > 1 ? 40 : 0 // 1 because we don't use empty for loading state
+            visible: height > 0 // display always first section. Other sections when more items are being fetched must not be visible
 
             required property string section
 
-            StatusBaseText {
+            StatusTextWithLoadingState {
+                id: sectionText
+
                 anchors.verticalCenter: parent.verticalCenter
-                text: parent.section
-                color: Theme.palette.baseColor1
+                text: loading ? "dummy" : parent.section // dummy text because loading component height depends on text height, and not visible with height == 0
+                Binding on width {
+                    when: sectionText.loading
+                    value: 56
+                    restoreMode: Binding.RestoreBindingOrValue
+                }
+                customColor: Theme.palette.baseColor1
                 font.pixelSize: 15
+                loading: { // First section must be loading when first item in the list is loading. Other sections are never visible until have date value
+                    if (parent.ListView.view.count > 0) {
+                        const firstItem = parent.ListView.view.itemAtIndex(0)
+                        if (sectionDelegate.isFirstSection && firstItem && firstItem.loading) {
+                            return true
+                        }
+                    }
+                    return false
+                }
             }
         }
         onAtYEndChanged: if (atYEnd && RootStore.historyTransactions.hasMore) fetchHistory()
@@ -157,22 +176,28 @@ ColumnLayout {
     Component {
         id: transactionDelegate
         TransactionDelegate {
-            property bool modelDataValid: !!modelData
-            isIncoming: modelDataValid ? modelData.to === account.address: false
+            width: ListView.view.width
+            modelData: model
+            isIncoming: isModelDataValid ? modelData.to === account.address: false
             currentCurrency: RootStore.currentCurrency
-            cryptoValue: modelDataValid ? modelData.value.amount : 0.0
-            fiatValue: modelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
-            networkIcon: modelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
-            networkColor: modelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
-            networkName: modelDataValid ? RootStore.getNetworkShortName(modelData.chainId) : ""
-            symbol: modelDataValid && !!modelData.symbol ? modelData.symbol : ""
-            transferStatus: modelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
-            shortTimeStamp: modelDataValid ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
-            savedAddressNameTo: modelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
-            savedAddressNameFrom: modelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.from) : ""
+            cryptoValue: isModelDataValid ? modelData.value.amount : 0.0
+            fiatValue: isModelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
+            networkIcon: isModelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
+            networkColor: isModelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
+            networkName: isModelDataValid ? RootStore.getNetworkShortName(modelData.chainId) : ""
+            symbol: isModelDataValid && !!modelData.symbol ? modelData.symbol : ""
+            transferStatus: isModelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
+            shortTimeStamp: isModelDataValid ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
+            savedAddressNameTo: isModelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
+            savedAddressNameFrom: isModelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.from) : ""
             isSummary: true
             onClicked: launchTransactionDetail(modelData)
-            loading: modelDataValid ? modelData.loadingTransaction : false
+            loading: isModelDataValid ? modelData.loadingTransaction : false
+
+            Component.onCompleted: {
+                if (index == 0)
+                    ListView.view.firstSection = date
+            }
         }
     }
 
