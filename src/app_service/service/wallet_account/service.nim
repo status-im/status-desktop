@@ -1,5 +1,4 @@
 import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils, os, times, algorithm
-import locks
 import web3/[ethtypes, conversions]
 
 import ../settings/service as settings_service
@@ -123,8 +122,7 @@ QtObject:
     tokenService: token_service.Service
     networkService: network_service.Service
     processedKeyPair: KeyPairDto
-    walletAccountsLock: Lock
-    walletAccounts {.guard: walletAccountsLock.}: OrderedTable[string, WalletAccountDto]
+    walletAccounts: OrderedTable[string, WalletAccountDto]
 
   # Forward declaration
   proc buildAllTokens(self: Service, accounts: seq[string], store: bool)
@@ -154,9 +152,7 @@ QtObject:
     result.accountsService = accountsService
     result.tokenService = tokenService
     result.networkService = networkService
-    initLock(result.walletAccountsLock)
-    withLock result.walletAccountsLock:
-      result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
+    result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
 
   proc fetchAccounts*(self: Service): seq[WalletAccountDto] =
     try:
@@ -178,78 +174,71 @@ QtObject:
       return
 
   proc updateRelatedAccounts(self: Service, derivedFrom: string, allAccounts: seq[WalletAccountDto]) =
-    withLock self.walletAccountsLock:
-      for wAcc in self.walletAccounts.mvalues:
-        if not wAcc.derivedFrom.isEmptyOrWhitespace and 
-          cmpIgnoreCase(wAcc.derivedFrom, derivedFrom) == 0:
-            wAcc.relatedAccounts = allAccounts.filter(x => not derivedFrom.isEmptyOrWhitespace and 
-              (cmpIgnoreCase(x.derivedFrom, derivedFrom) == 0))
+    for wAcc in self.walletAccounts.mvalues:
+      if not wAcc.derivedFrom.isEmptyOrWhitespace and 
+        cmpIgnoreCase(wAcc.derivedFrom, derivedFrom) == 0:
+          wAcc.relatedAccounts = allAccounts.filter(x => not derivedFrom.isEmptyOrWhitespace and 
+            (cmpIgnoreCase(x.derivedFrom, derivedFrom) == 0))
 
   proc storeAccount(self: Service, account: WalletAccountDto, allAccounts: seq[WalletAccountDto]) =
     # updating related accounts for already added accounts
     self.updateRelatedAccounts(account.derivedFrom, allAccounts)
     # add new account to store    
-    withLock self.walletAccountsLock:
-      self.walletAccounts[account.address] = account
+    self.walletAccounts[account.address] = account
 
   proc getCachedValuesForAccount*(self: Service, address: string): (bool, bool) =
     var areBalancesCached = false
     var areMarketValuesCached = false
-    withLock self.walletAccountsLock:
-      if self.walletAccounts.hasKey(address):
-        areBalancesCached = self.walletAccounts[address].hasBalanceCache
-        areMarketValuesCached = self.walletAccounts[address].hasMarketValuesCache
+    if self.walletAccounts.hasKey(address):
+      areBalancesCached = self.walletAccounts[address].hasBalanceCache
+      areMarketValuesCached = self.walletAccounts[address].hasMarketValuesCache
     return (areBalancesCached, areMarketValuesCached)
 
   proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto], areBalancesCached: bool, areMarketValuesCached: bool) =
-    withLock self.walletAccountsLock:
-      if self.walletAccounts.hasKey(address):
-        self.walletAccounts[address].tokens = tokens
-        self.walletAccounts[address].hasBalanceCache = areBalancesCached
-        self.walletAccounts[address].hasMarketValuesCache = areMarketValuesCached
+    if self.walletAccounts.hasKey(address):
+      self.walletAccounts[address].tokens = tokens
+      self.walletAccounts[address].hasBalanceCache = areBalancesCached
+      self.walletAccounts[address].hasMarketValuesCache = areMarketValuesCached
 
   proc updateOrReplaceBalancesAndCollectibles*(self: Service, address: string, tokens: seq[WalletTokenDto], ignoreBalances: bool, ignoreMarketValues: bool): seq[WalletTokenDto] =
-    withLock self.walletAccountsLock:
-      if self.walletAccounts.hasKey(address):
-        if self.walletAccounts[address].tokens.len == 0 or (not ignoreBalances and not ignoreMarketValues):
-          return tokens
-        else:
-          var updatedTokens: seq[WalletTokenDto] = self.walletAccounts[address].tokens
-          for i in 0 ..< updatedTokens.len:
-            for token in tokens:
-              if token.name == updatedTokens[i].name:
-                if ignoreBalances and not ignoreMarketValues:
-                  updatedTokens[i].marketValuesPerCurrency = token.marketValuesPerCurrency
-                elif ignoreMarketValues and not ignoreBalances:
-                  updatedTokens[i].balancesPerChain = token.balancesPerChain
-          return updatedTokens
+    if self.walletAccounts.hasKey(address):
+      if self.walletAccounts[address].tokens.len == 0 or (not ignoreBalances and not ignoreMarketValues):
+        return tokens
+      else:
+        var updatedTokens: seq[WalletTokenDto] = self.walletAccounts[address].tokens
+        for i in 0 ..< updatedTokens.len:
+          for token in tokens:
+            if token.name == updatedTokens[i].name:
+              if ignoreBalances and not ignoreMarketValues:
+                updatedTokens[i].marketValuesPerCurrency = token.marketValuesPerCurrency
+              elif ignoreMarketValues and not ignoreBalances:
+                updatedTokens[i].balancesPerChain = token.balancesPerChain
+        return updatedTokens
+
+  proc walletAccountsContainsAddress*(self: Service, address: string): bool =
+    return self.walletAccounts.hasKey(address)
 
   proc removeAccount*(self: Service, address: string): WalletAccountDto =
     result = WalletAccountDto()
-    withLock self.walletAccountsLock:
-      result = self.walletAccounts[address]
-      self.walletAccounts.del(address)
+    if not self.walletAccountsContainsAddress(address):
+      return
+    result = self.walletAccounts[address]
+    self.walletAccounts.del(address)
     # updating related accounts for other accounts
     let allAccounts = self.fetchAccounts()
     self.updateRelatedAccounts(result.derivedFrom, allAccounts)
 
-  proc walletAccountsContainsAddress*(self: Service, address: string): bool =
-    withLock self.walletAccountsLock:
-      result = self.walletAccounts.hasKey(address)
-
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
     result = WalletAccountDto()
-    withLock self.walletAccountsLock:
-      if self.walletAccounts.hasKey(address):
-        result = self.walletAccounts[address]
+    if not self.walletAccountsContainsAddress(address):
+      return
+    result = self.walletAccounts[address]
 
   proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
-    withLock self.walletAccountsLock:
-      result = toSeq(self.walletAccounts.values)
+    result = toSeq(self.walletAccounts.values)
 
   proc getAddresses*(self: Service): seq[string] =
-    withLock self.walletAccountsLock:
-      result = toSeq(self.walletAccounts.keys())
+    result = toSeq(self.walletAccounts.keys())
 
   proc init*(self: Service) =
     try:
@@ -526,9 +515,9 @@ QtObject:
     self.events.emit(SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED, data)
 
   proc updateAssetsLoadingState(self: Service, wAddress: string, loading: bool) =
-    withLock self.walletAccountsLock:
-      if self.walletAccounts.hasKey(wAddress):
-        self.walletAccounts[wAddress].assetsLoading = loading
+    if not self.walletAccountsContainsAddress(wAddress):
+      return
+    self.walletAccounts[wAddress].assetsLoading = loading
 
   proc checkIfBalancesHaveError*(self: Service, tokens: seq[WalletTokenDto]): bool =
     var hasError: bool = true
