@@ -213,8 +213,11 @@ SettingsPageLayout {
 
                     const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
 
-                    if (holdings.rowCount() === 0 && dirtyValues.holdingsRequired)
-                        continue
+                    if (holdings.rowCount() === 0)
+                        if (dirtyValues.holdingsRequired)
+                            continue
+                        else
+                            return true
 
                     if (holdings.rowCount() !== 0 && !dirtyValues.holdingsRequired)
                         continue
@@ -269,9 +272,11 @@ SettingsPageLayout {
                 target: d
 
                 function onSaveChanges() {
-                    const holdings = ModelUtils.modelToArray(
-                                       dirtyValues.selectedHoldingsModel,
-                                       ["key", "type", "amount"])
+                    const holdings = dirtyValues.holdingsRequired ?
+                                       ModelUtils.modelToArray(
+                                           dirtyValues.selectedHoldingsModel,
+                                           ["key", "type", "amount"])
+                                     : []
 
                     const channels = ModelUtils.modelToArray(
                                        dirtyValues.selectedChannelsModel, ["key"])
