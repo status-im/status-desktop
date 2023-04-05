@@ -1,6 +1,12 @@
 import strformat
 
 type
+  UxEnabledState* {.pure.} = enum
+    Enabled
+    AllEnabled
+    Disabled
+
+type
   Item* = object
     chainId: int
     nativeCurrencyDecimals: int
@@ -16,6 +22,7 @@ type
     chainColor: string
     shortName: string
     balance: float64
+    enabledState: UxEnabledState
 
 proc initItem*(
   chainId: int,
@@ -32,6 +39,7 @@ proc initItem*(
   chainColor: string,
   shortName: string,
   balance: float64,
+  enabledState: UxEnabledState,
 ): Item =
   result.chainId = chainId
   result.nativeCurrencyDecimals = nativeCurrencyDecimals
@@ -47,6 +55,7 @@ proc initItem*(
   result.chainColor = chainColor
   result.shortName = shortName
   result.balance = balance
+  result.enabledState = enabledState
 
 proc `$`*(self: Item): string =
   result = fmt"""NetworkItem(
@@ -64,6 +73,7 @@ proc `$`*(self: Item): string =
     shortName: {self.shortName},
     chainColor: {self.chainColor},
     balance: {self.balance},
+    enabledState: {self.enabledState}
     ]"""
 
 proc getChainId*(self: Item): int =
@@ -94,7 +104,7 @@ proc getIsTest*(self: Item): bool =
   return self.isTest
 
 proc getIsEnabled*(self: Item): bool =
-  return self.isEnabled  
+  return self.isEnabled
 
 proc getIconURL*(self: Item): string =
   return self.iconUrl
@@ -107,3 +117,6 @@ proc getChainColor*(self: Item): string =
 
 proc getBalance*(self: Item): float64 =
   return self.balance
+
+proc getEnabledState*(self: Item): UxEnabledState =
+  return self.enabledState

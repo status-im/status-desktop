@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, strformat, sequtils
 
 import ./item
 
@@ -20,6 +20,7 @@ type
     ChainColor
     ShortName
     Balance
+    EnabledState
 
 QtObject:
   type
@@ -69,6 +70,7 @@ QtObject:
       ModelRole.ShortName.int: "shortName",
       ModelRole.ChainColor.int: "chainColor",
       ModelRole.Balance.int: "balance",
+      ModelRole.EnabledState.int: "enabledState",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -110,6 +112,8 @@ QtObject:
       result = newQVariant(item.getChainColor())
     of ModelRole.Balance:
       result = newQVariant(item.getBalance())
+    of ModelRole.EnabledState:
+      result = newQVariant(item.getEnabledState().int)
 
   proc rowData*(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -130,6 +134,7 @@ QtObject:
       of "chainColor": result = $item.getChainColor()
       of "shortName": result = $item.getShortName()
       of "balance": result = $item.getBalance()
+      of "enabledState": result = $item.getEnabledState().int
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
@@ -171,7 +176,7 @@ QtObject:
     for item in self.items:
       if cmpIgnoreCase(item.getShortName(), shortName) == 0:
         return item.getChainName()
-    return ""   
+    return ""
 
   proc getNetworkColor*(self: Model, shortName: string): string {.slot.} =
     for item in self.items:
@@ -196,3 +201,41 @@ QtObject:
       if(item.getChainId() == chainId):
         return item.getBlockExplorerURL() & EXPLORER_TX_PREFIX
     return ""
+
+  proc getEnabledState*(self: Model, chainId: int): UxEnabledState =
+    for item in self.items:
+      if(item.getChainId() == chainId):
+        return item.getEnabledState()
+    return UxEnabledState.Disabled
+
+  # Returns the chains that need to be enabled or disabled (the second return value)
+  #   to satisty the transitions: all enabled to only chainId enabled and
+  #   only chainId enabled to all enabled
+  proc networksToChangeStateOnUserActionFor*(self: Model, chainId: int): (seq[int], bool) =
+    var chainIds: seq[int] = @[]
+    var enable = false
+    case self.getEnabledState(chainId):
+      of UxEnabledState.Enabled:
+        # Iterate to check for the only chainId enabled case ...
+        for item in self.items:
+          if item.getEnabledState() == UxEnabledState.Enabled and item.getChainId() != chainId:
+            # ... as soon as we find another enabled chain mark this by adding it to the list
+            chainIds.add(chainId)
+            break
+
+        # ... if no other chains are enabled, then it's a transition from only chainId enabled to all enabled
+        if chainIds.len == 0:
+          for item in self.items:
+            if item.getChainId() != chainId:
+              chainIds.add(item.getChainId())
+          enable = true
+      of UxEnabledState.Disabled:
+        chainIds.add(chainId)
+        enable = true
+      of UxEnabledState.AllEnabled:
+        # disable all but chainId
+        for item in self.items:
+          if item.getChainId() != chainId:
+            chainIds.add(item.getChainId())
+
+    return (chainIds, enable)

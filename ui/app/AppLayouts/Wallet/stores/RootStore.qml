@@ -65,8 +65,6 @@ QtObject {
     onAllNetworksChanged: {
         d.initChainColors(allNetworks)
     }
-    property var layer1NetworksProxy: networksModule.layer1Proxy
-    property var layer2NetworksProxy: networksModule.layer2Proxy
 
     property var cryptoRampServicesModel: walletSectionBuySellCrypto.model
 

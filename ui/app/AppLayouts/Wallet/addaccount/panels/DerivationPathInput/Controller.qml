@@ -3,6 +3,7 @@ import QtQuick 2.15
 /// \note ensures data model always has consecutive Separator and Number after Base without duplicates except current element
 /// \note for future work: split deleteInContent in deleteInContent and deleteElements and move data model to a DataModel object;
 ///     also fix code duplication in parseDerivationPath generating static level definitions and iterate through it
+/// \note using Item to support embedded sub-components
 Item {
     id: root
 

@@ -16,8 +16,10 @@ import StatusQ.Components 0.1
 
 import SortFilterProxyModel 0.2
 
-import "../controls"
+import AppLayouts.stores 1.0
+
 import "../stores"
+import "../controls"
 import ".."
 
 StatusDialog {
@@ -43,13 +45,16 @@ StatusDialog {
         readonly property int validationMode: root.edit ?
                                          StatusInput.ValidationMode.Always
                                        : StatusInput.ValidationMode.OnlyWhenDirty
-        readonly property bool valid: addressInput.valid && nameInput.valid
+        readonly property bool valid: addressInput.valid && nameInput.valid && root.address !== Constants.zeroAddress
         property bool chainShortNamesDirty: false
         readonly property bool dirty: nameInput.input.dirty || chainShortNamesDirty
 
         readonly property var chainPrefixRegexPattern: /[^:]+\:?|:/g
         readonly property string visibleAddress: root.address == Constants.zeroAddress ? "" : root.address
         readonly property bool addressInputIsENS: !visibleAddress
+
+        /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
+        property bool initialized: false
 
         function getPrefixArrayWithColumns(prefixStr) {
             return prefixStr.match(d.chainPrefixRegexPattern)
@@ -73,6 +78,8 @@ StatusDialog {
     }
 
     onOpened: {
+        d.initialized = true
+
         if(edit || addAddress) {
             if (root.ens)
                 addressInput.setPlainText(root.ens)
@@ -146,7 +153,7 @@ StatusDialog {
             property string plainText: input.edit.getText(0, text.length)
 
             onTextChanged: {
-                if (skipTextUpdate)
+                if (skipTextUpdate || !d.initialized)
                     return
 
                 plainText = input.edit.getText(0, text.length)
@@ -261,7 +268,7 @@ StatusDialog {
                 }
 
                 onCountChanged: {
-                    if (!networkSelector.modelUpdateBlocked) {
+                    if (!networkSelector.modelUpdateBlocked && d.initialized) {
                         // Initially source model is empty, filter proxy is also empty, but does
                         // extra work and mistakenly overwrites root.chainShortNames property
                         if (sourceModel.count != 0) {
@@ -310,7 +317,7 @@ StatusDialog {
             }
         }
 
-        onToggleNetwork: {
+        onToggleNetwork: (network) => {
             network.isEnabled = !network.isEnabled
             d.chainShortNamesDirty = true
         }
@@ -338,8 +345,12 @@ StatusDialog {
         }
     }
 
-    ListModel {
+    CloneModel {
         id: allNetworksModelCopy
+
+        sourceModel: store.allNetworks
+        roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl"]
+        rolesOverride: [{ role: "isEnabled", transform: (modelData) => Boolean(false) }]
 
         function setEnabledNetworks(prefixArr) {
             networkSelector.blockModelUpdate(true)
@@ -349,26 +360,5 @@ StatusDialog {
             }
             networkSelector.blockModelUpdate(false)
         }
-
-        function init(model, address) {
-            const prefixStr = Utils.getChainsPrefix(address)
-            for (let i = 0; i < model.count; i++) {
-                const clonedItem = {
-                    layer: model.rowData(i, "layer"),
-                    chainId: model.rowData(i, "chainId"),
-                    chainColor: model.rowData(i, "chainColor"),
-                    chainName: model.rowData(i, "chainName"),
-                    shortName: model.rowData(i, "shortName"),
-                    iconUrl: model.rowData(i, "iconUrl"),
-                    isEnabled: Boolean(prefixStr.length > 0 && prefixStr.includes(shortName))
-                }
-
-                append(clonedItem)
-            }
-        }
-    }
-
-    Component.onCompleted: {
-        allNetworksModelCopy.init(store.allNetworks, root.address)
     }
 }

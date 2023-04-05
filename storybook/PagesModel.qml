@@ -162,6 +162,10 @@ ListModel {
          section: "Popups"
     }
     ListElement {
+        title: "NetworkSelectPopup"
+        section: "Popups"
+    }
+    ListElement {
         title: "MembersSelector"
         section: "Components"
     }
@@ -236,5 +240,9 @@ ListModel {
     ListElement {
         title: "LanguageCurrencySettings"
         section: "Settings"
+    }
+    ListElement {
+        title: "ProfileSocialLinksPanel"
+        section: "Panels"
     }
 }

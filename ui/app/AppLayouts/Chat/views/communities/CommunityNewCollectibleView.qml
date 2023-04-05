@@ -270,18 +270,20 @@ StatusScrollView {
 
         NetworkFilter {
             Layout.preferredWidth: 160
+
+            allNetworks: root.allNetworks
             layer1Networks: root.layer1Networks
             layer2Networks: root.layer2Networks
             testNetworks: root.testNetworks
             enabledNetworks: root.enabledNetworks
-            allNetworks: root.allNetworks
+
             isChainVisible: false
             multiSelection: false
 
-            onSingleNetworkSelected: {
-                root.chainId = chainId
-                root.chainName = chainName
-                root.chainIcon = chainIcon
+            onToggleNetwork: (network) => {
+                root.chainId = network.chainId
+                root.chainName = network.chainName
+                root.chainIcon = network.iconUrl
             }
         }
     }

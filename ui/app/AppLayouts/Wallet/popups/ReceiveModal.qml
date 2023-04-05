@@ -16,6 +16,8 @@ import utils 1.0
 import shared.controls 1.0
 import shared.popups 1.0
 
+
+import AppLayouts.stores 1.0
 import "../stores"
 
 StatusModal {
@@ -41,15 +43,6 @@ StatusModal {
 
     showHeader: false
     showAdvancedHeader: true
-
-    // When no network is selected reset the prefix to empty string
-    Connections {
-        target: RootStore.enabledNetworks
-        function onModelReset() {
-            if(RootStore.enabledNetworks.count === 0)
-                root.networkPrefix = ""
-        }
-    }
 
     hasFloatingButtons: true
     advancedHeaderComponent: AccountsModalHeader {
@@ -97,7 +90,7 @@ StatusModal {
                 flow: Grid.TopToBottom
                 columns: need2Columns ? 2 : 1
                 spacing: 5
-                property var networkProxies: [RootStore.layer1NetworksProxy, RootStore.layer2NetworksProxy]
+                property var networkProxies: [layer1NetworksClone, layer2NetworksClone]
                 Repeater {
                     model: multiChainList.networkProxies.length
                     delegate: Repeater {
@@ -106,7 +99,7 @@ StatusModal {
                             tagPrimaryLabel.text: model.shortName
                             tagPrimaryLabel.color: model.chainColor
                             image.source: Style.svg("tiny/" + model.iconUrl)
-                            visible: model.isActive
+                            visible: model.isEnabled
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
@@ -116,6 +109,7 @@ StatusModal {
                     }
                 }
                 StatusRoundButton {
+                    id: editButton
                     width: 32
                     height: 32
                     icon.name: "edit_pencil"
@@ -212,7 +206,7 @@ StatusModal {
                                 font.pixelSize: 15
                                 color: chainColor
                                 text: shortName + ":"
-                                visible: model.isActive
+                                visible: model.isEnabled
                                 onVisibleChanged: {
                                     if (visible) {
                                         networkPrefix += text
@@ -253,15 +247,37 @@ StatusModal {
         NetworkSelectPopup {
             id: selectPopup
 
-            x: multiChainList.x + Style.current.xlPadding + Style.current.halfPadding
-            y: centralLayout.y
+            x: multiChainList.x + editButton.width + 9
+            y: tabBar.y + tabBar.height
 
-            layer1Networks: RootStore.layer1NetworksProxy
-            layer2Networks: RootStore.layer2NetworksProxy
-            testNetworks: RootStore.testNetworks
-            useNetworksExtraStoreProxy: true
+            layer1Networks: layer1NetworksClone
+            layer2Networks: layer2NetworksClone
 
             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+            onToggleNetwork: (network, networkModel, index) => {
+                network.isEnabled = !network.isEnabled
+            }
+
+            CloneModel {
+                id: layer1NetworksClone
+
+                sourceModel: RootStore.layer1Networks
+                roles: ["layer", "chainId", "chainColor", "chainName","shortName", "iconUrl", "isEnabled"]
+                // rowData used to clone returns string. Convert it to bool for bool arithmetics
+                rolesOverride: [{
+                    role: "isEnabled",
+                    transform: (modelData) => Boolean(modelData.isEnabled)
+                }]
+            }
+
+            CloneModel {
+                id: layer2NetworksClone
+
+                sourceModel: RootStore.layer2Networks
+                roles: layer1NetworksClone.roles
+                rolesOverride: layer1NetworksClone.rolesOverride
+            }
         }
 
         states: [
