@@ -8,6 +8,35 @@ QtObject {
 
     readonly property var userInputLocale: Qt.locale("en_US")
 
+    function integralPartLength(num) {
+        num = Math.abs(num)
+
+        // According to the JS Reference:
+        //
+        // Scientific notation is used if the radix is 10 and the number's
+        // magnitude (ignoring sign) is greater than or equal to 10^21 or less
+        // than 10^-6. In this case, the returned string always explicitly
+        // specifies the sign of the exponent.
+        //
+        // In order to take it into account, numbers in scientific notation
+        // is handled separately.
+
+        if (num < 1) {
+            return 1
+        }
+
+        if (num >= 10**21) {
+            const split = num.toString().split('e')
+            if (split.length === 2) {
+                const base = parseFloat(split[0])
+                const exp = parseInt(split[1], 10)
+                return integralPartLength(base) + exp
+            }
+        }
+
+        return num.toFixed().length
+    }
+
     function fractionalPartLength(num) {
         if (Number.isInteger(num))
             return 0
@@ -86,12 +115,16 @@ QtObject {
             return "N/A"
 
         // Parse options
-        var optShowOnlyAmount = false
+        var optNoSymbol = false
+        var optRawAmount = false
         var optDisplayDecimals = currencyAmount.displayDecimals
         var optStripTrailingZeroes = currencyAmount.stripTrailingZeroes
         if (options) {
-            if (options.onlyAmount !== undefined) {
-                optShowOnlyAmount = true
+            if (options.noSymbol !== undefined) {
+                optNoSymbol = true
+            }
+            if (options.rawAmount !== undefined) {
+                optRawAmount = true
             }
             if (options.minDecimals !== undefined && options.minDecimals > optDisplayDecimals) {
                 optDisplayDecimals = options.minDecimals
@@ -101,23 +134,40 @@ QtObject {
             }
         }
 
-        var amountStr
+        var amountStr = ""
+        var amountSuffix = ""
+
         let minAmount = 10**-optDisplayDecimals
-        if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !optShowOnlyAmount)
+        if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !optRawAmount)
         {
             // Handle amounts smaller than resolution
-            amountStr = "<%1".arg(numberToLocaleString(minAmount, optDisplayDecimals, locale))
+            amountStr = "<%1".arg(numberToLocaleString(minAmount, displayDecimals, locale))
         } else {
-            // Normal formatting
-            amountStr = numberToLocaleString(currencyAmount.amount, optDisplayDecimals, locale)
+            var amount
+            var displayDecimals
+            const numIntegerDigits = integralPartLength(currencyAmount.amount)
+            const maxDigits = 10
+            // For large numbers, we use the short scale system (https://en.wikipedia.org/wiki/Long_and_short_scales)
+            // and 2 decimal digits.
+            if (numIntegerDigits > maxDigits && !optRawAmount) {
+                amount = currencyAmount.amount/10**9 // Billion => 9 zeroes
+                displayDecimals = 2
+                amountSuffix = qsTr("B", "Billion")
+            } else {
+                // For normal numbers, we show the whole integral part and as many decimal places not
+                // not to exceed the maximum
+                amount = currencyAmount.amount
+                displayDecimals = Math.min(optDisplayDecimals, Math.max(0, maxDigits - numIntegerDigits))
+            }
+            amountStr = numberToLocaleString(amount, displayDecimals, locale)
             if (optStripTrailingZeroes) {
                 amountStr = stripTrailingZeroes(amountStr, locale)
             }
         }
 
         // Add symbol
-        if (currencyAmount.symbol && !optShowOnlyAmount) {
-            amountStr = "%1 %2".arg(amountStr).arg(currencyAmount.symbol)
+        if (currencyAmount.symbol && !optNoSymbol) {
+            amountStr = "%1%2 %3".arg(amountStr).arg(amountSuffix).arg(currencyAmount.symbol)
         }
 
         return amountStr

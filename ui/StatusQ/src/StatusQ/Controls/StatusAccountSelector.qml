@@ -239,7 +239,7 @@ Item {
                     id: txtFiatBalance
                     Layout.rightMargin: 4
                     font.pixelSize: 15
-                    text: LocaleUtils.currencyAmountToLocaleString(currencyBalance, {onlyAmount: true})
+                    text: LocaleUtils.currencyAmountToLocaleString(currencyBalance, {noSymbol: true})
                     color: Theme.palette.directColor1
                 }
                 StatusBaseText {
