@@ -3,7 +3,7 @@ import tables, times
 
 export tables, times
 
-type Value*[T] = ref object
+type Value*[T] = object
   value*: T
   timestamp*: DateTime
 
