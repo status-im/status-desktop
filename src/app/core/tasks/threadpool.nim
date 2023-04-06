@@ -40,10 +40,16 @@ proc newThreadPool*(): ThreadPool =
   result.pool = Taskpool.new(num_threads = nthreads)
 
 proc runTask(safeTaskArg: ThreadSafeTaskArg) {.gcsafe, nimcall.} =
-  let
-    taskArg = safeTaskArg.toString()
+  let taskArg = safeTaskArg.toString()
+  var parsed: JsonNode
+  
+  try:
     parsed = parseJson(taskArg)
-    messageType = parsed{"$type"}.getStr
+  except CatchableError as e:
+    error "[threadpool task thread] parsing task arg", error=e.msg
+    return
+
+  let messageType = parsed{"$type"}.getStr
     
   debug "[threadpool task thread] initiating task", messageType=messageType,
     threadid=getThreadId(), task=taskArg
