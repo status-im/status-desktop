@@ -123,6 +123,8 @@ Rectangle {
     QtObject {
         id: d
 
+        readonly property string emojiReplacementSymbols: ":='xX><0O;*dB8-D#%\\"
+
         //mentions helper properties
         property string copiedTextPlain: ""
         property string copiedTextFormatted: ""
@@ -345,6 +347,7 @@ Rectangle {
             }
 
             if (messageInputField.length <= messageLimit) {
+                checkForInlineEmojis(true);
                 control.sendMessage(event)
                 control.hideExtendedArea();
                 event.accepted = true
@@ -819,9 +822,35 @@ Rectangle {
         return length;
     }
 
-    function replaceWithEmoji(message, shortname, codePoint) {
+    function checkForInlineEmojis(force = false) {
+         // trigger inline emoji replacements after space, or always (force==true) when sending the message
+        if (force || messageInputField.getText(messageInputField.cursorPosition, messageInputField.cursorPosition - 1) === " ") {
+            // figure out last word (between spaces), max length of 5
+            var lastWord = ""
+            const cursorPos = messageInputField.cursorPosition - (force ? 1 : 2) // just before the last non-space character
+            for (let i = cursorPos; i > cursorPos - 6; i--) { // go back until we found a space or start of line
+                const lastChar = messageInputField.getText(i, i+1)
+                if (i < 0 || lastChar === " ") { // reached start of line or a space
+                    break
+                } else {
+                    lastWord = lastChar + lastWord // collect the last word
+                }
+            }
+
+            // check if the word contains any of the trigger chars (emojiReplacementSymbols)
+            if (!!lastWord && Array.prototype.some.call(d.emojiReplacementSymbols, (trigger) => lastWord.includes(trigger))) {
+                // search the ASCII aliases for a possible match
+                const emojiFound = StatusQUtils.Emoji.emojiJSON.emoji_json.find(emoji => emoji.aliases_ascii.includes(lastWord))
+                if (emojiFound) {
+                    replaceWithEmoji("", lastWord, emojiFound.unicode, force ? 0 : 1 /*offset*/);
+                }
+            }
+        }
+    }
+
+    function replaceWithEmoji(message, shortname, codePoint, offset = 0) {
         const encodedCodePoint = StatusQUtils.Emoji.getEmojiCodepoint(codePoint)
-        messageInputField.remove(messageInputField.cursorPosition - shortname.length, messageInputField.cursorPosition);
+        messageInputField.remove(messageInputField.cursorPosition - shortname.length - offset, messageInputField.cursorPosition);
         insertInTextInput(messageInputField.cursorPosition, StatusQUtils.Emoji.parse(encodedCodePoint) + " ");
         emojiSuggestions.close()
         emojiEvent = false
@@ -1293,22 +1322,10 @@ Rectangle {
 
                             onTextChanged: {
                                 if (length <= control.messageLimit) {
-                                    const symbols = ":='xX><0O;*dB8-D#%\\";
-                                    const symbolIdx = ((cursorPosition > 2) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1)))!==-1))
-                                                    ? (cursorPosition -1) : (symbols.indexOf(getText(0, 1))!==-1) ? 2 : -1;
-                                    if ((getText(symbolIdx-2, (symbolIdx-1)) === " ") || (symbolIdx === 2)) {
-                                        const textBefore1 = getText((symbolIdx-1), (symbolIdx+1))
-                                        const textBefore2 = getText((symbolIdx-2), (symbolIdx+1))
-                                        const has2CharsText = getText((symbolIdx-4), (symbolIdx-2))
-                                        const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
-                                            if (emoji.aliases_ascii.includes(textBefore1) || emoji.aliases_ascii.includes(textBefore2)) {
-                                                const has2Chars = emoji.aliases_ascii.includes(has2CharsText)
-                                                replaceWithEmoji("", getText((symbolIdx - (has2Chars ? 3 : 2)), symbolIdx), emoji.unicode);
-                                            }
-                                        })
-                                    }
                                     if (length === 0) {
                                         mentionsPos = [];
+                                    } else {
+                                        checkForInlineEmojis()
                                     }
                                 } else {
                                     const removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
