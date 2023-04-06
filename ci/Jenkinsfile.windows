@@ -47,6 +47,8 @@ pipeline {
     STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z')}"
     /* RFC 3161 timestamping URL for DigiCert */
     WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
+    QTDIR = "/c/Qt/5.15.2/msvc2019_64"
+    PATH = "${env.QTDIR}/bin:${env.PATH}"
   }
 
   stages {
