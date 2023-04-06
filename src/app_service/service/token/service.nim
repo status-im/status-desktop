@@ -154,14 +154,15 @@ QtObject:
       return self.tokensToAddressesMap[symbol].addresses
 
   proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
-    try:
-      for token in self.tokens[network.chainId]:
-        if token.symbol == symbol:
-          return token
-    except Exception as e:
-      error "Error finding token by symbol", msg = e.msg
+    if not self.tokens.hasKey(network.chainId):
+      return
+    for token in self.tokens[network.chainId]:
+      if token.symbol == symbol:
+        return token
 
   proc findTokenByAddress*(self: Service, network: NetworkDto, address: Address): TokenDto =
+    if not self.tokens.hasKey(network.chainId):
+      return
     for token in self.tokens[network.chainId]:
       if token.address == address:
         return token
@@ -217,7 +218,8 @@ QtObject:
     try:
       let response = backend.fetchPrices(@[cryptoKey], @[fiat])
       let prices = jsonToPricesMap(response.result)
-
+      if not prices.hasKey(cryptoKey) or not prices[cryptoKey].hasKey(fiat):
+        return 0.0
       self.updateCachedTokenPrice(cryptoKey, fiat, prices[cryptoKey][fiat])
       return prices[cryptoKey][fiat] * factor
     except Exception as e:
@@ -282,6 +284,8 @@ QtObject:
         if network.nativeCurrencySymbol == tokenSymbol:
           chainIds.add(network.chainId)
         else:
+          if not self.tokens.hasKey(network.chainId):
+            continue
           for token in self.tokens[network.chainId]:
             if token.symbol == tokenSymbol:
               chainIds.add(network.chainId)
