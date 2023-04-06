@@ -8,7 +8,7 @@ const WalletTypeSeed* = "seed"
 const WalletTypeWatch* = "watch"
 const WalletTypeKey* = "key"
 
-var alwaysVisible = {
+const alwaysVisible = {
   1: @["ETH", "SNT", "DAI"],
   10: @["ETH", "SNT", "DAI"],
   42161: @["ETH", "SNT", "DAI"],
@@ -231,7 +231,7 @@ proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   var marketValuesPerCurrencyObj: JsonNode
   if(jsonObj.getProp("marketValuesPerCurrency", marketValuesPerCurrencyObj)):
     for currency, marketValuesObj in marketValuesPerCurrencyObj:
-      result.marketValuesPerCurrency[currency] = marketValuesObj.toTokenMarketValuesDto()
+      result.marketValuesPerCurrency[currency.toUpperAscii()] = marketValuesObj.toTokenMarketValuesDto()
 
   var balancesPerChainObj: JsonNode
   if(jsonObj.getProp("balancesPerChain", balancesPerChainObj)):
