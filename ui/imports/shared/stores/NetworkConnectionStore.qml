@@ -53,7 +53,7 @@ QtObject {
 
     readonly property bool ensNetworkAvailable: !blockchainNetworksDown.includes(profileSectionModule.ensUsernamesModule.chainId.toString())
     readonly property string ensNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg( networksModule.all.getNetworkFullName(profileSectionModule.ensUsernamesModule.chainId))
-    readonly property bool stickersNetworkAvailable: false//!blockchainNetworksDown.includes(stickersModule.getChainIdForStickers().toString())
+    readonly property bool stickersNetworkAvailable: !blockchainNetworksDown.includes(stickersModule.getChainIdForStickers().toString())
     readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg( networksModule.all.getNetworkFullName(stickersModule.getChainIdForStickers()))
 
     function getBlockchainNetworkDownTextForToken(balances) {

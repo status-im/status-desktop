@@ -15,7 +15,7 @@ import "../controls"
 Item {
     id: root
 
-    property var assets: []
+    property var assets: null
     signal tokenSelected(var selectedToken)
     property var searchTokenSymbolByAddressFn: function (address) {
         return ""
