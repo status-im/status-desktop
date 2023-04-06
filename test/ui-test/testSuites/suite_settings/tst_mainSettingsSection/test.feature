@@ -10,14 +10,10 @@ Feature: Status Desktop Main Settings Section
     Background: Open settings section
         Given the user opens app settings screen
 
-	# TODO: It must be reformulated or extracted to a different feature file bc preconditions of this feature file also include closing the backup seed phrase indicator at first instance
-	# so the validation is not providing relevant information
-	# TODO: It is also unstable. Needs to be checked.
-    @mayfail
     Scenario: The user can backup seed phrase
-        Given the user opens the wallet settings
         When the user backs up the wallet seed phrase
         Then the backup seed phrase indicator is not displayed
+        And the Secure Your Seed Phrase Banner is not displayed
 
 	@mayfail
     Scenario: The user can switch state to offline
