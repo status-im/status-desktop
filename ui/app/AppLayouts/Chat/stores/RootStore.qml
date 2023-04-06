@@ -266,6 +266,10 @@ QtObject {
         return isCurrentUser(pubkey) ? qsTr("You") : name
     }
 
+    function myPubKey() {
+        return userProfileInst.pubKey
+    }
+
     function getCommunity(communityId) {
         // Not Refactored Yet
 //        try {

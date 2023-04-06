@@ -18,6 +18,7 @@ Item {
 
     property string placeholderText
     property var model
+    property var communityMemberContextMenu
 
     signal userProfileClicked(string id)
     signal kickUserClicked(string id, string name)
@@ -143,7 +144,19 @@ Item {
                 ringSettings.ringSpecModel: model.colorHash
                 statusListItemIcon.badge.visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers)
 
-                onClicked: root.userProfileClicked(model.pubKey)
+                onClicked: {
+                    if(mouse.button === Qt.RightButton) {
+                        // Set parent, X & Y positions for the messageContextMenu
+                        root.communityMemberContextMenu.parent = this
+                        root.communityMemberContextMenu.isProfile = true
+                        root.communityMemberContextMenu.selectedUserPublicKey = model.pubKey
+                        root.communityMemberContextMenu.selectedUserDisplayName = userName
+                        root.communityMemberContextMenu.selectedUserIcon = asset.name
+                        root.communityMemberContextMenu.popup()
+                    } else {
+                        root.userProfileClicked(model.pubKey)
+                    }
+                }
             }
         }
     }

@@ -21,6 +21,7 @@ import StatusQ.Controls.Validators 0.1
 import AppLayouts.Chat.stores 1.0
 
 import shared.stores 1.0
+import shared.views.chat 1.0
 
 import "../panels/communities"
 import "../popups/community"
@@ -235,6 +236,7 @@ StatusSectionLayout {
                 declinedMemberRequestsModel: root.community.declinedMemberRequests
                 editable: root.community.amISectionAdmin
                 communityName: root.community.name
+                communityMemberContextMenu: memberContextMenuView
 
                 onUserProfileClicked: Global.openProfilePopup(id)
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
@@ -393,6 +395,21 @@ StatusSectionLayout {
                 close()
             }
             onClosed: destroy()
+        }
+    }
+
+    MessageContextMenuView {
+        id: memberContextMenuView
+        store: root.rootStore
+        amIChatAdmin: root.rootStore.amIChatAdmin()
+        myPublicKey: root.rootStore.myPublicKey()
+
+        onOpenProfileClicked: {
+            Global.openProfilePopup(publicKey, null)
+        }
+        onCreateOneToOneChat: {
+            Global.changeAppSectionBySectionType(Constants.appSection.chat)
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
         }
     }
 
