@@ -105,8 +105,11 @@ QtObject:
   proc discordImportErrorsCountChanged*(self: View) {.signal.}
   proc communityAccessRequested*(self: View, communityId: string) {.signal.}
 
+  proc communityTagsChanged*(self: View) {.signal.}
+  
   proc setCommunityTags*(self: View, communityTags: string) =
     self.communityTags = newQVariant(communityTags)
+    self.communityTagsChanged()
 
   proc setDiscordOldestMessageTimestamp*(self: View, timestamp: int) {.slot.} =
     if (self.discordOldestMessageTimestamp == timestamp): return
@@ -270,6 +273,7 @@ QtObject:
 
   QtProperty[QVariant] tags:
     read = getTags
+    notify = communityTagsChanged
 
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
