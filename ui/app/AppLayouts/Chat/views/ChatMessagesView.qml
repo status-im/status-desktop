@@ -50,7 +50,7 @@ Item {
         readonly property bool isMostRecentMessageInViewport: chatLogView.visibleArea.yPosition >= 0.999 - chatLogView.visibleArea.heightRatio
         readonly property var chatDetails: chatContentModule.chatDetails || null
 
-        readonly property var loadMoreMessagesIfScrollBelowThreshold: Backpressure.oneInTime(root, 100, function() {
+        readonly property var loadMoreMessagesIfScrollBelowThreshold: Backpressure.oneInTimeQueued(root, 100, function() {
             if(scrollY < 1000) messageStore.loadMoreMessages()
         })
 
@@ -200,7 +200,15 @@ Item {
             d.loadMoreMessagesIfScrollBelowThreshold()
         }
 
-        onCountChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+        onCountChanged: {
+            d.markAllMessagesReadIfMostRecentMessageIsInViewport()
+
+            // after inilial messages are loaded
+            // load as much messages as the view requires
+            if (messageStore.initialMessagesLoaded) {
+                d.loadMoreMessagesIfScrollBelowThreshold()
+            }
+        }
 
         onVisibleChanged: d.markAllMessagesReadIfMostRecentMessageIsInViewport()
 
