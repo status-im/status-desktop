@@ -30,7 +30,6 @@ StatusSectionLayout {
     property RootStore rootStore
     property var sectionItemModel
 
-    property Component membershipRequestPopup
     property var emojiPopup
     property var stickersPopup
     property bool stickersLoaded: false
@@ -160,7 +159,6 @@ StatusSectionLayout {
             store: root.rootStore
             emojiPopup: root.emojiPopup
             hasAddedContacts: root.hasAddedContacts
-            membershipRequestPopup: root.membershipRequestPopup
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
         }

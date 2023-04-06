@@ -906,4 +906,19 @@ QtObject {
         readonly property string addAccountLabelOptionAddNewMasterKey: "LABEL-OPTION-ADD-NEW-MASTER-KEY"
         readonly property string addAccountLabelOptionAddWatchOnlyAcc: "LABEL-OPTION-ADD-WATCH-ONLY-ACC"
     }
+
+    enum CommunitySettingsSections {
+        Overview,
+        Members,
+        Permissions,
+        MintTokens,
+        Airdrops
+    }
+
+    enum CommunityMembershipSubSections {
+        Members,
+        MembershipRequests,
+        RejectedMembers,
+        BannedMembers
+    }
 }
