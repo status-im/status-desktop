@@ -21,6 +21,7 @@ SettingsPageLayout {
     property var pendingMemberRequestsModel
     property var declinedMemberRequestsModel
     property string communityName
+    property var communityMemberContextMenu
 
     property bool editable: true
 
@@ -78,6 +79,7 @@ SettingsPageLayout {
 
             CommunityMembersTabPanel {
                 model: root.membersModel
+                communityMemberContextMenu: root.communityMemberContextMenu
                 placeholderText: {
                     if (root.membersModel.count === 0) {
                         return qsTr("No members to search")
@@ -106,6 +108,7 @@ SettingsPageLayout {
 
             CommunityMembersTabPanel {
                 model: root.pendingMemberRequestsModel
+                communityMemberContextMenu: root.communityMemberContextMenu
                 placeholderText: {
                     if (root.pendingMemberRequestsModel.count === 0) {
                         return qsTr("No pending requests to search")
@@ -120,12 +123,14 @@ SettingsPageLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
+                onUserProfileClicked: root.userProfileClicked(id)
                 onAcceptRequestToJoin: root.acceptRequestToJoin(id)
                 onDeclineRequestToJoin: root.declineRequestToJoin(id)
             }
 
             CommunityMembersTabPanel {
                 model: root.declinedMemberRequestsModel
+                communityMemberContextMenu: root.communityMemberContextMenu
                 placeholderText: {
                     if (root.declinedMemberRequestsModel.count === 0) {
                         return qsTr("No rejected members to search")
@@ -140,11 +145,13 @@ SettingsPageLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
+                onUserProfileClicked: root.userProfileClicked(id)
                 onAcceptRequestToJoin: root.acceptRequestToJoin(id)
             }
 
             CommunityMembersTabPanel {
                 model: root.bannedMembersModel
+                communityMemberContextMenu: root.communityMemberContextMenu
                 placeholderText: {
                     if (root.bannedMembersModel.count === 0) {
                         return qsTr("No banned members to search")
