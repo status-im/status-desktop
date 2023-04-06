@@ -32,6 +32,7 @@ type
     viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
+    scrollToFirstUnseenMessageWhenLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
@@ -44,6 +45,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, contactService,
   communityService, chatService, messageService, mailserversService)
   result.moduleLoaded = false
+  result.scrollToFirstUnseenMessageWhenLoaded = true
 
 # Forward declaration
 proc createChatIdentifierItem(self: Module): Item
@@ -682,6 +684,12 @@ method resendChatMessage*(self: Module, messageId: string): string =
   return self.controller.resendChatMessage(messageId)
 
 method resetNewMessagesMarker*(self: Module) =
+  self.scrollToFirstUnseenMessageWhenLoaded = false
+  self.view.setFirstUnseenMessageLoaded(false)
+  self.controller.getAsyncFirstUnseenMessageId()
+
+method resetAndScrollToNewMessagesMarker*(self: Module) =
+  self.scrollToFirstUnseenMessageWhenLoaded = true
   self.view.setFirstUnseenMessageLoaded(false)
   self.controller.getAsyncFirstUnseenMessageId()
 
@@ -723,7 +731,6 @@ proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto)
 method onFirstUnseenMessageLoaded*(self: Module, messageId: string) =
   self.view.model().setFirstUnseenMessageId(messageId)
   self.view.model().resetNewMessagesMarker()
-  let index = self.view.model().findIndexForMessageId(messageId)
-  if (index != -1):
-    self.view.emitScrollToFirstUnreadMessageSignal(index)
+  if self.scrollToFirstUnseenMessageWhenLoaded:
+    self.scrollToMessage(messageId)
   self.view.setFirstUnseenMessageLoaded(true)

@@ -87,12 +87,6 @@ Item {
         function onScrollToMessage(messageIndex) {
             d.goToMessage(messageIndex)
         }
-
-        function onScrollToFirstUnreadMessage(messageIndex) {
-            if (d.isMostRecentMessageInViewport) {
-                d.goToMessage(messageIndex)
-            }
-        }
     }
 
     Connections {
