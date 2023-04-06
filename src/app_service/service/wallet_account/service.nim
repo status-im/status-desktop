@@ -173,47 +173,70 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc updateRelatedAccounts(self: Service, derivedFrom: string, allAccounts: seq[WalletAccountDto]) =
+  proc setRelatedAccountsToAccount(self: Service, account: WalletAccountDto) =
+    let allAccounts = self.fetchAccounts() # need to get new or do a deep copy, not use already fetched accounts
+    account.relatedAccounts = allAccounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and 
+      (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
+    
+  proc setRelatedAccountsForAllAccounts(self: Service, derivedFrom: string) =
     for wAcc in self.walletAccounts.mvalues:
       if not wAcc.derivedFrom.isEmptyOrWhitespace and 
         cmpIgnoreCase(wAcc.derivedFrom, derivedFrom) == 0:
-          wAcc.relatedAccounts = allAccounts.filter(x => not derivedFrom.isEmptyOrWhitespace and 
-            (cmpIgnoreCase(x.derivedFrom, derivedFrom) == 0))
+          self.setRelatedAccountsToAccount(wAcc)
 
-  proc storeAccount(self: Service, account: WalletAccountDto, allAccounts: seq[WalletAccountDto]) =
+  proc storeAccount(self: Service, account: WalletAccountDto) =
     # updating related accounts for already added accounts
-    self.updateRelatedAccounts(account.derivedFrom, allAccounts)
+    self.setRelatedAccountsForAllAccounts(account.derivedFrom)
     # add new account to store    
     self.walletAccounts[account.address] = account
 
-  proc getCachedValuesForAccount*(self: Service, address: string): (bool, bool) =
-    var areBalancesCached = false
-    var areMarketValuesCached = false
-    if self.walletAccounts.hasKey(address):
-      areBalancesCached = self.walletAccounts[address].hasBalanceCache
-      areMarketValuesCached = self.walletAccounts[address].hasMarketValuesCache
-    return (areBalancesCached, areMarketValuesCached)
-
   proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto], areBalancesCached: bool, areMarketValuesCached: bool) =
     if self.walletAccounts.hasKey(address):
-      self.walletAccounts[address].tokens = tokens
+      deepCopy(self.walletAccounts[address].tokens, tokens)
       self.walletAccounts[address].hasBalanceCache = areBalancesCached
       self.walletAccounts[address].hasMarketValuesCache = areMarketValuesCached
 
-  proc updateOrReplaceBalancesAndCollectibles*(self: Service, address: string, tokens: seq[WalletTokenDto], ignoreBalances: bool, ignoreMarketValues: bool): seq[WalletTokenDto] =
-    if self.walletAccounts.hasKey(address):
-      if self.walletAccounts[address].tokens.len == 0 or (not ignoreBalances and not ignoreMarketValues):
-        return tokens
-      else:
-        var updatedTokens: seq[WalletTokenDto] = self.walletAccounts[address].tokens
-        for i in 0 ..< updatedTokens.len:
-          for token in tokens:
-            if token.name == updatedTokens[i].name:
-              if ignoreBalances and not ignoreMarketValues:
-                updatedTokens[i].marketValuesPerCurrency = token.marketValuesPerCurrency
-              elif ignoreMarketValues and not ignoreBalances:
-                updatedTokens[i].balancesPerChain = token.balancesPerChain
-        return updatedTokens
+  proc allBalancesForAllTokensHaveError(tokens: seq[WalletTokenDto]): bool =
+    for token in tokens:
+      for chainId, balanceDto in token.balancesPerChain:
+        if not balanceDto.hasError:
+          return false
+    return true
+
+  proc anyTokenHasBalanceForAnyChain(tokens: seq[WalletTokenDto]): bool =
+    for token in tokens:
+      if len(token.balancesPerChain) > 0:
+        return true
+    return false
+
+  proc allMarketValuesForAllTokensHaveError(tokens: seq[WalletTokenDto]): bool =
+    for token in tokens:
+      for currency, marketDto in token.marketValuesPerCurrency:
+        if not marketDto.hasError:
+          return false
+    return true
+
+  proc anyTokenHasMarketValuesForAnyChain(tokens: seq[WalletTokenDto]): bool =
+    for token in tokens:
+      if len(token.marketValuesPerCurrency) > 0:
+        return true
+    return false
+
+  proc updateReceivedTokens*(self: Service, address: string, tokens: var seq[WalletTokenDto]) =
+    if not self.walletAccounts.hasKey(address) or
+      self.walletAccounts[address].tokens.len == 0:
+        return
+
+    let allBalancesForAllTokensHaveError = allBalancesForAllTokensHaveError(tokens)
+    let allMarketValuesForAllTokensHaveError = allMarketValuesForAllTokensHaveError(tokens)
+
+    for waToken in self.walletAccounts[address].tokens:
+      for token in tokens.mitems:
+        if waToken.name == token.name:
+          if allBalancesForAllTokensHaveError:
+            token.balancesPerChain = waToken.balancesPerChain
+          if allMarketValuesForAllTokensHaveError:
+            token.marketValuesPerCurrency = waToken.marketValuesPerCurrency
 
   proc walletAccountsContainsAddress*(self: Service, address: string): bool =
     return self.walletAccounts.hasKey(address)
@@ -225,8 +248,7 @@ QtObject:
     result = self.walletAccounts[address]
     self.walletAccounts.del(address)
     # updating related accounts for other accounts
-    let allAccounts = self.fetchAccounts()
-    self.updateRelatedAccounts(result.derivedFrom, allAccounts)
+    self.setRelatedAccountsForAllAccounts(result.derivedFrom)
 
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
     result = WalletAccountDto()
@@ -245,8 +267,8 @@ QtObject:
       let accounts = self.fetchAccounts()
       for account in accounts:
         self.setEnsName(account)
-        account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
-        self.storeAccount(account, accounts)
+        self.setRelatedAccountsToAccount(account)
+        self.storeAccount(account)
 
       self.buildAllTokens(self.getAddresses(), store = true)
       self.checkRecentHistory()
@@ -323,9 +345,9 @@ QtObject:
       return
 
     self.setEnsName(newAccount)
-    newAccount.relatedAccounts = accounts.filter(x => cmpIgnoreCase(x.derivedFrom, newAccount.derivedFrom) == 0)
+    self.setRelatedAccountsToAccount(newAccount)
+    self.storeAccount(newAccount)
 
-    self.storeAccount(newAccount, accounts)
     self.buildAllTokens(@[newAccount.address], store = true)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
@@ -519,24 +541,6 @@ QtObject:
       return
     self.walletAccounts[wAddress].assetsLoading = loading
 
-  proc checkIfBalancesHaveError*(self: Service, tokens: seq[WalletTokenDto]): bool =
-    var hasError: bool = true
-    for token in tokens:
-      for chainId, balanceDto in token.balancesPerChain:
-        if not balanceDto.hasError:
-          hasError = false
-          continue
-    return hasError
-
-  proc checkIfMarketValuesHaveError*(self: Service, tokens: seq[WalletTokenDto]): bool =
-    var hasError: bool = true
-    for token in tokens:
-      for currency, marketDto in token.marketValuesPerCurrency:
-        if not marketDto.hasError:
-          hasError = false
-          continue
-    return hasError
-
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
     try:
       var visibleSymbols: seq[string]
@@ -549,39 +553,31 @@ QtObject:
       discard responseObj.getProp("result", resultObj)
 
       var data = TokensPerAccountArgs()
+      data.accountsTokens = initOrderedTable[string, seq[WalletTokenDto]]()
+      data.hasBalanceCache = false
+      data.hasMarketValuesCache = false
       if resultObj.kind == JObject:
         for wAddress, tokensDetailsObj in resultObj:
           if tokensDetailsObj.kind == JArray:
             var tokens: seq[WalletTokenDto]
             tokens = map(tokensDetailsObj.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
-
-            let balancesHasError = self.checkIfBalancesHaveError(tokens)
-            let marketValuesHasError = self.checkIfMarketValuesHaveError(tokens)
-
-            var (areBalancesCached, areMarketValuesCached) = self.getCachedValuesForAccount(wAddress)
-            let ignoreNewBalances = areBalancesCached and balancesHasError
-            let ignoreNewMarketValues = areMarketValuesCached and marketValuesHasError
-            # once the balances/market values are retreived correctly we always have cache
-            if not areBalancesCached:
-                areBalancesCached = not balancesHasError
-            if not areMarketValuesCached :
-                areMarketValuesCached = not marketValuesHasError
-
             tokens.sort(priorityTokenCmp)
-            let updatedTokens = self.updateOrReplaceBalancesAndCollectibles(wAddress, tokens, ignoreNewBalances, ignoreNewMarketValues)
-
-            data.accountsTokens[wAddress] = updatedTokens
-            data.hasBalanceCache = areBalancesCached
-            data.hasMarketValuesCache = areMarketValuesCached
+            self.updateReceivedTokens(wAddress, tokens)
+            let hasBalanceCache = anyTokenHasBalanceForAnyChain(tokens)
+            let hasMarketValuesCache = anyTokenHasMarketValuesForAnyChain(tokens)
+            data.accountsTokens[wAddress] = @[]
+            deepCopy(data.accountsTokens[wAddress], tokens)
+            data.hasBalanceCache = data.hasBalanceCache or hasBalanceCache
+            data.hasMarketValuesCache = data.hasMarketValuesCache or hasMarketValuesCache
 
             # set assetsLoading to false once the tokens are loaded
             self.updateAssetsLoadingState(wAddress, false)
 
             if storeResult:
-              self.storeTokensForAccount(wAddress, updatedTokens, areBalancesCached, areMarketValuesCached)
-              self.tokenService.updateTokenPrices(updatedTokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
+              self.storeTokensForAccount(wAddress, tokens, hasBalanceCache, hasMarketValuesCache)
+              self.tokenService.updateTokenPrices(tokens) # For efficiency. Will be removed when token info fetching gets moved to the tokenService
               # Gather symbol for visible tokens
-              for token in updatedTokens:
+              for token in tokens:
                 if token.getVisibleForNetworkWithPositiveBalance(chainIds) and find(visibleSymbols, token.symbol) == -1:
                   visibleSymbols.add(token.symbol)
       self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
@@ -595,6 +591,10 @@ QtObject:
       accounts.len == 0:
         return
 
+    # set assetsLoading to true as the tokens are being loaded
+    for waddress in accounts:
+      self.updateAssetsLoadingState(waddress, true)
+
     let arg = BuildTokensTaskArg(
       tptr: cast[ByteAddress](prepareTokensTask),
       vptr: cast[ByteAddress](self.vptr),
@@ -602,11 +602,6 @@ QtObject:
       accounts: accounts,
       storeResult: store
     )
-
-    # set assetsLoading to true as the tokens are being loaded
-    for waddress in accounts:
-      self.updateAssetsLoadingState(waddress, true)
-
     self.threadpool.start(arg)
 
   proc getCurrentCurrencyIfEmpty(self: Service, currency = ""): string =
