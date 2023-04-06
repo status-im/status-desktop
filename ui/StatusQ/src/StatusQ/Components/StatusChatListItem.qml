@@ -187,19 +187,22 @@ Rectangle {
                 visible: mutedIconSensor.containsMouse
             }
         }
-
-        StatusBadge {
-            id: statusBadge
-
-            anchors.verticalCenter: parent.verticalCenter
+        Item {
+            width: 32
+            height: parent.height
             anchors.right: parent.right
             anchors.rightMargin: 8
-
-            color: root.muted ? Theme.palette.primaryColor2 : Theme.palette.primaryColor1
-            border.width: 4
-            border.color: color
-            value: root.notificationsCount
-            visible: root.notificationsCount > 0
+            StatusBadge {
+                id: statusBadge
+                readonly property bool onlyUnread: (root.notificationsCount === 0 && root.hasUnreadMessages)
+                anchors.centerIn: parent
+                color: onlyUnread ? Theme.palette.baseColor1 :
+                                    root.muted ? Theme.palette.primaryColor2 : Theme.palette.primaryColor1
+                border.width: onlyUnread ? -2 : 4
+                border.color: color
+                value: root.notificationsCount
+                visible: (root.notificationsCount > 0 || onlyUnread)
+            }
         }
     }
 }
