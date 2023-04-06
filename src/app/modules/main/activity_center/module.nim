@@ -80,9 +80,9 @@ method unreadActivityCenterNotificationsCountChanged*(self: Module) =
 method hasUnseenActivityCenterNotificationsChanged*(self: Module) =
   self.view.hasUnseenActivityCenterNotificationsChanged()
 
-proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: ChatDto): MessageItem =
+proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: string): MessageItem =
   let contactDetails = self.controller.getContactDetails(message.`from`)
-  let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+  let communityChats = self.controller.getCommunityById(communityId).chats
 
   var quotedMessageAuthorDetails = ContactDetails()
   if message.quotedMessage.`from` != "":
@@ -93,7 +93,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
       
   return msg_item_qobj.newMessageItem(msg_item.initItem(
     message.id,
-    chatDetails.communityId, # we don't received community id via `activityCenterNotifications` api call
+    communityId, # we don't received community id via `activityCenterNotifications` api call
     message.responseTo,
     message.`from`,
     contactDetails.defaultDisplayName,
@@ -144,23 +144,22 @@ method convertToItems*(
     proc(notification: ActivityCenterNotificationDto): notification_item.Item =
       var messageItem =  msg_item_qobj.newMessageItem(nil)
       var repliedMessageItem =  msg_item_qobj.newMessageItem(nil)
-
-      let chatDetails = self.controller.getChatDetails(notification.chatId)
       # default section id is `Chat` section
-      let sectionId = if(chatDetails.communityId.len > 0):
-          chatDetails.communityId
+      let sectionId = if notification.communityId.len > 0:
+          notification.communityId
         else:
           singletonInstance.userProfile.getPubKey()
 
       if (notification.message.id != ""):
+        let communityId = sectionId
         # If there is a message in the Notification, transfer it to a MessageItem (QObject)
-        messageItem = self.createMessageItemFromDto(notification.message, chatDetails)
+        messageItem = self.createMessageItemFromDto(notification.message, communityId)
 
         if (notification.notificationType == ActivityCenterNotificationType.Reply and notification.message.responseTo != ""):
-          repliedMessageItem = self.createMessageItemFromDto(notification.replyMessage, chatDetails)
+          repliedMessageItem = self.createMessageItemFromDto(notification.replyMessage, communityId)
 
         if (notification.notificationType == ActivityCenterNotificationType.ContactVerification):
-          repliedMessageItem = self.createMessageItemFromDto(notification.replyMessage, chatDetails)
+          repliedMessageItem = self.createMessageItemFromDto(notification.replyMessage, communityId)
 
       return notification_item.initItem(
         notification.id,
@@ -178,7 +177,7 @@ method convertToItems*(
         notification.accepted,
         messageItem,
         repliedMessageItem,
-        chatDetails.chatType
+        ChatType.Unknown # TODO: should use correct chat type
       )
     )
 
