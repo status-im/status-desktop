@@ -153,6 +153,9 @@ method resendChatMessage*(self: AccessInterface, messageId: string): string =
 method resetNewMessagesMarker*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
 
+method resetAndScrollToNewMessagesMarker*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
+
 method markAllMessagesRead*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
 

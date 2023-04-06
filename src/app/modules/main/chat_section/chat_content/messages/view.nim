@@ -246,7 +246,3 @@ QtObject:
   QtProperty[bool] firstUnseenMessageLoaded:
     read = getFirstUnseenMessageLoaded
     notify = firstUnseenMessageLoadedChanged
-
-  proc scrollToFirstUnreadMessage(self: View, messageIndex: int) {.signal.}
-  proc emitScrollToFirstUnreadMessageSignal*(self: View, messageIndex: int) =
-    self.scrollToFirstUnreadMessage(messageIndex)
