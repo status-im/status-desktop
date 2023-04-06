@@ -470,6 +470,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp -R $(FLEETS) tmp/linux/dist/usr/.
 	mkdir -p tmp/linux/dist/usr/i18n
 	cp bin/i18n/* tmp/linux/dist/usr/i18n
+	mkdir -p tmp/linux/dist/usr/bin/StatusQ
 	cp bin/StatusQ/* tmp/linux/dist/usr/bin/StatusQ
 
 	# Libraries
@@ -530,6 +531,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp -R $(FLEETS) $(MACOS_OUTER_BUNDLE)/Contents/
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	cp bin/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
+	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS/StatusQ
 	cp bin/StatusQ/* $(MACOS_OUTER_BUNDLE)/Contents/MacOS/StatusQ
 
 	echo -e $(BUILD_MSG) "app"
