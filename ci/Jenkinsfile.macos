@@ -4,8 +4,9 @@ library 'status-jenkins-lib@v1.6.8'
 def isPRBuild = utils.isPRBuild()
 
 pipeline {
+  /* This way we run the same Jenkinsfile on different platforms. */
   agent {
-    label 'macos && x86_64 && qt-5.15.2'
+    label "${getAgentLabels().join(' && ')} && qt-5.15"
   }
 
   parameters {
@@ -38,16 +39,16 @@ pipeline {
   }
 
   environment {
-    TARGET = 'macos'
+    TARGET = "macos-${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
-    /* Qt location is pre-defined */
-    QTDIR = '/usr/local/qt/5.15.2/clang_64'
+    /* WARNING: Qt 5.15.8 installed via Brew. */
+    QTDIR = '/opt/homebrew/opt/qt@5'
     PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Control output the filename */
-    STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg')}"
+    STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg', arch: getArch())}"
     /* Apple Team ID for Notarization */
     MACOS_NOTARIZE_TEAM_ID = "8B5X2M6H2Y"
   }
@@ -108,4 +109,26 @@ pipeline {
     failure { script { github.notifyPR(false) } }
     cleanup { sh './scripts/clean-git.sh' }
   }
+}
+
+/* This allows us to use one Jenkinsfile and run
+ * jobs on different platforms based on job name. */
+def getAgentLabels() {
+    if (params.AGENT_LABEL) { return params.AGENT_LABEL }
+    /* We extract the name of the job from currentThread because
+     * before an agent is picket env is not available. */
+    def tokens = Thread.currentThread().getName().split('/')
+    def labels = []
+    /* Check if the job path contains any of the valid labels. */
+    ['linux', 'macos', 'x86_64', 'aarch64', 'arm64'].each {
+        if (tokens.contains(it)) { labels.add(it) }
+    }
+    return labels
+}
+
+def getArch() {
+    def tokens = Thread.currentThread().getName().split('/')
+    for (def arch in ['x86_64', 'aarch64']) {
+      if (tokens.contains(arch)) { return arch }
+    }
 }

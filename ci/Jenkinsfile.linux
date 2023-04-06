@@ -43,7 +43,7 @@ pipeline {
   }
 
   environment {
-    TARGET = 'linux'
+    TARGET = "linux-${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */
@@ -51,8 +51,8 @@ pipeline {
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/5.15.2/gcc_64"
     /* Control output the filename */
-    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage')}"
-    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz')}"
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch())}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch())}"
   }
 
   stages {
@@ -96,4 +96,11 @@ pipeline {
     failure { script { github.notifyPR(false) } }
     cleanup { sh './scripts/clean-git.sh' }
   }
+}
+
+def getArch() {
+    def tokens = Thread.currentThread().getName().split('/')
+    for (def arch in ['x86_64', 'aarch64']) {
+      if (tokens.contains(arch)) { return arch }
+    }
 }

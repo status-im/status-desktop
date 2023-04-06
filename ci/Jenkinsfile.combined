@@ -27,23 +27,27 @@ pipeline {
   stages {
     stage('Build') {
       parallel {
-        stage('Linux') { steps { script {
-          linux = jenkins.Build('status-desktop/platforms/linux')
+        stage('Linux/x86_64') { steps { script {
+          linux_x86_64 = jenkins.Build('status-desktop/platforms/linux/x86_64')
         } } }
-        stage('Windows') { steps { script {
-          windows = jenkins.Build('status-desktop/platforms/windows')
+        stage('Windows/x86_64') { steps { script {
+          windows_x86_64 = jenkins.Build('status-desktop/platforms/windows/x86_64')
         } } }
-        stage('MacOS') { steps { script {
-          macos = jenkins.Build('status-desktop/platforms/macos')
+        stage('MacOS/x86_64') { steps { script {
+          macos_x86_64 = jenkins.Build('status-desktop/platforms/macos/x86_64')
+        } } }
+        stage('MacOS/arch64') { steps { script {
+          macos_aarch64 = jenkins.Build('status-desktop/platforms/macos/aarch64')
         } } }
       }
     }
     stage('Archive') {
       steps { script {
         sh('rm -f pkg/*')
-        jenkins.copyArts(linux)
-        jenkins.copyArts(windows)
-        jenkins.copyArts(macos)
+        jenkins.copyArts(linux_x86_64)
+        jenkins.copyArts(windows_x86_64)
+        jenkins.copyArts(macos_x86_64)
+        jenkins.copyArts(macos_aarch64)
         sha = "pkg/${utils.pkgFilename(ext: 'sha256')}"
         dir('pkg') {
           /* generate sha256 checksums for upload */
@@ -57,9 +61,10 @@ pipeline {
         /* object for easier URLs handling */
         urls = [
           /* mobile */
-          Linux: utils.pkgUrl(linux),
-          Windows: utils.pkgUrl(windows),
-          MacOS: utils.pkgUrl(macos),
+          'Linux': utils.pkgUrl(linux_x86_64),
+          'Windows': utils.pkgUrl(windows_x86_64),
+          'MacOS/x86_64': utils.pkgUrl(macos_x86_64),
+          'MacOS/aarch64': utils.pkgUrl(macos_aarch64),
           /* upload the sha256 checksums file too */
           SHA: s3.uploadArtifact(sha),
         ]

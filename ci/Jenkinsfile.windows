@@ -36,15 +36,15 @@ pipeline {
   }
 
   environment {
-    TARGET = 'windows'
+    TARGET = "windows-${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Control output the filename */
-    STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe')}"
+    STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
     /* 7zip archive filename */
-    STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z')}"
+    STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch())}"
     /* RFC 3161 timestamping URL for DigiCert */
     WINDOWS_CODESIGN_TIMESTAMP_URL = 'http://timestamp.digicert.com'
   }
@@ -99,4 +99,11 @@ pipeline {
     failure { script { github.notifyPR(false) } }
     cleanup { sh './scripts/clean-git.sh' }
   }
+}
+
+def getArch() {
+    def tokens = Thread.currentThread().getName().split('/')
+    for (def arch in ['x86_64', 'aarch64']) {
+      if (tokens.contains(arch)) { return arch }
+    }
 }
