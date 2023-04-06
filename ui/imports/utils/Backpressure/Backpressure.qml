@@ -21,13 +21,13 @@ Item {
             owner = backpressure;
         }
 
-        owner.Component.destruction.connect(cleanup);
+        owner.Component.onDestruction.connect(cleanup);
 
         var obj = Qt.createQmlObject('import QtQuick 2.0; Timer {running: false; repeat: false; interval: ' + timeout + '}', backpressure, "setTimeout");
         obj.triggered.connect(function() {
             callback();
             obj.destroy();
-            owner.Component.destruction.disconnect(cleanup);
+            owner.Component.onDestruction.disconnect(cleanup);
             delete _timers[tid];
         });
         obj.running = true;
@@ -60,6 +60,32 @@ Item {
                 pending = false;
             }, duration);
         }
+    }
+
+    // Same as `oneInTime` while also handling any queued calls
+    function oneInTimeQueued(owner, duration, callback) {
+        var pending = false;
+        var queued = false;
+        var timerId = null;
+
+        var proxy = function() {
+            if (pending) {
+                queued = true;
+                return;
+            }
+            pending = true;
+            queued = false;
+            var args = arguments;
+            callback.apply(null, args);
+            timerId = setTimeout(owner, duration , function() {
+                pending = false;
+                if (queued) {
+                    proxy(owner, duration, callback);
+                }
+            }, duration);
+        }
+
+        return proxy
     }
 
     function promisedOneInTime(owner, callback) {
