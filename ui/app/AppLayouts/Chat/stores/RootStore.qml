@@ -28,7 +28,6 @@ QtObject {
     property string createChatStickerPackId: ""
     property string createChatStickerUrl: ""
 
-    property var membershipRequestPopup
     property var contactsModel: root.contactsStore.myContactsModel
 
     // Important:
@@ -112,6 +111,8 @@ QtObject {
     property var advancedModule: profileSectionModule.advancedModule
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
+
+    signal goToMembershipRequestsPage()
 
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
@@ -680,5 +681,16 @@ QtObject {
       function onImportingCommunityStateChanged(communityId, state, errorMsg) {
           root.importingCommunityStateChanged(communityId, state, errorMsg)
       }
+    }
+
+    readonly property Connections mainModuleInstConnections: Connections {
+        target: mainModuleInst
+        enabled: !!chatCommunitySectionModule
+        function onOpenCommunityMembershipRequestsView(sectionId: string) {
+            if(root.getMySectionId() != sectionId)
+                return
+
+            root.goToMembershipRequestsPage()
+        }
     }
 }

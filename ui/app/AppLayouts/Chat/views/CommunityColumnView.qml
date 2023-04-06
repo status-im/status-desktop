@@ -34,7 +34,6 @@ Item {
     property var store
     property bool hasAddedContacts: false
     property var communityData
-    property Component membershipRequestPopup
 
     signal infoButtonClicked
     signal manageButtonClicked
@@ -134,9 +133,7 @@ Item {
             StatusContactRequestsIndicatorListItem {
                 title: qsTr("Membership requests")
                 requestsCount: membershipRequests.nbRequests
-                onClicked: Global.openPopup(root.membershipRequestPopup, {
-                    communitySectionModule: root.communitySectionModule
-                })
+                onClicked: root.store.goToMembershipRequestsPage()
             }
         }
     }
@@ -562,19 +559,6 @@ Item {
                 hiddenBannerIds.push(root.store.activeCommunity.id)
                 localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
             }
-        }
-    }
-
-    Connections {
-        target: root.store.mainModuleInst
-
-        function onOpenCommunityMembershipRequestsPopup(sectionId: string) {
-            if(root.store.getMySectionId() != sectionId)
-                return
-
-            Global.openPopup(membershipRequestPopup, {
-                                 communitySectionModule: root.communitySectionModule
-                             })
         }
     }
 }

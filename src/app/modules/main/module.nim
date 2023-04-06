@@ -1048,7 +1048,7 @@ method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) 
     self.view.emitOpenActivityCenterSignal()
   elif(details.notificationType == NotificationType.JoinCommunityRequest):
     self.controller.switchTo(details.sectionId, "", "")
-    self.view.emitOpenCommunityMembershipRequestsPopupSignal(details.sectionId)
+    self.view.emitOpenCommunityMembershipRequestsViewSignal(details.sectionId)
   elif(details.notificationType == NotificationType.MyRequestToJoinCommunityAccepted):
     self.controller.switchTo(details.sectionId, "", "")
   elif(details.notificationType == NotificationType.MyRequestToJoinCommunityRejected):

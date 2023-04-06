@@ -32,18 +32,6 @@ StackLayout {
         Global.closeCreateChatView()
     }
 
-    Component {
-        id: membershipRequestPopupComponent
-        MembershipRequestsPopup {
-            anchors.centerIn: parent
-            store: root.rootStore
-            communityData: sectionItemModel
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
     Loader {
 
         readonly property var chatItem: root.rootStore.chatCommunitySectionModule
@@ -124,7 +112,6 @@ StackLayout {
             contactsStore: root.contactsStore
             rootStore: root.rootStore
             sectionItemModel: root.sectionItemModel
-            membershipRequestPopup: membershipRequestPopupComponent
 
             onCommunityInfoButtonClicked: root.currentIndex = 1
             onCommunityManageButtonClicked: root.currentIndex = 1
@@ -145,9 +132,11 @@ StackLayout {
     }
 
     Loader {
+        id: communitySettingsLoader
         active: root.rootStore.chatCommunitySectionModule.isCommunity()
 
         sourceComponent: CommunitySettingsView {
+            id: communitySettingsView
             rootStore: root.rootStore
 
             hasAddedContacts: root.contactsStore.myContactsModel.count > 0
@@ -158,6 +147,13 @@ StackLayout {
 
             // TODO: remove me when migration to new settings is done
             onOpenLegacyPopupClicked: Global.openCommunityProfilePopupRequested(root.rootStore, community, chatCommunitySectionModule)
+            Connections {
+                target: root.rootStore
+                function onGoToMembershipRequestsPage() {
+                    root.currentIndex = 1 // go to settings
+                    communitySettingsView.goTo(Constants.CommunitySettingsSections.Members, Constants.CommunityMembershipSubSections.MembershipRequests)
+                }
+            }
         }
     }
 }

@@ -221,9 +221,9 @@ QtObject:
   proc emitOpenActivityCenterSignal*(self: View) =
     self.openActivityCenter()
 
-  proc openCommunityMembershipRequestsPopup*(self: View, sectionId: string) {.signal.}
-  proc emitOpenCommunityMembershipRequestsPopupSignal*(self: View, sectionId: string) =
-    self.openCommunityMembershipRequestsPopup(sectionId)
+  proc openCommunityMembershipRequestsView*(self: View, sectionId: string) {.signal.}
+  proc emitOpenCommunityMembershipRequestsViewSignal*(self: View, sectionId: string) =
+    self.openCommunityMembershipRequestsView(sectionId)
 
   proc onlineStatusChanged(self: View, connected: bool) {.signal.}
 

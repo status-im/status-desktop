@@ -1,8 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 import QtQuick.Dialogs 1.3
-import QtGraphicalEffects 1.13
+import QtGraphicalEffects 1.15
 
 import SortFilterProxyModel 0.2
 
@@ -34,11 +34,11 @@ StatusSectionLayout {
     hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
     onNotificationButtonClicked: Global.openActivityCenterPopup()
     // TODO: get this model from backend?
-    property var settingsMenuModel: [{name: qsTr("Overview"), icon: "show", enabled: true},
-        {name: qsTr("Members"), icon: "group-chat", enabled: true},
-        {name: qsTr("Permissions"), icon: "objects", enabled: root.rootStore.communityPermissionsEnabled},
-        {name: qsTr("Mint Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled},
-        {name: qsTr("Airdrops"), icon: "airdrop", enabled: root.rootStore.communityTokensEnabled}]
+    property var settingsMenuModel: [{id: Constants.CommunitySettingsSections.Overview, name: qsTr("Overview"), icon: "show", enabled: true},
+        {id: Constants.CommunitySettingsSections.Members, name: qsTr("Members"), icon: "group-chat", enabled: true, },
+        {id: Constants.CommunitySettingsSections.Permissions, name: qsTr("Permissions"), icon: "objects", enabled: root.rootStore.communityPermissionsEnabled},
+        {id: Constants.CommunitySettingsSections.MintTokens, name: qsTr("Mint Tokens"), icon: "token", enabled: root.rootStore.communityTokensEnabled},
+        {id: Constants.CommunitySettingsSections.Airdrops, name: qsTr("Airdrops"), icon: "airdrop", enabled: root.rootStore.communityTokensEnabled}]
     // TODO: Next community settings options:
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
     //                        {name: qsTr("Subscriptions"), icon: "subscription"},
@@ -68,6 +68,11 @@ StatusSectionLayout {
 
     signal backToCommunityClicked
     signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
+
+    //navigate to a specific section and subsection
+    function goTo(section: int, subSection: int) {
+        d.goTo(section, subSection)
+    }
 
     onBackButtonClicked: {
         centerPanelContentLoader.item.children[d.currentIndex].navigateBack()
@@ -175,6 +180,7 @@ StatusSectionLayout {
         anchors.fill: parent
         active: root.community
         sourceComponent: StackLayout {
+            id: stackLayout
             currentIndex: d.currentIndex
 
             CommunityOverviewSettingsPanel {
@@ -283,7 +289,7 @@ StatusSectionLayout {
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
 
-                onNavigateToMintTokenSettings: d.currentIndex = d.mintTokensSettingsIndex
+                onNavigateToMintTokenSettings: root.goTo(Constants.CommunitySettingsSections.MintTokens)
             }
 
             CommunityMintTokensSettingsPanel {
@@ -316,12 +322,6 @@ StatusSectionLayout {
                                                            chainId,
                                                            artworkSource,
                                                            accountName)
-                }
-                                
-                Binding {
-                   target: d
-                   property: "mintTokensSettingsIndex"
-                   value: communityMintTokensSettingsPanel.StackView.index
                 }
 
                 Connections {
@@ -356,7 +356,7 @@ StatusSectionLayout {
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
                 onAirdropClicked: communityTokensStore.airdrop(root.community.id, airdropTokens, addresses)
-                onNavigateToMintTokenSettings: d.currentIndex = d.mintTokensSettingsIndex
+                onNavigateToMintTokenSettings: root.goTo(Constants.CommunitySettingsSections.MintTokens)
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
@@ -369,7 +369,21 @@ StatusSectionLayout {
         id: d
 
         property int currentIndex: 0
-        property int mintTokensSettingsIndex
+        readonly property var currentItem: centerPanelContentLoader.item && centerPanelContentLoader.item.children[d.currentIndex]
+                                    ? centerPanelContentLoader.item.children[d.currentIndex]
+                                    : null
+
+        function goTo(section: int, subSection: int) {
+            //find and enable section
+            const matchingIndex = listView.model.findIndex((modelItem, index) => modelItem.id == section && modelItem.enabled)
+            if(matchingIndex != -1) {
+                d.currentIndex = matchingIndex
+                //find and enable subsection if subSection navigation is available
+                if(d.currentItem && d.currentItem.goTo) {
+                    d.currentItem.goTo(subSection)
+                }
+            } 
+        }
     }
 
     MessageDialog {

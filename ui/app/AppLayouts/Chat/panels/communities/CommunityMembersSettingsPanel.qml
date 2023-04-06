@@ -33,9 +33,37 @@ SettingsPageLayout {
     signal acceptRequestToJoin(string id)
     signal declineRequestToJoin(string id)
 
+    function goTo(tab: int) {
+        if(root.contentItem) {
+            root.contentItem.goTo(tab)
+        }
+    }
+
     title: qsTr("Members")
 
     content: ColumnLayout {
+
+        function goTo(tab: int) {
+            let tabButton = membersTabBar.currentItem
+            switch (tab) {
+            case Constants.CommunityMembershipSubSections.Members:
+                tabButton = allMembersBtn
+                break
+            case Constants.CommunityMembershipSubSections.MembershipRequests:
+                tabButton = pendingRequestsBtn
+                break
+            case Constants.CommunityMembershipSubSections.RejectedMembers:
+                tabButton = declinedRequestsBtn
+                break
+            case Constants.CommunityMembershipSubSections.BannedMembers:
+                tabButton = bannedBtn
+                break
+            }
+            
+            if(tabButton.enabled)
+                membersTabBar.currentIndex = tabButton.TabBar.index
+        }
+        
         spacing: 19
 
         StatusTabBar {
