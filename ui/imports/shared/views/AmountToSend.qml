@@ -132,7 +132,7 @@ ColumnLayout {
             onClicked: {
                 topAmountToSendInput.validate()
                 if(!!topAmountToSendInput.text) {
-                    topAmountToSendInput.text = root.formatCurrencyAmount(bottomItem.bottomAmountToSend, bottomItem.bottomAmountSymbol, {onlyAmount: true}, LocaleUtils.userInputLocale)
+                    topAmountToSendInput.text = root.formatCurrencyAmount(bottomItem.bottomAmountToSend, bottomItem.bottomAmountSymbol, {noSymbol: true, rawAmount: true}, LocaleUtils.userInputLocale)
                 }
                 inputIsFiat = !inputIsFiat
                 d.waitTimer.restart()

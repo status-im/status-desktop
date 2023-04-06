@@ -46,6 +46,10 @@ ListModel {
          section: "Views"
     }
     ListElement {
+        title: "AmountToSendView"
+        section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }
