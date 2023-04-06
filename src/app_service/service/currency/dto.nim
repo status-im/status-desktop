@@ -2,7 +2,7 @@ import json
 include  ../../common/json_utils
 
 type
-  CurrencyFormatDto* = ref object
+  CurrencyFormatDto* = object
     symbol*: string
     displayDecimals*: uint
     stripTrailingZeroes*: bool
