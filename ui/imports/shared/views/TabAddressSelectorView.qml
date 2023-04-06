@@ -21,6 +21,7 @@ Item {
     clip: true
     implicitHeight: visible ? accountSelectionTabBar.height + stackLayout.height + Style.current.bigPadding: 0
 
+    property var selectedAccount
     property var store
 
     signal contactSelected(string address, int type)
@@ -193,7 +194,7 @@ Item {
                 }
 
                 delegate: StatusListItem {
-                    property bool isIncoming: to === store.currentAccount.address
+                    property bool isIncoming: root.selectedAccount ? to === root.selectedAccount.address : false
                     implicitWidth: parent.width
                     height: visible ? 64 : 0
                     title: isIncoming ? from : to

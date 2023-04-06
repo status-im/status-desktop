@@ -19,7 +19,7 @@ StatusFloatingButtonsSelector {
     id: root
 
     property var selectedAccount
-    // Expected signature: function(newAccount, newIndex)
+    // Expected signature: function(newAccount)
     property var changeSelectedAccount: function(){}
     property bool showAllWalletTypes: false
 
@@ -27,20 +27,10 @@ StatusFloatingButtonsSelector {
 
     signal updatedSelectedAccount(var account)
 
-    QtObject {
-        id: d
-        property var firstModelData: null
-
-        function isWalletTypeAccepted(walletType, index) {
-            return (root.showAllWalletTypes || walletType !== Constants.watchWalletType)
-        }
-    }
-
     delegate: Rectangle {
         width: button.width
         height: button.height
         radius: 8
-        visible: root.visibleIndices.includes(index) && d.isWalletTypeAccepted(walletType, index)
         color: Theme.palette.baseColor3
         StatusButton {
             id: button
@@ -55,31 +45,21 @@ StatusFloatingButtonsSelector {
             hoverColor: Theme.palette.statusFloatingButtonHighlight
             highlighted: index === root.currentIndex
             onClicked: {
-                changeSelectedAccount(model, index)
+                changeSelectedAccount(model)
                 root.currentIndex = index
             }
             Component.onCompleted: {
-                // On startup make the preseected wallet in the floating menu,
-                // and if the selectedAccount is watch only then select 0th item
-                if(index === 0) {
-                    d.firstModelData = model
-                }
-
-                if(name !== root.selectedAccount.name) {
-                    return
-                }
-
-                if(name === root.selectedAccount.name) {
-                    if(d.isWalletTypeAccepted(walletType, index)) {
-                        // If the selected index wont be displayed, added it to the visible indices
-                        if(index > 2) {
-                            visibleIndices = [0, 1, index]
-                        }
-                        root.currentIndex = index
+                // on model reset, set the selected account to the one that was previously selected
+                if(root.selectedAccount === null) {
+                    if(root.currentIndex === index) {
+                        changeSelectedAccount(model)
                     }
-                    else {
-                        changeSelectedAccount(root.selectedAccount, 0)
-                        root.currentIndex = 0
+                }
+                else {
+                    // if the selectedAccount is watch only then select 0th item
+                    if(index === 0 && !!root.selectedAccount && root.selectedAccount.walletType === Constants.watchWalletType) {
+                        changeSelectedAccount(model)
+                        root.currentIndex = index
                     }
                 }
             }
@@ -96,10 +76,9 @@ StatusFloatingButtonsSelector {
         asset.isLetterIdenticon: !!model.emoji
         asset.bgColor: Theme.palette.indirectColor1
         onClicked: {
-            changeSelectedAccount(model, index)
+            changeSelectedAccount(model)
             root.selectItem(index)
         }
-        visible: !root.visibleIndices.includes(index) && d.isWalletTypeAccepted(walletType, index)
     }
 }
 

@@ -259,4 +259,10 @@ QtObject {
         selectedAccount.prepareTokenBalanceOnChain(chainId, tokenSymbol)
         return selectedAccount.getPreparedTokenBalanceOnChain()
     }
+
+    function findTokenSymbolByAddress(address) {
+        if (Global.appIsReady)
+            return walletSectionAllTokens.findTokenSymbolByAddress(address)
+        return ""
+    }
 }

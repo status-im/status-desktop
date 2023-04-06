@@ -15,6 +15,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls.Validators 0.1
 
+import SortFilterProxyModel 0.2
+
 import "../panels"
 import "../controls"
 import "../views"
@@ -44,14 +46,6 @@ StatusDialog {
         title: qsTr("Error sending the transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-    }
-
-    Connections {
-        target: store.currentAccount.assets
-        function onModelReset() {
-            popup.selectedAccount =  null
-            popup.selectedAccount = store.currentAccount
-        }
     }
 
     property var sendTransaction: function() {
@@ -181,13 +175,17 @@ StatusDialog {
     header: AccountsModalHeader {
         anchors.top: parent.top
         anchors.topMargin: -height - 18
-        model: popup.store.accounts
-        selectedAccount: popup.selectedAccount
-        changeSelectedAccount: function(newAccount, newIndex) {
-            if (newIndex > popup.store.accounts) {
-                return
+        model: SortFilterProxyModel {
+            sourceModel: popup.store.accounts
+            filters: ValueFilter {
+                roleName: "walletType"
+                value: Constants.watchWalletType
+                inverted: true
             }
-            popup.store.switchAccount(newIndex)
+        }
+        selectedAccount: popup.selectedAccount
+        changeSelectedAccount: function(newAccount) {
+            popup.selectedAccount = newAccount
         }
     }
 
@@ -244,7 +242,7 @@ StatusDialog {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                             enabled: popup.interactive
-                            assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
+                            assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
                             defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
                             placeholderText: qsTr("Select token")
                             currentCurrencySymbol: RootStore.currencyStore.currentCurrencySymbol
@@ -252,10 +250,7 @@ StatusDialog {
                                 return symbol ? Style.png("tokens/%1".arg(symbol)) : defaultToken
                             }
                             searchTokenSymbolByAddressFn: function (address) {
-                                if(popup.selectedAccount) {
-                                    return popup.selectedAccount.findTokenSymbolByAddress(address)
-                                }
-                                return ""
+                                    return store.findTokenSymbolByAddress(address)
                             }
                             getNetworkIcon: function(chainId){
                                 return RootStore.getNetworkIcon(chainId)
@@ -330,12 +325,9 @@ StatusDialog {
                         Layout.fillWidth: true
 
                         visible: !assetSelector.selectedAsset
-                        assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : []
+                        assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
                         searchTokenSymbolByAddressFn: function (address) {
-                            if(popup.selectedAccount) {
-                                return popup.selectedAccount.findTokenSymbolByAddress(address)
-                            }
-                            return ""
+                            return store.findTokenSymbolByAddress(address)
                         }
                         getNetworkIcon: function(chainId){
                             return RootStore.getNetworkIcon(chainId)
@@ -445,6 +437,7 @@ StatusDialog {
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
                         store: popup.store
+                        selectedAccount: popup.selectedAccount
                         onContactSelected:  {
                             recipientSelector.input.text = address
                             popup.isLoading = true
