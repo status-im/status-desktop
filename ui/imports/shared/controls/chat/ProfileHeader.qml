@@ -38,6 +38,7 @@ Item {
     property bool emojiHashVisible: true
     property bool editImageButtonVisible: false
     property bool editButtonVisible: displayNamePlusIconsVisible
+    property bool loading: false
     readonly property bool compact: root.imageSize === ProfileHeader.ImageSize.Compact
 
     signal clicked()
@@ -116,6 +117,7 @@ Item {
                 imageWidth: d.getSize(36, 64, 170)
                 imageHeight: imageWidth
                 ensVerified: root.userIsEnsVerified
+                loading: root.loading
             }
 
             StatusRoundButton {
@@ -150,17 +152,36 @@ Item {
             }
         }
 
-        StyledText {
+        Item {
             Layout.fillWidth: true
-            visible: root.displayNameVisible
-            text: root.displayName
-            horizontalAlignment: Text.AlignHCenter
-            elide: Text.ElideRight
-            maximumLineCount: 3
-            wrapMode: Text.Wrap
-            font {
-                bold: true
-                pixelSize: 17
+            implicitHeight: displayNameLabel.implicitHeight
+
+            StyledText {
+                id: displayNameLabel
+                width: parent.width
+                height: parent.height
+                text: root.displayName
+                visible: !root.loading
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+                maximumLineCount: 3
+                wrapMode: Text.Wrap
+                font {
+                    bold: true
+                    pixelSize: 17
+                }
+            }
+
+            Loader {
+                anchors.centerIn: parent
+                height: parent.height
+                width: 100
+                visible: root.loading
+                active: visible
+
+                sourceComponent: LoadingComponent {
+                    radius: 4
+                }
             }
         }
 
@@ -169,6 +190,7 @@ Item {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             visible: root.displayNamePlusIconsVisible
+
             StyledText {
                 objectName: "ProfileHeader_displayName"
                 Layout.maximumWidth: root.width - Style.current.xlPadding

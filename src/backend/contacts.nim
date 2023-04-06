@@ -112,3 +112,6 @@ proc retractContactRequest*(pubkey: string): RpcResponse[JsonNode] {.raises: [Ex
     "id": pubkey
   }]
   result = callPrivateRPC("retractContactRequest".prefix, payload)
+
+proc requestContactInfo*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("requestContactInfoFromMailserver".prefix, %*[pubkey])

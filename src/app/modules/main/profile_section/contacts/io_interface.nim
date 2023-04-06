@@ -124,3 +124,9 @@ method onVerificationRequestCanceled*(self: AccessInterface, publicKey: string) 
 
 method onVerificationRequestUpdatedOrAdded*(self: AccessInterface, VerificationRequest: VerificationRequest) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method requestContactInfo*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onContactInfoRequestFinished*(self: AccessInterface, publicKey: string, ok: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

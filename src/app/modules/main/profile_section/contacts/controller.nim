@@ -89,6 +89,10 @@ proc init*(self: Controller) =
     var args = VerificationRequestArgs(e)
     self.delegate.onVerificationRequestUpdatedOrAdded(args.verificationRequest)
 
+  self.events.on(SIGNAL_CONTACT_INFO_REQUEST_FINISHED) do(e: Args):
+    let args = ContactInfoRequestArgs(e)
+    self.delegate.onContactInfoRequestFinished(args.publicKey, args.ok)
+
 proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
   return self.contactsService.getContactsByGroup(group)
 
@@ -165,3 +169,5 @@ proc getReceivedVerificationRequests*(self: Controller): seq[VerificationRequest
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)
 
+proc requestContactInfo*(self: Controller, publicKey: string) =
+  self.contactsService.requestContactInfo(publicKey)

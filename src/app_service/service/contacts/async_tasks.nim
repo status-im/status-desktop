@@ -5,6 +5,8 @@ include ../../common/json_utils
 from ../../common/conversion import isCompressedPubKey
 include ../../../app/core/tasks/common
 
+import ../../../backend/contacts as status_go
+
 #################################################
 # Async lookup ENS contact
 #################################################
@@ -40,3 +42,24 @@ const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     "reason": arg.reason
   }
   arg.finish(output)
+
+#################################################
+# Async request contact info
+#################################################
+
+type
+  AsyncRequestContactInfoTaskArg = ref object of QObjectTaskArg
+    pubkey: string
+
+const asyncRequestContactInfoTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncRequestContactInfoTaskArg](argEncoded)
+  try:
+    let response = status_go.requestContactInfo(arg.pubkey)
+    arg.finish(%* {
+      "publicKey": arg.pubkey,
+      "response":  response,
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })

@@ -105,6 +105,8 @@ QtObject:
     read = getSentContactRequestsModel
     notify = sentContactRequestsModelChanged
 
+  proc contactInfoRequestFinished(self: View, publicKey: string, ok: bool) {.signal.}
+
   # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
   # proc receivedButRejectedContactRequestsModelChanged(self: View) {.signal.}
   # proc getReceivedButRejectedContactRequestsModel(self: View): QVariant {.slot.} =
@@ -186,3 +188,8 @@ QtObject:
   proc acceptVerificationRequest*(self: View, publicKey: string, response: string) {.slot.} =
     self.delegate.acceptVerificationRequest(publicKey, response)
 
+  proc requestContactInfo*(self: View, publicKey: string) {.slot.} =
+    self.delegate.requestContactInfo(publicKey)
+
+  proc onContactInfoRequestFinished*(self: View, publicKey: string, ok: bool) {.slot.} =
+    self.contactInfoRequestFinished(publicKey, ok)
