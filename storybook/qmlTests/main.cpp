@@ -11,7 +11,6 @@ public slots:
         // custom code that needs QQmlEngine, register QML types, add import paths,...
         const QStringList additionalImportPaths {
             STATUSQ_MODULE_IMPORT_PATH,
-            QML_IMPORT_ROOT + QStringLiteral("/../ui/StatusQ/src"),
             QML_IMPORT_ROOT + QStringLiteral("/../ui/app"),
             QML_IMPORT_ROOT + QStringLiteral("/../ui/imports"),
             QML_IMPORT_ROOT + QStringLiteral("/stubs"),

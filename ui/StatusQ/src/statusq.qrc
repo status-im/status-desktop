@@ -168,7 +168,6 @@
         <file>StatusQ/Popups/StatusSearchPopup.qml</file>
         <file>StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
         <file>StatusQ/Popups/StatusStackModal.qml</file>
-        <file>StatusQ/qmldir</file>
         <file>StatusQ/Components/StatusListPickerProxies.qml</file>
         <file>StatusQ/Layout/StatusSectionLayout.qml</file>
         <file>StatusQ/Layout/StatusMainLayout.qml</file>

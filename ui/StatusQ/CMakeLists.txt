@@ -57,11 +57,13 @@ if (NOT DEFINED STATUSQ_SHADOW_BUILD)
     endif()
 endif()
 
+set(STATUSQ_SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ")
+
 if (${STATUSQ_SHADOW_BUILD})
     set(STATUSQ_MODULE_PATH "${CMAKE_BINARY_DIR}/bin/StatusQ")
     set(STATUSQ_MODULE_IMPORT_PATH ":/")
 else()
-    set(STATUSQ_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ")
+    set(STATUSQ_MODULE_PATH "${STATUSQ_SOURCE_PATH}")
     set(STATUSQ_MODULE_IMPORT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
 endif()
 
@@ -108,7 +110,7 @@ set_target_properties(StatusQ PROPERTIES
 if (${STATUSQ_SHADOW_BUILD})
     set(COPY_QMLDIR_COMMAND
             ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusQ/qmldir
+            ${STATUSQ_SOURCE_PATH}/qmldir
             ${STATUSQ_MODULE_PATH}/qmldir)
     add_custom_command(
             TARGET StatusQ
