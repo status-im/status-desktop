@@ -9,6 +9,7 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
+import shared.controls 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
@@ -52,6 +53,15 @@ SettingsContentBase {
                 text: qsTr("Fleet")
                 currentValue: root.advancedStore.fleet
                 onClicked: fleetModal.open()
+            }
+
+            StatusSettingsLineButton {
+                id: labelScrolling
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Chat scrolling")
+                currentValue: root.advancedStore.isCustomScrollingEnabled ? qsTr("Custom") : qsTr("System")
+                onClicked: scrollingModal.open()
             }
 
             // TODO: replace with StatusQ component
@@ -619,6 +629,18 @@ SettingsContentBase {
             onCancelButtonClicked: {
                 close()
             }
+        }
+
+        ScrollingModal {
+            id: scrollingModal
+
+            title: labelScrolling.text
+            initialVelocity: root.advancedStore.scrollVelocity
+            initialDeceleration: root.advancedStore.scrollDeceleration
+            isCustomScrollingEnabled: root.advancedStore.isCustomScrollingEnabled
+            onVelocityChanged: root.advancedStore.setScrollVelocity(value)
+            onDecelerationChanged: root.advancedStore.setScrollDeceleration(value)
+            onCustomScrollingChanged: root.advancedStore.setCustomScrollingEnabled(enabled)
         }
     }
 }

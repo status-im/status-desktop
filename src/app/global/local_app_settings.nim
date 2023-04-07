@@ -9,6 +9,12 @@ const LAS_KEY_THEME* = "global/theme"
 const DEFAULT_THEME = 2 #system theme, from qml
 const LAS_KEY_GEOMETRY = "global/app_geometry"
 const LAS_KEY_VISIBILITY = "global/app_visibility"
+const LAS_KEY_SCROLL_VELOCITY = "global/scroll_velocity"
+const LAS_KEY_SCROLL_DECELERATION = "global/scroll_deceleration"
+const DEFAULT_SCROLL_VELOCITY = 0 # unset
+const DEFAULT_SCROLL_DECELERATION = 0 # unset
+const LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED = "global/custom_mouse_scroll_enabled"
+const DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED = false
 const DEFAULT_VISIBILITY = 2 #windowed visibility, from qml
 const LAS_KEY_FAKE_LOADING_SCREEN_ENABLED = "global/fake_loading_screen"
 const DEFAULT_FAKE_LOADING_SCREEN_ENABLED = defined(production) and (not existsEnv(TEST_ENVIRONMENT_VAR)) #enabled in production, disabled in development and e2e tests
@@ -83,6 +89,41 @@ QtObject:
     write = setVisibility
     notify = visibilityChanged
 
+  proc isCustomMouseScrollingEnabledChanged*(self: LocalAppSettings) {.signal.}
+  proc getCustomMouseScrollingEnabled*(self: LocalAppSettings): bool {.slot.} =
+    self.settings.value(LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED, newQVariant(DEFAULT_CUSTOM_MOUSE_SCROLLING_ENABLED)).boolVal
+  proc setCustomMouseScrollingEnabled*(self: LocalAppSettings, value: bool) {.slot.} =
+    self.settings.setValue(LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED, newQVariant(value))
+    self.isCustomMouseScrollingEnabledChanged()
+
+  QtProperty[bool] isCustomMouseScrollingEnabled:
+    read = getCustomMouseScrollingEnabled
+    write = setCustomMouseScrollingEnabled
+    notify = isCustomMouseScrollingEnabledChanged
+
+  proc scrollVelocityChanged*(self: LocalAppSettings) {.signal.}
+  proc getScrollVelocity*(self: LocalAppSettings): int {.slot.} =
+    self.settings.value(LAS_KEY_SCROLL_VELOCITY, newQVariant(DEFAULT_SCROLL_VELOCITY)).intVal
+  proc setScrollVelocity*(self: LocalAppSettings, value: int) {.slot.} =
+    self.settings.setValue(LAS_KEY_SCROLL_VELOCITY, newQVariant(value))
+    self.scrollVelocityChanged()
+
+  QtProperty[int] scrollVelocity:
+    read = getScrollVelocity
+    write = setScrollVelocity
+    notify = scrollVelocityChanged
+
+  proc scrollDecelerationChanged*(self: LocalAppSettings) {.signal.}
+  proc getScrollDeceleration*(self: LocalAppSettings): int {.slot.} =
+    self.settings.value(LAS_KEY_SCROLL_DECELERATION, newQVariant(DEFAULT_SCROLL_DECELERATION)).intVal
+  proc setScrollDeceleration*(self: LocalAppSettings, value: int) {.slot.} =
+    self.settings.setValue(LAS_KEY_SCROLL_DECELERATION, newQVariant(value))
+    self.scrollDecelerationChanged()
+
+  QtProperty[int] scrollDeceleration:
+    read = getScrollDeceleration
+    write = setScrollDeceleration
+    notify = scrollDecelerationChanged
 
   proc removeKey*(self: LocalAppSettings, key: string) =
     if(self.settings.isNil):
@@ -95,6 +136,9 @@ QtObject:
       of LAS_KEY_THEME: self.themeChanged()
       of LAS_KEY_GEOMETRY: self.geometryChanged()
       of LAS_KEY_VISIBILITY: self.visibilityChanged()
+      of LAS_KEY_SCROLL_VELOCITY: self.scrollVelocityChanged()
+      of LAS_KEY_SCROLL_DECELERATION: self.scrollDecelerationChanged()
+      of LAS_KEY_CUSTOM_MOUSE_SCROLLING_ENABLED: self.isCustomMouseScrollingEnabledChanged()
 
 
   proc getTestEnvironment*(self: LocalAppSettings): bool {.slot.} =

@@ -1,4 +1,5 @@
-import QtQuick 2.13
+import QtQuick 2.15
+import QtQml 2.15
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
@@ -187,6 +188,18 @@ Item {
         highlightMoveDuration: 200
         preferredHighlightBegin: 0
         preferredHighlightEnd: chatLogView.height / 2
+
+        Binding on flickDeceleration {
+            when: localAppSettings.isCustomMouseScrollingEnabled
+            value: localAppSettings.scrollDeceleration
+            restoreMode: Binding.RestoreBindingOrValue
+        }
+
+        Binding on maximumFlickVelocity {
+            when: localAppSettings.isCustomMouseScrollingEnabled
+            value: localAppSettings.scrollVelocity
+            restoreMode: Binding.RestoreBindingOrValue
+        }
 
         model: messageStore.messagesModel
 

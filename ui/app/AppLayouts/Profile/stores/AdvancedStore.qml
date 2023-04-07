@@ -38,6 +38,10 @@ QtObject {
         readonly property string communityTokens: "communityTokens"
     }
 
+    readonly property bool isCustomScrollingEnabled: localAppSettings.isCustomMouseScrollingEnabled ?? false
+    readonly property real scrollVelocity: localAppSettings.scrollVelocity
+    readonly property real scrollDeceleration: localAppSettings.scrollDeceleration
+
     function logDir() {
         if(!root.advancedModule)
             return ""
@@ -144,5 +148,26 @@ QtObject {
             return
 
         localAppSettings.fakeLoadingScreenEnabled = !localAppSettings.fakeLoadingScreenEnabled
+    }
+
+    function setCustomScrollingEnabled(value) {
+        if(!localAppSettings)
+            return
+
+        localAppSettings.isCustomMouseScrollingEnabled = value
+    }
+
+    function setScrollVelocity(value) {
+        if(!localAppSettings)
+            return
+
+        localAppSettings.scrollVelocity = value
+    }
+
+    function setScrollDeceleration(value) {
+        if(!localAppSettings)
+            return
+
+        localAppSettings.scrollDeceleration = value
     }
 }
