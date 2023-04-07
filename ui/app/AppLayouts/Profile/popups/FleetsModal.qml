@@ -24,8 +24,6 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.leftMargin: Style.current.padding
 
         spacing: 0
 
