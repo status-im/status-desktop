@@ -36,7 +36,7 @@ pipeline {
         stage('MacOS/x86_64') { steps { script {
           macos_x86_64 = jenkins.Build('status-desktop/platforms/macos/x86_64')
         } } }
-        stage('MacOS/arch64') { steps { script {
+        stage('MacOS/aarch64') { steps { script {
           macos_aarch64 = jenkins.Build('status-desktop/platforms/macos/aarch64')
         } } }
       }

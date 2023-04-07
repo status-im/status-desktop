@@ -36,7 +36,7 @@ pipeline {
   }
 
   environment {
-    TARGET = "windows-${getArch()}"
+    TARGET = "windows/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */

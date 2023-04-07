@@ -39,7 +39,7 @@ pipeline {
   }
 
   environment {
-    TARGET = "macos-${getArch()}"
+    TARGET = "macos/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */

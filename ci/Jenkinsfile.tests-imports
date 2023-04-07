@@ -5,10 +5,7 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
-    docker {
-      label 'linux'
-      image 'statusteam/nim-status-client-build:1.2.1-qt5.15.2'
-    }
+    label 'linux && x86_64 && qt-5.15.2'
   }
 
   parameters {
@@ -18,11 +15,11 @@ pipeline {
       choices: ['0', '1', '2']
     )
   }
-
+  
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 20, unit: 'MINUTES')
+    timeout(time: 120, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -36,34 +33,37 @@ pipeline {
   }
 
   environment {
-    TARGET = 'tests/nim'
+    TARGET = 'tests/imports'
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/5.15.2/gcc_64"
+    PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Include library in order to compile the project */
-    LD_LIBRARY_PATH = "$QTDIR/lib"
+    LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
   }
 
   stages {
-    stage('Deps') {
-      steps {
-        sh 'make update'
-        sh 'make deps'
-      }
+    stage('Build') {
+      steps { sh 'make statusq-sanity-checker' }
     }
 
-    stage('Tests') {
-      steps { sh 'make tests-nim-linux' }
+    stage('Check') {
+      steps { sh 'make run-statusq-sanity-checker' }
+    }
+
+    stage('Upload') {
+      steps { script {
+        env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText"
+      } }
     }
   }
 
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    always  { script { env.PKG_URL = "${currentBuild.absoluteUrl}/consoleText" } }
     cleanup { cleanWs() }
   }
 }
