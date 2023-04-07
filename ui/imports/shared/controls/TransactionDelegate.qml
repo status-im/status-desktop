@@ -64,6 +64,7 @@ StatusListItem {
                                                 Utils.compactAddress(modelData.from, 4) :
                                                 ""
     state: "normal"
+    enabled: !loading
     asset.isImage: !loading
     asset.name: root.image
     asset.isLetterIdenticon: loading
