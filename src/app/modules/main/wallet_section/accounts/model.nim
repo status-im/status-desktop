@@ -1,6 +1,8 @@
 import NimQml, Tables, strutils, strformat
 
 import ./item
+import ../../../shared_models/currency_amount
+import ../../../shared_models/token_model
 
 type
   ModelRole {.pure.} = enum
@@ -149,3 +151,9 @@ QtObject:
       if(account.getAddress() == address):
         return newQVariant(account.getAssets())
     return nil
+
+  proc getTokenBalanceOnChain1*(self: Model, address: string, chainId: int, tokenSymbol: string): CurrencyAmount =
+    for account in self.items:
+      if(account.getAddress() == address):
+        return account.getAssets().getTokenBalanceOnChain(chainId, tokenSymbol)
+    return newCurrencyAmount()

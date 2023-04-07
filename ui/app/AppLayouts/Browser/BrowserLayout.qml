@@ -64,7 +64,7 @@ StatusSectionLayout {
         property Component sendTransactionModalComponent: SendModal {
             anchors.centerIn: parent
             selectedAccount: WalletStore.dappBrowserAccount
-            preSelectedAsset: _internal.getEthAsset()
+            preSelectedAsset: store.getAsset(WalletStore.dappBrowserAccount.assets, "ETH")
         }
 
         property Component signMessageModalComponent: SignMessageModal {}
@@ -141,22 +141,6 @@ StatusSectionLayout {
         onCurrentWebViewChanged: {
             findBar.reset();
             browserHeader.addressBar.text = Web3ProviderStore.obtainAddress(currentWebView.url)
-        }
-
-        function getEthAsset() {
-            let assetsList = WalletStore.dappBrowserAccount.assets
-            for(var i=0; i< assetsList.count;i++) {
-                if("ETH" === assetsList.rowData(i, "symbol"))
-                    return {
-                        name: assetsList.rowData(i, "name"),
-                        symbol: assetsList.rowData(i, "symbol"),
-                        totalBalance: assetsList.rowData(i, "totalBalance"),
-                        totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
-                        balances: assetsList.rowData(i, "balances"),
-                        decimals: assetsList.rowData(i, "decimals")
-                    }
-            }
-            return {}
         }
     }
 

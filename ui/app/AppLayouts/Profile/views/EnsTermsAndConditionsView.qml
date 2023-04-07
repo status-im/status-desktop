@@ -50,23 +50,7 @@ Item {
             sendType: Constants.SendType.ENSRegister
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
-            preSelectedAsset: {
-                let assetsList = buyEnsModal.store.currentAccount.assets
-                for(var i=0; i< assetsList.count;i++) {
-                    let symbol = JSON.parse(root.stickersStore.getStatusToken()).symbol
-                    if (symbol !== assetsList.rowData(i, "symbol"))
-                        continue
-                    return {
-                        name: assetsList.rowData(i, "name"),
-                        symbol: assetsList.rowData(i, "symbol"),
-                        totalBalance: JSON.parse(assetsList.rowData(i, "totalBalance")),
-                        totalCurrencyBalance: JSON.parse(assetsList.rowData(i, "totalCurrencyBalance")),
-                        balances: assetsList.rowData(i, "balances"),
-                        decimals: assetsList.rowData(i, "decimals")
-                    }
-                }
-                return {}
-            }
+            preSelectedAsset: store.getAsset(buyEnsModal.store.currentAccount.assets, JSON.parse(root.stickersStore.getStatusToken()).symbol)
             sendTransaction: function() {
                 if(bestRoutes.length === 1) {
                     let path = bestRoutes[0]

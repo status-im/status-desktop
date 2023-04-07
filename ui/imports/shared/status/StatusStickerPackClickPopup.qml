@@ -70,22 +70,7 @@ ModalPopup {
                 sendType: Constants.SendType.StickersBuy
                 preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-                preSelectedAsset: {
-                    let assetsList = buyStickersPackModal.store.currentAccount.assets
-                    for(var i=0; i< assetsList.count;i++) {
-                        let symbol = JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol
-                        if(symbol === assetsList.rowData(i, "symbol"))
-                            return {
-                                name: assetsList.rowData(i, "name"),
-                                symbol: assetsList.rowData(i, "symbol"),
-                                totalBalance: assetsList.rowData(i, "totalBalance"),
-                                totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
-                                balances: assetsList.rowData(i, "balances"),
-                                decimals: assetsList.rowData(i, "decimals")
-                            }
-                    }
-                    return {}
-                }
+                preSelectedAsset: store.getAsset(buyStickersPackModal.store.currentAccount.assets, JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol)
                 sendTransaction: function() {
                     if(bestRoutes.length === 1) {
                         let path = bestRoutes[0]

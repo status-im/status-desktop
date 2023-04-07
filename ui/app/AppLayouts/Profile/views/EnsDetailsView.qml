@@ -120,21 +120,7 @@ Item {
             sendType: Constants.SendType.ENSRelease
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(0)
-            preSelectedAsset: {
-                let assetsList = releaseEnsModal.store.currentAccount.assets
-                for(var i=0; i< assetsList.count;i++) {
-                    if("ETH" === assetsList.rowData(i, "symbol"))
-                        return {
-                            name: assetsList.rowData(i, "name"),
-                            symbol: assetsList.rowData(i, "symbol"),
-                            totalBalance: assetsList.rowData(i, "totalBalance"),
-                            totalCurrencyBalance: assetsList.rowData(i, "totalCurrencyBalance"),
-                            balances: assetsList.rowData(i, "balances"),
-                            decimals: assetsList.rowData(i, "decimals")
-                        }
-                }
-                return {}
-            }
+            preSelectedAsset: store.getAsset(releaseEnsModal.store.currentAccount.assets, "ETH")
             sendTransaction: function() {
                 if(bestRoutes.length === 1) {
                     let path = bestRoutes[0]
