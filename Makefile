@@ -246,9 +246,9 @@ $(STATUSQ): | deps
 			-DSTATUSQ_BUILD_SANDBOX=OFF \
 			-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 			-DSTATUSQ_BUILD_TESTS=OFF \
-			-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON \
 			-B ui/StatusQ/build \
-			-S ui/StatusQ
+			-S ui/StatusQ \
+			$(HANDLE_OUTPUT)
 	+ cmake --build ui/StatusQ/build $(HANDLE_OUTPUT)
 	+ cmake --install ui/StatusQ/build $(HANDLE_OUTPUT)
 

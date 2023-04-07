@@ -25,6 +25,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+find_package(Qt5 COMPONENTS
+        Core Qml Quick QuickControls2 REQUIRED)
+
 add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
 add_subdirectory(../../vendor/qzxing/src qzxing)
 
@@ -71,15 +74,13 @@ set(STATUSQ_MODULE_PATH "${STATUSQ_MODULE_PATH}" PARENT_SCOPE)
 set(STATUSQ_MODULE_IMPORT_PATH "${STATUSQ_MODULE_IMPORT_PATH}" PARENT_SCOPE)
 
 if (${STATUSQ_SHADOW_BUILD})
-#    qt5_add_big_resources(STATUSQ_QRC_COMPILED
-#            src/statusq.qrc
-#            src/assets.qrc)
+    qt5_add_big_resources(STATUSQ_QRC_COMPILED
+            src/statusq.qrc
+            src/assets.qrc)
 endif()
 
 add_library(StatusQ SHARED
-#        ${STATUSQ_QRC_COMPILED} # Doesn't work for reasons unknown
-        src/statusq.qrc
-        src/assets.qrc
+        ${STATUSQ_QRC_COMPILED}
         src/plugin.cpp
         include/StatusQ/QClipboardProxy.h
         include/StatusQ/modelutilsinternal.h
@@ -118,9 +119,6 @@ if (${STATUSQ_SHADOW_BUILD})
             COMMAND ${COPY_QMLDIR_COMMAND}
             COMMENT "Copying qmldir to binary directory")
 endif ()
-
-find_package(Qt5 COMPONENTS
-        Core Qml Quick QuickControls2 REQUIRED)
 
 target_link_libraries(StatusQ PRIVATE
         Qt5::Core
