@@ -94,6 +94,10 @@ ListModel {
          section: "Panels"
     }
     ListElement {
+         title: "ChatAnchorButtonsPanel"
+         section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }

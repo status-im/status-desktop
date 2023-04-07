@@ -22,6 +22,11 @@ Button {
         Primary
     }
 
+    enum TextPosition {
+        Left,
+        Right
+    }
+
     property StatusAssetSettings asset: StatusAssetSettings { }
 
     property bool loading
@@ -40,6 +45,7 @@ Button {
 
     property int size: StatusBaseButton.Size.Large
     property int type: StatusBaseButton.Type.Normal
+    property int textPosition: StatusBaseButton.TextPosition.Right
 
     property bool isRoundIcon: false
 
@@ -110,6 +116,28 @@ Button {
             }
         }
 
+        Component {
+            id: text
+
+            StatusBaseText {
+                Layout.alignment: root.textAlignment
+                Layout.fillWidth: root.textFillWidth
+                opacity: !root.loading
+                font: root.font
+                text: root.text
+                color: d.textColor
+                visible: text
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideRight
+            }
+        }
+
+        Loader {
+            active: root.textPosition === StatusBaseButton.TextPosition.Left
+            visible: active && root.text !== ""
+            sourceComponent: text
+        }
+
         Loader {
             id: iconLoader
 
@@ -118,22 +146,18 @@ Button {
             active: root.icon.name !== ""
             sourceComponent: root.isRoundIcon ? roundIcon : baseIcon
         }
+
         StatusEmoji {
             Layout.preferredWidth: visible ? root.icon.width : 0
             Layout.preferredHeight: visible ? root.icon.height : 0
             visible: root.asset.emoji
             emojiId: Emoji.iconId(root.asset.emoji, root.asset.emojiSize) || ""
         }
-        StatusBaseText {
-            Layout.alignment: root.textAlignment
-            Layout.fillWidth: root.textFillWidth
-            opacity: !root.loading
-            font: root.font
-            text: root.text
-            color: d.textColor
-            visible: text
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
+
+        Loader {
+            active: root.textPosition === StatusBaseButton.TextPosition.Right
+            visible: active && root.text !== ""
+            sourceComponent: text
         }
     }
 
