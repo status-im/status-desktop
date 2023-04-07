@@ -256,13 +256,28 @@ QtObject {
             return undefined
         }
 
-        selectedAccount.prepareTokenBalanceOnChain(chainId, tokenSymbol)
-        return selectedAccount.getPreparedTokenBalanceOnChain()
+        walletSectionAccounts.prepareTokenBalanceOnChain(selectedAccount.address, chainId, tokenSymbol)
+        return walletSectionAccounts.getPreparedTokenBalanceOnChain()
     }
 
     function findTokenSymbolByAddress(address) {
         if (Global.appIsReady)
             return walletSectionAllTokens.findTokenSymbolByAddress(address)
         return ""
+    }
+
+    function getAsset(assetsList, symbol) {
+        for(var i=0; i< assetsList.count;i++) {
+            if(symbol === assetsList.rowData(i, "symbol"))
+                return {
+                    name: assetsList.rowData(i, "name"),
+                    symbol: assetsList.rowData(i, "symbol"),
+                    totalBalance: JSON.parse(assetsList.rowData(i, "totalBalance")),
+                    totalCurrencyBalance: JSON.parse(assetsList.rowData(i, "totalCurrencyBalance")),
+                    balances: assetsList.rowData(i, "balances"),
+                    decimals: assetsList.rowData(i, "decimals")
+                }
+        }
+        return {}
     }
 }

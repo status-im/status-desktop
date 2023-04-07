@@ -30,6 +30,8 @@ QtObject:
       watchOnlyVariant: QVariant
       generatedAccountsVariant: QVariant
       tmpAddress: string
+      tmpChainID: int  # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
+      tmpSymbol: string # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
 
   proc delete*(self: View) =
     self.model.delete
@@ -171,4 +173,22 @@ QtObject:
     self.tmpAddress = address
 
   proc getAccountAssetsByAddress*(self: View): QVariant {.slot.} =
+    self.tmpAddress = ""
     return self.model.getAccountAssetsByAddress(self.tmpAddress)
+
+  # Returning a QVariant from a slot with parameters other than "self" won't compile
+  #proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): QVariant {.slot.} =
+  #  return newQVariant(self.assets.getTokenBalanceOnChain(chainId, tokenSymbol))
+
+  # As a workaround, we do it in two steps: First call prepareTokenBalanceOnChain, then getPreparedTokenBalanceOnChain
+  proc prepareTokenBalanceOnChain*(self: View, address: string, chainId: int, tokenSymbol: string) {.slot.} =
+    self.tmpAddress = address
+    self.tmpChainId = chainId
+    self.tmpSymbol = tokenSymbol
+
+  proc getPreparedTokenBalanceOnChain*(self: View): QVariant {.slot.} =
+    let currencyAmount = self.model.getTokenBalanceOnChain1(self.tmpAddress, self.tmpChainId, self.tmpSymbol)
+    self.tmpAddress = ""
+    self.tmpChainId = 0
+    self.tmpSymbol = "ERROR"
+    return newQVariant(currencyAmount)
