@@ -501,22 +501,6 @@ Rectangle {
         }
 
         isColonPressed = event.key === Qt.Key_Colon;
-
-        if (suggestionsBox.visible) {
-            let aliasName = suggestionsBox.formattedPlainTextFilter;
-            let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition;
-            let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition;
-            let suggestionItem = suggestionsBox.suggestionsModel.get(suggestionsBox.listView.currentIndex);
-            if (aliasName.toLowerCase() === suggestionItem.name.toLowerCase()
-                    && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
-                d.insertMention(aliasName, suggestionItem.publicKey, lastAtPosition, lastCursorPosition);
-            } else if (event.key === Qt.Key_Space) {
-                var plainTextToReplace = messageInputField.getText(lastAtPosition, lastCursorPosition);
-                messageInputField.remove(lastAtPosition, lastCursorPosition);
-                messageInputField.insert(lastAtPosition, plainTextToReplace);
-                suggestionsBox.hide();
-            }
-        }
     }
 
     function getLineStartPosition(selectionStart) {
@@ -716,6 +700,24 @@ Rectangle {
         if (messageInputField.readOnly) {
             messageInputField.readOnly = false;
             messageInputField.cursorPosition = (d.copyTextStart + QClipboardProxy.text.length + d.nbEmojisInClipboard);
+        }
+
+
+        if (suggestionsBox.visible) {
+            let aliasName = suggestionsBox.formattedPlainTextFilter;
+            let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition;
+            let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition;
+            let suggestionItem = suggestionsBox.suggestionsModel.get(suggestionsBox.listView.currentIndex);
+            if (aliasName !== "" && aliasName.toLowerCase() === suggestionItem.name.toLowerCase()
+                    && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
+
+                d.insertMention(aliasName, suggestionItem.publicKey, lastAtPosition, lastCursorPosition);
+            } else if (event.key === Qt.Key_Space) {
+                var plainTextToReplace = messageInputField.getText(lastAtPosition, lastCursorPosition);
+                messageInputField.remove(lastAtPosition, lastCursorPosition);
+                messageInputField.insert(lastAtPosition, plainTextToReplace);
+                suggestionsBox.hide();
+            }
         }
     }
 
