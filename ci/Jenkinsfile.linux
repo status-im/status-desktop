@@ -50,6 +50,7 @@ pipeline {
     NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/5.15.2/gcc_64"
+    PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Control output the filename */
     STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage', arch: getArch())}"
     STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz', arch: getArch())}"
