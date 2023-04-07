@@ -29,9 +29,3 @@ target_link_libraries(sandbox PRIVATE
         Qt5::Quick
         Qt5::QuickControls2
         )
-#
-#if (APPLE)
-#  find_library(AppKit AppKit)
-#  find_library(Foundation Foundation)
-#  target_link_libraries(StatusQ_Sandbox PRIVATE ${AppKit} ${Foundation})
-#endif()

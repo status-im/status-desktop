@@ -302,7 +302,7 @@ StatusDialog {
                         return
                     }
                     let error = "";
-                    let emoji =  StatusQUtils.Emoji.deparseFromParse(nameInput.input.asset.emoji)
+                    let emoji =  StatusQUtils.Emoji.deparse(nameInput.input.asset.emoji)
 
                     if (!isEdit) {
                         //scrollView.communityColor.color.toString().toUpperCase()

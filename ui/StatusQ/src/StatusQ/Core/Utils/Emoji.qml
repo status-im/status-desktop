@@ -2,7 +2,6 @@ pragma Singleton
 
 import QtQuick 2.13
 
-//import shared.status 1.0
 import "../../../assets/twemoji/twemoji.js" as Twemoji
 import "./emojiList.js" as EmojiJSON
 
@@ -18,8 +17,9 @@ QtObject {
         "png": "png",
         "svg": "svg"
     }
-    property string base: Qt.resolvedUrl("../../../assets/twemoji/")
+    readonly property string base: Qt.resolvedUrl("../../../assets/twemoji/")
     property var emojiJSON: EmojiJSON
+
     function parse(text, renderSize = size.small, renderFormat = format.svg) {
         const renderSizes = renderSize.split("x");
         if (!renderSize.includes("x") || renderSizes.length !== 2) {
@@ -63,23 +63,25 @@ QtObject {
     function fromCodePoint(value) {
         return Twemoji.twemoji.convert.fromCodePoint(value)
     }
+    
+    // This regular expression looks for html tag `img` with following attributes in any order:
+    //  - `src` containig with "/assets/twemoji/" substring
+    //  - `alt` (this one is captured)
+    readonly property var emojiRegexp: /<img(?=[^>]*\balt="([^"]*)")(?=[^>]*\bsrc="[^>]*\/assets\/twemoji\/[^>]*")[^>]*>/g
+
     function deparse(value) {
-        // /StatusQ/src/assets/twemoji/
-        return value.replace(/<img src=\".+?\/StatusQ\/src\/assets\/twemoji\/.+?" alt=\"(.+?)\" width=\"[0-9]*\" height=\"[0-9]*\" style=\"(.+?)\" ?\/>/g, "$1");
-    }
-    function deparseFromParse(value) {
-        return value.replace(/<img class=\"emoji\" draggable=\"false\" alt=\"(.+?)\" src=\".+?\/StatusQ\/src\/assets\/twemoji\/.+?" width=\"[0-9]*\" height=\"[0-9]*\" style=\"(.+?)\" ?\/>/g, "$1");
+        return value.replace(emojiRegexp, "$1");
     }
     function hasEmoji(value) {
-        let match = value.match(/<img src=\".+?\/StatusQ\/src\/assets\/twemoji\/.+?" alt=\"(.+?)\" width=\"[0-9]*\" height=\"[0-9]*\" style=\"(.+?)\" ?\/>/g)
+        let match = value.match(emojiRegexp)
         return match && match.length > 0
     }
     function nbEmojis(value) {
-        let match = value.match(/<img src=\".+?\/StatusQ\/src\/assets\/twemoji\/.+?" alt=\"(.+?)\" width=\"[0-9]*\" height=\"[0-9]*\" style=\"(.+?)\" ?\/>/g)
+        let match = value.match(emojiRegexp)
         return match ? match.length : 0
     }
     function getEmojis(value) {
-        return value.match(/<img class=\"emoji\" draggable=\"false\" alt=\"(.+?)\" src=\".+?\/StatusQ\/src\/assets\/twemoji\/.+?" width=\"[0-9]*\" height=\"[0-9]*\" style=\"(.+?)\" ?\/>/g, "$1");
+        return value.match(emojiRegexp, "$1");
     }
     function getEmojiUnicode(shortname) {
 
