@@ -152,7 +152,7 @@ QtObject:
         return newQVariant(account.getAssets())
     return nil
 
-  proc getTokenBalanceOnChain1*(self: Model, address: string, chainId: int, tokenSymbol: string): CurrencyAmount =
+  proc getTokenBalanceOnChain*(self: Model, address: string, chainId: int, tokenSymbol: string): CurrencyAmount =
     for account in self.items:
       if(account.getAddress() == address):
         return account.getAssets().getTokenBalanceOnChain(chainId, tokenSymbol)

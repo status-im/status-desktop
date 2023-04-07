@@ -187,7 +187,7 @@ QtObject:
     self.tmpSymbol = tokenSymbol
 
   proc getPreparedTokenBalanceOnChain*(self: View): QVariant {.slot.} =
-    let currencyAmount = self.model.getTokenBalanceOnChain1(self.tmpAddress, self.tmpChainId, self.tmpSymbol)
+    let currencyAmount = self.model.getTokenBalanceOnChain(self.tmpAddress, self.tmpChainId, self.tmpSymbol)
     self.tmpAddress = ""
     self.tmpChainId = 0
     self.tmpSymbol = "ERROR"

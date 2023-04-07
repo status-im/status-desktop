@@ -25,4 +25,5 @@ TokenDelegate {
     change24Hour.loading: true
     localeCurrencyBalance.loading: true
     textColor: Theme.palette.baseColor1
+    enabled: false
 }
