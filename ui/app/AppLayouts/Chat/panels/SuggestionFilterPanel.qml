@@ -50,8 +50,10 @@ Item {
             return
 
         let filter = getFilter()
-        if (filter === undefined)
+        if (filter === undefined) {
+            formattedFilter = ""
             return
+        }
 
         this.lastAtPosition = -1
         for (let c = cursorPosition === 0 ? 0 : (cursorPosition-1); c >= 0; c--) {
@@ -69,7 +71,7 @@ Item {
             let listItem = sourceModelList.itemAtIndex(i)
             const item = {
                 publicKey: listItem.publicKey,
-                name: listItem.name,
+                name: listItem.name || listItem.alias,
                 nickname: listItem.nickname,
                 alias: listItem.alias,
                 ensName: listItem.ensName,
@@ -82,10 +84,10 @@ Item {
 
         const everyoneItem = {
             publicKey: "0x00001",
-            name: "@everyone",
+            name: "everyone",
             icon: ""
         }
-        if (suggestionsPanelRoot.addSystemSuggestions && isAcceptedItem(filter, everyoneItem)) {
+        if (suggestionsPanelRoot.addSystemSuggestions && (all || isAcceptedItem(filter, everyoneItem))) {
           filterModel.append(everyoneItem)
         }
     }
@@ -123,7 +125,7 @@ Item {
         filterWithoutAt = filterWithoutAt.replace(/\*/g, "")
         suggestionsPanelRoot.formattedFilter = filterWithoutAt
 
-        return !properties.every(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) === null)
+        return properties.some(p => item[p].toLowerCase().match(filterWithoutAt.toLowerCase()) != null)
                && (lastAtPosition > -1)
     }
 
