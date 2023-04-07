@@ -35,7 +35,7 @@ Platform specific conan profile
 - Windows: TODO
 - Linux: `conan install . --profile=./vendor/conan-configs/linux.ini -s build_type=Release --build=missing -if=build/conan -of=build`
 
-## Buid, test & run
+## Build, test & run
 
 Update `CMake` to the [Latest Release](https://cmake.org/download/) or use the Qt's "$QTBASE/Tools/CMake/..."
 
