@@ -31,20 +31,9 @@ add_subdirectory(../../vendor/qzxing/src qzxing)
 ### StatusQ library
 ### TODO: Move to a subdirectory for readability and better structure
 
-#
-#   NOTE:
-#
-#
-#   StatusQ resources (`statusq.qrc` and `assets.qrc`)
-#   are only compiled into plugin resources in Release build.
-#    In Debug build the plugin is built in `src` directory
-#   without resources embedded.
-#
-#
-
 if (NOT DEFINED STATUSQ_SHADOW_BUILD)
 
-    #   About STATUSQ_SHADOW_BUILD option.
+    #   About the STATUSQ_SHADOW_BUILD option.
     #
     #   This is an option that defaults to OFF in Debug mode and ON otherwise.
     #   When ON:
@@ -76,6 +65,7 @@ else()
     set(STATUSQ_MODULE_IMPORT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src")
 endif()
 
+set(STATUSQ_MODULE_PATH "${STATUSQ_MODULE_PATH}" PARENT_SCOPE)
 set(STATUSQ_MODULE_IMPORT_PATH "${STATUSQ_MODULE_IMPORT_PATH}" PARENT_SCOPE)
 
 if (${STATUSQ_SHADOW_BUILD})
@@ -109,7 +99,6 @@ if (APPLE)
 else ()
     target_sources(StatusQ PRIVATE src/statuswindow_other.cpp)
 endif ()
-
 
 set_target_properties(StatusQ PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}

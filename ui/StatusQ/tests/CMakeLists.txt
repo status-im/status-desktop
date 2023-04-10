@@ -37,3 +37,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Qml
     Qt${QT_VERSION_MAJOR}::Quick
 )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+        STATUSQ_MODULE_PATH="${STATUSQ_MODULE_PATH}"
+        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
+        )

@@ -28,8 +28,6 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     endif()
 endif()
 
-add_subdirectory(../../vendor/qzxing/src qzxing)
-add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
 add_subdirectory(lib)
 
 if(ENABLE_DOCS)
