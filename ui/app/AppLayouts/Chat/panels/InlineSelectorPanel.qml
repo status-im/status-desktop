@@ -107,6 +107,12 @@ Item {
                                 selectByMouse: true
                                 selectionColor: Theme.palette.primaryColor2
                                 selectedTextColor: color
+                                onCursorPositionChanged: {
+                                    if (scrollView.contentX > cursorRectangle.x)
+                                        scrollView.contentX = cursorRectangle.x;
+                                    if (scrollView.contentX < ((cursorRectangle.x+Style.current.smallPadding)-scrollView.width) && ((cursorRectangle.x+Style.current.smallPadding) > scrollView.width))
+                                        scrollView.contentX = (cursorRectangle.x-scrollView.width+Style.current.smallPadding);
+                                }
 
                                 cursorDelegate: StatusCursorDelegate {
                                     cursorVisible: edit.cursorVisible
