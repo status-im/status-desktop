@@ -6,16 +6,12 @@ option(STATUSQ_BUILD_SANDBOX "Enable to build StatusQ Sandbox application" ON)
 option(STATUSQ_BUILD_SANITY_CHECKER "Enable to build StatusQ Sanity Checker application" ON)
 option(STATUSQ_BUILD_TESTS "Enable to build StatusQ UI auto tests" ON)
 
-if (APPLE)
-    set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=10.14)
-    set(CMAKE_OSX_ARCHITECTURES "x86_64")
-endif ()
-
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(QZXING_USE_QML ON)
 set(QZXING_MULTIMEDIA ON)
@@ -26,7 +22,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 find_package(Qt5 COMPONENTS
-        Core Qml Quick QuickControls2 REQUIRED)
+        Core Qml Gui Quick QuickControls2 REQUIRED)
 
 add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
 add_subdirectory(../../vendor/qzxing/src qzxing)
@@ -123,6 +119,7 @@ endif ()
 target_link_libraries(StatusQ PRIVATE
         Qt5::Core
         Qt5::Qml
+        Qt5::Gui
         Qt5::Quick
         Qt5::QuickControls2
         SortFilterProxyModel
@@ -130,6 +127,10 @@ target_link_libraries(StatusQ PRIVATE
         )
 
 target_include_directories(StatusQ PRIVATE include)
+
+if (UNIX AND NOT APPLE)
+    target_compile_options(StatusQ PRIVATE "-fPIC")
+endif()
 
 install(TARGETS StatusQ
         LIBRARY DESTINATION StatusQ

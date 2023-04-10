@@ -202,7 +202,6 @@
         <file>StatusQ/Components/StatusQrCodeScanner.qml</file>
         <file>StatusQ/Components/StatusOnlineBadge.qml</file>
         <file>StatusQ/Components/StatusGroupBox.qml</file>
-        <file>StatusQ/Components/StatusImageCropPanel.qml</file>
         <file>StatusQ/Components/StatusDotsLoadingIndicator.qml</file>
         <file>StatusQ/Components/StatusDraggableListItem.qml</file>
         <file>StatusQ/Components/StatusEmojiAndColorComboBox.qml</file>
