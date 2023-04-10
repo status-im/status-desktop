@@ -196,6 +196,8 @@ else
  NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
  STATUSQ := bin/StatusQ/StatusQ.$(LIBSTATUS_EXT)
+ STATUSQ_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
+ STATUSQ_CMAKE_BUILD_PARAMS := --config Release
 endif
 
 ifeq ($(detected_OS),Darwin)
@@ -204,6 +206,7 @@ ifeq ($(detected_OS),Darwin)
 	STATUSGO_MAKE_PARAMS += GOBIN_SHARED_LIB_CFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
 	STATUSKEYCARDGO_MAKE_PARAMS += CGOFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
 	DOTHERSIDE_CMAKE_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
+	STATUSQ_CMAKE_CONFIG_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
 	QRCODEGEN_MAKE_PARAMS += CFLAGS="-target x86_64-apple-macos10.12"
 	NIM_PARAMS += --cpu:amd64 --os:MacOSX --passL:"-arch x86_64" --passC:"-arch x86_64"
   endif
@@ -243,13 +246,15 @@ endif
 $(STATUSQ): | deps
 	echo -e $(BUILD_MSG) "StatusQ"
 	+ cmake -DCMAKE_INSTALL_PREFIX=$(shell pwd)/bin \
+			-DCMAKE_BUILD_TYPE=Release \
 			-DSTATUSQ_BUILD_SANDBOX=OFF \
 			-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 			-DSTATUSQ_BUILD_TESTS=OFF \
+			$(STATUSQ_CMAKE_CONFIG_PARAMS) \
 			-B ui/StatusQ/build \
 			-S ui/StatusQ \
 			$(HANDLE_OUTPUT)
-	+ cmake --build ui/StatusQ/build $(HANDLE_OUTPUT)
+	+ cmake --build ui/StatusQ/build $(STATUSQ_CMAKE_BUILD_PARAMS) $(HANDLE_OUTPUT)
 	+ cmake --install ui/StatusQ/build $(HANDLE_OUTPUT)
 
 $(DOTHERSIDE): | deps
@@ -694,9 +699,9 @@ tests-nim-linux: | $(DOTHERSIDE)
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
 
 statusq-sanity-checker:
-	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target sanity_checker
+	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target SanityChecker
 
 run-statusq-sanity-checker: statusq-sanity-checker
-	ui/StatusQ/build/bin/sanity_checker
+	ui/StatusQ/build/bin/SanityChecker
 
 endif # "variables.mk" was not included

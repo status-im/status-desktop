@@ -1,4 +1,4 @@
-project(sandbox)
+project(Sandbox)
 
 find_package(
         Qt5
@@ -10,7 +10,7 @@ file(GLOB_RECURSE JS_FILES "../*.js")
 
 qt5_add_big_resources(STATUSQ_SANDBOX_QRC qml.qrc)
 
-add_executable(sandbox
+add_executable(${PROJECT_NAME}
         sandboxapp.h
         main.cpp
         sandboxapp.cpp
@@ -19,12 +19,12 @@ add_executable(sandbox
         ${JS_FILES}
         )
 
-target_compile_definitions(sandbox PRIVATE
+target_compile_definitions(${PROJECT_NAME} PRIVATE
         SANDBOX_SRC_DIR="${CMAKE_CURRENT_LIST_DIR}"
         STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
         )
 
-target_link_libraries(sandbox PRIVATE
+target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt5::Core
         Qt5::Quick
         Qt5::QuickControls2
