@@ -185,7 +185,6 @@ ifneq ($(detected_OS),Windows)
  DOTHERSIDE_CMAKE_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
  # order matters here, due to "-Wl,-as-needed"
  NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
- STATUSQ := bin/StatusQ/libStatusQ.$(LIBSTATUS_EXT)
 else
  ifneq ($(QML_DEBUG), false)
   DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
@@ -195,9 +194,6 @@ else
  DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
  NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
- STATUSQ := bin/StatusQ/StatusQ.$(LIBSTATUS_EXT)
- STATUSQ_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
- STATUSQ_CMAKE_BUILD_PARAMS := --config Release
 endif
 
 ifeq ($(detected_OS),Darwin)
@@ -243,19 +239,50 @@ ifeq ($(OUTPUT_CSV), true)
   $(shell touch .update.timestamp)
 endif
 
-$(STATUSQ): | deps
-	echo -e $(BUILD_MSG) "StatusQ"
-	+ cmake -DCMAKE_INSTALL_PREFIX=$(shell pwd)/bin \
-			-DCMAKE_BUILD_TYPE=Release \
-			-DSTATUSQ_BUILD_SANDBOX=OFF \
-			-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
-			-DSTATUSQ_BUILD_TESTS=OFF \
-			$(STATUSQ_CMAKE_CONFIG_PARAMS) \
-			-B ui/StatusQ/build \
-			-S ui/StatusQ \
-			$(HANDLE_OUTPUT)
-	+ cmake --build ui/StatusQ/build $(STATUSQ_CMAKE_BUILD_PARAMS) $(HANDLE_OUTPUT)
-	+ cmake --install ui/StatusQ/build $(HANDLE_OUTPUT)
+##
+##	StatusQ
+##
+
+ifneq ($(detected_OS),Windows)
+ STATUSQ := bin/StatusQ/libStatusQ.$(LIBSTATUS_EXT)
+else
+ STATUSQ := bin/StatusQ/StatusQ.$(LIBSTATUS_EXT)
+ STATUSQ_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
+ STATUSQ_CMAKE_BUILD_PARAMS := --config Release
+endif
+
+STATUSQ_CMAKE_CACHE := ui/StatusQ/build/CMakeCache.txt
+
+$(STATUSQ_CMAKE_CACHE): | deps
+	echo -e "\033[92mConfiguring:\033[39m StatusQ"
+	cmake -DCMAKE_INSTALL_PREFIX=$(shell pwd)/bin \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DSTATUSQ_BUILD_SANDBOX=OFF \
+		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
+		-DSTATUSQ_BUILD_TESTS=OFF \
+		$(STATUSQ_CMAKE_CONFIG_PARAMS) \
+		-B ui/StatusQ/build \
+		-S ui/StatusQ \
+		$(HANDLE_OUTPUT)
+
+$(STATUSQ): | statusq-cmake-build
+	echo -e "\033[92mInstalling:\033[39m StatusQ"
+	cmake --install ui/StatusQ/build \
+		$(HANDLE_OUTPUT)
+
+statusq-cmake-configure: | $(STATUSQ_CMAKE_CACHE) 
+
+statusq-cmake-build: | statusq-cmake-configure
+	echo -e "\033[92mBuilding:\033[39m StatusQ"
+	cmake --build ui/StatusQ/build \
+		$(STATUSQ_CMAKE_BUILD_PARAMS) \
+		$(HANDLE_OUTPUT)
+
+statusq-cmake-install: | $(STATUSQ)
+
+##
+##	DOtherSide
+##
 
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
