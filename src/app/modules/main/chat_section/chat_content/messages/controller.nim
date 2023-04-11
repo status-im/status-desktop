@@ -132,7 +132,10 @@ proc init*(self: Controller) =
     let args = MessagesMarkedAsReadArgs(e)
     if(self.chatId != args.chatId):
       return
-    self.delegate.markAllMessagesRead()
+    if(args.allMessagesMarked):
+      self.delegate.markAllMessagesRead()
+    else:
+      self.delegate.markMessagesAsRead(args.messagesIds)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)

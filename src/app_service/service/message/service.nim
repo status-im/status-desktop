@@ -88,6 +88,8 @@ type
     chatId*: string
     allMessagesMarked*: bool
     messagesIds*: seq[string]
+    messagesCount*: int
+    messagesWithMentionsCount*: int
 
   MessageAddRemoveReactionArgs* = ref object of Args
     chatId*: string
@@ -640,7 +642,7 @@ QtObject:
     var error: string
     discard responseObj.getProp("error", error)
     if(error.len > 0):
-      error "error: ", procName="onMarkCertainMessagesRead", errDescription=error
+      error "error: ", procName="onMarkAllMessagesRead", errDescription=error
       return
 
     var chatId: string
@@ -681,7 +683,21 @@ QtObject:
       for id in messagesIdsArr:
         messagesIds.add(id.getStr)
 
-    let data = MessagesMarkedAsReadArgs(chatId: chatId, allMessagesMarked: false, messagesIds: messagesIds)
+    var count: int
+    discard responseObj.getProp("count", count)
+
+    if count < len(messagesIds):
+      warn "warning: ", procName="onMarkCertainMessagesRead", errDescription="not all messages has been marked as read"
+
+    var countWithMentions: int
+    discard responseObj.getProp("countWithMentions", countWithMentions)
+
+    let data = MessagesMarkedAsReadArgs(
+      chatId: chatId, 
+      allMessagesMarked: false,
+      messagesIds: messagesIds,
+      messagesCount: count,
+      messagesWithMentionsCount: countWithMentions)
     self.events.emit(SIGNAL_MESSAGES_MARKED_AS_READ, data)
 
   proc markCertainMessagesRead*(self: Service, chatId: string, messagesIds: seq[string]) =

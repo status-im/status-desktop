@@ -311,3 +311,38 @@ suite "simulations":
     check(model.items[5].id == message1.id)
     check(model.items[6].id == message0_fetchMoreMessages.id)
     check(model.items[7].id == message0_chatIdentifier.id)
+
+
+suite "mark as seen":
+  setup:
+    let model = newModel()
+
+    var msg1 = createTestMessageItem("0xa", 1)
+    msg1.seen=false
+    let msg2 = createTestMessageItem("0xb", 2)
+    msg2.seen=false
+    let msg3 = createTestMessageItem("0xc", 3)
+    msg3.seen=true
+
+    model.insertItemsBasedOnClock(@[msg1, msg2, msg3])
+    require(model.items.len == 3)
+    check(model.items[0].seen == true)
+    check(model.items[1].seen == false)
+    check(model.items[2].seen == false)
+
+  test "mark all as seen":
+    model.markAllAsSeen()
+    check(model.items[0].seen == true)
+    check(model.items[1].seen == true)
+    check(model.items[2].seen == true)
+
+  test "mark some as seen":
+    model.markAsSeen(@["0xa"])
+    check(model.items[0].seen == true)
+    check(model.items[1].seen == false)
+    check(model.items[2].seen == true)
+
+    model.markAsSeen(@["0xb"])
+    check(model.items[0].seen == true)
+    check(model.items[1].seen == true)
+    check(model.items[2].seen == true)

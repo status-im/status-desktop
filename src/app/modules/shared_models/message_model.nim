@@ -713,6 +713,21 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.Seen.int])
 
+  proc markAsSeen*(self: Model, messages: seq[string]) =
+    var messagesSet = toHashSet(messages)
+
+    for i in 0 ..< self.items.len:
+      let currentItemID = self.items[i].id
+
+      if messagesSet.contains(currentItemID):
+        self.items[i].seen = true
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.Seen.int])
+        messagesSet.excl(currentItemID)
+
+      if messagesSet.len == 0:
+        return
+
   proc updateAlbumIfExists*(self: Model, albumId: string, messageImage: string, messageId: string): bool =
     for i in 0 ..< self.items.len:
       let item = self.items[i]

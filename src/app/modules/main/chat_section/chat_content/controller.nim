@@ -224,6 +224,9 @@ proc unblockChat*(self: Controller) =
 proc markAllMessagesRead*(self: Controller) =
   self.messageService.markAllMessagesRead(self.chatId)
 
+proc markMessageRead*(self: Controller, msgID: string) =
+  self.messageService.markCertainMessagesRead(self.chatId, @[msgID])
+
 proc clearChatHistory*(self: Controller) =
   self.chatService.clearChatHistory(self.chatId)
 

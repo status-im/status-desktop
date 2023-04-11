@@ -712,6 +712,9 @@ method removeNewMessagesMarker*(self: Module) =
 method markAllMessagesRead*(self: Module) =
   self.view.model().markAllAsSeen()
 
+method markMessagesAsRead*(self: Module, messages: seq[string]) =
+  self.view.model().markAsSeen(messages)
+
 method updateCommunityDetails*(self: Module, community: CommunityDto) =
   self.view.setAmIChatAdmin(community.admin)
   self.view.setIsPinMessageAllowedForMembers(community.adminSettings.pinMessageAllMembersEnabled)

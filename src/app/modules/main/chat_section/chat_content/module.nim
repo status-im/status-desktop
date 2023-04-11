@@ -274,6 +274,9 @@ method unblockChat*(self: Module) =
 method markAllMessagesRead*(self: Module) =
   self.controller.markAllMessagesRead()
 
+method markMessageRead*(self: Module, msgID: string) =
+  self.controller.markMessageRead(msgID)
+
 method clearChatHistory*(self: Module) =
   self.controller.clearChatHistory()
 

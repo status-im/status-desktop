@@ -142,16 +142,21 @@ const asyncMarkCertainMessagesReadTask: Task = proc(argEncoded: string) {.gcsafe
 
   let response = status_go.markCertainMessagesFromChatWithIdAsRead(arg.chatId, arg.messagesIds)
 
-  var numberOfAffectedMessages: int
-  discard response.result.getProp("count", numberOfAffectedMessages)
+  var count: int
+  discard response.result.getProp("count", count)
+
+  var countWithMentions: int
+  discard response.result.getProp("countWithMentions", countWithMentions)
 
   var error = ""
-  if(numberOfAffectedMessages == 0):
+  if(count == 0):
     error = "no message has updated"
 
   let responseJson = %*{
     "chatId": arg.chatId,
     "messagesIds": arg.messagesIds,
+    "count": count,
+    "countWithMentions": countWithMentions,
     "error": error
   }
   arg.finish(responseJson)
