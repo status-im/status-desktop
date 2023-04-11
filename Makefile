@@ -239,6 +239,7 @@ ifeq ($(OUTPUT_CSV), true)
   $(shell touch .update.timestamp)
 endif
 
+
 ##
 ##	StatusQ
 ##
@@ -252,12 +253,12 @@ else
 endif
 
 STATUSQ_BUILD_PATH := ui/StatusQ/build
-STATSUQ_INSTALL_PATH := $(shell pwd)/bin
+STATUSQ_INSTALL_PATH := $(shell pwd)/bin
 STATUSQ_CMAKE_CACHE := $(STATUSQ_BUILD_PATH)/CMakeCache.txt
 
 $(STATUSQ_CMAKE_CACHE): | deps
 	echo -e "\033[92mConfiguring:\033[39m StatusQ"
-	cmake -DCMAKE_INSTALL_PREFIX=$(STATSUQ_INSTALL_PATH) \
+	cmake -DCMAKE_INSTALL_PREFIX=$(STATUSQ_INSTALL_PATH) \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
@@ -287,7 +288,7 @@ statusq-install: | $(STATUSQ)
 statusq-clean:
 	echo -e "\033[92mCleaning:\033[39m StatusQ"
 	cmake --build $(STATUSQ_BUILD_PATH) --target clean
-	rm -rf $(STATSUQ_INSTALL_PATH)/StatusQ
+	rm -rf $(STATUSQ_INSTALL_PATH)/StatusQ
 
 statusq-sanity-checker:
 	cmake \
