@@ -237,25 +237,23 @@ method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
 
-proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto, networks: seq[NetworkDto]) : TokenItem =
+proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto, network: NetworkDto) : TokenItem =
   var chainName, chainIcon: string
-  for network in networks:
-    if network.chainId == tokenDto.chainId:
-      chainName = network.chainName
-      chainIcon = network.iconURL
-      break
+  if network != nil:
+    chainName = network.chainName
+    chainIcon = network.iconURL
   result = initTokenItem(tokenDto, chainName, chainIcon)
 
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
   var communityDetails: CommunityDto
   var communityTokensItems: seq[TokenItem]
-  let networks = self.controller.getNetworks()
   if (isCommunity):
     communityDetails = self.controller.getCommunityById(channelGroup.id)
     let communityTokens = self.controller.getCommunityTokens(channelGroup.id)
     communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
-      result = self.createTokenItem(tokenDto, networks)
+      let network = self.controller.getNetwork(tokenDto.chainId)
+      result = self.createTokenItem(tokenDto, network)
     )
 
   let unviewedCount = channelGroup.unviewedMessagesCount
@@ -987,8 +985,8 @@ method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdat
 method onCommunityTokenDeployed*[T](self: Module[T], communityToken: CommunityTokenDto) {.base.} =
   let item = self.view.model().getItemById(communityToken.communityId)
   if item.id != "":
-    let networks = self.controller.getNetworks()
-    item.appendCommunityToken(self.createTokenItem(communityToken, networks))
+    let network = self.controller.getNetwork(communityToken.chainId)
+    item.appendCommunityToken(self.createTokenItem(communityToken, network))
 
 method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, contractAddress: string, deployState: DeployState) =
   let item = self.view.model().getItemById(communityId)

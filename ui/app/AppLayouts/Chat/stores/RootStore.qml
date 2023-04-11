@@ -9,6 +9,7 @@ QtObject {
     id: root
 
     property var contactsStore
+    property var communityTokensStore
 
     property var networkConnectionStore
 
@@ -16,8 +17,6 @@ QtObject {
         activeSectionId: mainModuleInst.activeSection.id
         chatCommunitySectionModuleInst: chatCommunitySectionModule
     }
-
-    readonly property CommunityTokensStore communityTokensStore: CommunityTokensStore { rootStore: root }
 
     property bool openCreateChat: false
     property string createChatInitMessage: ""

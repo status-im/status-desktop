@@ -21,21 +21,15 @@ StatusScrollView {
                        string accountName,
                        string accountAddress)
 
-    enum DeployState {
-          Failed,
-          InProgress,
-          Deployed
-    }
-
     QtObject {
         id: d
 
         function getStateText(deployState) {
-            if(deployState === CommunityMintedTokensView.DeployState.Failed) {
+            if(deployState === Constants.DeployState.Failed) {
                 return qsTr("Failed")
             }
 
-            if(deployState === CommunityMintedTokensView.DeployState.InProgress) {
+            if(deployState === Constants.DeployState.InProgress) {
                 return qsTr("Minting...")
             }
             return ""

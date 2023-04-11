@@ -1,9 +1,9 @@
 import QtQuick 2.15
+import utils 1.0
 
 QtObject {
     id: root
 
-    property var rootStore
     property var communityTokensModuleInst: communityTokensModule ?? null
 
     // Network selection properties:
@@ -56,9 +56,6 @@ QtObject {
                    ])
     }
 
-    signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
-    signal selfDestructFeeUpdated(string value) // TO BE REMOVED
-
     // Minting tokens:
     function deployCollectible(communityId, accountAddress, name, symbol, description, supply,
                              infiniteSupply, transferable, selfDestruct, chainId, artworkSource, accountName)
@@ -68,10 +65,17 @@ QtObject {
                                                     infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
     }
 
+    signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
+    signal deploymentStateChanged(int status, string url)
+    signal selfDestructFeeUpdated(string value) // TO BE REMOVED
+
     readonly property Connections connections: Connections {
       target: communityTokensModuleInst
       function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
           root.deployFeeUpdated(ethCurrency, fiatCurrency, errorCode)
+      }
+      function onDeploymentStateChanged(status, url) {
+          root.deploymentStateChanged(status, url)
       }
     }
 

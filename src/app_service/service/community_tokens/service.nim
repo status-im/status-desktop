@@ -37,11 +37,14 @@ type
   CommunityTokenDeployedStatusArgs* = ref object of Args
     communityId*: string
     contractAddress*: string
+    chainId*: int
+    transactionHash*: string
     deployState*: DeployState
 
 type
   CommunityTokenDeployedArgs* = ref object of Args
     communityToken*: CommunityTokenDto
+    transactionHash*: string
 
 type
   ComputeFeeErrorCode* {.pure.} = enum
@@ -55,6 +58,10 @@ type
     ethCurrency*: CurrencyAmount
     fiatCurrency*: CurrencyAmount
     errorCode*: ComputeFeeErrorCode
+
+type ContractTuple = tuple
+    address: string
+    chainId: int
 
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
@@ -72,6 +79,7 @@ QtObject:
       walletAccountService: wallet_account_service.Service
       tempAccountAddress: string
       tempChainId: int
+      addressAndTxMap: Table[ContractTuple, string]
 
   proc delete*(self: Service) =
       self.QObject.delete
@@ -92,6 +100,7 @@ QtObject:
     result.tokenService = tokenService
     result.settingsService = settingsService
     result.walletAccountService = walletAccountService
+    result.addressAndTxMap = initTable[ContractTuple, string]()
 
   proc init*(self: Service) =
     self.events.on(PendingTransactionTypeDto.CollectibleDeployment.event) do(e: Args):
@@ -104,7 +113,9 @@ QtObject:
         discard updateCommunityTokenState(tokenDto.address, deployState) #update db state
       except RpcException:
         error "Error updating collectibles contract state", message = getCurrentExceptionMsg()
-      let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address, deployState: deployState)
+      let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address,
+                                                  deployState: deployState, chainId: tokenDto.chainId,
+                                                  transactionHash: self.addressAndTxMap.getOrDefault((tokenDto.address,tokenDto.chainId)))
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
     self.events.on(PendingTransactionTypeDto.CollectibleAirdrop.event) do(e: Args):
@@ -147,6 +158,8 @@ QtObject:
       debug "Deployed contract address ", contractAddress=contractAddress
       debug "Deployment transaction hash ", transactionHash=transactionHash
 
+      self.addressAndTxMap[(contractAddress, chainId)] = transactionHash
+
       var communityToken: CommunityTokenDto
       communityToken.tokenType = TokenType.ERC721
       communityToken.communityId = communityId
@@ -166,7 +179,7 @@ QtObject:
       # save token to db
       let communityTokenJson = tokens_backend.addCommunityToken(communityToken)
       communityToken = communityTokenJson.result.toCommunityTokenDto()
-      let data = CommunityTokenDeployedArgs(communityToken: communityToken)
+      let data = CommunityTokenDeployedArgs(communityToken: communityToken, transactionHash: transactionHash)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYED, data)
 
       # observe transaction state
