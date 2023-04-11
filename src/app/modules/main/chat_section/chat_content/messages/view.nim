@@ -229,3 +229,6 @@ QtObject:
   QtProperty[bool] loading:
     read = isLoading
     notify = loadingChanged
+
+  proc firstUnseenMentionMessageId(self: View): string {.slot.} =
+    return self.model.getFirstUnseenMentionMessageId()

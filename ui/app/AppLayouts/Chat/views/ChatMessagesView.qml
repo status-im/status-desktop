@@ -18,6 +18,7 @@ import shared.controls 1.0
 import shared.views.chat 1.0
 
 import "../controls"
+import "../panels"
 
 Item {
     id: root
@@ -185,13 +186,10 @@ Item {
         highlightMoveDuration: 200
         preferredHighlightBegin: 0
         preferredHighlightEnd: chatLogView.height/2
-        
+
         model: messageStore.messagesModel
 
-        onContentYChanged: {
-            scrollDownButton.visible = contentHeight - (d.scrollY + height) > 400
-            d.loadMoreMessagesIfScrollBelowThreshold()
-        }
+        onContentYChanged: d.loadMoreMessagesIfScrollBelowThreshold()
 
         onCountChanged: {
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()
@@ -215,41 +213,24 @@ Item {
             visible: chatLogView.visibleArea.heightRatio < 1
         }
 
-        Button {
-            id: scrollDownButton
-
+        ChatAnchorButtonsPanel {
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
 
-            visible: false
-            height: 32
-            width: arrowImage.width + 2 * Style.current.halfPadding
-
-            background: Rectangle {
-                color: Style.current.buttonSecondaryColor
-                border.width: 0
-                radius: 16
+            mentionsCount: d.chatDetails ? d.chatDetails.notificationCount : 0
+            recentMessagesButtonVisible: {
+                chatLogView.contentY // trigger binding on contentY change
+                return chatLogView.contentHeight - (d.scrollY + chatLogView.height) > 400
             }
 
-            onClicked: {
-                scrollDownButton.visible = false
-                chatLogView.positionViewAtBeginning()
-            }
-
-            StatusIcon {
-                id: arrowImage
-                anchors.centerIn: parent
-                width: 24
-                height: 24
-                icon: "arrow-down"
-                color: Style.current.pillButtonTextColor
-            }
-
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                acceptedButtons: Qt.NoButton
+            onRecentMessagesButtonClicked: chatLogView.positionViewAtBeginning()
+            onMentionsButtonClicked: {
+                let id = messageStore.firstUnseenMentionMessageId()
+                if (id !== "") {
+                    messageStore.jumpToMessage(id)
+                    chatContentModule.markMessageRead(id)
+                }
             }
         }
 

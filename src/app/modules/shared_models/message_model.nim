@@ -728,6 +728,12 @@ QtObject:
       if messagesSet.len == 0:
         return
 
+  proc getFirstUnseenMentionMessageId*(self: Model): string =
+    result = ""
+    for i in countdown(self.items.len - 1, 0):
+      if not self.items[i].seen and self.items[i].mentioned:
+        return self.items[i].id
+
   proc updateAlbumIfExists*(self: Model, albumId: string, messageImage: string, messageId: string): bool =
     for i in 0 ..< self.items.len:
       let item = self.items[i]

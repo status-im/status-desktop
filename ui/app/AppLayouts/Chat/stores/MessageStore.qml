@@ -210,4 +210,16 @@ QtObject {
             return
         messageModule.resendMessage(messageId)
     }
+
+    function jumpToMessage(messageId) {
+        if(!messageModule)
+            return
+        messageModule.jumpToMessage(messageId)
+    }
+
+    function firstUnseenMentionMessageId() {
+        if(!messageModule)
+            return ""
+        return messageModule.firstUnseenMentionMessageId()
+    }
 }
