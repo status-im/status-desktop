@@ -338,6 +338,14 @@ Item {
                             onTriggered: popups.openCommunityProfilePopup(appMain.rootStore, model, communityContextMenu.chatCommunitySectionModule)
                         }
 
+                        StatusAction {
+                            text: model.muted ? qsTr("Unmute Community") : qsTr("Mute Community")
+                            icon.name: model.muted ? "notification-muted" : "notification"
+                            onTriggered: {
+                                communityContextMenu.chatCommunitySectionModule.setCommunityMuted(!model.muted)
+                            }
+                        }
+
                         StatusMenuSeparator {}
 
                         StatusAction {

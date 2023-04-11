@@ -258,6 +258,10 @@ proc init*(self: Controller) =
     for community in args.communities:
       self.delegate.communityEdited(community)
 
+  self.events.on(SIGNAL_COMMUNITY_MUTED) do(e:Args):
+    let args = CommunityMutedArgs(e)
+    self.delegate.onCommunityMuted(args.communityId, args.muted)
+
   self.events.on(SIGNAL_ENS_RESOLVED) do(e: Args):
     var args = ResolvedContactArgs(e)
     self.delegate.resolvedENS(args.pubkey, args.address, args.uuid, args.reason)
