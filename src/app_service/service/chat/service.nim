@@ -282,6 +282,8 @@ QtObject:
       return false
 
     for chat in self.channelGroups[communityId].chats:
+      if chat.categoryId != categoryId:
+        continue
       if chat.unviewedMessagesCount > 0 or chat.unviewedMentionsCount > 0:
         return true
     return false
