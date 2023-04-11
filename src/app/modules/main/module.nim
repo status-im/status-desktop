@@ -923,6 +923,12 @@ method communityEdited*[T](
   let channelGroup = community.toChannelGroupDto()
   self.view.editItem(self.createChannelGroupItem(channelGroup))
 
+method onCommunityMuted*[T](
+    self: Module[T],
+    communityId: string,
+    muted: bool) =
+  self.view.model.setMuted(communityId, muted)
+
 method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): VerificationRequest =
   self.controller.getVerificationRequestFrom(publicKey)
 

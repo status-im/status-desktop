@@ -250,6 +250,7 @@ QtObject:
     self.countChanged()
 
   proc setMuted*(self: SectionModel, id: string, muted: bool) = 
+
     let index = self.getItemIndex(id)
     if (index == -1):
       return
@@ -258,7 +259,6 @@ QtObject:
     let dataIndex = self.createIndex(index, 0, nil)
     defer: dataIndex.delete
     self.dataChanged(dataIndex, dataIndex, @[ModelRole.Muted.int])
-
 
   proc editItem*(self: SectionModel, item: SectionItem) =
     let index = self.getItemIndex(item.id)
