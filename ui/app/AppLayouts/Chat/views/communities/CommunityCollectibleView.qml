@@ -51,12 +51,6 @@ StatusScrollView {
         readonly property int iconSize: 20
     }
 
-    enum DeployState {
-          Failed,
-          InProgress,
-          Deployed
-    }
-
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
     padding: 0
@@ -68,7 +62,7 @@ StatusScrollView {
         spacing: Style.current.padding
 
         RowLayout {
-            visible: !root.preview && (root.deployState === CommunityCollectibleView.DeployState.InProgress)
+            visible: !root.preview && (root.deployState === Constants.DeployState.InProgress)
             spacing: Style.current.halfPadding
 
             StatusDotsLoadingIndicator {}

@@ -474,5 +474,5 @@ proc getVerificationRequestFrom*(self: Controller, publicKey: string): Verificat
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   self.communityTokensService.getCommunityTokens(communityId)
 
-proc getNetworks*(self:Controller): seq[NetworkDto] =
-  self.networksService.getNetworks()
+proc getNetwork*(self:Controller, chainId: int): NetworkDto =
+  self.networksService.getNetwork(chainId)

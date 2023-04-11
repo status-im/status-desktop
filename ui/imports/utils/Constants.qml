@@ -883,6 +883,12 @@ QtObject {
         Everyone = 4
     }
 
+    enum DeployState {
+          Failed,
+          InProgress,
+          Deployed
+    }
+
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"
     }

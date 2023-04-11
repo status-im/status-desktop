@@ -2,6 +2,7 @@ import NimQml, json, stint, strutils, chronicles
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../../app_service/service/transaction/service as transaction_service
+import ../../../../../app_service/service/network/service as networks_service
 import ../../../../../app_service/service/community/dto/community
 import ../../../../../app_service/service/accounts/utils as utl
 import ../../../../core/eventemitter
@@ -38,12 +39,13 @@ proc newCommunityTokensModule*(
     parent: parent_interface.AccessInterface,
     events: EventEmitter,
     communityTokensService: community_tokens_service.Service,
-    transactionService: transaction_service.Service): Module =
+    transactionService: transaction_service.Service,
+    networksService: networks_service.Service): Module =
   result = Module()
   result.parent = parent
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newCommunityTokensController(result, events, communityTokensService, transactionService)
+  result.controller = controller.newCommunityTokensController(result, events, communityTokensService, transactionService, networksService)
 
 method delete*(self: Module) =
   self.view.delete
@@ -123,3 +125,8 @@ method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurre
 
 method computeDeployFee*(self: Module, chainId: int, accountAddress: string) =
   self.controller.computeDeployFee(chainId, accountAddress)
+
+method onCommunityTokenDeployStateChanged*(self: Module, chainId: int, transactionHash: string, deployState: DeployState) =
+  let network = self.controller.getNetwork(chainId)
+  let url = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
+  self.view.emitDeploymentStateChanged(deployState.int, url)

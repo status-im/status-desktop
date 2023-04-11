@@ -49,12 +49,14 @@ Item {
     property RootStore rootStore: RootStore {}
     property var rootChatStore: ChatStores.RootStore {
         contactsStore: appMain.rootStore.contactStore
+        communityTokensStore: appMain.communityTokensStore
         emojiReactionsModel: appMain.rootStore.emojiReactionsModel
         openCreateChat: createChatView.opened
         networkConnectionStore: appMain.networkConnectionStore
     }
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
+    property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
     // set from main.qml
     property var sysPalette
 
@@ -876,6 +878,7 @@ Item {
 
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
+                                    communityTokensStore: appMain.communityTokensStore
                                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     openCreateChat: createChatView.opened
                                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
@@ -1000,6 +1003,7 @@ Item {
 
                                         rootStore: ChatStores.RootStore {
                                             contactsStore: appMain.rootStore.contactStore
+                                            communityTokensStore: appMain.communityTokensStore
                                             emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                             openCreateChat: createChatView.opened
                                             chatCommunitySectionModule: {
@@ -1041,10 +1045,10 @@ Item {
                     sourceComponent: CreateChatView {
                         rootStore: ChatStores.RootStore {
                             contactsStore: appMain.rootStore.contactStore
+                            communityTokensStore: appMain.communityTokensStore
                             emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                             openCreateChat: createChatView.opened
                             chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
-
                         }
                         emojiPopup: statusEmojiPopup
                         stickersPopup: statusStickersPopupLoader.item
@@ -1064,6 +1068,7 @@ Item {
                 height: appView.height - _buttonSize * 2
                 store: ChatStores.RootStore {
                     contactsStore: appMain.rootStore.contactStore
+                    communityTokensStore: appMain.communityTokensStore
                     emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                     openCreateChat: createChatView.opened
                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()

@@ -354,15 +354,32 @@ StatusSectionLayout {
                         mintPanel.isFeeLoading = true
                     }
 
-                    // TODO: Self-destruct backend
-                    function onSelfDestructFeeUpdated(value) {
-                        // TODO better error handling
-                        if (value === "-") {
-                            mintPanel.isFeeLoading = true
-                        } else {
-                            mintPanel.isFeeLoading = false
-                            mintPanel.feeText = value
+                    function onDeploymentStateChanged(status, url) {
+                        let title = ""
+                        let loading = false
+                        let type = Constants.ephemeralNotificationType.normal
+                        switch (status) {
+                        case Constants.DeployState.InProgress:
+                            title = qsTr("Token is being minted...")
+                            loading = true
+                            break
+                        case Constants.DeployState.Deployed:
+                            title = qsTr("Token minting finished")
+                            type = Constants.ephemeralNotificationType.success
+                            break
+                        case Constants.DeployState.Failed:
+                            title = qsTr("Token minting failed")
+                            break
+                        default:
+                            console.warn("Unknown deploy state: "+status)
+                            return
                         }
+                        Global.displayToastMessage(title,
+                                                   qsTr("View on etherscan"),
+                                                   "",
+                                                   loading,
+                                                   type,
+                                                   url)
                     }
                 }
             }
