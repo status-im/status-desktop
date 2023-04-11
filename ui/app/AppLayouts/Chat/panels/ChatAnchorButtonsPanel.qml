@@ -14,6 +14,8 @@ Item {
     property int mentionsCount
     property int recentMessagesCount
 
+    property alias recentMessagesButtonVisible: recentMessagesButton.visible
+
     signal mentionsButtonClicked
     signal recentMessagesButtonClicked
 
@@ -57,6 +59,8 @@ Item {
         }
 
         AnchorButton {
+            id: recentMessagesButton
+
             text: recentMessagesCount <= 0 ? "" : d.limitNumberTo99(recentMessagesCount)
             normalColor: Style.current.buttonSecondaryColor
             type: StatusRoundButton.Type.Tertiary
