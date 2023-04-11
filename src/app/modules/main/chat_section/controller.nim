@@ -147,14 +147,12 @@ proc init*(self: Controller) =
   self.events.on(message_service.SIGNAL_MESSAGES_MARKED_AS_READ) do(e: Args):
     let args = message_service.MessagesMarkedAsReadArgs(e)
     # update chat entity in chat service
-    var chat = self.chatService.getChatById(args.chatId)
+    let chat = self.chatService.getChatById(args.chatId)
     if ((self.isCommunitySection and chat.communityId != self.sectionId) or
         (not self.isCommunitySection and chat.communityId != "")):
       return
-    chat.unviewedMessagesCount = 0
-    chat.unviewedMentionsCount = 0
-    self.chatService.updateOrAddChat(chat)
-    self.delegate.onMarkAllMessagesRead(args.chatId)
+    self.chatService.updateUnreadMessagesAndMentions(args.chatId, args.allMessagesMarked, args.messagesCount, args.messagesWithMentionsCount)
+    self.delegate.updateUnreadMessagesAndMentions(args.chatId)
 
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
     let args = chat_service.ChatArgs(e)

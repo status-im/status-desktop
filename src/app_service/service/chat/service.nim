@@ -725,3 +725,15 @@ QtObject:
           result.add(member)
     except Exception as e:
       error "error while getting members", msg = e.msg, communityID, chatId
+
+  proc updateUnreadMessagesAndMentions*(self: Service, chatID: string, markAllAsRead: bool, markAsReadCount: int, markAsReadMentionsCount: int) =
+    var chat = self.getChatById(chatID)
+    if chat.id == "":
+      return
+    if markAllAsRead:
+      chat.unviewedMessagesCount = 0
+      chat.unviewedMentionsCount = 0
+    else:
+      chat.unviewedMessagesCount = max(0, chat.unviewedMessagesCount - markAsReadCount)
+      chat.unviewedMentionsCount = max(0, chat.unviewedMentionsCount - markAsReadMentionsCount)
+    self.updateOrAddChat(chat)

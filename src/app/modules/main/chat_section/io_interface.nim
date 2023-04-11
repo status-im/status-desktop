@@ -111,7 +111,7 @@ method onChatMuted*(self: AccessInterface, chatId: string) {.base.} =
 method onChatUnmuted*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onMarkAllMessagesRead*(self: AccessInterface, chatId: string) {.base.} =
+method updateUnreadMessagesAndMentions*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onContactAdded*(self: AccessInterface, publicKey: string) {.base.} =

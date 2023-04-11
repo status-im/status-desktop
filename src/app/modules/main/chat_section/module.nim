@@ -827,9 +827,12 @@ method onJoinedCommunity*(self: Module) =
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
   self.controller.requestToJoinCommunityAuthenticated(password)
 
-method onMarkAllMessagesRead*(self: Module, chatId: string) =
-  self.updateBadgeNotifications(chatId, hasUnreadMessages=false, unviewedMentionsCount=0)
+method updateUnreadMessagesAndMentions*(self: Module, chatId: string) =
   let chatDetails = self.controller.getChatDetails(chatId)
+  self.updateBadgeNotifications(
+    chatId=chatId,
+    hasUnreadMessages=chatDetails.unviewedMessagesCount > 0,
+    unviewedMentionsCount=chatDetails.unviewedMentionsCount)
   if chatDetails.categoryId != "":
     let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chatDetails.communityId, chatDetails.categoryId)
     self.view.chatsModel().setCategoryHasUnreadMessages(chatDetails.categoryId, hasUnreadMessages)

@@ -164,6 +164,9 @@ method resetAndScrollToNewMessagesMarker*(self: AccessInterface) =
 method markAllMessagesRead*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
 
+method markMessagesAsRead*(self: AccessInterface, messages: seq[string]) =
+  raise newException(ValueError, "No implementation available")
+
 method updateCommunityDetails*(self: AccessInterface, community: CommunityDto) =
   raise newException(ValueError, "No implementation available")
 
