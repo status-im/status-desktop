@@ -929,7 +929,9 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
   let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
-  let plainText = singletonInstance.utils.plainText(renderedMessageText)
+  var plainText = singletonInstance.utils.plainText(renderedMessageText)
+  if ContentType(message.contentType) == ContentType.Image and len(plainText) == 0:
+    plainText = "🖼️"
   var notificationTitle = contactDetails.defaultDisplayName
 
   case chatDetails.chatType:
