@@ -517,7 +517,7 @@ QtObject:
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
       # members list was changed
-      if community.isMember and community.members != prev_community.members:
+      if (community.isMember or community.tokenPermissions.len == 0) and community.members != prev_community.members:
         self.events.emit(SIGNAL_COMMUNITY_MEMBERS_CHANGED, 
         CommunityMembersArgs(communityId: community.id, members: community.members))
 
