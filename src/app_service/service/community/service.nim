@@ -1244,12 +1244,13 @@ QtObject:
             chats.add(chatDetails)
 
         # Update communities objects
-        let updatedCommunity = response.result["communities"][0].toCommunityDto         
+        var updatedCommunity = response.result["communities"][0].toCommunityDto
         self.checkForCategoryPropertyUpdates(
           updatedCommunity,
           self.communities[communityId]
         )
-        self.communities[communityId] = updatedCommunity
+
+        self.saveUpdatedCommunity(updatedCommunity)
 
         for k, v in response.result["communityChanges"].getElems()[0]["categoriesModified"].pairs():
           let category = v.toCategory()
@@ -1268,13 +1269,14 @@ QtObject:
         raise newException(RpcException, "Error deleting community category: " & error.message)
 
       # Update communities objects
-      let updatedCommunity = response.result["communities"][0].toCommunityDto
+      var updatedCommunity = response.result["communities"][0].toCommunityDto
 
       self.checkForCategoryPropertyUpdates(
         updatedCommunity,
         self.communities[communityId]
       )
-      self.communities[communityId] = updatedCommunity
+
+      self.saveUpdatedCommunity(updatedCommunity)
 
       self.events.emit(SIGNAL_COMMUNITY_CATEGORY_DELETED,
         CommunityCategoryArgs(
