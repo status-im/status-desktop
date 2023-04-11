@@ -90,6 +90,10 @@ add_library(StatusQ SHARED
         src/statuswindow.cpp
         )
 
+set_target_properties(StatusQ PROPERTIES 
+    ADDITIONAL_CLEAN_FILES bin/StatusQ/qmldir
+)
+
 if (APPLE)
     find_library(AppKit AppKit)
     find_library(Foundation Foundation)

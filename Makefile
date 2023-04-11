@@ -251,34 +251,64 @@ else
  STATUSQ_CMAKE_BUILD_PARAMS := --config Release
 endif
 
-STATUSQ_CMAKE_CACHE := ui/StatusQ/build/CMakeCache.txt
+STATUSQ_BUILD_PATH := ui/StatusQ/build
+STATSUQ_INSTALL_PATH := $(shell pwd)/bin
+STATUSQ_CMAKE_CACHE := $(STATUSQ_BUILD_PATH)/CMakeCache.txt
 
 $(STATUSQ_CMAKE_CACHE): | deps
 	echo -e "\033[92mConfiguring:\033[39m StatusQ"
-	cmake -DCMAKE_INSTALL_PREFIX=$(shell pwd)/bin \
+	cmake -DCMAKE_INSTALL_PREFIX=$(STATSUQ_INSTALL_PATH) \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 		-DSTATUSQ_BUILD_TESTS=OFF \
 		$(STATUSQ_CMAKE_CONFIG_PARAMS) \
-		-B ui/StatusQ/build \
+		-B $(STATUSQ_BUILD_PATH) \
 		-S ui/StatusQ \
+		-Wno-dev \
 		$(HANDLE_OUTPUT)
 
-$(STATUSQ): | statusq-cmake-build
+$(STATUSQ): | statusq-build
 	echo -e "\033[92mInstalling:\033[39m StatusQ"
-	cmake --install ui/StatusQ/build \
+	cmake --install $(STATUSQ_BUILD_PATH) \
 		$(HANDLE_OUTPUT)
 
-statusq-cmake-configure: | $(STATUSQ_CMAKE_CACHE) 
+statusq-configure: | $(STATUSQ_CMAKE_CACHE) 
 
-statusq-cmake-build: | statusq-cmake-configure
+statusq-build: | statusq-configure
 	echo -e "\033[92mBuilding:\033[39m StatusQ"
-	cmake --build ui/StatusQ/build \
+	cmake --build $(STATUSQ_BUILD_PATH) \
+		--target StatusQ \
 		$(STATUSQ_CMAKE_BUILD_PARAMS) \
 		$(HANDLE_OUTPUT)
 
-statusq-cmake-install: | $(STATUSQ)
+statusq-install: | $(STATUSQ)
+
+statusq-clean:
+	echo -e "\033[92mCleaning:\033[39m StatusQ"
+	cmake --build $(STATUSQ_BUILD_PATH) --target clean
+	rm -rf $(STATSUQ_INSTALL_PATH)/StatusQ
+
+statusq-sanity-checker:
+	cmake \
+		-DSTATUSQ_BUILD_SANDBOX=OFF \
+		-DSTATUSQ_BUILD_SANITY_CHECKER=ON \
+		-DSTATUSQ_BUILD_TESTS=OFF \
+		-B$(STATUSQ_BUILD_PATH) \
+		-Sui/StatusQ \
+		-Wno-dev
+	cmake \
+		--build $(STATUSQ_BUILD_PATH) \
+		--target SanityChecker
+
+run-statusq-sanity-checker: statusq-sanity-checker
+	$(STATUSQ_BUILD_PATH)/bin/SanityChecker
+
+# statusq-sanity-checker:
+# 	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target SanityChecker
+
+# run-statusq-sanity-checker: statusq-sanity-checker
+# 	ui/StatusQ/build/bin/SanityChecker
 
 ##
 ##	DOtherSide
@@ -367,9 +397,12 @@ QM_BINARIES := $(shell find ui/i18n -iname "*.ts" | sed 's/\.ts/\.qm/' | sed 's/
 $(QM_BINARIES): TS_FILE = $(shell echo $@ | sed 's/\.qm/\.ts/' | sed 's/bin/ui/')
 $(QM_BINARIES): $(TS_SOURCES) | check-qt-dir
 	mkdir -p bin/i18n
-	lrelease -removeidentical $(TS_FILE) -qm $@
+	lrelease -removeidentical $(TS_FILE) -qm $@ $(HANDLE_OUTPUT)
 
-compile-translations: $(QM_BINARIES)
+log-compile-translations:
+	echo -e "\033[92mCompiling:\033[39m translations"
+
+compile-translations: | log-compile-translations $(QM_BINARIES)
 
 # default token is a free-tier token with limited capabilities and usage
 # limits; our docs should include directions for community contributor to setup
@@ -428,7 +461,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(STATUSQ) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(STATUSQ) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
@@ -682,7 +715,7 @@ pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 
 zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 
-clean: | clean-common
+clean: | clean-common statusq-clean
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO) $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
@@ -724,11 +757,5 @@ run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 tests-nim-linux: | $(DOTHERSIDE)
 	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
-
-statusq-sanity-checker:
-	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target SanityChecker
-
-run-statusq-sanity-checker: statusq-sanity-checker
-	ui/StatusQ/build/bin/SanityChecker
 
 endif # "variables.mk" was not included

@@ -52,7 +52,7 @@ func main() {
 			if err != nil {
 				return err
 			}
-			if info.IsDir() && (info.Name() == "vendor" || info.Name() == "tests") {
+			if info.IsDir() && (info.Name() == "vendor" || info.Name() == "tests" || info.Name() == "StatusQ") {
 				return filepath.SkipDir
 			}
 			if !info.IsDir() {

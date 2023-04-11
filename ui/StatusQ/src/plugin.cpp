@@ -18,7 +18,6 @@ public:
         Q_ASSERT(uri == QLatin1String("StatusQ"));
 
         qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
-        qmlRegisterType<StatusWindow>("StatusQ", 0, 1, "StatusWindow");
         qmlRegisterType<StatusSyntaxHighlighter>("StatusQ", 0, 1, "StatusSyntaxHighlighter");
         qmlRegisterType<RXValidator>("StatusQ", 0, 1, "RXValidator");
 
