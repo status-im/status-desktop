@@ -46,7 +46,7 @@ method allTokensModuleDidLoad*(self: AccessInterface) {.base.} =
 method collectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method currentAccountModuleDidLoad*(self: AccessInterface) {.base.} =
+method assetsModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method transactionsModuleDidLoad*(self: AccessInterface) {.base.} =
