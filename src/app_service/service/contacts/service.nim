@@ -524,19 +524,16 @@ QtObject:
     self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contactId: contact.id))
 
   proc removeContact*(self: Service, publicKey: string) =
-    var contact = self.getContactById(publicKey)
-
-    if contact.added:
-      discard status_contacts.retractContactRequest(publicKey)
-
-    contact.removed = true
-    contact.added = false
-
-    let response = status_contacts.removeContact(contact.id)
+    let response = status_contacts.retractContactRequest(publicKey)
     if(not response.error.isNil):
       let msg = response.error.message
       error "error removing contact ", msg
       return
+
+    var contact = self.getContactById(publicKey)
+    contact.removed = true
+    contact.added = false
+
     self.saveContact(contact)
     self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
 
