@@ -109,7 +109,7 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
-  self.delegate.currentAccountModuleDidLoad()
+  self.delegate.assetsModuleDidLoad()
 
 proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
   let chainIds = self.controller.getChainIds()

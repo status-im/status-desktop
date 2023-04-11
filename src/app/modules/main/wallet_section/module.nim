@@ -7,7 +7,7 @@ import ../io_interface as delegate_interface
 import ./accounts/module as accounts_module
 import ./all_tokens/module as all_tokens_module
 import ./collectibles/module as collectibles_module
-import ./current_account/module as current_account_module
+import ./assets/module as assets_module
 import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
@@ -45,7 +45,7 @@ type
     accountsModule: accounts_module.AccessInterface
     allTokensModule: all_tokens_module.AccessInterface
     collectiblesModule: collectibles_module.AccessInterface
-    currentAccountModule: current_account_module.AccessInterface
+    assetsModule: assets_module.AccessInterface
     transactionsModule: transactions_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
@@ -83,7 +83,7 @@ proc newModule*(
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
-  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService, collectibleService)
+  result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService, collectibleService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService, currencyService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
@@ -92,7 +92,7 @@ method delete*(self: Module) =
   self.accountsModule.delete
   self.allTokensModule.delete
   self.collectiblesModule.delete
-  self.currentAccountModule.delete
+  self.assetsModule.delete
   self.transactionsModule.delete
   self.savedAddressesModule.delete
   self.buySellCryptoModule.delete
@@ -105,7 +105,7 @@ method updateCurrency*(self: Module, currency: string) =
   self.controller.updateCurrency(currency)
 
 method switchAccount*(self: Module, accountIndex: int) =
-  self.currentAccountModule.switchAccount(accountIndex)
+  self.assetsModule.switchAccount(accountIndex)
   self.collectiblesModule.switchAccount(accountIndex)
   self.transactionsModule.switchAccount(accountIndex)
 
@@ -142,7 +142,7 @@ method load*(self: Module) =
   self.accountsModule.load()
   self.allTokensModule.load()
   self.collectiblesModule.load()
-  self.currentAccountModule.load()
+  self.assetsModule.load()
   self.transactionsModule.load()
   self.savedAddressesModule.load()
   self.buySellCryptoModule.load()
@@ -160,7 +160,7 @@ proc checkIfModuleDidLoad(self: Module) =
   if(not self.collectiblesModule.isLoaded()):
     return
 
-  if(not self.currentAccountModule.isLoaded()):
+  if(not self.assetsModule.isLoaded()):
     return
 
   if(not self.transactionsModule.isLoaded()):
@@ -194,7 +194,7 @@ method allTokensModuleDidLoad*(self: Module) =
 method collectiblesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method currentAccountModuleDidLoad*(self: Module) =
+method assetsModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method transactionsModuleDidLoad*(self: Module) =
