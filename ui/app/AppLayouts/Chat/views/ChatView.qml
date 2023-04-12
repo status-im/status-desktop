@@ -87,7 +87,7 @@ StatusSectionLayout {
         emojiPopup: root.emojiPopup
         stickersPopup: root.stickersPopup
         onOpenStickerPackPopup: {
-            Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
+            Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
         }
         onOpenAppSearch: {
             root.openAppSearch();
@@ -167,7 +167,6 @@ StatusSectionLayout {
     Component {
         id: statusStickerPackClickPopup
         StatusStickerPackClickPopup{
-            store: root.rootStore
             onClosed: {
                 destroy();
             }
