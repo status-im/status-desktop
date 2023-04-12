@@ -250,14 +250,15 @@ Popup {
         RowLayout {
             id: footerContent
             Layout.fillWidth: true
+            Layout.preferredHeight: 24
             Layout.rightMargin: Style.current.padding / 2
             Layout.leftMargin: Style.current.padding / 2
             spacing: Style.current.padding / 2
 
             StatusFlatRoundButton {
                 id: btnAddStickerPack
-                implicitHeight: 40
-                implicitWidth: 24
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
                 icon.name: "add"
                 type: StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
@@ -314,10 +315,8 @@ Popup {
                         model: d.stickerPacksLoading ? 7 : 0
 
                         delegate: Rectangle {
-                            width: 24
-                            height: 24
-                            Layout.preferredHeight: height
-                            Layout.preferredWidth: width
+                            Layout.preferredWidth: 24
+                            Layout.preferredHeight: 24
                             radius: width / 2
                             color: Style.current.backgroundHover
                         }
