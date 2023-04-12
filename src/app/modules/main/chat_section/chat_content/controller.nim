@@ -58,8 +58,8 @@ proc delete*(self: Controller) =
   self.events.disconnect()
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
-    let args = MessagesLoadedArgs(e)
+  self.events.on(SIGNAL_PINNED_MESSAGES_LOADED) do(e:Args):
+    let args = PinnedMessagesLoadedArgs(e)
     if(self.chatId != args.chatId or args.pinnedMessages.len == 0):
       return
     self.delegate.newPinnedMessagesLoaded(args.pinnedMessages)

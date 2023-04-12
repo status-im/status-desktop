@@ -221,8 +221,7 @@ method reevaluateViewLoadingState*(self: Module) =
                        not self.firstUnseenMessageState.initialized or
                        self.firstUnseenMessageState.fetching)
 
-method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto],
-  pinnedMessages: seq[PinnedMessageDto]) =
+method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
   var viewItems: seq[Item]
 
   if(messages.len > 0):
@@ -327,11 +326,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           else:
             error "wrong emoji id found when loading messages", methodName="newMessagesLoaded"
 
-      for p in pinnedMessages:
-        if(p.message.id == message.id):
-          item.pinned = true
-          item.pinnedBy = p.pinnedBy
-
       if message.editedAt != 0:
         item.isEdited = true
 
@@ -356,6 +350,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
 
   self.initialMessagesLoaded = true
   self.reevaluateViewLoadingState()
+
+method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageDto]) =
+  for p in pinnedMessages:
+    self.onPinMessage(p.message.id, p.pinnedBy)
 
 method messagesAdded*(self: Module, messages: seq[MessageDto]) =
   var items: seq[Item]
