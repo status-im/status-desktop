@@ -56,6 +56,7 @@ ModalPopup {
 
     contentWrapper.anchors.topMargin: 0
     contentWrapper.anchors.bottomMargin: 0
+    contentWrapper.anchors.rightMargin: 0
     StatusStickerList {
         id: stickerGridInPopup
         model: stickers

@@ -156,7 +156,6 @@ Popup {
             id: stickersContainer
             Layout.fillWidth: true
             Layout.leftMargin: 4
-            Layout.rightMargin: 4
             Layout.topMargin: 4
             Layout.bottomMargin: 0
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
@@ -223,6 +222,7 @@ Popup {
             StatusStickerList {
                 id: stickerGrid
                 objectName: "statusStickerPopupStickerGrid"
+                anchors.fill: parent
                 model: d.recentStickers
                 packId: stickerPackListView.selectedPackId
                 onStickerClicked: {
