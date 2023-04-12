@@ -135,7 +135,7 @@ Popup {
                 id: failedToLoadStickersInfo
 
                 anchors.centerIn: parent
-                visible: d.stickerPacksLoadFailed
+                visible: d.stickerPacksLoadFailed && d.installedPacksCount < 1
 
                 StatusBaseText {
                     text: qsTr("Failed to load stickers")
