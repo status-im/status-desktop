@@ -264,8 +264,7 @@ $(STATUSQ_CMAKE_CACHE): | deps
 		-DSTATUSQ_BUILD_TESTS=OFF \
 		$(STATUSQ_CMAKE_CONFIG_PARAMS) \
 		-B $(STATUSQ_BUILD_PATH) \
-		-S ui/StatusQ \
-		-Wno-dev \
+		-S ui/StatusQ
 		$(HANDLE_OUTPUT)
 
 statusq-configure: | $(STATUSQ_CMAKE_CACHE) 
@@ -291,18 +290,22 @@ statusq-clean:
 	rm -rf $(STATUSQ_INSTALL_PATH)/StatusQ
 
 statusq-sanity-checker:
+	echo -e "\033[92mConfiguring:\033[39m StatusQ SanityChecker"
 	cmake \
 		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=ON \
 		-DSTATUSQ_BUILD_TESTS=OFF \
 		-B$(STATUSQ_BUILD_PATH) \
 		-Sui/StatusQ \
-		-Wno-dev
+		$(HANDLE_OUTPUT)
+	echo -e "\033[92mBuilding:\033[39m StatusQ SanityChecker"
 	cmake \
 		--build $(STATUSQ_BUILD_PATH) \
-		--target SanityChecker
+		--target SanityChecker \
+		$(HANDLE_OUTPUT)
 
-run-statusq-sanity-checker: statusq-sanity-checker
+run-statusq-sanity-checker:
+	echo -e "\033[92mRunning:\033[39m StatusQ SanityChecker"
 	$(STATUSQ_BUILD_PATH)/bin/SanityChecker
 
 ##
