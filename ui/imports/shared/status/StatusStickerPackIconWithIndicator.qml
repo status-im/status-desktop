@@ -1,8 +1,9 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
-import shared 1.0
 import shared.panels 1.0
 
 Item {
@@ -36,14 +37,13 @@ Item {
             root.clicked()
         }
     }
+
     Rectangle {
-        id: packIndicator
         visible: root.selected
-        border.color: Style.current.blue
-        border.width: 1
+        width: parent.width
         height: 2
-        width: 16
-        x: 4
+        radius: 1
+        color: Theme.palette.primaryColor1
         y: root.y + root.height + 6
     }
 }

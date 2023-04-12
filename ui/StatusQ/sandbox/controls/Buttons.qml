@@ -177,6 +177,39 @@ Column {
             loading: true
         }
 
+        // icon only
+        StatusButton {
+            icon.name: "info"
+        }
+
+        StatusButton {
+            icon.name: "info"
+            enabled: false
+        }
+
+        StatusButton {
+            icon.name: "info"
+            loading: true
+        }
+
+        // icon only + small
+        StatusButton {
+            size: StatusBaseButton.Size.Small
+            icon.name: "info"
+        }
+
+        StatusButton {
+            size: StatusBaseButton.Size.Small
+            icon.name: "info"
+            enabled: false
+        }
+
+        StatusButton {
+            size: StatusBaseButton.Size.Small
+            icon.name: "info"
+            loading: true
+        }
+
         // Flat + small
         StatusFlatButton {
             text: "Button"

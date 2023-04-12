@@ -250,19 +250,18 @@ Popup {
         RowLayout {
             id: footerContent
             Layout.fillWidth: true
-            Layout.preferredHeight: 24
+            Layout.preferredHeight: 44
             Layout.rightMargin: Style.current.padding / 2
             Layout.leftMargin: Style.current.padding / 2
             spacing: Style.current.padding / 2
 
-            StatusFlatRoundButton {
+            StatusRoundButton {
                 id: btnAddStickerPack
                 Layout.preferredWidth: 24
                 Layout.preferredHeight: 24
                 icon.name: "add"
-                type: StatusFlatRoundButton.Type.Tertiary
-                color: "transparent"
-                state: d.stickerPacksLoading ? "default" : "pending"
+                type: StatusFlatRoundButton.Type.Secondary
+                loading: d.stickerPacksLoading
                 onClicked: {
                     stickersContainer.visible = false
                     stickerMarket.visible = true
@@ -285,6 +284,8 @@ Popup {
             StatusScrollView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                leftPadding: 0
+                rightPadding: 0
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {

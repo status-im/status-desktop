@@ -133,7 +133,6 @@ Item {
 
                     footer: StatusStickerButton {
                         objectName: "statusStickerMarketInstallButton"
-                        height: 44
                         anchors.right: parent.right
                         style: StatusStickerButton.StyleType.LargeNoIcon
                         packPrice: price
@@ -168,8 +167,8 @@ Item {
 
                     StatusStickerButton {
                         anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
                         packPrice: price
-                        width: 75 // only needed for Qt Creator
                         isInstalled: installed
                         isBought: bought
                         isPending: pending
@@ -247,22 +246,17 @@ Item {
 
     Item {
         id: footer
-        height: 44 - Style.current.padding
+        height: 44
         anchors.top: availableStickerPacks.bottom
 
-        RoundedIcon {
+        StatusBackButton {
             id: btnBack
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.padding / 2
+            anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding / 2
-            width: 28
-            height: 28
-            iconWidth: 17.5
-            iconHeight: 13.5
-            iconColor: Style.current.roundedButtonSecondaryForegroundColor
-            source: Style.svg("arrowUp")
-            rotation: 270
+            width: 24
+            height: 24
+            type: StatusRoundButton.Type.Secondary
             onClicked: {
                 root.backClicked()
             }

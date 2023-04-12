@@ -57,16 +57,14 @@ StatusListView {
                 }
             },
             StatusFlatButton {
-                size: StatusBaseButton.Size.Tiny
-                leftPadding: 4
-                rightPadding: 0
+                anchors.verticalCenter: parent.verticalCenter
+                size: StatusBaseButton.Size.Small
                 icon.name: model.muted ? "notification-muted" : "notification"
                 onClicked: root.setCommunityMutedClicked(model.id, !model.muted)
             },
             StatusFlatButton {
-                size: StatusBaseButton.Size.Tiny
-                leftPadding: 4
-                rightPadding: 0
+                anchors.verticalCenter: parent.verticalCenter
+                size: StatusBaseButton.Size.Small
                 icon.name: "invite-users"
                 onClicked: root.inviteFriends(model)
             }
