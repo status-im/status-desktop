@@ -24,7 +24,7 @@ ModalPopup {
     property string thumbnail: ""
     property string name: ""
     property string author: ""
-    property string price: ""
+    property int price
     property bool installed: false;
     property bool bought: false;
     property bool pending: false;

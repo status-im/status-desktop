@@ -147,7 +147,7 @@ Item {
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
                         onBuyClicked: {
-                            Global.openPopup(stickerPackPurchaseModal)
+                            Global.openPopup(stickerPackPurchaseModal, {price})
                             root.buyClicked(packId)
                         }
                     }
@@ -180,7 +180,7 @@ Item {
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
                         onBuyClicked: {
-                            Global.openPopup(stickerPackPurchaseModal)
+                            Global.openPopup(stickerPackPurchaseModal, {price})
                             root.buyClicked(packId)
                         }
                     }
@@ -193,6 +193,9 @@ Item {
         id: stickerPackPurchaseModal
         SendModal {
             id: buyStickersModal
+
+            required property int price
+
             interactive: false
             sendType: Constants.SendType.StickersBuy
             preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
