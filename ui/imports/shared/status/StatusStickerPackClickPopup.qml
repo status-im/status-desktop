@@ -125,7 +125,7 @@ ModalPopup {
         isInstalled: installed
         isBought: bought
         isPending: pending
-        greyedOut: store.networkConnectionStore.stickersNetworkAvailable
+        greyedOut: !store.networkConnectionStore.stickersNetworkAvailable
         tooltip.text: store.networkConnectionStore.stickersNetworkUnavailableText
         onInstallClicked: {
             stickersModule.install(packId);
