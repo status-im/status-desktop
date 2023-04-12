@@ -24,7 +24,7 @@ ModalPopup {
     property string thumbnail: ""
     property string name: ""
     property string author: ""
-    property int price
+    property string price
     property bool installed: false;
     property bool bought: false;
     property bool pending: false;
@@ -119,7 +119,6 @@ ModalPopup {
     }
 
     footer: StatusStickerButton {
-        height: 44
         anchors.right: parent.right
         style: StatusStickerButton.StyleType.LargeNoIcon
         packPrice: price

@@ -52,6 +52,7 @@ Button {
     QtObject {
         id: d
         readonly property color textColor: root.enabled || root.loading ? root.textColor : root.disabledTextColor
+        readonly property bool iconOnly: root.display === AbstractButton.IconOnly || root.text === ""
     }
 
     font.family: Theme.palette.baseFont.name
@@ -59,12 +60,16 @@ Button {
     font.pixelSize: size === StatusBaseButton.Size.Large ? 15 : 13
 
     horizontalPadding: {
+        if (d.iconOnly)
+            return spacing
         if (root.icon.name) {
             return size === StatusBaseButton.Size.Large ? 18 : 16
         }
         return size === StatusBaseButton.Size.Large ? 24 : 12
     }
     verticalPadding: {
+        if (d.iconOnly)
+            return spacing
         switch (size) {
         case StatusBaseButton.Size.Tiny:
             return 5
@@ -126,15 +131,13 @@ Button {
                 font: root.font
                 text: root.text
                 color: d.textColor
-                visible: text
-                verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
             }
         }
 
         Loader {
-            active: root.textPosition === StatusBaseButton.TextPosition.Left
-            visible: active && root.text !== ""
+            active: root.textPosition === StatusBaseButton.TextPosition.Left && !d.iconOnly
+            visible: active
             sourceComponent: text
         }
 
@@ -143,6 +146,7 @@ Button {
 
             Layout.preferredWidth: active ? root.icon.width : 0
             Layout.preferredHeight: active ? root.icon.height : 0
+            Layout.alignment: Qt.AlignCenter
             active: root.icon.name !== ""
             sourceComponent: root.isRoundIcon ? roundIcon : baseIcon
         }
@@ -155,8 +159,8 @@ Button {
         }
 
         Loader {
-            active: root.textPosition === StatusBaseButton.TextPosition.Right
-            visible: active && root.text !== ""
+            active: root.textPosition === StatusBaseButton.TextPosition.Right && !d.iconOnly
+            visible: active
             sourceComponent: text
         }
     }

@@ -13,7 +13,6 @@ Item {
     }
 
     property bool highlighted: false
-    property bool enabled: true
 
     signal clicked(var mouse)
 
