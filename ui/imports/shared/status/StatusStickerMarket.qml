@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 import QtQml.Models 2.13
 
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared 1.0
@@ -38,11 +39,12 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         cellWidth: parent.width - (Style.current.padding * 2)
         cellHeight: height - 72
+
+        ScrollBar.vertical: StatusScrollBar {}
 
         focus: true
         model: DelegateModel {
@@ -149,58 +151,6 @@ Item {
                         }
                     }
                 }
-                Component {
-                    id: stickerPackPurchaseModal
-                    SendModal {
-                        id: buyStickersModal
-                        interactive: false
-                        sendType: Constants.SendType.StickersBuy
-                        preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
-                        preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-                        preSelectedAsset: store.getAsset(buyStickersModal.store.currentAccount.assets, JSON.parse(root.store.stickersStore.getStatusToken()).symbol)
-                        sendTransaction: function() {
-                            if(bestRoutes.length === 1) {
-                                let path = bestRoutes[0]
-                                let eip1559Enabled = path.gasFees.eip1559Enabled
-                                let maxFeePerGas = path.gasFees.maxFeePerGasM
-                                root.store.stickersStore.authenticateAndBuy(packId,
-                                                             selectedAccount.address,
-                                                             path.gasAmount,
-                                                             eip1559Enabled ? "" : path.gasFees.gasPrice,
-                                                             eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",
-                                                             eip1559Enabled ? maxFeePerGas : path.gasFees.gasPrice,
-                                                             eip1559Enabled)
-                            }
-                        }
-                        Connections {
-                            target: root.store.stickersStore.stickersModule
-                            function onTransactionWasSent(txResult: string) {
-                                try {
-                                    let response = JSON.parse(txResult)
-                                    if (!response.success) {
-                                        if (response.result.includes(Constants.walletSection.cancelledMessage)) {
-                                            return
-                                        }
-                                        buyStickersModal.sendingError.text = response.result
-                                        return buyStickersModal.sendingError.open()
-                                    }
-                                    for(var i=0; i<buyStickersModal.bestRoutes.length; i++) {
-                                        let url =  "%1/%2".arg(buyStickersModal.store.getEtherscanLink(buyStickersModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
-                                        Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                                   qsTr("View on etherscan"),
-                                                                   "",
-                                                                   true,
-                                                                   Constants.ephemeralNotificationType.normal,
-                                                                   url)
-                                    }
-                                    buyStickersModal.close()
-                                } catch (e) {
-                                    console.error('Error parsing the response', e)
-                                }
-                            }
-                        }
-                    }
-                }
 
                 StatusStickerPackDetails {
                     id: stickerPackDetails
@@ -238,6 +188,59 @@ Item {
         }
     }
 
+    Component {
+        id: stickerPackPurchaseModal
+        SendModal {
+            id: buyStickersModal
+            interactive: false
+            sendType: Constants.SendType.StickersBuy
+            preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
+            preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
+            preSelectedAsset: store.getAsset(buyStickersModal.store.currentAccount.assets, JSON.parse(root.store.stickersStore.getStatusToken()).symbol)
+            sendTransaction: function() {
+                if(bestRoutes.length === 1) {
+                    let path = bestRoutes[0]
+                    let eip1559Enabled = path.gasFees.eip1559Enabled
+                    let maxFeePerGas = path.gasFees.maxFeePerGasM
+                    root.store.stickersStore.authenticateAndBuy(packId,
+                                                 selectedAccount.address,
+                                                 path.gasAmount,
+                                                 eip1559Enabled ? "" : path.gasFees.gasPrice,
+                                                 eip1559Enabled ? path.gasFees.maxPriorityFeePerGas : "",
+                                                 eip1559Enabled ? maxFeePerGas : path.gasFees.gasPrice,
+                                                 eip1559Enabled)
+                }
+            }
+            Connections {
+                target: root.store.stickersStore.stickersModule
+                function onTransactionWasSent(txResult: string) {
+                    try {
+                        let response = JSON.parse(txResult)
+                        if (!response.success) {
+                            if (response.result.includes(Constants.walletSection.cancelledMessage)) {
+                                return
+                            }
+                            buyStickersModal.sendingError.text = response.result
+                            return buyStickersModal.sendingError.open()
+                        }
+                        for(var i=0; i<buyStickersModal.bestRoutes.length; i++) {
+                            let url =  "%1/%2".arg(buyStickersModal.store.getEtherscanLink(buyStickersModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
+                            Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                       qsTr("View on etherscan"),
+                                                       "",
+                                                       true,
+                                                       Constants.ephemeralNotificationType.normal,
+                                                       url)
+                        }
+                        buyStickersModal.close()
+                    } catch (e) {
+                        console.error('Error parsing the response', e)
+                    }
+                }
+            }
+        }
+    }
+
     Item {
         id: footer
         height: 44 - Style.current.padding
@@ -262,9 +265,3 @@ Item {
         }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;height:440;width:360}
-}
-##^##*/
