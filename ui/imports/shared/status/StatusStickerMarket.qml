@@ -229,30 +229,9 @@ Item {
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
                         onBuyClicked: {
-                            if (!SharedStores.RootStore.isWalletEnabled) {
-                                confirmationPopup.open()
-                                return
-                            }
                             Global.openPopup(stickerPackPurchaseModal)
                             root.buyClicked(packId)
                         }
-                    }
-                }
-
-                ConfirmationDialog {
-                    id: confirmationPopup
-                    showCancelButton: true
-                    confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
-                    confirmButtonLabel: qsTr("I understand")
-                    onConfirmButtonClicked: {
-                        SharedStores.RootStore.enableWallet();
-                        close()
-                        Global.openPopup(stickerPackPurchaseModal)
-                        root.buyClicked(packId)
-                    }
-
-                    onCancelButtonClicked: {
-                        close()
                     }
                 }
             }
