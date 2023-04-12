@@ -66,7 +66,7 @@ Popup {
 
     onAboutToShow: {
         d.getInstalledStickerPacks()
-        if (stickerGrid.packId == -1) {
+        if (!stickerGrid.packId) {
             d.getRecentStickers()
         }
     }
@@ -197,7 +197,7 @@ Popup {
 
                     StyledText {
                         id: lblNoRecentStickers
-                        visible: stickerPackListView.selectedPackId === -1 && stickersModule.recent.rowCount() === 0 && !lblNoStickersYet.visible
+                        visible: !stickerPackListView.selectedPackId && stickersModule.recent.rowCount() === 0 && !lblNoStickersYet.visible
                         anchors.fill: parent
                         font.pixelSize: 15
                         text: qsTr("Recently used stickers will appear here")
@@ -275,36 +275,33 @@ Popup {
                 highlighted: true
                 onClicked: {
                     highlighted = true
-                    stickerPackListView.selectedPackId = -1
+                    stickerPackListView.selectedPackId = ""
                     d.getRecentStickers()
                     stickerGrid.model = d.recentStickers
                 }
             }
 
             StatusScrollView {
-                height: 40
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {
-                    spacing: Style.current.padding
+                    spacing: footerContent.spacing
 
                     Repeater {
                         id: stickerPackListView
-                        property int selectedPackId: -1
+                        property string selectedPackId
                         model: d.stickerPackList
                         visible: d.stickerPacksLoaded
 
                         delegate: StatusStickerPackIconWithIndicator {
                             id: packIconWithIndicator
                             visible: installed
-                            width: 24
-                            height: 24
+                            Layout.preferredWidth: 24
+                            Layout.preferredHeight: 24
                             selected: stickerPackListView.selectedPackId === packId
                             source: thumbnail
-                            Layout.preferredHeight: height
-                            Layout.preferredWidth: width
                             onClicked: {
                                 btnHistory.highlighted = false
                                 stickerPackListView.selectedPackId = packId

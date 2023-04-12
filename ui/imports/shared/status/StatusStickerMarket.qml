@@ -21,14 +21,14 @@ Item {
 
     property var store
     property var stickerPacks: StickerPackData {}
-    property int packId: -1
+    property string packId
 
     signal backClicked
-    signal uninstallClicked(int packId)
-    signal installClicked(var stickers, int packId, int index)
-    signal cancelClicked(int packId)
-    signal updateClicked(int packId)
-    signal buyClicked(int packId)
+    signal uninstallClicked(string packId)
+    signal installClicked(var stickers, string packId, int index)
+    signal cancelClicked(string packId)
+    signal updateClicked(string packId)
+    signal buyClicked(string packId)
 
     StatusGridView {
         id: availableStickerPacks

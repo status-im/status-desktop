@@ -18,7 +18,7 @@ import "../../../app/AppLayouts/Chat/stores"
 ModalPopup {
     id: stickerPackDetailsPopup
 
-    property int packId: -1
+    property string packId
 
     property var store
     property string thumbnail: ""
@@ -29,7 +29,7 @@ ModalPopup {
     property bool bought: false;
     property bool pending: false;
     property var stickers;
-    signal buyClicked(int packId)
+    signal buyClicked(string packId)
 
     Component.onCompleted: {
         const idx = stickersModule.stickerPacks.findIndexById(packId, false);
@@ -126,7 +126,7 @@ ModalPopup {
         isBought: bought
         isPending: pending
         greyedOut: store.networkConnectionStore.stickersNetworkAvailable
-        tooltip.text: root.store.networkConnectionStore.stickersNetworkUnavailableText
+        tooltip.text: store.networkConnectionStore.stickersNetworkUnavailableText
         onInstallClicked: {
             stickersModule.install(packId);
             stickerPackDetailsPopup.close();
