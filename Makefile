@@ -249,7 +249,6 @@ ifneq ($(detected_OS),Windows)
 else
  STATUSQ := bin/StatusQ/StatusQ.$(LIBSTATUS_EXT)
  STATUSQ_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
- STATUSQ_CMAKE_BUILD_PARAMS := --config Release
 endif
 
 STATUSQ_BUILD_PATH := ui/StatusQ/build
@@ -269,21 +268,22 @@ $(STATUSQ_CMAKE_CACHE): | deps
 		-Wno-dev \
 		$(HANDLE_OUTPUT)
 
-$(STATUSQ): | statusq-build
-	echo -e "\033[92mInstalling:\033[39m StatusQ"
-	cmake --install $(STATUSQ_BUILD_PATH) \
-		$(HANDLE_OUTPUT)
-
 statusq-configure: | $(STATUSQ_CMAKE_CACHE) 
 
 statusq-build: | statusq-configure
 	echo -e "\033[92mBuilding:\033[39m StatusQ"
 	cmake --build $(STATUSQ_BUILD_PATH) \
 		--target StatusQ \
-		$(STATUSQ_CMAKE_BUILD_PARAMS) \
+		--config Release
+		-DCMAKE_BUILD_TYPE=Release \
 		$(HANDLE_OUTPUT)
 
-statusq-install: | $(STATUSQ)
+statusq-install: | statusq-build
+	echo -e "\033[92mInstalling:\033[39m StatusQ"
+	cmake --install $(STATUSQ_BUILD_PATH) \
+		$(HANDLE_OUTPUT)
+
+statusq: | statusq-install
 
 statusq-clean:
 	echo -e "\033[92mCleaning:\033[39m StatusQ"
@@ -304,12 +304,6 @@ statusq-sanity-checker:
 
 run-statusq-sanity-checker: statusq-sanity-checker
 	$(STATUSQ_BUILD_PATH)/bin/SanityChecker
-
-# statusq-sanity-checker:
-# 	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target SanityChecker
-
-# run-statusq-sanity-checker: statusq-sanity-checker
-# 	ui/StatusQ/build/bin/SanityChecker
 
 ##
 ##	DOtherSide
@@ -462,7 +456,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(STATUSQ) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) statusq $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \

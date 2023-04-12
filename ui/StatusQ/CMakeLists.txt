@@ -11,6 +11,11 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Although SHARED libraries set this to ON by default,
+# all static libraries, that are built into this SHARED, 
+# (which is qzxing in our case) should also be build with -fPIC. 
+# This fixes it.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(QZXING_USE_QML ON)
@@ -131,10 +136,6 @@ target_link_libraries(StatusQ PRIVATE
         )
 
 target_include_directories(StatusQ PRIVATE include)
-
-if (UNIX AND NOT APPLE)
-    target_compile_options(StatusQ PRIVATE "-fPIC")
-endif()
 
 install(TARGETS StatusQ
         LIBRARY DESTINATION StatusQ

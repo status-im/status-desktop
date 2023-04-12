@@ -75,6 +75,8 @@ target_link_libraries(
 target_link_libraries(
         ${PROJECT_NAME} PRIVATE ${PROJECT_LIB})
 
+add_dependencies(${PROJECT_NAME} StatusQ)
+
 enable_testing()
 
 add_executable(SectionsDecoratorModelTest tests/tst_SectionsDecoratorModel.cpp)
