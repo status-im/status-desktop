@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-
-set -e
+set -eof pipefail
 
 [[ $(uname) != 'Darwin' ]] && { echo 'This only works on macOS.' >&2; exit 1; }
 [[ $# -ne 1 ]] && { echo 'notarize-macos-pkg.sh <bundle_to_notarize>' >&2; exit 1; }
@@ -17,16 +16,28 @@ CHECK_INTERVAL_SEC="${CHECK_INTERVAL_SEC:-30}"
 CHECK_RETRY_LIMIT="${CHECK_RETRY_LIMIT:-20}"
 # Unique ID of MacOS application.
 MACOS_BUNDLE_ID="${MACOS_BUNDLE_ID:-im.status.ethereum.desktop}"
-# Log file path
-NOTARIZATION_LOG="${NOTARIZATION_LOG:-${PWD}/notarization.log}"
+# Xcode altool log file paths
+NOTARIZATION_ERR_LOG="${NOTARIZATION_ERR_LOG:-${PWD}/notarization.out.log}"
+NOTARIZATION_OUT_LOG="${NOTARIZATION_OUT_LOG:-${PWD}/notarization.err.log}"
+
+function show_xcrun_altool_logs() {
+    echo "FAILURE!"
+    echo "STDERR:"
+    cat "${NOTARIZATION_ERR_LOG}"
+    echo "STDOUT:"
+    cat "${NOTARIZATION_OUT_LOG}"
+}
+trap show_xcrun_altool_logs ERR
 
 function xcrun_altool() {
+    # STDERR goes to /dev/null so we can capture just the JSON.
     xcrun altool "${@}" \
         --team-id "${MACOS_NOTARIZE_TEAM_ID}" \
         --username "${MACOS_NOTARIZE_USERNAME}" \
         --password "${MACOS_NOTARIZE_PASSWORD}" \
         --output-format "json" \
-        2>&1 | tee -a "${NOTARIZATION_LOG}"
+         > >(tee -a "${NOTARIZATION_OUT_LOG}") \
+        2> >(tee -a "${NOTARIZATION_ERR_LOG}" >/dev/null)
 }
 
 # Submit app for notarization. Should take 5-10 minutes.
