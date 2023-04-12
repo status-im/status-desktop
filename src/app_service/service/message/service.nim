@@ -40,6 +40,7 @@ const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
+const SIGNAL_PINNED_MESSAGES_LOADED* = "pinnedMessagesLoaded"
 const SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED* = "firstUnseenMessageLoaded"
 const SIGNAL_NEW_MESSAGE_RECEIVED* = "newMessageReceived"
 const SIGNAL_MESSAGE_PINNED* = "messagePinned"
@@ -72,8 +73,11 @@ type
   MessagesLoadedArgs* = ref object of Args
     chatId*: string
     messages*: seq[MessageDto]
-    pinnedMessages*: seq[PinnedMessageDto]
     reactions*: seq[ReactionDto]
+
+  PinnedMessagesLoadedArgs* = ref object of Args
+    chatId*: string
+    pinnedMessages*: seq[PinnedMessageDto]
 
   MessagePinUnpinArgs* = ref object of Args
     chatId*: string
@@ -188,16 +192,11 @@ QtObject:
     let msgCursor = self.initOrGetMessageCursor(chatId)
     let msgCursorValue = if (msgCursor.isFetchable()): msgCursor.getValue() else: CURSOR_VALUE_IGNORE
 
-    let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
-    let pinnedMsgCursorValue = if (pinnedMsgCursor.isFetchable()): pinnedMsgCursor.getValue() else: CURSOR_VALUE_IGNORE
-
-    if(msgCursorValue == CURSOR_VALUE_IGNORE and pinnedMsgCursorValue == CURSOR_VALUE_IGNORE):
+    if(msgCursorValue == CURSOR_VALUE_IGNORE):
       return
 
     if(msgCursorValue != CURSOR_VALUE_IGNORE):
       msgCursor.setPending()
-    if (pinnedMsgCursorValue != CURSOR_VALUE_IGNORE):
-      pinnedMsgCursor.setPending()
 
     let arg = AsyncFetchChatMessagesTaskArg(
       tptr: cast[ByteAddress](asyncFetchChatMessagesTask),
@@ -205,8 +204,31 @@ QtObject:
       slot: "onAsyncLoadMoreMessagesForChat",
       chatId: chatId,
       msgCursor: msgCursorValue,
-      pinnedMsgCursor: pinnedMsgCursorValue,
       limit: if(limit <= MESSAGES_PER_PAGE_MAX): limit else: MESSAGES_PER_PAGE_MAX
+    )
+
+    self.threadpool.start(arg)
+
+  proc asyncLoadPinnedMessagesForChat*(self: Service, chatId: string) =
+    if (chatId.len == 0):
+      error "empty chat id", procName="asyncLoadPinnedMessagesForChat"
+      return
+
+    let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
+    let pinnedMsgCursorValue = if (pinnedMsgCursor.isFetchable()): pinnedMsgCursor.getValue() else: CURSOR_VALUE_IGNORE
+
+    if(pinnedMsgCursorValue == CURSOR_VALUE_IGNORE):
+      return
+
+    pinnedMsgCursor.setPending()
+
+    let arg = AsyncFetchChatMessagesTaskArg(
+      tptr: cast[ByteAddress](asyncFetchPinnedChatMessagesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncLoadPinnedMessagesForChat",
+      chatId: chatId,
+      msgCursor: pinnedMsgCursorValue,
+      limit: MESSAGES_PER_PAGE_MAX
     )
 
     self.threadpool.start(arg)
@@ -215,7 +237,6 @@ QtObject:
     if(self.isChatCursorInitialized(chatId)):
       let data = MessagesLoadedArgs(chatId: chatId,
         messages: @[],
-        pinnedMessages: @[],
         reactions: @[])
       
       self.events.emit(SIGNAL_MESSAGES_LOADED, data)
@@ -389,30 +410,17 @@ QtObject:
     weiStr.trimZeros()
     return (tokenStr, weiStr)
 
-  proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
+  proc onAsyncLoadPinnedMessagesForChat*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
-      info "load more messages response is not a json object"
-      # notify view, this is important
-      self.events.emit(SIGNAL_MESSAGES_LOADED, MessagesLoadedArgs())
+      info "load pinned messages response is not a json object"
+      self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, PinnedMessagesLoadedArgs())
       return
 
     var chatId: string
     discard responseObj.getProp("chatId", chatId)
 
-    let msgCursor = self.initOrGetMessageCursor(chatId)
     let pinnedMsgCursor = self.initOrGetPinnedMessageCursor(chatId)
-
-    # handling messages
-    var msgCursorValue: string
-    if(responseObj.getProp("messagesCursor", msgCursorValue)):
-      msgCursor.setValue(msgCursorValue)
-
-    var messagesArr: JsonNode
-    var messages: seq[MessageDto]
-    if(responseObj.getProp("messages", messagesArr)):
-      messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
-
     # handling pinned messages
     var pinnedMsgCursorValue: string
     if(responseObj.getProp("pinnedMessagesCursor", pinnedMsgCursorValue)):
@@ -426,6 +434,38 @@ QtObject:
     # set initial number of pinned messages
     self.numOfPinnedMessagesPerChat[chatId] = pinnedMessages.len
 
+    let data = PinnedMessagesLoadedArgs(chatId: chatId,
+      pinnedMessages: pinnedMessages)
+
+    self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
+
+  proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      info "load more messages response is not a json object"
+      # notify view, this is important
+      self.events.emit(SIGNAL_MESSAGES_LOADED, MessagesLoadedArgs())
+      return
+
+    var chatId: string
+    discard responseObj.getProp("chatId", chatId)
+
+    let msgCursor = self.initOrGetMessageCursor(chatId)
+    if(msgCursor.getValue() == ""):
+      # this is the first time we load messages for this chat
+      # we need to load pinned messages as well
+      self.asyncLoadPinnedMessagesForChat(chatId)
+
+    # handling messages
+    var msgCursorValue: string
+    if(responseObj.getProp("messagesCursor", msgCursorValue)):
+      msgCursor.setValue(msgCursorValue)
+
+    var messagesArr: JsonNode
+    var messages: seq[MessageDto]
+    if(responseObj.getProp("messages", messagesArr)):
+      messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
+
     # handling reactions
     var reactionsArr: JsonNode
     var reactions: seq[ReactionDto]
@@ -434,7 +474,6 @@ QtObject:
 
     let data = MessagesLoadedArgs(chatId: chatId,
     messages: messages,
-    pinnedMessages: pinnedMessages,
     reactions: reactions)
 
     self.events.emit(SIGNAL_MESSAGES_LOADED, data)

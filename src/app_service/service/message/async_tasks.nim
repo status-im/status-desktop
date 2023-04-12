@@ -12,7 +12,6 @@ type
   AsyncFetchChatMessagesTaskArg = ref object of QObjectTaskArg
     chatId: string
     msgCursor: string
-    pinnedMsgCursor: string
     limit: int
 
 const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
@@ -32,16 +31,6 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
     responseJson["messages"] = messagesArr
     responseJson["messagesCursor"] = messagesCursor
 
-  # handle pinned messages
-  if(arg.pinnedMsgCursor != CURSOR_VALUE_IGNORE):
-    var pinnedMsgArr: JsonNode
-    var pinnedMsgCursor: JsonNode
-    let pinnedMsgsResponse = status_go.fetchPinnedMessages(arg.chatId, arg.pinnedMsgCursor, arg.limit)
-    discard pinnedMsgsResponse.result.getProp("cursor", pinnedMsgCursor)
-    discard pinnedMsgsResponse.result.getProp("pinnedMessages", pinnedMsgArr)
-    responseJson["pinnedMessages"] = pinnedMsgArr
-    responseJson["pinnedMessagesCursor"] = pinnedMsgCursor
-
   # handle reactions
   if(arg.msgCursor != CURSOR_VALUE_IGNORE):
     # messages and reactions are using the same cursor
@@ -51,6 +40,28 @@ const asyncFetchChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
     responseJson["reactions"] = reactionsArr
 
   arg.finish(responseJson)
+
+#################################################
+# Async load pinned messages
+#################################################
+const asyncFetchPinnedChatMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncFetchChatMessagesTaskArg](argEncoded)
+
+  var responseJson = %*{
+    "chatId": arg.chatId
+  }
+  #handle pinned messages
+  if(arg.msgCursor != CURSOR_VALUE_IGNORE):
+    var pinnedMsgArr: JsonNode
+    var msgCursor: JsonNode
+    let pinnedMsgsResponse = status_go.fetchPinnedMessages(arg.chatId, arg.msgCursor, arg.limit)
+    discard pinnedMsgsResponse.result.getProp("cursor", msgCursor)
+    discard pinnedMsgsResponse.result.getProp("pinnedMessages", pinnedMsgArr)
+    responseJson["pinnedMessages"] = pinnedMsgArr
+    responseJson["pinnedMessagesCursor"] = msgCursor
+
+  arg.finish(responseJson)
+
 
 #################################################
 # Async search messages

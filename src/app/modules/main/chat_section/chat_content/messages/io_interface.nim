@@ -25,8 +25,10 @@ method updateChatIdentifier*(self: AccessInterface) {.base.} =
 method updateChatFetchMoreMessages*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method newMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto], reactions: seq[ReactionDto],
-  pinnedMessages: seq[PinnedMessageDto]) {.base.} =
+method newMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto], reactions: seq[ReactionDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method newPinnedMessagesLoaded*(self: AccessInterface, pinnedMessages: seq[PinnedMessageDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onReactionAdded*(self: AccessInterface, messageId: string, emojiId: int, reactionId: string) {.base.} =
