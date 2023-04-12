@@ -11,7 +11,7 @@ import shared.panels 1.0
 
 StatusGridView {
     id: root
-    property int packId: -1
+    property string packId
     property var stickerGrid
     visible: count > 0
     anchors.fill: parent
@@ -19,7 +19,7 @@ StatusGridView {
     cellHeight: 88
     model: stickerList
     focus: true
-    signal stickerClicked(string hash, int packId, string url)
+    signal stickerClicked(string hash, string packId, string url)
     delegate: Item {
         width: root.cellWidth
         height: root.cellHeight
