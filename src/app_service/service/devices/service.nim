@@ -76,7 +76,7 @@ QtObject:
 
   proc updateLocalPairingStatus(self: Service, data: LocalPairingEventArgs) =
     self.events.emit(SIGNAL_LOCAL_PAIRING_EVENT, data)
-    self.localPairingStatus.update(data.eventType, data.action, data.account, data.error)
+    self.localPairingStatus.update(data)
     self.events.emit(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE, self.localPairingStatus)
 
   proc doConnect(self: Service) =
@@ -90,9 +90,10 @@ QtObject:
     self.events.on(SignalType.LocalPairing.event) do(e:Args):
       let signalData = LocalPairingSignal(e)
       let data = LocalPairingEventArgs(
-        eventType: signalData.eventType.parse(),
-        action: signalData.action.parse(),
+        eventType: signalData.eventType,
+        action: signalData.action,
         account: signalData.account,
+        installation: signalData.installation,
         error: signalData.error)
       self.updateLocalPairingStatus(data)
 
@@ -187,7 +188,7 @@ QtObject:
         "timeout": 5 * 60 * 1000,
       }
     }
-    self.localPairingStatus.mode = LocalPairingMode.BootstrapingOtherDevice
+    self.localPairingStatus.mode = LocalPairingMode.Sender
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
 
   proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string): string =
@@ -203,7 +204,7 @@ QtObject:
       },
       "clientConfig": %* {}
     }
-    self.localPairingStatus.mode = LocalPairingMode.BootstrapingThisDevice
+    self.localPairingStatus.mode = LocalPairingMode.Receiver
 
     let arg = AsyncInputConnectionStringArg(
       tptr: cast[ByteAddress](asyncInputConnectionStringTask),

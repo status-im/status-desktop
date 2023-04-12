@@ -50,6 +50,9 @@ Item {
             userColorId: startupStore.localPairingColorId
             userColorHash: startupStore.localPairingColorHash
 
+            installationId: startupStore.localPairingInstallationId
+            installationName: startupStore.localPairingInstallationName
+            installationDeviceType: startupStore.localPairingInstallationDeviceType
         }
 
         StatusButton {

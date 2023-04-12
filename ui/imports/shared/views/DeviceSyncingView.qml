@@ -10,15 +10,20 @@ import shared.controls 1.0
 import shared.controls.chat 1.0
 import utils 1.0
 
+import SortFilterProxyModel 0.2
+
 Item {
     id: root
 
-    property alias devicesModel: listView.model
+    property alias devicesModel: sfpModel.sourceModel
     property string userDisplayName
     property string userColorId
     property string userColorHash
     property string userPublicKey
     property string userImage
+    property string installationId
+    property string installationName
+    property string installationDeviceType
 
     property int localPairingState: Constants.LocalPairingState.Idle
     property string localPairingError
@@ -66,7 +71,6 @@ Item {
             active: root.userPublicKey == ""
             Layout.alignment: Qt.AlignHCenter
             sourceComponent: UserImage {
-                opacity: name ? 1 : 0
                 name: root.userDisplayName
                 colorId: root.userColorId
                 colorHash: root.userColorHash
@@ -74,10 +78,7 @@ Item {
                 interactive: false
                 imageWidth: 80
                 imageHeight: 80
-
-                Behavior on opacity {
-                    NumberAnimation { duration: 250 }
-                }
+                loading: name === ""
             }
         }
 
@@ -130,10 +131,13 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             implicitWidth: d.deviceDelegateWidth
             visible: !d.pairingFailed
-            subTitle: qsTr("Synced device")
+            subTitle: d.pairingInProgress ? qsTr("Syncing with device")
+                                          : qsTr("Synced device")
             enabled: false
             loading: d.pairingInProgress
-            deviceName: qsTr("No device name")
+            loadingSubTitle: false
+            deviceName: root.installationName
+            deviceType: root.installationDeviceType
             isCurrentDevice: false
             showOnlineBadge: false
         }
@@ -179,6 +183,18 @@ Item {
                 height: scrollView.availableHeight
                 spacing: 4
                 clip: true
+
+                model: SortFilterProxyModel {
+                    id: sfpModel
+                    filters: [
+                        ValueFilter {
+                            enabled: true
+                            roleName: "installationId"
+                            value: root.installationId
+                            inverted: true
+                        }
+                    ]
+                }
 
                 delegate: StatusSyncDeviceDelegate {
                     width: ListView.view.width

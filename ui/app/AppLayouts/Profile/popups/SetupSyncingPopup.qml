@@ -76,8 +76,6 @@ StatusDialog {
         target: root.devicesStore
         function onLocalPairingStateChanged() {
             switch (root.devicesStore.localPairingState) {
-            case Constants.LocalPairingState.WaitingForConnection:
-                break;
             case Constants.LocalPairingState.Transferring:
                 d.localPairingStarted()
                 break
@@ -220,6 +218,10 @@ StatusDialog {
 
             localPairingState: root.devicesStore.localPairingState
             localPairingError: root.devicesStore.localPairingError
+
+            installationId: root.devicesStore.localPairingInstallationId
+            installationName: root.devicesStore.localPairingInstallationName
+            installationDeviceType: root.devicesStore.localPairingInstallationDeviceType
         }
 
         Views.ErrorMessage {

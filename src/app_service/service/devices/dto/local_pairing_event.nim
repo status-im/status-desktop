@@ -1,5 +1,6 @@
 import ../../../../app/core/eventemitter
 import ../../accounts/dto/accounts
+import installation
 
 type 
   EventType* {.pure.} = enum
@@ -9,8 +10,9 @@ type
     EventTransferError = 2,
     EventTransferSuccess = 3,
     EventReceivedAccount = 4,
-    EventProcessSuccess = 5,
-    EventProcessError = 6
+    EventReceivedInstallation = 5
+    EventProcessSuccess = 6,
+    EventProcessError = 7
 
 type 
   Action* {.pure.} = enum
@@ -18,6 +20,7 @@ type
     ActionConnect = 1,
     ActionPairingAccount = 2,
     ActionSyncDevice = 3,
+    ActionPairingInstallation = 4,
 
 type
   LocalPairingEventArgs* = ref object of Args
@@ -25,6 +28,7 @@ type
     action*: Action
     error*: string
     account*: AccountDTO
+    installation*: InstallationDto
 
 proc parse*(self: string): EventType =
   case self:
@@ -42,6 +46,8 @@ proc parse*(self: string): EventType =
       return EventProcessError
     of "received-account":
       return EventReceivedAccount
+    of "received-installation":
+      return EventReceivedInstallation
     else:
       return EventUnknown
 
@@ -53,5 +59,7 @@ proc parse*(self: int): Action =
       return ActionPairingAccount
     of 3:
       return ActionSyncDevice
+    of 4:
+      return ActionPairingInstallation
     else:
       return ActionUnknown

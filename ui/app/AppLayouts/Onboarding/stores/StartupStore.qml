@@ -17,6 +17,9 @@ QtObject {
     readonly property string localPairingImage: startupModuleInst ? startupModuleInst.localPairingImage : ""
     readonly property int localPairingColorId: startupModuleInst ? startupModuleInst.localPairingColorId : 0
     readonly property string localPairingColorHash: startupModuleInst ? startupModuleInst.localPairingColorHash : ""
+    readonly property string localPairingInstallationId: startupModuleInst ? startupModuleInst.localPairingInstallationId : ""
+    readonly property string localPairingInstallationName: startupModuleInst ? startupModuleInst.localPairingInstallationName : ""
+    readonly property string localPairingInstallationDeviceType: startupModuleInst ? startupModuleInst.localPairingInstallationDeviceType : ""
 
     function backAction() {
         root.currentStartupState.backAction()
