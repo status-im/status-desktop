@@ -1,25 +1,25 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.3
-import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
-import shared 1.0
 import shared.panels 1.0
 
 StatusGridView {
     id: root
+
     property string packId
-    property var stickerGrid
+    signal stickerClicked(string hash, string packId, string url)
+
+    ScrollBar.vertical: StatusScrollBar {}
+
     visible: count > 0
-    anchors.fill: parent
     cellWidth: 88
     cellHeight: 88
-    model: stickerList
     focus: true
-    signal stickerClicked(string hash, string packId, string url)
+
     delegate: Item {
         width: root.cellWidth
         height: root.cellHeight
