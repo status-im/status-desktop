@@ -7,6 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Chat.panels.communities 1.0
 
@@ -36,11 +37,11 @@ StatusDialog {
         }
 
         function calculateTotalTokensToDestruct() {
-            tokenCount = 0
+            d.tokenCount = 0
             for(var i = 0; i < tokenHoldersPanel.model.count; i ++) {
-                var item = tokenHoldersPanel.model.get(i)
+                var item =  ModelUtils.get(tokenHoldersPanel.model, i)
                 if(item.selfDestruct) {
-                    tokenCount += item.selfDestructAmount
+                    d.tokenCount += item.selfDestructAmount
                 }
             }
         }

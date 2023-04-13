@@ -15,7 +15,7 @@ import shared.controls 1.0
 Control {
     id: root
 
-    // Expected roles: ensName, walletAddress, imageSource, amount, selfDestructAmount and selfDestruct
+    // Expected roles: name, walletAddress, imageSource, amount, selfDestructAmount and selfDestruct
     property var model
 
     property string tokenName
@@ -42,7 +42,7 @@ Control {
                 enabled: searcher.enabled
                 expression: {
                     searcher.text
-                    return model.ensName.toLowerCase().includes(searcher.text.toLowerCase()) ||
+                    return model.name.toLowerCase().includes(searcher.text.toLowerCase()) ||
                             model.walletAddress.toLowerCase().includes(searcher.text.toLowerCase())
                 }
             }
@@ -57,7 +57,7 @@ Control {
             bottomPadding: 0
             minimumHeight: 36 // by design
             maximumHeight: minimumHeight
-            enabled: root.model.count > 0
+            enabled: root.model && root.model.count > 0
             placeholderText: enabled ? qsTr("Search") : qsTr("No placeholders to search")
         }
 
@@ -81,8 +81,8 @@ Control {
                 spacing: Style.current.padding
 
                 StatusListItem {
-                    readonly property bool unknownHolder: model.ensName === ""
-                    readonly property string formattedTitle: unknownHolder ? "?" : model.ensName
+                    readonly property bool unknownHolder: model.name === ""
+                    readonly property string formattedTitle: unknownHolder ? "?" : model.name
 
                     Layout.fillWidth: true
 

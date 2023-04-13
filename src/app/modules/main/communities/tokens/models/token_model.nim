@@ -1,6 +1,9 @@
-import NimQml, Tables, strformat
+import NimQml, Tables, strformat, sequtils
 import token_item
+import token_owners_item
+import token_owners_model
 import ../../../../../../app_service/service/community_tokens/dto/community_token
+import ../../../../../../app_service/service/collectible/dto
 
 type
   ModelRole {.pure.} = enum
@@ -18,6 +21,7 @@ type
     Image
     ChainName
     ChainIcon
+    TokenOwnersModel
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -34,12 +38,23 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc updateDeployState*(self: TokenModel, contractAddress: string, deployState: DeployState) =
+  proc updateDeployState*(self: TokenModel, chainId: int, contractAddress: string, deployState: DeployState) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].tokenDto.address == contractAddress):
+      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
         self.items[i].tokenDto.deployState = deployState
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.DeployState.int])
+        return
+
+  proc setCommunityTokenOwners*(self: TokenModel, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) =
+    for i in 0 ..< self.items.len:
+      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
+        self.items[i].tokenOwnersModel.setItems(owners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
+          # TODO find member with the address - later when airdrop to member will be added
+          result = initTokenOwnersItem("", "", owner)
+        ))
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int])
         return
 
   proc countChanged(self: TokenModel) {.signal.}
@@ -85,6 +100,7 @@ QtObject:
       ModelRole.Image.int:"image",
       ModelRole.ChainName.int:"chainName",
       ModelRole.ChainIcon.int:"chainIcon",
+      ModelRole.TokenOwnersModel.int:"tokenOwnersModel",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -123,6 +139,8 @@ QtObject:
         result = newQVariant(item.chainName)
       of ModelRole.ChainIcon:
         result = newQVariant(item.chainIcon)
+      of ModelRole.TokenOwnersModel:
+        result = newQVariant(item.tokenOwnersModel)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:
