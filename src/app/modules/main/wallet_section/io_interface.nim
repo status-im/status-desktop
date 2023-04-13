@@ -58,6 +58,9 @@ method savedAddressesModuleDidLoad*(self: AccessInterface) {.base.} =
 method buySellCryptoModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method overviewModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method runAddAccountPopup*(self: AccessInterface, addingWatchOnlyAccount: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
