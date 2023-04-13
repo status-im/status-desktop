@@ -98,7 +98,6 @@ target_compile_definitions(QmlTests PRIVATE
 target_link_libraries(QmlTests PRIVATE Qt5::QuickTest Qt5::Qml ${PROJECT_LIB})
 add_test(NAME QmlTests COMMAND QmlTests)
 
-list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/StatusQ/src")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/app")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/../ui/imports")
 list(APPEND QML_DIRS "${CMAKE_SOURCE_DIR}/src")

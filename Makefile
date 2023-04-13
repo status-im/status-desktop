@@ -304,7 +304,7 @@ statusq-sanity-checker:
 		--target SanityChecker \
 		$(HANDLE_OUTPUT)
 
-run-statusq-sanity-checker:
+run-statusq-sanity-checker: statusq-sanity-checker
 	echo -e "\033[92mRunning:\033[39m StatusQ SanityChecker"
 	$(STATUSQ_BUILD_PATH)/bin/SanityChecker
 
