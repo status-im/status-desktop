@@ -23,6 +23,7 @@ QtObject {
     property bool editMode: root.addAccountModule.editMode
     property bool disablePopup: root.addAccountModule.disablePopup
 
+    property bool accountNameIsValid: false
     property bool enteredSeedPhraseIsValid: false
     property bool enteredPrivateKeyIsValid: false
     property bool addingNewMasterKeyConfirmed: false
@@ -195,7 +196,7 @@ QtObject {
         }
 
         if (root.editMode) {
-            return root.addAccountModule.accountName !== "" &&
+            return root.accountNameIsValid &&
                     root.addAccountModule.accountName !== root.getStoredAccountName() ||
                     root.addAccountModule.selectedColor !== "" &&
                     root.addAccountModule.selectedColor !== root.getStoredSelectedColor() ||
@@ -203,7 +204,7 @@ QtObject {
                     root.addAccountModule.selectedEmoji !== root.getStoredSelectedEmoji()
         }
 
-        let valid = root.addAccountModule.accountName !== "" &&
+        let valid = root.accountNameIsValid &&
             root.addAccountModule.selectedColor !== "" &&
             root.addAccountModule.selectedEmoji !== ""
 

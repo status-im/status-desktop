@@ -35,6 +35,7 @@ Item {
 
         accountName.text = root.store.addAccountModule.accountName
         accountName.input.edit.forceActiveFocus()
+        accountName.validate(true)
     }
 
     QtObject {
@@ -101,6 +102,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 placeholderText: qsTr("Enter an account name...")
                 label: qsTr("Name")
+                charLimit: 20
                 text: root.store.addAccountModule.accountName
                 input.isIconSelectable: true
                 input.leftPadding: Style.current.padding
@@ -120,6 +122,16 @@ Item {
                         d.openEmojiPopup(false)
                     }
                 }
+                validators: [
+                    StatusMinLengthValidator {
+                        minLength: 1
+                        errorMessage: Utils.getErrorMessage(accountName.errors, qsTr("wallet account name"))
+                    },
+                    StatusRegularExpressionValidator {
+                        regularExpression: Constants.regularExpressions.alphanumerical
+                        errorMessage: Constants.errorMessages.alphanumericalRegExp
+                    }
+                ]
 
                 onTextChanged: {
                     root.store.addAccountModule.accountName = text
@@ -127,6 +139,10 @@ Item {
 
                 onKeyPressed: {
                     root.store.submitAddAccount(event)
+                }
+
+                onValidChanged: {
+                    root.store.accountNameIsValid = accountName.valid
                 }
             }
 
