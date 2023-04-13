@@ -579,12 +579,14 @@ QtObject {
     }
 
     readonly property QtObject regularExpressions: QtObject {
+        readonly property var alphanumerical: /^$|^[a-zA-Z0-9]+$/
         readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_ ]+$/
         readonly property var asciiPrintable:         /^$|^[!-~]+$/
         readonly property var ascii:                  /^$|^[\x00-\x7F]+$/
     }
 
     readonly property QtObject errorMessages: QtObject {
+        readonly property string alphanumericalRegExp: qsTr("Only letters and numbers allowed")
         readonly property string alphanumericalExpandedRegExp: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
         readonly property string asciiRegExp: qsTr("Only letters, numbers and ASII characters allowed")
     }
