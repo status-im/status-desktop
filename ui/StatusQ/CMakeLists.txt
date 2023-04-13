@@ -100,6 +100,11 @@ add_library(StatusQ SHARED
 
 set_target_properties(StatusQ PROPERTIES 
     ADDITIONAL_CLEAN_FILES bin/StatusQ/qmldir
+    DEBUG_POSTFIX "d"
+    RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${STATUSQ_MODULE_PATH}
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${STATUSQ_MODULE_PATH}
+    LIBRARY_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
 )
 
 if (APPLE)
@@ -110,11 +115,6 @@ if (APPLE)
 else ()
     target_sources(StatusQ PRIVATE src/statuswindow_other.cpp)
 endif ()
-
-set_target_properties(StatusQ PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
-        LIBRARY_OUTPUT_DIRECTORY ${STATUSQ_MODULE_PATH}
-        )
 
 if (${STATUSQ_SHADOW_BUILD})
     set(COPY_QMLDIR_COMMAND
@@ -141,6 +141,7 @@ target_link_libraries(StatusQ PRIVATE
 target_include_directories(StatusQ PRIVATE include)
 
 install(TARGETS StatusQ
+        RUNTIME DESTINATION StatusQ
         LIBRARY DESTINATION StatusQ
         )
 

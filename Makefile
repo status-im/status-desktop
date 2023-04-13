@@ -286,7 +286,7 @@ statusq: | statusq-install
 
 statusq-clean:
 	echo -e "\033[92mCleaning:\033[39m StatusQ"
-	cmake --build $(STATUSQ_BUILD_PATH) --target clean
+	rm -rf $(STATUSQ_BUILD_PATH)
 	rm -rf $(STATUSQ_INSTALL_PATH)/StatusQ
 
 statusq-sanity-checker:
