@@ -26,6 +26,7 @@ class SettingsScreenComponents(Enum):
 
 class SidebarComponents(Enum):
     ADVANCED_OPTION: str = "advanced_StatusNavigationListItem"
+    KEYCARD_OPTION: str = "keycard_StatusNavigationListItem"
     WALLET_OPTION: str = "wallet_StatusNavigationListItem"
     LANGUAGE_CURRENCY_OPTION: str = "language_StatusNavigationListItem"
     SIGN_OUT_AND_QUIT_OPTION: str = "sign_out_Quit_StatusNavigationListItem"
