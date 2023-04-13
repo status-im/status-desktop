@@ -51,12 +51,12 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity,
-  isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService, messageService)
+    isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService, messageService)
   result.moduleLoaded = false
 
   result.inputAreaModule = input_area_module.newModule(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService)
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
-  contactService, communityService, chatService, messageService, mailserversService)
+    contactService, communityService, chatService, messageService, mailserversService)
   result.usersModule = 
     if communityUsersModule == nil: 
       users_module.newModule( events, sectionId, chatId, belongsToCommunity, 

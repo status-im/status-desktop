@@ -230,6 +230,10 @@ def step(context, color: str):
 @Then("\"|any|\" should be an available option in Community Settings")
 def step(context, manage_community_option:str):
     _statusCommunityScreen.verify_option_exists(manage_community_option)
+    
+@Then("\"|any|\" should be in the list of uncategorized channels")
+def step(context, chat_name:str):
+    _statusCommunityScreen.check_channel_is_uncategorized(chat_name)
 
     
 ###########################################################################

@@ -29,12 +29,7 @@ class CommunityScreenComponents(Enum):
     CHAT_LOG = "chatView_log"  
     COMMUNITY_HEADER_BUTTON = "mainWindow_communityHeader_StatusChatInfoButton"
     COMMUNITY_HEADER_NAME_TEXT= "community_ChatInfo_Name_Text"
-    COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON = "ma.
-
-
-
-
-    inWindow_createChannelOrCategoryBtn_StatusBaseText"
+    COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON = "mainWindow_createChannelOrCategoryBtn_StatusBaseText"
     COMMUNITY_CREATE_CHANNEL_MENU_ITEM = "create_channel_StatusMenuItem"
     COMMUNITY_CREATE_CATEGORY_MENU_ITEM = "create_category_StatusMenuItem"
     COMMUNITY_EDIT_CATEGORY_MENU_ITEM = "edit_сategory_StatusMenuItem"
@@ -310,6 +305,14 @@ class StatusCommunityScreen:
     def check_channel_count(self, count_to_check: int):
         chatListObj = get_obj(CommunityScreenComponents.NOT_CATEGORIZED_CHAT_LIST.value)
         verify_equals(chatListObj.statusChatListItems.count, int(count_to_check))
+
+    def check_channel_is_uncategorized(self, channel_name: str):
+        chatListObj = get_obj(CommunityScreenComponents.NOT_CATEGORIZED_CHAT_LIST.value)
+        for i in range(chatListObj.statusChatListItems.count):
+            channelObj = chatListObj.statusChatListItems.itemAtIndex(i)
+            if channelObj.objectName == channel_name:
+                return
+        verify_failure("No channel matches " + channel_name)
 
     def search_and_change_community_channel_emoji(self, emoji_description: str):
         self._open_edit_channel_popup()
