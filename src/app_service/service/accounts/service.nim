@@ -58,7 +58,6 @@ QtObject:
     accounts: seq[AccountDto]
     loggedInAccount: AccountDto
     importedAccount: GeneratedAccountDto
-    isFirstTimeAccountLogin: bool
     keyStoreDir: string
     defaultWalletEmoji: string
 
@@ -71,7 +70,6 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.fleetConfiguration = fleetConfiguration
-    result.isFirstTimeAccountLogin = false
     result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
     result.defaultWalletEmoji = ""
 
@@ -84,9 +82,6 @@ QtObject:
 
   proc getImportedAccount*(self: Service): GeneratedAccountDto =
     return self.importedAccount
-
-  proc isFirstTimeAccountLogin*(self: Service): bool =
-    return self.isFirstTimeAccountLogin
 
   proc setKeyStoreDir(self: Service, key: string) = 
     self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
@@ -121,7 +116,6 @@ QtObject:
     self.generatedAccounts = @[]
     self.loggedInAccount = AccountDto()
     self.importedAccount = GeneratedAccountDto()
-    self.isFirstTimeAccountLogin = false
 
   proc validateMnemonic*(self: Service, mnemonic: string): string =
     try:
@@ -184,7 +178,6 @@ QtObject:
         error = response.result["error"].getStr
         if error == "":
           debug "Account saved succesfully"
-          self.isFirstTimeAccountLogin = true
           result = toAccountDto(account)
           return
 

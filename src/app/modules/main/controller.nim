@@ -102,10 +102,6 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  if self.accountsService.isFirstTimeAccountLogin():
-    let d9 = 9*86400 # 9 days
-    discard self.settingsService.setDefaultSyncPeriod(d9)
-
   self.events.on(SIGNAL_CHANNEL_GROUPS_LOADED) do(e:Args):
     let args = ChannelGroupsArgs(e)
     self.delegate.onChannelGroupsLoaded(
