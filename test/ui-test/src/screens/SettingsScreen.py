@@ -19,7 +19,7 @@ from drivers.SquishDriverVerification import *
 from utils.ObjectAccess import *
 from .StatusMainScreen import MainScreenComponents
 from .StatusMainScreen import StatusMainScreen
-from .StatusMainScreen import authenticatePopupEnterPassword
+from .StatusMainScreen import authenticate_popup_enter_password
 
 class SettingsScreenComponents(Enum):
     SAVE_BUTTON: str = "settingsSave_StatusButton"
@@ -164,7 +164,7 @@ class SettingsScreen:
         click_obj_by_name(WalletSettingsScreen.DELETE_ACCOUNT.value)
         click_obj_by_name(WalletSettingsScreen.DELETE_ACCOUNT_CONFIRM.value)
 
-        authenticatePopupEnterPassword(password)
+        authenticate_popup_enter_password(password)
 
     def verify_no_account(self, account_name: str):
         index = self._find_account_index(account_name)

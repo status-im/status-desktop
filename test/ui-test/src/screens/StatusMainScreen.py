@@ -53,7 +53,7 @@ class SharedPopup(Enum):
     PASSWORD_INPUT: str = "sharedPopup_Password_Input"
     PRIMARY_BUTTON: str = "sharedPopup_Primary_Button"
 
-def authenticatePopupEnterPassword(password):
+def authenticate_popup_enter_password(password):
     wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
     click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
 
