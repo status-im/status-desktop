@@ -17,7 +17,9 @@ QtObject {
     property bool loggedInUserAuthenticated: false
 
     property string backButtonName: ""
-    property var currentAccount: Constants.isCppApp ? walletSectionAccounts.currentAccount: walletSectionCurrent
+    property var overview: walletSectionOverview
+    property var assets: walletSectionCurrent
+    property var currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings

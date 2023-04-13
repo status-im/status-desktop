@@ -19,7 +19,7 @@ Item {
     id: root
 
     property var networkConnectionStore
-    property var currentAccount
+    property var overview
     property var store
     property var walletStore
 
@@ -38,15 +38,15 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: 28
                 font.bold: true
-                text: currentAccount.name
+                text: overview.name
             }
             StatusTextWithLoadingState {
                 Layout.alignment: Qt.AlignVCenter
                 font.pixelSize: 28
                 font.bold: true
                 customColor: Theme.palette.baseColor1
-                text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(root.currentAccount.currencyBalance)
-                loading: root.currentAccount.assetsLoading
+                text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(root.overview.currencyBalance)
+                loading: root.overview.balanceLoading
                 visible: !networkConnectionStore.accountBalanceNotAvailable
             }
         }
@@ -67,12 +67,12 @@ Item {
 
         StatusAddressPanel {
             objectName: "addressPanel"
-            value: currentAccount.ens || currentAccount.mixedcaseAddress
-            ens: !!currentAccount.ens
+            value: overview.ens || overview.mixedcaseAddress
+            ens: !!overview.ens
             autHideCopyIcon: true
             expanded: false
 
-            onDoCopy: () => root.store.copyToClipboard(currentAccount.mixedcaseAddress)
+            onDoCopy: () => root.store.copyToClipboard(overview.mixedcaseAddress)
         }
     }
 }

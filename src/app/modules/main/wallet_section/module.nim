@@ -12,6 +12,7 @@ import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
 import ./add_account/module as add_account_module
+import ./overview/module as overview_module
 
 import ../../../global/global_singleton
 import ../../../core/eventemitter
@@ -50,6 +51,7 @@ type
     savedAddressesModule: saved_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
     addAccountModule: add_account_module.AccessInterface
+    overviewModule: overview_module.AccessInterface
     keycardService: keycard_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
@@ -87,6 +89,7 @@ proc newModule*(
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService, currencyService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
+  result.overviewModule = overview_module.newModule(result, events, walletAccountService, networkService, currencyService)
 
 method delete*(self: Module) =
   self.accountsModule.delete
@@ -108,6 +111,7 @@ method switchAccount*(self: Module, accountIndex: int) =
   self.assetsModule.switchAccount(accountIndex)
   self.collectiblesModule.switchAccount(accountIndex)
   self.transactionsModule.switchAccount(accountIndex)
+  self.overviewModule.switchAccount(accountIndex)
 
 method switchAccountByAddress*(self: Module, address: string) =
   let accountIndex = self.controller.getIndex(address)
@@ -146,6 +150,7 @@ method load*(self: Module) =
   self.transactionsModule.load()
   self.savedAddressesModule.load()
   self.buySellCryptoModule.load()
+  self.overviewModule.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -170,6 +175,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.buySellCryptoModule.isLoaded()):
+    return
+
+  if(not self.overviewModule.isLoaded()):
     return
 
   self.switchAccount(0)
@@ -204,6 +212,9 @@ method savedAddressesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method buySellCryptoModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method overviewModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method destroyAddAccountPopup*(self: Module, switchToAccWithAddress: string = "") =

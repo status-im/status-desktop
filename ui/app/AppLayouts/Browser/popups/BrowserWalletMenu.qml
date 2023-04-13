@@ -208,7 +208,7 @@ Popup {
             }
             HistoryView {
                 id: historyTab
-                account: WalletStore.dappBrowserAccount
+                assets: WalletStore.dappBrowserAccount
             }
         }
     }

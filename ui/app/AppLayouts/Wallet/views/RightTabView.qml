@@ -56,7 +56,7 @@ Item {
             ColumnLayout {
                 WalletHeader {
                     Layout.fillWidth: true
-                    currentAccount: RootStore.currentAccount
+                    overview: RootStore.overview
                     store: root.store
                     walletStore: RootStore
                     networkConnectionStore: root.networkConnectionStore
@@ -107,7 +107,7 @@ Item {
                         }
                     }
                     HistoryView {
-                        account: RootStore.currentAccount
+                        assets: RootStore.assets
                         onLaunchTransactionDetail: {
                             transactionDetailView.transaction = transaction
                             stack.currentIndex = 3

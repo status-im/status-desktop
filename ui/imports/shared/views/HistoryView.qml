@@ -20,15 +20,15 @@ import "../controls"
 ColumnLayout {
     id: root
 
-    property var account
+    property var assets
     property int pageSize: 20 // number of transactions per page
 
     signal launchTransactionDetail(var transaction)
 
     function fetchHistory() {
-        if (!RootStore.isFetchingHistory(root.account.address)) {
+        if (!RootStore.isFetchingHistory(root.assets.address)) {
             d.isLoading = true
-            RootStore.loadTransactionsForAccount(root.account.address, pageSize)
+            RootStore.loadTransactionsForAccount(root.assets.address, pageSize)
         }
     }
 
@@ -40,7 +40,7 @@ ColumnLayout {
     Connections {
         target: RootStore.history
         function onLoadingTrxHistoryChanged(isLoading: bool, address: string) {
-            if (root.account.address.toLowerCase() === address.toLowerCase()) {
+            if (root.assets.address.toLowerCase() === address.toLowerCase()) {
                 d.isLoading = isLoading
             }
         }
@@ -178,7 +178,7 @@ ColumnLayout {
         TransactionDelegate {
             width: ListView.view.width
             modelData: model
-            isIncoming: isModelDataValid ? modelData.to === account.address: false
+            isIncoming: isModelDataValid ? modelData.to === root.assets.address: false
             currentCurrency: RootStore.currentCurrency
             cryptoValue: isModelDataValid ? modelData.value.amount : 0.0
             fiatValue: isModelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
