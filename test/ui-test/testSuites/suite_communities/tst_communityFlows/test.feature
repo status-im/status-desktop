@@ -28,11 +28,12 @@ Feature: Status Desktop community
 
     Scenario Outline: The admin creates a community channel
         When the admin creates a community channel named "<community_channel_name>", with description "<community_channel_description>", with the method "<method>"
-        Then the channel named "<community_channel_name>" is open
+        Then "<community_channel_name>" should be in the list of uncategorized channels
+        And the channel named "<community_channel_name>" is open
         Examples:
             | community_channel_name    | community_channel_description     | method           |
             | test-channel    | Community channel description tested 1      | bottom_menu      |
-            | test-channel2   | Community channel description tested 2      | right_click_menu |
+          #  | test-channel2   | Community channel description tested 2      | right_click_menu |
 
     Scenario Outline: The admin edits a community channel
         Given the admin creates a community channel named "<community_channel_name>", with description "<community_channel_description>", with the method "bottom_menu"

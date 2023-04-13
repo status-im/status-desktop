@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, json, sequtils
+import NimQml, Tables, strutils, strformat, json, sequtils, algorithm
 import ../../../../app_service/common/types
 import ../../../../app_service/service/chat/dto/chat
 from ../../../../app_service/service/contacts/dto/contacts import TrustStatus
@@ -159,27 +159,62 @@ QtObject:
     of ModelRole.OnlineStatus:
       result = newQVariant(item.onlineStatus.int)
     of ModelRole.IsCategory:
-      result = newQVariant(item.`type` == CATEGORY_TYPE)
+      result = newQVariant(item.isCategory)
     of ModelRole.LoaderActive:
       result = newQVariant(item.loaderActive)
 
-  proc appendItem*(self: Model, item: Item) =
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item)
-    self.endInsertRows()
-
-    self.countChanged()
-
-  proc getItemIdxById*(self: Model, id: string): int =
+  proc getItemIdxById(items: seq[Item], id: string): int =
     var idx = 0
-    for it in self.items:
+    for it in items:
       if(it.id == id):
         return idx
       idx.inc
     return -1
+
+  proc getItemIdxById*(self: Model, id: string): int =
+    return getItemIdxById(self.items, id)
+
+  proc getClosestCategoryAtIndex*(self: Model, index: int): tuple[categoryIem: Item, categoryIndex: int] =
+    if index > self.items.len:
+      return (Item(), -1)
+    # Count down from the index to 0 and find the first category
+    for i in countdown(index - 1, 0):
+      if self.items[i].isCategory:
+        return (self.items[i], i)
+    return (Item(), -1)
+
+  proc cmpChatsAndCats*(x, y: Item): int =
+    # Sort proc to compare chats and categories
+    # Compares first by categoryPosition, then by position
+    result = cmp(x.categoryPosition, y.categoryPosition)
+    if result == 0:
+      result = cmp(x.position, y.position)
+
+  # IMPORTANT: if you call this function for a chat with a category, make sure the category is appended first
+  proc appendItem*(self: Model, item: Item, ignoreCategory: bool = false) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    var indexToInsertTo = item.position
+    if item.categoryId != "" and not item.isCategory:
+      if ignoreCategory:
+        # We don't care about the category position, just position it at the end
+        indexToInsertTo = self.items.len
+      else:
+        let categoryIdx = self.getItemIdxById(item.categoryId)
+        if categoryIdx == -1:
+          return
+        indexToInsertTo = categoryIdx + item.position + 1
+    if indexToInsertTo < 0:
+      indexToInsertTo = 0
+    elif indexToInsertTo >= self.items.len + 1:
+      indexToInsertTo = self.items.len
+    self.beginInsertRows(parentModelIndex, indexToInsertTo, indexToInsertTo)
+    self.items.insert(item, indexToInsertTo)
+    self.items.sort(cmpChatsAndCats)
+    self.endInsertRows()
+
+    self.countChanged()
 
   proc changeCategoryOpened*(self: Model, categoryId: string, opened: bool) {.slot.} =
     for i in 0 ..< self.items.len:
@@ -337,15 +372,15 @@ QtObject:
   proc updateItemsWithCategoryDetailsById*(
       self: Model,
       chats: seq[ChatDto],
-      categoryId,
-      newCategoryName: string,
+      categoryId: string,
       newCategoryPosition: int,
     ) =
+    self.beginResetModel()
+
     for i in 0 ..< self.items.len:
       var item = self.items[i]
       if item.`type` == CATEGORY_TYPE:
         continue
-      var hadCategory = item.categoryId == categoryId
       var nowHasCategory = false
       var found = false
       for chat in chats:
@@ -354,26 +389,14 @@ QtObject:
         found = true
         nowHasCategory = chat.categoryId == categoryId
         item.position = chat.position
-        item.categoryId = categoryId
-        item.categoryPosition = newCategoryPosition
-        let modelIndex = self.createIndex(i, 0, nil)
-        self.dataChanged(modelIndex, modelIndex, @[
-          ModelRole.Position.int,
-          ModelRole.CategoryId.int,
-          ModelRole.CategoryPosition.int,
-        ])
+        item.categoryId = chat.categoryId
+        item.categoryPosition = if nowHasCategory: newCategoryPosition else: -1
+        if not nowHasCategory:
+          item.categoryOpened = true
         break
-      if (hadCategory and not found and not nowHasCategory) or (hadCategory and found and not nowHasCategory):
-        item.categoryId = ""
-        item.categoryPosition = -1
-        echo "category changed ", item.name
-        item.categoryOpened = true
-        let modelIndex = self.createIndex(i, 0, nil)
-        self.dataChanged(modelIndex, modelIndex, @[
-          ModelRole.CategoryId.int,
-          ModelRole.CategoryPosition.int,
-          ModelRole.CategoryOpened.int,
-        ])
+
+    self.items.sort(cmpChatsAndCats)
+    self.endResetModel()
 
   proc removeCategory*(
       self: Model,
@@ -382,6 +405,7 @@ QtObject:
     ) =
     self.removeItemById(categoryId)
 
+    self.beginResetModel()
     for i in 0 ..< self.items.len:
       var item = self.items[i]
       if item.categoryId != categoryId:
@@ -403,6 +427,9 @@ QtObject:
           ModelRole.CategoryOpened.int,
         ])
         break
+    
+    self.items.sort(cmpChatsAndCats)
+    self.endResetModel()
 
   proc renameCategory*(self: Model, categoryId, newName: string) =
     let index = self.getItemIdxById(categoryId)
@@ -461,27 +488,34 @@ QtObject:
     let modelIndex = self.createIndex(index, 0, nil)
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.LastMessageTimestamp.int])
 
-  proc reorderChatById*(
+  proc reorderChats*(
       self: Model,
-      chatId: string,
-      position: int,
-      newCategoryId: string,
-      newCategoryPosition: int,
+      updatedChats: seq[ChatDto],
     ) =
-    let index = self.getItemIdxById(chatId)
-    if index == -1:
-      return
-    var roles = @[ModelRole.Position.int]
-    if(self.items[index].categoryId != newCategoryId):
-      self.items[index].categoryId = newCategoryId
-      self.items[index].categoryPosition = newCategoryPosition
-      roles = roles.concat(@[
-        ModelRole.CategoryId.int,
-        ModelRole.CategoryPosition.int,
-      ])
-    self.items[index].position = position
-    let modelIndex = self.createIndex(index, 0, nil)
-    self.dataChanged(modelIndex, modelIndex, roles)
+    self.beginResetModel()
+
+    for updatedChat in updatedChats:
+      let index = self.getItemIdxById(updatedChat.id)
+      if index == -1:
+        continue
+
+      if(self.items[index].categoryId != updatedChat.categoryId):
+        if updatedChat.categoryId == "":
+          # Moved out of a category
+          self.items[index].categoryId = updatedChat.categoryId
+          self.items[index].categoryPosition = -1
+        else:
+          let category = self.getItemById(updatedChat.categoryId)
+          if category.id == "":
+            continue
+          self.items[index].categoryId = category.id
+          self.items[index].categoryPosition = category.categoryPosition
+
+      self.items[index].position = updatedChat.position
+
+    self.items.sort(cmpChatsAndCats)
+
+    self.endResetModel()
 
   proc reorderCategoryById*(
       self: Model,

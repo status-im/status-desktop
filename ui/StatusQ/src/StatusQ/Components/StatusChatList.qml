@@ -69,7 +69,7 @@ Item {
                 const to = chatListDelegate.visualIndex;
                 if (to === from)
                     return;
-                if (!model.isCategory) {
+                if (!drop.source.isCategory) {
                     root.chatItemReordered(statusChatListItems.itemAtIndex(from).categoryId, statusChatListItems.itemAtIndex(from).chatId, to);
                 } else {
                     root.categoryReordered(statusChatListItems.itemAtIndex(from).categoryId, to);
@@ -77,6 +77,8 @@ Item {
             }
 
             StatusDraggableListItem {
+                readonly property bool isCategory: model.isCategory
+
                 id: draggableItem
                 width: parent.width
                 height: visible ? implicitHeight : 0
@@ -93,7 +95,7 @@ Item {
                 customizable: true
                 Drag.keys: chatListDelegate.keys
                 onClicked: {
-                    if (model.isCategory) {
+                    if (draggableItem.isCategory) {
                         statusChatListCategoryItem.clicked(mouse);
                     } else {
                         statusChatListItem.clicked(mouse);
@@ -104,7 +106,7 @@ Item {
                    StatusChatListCategoryItem {
                         id: statusChatListCategoryItem
                         objectName: "categoryItem"
-                        visible: model.isCategory
+                        visible: draggableItem.isCategory
 
                         function setupPopup() {
                             categoryPopupMenuSlot.item.categoryItem = model
@@ -129,10 +131,10 @@ Item {
                                 highlighted = true;
                                 categoryPopupMenuSlot.item.popup()
                             } else if (mouse.button === Qt.LeftButton) {
-                                root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                                root.model.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
                             }
                         }
-                        onToggleButtonClicked: root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                        onToggleButtonClicked: root.model.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
                         onMenuButtonClicked: {
                             statusChatListCategoryItem.setupPopup()
                             highlighted = true
@@ -148,7 +150,7 @@ Item {
                         objectName: model.name
                         width: root.width
                         height: visible ? (statusChatListItem.implicitHeight + 4) /*spacing between non-collapsed items*/ : 0
-                        visible: (!model.isCategory && model.categoryOpened)
+                        visible: (!draggableItem.isCategory && model.categoryOpened)
                         originalOrder: model.position
                         chatId: model.itemId
                         categoryId: model.categoryId

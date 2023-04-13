@@ -274,3 +274,6 @@ proc loaderActive*(self: Item): bool =
 
 proc `loaderActive=`*(self: var Item, value: bool) =
   self.loaderActive = value
+
+proc isCategory*(self: Item): bool =
+  self.`type` == CATEGORY_TYPE
