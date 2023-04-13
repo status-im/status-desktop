@@ -37,6 +37,9 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getWalletAccounts()
+
 proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 

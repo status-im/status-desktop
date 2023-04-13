@@ -47,8 +47,8 @@ proc init*(self: Controller) =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
-proc deleteAccount*(self: Controller, address: string, password = "") =
-  self.walletAccountService.deleteAccount(address, password)
+proc deleteAccount*(self: Controller, address: string, password = "", doPasswordHashing = false) =
+  self.walletAccountService.deleteAccount(address, password, doPasswordHashing)
 
 proc authenticateKeyPair*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_ACCOUNTS_MODULE_AUTH_IDENTIFIER,
