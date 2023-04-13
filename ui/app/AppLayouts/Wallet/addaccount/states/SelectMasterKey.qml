@@ -27,6 +27,7 @@ Item {
         }
 
         StatusListItem {
+            objectName: "AddAccountPopup-ImportUsingSeedPhrase"
             title: qsTr("Import using seed phrase")
             asset {
                 name: "key_pair_seed_phrase"
@@ -47,6 +48,7 @@ Item {
         }
 
         StatusListItem {
+            objectName: "AddAccountPopup-ImportPrivateKey"
             title: qsTr("Import private key")
             asset {
                 name: "objects"
@@ -67,6 +69,7 @@ Item {
         }
 
         StatusListItem {
+            objectName: "AddAccountPopup-GenerateNewMasterKey"
             title: qsTr("Generate new master key")
             asset {
                 name: "objects"
@@ -103,6 +106,7 @@ Item {
             }
             components: [
                 StatusButton {
+                    objectName: "AddAccountPopup-GoToKeycardSettings"
                     text: qsTr("Continue in Keycard settings")
                     onClicked: {
                         Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.keycard)

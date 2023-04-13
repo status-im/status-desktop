@@ -118,6 +118,7 @@ Item {
 
         StatusInput {
             id: word
+            objectName: "AddAccountPopup-EnterSeedPhraseWord"
             Layout.fillWidth: true
             Layout.topMargin: Style.current.xlPadding
             validationMode: StatusInput.ValidationMode.Always

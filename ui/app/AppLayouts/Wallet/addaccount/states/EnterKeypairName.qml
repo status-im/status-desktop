@@ -24,6 +24,7 @@ Item {
         spacing: Style.current.halfPadding
 
         StatusInput {
+            objectName: "AddAccountPopup-GeneratedSeedPhraseKeyName"
             Layout.preferredWidth: parent.width
             Layout.topMargin: Style.current.padding
             label: qsTr("Key name")

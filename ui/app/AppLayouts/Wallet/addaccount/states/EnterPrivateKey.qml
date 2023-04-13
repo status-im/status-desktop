@@ -50,6 +50,7 @@ Item {
 
                 StatusPasswordInput {
                     id: privKeyInput
+                    objectName: "AddAccountPopup-PrivateKeyInput"
                     Layout.preferredHeight: Constants.addAccountPopup.itemHeight
                     Layout.preferredWidth: parent.width - parent.columnSpacing - showHideButton.width
                     rightPadding: pasteButton.width + pasteButton.anchors.rightMargin + Style.current.halfPadding
@@ -147,6 +148,7 @@ Item {
             visible: d.addressResolved
 
             StatusInput {
+                objectName: "AddAccountPopup-PrivateKeyName"
                 width: parent.width
                 label: qsTr("Key name")
                 charLimit: Constants.addAccountPopup.keyPairNameMaxLength

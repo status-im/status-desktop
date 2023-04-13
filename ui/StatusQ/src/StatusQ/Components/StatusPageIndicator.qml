@@ -117,6 +117,7 @@ Item {
         spacing: root.spacing
         model: d.pages
         delegate: StatusBaseButton {
+            objectName: "Page-%1".arg(itemText)
             width: d.buttonWidth
             text: itemText
             size: StatusBaseButton.Size.Small

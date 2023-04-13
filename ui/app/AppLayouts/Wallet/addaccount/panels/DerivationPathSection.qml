@@ -52,6 +52,7 @@ Column {
         }
 
         StatusButton {
+            objectName: "AddAccountPopup-EditDerivationPath"
             visible: !root.store.addAccountModule.actionAuthenticated
             text: qsTr("Edit")
 

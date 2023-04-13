@@ -33,6 +33,7 @@ GridLayout {
     }
 
     StatusLinkText {
+        objectName: "AddAccountPopup-ResetDerivationPath"
         enabled: root.store.addAccountModule.suggestedDerivationPath !== root.store.addAccountModule.derivationPath
         font.pixelSize: Constants.addAccountPopup.labelFontSize1
         text: qsTr("Reset")
@@ -55,6 +56,7 @@ GridLayout {
 
         DerivationPathInput {
             id: derivationPathInput
+            objectName: "AddAccountPopup-DerivationPathInput"
 
             Layout.fillWidth: true
 
@@ -129,6 +131,7 @@ GridLayout {
 
     StatusListItem {
         id: generatedAddress
+        objectName: "AddAccountPopup-GeneratedAddress"
         Layout.preferredWidth: d.oneHalfWidth
         Layout.preferredHeight: derivationPathInput.height
         color: "transparent"
@@ -163,6 +166,7 @@ GridLayout {
 
         AccountAddressSelection {
             id: accountAddressSelection
+            objectName: "AddAccountPopup-GeneratedAddressesList"
             width: root.width
             store: root.store
 
@@ -219,6 +223,7 @@ GridLayout {
     }
 
     StatusCheckBox {
+        objectName: "AddAccountPopup-ConfirmAddingNonEthDerivationPath"
         visible: root.store.derivationPathOutOfTheDefaultStatusDerivationTree
         Layout.fillWidth: true
         Layout.columnSpan: 3

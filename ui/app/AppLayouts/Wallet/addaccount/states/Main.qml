@@ -99,6 +99,7 @@ Item {
 
             StatusInput {
                 id: accountName
+                objectName: "AddAccountPopup-AccountName"
                 anchors.horizontalCenter: parent.horizontalCenter
                 placeholderText: qsTr("Enter an account name...")
                 label: qsTr("Name")
@@ -112,6 +113,7 @@ Item {
                     d.openEmojiPopup(true)
                 }
                 input.rightComponent: StatusFlatRoundButton {
+                    objectName: "AddAccountPopup-AccountEmoji"
                     width: 30
                     height: 30
                     radius: 30
@@ -148,6 +150,7 @@ Item {
 
             StatusColorSelectorGrid {
                 id: colorSelection
+                objectName: "AddAccountPopup-AccountColor"
                 anchors.horizontalCenter: parent.horizontalCenter
                 model: Constants.preDefinedWalletAccountColors
                 title.color: Theme.palette.directColor1

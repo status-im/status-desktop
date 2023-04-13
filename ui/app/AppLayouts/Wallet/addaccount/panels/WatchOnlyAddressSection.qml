@@ -21,6 +21,7 @@ Column {
 
     StatusInput {
         id: addressInput
+        objectName: "AddAccountPopup-WatchOnlyAddress"
         width: parent.width
         maximumHeight: Constants.addAccountPopup.itemHeight
         minimumHeight: Constants.addAccountPopup.itemHeight
