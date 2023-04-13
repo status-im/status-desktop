@@ -177,8 +177,10 @@ def hover(objName: str, timeout_sec: int = 5):
         obj = squish.waitForObject(getattr(names, objName), 1000)
         try:
             squish.mouseMove(obj)
+            obj = squish.waitForObject(getattr(names, objName), 1000)
+            assert getattr(obj, 'hovered', True)
             return True
-        except RuntimeError as err:
+        except (RuntimeError, AssertionError) as err:
             # Object does not have a valid geometry
             squish.snooze(1)
             return False
