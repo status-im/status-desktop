@@ -6,7 +6,7 @@ import sys
 import common.Common as common
 from common.SeedUtils import *
 from .StatusMainScreen import StatusMainScreen
-from .StatusMainScreen import authenticatePopupEnterPassword
+from .StatusMainScreen import authenticate_popup_enter_password
 from .SettingsScreen import SidebarComponents
 from drivers.SquishDriver import type_text as type_text
 
@@ -153,11 +153,11 @@ class StatusWalletScreen:
     def add_account_popup_do_primary_action(self, password: str = NOT_APPLICABLE):
         click_obj_by_name(AddEditAccountPopup.PRIMARY_BUTTON.value)
         if password != NOT_APPLICABLE:
-            authenticatePopupEnterPassword(password)
+            authenticate_popup_enter_password(password)
             
     def add_account_popup_open_edit_derivation_path_section(self, password: str):
         click_obj_by_name(AddEditAccountPopup.EDIT_DERIVATION_PATH_BUTTON.value)
-        authenticatePopupEnterPassword(password)
+        authenticate_popup_enter_password(password)
         
     def add_account_popup_change_account_name(self, name: str):
         is_loaded_visible_and_enabled(AddEditAccountPopup.ACCOUNT_NAME.value, 1000)
@@ -298,7 +298,7 @@ class StatusWalletScreen:
             click_obj_by_name(RemoveAccountPopup.HAVE_PEN_PAPER.value)
         click_obj_by_name(RemoveAccountPopup.CONFIRM_BUTTON.value)
         if password != NOT_APPLICABLE:
-            authenticatePopupEnterPassword(password)        
+            authenticate_popup_enter_password(password)        
         
     def click_option_from_left_part_right_click_menu(self, option: str):
         right_click_obj_by_name(MainWalletScreen.WALLET_LEFT_TAB.value)
@@ -391,7 +391,7 @@ class StatusWalletScreen:
 
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
 
-        authenticatePopupEnterPassword(password)
+        authenticate_popup_enter_password(password)
 
     def _click_repeater(self, repeater_object_name: str, object_name: str):
         repeater = get_obj(repeater_object_name)
