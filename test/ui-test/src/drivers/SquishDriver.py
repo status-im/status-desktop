@@ -172,6 +172,19 @@ def right_click_obj_by_name(objName: str):
 def hover_obj(obj):
     squish.mouseMove(obj)
 
+def hover(objName: str, timeout_sec: int = 5):
+    def _hover(objName: str,):
+        obj = squish.waitForObject(getattr(names, objName), 1000)
+        try:
+            squish.mouseMove(obj)
+            return True
+        except RuntimeError as err:
+            # Object does not have a valid geometry
+            squish.snooze(1)
+            return False
+    
+    assert squish.waitFor(lambda: _hover(objName), timeout_sec * 1000)
+
 def move_mouse_over_object_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
     move_mouse_over_object(obj)

@@ -37,6 +37,7 @@ class MainScreenComponents(Enum):
     TOOLBAR_BACK_BUTTON = "main_toolBar_back_button"
     LEAVE_CHAT_MENUITEM = "leaveChatMenuItem"
     CONTACTS_COLUMN_MESSAGES_HEADLINE = "mainWindow_ContactsColumn_Messages_Headline"
+    SECURE_YOUR_SEED_PHRASE_BANNER = "mainWindow_secureYourSeedPhraseBanner_ModuleWarning"
 
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
@@ -193,3 +194,9 @@ class StatusMainScreen:
     def close_popup(self):
         # Click in the corner of the overlay to close the popup
         click_obj_by_name_at_coordinates(MainScreenComponents.POPUP_OVERLAY.value, 1, 1)
+    
+    def is_secure_your_seed_phrase_banner_visible(self, value: bool):
+        verify(is_found(MainScreenComponents.SECURE_YOUR_SEED_PHRASE_BANNER.value) is value, 
+            f'Secure your seed phrase banner visible: {value}'
+        ) 
+        

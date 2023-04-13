@@ -144,7 +144,6 @@ class SettingsScreen:
         click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS.value)
         click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
 
-
     def open_wallet_settings(self):
         click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
 
@@ -387,7 +386,6 @@ class SettingsScreen:
         click_obj_by_name(ProfileSettingsScreen.CLOSE_SOCIAL_LINKS_DIALOG.value)
 
     def check_backup_seed_phrase_workflow(self):
-        self.open_wallet_settings()
         click_obj_by_name(WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value)
 
         # Check all checkboxes and click next button
@@ -400,6 +398,7 @@ class SettingsScreen:
         click_obj_by_name(BackupSeedPhrasePopup.NEXT_BUTTON.value)
 
         # Show seed phrase
+        hover(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
         click_obj_by_name(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
 
         # Collect word phrases for the next random confirmation steps
