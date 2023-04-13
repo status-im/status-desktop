@@ -349,6 +349,8 @@ proc connectKeychain(self: AppController) =
   self.keychainConnectionIds.add(handlerId)
 
 proc checkForStoringPasswordToKeychain(self: AppController) =
+  if singletonInstance.localAppSettings.getTestEnvironment():
+    return
   ## This proc is used to store pass/pin depends on user's selection during onboarding flow.
   let account = self.accountsService.getLoggedInAccount()
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()

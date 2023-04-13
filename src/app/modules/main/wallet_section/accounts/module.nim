@@ -149,13 +149,8 @@ proc authenticateActivityForKeyUid(self: Module, keyUid: string, reason: Authent
   if keyPairMigratedToKeycard:
     self.controller.authenticateKeyPair(keyUid)
   else:
-    if singletonInstance.userProfile.getIsKeycardUser():
-      ## We're here in case the keypair we're conducting an action for is not migrated to a keycard, but
-      ## profile keypair is migrated, then we're authenticating profile keypair (logged in user).
-      self.processingWalletAccount.keyUid = singletonInstance.userProfile.getKeyUid()
-      self.controller.authenticateKeyPair(singletonInstance.userProfile.getKeyUid())
-    else:
-      self.controller.authenticateKeyPair()
+    self.processingWalletAccount.keyUid = singletonInstance.userProfile.getKeyUid()
+    self.controller.authenticateKeyPair()
 
 method deleteAccount*(self: Module, keyUid: string, address: string) =
   let accountDto = self.controller.getWalletAccount(address)
@@ -170,10 +165,7 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
     if self.processingWalletAccount.keyUid != keyUid:
       error "cannot resolve key uid of an account being deleted", keyUid=keyUid
       return
-    if pin.len == PINLengthForStatusApp:
-      # keycard keypair authentication
-      self.controller.deleteAccount(self.processingWalletAccount.address)
-      self.tryKeycardSync(keyUid, pin)
-    elif password.len > 0:
-      # regular keypair authentication
-      self.controller.deleteAccount(self.processingWalletAccount.address, password)
+    if password.len == 0:
+      return
+    let doPasswordHashing = pin.len != PINLengthForStatusApp
+    self.controller.deleteAccount(self.processingWalletAccount.address, password, doPasswordHashing)

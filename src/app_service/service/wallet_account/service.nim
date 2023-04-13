@@ -308,7 +308,7 @@ QtObject:
   proc getIndex*(self: Service, address: string): int =
     let accounts = self.getWalletAccounts()
     for i in 0 ..< accounts.len:
-      if(accounts[i].address == address):
+      if cmpIgnoreCase(accounts[i].address, address) == 0:
         return i
 
   proc startWallet(self: Service) =
@@ -423,12 +423,12 @@ QtObject:
       error "error: ", procName="getRandomMnemonic", errName=e.name, errDesription=e.msg
       return ""
 
-  proc deleteAccount*(self: Service, address: string, password = "") =
+  proc deleteAccount*(self: Service, address: string, password: string, doPasswordHashing: bool) =
     try:
-      var hashedPassword = ""
-      if password.len > 0:
-        hashedPassword = utils.hashPassword(password)
-      discard status_go_accounts.deleteAccount(address, hashedPassword)
+      var finalPassword = password
+      if doPasswordHashing:
+        finalPassword = utils.hashPassword(password)
+      discard status_go_accounts.deleteAccount(address, finalPassword)
       let accountDeleted = self.removeAccount(address)
       self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
     except Exception as e:
