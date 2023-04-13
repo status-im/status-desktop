@@ -341,7 +341,11 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
     let args = CommunityTokenDeployedStatusArgs(e)
-    self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.contractAddress, args.deployState)
+    self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.chainId, args.contractAddress, args.deployState)
+
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED) do(e: Args):
+    let args = CommunityTokenOwnersArgs(e)
+    self.delegate.onCommunityTokenOwnersFetched(args.communityId, args.chainId, args.contractAddress, args.owners)
 
   self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING) do(e: Args):
     var args = CommunityMemberArgs(e)
@@ -466,6 +470,9 @@ proc getVerificationRequestFrom*(self: Controller, publicKey: string): Verificat
 
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   self.communityTokensService.getCommunityTokens(communityId)
+
+proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner] =
+  return self.communityTokensService.getCommunityTokenOwners(communityId, chainId, contractAddress)
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)

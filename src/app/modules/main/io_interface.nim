@@ -297,7 +297,10 @@ method onSharedKeycarModuleKeycardSyncPurposeTerminated*(self: AccessInterface, 
 method onCommunityTokenDeployed*(self: AccessInterface, communityToken: CommunityTokenDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, contractAddress: string, deployState: DeployState) {.base.} =
+method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onAcceptRequestToJoinFailed*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =

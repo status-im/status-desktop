@@ -23,7 +23,6 @@ import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/transaction/service as transaction_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/chat/dto/chat
-import ./tokens/models/token_item
 import ./tokens/module as community_tokens_module
 
 export io_interface
@@ -132,16 +131,6 @@ proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
     isVerified = contactDetails.details.isContactVerified(),
     requestToJoinId = requestId)
 
-proc createTokenItem(self: Module, tokenDto: CommunityTokenDto) : TokenItem =
-  var chainName, chainIcon: string
-  let networks = self.controller.getNetworks()
-  for network in networks:
-    if network.chainId == tokenDto.chainId:
-      chainName = network.chainName
-      chainIcon = network.iconURL
-      break
-  result = initTokenItem(tokenDto, chainName, chainIcon)
-
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
   return initItem(
       c.id,
@@ -179,8 +168,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
         result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
       encrypted = c.encrypted,
-      communityTokens = self.controller.getCommunityTokens(c.id).map(proc(tokenDto: CommunityTokenDto): TokenItem =
-        result = self.createTokenItem(tokenDto))
+      communityTokens = @[]
     )
 
 proc getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityItem =

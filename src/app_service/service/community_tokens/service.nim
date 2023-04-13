@@ -10,6 +10,7 @@ import ../settings/service as settings_service
 import ../wallet_account/service as wallet_account_service
 import ../ens/utils as ens_utils
 import ../eth/dto/transaction
+import ../collectible/dto as collectibles_dto
 
 import ../../../backend/response_type
 
@@ -18,12 +19,15 @@ import ../community/dto/community
 
 import ./dto/deployment_parameters
 import ./dto/community_token
-import ./airdrop_details
+import ./dto/community_token_owner
+
+import airdrop_details
 
 include async_tasks
 
 export community_token
 export deployment_parameters
+export community_token_owner
 
 logScope:
   topics = "community-tokens-service"
@@ -59,14 +63,23 @@ type
     fiatCurrency*: CurrencyAmount
     errorCode*: ComputeFeeErrorCode
 
-type ContractTuple = tuple
+type
+  ContractTuple = tuple
     address: string
     chainId: int
+
+type
+  CommunityTokenOwnersArgs* =  ref object of Args
+    communityId*: string
+    contractAddress*: string
+    chainId*: int
+    owners*: seq[CollectibleOwner]
 
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
 const SIGNAL_COMMUNITY_TOKEN_DEPLOYED* = "communityTokenDeployed"
 const SIGNAL_COMPUTE_DEPLOY_FEE* = "computeDeployFee"
+const SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED* = "communityTokenOwnersFetched"
 
 QtObject:
   type
@@ -80,8 +93,14 @@ QtObject:
       tempAccountAddress: string
       tempChainId: int
       addressAndTxMap: Table[ContractTuple, string]
+      tokenOwnersTimer: QTimer
+      tokenOwnersCache: Table[ContractTuple, seq[CollectibleOwner]]
+
+  # Forward declaration
+  proc fetchAllTokenOwners*(self: Service)
 
   proc delete*(self: Service) =
+      delete(self.tokenOwnersTimer)
       self.QObject.delete
 
   proc newService*(
@@ -101,8 +120,13 @@ QtObject:
     result.settingsService = settingsService
     result.walletAccountService = walletAccountService
     result.addressAndTxMap = initTable[ContractTuple, string]()
+    result.tokenOwnersTimer = newQTimer()
+    result.tokenOwnersTimer.setInterval(10*60*1000)
+    signalConnect(result.tokenOwnersTimer, "timeout()", result, "onRefreshTransferableTokenOwners()", 2)
 
   proc init*(self: Service) =
+    self.fetchAllTokenOwners()
+    self.tokenOwnersTimer.start()
     self.events.on(PendingTransactionTypeDto.CollectibleDeployment.event) do(e: Args):
       var receivedData = TransactionMinedArgs(e)
       let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
@@ -140,7 +164,6 @@ QtObject:
 
   proc deployCollectibles*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
     try:
-      # TODO this will come from SendModal
       let suggestedFees = self.transactionService.suggestedFees(chainId)
       let contractGasUnits = self.deployCollectiblesEstimate()
       if suggestedFees == nil:
@@ -201,6 +224,13 @@ QtObject:
       return parseCommunityTokens(response)
     except RpcException:
         error "Error getting community tokens", message = getCurrentExceptionMsg()
+
+  proc getAllCommunityTokens*(self: Service): seq[CommunityTokenDto] =
+    try:
+      let response = tokens_backend.getAllCommunityTokens()
+      return parseCommunityTokens(response)
+    except RpcException:
+        error "Error getting all community tokens", message = getCurrentExceptionMsg()
 
   proc getCommunityTokenBySymbol*(self: Service, communityId: string, symbol: string): CommunityTokenDto =
     let communityTokens = self.getCommunityTokens(communityId)
@@ -303,3 +333,43 @@ QtObject:
     let data = ComputeDeployFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency,
                                     errorCode: (if ethValue > balance: ComputeFeeErrorCode.Balance else: ComputeFeeErrorCode.Success))
     self.events.emit(SIGNAL_COMPUTE_DEPLOY_FEE, data)
+
+  proc fetchCommunityOwners*(self: Service, communityId: string, chainId: int, contractAddress: string) =
+    let arg = FetchCollectibleOwnersArg(
+      tptr: cast[ByteAddress](fetchCollectibleOwnersTaskArg),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onCommunityTokenOwnersFetched",
+      chainId: chainId,
+      contractAddress: contractAddress,
+      communityId: communityId
+    )
+    self.threadpool.start(arg)
+
+  # get owners from cache
+  proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner] =
+    return self.tokenOwnersCache.getOrDefault((address: contractAddress, chainId: chainId))
+
+  proc onCommunityTokenOwnersFetched*(self:Service, response: string) {.slot.} =
+    let responseJson = response.parseJson()
+    if responseJson{"error"}.kind != JNull and responseJson{"error"}.getStr != "":
+      let errorMessage = responseJson["error"].getStr
+      error "Can't fetch community token owners", chainId=responseJson["chainId"], contractAddress=responseJson["contractAddress"], errorMsg=errorMessage
+      return
+    let chainId = responseJson["chainId"].getInt
+    let contractAddress = responseJson["contractAddress"].getStr
+    let communityId = responseJson["communityId"].getStr
+    let resultJson = responseJson["result"]
+    let owners = collectibles_dto.toCollectibleOwnershipDto(resultJson).owners
+    let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: owners)
+    self.events.emit(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED, data)
+
+  proc onRefreshTransferableTokenOwners*(self:Service) {.slot.} =
+    let allTokens = self.getAllCommunityTokens()
+    for token in allTokens:
+      if token.transferable:
+        self.fetchCommunityOwners(token.communityId, token.chainId, token.address)
+
+  proc fetchAllTokenOwners*(self: Service) =
+    let allTokens = self.getAllCommunityTokens()
+    for token in allTokens:
+      self.fetchCommunityOwners(token.communityId, token.chainId, token.address)
