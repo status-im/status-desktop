@@ -67,6 +67,7 @@ Item {
             visible: root.store.enteredSeedPhraseIsValid
 
             StatusInput {
+                objectName: "AddAccountPopup-ImportedSeedPhraseKeyName"
                 width: parent.width
                 label: qsTr("Key name")
                 charLimit: Constants.addAccountPopup.keyPairNameMaxLength

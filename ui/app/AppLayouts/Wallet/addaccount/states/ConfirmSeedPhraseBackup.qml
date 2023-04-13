@@ -78,6 +78,7 @@ Item {
 
         StatusCheckBox {
             id: aknowledge
+            objectName: "AddAccountPopup-SeedBackupAknowledge"
             Layout.preferredWidth: parent.width
             Layout.topMargin: 2 * Style.current.xlPadding
             Layout.alignment: Qt.AlignHCenter

@@ -26,6 +26,7 @@ StatusMenu {
             model: root.roots.length
 
             StatusListItem {
+                objectName: "AddAccountPopup-PreDefinedDerivationPath-%1".arg(title)
                 width: parent.width
                 title: root.translation(root.roots[index], true)
                 subTitle: root.translation(root.roots[index], false)

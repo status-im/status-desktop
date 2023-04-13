@@ -77,6 +77,7 @@ Item {
 
         StatusCheckBox {
             id: havePen
+            objectName: "AddAccountPopup-HavePenAndPaper"
             Layout.preferredWidth: d.width2
             Layout.preferredHeight: d.checkboxHeight
             Layout.topMargin: Style.current.padding
@@ -88,6 +89,7 @@ Item {
 
         StatusCheckBox {
             id: writeDown
+            objectName: "AddAccountPopup-SeedPhraseWritten"
             Layout.preferredWidth: d.width2
             Layout.preferredHeight: d.checkboxHeight
             Layout.alignment: Qt.AlignHCenter
@@ -98,6 +100,7 @@ Item {
 
         StatusCheckBox {
             id: storeIt
+            objectName: "AddAccountPopup-StoringSeedPhraseConfirmed"
             Layout.preferredWidth: d.width2
             Layout.preferredHeight: d.checkboxHeight
             Layout.alignment: Qt.AlignHCenter

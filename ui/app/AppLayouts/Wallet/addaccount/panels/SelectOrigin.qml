@@ -23,6 +23,7 @@ StatusSelect {
     model: root.originModel
 
     selectedItemComponent: StatusListItem {
+        objectName: "AddAccountPopup-SelectedOrigin"
         title: Utils.appTranslation(root.selectedOrigin.name)
         statusListItemTitle.color: Theme.palette.directColor1
         border.width: 1
@@ -71,6 +72,8 @@ StatusSelect {
     }
     menuDelegate: StatusListItem {
         id: menu
+        objectName: "AddAccountPopup-OriginOption-" +
+                    (model.keyPair.pairType === Constants.addAccountPopup.keyPairType.unknown? model.keyPair.keyUid : model.keyPair.name)
 
         property bool isProfileKeypair: model.keyPair.pairType === Constants.addAccountPopup.keyPairType.profile
         property bool isOption: model.keyPair.keyUid === Constants.appTranslatableConstants.addAccountLabelOptionAddNewMasterKey ||

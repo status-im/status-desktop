@@ -103,6 +103,7 @@ StatusMenu {
             model: proxyModel
 
             Rectangle {
+                objectName: "AddAccountPopup-GeneratedAddress-%1".arg(model.addressDetails.order)
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: Constants.addAccountPopup.itemHeight
@@ -215,6 +216,7 @@ StatusMenu {
             }
 
             StatusPageIndicator {
+                objectName: "AddAccountPopup-GeneratedAddressesListPageIndicatior"
                 anchors.top: parent.top
                 anchors.topMargin: (Constants.addAccountPopup.itemHeight - height) * 0.5
                 anchors.horizontalCenter: parent.horizontalCenter

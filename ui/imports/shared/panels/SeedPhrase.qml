@@ -23,6 +23,7 @@ Item {
         readonly property var wordIndex: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
         readonly property int spacing: 4
         delegate: StatusSeedPhraseInput {
+            objectName: "SeedPhraseWordAtIndex-" + grid.wordIndex[index]
             width: (grid.cellWidth - grid.spacing)
             height: (grid.cellHeight - grid.spacing)
             textEdit.input.edit.enabled: false
@@ -47,6 +48,7 @@ Item {
     }
 
     StatusButton {
+        objectName: "AddAccountPopup-RevealSeedPhrase"
         anchors.centerIn: parent
         visible: !root.seedPhraseRevealed
         type: StatusBaseButton.Type.Primary

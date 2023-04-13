@@ -24,6 +24,7 @@ import "../addaccount"
 
 Rectangle {
     id: root
+    objectName: "walletLeftTab"
 
     property var networkConnectionStore
     property var changeSelectedAccount: function(){}
@@ -55,6 +56,13 @@ Rectangle {
     Loader {
         id: walletBckgAccountContextMenu
         sourceComponent: AccountContextMenu {
+
+            uniqueIdentifier: "wallet-background"
+
+            onClosed: {
+                walletBckgAccountContextMenu.active = false
+            }
+
             onAddNewAccountClicked: {
                 RootStore.runAddAccountPopup()
             }
@@ -232,7 +240,8 @@ Rectangle {
             readonly property Item firstItem: count > 0 ? itemAtIndex(0) : null
 
             delegate: StatusListItem {
-                objectName: "walletAccountItem"
+                objectName: "walletAccount-" + model.name
+                readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
                 width: ListView.view.width - Style.current.padding * 2
                 highlighted: !ListView.view.footerItem.button.highlighted &&
                              RootStore.currentAccount.name === model.name
@@ -281,7 +290,13 @@ Rectangle {
                 Loader {
                     id: accountContextMenu
                     sourceComponent: AccountContextMenu {
+
+                        uniqueIdentifier: model.name
                         account: model
+
+                        onClosed: {
+                            accountContextMenu.active = false
+                        }
 
                         onEditAccountClicked: {
                             RootStore.runEditAccountPopup(model.address)

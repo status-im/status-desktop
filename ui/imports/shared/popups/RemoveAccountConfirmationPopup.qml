@@ -42,6 +42,7 @@ StatusModal {
         spacing: Style.current.halfPadding
 
         StatusBaseText {
+            objectName: "RemoveAccountPopup-Notification"
             Layout.preferredWidth: parent.width
             wrapMode: Text.WordWrap
             textFormat: Text.RichText
@@ -68,6 +69,7 @@ at a later date should you wish to do so:").arg("<b>%1</b>".arg(root.accountName
         }
 
         StatusInput {
+            objectName: "RemoveAccountPopup-DerivationPath"
             Layout.preferredWidth: parent.width
             visible: !root.simple
             input.edit.enabled: false
@@ -81,6 +83,7 @@ at a later date should you wish to do so:").arg("<b>%1</b>".arg(root.accountName
 
         StatusCheckBox {
             id: derivationPathWritten
+            objectName: "RemoveAccountPopup-HavePenPaper"
             Layout.preferredWidth: parent.width
             Layout.preferredHeight: d.checkboxHeight
             Layout.topMargin: Style.current.padding
@@ -93,6 +96,7 @@ at a later date should you wish to do so:").arg("<b>%1</b>".arg(root.accountName
 
     rightButtons: [
         StatusFlatButton {
+            objectName: "RemoveAccountPopup-CancelButton"
             text: qsTr("Cancel")
             type: StatusBaseButton.Type.Normal
             onClicked: {
@@ -100,7 +104,8 @@ at a later date should you wish to do so:").arg("<b>%1</b>".arg(root.accountName
             }
         },
         StatusButton {
-            text: qsTr("Remove %1").arg(root.accountName)
+            objectName: "RemoveAccountPopup-ConfirmButton"
+            text: qsTr("Remove")
             type: StatusBaseButton.Type.Danger
             enabled: root.simple || derivationPathWritten.checked
             focus: true
