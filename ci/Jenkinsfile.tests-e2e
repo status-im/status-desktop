@@ -36,7 +36,7 @@ pipeline {
       throttleEnabled: true,
       throttleOption: 'category',
       maxConcurrentPerNode: 1,
-      maxConcurrentTotal: 10
+      maxConcurrentTotal: 9
     )
     /* Abort old PR builds. */
     disableConcurrentBuilds(
