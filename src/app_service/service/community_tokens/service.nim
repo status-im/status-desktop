@@ -252,13 +252,14 @@ QtObject:
 
   proc onSuggestedFees*(self:Service, response: string) {.slot.} =
     let responseJson = response.parseJson()
+    const ethSymbol = "ETH"
 
     if responseJson{"error"}.kind != JNull and responseJson{"error"}.getStr != "":
         let errorMessage = responseJson["error"].getStr
         var errorCode = ComputeFeeErrorCode.Other
         if errorMessage.contains("403 Forbidden") or errorMessage.contains("exceed"):
           errorCode = ComputeFeeErrorCode.Infura
-        let ethCurrency = newCurrencyAmount(0.0, "ETH", 1, false)
+        let ethCurrency = newCurrencyAmount(0.0, ethSymbol, 1, false)
         let fiatCurrency = newCurrencyAmount(0.0, self.settingsService.getCurrency(), 1, false)
         let data = ComputeDeployFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode)
         self.events.emit(SIGNAL_COMPUTE_DEPLOY_FEE, data)
@@ -269,17 +270,21 @@ QtObject:
     let maxFees = suggestedFees.maxFeePerGasM
     let gasPrice = if suggestedFees.eip1559Enabled: maxFees else: suggestedFees.gasPrice
 
-    const ethSymbol = "ETH"
-
     let weiValue = gwei2Wei(gasPrice) * contractGasUnits.u256
     let ethValueStr = wei2Eth(weiValue)
     let ethValue = parseFloat(ethValueStr)
     let fiatValue = self.getFiatValue(ethValue, ethSymbol)
 
     let wallet = self.walletAccountService.getAccountByAddress(self.tempAccountAddress)
-    let balance = wallet.getCurrencyBalance(@[self.tempChainId], ethSymbol)
 
-    let ethCurrency = newCurrencyAmount(ethValue, "ETH", 4, false)
+    var balance = 0.0
+    let tokens = wallet.tokens
+    for token in tokens:
+      if token.symbol == ethSymbol:
+        balance = token.balancesPerChain[self.tempChainId].balance
+        break
+
+    let ethCurrency = newCurrencyAmount(ethValue, ethSymbol, 4, false)
     let fiatCurrency = newCurrencyAmount(fiatValue, self.settingsService.getCurrency(), 2, false)
 
     let data = ComputeDeployFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency,
