@@ -306,6 +306,8 @@ QtObject:
     # status-go doesn't seem to preserve categoryIDs from chat
     # objects received via new messages. So we rely on what we
     # have in memory.
+    if chat.id == "":
+      return
     var categoryId = ""
     if self.chats.hasKey(chat.id):
       categoryId = self.chats[chat.id].categoryId
@@ -322,9 +324,9 @@ QtObject:
 
     let index = self.getChatIndex(channelGroupId, chat.id)
     if (index == -1):
-      self.channelGroups[channelGroupId].chats.add(chat)
+      self.channelGroups[channelGroupId].chats.add(self.chats[chat.id])
     else:
-      self.channelGroups[channelGroupId].chats[index] = chat
+      self.channelGroups[channelGroupId].chats[index] = self.chats[chat.id]
 
   proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto) =
     self.channelGroups[channelGroup.id] = channelGroup

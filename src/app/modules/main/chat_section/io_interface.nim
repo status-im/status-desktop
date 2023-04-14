@@ -111,7 +111,7 @@ method onChatMuted*(self: AccessInterface, chatId: string) {.base.} =
 method onChatUnmuted*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateUnreadMessagesAndMentions*(self: AccessInterface, chatId: string) {.base.} =
+method onMarkAllMessagesRead*(self: AccessInterface, chat: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onContactAdded*(self: AccessInterface, publicKey: string) {.base.} =
@@ -147,7 +147,7 @@ method onReorderChat*(self: AccessInterface, chattId: string, position: int, new
 method onReorderCategory*(self: AccessInterface, catId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityCategoryCreated*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
+method onCommunityCategoryCreated*(self: AccessInterface, category: Category, chats: seq[ChatDto], communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCategoryDeleted*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
