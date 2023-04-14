@@ -59,8 +59,7 @@ Item {
                 return
             }
 
-            if (chatDetails && chatDetails.active && chatDetails.hasUnreadMessages &&
-                !messageStore.messageSearchOngoing && messageStore.firstUnseenMessageLoaded) {
+            if (chatDetails && chatDetails.active && chatDetails.hasUnreadMessages && !messageStore.loading) {
                 chatContentModule.markAllMessagesRead()
             }
         }
@@ -96,7 +95,7 @@ Item {
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()
         }
 
-        function onFirstUnseenMessageLoadedChanged() {
+        function onLoadingChanged() {
             d.markAllMessagesReadIfMostRecentMessageIsInViewport()
         }
     }
@@ -116,11 +115,7 @@ Item {
 
             // HACK: we call `addNewMessagesMarker` later because messages model
             // may not be yet propagated with unread messages when this signal is emitted
-            if (chatLogView.visible) {
-                if (!d.isMostRecentMessageInViewport) {
-                    Qt.callLater(() => messageStore.addNewMessagesMarker())
-                }
-            } else {
+            if (chatLogView.visible && !d.isMostRecentMessageInViewport) {
                 Qt.callLater(() => messageStore.addNewMessagesMarker())
             }
         }
@@ -161,19 +156,17 @@ Item {
     Loader {
         id: loadingMessagesView
 
-        readonly property bool show: !messageStore.firstUnseenMessageLoaded ||
-                                     !messageStore.initialMessagesLoaded
-        active: show
-        visible: show
         anchors.top: loadingMessagesIndicator.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        sourceComponent:
-            MessagesLoadingView {
+
+        active: messageStore.loading
+        visible: active
+        sourceComponent: MessagesLoadingView {
             anchors.margins: 16
             anchors.fill: parent
-            }
+        }
     }
 
     StatusListView {
@@ -205,7 +198,7 @@ Item {
 
             // after inilial messages are loaded
             // load as much messages as the view requires
-            if (messageStore.initialMessagesLoaded) {
+            if (!messageStore.loading) {
                 d.loadMoreMessagesIfScrollBelowThreshold()
             }
         }

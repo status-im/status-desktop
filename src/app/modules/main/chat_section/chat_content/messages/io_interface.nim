@@ -153,6 +153,9 @@ method resendChatMessage*(self: AccessInterface, messageId: string): string =
 method resetNewMessagesMarker*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
 
+method removeNewMessagesMarker*(self: AccessInterface) =
+  raise newException(ValueError, "No implementation available")
+
 method resetAndScrollToNewMessagesMarker*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
 
@@ -163,4 +166,10 @@ method updateCommunityDetails*(self: AccessInterface, community: CommunityDto) =
   raise newException(ValueError, "No implementation available")
 
 method onFirstUnseenMessageLoaded*(self: AccessInterface, messageId: string) =
+  raise newException(ValueError, "No implementation available")
+
+method isFirstUnseenMessageInitialized*(self: AccessInterface): bool =
+  raise newException(ValueError, "No implementation available")
+
+method reevaluateViewLoadingState*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")

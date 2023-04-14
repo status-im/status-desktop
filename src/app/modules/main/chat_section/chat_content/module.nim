@@ -387,8 +387,16 @@ method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustwort
   self.view.updateTrustStatus(isUntrustworthy)
 
 method onMadeActive*(self: Module) =
-  self.messagesModule.resetAndScrollToNewMessagesMarker()
+  # The new messages marker is reset each time the chat is made active,
+  # as messages may arrive out of order and relying on the previous
+  # new messages marker could yield incorrect results.
+  if not self.messagesModule.isFirstUnseenMessageInitialized() or
+     self.controller.getChatDetails().unviewedMessagesCount > 0:
+    self.messagesModule.resetAndScrollToNewMessagesMarker()
+  self.messagesModule.reevaluateViewLoadingState()
   self.view.setActive()
 
 method onMadeInactive*(self: Module) =
+  if self.controller.getChatDetails().unviewedMessagesCount == 0:
+    self.messagesModule.removeNewMessagesMarker()
   self.view.setInactive()
