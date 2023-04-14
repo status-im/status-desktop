@@ -10,14 +10,13 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
-      initialMessagesLoaded: bool
       messageSearchOngoing: bool
       amIChatAdmin: bool
       isPinMessageAllowedForMembers: bool
       chatColor: string
       chatIcon: string
       chatType: int
-      firstUnseenMessageLoaded: bool
+      loading: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -30,14 +29,13 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
-    result.initialMessagesLoaded = false
     result.messageSearchOngoing = false
     result.amIChatAdmin = false
     result.isPinMessageAllowedForMembers = false
     result.chatColor = ""
     result.chatIcon = ""
     result.chatType = ChatType.Unknown.int
-
+    result.loading = false
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -79,21 +77,6 @@ QtObject:
 
   proc getNumberOfPinnedMessages*(self: View): int {.slot.} =
     return self.delegate.getNumberOfPinnedMessages()
-
-  proc initialMessagesLoadedChanged*(self: View) {.signal.}
-
-  proc getInitialMessagesLoaded(self: View): bool {.slot.} =
-    return self.initialMessagesLoaded
-
-  QtProperty[bool] initialMessagesLoaded:
-    read = getInitialMessagesLoaded
-    notify = initialMessagesLoadedChanged
-
-  proc initialMessagesAreLoaded*(self: View) = # this is not a slot
-    if (self.initialMessagesLoaded):
-      return
-    self.initialMessagesLoaded = true
-    self.initialMessagesLoadedChanged()
 
   proc loadMoreMessages*(self: View) {.slot.} =
     self.delegate.loadMoreMessages()
@@ -236,13 +219,13 @@ QtObject:
     self.chatType = value
     self.chatTypeChanged()
 
-  proc firstUnseenMessageLoadedChanged*(self: View) {.signal.}
-  proc getFirstUnseenMessageLoaded*(self: View): bool {.slot.} =
-    return self.firstUnseenMessageLoaded
-  proc setFirstUnseenMessageLoaded*(self: View, value: bool) =
-    self.firstUnseenMessageLoaded = value
-    self.firstUnseenMessageLoadedChanged()
+  proc loadingChanged*(self: View) {.signal.}
+  proc isLoading*(self: View): bool {.slot.} =
+    return self.loading
+  proc setLoading*(self: View, value: bool) =
+    self.loading = value
+    self.loadingChanged()
   
-  QtProperty[bool] firstUnseenMessageLoaded:
-    read = getFirstUnseenMessageLoaded
-    notify = firstUnseenMessageLoadedChanged
+  QtProperty[bool] loading:
+    read = isLoading
+    notify = loadingChanged

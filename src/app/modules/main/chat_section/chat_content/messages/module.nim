@@ -26,13 +26,20 @@ const FETCH_MORE_MESSAGES_MESSAGE_ID = "fetch-more_messages-message-id"
 const FETCH_MORE_MESSAGES_CLOCK = -1
 
 type
+  FirstUnseenMessageState = tuple
+    initialized: bool
+    fetching: bool
+    scrollToWhenFetched: bool
+
+type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
     viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
-    scrollToFirstUnseenMessageWhenLoaded: bool
+    initialMessagesLoaded: bool
+    firstUnseenMessageState: FirstUnseenMessageState
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
@@ -45,7 +52,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, contactService,
   communityService, chatService, messageService, mailserversService)
   result.moduleLoaded = false
-  result.scrollToFirstUnseenMessageWhenLoaded = true
+  result.initialMessagesLoaded = false
+  result.firstUnseenMessageState = (false, false, false)
 
 # Forward declaration
 proc createChatIdentifierItem(self: Module): Item
@@ -208,6 +216,11 @@ method currentUserWalletContainsAddress(self: Module, address: string): bool =
       return true
   return false
 
+method reevaluateViewLoadingState*(self: Module) =
+  self.view.setLoading(not self.initialMessagesLoaded or 
+                       not self.firstUnseenMessageState.initialized or
+                       self.firstUnseenMessageState.fetching)
+
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto],
   pinnedMessages: seq[PinnedMessageDto]) =
   var viewItems: seq[Item]
@@ -341,7 +354,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
     # check if this loading was caused by the click on a messages from the app search result
     self.checkIfMessageLoadedAndScrollToItIfItIs()
 
-  self.view.initialMessagesAreLoaded()
+  self.initialMessagesLoaded = true
+  self.reevaluateViewLoadingState()
 
 method messagesAdded*(self: Module, messages: seq[MessageDto]) =
   var items: seq[Item]
@@ -684,13 +698,13 @@ method resendChatMessage*(self: Module, messageId: string): string =
   return self.controller.resendChatMessage(messageId)
 
 method resetNewMessagesMarker*(self: Module) =
-  self.scrollToFirstUnseenMessageWhenLoaded = false
-  self.view.setFirstUnseenMessageLoaded(false)
+  self.firstUnseenMessageState.fetching = true
+  self.firstUnseenMessageState.scrollToWhenFetched = false
   self.controller.getAsyncFirstUnseenMessageId()
 
 method resetAndScrollToNewMessagesMarker*(self: Module) =
-  self.scrollToFirstUnseenMessageWhenLoaded = true
-  self.view.setFirstUnseenMessageLoaded(false)
+  self.firstUnseenMessageState.fetching = true
+  self.firstUnseenMessageState.scrollToWhenFetched = true
   self.controller.getAsyncFirstUnseenMessageId()
 
 method removeNewMessagesMarker*(self: Module) =
@@ -728,9 +742,14 @@ proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto)
         return true
   return false
 
+method isFirstUnseenMessageInitialized*(self: Module): bool =
+  return self.firstUnseenMessageState.initialized
+
 method onFirstUnseenMessageLoaded*(self: Module, messageId: string) =
   self.view.model().setFirstUnseenMessageId(messageId)
   self.view.model().resetNewMessagesMarker()
-  if self.scrollToFirstUnseenMessageWhenLoaded:
+  if self.firstUnseenMessageState.scrollToWhenFetched:
     self.scrollToMessage(messageId)
-  self.view.setFirstUnseenMessageLoaded(true)
+  self.firstUnseenMessageState.initialized = true
+  self.firstUnseenMessageState.fetching = false
+  self.reevaluateViewLoadingState()
