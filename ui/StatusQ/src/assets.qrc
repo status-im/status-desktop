@@ -51,9 +51,6 @@
         <file>assets/fonts/RobotoMono/RobotoMono-SemiBoldItalic.ttf</file>
         <file>assets/fonts/RobotoMono/RobotoMono-Thin.ttf</file>
         <file>assets/fonts/RobotoMono/RobotoMono-ThinItalic.ttf</file>
-        <file>assets/img/icons/statuses/automatic.svg</file>
-        <file>assets/img/icons/statuses/inactive.svg</file>
-        <file>assets/img/icons/statuses/online.svg</file>
         <file>assets/img/icons/bigger/browser.svg</file>
         <file>assets/img/icons/bigger/network.svg</file>
         <file>assets/img/icons/bigger/pause.svg</file>
@@ -62,12 +59,16 @@
         <file>assets/img/icons/bigger/send.svg</file>
         <file>assets/img/icons/bigger/settings.svg</file>
         <file>assets/img/icons/bigger/status-update.svg</file>
+        <file>assets/img/icons/statuses/automatic.svg</file>
+        <file>assets/img/icons/statuses/inactive.svg</file>
+        <file>assets/img/icons/statuses/online.svg</file>
         <file>assets/img/icons/tiny/message/delivered.svg</file>
         <file>assets/img/icons/tiny/message/pending.svg</file>
         <file>assets/img/icons/tiny/message/sent.svg</file>
         <file>assets/img/icons/tiny/message/warning.svg</file>
         <file>assets/img/icons/tiny/add.svg</file>
         <file>assets/img/icons/tiny/arrow-down.svg</file>
+        <file>assets/img/icons/tiny/bridge.svg</file>
         <file>assets/img/icons/tiny/channel-white.svg</file>
         <file>assets/img/icons/tiny/channel.svg</file>
         <file>assets/img/icons/tiny/chat.svg</file>
@@ -83,8 +84,10 @@
         <file>assets/img/icons/tiny/contact.svg</file>
         <file>assets/img/icons/tiny/double-checkmark.svg</file>
         <file>assets/img/icons/tiny/edit.svg</file>
+        <file>assets/img/icons/tiny/exclamation.svg</file>
         <file>assets/img/icons/tiny/external.svg</file>
         <file>assets/img/icons/tiny/flash.svg</file>
+        <file>assets/img/icons/tiny/gas.svg</file>
         <file>assets/img/icons/tiny/group-white.svg</file>
         <file>assets/img/icons/tiny/group.svg</file>
         <file>assets/img/icons/tiny/members.svg</file>
@@ -103,6 +106,7 @@
         <file>assets/img/icons/tiny/time.svg</file>
         <file>assets/img/icons/tiny/tiny-checkmark.svg</file>
         <file>assets/img/icons/tiny/tiny-contact.svg</file>
+        <file>assets/img/icons/tiny/tiny-exclamation.svg</file>
         <file>assets/img/icons/tiny/tribute-to-talk.svg</file>
         <file>assets/img/icons/tiny/unlocked.svg</file>
         <file>assets/img/icons/tiny/warning.svg</file>
@@ -135,6 +139,7 @@
         <file>assets/img/icons/audio.svg</file>
         <file>assets/img/icons/backspace.svg</file>
         <file>assets/img/icons/bold.svg</file>
+        <file>assets/img/icons/bridge.svg</file>
         <file>assets/img/icons/browser.svg</file>
         <file>assets/img/icons/camera.svg</file>
         <file>assets/img/icons/cancel.svg</file>
@@ -155,12 +160,14 @@
         <file>assets/img/icons/code.svg</file>
         <file>assets/img/icons/communities.svg</file>
         <file>assets/img/icons/condition-or.svg</file>
+        <file>assets/img/icons/contact-book.svg</file>
         <file>assets/img/icons/contact.svg</file>
         <file>assets/img/icons/copy.svg</file>
         <file>assets/img/icons/crown.svg</file>
         <file>assets/img/icons/dapp.svg</file>
         <file>assets/img/icons/delete.svg</file>
         <file>assets/img/icons/desktop.svg</file>
+        <file>assets/img/icons/discord.svg</file>
         <file>assets/img/icons/double-checkmark.svg</file>
         <file>assets/img/icons/download.svg</file>
         <file>assets/img/icons/edit.svg</file>
@@ -182,16 +189,21 @@
         <file>assets/img/icons/food-and-drinks.svg</file>
         <file>assets/img/icons/gallery.svg</file>
         <file>assets/img/icons/gif.svg</file>
+        <file>assets/img/icons/github.svg</file>
         <file>assets/img/icons/group-chat.svg</file>
         <file>assets/img/icons/group.svg</file>
         <file>assets/img/icons/help.svg</file>
         <file>assets/img/icons/hide.svg</file>
         <file>assets/img/icons/history.svg</file>
         <file>assets/img/icons/image.svg</file>
+        <file>assets/img/icons/images_icon.svg</file>
         <file>assets/img/icons/in-contacts.svg</file>
         <file>assets/img/icons/info.svg</file>
         <file>assets/img/icons/invite-users.svg</file>
         <file>assets/img/icons/italic.svg</file>
+        <file>assets/img/icons/justify.svg</file>
+        <file>assets/img/icons/key_pair_private_key.svg</file>
+        <file>assets/img/icons/key_pair_seed_phrase.svg</file>
         <file>assets/img/icons/keyboard.svg</file>
         <file>assets/img/icons/keycard-logo.svg</file>
         <file>assets/img/icons/keycard.svg</file>
@@ -211,6 +223,7 @@
         <file>assets/img/icons/muted.svg</file>
         <file>assets/img/icons/network.svg</file>
         <file>assets/img/icons/next.svg</file>
+        <file>assets/img/icons/nft-profile.svg</file>
         <file>assets/img/icons/node-offline.svg</file>
         <file>assets/img/icons/node.svg</file>
         <file>assets/img/icons/notification-muted.svg</file>
@@ -222,6 +235,7 @@
         <file>assets/img/icons/paste.svg</file>
         <file>assets/img/icons/pause-filled.svg</file>
         <file>assets/img/icons/pause.svg</file>
+        <file>assets/img/icons/pencil-outline.svg</file>
         <file>assets/img/icons/pencil.svg</file>
         <file>assets/img/icons/pin.svg</file>
         <file>assets/img/icons/play-filled.svg</file>
@@ -230,8 +244,9 @@
         <file>assets/img/icons/private-chat.svg</file>
         <file>assets/img/icons/profile.svg</file>
         <file>assets/img/icons/public-chat.svg</file>
-        <file>assets/img/icons/quote.svg</file>
+        <file>assets/img/icons/qr-scan.svg</file>
         <file>assets/img/icons/qr.svg</file>
+        <file>assets/img/icons/quote.svg</file>
         <file>assets/img/icons/reaction-a.svg</file>
         <file>assets/img/icons/reaction-b.svg</file>
         <file>assets/img/icons/receive.svg</file>
@@ -240,6 +255,7 @@
         <file>assets/img/icons/remove-contact.svg</file>
         <file>assets/img/icons/remove.svg</file>
         <file>assets/img/icons/reply.svg</file>
+        <file>assets/img/icons/retail.svg</file>
         <file>assets/img/icons/rotate.svg</file>
         <file>assets/img/icons/search.svg</file>
         <file>assets/img/icons/secret.svg</file>
@@ -259,6 +275,7 @@
         <file>assets/img/icons/speech.svg</file>
         <file>assets/img/icons/star-icon-outline.svg</file>
         <file>assets/img/icons/star-icon.svg</file>
+        <file>assets/img/icons/status-logo-icon.svg</file>
         <file>assets/img/icons/status-update.svg</file>
         <file>assets/img/icons/status.svg</file>
         <file>assets/img/icons/stickers.svg</file>
@@ -267,6 +284,7 @@
         <file>assets/img/icons/swap.svg</file>
         <file>assets/img/icons/symbols.svg</file>
         <file>assets/img/icons/tabs.svg</file>
+        <file>assets/img/icons/telegram.svg</file>
         <file>assets/img/icons/teller.svg</file>
         <file>assets/img/icons/text.svg</file>
         <file>assets/img/icons/thumbs-down.svg</file>
@@ -277,6 +295,8 @@
         <file>assets/img/icons/touch-id.svg</file>
         <file>assets/img/icons/travel-and-places.svg</file>
         <file>assets/img/icons/tributeToTalk.svg</file>
+        <file>assets/img/icons/twitter.svg</file>
+        <file>assets/img/icons/unfavourite.svg</file>
         <file>assets/img/icons/union.svg</file>
         <file>assets/img/icons/unlock.svg</file>
         <file>assets/img/icons/unpin.svg</file>
@@ -284,6 +304,7 @@
         <file>assets/img/icons/view.svg</file>
         <file>assets/img/icons/wallet.svg</file>
         <file>assets/img/icons/warning.svg</file>
+        <file>assets/img/icons/youtube.svg</file>
         <file>assets/img/status-logo-icon.svg</file>
         <file>assets/twemoji/26x26/1f004.png</file>
         <file>assets/twemoji/26x26/1f0cf.png</file>
@@ -10368,21 +10389,7 @@
         <file>assets/twemoji/svg/a9.svg</file>
         <file>assets/twemoji/svg/ae.svg</file>
         <file>assets/twemoji/svg/e50a.svg</file>
-        <file>assets/twemoji/twemoji.js</file>
-        <file>assets/img/icons/tiny/exclamation.svg</file>
-        <file>assets/img/icons/tiny/tiny-exclamation.svg</file>
-        <file>assets/img/icons/discord.svg</file>
-        <file>assets/img/icons/github.svg</file>
-        <file>assets/img/icons/key_pair_private_key.svg</file>
-        <file>assets/img/icons/key_pair_seed_phrase.svg</file>
-        <file>assets/img/icons/pencil-outline.svg</file>
-        <file>assets/img/icons/qr-scan.svg</file>
-        <file>assets/img/icons/status-logo-icon.svg</file>
-        <file>assets/img/icons/telegram.svg</file>
-        <file>assets/img/icons/twitter.svg</file>
-        <file>assets/img/icons/unfavourite.svg</file>
-        <file>assets/img/icons/youtube.svg</file>
         <file>assets/twemoji/LICENSE</file>
-        <file>assets/img/icons/bridge.svg</file>
+        <file>assets/twemoji/twemoji.js</file>
     </qresource>
 </RCC>

@@ -51,7 +51,17 @@ pipeline {
     }
 
     stage('Check') {
-      steps { sh 'make run-statusq-sanity-checker' }
+      steps { script {
+        /* Needed for QGuiApplication to import QtQuick.Dialogs */
+        wrap([
+          $class: 'Xvfb',
+          autoDisplayName: true,
+          parallelBuild: true,
+          screen: '2560x1440x24',
+        ]) {
+          sh('make run-statusq-sanity-checker')
+        }
+      } }
     }
 
     stage('Upload') {

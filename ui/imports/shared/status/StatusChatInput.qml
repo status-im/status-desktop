@@ -763,7 +763,7 @@ Rectangle {
             }
         }
 
-        let textBeforeCursor = StatusQUtils.Emoji.deparseFromParse(plainText.substr(0, i));
+        let textBeforeCursor = StatusQUtils.Emoji.deparse(plainText.substr(0, i));
 
         return {
             cursor: countEmojiLengths(plainText.substr(0, i)) + messageInputField.cursorPosition + text.length - completelyPlainText.length,
@@ -817,7 +817,7 @@ Rectangle {
 
         if (match && match.length > 0) {
             for (var i = 0; i < match.length; i++) {
-                length += StatusQUtils.Emoji.deparseFromParse(match[i]).length;
+                length += StatusQUtils.Emoji.deparse(match[i]).length;
             }
             length = length - match.length;
         }

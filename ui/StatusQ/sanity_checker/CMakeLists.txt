@@ -1,34 +1,27 @@
 project(SanityChecker)
 
-find_package(
-  Qt5
-  COMPONENTS Core Quick QuickControls2
-  REQUIRED)
+find_package(Qt5
+        COMPONENTS Core Quick
+        REQUIRED)
 
-include (../StatusQSources.cmake)
+add_executable(${PROJECT_NAME}
+        main.cpp
+        )
 
-set(QRC_FILES ../src/statusq.qrc ../src/assets.qrc)
-qt5_add_resources(QRC_COMPILED ${QRC_FILES})
+add_dependencies(${PROJECT_NAME}
+        StatusQ)
 
-add_executable(
-  ${PROJECT_NAME}
-  main.cpp
-  ${QRC_FILES}
-  ${QRC_COMPILED}
-  ${STATUSQ_HEADERS}
-  ${STATUSQ_SOURCES}
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        Qt5::Core
+        Qt5::Quick)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${STATUSQ_DIR}/include)
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+        STATUSQ_MODULE_PATH="${STATUSQ_MODULE_PATH}"
+        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
+        )
 
-target_link_libraries(
-  ${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick Qt5::QuickControls2
-                          SortFilterProxyModel
-                          qzxing)
-
-if (APPLE)
-  find_library(AppKit AppKit)
-  find_library(Foundation Foundation)
-
-  target_link_libraries(${PROJECT_NAME} PRIVATE ${AppKit} ${Foundation})
-endif()
+if (STATUSQ_SHADOW_BUILD)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+            STATUSQ_SHADOW_BUILD
+            )
+endif ()

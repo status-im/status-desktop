@@ -143,7 +143,7 @@ proc mainProc() =
 
   prepareLogging()
 
-  singletonInstance.engine.addImportPath("qrc:/./StatusQ/src")
+  singletonInstance.engine.addImportPath("qrc:/")
   singletonInstance.engine.addImportPath("qrc:/./imports")
   singletonInstance.engine.addImportPath("qrc:/./app");
   singletonInstance.engine.setNetworkAccessManagerFactory(networkAccessFactory)

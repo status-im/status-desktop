@@ -1,51 +1,63 @@
-#include <QCoreApplication>
+#include <QGuiApplication>
 #include <QDebug>
 #include <QDirIterator>
 #include <QQmlComponent>
 #include <QQmlEngine>
 
-#include "StatusQ/typesregistration.h"
-#include <QZXing>
-
-int main(int argc, char *argv[])
-{
-    QCoreApplication app(argc, argv);
-
-    registerStatusQTypes();
-
+int main(int argc, char *argv[]) {
+    QGuiApplication app(argc, argv);
     QQmlEngine engine;
 
-    engine.addImportPath(QStringLiteral(":/"));
+#ifdef STATUSQ_SHADOW_BUILD
+    const QString componentBaseUrlPrefix{"qrc"};
+#else
+    const QString componentBaseUrlPrefix{"file://"};
+#endif
 
-    QZXing::registerQMLTypes();
+    const QString iterationPath{QStringLiteral(STATUSQ_MODULE_IMPORT_PATH)};
+    engine.addImportPath(iterationPath);
 
-    QDirIterator it(":", QDirIterator::Subdirectories);
+    // Create a dummy component with StatusQ import.
+    // NOTE: https://github.com/status-im/status-desktop/issues/10218
+
+    QQmlComponent mainComponent(&engine);
+    mainComponent.setData("import QtQuick 2.15\nimport StatusQ 0.1\nItem { }", {});
+
+    if (mainComponent.isError()) {
+        qWarning() << "Failed to import StatusQ 0.1:" << mainComponent.errors();
+        return EXIT_FAILURE;
+    }
+
+    // Start iterating over directory
+
     bool errorsFound = false;
 
-    while (it.hasNext()) {
-        QFileInfo info = it.fileInfo();
+    for (QDirIterator it(iterationPath, QDirIterator::Subdirectories); it.hasNext(); it.next()) {
 
-        if (info.suffix() == QStringLiteral("qml")) {
-            QFile file(it.filePath());
-            file.open(QIODevice::ReadOnly);
+        const QFileInfo info = it.fileInfo();
 
-            QTextStream in(&file);
-            QString line = in.readLine();
+        if (info.suffix() != QStringLiteral("qml"))
+            continue;
 
-            if (line != QStringLiteral("pragma Singleton")) {
-                engine.setBaseUrl(QStringLiteral("qrc") + info.dir().path()
-                                  + QDir::separator());
+        QFile file(it.filePath());
+        file.open(QIODevice::ReadOnly);
 
-                QQmlComponent component(&engine, it.fileName());
+        QTextStream in(&file);
+        QString line = in.readLine();
 
-                if (component.isError()) {
-                    qWarning() << component.errors();
-                    errorsFound = true;
-                }
-            }
+        if (line == QStringLiteral("pragma Singleton"))
+            continue;
+
+        QUrl baseFileUrl(componentBaseUrlPrefix + info.dir().path() + QDir::separator());
+
+        engine.setBaseUrl(baseFileUrl);
+
+        QQmlComponent component(&engine, it.fileName());
+
+        if (component.isError()) {
+            qWarning() << component.errors();
+            errorsFound = true;
         }
-
-        it.next();
     }
 
     if (errorsFound)

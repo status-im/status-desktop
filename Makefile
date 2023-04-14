@@ -183,29 +183,18 @@ ifneq ($(detected_OS),Windows)
  endif
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
- # We don't create qzxing target, it's build as DOtherSide cmake subdirectory  
- QZXING := vendor/DOtherSide/build/qzxing/libqzxing.$(LIBSTATUS_EXT)
  # order matters here, due to "-Wl,-as-needed"
  NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
  ifneq ($(QML_DEBUG), false)
   DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
-  QZXING := vendor/DOtherSide/build/qzxing/Debug/qzxing.dll
  else
   DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
-  QZXING := vendor/DOtherSide/build/qzxing/Release/qzxing.dll
  endif
- 
- DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF \
- 							-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON # This is for qzxing, as it doesn't export any symbols
+ DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
  NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
-
-QZXING_LIBDIR := $(shell pwd)/$(shell dirname "$(QZXING)")
-export QZXING_LIBDIR
-
-NIM_PARAMS += --passL:"-L$(QZXING_LIBDIR)" --passL:"-lqzxing" 
 
 ifeq ($(detected_OS),Darwin)
  ifeq ("$(shell sysctl -nq hw.optional.arm64)","1")
@@ -213,6 +202,7 @@ ifeq ($(detected_OS),Darwin)
 	STATUSGO_MAKE_PARAMS += GOBIN_SHARED_LIB_CFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
 	STATUSKEYCARDGO_MAKE_PARAMS += CGOFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
 	DOTHERSIDE_CMAKE_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
+	STATUSQ_CMAKE_CONFIG_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
 	QRCODEGEN_MAKE_PARAMS += CFLAGS="-target x86_64-apple-macos10.12"
 	NIM_PARAMS += --cpu:amd64 --os:MacOSX --passL:"-arch x86_64" --passC:"-arch x86_64"
   endif
@@ -249,6 +239,79 @@ ifeq ($(OUTPUT_CSV), true)
   $(shell touch .update.timestamp)
 endif
 
+
+##
+##	StatusQ
+##
+
+ifneq ($(detected_OS),Windows)
+ STATUSQ := bin/StatusQ/libStatusQ.$(LIBSTATUS_EXT)
+else
+ STATUSQ := bin/StatusQ/StatusQ.$(LIBSTATUS_EXT)
+ STATUSQ_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
+endif
+
+STATUSQ_BUILD_PATH := ui/StatusQ/build
+STATUSQ_INSTALL_PATH := $(shell pwd)/bin
+STATUSQ_CMAKE_CACHE := $(STATUSQ_BUILD_PATH)/CMakeCache.txt
+
+$(STATUSQ_CMAKE_CACHE): | deps
+	echo -e "\033[92mConfiguring:\033[39m StatusQ"
+	cmake -DCMAKE_INSTALL_PREFIX=$(STATUSQ_INSTALL_PATH) \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DSTATUSQ_BUILD_SANDBOX=OFF \
+		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
+		-DSTATUSQ_BUILD_TESTS=OFF \
+		$(STATUSQ_CMAKE_CONFIG_PARAMS) \
+		-B $(STATUSQ_BUILD_PATH) \
+		-S ui/StatusQ
+		$(HANDLE_OUTPUT)
+
+statusq-configure: | $(STATUSQ_CMAKE_CACHE) 
+
+statusq-build: | statusq-configure
+	echo -e "\033[92mBuilding:\033[39m StatusQ"
+	cmake --build $(STATUSQ_BUILD_PATH) \
+		--target StatusQ \
+		--config Release
+		-DCMAKE_BUILD_TYPE=Release \
+		$(HANDLE_OUTPUT)
+
+statusq-install: | statusq-build
+	echo -e "\033[92mInstalling:\033[39m StatusQ"
+	cmake --install $(STATUSQ_BUILD_PATH) \
+		$(HANDLE_OUTPUT)
+
+statusq: | statusq-install
+
+statusq-clean:
+	echo -e "\033[92mCleaning:\033[39m StatusQ"
+	rm -rf $(STATUSQ_BUILD_PATH)
+	rm -rf $(STATUSQ_INSTALL_PATH)/StatusQ
+
+statusq-sanity-checker:
+	echo -e "\033[92mConfiguring:\033[39m StatusQ SanityChecker"
+	cmake \
+		-DSTATUSQ_BUILD_SANDBOX=OFF \
+		-DSTATUSQ_BUILD_SANITY_CHECKER=ON \
+		-DSTATUSQ_BUILD_TESTS=OFF \
+		-B$(STATUSQ_BUILD_PATH) \
+		-Sui/StatusQ \
+		$(HANDLE_OUTPUT)
+	echo -e "\033[92mBuilding:\033[39m StatusQ SanityChecker"
+	cmake \
+		--build $(STATUSQ_BUILD_PATH) \
+		--target SanityChecker \
+		$(HANDLE_OUTPUT)
+
+run-statusq-sanity-checker: statusq-sanity-checker
+	echo -e "\033[92mRunning:\033[39m StatusQ SanityChecker"
+	$(STATUSQ_BUILD_PATH)/bin/SanityChecker
+
+##
+##	DOtherSide
+##
+
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
 	+ cd vendor/DOtherSide && \
@@ -256,7 +319,8 @@ $(DOTHERSIDE): | deps
 		cd build && \
 		rm -f CMakeCache.txt && \
 		cmake $(DOTHERSIDE_CMAKE_PARAMS)\
-			-DENABLE_DOCS=OFF -DENABLE_TESTS=OFF -DQZXING_USE_QML=ON -DQZXING_MULTIMEDIA=ON -DQZXING_USE_DECODER_QR_CODE=ON \
+			-DENABLE_DOCS=OFF \
+			-DENABLE_TESTS=OFF \
 			.. $(HANDLE_OUTPUT) && \
 		$(DOTHERSIDE_BUILD_CMD)
 
@@ -331,9 +395,12 @@ QM_BINARIES := $(shell find ui/i18n -iname "*.ts" | sed 's/\.ts/\.qm/' | sed 's/
 $(QM_BINARIES): TS_FILE = $(shell echo $@ | sed 's/\.qm/\.ts/' | sed 's/bin/ui/')
 $(QM_BINARIES): $(TS_SOURCES) | check-qt-dir
 	mkdir -p bin/i18n
-	lrelease -removeidentical $(TS_FILE) -qm $@
+	lrelease -removeidentical $(TS_FILE) -qm $@ $(HANDLE_OUTPUT)
 
-compile-translations: $(QM_BINARIES)
+log-compile-translations:
+	echo -e "\033[92mCompiling:\033[39m translations"
+
+compile-translations: | log-compile-translations $(QM_BINARIES)
 
 # default token is a free-tier token with limited capabilities and usage
 # limits; our docs should include directions for community contributor to setup
@@ -392,7 +459,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) statusq $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
@@ -400,10 +467,6 @@ $(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | check-qt-dir $(STATUSGO) $(
 		install_name_tool -change \
 			libstatus.dylib \
 			@rpath/libstatus.dylib \
-			bin/nim_status_client && \
-		install_name_tool -change \
-			$(QZXING) \
-			@rpath/libqzxing.dylib \
 			bin/nim_status_client && \
 		install_name_tool -change \
 			libkeycard.dylib \
@@ -470,6 +533,8 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp -R $(FLEETS) tmp/linux/dist/usr/.
 	mkdir -p tmp/linux/dist/usr/i18n
 	cp bin/i18n/* tmp/linux/dist/usr/i18n
+	mkdir -p tmp/linux/dist/usr/bin/StatusQ
+	cp bin/StatusQ/* tmp/linux/dist/usr/bin/StatusQ
 
 	# Libraries
 	cp -r /usr/lib/x86_64-linux-gnu/nss tmp/linux/dist/usr/lib/
@@ -479,7 +544,6 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
 	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
-	cp $(QZXING) tmp/linux/dist/usr/lib/
 
 	echo -e $(BUILD_MSG) "AppImage"
 	linuxdeployqt tmp/linux/dist/nim-status.desktop -no-copy-copyright-files -qmldir=ui -qmlimport=$(QT5_QMLDIR) -bundle-non-qt-libs
@@ -530,6 +594,8 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp -R $(FLEETS) $(MACOS_OUTER_BUNDLE)/Contents/
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	cp bin/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
+	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS/StatusQ
+	cp bin/StatusQ/* $(MACOS_OUTER_BUNDLE)/Contents/MacOS/StatusQ
 
 	echo -e $(BUILD_MSG) "app"
 	macdeployqt \
@@ -593,21 +659,20 @@ $(STATUS_CLIENT_EXE): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_EXE): INSTALLER_OUTPUT := pkg
 $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)
 	rm -rf pkg/*.exe tmp/windows/dist
-	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n
+	mkdir -p $(OUTPUT)/bin $(OUTPUT)/resources $(OUTPUT)/vendor $(OUTPUT)/resources/i18n $(OUTPUT)/bin/StatusQ
 	cat windows-install.txt | unix2dos > $(OUTPUT)/INSTALL.txt
 	cp status.ico status.svg resources.rcc $(FLEETS) $(OUTPUT)/resources/
 	cp bin/i18n/* $(OUTPUT)/resources/i18n
 	cp cacert.pem $(OUTPUT)/bin/cacert.pem
+	cp bin/StatusQ/* $(OUTPUT)/bin/StatusQ
 	cp bin/nim_status_client.exe $(OUTPUT)/bin/Status.exe
 	cp bin/nim_windows_launcher.exe $(OUTPUT)/Status.exe
 	rcedit $(OUTPUT)/bin/Status.exe --set-icon $(OUTPUT)/resources/status.ico
 	rcedit $(OUTPUT)/Status.exe --set-icon $(OUTPUT)/resources/status.ico
-	cp $(DOTHERSIDE) $(QZXING) $(STATUSGO) $(STATUSKEYCARDGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
+	cp $(DOTHERSIDE) $(STATUSGO) $(STATUSKEYCARDGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
 	cp "$(shell which libgcc_s_seh-1.dll)" $(OUTPUT)/bin/
 	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
 	echo -e $(BUILD_MSG) "deployable folder"
-	windeployqt --compiler-runtime --qmldir ui --release \
-		tmp/windows/dist/Status/bin/qzxing.dll
 	windeployqt --compiler-runtime --qmldir ui --release \
 		tmp/windows/dist/Status/bin/DOtherSide.dll
 	mv tmp/windows/dist/Status/bin/vc_redist.x64.exe tmp/windows/dist/Status/vendor/
@@ -648,7 +713,7 @@ pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 
 zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 
-clean: | clean-common
+clean: | clean-common statusq-clean
 	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO) $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
@@ -669,7 +734,7 @@ ICON_TOOL := node_modules/.bin/fileicon
 
 run-linux: nim_status_client
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client"
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(QZXING_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)" \
 	./bin/nim_status_client
 
 run-macos: nim_status_client
@@ -684,17 +749,11 @@ run-macos: nim_status_client
 
 run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
-	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(QZXING_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
+	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
 tests-nim-linux: | $(DOTHERSIDE)
-	LD_LIBRARY_PATH="$(QT5_LIBDIR)":"$(QZXING_LIBDIR)" \
+	LD_LIBRARY_PATH="$(QT5_LIBDIR)" \
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
-
-statusq-sanity-checker:
-	cmake -Bui/StatusQ/build -Sui/StatusQ && cmake --build ui/StatusQ/build --target SanityChecker
-
-run-statusq-sanity-checker: statusq-sanity-checker
-	ui/StatusQ/build/sanity_checker/SanityChecker
 
 endif # "variables.mk" was not included

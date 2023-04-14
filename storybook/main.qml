@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.14
 
 import Qt.labs.settings 1.0
 
+import StatusQ 0.1 // https://github.com/status-im/status-desktop/issues/10218
+
 import StatusQ.Core.Theme 0.1
 import Storybook 1.0
 

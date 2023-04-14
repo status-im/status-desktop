@@ -1,2 +1,3 @@
 module StatusQ
-
+plugin StatusQ
+classname StatusQPlugin
