@@ -125,12 +125,15 @@ QtObject:
       if (receivedData.activityCenterNotifications.len > 0):
         self.handleNewNotificationsLoaded(receivedData.activityCenterNotifications)
 
-  proc parseActivityCenterResponse*(self: Service, response: RpcResponse[JsonNode]) =
+  proc parseActivityCenterNotifications*(self: Service, notificationsJson: JsonNode) =
     var activityCenterNotifications: seq[ActivityCenterNotificationDto] = @[]
+    for notificationJson in notificationsJson:
+      activityCenterNotifications.add(notificationJson.toActivityCenterNotificationDto)
+    self.handleNewNotificationsLoaded(activityCenterNotifications)
+
+  proc parseActivityCenterResponse*(self: Service, response: RpcResponse[JsonNode]) =
     if response.result{"activityCenterNotifications"} != nil:
-      for jsonMsg in response.result["activityCenterNotifications"]:
-        activityCenterNotifications.add(jsonMsg.toActivityCenterNotificationDto)
-      self.handleNewNotificationsLoaded(activityCenterNotifications)
+      self.parseActivityCenterNotifications(response.result["activityCenterNotifications"])
 
   proc setActiveNotificationGroup*(self: Service, group: ActivityCenterGroup) =
     self.activeGroup = group

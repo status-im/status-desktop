@@ -1367,6 +1367,7 @@ QtObject:
 
       self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[communityId]))
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
+      self.activityCenterService.parseActivityCenterNotifications(rpcResponseObj["response"]["result"]["activityCenterNotifications"])
 
     except Exception as e:
       let errMsg = e.msg
