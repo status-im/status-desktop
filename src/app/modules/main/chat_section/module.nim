@@ -163,8 +163,9 @@ proc removeSubmodule(self: Module, chatId: string) =
   self.chatContentModules.del(chatId)
 
 
-proc addCategoryItem(self: Module, category: Category, amIAdmin: bool) =
-  let emptyChatItem = chat_item.initItem(
+proc addCategoryItem(self: Module, category: Category, amIAdmin: bool, communityId: string) =
+  let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(communityId, category.id)
+  let categoryItem = chat_item.initItem(
         id = category.id,
         category.name,
         icon = "",
@@ -174,7 +175,7 @@ proc addCategoryItem(self: Module, category: Category, amIAdmin: bool) =
         `type` = chat_item.CATEGORY_TYPE,
         amIAdmin,
         lastMessageTimestamp = 0,
-        hasUnreadMessages = false,
+        hasUnreadMessages,
         notificationsCount = 0,
         muted = false,
         blocked = false,
@@ -183,7 +184,7 @@ proc addCategoryItem(self: Module, category: Category, amIAdmin: bool) =
         category.id,
         category.position,
       )
-  self.view.chatsModel().appendItem(emptyChatItem)
+  self.view.chatsModel().appendItem(categoryItem)
 
 proc buildChatSectionUI(
     self: Module,
@@ -202,7 +203,7 @@ proc buildChatSectionUI(
 
   for categoryDto in channelGroup.categories:
     # Add items for the categories. We use a special type to identify categories
-    self.addCategoryItem(categoryDto, channelGroup.admin)
+    self.addCategoryItem(categoryDto, channelGroup.admin, channelGroup.id)
 
   for chatDto in channelGroup.chats:
     var categoryPosition = -1
@@ -482,12 +483,17 @@ proc updateParentBadgeNotifications(self: Module) =
     unviewedMentionsCount
   )
 
-proc updateBadgeNotifications(self: Module, chatId: string, hasUnreadMessages: bool, unviewedMentionsCount: int) =
+proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bool, unviewedMentionsCount: int) =
+  let chatId = chat.id
   # update model of this module (appropriate chat from the chats list (chats model))
   self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
   # update child module
   if (self.chatContentModules.contains(chatId)):
     self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
+  # Update category
+  if chat.categoryId != "":
+    let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chat.communityId, chat.categoryId)
+    self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
   # update parent module
   self.updateParentBadgeNotifications()
 
@@ -648,12 +654,12 @@ method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDt
     cat.position,
   )
 
-method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
+method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto], communityId: string) =
   if (self.doesCatOrChatExist(cat.id)):
     return
 
   # TODO get admin status
-  self.addCategoryItem(cat, false)
+  self.addCategoryItem(cat, false, communityId)
   # Update chat items that now belong to that category
   self.view.chatsModel().updateItemsWithCategoryDetailsById(
     chats,
@@ -827,15 +833,8 @@ method onJoinedCommunity*(self: Module) =
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
   self.controller.requestToJoinCommunityAuthenticated(password)
 
-method updateUnreadMessagesAndMentions*(self: Module, chatId: string) =
-  let chatDetails = self.controller.getChatDetails(chatId)
-  self.updateBadgeNotifications(
-    chatId=chatId,
-    hasUnreadMessages=chatDetails.unviewedMessagesCount > 0,
-    unviewedMentionsCount=chatDetails.unviewedMentionsCount)
-  if chatDetails.categoryId != "":
-    let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chatDetails.communityId, chatDetails.categoryId)
-    self.view.chatsModel().setCategoryHasUnreadMessages(chatDetails.categoryId, hasUnreadMessages)
+method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
+  self.updateBadgeNotifications(chat, hasUnreadMessages=false, unviewedMentionsCount=0)
 
 method markAllMessagesRead*(self: Module, chatId: string) =
   self.controller.markAllMessagesRead(chatId)
@@ -1134,7 +1133,7 @@ proc addOrUpdateChat(self: Module,
     var hasUnreadMessages = false
     if not chat.muted:
       hasUnreadMessages = chat.unviewedMessagesCount > 0
-    self.updateBadgeNotifications(chat.id, hasUnreadMessages, chat.unviewedMentionsCount)
+    self.updateBadgeNotifications(chat, hasUnreadMessages, chat.unviewedMentionsCount)
 
   if not self.chatsLoaded:
     return

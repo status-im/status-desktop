@@ -152,7 +152,7 @@ proc init*(self: Controller) =
         (not self.isCommunitySection and chat.communityId != "")):
       return
     self.chatService.updateUnreadMessagesAndMentions(args.chatId, args.allMessagesMarked, args.messagesCount, args.messagesWithMentionsCount)
-    self.delegate.updateUnreadMessagesAndMentions(args.chatId)
+    self.delegate.onMarkAllMessagesRead(chat)
 
   self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
     let args = chat_service.ChatArgs(e)
@@ -217,7 +217,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_CREATED) do(e:Args):
       let args = CommunityCategoryArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.onCommunityCategoryCreated(args.category, args.chats)
+        self.delegate.onCommunityCategoryCreated(args.category, args.chats, args.communityId)
 
     self.events.on(SIGNAL_COMMUNITY_CATEGORY_DELETED) do(e:Args):
       let args = CommunityCategoryArgs(e)
