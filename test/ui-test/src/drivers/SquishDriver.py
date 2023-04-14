@@ -84,6 +84,24 @@ def is_displayed(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
 def is_visible_and_enabled(obj):
     return obj.visible and obj.enabled
 
+def wait_for_is_visible(
+        objName: str, 
+        visible: bool = True, 
+        verify: bool = True, 
+        timeout: int=_MAX_WAIT_OBJ_TIMEOUT
+        ) -> bool:
+    
+    def _is_visible(value: bool):
+        try:
+            return squish.findObject(getattr(names, objName)).visible is value
+        except LookupError:
+            return False
+        
+    result = squish.waitFor(lambda: _is_visible(visible), timeout)
+    if verify:
+        assert result, f'Visible property is not {visible}'
+    return result
+    
 def is_null(obj):
     return squish.isNull(obj)
 

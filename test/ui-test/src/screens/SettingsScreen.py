@@ -131,7 +131,6 @@ class BackupSeedPhrasePopup(Enum):
     CONFIRM_YOU_STORED_CHECKBOX: str = "backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck"
     CONFIRM_YOU_STORED_BUTTON: str = "backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton"
 
-
 class SettingsScreen:
     __pid = 0
 
@@ -399,8 +398,15 @@ class SettingsScreen:
         click_obj_by_name(BackupSeedPhrasePopup.NEXT_BUTTON.value)
 
         # Show seed phrase
-        hover(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
-        click_obj_by_name(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
+        started_at = time.monotonic()
+        while wait_for_is_visible(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value, verify=False):
+            try:
+                hover(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
+                click_obj_by_name(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
+            except (LookupError, RuntimeError):
+                pass
+            if time.monotonic() - started_at > 10:
+                raise RuntimeError('Reveal seed phrase button not clicked')
 
         # Collect word phrases for the next random confirmation steps
         seed_phrase = [wait_by_wildcards(BackupSeedPhrasePopup.SEED_PHRASE_WORD_PLACEHOLDER.value, "%WORD_NO%", str(i + 1)).textEdit.input.edit.text for i in range(12)]
