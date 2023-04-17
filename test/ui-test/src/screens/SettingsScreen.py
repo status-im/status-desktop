@@ -9,20 +9,21 @@
 # *****************************************************************************/
 
 
-from enum import Enum
 import random
-import time
 import string
-from wsgiref import validate
+from enum import Enum
+
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from utils.ObjectAccess import *
+
 from .StatusMainScreen import MainScreenComponents
-from .StatusMainScreen import StatusMainScreen
 from .StatusMainScreen import authenticate_popup_enter_password
+
 
 class SettingsScreenComponents(Enum):
     SAVE_BUTTON: str = "settingsSave_StatusButton"
+
 
 class SidebarComponents(Enum):
     ADVANCED_OPTION: str = "advanced_StatusNavigationListItem"
@@ -40,14 +41,16 @@ class AdvancedOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS: str = "communitySettingsLineButton"
     I_UNDERSTAND_POP_UP: str = "i_understand_StatusBaseText"
 
+
 class ENSScreen(Enum):
-    START_BUTTON :str = "settings_ENS_Start_Button"
+    START_BUTTON: str = "settings_ENS_Start_Button"
     ENS_SEARCH_INPUT: str = "settings_ENS_Search_Input"
     NEXT_BUTTON: str = "settings_ENS_Search_Next_Button"
     AGREE_TERMS: str = "settings_ENS_Terms_Agree"
     OPEN_TRANSACTION: str = "settings_ENS_Terms_Open_Transaction"
     TRANSACTION_NEXT_BUTTON: str = "settings_ENS_Terms_Transaction_Next_Button"
     PASSWORD_INPUT: str = "settings_ENS_Terms_Transaction_Password_Input"
+
 
 class MessagingOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW: str = "displayMessageLinkPreviewItem"
@@ -56,6 +59,7 @@ class MessagingOptionScreen(Enum):
     TENOR_GIFS_PREVIEW_SWITCH_ITEM: str = "tenorGifsPreviewSwitchItem"
     SCROLLVIEW: str = "settingsContentBase_ScrollView"
     CONTACTS_BTN: str = "contacts_listItem_btn"
+
 
 class ContactsViewScreen(Enum):
     CONTACT_REQUEST_CHAT_KEY_BTN: str = "contact_request_to_chat_key_btn"
@@ -66,10 +70,12 @@ class ContactsViewScreen(Enum):
     SENT_REQUESTS_CONTACT_PANEL_LIST_VIEW: str = "sentRequests_contactListPanel_ListView"
     RECEIVED_REQUESTS_CONTACT_PANEL_LIST_VIEW: str = "receivedRequests_contactListPanel_ListView"
 
+
 class ProfilePopupScreen(Enum):
     PROFILE_POPUP_SEND_CONTACT_REQUEST_BUTTON = "ProfilePopup_SendContactRequestButton"
     SAY_WHO_YOU_ARE_INPUT: str = "ProfilePopup_SayWhoYouAre_TextEdit"
     SEND_CONTACT_REQUEST_BUTTON: str = "ProfilePopup_SendContactRequest_Button"
+
 
 class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
@@ -84,6 +90,7 @@ class WalletSettingsScreen(Enum):
     ACCOUNT_VIEW_ACCOUNT_NAME: str = "settings_Wallet_AccountView_AccountName"
     ACCOUNT_VIEW_ICON_SETTINGS: str = "settings_Wallet_AccountView_IconSettings"
     BACKUP_SEED_PHRASE_BUTTON: str = "settings_Wallet_MainView_BackupSeedPhrase"
+
 
 class ProfileSettingsScreen(Enum):
     DISPLAY_NAME: str = "displayName_TextEdit"
@@ -102,6 +109,7 @@ class ProfileSettingsScreen(Enum):
     CUSTOM_URL_IN_DIALOG: str = "customUrl_popup_TextEdit"
     CHANGE_PASSWORD_BUTTON: str = "change_password_button"
 
+
 class ChangePasswordMenu(Enum):
     CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT: str = "change_password_menu_current_password"
     CHANGE_PASSWORD_NEW_PASSWORD_INPUT: str = "change_password_menu_new_password"
@@ -109,13 +117,16 @@ class ChangePasswordMenu(Enum):
     CHANGE_PASSWORD_SUBMIT_BUTTON: str = "change_password_menu_submit_button"
     CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON: str = "change_password_success_menu_sign_out_quit_button"
 
+
 class ConfirmationDialog(Enum):
     SIGN_OUT_CONFIRMATION: str = "signOutConfirmation_StatusButton"
+
 
 class CommunitiesSettingsScreen(Enum):
     LIST_PANEL: str = "settings_Communities_CommunitiesListPanel"
     LEAVE_COMMUNITY_BUTTONS: str = "settings_Communities_MainView_LeaveCommunityButtons"
     LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON: str = "settings_Communities_MainView_LeavePopup_LeaveCommunityButton"
+
 
 class BackupSeedPhrasePopup(Enum):
     HAVE_PEN_CHECKBOX: str = "backup_seed_phrase_popup_Acknowledgements_havePen_checkbox"
@@ -130,6 +141,7 @@ class BackupSeedPhrasePopup(Enum):
     CONFIRM_SECOND_WORD_INPUT: str = "backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord_inputText"
     CONFIRM_YOU_STORED_CHECKBOX: str = "backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck"
     CONFIRM_YOU_STORED_BUTTON: str = "backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton"
+
 
 class SettingsScreen:
     __pid = 0
@@ -185,20 +197,23 @@ class SettingsScreen:
         click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
         # view can be scrolled down, we need to reset scroll
         reset_scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)
-        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.LINK_PREVIEW_SWITCH.value)
+        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value,
+                                          MessagingOptionScreen.LINK_PREVIEW_SWITCH.value)
         switch = wait_and_get_obj(MessagingOptionScreen.LINK_PREVIEW_SWITCH.value)
         if not switch.checked:
             click_obj_by_name(MessagingOptionScreen.LINK_PREVIEW_SWITCH.value)
 
     # Post condition: Messaging Settings is active and Link Preview is activated (@see open_messaging_settings and activate_link_preview_if_dectivated)
     def activate_image_unfurling(self):
-        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING.value)
+        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value,
+                                          MessagingOptionScreen.ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING.value)
         click_obj_by_name(MessagingOptionScreen.ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING.value)
 
     # Post condition: Messaging Settings is active and Link Preview is activated (@see open_messaging_settings and activate_link_preview_if_dectivated)
     def the_user_activates_tenor_gif_preview(self):
         click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
-        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value, MessagingOptionScreen.TENOR_GIFS_PREVIEW_SWITCH_ITEM.value)
+        scroll_item_until_item_is_visible(MessagingOptionScreen.SCROLLVIEW.value,
+                                          MessagingOptionScreen.TENOR_GIFS_PREVIEW_SWITCH_ITEM.value)
         click_obj_by_name(MessagingOptionScreen.TENOR_GIFS_PREVIEW_SWITCH_ITEM.value)
 
     def toggle_test_networks(self):
@@ -233,7 +248,7 @@ class SettingsScreen:
     def _find_account_index(self, account_name: str) -> int:
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         for index in range(accounts.count):
-            if(accounts.itemAtIndex(index).objectName == account_name):
+            if (accounts.itemAtIndex(index).objectName == account_name):
                 return index
         return -1
 
@@ -255,7 +270,7 @@ class SettingsScreen:
         colorList = get_obj(WalletSettingsScreen.EDIT_ACCOUNT_COLOR_REPEATER.value)
         for index in range(colorList.count):
             color = colorList.itemAt(index)
-            if(color.radioButtonColor == account_color):
+            if (color.radioButtonColor == account_color):
                 click_obj(colorList.itemAt(index))
 
         click_obj_by_name(WalletSettingsScreen.EDIT_ACCOUNT_SAVE_BUTTON.value)
@@ -264,7 +279,8 @@ class SettingsScreen:
         accountName = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ACCOUNT_NAME.value)
         iconSettings = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ICON_SETTINGS.value)
         verify_values_equal(str(accountName.text), str(new_name), "Edited account name not updated")
-        verify_values_equal(str(iconSettings.asset.color.name), str(new_color.lower()), "Edited account color not updated")
+        verify_values_equal(str(iconSettings.asset.color.name), str(new_color.lower()),
+                            "Edited account color not updated")
 
     def open_communities_section(self):
         click_obj_by_name(SidebarComponents.COMMUNITIES_OPTION.value)
@@ -317,7 +333,7 @@ class SettingsScreen:
         custom_link = ""
 
         if table is not None:
-            verify_equals(8, len(table)) # Expecting 8 as social media link fields to verify
+            verify_equals(8, len(table))  # Expecting 8 as social media link fields to verify
             twitter = table[0][0]
             personal_site = table[1][0]
             github = table[2][0]
@@ -361,7 +377,7 @@ class SettingsScreen:
         custom_link = ""
 
         if table is not None:
-            verify_equals(8, len(table)) # Expecting 8 as social media link fields to verify
+            verify_equals(8, len(table))  # Expecting 8 as social media link fields to verify
             twitter = table[0][0]
             personal_site = table[1][0]
             github = table[2][0]
@@ -409,7 +425,8 @@ class SettingsScreen:
                 raise RuntimeError('Reveal seed phrase button not clicked')
 
         # Collect word phrases for the next random confirmation steps
-        seed_phrase = [wait_by_wildcards(BackupSeedPhrasePopup.SEED_PHRASE_WORD_PLACEHOLDER.value, "%WORD_NO%", str(i + 1)).textEdit.input.edit.text for i in range(12)]
+        seed_phrase = [wait_by_wildcards(BackupSeedPhrasePopup.SEED_PHRASE_WORD_PLACEHOLDER.value, "%WORD_NO%",
+                                         str(i + 1)).textEdit.input.edit.text for i in range(12)]
         click_obj_by_name(BackupSeedPhrasePopup.NEXT_BUTTON.value)
 
         # Confirm first random word of the seed phrase
@@ -431,7 +448,9 @@ class SettingsScreen:
         click_obj_by_name(BackupSeedPhrasePopup.CONFIRM_YOU_STORED_BUTTON.value)
 
     def verify_seed_phrase_indicator_not_visible(self):
-        verify_not_found(WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value, "Check that backup seed phrase settings button is visible")
+        assert wait_util_hidden(
+            WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value,
+        ), "Backup seed phrase settings button is visible"
 
     def change_user_password(self, oldPassword: str, newPassword: str):
         get_and_click_obj(ProfileSettingsScreen.CHANGE_PASSWORD_BUTTON.value)
