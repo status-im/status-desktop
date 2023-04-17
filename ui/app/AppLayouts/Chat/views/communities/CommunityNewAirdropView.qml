@@ -34,12 +34,24 @@ StatusScrollView {
     signal airdropClicked(var airdropTokens, var addresses)
     signal navigateToMintTokenSettings
 
+    function selectCollectible(key, amount) {
+        const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                            root.collectiblesModel, key)
+        d.addItem(HoldingTypes.Type.Collectible, modelItem, amount)
+    }
+
     QtObject {
         id: d
 
         readonly property int maxAirdropTokens: 5
         readonly property int dropdownHorizontalOffset: 4
         readonly property int dropdownVerticalOffset: 1
+
+        function addItem(type, item, amount) {
+            const key = item.key
+
+            root.selectedHoldingsModel.append({ type, key, amount })
+        }
     }
 
     contentWidth: mainLayout.width
@@ -81,13 +93,6 @@ StatusScrollView {
                 isCollectiblesOnly: true
                 noDataText: qsTr("First you need to mint or import a collectible before you can perform an airdrop")
 
-                function addItem(type, item, amount) {
-                    const key = item.key
-
-                    root.selectedHoldingsModel.append(
-                                { type, key, amount })
-                }
-
                 function getHoldingIndex(key) {
                     return ModelUtils.indexOf(root.selectedHoldingsModel, "key", key)
                 }
@@ -112,14 +117,14 @@ StatusScrollView {
                 onAddAsset: {
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(
                                         root.assetsModel, key)
-                    addItem(HoldingTypes.Type.Asset, modelItem, amount)
+                    d.addItem(HoldingTypes.Type.Asset, modelItem, amount)
                     dropdown.close()
                 }
 
                 onAddCollectible: {
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(
                                         root.collectiblesModel, key)
-                    addItem(HoldingTypes.Type.Collectible, modelItem, amount)
+                    d.addItem(HoldingTypes.Type.Collectible, modelItem, amount)
                     dropdown.close()
                 }
 

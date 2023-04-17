@@ -332,6 +332,7 @@ StatusSectionLayout {
                                                                         accountName,
                                                                         accountAddress)
                 }
+                onAirdropCollectible: root.goTo(Constants.CommunitySettingsSections.Airdrops)
 
                 Connections {
                     target: rootStore.communityTokensStore
@@ -385,6 +386,8 @@ StatusSectionLayout {
             }
 
             CommunityAirdropsSettingsPanel {
+                id: airdropPanel
+
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
@@ -394,6 +397,18 @@ StatusSectionLayout {
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
                 onAirdropClicked: communityTokensStore.airdrop(root.community.id, airdropTokens, addresses)
                 onNavigateToMintTokenSettings: root.goTo(Constants.CommunitySettingsSections.MintTokens)
+
+                Connections {
+                    target: mintPanel
+
+                    function onAirdropCollectible(key) {
+                        // Here it is forced a navigation to the new airdrop form, like if it was clicked the header button
+                        airdropPanel.headerButtonClicked()
+
+                        // Force a token selection to be airdroped with default amount 1
+                        airdropPanel.selectCollectible(key, 1)
+                    }
+                }
             }
 
             onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
@@ -412,8 +427,8 @@ StatusSectionLayout {
 
         function goTo(section: int, subSection: int) {
             //find and enable section
-            const matchingIndex = listView.model.findIndex((modelItem, index) => modelItem.id == section && modelItem.enabled)
-            if(matchingIndex != -1) {
+            const matchingIndex = listView.model.findIndex((modelItem, index) => modelItem.id === section && modelItem.enabled)
+            if(matchingIndex !== -1) {
                 d.currentIndex = matchingIndex
                 //find and enable subsection if subSection navigation is available
                 if(d.currentItem && d.currentItem.goTo) {

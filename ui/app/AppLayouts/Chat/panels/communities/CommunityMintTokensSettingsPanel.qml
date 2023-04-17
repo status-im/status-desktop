@@ -51,18 +51,20 @@ SettingsPageLayout {
 
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
-    function setFeeLoading() {
-        root.isFeeLoading = true
-        root.feeText = ""
-        root.errorText = ""
-    }
-
     signal remoteSelfDestructCollectibles(var holdersModel,
                                           int chainId,
                                           string accountName,
                                           string accountAddress)
 
     signal signSelfDestructTransactionOpened(int chainId)
+
+    signal airdropCollectible(string key)
+
+    function setFeeLoading() {
+        root.isFeeLoading = true
+        root.feeText = ""
+        root.errorText = ""
+    }
 
     function navigateBack() {
         stackManager.pop(StackView.Immediate)
@@ -89,6 +91,8 @@ SettingsPageLayout {
 
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
         onInitialItemChanged: updateInitialStackView()
+
+        signal airdropClicked()
 
         function updateInitialStackView() {
             if(stackManager.stackView) {
@@ -267,11 +271,12 @@ SettingsPageLayout {
                 signSelfDestructPopup.close()
             }
 
-            airdropEnabled: false
+            airdropEnabled: true
             retailEnabled: false
             remotelySelfDestructEnabled: true
             burnEnabled: false
 
+            onAirdropClicked: d.airdropClicked()
             onRemotelySelfDestructClicked: remoteSelfdestructPopup.open()
 
             RemoteSelfDestructPopup {
@@ -385,6 +390,14 @@ SettingsPageLayout {
                         Bind { property: "chainIcon"; value: model.chainIcon },
                         Bind { property: "accountName"; value: model.accountName }
                     ]
+                }
+            }
+
+            Connections {
+                target: d
+
+                function onAirdropClicked() {
+                    root.airdropCollectible(view.symbol) // TODO: Backend. It should just be the key (hash(chainId + contractAddress)
                 }
             }
         }

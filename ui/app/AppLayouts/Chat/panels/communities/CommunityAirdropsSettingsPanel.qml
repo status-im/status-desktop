@@ -22,9 +22,13 @@ SettingsPageLayout {
     signal airdropClicked(var airdropTokens, var addresses)
     signal navigateToMintTokenSettings
 
-    // TODO: Update with stackmanager when #8736 is integrated
+
     function navigateBack() {
         stackManager.pop(StackView.Immediate)
+    }
+
+    function selectCollectible(key, amount) {
+        d.selectCollectible(key, amount)
     }
 
     QtObject {
@@ -35,6 +39,8 @@ SettingsPageLayout {
 
         readonly property string welcomePageTitle: qsTr("Airdrops")
         readonly property string newAirdropViewPageTitle: qsTr("New airdrop")
+
+        signal selectCollectible(string key, int amount)
     }
 
     content: StackView {
@@ -92,6 +98,8 @@ SettingsPageLayout {
         id: newAirdropView
 
         CommunityNewAirdropView {
+            id: view
+
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
 
@@ -100,6 +108,8 @@ SettingsPageLayout {
                 stackManager.clear(d.welcomeViewState, StackView.Immediate)
             }
             onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
+
+            Component.onCompleted: d.selectCollectible.connect(view.selectCollectible)
         }
     }
 }
