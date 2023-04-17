@@ -2,7 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
-import Qt.labs.qmlmodels 1.0
 import Qt.labs.platform 1.1
 import QtQml.Models 2.14
 import QtQml 2.15
@@ -843,7 +842,7 @@ Item {
                     Loader {
                         id: personalChatLayoutLoader
                         asynchronous: true
-                        active: appView.currentIndex === Constants.appViewStackIndex.chat
+                        active: false
                         sourceComponent: {
                             if (appMain.rootStore.mainModuleInst.chatsLoadingFailed) {
                                 return errorStateComponent
@@ -852,6 +851,15 @@ Item {
                                 return personalChatLayoutComponent
                             }
                             return loadingStateComponent
+                        }
+
+                        // Do not unload section data from the memory in order not
+                        // to reset scroll, not send text input and etc during the
+                        // sections switching
+                        Binding on active {
+                            when: appView.currentIndex === Constants.appViewStackIndex.chat
+                            value: true
+                            restoreMode: Binding.RestoreNone
                         }
                         
                         Component {
@@ -920,14 +928,7 @@ Item {
 
                                 onCreateCommunityClicked: {
                                     popups.openPopup(communitiesPortalLayoutContainer.createCommunitiesPopup);
-                                }
-
-                                Component.onCompleted: {
-                                    // Do not unload section data from the memory in order not
-                                    // to reset scroll, not send text input and etc during the
-                                    // sections switching
-                                    personalChatLayoutLoader.active = true
-                                }
+                               }
                             }
                         }
                     }
@@ -987,58 +988,67 @@ Item {
                     }
 
                     Repeater {
-                        model: appMain.rootStore.mainModuleInst.sectionsModel
+                        model: SortFilterProxyModel {
+                            sourceModel: appMain.rootStore.mainModuleInst.sectionsModel
+                            filters: ValueFilter {
+                                roleName: "sectionType"
+                                value: Constants.appSection.community
+                            }
+                        }
 
-                        delegate: DelegateChooser {
-                            role: "sectionType"
-                            DelegateChoice {
-                                roleValue: Constants.appSection.community
+                        delegate: Loader {
+                            id: communityLoader
 
-                                delegate: Loader {
-                                    id: communityLoader
-                                    readonly property string sectionId: model.id
+                            readonly property string sectionId: model.id
 
-                                    asynchronous: true
-                                    active: model.loaderActive
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                            Layout.fillHeight: true
 
-                                    Layout.fillWidth: true
-                                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                    Layout.fillHeight: true
+                            asynchronous: true
+                            active: false
 
-                                    sourceComponent: ChatLayout {
-                                        id: chatLayoutComponent
+                            // Do not unload section data from the memory in order not
+                            // to reset scroll, not send text input and etc during the
+                            // sections switching
+                            Binding on active {
+                                when: sectionId === appMain.rootStore.mainModuleInst.activeSection.id
+                                value: true
+                                restoreMode: Binding.RestoreNone
+                            }
 
-                                        Binding {
-                                            target: rootDropAreaPanel
-                                            property: "enabled"
-                                            value: chatLayoutComponent.currentIndex === 0 // Meaning: Chats / channels view
-                                            when: visible
-                                            restoreMode: Binding.RestoreBindingOrValue
-                                        }
+                            sourceComponent: ChatLayout {
+                                id: chatLayoutComponent
 
-                                        emojiPopup: statusEmojiPopup
-                                        stickersPopup: statusStickersPopupLoader.item
-                                        sectionItemModel: model
+                                Binding {
+                                    target: rootDropAreaPanel
+                                    property: "enabled"
+                                    value: chatLayoutComponent.currentIndex === 0 // Meaning: Chats / channels view
+                                    when: visible
+                                    restoreMode: Binding.RestoreBindingOrValue
+                                }
 
-                                        rootStore: ChatStores.RootStore {
-                                            contactsStore: appMain.rootStore.contactStore
-                                            communityTokensStore: appMain.communityTokensStore
-                                            emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-                                            openCreateChat: createChatView.opened
-                                            chatCommunitySectionModule: {
-                                                appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
-                                                return appMain.rootStore.mainModuleInst.getCommunitySectionModule()
-                                            }
-                                        }
+                                emojiPopup: statusEmojiPopup
+                                stickersPopup: statusStickersPopupLoader.item
+                                sectionItemModel: model
 
-                                        onProfileButtonClicked: {
-                                            Global.changeAppSectionBySectionType(Constants.appSection.profile);
-                                        }
-
-                                        onOpenAppSearch: {
-                                            appSearch.openSearchPopup()
-                                        }
+                                rootStore: ChatStores.RootStore {
+                                    contactsStore: appMain.rootStore.contactStore
+                                    communityTokensStore: appMain.communityTokensStore
+                                    emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                    openCreateChat: createChatView.opened
+                                    chatCommunitySectionModule: {
+                                        appMain.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(model.id)
+                                        return appMain.rootStore.mainModuleInst.getCommunitySectionModule()
                                     }
+                                }
+
+                                onProfileButtonClicked: {
+                                    Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                                }
+
+                                onOpenAppSearch: {
+                                    appSearch.openSearchPopup()
                                 }
                             }
                         }
