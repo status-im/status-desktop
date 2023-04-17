@@ -14,6 +14,10 @@ StatusScrollView {
     property alias subtitle: subtitleItem.text
     property alias checkersModel: checkersItems.model
 
+    property int imageWidth: 256
+    property int imageHeigth: root.imageWidth
+
+
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height + mainLayout.anchors.topMargin
 
@@ -43,9 +47,10 @@ StatusScrollView {
                 Image {
                     id: imageItem
 
-                    Layout.preferredWidth: 257
-                    Layout.preferredHeight: Layout.preferredWidth
+                    Layout.preferredWidth: root.imageWidth
+                    Layout.preferredHeight: root.imageHeigth
                     Layout.alignment: Qt.AlignHCenter
+                    fillMode: Image.PreserveAspectFit
                     mipmap: true
                 }
 
