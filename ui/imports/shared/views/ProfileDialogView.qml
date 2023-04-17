@@ -192,22 +192,6 @@ Pane {
     }
 
     Component {
-        id: btnRevertContactRequestRejectionComponent
-
-        StatusButton {
-            size: StatusButton.Size.Small
-            text: qsTr("Reverse Contact Rejection")
-            icon.name: "refresh"
-            icon.width: 16
-            icon.height: 16
-            onClicked: {
-                root.contactsStore.removeContactRequestRejection(root.publicKey)
-                d.reload()
-            }
-        }
-    }
-
-    Component {
         id: btnSendContactRequestComponent
         StatusButton {
             objectName: "profileDialog_sendContactRequestButton"
@@ -384,11 +368,7 @@ Pane {
 
                     // contact request, incoming, pending
                     if (!d.isContact && d.isContactRequestReceived) {
-                        if (d.contactDetails.removed) {
-                            return btnRevertContactRequestRejectionComponent
-                        } else {
-                            return btnAcceptContactRequestComponent
-                        }
+                        return btnAcceptContactRequestComponent
                     }
 
                     // contact request, incoming, rejected

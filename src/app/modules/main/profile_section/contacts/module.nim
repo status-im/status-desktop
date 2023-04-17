@@ -125,9 +125,6 @@ method removeContact*(self: Module, publicKey: string) =
 method changeContactNickname*(self: Module, publicKey: string, nickname: string) =
   self.controller.changeContactNickname(publicKey, nickname)
 
-method removeContactRequestRejection*(self: Module, publicKey: string) =
-  self.controller.removeContactRequestRejection(publicKey)
-
 proc addItemToAppropriateModel(self: Module, item: UserItem) =
   if(singletonInstance.userProfile.getPubKey() == item.pubKey):
     return

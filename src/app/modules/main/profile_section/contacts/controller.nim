@@ -41,10 +41,6 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.contactRemoved(args.contactId)
 
-  self.events.on(SIGNAL_CONTACT_REJECTION_REMOVED) do(e: Args):
-    var args = ContactArgs(e)
-    self.delegate.contactRequestRejectionRemoved(args.contactId)
-
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactNicknameChanged(args.contactId)
@@ -126,9 +122,6 @@ proc acceptContactRequest*(self: Controller, publicKey: string, contactRequestId
 
 proc dismissContactRequest*(self: Controller, publicKey: string, contactRequestId: string) =
   self.contactsService.dismissContactRequest(publicKey, contactRequestId)
-
-proc removeContactRequestRejection*(self: Controller, publicKey: string) =
-  self.contactsService.removeContactRequestRejection(publicKey)
 
 proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string) =
   self.chatService.switchToOrCreateOneToOneChat(chatId, "")

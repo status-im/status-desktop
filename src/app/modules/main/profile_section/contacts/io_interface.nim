@@ -51,9 +51,6 @@ method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
 method removeContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeContactRequestRejection*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 # Controller Delegate Interface
 
 method contactAdded*(self: AccessInterface, publicKey: string) {.base.} =
@@ -108,9 +105,6 @@ method declineVerificationRequest*(self: AccessInterface, publicKey: string): vo
   raise newException(ValueError, "No implementation available")
 
 method acceptVerificationRequest*(self: AccessInterface, publicKey: string, response: string): void {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method contactRequestRejectionRemoved*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getReceivedVerificationRequests*(self: AccessInterface): seq[VerificationRequest] {.base.} =

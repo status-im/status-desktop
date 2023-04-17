@@ -57,7 +57,6 @@ const SIGNAL_CONTACT_ADDED* = "contactAdded"
 const SIGNAL_CONTACT_BLOCKED* = "contactBlocked"
 const SIGNAL_CONTACT_UNBLOCKED* = "contactUnblocked"
 const SIGNAL_CONTACT_REMOVED* = "contactRemoved"
-const SIGNAL_CONTACT_REJECTION_REMOVED* = "contactRejectionRemoved"
 const SIGNAL_CONTACT_NICKNAME_CHANGED* = "contactNicknameChanged"
 const SIGNAL_CONTACTS_STATUS_UPDATED* = "contactsStatusUpdated"
 const SIGNAL_CONTACT_UPDATED* = "contactUpdated"
@@ -78,7 +77,7 @@ const SIGNAL_CONTACT_INFO_REQUEST_FINISHED* = "contactInfoRequestFinished"
 type
   ContactsGroup* {.pure.} = enum
     AllKnownContacts
-    MyMutualContacts    
+    MyMutualContacts
     IncomingPendingContactRequests
     OutgoingPendingContactRequests
     IncomingRejectedContactRequests
@@ -474,16 +473,6 @@ QtObject:
     except Exception as e:
       error "an error occurred while dismissing contact request", msg=e.msg
 
-  proc removeContactRequestRejection*(self: Service, publicKey: string) =
-    var contact = self.getContactById(publicKey)
-    contact.removed = false
-
-    # When we know what flags or what `status-go` end point we need to call, we should add
-    # that call here.
-
-    self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_REJECTION_REMOVED, ContactArgs(contactId: contact.id))
-
   proc changeContactNickname*(self: Service, publicKey: string, nickname: string) =
     var contact = self.getContactById(publicKey)
     contact.localNickname = nickname
@@ -533,6 +522,7 @@ QtObject:
     var contact = self.getContactById(publicKey)
     contact.removed = true
     contact.added = false
+    contact.hasAddedUs = false
 
     self.saveContact(contact)
     self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
