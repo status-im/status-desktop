@@ -42,6 +42,12 @@ Popup {
         function getInstalledStickerPacks() {
             store.stickersModuleInst.getInstalledStickerPacks()
         }
+
+        readonly property bool online: root.store.networkConnectionStore.isOnline
+        onOnlineChanged: {
+            if (online)
+                d.loadStickers()
+        }
     }
 
     enabled: !!d.recentStickers && !!d.stickerPackList
@@ -77,13 +83,6 @@ Popup {
         stickersContainer.visible = true
     }
 
-    Connections {
-        target: mainModule
-        function onOnlineStatusChanged() {
-            root.close()
-        }
-    }
-
     contentItem: ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -96,6 +95,7 @@ Popup {
             store: root.store
             stickerPacks: d.stickerPackList
             packId: stickerPackListView.selectedPackId
+            marketVisible: d.stickerPacksLoaded && d.online
             onInstallClicked: {
                 //starts async task
                 stickersModule.install(packId)
@@ -135,7 +135,7 @@ Popup {
                 id: failedToLoadStickersInfo
 
                 anchors.centerIn: parent
-                visible: d.stickerPacksLoadFailed && d.installedPacksCount < 1
+                visible: d.stickerPacksLoadFailed || !d.online
 
                 StatusBaseText {
                     text: qsTr("Failed to load stickers")
@@ -146,6 +146,7 @@ Popup {
                     objectName: "stickersPopupRetryButton"
                     Layout.alignment: Qt.AlignHCenter
                     text: qsTr("Try again")
+                    enabled: d.online
 
                     onClicked: d.loadStickers()
                 }
@@ -164,11 +165,10 @@ Popup {
             Item {
                 id: noStickerPacks
                 anchors.fill: parent
-                visible: d.installedPacksCount == 0 || stickersModule.recent.rowCount() === 0
+                visible: d.installedPacksCount == 0 && stickersModule.recent.rowCount() === 0
 
                 Image {
                     id: imgNoStickers
-                    visible: lblNoStickersYet.visible || lblNoRecentStickers.visible
                     width: 56
                     height: 56
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -186,20 +186,10 @@ Popup {
 
                     StyledText {
                         id: lblNoStickersYet
-                        visible: d.installedPacksCount === 0
                         anchors.fill: parent
                         font.pixelSize: 15
-                        text: qsTr("You don't have any stickers yet")
-                        lineHeight: 22
-                        horizontalAlignment: Text.AlignHCenter
-                    }
-
-                    StyledText {
-                        id: lblNoRecentStickers
-                        visible: !stickerPackListView.selectedPackId && stickersModule.recent.rowCount() === 0 && !lblNoStickersYet.visible
-                        anchors.fill: parent
-                        font.pixelSize: 15
-                        text: qsTr("Recently used stickers will appear here")
+                        text: d.installedPacksCount === 0 || !d.online ? qsTr("You don't have any stickers yet")
+                                                                       : qsTr("Recently used stickers will appear here")
                         lineHeight: 22
                         horizontalAlignment: Text.AlignHCenter
                     }
@@ -207,8 +197,9 @@ Popup {
 
                 StatusButton {
                     objectName: "stickersPopupGetStickersButton"
-                    visible: lblNoStickersYet.visible
+                    visible: d.installedPacksCount === 0
                     text: qsTr("Get Stickers")
+                    enabled: d.online
                     anchors.top: noStickersContainer.bottom
                     anchors.topMargin: Style.current.padding
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -219,6 +210,7 @@ Popup {
                     }
                 }
             }
+
             StatusStickerList {
                 id: stickerGrid
                 objectName: "statusStickerPopupStickerGrid"

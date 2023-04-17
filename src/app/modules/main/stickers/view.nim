@@ -105,7 +105,7 @@ QtObject:
     self.installedStickerPacksLoaded = flag
 
   proc getInstalledStickerPacksLoaded*(self: View): bool =
-    return self.installedStickerPacksloaded
+    return self.installedStickerPacksLoaded
 
   proc uninstall*(self: View, packId: string) {.slot.} =
     self.delegate.uninstallStickerPack(packId)
