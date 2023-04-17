@@ -166,10 +166,9 @@ StatusDropdown {
             visible: statesStack.size > 1
             spacing: 0
             leftPadding: 4
-            statusIcon: "next"
+            statusIcon: "previous"
             icon.width: 12
             icon.height: 12
-            iconRotation: 180
             text: qsTr("Back")
         }
 

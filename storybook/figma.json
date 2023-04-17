@@ -24,6 +24,9 @@
         "https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=448%3A36296",
         "https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=1573%3A296338"
     ],
+    "ChatAnchorButtonsPanel": [
+        "https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/%F0%9F%92%AC-Chat%E2%8E%9CDesktop?node-id=14632-460085&t=SGTU2JeRA8ifbv2E-0"
+    ],
     "CommunitiesPortalLayout": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A415655",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A415935"
@@ -76,6 +79,9 @@
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2975%3A489607",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2975%3A492910"
     ],
+    "DerivationPathInput": [
+        "https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=12272%3A269692&t=YiipgcxOhdOvqprP-0"
+    ],
     "DidYouKnowSplashScreen": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?node-id=25878%3A518438&t=C7xTpNib38t7s7XU-4"
     ],
@@ -117,6 +123,10 @@
     ],
     "LoginView": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=1080%3A313192"
+    ],
+    "MembersDropdown": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-498410",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22642-497015"
     ],
     "NetworkSelectPopup": [
         "https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=13200-352357&t=jKciSCy3BVlrZmBs-0",
@@ -172,11 +182,5 @@
     "StatusCommunityCard": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416160"
-    ],
-    "ChatAnchorButtonsPanel": [
-        "https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/%F0%9F%92%AC-Chat%E2%8E%9CDesktop?node-id=14632-460085&t=SGTU2JeRA8ifbv2E-0"
-    ],
-    "DerivationPathInput": [
-        "https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=12272%3A269692&t=YiipgcxOhdOvqprP-0"
     ]
 }
