@@ -36,11 +36,12 @@ import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
 
+import mainui.activitycenter.stores 1.0
+import mainui.activitycenter.popups 1.0
+
 import SortFilterProxyModel 0.2
 
 import "panels"
-import "activitycenter/popups"
-import "activitycenter/stores"
 
 Item {
     id: appMain
@@ -88,7 +89,25 @@ Item {
         }
 
         function onOpenActivityCenter() {
-            popups.openPopup(activityCenterPopupComponent)
+            d.openActivityCenterPopup()
+        }
+    }
+
+    QtObject {
+        id: d
+
+        property var activityCenterPopupObj: null
+
+        function openActivityCenterPopup() {
+            if (!activityCenterPopupObj) {
+                activityCenterPopupObj = activityCenterPopupComponent.createObject(appMain)
+            }
+
+            if (activityCenterPopupObj.opened) {
+                activityCenterPopupObj.close()
+            } else {
+                activityCenterPopupObj.open()
+            }
         }
     }
 
@@ -116,7 +135,7 @@ Item {
         }
 
         function onOpenActivityCenterPopupRequested() {
-            popups.openPopup(activityCenterPopupComponent)
+            d.openActivityCenterPopup()
         }
 
         function onDisplayToastMessage(title: string, subTitle: string, icon: string, loading: bool, ephNotifType: int, url: string) {
@@ -1061,7 +1080,7 @@ Item {
             id: activityCenterPopupComponent
             ActivityCenterPopup {
                 // TODO get screen size // Taken from old code top bar height was fixed there to 56
-                property int _buttonSize: 56
+                readonly property int _buttonSize: 56
 
                 x: parent.width - width - Style.current.smallPadding
                 y: parent.y + _buttonSize
