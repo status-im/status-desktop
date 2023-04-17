@@ -74,7 +74,10 @@
   },
   "WalletConfig": {
     "Enabled": true,
-    "OpenseaAPIKey": ""
+    "OpenseaAPIKey": "",
+    "AlchemyAPIKeys": {},
+    "InfuraAPIKey": "",
+    "InfuraAPIKeySecret": ""
   },
   "Networks": [],
   "TorrentConfig": {

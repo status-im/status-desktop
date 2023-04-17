@@ -35,3 +35,7 @@ rpc(getOpenseaAssetsByNFTUniqueID, "wallet"):
   chainId: int
   uniqueIds: seq[NFTUniqueID]
   limit: int
+
+rpc(getCollectibleOwnersByContractAddress, "wallet"):
+  chainId: int
+  contractAddress: string

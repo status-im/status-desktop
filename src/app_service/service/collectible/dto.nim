@@ -27,6 +27,35 @@ type CollectibleDto* = ref object
     address*, collectionSlug*, name*, description*, permalink*, imageThumbnailUrl*, imageUrl*, animationUrl*, animationMediaType*, backgroundColor*: string
     properties*, rankings*, statistics*: seq[CollectibleTrait]
 
+type CollectibleBalance* = ref object
+    tokenId*: UInt256
+    balance*: UInt256
+
+proc `$`*(self: CollectibleBalance): string =
+  return fmt"""CollectibleBalance(
+    tokenId:{self.tokenId}, 
+    balance:{self.balance}
+    """
+
+type CollectibleOwner* = ref object
+    address*: string
+    balances*: seq[CollectibleBalance] 
+
+proc `$`*(self: CollectibleOwner): string =
+  return fmt"""CollectibleOwner(
+    address:{self.address}, 
+    balances:{self.balances}
+    """
+
+type CollectibleOwnershipDto* = ref object
+    contractAddress*: string
+    owners*: seq[CollectibleOwner]
+
+proc `$`*(self: CollectibleOwnershipDto): string =
+  return fmt"""CollectibleOwnershipDto(
+    contractAddress:{self.contractAddress}, 
+    owners:{self.owners}
+    """
 proc newCollectibleDto*: CollectibleDto =
   return CollectibleDto(
     id: -1
@@ -121,4 +150,28 @@ proc toCollectibleDto*(jsonAsset: JsonNode): CollectibleDto =
         properties: getTrait(jsonAsset, CollectibleTraitType.Properties),
         rankings: getTrait(jsonAsset, CollectibleTraitType.Rankings),
         statistics: getTrait(jsonAsset, CollectibleTraitType.Statistics)
+    )
+
+proc getCollectibleBalances(jsonAsset: JsonNode): seq[CollectibleBalance] =
+  var balanceList: seq[CollectibleBalance] = @[]
+  for item in jsonAsset.items:
+      balanceList.add(CollectibleBalance(
+          tokenId: stint.parse(item{"tokenId"}.getStr, Uint256),
+          balance: stint.parse(item{"balance"}.getStr, Uint256)
+      ))
+  return balanceList
+
+proc getCollectibleOwners(jsonAsset: JsonNode): seq[CollectibleOwner] =
+  var ownerList: seq[CollectibleOwner] = @[]
+  for item in jsonAsset.items:
+      ownerList.add(CollectibleOwner(
+          address: item{"ownerAddress"}.getStr,
+          balances: getCollectibleBalances(item{"tokenBalances"})
+      ))
+  return ownerList
+
+proc toCollectibleOwnershipDto*(jsonAsset: JsonNode): CollectibleOwnershipDto =
+    return CollectibleOwnershipDto(
+        contractAddress: jsonAsset{"contractAddress"}.getStr,
+        owners: getCollectibleOwners(jsonAsset{"owners"})
     )

@@ -633,7 +633,15 @@ QtObject:
         },
         "WalletConfig": {
           "Enabled": true,
-          "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED
+          "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,
+          "AlchemyAPIKeys": %* {
+            "42161": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
+            "421613": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
+            "10": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
+            "420": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED
+          },
+          "InfuraAPIKey": INFURA_TOKEN_RESOLVED,
+          "InfuraAPIKeySecret": INFURA_TOKEN_SECRET_RESOLVED
         },
         "TorrentConfig": {
           "Enabled": false,
