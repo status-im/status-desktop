@@ -1,7 +1,7 @@
 import NimQml, strutils
 import ../shared_models/section_model
 import ../shared_models/section_item
-import ../shared_models/active_section
+import ../shared_models/section_details
 import io_interface
 import chat_search_model
 import ephemeral_notification_model
@@ -16,7 +16,7 @@ QtObject:
       modelVariant: QVariant
       sectionsLoaded: bool
       chatsLoadingFailed: bool
-      activeSection: ActiveSection
+      activeSection: SectionDetails
       activeSectionVariant: QVariant
       chatSearchModel: chat_search_model.Model
       chatSearchModelVariant: QVariant
@@ -126,7 +126,7 @@ QtObject:
   proc emitMailserverNotWorking*(self: View) =
     self.mailserverNotWorking()
 
-  proc activeSection*(self: View): ActiveSection =
+  proc activeSection*(self: View): SectionDetails =
     return self.activeSection
 
   proc getActiveSection(self: View): QVariant {.slot.} =

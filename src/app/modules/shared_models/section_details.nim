@@ -5,27 +5,27 @@ import ../../../app_service/service/contacts/dto/contacts
 import ../../../app_service/common/types
 
 QtObject:
-  type ActiveSection* = ref object of QObject
+  type SectionDetails* = ref object of QObject
     item: SectionItem
 
-  proc setup(self: ActiveSection) =
+  proc setup(self: SectionDetails) =
     self.QObject.setup
 
-  proc delete*(self: ActiveSection) =
+  proc delete*(self: SectionDetails) =
     self.QObject.delete
 
-  proc newActiveSection*(): ActiveSection =
+  proc newActiveSection*(): SectionDetails =
     new(result, delete)
     result.setup
 
-  proc membersChanged*(self: ActiveSection) {.signal.}
-  proc bannedMembersChanged*(self: ActiveSection) {.signal.}
-  proc pendingRequestsToJoinChanged*(self: ActiveSection) {.signal.}
-  proc pendingMemberRequestsChanged*(self: ActiveSection) {.signal.}
-  proc declinedMemberRequestsChanged*(self: ActiveSection) {.signal.}
-  proc communityTokensChanged*(self: ActiveSection) {.signal.}
+  proc membersChanged*(self: SectionDetails) {.signal.}
+  proc bannedMembersChanged*(self: SectionDetails) {.signal.}
+  proc pendingRequestsToJoinChanged*(self: SectionDetails) {.signal.}
+  proc pendingMemberRequestsChanged*(self: SectionDetails) {.signal.}
+  proc declinedMemberRequestsChanged*(self: SectionDetails) {.signal.}
+  proc communityTokensChanged*(self: SectionDetails) {.signal.}
 
-  proc setActiveSectionData*(self: ActiveSection, item: SectionItem) =
+  proc setActiveSectionData*(self: SectionDetails, item: SectionItem) =
     self.item = item
     self.membersChanged()
     self.bannedMembersChanged()
@@ -34,151 +34,151 @@ QtObject:
     self.pendingRequestsToJoinChanged()
     self.communityTokensChanged()
 
-  proc getId*(self: ActiveSection): string {.slot.} =
+  proc getId*(self: SectionDetails): string {.slot.} =
     return self.item.id
 
   QtProperty[string] id:
     read = getId
 
-  proc getSectionType(self: ActiveSection): int {.slot.} =
+  proc getSectionType(self: SectionDetails): int {.slot.} =
     return self.item.sectionType.int
 
   QtProperty[int] sectionType:
     read = getSectionType
 
-  proc getName(self: ActiveSection): string {.slot.} =
+  proc getName(self: SectionDetails): string {.slot.} =
     return self.item.name
 
   QtProperty[string] name:
     read = getName
 
-  proc getAmISectionAdmin(self: ActiveSection): bool {.slot.} =
+  proc getAmISectionAdmin(self: SectionDetails): bool {.slot.} =
     return self.item.amISectionAdmin
 
   QtProperty[bool] amISectionAdmin:
     read = getAmISectionAdmin
 
-  proc description(self: ActiveSection): string {.slot.} =
+  proc description(self: SectionDetails): string {.slot.} =
     return self.item.description
 
   QtProperty[string] description:
     read = description
 
-  proc introMessage(self: ActiveSection): string {.slot.} =
+  proc introMessage(self: SectionDetails): string {.slot.} =
     return self.item.introMessage
 
   QtProperty[string] introMessage:
     read = introMessage
 
-  proc outroMessage(self: ActiveSection): string {.slot.} =
+  proc outroMessage(self: SectionDetails): string {.slot.} =
     return self.item.outroMessage
 
   QtProperty[string] outroMessage:
     read = outroMessage
 
-  proc getImage(self: ActiveSection): string {.slot.} =
+  proc getImage(self: SectionDetails): string {.slot.} =
     return self.item.image
 
   QtProperty[string] image:
     read = getImage
 
-  proc getBannerImageData(self: ActiveSection): string {.slot.} =
+  proc getBannerImageData(self: SectionDetails): string {.slot.} =
     return self.item.bannerImageData
 
   QtProperty[string] bannerImageData:
     read = getBannerImageData
 
-  proc getIcon(self: ActiveSection): string {.slot.} =
+  proc getIcon(self: SectionDetails): string {.slot.} =
     return self.item.icon
 
   QtProperty[string] icon:
     read = getIcon
 
-  proc getColor(self: ActiveSection): string {.slot.} =
+  proc getColor(self: SectionDetails): string {.slot.} =
     return self.item.color
 
   QtProperty[string] color:
     read = getColor
 
-  proc getTags(self: ActiveSection): string {.slot.} =
+  proc getTags(self: SectionDetails): string {.slot.} =
     return self.item.tags
 
   QtProperty[string] tags:
     read = getTags
 
-  proc getHasNotification(self: ActiveSection): bool {.slot.} =
+  proc getHasNotification(self: SectionDetails): bool {.slot.} =
     return self.item.hasNotification
 
   QtProperty[bool] hasNotification:
     read = getHasNotification
 
-  proc getNotificationCount(self: ActiveSection): int {.slot.} =
+  proc getNotificationCount(self: SectionDetails): int {.slot.} =
     return self.item.notificationsCount
 
   QtProperty[int] notificationCount:
     read = getNotificationCount
 
-  proc canJoin(self: ActiveSection): bool {.slot.} =
+  proc canJoin(self: SectionDetails): bool {.slot.} =
     return self.item.canJoin
 
   QtProperty[bool] canJoin:
     read = canJoin
 
-  proc canRequestAccess(self: ActiveSection): bool {.slot.} =
+  proc canRequestAccess(self: SectionDetails): bool {.slot.} =
     return self.item.canRequestAccess
 
   QtProperty[bool] canRequestAccess:
     read = canRequestAccess
 
-  proc canManageUsers(self: ActiveSection): bool {.slot.} =
+  proc canManageUsers(self: SectionDetails): bool {.slot.} =
     return self.item.canManageUsers
 
   QtProperty[bool] canManageUsers:
     read = canManageUsers
 
-  proc getJoined(self: ActiveSection): bool {.slot.} =
+  proc getJoined(self: SectionDetails): bool {.slot.} =
     return self.item.joined
 
   QtProperty[bool] joined:
     read = getJoined
 
-  proc getIsMember(self: ActiveSection): bool {.slot.} =
+  proc getIsMember(self: SectionDetails): bool {.slot.} =
     return self.item.isMember
 
   QtProperty[bool] isMember:
     read = getIsMember
 
-  proc access(self: ActiveSection): int {.slot.} =
+  proc access(self: SectionDetails): int {.slot.} =
     return self.item.access
 
   QtProperty[int] access:
     read = access
 
-  proc ensOnly(self: ActiveSection): bool {.slot.} =
+  proc ensOnly(self: SectionDetails): bool {.slot.} =
     return self.item.ensOnly
 
   QtProperty[bool] ensOnly:
     read = ensOnly
 
-  proc historyArchiveSupportEnabled(self: ActiveSection): bool {.slot.} =
+  proc historyArchiveSupportEnabled(self: SectionDetails): bool {.slot.} =
     return self.item.historyArchiveSupportEnabled
 
   QtProperty[bool] historyArchiveSupportEnabled:
     read = historyArchiveSupportEnabled
 
-  proc pinMessageAllMembersEnabled(self: ActiveSection): bool {.slot.} =
+  proc pinMessageAllMembersEnabled(self: SectionDetails): bool {.slot.} =
     return self.item.pinMessageAllMembersEnabled
 
   QtProperty[bool] pinMessageAllMembersEnabled:
     read = pinMessageAllMembersEnabled
 
-  proc encrypted(self: ActiveSection): bool {.slot.} =
+  proc encrypted(self: SectionDetails): bool {.slot.} =
     return self.item.encrypted
 
   QtProperty[bool] encrypted:
     read = encrypted
 
-  proc members(self: ActiveSection): QVariant {.slot.} =
+  proc members(self: SectionDetails): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
       return newQVariant("")
@@ -189,7 +189,7 @@ QtObject:
     notify = membersChanged
 
 
-  proc bannedMembers(self: ActiveSection): QVariant {.slot.} =
+  proc bannedMembers(self: SectionDetails): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
       return newQVariant("")
@@ -199,7 +199,7 @@ QtObject:
     read = bannedMembers
     notify = bannedMembersChanged
 
-  proc communityTokens(self: ActiveSection): QVariant {.slot.} =
+  proc communityTokens(self: SectionDetails): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
       return newQVariant("")
@@ -209,14 +209,14 @@ QtObject:
     read = communityTokens
     notify = communityTokensChanged
 
-  proc amIBanned(self: ActiveSection): bool {.slot.} =
+  proc amIBanned(self: SectionDetails): bool {.slot.} =
     return self.item.amIBanned
 
   QtProperty[bool] amIBanned:
     read = amIBanned
     notify = bannedMembersChanged
 
-  proc pendingMemberRequests(self: ActiveSection): QVariant {.slot.} =
+  proc pendingMemberRequests(self: SectionDetails): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
       return newQVariant("")
@@ -227,7 +227,7 @@ QtObject:
     notify = pendingMemberRequestsChanged
 
 
-  proc declinedMemberRequests(self: ActiveSection): QVariant {.slot.} =
+  proc declinedMemberRequests(self: SectionDetails): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
       return newQVariant("")
@@ -237,15 +237,15 @@ QtObject:
     read = declinedMemberRequests
     notify = declinedMemberRequestsChanged
 
-  proc hasMember(self: ActiveSection, pubkey: string): bool {.slot.} =
+  proc hasMember(self: SectionDetails, pubkey: string): bool {.slot.} =
     return self.item.hasMember(pubkey)
 
-  proc setOnlineStatusForMember*(self: ActiveSection, pubKey: string,
+  proc setOnlineStatusForMember*(self: SectionDetails, pubKey: string,
       onlineStatus: OnlineStatus) =
     self.item.setOnlineStatusForMember(pubKey, onlineStatus)
-    
+
   proc updateMember*(
-      self: ActiveSection,
+      self: SectionDetails,
       pubkey: string,
       name: string,
       ensName: string,
@@ -258,7 +258,7 @@ QtObject:
     self.item.updateMember(pubkey, name, ensName, localNickname, alias, image, isContact,
       isVerified, isUntrustworthy)
 
-  proc pendingRequestsToJoin(self: ActiveSection): QVariant {.slot.} =
+  proc pendingRequestsToJoin(self: SectionDetails): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
       return newQVariant("")
