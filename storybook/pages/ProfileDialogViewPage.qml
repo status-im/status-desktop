@@ -165,10 +165,6 @@ SplitView {
                                 logs.logEvent("contactsStore::removeTrustStatus", ["publicKey"], arguments)
                             }
 
-                            function removeContactRequestRejection(publicKey) {
-                                logs.logEvent("contactsStore::removeContactRequestRejection", ["publicKey"], arguments)
-                            }
-
                             function verifiedUntrustworthy(publicKey) {
                                 logs.logEvent("contactsStore::verifiedUntrustworthy", ["publicKey"], arguments)
                             }
