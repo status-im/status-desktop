@@ -3,7 +3,7 @@ import NimQml, json, strutils, json_serialization, sequtils
 import ./io_interface
 import ../../shared_models/section_model
 import ../../shared_models/section_item
-import ../../shared_models/active_section
+import ../../shared_models/section_details
 import ./models/curated_community_model
 import ./models/curated_community_item
 import ./models/discord_file_list_model
@@ -22,7 +22,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: SectionModel
       modelVariant: QVariant
-      observedItem: ActiveSection
+      observedItem: SectionDetails
       curatedCommunitiesModel: CuratedCommunityModel
       curatedCommunitiesModelVariant: QVariant
       curatedCommunitiesLoading: bool

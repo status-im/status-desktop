@@ -3,7 +3,7 @@ import NimQml, tables, json, sugar, sequtils, strformat, marshal, times, chronic
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
 import ./communities/models/[pending_request_item, pending_request_model]
-import ../shared_models/[user_item, member_item, member_model, section_item, section_model, active_section]
+import ../shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
 import ../shared_modules/keycard_popup/module as keycard_shared_module
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
