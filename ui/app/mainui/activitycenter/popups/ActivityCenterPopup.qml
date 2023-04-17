@@ -26,7 +26,7 @@ Popup {
     }
     onClosed: {
         Global.popupOpened = false
-        activityCenterStore.markAsSeenActivityCenterNotifications()
+        Qt.callLater(activityCenterStore.markAsSeenActivityCenterNotifications)
     }
 
     width: 560
