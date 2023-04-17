@@ -23,13 +23,6 @@ Item {
 
     readonly property alias count: contactGridView.count
 
-    signal contactClicked(var contact)
-
-    function matchesAlias(name, filter) {
-        let parts = name.split(" ")
-        return parts.some(p => p.startsWith(filter))
-    }
-
     StatusGridView {
         id: contactGridView
         anchors.fill: parent
