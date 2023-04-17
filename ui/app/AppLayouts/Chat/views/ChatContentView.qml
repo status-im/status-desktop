@@ -36,9 +36,10 @@ ColumnLayout {
     property var contactsStore
     property bool isActiveChannel: false
 
+    readonly property alias chatMessagesLoader: chatMessagesLoader
+
     property var emojiPopup
     property var stickersPopup
-    property alias textInputField: chatInput
     property UsersStore usersStore: UsersStore {}
 
     onChatContentModuleChanged: {
@@ -76,8 +77,7 @@ ColumnLayout {
         }
     }
 
-    MessageStore {
-        id: messageStore
+    readonly property var messageStore: MessageStore {
         messageModule: chatContentModule ? chatContentModule.messagesModule : null
         chatSectionModule: root.rootStore.chatCommunitySectionModule
     }
@@ -137,33 +137,36 @@ ColumnLayout {
         Layout.fillHeight: true
         clip: true
 
-        ChatMessagesView {
-            id: chatMessages
+        Loader {
+            id: chatMessagesLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
-            chatContentModule: root.chatContentModule
-            rootStore: root.rootStore
-            contactsStore: root.contactsStore
-            messageContextMenu: contextmenu
-            messageStore: messageStore
-            emojiPopup: root.emojiPopup
-            stickersPopup: root.stickersPopup
-            usersStore: root.usersStore
-            stickersLoaded: root.stickersLoaded
-            isChatBlocked: root.isBlocked || (chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne && !root.isUserAdded)
-            channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
-            isActiveChannel: root.isActiveChannel
-            onShowReplyArea: {
-                let obj = messageStore.getMessageByIdAsJson(messageId)
-                if (!obj) {
-                    return
+
+            sourceComponent: ChatMessagesView {
+                chatContentModule: root.chatContentModule
+                rootStore: root.rootStore
+                contactsStore: root.contactsStore
+                messageContextMenu: contextmenu
+                messageStore: root.messageStore
+                emojiPopup: root.emojiPopup
+                stickersPopup: root.stickersPopup
+                usersStore: root.usersStore
+                stickersLoaded: root.stickersLoaded
+                isChatBlocked: root.isBlocked || (chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne && !root.isUserAdded)
+                channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
+                isActiveChannel: root.isActiveChannel
+                onShowReplyArea: {
+                    let obj = messageStore.getMessageByIdAsJson(messageId)
+                    if (!obj) {
+                        return
+                    }
+                    chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
                 }
-                chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+                onOpenStickerPackPopup: {
+                    root.openStickerPackPopup(stickerPackId);
+                }
+                onEditModeChanged: if (!editModeOn) chatInput.forceInputActiveFocus()
             }
-            onOpenStickerPackPopup: {
-                root.openStickerPackPopup(stickerPackId);
-            }
-            onEditModeChanged: if (!editModeOn) chatInput.forceInputActiveFocus()
         }
 
         Item {
