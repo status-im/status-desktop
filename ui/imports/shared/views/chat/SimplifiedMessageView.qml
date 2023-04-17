@@ -70,7 +70,7 @@ RowLayout {
             Layout.fillWidth: true
 
             StatusBaseText {
-                text: CoreUtils.Utils.stripHtmlTags(root.messageDetails.messageText)
+                text: root.messageDetails.messageText
                 maximumLineCount: root.maximumLineCount
                 wrapMode: Text.Wrap
                 elide: Text.ElideRight
