@@ -135,40 +135,33 @@ Item {
         id: chatRepeater
         model: parentModule && parentModule.model
 
-        delegate: Loader {
-            id: chatLoader
-
-            // Channels/chats are not loaded by default and only load when first put active
-            active: model.loaderActive
+        ChatContentView {
             width: parent.width
             height: parent.height
-            visible: model.active
-
-            sourceComponent: ChatContentView {
-                visible: !root.rootStore.openCreateChat && isActiveChannel
-                rootStore: root.rootStore
-                contactsStore: root.contactsStore
-                emojiPopup: root.emojiPopup
-                stickersPopup: root.stickersPopup
-                sendTransactionNoEnsModal: cmpSendTransactionNoEns
-                receiveTransactionModal: cmpReceiveTransaction
-                sendTransactionWithEnsModal: cmpSendTransactionWithEns
-                stickersLoaded: root.stickersLoaded
-                isBlocked: model.blocked
-                isUserAdded: root.isUserAdded
-                isActiveChannel: chatLoader.visible
-                onOpenStickerPackPopup: {
-                    root.openStickerPackPopup(stickerPackId)
-                }
-                onOpenAppSearch: {
-                    root.openAppSearch();
-                }
-                Component.onCompleted: {
-                    parentModule.prepareChatContentModuleForChatId(model.itemId)
-                    chatContentModule = parentModule.getChatContentModule()
-                    chatSectionModule = root.parentModule
-                    root.checkForCreateChatOptions(model.itemId)
-                }
+            visible: model.active && !root.rootStore.openCreateChat && isActiveChannel
+            chatMessagesLoader.active: model.loaderActive
+            rootStore: root.rootStore
+            contactsStore: root.contactsStore
+            emojiPopup: root.emojiPopup
+            stickersPopup: root.stickersPopup
+            sendTransactionNoEnsModal: cmpSendTransactionNoEns
+            receiveTransactionModal: cmpReceiveTransaction
+            sendTransactionWithEnsModal: cmpSendTransactionWithEns
+            stickersLoaded: root.stickersLoaded
+            isBlocked: model.blocked
+            isUserAdded: root.isUserAdded
+            isActiveChannel: model.active
+            onOpenStickerPackPopup: {
+                root.openStickerPackPopup(stickerPackId)
+            }
+            onOpenAppSearch: {
+                root.openAppSearch();
+            }
+            Component.onCompleted: {
+                parentModule.prepareChatContentModuleForChatId(model.itemId)
+                chatContentModule = parentModule.getChatContentModule()
+                chatSectionModule = root.parentModule
+                root.checkForCreateChatOptions(model.itemId)
             }
         }
     }
