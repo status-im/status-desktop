@@ -21,6 +21,7 @@ Item {
 
     property WalletStore walletStore
     property var emojiPopup
+    property var account
 
     Column {
         id: column
@@ -42,11 +43,11 @@ Item {
                 asset: StatusAssetSettings {
                     width: isLetterIdenticon ? 40 : 20
                     height: isLetterIdenticon ? 40 : 20
-                    color: walletStore.currentAccount.color
-                    emoji: walletStore.currentAccount.emoji
-                    name: !walletStore.currentAccount.emoji ? "filled-account": ""
+                    color: root.account ? root.account.color : "#ffffff"
+                    emoji: root.account ? root.account.emoji : ""
+                    name: root.account && !root.account.emoji ? "filled-account": ""
                     letterSize: 14
-                    isLetterIdenticon: !!walletStore.currentAccount.emoji
+                    isLetterIdenticon: !!root.account && !!root.account.emoji
                     bgWidth: 40
                     bgHeight: 40
                     bgColor: Theme.palette.primaryColor3
@@ -59,7 +60,7 @@ Item {
                     StatusBaseText {
                         objectName: "walletAccountViewAccountName"
                         id: accountName
-                        text: walletStore.currentAccount.name
+                        text:root.account ? root.account.name : ""
                         font.weight: Font.Bold
                         font.pixelSize: 28
                         color: Theme.palette.directColor1
@@ -76,7 +77,7 @@ Item {
                     }
                 }
                 StatusAddressPanel {
-                    value: walletStore.currentAccount.address
+                    value: root.account ? root.account.address : ""
 
                     font.weight: Font.Normal
 
@@ -98,7 +99,10 @@ Item {
                 maxWidth: parent.width
                 primaryText: qsTr("Type")
                 secondaryText: {
-                    const walletType = walletStore.currentAccount.walletType
+                    if (!root.account) {
+                        return ""
+                    }
+                    const walletType = root.account.walletType
                     if (walletType === "watch") {
                         return qsTr("Watch-Only Account")
                     } else if (walletType === "generated" || walletType === "") {
@@ -118,15 +122,15 @@ Item {
             InformationTile {
                 maxWidth: parent.width
                 primaryText: qsTr("Derivation Path")
-                secondaryText: walletStore.currentAccount.path
-                visible: walletStore.currentAccount.path
+                secondaryText: root.account ? root.account.path : ""
+                visible: !!root.account && root.account.path
             }
 
             InformationTile {
                 maxWidth: parent.width
-                visible: walletStore.currentAccount.relatedAccounts.count > 0
+                visible:root.account ? root.account.relatedAccounts.count > 0 : false
                 primaryText: qsTr("Related Accounts")
-                tagsModel: walletStore.currentAccount.relatedAccounts
+                tagsModel: root.account ? root.account.relatedAccounts : []
                 tagsDelegate: StatusListItemTag {
                     bgColor: model.color
                     bgRadius: 6
@@ -144,20 +148,20 @@ Item {
 
         StatusButton {
             objectName: "deleteAccountButton"
-            visible: walletStore.currentAccount.walletType !== ""
+            visible: !!root.account && root.account.walletType !== "" 
             text: qsTr("Remove from your profile")
             type: StatusBaseButton.Type.Danger
 
             ConfirmationDialog {
                 id: confirmationPopup
                 confirmButtonObjectName: "confirmDeleteAccountButton"
-                header.title: qsTr("Confirm %1 Removal").arg(walletStore.currentAccount.name)
+                header.title: qsTr("Confirm %1 Removal").arg(root.account ? root.account.name : "")
                 confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
                 confirmButtonLabel: qsTr("Remove Account")
                 onConfirmButtonClicked: {
                     confirmationPopup.close();
                     root.goBack();
-                    root.walletStore.deleteAccount(walletStore.currentAccount.keyUid, walletStore.currentAccount.address);
+                    root.walletStore.deleteAccount(root.account.keyUid, root.account.address);
                 }
 
             }
@@ -171,6 +175,7 @@ Item {
     Component {
         id: renameAccountModalComponent
         RenameAccontModal {
+            account: root.account
             anchors.centerIn: parent
             onClosed: destroy()
             walletStore: root.walletStore
