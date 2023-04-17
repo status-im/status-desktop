@@ -23,6 +23,7 @@ Item {
     property var store
     property var stickerPacks: StickerPackData {}
     property string packId
+    property bool marketVisible
 
     signal backClicked
     signal uninstallClicked(string packId)
@@ -43,6 +44,7 @@ Item {
         anchors.topMargin: Style.current.padding
         cellWidth: parent.width - (Style.current.padding * 2)
         cellHeight: height - 72
+        visible: root.marketVisible
 
         ScrollBar.vertical: StatusScrollBar {}
 

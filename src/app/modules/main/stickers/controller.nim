@@ -26,10 +26,6 @@ type
     tokenService: token_service.Service
     disconnected: bool
 
-# Forward declaration
-proc obtainMarketStickerPacks*(self: Controller)
-proc getInstalledStickerPacks*(self: Controller): Table[string, StickerPackDto]
-
 proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
@@ -53,20 +49,6 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-
-  self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
-    self.disconnected = true
-    self.delegate.clearStickerPacks()
-    let installedStickerPacks = self.getInstalledStickerPacks()
-    self.delegate.populateInstalledStickerPacks(installedStickerPacks)
-
-  self.events.on(SIGNAL_NETWORK_CONNECTED) do(e: Args):
-    if self.disconnected:
-      let installedStickers = self.stickerService.getInstalledStickerPacks()
-      self.delegate.populateInstalledStickerPacks(installedStickers)
-      self.delegate.clearStickerPacks()
-      self.obtainMarketStickerPacks()
-      self.disconnected = false
 
   self.events.on(SIGNAL_LOAD_RECENT_STICKERS_DONE) do(e: Args):
     let args = StickersArgs(e)
