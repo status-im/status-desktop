@@ -7,6 +7,7 @@
 # * \date    February 2022
 # * \brief   It defines the status accounts popup behavior and properties.
 # *****************************************************************************/
+from enum import Enum
 
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
