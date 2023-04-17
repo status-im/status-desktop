@@ -71,7 +71,7 @@ SettingsContentBase {
             }
 
             onGoToAccountView: {
-                root.walletStore.switchAccountByAddress(address)
+                accountView.account = account
                 stackContainer.currentIndex = accountViewIndex
             }
 
@@ -89,6 +89,7 @@ SettingsContentBase {
         }
 
         AccountView {
+            id: accountView
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup
 

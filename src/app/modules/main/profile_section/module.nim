@@ -37,6 +37,7 @@ import ./notifications/module as notifications_module
 import ./ens_usernames/module as ens_usernames_module
 import ./communities/module as communities_module
 import ./keycard/module as keycard_module
+import ./wallet/module as wallet_module
 
 export io_interface
 
@@ -61,6 +62,7 @@ type
     ensUsernamesModule: ens_usernames_module.AccessInterface
     communitiesModule: communities_module.AccessInterface
     keycardModule: keycard_module.AccessInterface
+    walletModule: wallet_module.AccessInterface
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
@@ -109,6 +111,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.keycardModule = keycard_module.newModule(result, events, keycardService, settingsService, networkService, 
     privacyService, accountsService, walletAccountService, keychainService)
 
+  result.walletModule = wallet_module.newModule(result, events, walletAccountService, settingsService, networkService)
+
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
 method delete*(self: Module) =
@@ -143,6 +147,7 @@ method load*(self: Module) =
   self.ensUsernamesModule.load()
   self.communitiesModule.load()
   self.keycardModule.load()
+  self.walletModule.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -185,6 +190,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.keycardModule.isLoaded()):
+    return
+
+  if(not self.walletModule.isLoaded()):
     return
 
   self.moduleLoaded = true
@@ -264,3 +272,12 @@ method communitiesModuleDidLoad*(self: Module) =
 
 method getKeycardModule*(self: Module): QVariant =
   self.keycardModule.getModuleAsVariant()
+
+method walletModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method getWalletAccountsModule*(self: Module): QVariant =
+  return self.walletModule.getAccountsModuleAsVariant()
+
+method getWalletNetworksModule*(self: Module): QVariant =
+  return self.walletModule.getNetworksModuleAsVariant()

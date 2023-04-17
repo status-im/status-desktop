@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import SortFilterProxyModel 0.2
 
 import utils 1.0
 import shared.status 1.0
@@ -17,7 +18,7 @@ Column {
     property WalletStore walletStore
 
     signal goToNetworksView()
-    signal goToAccountView(address: string)
+    signal goToAccountView(var account)
     signal goToDappPermissionsView()
 
     Component.onCompleted: {
@@ -84,11 +85,28 @@ Column {
         width: parent.width
         height: childrenRect.height
         objectName: "generatedAccounts"
-        model: walletStore.generatedAccounts
+        model: SortFilterProxyModel {
+            sourceModel: walletStore.accounts
+            filters: ExpressionFilter {
+                expression: {
+                    return model.walletType === "generated" || model.walletType === ""
+                }
+            }
+        }
         delegate: WalletAccountDelegate {
             account: model
             onGoToAccountView: {
-                root.goToAccountView(model.address)
+                root.goToAccountView(model)
+            }
+        }
+    }
+
+    SortFilterProxyModel {
+        id: importedAccounts
+        sourceModel: walletStore.accounts
+        filters: ExpressionFilter {
+            expression: {
+                return model.walletType !== "generated" && model.walletType !== "watch" && model.walletType !== ""
             }
         }
     }
@@ -98,16 +116,25 @@ Column {
         leftPadding: Style.current.padding
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding/2
-        visible: walletStore.importedAccounts.count > 0
+        visible: importedAccounts.count > 0
     }
 
     Repeater {
-        model: walletStore.importedAccounts
+        model: importedAccounts
         delegate: WalletAccountDelegate {
             account: model
             onGoToAccountView: {
-                root.goToAccountView(model.address)
+                root.goToAccountView(model)
             }
+        }
+    }
+
+    SortFilterProxyModel {
+        id: watchOnlyAccounts
+        sourceModel: walletStore.accounts
+        filters: ValueFilter {
+            roleName: "walletType"
+            value: "watch"
         }
     }
 
@@ -116,15 +143,15 @@ Column {
         leftPadding: Style.current.padding
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding/2
-        visible: walletStore.watchOnlyAccounts.count > 0
+        visible: watchOnlyAccounts.count > 0
     }
 
     Repeater {
-        model: walletStore.watchOnlyAccounts
+        model: watchOnlyAccounts
         delegate: WalletAccountDelegate {
             account: model
             onGoToAccountView: {
-                root.goToAccountView(model.address)
+                root.goToAccountView(model)
             }
         }
     }

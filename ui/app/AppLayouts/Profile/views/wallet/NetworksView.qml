@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import SortFilterProxyModel 0.2
 
 import shared.status 1.0
 import StatusQ.Controls 0.1
@@ -23,7 +24,13 @@ Item {
 
         Repeater {
             id: layer1List
-            model: walletStore.layer1Networks
+            model: SortFilterProxyModel {
+                sourceModel: walletStore.networks
+                filters: ValueFilter {
+                    roleName: "layer"
+                    value: 1
+                }
+            }
             delegate: WalletNetworkDelegate {
                 network: model
             }
@@ -39,27 +46,15 @@ Item {
 
         Repeater {
             id: layer2List
-            model: walletStore.layer2Networks
+            model: SortFilterProxyModel {
+                sourceModel: walletStore.networks
+                filters: ValueFilter {
+                    roleName: "layer"
+                    value: 2
+                }
+            }
             delegate: WalletNetworkDelegate {
                 network: model
-            }
-        }
-
-        Item {
-            height: Style.current.bigPadding
-            width: parent.width
-        }
-
-        StatusButton {
-            // Disable for now
-            visible: false
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.bigPadding
-            id: addCustomNetworkButton
-            type: StatusFlatRoundButton.Type.Primary
-            text: qsTr("Add Custom Network")
-            onClicked: {
-                root.goBack()
             }
         }
     }

@@ -56,6 +56,8 @@ QtObject {
     }
 
     property WalletStore walletStore: WalletStore {
+        accountsModule: profileSectionModuleInst.walletAccountsModule
+        networksModule: profileSectionModuleInst.walletNetworksModule
     }
 
     property KeycardStore keycardStore: KeycardStore {

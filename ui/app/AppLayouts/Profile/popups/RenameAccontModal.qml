@@ -20,10 +20,10 @@ StatusModal {
     id: popup
 
     property WalletStore walletStore
-    property var currentAccount: walletStore.currentAccount
+    property var account
     property var emojiPopup
 
-    header.title: qsTr("Rename %1").arg(currentAccount.name)
+    header.title: qsTr("Rename %1").arg(popup.account.name)
 
     property int marginBetweenInputs: 30
 
@@ -53,10 +53,10 @@ StatusModal {
             input.edit.objectName: "renameAccountNameInput"
             input.isIconSelectable: true
             placeholderText: qsTr("Enter an account name...")
-            input.text: currentAccount.name
-            input.asset.emoji: currentAccount.emoji
-            input.asset.color: currentAccount.color
-            input.asset.name: !currentAccount.emoji ? "filled-account": ""
+            input.text: popup.account.name
+            input.asset.emoji: popup.account.emoji
+            input.asset.color: popup.account.color
+            input.asset.name: !popup.account.emoji ? "filled-account": ""
 
             validationMode: StatusInput.ValidationMode.Always
 
@@ -85,16 +85,16 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             model: Constants.preDefinedWalletAccountColors
             titleText: qsTr("color").toUpperCase()
-            selectedColor: currentAccount.color
+            selectedColor: popup.account.color
             selectedColorIndex: {
                 for (let i = 0; i < model.length; i++) {
-                    if(model[i] === currentAccount.color)
+                    if(model[i] === popup.account.color)
                         return i
                 }
                 return -1
             }
             onSelectedColorChanged: {
-                if(selectedColor !== currentAccount.color) {
+                if(selectedColor !== popup.account.color) {
                     accountNameInput.input.asset.color = selectedColor
                 }
             }
@@ -113,8 +113,8 @@ StatusModal {
             text: qsTr("Change Name")
 
             enabled: accountNameInput.text !== "" && accountNameInput.valid
-                        && (accountNameInput.text !== currentAccount.name
-                            || (accountColorInput.selectedColorIndex >= 0 && accountColorInput.selectedColor !== currentAccount.color))
+                        && (accountNameInput.text !== popup.account.name
+                            || (accountColorInput.selectedColorIndex >= 0 && accountColorInput.selectedColor !== popup.account.color))
 
             MessageDialog {
                 id: changeError
@@ -128,7 +128,7 @@ StatusModal {
                      return
                  }
 
-                const error = walletStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.asset.emoji);
+                const error = walletStore.updateAccount(popup.account.address, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.asset.emoji);
 
                 if (error) {
                     Global.playErrorSound();
