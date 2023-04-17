@@ -29,14 +29,19 @@ Popup {
         activityCenterStore.markAsSeenActivityCenterNotifications()
     }
 
-    x: Global.applicationWindow.width - root.width - Style.current.halfPadding
     width: 560
     padding: 0
-    modal: false
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    modal: true
     parent: Overlay.overlay
 
-    Overlay.modeless: null
+    Overlay.modal: MouseArea { // eat every event behind the popup
+        hoverEnabled: true
+        onPressed: (event) => {
+                       event.accept()
+                       root.close()
+                   }
+        onWheel: (event) => event.accept()
+    }
 
     background: Rectangle {
         color: Style.current.background
