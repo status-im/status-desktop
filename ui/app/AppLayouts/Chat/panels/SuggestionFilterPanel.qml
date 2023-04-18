@@ -73,7 +73,6 @@ Item {
                 publicKey: listItem.publicKey,
                 name: listItem.name || listItem.alias,
                 nickname: listItem.nickname,
-                alias: listItem.alias,
                 ensName: listItem.ensName,
                 icon: listItem.icon
             }
@@ -88,7 +87,7 @@ Item {
             icon: ""
         }
         if (suggestionsPanelRoot.addSystemSuggestions && (all || isAcceptedItem(filter, everyoneItem))) {
-          filterModel.append(everyoneItem)
+            filterModel.append(everyoneItem)
         }
     }
 
