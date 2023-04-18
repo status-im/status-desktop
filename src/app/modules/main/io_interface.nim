@@ -306,7 +306,7 @@ method onAcceptRequestToJoinLoading*(self: AccessInterface, communityId: string,
 method onAcceptRequestToJoinSuccess*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onDeactivateSectionAndChatLoader*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =
+method onDeactivateChatLoader*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

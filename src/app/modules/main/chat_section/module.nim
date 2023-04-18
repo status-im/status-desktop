@@ -461,7 +461,7 @@ method activeItemSet*(self: Module, itemId: string) =
 
   # notify parent module about active chat/channel
   self.delegate.onActiveChatChange(mySectionId, activeChatId)
-  self.delegate.onDeactivateSectionAndChatLoader(deactivateSectionId, deactivateChatId)
+  self.delegate.onDeactivateChatLoader(deactivateSectionId, deactivateChatId)
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
