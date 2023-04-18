@@ -17,12 +17,12 @@ pipeline {
     string(
       name: 'SQUISH_SUITE',
       description: 'Name of test suite to run in Squish. Defaults to all.',
-      defaultValue: '*'
+      defaultValue: forcePRDefaults(params.SQUISH_SUITE, '*')
     )
     string(
       name: 'SQUISH_TAGS',
       description: 'List of tags to use for Squish tests separated by spaces.',
-      defaultValue: '~mayfail ~merge ~relyon-mailserver'
+      defaultValue: forcePRDefaults(params.SQUISH_TAGS, '~mayfail ~merge ~relyon-mailserver')
     )
     choice(
       name: 'VERBOSE',
@@ -194,4 +194,10 @@ def getPeerAddress() {
     ).trim()
     assert rpcResp : 'Could not get node address from RPC API!'
     return readJSON(text: rpcResp)['result']['listenAddresses'][0]
+}
+
+/* Helper that prevents saving of parameters in PR jobs. */
+def String forcePRDefaults(String previousValue, String defaultValue) {
+  if (utils.isPRBuild()) { return defaultValue }
+  return previousValue ?: defaultValue
 }
