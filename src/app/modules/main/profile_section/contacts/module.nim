@@ -129,22 +129,20 @@ proc addItemToAppropriateModel(self: Module, item: UserItem) =
   if(singletonInstance.userProfile.getPubKey() == item.pubKey):
     return
   let contact = self.controller.getContact(item.pubKey())
-  if(contact.isContactRemoved()):
-    return
-  elif(contact.isBlocked()):
+
+  if contact.isBlocked():
     self.view.blockedContactsModel().addItem(item)
-  elif(contact.isContact()):
-    self.view.myMutualContactsModel().addItem(item)
-  else:
-    if(contact.isContactRequestReceived() and not contact.isContactRequestSent()):
+    return
+
+  case contact.requestState:
+    of ContactRequestState.Received:
       self.view.receivedContactRequestsModel().addItem(item)
-    elif(contact.isContactRequestSent() and not contact.isContactRequestReceived()):
+    of ContactRequestState.Sent:
       self.view.sentContactRequestsModel().addItem(item)
-    # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-    # elif(contact.isContactRequestReceived() and contact.isReceivedContactRequestRejected()):
-    #   self.view.receivedButRejectedContactRequestsModel().addItem(item)
-    # elif(contact.isContactRequestSent() and contact.isSentContactRequestRejected()):
-    #   self.view.sentButRejectedContactRequestsModel().addItem(item)
+    of ContactRequestState.Mutual:
+      self.view.myMutualContactsModel().addItem(item)
+    else:
+      return
 
 proc removeItemWithPubKeyFromAllModels(self: Module, publicKey: string) =
   self.view.myMutualContactsModel().removeItemById(publicKey)
@@ -170,9 +168,6 @@ method contactUnblocked*(self: Module, publicKey: string) =
   self.removeIfExistsAndAddToAppropriateModel(publicKey)
 
 method contactRemoved*(self: Module, publicKey: string) =
-  self.removeIfExistsAndAddToAppropriateModel(publicKey)
-
-method contactRequestRejectionRemoved*(self: Module, publicKey: string) =
   self.removeIfExistsAndAddToAppropriateModel(publicKey)
 
 method contactUpdated*(self: Module, publicKey: string) =
