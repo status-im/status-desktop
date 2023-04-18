@@ -1010,7 +1010,7 @@ Rectangle {
         width: messageInput.width
         filter: messageInputField.text
         cursorPosition: messageInputField.cursorPosition
-        property: ["nickname", "ensName", "name", "alias"]
+        property: ["nickname", "ensName", "name"]
         inputField: messageInputField
         onItemSelected: function (item, lastAtPosition, lastCursorPosition) {
             messageInputField.forceActiveFocus();
