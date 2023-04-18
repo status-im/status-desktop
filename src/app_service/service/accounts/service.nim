@@ -38,9 +38,13 @@ let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
 const SIGNAL_CONVERTING_PROFILE_KEYPAIR* = "convertingProfileKeypair"
 const SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED* = "derivedAddressesFromNotImportedMnemonicFetched"
 const SIGNAL_REENCRYPTION_PROCESS_STARTED* = "reencryptionProcessStarted"
+const SIGNAL_LOGIN_ERROR* = "errorWhileLogin"
 
 type ResultArgs* = ref object of Args
   success*: bool
+
+type LoginErrorArgs* = ref object of Args
+  error*: string
 
 type DerivedAddressesFromNotImportedMnemonicArgs* = ref object of Args
   error*: string
@@ -48,6 +52,7 @@ type DerivedAddressesFromNotImportedMnemonicArgs* = ref object of Args
 
 include utils
 include async_tasks
+include ../../common/async_tasks
 
 QtObject:
   type Service* = ref object of QObject
@@ -61,6 +66,12 @@ QtObject:
     isFirstTimeAccountLogin: bool
     keyStoreDir: string
     defaultWalletEmoji: string
+    tmpAccount: AccountDto
+    tmpPassword: string
+    tmpHashedPassword: string
+    tmpThumbnailImage: string
+    tmpLargeImage: string
+    tmpNodeCfg: JsonNode
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -602,7 +613,19 @@ QtObject:
     except Exception as e:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
-  proc login*(self: Service, account: AccountDto, password: string): string =
+  proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string, nodeCfg: JsonNode) =
+    let response = status_account.login(
+      account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage, largeImage, $nodeCfg
+    )
+    if response.result{"error"}.getStr != "":
+      self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))
+      return
+
+    debug "Account logged in"
+    self.loggedInAccount = account
+    self.setLocalAccountSettingsFile()
+
+  proc login*(self: Service, account: AccountDto, password: string) =
     try:
       let hashedPassword = hashPassword(password)
       var thumbnailImage: string
@@ -667,27 +690,50 @@ QtObject:
           "RendezvousNodes": @[],
           "DiscV5BootstrapNodes": @[]
         }
-
-
+  
       let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashPassword(password, lower=false))
       if isOldHashPassword:
+        # Start loading screen with warning
         self.events.emit(SIGNAL_REENCRYPTION_PROCESS_STARTED, Args())
-        discard status_privacy.lowerDatabasePassword(account.keyUid, password)
+  
+        # Save tmp properties so that we can login after the timer
+        self.tmpAccount = account
+        self.tmpPassword = password
+        self.tmpHashedPassword = hashedPassword
+        self.tmpThumbnailImage = thumbnailImage
+        self.tmpLargeImage = largeImage
+        self.tmpNodeCfg = nodeCfg
+
+        # Start a 1 second timer for the loading screen to appear
+        let arg = TimerTaskArg(
+          tptr: cast[ByteAddress](timerTask),
+          vptr: cast[ByteAddress](self.vptr),
+          slot: "onWaitForReencryptionTimeout",
+          timeoutInMilliseconds: 1000
+        )
+        self.threadpool.start(arg)
+        return
       
-      let response = status_account.login(
-        account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage, largeImage, $nodeCfg
-      )
-      if response.result{"error"}.getStr == "":
-        debug "Account logged in"
-        self.loggedInAccount = account
-        self.setLocalAccountSettingsFile()
-        return ""
-
-      return response.result{"error"}.getStr
-
+      self.doLogin(account, hashedPassword, thumbnailImage, largeImage, nodeCfg)
     except Exception as e:
       error "error: ", procName="login", errName = e.name, errDesription = e.msg
-      return e.msg
+      self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: e.msg))
+
+  proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
+    # Reencryption (can freeze and take up to 30 minutes)
+    let pwd = self.tmpPassword
+    self.tmpPassword = "" # Clear the password from memory as fast as possible
+    discard status_privacy.lowerDatabasePassword(self.tmpAccount.keyUid, pwd)
+
+    # Normal login after reencryption
+    self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage, self.tmpNodeCfg)
+    
+    # Clear out the temp properties
+    self.tmpAccount = AccountDto()
+    self.tmpHashedPassword = ""
+    self.tmpThumbnailImage = ""
+    self.tmpLargeImage = ""
+    self.tmpNodeCfg = JsonNode()
 
   proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string = 
     try:
