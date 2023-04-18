@@ -90,6 +90,7 @@
         <file>assets/img/icons/tiny/gas.svg</file>
         <file>assets/img/icons/tiny/group-white.svg</file>
         <file>assets/img/icons/tiny/group.svg</file>
+        <file>assets/img/icons/tiny/locked.svg</file>
         <file>assets/img/icons/tiny/members.svg</file>
         <file>assets/img/icons/tiny/more.svg</file>
         <file>assets/img/icons/tiny/muted-white.svg</file>
@@ -168,6 +169,7 @@
         <file>assets/img/icons/delete.svg</file>
         <file>assets/img/icons/desktop.svg</file>
         <file>assets/img/icons/discord.svg</file>
+        <file>assets/img/icons/dots-icon.svg</file>        
         <file>assets/img/icons/double-checkmark.svg</file>
         <file>assets/img/icons/download.svg</file>
         <file>assets/img/icons/edit.svg</file>

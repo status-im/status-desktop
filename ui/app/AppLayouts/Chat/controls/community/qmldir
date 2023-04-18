@@ -4,6 +4,7 @@ AirdropRecipientsSelector 1.0 AirdropRecipientsSelector.qml
 AirdropTokensSelector 1.0 AirdropTokensSelector.qml
 CommunityCategoryListItem 1.0 CommunityCategoryListItem.qml
 CommunityListItem 1.0 CommunityListItem.qml
+CommunityPermissionsRow 1.0 CommunityPermissionsRow.qml
 HoldingTypes 1.0 HoldingTypes.qml
 HoldingsDropdown 1.0 HoldingsDropdown.qml
 InDropdown 1.0 InDropdown.qml
