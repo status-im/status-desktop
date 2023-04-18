@@ -175,6 +175,11 @@ proc init*(self: Controller) =
     self.delegate.onReencryptionProcessStarted()
   self.connectionIds.add(handlerId)
 
+  handlerId = self.events.onWithUUID(SIGNAL_LOGIN_ERROR) do(e: Args):
+    let args = LoginErrorArgs(e)
+    self.delegate.emitAccountLoginError(args.error)
+  self.connectionIds.add(handlerId)
+
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
 
@@ -440,9 +445,7 @@ proc isSelectedAccountAKeycardAccount*(self: Controller): bool =
 proc login*(self: Controller) =
   self.delegate.moveToLoadingAppState()
   let selectedAccount = self.getSelectedLoginAccount()
-  let error = self.accountsService.login(selectedAccount, self.tmpPassword)
-  if(error.len > 0):
-    self.delegate.emitAccountLoginError(error)
+  self.accountsService.login(selectedAccount, self.tmpPassword)
 
 proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, syncWalletAfterLogin = false) =
   if syncWalletAfterLogin:
