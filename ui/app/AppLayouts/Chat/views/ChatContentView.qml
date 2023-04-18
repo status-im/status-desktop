@@ -58,9 +58,6 @@ ColumnLayout {
 
     property bool stickersLoaded: false
 
-    // FIXME: this should be section data related only to that view, not the active one
-    readonly property var activeSectionData: rootStore.mainModuleInst ? rootStore.mainModuleInst.activeSection || {} : {}
-
     onIsActiveChannelChanged: {
         if (isActiveChannel) {
             chatInput.forceInputActiveFocus();
@@ -183,7 +180,7 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: Style.current.smallPadding
 
-                enabled: root.activeSectionData.joined && !root.activeSectionData.amIBanned &&
+                enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
                          !(chatType === Constants.chatType.oneToOne && !root.isUserAdded)
 
                 store: root.rootStore
@@ -204,7 +201,7 @@ ColumnLayout {
                 }
 
                 Binding on chatInputPlaceholder {
-                    when: !root.activeSectionData.joined || root.activeSectionData.amIBanned
+                    when: !root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned
                     value: qsTr("You need to join this community to send messages")
                 }
 

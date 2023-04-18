@@ -33,9 +33,10 @@ QtObject {
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)
     property var chatCommunitySectionModule
+    readonly property var sectionDetails: _d.sectionDetailsInstantiator.count ? _d.sectionDetailsInstantiator.objectAt(0) : null
 
     property var communityItemsModel: chatCommunitySectionModule.model
-    
+
     property var assetsModel: SortFilterProxyModel {
         sourceModel: chatCommunitySectionModule.tokenList
 
@@ -656,6 +657,26 @@ QtObject {
                 return
 
             root.goToMembershipRequestsPage()
+        }
+    }
+
+    readonly property QtObject _d: QtObject {
+        readonly property var sectionDetailsInstantiator: Instantiator {
+            model: SortFilterProxyModel {
+                sourceModel: mainModuleInst.sectionsModel
+                filters: ValueFilter {
+                    roleName: "id"
+                    value: chatCommunitySectionModule.getMySectionId()
+                }
+            }
+            delegate: QtObject {
+                readonly property string id: model.id
+                readonly property int sectionType: model.sectionType
+                readonly property string name: model.name
+                readonly property bool joined: model.joined
+                readonly property bool amIBanned: model.amIBanned
+                // add others when needed..
+            }
         }
     }
 }
