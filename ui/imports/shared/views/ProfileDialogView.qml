@@ -358,6 +358,10 @@ Pane {
                     if (d.isCurrentUser)
                         return btnEditProfileComponent
 
+                    // blocked contact
+                    if (d.isBlocked)
+                        return btnUnblockUserComponent
+
                     // contact request, outgoing, rejected
                     if (!d.isContact && d.isContactRequestSent && d.outgoingVerificationStatus === Constants.verificationStatus.declined)
                         return txtRejectedContactRequestComponent
@@ -387,10 +391,6 @@ Pane {
                     // send contact request
                     if (!d.isContact && !d.isBlocked && !d.isContactRequestSent)
                         return btnSendContactRequestComponent
-
-                    // blocked contact
-                    if (d.isBlocked)
-                        return btnUnblockUserComponent
 
                     // send message
                     if (d.isContact && !d.isBlocked)
