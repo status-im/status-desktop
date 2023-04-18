@@ -6,11 +6,14 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 import shared.stores 1.0
 
+import AppLayouts.Wallet 1.0
+
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import "../panels"
 import "../controls"
@@ -24,7 +27,16 @@ Item {
     property var selectedAccount
     property var store
 
-    signal contactSelected(string address, int type)
+    signal recipientSelected(var recipient, int type)
+
+    enum Type {
+        Address,
+        Contact,
+        Account,
+        SavedAddress,
+        RecentsAddress,
+        None
+    }
 
     QtObject {
         id: d
@@ -58,6 +70,7 @@ Item {
     StackLayout {
         id: stackLayout
         anchors.top: accountSelectionTabBar.bottom
+        anchors.topMargin: -5
         height: currentIndex === 0 ? savedAddresses.height: currentIndex === 1 ? myAccounts.height : recents.height
         width: parent.width
         currentIndex: accountSelectionTabBar.currentIndex
@@ -77,46 +90,20 @@ Item {
                 height: Math.min(d.maxHeightForList, savedAddresses.contentHeight)
 
                 model: root.store.savedAddressesModel
-                header:  savedAddresses.count > 0 ? search : nothingInList
+                header: savedAddresses.count > 0 ? search : nothingInList
                 headerPositioning: ListView.OverlayHeader
-                delegate: StatusListItem {
-                    implicitWidth: parent.width
-                    height: visible ? 64 : 0
-                    title: name
-                    subTitle: address
-                    radius: 0
-                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
+                delegate: SavedAddressListItem {
+                    implicitWidth: ListView.view.width
+                    modelData: model
                     visible: !savedAddresses.headerItem.text || name.toLowerCase().includes(savedAddresses.headerItem.text)
-//                    TODO uncomment when #6456 is fixed
-//                    components: [
-//                        StatusIcon {
-//                            icon: "star-icon"
-//                            width: 12
-//                            height: 12
-//                        }
-//                    ]
-                    onClicked: contactSelected(address, RecipientSelector.Type.Address )
+                    onClicked: recipientSelected(modelData, TabAddressSelectorView.Type.SavedAddress)
                 }
                 Component {
                     id: search
-                    ColumnLayout {
+                    SearchBoxWithRightIcon {
                         width: parent.width
-                        StatusInput {
-                            Layout.preferredHeight: 55
-                            Layout.preferredWidth: parent.width
-                            input.showBackground: false
-                            placeholderText: qsTr("Search for saved address")
-                            input.rightComponent: StatusIcon {
-                                icon: "search"
-                                height: 17
-                                color: Theme.palette.baseColor1
-                            }
-                        }
-                        Rectangle {
-                            Layout.preferredHeight: 1
-                            Layout.preferredWidth: parent.width
-                            color: Theme.palette.baseColor3
-                        }
+                        placeholderText: qsTr("Search for saved address")
+                        z: 2
                     }
                 }
                 Component {
@@ -148,21 +135,11 @@ Item {
                 width: parent.width
                 height: Math.min(d.maxHeightForList, myAccounts.contentHeight)
 
-                delegate: StatusListItem {
-                    implicitWidth: parent.width
-                    objectName: model.name
-                    height: visible ? 64 : 0
-                    title: !!model.name ? model.name : ""
-                    subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
-                    asset.emoji: !!model.emoji ? model.emoji: ""
-                    asset.color: model.color
-                    asset.name: !model.emoji ? "filled-account": ""
-                    asset.letterSize: 14
-                    asset.isLetterIdenticon: !!model.emoji ? true : false
-                    asset.bgColor: Theme.palette.indirectColor1
-                    radius: 0
-                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
-                    onClicked: contactSelected(model.address, RecipientSelector.Type.Account )
+                delegate: WalletAccountListItem {
+                    implicitWidth: ListView.view.width
+                    modelData: model
+                    chainShortNames: root.store.getAllNetworksSupportedString()
+                    onClicked: recipientSelected(modelData, TabAddressSelectorView.Type.Account )
                 }
 
                 model: root.store.accounts
@@ -194,15 +171,18 @@ Item {
                 }
 
                 delegate: StatusListItem {
+                    id: listItem
                     property bool isIncoming: root.selectedAccount ? to === root.selectedAccount.address : false
-                    implicitWidth: parent.width
+                    implicitWidth: ListView.view.width
                     height: visible ? 64 : 0
-                    title: isIncoming ? from : to
+                    title: loading ? Constants.dummyText : isIncoming ? StatusQUtils.Utils.elideText(from,6,4) : StatusQUtils.Utils.elideText(to,6,4)
                     subTitle: LocaleUtils.getTimeDifference(new Date(parseInt(timestamp) * 1000), new Date())
                     statusListItemTitle.elide: Text.ElideMiddle
                     statusListItemTitle.wrapMode: Text.NoWrap
                     radius: 0
-                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
+                    color: sensor.containsMouse || highlighted ? Theme.palette.statusListItem.highlightColor : "transparent"
+                    statusListItemComponentsSlot.spacing: 5
+                    loading: loadingTransaction
                     components: [
                         StatusIcon {
                             id: transferIcon
@@ -211,18 +191,25 @@ Item {
                             color: isIncoming ? Style.current.success : Style.current.danger
                             icon: isIncoming ? "arrow-down" : "arrow-up"
                             rotation: 45
+                            visible: !listItem.loading
                         },
-                        StatusBaseText {
+                        StatusTextWithLoadingState {
                             id: contactsLabel
+                            loading: listItem.loading
                             font.pixelSize: 15
-                            color: Theme.palette.directColor1
-                            text: LocaleUtils.currencyAmountToLocaleString(value)
+                            customColor: Theme.palette.directColor1
+                            text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(value)
                         }
                     ]
-                    onClicked: contactSelected(title, RecipientSelector.Type.Address)
+                    onClicked: recipientSelected(model, TabAddressSelectorView.Type.RecentsAddress)
                 }
 
-                model: root.store.walletSectionTransactionsInst.model
+                model: {
+                    if(root.selectedAccount) {
+                        root.store.prepareTransactionsForAddress(root.selectedAccount.address)
+                        return root.store.getTransactions()
+                    }
+                }
             }
         }
     }

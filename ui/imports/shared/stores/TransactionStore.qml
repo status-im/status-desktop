@@ -4,6 +4,7 @@ import utils 1.0
 
 import shared.stores 1.0
 import "../../../app/AppLayouts/Profile/stores"
+import SortFilterProxyModel 0.2
 
 QtObject {
     id: root
@@ -20,7 +21,15 @@ QtObject {
     property var accounts: walletSectionAccounts.model
     property var currentAccount: walletSectionCurrent
     property string signingPhrase: walletSection.signingPhrase
-    property var savedAddressesModel: walletSectionSavedAddresses.model
+    property var savedAddressesModel: SortFilterProxyModel {
+        sourceModel: walletSectionSavedAddresses.model
+        filters: [
+            ValueFilter {
+                roleName: "isTest"
+                value: networksModule.areTestNetworksEnabled
+            }
+        ]
+    }
     property var disabledChainIdsFromList: []
     property var disabledChainIdsToList: []
 
@@ -279,5 +288,22 @@ QtObject {
                 }
         }
         return {}
+    }
+
+    function prepareTransactionsForAddress(address) {
+        walletSectionTransactions.prepareTransactionsForAddress(address)
+    }
+
+    function getTransactions() {
+        return walletSectionTransactions.getTransactions()
+    }
+
+    function getAllNetworksSupportedString() {
+        let result = ""
+        for(var i = 0; i < allNetworks.count; i++) {
+            let shortName = allNetworks.rowData(i, "shortName")
+            result += shortName + ':'
+        }
+        return result
     }
 }
