@@ -17,6 +17,7 @@ Item {
 
     property var assets: null
     signal tokenSelected(var selectedToken)
+    signal tokenHovered(var selectedToken, bool hovered)
     property var searchTokenSymbolByAddressFn: function (address) {
         return ""
     }
@@ -37,66 +38,55 @@ Item {
         id: contentLayout
 
         anchors.fill: parent
+        spacing: 8
+
+        StatusBaseText {
+            id: label
+            elide: Text.ElideRight
+            text: qsTr("Token to send")
+            font.pixelSize: 13
+            color: Theme.palette.directColor1
+        }
 
         Rectangle {
             Layout.fillWidth: true
-            Layout.preferredHeight: headerColumn.height
+            Layout.preferredHeight: tokenList.height
 
             color: Theme.palette.indirectColor1
             radius: 8
 
-            Column {
-                id: headerColumn
+            StatusListView {
+                id: tokenList
 
                 width: parent.width
-                Item {
-                    height: 5
+                height: tokenList.contentHeight
+
+                header: SearchBoxWithRightIcon {
                     width: parent.width
-                }
-                StatusInput {
-                    height: 50
-                    width: parent.width
-                    input.showBackground: false
                     placeholderText: qsTr("Search for token or enter token address")
-                    input.rightComponent: StatusIcon {
-                        icon: "search"
-                        height: 17
-                        color: Theme.palette.baseColor1
-                    }
                     onTextChanged: Qt.callLater(d.updateSearchText, text)
                 }
-                Rectangle {
-                    height: 1
-                    width: parent.width
-                    color: Theme.palette.baseColor3
-                }
-            }
-        }
 
-        StatusListView {
-            id: tokenList
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: 396
-
-            model: SortFilterProxyModel {
-                sourceModel: root.assets
-                filters: [
-                    ExpressionFilter {
-                        expression: {
-                            var tokenSymbolByAddress = searchTokenSymbolByAddressFn(d.searchString)
-                            tokenList.positionViewAtBeginning()
-                            return visibleForNetwork && (
-                                symbol.startsWith(d.searchString.toUpperCase()) || name.toUpperCase().startsWith(d.searchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
-                            )
+                model: SortFilterProxyModel {
+                    sourceModel: root.assets
+                    filters: [
+                        ExpressionFilter {
+                            expression: {
+                                var tokenSymbolByAddress = searchTokenSymbolByAddressFn(d.searchString)
+                                tokenList.positionViewAtBeginning()
+                                return visibleForNetwork && (
+                                            symbol.startsWith(d.searchString.toUpperCase()) || name.toUpperCase().startsWith(d.searchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
+                                            )
+                            }
                         }
-                    }
-                ]
-            }
-            delegate: TokenBalancePerChainDelegate {
-                width: ListView.view.width
-                getNetworkIcon: root.getNetworkIcon
-                onTokenSelected: root.tokenSelected(selectedToken)
+                    ]
+                }
+                delegate: TokenBalancePerChainDelegate {
+                    width: ListView.view.width
+                    getNetworkIcon: root.getNetworkIcon
+                    onTokenSelected: root.tokenSelected(selectedToken)
+                    onTokenHovered: root.tokenHovered(selectedToken, hovered)
+                }
             }
         }
     }

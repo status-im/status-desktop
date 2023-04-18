@@ -38,7 +38,7 @@ StatusDialog {
     property var currencyStore: store.currencyStore
     property var selectedAccount: store.currentAccount
     property var bestRoutes
-    property string addressText
+    property alias addressText: recipientLoader.addressText
     property bool isLoading: false
     property int sendType: isBridgeTx ? Constants.SendType.Bridge : Constants.SendType.Transfer
     property MessageDialog sendingError: MessageDialog {
@@ -49,7 +49,7 @@ StatusDialog {
     }
 
     property var sendTransaction: function() {
-        let recipientAddress = Utils.isValidAddress(popup.addressText) ? popup.addressText : d.resolvedENSAddress
+        let recipientAddress = Utils.isValidAddress(popup.addressText) ? popup.addressText : recipientLoader.resolvedENSAddress
         d.isPendingTx = true
         popup.store.authenticateAndTransfer(
                     popup.selectedAccount.address,
@@ -62,7 +62,7 @@ StatusDialog {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if(!!popup.selectedAccount && !!assetSelector.selectedAsset && d.recipientReady && amountToSendInput.inputNumberValid) {
+        if(!!popup.selectedAccount && !!assetSelector.selectedAsset && recipientLoader.ready && amountToSendInput.inputNumberValid) {
             popup.isLoading = true
             let amount = Math.round(amountToSendInput.cryptoValueToSend * Math.pow(10, assetSelector.selectedAsset.decimals))
             popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
@@ -74,21 +74,14 @@ StatusDialog {
     QtObject {
         id: d
         readonly property int errorType: !amountToSendInput.input.valid ? Constants.SendAmountExceedsBalance :
-                                                                          (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientReady && !popup.isLoading) ?
+                                                                          (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
         readonly property double maxFiatBalance: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.totalCurrencyBalance.amount : 0
         readonly property double maxCryptoBalance: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance.amount : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string selectedSymbol: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol : ""
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.store.currentCurrency : selectedSymbol
-        readonly property bool errorMode: popup.isLoading || !recipientReady ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
-        readonly property bool recipientReady: (isAddressValid || isENSValid) && !recipientSelector.isPending
-        property bool isAddressValid: Utils.isValidAddress(popup.addressText)
-        property bool isENSValid: false
-        readonly property var resolveENS: Backpressure.debounce(popup, 500, function (ensName) {
-            store.resolveENS(ensName)
-        })
-        property string resolvedENSAddress
+        readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
@@ -96,24 +89,6 @@ StatusDialog {
         property double totalFeesInFiat
         property double totalAmountToReceive
 
-        property Timer waitTimer: Timer {
-            interval: 1500
-            onTriggered: {
-                if (recipientSelector.isPending) {
-                    return
-                }
-                if (d.isENSValid)  {
-                    recipientSelector.input.text = d.resolvedENSAddress
-                    popup.addressText = d.resolvedENSAddress
-                } else {
-                    let result = store.splitAndFormatAddressPrefix(recipientSelector.input.text, isBridgeTx, networkSelector.showUnpreferredNetworks)
-                    popup.addressText = result.address
-                    recipientSelector.input.text = result.formattedText
-                }
-                
-                popup.recalculateRoutesAndFees()
-            }
-        }
         readonly property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
 
         onErrorTypeChanged: {
@@ -124,6 +99,7 @@ StatusDialog {
 
     width: 556
     topMargin: 64 + header.height
+    bottomPadding: footer.visible ? 0 : 32
 
     padding: 0
     background: StatusDialogBackground {
@@ -153,13 +129,13 @@ StatusDialog {
         }
 
         if(!!popup.preSelectedRecipient) {
-            recipientSelector.input.text = popup.preSelectedRecipient
-            d.waitTimer.restart()
+            recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
+            recipientLoader.selectedRecipient = {address: popup.preSelectedRecipient}
         }
 
         if(popup.isBridgeTx) {
-            recipientSelector.input.text = popup.selectedAccount.address
-            d.waitTimer.restart()
+            recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
+            recipientLoader.selectedRecipient = {address: popup.selectedAccount.address}
         }
 
         // add networks that are down to disabled list
@@ -186,6 +162,7 @@ StatusDialog {
         selectedAccount: popup.selectedAccount
         changeSelectedAccount: function(newAccount) {
             popup.selectedAccount = newAccount
+            assetSelector.selectedAsset = store.getAsset(selectedAccount.assets, assetSelector.selectedAsset.symbol)
         }
     }
 
@@ -261,23 +238,56 @@ StatusDialog {
                                 }
                                 popup.recalculateRoutesAndFees()
                             }
+                            visible: !!assetSelector.selectedAsset || !!assetSelector.hoveredToken
                         }
                         StatusListItemTag {
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                             Layout.preferredHeight: 22
+                            visible: !!assetSelector.selectedAsset || !!assetSelector.hoveredToken
                             title: {
+                                if(!!assetSelector.hoveredToken) {
+                                    const balance = popup.currencyStore.formatCurrencyAmount(assetSelector.hoveredToken.totalCurrencyBalance.amount, assetSelector.hoveredToken.symbol)
+                                    return qsTr("Max: %1").arg(balance)
+                                }
                                 if (d.maxInputBalance <= 0)
                                     return qsTr("No balances active")
                                 const balance = popup.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol)
                                 return qsTr("Max: %1").arg(balance)
                             }
+                            tagClickable: true
                             closeButtonVisible: false
                             titleText.font.pixelSize: 12
-                            bgColor: amountToSendInput.input.valid ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
-                            titleText.color: amountToSendInput.input.valid ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
+                            bgColor: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
+                            titleText.color: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
+                            onTagClicked: amountToSendInput.input.text = d.maxInputBalance
+                        }
+                    }
+                    TokenListView {
+                        id: tokenListRect
+
+                        Layout.fillWidth: true
+
+                        visible: !assetSelector.selectedAsset
+                        assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
+                        searchTokenSymbolByAddressFn: function (address) {
+                            return store.findTokenSymbolByAddress(address)
+                        }
+                        getNetworkIcon: function(chainId){
+                            return RootStore.getNetworkIcon(chainId)
+                        }
+                        onTokenSelected: {
+                            assetSelector.userSelectedToken = selectedToken.symbol
+                            assetSelector.selectedAsset = selectedToken
+                        }
+                        onTokenHovered: {
+                            if(hovered)
+                                assetSelector.hoveredToken = selectedToken
+                            else
+                                assetSelector.hoveredToken = null
                         }
                     }
                     RowLayout {
+                        visible: !!assetSelector.selectedAsset
                         AmountToSend {
                             id: amountToSendInput
                             Layout.fillWidth:true
@@ -319,24 +329,6 @@ StatusDialog {
                             formatCurrencyAmount: popup.currencyStore.formatCurrencyAmount
                         }
                     }
-                    TokenListView {
-                        id: tokenListRect
-
-                        Layout.fillWidth: true
-
-                        visible: !assetSelector.selectedAsset
-                        assets: popup.selectedAccount && popup.selectedAccount.assets ? popup.selectedAccount.assets : null
-                        searchTokenSymbolByAddressFn: function (address) {
-                            return store.findTokenSymbolByAddress(address)
-                        }
-                        getNetworkIcon: function(chainId){
-                            return RootStore.getNetworkIcon(chainId)
-                        }
-                        onTokenSelected: {
-                            assetSelector.userSelectedToken = selectedToken.symbol
-                            assetSelector.selectedAsset = selectedToken
-                        }
-                    }
                 }
             }
 
@@ -360,72 +352,31 @@ StatusDialog {
                     spacing: Style.current.bigPadding
                     anchors.left: parent.left
 
-                    StatusInput {
-                        id: recipientSelector
-                        property bool isPending: false
-
-                        height: visible ? implicitHeight: 0
-                        visible: !isBridgeTx && !!assetSelector.selectedAsset
-
+                    ColumnLayout {
+                        spacing: 8
                         width: parent.width
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
-
-                        label: qsTr("To")
-                        placeholderText: qsTr("Enter an ENS name or address")
-                        text: popup.addressText
-                        input.background.color: Theme.palette.indirectColor1
-                        input.background.border.width: 0
-                        input.implicitHeight: 56
-                        input.clearable: popup.interactive
-                        input.edit.readOnly: !popup.interactive
-                        multiline: false
-                        input.edit.textFormat: TextEdit.RichText
-                        input.rightComponent: RowLayout {
-                            StatusIcon {
-                                Layout.preferredWidth: 16
-                                Layout.preferredHeight: 16
-                                icon: "tiny/checkmark"
-                                color: Theme.palette.primaryColor1
-                                visible: d.recipientReady
-                            }
-                            StatusFlatRoundButton {
-                                visible: recipientSelector.text !== ""
-                                type: StatusFlatRoundButton.Type.Secondary
-                                Layout.preferredWidth: 24
-                                Layout.preferredHeight: 24
-                                icon.name: "clear"
-                                icon.width: 16
-                                icon.height: 16
-                                icon.color: Theme.palette.baseColor1
-                                backgroundHoverColor: "transparent"
-                                onClicked: {
-                                    popup.isLoading = true
-                                    recipientSelector.input.edit.clear()
-                                    d.waitTimer.restart()
-                                }
-                            }
+                        visible: !isBridgeTx && !!assetSelector.selectedAsset
+                        StatusBaseText {
+                            id: label
+                            elide: Text.ElideRight
+                            text: qsTr("To")
+                            font.pixelSize: 15
+                            color: Theme.palette.directColor1
                         }
-                        Keys.onReleased: {
-                            popup.isLoading = true
-                            d.waitTimer.restart()
-                            if(!d.isAddressValid) {
-                                isPending = true
-                                Qt.callLater(d.resolveENS, store.plainText(input.edit.text))
-                            }
-                        }
-                    }
-
-                    Connections {
-                        target: store.mainModuleInst
-                        function onResolvedENS(resolvedPubKey: string, resolvedAddress: string, uuid: string) {
-                            recipientSelector.isPending = false
-                            if(Utils.isValidAddress(resolvedAddress)) {
-                                d.resolvedENSAddress = resolvedAddress
-                                d.isENSValid = true
-                            }
+                        RecipientView {
+                            id: recipientLoader
+                            Layout.fillWidth: true
+                            store: popup.store
+                            isBridgeTx: popup.isBridgeTx
+                            interactive: popup.interactive
+                            selectedAsset: assetSelector.selectedAsset
+                            showUnpreferredNetworks: networkSelector.showUnpreferredNetworks
+                            onIsLoading: popup.isLoading = true
+                            onRecalculateRoutesAndFees: popup.recalculateRoutesAndFees()
                         }
                     }
 
@@ -438,12 +389,11 @@ StatusDialog {
                         anchors.rightMargin: Style.current.bigPadding
                         store: popup.store
                         selectedAccount: popup.selectedAccount
-                        onContactSelected:  {
-                            recipientSelector.input.text = address
-                            popup.isLoading = true
-                            d.waitTimer.restart()
+                        onRecipientSelected:  {
+                            recipientLoader.selectedRecipientType = type
+                            recipientLoader.selectedRecipient = recipient
                         }
-                        visible: !d.recipientReady && !isBridgeTx && !!assetSelector.selectedAsset
+                        visible: !recipientLoader.ready && !isBridgeTx && !!assetSelector.selectedAsset
                     }
 
                     NetworkSelector {
@@ -456,14 +406,14 @@ StatusDialog {
                         store: popup.store
                         interactive: popup.interactive
                         selectedAccount: popup.selectedAccount
-                        ensAddressOrEmpty: d.isENSValid ? d.resolvedENSAddress : ""
+                        ensAddressOrEmpty: recipientLoader.isENSValid ? recipientLoader.resolvedENSAddress : ""
                         amountToSend: amountToSendInput.cryptoValueToSend
                         minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
                         minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
                         requiredGasInEth: d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
-                        visible: d.recipientReady && !!assetSelector.selectedAsset && amountToSendInput.inputNumberValid
+                        visible: recipientLoader.ready && !!assetSelector.selectedAsset && amountToSendInput.inputNumberValid
                         errorType: d.errorType
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
@@ -477,7 +427,7 @@ StatusDialog {
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
                         anchors.rightMargin: Style.current.bigPadding
-                        visible: d.recipientReady && !!assetSelector.selectedAsset && networkSelector.advancedOrCustomMode && amountToSendInput.inputNumberValid
+                        visible: recipientLoader.ready && !!assetSelector.selectedAsset && networkSelector.advancedOrCustomMode && amountToSendInput.inputNumberValid
                         selectedTokenSymbol: d.selectedSymbol
                         isLoading: popup.isLoading
                         bestRoutes: popup.bestRoutes
@@ -495,7 +445,7 @@ StatusDialog {
         maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.store.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
-        visible: d.recipientReady && amountToSendInput.inputNumberValid && !d.errorMode
+        visible: recipientLoader.ready && amountToSendInput.inputNumberValid && !d.errorMode
         onNextButtonClicked: popup.sendTransaction()
     }
 

@@ -196,6 +196,7 @@ QtObject {
     property QtObject statusListItem: QtObject {
         property color backgroundColor
         property color secondaryHoverBackgroundColor
+        property color highlightColor
     }
 
     property QtObject statusChatListItem: QtObject {

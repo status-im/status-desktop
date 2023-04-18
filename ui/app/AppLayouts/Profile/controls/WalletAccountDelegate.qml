@@ -22,7 +22,6 @@ StatusListItem {
     asset.bgColor: Theme.palette.primaryColor3
     asset.width: 40
     asset.height: 40
-    width: parent.width
     
     components: !showShevronIcon ? [] : [ shevronIcon ]
 

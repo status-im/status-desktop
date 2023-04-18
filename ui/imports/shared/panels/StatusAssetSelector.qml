@@ -25,6 +25,7 @@ Item {
     property string userSelectedToken
     property string currentCurrencySymbol
     property string placeholderText
+    property var hoveredToken
 
     property var tokenAssetSourceFn: function (symbol) {
         return ""
@@ -51,12 +52,19 @@ Item {
         }
     }
 
+    onHoveredTokenChanged: {
+        if (hoveredToken && hoveredToken.symbol) {
+            d.iconSource = tokenAssetSourceFn(hoveredToken.symbol)
+            d.text = hoveredToken.symbol
+        }
+    }
+
     QtObject {
         id: d
         property string iconSource: ""
         property string text: ""
         property string searchString
-        property bool isTokenSelected: !!root.selectedAsset
+        readonly property bool isTokenSelected: !!root.selectedAsset || !!root.hoveredToken
 
         readonly property var updateSearchText: Backpressure.debounce(root, 1000, function(inputText) {
             d.searchString = inputText
@@ -70,8 +78,8 @@ Item {
 
         control.padding: 4
         control.popup.width: 492
-        control.popup.height: 416
         control.popup.x: -root.x
+        control.popup.verticalPadding: 0
 
         popupContentItemObjectName: "assetSelectorList"
 
@@ -171,11 +179,11 @@ Item {
             placeholderText: qsTr("Search for token or enter token address")
             onTextChanged: Qt.callLater(d.updateSearchText, text)
             input.clearable: true
-            input.rightComponent: StatusIcon {
-                width: 16
-                height: 16
-                color: Theme.palette.baseColor1
-                icon: "search"
+            input.implicitHeight: 56
+            input.rightComponent: StatusFlatRoundButton {
+                icon.name: "search"
+                type: StatusFlatRoundButton.Type.Secondary
+                enabled: false
             }
             Rectangle {
                 anchors.bottom: parent.bottom

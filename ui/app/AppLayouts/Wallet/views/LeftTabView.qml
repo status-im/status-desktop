@@ -273,17 +273,16 @@ Rectangle {
                 }
                 components: [
                     StatusIcon {
-                        icon: {
-                            if (model.walletType === Constants.watchWalletType)
-                                return "show"
-                            if (model.walletType === Constants.keyWalletType)
-                                return "keycard"
-
-                            return ""
-                        }
+                        width: !!icon ? 15: 0
+                        height: !!icon ? 15: 0
                         color: Theme.palette.directColor1
-                        width: 15
-                        height: 15
+                        icon: model.walletType === Constants.watchWalletType ? "show" : ""
+                    },
+                    StatusIcon {
+                        width: !!icon ? 15: 0
+                        height: !!icon ? 15: 0
+                        color: Theme.palette.directColor1
+                        icon: model.migratedToKeycard ? "keycard" : ""
                     }
                 ]
 

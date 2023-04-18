@@ -111,6 +111,7 @@ ThemePalette {
     statusListItem: QtObject {
         property color backgroundColor: baseColor3
         property color secondaryHoverBackgroundColor: primaryColor3
+        property color highlightColor: getColor('blue3', 0.05)
     }
 
     statusChatListItem: QtObject {

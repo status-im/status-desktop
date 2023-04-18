@@ -17,6 +17,7 @@ QtObject:
       fetchingHistoryState: Table[string, bool]
       enabledChainIds: seq[int]
       isNonArchivalNode: bool
+      tempAddress: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -197,3 +198,12 @@ QtObject:
       if not self.models.hasKey(fromAddress):
         self.models[fromAddress] = newModel()
       self.models[fromAddress].addNewTransactions(@[tx], wasFetchMore=false)
+
+  proc prepareTransactionsForAddress*(self: View, address: string) {.slot.} =
+    self.tempAddress = address
+
+  proc getTransactions*(self: View): QVariant {.slot.} =
+    if self.models.hasKey(self.tempAddress):
+      return newQVariant(self.models[self.tempAddress])
+    else:
+      return newQVariant()

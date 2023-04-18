@@ -86,6 +86,7 @@ Column {
         objectName: "generatedAccounts"
         model: walletStore.generatedAccounts
         delegate: WalletAccountDelegate {
+            width: ListView.view.width
             account: model
             onGoToAccountView: {
                 root.goToAccountView(model.address)
@@ -104,6 +105,7 @@ Column {
     Repeater {
         model: walletStore.importedAccounts
         delegate: WalletAccountDelegate {
+            width: ListView.view.width
             account: model
             onGoToAccountView: {
                 root.goToAccountView(model.address)
@@ -122,6 +124,7 @@ Column {
     Repeater {
         model: walletStore.watchOnlyAccounts
         delegate: WalletAccountDelegate {
+            width: ListView.view.width
             account: model
             onGoToAccountView: {
                 root.goToAccountView(model.address)
