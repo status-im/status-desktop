@@ -5,6 +5,7 @@ def isPRBuild = utils.isPRBuild()
 
 pipeline {
   agent {
+    /* Necessary image with Ubuntu 18.04 for older Glibc. */
     docker {
       label 'linux'
       image 'statusteam/nim-status-client-build:1.2.1-qt5.15.2'
@@ -36,6 +37,8 @@ pipeline {
       daysToKeepStr: '30',
       artifactNumToKeepStr: '3',
     ))
+    /* Allows combined build to copy */
+    copyArtifactPermission('/status-desktop/*')
     /* Abort old PR builds. */
     disableConcurrentBuilds(
       abortPrevious: isPRBuild

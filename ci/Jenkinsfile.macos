@@ -32,6 +32,8 @@ pipeline {
       daysToKeepStr: '30',
       artifactNumToKeepStr: '3',
     ))
+    /* Allows combined build to copy */
+    copyArtifactPermission('/status-desktop/*')
     /* Abort old PR builds. */
     disableConcurrentBuilds(
       abortPrevious: isPRBuild
