@@ -369,7 +369,6 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     ) else: @[],
     channelGroup.encrypted,
     communityTokensItems,
-    loaderActive = active,
   )
 
 method load*[T](
@@ -1194,8 +1193,6 @@ method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
   let linkToActivate = self.urlsManager.convertExternalLinkToInternal(statusDeepLink)
   self.urlsManager.onUrlActivated(linkToActivate)
 
-method onDeactivateSectionAndChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =
+method onDeactivateChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =
   if (sectionId.len > 0 and self.channelGroupModules.contains(sectionId)):
     self.channelGroupModules[sectionId].onDeactivateChatLoader(chatId)
-    if (singletonInstance.loaderDeactivator.unloadSection(sectionId)):
-      self.view.model().disableSectionLoader(sectionId)

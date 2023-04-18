@@ -27,14 +27,6 @@ QtObject:
   proc newChatInMemory(sectionId, chatId: string): ChatInMemory =
     (sectionId, chatId)
 
-  proc unloadSection*(self: LoaderDeactivator, searchSectionId: string): bool = 
-    if searchSectionId.len == 0:
-      return false
-    for (sectionId, _) in self.keepInMemory.items:
-      if sectionId == searchSectionId:
-        return false
-    return true
-
   proc addChatInMemory*(self: LoaderDeactivator, sectionId, chatId: string): ChatInMemory =
     if self.keepInMemory.contains(newChatInMemory(sectionId, chatId)):
       return

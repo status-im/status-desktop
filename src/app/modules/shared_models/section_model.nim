@@ -42,7 +42,6 @@ type
     PendingMemberRequestsModel
     DeclinedMemberRequestsModel
     AmIBanned
-    LoaderActive
 
 QtObject:
   type
@@ -115,7 +114,6 @@ QtObject:
       ModelRole.PendingMemberRequestsModel.int:"pendingMemberRequests",
       ModelRole.DeclinedMemberRequestsModel.int:"declinedMemberRequests",
       ModelRole.AmIBanned.int:"amIBanned",
-      ModelRole.LoaderActive.int:"loaderActive"
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -199,8 +197,6 @@ QtObject:
       result = newQVariant(item.declinedMemberRequests)
     of ModelRole.AmIBanned:
       result = newQVariant(item.amIBanned)
-    of ModelRole.LoaderActive:
-      result = newQVariant(item.loaderActive)
 
   proc isItemExist(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -299,7 +295,6 @@ QtObject:
       ModelRole.PendingMemberRequestsModel.int,
       ModelRole.DeclinedMemberRequestsModel.int,
       ModelRole.AmIBanned.int,
-      ModelRole.LoaderActive.int
       ])
 
   proc getNthEnabledItem*(self: SectionModel, nth: int): SectionItem =
@@ -339,9 +334,8 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.items[i].active = true
-        self.items[i].loaderActive = true
 
-        self.dataChanged(index, index, @[ModelRole.Active.int, ModelRole.LoaderActive.int])
+        self.dataChanged(index, index, @[ModelRole.Active.int])
 
   proc sectionVisibilityUpdated*(self: SectionModel) {.signal.}
 
@@ -441,14 +435,5 @@ QtObject:
           "ensOnly": item.ensOnly,
           "nbMembers": item.members.getCount(),
           "encrypted": item.encrypted,
-          "loaderActive": item.loaderActive,
         }
         return $jsonObj
-
-  proc disableSectionLoader*(self: SectionModel, sectionId: string) =
-    for i in 0 ..< self.items.len:
-        if(self.items[i].id == sectionId):
-          let index = self.createIndex(i, 0, nil)
-          defer: index.delete
-          self.items[i].loaderActive = false
-          self.dataChanged(index, index, @[ModelRole.LoaderActive.int])
