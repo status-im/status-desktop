@@ -66,8 +66,7 @@ Pane {
         readonly property bool isContact: contactDetails.isContact
         readonly property bool isBlocked: contactDetails.isBlocked
 
-        readonly property bool isContactRequestSent: contactDetails.isAdded
-        readonly property bool isContactRequestReceived: contactDetails.hasAddedUs
+        readonly property int contactRequestState: contactDetails.contactRequestState
 
         readonly property int outgoingVerificationStatus: contactDetails.verificationStatus
         readonly property int incomingVerificationStatus: contactDetails.incomingVerificationStatus
@@ -362,41 +361,31 @@ Pane {
                     if (d.isBlocked)
                         return btnUnblockUserComponent
 
-                    // contact request, outgoing, rejected
-                    if (!d.isContact && d.isContactRequestSent && d.outgoingVerificationStatus === Constants.verificationStatus.declined)
-                        return txtRejectedContactRequestComponent
-
-                    // contact request, outgoing, pending
-                    if (!d.isContact && d.isContactRequestSent)
-                        return txtPendingContactRequestComponent
-
-                    // contact request, incoming, pending
-                    if (!d.isContact && d.isContactRequestReceived) {
-                        return btnAcceptContactRequestComponent
-                    }
-
-                    // contact request, incoming, rejected
-                    if (d.isContactRequestSent && d.incomingVerificationStatus === Constants.verificationStatus.declined)
-                        return btnBlockUserComponent
-
-                    // verified contact request, incoming, pending
-                    if (d.isContact && !d.isTrusted && d.isVerificationRequestReceived)
-                        return btnRespondToIdRequestComponent
-
                     // block user
-                    if (!d.isContact && !d.isBlocked &&
-                            (d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy || d.outgoingVerificationStatus === Constants.verificationStatus.declined))
+                    if (d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy)
                         return btnBlockUserComponent
 
-                    // send contact request
-                    if (!d.isContact && !d.isBlocked && !d.isContactRequestSent)
-                        return btnSendContactRequestComponent
-
-                    // send message
-                    if (d.isContact && !d.isBlocked)
+                    // depend on contactRequestState
+                    switch (d.contactRequestState) {
+                    case Constants.ContactRequestState.Sent:
+                        return txtPendingContactRequestComponent
+                    case Constants.ContactRequestState.Received:
+                        return btnAcceptContactRequestComponent
+                    case Constants.ContactRequestState.Mutual: {
+                        if (d.incomingVerificationStatus === Constants.verificationStatus.declined) {
+                            return btnBlockUserComponent
+                        } else if (!d.isTrusted && d.isVerificationRequestReceived) {
+                            return btnRespondToIdRequestComponent
+                        }
                         return btnSendMessageComponent
-
-                    console.warn("!!! UNHANDLED CONTACT ACTION BUTTON; PUBKEY", root.publicKey)
+                    }
+                    case Constants.ContactRequestState.None:
+                    case Constants.ContactRequestState.Dismissed:
+                        return btnSendContactRequestComponent
+                    default:
+                        console.warn("!!! UNHANDLED CONTACT ACTION BUTTON; PUBKEY", root.publicKey)
+                        return null
+                    }
                 }
             }
 
@@ -417,9 +406,9 @@ Pane {
                 StatusMenu {
                     id: moreMenu
                     width: 230
-
+                    // FIXME: raly on contactRequestState !!!
                     SendContactRequestMenuItem {
-                        enabled: !d.isContact && !d.isBlocked && !d.isContactRequestSent && !d.contactDetails.removed &&
+                        enabled: !d.isContact && !d.isBlocked && !d.contactRequestState === Constants.ContactRequestState.Sent &&
                                  d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise
                         onTriggered: {
                             moreMenu.close()
@@ -513,7 +502,7 @@ Pane {
                         text: qsTr("Remove Contact")
                         icon.name: "remove-contact"
                         type: StatusAction.Type.Danger
-                        enabled: d.isContact && !d.isBlocked
+                        enabled: d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent
                         onTriggered: {
                             moreMenu.close()
                             removeContactConfirmationDialog.open()

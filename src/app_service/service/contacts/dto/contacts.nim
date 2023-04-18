@@ -60,7 +60,7 @@ type ContactsDto* = object
   isSyncing*: bool
   removed*: bool
   trustStatus*: TrustStatus
-  requestState*: ContactRequestState
+  contactRequestState*: ContactRequestState
   verificationStatus*: VerificationStatus
 
 proc `$`(self: Images): string =
@@ -144,10 +144,10 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("localNickname", result.localNickname)
   discard jsonObj.getProp("bio", result.bio)
 
-  result.requestState = ContactRequestState.None
-  var requestState: int
-  discard jsonObj.getProp("contactRequestState", requestState)
-  result.requestState = requestState.toContactRequestState()
+  result.contactRequestState = ContactRequestState.None
+  var contactRequestState: int
+  discard jsonObj.getProp("contactRequestState", contactRequestState)
+  result.contactRequestState = contactRequestState.toContactRequestState()
 
   result.trustStatus = TrustStatus.Unknown
   var trustStatusInt: int
@@ -194,7 +194,7 @@ proc isContactRequestReceived*(self: ContactsDto): bool =
   return self.hasAddedUs
 
 proc isReceivedContactRequestRejected*(self: ContactsDto): bool =
-  return self.requestState == ContactRequestState.Dismissed
+  return self.contactRequestState == ContactRequestState.Dismissed
 
 proc isContactRequestSent*(self: ContactsDto): bool =
   return self.added

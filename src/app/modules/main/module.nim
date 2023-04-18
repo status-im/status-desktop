@@ -959,6 +959,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "removed": contact.removed,
     "trustStatus": contact.trustStatus.int,
     # TODO rename verificationStatus to outgoingVerificationStatus
+    "contactRequestState": contact.contactRequestState.int,
     "verificationStatus": contact.verificationStatus.int,
     "incomingVerificationStatus": requestStatus,
     "hasAddedUs": contact.hasAddedUs,

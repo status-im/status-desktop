@@ -11,13 +11,14 @@ import utils 1.0
 
 import "../panels"
 import "../popups"
+import "../stores"
 
 ActivityNotificationMessage {
     id: root
 
-    readonly property bool pending: notification && notification.message.contactRequestState === Constants.contactRequestStatePending
-    readonly property bool accepted: notification && notification.message.contactRequestState === Constants.contactRequestStateAccepted
-    readonly property bool dismissed: notification && notification.message.contactRequestState === Constants.contactRequestStateDismissed
+    readonly property bool pending: notification && notification.message.contactRequestState === ActivityCenterStore.ActivityCenterContactRequestState.Pending
+    readonly property bool accepted: notification && notification.message.contactRequestState === ActivityCenterStore.ActivityCenterContactRequestState.Accepted
+    readonly property bool dismissed: notification && notification.message.contactRequestState === ActivityCenterStore.ActivityCenterContactRequestState.Dismissed
 
     readonly property string contactRequestId: notification && notification.message ? notification.message.id : ""
 

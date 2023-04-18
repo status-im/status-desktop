@@ -705,11 +705,6 @@ QtObject {
     readonly property int communityChatInvitationOnlyAccess: 2
     readonly property int communityChatOnRequestAccess: 3
 
-    readonly property int contactRequestStateNone: 0
-    readonly property int contactRequestStatePending: 1
-    readonly property int contactRequestStateAccepted: 2
-    readonly property int contactRequestStateDismissed: 3
-
     readonly property int maxNbDaysToFetch: 30
     readonly property int fetchRangeLast24Hours: 86400
     readonly property int fetchRangeLast2Days: 172800
@@ -896,6 +891,14 @@ QtObject {
           Failed,
           InProgress,
           Deployed
+    }
+
+    enum ContactRequestState {
+        None = 0,
+        Mutual = 1,
+        Sent = 2,
+        Received = 3,
+        Dismissed = 4
     }
 
     readonly property QtObject walletSection: QtObject {
