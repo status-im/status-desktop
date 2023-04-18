@@ -417,9 +417,8 @@ class SettingsScreen:
         started_at = time.monotonic()
         while wait_for_is_visible(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value, verify=False):
             try:
-                hover(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
                 click_obj_by_name(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
-            except (LookupError, RuntimeError):
+            except (LookupError, RuntimeError) as error:           
                 pass
             if time.monotonic() - started_at > 10:
                 raise RuntimeError('Reveal seed phrase button not clicked')
