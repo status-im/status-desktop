@@ -134,7 +134,7 @@ proc addItemToAppropriateModel(self: Module, item: UserItem) =
     self.view.blockedContactsModel().addItem(item)
     return
 
-  case contact.requestState:
+  case contact.contactRequestState:
     of ContactRequestState.Received:
       self.view.receivedContactRequestsModel().addItem(item)
     of ContactRequestState.Sent:

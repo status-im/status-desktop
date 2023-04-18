@@ -43,6 +43,12 @@ QtObject {
         Declined = 3
     }
 
+    enum ActivityCenterContactRequestState {
+        Pending = 1,
+        Accepted = 2,
+        Dismissed = 3
+    }
+
     readonly property var activityCenterModuleInst: activityCenterModule
     readonly property var activityCenterNotifications: activityCenterModuleInst.activityNotificationsModel
 

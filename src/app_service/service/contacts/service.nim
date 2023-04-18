@@ -421,6 +421,8 @@ QtObject:
       contact.added = true
       contact.blocked = false
       contact.removed = false
+      contact.contactRequestState = ContactRequestState.Sent
+
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
       self.activityCenterService.parseActivityCenterResponse(response)
@@ -445,6 +447,8 @@ QtObject:
       var contact = self.getContactById(publicKey)
       contact.added = true
       contact.removed = false
+      contact.contactRequestState = ContactRequestState.Mutual
+
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
       self.activityCenterService.parseActivityCenterResponse(response)
@@ -467,6 +471,8 @@ QtObject:
         return
       var contact = self.getContactById(publicKey)
       contact.removed = true
+      contact.contactRequestState = ContactRequestState.Dismissed
+
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
       self.activityCenterService.parseActivityCenterResponse(response)
@@ -523,6 +529,7 @@ QtObject:
     contact.removed = true
     contact.added = false
     contact.hasAddedUs = false
+    contact.contactRequestState = ContactRequestState.None
 
     self.saveContact(contact)
     self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
