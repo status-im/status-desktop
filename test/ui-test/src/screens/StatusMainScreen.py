@@ -11,11 +11,12 @@
 
 import time
 from enum import Enum
+
+from drivers.SDKeyboardCommands import *
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
-from drivers.SDKeyboardCommands import *
 from utils.ObjectAccess import *
-import time
+
 
 class MainScreenComponents(Enum):
     MAIN_WINDOW = "statusDesktop_mainWindow"
@@ -194,9 +195,8 @@ class StatusMainScreen:
     def close_popup(self):
         # Click in the corner of the overlay to close the popup
         click_obj_by_name_at_coordinates(MainScreenComponents.POPUP_OVERLAY.value, 1, 1)
-    
+
     def is_secure_your_seed_phrase_banner_visible(self, value: bool):
-        verify(is_found(MainScreenComponents.SECURE_YOUR_SEED_PHRASE_BANNER.value) is value, 
-            f'Secure your seed phrase banner visible: {value}'
-        ) 
-        
+        verify(is_found(MainScreenComponents.SECURE_YOUR_SEED_PHRASE_BANNER.value) is value,
+               f'Secure your seed phrase banner visible: {value}'
+               )

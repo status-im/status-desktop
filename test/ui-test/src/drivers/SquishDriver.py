@@ -17,7 +17,10 @@ import object
 # IMPORTANT: It is necessary to import manually the Squish drivers module by module.
 # More info in: https://kb.froglogic.com/display/KB/Article+-+Using+Squish+functions+in+your+own+Python+modules+or+packages
 import squish
+import toplevelwindow
 from objectmaphelper import Wildcard
+
+from .elements import *  # noqa
 
 # The default maximum timeout to find ui object
 _MAX_WAIT_OBJ_TIMEOUT = 5000
@@ -30,6 +33,7 @@ _SEARCH_IMAGES_PATH = "../shared/searchImages/"
 
 def start_application(app_name: str):
     squish.startApplication(app_name)
+    toplevelwindow.ToplevelWindow(squish.waitForObject(names.statusDesktop_mainWindow)).maximize()
 
 
 # Waits for the given object is loaded, visible and enabled.
@@ -491,5 +495,5 @@ def wait_for(py_condition_to_check: str, timeout_msec: int = 500):
     squish.waitFor(py_condition_to_check, timeout_msec)
 
 
-def wait_util_hidden(object_name: str, timeout_msec: int = _MAX_WAIT_OBJ_TIMEOUT) -> bool:
+def wait_until_hidden(object_name: str, timeout_msec: int = _MAX_WAIT_OBJ_TIMEOUT) -> bool:
     return squish.waitFor(lambda: not is_displayed(object_name), timeout_msec)
