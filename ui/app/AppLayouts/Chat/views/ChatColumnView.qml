@@ -139,6 +139,7 @@ Item {
             width: parent.width
             height: parent.height
             visible: model.active && !root.rootStore.openCreateChat && isActiveChannel
+            chatId: model.itemId
             chatMessagesLoader.active: model.loaderActive
             rootStore: root.rootStore
             contactsStore: root.contactsStore
@@ -149,7 +150,6 @@ Item {
             sendTransactionWithEnsModal: cmpSendTransactionWithEns
             stickersLoaded: root.stickersLoaded
             isBlocked: model.blocked
-            isUserAdded: root.isUserAdded
             isActiveChannel: model.active
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId)

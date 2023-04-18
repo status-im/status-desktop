@@ -35,6 +35,7 @@ ColumnLayout {
     property var rootStore
     property var contactsStore
     property bool isActiveChannel: false
+    property string chatId
 
     readonly property alias chatMessagesLoader: chatMessagesLoader
 
@@ -54,13 +55,34 @@ ColumnLayout {
     property Component sendTransactionWithEnsModal
 
     property bool isBlocked: false
-    property bool isUserAdded: false
 
     property bool stickersLoaded: false
+
+    QtObject {
+        id: d
+
+        property bool isUserAdded
+
+        function updateIsUserAdded() {
+            isUserAdded = Qt.binding(() => {isActiveChannel; return Utils.getContactDetailsAsJson(root.chatId, false).isAdded})
+        }
+
+        Component.onCompleted: updateIsUserAdded()
+    }
 
     onIsActiveChannelChanged: {
         if (isActiveChannel) {
             chatInput.forceInputActiveFocus();
+        }
+    }
+
+    Connections {
+        target: root.contactsStore.myContactsModel
+
+        function onItemChanged(pubKey) {
+            if (pubKey === root.chatId) {
+                d.updateIsUserAdded()
+            }
         }
     }
 
@@ -83,7 +105,7 @@ ColumnLayout {
         id: contextmenu
         store: root.rootStore
         reactionModel: root.rootStore.emojiReactionsModel
-        disabledForChat: chatType === Constants.chatType.oneToOne && !root.isUserAdded
+        disabledForChat: chatType === Constants.chatType.oneToOne && !d.isUserAdded
 
         onPinMessage: {
             messageStore.pinMessage(messageId)
@@ -98,8 +120,7 @@ ColumnLayout {
                 console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
                 return
             }
-            const chatId = chatType === Constants.chatType.oneToOne ? chatContentModule.getMyChatId() : ""
-            Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, chatId)
+            Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, root.chatId)
         }
 
         onToggleReaction: {
@@ -149,7 +170,7 @@ ColumnLayout {
                 stickersPopup: root.stickersPopup
                 usersStore: root.usersStore
                 stickersLoaded: root.stickersLoaded
-                isChatBlocked: root.isBlocked || (chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne && !root.isUserAdded)
+                isChatBlocked: root.isBlocked || (chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne && !d.isUserAdded)
                 channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
                 isActiveChannel: root.isActiveChannel
                 onShowReplyArea: {
@@ -181,7 +202,7 @@ ColumnLayout {
                 anchors.margins: Style.current.smallPadding
 
                 enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
-                         !(chatType === Constants.chatType.oneToOne && !root.isUserAdded)
+                         !(chatType === Constants.chatType.oneToOne && !d.isUserAdded)
 
                 store: root.rootStore
                 usersStore: root.usersStore
