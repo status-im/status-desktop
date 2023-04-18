@@ -38,7 +38,9 @@ ListModel {
                     "name": "Career",
                     "emoji": "💼",
                 },
-            ])
+            ]),
+            permissionsModel: PermissionsModel.shortPermissionsModel,
+            allTokenRequirementsMet: true
         },
         {
             featured: true,
@@ -66,7 +68,9 @@ ListModel {
                     "name": "Career",
                     "emoji": "💼",
                 },
-            ])
+            ]),
+            permissionsModel: PermissionsModel.twoShortPermissionsModel,
+            allTokenRequirementsMet: false
         },
         {
             featured: true,
@@ -90,7 +94,9 @@ ListModel {
                     "name": "Career",
                     "emoji": "💼",
                 },
-            ])
+            ]),
+            permissionsModel: PermissionsModel.moreThanTwoInitialShortPermissionsModel,
+            allTokenRequirementsMet: false
 
 
         },
@@ -112,7 +118,9 @@ ListModel {
                     "name": "Career",
                     "emoji": "💼",
                 },
-            ])
+            ]),
+            permissionsModel: PermissionsModel.longPermissionsModel,
+            allTokenRequirementsMet: false
         },
         {
             featured: false,
@@ -127,7 +135,9 @@ ListModel {
             activeMembers: 2800,
             popularity: 4,
             available: true,
-            tags: JSON.stringify([])
+            tags: JSON.stringify([]),
+            permissionsModel: PermissionsModel.threeShortPermissionsModelData,
+            allTokenRequirementsMet: false
         },
         {
             featured: false,
@@ -155,7 +165,9 @@ ListModel {
                     "name": "Books & blogs",
                     "emoji": "📚",
                 },
-            ])
+            ]),
+            permissionsModel: PermissionsModel.threeShortPermissionsModel,
+            allTokenRequirementsMet: true
         },
         {
             featured: false,
@@ -171,6 +183,8 @@ ListModel {
             popularity: 4,
             available: true,
             tags: JSON.stringify([]),
+            permissionsModel: PermissionsModel.threeShortPermissionsModel,
+            allTokenRequirementsMet: false
         },
         {
             featured: false,
@@ -202,7 +216,9 @@ ListModel {
                     "name": "Career",
                     "emoji": "💼",
                 },
-            ])
+            ]),
+            permissionsModel: PermissionsModel.longPermissionsModel,
+            allTokenRequirementsMet: true
         },
         {
             featured: false,

@@ -110,16 +110,17 @@ Rectangle {
     */
     property color communityColor: Theme.palette.primaryColor1
     /*!
-       \qmlproperty bool StatusCommunityCard::isPrivate
-       This property holds if the community is private.
-       If not provided, default value is false.
-    */
-    property bool isPrivate: false
-    /*!
        \qmlproperty url StatusCommunityCard::tokenLogo
        This property holds the image of the token needed if the community is private.
     */
     property url tokenLogo: ""
+
+    /*!
+       \qmlproperty Item StatusCommunityCard::rigthHeaderComponent
+       This property holds an extra info header component that will be displayed on top right of the card.
+       Example: Community token permissions row.
+    */
+    property alias rigthHeaderComponent: rightHeaderLoader.sourceComponent
 
     /*!
         \qmlsignal StatusCommunityCard::clicked(string communityId)
@@ -249,36 +250,16 @@ Rectangle {
         color: d.cardColor
         radius: d.cardRadius
         clip: true
-        // Community restriccions
-        Rectangle {
-            visible: root.isPrivate
+
+        // Right header extra info component
+        Loader {
+            id: rightHeaderLoader
             anchors.top: parent.top
             anchors.topMargin: 8
             anchors.right: parent.right
             anchors.rightMargin: anchors.topMargin
-            width: 48
-            height: 24
-            color: d.loadingColor2
-            radius: 200
-            StatusIcon {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 6
-                anchors.left: parent.left
-                icon: "tiny/unlocked"
-                width: 16
-                height: 16
-                color: Theme.palette.baseColor1
-            }
-            StatusRoundedImage {
-                anchors.rightMargin: 2
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                width: 20
-                height: width
-                image.source: root.tokenLogo
-                color: "transparent"
-            }
         }
+
         // Community info
         ColumnLayout {
             anchors.fill: parent

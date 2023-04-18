@@ -943,6 +943,9 @@ Item {
 
                     CommunitiesPortalLayout {
                         id: communitiesPortalLayoutContainer
+
+                        assetsModel: rootChatStore.assetsModel
+                        collectiblesModel: rootChatStore.collectiblesModel
                     }
 
                     Loader {
