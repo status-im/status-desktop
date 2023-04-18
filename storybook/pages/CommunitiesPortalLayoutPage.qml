@@ -29,6 +29,8 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
+            assetsModel: AssetsModel {}
+            collectiblesModel:  CollectiblesModel {}
             communitiesStore: CommunitiesStore {
                 readonly property int unreadNotificationsCount: 42
                 readonly property string communityTags: ModelsData.communityTags

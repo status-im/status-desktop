@@ -24,13 +24,16 @@ import "views"
 
 StatusSectionLayout {
     id: root
-    objectName: "communitiesPortalLayout"
 
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     property var importCommunitiesPopup: importCommunitiesPopupComponent
     property var createCommunitiesPopup: createCommunitiesPopupComponent
     property var discordImportProgressPopup: discordImportProgressDialog
 
+    property alias assetsModel: communitiesGrid.assetsModel
+    property alias collectiblesModel: communitiesGrid.collectiblesModel
+
+    objectName: "communitiesPortalLayout"
     notificationCount: activityCenterStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
@@ -166,6 +169,7 @@ StatusSectionLayout {
 
                 CommunitiesGridView {
                     id: communitiesGrid
+
                     anchors.fill: parent
                     anchors.rightMargin: d.preventShadowClipMargin
                     anchors.leftMargin: d.preventShadowClipMargin
@@ -175,6 +179,9 @@ StatusSectionLayout {
 
                     model: filteredCommunitiesModel
                     searchLayout: d.searchMode
+
+                    assetsModel: root.assetsModel
+                    collectiblesModel: root.collectiblesModel
 
                     onCardClicked: root.communitiesStore.navigateToCommunity(communityId)
                 }

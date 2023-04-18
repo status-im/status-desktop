@@ -146,7 +146,6 @@ StatusSectionLayout {
                             activeUsers: model.activeUsers
                             popularity: model.popularity
                             tokenLogo: model.tokenLogo
-                            isPrivate: model.isPrivate
                             banner: model.banner
 
                             onClicked: { d.navigateToCommunity(communityId) }

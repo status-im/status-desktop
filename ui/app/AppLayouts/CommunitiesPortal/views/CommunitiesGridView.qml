@@ -10,11 +10,16 @@ import utils 1.0
 
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Chat.controls.community 1.0
+
 StatusScrollView {
     id: root
 
     property var model
     property bool searchLayout: false
+
+    property var assetsModel
+    property var collectiblesModel
 
     readonly property bool isEmpty: !featuredRepeater.count && !popularRepeater.count
 
@@ -56,7 +61,11 @@ StatusScrollView {
         id: communityCardDelegate
 
         StatusCommunityCard {
+            id: card
+
             readonly property string tags: model.tags
+            readonly property var permissionsList: model.permissionsModel
+            readonly property bool requirementsMet: !!model.allTokenRequirementsMet ? model.allTokenRequirementsMet : false
 
             JSONListModel {
                 id: tagsJson
@@ -74,6 +83,15 @@ StatusScrollView {
             activeUsers: model.activeMembers
             popularity: model.popularity
             categories: tagsJson.model
+
+            // Community restriccions
+            rigthHeaderComponent: CommunityPermissionsRow {
+                visible: !!card.permissionsList
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
+                model: card.permissionsList
+                requirementsMet: card.requirementsMet
+            }
 
             onClicked: root.cardClicked(communityId)
         }
