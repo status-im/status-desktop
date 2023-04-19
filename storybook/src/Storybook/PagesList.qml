@@ -15,6 +15,8 @@ ListView {
     readonly property string foldedPrefix: "▶  "
     readonly property string unfoldedPrefix: "▼  "
 
+    ScrollBar.vertical: ScrollBar {}
+
     delegate: ItemDelegate {
         id: delegate
 
