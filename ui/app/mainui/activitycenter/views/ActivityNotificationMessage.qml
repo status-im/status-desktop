@@ -24,9 +24,13 @@ ActivityNotificationBase {
         messageText: notification ? notification.message.messageText : ""
         amISender: false
         sender.id: contactId
-        sender.displayName: contactDetails ? contactDetails.displayName : ""
-        sender.secondaryName: contactDetails ? contactDetails.localNickname : ""
+        sender.displayName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.ensVerified ? contactDetails.name : "",
+                                                                      contactDetails.displayName, contactDetails.alias) : ""
+        sender.secondaryName: contactDetails && contactDetails.localNickname ? ProfileUtils.displayName("", contactDetails.ensVerified ? contactDetails.name : "",
+                                                                                                        contactDetails.displayName, contactDetails.alias) : ""
         sender.trustIndicator: contactDetails ? contactDetails.trustStatus : Constants.trustStatus.unknown
+        sender.isEnsVerified: !!contactDetails && contactDetails.ensVerified
+        sender.isContact: !!contactDetails && contactDetails.isContact
         sender.profileImage {
             width: 40
             height: 40
@@ -34,7 +38,7 @@ ActivityNotificationBase {
             assetSettings.isImage: contactDetails && contactDetails.displayIcon.startsWith("data")
             pubkey: contactId
             colorId: Utils.colorIdForPubkey(contactId)
-            colorHash: Utils.getColorHashAsJson(contactId, contactDetails && contactDetails.ensVerified)
+            colorHash: Utils.getColorHashAsJson(contactId, sender.isEnsVerified)
         }
     }
 
