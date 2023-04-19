@@ -122,6 +122,15 @@ Pane {
             }
         }
 
+        readonly property var conns4: Connections {
+            target: Global
+
+            function onContactRenamed(pubKey) {
+                if (pubKey === root.publicKey)
+                    d.reload()
+            }
+        }
+
         readonly property var timer: Timer {
             id: timer
         }

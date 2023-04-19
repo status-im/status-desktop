@@ -61,6 +61,15 @@ ActivityNotificationBase {
         }
     }
 
+    Connections {
+        target: Global
+
+        function onContactRenamed(pubKey) {
+            if (pubKey === root.contactId)
+                root.updateContactDetails()
+        }
+    }
+
     bodyComponent: MouseArea {
         implicitWidth: parent.width
         implicitHeight: messageView.implicitHeight
