@@ -7,6 +7,7 @@ CommunityListItem 1.0 CommunityListItem.qml
 HoldingTypes 1.0 HoldingTypes.qml
 HoldingsDropdown 1.0 HoldingsDropdown.qml
 InDropdown 1.0 InDropdown.qml
+InlineNetworksComboBox 1.0 InlineNetworksComboBox.qml
 MembersSelectorPanel 1.0 MembersSelectorPanel.qml
 PermissionItem 1.0 PermissionItem.qml
 PermissionsDropdown 1.0 PermissionsDropdown.qml
