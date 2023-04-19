@@ -58,6 +58,7 @@ QtObject:
       pubKey = pubKey,
       displayName = displayName,
       ensName = "",
+      isEnsVerified = false,
       localNickname = "",
       alias = "",
       icon = "",

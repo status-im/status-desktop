@@ -11,6 +11,7 @@ type
     PubKey = UserRole + 1
     DisplayName
     EnsName
+    IsEnsVerified
     LocalNickname
     Alias
     Icon
@@ -77,6 +78,7 @@ QtObject:
       ModelRole.PubKey.int: "pubKey",
       ModelRole.DisplayName.int: "displayName",
       ModelRole.EnsName.int: "ensName",
+      ModelRole.IsEnsVerified.int: "isEnsVerified",
       ModelRole.LocalNickname.int: "localNickname",
       ModelRole.Alias.int: "alias",
       ModelRole.Icon.int: "icon",
@@ -113,6 +115,8 @@ QtObject:
       result = newQVariant(item.displayName)
     of ModelRole.EnsName:
       result = newQVariant(item.ensName)
+    of ModelRole.IsEnsVerified:
+      result = newQVariant(item.isEnsVerified)
     of ModelRole.LocalNickname:
       result = newQVariant(item.localNickname)
     of ModelRole.Alias:
@@ -205,6 +209,7 @@ QtObject:
       pubKey: string,
       displayName: string,
       ensName: string,
+      isEnsVerified: bool,
       localNickname: string,
       alias: string,
       icon: string,
@@ -220,6 +225,7 @@ QtObject:
 
     self.items[ind].displayName = displayName
     self.items[ind].ensName = ensName
+    self.items[ind].isEnsVerified = isEnsVerified
     self.items[ind].localNickname = localNickname
     self.items[ind].alias = alias
     self.items[ind].icon = icon
@@ -232,6 +238,7 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int,
+      ModelRole.IsEnsVerified.int,
       ModelRole.EnsName.int,
       ModelRole.LocalNickname.int,
       ModelRole.Alias.int,
@@ -248,6 +255,7 @@ QtObject:
       pubKey: string,
       displayName: string,
       ensName: string,
+      isEnsVerified: bool,
       localNickname: string,
       alias: string,
       icon: string,
@@ -261,6 +269,7 @@ QtObject:
 
     self.items[ind].displayName = displayName
     self.items[ind].ensName = ensName
+    self.items[ind].isEnsVerified = isEnsVerified
     self.items[ind].localNickname = localNickname
     self.items[ind].alias = alias
     self.items[ind].icon = icon
@@ -272,6 +281,7 @@ QtObject:
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int,
       ModelRole.EnsName.int,
+      ModelRole.IsEnsVerified.int,
       ModelRole.LocalNickname.int,
       ModelRole.Alias.int,
       ModelRole.Icon.int,

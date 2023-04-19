@@ -14,20 +14,19 @@ StatusMemberListItem {
     id: root
 
     readonly property string _pubKey: model.pubKey // expose uncompressed pubkey
-    readonly property bool hasEnsName: Utils.isEnsVerified(model.pubKey)
 
-    pubKey: hasEnsName ? "" : Utils.getCompressedPk(model.pubKey)
+    pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
     nickName: model.localNickname
     userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
     isVerified: model.isVerified
     isUntrustworthy: model.isUntrustworthy
     isContact: model.isContact
     asset.name: model.icon
-    asset.color: Utils.colorForPubkey(model.pubKey)
+    asset.color: Utils.colorForColorId(model.colorId)
     asset.isImage: (asset.name !== "")
     asset.isLetterIdenticon: (asset.name === "")
     status: model.onlineStatus
     statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
-    ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey, hasEnsName)
+    ringSettings.ringSpecModel: model.colorHash
     color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
 }

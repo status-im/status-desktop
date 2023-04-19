@@ -51,7 +51,7 @@ Item {
             rightPadding: 0
             placeholderText: root.placeholderText
             input.asset.name: "search"
-            enabled: model.count > 0
+            enabled: !!model && model.count > 0
         }
 
         ListView {
@@ -131,7 +131,7 @@ Item {
                 height: visible ? implicitHeight : 0
                 color: "transparent"
 
-                pubKey: model.ensName ? "" : Utils.getElidedCompressedPk(model.pubKey)
+                pubKey: model.isEnsVerified ? "" : Utils.getElidedCompressedPk(model.pubKey)
                 nickName: model.localNickname
                 userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
                 status: model.onlineStatus

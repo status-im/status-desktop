@@ -23,6 +23,7 @@ type
     pubKey: string
     displayName: string
     ensName: string
+    isEnsVerified: bool
     localNickname: string
     alias: string
     icon: string
@@ -41,6 +42,7 @@ proc setup*(self: UserItem,
   pubKey: string,
   displayName: string,
   ensName: string,
+  isEnsVerified: bool,
   localNickname: string,
   alias: string,
   icon: string,
@@ -58,6 +60,7 @@ proc setup*(self: UserItem,
   self.pubKey = pubKey
   self.displayName = displayName
   self.ensName = ensName
+  self.isEnsVerified = isEnsVerified
   self.localNickname = localNickname
   self.alias = alias
   self.icon = icon
@@ -77,6 +80,7 @@ proc initUserItem*(
     pubKey: string,
     displayName: string,
     ensName: string,
+    isEnsVerified: bool,
     localNickname: string,
     alias: string,
     icon: string,
@@ -96,6 +100,7 @@ proc initUserItem*(
     pubKey = pubKey,
     displayName = displayName,
     ensName = ensName,
+    isEnsVerified = isEnsVerified,
     localNickname = localNickname,
     alias = alias,
     icon = icon,
@@ -115,6 +120,7 @@ proc `$`*(self: UserItem): string =
     pubKey: {self.pubkey},
     displayName: {self.displayName},
     ensName: {self.ensName},
+    isEnsVerified: {self.isEnsVerified},
     localNickname: {self.localNickname},
     alias: {self.alias},
     icon: {self.icon},
@@ -140,10 +146,16 @@ proc `displayName=`*(self: UserItem, value: string) {.inline.} =
   self.displayName = value
 
 proc ensName*(self: UserItem): string {.inline.} =
-  self.ensName
+  if self.isEnsVerified: self.ensName else: ""
 
 proc `ensName=`*(self: UserItem, value: string) {.inline.} =
   self.ensName = value
+
+proc isEnsVerified*(self: UserItem): bool {.inline.} =
+  self.isEnsVerified
+
+proc `isEnsVerified=`*(self: UserItem, value: bool) {.inline.} =
+  self.isEnsVerified = value
 
 proc localNickname*(self: UserItem): string {.inline.} =
   self.localNickname
@@ -170,7 +182,7 @@ proc `colorId=`*(self: UserItem, value: int) {.inline.} =
   self.colorId = value
 
 proc colorHash*(self: UserItem): string {.inline.} =
-  self.colorHash
+  if not self.isEnsVerified: self.colorHash else: ""
 
 proc `colorHash=`*(self: UserItem, value: string) {.inline.} =
   self.colorHash = value

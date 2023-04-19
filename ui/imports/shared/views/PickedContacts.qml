@@ -46,7 +46,7 @@ Item {
 
         delegate: StatusMemberListItem {
             width: contactGridView.cellWidth
-            pubKey: Utils.getCompressedPk(model.pubKey)
+            pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
             isContact: model.isContact
             status: model.onlineStatus
             nickName: model.localNickname
@@ -59,7 +59,7 @@ Item {
             asset.height: 40
             color: "transparent"
             asset.color: Utils.colorForColorId(model.colorId)
-            ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
+            ringSettings.ringSpecModel: model.colorHash
             statusListItemIcon.badge.border.color: Theme.palette.baseColor4
             statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
             statusListItemIcon.badge.implicitWidth: 14 // 10 px + 2 px * 2 borders

@@ -35,14 +35,12 @@ ColumnLayout {
         Layout.rightMargin: Style.current.padding
     }
 
-    StatusInput {
+    SearchBox {
         id: filterInput
         placeholderText: qsTr("Search contacts")
         maximumHeight: 36
         topPadding: 0
         bottomPadding: 0
-        input.asset.name: "search"
-        input.clearable: true
         Layout.fillWidth: true
         Layout.topMargin: Style.current.bigPadding
         Layout.bottomMargin: Style.current.padding

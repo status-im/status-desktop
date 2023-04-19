@@ -443,8 +443,7 @@ Loader {
                     if (!root.pinnedMessage || root.isDiscordMessage)
                         return ""
                     const contact = Utils.getContactDetailsAsJson(root.messagePinnedBy, false)
-                    const ensName = contact.ensVerified ? contact.name : ""
-                    return ProfileUtils.displayName(contact.localNickname, ensName, contact.displayName, contact.alias)
+                    return ProfileUtils.displayName(contact.localNickname, contact.name, contact.displayName, contact.alias)
                 }
                 isInPinnedPopup: root.isInPinnedPopup
                 hasExpired: root.isExpired

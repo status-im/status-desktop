@@ -249,13 +249,14 @@ QtObject:
       pubkey: string,
       name: string,
       ensName: string,
+      isEnsVerified: bool,
       localNickname: string,
       alias: string,
       image: string,
       isContact: bool,
       isVerified: bool,
       isUntrustworthy: bool) =
-    self.item.updateMember(pubkey, name, ensName, localNickname, alias, image, isContact,
+    self.item.updateMember(pubkey, name, ensName, isEnsVerified, localNickname, alias, image, isContact,
       isVerified, isUntrustworthy)
 
   proc pendingRequestsToJoin(self: SectionDetails): QVariant {.slot.} =

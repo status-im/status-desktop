@@ -93,10 +93,11 @@ Item {
 
         delegate: ContactPanel {
             id: panelDelegate
+
             width: ListView.view.width
             contactsStore: root.contactsStore
             name: ProfileUtils.displayName(model.localNickname, model.ensName, model.displayName, model.alias)
-            ensVerified: !!model.ensName
+            ensVerified: model.isEnsVerified
             publicKey: model.pubKey
             compressedPk: Utils.getCompressedPk(model.pubKey)
             iconSource: model.icon

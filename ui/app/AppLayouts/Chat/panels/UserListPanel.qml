@@ -60,13 +60,21 @@ Item {
             model: SortFilterProxyModel {
                 sourceModel: root.usersModel
 
+                proxyRoles: ExpressionRole {
+                    function displayNameProxy(nickname, ensName, displayName, aliasName) {
+                        return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
+                    }
+                    name: "preferredDisplayName"
+                    expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
+                }
+
                 sorters: [
                     RoleSorter {
                         roleName: "onlineStatus"
                         sortOrder: Qt.DescendingOrder
                     },
                     StringSorter {
-                        roleName: "displayName"
+                        roleName: "preferredDisplayName"
                         caseSensitivity: Qt.CaseInsensitive
                     }
                 ]
@@ -74,11 +82,10 @@ Item {
             section.property: "onlineStatus"
             section.delegate: (root.width > 58) ? sectionDelegateComponent : null
             delegate: StatusMemberListItem {
-                readonly property bool ensVerified: Utils.isEnsVerified(model.pubKey)
                 width: ListView.view.width
                 nickName: model.localNickname
                 userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
-                pubKey: ensVerified ? "" : Utils.getCompressedPk(model.pubKey)
+                pubKey: model.isEnsVerified ? "" : Utils.getCompressedPk(model.pubKey)
                 isContact: model.isContact
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy

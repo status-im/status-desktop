@@ -293,6 +293,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         pubKey = member.id,
         displayName = contactDetails.details.displayName,
         ensName = contactDetails.details.name,
+        isEnsVerified = contactDetails.details.ensVerified,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
@@ -321,6 +322,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         pubKey = bannedMemberId,
         displayName = contactDetails.details.displayName,
         ensName = contactDetails.details.name,
+        isEnsVerified = contactDetails.details.ensVerified,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
@@ -338,6 +340,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         pubKey = requestDto.publicKey,
         displayName = contactDetails.details.displayName,
         ensName = contactDetails.details.name,
+        isEnsVerified = contactDetails.details.ensVerified,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
@@ -356,6 +359,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         pubKey = requestDto.publicKey,
         displayName = contactDetails.details.displayName,
         ensName = contactDetails.details.name,
+        isEnsVerified = contactDetails.details.ensVerified,
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
@@ -955,6 +959,9 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
   }
   return $jsonObj
 
+method isEnsVerified*[T](self: Module[T], publicKey: string): bool =
+  return self.controller.getContact(publicKey).ensVerified
+
 method communityDataImported*[T](self: Module[T], community: CommunityDto) =
   if community.id == self.statusUrlCommunityToSpectate:
     self.statusUrlCommunityToSpectate = ""
@@ -1018,6 +1025,7 @@ method contactUpdated*[T](self: Module[T], publicKey: string) =
     publicKey,
     contactDetails.details.displayName,
     contactDetails.details.name,
+    contactDetails.details.ensVerified,
     contactDetails.details.localNickname,
     contactDetails.details.alias,
     contactDetails.icon,

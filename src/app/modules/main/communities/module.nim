@@ -123,6 +123,7 @@ proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
     pubKey = memberId,
     displayName = contactDetails.details.displayName,
     ensName = contactDetails.details.name,
+    isEnsVerified = contactDetails.details.ensVerified,
     localNickname = contactDetails.details.localNickname,
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
