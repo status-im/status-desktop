@@ -362,6 +362,7 @@ QtObject {
                 onEditDone: {
                     if (nickname !== newNickname) {
                         rootStore.contactStore.changeContactNickname(publicKey, newNickname)
+                        Global.contactRenamed(publicKey)
                     }
                     close()
                 }
