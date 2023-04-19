@@ -11,6 +11,7 @@ Control {
 
     property string name
     property string shortName
+    property string amount
     property url iconSource
     property bool selected: false
     property bool showSubItemsIcon: false
@@ -64,6 +65,17 @@ Control {
                 font.pixelSize: 12
                 elide: Text.ElideRight
             }
+        }
+
+        StatusBaseText {
+            visible: !!root.amount
+            text: root.amount
+            color: Theme.palette.baseColor1
+            font.pixelSize: 12
+            font.weight: Font.Medium
+            elide: Text.ElideRight
+
+            Layout.rightMargin: root.spacing
         }
 
         StatusIcon {

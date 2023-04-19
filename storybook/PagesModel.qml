@@ -246,6 +246,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "TokenItem"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
