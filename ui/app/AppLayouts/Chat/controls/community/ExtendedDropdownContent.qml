@@ -412,11 +412,10 @@ Item {
 
            Layout.fillWidth: true
 
-           key: d.currentItemKey
            name: qsTr("Any %1").arg(d.currentItemName)
            iconSource: d.currentItemSource
 
-           selected: root.checkedKeys.includes(key)
+           selected: root.checkedKeys.includes(d.currentItemKey)
            enabled: true
            onItemClicked: root.itemClicked(d.currentItemKey,
                                            d.currentItemName,
