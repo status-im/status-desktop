@@ -188,7 +188,7 @@ method onReencryptionProcessStarted*(self: AccessInterface) {.base.} =
 type
   DelegateInterface* = concept c
     c.startupDidLoad()
-    c.userLoggedIn()
+    c.userLoggedIn(bool)
     c.finishAppLoading()
     c.storeDefaultKeyPairForNewKeycardUser()
     c.syncKeycardBasedOnAppWalletStateAfterLogin()

@@ -112,7 +112,7 @@ proc tryKeycardSyncWithTheAppState(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
-proc userLoggedIn*(self: AppController): string
+proc userLoggedIn*(self: AppController, recoverAccount: bool): string
 proc logout*(self: AppController)
 proc finishAppLoading*(self: AppController)
 proc storeDefaultKeyPairForNewKeycardUser*(self: AppController)
@@ -450,10 +450,10 @@ proc load(self: AppController) =
     self.mailserversService,
   )
 
-proc userLoggedIn*(self: AppController): string =
+proc userLoggedIn*(self: AppController, recoverAccount: bool): string =
   try:
     self.generalService.startMessenger()
-    self.statusFoundation.userLoggedIn()
+    self.statusFoundation.userLoggedIn(recoverAccount)
     return ""
   except Exception as e:
     let errDescription = e.msg

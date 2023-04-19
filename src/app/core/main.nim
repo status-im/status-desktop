@@ -34,5 +34,7 @@ proc initUrlSchemeManager*(self: StatusFoundation, urlSchemeEvent: StatusEvent,
   self.urlsManager = newUrlsManager(self.events, urlSchemeEvent, singleInstance,
     protocolUriOnStart)
 
-proc userLoggedIn*(self: StatusFoundation) =
+proc userLoggedIn*(self: StatusFoundation, recoverAccount: bool) =
   self.urlsManager.userLoggedIn()
+  if recoverAccount:
+    self.signalsManager.doHandlingForDataComingFromWakuBackup()
