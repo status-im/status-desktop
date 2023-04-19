@@ -32,15 +32,25 @@ ColumnLayout {
         sourceModel: filteredModel
     }
 
-    TextField {
-        id: textField
-
+    RowLayout {
         Layout.fillWidth: true
-        placeholderText: "search"
 
-        Keys.onEscapePressed: {
-            text = ""
-            focus = false
+        TextField {
+            id: textField
+
+            Layout.fillWidth: true
+            placeholderText: "search"
+
+            Keys.onEscapePressed: {
+                clear()
+                focus = false
+            }
+        }
+
+        ToolButton {
+            text: "❌"
+
+            onClicked: textField.clear()
         }
     }
 
