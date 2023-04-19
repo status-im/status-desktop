@@ -163,15 +163,15 @@ QtObject:
 
   proc pinned*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.pinned
   QtProperty[bool] pinned:
-    read = bool
+    read = pinned
 
   proc editMode*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.editMode
   QtProperty[bool] editMode:
-    read = bool
+    read = editMode
 
   proc isEdited*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.isEdited
   QtProperty[bool] isEdited:
-    read = bool
+    read = isEdited
 
   # this is not the greatest approach, but aligns with the rest of the code
   proc communityId*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.communityId

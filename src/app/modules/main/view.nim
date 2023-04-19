@@ -210,6 +210,9 @@ QtObject:
   proc getContactDetailsAsJson(self: View, publicKey: string, getVerificationRequest: bool): string {.slot.} =
     return self.delegate.getContactDetailsAsJson(publicKey, getVerificationRequest)
 
+  proc isEnsVerified(self:View, publicKey: string): bool {.slot.} =
+    return self.delegate.isEnsVerified(publicKey)
+
   proc resolveENS*(self: View, ensName: string, uuid: string) {.slot.} =
     self.delegate.resolveENS(ensName, uuid)
 

@@ -41,22 +41,23 @@ method delete*(self: Module) =
   self.view.delete
 
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
-  let contact =  self.controller.getContact(publicKey)
-  let contactDetails = self.controller.getContactDetails(contact.id)
+  let contactDetails = self.controller.getContactDetails(publicKey)
 
   return initUserItem(
-    pubKey = contact.id,
+    pubKey = contactDetails.details.id,
     displayName = contactDetails.details.displayName,
     ensName = contactDetails.details.name,
+    isEnsVerified = contactDetails.details.ensVerified,
     localNickname = contactDetails.details.localNickname,
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
+    colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
-    isContact = contact.isContact(),
-    isBlocked = contact.isBlocked(),
-    isVerified = contact.isContactVerified(),
-    isUntrustworthy = contact.isContactUntrustworthy()
+    isContact = contactDetails.details.isContact(),
+    isVerified = contactDetails.details.isContactVerified(),
+    isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
+    isBlocked = contactDetails.details.isBlocked(),
   )
 
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =
@@ -186,14 +187,18 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
     self.view.myMutualContactsModel().setOnlineStatus(s.publicKey, status)
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
-  let (name, _, _) = self.controller.getContactNameAndImage(publicKey)
-  self.view.myMutualContactsModel().updateName(publicKey, name)
-  self.view.receivedContactRequestsModel().updateName(publicKey, name)
-  self.view.sentContactRequestsModel().updateName(publicKey, name)
+  let contactDetails = self.controller.getContactDetails(publicKey)
+  let displayName = contactDetails.details.displayName
+  let ensName = contactDetails.details.name
+  let localNickname = contactDetails.details.localNickname
+
+  self.view.myMutualContactsModel().setName(publicKey, displayName, ensName, localNickname)
+  self.view.receivedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
+  self.view.sentContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
   # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-  # self.view.receivedButRejectedContactRequestsModel().updateName(publicKey, name)
-  # self.view.sentButRejectedContactRequestsModel().updateName(publicKey, name)
-  self.view.blockedContactsModel().updateName(publicKey, name)
+  # self.view.receivedButRejectedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
+  # self.view.sentButRejectedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
+  self.view.blockedContactsModel().setName(publicKey, displayName, ensName, localNickname)
 
 method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustworthy: bool) =
   self.view.myMutualContactsModel().updateTrustStatus(publicKey, isUntrustworthy)

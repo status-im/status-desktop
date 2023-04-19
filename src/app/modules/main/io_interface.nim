@@ -239,6 +239,9 @@ method getAppSearchModule*(self: AccessInterface): QVariant {.base.} =
 method getContactDetailsAsJson*(self: AccessInterface, publicKey: string, getVerificationRequest: bool): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method isEnsVerified*(self: AccessInterface, publicKey: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method communityDataImported*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 

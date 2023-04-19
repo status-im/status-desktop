@@ -133,8 +133,10 @@ proc toVerificationRequest*(jsonObj: JsonNode): VerificationRequest =
 proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   result = ContactsDto()
   discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("ensVerified", result.ensVerified)
+  result.name = ""
+  if (result.ensVerified):
+    discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("displayName", result.displayName)
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("lastUpdated", result.lastUpdated)

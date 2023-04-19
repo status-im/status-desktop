@@ -452,6 +452,7 @@ StatusSectionLayout {
     MessageContextMenuView {
         id: memberContextMenuView
         store: root.rootStore
+        isProfile: true
         amIChatAdmin: root.rootStore.amIChatAdmin()
         myPublicKey: root.rootStore.myPublicKey()
 

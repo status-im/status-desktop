@@ -108,16 +108,16 @@ Item {
 
         Loader {
             id: tertiaryDetailTextLoader
-            active: !root.amISender && root.messageOriginInfo === ""
+            active: !root.amISender && root.messageOriginInfo === "" && !!root.tertiaryDetail
+            visible: active
             asynchronous: true
             sourceComponent: StatusBaseText {
-                id: tertiaryDetailText
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: Theme.asideTextFontSize
                 visible: text
                 elide: Text.ElideMiddle
                 color: Theme.palette.baseColor1
-                text: root.tertiaryDetail ? Utils.elideText(root.tertiaryDetail, 5, 3) : ""
+                text: Utils.elideText(root.tertiaryDetail, 5, 3)
             }
         }
 

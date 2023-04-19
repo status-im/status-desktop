@@ -17,13 +17,9 @@ import "../stores"
 ActivityNotificationMessage {
     id: root
 
-    readonly property var contactDetails: notification ?
-                                            Utils.getContactDetailsAsJson(notification.author, false) :
-                                            null
+    contactDetails: notification ? Utils.getContactDetailsAsJson(notification.author, false) : null
 
     messageDetails.messageText: qsTr("Wants to join")
-    messageDetails.sender.displayName: contactDetails ? contactDetails.displayName : ""
-    messageDetails.sender.secondaryName: contactDetails ? contactDetails.localNickname : ""
     messageDetails.sender.profileImage.name: contactDetails ? contactDetails.displayIcon : ""
     messageDetails.sender.profileImage.assetSettings.isImage: true
     messageDetails.sender.profileImage.pubkey: notification ? notification.author : ""

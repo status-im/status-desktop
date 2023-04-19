@@ -436,7 +436,7 @@ QtObject {
     function isEnsVerified(publicKey) {
         if (publicKey === "" || !isChatKey(publicKey) )
             return
-        return getContactDetailsAsJson(publicKey, false).ensVerified
+        return mainModuleInst.isEnsVerified(publicKey)
     }
 
     function getEmojiHashAsJson(publicKey) {

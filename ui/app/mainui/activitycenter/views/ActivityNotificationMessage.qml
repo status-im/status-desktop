@@ -24,10 +24,10 @@ ActivityNotificationBase {
         messageText: notification ? notification.message.messageText : ""
         amISender: false
         sender.id: contactId
-        sender.displayName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.ensVerified ? contactDetails.name : "",
+        sender.displayName: contactDetails ? ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name,
                                                                       contactDetails.displayName, contactDetails.alias) : ""
-        sender.secondaryName: contactDetails && contactDetails.localNickname ? ProfileUtils.displayName("", contactDetails.ensVerified ? contactDetails.name : "",
-                                                                                                        contactDetails.displayName, contactDetails.alias) : ""
+        sender.secondaryName: contactDetails && contactDetails.localNickname ?
+                                  ProfileUtils.displayName("", contactDetails.name, contactDetails.displayName, contactDetails.alias) : ""
         sender.trustIndicator: contactDetails ? contactDetails.trustStatus : Constants.trustStatus.unknown
         sender.isEnsVerified: !!contactDetails && contactDetails.ensVerified
         sender.isContact: !!contactDetails && contactDetails.isContact
