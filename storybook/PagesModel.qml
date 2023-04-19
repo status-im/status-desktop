@@ -130,6 +130,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "TokenPanel"
+        section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
