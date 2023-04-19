@@ -1,4 +1,5 @@
-import QtQuick 2.13
+import QtQuick 2.15
+import QtQml 2.15
 import Qt.labs.platform 1.1
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
@@ -43,7 +44,7 @@ ColumnLayout {
     property var stickersPopup
     property UsersStore usersStore: UsersStore {}
 
-    onChatContentModuleChanged: {
+    onChatContentModuleChanged: if (!!chatContentModule) {
         root.usersStore.usersModule = root.chatContentModule.usersModule
     }
 
@@ -68,12 +69,6 @@ ColumnLayout {
         }
 
         Component.onCompleted: updateIsUserAdded()
-    }
-
-    onIsActiveChannelChanged: {
-        if (isActiveChannel) {
-            chatInput.forceInputActiveFocus();
-        }
     }
 
     Connections {
@@ -101,52 +96,61 @@ ColumnLayout {
         chatSectionModule: root.rootStore.chatCommunitySectionModule
     }
 
-    MessageContextMenuView {
-        id: contextmenu
-        store: root.rootStore
-        reactionModel: root.rootStore.emojiReactionsModel
-        disabledForChat: chatType === Constants.chatType.oneToOne && !d.isUserAdded
+    Loader {
+        id: contextMenuLoader
+        active: root.isActiveChannel
+        asynchronous: true
 
-        onPinMessage: {
-            messageStore.pinMessage(messageId)
-        }
+        // FIXME: `MessageContextMenuView` is way too heavy
+        // see: https://github.com/status-im/status-desktop/pull/10343#issuecomment-1515103756
+        sourceComponent: MessageContextMenuView {
+            store: root.rootStore
+            reactionModel: root.rootStore.emojiReactionsModel
+            disabledForChat: chatType === Constants.chatType.oneToOne && !d.isUserAdded
 
-        onUnpinMessage: {
-            messageStore.unpinMessage(messageId)
-        }
-
-        onPinnedMessagesLimitReached: {
-            if(!chatContentModule) {
-                console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
-                return
+            onPinMessage: {
+                messageStore.pinMessage(messageId)
             }
-            Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, root.chatId)
-        }
 
-        onToggleReaction: {
-            messageStore.toggleReaction(messageId, emojiId)
-        }
-
-        onOpenProfileClicked: {
-            Global.openProfilePopup(publicKey, null)
-        }
-
-        onDeleteMessage: {
-            messageStore.deleteMessage(messageId)
-        }
-
-        onEditClicked: messageStore.setEditModeOn(messageId)
-
-        onCreateOneToOneChat: {
-            Global.changeAppSectionBySectionType(Constants.appSection.chat)
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
-        }
-        onShowReplyArea: {
-            let obj = messageStore.getMessageByIdAsJson(messageId)
-            if (!obj) {
-                return
+            onUnpinMessage: {
+                messageStore.unpinMessage(messageId)
             }
-            chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+
+            onPinnedMessagesLimitReached: {
+                if(!chatContentModule) {
+                    console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
+                    return
+                }
+                Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, root.chatId)
+            }
+
+            onToggleReaction: {
+                messageStore.toggleReaction(messageId, emojiId)
+            }
+
+            onOpenProfileClicked: {
+                Global.openProfilePopup(publicKey, null)
+            }
+
+            onDeleteMessage: {
+                messageStore.deleteMessage(messageId)
+            }
+
+            onEditClicked: messageStore.setEditModeOn(messageId)
+
+            onCreateOneToOneChat: {
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
+            }
+            onShowReplyArea: {
+                let obj = messageStore.getMessageByIdAsJson(messageId)
+                if (!obj) {
+                    return
+                }
+                if (inputAreaLoader.item) {
+                    inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+                }
+            }
         }
     }
 
@@ -164,7 +168,7 @@ ColumnLayout {
                 chatContentModule: root.chatContentModule
                 rootStore: root.rootStore
                 contactsStore: root.contactsStore
-                messageContextMenu: contextmenu
+                messageContextMenu: contextMenuLoader.item
                 messageStore: root.messageStore
                 emojiPopup: root.emojiPopup
                 stickersPopup: root.stickersPopup
@@ -178,103 +182,133 @@ ColumnLayout {
                     if (!obj) {
                         return
                     }
-                    chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+                    if (inputAreaLoader.item) {
+                        inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+                    }
                 }
                 onOpenStickerPackPopup: {
                     root.openStickerPackPopup(stickerPackId);
                 }
-                onEditModeChanged: if (!editModeOn) chatInput.forceInputActiveFocus()
+                onEditModeChanged: if (!editModeOn && inputAreaLoader.item) inputAreaLoader.item.chatInput.forceInputActiveFocus()
             }
         }
 
-        Item {
-            id: inputArea
+        Loader {
+            id: inputAreaLoader
+
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
-            Layout.preferredHeight: chatInput.implicitHeight
-                                    + chatInput.anchors.topMargin
-                                    + chatInput.anchors.bottomMargin
 
-            StatusChatInput {
-                id: chatInput
+            active: root.isActiveChannel
+            asynchronous: true
 
-                anchors.fill: parent
-                anchors.margins: Style.current.smallPadding
+            property string preservedText
+            Binding on preservedText {
+                when: inputAreaLoader.item != null
+                value: inputAreaLoader.item ? inputAreaLoader.item.chatInput.textInput.text : inputAreaLoader.preservedText
+                restoreMode: Binding.RestoreNone
+                delayed: true
+            }
 
-                enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
-                         !(chatType === Constants.chatType.oneToOne && !d.isUserAdded)
+            // FIXME: `StatusChatInput` is way too heavy
+            // see: https://github.com/status-im/status-desktop/pull/10343#issuecomment-1515103756
+            sourceComponent: Item {
+                id: inputArea
+                implicitHeight: chatInput.implicitHeight
+                                + chatInput.anchors.topMargin
+                                + chatInput.anchors.bottomMargin
 
-                store: root.rootStore
-                usersStore: root.usersStore
+                readonly property alias chatInput: chatInput
 
-                messageContextMenu: contextmenu
-                emojiPopup: root.emojiPopup
-                stickersPopup: root.stickersPopup
-                isContactBlocked: root.isBlocked
-                isActiveChannel: root.isActiveChannel
-                anchors.bottom: parent.bottom
-                chatType: chatContentModule ? chatContentModule.chatDetails.type : Constants.chatType.unknown
-                suggestions.suggestionFilter.addSystemSuggestions: chatType == Constants.chatType.communityChat
+                StatusChatInput {
+                    id: chatInput
 
-                Binding on chatInputPlaceholder {
-                    when: root.isBlocked
-                    value: qsTr("This user has been blocked.")
-                }
+                    anchors.fill: parent
+                    anchors.margins: Style.current.smallPadding
 
-                Binding on chatInputPlaceholder {
-                    when: !root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned
-                    value: qsTr("You need to join this community to send messages")
-                }
+                    enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
+                             !(chatType === Constants.chatType.oneToOne && !d.isUserAdded)
 
-                onSendTransactionCommandButtonClicked: {
-                    if(!chatContentModule) {
-                        console.debug("error on sending transaction command - chat content module is not set")
-                        return
+                    store: root.rootStore
+                    usersStore: root.usersStore
+
+                    textInput.text: inputAreaLoader.preservedText
+                    messageContextMenu: contextMenuLoader.item
+                    emojiPopup: root.emojiPopup
+                    stickersPopup: root.stickersPopup
+                    isContactBlocked: root.isBlocked
+                    isActiveChannel: root.isActiveChannel
+                    anchors.bottom: parent.bottom
+                    chatType: chatContentModule ? chatContentModule.chatDetails.type : Constants.chatType.unknown
+                    suggestions.suggestionFilter.addSystemSuggestions: chatType == Constants.chatType.communityChat
+
+                    Binding on chatInputPlaceholder {
+                        when: root.isBlocked
+                        value: qsTr("This user has been blocked.")
                     }
 
-                    if (Utils.isEnsVerified(chatContentModule.getMyChatId())) {
-                        Global.openPopup(root.sendTransactionWithEnsModal)
-                    } else {
-                        Global.openPopup(root.sendTransactionNoEnsModal)
-                    }
-                }
-                onReceiveTransactionCommandButtonClicked: {
-                    Global.openPopup(root.receiveTransactionModal)
-                }
-                onStickerSelected: {
-                    root.rootStore.sendSticker(chatContentModule.getMyChatId(),
-                                                          hashId,
-                                                          chatInput.isReply ? chatInput.replyMessageId : "",
-                                                          packId,
-                                                          url)
-                }
-
-
-                onSendMessage: {
-                    if (!chatContentModule) {
-                        console.debug("error on sending message - chat content module is not set")
-                        return
+                    Binding on chatInputPlaceholder {
+                        when: !root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned
+                        value: qsTr("You need to join this community to send messages")
                     }
 
-                    if(root.rootStore.sendMessage(chatContentModule.getMyChatId(),
-                                                  event,
-                                                  chatInput.getTextWithPublicKeys(),
-                                                  chatInput.isReply? chatInput.replyMessageId : "",
-                                                  chatInput.fileUrlsAndSources
-                                                  ))
-                    {
-                        Global.playSendMessageSound()
+                    onSendTransactionCommandButtonClicked: {
+                        if(!chatContentModule) {
+                            console.debug("error on sending transaction command - chat content module is not set")
+                            return
+                        }
 
-                        chatInput.textInput.clear();
-                        chatInput.textInput.textFormat = TextEdit.PlainText;
-                        chatInput.textInput.textFormat = TextEdit.RichText;
+                        if (Utils.isEnsVerified(chatContentModule.getMyChatId())) {
+                            Global.openPopup(root.sendTransactionWithEnsModal)
+                        } else {
+                            Global.openPopup(root.sendTransactionNoEnsModal)
+                        }
+                    }
+                    onReceiveTransactionCommandButtonClicked: {
+                        Global.openPopup(root.receiveTransactionModal)
+                    }
+                    onStickerSelected: {
+                        root.rootStore.sendSticker(chatContentModule.getMyChatId(),
+                                                              hashId,
+                                                              chatInput.isReply ? chatInput.replyMessageId : "",
+                                                              packId,
+                                                              url)
+                    }
+
+
+                    onSendMessage: {
+                        if (!chatContentModule) {
+                            console.debug("error on sending message - chat content module is not set")
+                            return
+                        }
+
+                        if(root.rootStore.sendMessage(chatContentModule.getMyChatId(),
+                                                      event,
+                                                      chatInput.getTextWithPublicKeys(),
+                                                      chatInput.isReply? chatInput.replyMessageId : "",
+                                                      chatInput.fileUrlsAndSources
+                                                      ))
+                        {
+                            Global.playSendMessageSound()
+
+                            chatInput.textInput.clear();
+                            chatInput.textInput.textFormat = TextEdit.PlainText;
+                            chatInput.textInput.textFormat = TextEdit.RichText;
+                        }
+                    }
+
+                    onUnblockChat: {
+                        chatContentModule.unblockChat()
+                    }
+                    onKeyUpPress: messageStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
+
+                    Component.onCompleted: {
+                        Qt.callLater(() => {
+                            forceInputActiveFocus()
+                            textInput.cursorPosition = textInput.length
+                        })
                     }
                 }
-
-                onUnblockChat: {
-                    chatContentModule.unblockChat()
-                }
-                onKeyUpPress: messageStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
             }
         }
     }

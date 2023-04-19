@@ -138,7 +138,7 @@ Item {
         ChatContentView {
             width: parent.width
             height: parent.height
-            visible: model.active && !root.rootStore.openCreateChat && isActiveChannel
+            visible: !root.rootStore.openCreateChat && isActiveChannel
             chatId: model.itemId
             chatMessagesLoader.active: model.loaderActive
             rootStore: root.rootStore
