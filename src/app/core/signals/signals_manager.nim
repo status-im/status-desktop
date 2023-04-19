@@ -9,6 +9,7 @@ logScope:
 QtObject:
   type SignalsManager* = ref object of QObject
     events: EventEmitter
+    ignoreBackedUpData: bool
 
   #################################################
   # Forward declaration section
@@ -25,6 +26,10 @@ QtObject:
     new(result)
     result.setup()
     result.events = events
+    result.ignoreBackedUpData = true
+
+  proc doHandlingForDataComingFromWakuBackup*(self: SignalsManager) =
+    self.ignoreBackedUpData = false
 
   proc processSignal(self: SignalsManager, statusSignal: string) =
     var jsonSignal: JsonNode
@@ -49,6 +54,13 @@ QtObject:
 
     if(signal.signalType == SignalType.NodeCrashed):
         error "node.crashed", error=statusSignal
+
+    if self.ignoreBackedUpData and 
+      (signal.signalType == SignalType.WakuFetchingBackupProgress or
+      signal.signalType == SignalType.WakuBackedUpProfile or
+      signal.signalType == SignalType.WakuBackedUpSettings or
+      signal.signalType == SignalType.WakuBackedUpKeycards):
+        return
 
     self.events.emit(signal.signalType.event, signal)
 

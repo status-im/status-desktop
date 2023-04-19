@@ -389,7 +389,7 @@ method onNodeLogin*[T](self: Module[T], error: string) =
         self.prepareAndInitFetchingData()
         self.controller.connectToFetchingFromWakuEvents()
         self.delayStartingApp()
-        let err = self.delegate.userLoggedIn()
+        let err = self.delegate.userLoggedIn(recoverAccount = true)
         if err.len > 0:
           self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
           return
@@ -402,7 +402,7 @@ method onNodeLogin*[T](self: Module[T], error: string) =
         self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
         self.moveToStartupState()
     else:
-      let err = self.delegate.userLoggedIn()
+      let err = self.delegate.userLoggedIn(recoverAccount = false)
       if err.len > 0:
         self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
         return
