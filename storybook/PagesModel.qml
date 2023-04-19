@@ -242,6 +242,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "InlineNetworksComboBox"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
