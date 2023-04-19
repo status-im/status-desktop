@@ -238,6 +238,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "NetworkFilter"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
