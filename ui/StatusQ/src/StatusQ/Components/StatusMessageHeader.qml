@@ -89,9 +89,9 @@ Item {
         Loader {
             id: secondaryDisplayNameLoader
             active: !root.amISender && !!root.sender.secondaryName
+            visible: active
             asynchronous: true
             sourceComponent: StatusBaseText {
-                id: secondaryDisplayName
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.baseColor1
                 font.pixelSize: Theme.asideTextFontSize
