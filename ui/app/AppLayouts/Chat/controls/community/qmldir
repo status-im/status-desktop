@@ -11,5 +11,6 @@ InlineNetworksComboBox 1.0 InlineNetworksComboBox.qml
 MembersSelectorPanel 1.0 MembersSelectorPanel.qml
 PermissionItem 1.0 PermissionItem.qml
 PermissionsDropdown 1.0 PermissionsDropdown.qml
+TokenItem 1.0 TokenItem.qml
 singleton PermissionTypes 1.0 PermissionTypes.qml
 singleton TokenCategories 1.0 TokenCategories.qml
