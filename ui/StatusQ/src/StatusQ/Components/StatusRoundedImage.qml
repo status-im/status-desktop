@@ -26,5 +26,6 @@ StatusRoundedComponent {
     StatusImage {
         id: image
         anchors.fill: parent
+        anchors.margins: parent.border.width
     }
 }
