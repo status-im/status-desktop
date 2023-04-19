@@ -2,6 +2,10 @@ import QtQuick 2.14
 
 ListModel {
     ListElement {
+         title: "Playground"
+         section: "Views"
+    }
+    ListElement {
         title: "ProfileDialogView"
         section: "Views"
     }
