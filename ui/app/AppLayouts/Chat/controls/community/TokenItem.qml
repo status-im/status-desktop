@@ -1,23 +1,21 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.12
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 Control {
     id: root
 
-    property string key
     property string name
     property string shortName
     property url iconSource
-    property var subItems
     property bool selected: false
+    property bool showSubItemsIcon: false
 
-    signal itemClicked(string key, string name, string shortName,  url iconSource, var subItems)
+    signal itemClicked
 
     leftPadding: 6 // by design
     implicitHeight: 45 // by design
@@ -30,11 +28,7 @@ Control {
             anchors.fill: parent
             cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
             hoverEnabled: true
-            onClicked: root.itemClicked(root.key,
-                                        root.name,
-                                        root.shortName,
-                                        root.iconSource,
-                                        root.subItems)
+            onClicked: root.itemClicked()
         }
     }
     contentItem: RowLayout {
@@ -58,13 +52,14 @@ Control {
                 text: root.name
                 color: Theme.palette.directColor1
                 font.pixelSize: 13
+                font.weight: Font.Medium
                 elide: Text.ElideRight
             }
 
             StatusBaseText {
                 visible: !!root.shortName
                 Layout.fillWidth: true
-                text: !!root.shortName ? root.shortName : ""
+                text: root.shortName
                 color: Theme.palette.baseColor1
                 font.pixelSize: 12
                 elide: Text.ElideRight
@@ -72,10 +67,8 @@ Control {
         }
 
         StatusIcon {
-            readonly property bool hasSubItems: !!root.subItems && root.subItems.count > 0
-
-            icon: root.selected && !hasSubItems ? "checkmark" : "tiny/chevron-right"
-            visible: root.selected || hasSubItems
+            icon: root.selected && !root.showSubItemsIcon ? "checkmark" : "tiny/chevron-right"
+            visible: root.selected || root.showSubItemsIcon
             Layout.alignment: Qt.AlignVCenter
             Layout.rightMargin: 16
             color: Theme.palette.baseColor1

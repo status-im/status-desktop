@@ -89,15 +89,15 @@ StatusListView {
 
     delegate: TokenItem {
         width: ListView.view.width
-        key: model.key
+
         name: model.name
         shortName: model.shortName ?? ""
         iconSource: model.iconSource ?? ""
-        subItems: model.subItems
+        showSubItemsIcon: !!model.subItems && model.subItems.count > 0
         selected: root.checkedKeys.includes(model.key)
 
         onItemClicked: root.itemClicked(
-                           key, name, shortName, iconSource, subItems)
+                           model.key, name, shortName, iconSource, model.subItems)
     }
 
     section.property: root.searchMode || !root.areSectionsVisible
