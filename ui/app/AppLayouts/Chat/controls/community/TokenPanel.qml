@@ -8,19 +8,26 @@ import StatusQ.Components 0.1
 
 import shared.controls 1.0
 
+import utils 1.0
+
+
 ColumnLayout {
     id: root
 
     property int mode: HoldingTypes.Mode.Add
     property alias tokenName: item.name
     property alias tokenShortName: item.shortName
+    property alias tokenAmount: item.amount
     property alias tokenImage: item.iconSource
     property alias amountText: amountInput.text
     property alias amount: amountInput.amount
     property alias tokenCategoryText: tokenLabel.text
+    property alias networkLabelText: d.networkLabelText
     property alias addOrUpdateButtonEnabled: addOrUpdateButton.enabled
     property alias allowDecimals: amountInput.allowDecimals
-    readonly property bool amountValid: amountInput.valid && amountInput.text.length > 0
+    readonly property bool amountValid: amountInput.valid && !!amountInput.text
+
+    property var networksModel
 
     signal addClicked
     signal updateClicked
@@ -36,25 +43,62 @@ ColumnLayout {
         // values from design
         readonly property int defaultHeight: 44
         readonly property int defaultSpacing: 8
+
+        property string networkLabelText: qsTr("Network for airdrop")
+    }
+
+    component CustomText: StatusBaseText {
+        color: Theme.palette.baseColor1
+        font.pixelSize: 12
+        elide: Text.ElideRight
+
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignVCenter
+        Layout.leftMargin: d.defaultSpacing
     }
 
     spacing: d.defaultSpacing
 
-    StatusBaseText {
+    CustomText {
         id: tokenLabel
+
         Layout.topMargin: 2 * d.defaultSpacing
-        Layout.fillWidth: true
-        Layout.alignment: Qt.AlignVCenter
-        Layout.leftMargin: d.defaultSpacing
-        color: Theme.palette.baseColor1
-        font.pixelSize: 12
-        elide: Text.ElideRight
     }
 
     TokenItem {
         id: item
+
         Layout.fillWidth: true
         enabled: false
+    }
+
+    Loader {
+        active: !!root.networksModel
+        visible: active
+
+        Layout.fillWidth: true
+        Layout.topMargin: 14
+        Layout.bottomMargin: d.defaultSpacing
+
+        sourceComponent: ColumnLayout {
+             spacing: 10
+
+            CustomText {
+                id: networkLabel
+
+                text: d.networkLabelText
+
+                color: Theme.palette.baseColor1
+                font.pixelSize: 12
+                elide: Text.ElideRight
+            }
+
+            InlineNetworksComboBox {
+                Layout.fillWidth: true
+
+                model: root.networksModel
+            }
+        }
     }
 
     AmountInput {
