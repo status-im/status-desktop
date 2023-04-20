@@ -15,9 +15,7 @@ QtObject:
       address: string
       path: string
       color: string
-      publicKey: string
       walletType: string
-      isChat: bool
       currencyBalance: CurrencyAmount
       assets: token_model.Model
       emoji: string
@@ -74,15 +72,6 @@ QtObject:
     read = getColor
     notify = colorChanged
 
-  proc getPublicKey(self: View): QVariant {.slot.} =
-    return newQVariant(self.publicKey)
-
-  proc publicKeyChanged(self: View) {.signal.}
-
-  QtProperty[QVariant] publicKey:
-    read = getPublicKey
-    notify = publicKeyChanged
-
   proc getWalletType(self: View): QVariant {.slot.} =
     return newQVariant(self.walletType)
 
@@ -91,15 +80,6 @@ QtObject:
   QtProperty[QVariant] walletType:
     read = getWalletType
     notify = walletTypeChanged
-
-  proc getIsChat(self: View): QVariant {.slot.} =
-    return newQVariant(self.isChat)
-
-  proc isChatChanged(self: View) {.signal.}
-
-  QtProperty[QVariant] isChat:
-    read = getIsChat
-    notify = isChatChanged
 
   proc getCurrencyBalance(self: View): QVariant {.slot.} =
     return newQVariant(self.currencyBalance)
@@ -141,9 +121,6 @@ QtObject:
   proc hasGas*(self: View, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
     return self.assets.hasGas(chainId, nativeGasSymbol, requiredGas)
 
-#  proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): QVariant {.slot.} =
-#    return newQVariant(self.assets.getTokenBalanceOnChain(chainId, tokenSymbol))
-
 proc setData*(self: View, item: account_item.Item) =
     self.name = item.getName()
     self.nameChanged()
@@ -153,12 +130,8 @@ proc setData*(self: View, item: account_item.Item) =
     self.pathChanged()
     self.color = item.getColor()
     self.colorChanged()
-    self.publicKey = item.getPublicKey()
-    self.publicKeyChanged()
     self.walletType = item.getWalletType()
     self.walletTypeChanged()
-    self.isChat = item.getIsChat()
-    self.isChatChanged()
     self.currencyBalance = item.getCurrencyBalance()
     self.currencyBalanceChanged()
     self.emoji = item.getEmoji()

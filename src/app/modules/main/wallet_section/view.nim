@@ -11,8 +11,8 @@ QtObject:
       totalCurrencyBalance: CurrencyAmount
       signingPhrase: string
       isMnemonicBackedUp: bool
-      tmpAmount: float  # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
-      tmpSymbol: string # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
+      tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
+      tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
 
   proc setup(self: View) =
     self.QObject.setup

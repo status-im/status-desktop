@@ -20,7 +20,7 @@ QtObject {
     property var overview: walletSectionOverview
     property var assets: walletSectionCurrent
     property var currentAccount: walletSectionCurrent
-    property var accounts: walletSectionAccounts.model
+    property var accounts: walletSectionAccounts.accounts
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
@@ -126,10 +126,7 @@ QtObject {
     }
 
     function switchAccount(newIndex) {
-        if(Constants.isCppApp)
-            walletSectionAccounts.switchAccount(newIndex)
-        else
-            walletSection.switchAccount(newIndex)
+        walletSection.switchAccount(newIndex)
     }
 
     function switchAccountByAddress(address) {

@@ -4,10 +4,8 @@ import ./io_interface
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
 import ../../../shared_models/currency_amount
-import ../accounts/compact_model
-import ../accounts/compact_item
 
-import ../accounts/item as account_item
+import ./item as account_item
 
 const GENERATED = "generated"
 const GENERATED_FROM_IMPORTED = "generated from imported accounts"
@@ -20,20 +18,12 @@ QtObject:
       name: string
       keyUid: string
       address: string
-      mixedcaseAddress: string
       path: string
       color: string
-      publicKey: string
       walletType: string
-      isChat: bool
       currencyBalance: CurrencyAmount
       assets: token_model.Model
       emoji: string
-      derivedfrom: string
-      relatedAccounts: compact_model.Model
-      ens: string
-      tmpChainID: int  # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
-      tmpSymbol: string # shouldn't be used anywhere except in prepareCurrencyAmount/getPreparedCurrencyAmount procs
       assetsLoading: bool
       hasBalanceCache: bool
       hasMarketValuesCache: bool
@@ -77,13 +67,6 @@ QtObject:
     read = getAddress
     notify = addressChanged
 
-  proc getMixedcaseAddress(self: View): string {.slot.} =
-    return self.mixedcaseAddress
-  proc mixedcaseAddressChanged(self: View) {.signal.}
-  QtProperty[string] mixedcaseAddress:
-    read = getMixedcaseAddress
-    notify = mixedcaseAddressChanged
-
   proc getPath(self: View): QVariant {.slot.} =
     return newQVariant(self.path)
 
@@ -102,15 +85,6 @@ QtObject:
     read = getColor
     notify = colorChanged
 
-  proc getPublicKey(self: View): QVariant {.slot.} =
-    return newQVariant(self.publicKey)
-
-  proc publicKeyChanged(self: View) {.signal.}
-
-  QtProperty[QVariant] publicKey:
-    read = getPublicKey
-    notify = publicKeyChanged
-
   proc getWalletType(self: View): QVariant {.slot.} =
     return newQVariant(self.walletType)
 
@@ -119,15 +93,6 @@ QtObject:
   QtProperty[QVariant] walletType:
     read = getWalletType
     notify = walletTypeChanged
-
-  proc getIsChat(self: View): QVariant {.slot.} =
-    return newQVariant(self.isChat)
-
-  proc isChatChanged(self: View) {.signal.}
-
-  QtProperty[QVariant] isChat:
-    read = getIsChat
-    notify = isChatChanged
 
   proc currencyBalanceChanged(self: View) {.signal.}
   proc getCurrencyBalance*(self: View): QVariant {.slot.} =
@@ -157,33 +122,6 @@ QtObject:
   QtProperty[QVariant] emoji:
     read = getEmoji
     notify = emojiChanged
-
-  proc getEns(self: View): QVariant {.slot.} =
-    return newQVariant(self.ens)
-
-  proc ensChanged(self: View) {.signal.}
-
-  QtProperty[QVariant] ens:
-    read = getEns
-    notify = ensChanged
-
-  proc getDerivedfrom(self: View): QVariant {.slot.} =
-    return newQVariant(self.derivedfrom)
-
-  proc derivedfromChanged(self: View) {.signal.}
-
-  QtProperty[QVariant] derivedfrom:
-    read = getDerivedfrom
-    notify = derivedfromChanged
-
-  proc getRelatedAccounts(self: View): QVariant {.slot.} =
-    return newQVariant(self.relatedAccounts)
-
-  proc relatedAccountsChanged(self: View) {.signal.}
-
-  QtProperty[QVariant] relatedAccounts:
-    read = getRelatedAccounts
-    notify = relatedAccountsChanged
 
   proc getAssetsLoading(self: View): QVariant {.slot.} =
     return newQVariant(self.assetsLoading)
@@ -227,67 +165,29 @@ QtObject:
     if(self.address != item.getAddress()):
       self.address = item.getAddress()
       self.addressChanged()
-    if(self.mixedcaseAddress != item.getMixedCaseAddress()):
-      self.mixedcaseAddress = item.getMixedCaseAddress()
-      self.mixedcaseAddressChanged()
     if(self.path != item.getPath()):
       self.path = item.getPath()
       self.pathChanged()
     if(self.color != item.getColor()):
       self.color = item.getColor()
       self.colorChanged()
-    if(self.publicKey != item.getPublicKey()):
-      self.publicKey = item.getPublicKey()
-      self.publicKeyChanged()
-    # Check if the account is generated from default wallet account else change wallettype
-    if item.getWalletType() == GENERATED and item.getDerivedfrom() != self.defaultAccount.getDerivedfrom():
-        self.walletType = GENERATED_FROM_IMPORTED
-        self.walletTypeChanged()
-    else:
-      if(self.walletType != item.getWalletType()):
-        self.walletType = item.getWalletType()
-        self.walletTypeChanged()
-    if(self.isChat != item.getIsChat()):
-      self.isChat = item.getIsChat()
-      self.isChatChanged()
+    if(self.walletType != item.getWalletType()):
+      self.walletType = item.getWalletType()
+      self.walletTypeChanged()
     if(self.emoji != item.getEmoji()):
       self.emoji = item.getEmoji()
       self.emojiChanged()
-    if(self.derivedfrom != item.getDerivedFrom()):
-      self.derivedfrom = item.getDerivedFrom()
-      self.derivedfromChanged()
-    if(self.ens != item.getEns()):
-      self.ens = item.getEns()
-      self.ensChanged()
     self.setAssetsLoading(item.getAssetsLoading())  
     self.hasBalanceCache = item.getHasBalanceCache()
     self.hasBalanceCacheChanged()
     self.hasMarketValuesCache = item.getHasMarketValuesCache()
     self.hasMarketValuesCacheChanged()
-    # Set related accounts
-    self.relatedAccounts = item.getRelatedAccounts()
-    self.relatedAccountsChanged()
 
   proc findTokenSymbolByAddress*(self: View, address: string): string {.slot.} =
     return self.delegate.findTokenSymbolByAddress(address)
 
   proc hasGas*(self: View, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
     return self.assets.hasGas(chainId, nativeGasSymbol, requiredGas)
-
-  # Returning a QVariant from a slot with parameters other than "self" won't compile
-  #proc getTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string): QVariant {.slot.} =
-  #  return newQVariant(self.assets.getTokenBalanceOnChain(chainId, tokenSymbol))
-
-  # As a workaround, we do it in two steps: First call prepareTokenBalanceOnChain, then getPreparedTokenBalanceOnChain
-  proc prepareTokenBalanceOnChain*(self: View, chainId: int, tokenSymbol: string) {.slot.} =
-    self.tmpChainId = chainId
-    self.tmpSymbol = tokenSymbol
-
-  proc getPreparedTokenBalanceOnChain*(self: View): QVariant {.slot.} =
-    let currencyAmount = self.assets.getTokenBalanceOnChain(self.tmpChainId, self.tmpSymbol)
-    self.tmpChainId = 0
-    self.tmpSymbol = "ERROR"
-    return newQVariant(currencyAmount)
 
   proc setCacheValues*(self: View, hasBalanceCache: bool, hasMarketValuesCache: bool) =
     self.hasBalanceCache = hasBalanceCache

@@ -10,8 +10,6 @@ import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_modu
 import ../../../../core/[main]
 import ../../../../core/tasks/[qt, threadpool]
 
-const UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER* = "WalletSection-TransactionModule"
-
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
@@ -45,6 +43,9 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
+    self.delegate.transactionWasSent(TransactionSentArgs(e).result)
+
   self.events.on(SIGNAL_HISTORY_FETCHING) do (e:Args):
     let args = HistoryArgs(e)
     self.delegate.setHistoryFetchState(args.addresses, isFetching = true)
@@ -68,18 +69,6 @@ proc init*(self: Controller) =
     let args = TransactionsLoadedArgs(e)
     self.delegate.setHistoryFetchState(@[args.address], isFetching = false)
     self.delegate.setTrxHistoryResult(args.transactions, args.collectibles, args.address, args.wasFetchMore)
-
-  self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
-    self.delegate.transactionWasSent(TransactionSentArgs(e).result)
-
-  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
-    let args = SharedKeycarModuleArgs(e)
-    if args.uniqueIdentifier != UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER:
-      return
-    self.delegate.onUserAuthenticated(args.password)
-
-  self.events.on(SIGNAL_SUGGESTED_ROUTES_READY) do(e:Args):
-    self.delegate.suggestedRoutesReady(SuggestedRoutesArgs(e).suggestedRoutes)
 
   self.events.on(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS) do(e:Args):
     let args = TransactionsLoadedArgs(e)
@@ -108,29 +97,11 @@ proc getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
 proc getWalletAccount*(self: Controller, accountIndex: int): WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
-  self.walletAccountService.getAccountByAddress(address)
-
-proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
-  return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
-
 proc loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)
 
-proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string, selectedRoutes: string, password: string) =
-  self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
-
-proc suggestedFees*(self: Controller, chainId: int): string = 
-  let suggestedFees = self.transactionService.suggestedFees(chainId)
-  return suggestedFees.toJson()
-
 proc getAllTransactions*(self: Controller, address: string): seq[TransactionDto] = 
   return self.transactionService.getAllTransactions(address)
-
-proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
-  let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
-  return suggestedRoutes.toJson()
 
 proc getChainIdForChat*(self: Controller): int =
   return self.networkService.getNetworkForChat().chainId
@@ -138,19 +109,11 @@ proc getChainIdForChat*(self: Controller): int =
 proc getChainIdForBrowser*(self: Controller): int =
   return self.networkService.getNetworkForBrowser().chainId
 
-proc getEstimatedTime*(self: Controller, chainId: int, maxFeePerGas: string): EstimatedTime = 
-  return self.transactionService.getEstimatedTime(chainId, maxFeePerGas)
-
 proc getLastTxBlockNumber*(self: Controller): string =
   return self.transactionService.getLastTxBlockNumber(self.networkService.getNetworkForBrowser().chainId)
 
 proc getEnabledChainIds*(self: Controller): seq[int] = 
   return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
-
-proc authenticateUser*(self: Controller, keyUid = "") =
-  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_WALLET_SECTION_TRANSACTION_MODULE_IDENTIFIER,
-    keyUid: keyUid)
-  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)

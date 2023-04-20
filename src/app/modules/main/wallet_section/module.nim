@@ -13,6 +13,7 @@ import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
 import ./add_account/module as add_account_module
 import ./overview/module as overview_module
+import ./send/module as send_module
 
 import ../../../global/global_singleton
 import ../../../core/eventemitter
@@ -47,6 +48,7 @@ type
     allTokensModule: all_tokens_module.AccessInterface
     collectiblesModule: collectibles_module.AccessInterface
     assetsModule: assets_module.AccessInterface
+    sendModule: send_module.AccessInterface
     transactionsModule: transactions_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
@@ -87,6 +89,7 @@ proc newModule*(
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService, collectibleService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService, currencyService)
+  result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService, transactionService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
   result.overviewModule = overview_module.newModule(result, events, walletAccountService, networkService, currencyService)
@@ -99,6 +102,7 @@ method delete*(self: Module) =
   self.transactionsModule.delete
   self.savedAddressesModule.delete
   self.buySellCryptoModule.delete
+  self.sendModule.delete
   self.controller.delete
   self.view.delete
   if not self.addAccountModule.isNil:
@@ -151,6 +155,7 @@ method load*(self: Module) =
   self.savedAddressesModule.load()
   self.buySellCryptoModule.load()
   self.overviewModule.load()
+  self.sendModule.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -178,6 +183,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.overviewModule.isLoaded()):
+    return
+
+  if(not self.sendModule.isLoaded()):
     return
 
   self.switchAccount(0)
@@ -215,6 +223,9 @@ method buySellCryptoModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method overviewModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method sendModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method destroyAddAccountPopup*(self: Module, switchToAccWithAddress: string = "") =

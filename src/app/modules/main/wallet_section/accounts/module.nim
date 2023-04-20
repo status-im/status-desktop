@@ -58,33 +58,17 @@ method delete*(self: Module) =
   self.controller.delete
 
 method refreshWalletAccounts*(self: Module) =
-  let keyPairMigrated = proc(migratedKeyPairs: seq[KeyPairDto], keyUid: string): bool =
-    for kp in migratedKeyPairs:
-      if kp.keyUid == keyUid:
-        return true
-    return false
-
   let walletAccounts = self.controller.getWalletAccounts()
-  let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
   let currency = self.controller.getCurrentCurrency()
-
-  let chainIds = self.controller.getChainIds()
   let enabledChainIds = self.controller.getEnabledChainIds()
-  
   let currencyFormat = self.controller.getCurrencyFormat(currency)
 
   let items = walletAccounts.map(w => (block:
-    let tokenFormats = collect(initTable()):
-      for t in w.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
-
     walletAccountToItem(
-    w,
-    chainIds,
-    enabledChainIds,
-    currency,
-    keyPairMigrated(migratedKeyPairs, w.keyUid),
-    currencyFormat,
-    tokenFormats
+      w,
+      enabledChainIds,
+      currency,
+      currencyFormat,
     )
   ))
 
@@ -137,10 +121,6 @@ method viewDidLoad*(self: Module) =
   self.refreshWalletAccounts()
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
-
-proc tryKeycardSync(self: Module, keyUid, pin: string) = 
-  let dataForKeycardToSync = SharedKeycarModuleArgs(pin: pin, keyUid: keyUid)
-  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC, dataForKeycardToSync)
 
 proc authenticateActivityForKeyUid(self: Module, keyUid: string, reason: AuthenticationReason) =
   self.authentiactionReason = reason

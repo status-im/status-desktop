@@ -1,5 +1,4 @@
 import strformat
-
 import ../../../shared_models/currency_amount
 
 type
@@ -8,38 +7,38 @@ type
     address: string
     path: string
     color: string
-    publicKey: string
     walletType: string
-    isWallet: bool
-    isChat: bool
     currencyBalance: CurrencyAmount
     emoji: string
-    derivedfrom: string
+    keyUid: string
+    assetsLoading: bool
+    hasBalanceCache: bool
+    hasMarketValuesCache: bool
 
 proc initItem*(
-  name: string,
-  address: string,
-  path: string,
-  color: string,
-  publicKey: string,
-  walletType: string,
-  isWallet: bool,
-  isChat: bool,
-  currencyBalance: CurrencyAmount,
-  emoji: string,
-  derivedfrom: string
+  name: string = "",
+  address: string = "",
+  path: string = "",
+  color: string = "",
+  walletType: string = "",
+  currencyBalance: CurrencyAmount = nil,
+  emoji: string = "",
+  keyUid: string = "",
+  assetsLoading: bool  = true,
+  hasBalanceCache: bool = false,
+  hasMarketValuesCache: bool = false
 ): Item =
   result.name = name
   result.address = address
   result.path = path
   result.color = color
-  result.publicKey = publicKey
   result.walletType = walletType
-  result.isWallet = isWallet
-  result.isChat = isChat
   result.currencyBalance = currencyBalance
   result.emoji = emoji
-  result.derivedfrom = derivedfrom
+  result.keyUid = keyUid
+  result.assetsLoading = assetsLoading
+  result.hasBalanceCache = hasBalanceCache
+  result.hasMarketValuesCache = hasMarketValuesCache
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
@@ -47,13 +46,13 @@ proc `$`*(self: Item): string =
     address: {self.address},
     path: {self.path},
     color: {self.color},
-    publicKey: {self.publicKey},
     walletType: {self.walletType},
-    isWallet: {self.isWallet},
-    isChat: {self.isChat},
     currencyBalance: {self.currencyBalance},
     emoji: {self.emoji},
-    derivedfrom: {self.derivedfrom}
+    keyUid: {self.keyUid},
+    assetsLoading: {self.assetsLoading},
+    hasBalanceCache: {self.hasBalanceCache},
+    hasMarketValuesCache: {self.hasMarketValuesCache},
     ]"""
 
 proc getName*(self: Item): string =
@@ -71,21 +70,20 @@ proc getEmoji*(self: Item): string =
 proc getColor*(self: Item): string =
   return self.color
 
-proc getPublicKey*(self: Item): string =
-  return self.publicKey
-
 proc getWalletType*(self: Item): string =
   return self.walletType
-
-proc getIsWallet*(self: Item): bool =
-  return self.isWallet
-
-proc getIsChat*(self: Item): bool =
-  return self.isChat
 
 proc getCurrencyBalance*(self: Item): CurrencyAmount =
   return self.currencyBalance
 
-proc getDerivedFrom*(self: Item): string =
-  return self.derivedfrom
+proc getKeyUid*(self: Item): string =
+  return self.keyUid
 
+proc getAssetsLoading*(self: Item): bool =
+  return self.assetsLoading
+
+proc getHasBalanceCache*(self: Item): bool =
+  return self.hasBalanceCache
+
+proc getHasMarketValuesCache*(self: Item): bool =
+  return self.hasMarketValuesCache

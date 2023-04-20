@@ -127,7 +127,7 @@ Item {
                 visible: (stack.currentIndex === 2)
 
                 account: RootStore.currentAccount
-                address:  RootStore.currentAccount.mixedcaseAddress
+                address:  RootStore.currentAccount.address
                 networkConnectionStore: root.networkConnectionStore
             }
             TransactionDetailView {

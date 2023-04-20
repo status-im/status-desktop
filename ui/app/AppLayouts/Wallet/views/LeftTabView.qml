@@ -391,7 +391,6 @@ Rectangle {
             }
 
             model: RootStore.accounts
-            // model: RootStore.exampleWalletModel
         }
     }
 }

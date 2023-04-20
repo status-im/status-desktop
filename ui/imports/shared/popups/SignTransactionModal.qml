@@ -322,7 +322,7 @@ StatusModal {
 //    }
 
 //    Connections {
-//        target: root.store.walletSectionTransactionsInst
+//        target: root.store.walletSectionSendInst
 //        onTransactionSent: {
 //            try {
 //                let response = JSON.parse(txResult)

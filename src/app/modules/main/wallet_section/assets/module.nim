@@ -14,9 +14,8 @@ import ../../../shared_models/currency_amount
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
 import ../../../shared_models/token_utils
-import ../accounts/compact_item as account_compact_item
-import ../accounts/item as account_item
-import ../accounts/utils
+import ./item as account_item
+import ./utils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -149,13 +148,10 @@ method switchAccount*(self: Module, accountIndex: int) =
     
     let defaultAccountItem = walletAccountToItem(
       defaultAccount,
-      chainIds,
       enabledChainIds,
       currency,
-      keyPairMigrated(migratedKeyPairs, defaultAccount.keyUid),
       currencyFormat,
-      defaultAccountTokenFormats
-      )
+    )
     
     self.view.setDefaultWalletAccount(defaultAccountItem)
 
@@ -166,13 +162,10 @@ method switchAccount*(self: Module, accountIndex: int) =
 
     let accountItem = walletAccountToItem(
       walletAccount,
-      chainIds,
       enabledChainIds,
       currency,
-      keyPairMigrated(migratedKeyPairs, walletAccount.keyUid),
       currencyFormat,
-      accountTokenFormats
-      )
+    )
 
     self.view.setData(accountItem)
 

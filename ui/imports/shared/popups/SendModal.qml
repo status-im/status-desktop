@@ -455,7 +455,7 @@ StatusDialog {
     }
 
     Connections {
-        target: popup.store.walletSectionTransactionsInst
+        target: popup.store.walletSectionSendInst
         function onSuggestedRoutesReady(suggestedRoutes: string) {
             let response = JSON.parse(suggestedRoutes)
             if(!!response.error) {
@@ -475,7 +475,7 @@ StatusDialog {
     }
 
     Connections {
-        target: popup.store.walletSectionTransactionsInst
+        target: popup.store.walletSectionSendInst
         function onTransactionSent(txResult: string) {
             d.isPendingTx = false
             try {

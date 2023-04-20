@@ -1,6 +1,6 @@
 import NimQml, Tables, strutils, strformat
 
-import ./item
+import ./account_item
 import ../../../shared_models/currency_amount
 import ../../../shared_models/token_model
 
@@ -8,67 +8,63 @@ type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
     Address,
-    Path,
     Color,
     WalletType,
-    CurrencyBalance,
     Emoji,
-    KeyUid,
-    AssetsLoading,
+    Assets,
+    CurrencyBalance,
 
 QtObject:
   type
-    Model* = ref object of QAbstractListModel
-      items: seq[Item]
+    AccountsModel* = ref object of QAbstractListModel
+      items: seq[AccountItem]
 
-  proc delete(self: Model) =
+  proc delete(self: AccountsModel) =
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc setup(self: Model) =
+  proc setup(self: AccountsModel) =
     self.QAbstractListModel.setup
 
-  proc newModel*(): Model =
+  proc newAccountsModel*(): AccountsModel =
     new(result, delete)
     result.setup
 
-  proc `$`*(self: Model): string =
+  proc `$`*(self: AccountsModel): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""[{i}]:({$self.items[i]})"""
 
-  proc countChanged(self: Model) {.signal.}
+  proc countChanged(self: AccountsModel) {.signal.}
 
-  proc getCount*(self: Model): int {.slot.} =
+  proc getCount*(self: AccountsModel): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: Model, index: QModelIndex = nil): int =
+  method rowCount(self: AccountsModel, index: QModelIndex = nil): int =
     return self.items.len
 
-  method roleNames(self: Model): Table[int, string] =
+  method roleNames(self: AccountsModel): Table[int, string] =
     {
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
-      ModelRole.Path.int:"path",
       ModelRole.Color.int:"color",
       ModelRole.WalletType.int:"walletType",
-      ModelRole.CurrencyBalance.int:"currencyBalance",
       ModelRole.Emoji.int: "emoji",
-      ModelRole.KeyUid.int: "keyUid",
-      ModelRole.AssetsLoading.int: "assetsLoading",
+      ModelRole.Assets.int: "assets",
+      ModelRole.CurrencyBalance.int: "currencyBalance",
     }.toTable
 
 
-  proc setItems*(self: Model, items: seq[Item]) =
+  proc setItems*(self: AccountsModel, items: seq[AccountItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
 
-  method data(self: Model, index: QModelIndex, role: int): QVariant =
+  method data(self: AccountsModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
@@ -83,17 +79,14 @@ QtObject:
       result = newQVariant(item.getName())
     of ModelRole.Address:
       result = newQVariant(item.getAddress())
-    of ModelRole.Path:
-      result = newQVariant(item.getPath())
     of ModelRole.Color:
       result = newQVariant(item.getColor())
     of ModelRole.WalletType:
       result = newQVariant(item.getWalletType())
-    of ModelRole.CurrencyBalance:
-      result = newQVariant(item.getCurrencyBalance())
     of ModelRole.Emoji:
       result = newQVariant(item.getEmoji())
-    of ModelRole.KeyUid:
-      result = newQVariant(item.getKeyUid())
-    of ModelRole.AssetsLoading:
-      result = newQVariant(item.getAssetsLoading())
+    of ModelRole.Assets:
+      result = newQVariant(item.getAssets())
+    of ModelRole.CurrencyBalance:
+      result = newQVariant(item.getCurrencyBalance())
+    

@@ -55,12 +55,6 @@ proc authenticateKeyPair*(self: Controller, keyUid = "") =
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
-  return self.walletAccountService.getAllMigratedKeyPairs()
-
-proc getChainIds*(self: Controller): seq[int] = 
-  return self.networkService.getNetworks().map(n => n.chainId)
-
 proc getEnabledChainIds*(self: Controller): seq[int] = 
   return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 

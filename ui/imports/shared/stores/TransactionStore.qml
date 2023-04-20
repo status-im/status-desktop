@@ -15,10 +15,11 @@ QtObject {
 
     property var mainModuleInst: mainModule
     property var walletSectionTransactionsInst: walletSectionTransactions
+    property var walletSectionSendInst: walletSectionSend
 
     property string currentCurrency: walletSection.currentCurrency
     property var allNetworks: networksModule.all
-    property var accounts: walletSectionAccounts.model
+    property var accounts: walletSectionSendInst.accounts
     property var currentAccount: walletSectionCurrent
     property string signingPhrase: walletSection.signingPhrase
     property var savedAddressesModel: SortFilterProxyModel {
@@ -70,15 +71,15 @@ QtObject {
     }
 
     function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes) {
-        walletSectionTransactions.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
+        walletSectionSendInst.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
     }
 
     function suggestedFees(chainId) {
-        return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
+        return JSON.parse(walletSectionSendInst.suggestedFees(chainId))
     }
 
     function getEstimatedTime(chainId, maxFeePerGas) {
-       return walletSectionTransactions.getEstimatedTime(chainId, maxFeePerGas)
+       return walletSectionSendInst.getEstimatedTime(chainId, maxFeePerGas)
     }
 
     function getChainIdForChat() {
@@ -90,7 +91,7 @@ QtObject {
     }
 
     function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts) {
-        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, JSON.stringify(lockedInAmounts))
+        walletSectionSendInst.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, JSON.stringify(lockedInAmounts))
     }
 
     function hex2Eth(value) {
@@ -265,8 +266,8 @@ QtObject {
             return undefined
         }
 
-        walletSectionAccounts.prepareTokenBalanceOnChain(selectedAccount.address, chainId, tokenSymbol)
-        return walletSectionAccounts.getPreparedTokenBalanceOnChain()
+        walletSectionSendInst.prepareTokenBalanceOnChain(selectedAccount.address, chainId, tokenSymbol)
+        return walletSectionSendInst.getPreparedTokenBalanceOnChain()
     }
 
     function findTokenSymbolByAddress(address) {

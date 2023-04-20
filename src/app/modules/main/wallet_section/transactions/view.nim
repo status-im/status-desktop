@@ -132,62 +132,14 @@ QtObject:
     read = getIsNonArchivalNode
     notify = isNonArchivalNodeChanged
 
-  proc transactionSent*(self: View, txResult: string) {.signal.}
-
-  proc transactionWasSent*(self: View,txResult: string) {.slot} =
-    self.transactionSent(txResult)
-
-  proc authenticateAndTransfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string, selectedRoutes: string) {.slot.} =
-      self.delegate.authenticateAndTransfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes)
-
-  proc suggestedFees*(self: View, chainId: int): string {.slot.} =
-    return self.delegate.suggestedFees(chainId)
-
-  proc suggestedRoutes*(self: View, account: string, amount: string, token: string, disabledFromChainIDs: string, disabledToChainIDs: string, preferredChainIDs: string, sendType: int, lockedInAmounts: string): string {.slot.} =
-    var parsedAmount = stint.u256("0")
-    var seqPreferredChainIDs = seq[uint64] : @[]
-    var seqDisabledFromChainIDs = seq[uint64] : @[]
-    var seqDisabledToChainIDs = seq[uint64] : @[]
-
-    try:
-      for chainID in disabledFromChainIDs.split(','):
-        seqDisabledFromChainIDs.add(parseUInt(chainID))
-    except:
-      discard
-
-    try:
-      for chainID in disabledToChainIDs.split(','):
-        seqDisabledToChainIDs.add(parseUInt(chainID))
-    except:
-      discard
-
-    try:
-      for chainID in preferredChainIDs.split(','):
-        seqPreferredChainIDs.add(parseUInt(chainID))
-    except:
-      discard
-
-    try:
-      parsedAmount = fromHex(Stuint[256], amount)
-    except Exception as e:
-      discard
-
-    return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledFromChainIDs, seqDisabledToChainIDs, seqPreferredChainIDs, sendType, lockedInAmounts)
-
   proc getChainIdForChat*(self: View): int {.slot.} =
     return self.delegate.getChainIdForChat()
 
   proc getChainIdForBrowser*(self: View): int {.slot.} =
     return self.delegate.getChainIdForBrowser()
 
-  proc getEstimatedTime*(self: View, chainId: int, maxFeePerGas: string): int {.slot.} =
-    return self.delegate.getEstimatedTime(chainId, maxFeePerGas)
-
   proc getLastTxBlockNumber*(self: View): string {.slot.} =
     return self.delegate.getLastTxBlockNumber()
-
-  proc suggestedRoutesReady*(self: View, suggestedRoutes: string) {.signal.}
 
   proc setPendingTx*(self: View, pendingTx: seq[Item]) =
     for tx in pendingTx:
