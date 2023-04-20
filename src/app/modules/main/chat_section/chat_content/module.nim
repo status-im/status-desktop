@@ -150,11 +150,8 @@ method currentUserWalletContainsAddress(self: Module, address: string): bool =
       return true
   return false
 
-proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: string, item: var pinned_msg_item.Item):
-    bool =
-  let (message, err) = self.controller.getMessageById(messageId)
-  if(err.len > 0):
-    return false
+proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy: string,
+    item: var pinned_msg_item.Item):bool =
 
   let contactDetails = self.controller.getContactDetails(message.`from`)
   let chatDetails = self.controller.getChatDetails()
@@ -234,7 +231,7 @@ method newPinnedMessagesLoaded*(self: Module, pinnedMessages: seq[PinnedMessageD
   var viewItems: seq[pinned_msg_item.Item]
   for p in pinnedMessages:
     var item: pinned_msg_item.Item
-    if(not self.buildPinnedMessageItem(p.message.id, p.pinnedBy, item)):
+    if(not self.buildPinnedMessageItem(p.message, p.pinnedBy, item)):
       continue
 
     viewItems = item & viewItems # messages are sorted from the most recent to the least recent one
@@ -251,7 +248,8 @@ method onUnpinMessage*(self: Module, messageId: string) =
 
 method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string) =
   var item: pinned_msg_item.Item
-  if(not self.buildPinnedMessageItem(messageId, actionInitiatedBy, item)):
+  let (message, err) = self.controller.getMessageById(messageId)
+  if(err.len > 0 or not self.buildPinnedMessageItem(message, actionInitiatedBy, item)):
     return
 
   self.view.pinnedModel().insertItemBasedOnClock(item)
