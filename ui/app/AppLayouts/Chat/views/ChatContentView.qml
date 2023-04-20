@@ -37,6 +37,7 @@ ColumnLayout {
     property var contactsStore
     property bool isActiveChannel: false
     property string chatId
+    property int activeChatType
 
     readonly property alias chatMessagesLoader: chatMessagesLoader
 
@@ -65,6 +66,9 @@ ColumnLayout {
         property bool isUserAdded
 
         function updateIsUserAdded() {
+            if (activeChatType !== Constants.chatType.oneToOne) {
+                return false
+            }
             isUserAdded = Qt.binding(() => {isActiveChannel; return Utils.getContactDetailsAsJson(root.chatId, false).isAdded})
         }
 
