@@ -140,6 +140,7 @@ Item {
             height: parent.height
             visible: !root.rootStore.openCreateChat && isActiveChannel
             chatId: model.itemId
+            activeChatType: root.activeChatType
             chatMessagesLoader.active: model.loaderActive
             rootStore: root.rootStore
             contactsStore: root.contactsStore
