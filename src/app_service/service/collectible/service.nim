@@ -192,6 +192,48 @@ QtObject:
     self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
       self.removeAddress(AccountDeleted(e).account.address)
 
+    echo "Eth Mainnet"
+    try:
+      let response = collectibles.getCollectibleOwnersByContractAddress(1, "0x4bA0Be4D8D83B5cA9935d0e0284f707E8F2dD6d1")
+      echo response.result.toCollectibleOwnershipDto()
+    except Exception as e:
+      echo "Failed: ", e.msg
+
+    echo "Eth Goerli"
+    try:
+      let response = collectibles.getCollectibleOwnersByContractAddress(5, "0xf4910C763eD4e47A585E2D34baA9A4b611aE448C")
+      echo response.result.toCollectibleOwnershipDto()
+    except Exception as e:
+      echo "Failed: ", e.msg
+
+    echo "Opt Main"
+    try:
+      let response = collectibles.getCollectibleOwnersByContractAddress(10, "0xe27Cc8Bee925c0fc9b1d0C9d9e9850b773577e8d")
+      echo response.result.toCollectibleOwnershipDto()
+    except Exception as e:
+      echo "Failed: ", e.msg
+
+    echo "Opt Goerli"
+    try:
+      let response = collectibles.getCollectibleOwnersByContractAddress(420, "0xE802a6120a9612523e6820Db02AC9AB704C5630b")
+      echo response.result.toCollectibleOwnershipDto()
+    except Exception as e:
+      echo "Failed: ", e.msg
+
+    echo "Arb Main"
+    try:
+      let response = collectibles.getCollectibleOwnersByContractAddress(42161, "0xe8A4Ad340921475A3332d745F1F32ea8f2058A03")
+      echo response.result.toCollectibleOwnershipDto()
+    except Exception as e:
+      echo "Failed: ", e.msg
+
+    echo "Arb Goerli"
+    try:
+      let response = collectibles.getCollectibleOwnersByContractAddress(421613, "0x43F519AcDc179c65Ef16f4b9Aa41A521ffB199b9")
+      echo response.result.toCollectibleOwnershipDto()
+    except Exception as e:
+      echo "Failed: ", e.msg
+
   # needs to be re-written once cache for colletibles works
   proc areCollectionsLoaded*(self: Service, address: string): bool =
     for chainId, adressesData in self.accountsOwnershipData:
