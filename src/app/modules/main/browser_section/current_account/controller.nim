@@ -53,6 +53,3 @@ proc getCurrentCurrency*(self: Controller): string =
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
-
-proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
-  return self.walletAccountService.getAllMigratedKeyPairs()

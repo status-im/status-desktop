@@ -13,27 +13,14 @@ import ../../../../../app_service/service/collectible/service as collectible_ser
 
 export io_interface
 
-const cancelledRequest* = "cancelled"
-
-# Shouldn't be public ever, use only within this module.
-type TmpSendTransactionDetails = object
-  fromAddr: string
-  toAddr: string
-  tokenSymbol: string
-  value: string
-  uuid: string
-  selectedRoutes: string
-
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
     controller: Controller
     moduleLoaded: bool
-    tmpSendTransactionDetails: TmpSendTransactionDetails
 
 # Forward declarations
-method getWalletAccounts*(self: Module): seq[WalletAccountDto]
 method loadTransactions*(self: Module, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false)
 
 proc newModule*(
@@ -120,7 +107,7 @@ method refreshTransactions*(self: Module) =
     self.view.setTrxHistoryResult(self.transactionsToItems(transactions, @[]), account.address, wasFetchMore=false)
 
 method viewDidLoad*(self: Module) =
-  let accounts = self.getWalletAccounts()
+  let accounts = self.controller.getWalletAccounts()
 
   self.moduleLoaded = true
   self.delegate.transactionsModuleDidLoad()
@@ -130,12 +117,6 @@ method viewDidLoad*(self: Module) =
 method switchAccount*(self: Module, accountIndex: int) =
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.switchAccount(walletAccount)
-
-method getWalletAccounts*(self: Module): seq[WalletAccountDto] =
-  self.controller.getWalletAccounts()
-
-method getAccountByAddress*(self: Module, address: string): WalletAccountDto =
-  self.controller.getAccountByAddress(address)
 
 method loadTransactions*(self: Module, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) =
   let toBlockParsed = stint.fromHex(Uint256, toBlock)
@@ -158,64 +139,8 @@ method setHistoryFetchState*(self: Module, addresses: seq[string], isFetching: b
 method setHistoryFetchState*(self: Module, address: string, allTxLoaded: bool, isFetching: bool) =
   self.view.setHistoryFetchState(address, allTxLoaded, isFetching)
   
-
 method setIsNonArchivalNode*(self: Module, isNonArchivalNode: bool) =
   self.view.setIsNonArchivalNode(isNonArchivalNode)
-
-method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string,
-    tokenSymbol: string, value: string, uuid: string, selectedRoutes: string) =
-  self.tmpSendTransactionDetails.fromAddr = from_addr
-  self.tmpSendTransactionDetails.toAddr = to_addr
-  self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
-  self.tmpSendTransactionDetails.value = value
-  self.tmpSendTransactionDetails.uuid = uuid
-  self.tmpSendTransactionDetails.selectedRoutes = selectedRoutes
-
-  if singletonInstance.userProfile.getIsKeycardUser():
-    let keyUid = singletonInstance.userProfile.getKeyUid()
-    self.controller.authenticateUser(keyUid)
-  else:
-    self.controller.authenticateUser()
-
-  ##################################
-  ## Do Not Delete
-  ## 
-  ## Once we start with signing a transactions we shold check if the address we want to send a transaction from is migrated
-  ## or not. In case it's not we should just authenticate logged in user, otherwise we should use one of the keycards that
-  ## address (key pair) is migrated to and sign the transaction using it.
-  ## 
-  ## The code bellow is an example how we can achieve that in future, when we start with signing transactions.
-  ## 
-  ## let acc = self.controller.getAccountByAddress(from_addr)
-  ## if acc.isNil:
-  ##   echo "error: selected account to send a transaction from is not known"
-  ##   return
-  ## let keyPair = self.controller.getMigratedKeyPairByKeyUid(acc.keyUid)
-  ## if keyPair.len == 0:
-  ##   self.controller.authenticateUser()
-  ## else:
-  ##   self.controller.authenticateUser(acc.keyUid, acc.path)
-  ## 
-  ##################################
-
-method onUserAuthenticated*(self: Module, password: string) =
-  if password.len == 0:
-    let response = %* {"uuid": self.tmpSendTransactionDetails.uuid, "success": false, "error": cancelledRequest}
-    self.view.transactionWasSent($response)
-  else:
-    self.controller.transfer(self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
-      self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid, 
-      self.tmpSendTransactionDetails.selectedRoutes, password)
-
-method transactionWasSent*(self: Module, result: string) =
-  self.view.transactionWasSent(result)
-  self.view.setPendingTx(self.transactionsToItems(self.controller.getPendingTransactions(), @[]))
-
-method suggestedFees*(self: Module, chainId: int): string = 
-  return self.controller.suggestedFees(chainId)
-
-method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
-  return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
 
 method getChainIdForChat*(self: Module): int =
   return self.controller.getChainIdForChat()
@@ -223,11 +148,8 @@ method getChainIdForChat*(self: Module): int =
 method getChainIdForBrowser*(self: Module): int =
   return self.controller.getChainIdForBrowser()
 
-method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int = 
-  return self.controller.getEstimatedTime(chainId, maxFeePerGas).int
-
 method getLastTxBlockNumber*(self: Module): string =
-    return self.controller.getLastTxBlockNumber()
+  return self.controller.getLastTxBlockNumber()
 
-method suggestedRoutesReady*(self: Module, suggestedRoutes: string) =
-  self.view.suggestedRoutesReady(suggestedRoutes)
+method transactionWasSent*(self: Module, result: string) =
+  self.view.setPendingTx(self.transactionsToItems(self.controller.getPendingTransactions(), @[]))

@@ -223,12 +223,14 @@ Item {
                 fromAddress: transactionParamsObject.fromAddress
                 selectedRecipient: root.selectedRecipient
                 onSendTransaction: {
-                    Global.openPopup(signTxComponent, {selectedAccount: {
-                                      name: root.store.getAccountNameByAddress(fromAddress),
-                                      address: fromAddress,
-                                      color: root.store.getAccountIconColorByAddress(fromAddress),
-                                      assets: root.store.getAccountAssetsByAddress(fromAddress)
-                                  }})
+                    // TODO: https://github.com/status-im/status-desktop/issues/6778
+                    console.log("not implemented")
+                    // Global.openPopup(signTxComponent, {selectedAccount: {
+                    //                   name: root.store.getAccountNameByAddress(fromAddress),
+                    //                   address: fromAddress,
+                    //                   color: root.store.getAccountIconColorByAddress(fromAddress),
+                    //                   assets: root.store.getAccountAssetsByAddress(fromAddress)
+                    //               }})
                 }
             }
         }

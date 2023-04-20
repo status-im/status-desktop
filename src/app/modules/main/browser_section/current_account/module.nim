@@ -63,33 +63,18 @@ proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
 method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
 
-  let keyPairMigrated = proc(migratedKeyPairs: seq[KeyPairDto], keyUid: string): bool =
-    for kp in migratedKeyPairs:
-      if kp.keyUid == keyUid:
-        return true
-    return false
-
   let walletAccount = self.controller.getWalletAccount(accountIndex)
-  let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
   let currency = self.controller.getCurrentCurrency()
-
-  let chainIds = self.controller.getChainIds()
   let enabledChainIds = self.controller.getEnabledChainIds()
 
-  let tokenFormats = collect(initTable()):
-    for t in walletAccount.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
-  
   let currencyFormat = self.controller.getCurrencyFormat(currency)
 
   let accountItem = walletAccountToItem(
     walletAccount,
-    chainIds,
     enabledChainIds,
     currency,
-    keyPairMigrated(migratedKeyPairs, walletAccount.keyUid),
     currencyFormat,
-    tokenFormats
-    )
+  )
 
   self.view.setData(accountItem)
   self.setAssets(walletAccount.tokens)

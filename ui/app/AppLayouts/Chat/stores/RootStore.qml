@@ -193,7 +193,7 @@ QtObject {
 
     property ListModel addToGroupContacts: ListModel {}
 
-    property var walletSectionTransactionsInst: walletSectionTransactions
+    property var walletSectionSendInst: walletSectionSend
 
     property bool isWakuV2StoreEnabled: advancedModule ? advancedModule.isWakuV2StoreEnabled : false
 
@@ -515,7 +515,7 @@ QtObject {
 
     // Needed for TX in chat for stickers and via contact
 
-    property var accounts: walletSectionAccounts.model
+    property var accounts: walletSectionSendInst.accounts
     property var currentAccount: walletSectionCurrent
     property string currentCurrency: walletSection.currentCurrency
     property CurrenciesStore currencyStore: CurrenciesStore {}
@@ -576,32 +576,19 @@ QtObject {
     }
 
     function estimateGas(from_addr, to, assetSymbol, value, chainId, data) {
-        return walletSectionTransactions.estimateGas(from_addr, to, assetSymbol, value === "" ? "0.00" : value, chainId, data)
+        return walletSectionSendInst.estimateGas(from_addr, to, assetSymbol, value === "" ? "0.00" : value, chainId, data)
     }
 
     function authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes) {
-        walletSectionTransactions.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
-    }
-
-    function getAccountNameByAddress(address) {
-        return walletSectionAccounts.getAccountNameByAddress(address)
-    }
-
-    function getAccountIconColorByAddress(address) {
-        return walletSectionAccounts.getAccountIconColorByAddress(address)
-    }
-
-    function getAccountAssetsByAddress(address) {
-        walletSectionAccounts.setAddressForAssets(address)
-        return walletSectionAccounts.getAccountAssetsByAddress()
+        walletSectionSendInst.authenticateAndTransfer(from, to, tokenSymbol, amount, uuid, selectedRoutes)
     }
 
     function suggestedFees(chainId) {
-        return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
+        return JSON.parse(walletSectionSendInst.suggestedFees(chainId))
     }
 
     function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts) {
-        walletSectionTransactions.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts)
+        walletSectionSendInst.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts)
     }
 
     function resolveENS(value) {

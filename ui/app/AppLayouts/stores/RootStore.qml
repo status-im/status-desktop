@@ -52,7 +52,7 @@ QtObject {
 //    property var walletModelInst: walletModel
     property var userProfileInst: userProfile
 
-    property var accounts: walletSectionAccounts.model
+    property var accounts: walletSectionSendInst.accounts
     property var currentAccount: walletSectionCurrent
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
@@ -67,7 +67,7 @@ QtObject {
     property real volume: !!appSettings ? appSettings.volume * 0.01 : 0.5
     property bool notificationSoundsEnabled: !!appSettings ? appSettings.notificationSoundsEnabled : true
 
-    property var walletSectionTransactionsInst: walletSectionTransactions
+    property var walletSectionSendInst: walletSectionSend
 
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
@@ -117,11 +117,11 @@ QtObject {
     }
 
     function suggestedFees(chainId) {
-        return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
+        return JSON.parse(walletSectionSendInst.suggestedFees(chainId))
     }
 
     function getEstimatedTime(chainId, maxFeePerGas) {
-       return walletSectionTransactions.getEstimatedTime(chainId, maxFeePerGas)
+       return walletSectionSendInst.getEstimatedTime(chainId, maxFeePerGas)
     }
 
     function getChainIdForChat() {

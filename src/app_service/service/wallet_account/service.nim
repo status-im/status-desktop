@@ -635,6 +635,14 @@ QtObject:
     let accounts = self.getWalletAccounts()
     return accounts.map(a => a.getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))).foldl(a + b, 0.0)
 
+  proc getTokenBalanceOnChain*(self: Service, address: string, chainId: int, symbol: string): float64 =
+    let account = self.getAccountByAddress(address)
+    for token in account.tokens:
+      if token.symbol == symbol:
+        return token.balancesPerChain[chainId].balance
+
+    return 0.0
+
   proc addMigratedKeyPairAsync*(self: Service, keyPair: KeyPairDto, password = "") =
     # Providing a password corresponding local keystore file will be removed as well, though
     # in some contexts we just need to add keypair to the db, so password is not needed.

@@ -205,23 +205,3 @@ QtObject:
       break
 
     return false
-
-  proc getTokenBalanceOnChain*(self: Model, chainId: int, tokenSymbol: string): CurrencyAmount =
-    for item in self.items:
-      if(item.getSymbol() != tokenSymbol):
-        continue
-
-      for balance in item.getBalances().items:
-        if (balance.chainId != chainId):
-          continue
-
-        return balance.balance
-
-      break
-
-    return newCurrencyAmount(
-      0.0,
-      tokenSymbol,
-      0,
-      false
-    )

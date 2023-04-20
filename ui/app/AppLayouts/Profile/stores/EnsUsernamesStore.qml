@@ -24,7 +24,7 @@ QtObject {
 
     property string username: !!Global.userProfile? Global.userProfile.username : ""
 
-    property var walletAccounts: Global.appIsReady? walletSectionAccounts.model : null
+    property var walletAccounts: Global.appIsReady? walletSectionSend.accounts : null
 
     function setPrefferedEnsUsername(ensName) {
         if(!root.ensUsernamesModule)
@@ -145,7 +145,7 @@ QtObject {
     }
 
     function getEstimatedTime(chainId, maxFeePerGas) {
-       return walletSectionTransactions.getEstimatedTime(chainId, maxFeePerGas)
+       return walletSectionSend.getEstimatedTime(chainId, maxFeePerGas)
     }
 
     function getStatusToken() {
@@ -155,7 +155,7 @@ QtObject {
     }
 
     function suggestedFees(chainId) {
-        return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
+        return JSON.parse(walletSectionSend.suggestedFees(chainId))
     }
 
     function removeEnsUsername(chainId, ensUsername) {

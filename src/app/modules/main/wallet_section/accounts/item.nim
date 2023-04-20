@@ -1,96 +1,50 @@
 import strformat
-import ../../../shared_models/token_model as token_model
 import ../../../shared_models/currency_amount
-import ./compact_model as compact_model
 
 type
   Item* = object
     name: string
     address: string
-    mixedCaseAddress: string
     path: string
     color: string
-    publicKey: string
     walletType: string
-    isWallet: bool
-    isChat: bool
     currencyBalance: CurrencyAmount
-    assets: token_model.Model
     emoji: string
-    derivedfrom: string
-    relatedAccounts: compact_model.Model
     keyUid: string
-    migratedToKeycard: bool
-    ens: string
     assetsLoading: bool
-    hasBalanceCache: bool
-    hasMarketValuesCache: bool
 
 proc initItem*(
   name: string = "",
   address: string = "",
-  mixedCaseAddress: string = "",
   path: string = "",
   color: string = "",
-  publicKey: string = "",
   walletType: string = "",
-  isWallet: bool = true,
-  isChat: bool = false,
   currencyBalance: CurrencyAmount = nil,
-  assets: token_model.Model = nil,
   emoji: string = "",
-  derivedfrom: string = "",
-  relatedAccounts: compact_model.Model = nil,
   keyUid: string = "",
-  migratedToKeycard: bool = false,
-  ens: string = "",
   assetsLoading: bool  = true,
-  hasBalanceCache: bool = false,
-  hasMarketValuesCache: bool = false
 ): Item =
   result.name = name
   result.address = address
-  result.mixedCaseAddress = mixedCaseAddress
   result.path = path
   result.color = color
-  result.publicKey = publicKey
   result.walletType = walletType
-  result.isWallet = isWallet
-  result.isChat = isChat
   result.currencyBalance = currencyBalance
-  result.assets = assets
   result.emoji = emoji
-  result.derivedfrom = derivedfrom
-  result.relatedAccounts = relatedAccounts
   result.keyUid = keyUid
-  result.migratedToKeycard = migratedToKeycard
-  result.ens = ens
   result.assetsLoading = assetsLoading
-  result.hasBalanceCache = hasBalanceCache
-  result.hasMarketValuesCache = hasMarketValuesCache
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
     name: {self.name},
     address: {self.address},
-    mixedCaseAddress: {self.mixedCaseAddress},
     path: {self.path},
     color: {self.color},
-    publicKey: {self.publicKey},
     walletType: {self.walletType},
-    isWallet: {self.isWallet},
-    isChat: {self.isChat},
     currencyBalance: {self.currencyBalance},
-    assets.len: {self.assets.getCount()},
     emoji: {self.emoji},
-    derivedfrom: {self.derivedfrom},
-    relatedAccounts: {self.relatedAccounts}
     keyUid: {self.keyUid},
-    migratedToKeycard: {self.migratedToKeycard},
-    ens: {self.ens},
     assetsLoading: {self.assetsLoading},
-    hasBalanceCache: {self.hasBalanceCache},
-    hasMarketValuesCache: {self.hasMarketValuesCache},
     ]"""
 
 proc getName*(self: Item): string =
@@ -98,9 +52,6 @@ proc getName*(self: Item): string =
 
 proc getAddress*(self: Item): string =
   return self.address
-
-proc getMixedCaseAddress*(self: Item): string =
-  return self.mixedCaseAddress
 
 proc getPath*(self: Item): string =
   return self.path
@@ -111,44 +62,14 @@ proc getEmoji*(self: Item): string =
 proc getColor*(self: Item): string =
   return self.color
 
-proc getPublicKey*(self: Item): string =
-  return self.publicKey
-
 proc getWalletType*(self: Item): string =
   return self.walletType
-
-proc getIsWallet*(self: Item): bool =
-  return self.isWallet
-
-proc getIsChat*(self: Item): bool =
-  return self.isChat
 
 proc getCurrencyBalance*(self: Item): CurrencyAmount =
   return self.currencyBalance
 
-proc getAssets*(self: Item): token_model.Model =
-  return self.assets
-
-proc getDerivedFrom*(self: Item): string =
-  return self.derivedfrom
-
-proc getRelatedAccounts*(self: Item): compact_model.Model =
-  return self.relatedAccounts
-
 proc getKeyUid*(self: Item): string =
   return self.keyUid
 
-proc getMigratedToKeycard*(self: Item): bool =
-  return self.migratedToKeycard
-
-proc getEns*(self: Item): string =
-  return self.ens
-
 proc getAssetsLoading*(self: Item): bool =
   return self.assetsLoading
-
-proc getHasBalanceCache*(self: Item): bool =
-  return self.hasBalanceCache
-
-proc getHasMarketValuesCache*(self: Item): bool =
-  return self.hasMarketValuesCache
