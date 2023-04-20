@@ -111,7 +111,7 @@ Control {
                     type: StatusComboBox.Type.Secondary
                     delegate: StatusItemDelegate {
                         width: combo.control.width
-                        textHorizontalAligment: Text.AlignHCenter
+                        centerTextHorizontally: true
                         highlighted: combo.control.highlightedIndex === index
                         font: combo.control.font
                         text: Number(modelData) + 1

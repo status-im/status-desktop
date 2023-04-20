@@ -1,15 +1,16 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
 
 ItemDelegate {
     id: root
 
-    property alias textHorizontalAligment: textItem.horizontalAlignment
+    property bool centerTextHorizontally: false
+    property int radius: 0
+    property int cursorShape: Qt.PointingHandCursor
 
     padding: 8
     spacing: 8
@@ -30,15 +31,18 @@ ItemDelegate {
         }
 
         StatusBaseText {
-            id: textItem
             Layout.fillWidth: true
             Layout.fillHeight: true
             font: root.font
             text: root.text
-            horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
             elide: Text.ElideRight
             color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+
+            Binding on horizontalAlignment {
+                when: root.centerTextHorizontally
+                value: Text.AlignHCenter
+            }
         }
     }
 
@@ -47,11 +51,12 @@ ItemDelegate {
                ? Theme.palette.statusMenu.hoverBackgroundColor
                : "transparent"
 
+        radius: root.radius
+
         MouseArea {
             anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
+            cursorShape: root.cursorShape
             acceptedButtons: Qt.NoButton
-            enabled: root.enabled
         }
     }
 }
