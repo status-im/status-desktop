@@ -1,9 +1,26 @@
-import json, stint
+import json, stint, json_serialization
 
-import ../app_service/service/transaction/dto
 import ../app_service/service/eth/dto/transaction
 import ./core as core
 import ../app_service/common/utils
+
+# mirrors the MultiTransactionType from status-go, services/wallet/transfer/transaction.go
+type
+  MultiTransactionType* = enum
+    MultiTransactionSend = 0, MultiTransactionSwap = 1, MultiTransactionBridge = 2
+
+  MultiTransactionDto* = ref object of RootObj
+    id* {.serializedFieldName("id").}: int
+    timestamp* {.serializedFieldName("timestamp").}: int
+    fromAddress* {.serializedFieldName("fromAddress").}: string
+    toAddress* {.serializedFieldName("toAddress").}: string
+    fromAsset* {.serializedFieldName("fromAsset").}: string
+    toAsset* {.serializedFieldName("toAsset").}: string
+    fromAmount* {.serializedFieldName("fromAmount").}: string
+    multiTxtype* {.serializedFieldName("type").}: MultiTransactionType
+
+proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  core.callPrivateRPCWithChainId("eth_getTransactionByHash", chainId, %* [hash])
 
 proc checkRecentHistory*(chainIds: seq[int], addresses: seq[string]) {.raises: [Exception].} =
   let payload = %* [chainIds, addresses]

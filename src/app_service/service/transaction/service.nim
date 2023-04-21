@@ -18,7 +18,7 @@ import ../token/service as token_service
 import ../settings/service as settings_service
 import ../collectible/dto
 import ../eth/dto/transaction as transaction_data_dto
-import ../eth/dto/[method_dto, coder, method_dto]
+import ../eth/dto/[coder, method_dto]
 import ./dto as transaction_dto
 import ./cryptoRampDto
 import ../eth/utils as eth_utils
@@ -153,16 +153,6 @@ QtObject:
         return response.getElems().map(x => x.toPendingTransactionDto())
 
       return @[]
-    except Exception as e:
-      let errDescription = e.msg
-      error "error: ", errDescription
-      return
-
-  proc getMultiTransactions*(self: Service, transactionIDs: seq[int]): seq[MultiTransactionDto] =
-    try:
-      let response = transactions.getMultiTransactions(transactionIDs).result
-
-      return response.getElems().map(x => x.toMultiTransactionDto())
     except Exception as e:
       let errDescription = e.msg
       error "error: ", errDescription
@@ -375,7 +365,7 @@ QtObject:
           fromAsset: tokenSymbol,
           toAsset: tokenSymbol,
           fromAmount:  "0x" & amountToSend.toHex,
-          multiTxtype: MultiTransactionType.MultiTransactionSend,
+          multiTxtype: transactions.MultiTransactionType.MultiTransactionSend,
         ),
         paths,
         password,
@@ -442,7 +432,7 @@ QtObject:
           fromAsset: tokenSymbol,
           toAsset: tokenSymbol,
           fromAmount:  "0x" & amountToSend.toHex,
-          multiTxtype: MultiTransactionType.MultiTransactionSend,
+          multiTxtype: transactions.MultiTransactionType.MultiTransactionSend,
         ),
         paths,
         password,
@@ -547,3 +537,13 @@ QtObject:
     except Exception as e:
       error "Error getting latest block number", message = e.msg
       return ""
+
+proc getMultiTransactions*(transactionIDs: seq[int]): seq[MultiTransactionDto] =
+  try:
+    let response = transactions.getMultiTransactions(transactionIDs).result
+
+    return response.getElems().map(x => x.toMultiTransactionDto())
+  except Exception as e:
+    let errDescription = e.msg
+    error "error: ", errDescription
+    return

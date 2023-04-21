@@ -3,6 +3,8 @@ import ../../../../../app_service/service/collectible/dto as CollectibleDto
 import ../../../../../app_service/service/transaction/dto
 export TransactionDto, CollectibleDto
 
+import ./item
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
   ## Abstract class for any input/interaction with this module.
@@ -43,13 +45,13 @@ method setIsNonArchivalNode*(self: AccessInterface, isNonArchivalNode: bool) {.b
 method transactionWasSent*(self: AccessInterface, result: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChainIdForChat*(self: AccessInterface): int =
+method getChainIdForChat*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChainIdForBrowser*(self: AccessInterface): int =
+method getChainIdForBrowser*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method refreshTransactions*(self: AccessInterface) {.base.} = 
+method refreshTransactions*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
@@ -59,4 +61,7 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getLastTxBlockNumber*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method transactionsToItems*(self: AccessInterface, transactions: seq[TransactionDto], collectibles: seq[CollectibleDto]): seq[Item] {.base.} =
   raise newException(ValueError, "No implementation available")

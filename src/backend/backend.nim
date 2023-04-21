@@ -1,4 +1,4 @@
-import json, json_serialization
+import json, json_serialization, strformat
 import ./core, ./response_type
 from ./gen import rpc
 
@@ -95,6 +95,25 @@ rpc(getTokensBalancesForChainIDs, "wallet"):
 
 rpc(getPendingTransactionsByChainIDs, "wallet"):
   chainIds: seq[int]
+
+type
+  TransactionIdentity* = ref object
+    chainId* {.serializedFieldName("chainId").}: int
+    hash* {.serializedFieldName("hash").}: string
+    address* {.serializedFieldName("address").}: string
+
+proc `$`*(self: TransactionIdentity): string =
+  return fmt"""TransactionIdentity(
+    chainId:{self.chainId},
+    hash:{self.hash},
+    address:{self.address},
+  )"""
+
+rpc(getPendingTransactionsForIdentities, "wallet"):
+  identities = seq[TransactionIdentity]
+
+rpc(getTransfersForIdentities, "wallet"):
+  identities = seq[TransactionIdentity]
 
 rpc(getWalletToken, "wallet"):
   accounts: seq[string]

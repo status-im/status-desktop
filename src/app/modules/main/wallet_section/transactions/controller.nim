@@ -9,6 +9,7 @@ import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_modu
 
 import ../../../../core/[main]
 import ../../../../core/tasks/[qt, threadpool]
+import ./backend/transactions
 
 type
   Controller* = ref object of RootObj
@@ -100,7 +101,7 @@ proc getWalletAccountByAddress*(self: Controller, address: string): WalletAccoun
 proc loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)
 
-proc getAllTransactions*(self: Controller, address: string): seq[TransactionDto] = 
+proc getAllTransactions*(self: Controller, address: string): seq[TransactionDto] =
   return self.transactionService.getAllTransactions(address)
 
 proc getChainIdForChat*(self: Controller): int =
@@ -122,4 +123,4 @@ proc findTokenSymbolByAddress*(self: Controller, address: string): string =
   return self.walletAccountService.findTokenSymbolByAddress(address)
 
 proc getMultiTransactions*(self: Controller, transactionIDs: seq[int]): seq[MultiTransactionDto] =
-  return self.transactionService.getMultiTransactions(transactionIDs)
+  return transaction_service.getMultiTransactions(transactionIDs)
