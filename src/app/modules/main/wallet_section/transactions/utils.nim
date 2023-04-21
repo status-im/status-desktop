@@ -10,6 +10,8 @@ import ../../../shared_models/currency_amount
 import ./item
 import ./multi_transaction_item
 
+import ./backend/transactions
+
 proc hex2GweiCurrencyAmount(hexValueStr: string, gweiFormat: CurrencyFormatDto): CurrencyAmount =
   let value = parseFloat(singletonInstance.utils.hex2Gwei(hexValueStr))
   return currencyAmountToItem(value, gweiFormat)

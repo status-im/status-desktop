@@ -16,6 +16,8 @@ import ./networks/module as networks_module
 import ./overview/module as overview_module
 import ./send/module as send_module
 
+import ./activity/controller as activityc
+
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/keycard/service as keycard_service
@@ -34,7 +36,6 @@ import ../../../../app_service/service/network_connection/service as network_con
 logScope:
   topics = "wallet-section-module"
 
-import io_interface
 export io_interface
 
 type
@@ -42,7 +43,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     moduleLoaded: bool
-    controller: Controller
+    controller: controller.Controller
     view: View
     filter: Filter
 
@@ -60,6 +61,8 @@ type
     keycardService: keycard_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
+
+    activityController: activityc.Controller
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -85,7 +88,6 @@ proc newModule*(
   result.walletAccountService = walletAccountService
   result.moduleLoaded = false
   result.controller = newController(result, settingsService, walletAccountService, currencyService, networkService)
-  result.view = newView(result)
 
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
@@ -99,6 +101,10 @@ proc newModule*(
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
   result.filter = initFilter(result.controller)
 
+  result.activityController = activityc.newController(result.transactionsModule)
+  result.view = newView(result, result.activityController)
+
+
 method delete*(self: Module) =
   self.accountsModule.delete
   self.allTokensModule.delete
@@ -110,6 +116,7 @@ method delete*(self: Module) =
   self.sendModule.delete
   self.controller.delete
   self.view.delete
+  self.activityController.delete
 
   if not self.addAccountModule.isNil:
     self.addAccountModule.delete

@@ -240,6 +240,7 @@ proc getTxStatus*(self: Item): string =
 proc getValue*(self: Item): CurrencyAmount =
   return self.value
 
+# TODO: fix naming
 proc getfrom*(self: Item): string =
   return self.fro
 

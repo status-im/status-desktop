@@ -15,7 +15,7 @@ type
     walletAccountService: wallet_account_service.Service
     currencyService: currency_service.Service
     networkService: network_service.Service
- 
+
 proc newController*(
   delegate: io_interface.AccessInterface,
   settingsService: settings_service.Service,

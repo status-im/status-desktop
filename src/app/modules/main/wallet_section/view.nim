@@ -1,5 +1,6 @@
 import NimQml, json
 
+import ./activity/controller as activityc
 import ./io_interface
 import ../../shared_models/currency_amount
 
@@ -13,6 +14,7 @@ QtObject:
       isMnemonicBackedUp: bool
       tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
+      activityController: activityc.Controller
 
   proc setup(self: View) =
     self.QObject.setup
@@ -20,9 +22,10 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(delegate: io_interface.AccessInterface): View =
+  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller): View =
     new(result, delete)
     result.delegate = delegate
+    result.activityController = activityController
     result.setup()
 
   proc load*(self: View) =
@@ -121,3 +124,8 @@ QtObject:
   proc destroyAddAccountPopup*(self: View) {.signal.}
   proc emitDestroyAddAccountPopup*(self: View) =
     self.destroyAddAccountPopup()
+
+  proc getActivityController(self: View): QVariant {.slot.} =
+    return newQVariant(self.activityController)
+  QtProperty[QVariant] activityController:
+    read = getActivityController

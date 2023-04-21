@@ -83,7 +83,7 @@ QtObject:
     for tx in transactions:
       if not self.enabledChainIds.contains(tx.getChainId()):
         continue
-      
+
       toAddTransactions.add(tx)
 
     if not self.models.hasKey(address):
