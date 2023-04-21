@@ -33,10 +33,13 @@ Item {
     property var emojiPopup
     property var stickersPopup
 
+    property string publicKey: ""
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
     property bool isChatBlocked: false
+    property bool isOneToOne: false
     property bool isActiveChannel: false
+    property int contactRequestState: Constants.ContactRequestState.None
 
     property var messageContextMenu
 
@@ -185,7 +188,7 @@ Item {
         highlightRangeMode: ListView.ApplyRange
         highlightMoveDuration: 200
         preferredHighlightBegin: 0
-        preferredHighlightEnd: chatLogView.height/2
+        preferredHighlightEnd: chatLogView.height / 2
 
         model: messageStore.messagesModel
 
@@ -250,7 +253,7 @@ Item {
             chatLogView: ListView.view
 
             isActiveChannel: root.isActiveChannel
-            isChatBlocked: root.isChatBlocked
+            isChatBlocked: root.isChatBlocked || (root.isOneToOne && d.contactRequestState !== Constants.ContactRequestState.Mutual)
             messageContextMenu: root.messageContextMenu
 
             messageId: model.id
@@ -329,6 +332,23 @@ Item {
                     messageStore.setEditModeOff(model.id)
             }
         }
+        header: {
+            if (root.isOneToOne) {
+                switch (root.contactRequestState) {
+                case Constants.ContactRequestState.None: // no break
+                case Constants.ContactRequestState.Dismissed:
+                    return sendContactRequestComponent
+                case Constants.ContactRequestState.Received:
+                    return acceptContactRequestComponent
+                case Constants.ContactRequestState.Sent:
+                    return pendingContactRequestComponent
+                default:
+                    break
+                }
+            }
+            return null
+        }
+        onHeaderChanged: chatLogView.positionViewAtBeginning()
     }
 
     MessageDialog {
@@ -336,5 +356,39 @@ Item {
         standardButtons: StandardButton.Ok
         text: qsTr("Failed to send message.")
         icon: StandardIcon.Critical
+    }
+
+    Component {
+        id: sendContactRequestComponent
+
+        StatusButton {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Send Contact Request")
+            onClicked: {
+                Global.openContactRequestPopup(root.publicKey, null)
+            }
+        }
+    }
+
+    Component {
+        id: acceptContactRequestComponent
+
+        StatusButton {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Accept Contact Request")
+            onClicked: {
+                root.contactsStore.acceptContactRequest(root.publicKey, "")
+            }
+        }
+    }
+
+    Component {
+        id: pendingContactRequestComponent
+
+        StatusButton {
+            anchors.horizontalCenter: parent.horizontalCenter
+            enabled: false
+            text: qsTr("Contact Request Pending...")
+        }
     }
 }

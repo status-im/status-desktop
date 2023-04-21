@@ -162,16 +162,6 @@ Item {
         }
     }
 
-    ChatRequestMessagePanel {
-        anchors.fill: parent
-        anchors.bottomMargin: Style.current.bigPadding
-        isUserAdded: root.isUserAdded
-        visible: root.activeChatType === Constants.chatType.oneToOne && !root.isUserAdded
-        onAddContactClicked: {
-            root.rootStore.addContact(root.activeChatId);
-        }
-    }
-
     Component {
         id: cmpSendTransactionNoEns
         ChatCommandModal {
