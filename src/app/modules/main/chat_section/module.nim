@@ -81,7 +81,9 @@ proc addOrUpdateChat(self: Module,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
-    setChatAsActive: bool = true)
+    setChatAsActive: bool = true,
+    insertIntoModel: bool = true,
+  ): Item
 
 proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem
 
@@ -163,9 +165,9 @@ proc removeSubmodule(self: Module, chatId: string) =
   self.chatContentModules.del(chatId)
 
 
-proc addCategoryItem(self: Module, category: Category, amIAdmin: bool, communityId: string) =
+proc addCategoryItem(self: Module, category: Category, amIAdmin: bool, communityId: string, insertIntoModel: bool = true): Item =
   let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(communityId, category.id)
-  let categoryItem = chat_item.initItem(
+  result = chat_item.initItem(
         id = category.id,
         category.name,
         icon = "",
@@ -184,7 +186,8 @@ proc addCategoryItem(self: Module, category: Category, amIAdmin: bool, community
         category.id,
         category.position,
       )
-  self.view.chatsModel().appendItem(categoryItem)
+  if insertIntoModel:
+    self.view.chatsModel().appendItem(result)
 
 proc buildChatSectionUI(
     self: Module,
@@ -201,9 +204,10 @@ proc buildChatSectionUI(
   var selectedItemId = ""
   let sectionLastOpenChat = singletonInstance.localAccountSensitiveSettings.getSectionLastOpenChat(self.controller.getMySectionId())
 
+  var items: seq[Item] = @[]
   for categoryDto in channelGroup.categories:
     # Add items for the categories. We use a special type to identify categories
-    self.addCategoryItem(categoryDto, channelGroup.admin, channelGroup.id)
+    items.add(self.addCategoryItem(categoryDto, channelGroup.admin, channelGroup.id))
 
   for chatDto in channelGroup.chats:
     var categoryPosition = -1
@@ -222,7 +226,7 @@ proc buildChatSectionUI(
           categoryPosition = category.position
           break
 
-    self.addOrUpdateChat(
+    items.add(self.addOrUpdateChat(
       chatDto,
       channelGroup,
       belongsToCommunity = chatDto.communityId.len > 0,
@@ -236,8 +240,10 @@ proc buildChatSectionUI(
       gifService,
       mailserversService,
       setChatAsActive = false,
-    )
+      insertIntoModel = false
+    ))
 
+  self.view.chatsModel.setData(items)
   self.setActiveItem(selectedItemId)
 
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
@@ -535,7 +541,9 @@ method addNewChat*(
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
-    setChatAsActive: bool = true) =
+    setChatAsActive: bool = true,
+    insertIntoModel: bool = true,
+  ): Item =
   let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
   let notificationsCount = chatDto.unviewedMentionsCount
 
@@ -578,14 +586,14 @@ method addNewChat*(
       else:
         categoryPosition = category.position
 
-  let chatItem = chat_item.initItem(
+  result = chat_item.initItem(
     chatDto.id,
     chatName,
     chatImage,
     chatDto.color,
     chatDto.emoji,
     chatDto.description,
-    chatDto.chatType.int,
+    ChatType(chatDto.chatType).int,
     amIChatAdmin,
     chatDto.timestamp.int,
     hasNotification,
@@ -616,10 +624,11 @@ method addNewChat*(
     gifService,
     mailserversService,
   )
-  self.chatContentModules[chatDto.id].load(chatItem)
-  self.view.chatsModel().appendItem(chatItem)
+  self.chatContentModules[chatDto.id].load(result)
+  if insertIntoModel:
+    self.view.chatsModel().appendItem(result)
   if setChatAsActive:
-    self.setActiveItem(chatItem.id)
+    self.setActiveItem(result.id)
 
 method switchToChannel*(self: Module, channelName: string) =
   if(not self.controller.isCommunity()):
@@ -660,7 +669,7 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
     return
 
   # TODO get admin status
-  self.addCategoryItem(cat, false, communityId)
+  discard self.addCategoryItem(cat, false, communityId)
   # Update chat items that now belong to that category
   self.view.chatsModel().updateItemsWithCategoryDetailsById(
     chats,
@@ -1130,7 +1139,9 @@ proc addOrUpdateChat(self: Module,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
-    setChatAsActive: bool = true) =
+    setChatAsActive: bool = true,
+    insertIntoModel: bool = true,
+  ): Item =
 
   let sectionId = self.controller.getMySectionId()
   if(belongsToCommunity and sectionId != chat.communityId or
@@ -1156,7 +1167,7 @@ proc addOrUpdateChat(self: Module,
       self.onChatRenamed(chat.id, chat.name)
     return
 
-  self.addNewChat(
+  result = self.addNewChat(
       chat,
       channelGroup,
       belongsToCommunity,
@@ -1170,6 +1181,7 @@ proc addOrUpdateChat(self: Module,
       gifService,
       mailserversService,
       setChatAsActive,
+      insertIntoModel,
     )
 
 method addOrUpdateChat*(self: Module,
@@ -1184,8 +1196,10 @@ method addOrUpdateChat*(self: Module,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
-    setChatAsActive: bool = true) =
- self.addOrUpdateChat(
+    setChatAsActive: bool = true,
+    insertIntoModel: bool = true,
+  ): Item =
+ result = self.addOrUpdateChat(
     chat,
     ChannelGroupDto(),
     belongsToCommunity,
@@ -1199,6 +1213,7 @@ method addOrUpdateChat*(self: Module,
     gifService,
     mailserversService,
     setChatAsActive,
+    insertIntoModel,
   )
 
 method downloadMessages*(self: Module, chatId: string, filePath: string) =

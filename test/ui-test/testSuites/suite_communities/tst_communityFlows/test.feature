@@ -33,7 +33,7 @@ Feature: Status Desktop community
         Examples:
             | community_channel_name    | community_channel_description     | method           |
             | test-channel    | Community channel description tested 1      | bottom_menu      |
-          #  | test-channel2   | Community channel description tested 2      | right_click_menu |
+            | test-channel2   | Community channel description tested 2      | right_click_menu |
 
     Scenario Outline: The admin edits a community channel
         Given the admin creates a community channel named "<community_channel_name>", with description "<community_channel_description>", with the method "bottom_menu"
