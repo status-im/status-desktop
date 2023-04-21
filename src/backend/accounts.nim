@@ -66,7 +66,7 @@ proc updateAccount*(name, keyPairName, address, path: string, lastUsedDerivation
   keyUid, accountType, color, emoji: string, walletDefaultAccount: bool, chatDefaultAccount: bool):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [
-    [{
+    {
       "address": address,
       "key-uid": keyUid,
       "wallet": walletDefaultAccount,
@@ -84,9 +84,9 @@ proc updateAccount*(name, keyPairName, address, path: string, lastUsedDerivation
       #"removed" present on the status-go side, used for synchronization, no need to set it here
       "keypair-name": keyPairName,
       "last-used-derivation-index": lastUsedDerivationIndex
-    }]
+    }
   ]
-  return core.callPrivateRPC("accounts_saveAccounts", payload)
+  return core.callPrivateRPC("accounts_saveAccount", payload)
 
 proc generateAddresses*(paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
