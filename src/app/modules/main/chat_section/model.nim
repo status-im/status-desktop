@@ -190,13 +190,23 @@ QtObject:
     if result == 0:
       result = cmp(x.position, y.position)
 
+  proc setData*(self: Model, items: seq[Item]) =
+    self.beginResetModel()
+    self.items = items
+    self.items.sort(cmpChatsAndCats)
+    self.endResetModel()
+
+    self.countChanged()
+
   # IMPORTANT: if you call this function for a chat with a category, make sure the category is appended first
   proc appendItem*(self: Model, item: Item, ignoreCategory: bool = false) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
     var indexToInsertTo = item.position
-    if item.categoryId != "" and not item.isCategory:
+    if item.isCategory:
+      indexToInsertTo = item.categoryPosition
+    elif item.categoryId != "":
       if ignoreCategory:
         # We don't care about the category position, just position it at the end
         indexToInsertTo = self.items.len
@@ -209,9 +219,9 @@ QtObject:
       indexToInsertTo = 0
     elif indexToInsertTo >= self.items.len + 1:
       indexToInsertTo = self.items.len
+
     self.beginInsertRows(parentModelIndex, indexToInsertTo, indexToInsertTo)
     self.items.insert(item, indexToInsertTo)
-    self.items.sort(cmpChatsAndCats)
     self.endInsertRows()
 
     self.countChanged()

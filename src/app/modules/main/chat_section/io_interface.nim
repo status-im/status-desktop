@@ -11,6 +11,7 @@ import ../../../../app_service/service/mailservers/service as mailservers_servic
 import ../../../../app_service/service/token/service as token_service
 
 import model as chats_model
+import item as chat_item
 
 import ../../../core/eventemitter
 import ../../../core/unique_event_emitter
@@ -77,7 +78,7 @@ method addNewChat*(self: AccessInterface, chatDto: ChatDto, belongsToCommunity: 
   settingsService: settings_service.Service, contactService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service, setChatAsActive: bool = true) {.base.} =
+  mailserversService: mailservers_service.Service, setChatAsActive: bool = true, insertIntoModel: bool = true): Item {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method doesCatOrChatExist*(self: AccessInterface, chatId: string): bool {.base.} =
@@ -98,7 +99,9 @@ method addOrUpdateChat*(self: AccessInterface,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
-    setChatAsActive: bool = true) {.base.} =
+    setChatAsActive: bool = true,
+    insertIntoModel: bool = true
+  ): Item {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onNewMessagesReceived*(self: AccessInterface, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string, 

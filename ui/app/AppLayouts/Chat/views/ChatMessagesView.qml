@@ -49,7 +49,7 @@ Item {
 
         readonly property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
         readonly property bool isMostRecentMessageInViewport: chatLogView.visibleArea.yPosition >= 0.999 - chatLogView.visibleArea.heightRatio
-        readonly property var chatDetails: chatContentModule.chatDetails || null
+        readonly property var chatDetails: chatContentModule && chatContentModule.chatDetails || null
 
         readonly property var loadMoreMessagesIfScrollBelowThreshold: Backpressure.oneInTimeQueued(root, 100, function() {
             if(scrollY < 1000) messageStore.loadMoreMessages()
