@@ -138,7 +138,7 @@ Rectangle {
             anchors.left: statusIcon.visible ? statusIcon.right : identicon.right
             anchors.leftMargin: statusIcon.visible ? 1 : 8
             anchors.right: mutedIcon.visible ? mutedIcon.left :
-                                               statusBadge.visible ? statusBadge.left : parent.right
+                                               statusBadge.visible ? statusBadgeContainer.left : parent.right
             anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
 
@@ -166,7 +166,7 @@ Rectangle {
 
         StatusIcon {
             id: mutedIcon
-            anchors.right: statusBadge.visible ? statusBadge.left : parent.right
+            anchors.right: statusBadge.visible ? statusBadgeContainer.left : parent.right
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             width: 14
@@ -188,6 +188,7 @@ Rectangle {
             }
         }
         Item {
+            id: statusBadgeContainer
             width: 32
             height: parent.height
             anchors.right: parent.right
