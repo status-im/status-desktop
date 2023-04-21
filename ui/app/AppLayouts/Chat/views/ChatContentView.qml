@@ -1,9 +1,6 @@
 import QtQuick 2.15
 import QtQml 2.15
-import Qt.labs.platform 1.1
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.0
+import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -57,32 +54,49 @@ ColumnLayout {
     property Component sendTransactionWithEnsModal
 
     property bool isBlocked: false
-
+    property int contactRequestState: Constants.ContactRequestState.None
     property bool stickersLoaded: false
+
+    onIsActiveChannelChanged: d.updateContactRequestState()
 
     QtObject {
         id: d
 
-        property bool isUserAdded
+        readonly property var conns1: Connections {
+            target: root.contactsStore.myContactsModel ?? null
 
-        function updateIsUserAdded() {
+            function onItemChanged(pubKey) {
+                if (pubKey === root.chatId)
+                    d.updateContactRequestState()
+            }
+        }
+
+        readonly property var conns2: Connections {
+            target: root.contactsStore.receivedContactRequestsModel ?? null
+
+            function onItemChanged(pubKey) {
+                if (pubKey === root.chatId)
+                    d.updateContactRequestState()
+            }
+        }
+
+        readonly property var conns3: Connections {
+            target: root.contactsStore.sentContactRequestsModel ?? null
+
+            function onItemChanged(pubKey) {
+                if (pubKey === root.chatId)
+                    d.updateContactRequestState()
+            }
+        }
+
+        function updateContactRequestState() {
             if (root.chatType !== Constants.chatType.oneToOne) {
-                return false
+                return
             }
-            isUserAdded = Qt.binding(() => {isActiveChannel; return Utils.getContactDetailsAsJson(root.chatId, false).isAdded})
+            root.contactRequestState = Utils.getContactDetailsAsJson(root.chatId).contactRequestState
         }
 
-        Component.onCompleted: updateIsUserAdded()
-    }
-
-    Connections {
-        target: root.contactsStore.myContactsModel
-
-        function onItemChanged(pubKey) {
-            if (pubKey === root.chatId) {
-                d.updateIsUserAdded()
-            }
-        }
+        Component.onCompleted: d.updateContactRequestState()
     }
 
     Loader {
@@ -110,7 +124,7 @@ ColumnLayout {
         sourceComponent: MessageContextMenuView {
             store: root.rootStore
             reactionModel: root.rootStore.emojiReactionsModel
-            disabledForChat: chatType === Constants.chatType.oneToOne && !d.isUserAdded
+            disabledForChat: chatType === Constants.chatType.oneToOne && d.contactRequestState !== Constants.ContactRequestState.Mutual
 
             onPinMessage: {
                 messageStore.pinMessage(messageId)
@@ -178,7 +192,10 @@ ColumnLayout {
                 stickersPopup: root.stickersPopup
                 usersStore: root.usersStore
                 stickersLoaded: root.stickersLoaded
-                isChatBlocked: root.isBlocked || (root.chatType === Constants.chatType.oneToOne && !d.isUserAdded)
+                publicKey: root.chatId
+                isOneToOne: root.chatType === Constants.chatType.oneToOne
+                contactRequestState: root.contactRequestState
+                isChatBlocked: root.isBlocked
                 channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
                 isActiveChannel: root.isActiveChannel
                 onShowReplyArea: {
@@ -231,7 +248,7 @@ ColumnLayout {
                     anchors.margins: Style.current.smallPadding
 
                     enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
-                             !(chatType === Constants.chatType.oneToOne && !d.isUserAdded)
+                             !(chatType === Constants.chatType.oneToOne && d.contactRequestState !== Constants.ContactRequestState.Mutual)
 
                     store: root.rootStore
                     usersStore: root.usersStore
