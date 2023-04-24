@@ -391,51 +391,6 @@ Column {
         }
     }
 
-    StatusModal {
-        id: floatingHeaderModal
-        anchors.centerIn: parent
-        height: 200
-        showHeader: false
-        showFooter: false
-        showAdvancedHeader: true
-        hasFloatingButtons: true
-        advancedHeaderComponent: StatusFloatingButtonsSelector {
-            id: floatingHeader
-
-            model: dummyAccountsModel
-
-            delegate: Rectangle {
-                width: button.width
-                height: button.height
-                radius: 8
-                visible: floatingHeader.visibleIndices.includes(index)
-                color: Theme.palette.statusAppLayout.backgroundColor
-                StatusButton {
-                    id: button
-                    topPadding: 8
-                    bottomPadding: 0
-                    implicitHeight: 32
-                    leftPadding: 4
-                    text: name
-                    asset.emoji: !!emoji ? emoji: ""
-                    asset.emojiSize: Emoji.size.middle
-                    asset.name: !emoji ? "filled-account": ""
-                    normalColor: "transparent"
-                    highlighted: index === floatingHeader.currentIndex
-                    onClicked: {
-                        floatingHeader.currentIndex = index
-                    }
-                }
-            }
-
-            popupMenuDelegate: StatusListItem {
-                implicitWidth: 272
-                title: name
-                onClicked: floatingHeader.selectItem(index)
-            }
-        }
-    }
-
     ListModel {
         id: dummyAccountsModel
         ListElement{name: "Account 1"; iconName: "filled-account"; emoji: "🥑" }

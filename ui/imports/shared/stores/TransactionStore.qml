@@ -307,4 +307,12 @@ QtObject {
         }
         return result
     }
+
+    function getUserSelectedAccountIndex(model) {
+        for (let i = 0; i < model.count; i++) {
+            if(model.get(i).address.toUpperCase() === root.overview.mixedcaseAddress.toUpperCase()) {
+                return i
+            }
+        }
+    }
 }

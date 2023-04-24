@@ -949,8 +949,9 @@ QtObject {
     readonly property string expired: "expired"
     readonly property string failedResending: "failedResending"
 
-    readonly property var preDefinedWalletAccountColors:[ StatusColors.colors['black'],
-        StatusColors.colors['grey'],
+    readonly property var preDefinedWalletAccountColors:[
+        StatusColors.colors['black'],
+        StatusColors.colors['white'],
         StatusColors.colors['blue2'],
         StatusColors.colors['purple'],
         StatusColors.colors['cyan'],
@@ -960,7 +961,8 @@ QtObject {
         StatusColors.colors['green2'],
         StatusColors.colors['moss'],
         StatusColors.colors['brown'],
-        StatusColors.colors['brown2'] ]
+        StatusColors.colors['brown2']
+    ]
 
     readonly property QtObject appTranslatableConstants: QtObject {
         readonly property string loginAccountsListAddNewUser: "LOGIN-ACCOUNTS-LIST-ADD-NEW-USER"

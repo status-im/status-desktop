@@ -21,6 +21,7 @@ QtObject {
     property var assets: walletSectionAssets.assets
     property bool assetsLoading: walletSectionAssets.assetsLoading
     property var accounts: walletSectionAccounts.accounts
+    property var sendAccounts: walletSectionSend.accounts
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
@@ -196,5 +197,13 @@ QtObject {
 
     function runEditAccountPopup(address) {
         walletSection.runEditAccountPopup(address)
+    }
+
+    function getUserSelectedAccountIndex(model) {
+        for (let i = 0; i < model.count; i++) {
+            if(model.get(i).address.toUpperCase() === root.overview.mixedcaseAddress.toUpperCase()) {
+                return i
+            }
+        }
     }
 }

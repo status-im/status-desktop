@@ -1,87 +1,85 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import StatusQ.Controls.Validators 0.1
-
-import utils 1.0
+import QtQuick 2.15
 
 import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import "../controls"
-import "../views"
 
-StatusFloatingButtonsSelector {
+StatusComboBox {
     id: root
 
-    property string currentAddress
     property var selectedAccount
-    // Expected signature: function(newAccount)
-    property var changeSelectedAccount: function(){}
-    property bool showAllWalletTypes: false
+    property string chainShortNames
+    property int selectedIndex: -1
 
-    repeater.objectName: "accountsListFloatingHeader"
-
-    signal updatedSelectedAccount(var account)
-
-    delegate: Rectangle {
-        width: button.width
-        height: button.height
-        radius: 8
-        color: Theme.palette.baseColor3
-        StatusButton {
-            id: button
-            size: StatusBaseButton.Size.Tiny
-            implicitHeight: 32
-            leftPadding: 4
-            text: name
-            objectName: name
-            asset.emoji: !!emoji ? emoji: ""
-            icon.name: !emoji ? "filled-account": ""
-            normalColor: "transparent"
-            hoverColor: Theme.palette.statusFloatingButtonHighlight
-            highlighted: index === root.currentIndex
-            onClicked: {
-                changeSelectedAccount(model)
-                root.currentIndex = index
-            }
-            Component.onCompleted: {
-                // on model reset, set the selected account to the one that was previously selected
-                if(!root.selectedAccount) {
-                    if(root.currentIndex === index) {
-                        changeSelectedAccount(model)
-                    }
-                    if(root.currentAddress === model.address) {
-                        root.currentIndex = index
-                        changeSelectedAccount(model)
-                    }
-                } else {
-                    // if the selectedAccount is watch only then select 0th item
-                    if(index === 0 && !!root.selectedAccount && root.selectedAccount.walletType === Constants.watchWalletType) {
-                        changeSelectedAccount(model)
-                        root.currentIndex = index
-                    }
-                }
-            }
+    QtObject {
+        id: d
+        function getTextColorForWhite(color) {
+            // The grey is kept for backwards compatibility for accounts already created with grey background
+            return color === StatusColors.colors['grey'] || color === StatusColors.colors['white'] ? Theme.palette.black : Theme.palette.white
         }
     }
-    popupMenuDelegate: StatusListItem {
-        implicitWidth: 272
-        title: name
-        subTitle: LocaleUtils.currencyAmountToLocaleString(currencyBalance)
-        asset.emoji: !!emoji ? emoji: ""
-        asset.color: model.color
-        asset.name: !emoji ? "filled-account": ""
-        asset.letterSize: 14
-        asset.isLetterIdenticon: !!model.emoji
-        asset.bgColor: Theme.palette.indirectColor1
+
+    control.padding: 0
+    control.spacing: 0
+    control.leftPadding: 8
+    control.rightPadding: 8
+    control.topPadding: 10
+
+    control.popup.width: 430
+    control.indicator: null
+
+    control.background: Rectangle {
+        width: contentItem.childrenRect.width + control.leftPadding + control.rightPadding
+        height: 32
+        radius: 8
+        color: !!selectedAccount ? hoverHandler.containsMouse ?
+                                       Theme.palette.walletAccountColors.getHoveredColor(selectedAccount.color) :
+                                       selectedAccount.color ?? "transparent" : "transparent"
+        HoverHandler {
+            id: hoverHandler
+            cursorShape: Qt.PointingHandCursor
+        }
+    }
+
+    contentItem: Row {
+        anchors.verticalCenter: parent.verticalCenter
+        width: childrenRect.width
+        spacing: 8
+        StatusEmoji {
+            anchors.verticalCenter: parent.verticalCenter
+            width: 16
+            height: 16
+            emojiId: StatusQUtils.Emoji.iconId(selectedAccount.emoji ?? "", StatusQUtils.Emoji.size.verySmall) || ""
+        }
+        StatusBaseText {
+            anchors.verticalCenter: parent.verticalCenter
+            text: selectedAccount.name ?? ""
+            font.pixelSize: 15
+            color: d.getTextColorForWhite(selectedAccount.color ?? "")
+        }
+        StatusIcon {
+            anchors.verticalCenter: parent.verticalCenter
+            width: 16
+            height: width
+            icon: "chevron-down"
+            color: d.getTextColorForWhite(selectedAccount.color ?? "")
+        }
+    }
+
+    delegate: WalletAccountListItem {
+        width: ListView.view.width
+        modelData: model
+        chainShortNames: root.chainShortNames
+        color: sensor.containsMouse || highlighted ?
+                   Theme.palette.baseColor2 :
+                   selectedAccount.name === model.name ? Theme.palette.statusListItem.highlightColor : "transparent"
         onClicked: {
-            changeSelectedAccount(model)
-            root.selectItem(index)
+            selectedIndex = index
+            control.popup.close()
         }
     }
 }

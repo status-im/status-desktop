@@ -6,17 +6,23 @@ type
     mixedCaseAddress: string
     ens: string
     balanceLoading: bool
+    color: string
+    emoji: string
 
 proc initItem*(
   name: string = "",
   mixedCaseAddress: string = "",
   ens: string = "",
   balanceLoading: bool  = true,
+  color: string,
+  emoji: string
 ): Item =
   result.name = name
   result.mixedCaseAddress = mixedCaseAddress
   result.ens = ens
   result.balanceLoading = balanceLoading
+  result.color = color
+  result.emoji = emoji
 
 proc `$`*(self: Item): string =
   result = fmt"""OverviewItem(
@@ -24,6 +30,8 @@ proc `$`*(self: Item): string =
     mixedCaseAddress: {self.mixedCaseAddress},
     ens: {self.ens},
     balanceLoading: {self.balanceLoading},
+    color: {self.color},
+    emoji: {self.emoji},
     ]"""
 
 proc getName*(self: Item): string =
@@ -37,3 +45,10 @@ proc getEns*(self: Item): string =
 
 proc getBalanceLoading*(self: Item): bool =
   return self.balanceLoading
+
+proc getColor*(self: Item): string =
+  return self.color
+
+proc getEmoji*(self: Item): string =
+  return self.emoji
+
