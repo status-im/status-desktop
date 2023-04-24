@@ -95,9 +95,11 @@ proc setBalance(self: Module, tokens: seq[WalletTokenDto]) =
 
 # TODO(alaibe): replace with filter logic
 method switchAccount*(self: Module, accountIndex: int) =
+  var walletAccount = self.controller.getWalletAccount(accountIndex)
   self.currentAccountIndex = accountIndex
-
-  let walletAccount = self.controller.getWalletAccount(accountIndex)
+  if walletAccount.isNil:
+    self.currentAccountIndex = 0
+    walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
 
   let item = initItem(
     walletAccount.name,
@@ -134,3 +136,4 @@ proc onAccountAdded(self: Module, account: WalletAccountDto) =
 
 proc onAccountRemoved(self: Module, account: WalletAccountDto) =
   self.switchAccount(self.currentAccountIndex)
+  
