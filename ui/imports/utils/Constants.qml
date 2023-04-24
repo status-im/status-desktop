@@ -442,13 +442,23 @@ QtObject {
 
     readonly property QtObject validators: QtObject {
         readonly property list<StatusValidator> displayName: [
-            StatusMinLengthValidator {
-                minLength: 5
-                errorMessage: qsTr("Username must be at least 5 characters")
+            StatusValidator {
+                name: "startsWithSpaceValidator"
+                validate: function (t) { return !t.startsWith(" ") }
+                errorMessage: qsTr("Usernames starting with whitespace are not allowed")
             },
             StatusRegularExpressionValidator {
                 regularExpression: /^[a-zA-Z0-9\-_ ]+$/
                 errorMessage: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
+            },
+            StatusMinLengthValidator {
+                minLength: 5
+                errorMessage: qsTr("Username must be at least 5 characters")
+            },
+            StatusValidator {
+                name: "endsWithSpaceValidator"
+                validate: function (t) { return !t.endsWith(" ") }
+                errorMessage: qsTr("Usernames ending with whitespace are not allowed")
             },
             // TODO: Create `StatusMaxLengthValidator` in StatusQ
             StatusValidator {
