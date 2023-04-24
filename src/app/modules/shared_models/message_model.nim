@@ -604,6 +604,7 @@ QtObject:
       updatedRawMsg: string,
       updatedParsedText: seq[ParsedText],
       contentType: int,
+      mentioned: bool,
       messageContainsMentions: bool,
       links: seq[string],
       mentionedUsersPks: seq[string]
@@ -613,6 +614,7 @@ QtObject:
       return
 
     self.items[ind].messageText = updatedMsg
+    self.items[ind].mentioned = mentioned
     self.items[ind].messageContainsMentions = messageContainsMentions
     self.items[ind].isEdited = true
     self.items[ind].links = links
@@ -623,6 +625,7 @@ QtObject:
     self.dataChanged(index, index, @[
       ModelRole.MessageText.int,
       ModelRole.UnparsedText.int,
+      ModelRole.Mentioned.int,
       ModelRole.MessageContainsMentions.int,
       ModelRole.IsEdited.int,
       ModelRole.Links.int,

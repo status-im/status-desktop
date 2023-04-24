@@ -616,6 +616,7 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     self.controller.replacePubKeysWithDisplayNames(message.text),
     message.parsedText,
     message.contentType,
+    message.mentioned,
     message.containsContactMentions(),
     message.links,
     message.mentionedUsersPks
