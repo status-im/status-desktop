@@ -27,7 +27,6 @@ type SignalType* {.pure.} = enum
   HistoryRequestCompleted = "history.request.completed"
   HistoryRequestFailed = "history.request.failed"
   HistoryRequestSuccess = "history.request.success"
-  KeycardConnected = "keycard.connected"
   MailserverAvailable = "mailserver.available"
   MailserverChanged = "mailserver.changed"
   MailserverNotWorking = "mailserver.not.working"
