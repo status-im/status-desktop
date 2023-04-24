@@ -121,3 +121,6 @@ def image_present(imageName: str, tolerant: bool = True, threshold: int = 99.5, 
 
 def passes(text: str):
     test.passes(text)
+
+def compare_text(expected: str, actual: str):
+    test.compare(expected, actual, f'Actual value "{actual}" not equals to expected: {expected}')

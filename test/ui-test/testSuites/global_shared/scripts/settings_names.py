@@ -31,6 +31,8 @@ class SettingsSubsection(Enum):
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "StatusButton", "visible": True}
 settings_Sidebar_ENS_Item = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.ENS_USERNAMES.value, "type": "StatusNavigationListItem"}
+settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
+settingsContentBaseScrollView_Item = {"container": settingsContentBase_ScrollView, "type": "Item", "unnamed": 1, "visible": True}
 
 # ENS view;
 settings_ENS_Start_Button = {"container": statusDesktop_mainWindow, "objectName": "ensStartButton", "type": "StatusButton"}
@@ -53,6 +55,7 @@ messaging_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objec
 
 
 # Profile Settings:
+mainWindow_MyProfileView = {"container": statusDesktop_mainWindow, "type": "MyProfileView", "unnamed": 1, "visible": True}
 displayName_StatusInput = {"container": statusDesktop_mainWindow, "objectName": "displayNameInput", "type": "StatusInput", "visible": True}
 displayName_TextEdit = {"container": displayName_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 bio_StatusInput = {"container": statusDesktop_mainWindow, "objectName": "bioInput", "type": "StatusInput", "visible": True}
@@ -61,24 +64,26 @@ twitter_StaticSocialLinkInput = {"container": statusDesktop_mainWindow, "objectN
 twitter_TextEdit = {"container": twitter_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 personalSite_StaticSocialLinkInput = {"container": statusDesktop_mainWindow, "objectName": "__personal_site-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
 personalSite_TextEdit = {"container": personalSite_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
-addMoreSocialLinks_StatusIconTextButton = {"container": statusDesktop_mainWindow, "objectName": "addMoreSocialLinksButton", "type": "StatusIconTextButton", "visible": True}
+addMoreSocialLinks = {"container": statusDesktop_mainWindow, "objectName": "addMoreSocialLinks", "type": "StatusLinkText", "visible": True}
 twitter_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__twitter-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
-twitter_popup_TextEdit = {"container": twitter_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 personalSite_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__personal_site-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
-personalSite_popup_TextEdit = {"container": personalSite_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 github_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__github-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
-github_popup_TextEdit = {"container": github_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 youtube_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__youtube-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
-youtube_popup_TextEdit = {"container": youtube_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 discord_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__discord-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
-discord_popup_TextEdit = {"container": discord_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 telegram_popup_StaticSocialLinkInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "__telegram-socialLinkInput", "type": "StaticSocialLinkInput", "visible": True}
-telegram_popup_TextEdit = {"container": telegram_popup_StaticSocialLinkInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 customLink_popup_StatusInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "hyperlinkInput", "type": "StatusInput", "visible": True}
-customLink_popup_TextEdit = {"container": customLink_popup_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 customUrl_popup_StatusInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "urlInput", "type": "StatusInput", "visible": True}
 customUrl_popup_TextEdit = {"container": customUrl_popup_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 change_password_button = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "profileSettingsChangePasswordButton", "visible": True}
+
+# Social Links Popup
+socialLink_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListItem", "title": "", "visible": True}
+placeholder_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "id": "placeholder", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+o_StatusBackButton = {"container": statusDesktop_mainWindow_overlay, "type": "StatusBackButton", "unnamed": 1, "visible": True}
+add_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+linksView = {"container": statusDesktop_mainWindow, "id": "linksView", "type": "StatusListView", "unnamed": 1, "visible": True}
+edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+
 
 # Wallet Settings:
 settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWindow, "objectName":'generatedAccounts', "type": 'ListView'}
@@ -98,12 +103,12 @@ settings_Wallet_MainView_BackupSeedPhrase = {"container": mainWindow_ScrollView,
 generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName": "generatedAccounts", "type": "ListView"}
 
 # Messaging Settings:
-settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 displayMessageLinkPreviewItem = {"container": statusDesktop_mainWindow, "objectName": "displayMessageLinkPreviewsItem", "type": "StatusListItem"}
 linkPreviewSwitch = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_showMessageLinksSwitch", "type": "StatusSwitch", "visible": True}
 imageUnfurlingItem = {"container": statusDesktop_mainWindow, "objectName": "imageUnfurlingItem", "type": "StatusListItem"}
 tenorGifsPreviewSwitchItem = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_sitesListView_StatusListItem_tenor_gifs_subdomain", "type": "StatusListItem"}
 contacts_listItem_btn = {"container": statusDesktop_mainWindow, "objectName": "MessagingView_ContactsListItem_btn", "type": "StatusContactRequestsIndicatorListItem"}
+settingsContentBaseScrollView_StatusScrollBar = {"container": settingsContentBase_ScrollView, "occurrence": 3, "type": "StatusScrollBar", "unnamed": 1, "visible": True}
 
 # Contacts View
 contact_request_to_chat_key_btn = {"container": statusDesktop_mainWindow, "objectName": "ContactsView_ContactRequest_Button", "type": "StatusButton"}

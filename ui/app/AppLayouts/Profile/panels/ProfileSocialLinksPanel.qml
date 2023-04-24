@@ -49,6 +49,7 @@ Control {
             }
             Item { Layout.fillWidth: true }
             StatusLinkText {
+                objectName: "addMoreSocialLinks"
                 text: qsTr("＋ Add more links")
                 color: Theme.palette.primaryColor1
                 font.pixelSize: Theme.tertiaryTextFontSize

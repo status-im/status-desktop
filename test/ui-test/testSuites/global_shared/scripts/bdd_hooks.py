@@ -5,6 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/glo
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
 from steps.commonInitSteps import context_init
+  
 
 @OnScenarioStart
 def hook(context):

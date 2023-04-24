@@ -1,7 +1,7 @@
-#******************************************************************************
+# ******************************************************************************
 # Status.im
-#*****************************************************************************/
-#/**
+# *****************************************************************************/
+# /**
 # * \file    AccountsPopup.py
 # *
 # * \date    February 2022
@@ -13,27 +13,28 @@ from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from utils.ObjectAccess import *
 
+
 # It defines the identifier for each Account View component:
 class SAccountsComponents(Enum):
-    ACCOUNTS_POPUP                = "accountsView_accountListPanel"
+    ACCOUNTS_POPUP = "accountsView_accountListPanel"
 
-#It defines the status accounts popup behavior and properties.
-class StatusAccountsScreen():
 
-    
+# It defines the status accounts popup behavior and properties.
+class StatusAccountsScreen:
+
     def __init__(self):
         verify_screen(SAccountsComponents.ACCOUNTS_POPUP.value)
 
     def find_account(self, account):
         [found, account_obj] = self.__find_account(account)
         return found
-    
+
     def select_account(self, account):
         [found, account_obj] = self.__find_account(account)
         if found:
-            return click_obj(account_obj)       
+            return click_obj(account_obj)
         return found
-    
+
     def __find_account(self, account):
         found = False
         account_obj = None
@@ -41,8 +42,8 @@ class StatusAccountsScreen():
         if is_loaded:
             for index in range(accountsList.count):
                 a = accountsList.itemAt(index)
-                if(a.label == account):
+                if (a.label == account):
                     account_obj = a
                     found = True
-                    break 
+                    break
         return found, account_obj

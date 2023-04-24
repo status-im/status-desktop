@@ -1,8 +1,7 @@
 import steps.commonInitSteps as init_steps
-
-from screens.StatusMainScreen import StatusMainScreen
 from screens.SettingsScreen import SettingsScreen
 from screens.StatusLanguageScreen import StatusLanguageScreen
+from screens.StatusMainScreen import StatusMainScreen
 
 _statusMain = StatusMainScreen()
 _settingsScreen = SettingsScreen()
@@ -45,11 +44,11 @@ def step(context, display_name: str):
 
 @Given("the user's bio is empty")
 def step(context):
-    _settingsScreen.verify_bio("")
+    _settingsScreen.profile_settings.verify_bio("")
 
 @Given("the user's social links are empty")
 def step(context):
-    _settingsScreen.verify_social_links(None)
+    _settingsScreen.profile_settings.verify_social_no_links()
 
 @Given("the user opens own profile popup")
 def step(context: any):
@@ -153,19 +152,22 @@ def step(context: any):
 
 @When("the user sets display name to \"|any|\"")
 def step(context, display_name):
-    _settingsScreen.set_display_name(display_name)
+    _settingsScreen.profile_settings.display_name = display_name
 
 @When("the user backs up the wallet seed phrase")
 def step(context):
     _settingsScreen.check_backup_seed_phrase_workflow()
 
+
 @When("the user sets social links to:")
 def step(context):
-    _settingsScreen.set_social_links(context.table)
+    profile_settings = _settingsScreen.profile_settings
+    profile_settings.social_links = context.table
+    profile_settings.save_changes()
 
 @When("the user sets bio to \"|any|\"")
 def step(context, bio):
-    _settingsScreen.set_bio(bio)
+    _settingsScreen.profile_settings.bio = bio
 
 @When("the users switches state to offline")
 def step(context: any):
@@ -181,7 +183,7 @@ def step(context: any):
 
 @When("the user changes the password from |any| to |any|")
 def step(context: any, oldPassword: str, newPassword: str):
-    _settingsScreen.change_user_password(oldPassword, newPassword)
+    _settingsScreen.profile_settings.open_change_password_popup().change_password(oldPassword, newPassword)
 
 @When("the user sends a contact request to the chat key \"|any|\" with the reason \"|any|\"")
 def step(context: any, chat_key: str, reason: str):
@@ -232,11 +234,11 @@ def step(context, display_name: str):
 
 @Then("the user's bio is \"|any|\"")
 def step(context, bio):
-    _settingsScreen.verify_bio(bio)
+    _settingsScreen.profile_settings.verify_bio(bio)
 
 @Then("the user's social links are:")
 def step(context):
-    _settingsScreen.verify_social_links(context.table)
+    _settingsScreen.profile_settings.verify_social_links(context.table)
 
 @Then("the application displays |any| as the selected language")
 def step(context, native):
@@ -293,10 +295,10 @@ def the_user_opens_the_wallet_settings():
     _settingsScreen.open_wallet_settings()
 
 def the_user_opens_the_profile_settings():
-    _settingsScreen.open_profile_settings()
+    _settingsScreen.profile_settings
 
 def the_user_display_name_is(display_name: str):
-    _settingsScreen.verify_display_name(display_name)
+    _settingsScreen.profile_settings.verify_display_name(display_name)
 
 def the_user_display_name_in_profile_popup_is(display_name: str):
     _statusMain.verify_profile_popup_display_name(display_name)

@@ -19,6 +19,8 @@ from utils.ObjectAccess import *
 
 from .StatusMainScreen import MainScreenComponents
 from .StatusMainScreen import authenticate_popup_enter_password
+from .components.cahange_password_popup import ChangePasswordPopup
+from .components.social_links_popup import SocialLinksPopup
 
 
 class SettingsScreenComponents(Enum):
@@ -92,32 +94,6 @@ class WalletSettingsScreen(Enum):
     BACKUP_SEED_PHRASE_BUTTON: str = "settings_Wallet_MainView_BackupSeedPhrase"
 
 
-class ProfileSettingsScreen(Enum):
-    DISPLAY_NAME: str = "displayName_TextEdit"
-    BIO: str = "bio_TextEdit"
-    TWITTER_SOCIAL_LINK: str = "twitter_TextEdit"
-    PERSONAL_SITE_SOCIAL_LINK: str = "personalSite_TextEdit"
-    OPEN_SOCIAL_LINKS_DIALOG: str = "addMoreSocialLinks_StatusIconTextButton"
-    CLOSE_SOCIAL_LINKS_DIALOG: str = "closeButton_StatusHeaderAction"
-    TWITTER_SOCIAL_LINK_IN_DIALOG: str = "twitter_popup_TextEdit"
-    PERSONAL_SITE_LINK_IN_DIALOG: str = "personalSite_popup_TextEdit"
-    GITHUB_SOCIAL_LINK_IN_DIALOG: str = "github_popup_TextEdit"
-    YOUTUBE_SOCIAL_LINK_IN_DIALOG: str = "youtube_popup_TextEdit"
-    DISCORD_SOCIAL_LINK_IN_DIALOG: str = "discord_popup_TextEdit"
-    TELEGRAM_SOCIAL_LINK_IN_DIALOG: str = "telegram_popup_TextEdit"
-    CUSTOM_LINK_IN_DIALOG: str = "customLink_popup_TextEdit"
-    CUSTOM_URL_IN_DIALOG: str = "customUrl_popup_TextEdit"
-    CHANGE_PASSWORD_BUTTON: str = "change_password_button"
-
-
-class ChangePasswordMenu(Enum):
-    CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT: str = "change_password_menu_current_password"
-    CHANGE_PASSWORD_NEW_PASSWORD_INPUT: str = "change_password_menu_new_password"
-    CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT: str = "change_password_menu_new_password_confirm"
-    CHANGE_PASSWORD_SUBMIT_BUTTON: str = "change_password_menu_submit_button"
-    CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON: str = "change_password_success_menu_sign_out_quit_button"
-
-
 class ConfirmationDialog(Enum):
     SIGN_OUT_CONFIRMATION: str = "signOutConfirmation_StatusButton"
 
@@ -148,6 +124,15 @@ class SettingsScreen:
 
     def __init__(self):
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
+        self._profile_view = ProfileSettingsView()
+        self._profile_button = Button('profile_StatusNavigationListItem')
+
+    @property
+    def profile_settings(self) -> 'ProfileSettingsView':
+        if not self._profile_button.is_selected:
+            verify_object_enabled(SidebarComponents.PROFILE_OPTION.value)
+            self._profile_button.click()
+        return self._profile_view
 
     def open_advanced_settings(self):
         click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
@@ -298,109 +283,6 @@ class SettingsScreen:
                 return
         verify(False, "Community left")
 
-    def open_profile_settings(self):
-        verify_object_enabled(SidebarComponents.PROFILE_OPTION.value)
-        click_obj_by_name(SidebarComponents.PROFILE_OPTION.value)
-
-    def verify_display_name(self, display_name: str):
-        verify_text_matching(ProfileSettingsScreen.DISPLAY_NAME.value, display_name)
-
-    def set_display_name(self, display_name: str):
-        click_obj_by_name(ProfileSettingsScreen.DISPLAY_NAME.value)
-        name_changed = setText(ProfileSettingsScreen.DISPLAY_NAME.value, display_name)
-        verify(name_changed, "set display name")
-        click_obj_by_name(SettingsScreenComponents.SAVE_BUTTON.value)
-        self.verify_display_name(display_name)
-
-    def verify_bio(self, bio: str):
-        verify_text_matching(ProfileSettingsScreen.BIO.value, bio)
-
-    def set_bio(self, bio: str):
-        click_obj_by_name(ProfileSettingsScreen.BIO.value)
-        verify(setText(ProfileSettingsScreen.BIO.value, bio), "set bio")
-        click_obj_by_name(SettingsScreenComponents.SAVE_BUTTON.value)
-        self.verify_bio(bio)
-
-    def set_social_links(self, table):
-
-        twitter = ""
-        personal_site = ""
-        github = ""
-        youtube = ""
-        discord = ""
-        telegram = ""
-        custom_link_text = ""
-        custom_link = ""
-
-        if table is not None:
-            verify_equals(8, len(table))  # Expecting 8 as social media link fields to verify
-            twitter = table[0][0]
-            personal_site = table[1][0]
-            github = table[2][0]
-            youtube = table[3][0]
-            discord = table[4][0]
-            telegram = table[5][0]
-            custom_link_text = table[6][0]
-            custom_link = table[7][0]
-
-        click_obj_by_name(ProfileSettingsScreen.OPEN_SOCIAL_LINKS_DIALOG.value)
-
-        click_obj_by_name(ProfileSettingsScreen.TWITTER_SOCIAL_LINK_IN_DIALOG.value)
-        verify(setText(ProfileSettingsScreen.TWITTER_SOCIAL_LINK_IN_DIALOG.value, twitter), "set twitter")
-        click_obj_by_name(ProfileSettingsScreen.PERSONAL_SITE_LINK_IN_DIALOG.value)
-        verify(setText(ProfileSettingsScreen.PERSONAL_SITE_LINK_IN_DIALOG.value, personal_site), "set personal site")
-        click_obj_by_name(ProfileSettingsScreen.GITHUB_SOCIAL_LINK_IN_DIALOG.value)
-        verify(setText(ProfileSettingsScreen.GITHUB_SOCIAL_LINK_IN_DIALOG.value, github), "set github")
-        click_obj_by_name(ProfileSettingsScreen.YOUTUBE_SOCIAL_LINK_IN_DIALOG.value)
-        verify(setText(ProfileSettingsScreen.YOUTUBE_SOCIAL_LINK_IN_DIALOG.value, youtube), "set youtube")
-        click_obj_by_name(ProfileSettingsScreen.DISCORD_SOCIAL_LINK_IN_DIALOG.value)
-        verify(setText(ProfileSettingsScreen.DISCORD_SOCIAL_LINK_IN_DIALOG.value, discord), "set discord")
-        click_obj_by_name(ProfileSettingsScreen.TELEGRAM_SOCIAL_LINK_IN_DIALOG.value)
-        verify(setText(ProfileSettingsScreen.TELEGRAM_SOCIAL_LINK_IN_DIALOG.value, telegram), "set telegram")
-        click_obj_by_name(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value)
-        verify(setText(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value, custom_link_text), "set custom link name")
-        click_obj_by_name(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value)
-        verify(setText(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value, custom_link), "set custom link url")
-
-        click_obj_by_name(ProfileSettingsScreen.CLOSE_SOCIAL_LINKS_DIALOG.value)
-        click_obj_by_name(SettingsScreenComponents.SAVE_BUTTON.value)
-
-    def verify_social_links(self, table):
-
-        twitter = ""
-        personal_site = ""
-        github = ""
-        youtube = ""
-        discord = ""
-        telegram = ""
-        custom_link_text = ""
-        custom_link = ""
-
-        if table is not None:
-            verify_equals(8, len(table))  # Expecting 8 as social media link fields to verify
-            twitter = table[0][0]
-            personal_site = table[1][0]
-            github = table[2][0]
-            youtube = table[3][0]
-            discord = table[4][0]
-            telegram = table[5][0]
-            custom_link_text = table[6][0]
-            custom_link = table[7][0]
-
-        verify_text_matching(ProfileSettingsScreen.TWITTER_SOCIAL_LINK.value, twitter)
-        verify_text_matching(ProfileSettingsScreen.PERSONAL_SITE_SOCIAL_LINK.value, personal_site)
-
-        click_obj_by_name(ProfileSettingsScreen.OPEN_SOCIAL_LINKS_DIALOG.value)
-        verify_text_matching(ProfileSettingsScreen.TWITTER_SOCIAL_LINK_IN_DIALOG.value, twitter)
-        verify_text_matching(ProfileSettingsScreen.PERSONAL_SITE_LINK_IN_DIALOG.value, personal_site)
-        verify_text_matching(ProfileSettingsScreen.GITHUB_SOCIAL_LINK_IN_DIALOG.value, github)
-        verify_text_matching(ProfileSettingsScreen.YOUTUBE_SOCIAL_LINK_IN_DIALOG.value, youtube)
-        verify_text_matching(ProfileSettingsScreen.DISCORD_SOCIAL_LINK_IN_DIALOG.value, discord)
-        verify_text_matching(ProfileSettingsScreen.TELEGRAM_SOCIAL_LINK_IN_DIALOG.value, telegram)
-        verify_text_matching(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value, custom_link_text)
-        verify_text_matching(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value, custom_link)
-        click_obj_by_name(ProfileSettingsScreen.CLOSE_SOCIAL_LINKS_DIALOG.value)
-
     def check_backup_seed_phrase_workflow(self):
         click_obj_by_name(WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value)
 
@@ -447,21 +329,9 @@ class SettingsScreen:
         click_obj_by_name(BackupSeedPhrasePopup.CONFIRM_YOU_STORED_BUTTON.value)
 
     def verify_seed_phrase_indicator_not_visible(self):
-        assert wait_util_hidden(
+        assert wait_until_hidden(
             WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value,
         ), "Backup seed phrase settings button is visible"
-
-    def change_user_password(self, oldPassword: str, newPassword: str):
-        get_and_click_obj(ProfileSettingsScreen.CHANGE_PASSWORD_BUTTON.value)
-
-        type_text(ChangePasswordMenu.CHANGE_PASSWORD_CURRENT_PASSWORD_INPUT.value, oldPassword)
-
-        type_text(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_INPUT.value, newPassword)
-
-        type_text(ChangePasswordMenu.CHANGE_PASSWORD_NEW_PASSWORD_CONFIRM_INPUT.value, newPassword)
-
-        click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUBMIT_BUTTON.value)
-        click_obj_by_name(ChangePasswordMenu.CHANGE_PASSWORD_SUCCESS_MENU_SIGN_OUT_QUIT_BUTTON.value)
 
     def add_contact_by_chat_key(self, chat_key: str, who_you_are: str):
         click_obj_by_name(ContactsViewScreen.CONTACT_REQUEST_CHAT_KEY_BTN.value)
@@ -508,3 +378,111 @@ class SettingsScreen:
                 click_obj(delegate)
                 return
         verify(False, "Community not found")
+
+
+class ProfileSettingsView(BaseElement):
+
+    def __init__(self):
+        super(ProfileSettingsView, self).__init__('mainWindow_MyProfileView')
+        self._display_name_text_field = TextEdit('displayName_TextEdit')
+        self._bio_text_field = TextEdit('bio_TextEdit')
+        self._scroll_view = Scroll('settingsContentBase_ScrollView')
+        self._add_more_links_label = TextLabel('addMoreSocialLinks')
+        self._save_button = Button('settingsSave_StatusButton')
+        self._links_list = BaseElement('linksView')
+        self._change_password_button = Button('change_password_button')
+
+    @property
+    def display_name(self) -> str:
+        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
+        return self._display_name_text_field.text
+
+    @display_name.setter
+    def display_name(self, value: str):
+        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
+        self._display_name_text_field.text = value
+        self.save_changes()
+
+    @property
+    def bio(self) -> str:
+        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
+        return self._bio_text_field.text
+
+    @bio.setter
+    def bio(self, value: str):
+        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
+        self._bio_text_field.text = value
+        self.save_changes()
+
+    @property
+    def social_links(self) -> dict:
+        self._scroll_view.vertical_scroll_to(self._add_more_links_label)
+        links = {}
+        for link_name in walk_children(self._links_list.existent):
+            if getattr(link_name, 'id', '') == 'draggableDelegate':
+                for link_value in walk_children(link_name):
+                    if getattr(link_value, 'id', '') == 'textMouseArea':
+                        links[str(link_name.title)] = str(object.parent(link_value).text)
+        return links
+
+    @social_links.setter
+    def social_links(self, table):
+        verify_equals(8, len(table))  # Expecting 8 as social media link fields to verify
+        links = {
+            'Twitter': [table[0][0]],
+            'Personal Site': [table[1][0]],
+            'Github': [table[2][0]],
+            'YouTube': [table[3][0]],
+            'Discord': [table[4][0]],
+            'Telegram': [table[5][0]],
+            'Custom link': [table[6][0], table[7][0]],
+        }
+
+        for network, link in links.items():
+            social_links_popup = self.open_social_links_popup()
+            social_links_popup.add_link(network, link)
+
+    def save_changes(self):
+        self._save_button.click()
+
+    def open_social_links_popup(self):
+        self._scroll_view.vertical_scroll_to(self._add_more_links_label)
+        self._add_more_links_label.click()
+        return SocialLinksPopup().wait_utill_appears()
+
+    def verify_display_name(self, display_name: str):
+        compare_text(display_name, self.display_name)
+
+    def verify_bio(self, bio: str):
+        compare_text(bio, self.bio)
+
+    def verify_social_links(self, table):
+        verify_equals(8, len(table))  # Expecting 8 as social media link fields to verify
+        twitter = table[0][0]
+        personal_site = table[1][0]
+        github = table[2][0]
+        youtube = table[3][0]
+        discord = table[4][0]
+        telegram = table[5][0]
+        custom_link_text = table[6][0]
+        custom_link = table[7][0]
+
+        links = self.social_links
+
+        compare_text(links['Twitter'], twitter)
+        compare_text(links['Personal Site'], personal_site)
+        compare_text(links['Github'], github)
+        compare_text(links['YouTube'], youtube)
+        compare_text(links['Discord'], discord)
+        compare_text(links['Telegram'], telegram)
+        compare_text(links[custom_link_text], custom_link)
+
+    def verify_social_no_links(self):
+        links = self.social_links
+        for value in links.values():
+            compare_text(value, '')
+
+    def open_change_password_popup(self):
+        self._scroll_view.vertical_scroll_to(self._change_password_button)
+        self._change_password_button.click()
+        return ChangePasswordPopup().wait_utill_appears()
