@@ -180,7 +180,7 @@ Item {
                     statusListItemTitle.elide: Text.ElideMiddle
                     statusListItemTitle.wrapMode: Text.NoWrap
                     radius: 0
-                    color: sensor.containsMouse || highlighted ? Theme.palette.statusListItem.highlightColor : "transparent"
+                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
                     statusListItemComponentsSlot.spacing: 5
                     loading: loadingTransaction
                     components: [

@@ -89,7 +89,6 @@
         <file>StatusQ/Controls/StatusDropdown.qml</file>
         <file>StatusQ/Controls/StatusFlatButton.qml</file>
         <file>StatusQ/Controls/StatusFlatRoundButton.qml</file>
-        <file>StatusQ/Controls/StatusFloatingButtonsSelector.qml</file>
         <file>StatusQ/Controls/StatusIconTabButton.qml</file>
         <file>StatusQ/Controls/StatusIconTextButton.qml</file>
         <file>StatusQ/Controls/StatusIdenticonRing.qml</file>

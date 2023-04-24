@@ -14,6 +14,8 @@ QtObject:
       currencyBalance: CurrencyAmount
       ens: string
       balanceLoading: bool
+      color: string
+      emoji: string
 
   proc setup(self: View) =
     self.QObject.setup
@@ -72,6 +74,20 @@ QtObject:
       self.balanceLoading = balanceLoading
       self.balanceLoadingChanged()
 
+  proc getColor(self: View): QVariant {.slot.} =
+    return newQVariant(self.color)
+  proc colorChanged(self: View) {.signal.}
+  QtProperty[QVariant] color:
+    read = getColor
+    notify = colorChanged
+
+  proc getEmoji(self: View): QVariant {.slot.} =
+    return newQVariant(self.emoji)
+  proc emojiChanged(self: View) {.signal.}
+  QtProperty[QVariant] emoji:
+    read = getEmoji
+    notify = emojiChanged
+
   proc setData*(self: View, item: Item) =
     if(self.name != item.getName()):
       self.name = item.getName()
@@ -83,3 +99,9 @@ QtObject:
       self.ens = item.getEns()
       self.ensChanged()
     self.setBalanceLoading(item.getBalanceLoading())  
+    if(self.color != item.getColor()):
+      self.color = item.getColor()
+      self.colorChanged()
+    if(self.emoji != item.getEmoji()):
+      self.emoji = item.getEmoji()
+      self.emojiChanged()

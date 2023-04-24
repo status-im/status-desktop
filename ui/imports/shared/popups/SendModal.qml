@@ -95,6 +95,12 @@ StatusDialog {
             if(errorType === Constants.SendAmountExceedsBalance)
                 bestRoutes = []
         }
+
+        function setSelectedAccount() {
+            popup.selectedAccount = header.model.get(header.selectedIndex)
+            if(!!assetSelector.selectedAsset)
+                assetSelector.selectedAsset = store.getAsset(selectedAccount.assets, assetSelector.selectedAsset.symbol)
+        }
     }
 
     width: 556
@@ -149,6 +155,7 @@ StatusDialog {
     onClosed: popup.store.resetTxStoreProperties()
 
     header: AccountsModalHeader {
+        id: header
         anchors.top: parent.top
         anchors.topMargin: -height - 18
         model: SortFilterProxyModel {
@@ -159,11 +166,14 @@ StatusDialog {
                 inverted: true
             }
         }
-        currentAddress: popup.store.overview.mixedcaseAddress
-        changeSelectedAccount: function(newAccount) {
-            popup.selectedAccount = newAccount
-            if (assetSelector.selectedAsset) {
-                assetSelector.selectedAsset = store.getAsset(popup.selectedAccount.assets, assetSelector.selectedAsset.symbol)
+        selectedIndex: store.getUserSelectedAccountIndex(header.model)
+        selectedAccount: !!popup.selectedAccount ? popup.selectedAccount: {}
+        chainShortNames: store.getAllNetworksSupportedString()
+        onSelectedIndexChanged: d.setSelectedAccount()
+        Connections {
+            target: popup.store.accounts
+            function onModelReset() {
+                d.setSelectedAccount()
             }
         }
     }
@@ -248,7 +258,7 @@ StatusDialog {
                             visible: !!assetSelector.selectedAsset || !!assetSelector.hoveredToken
                             title: {
                                 if(!!assetSelector.hoveredToken) {
-                                    const balance = popup.currencyStore.formatCurrencyAmount(assetSelector.hoveredToken.totalCurrencyBalance.amount, assetSelector.hoveredToken.symbol)
+                                    const balance = popup.currencyStore.formatCurrencyAmount((amountToSendInput.inputIsFiat ? assetSelector.hoveredToken.totalCurrencyBalance.amount : assetSelector.hoveredToken.totalBalance.amount) , assetSelector.hoveredToken.symbol)
                                     return qsTr("Max: %1").arg(balance)
                                 }
                                 if (d.maxInputBalance <= 0)
@@ -278,7 +288,6 @@ StatusDialog {
                             return RootStore.getNetworkIcon(chainId)
                         }
                         onTokenSelected: {
-                            assetSelector.userSelectedToken = selectedToken.symbol
                             assetSelector.selectedAsset = selectedToken
                         }
                         onTokenHovered: {

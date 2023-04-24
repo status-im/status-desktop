@@ -29,7 +29,7 @@ StatusListItem {
     tagsModel: balances.count > 0 ? balances : []
     tagsDelegate: sensor.containsMouse ? expandedItem : compactItem
     radius: sensor.containsMouse || root.highlighted ? 0 : 8
-    color: sensor.containsMouse || highlighted ? Theme.palette.statusListItem.highlightColor : "transparent"
+    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
 
     onClicked: d.selectToken()
 

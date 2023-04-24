@@ -71,5 +71,17 @@ QtObject {
         'blueHijab': '#CDF2FB',
 
         'lightPattensBlue': '#D7DEE4',
+
+        'blackHovered': '#1D232E',
+        'blueHovered': '#364DB2',
+        'purpleHovered': '#6D62C7',
+        'cyanHovered': '#41A6C0',
+        'violetHovered': '#A965C3',
+        'redHovered': '#C85151',
+        'yellowHovered': '#CCA20C',
+        'greenHovered': '#63AE00',
+        'mossHovered': '#1E857B',
+        'brownHovered': '#6F2727',
+        'brown2Hovered': '#7C6926',
     }
 }

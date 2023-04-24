@@ -39,7 +39,7 @@ StatusListItem {
     asset.width: 40
     asset.height: 40
     radius: 0
-    color: sensor.containsMouse || highlighted ? Theme.palette.statusListItem.highlightColor : "transparent"
+    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
     components: [
         Column {
             anchors.verticalCenter: parent.verticalCenter
