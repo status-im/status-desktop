@@ -163,6 +163,11 @@ Item {
         \note If the new rect has a diferent area the crop window will adjust to the new AR
     */
     function setCropRect(newRect /*rect*/) {
+        if (newRect.x === 0 && newRect.y === 0 && newRect.width === 0 && newRect.height === 0) { // reset
+            d.cropRect = newRect
+            return
+        }
+
         if(newRect.width === 0 || newRect.height === 0)
             return
         if(root.sourceSize.width === 0 || root.sourceSize.height === 0)

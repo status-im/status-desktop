@@ -21,7 +21,7 @@ Item {
 
     property alias source: editor.source
     property alias cropRect: editor.cropRect
-    property string imageData
+    property alias imageData: editor.dataImage
 
     implicitHeight: layout.childrenRect.height
 
@@ -52,8 +52,6 @@ Item {
 
             roundedImage: false
             aspectRatio: 375/184
-
-            dataImage: root.imageData
 
             NoImageUploadedPanel {
                 anchors.centerIn: parent

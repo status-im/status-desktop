@@ -207,8 +207,10 @@ StackLayout {
                                               root.pinMessagesEnabled != options.pinMessagesEnabled ||
                                               root.color != color ||
                                               root.selectedTags != selectedTags ||
+                                              root.logoImageData != logoImageData ||
                                               logoImagePath.length > 0 ||
                                               isValidRect(logoCropRect) ||
+                                              root.bannerImageData != bannerImageData ||
                                               bannerPath.length > 0 ||
                                               isValidRect(bannerCropRect)
                                    })
