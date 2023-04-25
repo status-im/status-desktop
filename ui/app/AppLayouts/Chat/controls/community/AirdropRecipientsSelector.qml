@@ -1,6 +1,8 @@
 import QtQuick 2.15
 
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -15,6 +17,14 @@ StatusFlowSelector {
     property alias addressesInputText: addressesSelectorPanel.text
 
     property bool showAddressesInputWhenEmpty: false
+    property int expectedNumberOfRecipients: 0
+    property bool infiniteExpectedNumberOfRecipients: false
+
+    readonly property int count: addressesSelectorPanel.count +
+                                 membersSelectorPanel.count
+
+    readonly property bool valid:
+        addressesSelectorPanel.invalidAddressesCount === 0
 
     signal addAddressesRequested(string addresses)
     signal removeAddressRequested(int index)
@@ -39,6 +49,24 @@ StatusFlowSelector {
 
     function positionMembersListAtEnd() {
         membersSelectorPanel.positionListAtEnd()
+    }
+
+    StatusBaseText {
+        parent: label
+
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+
+        readonly property bool valid: root.infiniteExpectedNumberOfRecipients ||
+                                      root.count <= root.expectedNumberOfRecipients
+
+        text: root.count + " / " + (root.infiniteExpectedNumberOfRecipients
+              ? qsTr("∞ recipients", "infinite number of recipients")
+              : qsTr("%n recipient(s)", "", root.expectedNumberOfRecipients))
+
+        font.pixelSize: Theme.tertiaryTextFontSize + 1
+        color: valid ? Theme.palette.baseColor1 : Theme.palette.dangerColor1
+        elide: Text.ElideRight
     }
 
     AddressesSelectorPanel {
