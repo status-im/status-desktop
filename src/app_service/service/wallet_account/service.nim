@@ -74,7 +74,7 @@ type AccountSaved* = ref object of Args
   account*: WalletAccountDto
 
 type AccountDeleted* = ref object of Args
-  account*: WalletAccountDto
+  address*: string
 
 type CurrencyUpdated = ref object of Args
 
@@ -130,6 +130,8 @@ QtObject:
   proc startWallet(self: Service)
   proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto])
   proc handleKeycardsState(self: Service, keycardsState: seq[KeyPairDto])
+  proc getAllKnownKeycards*(self: Service): seq[KeyPairDto]
+  proc removeMigratedAccountsForKeycard*(self: Service, keyUid: string, keycardUid: string, accountsToRemove: seq[string])
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -162,6 +164,18 @@ QtObject:
         ).filter(a => not a.isChat)
     except Exception as e:
       error "error: ", procName="fetchAccounts", errName = e.name, errDesription = e.msg    
+
+  proc getAccountsByKeyUID*(self: Service, keyUid: string): seq[WalletAccountDto] =
+    if keyUid.len == 0:
+      error "error: cannot fetch accounts for an empty keyUid", procName="getAccountsByKeyUID"
+      return
+    try:
+      let response = status_go_accounts.getAccountsByKeyUID(keyUid)
+      return response.result.getElems().map(
+          x => x.toWalletAccountDto()
+        ).filter(a => not a.isChat)
+    except Exception as e:
+      error "error: ", procName="getAccountsByKeyUID", errName = e.name, errDesription = e.msg    
 
   proc setEnsName(self: Service, account: WalletAccountDto) =
     let chainId = self.networkService.getNetworkForEns().chainId
@@ -240,15 +254,6 @@ QtObject:
 
   proc walletAccountsContainsAddress*(self: Service, address: string): bool =
     return self.walletAccounts.hasKey(address)
-
-  proc removeAccount*(self: Service, address: string): WalletAccountDto =
-    result = WalletAccountDto()
-    if not self.walletAccountsContainsAddress(address):
-      return
-    result = self.walletAccounts[address]
-    self.walletAccounts.del(address)
-    # updating related accounts for other accounts
-    self.setRelatedAccountsForAllAccounts(result.derivedFrom)
 
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
     result = WalletAccountDto()
@@ -353,6 +358,15 @@ QtObject:
     self.buildAllTokens(@[newAccount.address], store = true)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
+  proc removeAccountFromLocalStoreAndNotify(self: Service, address: string) =
+    if not self.walletAccountsContainsAddress(address):
+      return
+    let removedAcc = self.walletAccounts[address]
+    self.walletAccounts.del(address)
+    # updating related accounts for other accounts
+    self.setRelatedAccountsForAllAccounts(removedAcc.derivedFrom)
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(address: address))
+
   ## if password is not provided local keystore file won't be created
   proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, keyPairName, address, path: string, 
     lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): string =
@@ -425,14 +439,25 @@ QtObject:
       error "error: ", procName="getRandomMnemonic", errName=e.name, errDesription=e.msg
       return ""
 
-  proc deleteAccount*(self: Service, address: string, password: string, doPasswordHashing: bool) =
+  proc deleteAccount*(self: Service, address: string, password: string, keyUid: string, keycardUid: string) =
     try:
+      let isKeycardAccount = keycardUid.len > 0
       var finalPassword = password
-      if doPasswordHashing:
+      if not isKeycardAccount:
         finalPassword = utils.hashPassword(password)
-      discard status_go_accounts.deleteAccount(address, finalPassword)
-      let accountDeleted = self.removeAccount(address)
-      self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
+      let response = status_go_accounts.deleteAccount(address, finalPassword)
+      if not response.error.isNil:
+        error "status-go error", procName="deleteAccount", errCode=response.error.code, errDesription=response.error.message
+        return
+      self.removeAccountFromLocalStoreAndNotify(address)
+      if isKeycardAccount:
+        self.removeMigratedAccountsForKeycard(keyUid, keycardUid, @[address])
+        let accounts = self.getAccountsByKeyUID(keyUID)
+        if accounts.len == 0:
+          let allKnownKeycards = self.getAllKnownKeycards()
+          for kc in allKnownKeycards:
+            if kc.keyUid == keyUid:
+              self.removeMigratedAccountsForKeycard(kc.keyUid, kc.keycardUid, kc.accountsAddresses)
     except Exception as e:
       error "error: ", procName="deleteAccount", errName = e.name, errDesription = e.msg    
 

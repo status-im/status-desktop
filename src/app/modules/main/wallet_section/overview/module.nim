@@ -26,7 +26,7 @@ type
 proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]])
 proc onCurrencyFormatsUpdated(self: Module)
 proc onAccountAdded(self: Module, account: WalletAccountDto)
-proc onAccountRemoved(self: Module, account: WalletAccountDto)
+proc onAccountRemoved(self: Module, address: string)
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -56,7 +56,7 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     let args = AccountDeleted(e)
-    self.onAccountRemoved(args.account)
+    self.onAccountRemoved(args.address)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     self.switchAccount(self.currentAccountIndex)
@@ -132,6 +132,5 @@ proc onCurrencyFormatsUpdated(self: Module) =
 proc onAccountAdded(self: Module, account: WalletAccountDto) =
   self.switchAccount(self.currentAccountIndex)
 
-proc onAccountRemoved(self: Module, account: WalletAccountDto) =
+proc onAccountRemoved(self: Module, address: string) =
   self.switchAccount(self.currentAccountIndex)
-  

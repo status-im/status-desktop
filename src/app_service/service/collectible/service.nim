@@ -190,7 +190,7 @@ QtObject:
           self.refetchAllOwnedCollectibles()
 
     self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
-      self.removeAddress(AccountDeleted(e).account.address)
+      self.removeAddress(AccountDeleted(e).address)
 
   # needs to be re-written once cache for colletibles works
   proc areCollectionsLoaded*(self: Service, address: string): bool =

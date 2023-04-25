@@ -31,7 +31,7 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_PROFILE_SECTION_ACCOUNTS_MODULE_AUTH_IDENTIFIER:
       return
-    self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
+    self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid, args.keycardUid)
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
@@ -39,8 +39,8 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 proc updateAccount*(self: Controller, address: string, accountName: string, color: string, emoji: string) =
   discard self.walletAccountService.updateWalletAccount(address, accountName, color, emoji)
 
-proc deleteAccount*(self: Controller, address: string, password = "", doPasswordHashing = false) =
-  self.walletAccountService.deleteAccount(address, password, doPasswordHashing)
+proc deleteAccount*(self: Controller, address: string, password = "", keyUid = "", keycardUid = "") =
+  self.walletAccountService.deleteAccount(address, password, keyUid, keycardUid)
 
 proc authenticateKeyPair*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_PROFILE_SECTION_ACCOUNTS_MODULE_AUTH_IDENTIFIER,
