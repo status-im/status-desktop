@@ -9,6 +9,8 @@ Loader {
     id: root
     active: false
 
+    height: active && item ? item.height : 0
+
     property var networkConnectionStore
     readonly property string jointChainIdString: networkConnectionStore.getChainIdsJointString(chainIdsDown)
     property string websiteDown
@@ -22,26 +24,27 @@ Loader {
 
     function updateBanner() {
         root.active = true
-        if (connectionState === Constants.ConnectionStatus.Failure)
+        if (root.connectionState === Constants.ConnectionStatus.Failure)
             item.show()
         else
             item.showFor(3000)
     }
 
     sourceComponent: ModuleWarning {
+        id: banner
         QtObject {
             id: d
-            readonly property bool isOnline: networkConnectionStore.isOnline
-            onIsOnlineChanged: if(!isOnline) hide()
+            readonly property bool isOnline: root.networkConnectionStore.isOnline
+            onIsOnlineChanged: if(!isOnline) banner.hide()
         }
 
         onHideFinished: root.active = false
 
         text: root.toastText
-        type: connectionState === Constants.ConnectionStatus.Success ? ModuleWarning.Success : ModuleWarning.Danger
-        buttonText: connectionState === Constants.ConnectionStatus.Failure ? qsTr("Retry now") : ""
+        type: root.connectionState === Constants.ConnectionStatus.Success ? ModuleWarning.Success : ModuleWarning.Danger
+        buttonText: root.connectionState === Constants.ConnectionStatus.Failure ? qsTr("Retry now") : ""
 
-        onClicked: networkConnectionStore.retryConnection(websiteDown)
+        onClicked: root.networkConnectionStore.retryConnection(root.websiteDown)
         onCloseClicked: hide()
 
         onLinkActivated: {
@@ -56,14 +59,27 @@ Loader {
     }
 
     Connections {
+        enabled: d.isOnline
         target: networkConnectionStore.networkConnectionModuleInst
         function onNetworkConnectionStatusUpdate(website: string, completelyDown: bool, connectionState: int, chainIds: string, lastCheckedAt: int)  {
-            if (website === websiteDown) {
-                root.connectionState = connectionState
-                root.chainIdsDown = chainIds.split(";")
-                root.completelyDown = completelyDown
+            if (website === root.websiteDown) {
+                let anyChanged = false
+                if (connectionState !== root.connectionState) {
+                    anyChanged = true
+                    root.connectionState = connectionState
+                }
+                const splitChainIds = chainIds.split(";")
+                if (splitChainIds !== root.chainIdsDown) {
+                    anyChanged = true
+                    root.chainIdsDown = splitChainIds
+                }
+                if (completelyDown !== root.completelyDown) {
+                    anyChanged = true
+                    root.completelyDown = completelyDown
+                }
                 root.lastCheckedAt = LocaleUtils.formatDateTime(new Date(lastCheckedAt*1000))
-                root.updateBanner()
+                if (anyChanged)
+                    root.updateBanner()
             }
         }
     }
