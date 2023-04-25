@@ -95,6 +95,7 @@ StatusListView {
         iconSource: model.iconSource ?? ""
         showSubItemsIcon: !!model.subItems && model.subItems.count > 0
         selected: root.checkedKeys.includes(model.key)
+        amount: !!model.infiniteSupply ? "∞" : model.supply ?? ""
 
         onItemClicked: root.itemClicked(
                            model.key, name, shortName, iconSource, model.subItems)
