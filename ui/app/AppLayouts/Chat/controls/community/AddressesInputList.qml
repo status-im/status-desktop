@@ -180,10 +180,11 @@ Control {
             multiline: true
 
             topPadding: bottomPadding + (listView.count ? d.spacing : 0)
+            bottomPadding: 5
 
             height: edit.implicitHeight + topPadding + bottomPadding
 
-            placeholderText: qsTr("Example: 0x39cf...fbd2")
+            placeholderText: root.count ? "" : qsTr("Example: 0x39cf...fbd2")
 
             Keys.onPressed: {
                 if ((event.key !== Qt.Key_Return && event.key !== Qt.Key_Enter)
