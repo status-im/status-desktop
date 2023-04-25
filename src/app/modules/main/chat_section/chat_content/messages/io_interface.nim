@@ -170,11 +170,5 @@ method markMessagesAsRead*(self: AccessInterface, messages: seq[string]) =
 method updateCommunityDetails*(self: AccessInterface, community: CommunityDto) =
   raise newException(ValueError, "No implementation available")
 
-method onFirstUnseenMessageLoaded*(self: AccessInterface, messageId: string) =
-  raise newException(ValueError, "No implementation available")
-
-method isFirstUnseenMessageInitialized*(self: AccessInterface): bool =
-  raise newException(ValueError, "No implementation available")
-
 method reevaluateViewLoadingState*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")

@@ -2,6 +2,7 @@
 
 import json, strformat, strutils
 import ../../community/dto/community
+import ../../message/dto/message
 
 include ../../../common/json_utils
 
@@ -64,6 +65,7 @@ type ChatDto* = object
   readMessagesAtClockValue*: int64
   unviewedMessagesCount*: int
   unviewedMentionsCount*: int
+  firstUnviewedMessage*: MessageDto
   #lastMessage*: Message ???? It's a question why do we need it here within this context ????
   members*: seq[ChatMember]
   #membershipUpdateEvents*: seq[ChatMembershipEvent]  ???? It's always null and a question why do we need it here within this context ????
@@ -265,6 +267,10 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   # Add community ID if needed
   if (result.communityId != "" and not result.id.contains(result.communityId)):
     result.id = result.communityId & result.id
+
+  var firstUnviewedMessage: JsonNode
+  if(jsonObj.getProp("firstUnviewedMessage", firstUnviewedMessage) and firstUnviewedMessage.kind != JNull):
+    result.firstUnviewedMessage = toMessageDto(firstUnviewedMessage)
 
 proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   result = ChannelGroupDto()

@@ -26,12 +26,6 @@ const FETCH_MORE_MESSAGES_MESSAGE_ID = "fetch-more_messages-message-id"
 const FETCH_MORE_MESSAGES_CLOCK = -1
 
 type
-  FirstUnseenMessageState = tuple
-    initialized: bool
-    fetching: bool
-    scrollToWhenFetched: bool
-
-type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
@@ -39,7 +33,6 @@ type
     controller: Controller
     moduleLoaded: bool
     initialMessagesLoaded: bool
-    firstUnseenMessageState: FirstUnseenMessageState
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
@@ -53,7 +46,6 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   communityService, chatService, messageService, mailserversService)
   result.moduleLoaded = false
   result.initialMessagesLoaded = false
-  result.firstUnseenMessageState = (false, false, false)
 
 # Forward declaration
 proc createChatIdentifierItem(self: Module): Item
@@ -217,9 +209,7 @@ method currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 method reevaluateViewLoadingState*(self: Module) =
-  self.view.setLoading(not self.initialMessagesLoaded or 
-                       not self.firstUnseenMessageState.initialized or
-                       self.firstUnseenMessageState.fetching)
+  self.view.setLoading(not self.initialMessagesLoaded)
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
   var viewItems: seq[Item]
@@ -392,7 +382,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
     if (message.contentType.ContentType == ContentType.Image and len(message.albumId) != 0):
       if (self.view.model().updateAlbumIfExists(message.albumId, message.image, message.id)):
         continue
-      
+
       if (self.updateItemsByAlbum(items, message)):
         continue
 
@@ -696,14 +686,15 @@ method resendChatMessage*(self: Module, messageId: string): string =
   return self.controller.resendChatMessage(messageId)
 
 method resetNewMessagesMarker*(self: Module) =
-  self.firstUnseenMessageState.fetching = true
-  self.firstUnseenMessageState.scrollToWhenFetched = false
-  self.controller.getAsyncFirstUnseenMessageId()
+  let messageId = self.controller.getFirstUnseenMessageId()
+  self.view.model().setFirstUnseenMessageId(messageId)
+  self.view.model().resetNewMessagesMarker()
 
 method resetAndScrollToNewMessagesMarker*(self: Module) =
-  self.firstUnseenMessageState.fetching = true
-  self.firstUnseenMessageState.scrollToWhenFetched = true
-  self.controller.getAsyncFirstUnseenMessageId()
+  let messageId = self.controller.getFirstUnseenMessageId()
+  self.view.model().setFirstUnseenMessageId(messageId)
+  self.view.model().resetNewMessagesMarker()
+  self.scrollToMessage(messageId)
 
 method removeNewMessagesMarker*(self: Module) =
   self.view.model().setFirstUnseenMessageId("")
@@ -732,7 +723,7 @@ proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto)
       for j in 0 ..< item.albumMessageIds.len:
         if item.albumMessageIds[j] == message.id:
           return true
-        
+
         var albumImages = item.albumMessageImages
         var albumMessagesIds = item.albumMessageIds
         albumMessagesIds.add(message.id)
@@ -742,15 +733,3 @@ proc updateItemsByAlbum(self: Module, items: var seq[Item], message: MessageDto)
         items[i] = item
         return true
   return false
-
-method isFirstUnseenMessageInitialized*(self: Module): bool =
-  return self.firstUnseenMessageState.initialized
-
-method onFirstUnseenMessageLoaded*(self: Module, messageId: string) =
-  self.view.model().setFirstUnseenMessageId(messageId)
-  self.view.model().resetNewMessagesMarker()
-  if self.firstUnseenMessageState.scrollToWhenFetched:
-    self.scrollToMessage(messageId)
-  self.firstUnseenMessageState.initialized = true
-  self.firstUnseenMessageState.fetching = false
-  self.reevaluateViewLoadingState()

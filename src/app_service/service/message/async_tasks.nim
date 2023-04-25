@@ -249,35 +249,3 @@ const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nim
 
   let tpl: tuple[previewData: JsonNode, uuid: string] = (previewData, arg.uuid)
   arg.finish(tpl)
-
-#################################################
-# Async get first unseen message id
-#################################################
-type
-  AsyncGetFirstUnseenMessageIdForTaskArg = ref object of QObjectTaskArg
-    chatId: string
-
-const asyncGetFirstUnseenMessageIdForTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AsyncGetFirstUnseenMessageIdForTaskArg](argEncoded)
-  
-  let responseJson = %*{
-    "messageId": "",
-    "chatId": arg.chatId,
-    "error": ""
-  }
-
-  try:
-    let response = status_go.firstUnseenMessageID(arg.chatId)
-
-    if(not response.error.isNil):
-      error "error getFirstUnseenMessageIdFor: ", errDescription = response.error.message
-      responseJson["error"] = %response.error.message
-    else:
-      responseJson["messageId"] = %response.result.getStr()
-
-  except Exception as e:
-    error "error: ", procName = "getFirstUnseenMessageIdFor", errName = e.name,
-        errDesription = e.msg, chatId=arg.chatId
-    responseJson["error"] = %e.msg
-
-  arg.finish(responseJson)

@@ -41,7 +41,6 @@ const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
 const SIGNAL_PINNED_MESSAGES_LOADED* = "pinnedMessagesLoaded"
-const SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED* = "firstUnseenMessageLoaded"
 const SIGNAL_NEW_MESSAGE_RECEIVED* = "newMessageReceived"
 const SIGNAL_MESSAGE_PINNED* = "messagePinned"
 const SIGNAL_MESSAGE_UNPINNED* = "messageUnpinned"
@@ -122,10 +121,6 @@ type
 
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
-
-  FirstUnseenMessageLoadedArgs* = ref object of Args
-    chatId*: string
-    messageId*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -714,38 +709,6 @@ QtObject:
     )
 
     self.threadpool.start(arg)
-
-  proc getAsyncFirstUnseenMessageId*(self: Service, chatId: string) =
-    let arg = AsyncGetFirstUnseenMessageIdForTaskArg(
-      tptr: cast[ByteAddress](asyncGetFirstUnseenMessageIdForTaskArg),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onGetFirstUnseenMessageIdFor",
-      chatId: chatId,
-    )
-
-    self.threadpool.start(arg)
-
-  proc onGetFirstUnseenMessageIdFor*(self: Service, response: string) {.slot.} =
-    try:
-      let responseObj = response.parseJson
-
-      var error: string
-      discard responseObj.getProp("error", error)
-
-      var chatId: string
-      discard responseObj.getProp("chatId", chatId)
-
-      var messageId = ""
-
-      if(error.len > 0):
-        error "error: ", procName="onGetFirstUnseenMessageIdFor", errDescription=error
-      else:
-        discard responseObj.getProp("messageId", messageId)
-
-      self.events.emit(SIGNAL_FIRST_UNSEEN_MESSAGE_LOADED, FirstUnseenMessageLoadedArgs(chatId: chatId, messageId: messageId))
-
-    except Exception as e:
-      error "error: ", procName="onGetFirstUnseenMessageIdFor", errName = e.name, errDesription = e.msg
 
   proc onAsyncGetLinkPreviewData*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
