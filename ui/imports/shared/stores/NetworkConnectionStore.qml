@@ -15,7 +15,7 @@ QtObject {
     readonly property bool marketValuesCache: walletSectionCurrent.hasMarketValuesCache
     readonly property bool collectiblesCache: walletSectionCurrent.getHasCollectiblesCache()
 
-    readonly property var blockchainNetworksDown: networkConnectionModule.blockchainNetworkConnection.chainIds.split(";")
+    readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
     readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length <  networksModule.all.count
 
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
