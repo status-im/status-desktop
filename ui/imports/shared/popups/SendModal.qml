@@ -139,7 +139,7 @@ StatusDialog {
         }
 
         // add networks that are down to disabled list
-        if(!!d.networkConnectionStore.blockchainNetworksDown) {
+        if(d.networkConnectionStore.blockchainNetworksDown.length !== 0) {
             for(let i in d.networkConnectionStore.blockchainNetworksDown) {
                 store.addRemoveDisabledToChain(parseInt(d.networkConnectionStore.blockchainNetworksDown[i]), true)
             }
