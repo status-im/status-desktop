@@ -1,4 +1,4 @@
-import chronicles, marshal, json
+import chronicles, marshal
 
 import ./dto as dto
 import ../../../backend/visual_identity as status_visual_identity

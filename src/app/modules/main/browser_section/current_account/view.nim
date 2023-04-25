@@ -1,8 +1,7 @@
-import NimQml, sequtils, sugar
+import NimQml, sequtils
 
 import ./io_interface
 import ../../../shared_models/token_model as token_model
-import ../../../shared_models/token_item as token_item
 import ../../../shared_models/currency_amount
 
 import ../../wallet_section/accounts/item as account_item

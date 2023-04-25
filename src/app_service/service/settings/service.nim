@@ -1,6 +1,5 @@
 import NimQml, chronicles, json, strutils, sequtils
 
-import ../../common/[network_constants]
 import ../../common/types as common_types
 import ../../common/social_links
 import ../../common/utils as common_utils

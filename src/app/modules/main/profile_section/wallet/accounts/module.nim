@@ -1,14 +1,12 @@
-import tables, NimQml, sequtils, sugar, chronicles
+import NimQml, sequtils, sugar, chronicles
 
 import ./io_interface, ./view, ./item, ./controller, ./utils
 import ../io_interface as delegate_interface
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
-import ../../../../../../app_service/common/account_constants
 import ../../../../../../app_service/service/keycard/service as keycard_service
 import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../../app_service/service/network/service as network_service
-import ../../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 export io_interface
 
@@ -107,7 +105,7 @@ method viewDidLoad*(self: Module) =
 method updateAccount*(self: Module, address: string, accountName: string, color: string, emoji: string) =
   self.controller.updateAccount(address, accountName, color, emoji)
 
-method authenticateActivityForKeyUid(self: Module, keyUid: string, reason: AuthenticationReason) =
+proc authenticateActivityForKeyUid(self: Module, keyUid: string, reason: AuthenticationReason) =
   self.authentiactionReason = reason
   let keyPair = self.controller.getMigratedKeyPairByKeyUid(keyUid)
   let keyPairMigratedToKeycard = keyPair.len > 0

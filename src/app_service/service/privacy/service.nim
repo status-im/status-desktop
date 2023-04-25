@@ -6,7 +6,6 @@ import ../accounts/service as accounts_service
 
 import ../../../app/core/eventemitter
 
-import ../../../backend/accounts as status_account
 import ../../../backend/eth as status_eth
 import ../../../backend/privacy as status_privacy
 

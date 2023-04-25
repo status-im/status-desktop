@@ -162,7 +162,7 @@ QtObject:
     result.pinnedMsgCursor = initTable[string, MessageCursor]()
 
   proc removeMessageWithId(messages: var seq[MessageDto], msgId: string) =
-    for i in 0..< messages.len:
+    for i in 0..<messages.len:
       if (messages[i].id == msgId):
         messages.delete(i)
         return

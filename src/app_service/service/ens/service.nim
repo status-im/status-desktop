@@ -1,4 +1,4 @@
-import NimQml, Tables, sets, json, sequtils, strutils, strformat, chronicles
+import NimQml, Tables, sets, json, sequtils, strutils, chronicles
 import web3/conversions
 import web3/[conversions, ethtypes], stint
 import web3/ethtypes
@@ -7,12 +7,8 @@ import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 
 import ../../../app/global/global_singleton
-import ../../../backend/eth as status_eth
 import ../../../backend/ens as status_ens
-import ../../../backend/accounts as status_go_accounts
 import ../../../backend/backend as status_go_backend
-
-import ../network/types as network_types
 
 import ../../common/conversion as common_conversion
 import utils as ens_utils

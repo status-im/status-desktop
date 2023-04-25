@@ -86,16 +86,16 @@ method markUntrustworthy*(self: AccessInterface, publicKey: string): void {.base
 method removeTrustStatus*(self: AccessInterface, publicKey: string): void {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getSentVerificationDetailsAsJson*(self: AccessInterface, publicKey: string): string =
+method getSentVerificationDetailsAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getVerificationDetailsFromAsJson*(self: AccessInterface, publicKey: string): string =
+method getVerificationDetailsFromAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method sendVerificationRequest*(self: AccessInterface, publicKey: string, challenge: string) =
+method sendVerificationRequest*(self: AccessInterface, publicKey: string, challenge: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method cancelVerificationRequest*(self: AccessInterface, publicKey: string) =
+method cancelVerificationRequest*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method verifiedTrusted*(self: AccessInterface, publicKey: string): void {.base.} =

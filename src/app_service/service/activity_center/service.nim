@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strutils, strutils, stint, sugar
+import NimQml, json, sequtils, chronicles, strutils, strutils, stint
 
 import ../../../app/core/eventemitter
 import ../../../app/core/[main]
@@ -196,7 +196,7 @@ QtObject:
       if response.result.kind != JNull:
         for activityType in activityTypes:
           if response.result.contains($activityType):
-            counters.add(activityType, response.result[$activityType].getInt)
+            counters[activityType] = response.result[$activityType].getInt
       return counters
     except Exception as e:
       error "Error getting unread activity center notifications count", msg = e.msg
@@ -209,7 +209,7 @@ QtObject:
       var groupTotal = 0
       for activityType in activityCenterNotificationTypesByGroup(group):
         groupTotal = groupTotal + counters.getOrDefault(activityType, 0)
-      groupCounters.add(group, groupTotal)
+      groupCounters[group] = groupTotal
     return groupCounters
 
   proc getUnreadActivityCenterNotificationsCount*(self: Service): int =

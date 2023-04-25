@@ -141,7 +141,7 @@ method getMessagesModule*(self: Module): QVariant =
 method getUsersModule*(self: Module): QVariant =
   return self.usersModule.getModuleAsVariant()
 
-method currentUserWalletContainsAddress(self: Module, address: string): bool =
+proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   if (address.len == 0):
     return false
   let accounts = self.controller.getWalletAccounts()
@@ -383,9 +383,6 @@ method onMutualContactChanged*(self: Module) =
   let contactDto = self.controller.getContactById(self.controller.getMyChatId())
   let isContact = contactDto.isContact
   self.view.onMutualContactChanged(isContact)
-
-method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustworthy: bool) =
-  self.view.updateTrustStatus(isUntrustworthy)
 
 method onMadeActive*(self: Module) =
   # The new messages marker is reset each time the chat is made active,

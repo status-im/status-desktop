@@ -1,8 +1,7 @@
-import Tables, chronicles
+import chronicles
 import io_interface
 
 import ../../../../core/eventemitter
-import ../../../../core/fleets/fleet_configuration
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service
@@ -55,8 +54,8 @@ proc saveNewMailserver*(self: Controller, name: string, nodeAddress: string) =
 proc enableAutomaticSelection*(self: Controller, value: bool) =
   self.mailserversService.enableAutomaticSelection(value)
 
-method getUseMailservers*(self: Controller): bool =
+proc getUseMailservers*(self: Controller): bool =
   return self.settingsService.getUseMailservers()
 
-method setUseMailservers*(self: Controller, value: bool): bool =
+proc setUseMailservers*(self: Controller, value: bool): bool =
   return self.settingsService.saveUseMailservers(value)

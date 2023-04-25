@@ -158,7 +158,7 @@ proc removeItemWithPubKeyFromAllModels(self: Module, publicKey: string) =
   # self.view.sentButRejectedContactRequestsModel().removeItemById(publicKey)
   self.view.blockedContactsModel().removeItemById(publicKey)
 
-method removeIfExistsAndAddToAppropriateModel*(self: Module, publicKey: string) =
+proc removeIfExistsAndAddToAppropriateModel(self: Module, publicKey: string) =
   self.removeItemWithPubKeyFromAllModels(publicKey)
   let item = self.createItemFromPublicKey(publicKey)
   self.addItemToAppropriateModel(item)

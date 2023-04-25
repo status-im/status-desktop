@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, stint, strutils, strformat
+import NimQml, Tables, chronicles, json, stint, strutils
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/modules/shared_models/currency_amount

@@ -1,4 +1,3 @@
-import ../../common/utils
 
 const WEB3_SEND_ASYNC =  "web3-send-async-read-only"
 

@@ -1,4 +1,4 @@
-import Tables, sugar, algorithm, sequtils, strutils
+import Tables, sugar, sequtils, strutils
 
 import io_interface
 
@@ -604,10 +604,10 @@ proc editCommunity*(
 proc exportCommunity*(self: Controller): string =
   self.communityService.exportCommunity(self.sectionId)
 
-method muteCategory*(self: Controller, categoryId: string) =
+proc muteCategory*(self: Controller, categoryId: string) =
   self.communityService.muteCategory(self.sectionId, categoryId)
 
-method unmuteCategory*(self: Controller, categoryId: string) =
+proc unmuteCategory*(self: Controller, categoryId: string) =
   self.communityService.unmuteCategory(self.sectionId, categoryId)
 
 proc setCommunityMuted*(self: Controller, muted: bool) =

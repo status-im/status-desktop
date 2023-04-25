@@ -33,7 +33,7 @@ QtObject:
     result.threadpool = threadpool
 
   proc init*(self: Service) =
-    if not existsDir(app_constants.ROOTKEYSTOREDIR):
+    if not dirExists(app_constants.ROOTKEYSTOREDIR):
       createDir(app_constants.ROOTKEYSTOREDIR)
 
   proc startMessenger*(self: Service) =

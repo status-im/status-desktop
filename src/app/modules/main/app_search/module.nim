@@ -9,7 +9,6 @@ import result_model, result_item
 import ../../shared_models/message_item
 
 import ../../../global/global_singleton
-import ../../../global/app_sections_config as conf
 import ../../../core/eventemitter
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
@@ -81,7 +80,6 @@ proc buildLocationMenuForChannelGroup(self: Module, channelGroup: ChannelGroupDt
   for chatDto in channelGroup.chats:
     var chatName = chatDto.name
     var chatImage = chatDto.icon
-    var chatEmoji = chatDto.emoji
     var colorHash: ColorHashDto = @[]
     var colorId: int = 0
     let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
@@ -92,7 +90,7 @@ proc buildLocationMenuForChannelGroup(self: Module, channelGroup: ChannelGroupDt
     let subItem = location_menu_sub_item.initSubItem(
       chatDto.id,
       chatName,
-      if (chatImage != ""): chatImage else: chatEmoji,
+      if (chatImage != ""): chatImage else: chatDto.emoji,
       "",
       chatDto.color,
       isOneToOneChat,

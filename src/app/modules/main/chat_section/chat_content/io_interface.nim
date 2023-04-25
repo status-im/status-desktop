@@ -116,7 +116,7 @@ method getCurrentFleet*(self: AccessInterface): string {.base.} =
 method amIChatAdmin*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method downloadMessages*(self: AccessInterface, filePath: string) =
+method downloadMessages*(self: AccessInterface, filePath: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onMutualContactChanged*(self: AccessInterface) {.base.} =

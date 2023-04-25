@@ -1,5 +1,5 @@
 import NimQml
-import json_serialization, chronicles, os, strformat, re
+import chronicles, os, strformat, re
 
 import ../../../constants as main_constants
 import ../../../app/global/global_singleton

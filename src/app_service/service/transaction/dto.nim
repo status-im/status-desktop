@@ -2,7 +2,6 @@ import json, strutils, stint, json_serialization, strformat
 
 import
   web3/ethtypes, json_serialization
-from web3/conversions import `$`
 
 include  ../../common/json_utils
 import ../network/dto

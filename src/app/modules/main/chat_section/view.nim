@@ -3,10 +3,8 @@ import model as chats_model
 import item, active_item
 import ../../shared_models/user_model as user_model
 import ../../shared_models/token_permissions_model
-import ../../shared_models/token_permission_item
 import ../../shared_models/token_list_model
 import ../../shared_models/token_list_item
-import ../../../../app_service/service/token/dto
 import io_interface
 
 QtObject:
@@ -87,7 +85,7 @@ QtObject:
   proc isCommunity(self: View): bool {.slot.} =
     return self.delegate.isCommunity()
 
-  method getMySectionId*(self: View): string {.slot.} =
+  proc getMySectionId*(self: View): string {.slot.} =
     return self.delegate.getMySectionId()
 
   proc chatsModel*(self: View): chats_model.Model =
@@ -156,7 +154,7 @@ QtObject:
     read = getActiveItem
     notify = activeItemChanged
 
-  method activeItemSet*(self: View, item: Item) =
+  proc activeItemSet*(self: View, item: Item) =
     self.activeItem.setActiveItemData(item)
     self.activeItemChanged()
 

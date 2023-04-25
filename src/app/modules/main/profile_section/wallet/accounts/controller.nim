@@ -1,9 +1,6 @@
-import sugar, sequtils, tables
 import io_interface
 import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../../app_service/service/network/service as network_service
 
-import ../../../../../global/global_singleton
 import ../../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 import ../../../../../core/eventemitter

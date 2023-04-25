@@ -9,7 +9,6 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../../app_service/service/eth/utils as eth_utils
 import ../../../../../global/app_signals
 import ../../../../../core/signals/types
 import ../../../../../core/eventemitter
@@ -322,5 +321,5 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 proc leaveChat*(self: Controller) =
   self.chatService.leaveChat(self.chatId)
 
-method resendChatMessage*(self: Controller, messageId: string): string =
+proc resendChatMessage*(self: Controller, messageId: string): string =
   return self.messageService.resendChatMessage(messageId)

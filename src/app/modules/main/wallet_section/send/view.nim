@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, sugar, stint
+import NimQml, sequtils, strutils, stint
 
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 

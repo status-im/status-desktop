@@ -1,11 +1,11 @@
 import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils, os, times, algorithm
-import web3/[ethtypes, conversions]
+import web3/ethtypes
 
 import ../settings/service as settings_service
 import ../accounts/service as accounts_service
 import ../token/service as token_service
 import ../network/service as network_service
-import ../../common/[account_constants, utils]
+import ../../common/[utils]
 import ../../../app/global/global_singleton
 
 import dto, derived_address, key_pair_dto
@@ -448,7 +448,7 @@ QtObject:
     self.networkService.setNetworksState(chainIds, enabled)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
-  method toggleTestNetworksEnabled*(self: Service) =
+  proc toggleTestNetworksEnabled*(self: Service) =
     discard self.settingsService.toggleTestNetworksEnabled()
     self.tokenService.loadData()
     self.checkRecentHistory()

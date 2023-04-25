@@ -24,7 +24,7 @@ method disconnect*(self: AccessInterface, dappName: string, address: string) {.b
 method postMessage*(self: AccessInterface, payloadMethod: string, requestType: string, message: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method ensResourceURL*(self: AccessInterface, ens: string, url: string): (string, string, string, string, bool) =
+method ensResourceURL*(self: AccessInterface, ens: string, url: string): (string, string, string, string, bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onPostMessage*(self: AccessInterface, payloadMethod: string, result: string, chainId: string) {.base.} =

@@ -23,7 +23,7 @@ import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/network/service as networks_service
 import ../../../app_service/service/collectible/service as collectible_service
 
-import ../shared_models/section_item, io_interface
+import io_interface
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 logScope:

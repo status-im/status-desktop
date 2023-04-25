@@ -1,4 +1,4 @@
-import sugar, sequtils, tables, stint, json, json_serialization
+import sugar, sequtils, stint, json, json_serialization
 import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
@@ -6,7 +6,6 @@ import ../../../../../app_service/service/transaction/service as transaction_ser
 import ../../../../../app_service/service/currency/service as currency_service
 import ../../../../../app_service/service/currency/dto as currency_dto
 
-import ../../../../global/global_singleton
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 import ../../../shared_models/currency_amount
 import ../../../shared_models/currency_amount_utils

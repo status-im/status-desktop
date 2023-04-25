@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar, json
+import NimQml, sequtils, json
 
 import ./io_interface
 import ../../../shared_models/currency_amount

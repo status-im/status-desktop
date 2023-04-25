@@ -1,4 +1,4 @@
-import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math, random
+import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm
 
 import ../../../backend/collectibles as collectibles
 import ../../../backend/transactions as transactions
@@ -6,7 +6,6 @@ import ../../../backend/backend
 import ../../../backend/eth
 
 import ../ens/utils as ens_utils
-from ../../common/account_constants import ZERO_ADDRESS
 import ../../common/conversion as common_conversion
 
 import ../../../app/core/[main]

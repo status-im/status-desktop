@@ -142,7 +142,7 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "") =
-  self.resultItems.add(itemId, ResultItemDetails(sectionId: sectionId, channelId: channelId, messageId: messageId))
+  self.resultItems[itemId] = ResultItemDetails(sectionId: sectionId, channelId: channelId, messageId: messageId)
 
 proc resultItemClicked*(self: Controller, itemId: string) =
   let itemDetails = self.resultItems.getOrDefault(itemId)
