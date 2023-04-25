@@ -206,13 +206,6 @@ QtObject {
             }
         }
 
-        // return full days between 2 dates
-        function daysBetween(firstDate, secondDate) {
-            firstDate.setHours(0, 0, 0) // discard time
-            secondDate.setHours(0, 0, 0)
-            return Math.round(Math.abs((firstDate - secondDate) / d.msInADay)) // Math.round: not all days are 24 hours long!
-        }
-
         property var nonDigitCharacterRegExpLocale
 
         readonly property var nonDigitCharacterRegExp: {
@@ -232,6 +225,13 @@ QtObject {
     function is24hTimeFormatDefault() {
         const timeFormatString = Qt.locale().timeFormat(Locale.LongFormat)
         return !d.amPmFormatChars.some(ampm => timeFormatString.includes(ampm))
+    }
+
+    // return full days between 2 dates
+    function daysBetween(firstDate, secondDate) {
+        firstDate.setHours(0, 0, 0) // discard time
+        secondDate.setHours(0, 0, 0)
+        return Math.round(Math.abs((firstDate - secondDate) / d.msInADay)) // Math.round: not all days are 24 hours long!
     }
 
     /**
@@ -287,7 +287,7 @@ QtObject {
         const value = d.readDate(timestamp)
         const loc = Qt.locale()
         const formatString = d.fixupTimeFormatString(loc.timeFormat(Locale.ShortFormat)) // format string for the time part
-        const dayDifference = d.daysBetween(d.readDate(timestamp), now)
+        const dayDifference = daysBetween(d.readDate(timestamp), now)
 
         // within last day, 2 or 7 days
         if (dayDifference < 1) // today -> "Today 14:23"
