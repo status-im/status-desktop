@@ -25,6 +25,7 @@ SplitView {
             anchors.topMargin: 50
             assetsModel: AssetsModel {}
             collectiblesModel: CollectiblesModel {}
+            membersModel: ListModel {}
 
             onAirdropClicked: logs.logEvent("CommunityAirdropsSettingsPanel::onAirdropClicked")
         }

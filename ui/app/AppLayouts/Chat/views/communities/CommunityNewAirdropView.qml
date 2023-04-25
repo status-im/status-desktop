@@ -1,10 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
@@ -15,7 +13,9 @@ import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.panels.communities 1.0
 import AppLayouts.Chat.controls.community 1.0
 
-// TEMPORAL - BASIC IMPLEMENTATION
+import SortFilterProxyModel 0.2
+
+
 StatusScrollView {
     id: root
 
@@ -23,21 +23,27 @@ StatusScrollView {
     required property var assetsModel
     required property var collectiblesModel
 
+    // Community members model:
+    required property var membersModel
+
     property int viewWidth: 560 // by design
 
-    // roles: type, key, name, amount, imageSource
-    property var selectedHoldingsModel: ListModel {}
+    readonly property var selectedHoldingsModel: ListModel {}
 
-    readonly property bool isFullyFilled: selectedHoldingsModel.count > 0 &&
-                                          addressess.model.count > 0
+    readonly property bool isFullyFilled: tokensSelector.count > 0 &&
+                                          airdropRecipientsSelector.count > 0 &&
+                                          airdropRecipientsSelector.valid
 
-    signal airdropClicked(var airdropTokens, var addresses)
+    signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys)
     signal navigateToMintTokenSettings
 
     function selectCollectible(key, amount) {
         const modelItem = CommunityPermissionsHelpers.getTokenByKey(
                             root.collectiblesModel, key)
-        d.addItem(HoldingTypes.Type.Collectible, modelItem, amount)
+
+        const entry = d.prepareEntry(key, amount)
+        entry.valid = true
+        selectedHoldingsModel.append(entry)
     }
 
     QtObject {
@@ -47,22 +53,68 @@ StatusScrollView {
         readonly property int dropdownHorizontalOffset: 4
         readonly property int dropdownVerticalOffset: 1
 
-        function addItem(type, item, amount) {
-            const key = item.key
+        function prepareEntry(key, amount) {
+            const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                                root.collectiblesModel, key)
 
-            root.selectedHoldingsModel.append({ type, key, amount })
+            return {
+                key, amount,
+                tokenText: amount + " " + modelItem.name,
+                tokenImage: modelItem.iconSource,
+                networkText: modelItem.chainName,
+                networkImage: Style.svg(modelItem.chainIcon),
+                supply: modelItem.supply,
+                infiniteSupply: modelItem.infiniteSupply
+            }
         }
+    }
+
+    Instantiator {
+        id: recipientsCountInstantiator
+
+        model: selectedHoldingsModel
+
+        property bool infinity: true
+        property int maximumRecipientsCount
+
+        function findRecipientsCount() {
+            let min = Number.MAX_SAFE_INTEGER
+
+            for (let i = 0; i < count; i++) {
+                const item = objectAt(i)
+
+                if (!item || item.infiniteSupply)
+                    continue
+
+                min = Math.min(item.supply / item.amount, min)
+            }
+
+            infinity = min === Number.MAX_SAFE_INTEGER
+            maximumRecipientsCount = infinity ? 0 : min
+        }
+
+        delegate: QtObject {
+            readonly property int supply: model.supply
+            readonly property real amount: model.amount
+            readonly property bool infiniteSupply: model.infiniteSupply
+
+            onSupplyChanged: recipientsCountInstantiator.findRecipientsCount()
+            onAmountChanged: recipientsCountInstantiator.findRecipientsCount()
+            onInfiniteSupplyChanged: recipientsCountInstantiator.findRecipientsCount()
+        }
+
+        onCountChanged: findRecipientsCount()
     }
 
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
 
-    ColumnLayout {
+    SequenceColumnLayout {
         id: mainLayout
         width: root.viewWidth
         spacing: 0
 
-        StatusItemSelector {
+        AirdropTokensSelector {
             id: tokensSelector
 
             property int editedIndex: -1
@@ -71,19 +123,10 @@ StatusScrollView {
             icon: Style.svg("token")
             title: qsTr("What")
             placeholderText: qsTr("Example: 1 SOCK")
-            tagLeftPadding: 2
-            asset.height: 28
-            asset.width: asset.height
             addButton.visible: model.count < d.maxAirdropTokens
 
-            model: HoldingsSelectionModel {
-                sourceModel: root.selectedHoldingsModel
+            model: root.selectedHoldingsModel
 
-                assetsModel: root.assetsModel
-                collectiblesModel: root.collectiblesModel
-            }
-
-            // TODO: All this code is repeated inside `CommunityNewPermissionView`. Check how to reuse it.
             HoldingsDropdown {
                 id: dropdown
 
@@ -114,37 +157,26 @@ StatusScrollView {
                     return itemIndex
                 }
 
-                onAddAsset: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                        root.assetsModel, key)
-                    d.addItem(HoldingTypes.Type.Asset, modelItem, amount)
-                    dropdown.close()
+                onOpened: {
+                    usedTokens = ModelUtils.modelToArray(
+                                root.selectedHoldingsModel, ["key", "amount"])
                 }
 
                 onAddCollectible: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                        root.collectiblesModel, key)
-                    d.addItem(HoldingTypes.Type.Collectible, modelItem, amount)
-                    dropdown.close()
-                }
+                    const entry = d.prepareEntry(key, amount)
 
-                onUpdateAsset: {
-                    const itemIndex = prepareUpdateIndex(key)
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(root.assetsModel, key)
-
-                    root.selectedHoldingsModel.set(
-                                itemIndex, { type: HoldingTypes.Type.Asset, key, amount })
+                    selectedHoldingsModel.append(entry)
                     dropdown.close()
                 }
 
                 onUpdateCollectible: {
                     const itemIndex = prepareUpdateIndex(key)
+
+                    const entry = d.prepareEntry(key, amount)
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(
                                         root.collectiblesModel, key)
 
-                    root.selectedHoldingsModel.set(
-                                itemIndex,
-                                { type: HoldingTypes.Type.Collectible, key, amount })
+                    root.selectedHoldingsModel.set(itemIndex, entry)
                     dropdown.close()
                 }
 
@@ -176,70 +208,146 @@ StatusScrollView {
                 dropdown.x = mouse.x + d.dropdownHorizontalOffset
                 dropdown.y = d.dropdownVerticalOffset
 
-                const modelItem = tokensSelector.model.get(index)
-
-                switch(modelItem.type) {
-                case HoldingTypes.Type.Asset:
-                    dropdown.assetKey = modelItem.key
-                    dropdown.assetAmount = modelItem.amount
-                    break
-                case HoldingTypes.Type.Collectible:
-                    dropdown.collectibleKey = modelItem.key
-                    dropdown.collectibleAmount = modelItem.amount
-                    break
-                default:
-                    console.warn("Unsupported holdings type.")
-                }
-
-                dropdown.setActiveTab(modelItem.type)
+                const modelItem = selectedHoldingsModel.get(index)
+                dropdown.collectibleKey = modelItem.key
+                dropdown.collectibleAmount = modelItem.amount
+                dropdown.setActiveTab(HoldingTypes.Type.Collectible)
                 dropdown.openUpdateFlow()
 
                 editedIndex = index
             }
         }
 
-        Rectangle {
-            Layout.leftMargin: 16
-            Layout.preferredWidth: 2
-            Layout.preferredHeight: 24
-            color: Style.current.separator
-        }
+        SequenceColumnLayout.Separator {}
 
-        // TEMPORAL
-        StatusInput {
-            id: addressInput
+        AirdropRecipientsSelector {
+            id: airdropRecipientsSelector
 
-            Layout.fillWidth: true
+            addressesModel: addresses
 
-            placeholderText: qsTr("Example: 0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7999")
-        }
+            infiniteMaxNumberOfRecipients:
+                recipientsCountInstantiator.infinity
 
-        Rectangle {
-            Layout.leftMargin: 16
-            Layout.preferredWidth: 2
-            Layout.preferredHeight: 24
-            color: Style.current.separator
-        }
+            maxNumberOfRecipients:
+                recipientsCountInstantiator.maximumRecipientsCount
 
-        StatusItemSelector {
-            id: addressess
+            membersModel: SortFilterProxyModel {
+                sourceModel: membersModel
 
-            Layout.fillWidth: true
-            icon: Style.svg("member")
-            title: qsTr("To")
-            placeholderText: qsTr("Example: 12 addresses and 3 members")
-            tagLeftPadding: 2
-            asset.height: 28
-            asset.width: asset.height
+                filters: ExpressionFilter {
+                    id: selectedKeysFilter
 
-            model: ListModel {}
+                    property var keys: []
 
-            addButton.onClicked: {
-                if(addressInput.text.length > 0)
-                    model.append({text: addressInput.text})
+                    expression: keys.indexOf(model.pubKey) !== -1
+                }
             }
 
-            onItemClicked: addressess.model.remove(index)
+            onRemoveMemberRequested: {
+                const pubKey = ModelUtils.get(membersModel, index, "pubKey")
+                const keyIndex = selectedKeysFilter.keys.indexOf(pubKey)
+
+                selectedKeysFilter.keys.splice(keyIndex, 1)
+                selectedKeysFilter.keys = selectedKeysFilter.keys
+            }
+
+            onAddAddressesRequested: (addresses_) => {
+                addresses.addAddressesFromString(addresses_)
+                airdropRecipientsSelector.clearAddressesInput()
+                airdropRecipientsSelector.positionAddressesListAtEnd()
+            }
+
+            onRemoveAddressRequested: addresses.remove(index)
+
+            ListModel {
+                id: addresses
+
+                function addAddressesFromString(addresses) {
+                    const words = addresses.trim().split(/[\s+,]/)
+                    const existing = new Set()
+
+                    for (let i = 0; i < count; i++)
+                        existing.add(get(i).address)
+
+                    words.forEach(word => {
+                        if (word === "" || existing.has(word))
+                            return
+
+                        const valid = Utils.isValidAddress(word)
+                        append({ valid, address: word })
+                    })
+                }
+            }
+
+            function openPopup(popup) {
+                popup.parent = addButton
+                popup.x = addButton.width + d.dropdownHorizontalOffset
+                popup.y = 0
+
+                popup.open()
+            }
+
+            addButton.onClicked: openPopup(recipientTypeSelectionDropdown)
+
+            RecipientTypeSelectionDropdown {
+                id: recipientTypeSelectionDropdown
+
+                onEthAddressesSelected: {
+                    airdropRecipientsSelector.showAddressesInputWhenEmpty = true
+                    airdropRecipientsSelector.forceInputFocus()
+                    recipientTypeSelectionDropdown.close()
+                }
+
+                onCommunityMembersSelected: {
+                    recipientTypeSelectionDropdown.close()
+                    membersDropdown.selectedKeys = selectedKeysFilter.keys
+                    airdropRecipientsSelector.openPopup(membersDropdown)
+                }
+            }
+
+            MembersDropdown {
+                id: membersDropdown
+
+                model: SortFilterProxyModel {
+                    sourceModel: membersModel
+
+                    filters: [
+                        ExpressionFilter {
+                            enabled: membersDropdown.searchText !== ""
+
+                            function matchesAlias(name, filter) {
+                                return name.split(" ").some(p => p.startsWith(filter))
+                            }
+
+                            expression: {
+                                membersDropdown.selectedKeys
+                                membersDropdown.searchText
+
+                                if (membersDropdown.selectedKeys.indexOf(model.pubKey) > -1)
+                                    return true
+
+                                const filter = membersDropdown.searchText.toLowerCase()
+                                return matchesAlias(model.alias.toLowerCase(), filter)
+                                         || model.displayName.toLowerCase().includes(filter)
+                                         || model.ensName.toLowerCase().includes(filter)
+                                         || model.localNickname.toLowerCase().includes(filter)
+                                         || model.pubKey.toLowerCase().includes(filter)
+                            }
+                        }
+                    ]
+                }
+
+                onBackButtonClicked: {
+                    close()
+                    airdropRecipientsSelector.openPopup(
+                                recipientTypeSelectionDropdown)
+                }
+
+                onAddButtonClicked: {
+                    selectedKeysFilter.keys = selectedKeys
+                    close()
+                }
+            }
         }
 
         StatusButton {
@@ -253,13 +361,14 @@ StatusScrollView {
             onClicked: {
                 const airdropTokens = ModelUtils.modelToArray(
                                         root.selectedHoldingsModel,
-                                        ["key", "type", "amount"])
+                                        ["key", "amount"])
 
-                const addresses = ModelUtils.modelToArray(
-                                    addressess.model,
-                                    ["text"])
+                const addresses_ = ModelUtils.modelToArray(
+                                    addresses, ["address"]).map(e => e.address)
 
-                root.airdropClicked(airdropTokens, addresses)
+                const pubKeys = selectedKeysFilter.keys
+
+                root.airdropClicked(airdropTokens, addresses_, pubKeys)
             }
         }
     }
