@@ -39,6 +39,10 @@ StatusFlowSelector {
 
     placeholderText: qsTr("Example: 12 addresses and 3 members")
 
+    function forceInputFocus() {
+        addressesSelectorPanel.forceInputFocus()
+    }
+
     function clearAddressesInput() {
         addressesSelectorPanel.clearInput()
     }

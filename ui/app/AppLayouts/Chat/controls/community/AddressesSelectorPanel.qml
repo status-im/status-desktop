@@ -25,6 +25,10 @@ Control {
     readonly property int invalidAddressesCount: addressesInputList.count
                                                  - validAddressesCount
 
+    function forceInputFocus() {
+        addressesInputList.forceInputFocus()
+    }
+
     function clearInput() {
         addressesInputList.clearInput()
     }
