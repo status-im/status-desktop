@@ -15,29 +15,29 @@ QtObject {
     readonly property bool marketValuesCache: walletSectionAssets.hasMarketValuesCache
     readonly property bool collectiblesCache: walletSectionCollectibles.getHasCollectiblesCache()
 
-    readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
+    readonly property var blockchainNetworksDown: !!networkConnectionModuleInst.blockchainNetworkConnection.chainIds ? networkConnectionModuleInst.blockchainNetworkConnection.chainIds.split(";") : []
     readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length <  networksModule.all.count
 
     readonly property bool sendBuyBridgeEnabled: localAppSettings.testEnvironment || (isOnline &&
-                                        (!networkConnectionModule.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
-                                        !networkConnectionModule.marketValuesNetworkConnection.completelyDown)
+                                        (!networkConnectionModuleInst.blockchainNetworkConnection.completelyDown && atleastOneBlockchainNetworkAvailable) &&
+                                        !networkConnectionModuleInst.marketValuesNetworkConnection.completelyDown)
     readonly property string sendBuyBridgeToolTipText: !isOnline ? qsTr("Requires internet connection") :
                                                         noBlockchainAndMarketConnectionAndNoCache ?
                                                         qsTr("Requires POKT/Infura and CryptoCompare/CoinGecko, which are all currently unavailable") :
-                                                        networkConnectionModule.blockchainNetworkConnection.completelyDown ||
-                                                        (!networkConnectionModule.blockchainNetworkConnection.completelyDown &&
+                                                        networkConnectionModuleInst.blockchainNetworkConnection.completelyDown ||
+                                                        (!networkConnectionModuleInst.blockchainNetworkConnection.completelyDown &&
                                                         !atleastOneBlockchainNetworkAvailable) ?
                                                         qsTr("Requires Pocket Network(POKT) or Infura, both of which are currently unavailable") :
-                                                        networkConnectionModule.marketValuesNetworkConnection.completelyDown ?
+                                                        networkConnectionModuleInst.marketValuesNetworkConnection.completelyDown ?
                                                         qsTr("Requires CryptoCompare or CoinGecko, both of which are currently unavailable"): ""
 
     readonly property bool notOnlineWithNoCache: !isOnline && !walletSectionAssets.hasBalanceCache && !walletSectionAssets.hasMarketValuesCache
     readonly property string notOnlineWithNoCacheText: qsTr("Internet connection lost. Data could not be retrieved.")
 
-    readonly property bool noBlockchainConnectionAndNoCache: networkConnectionModule.blockchainNetworkConnection.completelyDown && !walletSectionAssets.hasBalanceCache
+    readonly property bool noBlockchainConnectionAndNoCache: networkConnectionModuleInst.blockchainNetworkConnection.completelyDown && !walletSectionAssets.hasBalanceCache
     readonly property string noBlockchainConnectionAndNoCacheText: qsTr("Token balances are fetched from Pocket Network (POKT) and Infura which are both curently unavailable")
 
-    readonly property bool noMarketConnectionAndNoCache: networkConnectionModule.marketValuesNetworkConnection.completelyDown && !walletSectionAssets.hasMarketValuesCache
+    readonly property bool noMarketConnectionAndNoCache: networkConnectionModuleInst.marketValuesNetworkConnection.completelyDown && !walletSectionAssets.hasMarketValuesCache
     readonly property string noMarketConnectionAndNoCacheText: qsTr("Market values are fetched from CryptoCompare and CoinGecko which are both currently unavailable")
 
     readonly property bool noBlockchainAndMarketConnectionAndNoCache: noBlockchainConnectionAndNoCache && noMarketConnectionAndNoCache
@@ -46,10 +46,10 @@ QtObject {
     readonly property bool accountBalanceNotAvailable: notOnlineWithNoCache || noBlockchainConnectionAndNoCache || noMarketConnectionAndNoCache
     readonly property string accountBalanceNotAvailableText: !isOnline ? notOnlineWithNoCacheText :
                                                              noBlockchainAndMarketConnectionAndNoCache ? noBlockchainAndMarketConnectionAndNoCacheText :
-                                                             networkConnectionModule.blockchainNetworkConnection.completelyDown ? noBlockchainConnectionAndNoCacheText :
-                                                             networkConnectionModule.marketValuesNetworkConnection.completelyDown ? noBlockchainAndMarketConnectionAndNoCacheText : ""
+                                                             networkConnectionModuleInst.blockchainNetworkConnection.completelyDown ? noBlockchainConnectionAndNoCacheText :
+                                                             networkConnectionModuleInst.marketValuesNetworkConnection.completelyDown ? noBlockchainAndMarketConnectionAndNoCacheText : ""
 
-    readonly property bool noTokenBalanceAvailable: networkConnectionStore.notOnlineWithNoCache || networkConnectionStore.noBlockchainConnectionAndNoCache
+    readonly property bool noTokenBalanceAvailable: notOnlineWithNoCache || noBlockchainConnectionAndNoCache
 
     readonly property bool ensNetworkAvailable: !blockchainNetworksDown.includes(profileSectionModule.ensUsernamesModule.chainId.toString())
     readonly property string ensNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg( networksModule.all.getNetworkFullName(profileSectionModule.ensUsernamesModule.chainId))
@@ -57,7 +57,7 @@ QtObject {
     readonly property string stickersNetworkUnavailableText: qsTr("Requires POKT/Infura for %1, which is currently unavailable").arg( networksModule.all.getNetworkFullName(stickersModule.getChainIdForStickers()))
 
     function getBlockchainNetworkDownTextForToken(balances) {
-        if(!!balances && !networkConnectionModule.blockchainNetworkConnection.completelyDown && !networkConnectionStore.notOnlineWithNoCache) {
+        if(!!balances && !networkConnectionModuleInst.blockchainNetworkConnection.completelyDown && !notOnlineWithNoCache) {
             let chainIdsDown = []
             for (var i =0; i<balances.count; i++) {
                 let chainId = balances.rowData(i, "chainId")
@@ -67,15 +67,15 @@ QtObject {
             if(chainIdsDown.length > 0) {
                 return qsTr("Pocket Network (POKT) & Infura are currently both unavailable for %1. %1 balances are as of %2.")
                 .arg(getChainIdsJointString(chainIdsDown))
-                .arg(LocaleUtils.formatDateTime(new Date(networkConnectionModule.blockchainNetworkConnection.lastCheckedAt*1000)))
+                .arg(LocaleUtils.formatDateTime(new Date(networkConnectionModuleInst.blockchainNetworkConnection.lastCheckedAt*1000)))
             }
         }
         return ""
     }
 
     function getMarketNetworkDownText() {
-        if(networkConnectionStore.notOnlineWithNoCache)
-            return networkConnectionStore.notOnlineWithNoCacheText
+        if(notOnlineWithNoCache)
+            return notOnlineWithNoCacheText
         else if(noBlockchainAndMarketConnectionAndNoCache)
             return noBlockchainAndMarketConnectionAndNoCacheText
         else if(noMarketConnectionAndNoCache)
@@ -96,13 +96,13 @@ QtObject {
     function retryConnection(websiteDown) {
         switch(websiteDown) {
         case Constants.walletConnections.blockchains:
-            networkConnectionModule.refreshBlockchainValues()
+            networkConnectionModuleInst.refreshBlockchainValues()
             break
         case Constants.walletConnections.market:
-            networkConnectionModule.refreshMarketValues()
+            networkConnectionModuleInst.refreshMarketValues()
             break
         case Constants.walletConnections.collectibles:
-            networkConnectionModule.refreshCollectiblesValues()
+            networkConnectionModuleInst.refreshCollectiblesValues()
             break
         }
     }
