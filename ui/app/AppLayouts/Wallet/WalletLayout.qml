@@ -96,6 +96,7 @@ Item {
                     rightPanelStackView.replace(cmpSavedAddresses)
                 else
                     rightPanelStackView.replace(walletContainer)
+                RootStore.backButtonName = ""
             }
             emojiPopup: root.emojiPopup
             networkConnectionStore: root.networkConnectionStore
