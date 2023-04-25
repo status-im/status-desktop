@@ -48,6 +48,7 @@ Item {
             anchors.right: parent ? parent.right: undefined
             contactsStore: root.contactsStore
             sendModal: root.sendModalPopup
+            networkConnectionStore: root.networkConnectionStore
         }
     }
 

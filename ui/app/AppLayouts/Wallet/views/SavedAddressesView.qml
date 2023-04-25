@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 
 import utils 1.0
 
@@ -12,6 +13,7 @@ import shared.controls 1.0
 import SortFilterProxyModel 0.2
 
 import "../stores"
+import "../panels"
 import "../popups"
 import "../controls"
 
@@ -22,6 +24,7 @@ Item {
 
     property var sendModal
     property var contactsStore
+    property var networkConnectionStore
 
     QtObject {
         id: _internal
@@ -97,62 +100,79 @@ Item {
         text: qsTr("No saved addresses")
     }
 
-    StatusListView {
-        id: listView
-        objectName: "SavedAddressesView_savedAddresses"
-        anchors.top: errorMessage.bottom
+    ColumnLayout {
+        anchors.top: header.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.halfPadding
         anchors.right: parent.right
         anchors.left: parent.left
+
         visible: listView.count > 0
-        spacing: 5
-        model: SortFilterProxyModel {
-            sourceModel: RootStore.savedAddresses
-            sorters: RoleSorter { roleName: "createdAt"; sortOrder: Qt.DescendingOrder }
+
+        spacing: Style.current.halfPadding
+
+        StatusListView {
+            id: listView
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            objectName: "SavedAddressesView_savedAddresses"
+            spacing: 5
+            model: SortFilterProxyModel {
+                sourceModel: RootStore.savedAddresses
+                sorters: RoleSorter { roleName: "createdAt"; sortOrder: Qt.DescendingOrder }
+            }
+            delegate: SavedAddressesDelegate {
+                id: savedAddressDelegate
+
+                objectName: "savedAddressView_Delegate_" + name
+
+                name: model.name
+                address: model.address
+                chainShortNames: model.chainShortNames
+                ens: model.ens
+                favourite: model.favourite
+                store: RootStore
+                contactsStore: root.contactsStore
+                onOpenSendModal: root.sendModal.open(recipient);
+                saveAddress: function(name, address, favourite, chainShortNames, ens) {
+                    _internal.saveAddress(name, address, favourite, chainShortNames, ens)
+                }
+                deleteSavedAddress: function(address, ens) {
+                    _internal.deleteSavedAddress(address, ens)
+                }
+
+                states: [
+                    State {
+                        name: "highlighted"
+                        when: _internal.lastCreatedAddress ? (_internal.lastCreatedAddress.address.toLowerCase() === address.toLowerCase() &&
+                              _internal.lastCreatedAddress.ens === ens) : false
+                        PropertyChanges { target: savedAddressDelegate; color: Theme.palette.baseColor2 }
+                        StateChangeScript {
+                            script: Qt.callLater(_internal.resetLastCreatedAddress)
+                        }
+                    }
+                ]
+
+                transitions: [
+                    Transition {
+                        from: "highlighted"
+                        ColorAnimation {
+                            target: savedAddressDelegate
+                            duration: 3000
+                        }
+                    }
+                ]
+            }
         }
-        delegate: SavedAddressesDelegate {
-            id: savedAddressDelegate
 
-            objectName: "savedAddressView_Delegate_" + name
-
-            name: model.name
-            address: model.address
-            chainShortNames: model.chainShortNames
-            ens: model.ens
-            favourite: model.favourite
-            store: RootStore
-            contactsStore: root.contactsStore
-            onOpenSendModal: root.sendModal.open(recipient);
-            saveAddress: function(name, address, favourite, chainShortNames, ens) {
-                _internal.saveAddress(name, address, favourite, chainShortNames, ens)
-            }
-            deleteSavedAddress: function(address, ens) {
-                _internal.deleteSavedAddress(address, ens)
-            }
-
-            states: [
-                State {
-                    name: "highlighted"
-                    when: _internal.lastCreatedAddress ? (_internal.lastCreatedAddress.address.toLowerCase() === address.toLowerCase() &&
-                          _internal.lastCreatedAddress.ens === ens) : false
-                    PropertyChanges { target: savedAddressDelegate; color: Theme.palette.baseColor2 }
-                    StateChangeScript {
-                        script: Qt.callLater(_internal.resetLastCreatedAddress)
-                    }
-                }
-            ]
-
-            transitions: [
-                Transition {
-                    from: "highlighted"
-                    ColorAnimation {
-                        target: savedAddressDelegate
-                        duration: 3000
-                    }
-                }
-            ]
+        WalletFooter {
+            id: footer
+            Layout.fillWidth: true
+            Layout.leftMargin: !!root.StackView && root.StackView.visible ? -root.StackView.view.anchors.leftMargin : 0
+            Layout.rightMargin: !!root.StackView && root.StackView.visible ? -root.StackView.view.anchors.rightMargin : 0
+            sendModal: root.sendModal
+            walletStore: RootStore
+            networkConnectionStore: root.networkConnectionStore
         }
     }
 
