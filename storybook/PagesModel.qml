@@ -18,6 +18,10 @@ ListModel {
          section: "Views"
     }
     ListElement {
+         title: "CommunityNewAirdropView"
+         section: "Views"
+    }
+    ListElement {
          title: "ProfileFetchingView"
          section: "Views"
     }

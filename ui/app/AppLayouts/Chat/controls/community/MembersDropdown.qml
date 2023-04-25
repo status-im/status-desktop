@@ -36,6 +36,8 @@ StatusDropdown {
     bottomInset: 10
     bottomPadding: padding + bottomInset
 
+    onOpened: filterInput.text = ""
+
     QtObject {
         id: d
 

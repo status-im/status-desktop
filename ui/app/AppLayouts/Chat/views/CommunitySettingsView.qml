@@ -19,6 +19,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
 import AppLayouts.Chat.stores 1.0
+import AppLayouts.Chat.controls.community 1.0
 
 import shared.stores 1.0
 import shared.views.chat 1.0
@@ -370,8 +371,48 @@ StatusSectionLayout {
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
-                assetsModel: rootStore.assetsModel
-                collectiblesModel: rootStore.collectiblesModel
+                assetsModel: ListModel {}
+
+                readonly property var communityTokens: root.community.communityTokens
+
+                Loader {
+                    id: modelLoader
+                    active: airdropPanel.communityTokens
+
+                    sourceComponent: SortFilterProxyModel {
+
+                        sourceModel: airdropPanel.communityTokens
+
+                        proxyRoles: [
+                            ExpressionRole {
+                                name: "category"
+
+                                // Singleton cannot be used directly in the epression
+                                readonly property int category: TokenCategories.Category.Own
+                                expression: category
+                            },
+                            ExpressionRole {
+                                name: "iconSource"
+                                expression: model.image
+                            },
+                            ExpressionRole {
+                                name: "key"
+                                expression: model.symbol
+                            }
+                        ]
+                    }
+                }
+
+                collectiblesModel: modelLoader.item
+
+                membersModel: {
+                    const chatContentModule = root.rootStore.currentChatContentModule()
+                    if (!chatContentModule || !chatContentModule.usersModule) {
+                        // New communities have no chats, so no chatContentModule
+                        return null
+                    }
+                    return chatContentModule.usersModule.model
+                }
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
                 onAirdropClicked: communityTokensStore.airdrop(root.community.id, airdropTokens, addresses)
@@ -413,7 +454,7 @@ StatusSectionLayout {
                 if(d.currentItem && d.currentItem.goTo) {
                     d.currentItem.goTo(subSection)
                 }
-            } 
+            }
         }
     }
 

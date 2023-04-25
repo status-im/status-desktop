@@ -25,6 +25,10 @@ SplitView {
             return true
         }
 
+        function getCompressedPk(publicKey) {
+            return "compressed_" + publicKey
+        }
+
         function getColorId(publicKey) {
             return Math.floor(Math.random() * 10)
         }

@@ -17,9 +17,11 @@ SettingsPageLayout {
     required property var assetsModel
     required property var collectiblesModel
 
+    required property var membersModel
+
     property int viewWidth: 560 // by design
 
-    signal airdropClicked(var airdropTokens, var addresses)
+    signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys)
     signal navigateToMintTokenSettings
 
 
@@ -102,9 +104,10 @@ SettingsPageLayout {
 
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
+            membersModel: root.membersModel
 
             onAirdropClicked: {
-                root.airdropClicked(airdropTokens, addresses)
+                root.airdropClicked(airdropTokens, addresses, membersPubKeys)
                 stackManager.clear(d.welcomeViewState, StackView.Immediate)
             }
             onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()

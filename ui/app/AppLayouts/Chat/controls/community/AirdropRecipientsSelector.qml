@@ -17,14 +17,15 @@ StatusFlowSelector {
     property alias addressesInputText: addressesSelectorPanel.text
 
     property bool showAddressesInputWhenEmpty: false
-    property int expectedNumberOfRecipients: 0
-    property bool infiniteExpectedNumberOfRecipients: false
+    property int maxNumberOfRecipients: 0
+    property bool infiniteMaxNumberOfRecipients: false
 
     readonly property int count: addressesSelectorPanel.count +
                                  membersSelectorPanel.count
 
     readonly property bool valid:
-        addressesSelectorPanel.invalidAddressesCount === 0
+        addressesSelectorPanel.invalidAddressesCount === 0 &&
+        (infiniteMaxNumberOfRecipients || count <= maxNumberOfRecipients)
 
     signal addAddressesRequested(string addresses)
     signal removeAddressRequested(int index)
@@ -35,7 +36,8 @@ StatusFlowSelector {
 
     title: qsTr("To")
     icon: Style.svg("member")
-    flowSpacing: 12
+    flowSpacing: addressesSelectorPanel.visible || membersSelectorPanel.visible
+                 ? 12 : 6
 
     placeholderText: qsTr("Example: 12 addresses and 3 members")
 
@@ -61,12 +63,12 @@ StatusFlowSelector {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
 
-        readonly property bool valid: root.infiniteExpectedNumberOfRecipients ||
-                                      root.count <= root.expectedNumberOfRecipients
+        readonly property bool valid: root.infiniteMaxNumberOfRecipients ||
+                                      root.count <= root.maxNumberOfRecipients
 
-        text: root.count + " / " + (root.infiniteExpectedNumberOfRecipients
+        text: root.count + " / " + (root.infiniteMaxNumberOfRecipients
               ? qsTr("∞ recipients", "infinite number of recipients")
-              : qsTr("%n recipient(s)", "", root.expectedNumberOfRecipients))
+              : qsTr("%n recipient(s)", "", root.maxNumberOfRecipients))
 
         font.pixelSize: Theme.tertiaryTextFontSize + 1
         color: valid ? Theme.palette.baseColor1 : Theme.palette.dangerColor1

@@ -68,6 +68,7 @@ AbstractButton {
          }
          StatusBaseText {
              Layout.alignment: Qt.AlignVCenter
+             Layout.fillWidth: true
              text: root.text
              color: root.textColor
              font.pixelSize: root.font.pixelSize

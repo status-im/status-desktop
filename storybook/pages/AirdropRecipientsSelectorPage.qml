@@ -110,11 +110,10 @@ SplitView {
                 showAddressesInputWhenEmpty:
                     showAddressesInputWhenEmptyCheckBox.checked
 
-                infiniteExpectedNumberOfRecipients:
-                    infiniteExpectedNumberOfRecipientsCheckBox.checked
+                infiniteMaxNumberOfRecipients:
+                    infiniteMaxNumberOfRecipientsCheckBox.checked
 
-                expectedNumberOfRecipients:
-                    expectedNumberOfRecipientsSpinBox.value
+                maxNumberOfRecipients: maxNumberOfRecipientsSpinBox.value
 
                 onAddAddressesRequested: timer.start()
                 onRemoveAddressRequested: addresses.remove(index)
@@ -163,7 +162,7 @@ SplitView {
                 }
 
                 CheckBox {
-                    id: infiniteExpectedNumberOfRecipientsCheckBox
+                    id: infiniteMaxNumberOfRecipientsCheckBox
 
                     text: "Infinite number of expected recipients"
                 }
@@ -175,7 +174,7 @@ SplitView {
                 }
 
                 SpinBox {
-                    id: expectedNumberOfRecipientsSpinBox
+                    id: maxNumberOfRecipientsSpinBox
 
                     value: 2
                     from: 1
