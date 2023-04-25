@@ -116,6 +116,7 @@ QtObject:
       of SignalType.WakuFetchingBackupProgress: WakuFetchingBackupProgressSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpProfile: WakuBackedUpProfileSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpSettings: WakuBackedUpSettingsSignal.fromEvent(jsonSignal)
+      of SignalType.WakuBackedUpWalletAccount: WakuBackedUpWalletAccountsSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpKeycards: WakuBackedUpKeycardsSignal.fromEvent(jsonSignal)
       # pairing
       of SignalType.LocalPairing: LocalPairingSignal.fromEvent(jsonSignal)

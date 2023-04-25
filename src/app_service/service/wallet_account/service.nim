@@ -128,6 +128,7 @@ QtObject:
   proc buildAllTokens(self: Service, accounts: seq[string], store: bool)
   proc checkRecentHistory*(self: Service)
   proc startWallet(self: Service)
+  proc handleWalletAccount(self: Service, account: WalletAccountDto)
   proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto])
   proc handleKeycardsState(self: Service, keycardsState: seq[KeyPairDto])
   proc getAllKnownKeycards*(self: Service): seq[KeyPairDto]
@@ -177,6 +178,15 @@ QtObject:
     except Exception as e:
       error "error: ", procName="getAccountsByKeyUID", errName = e.name, errDesription = e.msg    
 
+  proc verifyKeystoreFileForAccount*(self: Service, account, password: string): bool =
+    try:
+      let hashedPassword = utils.hashPassword(password)
+      let response = status_go_accounts.verifyKeystoreFileForAccount(account, hashedPassword)
+      return response.result.getBool
+    except Exception as e:
+      error "error: ", procName="verifyKeystoreFileForAccount", errName = e.name, errDesription = e.msg
+    return false
+
   proc setEnsName(self: Service, account: WalletAccountDto) =
     let chainId = self.networkService.getNetworkForEns().chainId
     try:
@@ -193,14 +203,17 @@ QtObject:
       (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
     
   proc setRelatedAccountsForAllAccounts(self: Service, derivedFrom: string) =
+    if derivedFrom.len == 0:
+      return
     for wAcc in self.walletAccounts.mvalues:
       if not wAcc.derivedFrom.isEmptyOrWhitespace and 
         cmpIgnoreCase(wAcc.derivedFrom, derivedFrom) == 0:
           self.setRelatedAccountsToAccount(wAcc)
 
-  proc storeAccount(self: Service, account: WalletAccountDto) =
-    # updating related accounts for already added accounts
-    self.setRelatedAccountsForAllAccounts(account.derivedFrom)
+  proc storeAccount(self: Service, account: WalletAccountDto, updateRelatedAccounts = true) =
+    if updateRelatedAccounts:
+      # updating related accounts for already added accounts
+      self.setRelatedAccountsForAllAccounts(account.derivedFrom)
     # add new account to store    
     self.walletAccounts[account.address] = account
 
@@ -291,6 +304,9 @@ QtObject:
           if settingsField.name == KEY_CURRENCY:
             self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
+      if receivedData.walletAccounts.len > 0:
+        for acc in receivedData.walletAccounts:
+          self.handleWalletAccount(acc)
       self.handleKeycardsState(receivedData.keycards)
       self.handleKeycardActions(receivedData.keycardActions)
 
@@ -336,7 +352,7 @@ QtObject:
       error "error: ", errDescription
       return
 
-  proc addNewAccountToLocalStore(self: Service) =
+  proc addNewAccountToLocalStoreAndNotify(self: Service) =
     let accounts = self.fetchAccounts()
     var newAccount: WalletAccountDto
     var found = false
@@ -367,6 +383,16 @@ QtObject:
     self.setRelatedAccountsForAllAccounts(removedAcc.derivedFrom)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(address: address))
 
+  proc updateAccountFromLocalStoreAndNotify(self: Service, address, name, color, emoji: string) =
+    if not self.walletAccountsContainsAddress(address):
+      return
+    var account = self.getAccountByAddress(address)
+    account.name = name
+    account.color = color
+    account.emoji = emoji
+    self.storeAccount(account, updateRelatedAccounts = false)
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
+
   ## if password is not provided local keystore file won't be created
   proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, keyPairName, address, path: string, 
     lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): string =
@@ -384,7 +410,7 @@ QtObject:
       if not response.error.isNil:
         error "status-go error", procName="addWalletAccount", errCode=response.error.code, errDesription=response.error.message
         return response.error.message
-      self.addNewAccountToLocalStore()
+      self.addNewAccountToLocalStoreAndNotify()
       return ""
     except Exception as e:
       error "error: ", procName="addWalletAccount", errName=e.name, errDesription=e.msg
@@ -490,10 +516,7 @@ QtObject:
       if not response.error.isNil:
         error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
         return false
-      account.name = accountName
-      account.color = color
-      account.emoji = emoji
-      self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
+      self.updateAccountFromLocalStoreAndNotify(address, accountName, color, emoji)
       return true
     except Exception as e:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
@@ -853,6 +876,15 @@ QtObject:
     except Exception as e:
       error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
     return false
+
+  proc handleWalletAccount(self: Service, account: WalletAccountDto) =
+    if account.removed:
+      self.removeAccountFromLocalStoreAndNotify(account.address)
+    else:
+      if self.walletAccountsContainsAddress(account.address):
+        self.updateAccountFromLocalStoreAndNotify(account.address, account.name, account.color, account.emoji)
+      else:
+        self.addNewAccountToLocalStoreAndNotify()
 
   proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto]) =
     if keycardActions.len == 0:

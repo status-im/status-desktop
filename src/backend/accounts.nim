@@ -29,7 +29,7 @@ proc deleteAccount*(address: string, password: string): RpcResponse[JsonNode] {.
   let payload = %* [address, password]
   return core.callPrivateRPC("accounts_deleteAccount", payload)
 
-## Adds a new account and creates a Keystore file if password is provided, otherwise it only creates a new account
+## Adds a new account and creates a Keystore file if password is provided, otherwise it only creates a new account. Notifies paired devices.
 proc addAccount*(password, name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
   keyUid, accountType, color, emoji: string): 
   RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -49,7 +49,7 @@ proc addAccount*(password, name, keyPairName, address, path: string, lastUsedDer
       "color": color,
       #"hidden" present on the status-go side, but we don't use it
       "derived-from": rootWalletMasterKey,
-      #"clock" we leave this empty, if needed should be set on the status-go side
+      #"clock" we leave this empty, set on the status-go side
       #"removed" present on the status-go side, used for synchronization, no need to set it here
       "keypair-name": keyPairName,
       "last-used-derivation-index": lastUsedDerivationIndex
@@ -57,14 +57,14 @@ proc addAccount*(password, name, keyPairName, address, path: string, lastUsedDer
   ]
   return core.callPrivateRPC("accounts_addAccount", payload)
 
-## Adds a new account without creating a Keystore file
+## Adds a new account without creating a Keystore file and notifies paired devices
 proc addAccountWithoutKeystoreFileCreation*(name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
   keyUid, accountType, color, emoji: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   return addAccount(password = "", name, keyPairName, address, path, lastUsedDerivationIndex, rootWalletMasterKey, publicKey, 
     keyUid, accountType, color, emoji)
 
-## Updates either regular or keycard account, without interaction to a Keystore file
+## Updates either regular or keycard account, without interaction to a Keystore file and notifies paired devices
 proc updateAccount*(name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
   keyUid, accountType, color, emoji: string, walletDefaultAccount: bool, chatDefaultAccount: bool):
   RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -83,7 +83,7 @@ proc updateAccount*(name, keyPairName, address, path: string, lastUsedDerivation
       "color": color,
       #"hidden" present on the status-go side, but we don't use it
       "derived-from": rootWalletMasterKey,
-      #"clock" we leave this empty, if needed should be set on the status-go side
+      #"clock" we leave this empty, set on the status-go side
       #"removed" present on the status-go side, used for synchronization, no need to set it here
       "keypair-name": keyPairName,
       "last-used-derivation-index": lastUsedDerivationIndex
@@ -409,3 +409,7 @@ proc getAddressDetails*(address: string,): RpcResponse[JsonNode] {.raises: [Exce
 proc verifyPassword*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [password]
   return core.callPrivateRPC("accounts_verifyPassword", payload)
+
+proc verifyKeystoreFileForAccount*(address, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [address, password]
+  return core.callPrivateRPC("accounts_verifyKeystoreFileForAccount", payload)

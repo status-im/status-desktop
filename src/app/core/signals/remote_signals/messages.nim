@@ -10,8 +10,8 @@ import ../../../../app_service/service/activity_center/dto/[notification]
 import ../../../../app_service/service/contacts/dto/[contacts, status_update]
 import ../../../../app_service/service/devices/dto/[installation]
 import ../../../../app_service/service/settings/dto/[settings]
-import ../../../../app_service/service/saved_address/[dto]
-import ../../../../app_service/service/wallet_account/[key_pair_dto]
+import ../../../../app_service/service/saved_address/dto as saved_address_dto
+import ../../../../app_service/service/wallet_account/[dto, key_pair_dto]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
@@ -35,6 +35,7 @@ type MessageSignal* = ref object of Signal
   savedAddresses*: seq[SavedAddressDto]
   keycards*: seq[KeyPairDto]
   keycardActions*: seq[KeycardActionDto]
+  walletAccounts*: seq[WalletAccountDto]
 
 type MessageDeliveredSignal* = ref object of Signal
   chatId*: string
@@ -140,6 +141,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"keycardActions"} != nil:
     for jsonKc in event["event"]["keycardActions"]:
       signal.keycardActions.add(jsonKc.toKeycardActionDto())
+
+  if event["event"]{"accounts"} != nil:
+    for jsonAcc in event["event"]["accounts"]:
+      signal.walletAccounts.add(jsonAcc.toWalletAccountDto())
 
   result = signal
 
