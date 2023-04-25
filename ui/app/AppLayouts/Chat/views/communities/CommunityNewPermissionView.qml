@@ -180,16 +180,11 @@ StatusScrollView {
 
     onPermissionTypeChanged: Qt.callLater(() => d.loadInitValues())
 
-    ColumnLayout {
+    SequenceColumnLayout {
         id: mainLayout
-        width: root.viewWidth
-        spacing: 0
 
-        CurveSeparatorWithText {
-            Layout.alignment: Qt.AlignLeft
-            Layout.leftMargin: 14
-            text: qsTr("Anyone")
-        }
+        width: root.viewWidth
+        title: qsTr("Anyone")
 
         StatusItemSelector {
             id: tokensSelector
@@ -377,12 +372,9 @@ StatusScrollView {
                 editedIndex = index
             }
         }
-        Rectangle {
-            Layout.leftMargin: 16
-            Layout.preferredWidth: 2
-            Layout.preferredHeight: 24
-            color: Style.current.separator
-        }
+
+        SequenceColumnLayout.Separator {}
+
         StatusFlowSelector {
             id: permissionsSelector
 
@@ -465,12 +457,9 @@ StatusScrollView {
                 permissionsDropdown.open()
             }
         }
-        Rectangle {
-            Layout.leftMargin: 16
-            Layout.preferredWidth: 2
-            Layout.preferredHeight: 24
-            color: Style.current.separator
-        }
+
+        SequenceColumnLayout.Separator {}
+
         StatusItemSelector {
             id: inSelector
 
