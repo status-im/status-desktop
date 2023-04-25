@@ -52,6 +52,17 @@ QtObject {
         return ""
     }
 
+    function getTokenAmountByKey(model, key) {
+        const item = getTokenByKey(model, key)
+        if (item) {
+            if (item.infiniteSupply === true)
+                return "∞"
+
+            return item.supply ?? ""
+        }
+        return ""
+    }
+
     function setHoldingsTextFormat(type, name, amount) {
         switch (type) {
             case HoldingTypes.Type.Asset:

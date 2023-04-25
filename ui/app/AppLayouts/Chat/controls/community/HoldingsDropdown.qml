@@ -9,6 +9,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Chat.helpers 1.0
+import utils 1.0
 
 StatusDropdown {
     id: root
@@ -368,6 +369,7 @@ StatusDropdown {
             tokenShortName: CommunityPermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
             tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(root.assetsModel, root.assetKey)
             amountText: d.assetAmountText
+
             tokenCategoryText: qsTr("Asset")
             addOrUpdateButtonEnabled: d.assetsReady
             mode: d.effectiveHoldingMode
@@ -402,11 +404,37 @@ StatusDropdown {
             tokenName: CommunityPermissionsHelpers.getTokenNameByKey(root.collectiblesModel, root.collectibleKey)
             tokenShortName: ""
             tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(root.collectiblesModel, root.collectibleKey)
+            tokenAmount: CommunityPermissionsHelpers.getTokenAmountByKey(root.collectiblesModel, root.collectibleKey)
             amountText: d.collectibleAmountText
             tokenCategoryText: qsTr("Collectible")
             addOrUpdateButtonEnabled: d.collectiblesReady
             allowDecimals: false
             mode: d.effectiveHoldingMode
+
+            ListModel {
+                Component.onCompleted: {
+                    const collectible = CommunityPermissionsHelpers.getTokenByKey(
+                                          root.collectiblesModel,
+                                          root.collectibleKey)
+
+                    if (!collectible)
+                        return
+
+                    const chainName = collectible.chainName ?? ""
+                    const chainIcon = collectible.chainIcon
+                                    ? Style.svg(collectible.chainIcon) : ""
+
+                    if (!chainName)
+                        return
+
+                    append({
+                        name:chainName,
+                        icon: chainIcon
+                    })
+
+                    collectiblePanel.networksModel = this
+                }
+            }
 
             onEffectiveAmountChanged: root.collectibleAmount = effectiveAmount
             onAmountTextChanged: d.collectibleAmountText = amountText
