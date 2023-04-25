@@ -1,19 +1,16 @@
-import NimQml, json, strutils, json_serialization, sequtils
+import NimQml, json, strutils, sequtils
 
 import ./io_interface
 import ../../shared_models/section_model
 import ../../shared_models/section_item
 import ../../shared_models/section_details
 import ./models/curated_community_model
-import ./models/curated_community_item
 import ./models/discord_file_list_model
 import ./models/discord_file_item
 import ./models/discord_categories_model
-import ./models/discord_category_item
 import ./models/discord_channels_model
 import ./models/discord_channel_item
 import ./models/discord_import_tasks_model
-import ./models/discord_import_errors_model
 
 QtObject:
   type

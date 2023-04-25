@@ -1,4 +1,4 @@
-import json, json_serialization, chronicles
+import json, chronicles
 import ../app_service/common/utils
 import ./core
 

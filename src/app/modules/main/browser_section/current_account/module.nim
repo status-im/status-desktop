@@ -7,7 +7,6 @@ import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/token/service as token_service
 import ../../../../../app_service/service/currency/service as currency_service
 import ../../../shared_models/token_model as token_model
-import ../../../shared_models/token_item as token_item
 import ../../../shared_models/token_utils
 
 import ../../wallet_section/accounts/utils
@@ -60,7 +59,7 @@ proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
     
   self.view.getAssetsModel().setItems(items)
 
-method switchAccount*(self: Module, accountIndex: int) =
+proc switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
 
   let walletAccount = self.controller.getWalletAccount(accountIndex)

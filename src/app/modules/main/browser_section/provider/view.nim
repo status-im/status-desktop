@@ -76,11 +76,11 @@ QtObject:
     self.delegate.postMessage(payloadMethod, requestType, message)
 
   proc ensResourceURL*(self: View, ens: string, url: string): string {.slot.} =
-    let (url, base, http_scheme, path_prefix, hasContentHash) = self.delegate.ensResourceURL(ens, url)
+    let (url, base, http_scheme, _, hasContentHash) = self.delegate.ensResourceURL(ens, url)
     var newHost = url_host(base)
     if hasContentHash:
       if strutils.endsWith(base, "/"):
-        newHost = base[.. ^2]
+        newHost = base[0.. ^2]
       else:
         newHost = base
 

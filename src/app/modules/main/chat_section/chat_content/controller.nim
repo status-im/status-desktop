@@ -1,4 +1,3 @@
-import Tables
 import NimQml
 import json
 import io_interface
@@ -9,7 +8,6 @@ import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/message/service as message_service
-import ../../../../../app_service/service/eth/utils as eth_utils
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 import ../../../../core/signals/types

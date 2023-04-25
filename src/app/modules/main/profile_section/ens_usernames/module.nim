@@ -143,7 +143,7 @@ method authenticateAndSetPubKey*(self: Module, chainId: int, ensUsername: string
   else:
     self.controller.authenticateUser()
 
-method setPubKey*(self: Module, password: string) =
+proc setPubKey*(self: Module, password: string) =
   let response = self.controller.setPubKey(
     self.tmpSendEnsTransactionDetails.chainId,
     self.tmpSendEnsTransactionDetails.ensUsername,
@@ -200,7 +200,7 @@ method authenticateAndReleaseEns*(self: Module, chainId: int, ensUsername: strin
   else:
     self.controller.authenticateUser()
 
-method onEnsUsernameRemoved(self: Module, chainId: int, ensUsername: string) =
+proc onEnsUsernameRemoved(self: Module, chainId: int, ensUsername: string) =
   if (self.controller.getPreferredEnsUsername() == ensUsername):
     self.controller.fixPreferredName(true)
   self.view.model().removeItemByEnsUsername(chainId, ensUsername)
@@ -212,7 +212,7 @@ method removeEnsUsername*(self: Module, chainId: int, ensUsername: string): bool
   self.onEnsUsernameRemoved(chainId, ensUsername)
   return true
 
-method releaseEns*(self: Module, password: string) =
+proc releaseEns*(self: Module, password: string) =
   let response = self.controller.release(
     self.tmpSendEnsTransactionDetails.chainId,
     self.tmpSendEnsTransactionDetails.ensUsername,
@@ -321,7 +321,7 @@ method authenticateAndRegisterEns*(self: Module, chainId: int, ensUsername: stri
   ##
   ##################################
 
-method registerEns(self: Module, password: string) =
+proc registerEns(self: Module, password: string) =
   let response = self.controller.registerEns(
     self.tmpSendEnsTransactionDetails.chainId,
     self.tmpSendEnsTransactionDetails.ensUsername,

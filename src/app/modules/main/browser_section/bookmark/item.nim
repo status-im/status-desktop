@@ -1,4 +1,4 @@
-import json, strformat
+import strformat
 
 type
   Item* = object

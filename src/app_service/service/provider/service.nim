@@ -4,7 +4,6 @@ import ../../../backend/provider as status_go_provider
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../ens/service as ens_service
-import ../../common/utils
 
 logScope:
   topics = "provider-service"

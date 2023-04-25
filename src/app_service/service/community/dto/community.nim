@@ -4,7 +4,6 @@ import json, sequtils, sugar, tables, strutils, json_serialization
 
 import ../../../../backend/communities
 include ../../../common/json_utils
-import ../../../common/types
 import ../../../common/conversion
 
 import ../../chat/dto/chat

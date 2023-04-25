@@ -1,5 +1,4 @@
 import stint
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../shared_models/currency_amount
 
 type

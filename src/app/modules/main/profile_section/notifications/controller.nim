@@ -1,7 +1,6 @@
-import Tables, chronicles, json
+import chronicles
 import io_interface
 
-import ../../../../global/app_signals
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/chat/service as chat_service
@@ -77,7 +76,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
     var args = ChatUpdateArgs(e)
     for chat in args.chats:
-      let belongsToCommunity = chat.communityId.len > 0
       self.delegate.addChat(chat)
 
   self.events.on(SIGNAL_CHAT_RENAMED) do(e: Args):

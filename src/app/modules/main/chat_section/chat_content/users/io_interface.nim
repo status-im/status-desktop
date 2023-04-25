@@ -58,5 +58,5 @@ method addGroupMembers*(self: AccessInterface, pubKeys: seq[string]) {.base.} =
 method removeGroupMembers*(self: AccessInterface, pubKeys: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateMembersList*(self: AccessInterface) =
+method updateMembersList*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

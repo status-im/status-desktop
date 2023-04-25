@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, sugar, tables, strutils
+import NimQml, sequtils, tables
 
 import ./io_interface
 import ../io_interface as delegate_interface
@@ -12,10 +12,8 @@ import ./models/discord_channels_model
 import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
-import ./models/discord_import_error_item
-import ./models/discord_import_errors_model
 import ../../shared_models/section_item
-import ../../shared_models/[member_item, member_model, section_model]
+import ../../shared_models/[member_item, section_model]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/common/types
@@ -185,7 +183,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
         result = self.createTokenItem(tokenDto))
     )
 
-method getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityItem =
+proc getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityItem =
   return initCuratedCommunityItem(
       c.id,
       c.name,
@@ -198,13 +196,13 @@ method getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityI
       len(c.members),
       int(c.activeMembersCount))
 
-method getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
+proc getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
   return initDiscordCategoryItem(
       c.id,
       c.name,
       true)
 
-method getDiscordChannelItem(self: Module, c: DiscordChannelDto): DiscordChannelItem =
+proc getDiscordChannelItem(self: Module, c: DiscordChannelDto): DiscordChannelItem =
   return initDiscordChannelItem(
       c.id,
       c.categoryId,
@@ -246,34 +244,6 @@ method curatedCommunityAdded*(self: Module, community: CommunityDto) =
 
 method curatedCommunityEdited*(self: Module, community: CommunityDto) =
   self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
-
-method requestAdded*(self: Module) =
-  # TODO to model or view
-  discard
-
-method communityLeft*(self: Module, communityId: string) =
-   # TODO to model or view
-  discard
-
-method communityChannelReordered*(self: Module) =
-   # TODO to model or view
-  discard
-
-method communityChannelDeleted*(self: Module, communityId: string, chatId: string) =
-   # TODO to model or view
-  discard
-
-method communityCategoryCreated*(self: Module) =
-   # TODO to model or view
-  discard
-
-method communityCategoryEdited*(self: Module) =
-   # TODO to model or view
-  discard
-
-method communityCategoryDeleted*(self: Module) =
-   # TODO to model or view
-  discard
 
 method createCommunity*(self: Module, name: string,
                         description, introMessage: string, outroMessage: string,
@@ -373,7 +343,7 @@ method requestImportDiscordCommunity*(self: Module, name: string, description, i
   self.view.setDiscordImportHasCommunityImage(imagePath != "")
   self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp, encrypted)
 
-method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
+proc getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
   return initDiscordImportTaskItem(
       t.`type`,
       t.progress,
@@ -383,10 +353,19 @@ method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): Dis
       t.errorsCount,
       t.warningsCount)
 
-method discordImportProgressUpdated*(self: Module, communityId: string, communityName: string, communityImage: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool, totalChunksCount: int, currentChunk: int) =
-
-  var taskItems: seq[DiscordImportTaskItem] = @[]
-
+method discordImportProgressUpdated*(
+    self: Module,
+    communityId: string,
+    communityName: string,
+    communityImage: string,
+    tasks: seq[DiscordImportTaskProgress],
+    progress: float,
+    errorsCount: int,
+    warningsCount: int,
+    stopped: bool,
+    totalChunksCount: int,
+    currentChunk: int
+  ) =
   for task in tasks:
     if not self.view.discordImportTasksModel().hasItemByType(task.`type`):
       self.view.discordImportTasksModel().addItem(self.getDiscordImportTaskItem(task))

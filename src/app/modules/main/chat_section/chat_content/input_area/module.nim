@@ -59,7 +59,7 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method getChatId*(self: Module): string =
+proc getChatId*(self: Module): string =
   return self.controller.getChatId()
 
 method sendImages*(self: Module, imagePathsAndDataJson: string, msg: string, replyTo: string): string =

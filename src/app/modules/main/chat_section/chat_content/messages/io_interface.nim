@@ -143,38 +143,38 @@ method leaveChat*(self: AccessInterface) {.base.} =
 method didIJoinedChat*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getMessages*(self: AccessInterface): seq[message_item.Item] =
+method getMessages*(self: AccessInterface): seq[message_item.Item] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onMailserverSynced*(self: AccessInterface, syncedFrom: int64) =
+method onMailserverSynced*(self: AccessInterface, syncedFrom: int64) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resendChatMessage*(self: AccessInterface, messageId: string): string =
+method resendChatMessage*(self: AccessInterface, messageId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resetNewMessagesMarker*(self: AccessInterface) =
+method resetNewMessagesMarker*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeNewMessagesMarker*(self: AccessInterface) =
+method removeNewMessagesMarker*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resetAndScrollToNewMessagesMarker*(self: AccessInterface) =
+method resetAndScrollToNewMessagesMarker*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method markAllMessagesRead*(self: AccessInterface) =
+method markAllMessagesRead*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method markMessagesAsRead*(self: AccessInterface, messages: seq[string]) =
+method markMessagesAsRead*(self: AccessInterface, messages: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateCommunityDetails*(self: AccessInterface, community: CommunityDto) =
+method updateCommunityDetails*(self: AccessInterface, community: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onFirstUnseenMessageLoaded*(self: AccessInterface, messageId: string) =
+method onFirstUnseenMessageLoaded*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isFirstUnseenMessageInitialized*(self: AccessInterface): bool =
+method isFirstUnseenMessageInitialized*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method reevaluateViewLoadingState*(self: AccessInterface) =
+method reevaluateViewLoadingState*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

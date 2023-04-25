@@ -1,4 +1,4 @@
-import NimQml, strutils, sequtils, sugar, chronicles
+import NimQml, sequtils, sugar
 import io_interface
 import view, controller
 import ../../../../shared_models/[member_model, member_item]
@@ -22,7 +22,7 @@ type
     moduleLoaded: bool
 
 # Forward declaration
-method addChatMember(self: Module,  member: ChatMember)
+proc addChatMember(self: Module,  member: ChatMember)
 
 proc newModule*(
   events: EventEmitter, sectionId: string, chatId: string,
@@ -94,7 +94,7 @@ method userProfileUpdated*(self: Module) =
 method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
-method addChatMember(self: Module,  member: ChatMember) =
+proc addChatMember(self: Module,  member: ChatMember) =
   if member.id == "":
     return
 

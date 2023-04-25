@@ -183,7 +183,6 @@ QtObject:
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
 
   # Forward declaration
-  proc loadCommunityTags(self: Service): string
   proc asyncLoadCuratedCommunities*(self: Service)
   proc asyncAcceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string])
@@ -652,12 +651,6 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "error loading all communities: ", errDesription
-
-  proc loadCommunityTags(self: Service): string =
-    let response = status_go.getCommunityTags()
-    var result = newString(0)
-    toUgly(result, response.result)
-    return result
 
   proc getCommunityTags*(self: Service): string =
     return self.communityTags

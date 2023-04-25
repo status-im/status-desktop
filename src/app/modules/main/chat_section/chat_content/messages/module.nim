@@ -207,7 +207,7 @@ proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
       self.controller.increaseLoadingMessagesPerPageFactor()
       self.loadMoreMessages()
 
-method currentUserWalletContainsAddress(self: Module, address: string): bool =
+proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   if (address.len == 0):
     return false
   let accounts = self.controller.getWalletAccounts()
@@ -644,7 +644,7 @@ method getLinkPreviewData*(self: Module, link: string, uuid: string, whiteListed
 method onPreviewDataLoaded*(self: Module, previewData: string, uuid: string) =
   self.view.onPreviewDataLoaded(previewData, uuid)
 
-method switchToMessage*(self: Module, messageId: string) =
+proc switchToMessage*(self: Module, messageId: string) =
   let index = self.view.model().findIndexForMessageId(messageId)
   if(index != -1):
     self.controller.clearSearchedMessageId()

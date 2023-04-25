@@ -1,4 +1,4 @@
-import NimQml, strformat, chronicles, strutils, tables, json
+import NimQml, chronicles, strutils, tables, json
 
 import ../../../backend/backend as backend
 

@@ -1,10 +1,9 @@
-import tables, NimQml, sequtils, sugar, chronicles, json, stint
+import tables, NimQml, sequtils, sugar, json, stint
 
-import ./io_interface, ./view, ./account_item, ./controller, ./utils
+import ./io_interface, ./view, ./controller, ./utils
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
-import ../../../../../app_service/common/account_constants
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/currency/service as currency_service

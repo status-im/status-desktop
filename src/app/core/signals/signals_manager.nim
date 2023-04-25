@@ -30,7 +30,7 @@ QtObject:
     var jsonSignal: JsonNode
     try:
       jsonSignal = statusSignal.parseJson
-    except:
+    except CatchableError:
       error "Invalid signal received", data = statusSignal
       return
 
@@ -39,7 +39,7 @@ QtObject:
     var signal:Signal
     try:
       signal = self.decode(jsonSignal)
-    except:
+    except CatchableError:
       warn "Error decoding signal", err=getCurrentExceptionMsg()
       return
 
@@ -60,7 +60,7 @@ QtObject:
     var signalType: SignalType
     try:
       signalType = parseEnum[SignalType](signalString)
-    except:
+    except CatchableError:
       raise newException(ValueError, "Unknown signal received: " & signalString)
 
     result = case signalType:

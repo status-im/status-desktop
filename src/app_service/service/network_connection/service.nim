@@ -1,4 +1,4 @@
-import NimQml, chronicles, Tables, strutils, sequtils, sugar, strformat, json
+import NimQml, chronicles, Tables, strutils, sequtils, sugar, json
 
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
@@ -8,7 +8,6 @@ import ../wallet_account/service as wallet_service
 import ../network/service as network_service
 import ../node/service as node_service
 import ../collectible/service as collectible_service
-import ../../../backend/backend as backend
 
 logScope:
   topics = "network-connection-service"
@@ -137,7 +136,6 @@ QtObject:
     return (allDown, chaindIdsDown)
 
   proc getFormattedStringForChainIds(self: Service, chainIds: seq[int]): string =
-    var result: string = ""
     for chainId in chainIds:
       if result.isEmptyOrWhitespace:
         result = $chainId

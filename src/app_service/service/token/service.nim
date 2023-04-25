@@ -1,6 +1,5 @@
-import NimQml, Tables, json, sequtils, chronicles, strformat, strutils
+import NimQml, Tables, json, sequtils, chronicles, strutils
 
-from sugar import `=>`
 import web3/ethtypes
 from web3/conversions import `$`
 import ../../../backend/backend as backend

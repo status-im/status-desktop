@@ -1,4 +1,3 @@
-import strutils
 import io_interface
 
 import ../../../../core/eventemitter

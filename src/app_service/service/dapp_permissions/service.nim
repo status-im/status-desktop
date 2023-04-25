@@ -1,6 +1,6 @@
 import Tables, json, sequtils, chronicles
 import sets
-import result
+import results
 import options
 include ../../common/json_utils
 import ../../../backend/backend

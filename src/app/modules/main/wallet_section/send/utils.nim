@@ -3,10 +3,8 @@ import ./account_item
 
 import ../../../../../app_service/service/wallet_account/dto
 import ../../../../../app_service/service/currency/dto as currency_dto
-import ../../../shared_models/currency_amount
 import ../../../shared_models/currency_amount_utils
 import ../../../shared_models/token_model as token_model
-import ../../../shared_models/token_item as token_item
 import ../../../shared_models/token_utils
 
 proc walletAccountToItem*(

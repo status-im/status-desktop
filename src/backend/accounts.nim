@@ -1,6 +1,5 @@
 import json, json_serialization, chronicles, strutils
 import ./core, ../app_service/common/utils
-import ../app_service/common/account_constants
 import ./response_type
 
 import status_go

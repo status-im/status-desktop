@@ -1,8 +1,7 @@
-import chronicles, json, strutils
+import chronicles, strutils
 
 import ./dto/node_config
 import ../settings/service as settings_service
-import ../community/service
 import ../../../app/core/eventemitter
 import ../../../app/core/fleets/fleet_configuration
 import ../../../backend/node_config as status_node_config
@@ -286,7 +285,7 @@ proc isV2LightMode*(self: Service): bool =
 proc isFullNode*(self: Service): bool =
    return self.configuration.WakuConfig.FullNode
 
-method isWakuV2StoreEnabled*(self: Service): bool =
+proc isWakuV2StoreEnabled*(self: Service): bool =
   return self.configuration.WakuV2Config.EnableStore
 
 proc setWakuV2StoreEnabled*(self: Service, enabled: bool, storeCapacity: int = 0, storeSeconds: int = 0): bool =

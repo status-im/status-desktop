@@ -1,4 +1,4 @@
-import json, Tables, stint, strformat, strutils, times
+import json, Tables, stint, strformat, strutils
 
 # Unique identifier for collectible on a specific chain
 type

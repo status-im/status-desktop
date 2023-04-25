@@ -1,6 +1,5 @@
 import times
 include ../../common/json_utils
-import ../eth/utils
 
 import ../../../backend/backend as backend
 import ./dto

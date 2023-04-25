@@ -1,10 +1,8 @@
-import Tables, chronicles
+import chronicles
 import io_interface
 
 import ../../../../global/app_signals
 import ../../../../core/eventemitter
-import ../../../../core/fleets/fleet_configuration
-import ../../../../../app_service/service/community/service
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/stickers/service as stickers_service
 import ../../../../../app_service/service/node_configuration/service as node_configuration_service
@@ -58,7 +56,7 @@ proc setBloomLevel*(self: Controller, bloomLevel: string) =
 
   self.delegate.onBloomLevelSet()
 
-method toggleWakuV2Store*(self: Controller) =
+proc toggleWakuV2Store*(self: Controller) =
   let enabled = self.nodeConfigurationService.isWakuV2StoreEnabled()
   if (not self.nodeConfigurationService.setWakuV2StoreEnabled(not enabled)):
     # in the future we may do a call from here to show a popup about this error
@@ -66,7 +64,7 @@ method toggleWakuV2Store*(self: Controller) =
     return
   self.delegate.onWakuV2StoreToggled()
 
-method isWakuV2StoreEnabled*(self: Controller): bool =
+proc isWakuV2StoreEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isWakuV2StoreEnabled()
 
 

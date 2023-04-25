@@ -3,7 +3,7 @@ import NimQml, json, chronicles
 import ../settings/service as settings_service
 import ../network/types
 import ../../../app/core/eventemitter
-import ../../../app/core/tasks/[qt, threadpool]
+import ../../../app/core/tasks/[threadpool]
 import ../../../app/core/signals/types as signal_types
 import ../../../backend/backend
 import ../../../backend/about as status_about

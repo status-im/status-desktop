@@ -1,8 +1,7 @@
 import Tables, json, chronicles, strutils
-import algorithm, strformat, sets, options, sequtils
+import strformat, sets, options
 import chronicles, libp2p/[multihash, multicodec, cid]
 import nimcrypto, stint
-import web3/conversions
 import ../../common/conversion as common_conversion
 import ../eth/dto/transaction as eth_transaction_dto
 import ../../../backend/eth as status_eth
