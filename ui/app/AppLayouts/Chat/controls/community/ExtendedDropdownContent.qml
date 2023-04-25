@@ -497,7 +497,8 @@ Item {
 
             areSectionsVisible: !root.showAllTokensMode
             isFooterButtonVisible: !root.showAllTokensMode && !d.searchMode
-                                   && filteredModel.item && d.currentModel.count > filteredModel.item.count
+                                   && filteredModel.item && d.currentModel
+                                   && d.currentModel.count > filteredModel.item.count
 
             onHeaderItemClicked: root.navigateToMintTokenSettings()
             onFooterButtonClicked: root.footerButtonClicked()

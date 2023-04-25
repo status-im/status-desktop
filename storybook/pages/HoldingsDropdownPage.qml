@@ -7,6 +7,10 @@ import Models 1.0
 
 import AppLayouts.Chat.controls.community 1.0
 
+import SortFilterProxyModel 0.2
+
+import utils 1.0
+
 SplitView {
     id: root
 
@@ -47,7 +51,49 @@ SplitView {
             parent: container
             anchors.centerIn: container
 
-            collectiblesModel: CollectiblesModel {}
+            CollectiblesModel {
+                id: collectiblesModel
+            }
+
+            SortFilterProxyModel {
+                id: collectiblesModelWithSupply
+
+                sourceModel: collectiblesModel
+
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "supply"
+                        expression: ((model.index + 1) * 115).toString()
+                    },
+                    ExpressionRole {
+                        name: "infiniteSupply"
+                        expression: !(model.index % 4)
+                    },
+                    ExpressionRole {
+                        name: "chainName"
+                        expression: model.index ? "Optimism" : "Arbitrum"
+                    },
+                    ExpressionRole {
+
+                        readonly property string icon1: Style.svg("network/Network=Optimism")
+                        readonly property string icon2: Style.svg("network/Network=Arbitrum")
+
+                        name: "chainIcon"
+                        expression: model.index ? icon1 : icon2
+                    }
+                ]
+
+                filters: ValueFilter {
+                    roleName: "category"
+                    value: TokenCategories.Category.Community
+                }
+            }
+
+
+            collectiblesModel: isAirdropMode.checked
+                               ? collectiblesModelWithSupply
+                               : collectiblesModel
+
             assetsModel: AssetsModel {}
             isENSTab: isEnsTabChecker.checked
             isCollectiblesOnly: isCollectiblesOnlyChecker.checked
@@ -68,13 +114,19 @@ SplitView {
         RowLayout {
             CheckBox {
                 id: isEnsTabChecker
-                text: "Is ENS tab visible?"
+                text: "ENS tab visible"
                 checked: true
             }
 
             CheckBox {
                 id: isCollectiblesOnlyChecker
-                text: "Is collectibles only visible?"
+                text: "Collectibles only"
+                checked: false
+            }
+
+            CheckBox {
+                id: isAirdropMode
+                text: "Airdrop mode"
                 checked: false
             }
         }

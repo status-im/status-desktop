@@ -39,7 +39,7 @@ ColumnLayout {
             property int counter: 0
 
             model: ListModel {
-                id:listModel
+                id: listModel
             }
 
             addButton.onClicked: model.append(items[(counter++) % items.length])

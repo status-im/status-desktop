@@ -11,6 +11,12 @@ ListModel {
             category: TokenCategories.Category.Community
         },
         {
+            key: "Anniversary2",
+            iconSource: ModelsData.collectibles.anniversary,
+            name: "Anniversary2",
+            category: TokenCategories.Category.Community,
+        },
+        {
             key: "CryptoKitties",
             iconSource: ModelsData.collectibles.cryptoKitties,
             name: "CryptoKitties",
