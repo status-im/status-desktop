@@ -21,7 +21,7 @@ Item {
 
     property alias source: editor.source
     property alias cropRect: editor.cropRect
-    property string imageData
+    property alias imageData: editor.dataImage
 
     implicitHeight: layout.childrenRect.height
 
@@ -47,8 +47,6 @@ Item {
             imageFileDialogTitle: qsTr("Choose an image as logo")
             title: qsTr("Community logo")
             acceptButtonText: qsTr("Make this my Community logo")
-
-            dataImage: root.imageData
 
             NoImageUploadedPanel {
                 anchors.centerIn: parent

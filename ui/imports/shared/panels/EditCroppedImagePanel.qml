@@ -111,28 +111,30 @@ Item {
             StatusRoundButton {
                 id: editButton
 
-                icon.name: "edit"
+                icon.name: "edit_pencil"
 
-                readonly property real rotationRadius: roundedImage ? parent.width/2 : imageCropEditor.radius
+                readonly property real rotationRadius: root.roundedImage ? parent.width/2 : imageCropEditor.radius
                 transform: [
                     Translate {
                         x: -editButton.width/2 - d.buttonsInsideOffset
-                        y: -editButton.height/2 - d.buttonsInsideOffset
+                        y: -editButton.height/2 + d.buttonsInsideOffset
                     },
                     Rotation { angle: -editRotationTransform.angle },
                     Rotation {
                         id: editRotationTransform
-                        angle: 225
+                        angle: 135
                         origin.x: editButton.rotationRadius
                     },
                     Translate {
                         x: root.roundedImage ? 0 : editButton.parent.width - 2 * editButton.rotationRadius
-                        y: (root.roundedImage ? 0 : editButton.parent.height - 2 * editButton.rotationRadius) + editButton.rotationRadius
+                        y: editButton.rotationRadius
                     }
                 ]
                 type: StatusRoundButton.Type.Secondary
 
-                onClicked: imageCropWorkflow.chooseImageToCrop()
+                onClicked: chooseImageToCrop()
+                // TODO uncomment when status-go supports deleting images:
+                // onClicked: imageEditMenu.popup(this, mouse.x, mouse.y)
             }
         }
 
@@ -173,7 +175,7 @@ Item {
 
                 type: StatusRoundButton.Type.Secondary
 
-                onClicked: imageCropWorkflow.chooseImageToCrop()
+                onClicked: chooseImageToCrop()
                 z: imageCropEditor.z + 1
             }
 
@@ -197,6 +199,29 @@ Item {
             visible: root.state == d.backgroundComponentState
 
             sourceComponent: root.backgroundComponent
+        }
+    }
+
+    StatusMenu {
+        id: imageEditMenu
+        width: 200
+
+        StatusAction {
+            text: qsTr("Select different image")
+            assetSettings.name: "image"
+            onTriggered: chooseImageToCrop()
+        }
+
+        StatusAction {
+            text: qsTr("Remove image")
+            type: StatusAction.Danger
+            assetSettings.name: "delete"
+            onTriggered: {
+                root.userSelectedImage = false
+                root.dataImage = ""
+                root.source = ""
+                croppedPreview.setCropRect(Qt.rect(0, 0, 0, 0))
+            }
         }
     }
 }
