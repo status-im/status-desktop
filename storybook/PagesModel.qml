@@ -134,6 +134,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "SequenceColumnLayout"
+        section: "Panels"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
