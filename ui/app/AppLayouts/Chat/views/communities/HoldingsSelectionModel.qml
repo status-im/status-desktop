@@ -56,7 +56,7 @@ SortFilterProxyModel {
 
             function getIcon(type, key) {
                 if (type === HoldingTypes.Type.Ens)
-                    return "username"
+                    return Style.png("tokens/ENS")
 
                 const model = type === HoldingTypes.Type.Asset
                             ? assetsModel : collectiblesModel
@@ -68,19 +68,6 @@ SortFilterProxyModel {
                 _assetsChanges.revision
                 _collectiblesChanges.revision
                 return getIcon(model.type, model.key)
-            }
-        },
-        ExpressionRole {
-            name: "isIcon"
-
-            function isIconType(type) {
-                return type === HoldingTypes.Type.Ens
-            }
-
-            expression: {
-                _assetsChanges.revision
-                _collectiblesChanges.revision
-                return isIconType(model.type)
             }
         },
         ExpressionRole {

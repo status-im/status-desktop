@@ -74,7 +74,7 @@ Control {
                                 leftPadding: 2
                                 title: model.text
                                 asset.name: model.imageSource
-                                asset.isImage: !model.isIcon
+                                asset.isImage: true
                                 asset.bgColor: "transparent"
                                 asset.height: 28
                                 asset.width: asset.height

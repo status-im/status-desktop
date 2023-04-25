@@ -108,9 +108,9 @@ QtObject {
                         available: false
                     },
                     {
-                        type: HoldingTypes.Type.Collectible,
-                        key: "Kitty1",
-                        amount: 12,
+                        type: HoldingTypes.Type.Ens,
+                        key: "Ens",
+                        amount: 1,
                         available: true
                     }
                 ]
@@ -151,6 +151,35 @@ QtObject {
     }
 
     function createHoldingsModel4() {
+        return [
+                    {
+                        type: HoldingTypes.Type.Asset,
+                        key: "socks",
+                        amount: 15,
+                        available: true
+                    },
+                    {
+                        type: HoldingTypes.Type.Asset,
+                        key: "snt",
+                        amount: 25000,
+                        available: true
+                    },
+                    {
+                        type: HoldingTypes.Type.Ens,
+                        key: "ENS",
+                        amount: 1,
+                        available: false
+                    },
+                    {
+                        type: HoldingTypes.Type.Asset,
+                        key: "Amp",
+                        amount: 2,
+                        available: true
+                    }
+                ]
+    }
+
+    function createHoldingsModel5() {
         return [
                     {
                         type: HoldingTypes.Type.Asset,
