@@ -141,15 +141,14 @@ method deleteAccount*(self: Module, keyUid: string, address: string) =
   self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, address: address)
   self.authenticateActivityForKeyUid(keyUid, AuthenticationReason.DeleteAccountAuthentication)
 
-method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string, keycardUid: string) =
   if self.authentiactionReason == AuthenticationReason.DeleteAccountAuthentication:
     if self.processingWalletAccount.keyUid != keyUid:
       error "cannot resolve key uid of an account being deleted", keyUid=keyUid
       return
     if password.len == 0:
       return
-    let doPasswordHashing = pin.len != PINLengthForStatusApp
-    self.controller.deleteAccount(self.processingWalletAccount.address, password, doPasswordHashing)
+    self.controller.deleteAccount(self.processingWalletAccount.address, password, keyUid, keycardUid)
 
 method updateAccount*(self: Module, address: string, accountName: string, color: string, emoji: string) =
   self.controller.updateAccount(address, accountName, color, emoji)

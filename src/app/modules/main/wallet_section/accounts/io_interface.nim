@@ -31,5 +31,5 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method authenticateUser*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
+method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string, keycardUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")

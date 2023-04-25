@@ -21,6 +21,10 @@ const WATCH* = "watch"
 proc getAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("accounts_getAccounts")
 
+proc getAccountsByKeyUID*(keyUid: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [keyUid]
+  return core.callPrivateRPC("accounts_getAccountsByKeyUID", payload)
+
 proc deleteAccount*(address: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [address, password]
   return core.callPrivateRPC("accounts_deleteAccount", payload)

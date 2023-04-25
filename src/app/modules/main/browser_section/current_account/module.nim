@@ -80,7 +80,7 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("browserSectionCurrentAccount", newQVariant(self.view))
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
-    if(self.view.isAddressCurrentAccount(AccountDeleted(e).account.address)):
+    if(self.view.isAddressCurrentAccount(AccountDeleted(e).address)):
       self.switchAccount(0)
       self.view.connectedAccountDeleted()
 
