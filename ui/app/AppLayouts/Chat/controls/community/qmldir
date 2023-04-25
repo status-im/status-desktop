@@ -13,6 +13,7 @@ MembersDropdown 1.0 MembersDropdown.qml
 MembersSelectorPanel 1.0 MembersSelectorPanel.qml
 PermissionItem 1.0 PermissionItem.qml
 PermissionsDropdown 1.0 PermissionsDropdown.qml
+RecipientTypeSelectionDropdown 1.0 RecipientTypeSelectionDropdown.qml
 TokenItem 1.0 TokenItem.qml
 TokenPanel 1.0 TokenPanel.qml
 singleton PermissionTypes 1.0 PermissionTypes.qml
