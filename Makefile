@@ -147,10 +147,10 @@ QML_DEBUG_PORT ?= 49152
 
 ifneq ($(QML_DEBUG), false)
  DOTHERSIDE_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Debug -DQML_DEBUG_PORT=$(QML_DEBUG_PORT)
- DOTHERSIDE_BUILD_CMD := cmake --build . --config Debug $(HANDLE_OUTPUT)
+ DOTHERSIDE_BUILD_CMD := cmake --build . --config Debug
 else
  DOTHERSIDE_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release
- DOTHERSIDE_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
+ DOTHERSIDE_BUILD_CMD := cmake --build . --config Release
 endif
 
 MONITORING ?= false
@@ -265,6 +265,7 @@ $(STATUSQ_CMAKE_CACHE): | deps
 		$(STATUSQ_CMAKE_CONFIG_PARAMS) \
 		-B $(STATUSQ_BUILD_PATH) \
 		-S ui/StatusQ \
+		-Wno-dev \
 		$(HANDLE_OUTPUT)
 
 statusq-configure: | $(STATUSQ_CMAKE_CACHE) 
@@ -273,8 +274,7 @@ statusq-build: | statusq-configure
 	echo -e "\033[92mBuilding:\033[39m StatusQ"
 	cmake --build $(STATUSQ_BUILD_PATH) \
 		--target StatusQ \
-		--config Release
-		-DCMAKE_BUILD_TYPE=Release \
+		--config Release \
 		$(HANDLE_OUTPUT)
 
 statusq-install: | statusq-build
@@ -322,17 +322,28 @@ $(DOTHERSIDE): | deps
 			-DENABLE_DOCS=OFF \
 			-DENABLE_TESTS=OFF \
 			.. $(HANDLE_OUTPUT) && \
-		$(DOTHERSIDE_BUILD_CMD)
+		$(DOTHERSIDE_BUILD_CMD) \
+			$(HANDLE_OUTPUT)
+
+dotherside: $(DOTHERSIDE)
+
+dotherside-clean:
+	$(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
 
 STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
 export STATUSGO_LIBDIR
 
-status-go: $(STATUSGO)
 $(STATUSGO): | deps
 	echo -e $(BUILD_MSG) "status-go"
 	+ cd vendor/status-go && \
 	  $(MAKE) statusgo-shared-library $(STATUSGO_MAKE_PARAMS) $(HANDLE_OUTPUT)
+
+status-go: $(STATUSGO)
+
+status-go-clean:
+	echo -e "\033[92mCleaning:\033[39m status-go"
+	rm -f $(STATUSGO)
 
 STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
 STATUSKEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")
@@ -349,7 +360,7 @@ QRCODEGEN := vendor/QR-Code-generator/c/libqrcodegen.a
 $(QRCODEGEN): | deps
 	echo -e $(BUILD_MSG) "QR-Code-generator"
 	+ cd vendor/QR-Code-generator/c && \
-	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS)
+	  $(MAKE) $(QRCODEGEN_MAKE_PARAMS) $(HANDLE_OUTPUT)
 
 FLEETS := fleets.json
 $(FLEETS):
@@ -713,9 +724,8 @@ pkg-windows: check-pkg-target-windows $(STATUS_CLIENT_EXE)
 
 zip-windows: check-pkg-target-windows $(STATUS_CLIENT_7Z)
 
-clean: | clean-common statusq-clean
-	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSGO) $(STATUSKEYCARDGO)
-	+ $(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
+clean: | clean-common statusq-clean status-go-clean dotherside-clean
+	rm -rf bin/* node_modules bottles/* pkg/* tmp/* $(STATUSKEYCARDGO)
 	+ $(MAKE) -C vendor/QR-Code-generator/c/ --no-print-directory clean
 
 clean-git:

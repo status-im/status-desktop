@@ -216,6 +216,5 @@
         <file>StatusQ/Controls/StatusLinkText.qml</file>
         <file>StatusQ/Core/Utils/ModelChangeGuard.qml</file>
         <file>StatusQ/Core/Utils/StackViewStates.qml</file>
-        <file>StatusQ/Components/StatusDraggableListItem.qml</file>
     </qresource>
 </RCC>

@@ -32,6 +32,9 @@ find_package(Qt5 COMPONENTS
 add_subdirectory(../../vendor/SortFilterProxyModel SortFilterProxyModel)
 add_subdirectory(../../vendor/qzxing/src qzxing)
 
+target_compile_options(qzxing PRIVATE -w)
+target_compile_options(SortFilterProxyModel PRIVATE -w)
+
 ### StatusQ library
 ### TODO: Move to a subdirectory for readability and better structure
 
