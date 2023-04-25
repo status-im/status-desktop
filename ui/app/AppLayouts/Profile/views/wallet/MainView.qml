@@ -39,8 +39,7 @@ Column {
         label: qsTr("%n DApp(s) connected", "", root.walletStore.dappList.count)
         components: [
             StatusIcon {
-                icon: "chevron-down"
-                rotation: 270
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         ]
@@ -58,8 +57,7 @@ Column {
         onClicked: goToNetworksView()
         components: [
             StatusIcon {
-                icon: "chevron-down"
-                rotation: 270
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         ]
@@ -121,9 +119,10 @@ Column {
     }
 
     Repeater {
+        width: parent.width
         model: importedAccounts
         delegate: WalletAccountDelegate {
-            width: ListView.view.width
+            width: parent.width
             account: model
             onGoToAccountView: {
                 root.goToAccountView(model)
@@ -149,9 +148,10 @@ Column {
     }
 
     Repeater {
+        width: parent.width
         model: watchOnlyAccounts
         delegate: WalletAccountDelegate {
-            width: ListView.view.width
+            width: parent.width
             account: model
             onGoToAccountView: {
                 root.goToAccountView(model)

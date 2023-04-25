@@ -21,11 +21,8 @@ StatusListItem {
             border.color: color
         },
         StatusIcon {
-            icon: "chevron-down"
-            rotation: 270
+            icon: "next"
             color: Theme.palette.baseColor1
         }
     ]
 }
-
-

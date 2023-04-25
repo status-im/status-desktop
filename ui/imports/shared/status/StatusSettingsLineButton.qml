@@ -6,6 +6,7 @@ import ".."
 import "../panels"
 
 import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Core 0.1 as StatusQCore
 
 Rectangle {
     property string text
@@ -100,21 +101,14 @@ Rectangle {
         }
     }
 
-    SVGImage {
+    StatusQCore.StatusIcon {
         id: caret
         visible: !root.isSwitch
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
-        source: Style.svg("caret")
-        width: 13
-        height: 7
-        rotation: -90
-        ColorOverlay {
-            anchors.fill: caret
-            source: caret
-            color: Style.current.secondaryText
-        }
+        icon: "next"
+        color: Style.current.secondaryText
     }
 
     MouseArea {

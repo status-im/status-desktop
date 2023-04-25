@@ -341,8 +341,7 @@ SettingsContentBase {
             label: root.messagingStore.getMailserverNameForNodeAddress(root.messagingStore.activeMailserver)
             components: [
                 StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
+                    icon: "next"
                     color: Theme.palette.baseColor1
                 }
             ]
@@ -363,8 +362,7 @@ SettingsContentBase {
             visible: root.advancedStore.isWakuV2
             components: [
                 StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
+                    icon: "next"
                     color: Theme.palette.baseColor1
                 }
             ]
