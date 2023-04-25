@@ -45,12 +45,10 @@ StatusListItem {
         if (d.daysFromSync == 1)
             return qsTr("Last online yesterday")
 
-        const date = new Date(d.deviceLastTimestamp)
-
         if (d.daysFromSync <= 6)
-            return qsTr("Last online [%1]").arg(LocaleUtils.getDayName(date))
+            return qsTr("Last online: %1").arg(LocaleUtils.formatRelativeTimestamp(d.deviceLastTimestamp))
 
-        return qsTr("Last online %1").arg(LocaleUtils.formatDate(date))
+        return qsTr("Last online: %1").arg(LocaleUtils.formatDate(d.deviceLastTimestamp))
     }
 
     subTitleBadgeComponent: root.showOnlineBadge ? onlineBadgeComponent : null
@@ -77,11 +75,10 @@ StatusListItem {
         id: d
 
         property real now: 0
-        readonly property int deviceLastTimestamp: root.timestamp / 1000000
+        readonly property real deviceLastTimestamp: root.timestamp / 1000000
         readonly property int secondsFromSync: (now - Math.max(0, d.deviceLastTimestamp)) / 1000
         readonly property int minutesFromSync: secondsFromSync / 60
-        readonly property int hoursFromSync: minutesFromSync / 60
-        readonly property int daysFromSync: hoursFromSync / 24
+        readonly property int daysFromSync: LocaleUtils.daysBetween(new Date(now), new Date(d.deviceLastTimestamp))
         readonly property bool onlineNow: secondsFromSync <= 120
     }
 
