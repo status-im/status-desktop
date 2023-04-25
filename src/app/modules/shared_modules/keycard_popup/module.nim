@@ -61,6 +61,7 @@ method delete*[T](self: Module[T]) =
 proc init[T](self: Module[T], fullConnect = true) =
   if not self.initialized:
     self.initialized = true
+    self.controller.cleanReceivedKeycardData()
     self.controller.init(fullConnect)
 
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
