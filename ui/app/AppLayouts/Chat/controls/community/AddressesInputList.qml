@@ -23,6 +23,10 @@ Control {
     signal addAddressesRequested(string addresses)
     signal removeAddressRequested(int index)
 
+    function forceInputFocus() {
+        listView.footerItem.forceActiveFocus()
+    }
+
     function clearInput() {
         listView.footerItem.edit.clear()
     }
