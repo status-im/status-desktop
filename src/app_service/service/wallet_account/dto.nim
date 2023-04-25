@@ -1,4 +1,4 @@
-import tables, json, sequtils, sugar, strutils
+import tables, json, strformat, sequtils, sugar, strutils
 
 include  ../../common/json_utils
 
@@ -104,6 +104,7 @@ type
     lastUsedDerivationIndex*: int
     hasBalanceCache*: bool
     hasMarketValuesCache*: bool
+    removed*: bool # needs for synchronization
 
 proc newDto*(
   name: string,
@@ -149,9 +150,30 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("derived-from", result.derivedfrom)
   discard jsonObj.getProp("keypair-name", result.keypairName)
   discard jsonObj.getProp("last-used-derivation-index", result.lastUsedDerivationIndex)
+  discard jsonObj.getProp("removed", result.removed)
   result.assetsLoading = true
   result.hasBalanceCache = false
   result.hasMarketValuesCache = false
+
+proc `$`*(self: WalletAccountDto): string =
+  result = fmt"""WalletAccountDto[
+    name: {self.name},
+    address: {self.address},
+    mixedcaseAddress: {self.mixedcaseAddress},
+    keyUid: {self.keyUid},
+    path: {self.path},
+    color: {self.color},
+    publicKey: {self.publicKey},
+    walletType: {self.walletType},
+    isChat: {self.isChat},
+    emoji: {self.emoji},
+    derivedfrom: {self.derivedfrom},
+    keypairName: {self.keypairName},
+    lastUsedDerivationIndex: {self.lastUsedDerivationIndex},
+    hasBalanceCache: {self.hasBalanceCache},
+    hasMarketValuesCache: {self.hasMarketValuesCache},
+    removed: {self.removed}
+    ]"""
 
 proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =
   return self.balance * currencyPrice

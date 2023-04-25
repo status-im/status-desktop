@@ -268,7 +268,8 @@ proc buildKeycardList(self: Module) =
     ## If all created keycards for certain keypair are locked, then we need to display that item as locked.
     item.setLocked(self.areAllKnownKeycardsLockedForKeypair(item.getKeyUid()))
     items.add(item)
-  self.view.setKeycardItems(items)
+  if items.len > 0:
+    self.view.setKeycardItems(items)
 
 method onLoggedInUserImageChanged*(self: Module) =
   self.view.keycardModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())

@@ -49,6 +49,7 @@ type SignalType* {.pure.} = enum
   WakuFetchingBackupProgress = "waku.fetching.backup.progress"
   WakuBackedUpProfile = "waku.backedup.profile"
   WakuBackedUpSettings = "waku.backedup.settings"
+  WakuBackedUpWalletAccount = "waku.backedup.wallet-account"
   WakuBackedUpKeycards = "waku.backedup.keycards"
   LocalPairing = "localPairing"
   Unknown
