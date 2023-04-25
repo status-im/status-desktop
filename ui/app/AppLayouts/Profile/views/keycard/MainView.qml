@@ -99,7 +99,7 @@ ColumnLayout {
                               : qsTr("Migrate an existing account from Status Desktop to Keycard")
         components: [
             StatusIcon {
-                icon: "tiny/chevron-right"
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         ]
@@ -120,7 +120,7 @@ ColumnLayout {
         title: qsTr("Create a new Keycard account with a new seed phrase")
         components: [
             StatusIcon {
-                icon: "tiny/chevron-right"
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         ]
@@ -134,7 +134,7 @@ ColumnLayout {
         title: qsTr("Import or restore via a seed phrase")
         components: [
             StatusIcon {
-                icon: "tiny/chevron-right"
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         ]
@@ -148,7 +148,7 @@ ColumnLayout {
         title: qsTr("Import from Keycard to Status Desktop")
         components: [
             StatusIcon {
-                icon: "tiny/chevron-right"
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         ]
@@ -169,7 +169,7 @@ ColumnLayout {
         title: qsTr("Check what’s on a Keycard")
         components: [
             StatusIcon {
-                icon: "tiny/chevron-right"
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         ]
@@ -183,7 +183,7 @@ ColumnLayout {
         title: qsTr("Factory reset a Keycard")
         components: [
             StatusIcon {
-                icon: "tiny/chevron-right"
+                icon: "next"
                 color: Theme.palette.baseColor1
             }
         ]
