@@ -53,7 +53,6 @@ QtObject {
     property var userProfileInst: userProfile
 
     property var accounts: walletSectionSendInst.accounts
-    property var currentAccount: walletSectionCurrent
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
 

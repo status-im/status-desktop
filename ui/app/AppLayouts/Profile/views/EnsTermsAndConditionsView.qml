@@ -50,7 +50,7 @@ Item {
             sendType: Constants.SendType.ENSRegister
             preSelectedRecipient: root.ensUsernamesStore.getEnsRegisteredAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
-            preSelectedAsset: store.getAsset(buyEnsModal.store.currentAccount.assets, JSON.parse(root.stickersStore.getStatusToken()).symbol)
+            preSelectedAsset: store.getAsset(buyEnsModal.store.assets, JSON.parse(root.stickersStore.getStatusToken()).symbol)
             sendTransaction: function() {
                 if(bestRoutes.length === 1) {
                     let path = bestRoutes[0]

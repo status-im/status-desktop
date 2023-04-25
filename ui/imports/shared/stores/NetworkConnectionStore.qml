@@ -11,9 +11,9 @@ QtObject {
 
     readonly property bool isOnline: mainModule.isOnline
 
-    readonly property bool balanceCache: walletSectionCurrent.hasBalanceCache
-    readonly property bool marketValuesCache: walletSectionCurrent.hasMarketValuesCache
-    readonly property bool collectiblesCache: walletSectionCurrent.getHasCollectiblesCache()
+    readonly property bool balanceCache: walletSectionAssets.hasBalanceCache
+    readonly property bool marketValuesCache: walletSectionAssets.hasMarketValuesCache
+    readonly property bool collectiblesCache: walletSectionCollectibles.getHasCollectiblesCache()
 
     readonly property var blockchainNetworksDown: !!networkConnectionModule.blockchainNetworkConnection.chainIds ? networkConnectionModule.blockchainNetworkConnection.chainIds.split(";") : []
     readonly property bool atleastOneBlockchainNetworkAvailable: blockchainNetworksDown.length <  networksModule.all.count
@@ -31,13 +31,13 @@ QtObject {
                                                         networkConnectionModule.marketValuesNetworkConnection.completelyDown ?
                                                         qsTr("Requires CryptoCompare or CoinGecko, both of which are currently unavailable"): ""
 
-    readonly property bool notOnlineWithNoCache: !isOnline && !walletSectionCurrent.hasBalanceCache && !walletSectionCurrent.hasMarketValuesCache
+    readonly property bool notOnlineWithNoCache: !isOnline && !walletSectionAssets.hasBalanceCache && !walletSectionAssets.hasMarketValuesCache
     readonly property string notOnlineWithNoCacheText: qsTr("Internet connection lost. Data could not be retrieved.")
 
-    readonly property bool noBlockchainConnectionAndNoCache: networkConnectionModule.blockchainNetworkConnection.completelyDown && !walletSectionCurrent.hasBalanceCache
+    readonly property bool noBlockchainConnectionAndNoCache: networkConnectionModule.blockchainNetworkConnection.completelyDown && !walletSectionAssets.hasBalanceCache
     readonly property string noBlockchainConnectionAndNoCacheText: qsTr("Token balances are fetched from Pocket Network (POKT) and Infura which are both curently unavailable")
 
-    readonly property bool noMarketConnectionAndNoCache: networkConnectionModule.marketValuesNetworkConnection.completelyDown && !walletSectionCurrent.hasMarketValuesCache
+    readonly property bool noMarketConnectionAndNoCache: networkConnectionModule.marketValuesNetworkConnection.completelyDown && !walletSectionAssets.hasMarketValuesCache
     readonly property string noMarketConnectionAndNoCacheText: qsTr("Market values are fetched from CryptoCompare and CoinGecko which are both currently unavailable")
 
     readonly property bool noBlockchainAndMarketConnectionAndNoCache: noBlockchainConnectionAndNoCache && noMarketConnectionAndNoCache

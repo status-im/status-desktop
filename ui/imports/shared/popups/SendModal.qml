@@ -36,7 +36,7 @@ StatusDialog {
     property var store: TransactionStore{}
     property var contactsStore: store.contactStore
     property var currencyStore: store.currencyStore
-    property var selectedAccount: store.currentAccount
+    property var selectedAccount
     property var bestRoutes
     property alias addressText: recipientLoader.addressText
     property bool isLoading: false
@@ -159,10 +159,12 @@ StatusDialog {
                 inverted: true
             }
         }
-        selectedAccount: popup.selectedAccount
+        currentAddress: popup.store.overview.mixedcaseAddress
         changeSelectedAccount: function(newAccount) {
             popup.selectedAccount = newAccount
-            assetSelector.selectedAsset = store.getAsset(selectedAccount.assets, assetSelector.selectedAsset.symbol)
+            if (assetSelector.selectedAsset) {
+                assetSelector.selectedAsset = store.getAsset(popup.selectedAccount.assets, assetSelector.selectedAsset.symbol)
+            }
         }
     }
 

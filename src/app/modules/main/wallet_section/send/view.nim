@@ -1,6 +1,7 @@
 import NimQml, sequtils, strutils, stint
 
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../shared_models/token_model
 
 import ./accounts_model
 import ./account_item
@@ -103,3 +104,10 @@ QtObject:
     return self.delegate.getEstimatedTime(chainId, maxFeePerGas)
 
   proc suggestedRoutesReady*(self: View, suggestedRoutes: string) {.signal.}
+
+  proc hasGas*(self: View, address: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
+    for account in self.accounts.items:
+      if account.getAddress() == address:
+        return account.getAssets().hasGas(chainId, nativeGasSymbol, requiredGas)
+
+    return false

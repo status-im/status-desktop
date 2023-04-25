@@ -20,7 +20,7 @@ import ".."
 Item {
     id: root
 
-    property var currentAccount: RootStore.currentAccount
+    property var overview: WalletStores.RootStore.overview
     property var contactsStore
     property var transaction
     property var sendModal
@@ -28,7 +28,7 @@ Item {
 
     QtObject {
         id: d
-        readonly property bool isIncoming: root.isTransactionValid ? root.transaction.to === currentAccount.address : false
+        readonly property bool isIncoming: root.isTransactionValid ? root.transaction.to === root.overview.mixedcaseAddress : false
         readonly property bool isNFT: root.isTransactionValid ? root.transaction.isNFT : false
         readonly property string savedAddressNameTo: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.to) : ""
         readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.from): ""

@@ -204,11 +204,11 @@ Popup {
 
             AssetsView {
                 id: assetsTab
-                account: WalletStore.dappBrowserAccount
+                assets: WalletStore.dappBrowserAccount.assets
             }
             HistoryView {
                 id: historyTab
-                assets: WalletStore.dappBrowserAccount
+                overview: WalletStore.dappBrowserAccount
             }
         }
     }

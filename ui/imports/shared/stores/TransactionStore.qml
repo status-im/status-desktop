@@ -19,8 +19,8 @@ QtObject {
 
     property string currentCurrency: walletSection.currentCurrency
     property var allNetworks: networksModule.all
+    property var overview: walletSectionOverview
     property var accounts: walletSectionSendInst.accounts
-    property var currentAccount: walletSectionCurrent
     property string signingPhrase: walletSection.signingPhrase
     property var savedAddressesModel: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model

@@ -23,13 +23,13 @@ import "../stores"
 StatusModal {
     id: root
 
-    property var selectedAccount
+    property string selectedAddress: ""
     property string networkPrefix: ""
     property string completeAddressWithNetworkPrefix
 
-    onSelectedAccountChanged: {
-        if (selectedAccount && selectedAccount.address) {
-            txtWalletAddress.text = selectedAccount.address
+    onSelectedAddressChanged: {
+        if (selectedAddress) {
+            txtWalletAddress.text = selectedAddress
         }
     }
 
@@ -47,9 +47,9 @@ StatusModal {
     hasFloatingButtons: true
     advancedHeaderComponent: AccountsModalHeader {
         model: RootStore.accounts
-        selectedAccount: root.selectedAccount
+        currentAddress: root.selectedAddress
         changeSelectedAccount: function(newAccount, newIndex) {
-            root.selectedAccount = newAccount
+            root.selectedAddress = newAccount.address
         }
         showAllWalletTypes: true
     }
@@ -302,7 +302,7 @@ StatusModal {
                 }
                 PropertyChanges {
                     target: root
-                    completeAddressWithNetworkPrefix: root.selectedAccount.address
+                    completeAddressWithNetworkPrefix: root.selectedAddress
                 }
             },
             State {
@@ -326,7 +326,7 @@ StatusModal {
                 }
                 PropertyChanges {
                     target: root
-                    completeAddressWithNetworkPrefix: root.networkPrefix + root.selectedAccount.address
+                    completeAddressWithNetworkPrefix: root.networkPrefix + root.selectedAddress
                 }
             }
         ]

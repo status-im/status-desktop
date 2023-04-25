@@ -99,7 +99,7 @@ Item {
                     property int routeOnNetwork: 0
                     property bool selectedAssetValid: selectedAccount && selectedAccount !== undefined && selectedAsset !== undefined
                     property double tokenBalanceOnChain: selectedAssetValid ? root.store.getTokenBalanceOnChain(selectedAccount, model.chainId, root.selectedSymbol).amount : 0.0
-                    property bool hasGas: selectedAssetValid && requiredGasInEth !== undefined ? selectedAccount.hasGas(model.chainId, model.nativeCurrencySymbol, requiredGasInEth) : false
+                    property bool hasGas: selectedAssetValid && requiredGasInEth !== undefined ? root.store.walletSectionSendInst.hasGas(selectedAccount.address, model.chainId, model.nativeCurrencySymbol, requiredGasInEth) : false
                     property double advancedInputCurrencyAmount: selectedAssetValid && advancedInput.valid ? LocaleUtils.numberFromLocaleString(advancedInputText, LocaleUtils.userInputLocale) : 0.0
 
                     primaryText: model.chainName

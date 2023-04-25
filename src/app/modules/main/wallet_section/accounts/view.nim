@@ -42,3 +42,6 @@ QtObject:
 
   proc deleteAccount*(self: View, keyUid: string, address: string) {.slot.} =
     self.delegate.deleteAccount(keyUid, address)
+
+  proc updateAccount(self: View, address: string, accountName: string, color: string, emoji: string) {.slot.} =
+    self.delegate.updateAccount(address, accountName, color, emoji)

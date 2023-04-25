@@ -6,20 +6,17 @@ type
     mixedCaseAddress: string
     ens: string
     balanceLoading: bool
-    hasBalanceCache: bool
 
 proc initItem*(
   name: string = "",
   mixedCaseAddress: string = "",
   ens: string = "",
   balanceLoading: bool  = true,
-  hasBalanceCache: bool = false,
 ): Item =
   result.name = name
   result.mixedCaseAddress = mixedCaseAddress
   result.ens = ens
   result.balanceLoading = balanceLoading
-  result.hasBalanceCache = hasBalanceCache
 
 proc `$`*(self: Item): string =
   result = fmt"""OverviewItem(
@@ -27,7 +24,6 @@ proc `$`*(self: Item): string =
     mixedCaseAddress: {self.mixedCaseAddress},
     ens: {self.ens},
     balanceLoading: {self.balanceLoading},
-    hasBalanceCache: {self.hasBalanceCache},
     ]"""
 
 proc getName*(self: Item): string =
@@ -41,6 +37,3 @@ proc getEns*(self: Item): string =
 
 proc getBalanceLoading*(self: Item): bool =
   return self.balanceLoading
-
-proc getHasBalanceCache*(self: Item): bool =
-  return self.hasBalanceCache

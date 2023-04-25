@@ -13,7 +13,6 @@ type
     networkService: network_service.Service
     tokenService: token_service.Service
     currencyService: currency_service.Service
-    collectibleService: collectible_service.Service
  
 proc newController*(
   delegate: io_interface.AccessInterface,
@@ -21,7 +20,6 @@ proc newController*(
   networkService: network_service.Service,
   tokenService: token_service.Service,
   currencyService: currency_service.Service,
-  collectibleService: collectible_service.Service,
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -29,7 +27,6 @@ proc newController*(
   result.networkService = networkService
   result.tokenService = tokenService
   result.currencyService = currencyService
-  result.collectibleService = collectibleService
 
 proc delete*(self: Controller) =
   discard
@@ -43,12 +40,6 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-proc update*(self: Controller, address: string, accountName: string, color: string, emoji: string) =
-  discard self.walletAccountService.updateWalletAccount(address, accountName, color, emoji)
-
-method findTokenSymbolByAddress*(self: Controller, address: string): string =
-  return self.walletAccountService.findTokenSymbolByAddress(address)
-
 proc getChainIds*(self: Controller): seq[int] = 
   return self.networkService.getNetworks().map(n => n.chainId)
 
@@ -60,9 +51,3 @@ proc getCurrentCurrency*(self: Controller): string =
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
-
-proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
-  return self.walletAccountService.getAllMigratedKeyPairs()
-
-proc getHasCollectiblesCache*(self: Controller, address: string): bool  =
-  return self.collectibleService.areCollectionsLoaded(address)

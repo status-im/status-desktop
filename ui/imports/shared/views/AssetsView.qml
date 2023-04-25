@@ -16,7 +16,7 @@ import shared.controls 1.0
 Item {
     id: root
 
-    property var account
+    property var assets
     property var networkConnectionStore
     property bool assetDetailsLaunched: false
 
@@ -39,7 +39,7 @@ Item {
 
     SortFilterProxyModel {
         id: filteredModel
-        sourceModel: account.assets
+        sourceModel: assets
         filters: [
             ExpressionFilter {
                 expression: visibleForNetworkWithPositiveBalance || loading

@@ -6,9 +6,9 @@ import ../../../../../app_service/service/token/service as token_service
 import ../../../../../app_service/service/currency/service as currency_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/node/service as node_service
 import ../../../../../app_service/service/network_connection/service as network_connection
 import ../../../../../app_service/service/collectible/service as collectible_service
+import ../../../../../app_service/service/node/service as node_service
 import ../../../shared_models/currency_amount_utils
 import ../../../shared_models/currency_amount
 import ../../../shared_models/token_model as token_model
@@ -43,14 +43,13 @@ proc newModule*(
   networkService: network_service.Service,
   tokenService: token_service.Service,
   currencyService: currency_service.Service,
-  collectibleService: collectible_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.events = events
   result.currentAccountIndex = 0
   result.view = newView(result)
-  result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService, collectibleService)
+  result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -61,10 +60,9 @@ proc setLoadingAssets(self: Module) =
   for i in 0 ..< 25:
     loadingTokenItems.add(token_item.initLoadingItem())
   self.view.getAssetsModel().setItems(loadingTokenItems)
-  self.view.setCurrencyBalance(newCurrencyAmount())
 
 method load*(self: Module) =
-  singletonInstance.engine.setRootContextProperty("walletSectionCurrent", newQVariant(self.view))
+  singletonInstance.engine.setRootContextProperty("walletSectionAssets", newQVariant(self.view))
 
   # these connections should be part of the controller's init method
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
@@ -123,59 +121,22 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
   let totalCurrencyBalanceForAllAssets = tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0)
     
   self.view.getAssetsModel().setItems(items)
-  self.view.setCurrencyBalance(currencyAmountToItem(totalCurrencyBalanceForAllAssets, currencyFormat))
 
 method switchAccount*(self: Module, accountIndex: int) =
+  var walletAccount = self.controller.getWalletAccount(accountIndex)
   self.currentAccountIndex = accountIndex
+  if walletAccount.isNil:
+    self.currentAccountIndex = 0
+    walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
+  
+  let accountItem = walletAccountToItem(walletAccount)
+  self.view.setData(accountItem)
 
-  let keyPairMigrated = proc(migratedKeyPairs: seq[KeyPairDto], keyUid: string): bool =
-    for kp in migratedKeyPairs:
-      if kp.keyUid == keyUid:
-        return true
-    return false
+  if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
+    self.setLoadingAssets()
+  else:
+    self.setAssetsAndBalance(walletAccount.tokens)
 
-  let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
-  let currency = self.controller.getCurrentCurrency()
-  let currencyFormat = self.controller.getCurrencyFormat(currency)
-
-  let chainIds = self.controller.getChainIds()
-  let enabledChainIds = self.controller.getEnabledChainIds()
-
-  let defaultAccount = self.controller.getWalletAccount(0) # can safely do this as the account will always contain atleast one account
-  if not defaultAccount.isNil:
-    let defaultAccountTokenFormats = collect(initTable()):
-      for t in defaultAccount.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
-    
-    let defaultAccountItem = walletAccountToItem(
-      defaultAccount,
-      enabledChainIds,
-      currency,
-      currencyFormat,
-    )
-    
-    self.view.setDefaultWalletAccount(defaultAccountItem)
-
-  let walletAccount = self.controller.getWalletAccount(accountIndex)
-  if not walletAccount.isNil:
-    let accountTokenFormats = collect(initTable()):
-      for t in walletAccount.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
-
-    let accountItem = walletAccountToItem(
-      walletAccount,
-      enabledChainIds,
-      currency,
-      currencyFormat,
-    )
-
-    self.view.setData(accountItem)
-
-    if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
-      self.setLoadingAssets()
-    else:
-      self.setAssetsAndBalance(walletAccount.tokens)
-
-method update*(self: Module, address: string, accountName: string, color: string, emoji: string) =
-  self.controller.update(address, accountName, color, emoji)
 
 proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]], hasBalanceCache: bool, hasMarketValuesCache: bool) =
   let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
@@ -186,21 +147,14 @@ proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[Wall
   self.view.setCacheValues(hasBalanceCache, hasMarketValuesCache)
 
 proc onCurrencyFormatsUpdated(self: Module) =
-  # Update assets
   let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
   if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
       self.setLoadingAssets()
   else:
     self.setAssetsAndBalance(walletAccount.tokens)
 
-method findTokenSymbolByAddress*(self: Module, address: string): string =
-  return self.controller.findTokenSymbolByAddress(address)
-
 proc onAccountAdded(self: Module, account: WalletAccountDto) =
   self.switchAccount(self.currentAccountIndex)
 
 proc onAccountRemoved(self: Module, account: WalletAccountDto) =
   self.switchAccount(self.currentAccountIndex)
-
-method getHasCollectiblesCache*(self: Module, address: string): bool =
-  return self.controller.getHasCollectiblesCache(address)

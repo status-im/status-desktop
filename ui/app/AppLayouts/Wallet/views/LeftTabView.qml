@@ -244,7 +244,7 @@ Rectangle {
                 readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
                 width: ListView.view.width - Style.current.padding * 2
                 highlighted: !ListView.view.footerItem.button.highlighted &&
-                             RootStore.currentAccount.name === model.name
+                             RootStore.overview.name === model.name
                 anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
                 title: model.name
                 subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
@@ -258,7 +258,7 @@ Rectangle {
                 asset.bgColor: Theme.palette.primaryColor3
                 statusListItemTitle.font.weight: Font.Medium
                 color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
-                statusListItemSubTitle.loading: model.assetsLoading
+                statusListItemSubTitle.loading: !!model.assetsLoading
                 errorMode: networkConnectionStore.accountBalanceNotAvailable
                 errorIcon.tooltip.maxWidth: 300
                 errorIcon.tooltip.text: networkConnectionStore.accountBalanceNotAvailableText

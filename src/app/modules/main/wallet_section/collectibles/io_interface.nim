@@ -31,6 +31,9 @@ method appendCollectibles*(self: AccessInterface, chainId: int, address: string,
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getHasCollectiblesCache*(self: AccessInterface): bool  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # Methods called by submodules of this module
 method collectiblesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
