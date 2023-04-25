@@ -175,7 +175,7 @@ void dos_qguiapplication_initialize_opengl()
 
 void dos_qguiapplication_try_enable_threaded_renderer()
 {
-    if(QSysInfo::buildCpuArchitecture() == "arm64" && QSysInfo::kernelType() == "darwin" && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    if(QSysInfo::kernelType() == "darwin" && QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     {
         //Threaded renderer is crashing on M1 Macs
         return;
