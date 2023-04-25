@@ -406,6 +406,11 @@ proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flow
     return
   return self.keycardService.getLastReceivedKeycardData()
 
+proc cleanReceivedKeycardData*(self: Controller) =
+  if not serviceApplicable(self.keycardService):
+    return
+  self.keycardService.cleanReceivedKeycardData()
+
 proc getMetadataFromKeycard*(self: Controller): CardMetadata =
   return self.tmpCardMetadata
 

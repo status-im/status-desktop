@@ -112,6 +112,9 @@ QtObject:
   proc getLastReceivedKeycardData*(self: Service): tuple[flowType: string, flowEvent: KeycardEvent] =
     return self.lastReceivedKeycardData
 
+  proc cleanReceivedKeycardData*(self: Service) =
+    self.lastReceivedKeycardData = ("", KeycardEvent())
+
   proc buildSeedPhrasesFromIndexes*(self: Service, seedPhraseIndexes: seq[int]): seq[string] =
     var seedPhrase: seq[string]
     for ind in seedPhraseIndexes:
