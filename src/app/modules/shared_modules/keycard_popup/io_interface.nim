@@ -23,7 +23,7 @@ const SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED* = "sharedKeycarModul
 ## and props there will be emitted:
 ## -- `uniqueIdentifier` - will be the same as one used for running authentication process
 ## -- in case of success of a regular user authentication `keyUid`, `password` will be sent, otherwise it will be empty
-## -- in case of success of a keycard user authentication `keyUid`, `pin` and `password` will be sent, otherwise they will be empty
+## -- in case of success of a keycard user authentication `keycardUid`, `keyUid`, `pin` and `password` will be sent, otherwise they will be empty
 ##
 ## TLDR: when you need to authenticate user, from the module where it's needed you have to send `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER`
 ## signal to run authentication process and connect to `SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED` signal to get the results of it.
@@ -37,6 +37,7 @@ type
     password*: string
     pin*: string # this is used in case we need to run another keycard flow which requires pin, after we successfully authenticated logged in user
     keyUid*: string
+    keycardUid*: string
 
 type
   SharedKeycarModuleFlowTerminatedArgs* = ref object of SharedKeycarModuleArgs

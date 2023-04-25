@@ -372,7 +372,8 @@ proc init*(self: Controller) =
     let data = SharedKeycarModuleArgs(uniqueIdentifier: self.authenticateUserFlowRequestedBy,
       password: args.password,
       pin: args.pin,
-      keyUid: args.keyUid)
+      keyUid: args.keyUid,
+      keycardUid: args.keycardUid)
     self.authenticateUserFlowRequestedBy = ""
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
 

@@ -582,6 +582,7 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
       self.tmpFlowData.password = exportedEncryptionPubKey
       self.tmpFlowData.pin = self.getPin()
       self.tmpFlowData.keyUid = flowEvent.keyUid
+      self.tmpFlowData.keycardUid = flowEvent.instanceUID
     else:
       self.tmpFlowData.password = self.getPassword()
       self.tmpFlowData.keyUid = singletonInstance.userProfile.getKeyUid()
