@@ -335,7 +335,7 @@ Control {
                 visible: count
                 model: SortFilterProxyModel {
                     // TODO show assets for all accounts, not just the current one?
-                    sourceModel: root.isCurrentUser ? root.walletStore.currentAccount.assets : null // TODO show other users too
+                    sourceModel: root.isCurrentUser ? root.walletStore.assets : null // TODO show other users too
                     filters: ValueFilter {
                         roleName: "visibleForNetworkWithPositiveBalance"
                         value: true

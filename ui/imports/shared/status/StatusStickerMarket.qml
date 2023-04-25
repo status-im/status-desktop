@@ -201,7 +201,7 @@ Item {
             sendType: Constants.SendType.StickersBuy
             preSelectedRecipient: root.store.stickersStore.getStickersMarketAddress()
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-            preSelectedAsset: store.getAsset(buyStickersModal.store.currentAccount.assets, JSON.parse(root.store.stickersStore.getStatusToken()).symbol)
+            preSelectedAsset: store.getAsset(buyStickersModal.store.assets, JSON.parse(root.store.stickersStore.getStatusToken()).symbol)
             sendTransaction: function() {
                 if(bestRoutes.length === 1) {
                     let path = bestRoutes[0]

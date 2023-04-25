@@ -87,7 +87,7 @@ Item {
                 currentIndex: walletTabBar.currentIndex
 
                 AssetsView {
-                    account: RootStore.currentAccount
+                    assets: RootStore.assets
                     networkConnectionStore: root.networkConnectionStore
                     assetDetailsLaunched: stack.currentIndex === 2
                     onAssetClicked: {
@@ -103,7 +103,7 @@ Item {
                     }
                 }
                 HistoryView {
-                    assets: RootStore.assets
+                    overview: RootStore.overview
                     onLaunchTransactionDetail: {
                         transactionDetailView.transaction = transaction
                         stack.currentIndex = 3
@@ -122,10 +122,12 @@ Item {
             Layout.fillHeight: true
             visible: (stack.currentIndex === 2)
 
-            account: RootStore.currentAccount
-            address:  RootStore.currentAccount.address
+            assetsLoading: RootStore.assetsLoading
+            address:  RootStore.overview.mixedcaseAddress
+            
             networkConnectionStore: root.networkConnectionStore
         }
+
         TransactionDetailView {
             id: transactionDetailView
             Layout.fillWidth: true

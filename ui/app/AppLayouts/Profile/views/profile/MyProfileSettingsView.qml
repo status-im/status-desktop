@@ -205,7 +205,7 @@ ColumnLayout {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
             baseModel: root.walletStore.accounts
-            currentWallet: root.walletStore.currentAccount.address
+            currentWallet: root.walletStore.overview.mixedcaseAddress
         }
 
         ProfileShowcaseCollectiblesPanel {
@@ -217,7 +217,7 @@ ColumnLayout {
         ProfileShowcaseAssetsPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletStore.currentAccount.assets
+            baseModel: root.walletStore.assets
         }
     }
 }

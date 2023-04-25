@@ -149,3 +149,6 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
       return
     let doPasswordHashing = pin.len != PINLengthForStatusApp
     self.controller.deleteAccount(self.processingWalletAccount.address, password, doPasswordHashing)
+
+method updateAccount*(self: Module, address: string, accountName: string, color: string, emoji: string) =
+  self.controller.updateAccount(address, accountName, color, emoji)

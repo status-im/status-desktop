@@ -16,7 +16,7 @@ type
 QtObject:
   type
     AccountsModel* = ref object of QAbstractListModel
-      items: seq[AccountItem]
+      items*: seq[AccountItem]
 
   proc delete(self: AccountsModel) =
     self.items = @[]

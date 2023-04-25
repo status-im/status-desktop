@@ -142,3 +142,6 @@ method appendCollectibles*(self: Module, chainId: int, address: string, data: Co
       self.view.appendCollectibles(newCollectibles)
 
     self.view.setAllLoaded(data.allLoaded)
+
+method getHasCollectiblesCache*(self: Module): bool =
+  return self.controller.getHasCollectiblesCache(self.address)

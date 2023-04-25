@@ -89,3 +89,6 @@ proc getCollectible*(self: Controller, chainId: int, id: UniqueID) : Collectible
 
 proc getCollection*(self: Controller, chainId: int, slug: string) : CollectionDto =
   self.collectibleService.getCollection(chainId, slug)
+
+proc getHasCollectiblesCache*(self: Controller, address: string): bool  =
+  return self.collectibleService.areCollectionsLoaded(address)

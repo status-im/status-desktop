@@ -71,7 +71,7 @@ ModalPopup {
                 sendType: Constants.SendType.StickersBuy
                 preSelectedRecipient: stickerPackDetailsPopup.store.stickersStore.getStickersMarketAddress()
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
-                preSelectedAsset: store.getAsset(buyStickersPackModal.store.currentAccount.assets, JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol)
+                preSelectedAsset: store.getAsset(buyStickersPackModal.store.assets, JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol)
                 sendTransaction: function() {
                     if(bestRoutes.length === 1) {
                         let path = bestRoutes[0]

@@ -77,7 +77,7 @@ Rectangle {
     Component {
         id: receiveModalComponent
         ReceiveModal {
-            selectedAccount: walletStore.currentAccount
+            selectedAddress: walletStore.overview.mixedcaseAddress
             anchors.centerIn: parent
         }
     }

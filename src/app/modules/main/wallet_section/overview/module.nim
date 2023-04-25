@@ -23,7 +23,7 @@ type
     moduleLoaded: bool
     currentAccountIndex: int
 
-proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]], hasBalanceCache: bool)
+proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]])
 proc onCurrencyFormatsUpdated(self: Module)
 proc onAccountAdded(self: Module, account: WalletAccountDto)
 proc onAccountRemoved(self: Module, account: WalletAccountDto)
@@ -69,7 +69,7 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     let arg = TokensPerAccountArgs(e)
-    self.onTokensRebuilt(arg.accountsTokens, arg.hasBalanceCache)
+    self.onTokensRebuilt(arg.accountsTokens)
   
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.onCurrencyFormatsUpdated()
@@ -106,7 +106,6 @@ method switchAccount*(self: Module, accountIndex: int) =
     walletAccount.mixedCaseAddress,
     walletAccount.ens,
     walletAccount.assetsLoading,
-    walletAccount.hasBalanceCache,
   )
 
   self.view.setData(item)
@@ -115,12 +114,11 @@ method switchAccount*(self: Module, accountIndex: int) =
   else:
     self.setBalance(walletAccount.tokens)
 
-proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]], hasBalanceCache: bool) =
+proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
   let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
   if not accountsTokens.contains(walletAccount.address):
     return
   self.setBalance(accountsTokens[walletAccount.address])
-  self.view.setCacheValues(hasBalanceCache)
   self.view.setBalanceLoading(false)
 
 proc onCurrencyFormatsUpdated(self: Module) =

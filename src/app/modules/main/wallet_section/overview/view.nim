@@ -14,7 +14,6 @@ QtObject:
       currencyBalance: CurrencyAmount
       ens: string
       balanceLoading: bool
-      hasBalanceCache*: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -73,13 +72,6 @@ QtObject:
       self.balanceLoading = balanceLoading
       self.balanceLoadingChanged()
 
-  proc getHasBalanceCache(self: View): QVariant {.slot.} =
-    return newQVariant(self.hasBalanceCache)
-  proc hasBalanceCacheChanged(self: View) {.signal.}
-  QtProperty[QVariant] hasBalanceCache:
-    read = getHasBalanceCache
-    notify = hasBalanceCacheChanged
-
   proc setData*(self: View, item: Item) =
     if(self.name != item.getName()):
       self.name = item.getName()
@@ -91,9 +83,3 @@ QtObject:
       self.ens = item.getEns()
       self.ensChanged()
     self.setBalanceLoading(item.getBalanceLoading())  
-    self.hasBalanceCache = item.getHasBalanceCache()
-    self.hasBalanceCacheChanged()
-
-  proc setCacheValues*(self: View, hasBalanceCache: bool) =
-    self.hasBalanceCache = hasBalanceCache
-    self.hasBalanceCacheChanged()

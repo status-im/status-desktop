@@ -18,8 +18,8 @@ QtObject {
 
     property string backButtonName: ""
     property var overview: walletSectionOverview
-    property var assets: walletSectionCurrent
-    property var currentAccount: walletSectionCurrent
+    property var assets: walletSectionAssets.assets
+    property bool assetsLoading: walletSectionAssets.assetsLoading
     property var accounts: walletSectionAccounts.accounts
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
@@ -138,7 +138,7 @@ QtObject {
     }
 
     function updateCurrentAccount(address, accountName, color, emoji) {
-        return walletSectionCurrent.update(address, accountName, color, emoji)
+        return walletSectionAccounts.updateAccount(address, accountName, color, emoji)
     }
 
     function updateCurrency(newCurrency) {

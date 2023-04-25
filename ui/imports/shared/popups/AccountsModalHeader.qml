@@ -18,6 +18,7 @@ import "../views"
 StatusFloatingButtonsSelector {
     id: root
 
+    property string currentAddress
     property var selectedAccount
     // Expected signature: function(newAccount)
     property var changeSelectedAccount: function(){}
@@ -50,12 +51,15 @@ StatusFloatingButtonsSelector {
             }
             Component.onCompleted: {
                 // on model reset, set the selected account to the one that was previously selected
-                if(root.selectedAccount === null) {
+                if(!root.selectedAccount) {
                     if(root.currentIndex === index) {
                         changeSelectedAccount(model)
                     }
-                }
-                else {
+                    if(root.currentAddress === model.address) {
+                        root.currentIndex = index
+                        changeSelectedAccount(model)
+                    }
+                } else {
                     // if the selectedAccount is watch only then select 0th item
                     if(index === 0 && !!root.selectedAccount && root.selectedAccount.walletType === Constants.watchWalletType) {
                         changeSelectedAccount(model)

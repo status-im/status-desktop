@@ -18,7 +18,9 @@ QtObject {
     }
 
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
+    property var overview: walletSectionOverview
     property var flatCollectibles: Global.appIsReady ? walletSectionCollectibles.model : null
+
     property var accounts: Global.appIsReady? accountsModule.accounts : null
     
     function deleteAccount(keyUid, address) {

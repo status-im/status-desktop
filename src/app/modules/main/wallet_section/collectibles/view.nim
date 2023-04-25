@@ -49,3 +49,5 @@ QtObject:
   proc appendCollectibles*(self: View, collectibles: seq[Item]) =
     self.model.appendItems(collectibles)
 
+  proc getHasCollectiblesCache(self: View): bool {.slot.} =
+    return self.delegate.getHasCollectiblesCache()
