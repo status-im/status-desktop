@@ -26,7 +26,7 @@ QtObject {
 
     readonly property var shortPermissionsModelData: [
         {
-            holdingsListModel: root.createHoldingsModel3(),
+            holdingsListModel: root.createHoldingsModel4(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
             isPrivate: true,
@@ -53,8 +53,86 @@ QtObject {
             isPrivate: false
         },
         {
-            channelsListModel: root.createChannelsModel2(),
             holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        }
+    ]
+
+    readonly property var twoShortPermissionsModelData: [
+        {
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: true
+        },
+        {
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        }
+    ]
+
+    readonly property var twoLongPermissionsModelData: [
+        {
+            holdingsListModel: root.createHoldingsModel5(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: true
+        },
+        {
+            holdingsListModel: root.createHoldingsModel4(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        }
+    ]
+
+    readonly property var threeShortPermissionsModelData: [
+        {
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: true
+        },
+        {
+            holdingsListModel: root.createHoldingsModel1b(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        },
+        {
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        }
+    ]
+
+    readonly property var moreThanTwoInitialShortPermissionsModelData: [
+        {
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: true
+        },
+        {
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        },
+        {
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false
+        },
+        {
+            holdingsListModel: root.createHoldingsModel5(),
+            channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
             isPrivate: false
         }
@@ -93,20 +171,63 @@ QtObject {
         }
     }
 
+    readonly property var twoShortPermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.twoShortPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(twoShortPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property var twoLongPermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.twoLongPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(twoLongPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property var threeShortPermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.threeShortPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(threeShortPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property var moreThanTwoInitialShortPermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.moreThanTwoInitialShortPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(moreThanTwoInitialShortPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
     function createHoldingsModel1() {
         return [
-                    {
-                        type: HoldingTypes.Type.Asset,
-                        key: "socks",
-                        amount: 1.2,
-                        available: true
-                    },
                     {
                         type: HoldingTypes.Type.Asset,
                         key: "zrx",
                         amount: 15,
                         available: false
-                    },
+                    }
+                ]
+    }
+
+    function createHoldingsModel1b() {
+        return [
                     {
                         type: HoldingTypes.Type.Ens,
                         key: "Ens",
@@ -120,13 +241,13 @@ QtObject {
         return [
                     {
                         type: HoldingTypes.Type.Collectible,
-                        key: "Kitty3",
+                        key: "Kitty6",
                         amount: 50.25,
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Collectible,
-                        key: "Anniversary",
+                        type: HoldingTypes.Type.Asset,
+                        key: "Dai",
                         amount: 11,
                         available: false
                     }
@@ -142,9 +263,15 @@ QtObject {
                         available: true
                     },
                     {
-                        type: HoldingTypes.Type.Asset,
-                        key: "zrx",
-                        amount: 1,
+                        type: HoldingTypes.Type.Collectible,
+                        key: "Kitty4",
+                        amount: 50.25,
+                        available: true
+                    },
+                    {
+                        type: HoldingTypes.Type.Collectible,
+                        key: "SuperRare",
+                        amount: 11,
                         available: false
                     }
                 ]
