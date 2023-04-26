@@ -66,6 +66,11 @@ SplitView {
         This property holds the right panel of the component.
     */
     property Component rightPanel
+    /*!
+        \qmlproperty Component StatusAppLayout::footer
+        This property holds the footer of the component.
+    */
+    property Item footer
 
     /*!
         \qmlproperty bool StatusAppLayout::showRightPanel
@@ -134,6 +139,12 @@ SplitView {
         }
     }
 
+    onFooterChanged: {
+        if (!!footer) {
+            footer.parent = footerSlot
+        }
+    }
+
     Control {
         SplitView.minimumWidth: (!!leftPanel) ? 304 : 0
         SplitView.preferredWidth: (!!leftPanel) ? 304 : 0
@@ -167,7 +178,15 @@ SplitView {
                 id: centerPanelSlot
                 width: parent.width
                 anchors.top: statusToolBar.bottom
+                anchors.bottom: footerSlot.top
+                anchors.bottomMargin: footerSlot.visible ? 8 : 0
+            }
+            Item {
+                id: footerSlot
+                width: parent.width
+                height: visible ? childrenRect.height : 0
                 anchors.bottom: parent.bottom
+                visible: (!!footer)
             }
         }
     }

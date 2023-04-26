@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Layouts 1.13
 
 import utils 1.0
 
@@ -100,23 +101,20 @@ Item {
     StatusListView {
         id: listView
         objectName: "SavedAddressesView_savedAddresses"
-        anchors.top: errorMessage.bottom
+        anchors.top: header.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.halfPadding
         anchors.right: parent.right
         anchors.left: parent.left
-        visible: listView.count > 0
         spacing: 5
+        visible: count > 0
         model: SortFilterProxyModel {
             sourceModel: RootStore.savedAddresses
             sorters: RoleSorter { roleName: "createdAt"; sortOrder: Qt.DescendingOrder }
         }
         delegate: SavedAddressesDelegate {
             id: savedAddressDelegate
-
             objectName: "savedAddressView_Delegate_" + name
-
             name: model.name
             address: model.address
             chainShortNames: model.chainShortNames

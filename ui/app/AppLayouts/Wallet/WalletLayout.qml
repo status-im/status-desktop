@@ -96,6 +96,7 @@ Item {
                     rightPanelStackView.replace(cmpSavedAddresses)
                 else
                     rightPanelStackView.replace(walletContainer)
+                RootStore.backButtonName = ""
             }
             emojiPopup: root.emojiPopup
             networkConnectionStore: root.networkConnectionStore
@@ -113,6 +114,13 @@ Item {
             replaceExit: Transition {
                 NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 400; easing.type: Easing.OutCubic }
             }
+        }
+
+        footer: WalletFooter {
+            sendModal: root.sendModalPopup
+            width: parent.width
+            walletStore: RootStore
+            networkConnectionStore: root.networkConnectionStore
         }
     }
 }
