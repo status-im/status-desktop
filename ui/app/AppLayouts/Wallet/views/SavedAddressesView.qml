@@ -100,12 +100,12 @@ Item {
 
     StatusListView {
         id: listView
+        objectName: "SavedAddressesView_savedAddresses"
         anchors.top: header.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.left: parent.left
-        objectName: "SavedAddressesView_savedAddresses"
         spacing: 5
         visible: count > 0
         model: SortFilterProxyModel {
@@ -114,9 +114,7 @@ Item {
         }
         delegate: SavedAddressesDelegate {
             id: savedAddressDelegate
-
             objectName: "savedAddressView_Delegate_" + name
-
             name: model.name
             address: model.address
             chainShortNames: model.chainShortNames

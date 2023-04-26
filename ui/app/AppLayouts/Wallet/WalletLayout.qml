@@ -102,30 +102,25 @@ Item {
             networkConnectionStore: root.networkConnectionStore
         }
 
-        centerPanel: ColumnLayout {
+        centerPanel: StackView {
+            id: rightPanelStackView
             anchors.fill: parent
             anchors.leftMargin: 64
             anchors.rightMargin: 64
-            spacing: Style.current.halfPadding
-            StackView {
-                id: rightPanelStackView
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                initialItem: walletContainer
-                replaceEnter: Transition {
-                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 400; easing.type: Easing.OutCubic }
-                }
-                replaceExit: Transition {
-                    NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 400; easing.type: Easing.OutCubic }
-                }
+            initialItem: walletContainer
+            replaceEnter: Transition {
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 400; easing.type: Easing.OutCubic }
             }
-            WalletFooter {
-                id: footer
-                Layout.fillWidth: true
-                sendModal: root.sendModalPopup
-                walletStore: RootStore
-                networkConnectionStore: root.networkConnectionStore
+            replaceExit: Transition {
+                NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 400; easing.type: Easing.OutCubic }
             }
+        }
+
+        footer: WalletFooter {
+            sendModal: root.sendModalPopup
+            width: parent.width
+            walletStore: RootStore
+            networkConnectionStore: root.networkConnectionStore
         }
     }
 }
