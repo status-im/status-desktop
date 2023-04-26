@@ -56,6 +56,7 @@ Item {
         source: root.source
         playing: root.isAnimated && root.playing
         mipmap: true
+        cache: false
 
         onStatusChanged: {
             if (imageMessage.status === Image.Error && !retryTimer.running) {

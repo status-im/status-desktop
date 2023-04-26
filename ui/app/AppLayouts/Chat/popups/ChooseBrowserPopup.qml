@@ -24,6 +24,7 @@ StatusDialog {
             Layout.preferredWidth: 240
             Layout.preferredHeight: 148
             Layout.alignment: Qt.AlignHCenter
+            cache: false
         }
 
         StatusButton {

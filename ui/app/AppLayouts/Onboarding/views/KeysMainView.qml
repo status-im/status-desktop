@@ -45,6 +45,7 @@ Item {
             id: keysImg
             Layout.alignment: Qt.AlignHCenter
             mipmap: true
+            cache: false
         }
 
         StyledText {

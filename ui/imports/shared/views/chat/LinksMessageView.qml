@@ -139,6 +139,7 @@ Column {
                 asynchronous: true
                 isAnimated: result.contentType ? result.contentType.toLowerCase().endsWith("gif") : false
                 onClicked: isAnimated && !playing ? localAnimationEnabled = true : root.imageClicked(linkImage.imageAlias)
+                imageAlias.cache: localAnimationEnabled // GIFs can only loop/play properly with cache enabled
                 Loader {
                     width: 45
                     height: 38

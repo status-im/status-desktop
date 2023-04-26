@@ -33,6 +33,7 @@ Item {
         anchors.bottomMargin: Style.current.padding
         fillMode: Image.PreserveAspectFit
         source: Style.png("onboarding/notifications@2x")
+        cache: false
     }
 
     StyledText {

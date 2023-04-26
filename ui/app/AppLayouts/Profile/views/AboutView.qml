@@ -38,6 +38,7 @@ SettingsContentBase {
                 fillMode: Image.PreserveAspectFit
                 source: Style.png("status-logo")
                 anchors.horizontalCenter: parent.horizontalCenter
+                cache: false
             }
 
             Item { width: 1; height: 8}

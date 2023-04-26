@@ -203,6 +203,7 @@ Rectangle {
             fillMode: Image.PreserveAspectCrop
             smooth: true
             visible: false
+            cache: false
         }
 
         OpacityMask {

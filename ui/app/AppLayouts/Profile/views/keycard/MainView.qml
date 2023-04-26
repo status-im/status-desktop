@@ -40,6 +40,7 @@ ColumnLayout {
         antialiasing: true
         source: Style.png("keycard/keycard-security")
         mipmap: true
+        cache: false
     }
 
     Item {

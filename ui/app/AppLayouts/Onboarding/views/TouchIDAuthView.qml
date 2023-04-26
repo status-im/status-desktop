@@ -47,6 +47,7 @@ Item {
             antialiasing: true
             source: Style.png("onboarding/fingerprint@2x")
             mipmap: true
+            cache: false
         }
 
         StyledText {

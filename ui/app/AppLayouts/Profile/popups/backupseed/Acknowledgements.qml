@@ -51,6 +51,7 @@ ColumnLayout {
                         Layout.alignment: Qt.AlignHCenter
                         Layout.preferredWidth: 120
                         Layout.preferredHeight: width
+                        cache: false
                     }
 
                     StyledText {
