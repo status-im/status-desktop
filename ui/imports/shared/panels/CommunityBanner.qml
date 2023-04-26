@@ -72,6 +72,7 @@ Rectangle {
 
     StatusQControls.StatusButton {
         id: bannerButton
+        objectName: "communityBannerButton"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 16

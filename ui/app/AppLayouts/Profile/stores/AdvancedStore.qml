@@ -129,15 +129,6 @@ QtObject {
         else if (feature === experimentalFeatures.gifWidget) {
             localAccountSensitiveSettings.isGifWidgetEnabled = !localAccountSensitiveSettings.isGifWidgetEnabled
         }
-        else if (feature === experimentalFeatures.communityPermissions) {
-            localAccountSensitiveSettings.isCommunityPermissionsEnabled = !localAccountSensitiveSettings.isCommunityPermissionsEnabled
-        }
-        else if (feature === experimentalFeatures.discordImportTool) {
-            localAccountSensitiveSettings.isDiscordImportToolEnabled = !localAccountSensitiveSettings.isDiscordImportToolEnabled
-        }
-        else if (feature === experimentalFeatures.communityTokens) {
-            localAccountSensitiveSettings.isCommunityTokensEnabled = !localAccountSensitiveSettings.isCommunityTokensEnabled
-        }
     }
 
     function toggleFakeLoadingScreen() {

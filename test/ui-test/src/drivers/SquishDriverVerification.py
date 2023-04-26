@@ -104,6 +104,9 @@ def verify_equals(val1, val2):
 def log(text: str):
     test.log(text)
     
+def warning(text: str):
+    test.warning(text)
+    
     
 def verify_or_create_screenshot(vp: str, obj: Dict[str, Any]):
     try:

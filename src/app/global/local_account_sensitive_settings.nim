@@ -91,7 +91,6 @@ const LSS_KEY_STICKERS_ENS_ROPSTEN* = "stickersEnsRopsten"
 const DEFAULT_STICKERS_ENS_ROPSTEN = false
 const LSS_KEY_USER_DECLINED_BACKUP_BANNER* = "userDeclinedBackupBanner"
 const DEFAULT_USER_DECLINED_BACKUP_BANNER = false
-const LSS_KEY_IS_DISCORD_IMPORT_TOOL_ENABLED* = "isDiscordImportToolEnabled"
 const DEFAULT_IS_DISCORD_IMPORT_TOOL_ENABLED = false
 
 
@@ -227,30 +226,6 @@ QtObject:
     write = setProfileSplitView
     notify = profileSplitViewChanged
 
-  proc isCommunityPermissionsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(DEFAULT_IS_COMMUNITY_PERMISSIONS_ENABLED))
-  proc setIsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(value)):
-      self.isCommunityPermissionsEnabledChanged()
-
-  QtProperty[bool] isCommunityPermissionsEnabled:
-    read = getIsCommunityPermissionsEnabled
-    write = setIsCommunityPermissionsEnabled
-    notify = isCommunityPermissionsEnabledChanged
-
-  proc isCommunityTokensEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsCommunityTokensEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_COMMUNITY_TOKENS_ENABLED, newQVariant(DEFAULT_IS_COMMUNITY_TOKENS_ENABLED))
-  proc setIsCommunityTokensEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_COMMUNITY_TOKENS_ENABLED, newQVariant(value)):
-      self.isCommunityTokensEnabledChanged()
-
-  QtProperty[bool] isCommunityTokensEnabled:
-    read = getIsCommunityTokensEnabled
-    write = setIsCommunityTokensEnabled
-    notify = isCommunityTokensEnabledChanged
-
   proc nodeManagementEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getNodeManagementEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_NODE_MANAGEMENT_ENABLED, newQVariant(DEFAULT_NODE_MANAGEMENT_ENABLED))
@@ -262,18 +237,6 @@ QtObject:
     read = getNodeManagementEnabled
     write = setNodeManagementEnabled
     notify = nodeManagementEnabledChanged
-
-  proc isDiscordImportToolEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsDiscordImportToolEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_DISCORD_IMPORT_TOOL_ENABLED, newQVariant(DEFAULT_IS_DISCORD_IMPORT_TOOL_ENABLED))
-  proc setIsDiscordImportToolEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_DISCORD_IMPORT_TOOL_ENABLED, newQVariant(value)):
-      self.isDiscordImportToolEnabledChanged()
-
-  QtProperty[bool] isDiscordImportToolEnabled:
-    read = getIsDiscordImportToolEnabled
-    write = setIsDiscordImportToolEnabled
-    notify = isDiscordImportToolEnabledChanged
 
   proc isBrowserEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getIsBrowserEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -774,7 +737,6 @@ QtObject:
       of LSS_KEY_CHAT_SPLIT_VIEW: self.chatSplitViewChanged()
       of LSS_KEY_WALLET_SPLIT_VIEW: self.walletSplitViewChanged()
       of LSS_KEY_PROFILE_SPLIT_VIEW: self.profileSplitViewChanged()
-      of LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED: self.isCommunityPermissionsEnabledChanged()
       of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()

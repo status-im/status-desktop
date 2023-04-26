@@ -10,12 +10,6 @@ Background:
     And the user lands on the community named "Test-Community"
 
 
- Scenario: Enable community permissions feature
-   Given the user opens app settings screen
-   And Application Settings "Advanced" is open
-   And "Community Permissions Settings" is toggled on under Experimental features
-   And the user opens the communities settings
-   Then the user opens the community named "Test-Community"
-   And the user lands on the community named "Test-Community"
+ Scenario: Community permissions is an available option is Community Settings
    When "Manage Community" is clicked in the community sidebar
    Then "Permissions" should be an available option in Community Settings

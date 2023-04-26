@@ -133,58 +133,6 @@ SettingsContentBase {
             }
 
             // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                objectName: "CommunitySettingsLineButton"
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Community Permissions Settings")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isCommunityPermissionsEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isCommunityPermissionsEnabled) {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communityPermissions
-                        confirmationPopup.open()
-                    } else {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communityPermissions)
-                    }
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Community Tokens")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isCommunityTokensEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isCommunityTokensEnabled) {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communityTokens
-                        confirmationPopup.open()
-                    } else {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communityTokens)
-                    }
-                }
-            }
-
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Discord Import Tool")
-                objectName: "DiscordImportToolSettingsLineButton"
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isDiscordImportToolEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isDiscordImportToolEnabled) {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.discordImportTool
-                        confirmationPopup.open()
-                    } else {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.discordImportTool)
-                    }
-                }
-            }
-
-            // TODO: replace with StatusQ component
              StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
