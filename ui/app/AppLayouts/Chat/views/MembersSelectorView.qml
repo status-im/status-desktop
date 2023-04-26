@@ -33,7 +33,14 @@ MembersSelectorBase {
     }
 
     edit.onTextChanged: {
-        d.lookupContact(edit.text)
+        // When edited, give a small delay in case next character is printed soon
+        contactLookupDelayTimer.start()
+    }
+
+    onTextPasted: (text) => {
+        // When pated, process text immediately
+        contactLookupDelayTimer.stop() // when pasting, textChanged is still emited first
+        d.lookupContact(text)
     }
 
     model: SortFilterProxyModel {
@@ -55,11 +62,52 @@ MembersSelectorBase {
         property ListModel selectedMembers: ListModel {}
 
         function lookupContact(value) {
+
+            value = value.trim()
+
             if (value.startsWith(Constants.userLinkPrefix))
                 value = value.slice(Constants.userLinkPrefix.length)
 
-            if (Utils.isCompressedPubKey(value))
+            if (Utils.isChatKey(value)) {
+                processContact(value)
+                return
+            }
+
+            if (Utils.isValidEns(value)) {
                 root.rootStore.contactsStore.resolveENS(value)
+                return
+            }
+
+            root.suggestionsDialog.forceHide = false
+        }
+
+        function processContact(publicKey) {
+            const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
+
+            if (contactDetails.publicKey === "") {
+                // not a valid key given
+                root.suggestionsDialog.forceHide = false
+                return
+            }
+
+            if (contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey ||
+                contactDetails.isBlocked) {
+                root.suggestionsDialog.forceHide = false
+                return
+            };
+
+            if (contactDetails.isContact) {
+                root.rootStore.mainModuleInst.switchTo(root.rootStore.getMySectionId(), contactDetails.publicKey)
+                return
+            }
+
+            if (root.model.count === 0 && !root.rootStore.contactsStore.hasPendingContactRequest(contactDetails.publicKey)) {
+                Global.openContactRequestPopup(contactDetails.publicKey,
+                                               popup => popup.closed.connect(root.rejected))
+                return
+            }
+
+            root.suggestionsDialog.forceHide = false
         }
 
         function addMember(pubKey, displayName, localNickname) {
@@ -87,6 +135,15 @@ MembersSelectorBase {
         }
     }
 
+    Timer {
+        id: contactLookupDelayTimer
+        repeat: false
+        interval: 500
+        onTriggered: {
+            d.lookupContact(edit.text)
+        }
+    }
+
     Connections {
         enabled: root.visible
         target: root.rootStore.contactsStore.mainModuleInst
@@ -95,28 +152,7 @@ MembersSelectorBase {
                 root.suggestionsDialog.forceHide = false
                 return
             }
-
-            const contactDetails = Utils.getContactDetailsAsJson(resolvedPubKey, false)
-
-
-            if (contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey ||
-                contactDetails.isBlocked) {
-                root.suggestionsDialog.forceHide = false
-                return
-            };
-
-            if (contactDetails.isContact) {
-                root.rootStore.mainModuleInst.switchTo(root.rootStore.getMySectionId(), contactDetails.publicKey)
-                return
-            }
-
-            if (root.model.count === 0 && !root.rootStore.contactsStore.hasPendingContactRequest(contactDetails.publicKey)) {
-                Global.openContactRequestPopup(contactDetails.publicKey,
-                                               popup => popup.closed.connect(root.rejected))
-                return
-            }
-
-            root.suggestionsDialog.forceHide = false
+            d.processContact(resolvedPubKey)
         }
     }
 }

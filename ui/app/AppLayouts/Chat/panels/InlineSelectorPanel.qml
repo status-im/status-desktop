@@ -41,6 +41,18 @@ Item {
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
 
+    QtObject {
+        id: d
+
+        function paste() {
+            root.suggestionsDialog.forceHide = true
+            edit.pasteOperation = true
+            edit.paste()
+            root.textPasted(edit.text)
+            edit.pasteOperation = false
+        }
+    }
+
     RowLayout {
         id: mainLayout
         anchors.fill: parent
@@ -118,13 +130,17 @@ Item {
                                     cursorVisible: edit.cursorVisible
                                 }
 
-                                onTextEdited: if (suggestionsDialog.forceHide && !pasteOperation)
-                                                  suggestionsDialog.forceHide = false
+                                onTextEdited: {
+                                    if (suggestionsDialog.forceHide && !pasteOperation)
+                                        suggestionsDialog.forceHide = false
+                                }
 
-                                Keys.onPressed: {
+                                Keys.onPressed: (event) => {
+
                                     if (event.matches(StandardKey.Paste)) {
-                                        pasteOperation = true
-                                        root.suggestionsDialog.forceHide = true
+                                        event.accepted = true
+                                        d.paste()
+                                        return
                                     }
 
                                     if (suggestionsDialog.visible) {
@@ -147,17 +163,6 @@ Item {
                                         } else if (event.key === Qt.Key_Down) {
                                             root.downKeyPressed()
                                         }
-                                    }
-                                }
-
-                                Keys.onReleased: {
-                                    if (event.matches(StandardKey.Paste)) {
-                                        event.accepted = true
-                                        pasteOperation = false
-                                        if (text) {
-                                            root.textPasted(text)
-                                        }
-
                                     }
                                 }
                             }
