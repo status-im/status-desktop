@@ -6,19 +6,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
 import steps.commonInitSteps as init_steps
 
-# Global properties for the specific feature
-_user = "tester123"
-_password = "TesTEr16843/!@00"
 
 @OnFeatureStart
 def hook(context):
     init_steps.context_init(context, testSettings)  
-    init_steps.signs_up_process_steps(context, _user, _password)
 
-@OnFeatureEnd
+@OnScenarioEnd
 def hook(context):
-    currentApplicationContext().detach()
-    snooze(_app_closure_timeout)
+    [ctx.detach() for ctx in squish.applicationContextList()]
     
 @OnStepEnd
 def hook(context):

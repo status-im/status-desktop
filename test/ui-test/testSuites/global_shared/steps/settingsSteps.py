@@ -133,8 +133,7 @@ def step(context, native):
 
 @When("the user clicks on Sign out and Quit")
 def step(context: any):
-    ctx = currentApplicationContext()
-    _settingsScreen.sign_out_and_quit_the_app(ctx.pid)
+    _settingsScreen.menu.sign_out_and_quit()
 
 @Given("the user opens the communities settings")
 @When("the user opens the communities settings")

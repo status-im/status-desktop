@@ -9,15 +9,17 @@
 # *****************************************************************************/
 
 from enum import Enum
-from screens.StatusAccountsScreen import StatusAccountsScreen
+
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from screens.StatusAccountsScreen import StatusAccountsScreen
+
+from .components.splash_screen import SplashScreen
 
 
 # It defines the identifier for each Login View component:
 class SLoginComponents(Enum):
     MAIN_VIEW = "loginView_main"
-    PASSWORD_INPUT = "loginView_passwordInput"
     SUBMIT_BTN = "loginView_submitBtn"
     CHANGE_ACCOUNT_BTN = "loginView_changeAccountBtn"
     CURRENT_USERNAME_LABEL = "loginView_currentUserNameLabel"
@@ -38,10 +40,11 @@ class StatusLoginScreen():
 
     def __init__(self):
         verify_screen(SLoginComponents.MAIN_VIEW.value)
+        self._password_text_edit = TextEdit('loginView_passwordInput')
 
     def login(self, account, password):
         self.select_account(account)
-        self.enter_password(password)        
+        self.enter_password(password)
         
     def select_account(self, account):
         if self.is_account_selected(account):
@@ -55,8 +58,7 @@ class StatusLoginScreen():
         return obj.text == account
     
     def enter_password(self, password):
-        click_obj_by_name(SLoginComponents.PASSWORD_INPUT.value)
-        type_text(SLoginComponents.PASSWORD_INPUT.value, password)
+        self._password_text_edit.text = password
         click_obj_by_name(SLoginComponents.SUBMIT_BTN.value)
 
     def verify_error_message_is_displayed(self):
@@ -72,11 +74,7 @@ class StatusLoginScreen():
         return click_obj_by_name(SLoginComponents.CHANGE_ACCOUNT_BTN.value)
 
     def get_password_placeholder_text(self):
-        result = ""
-        [loaded, obj] = is_loaded(SLoginComponents.PASSWORD_INPUT.value)
-        if loaded:
-            result = obj.placeholderText
-        return result
+        return self._password_text_edit.object.placeholderText
 
     def get_error_message_text(self):
         result = ""

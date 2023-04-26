@@ -503,8 +503,8 @@ def sleep_test(seconds: float):
     squish.snooze(seconds)
 
 
-def wait_for(py_condition_to_check: str, timeout_msec: int = 500):
-    squish.waitFor(py_condition_to_check, timeout_msec)
+def wait_for(py_condition_to_check: str, timeout_msec: int = 500) -> bool:
+    return squish.waitFor(lambda: py_condition_to_check, timeout_msec)
 
 
 def wait_until_hidden(object_name: str, timeout_msec: int = _MAX_WAIT_OBJ_TIMEOUT) -> bool:
