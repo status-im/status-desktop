@@ -138,7 +138,7 @@ Item {
                 delegate: WalletAccountListItem {
                     implicitWidth: ListView.view.width
                     modelData: model
-                    chainShortNames: root.store.getAllNetworksSupportedString()
+                    chainShortNames: root.store.getAllNetworksSupportedPrefix()
                     onClicked: recipientSelected({name: modelData.name,
                                                      address: modelData.address,
                                                      color: modelData.color,

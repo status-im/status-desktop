@@ -124,6 +124,9 @@ QtObject:
   proc getMainnetChainId*(self: View): int {.slot.} =
     return self.layer1.getLayer1Network(self.areTestNetworksEnabled)
 
+  proc getAllNetworksSupportedPrefix*(self: View): string {.slot.} =
+    return self.all.getAllNetworksSupportedPrefix()
+
 proc networkEnabledToUxEnabledState(enabled: bool, allEnabled: bool): UxEnabledState =
   return if allEnabled:
       UxEnabledState.AllEnabled

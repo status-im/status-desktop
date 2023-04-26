@@ -22,6 +22,8 @@ Item {
     property var sendModal
     property var networkConnectionStore
 
+    signal launchShareAddressModal()
+
     function resetStack() {
         stack.currentIndex = 0;
     }
@@ -50,12 +52,14 @@ Item {
         }
 
         ColumnLayout {
+            spacing: 0
             WalletHeader {
                 Layout.fillWidth: true
                 overview: RootStore.overview
                 store: root.store
                 walletStore: RootStore
                 networkConnectionStore: root.networkConnectionStore
+                onLaunchShareAddressModal: root.launchShareAddressModal()
             }
             StatusTabBar {
                 id: walletTabBar
@@ -123,7 +127,7 @@ Item {
             visible: (stack.currentIndex === 2)
 
             assetsLoading: RootStore.assetsLoading
-            address:  RootStore.overview.mixedcaseAddress
+            address: RootStore.overview.mixedcaseAddress
             
             networkConnectionStore: root.networkConnectionStore
         }

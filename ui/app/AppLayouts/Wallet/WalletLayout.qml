@@ -58,6 +58,7 @@ Item {
             contactsStore: root.contactsStore
             sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
+            onLaunchShareAddressModal: Global.openPopup(receiveModalComponent);
         }
     }
 
@@ -119,6 +120,14 @@ Item {
             width: parent.width
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
+            onLaunchShareAddressModal: Global.openPopup(receiveModalComponent)
+        }
+    }
+
+    Component {
+        id: receiveModalComponent
+        ReceiveModal {
+            anchors.centerIn: parent
         }
     }
 }

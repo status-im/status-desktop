@@ -1,30 +1,24 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 
-import shared 1.0
-import shared.panels 1.0
-import shared.controls 1.0
 import utils 1.0
 
-import "../popups"
+import "../views"
 
-Item {
+StatusComboBox {
     id: root
-    implicitWidth: 130
-    implicitHeight: parent.height
 
     required property var allNetworks
     required property var layer1Networks
     required property var layer2Networks
     required property var testNetworks
     required property var enabledNetworks
-
-    property bool isChainVisible: true
     property bool multiSelection: true
 
     /// \c network is a network.model.nim entry
@@ -37,6 +31,7 @@ Item {
 
         property string selectedChainName: ""
         property string selectedIconUrl: ""
+        property bool allSelected: root.enabledNetworks.count === root.allNetworks.count
 
         // Persist selection between selectPopupLoader reloads
         property var currentModel: layer1Networks
@@ -51,103 +46,88 @@ Item {
         }
     }
 
-    Item {
-        id: selectRectangleItem
+    control.padding: 12
+    control.spacing: 0
+    control.rightPadding: 36
+    control.topPadding: 7
+    control.popup.width: 430
 
-        width: parent.width
-        height: 56
+    size: StatusComboBox.Size.Small
 
-        // FIXME this should be a (styled) ComboBox
-        StatusListItem {
-            implicitWidth: parent.width
-            implicitHeight: 40
-            anchors.verticalCenter: parent.verticalCenter
-            border.width: 1
-            border.color: Theme.palette.directColor7
-            color: "transparent"
-            objectName: "networkSelectorButton"
-            leftPadding: 12
-            rightPadding: 12
-            statusListItemTitle.font.pixelSize: 13
-            statusListItemTitle.font.weight: Font.Medium
-            statusListItemTitle.color: Theme.palette.baseColor1
-            title: root.multiSelection
-                        ? (root.enabledNetworks.count === root.allNetworks.count
-                            ? qsTr("All networks")
-                            : qsTr("%n network(s)", "", root.enabledNetworks.count))
-                        : d.selectedChainName
+    control.background: Rectangle {
+        height: 38
+        radius: 8
+        color: root.control.hovered ? Theme.palette.baseColor2 : "transparent"
+        border.color: Theme.palette.directColor7
+    }
+
+    contentItem: RowLayout {
+        spacing: 16
+        StatusSmartIdenticon {
+            Layout.alignment: Qt.AlignVCenter
             asset.height: 24
-            asset.width: asset.height
+            asset.width: 24
             asset.isImage: !root.multiSelection
             asset.name: !root.multiSelection ? Style.svg(d.selectedIconUrl) : ""
-            components:[
-                StatusIcon {
-                    width: 16
-                    height: 16
-                    icon: "chevron-down"
-                    color: Theme.palette.baseColor1
+            active: !root.multiSelection
+            visible: active
+        }
+        StatusBaseText {
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillWidth: true
+            font.pixelSize: 13
+            font.weight: Font.Medium
+            elide: Text.ElideRight
+            lineHeight: 24
+            lineHeightMode: Text.FixedHeight
+            verticalAlignment: Text.AlignVCenter
+            text: root.multiSelection ? (d.allSelected ? qsTr("All networks") : "") : d.selectedChainName
+            color: Theme.palette.baseColor1
+            visible: !!text
+        }
+        Row {
+            spacing: -4
+            visible: !d.allSelected && chainRepeater.count > 0
+            Repeater {
+                id: chainRepeater
+                model: root.enabledNetworks
+                delegate: StatusRoundedImage {
+                    width: 24
+                    height: 24
+                    visible: image.source !== ""
+                    border.width: index === 0 ? 0 : 1
+                    border.color: Theme.palette.white
+                    image.source: Style.svg("tiny/" + model.iconUrl)
+                    z: index + 1
                 }
-            ]
-
-            onClicked: {
-                selectPopupLoader.active = !selectPopupLoader.active
             }
         }
     }
 
-    Row {
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.halfPadding
-        spacing: Style.current.smallPadding
-        visible: root.isChainVisible && chainRepeater.count > 0
+    control.popup.contentItem: NetworkSelectionView {
+        layer1Networks: root.layer1Networks
+        layer2Networks: root.layer2Networks
+        testNetworks: root.testNetworks
 
-        Repeater {
-            id: chainRepeater
-            model: root.enabledNetworks
-            delegate: InformationTag {
-                tagPrimaryLabel.text: model.shortName
-                tagPrimaryLabel.color: model.chainColor
-                image.source: Style.svg("tiny/" + model.iconUrl)
-            }
-        }
-    }
+        implicitWidth: contentWidth
+        implicitHeight: contentHeight
 
-    Loader {
-        id: selectPopupLoader
-
-        active: false
-
-        sourceComponent: NetworkSelectPopup {
-            id: selectPopup
-
-            x: -width + selectRectangleItem.width + 5
-            y: selectRectangleItem.height + 5
-
-            layer1Networks: root.layer1Networks
-            layer2Networks: root.layer2Networks
-            testNetworks: root.testNetworks
-
-            singleSelection {
-                enabled: !root.multiSelection
-                currentModel: d.currentModel
-                currentIndex: d.currentIndex
-            }
-
-            useEnabledRole: false
-
-            onToggleNetwork: (network, networkModel, index) => {
-                d.selectedChainName = network.chainName
-                d.selectedIconUrl = network.iconUrl
-                d.currentModel = networkModel
-                d.currentIndex = index
-                root.toggleNetwork(network)
-            }
-
-
-            onClosed: selectPopupLoader.active = false
+        singleSelection {
+            enabled: !root.multiSelection
+            currentModel: d.currentModel
+            currentIndex: d.currentIndex
         }
 
-        onLoaded: item.open()
+        useEnabledRole: false
+
+        onToggleNetwork: (network, networkModel, index) => {
+                             d.selectedChainName = network.chainName
+                             d.selectedIconUrl = network.iconUrl
+                             d.currentModel = networkModel
+                             d.currentIndex = index
+                             root.toggleNetwork(network)
+                             if(singleSelection.enabled)
+                                control.popup.close()
+                         }
     }
 }

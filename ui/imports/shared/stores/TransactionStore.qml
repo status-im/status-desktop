@@ -294,13 +294,8 @@ QtObject {
         return walletSectionTransactions.getTransactions()
     }
 
-    function getAllNetworksSupportedString() {
-        let result = ""
-        for(var i = 0; i < allNetworks.count; i++) {
-            let shortName = allNetworks.rowData(i, "shortName")
-            result += shortName + ':'
-        }
-        return result
+    function getAllNetworksSupportedPrefix() {
+        return networksModule.getAllNetworksSupportedPrefix()
     }
 
     function switchSenderAccount(index) {

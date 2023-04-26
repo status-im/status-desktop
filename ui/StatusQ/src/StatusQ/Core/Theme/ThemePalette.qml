@@ -102,6 +102,7 @@ QtObject {
 
     property color black: getColor('black')
     property color white: getColor('white')
+    property color transparent: "#00000000"
 
     property color dropShadow: getColor('black', 0.12)
     property color dropShadow2

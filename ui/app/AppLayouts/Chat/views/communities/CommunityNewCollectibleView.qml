@@ -277,7 +277,6 @@ StatusScrollView {
             testNetworks: root.testNetworks
             enabledNetworks: root.enabledNetworks
 
-            isChainVisible: false
             multiSelection: false
 
             onToggleNetwork: (network) => {
