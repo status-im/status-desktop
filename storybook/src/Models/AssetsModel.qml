@@ -47,10 +47,10 @@ ListModel {
             category: TokenCategories.Category.General
         },
         {
-            key: "Dai2",
-            iconSource: ModelsData.assets.dai,
-            name: "Dai2",
-            shortName: "DAI2",
+            key: "snt",
+            iconSource: ModelsData.assets.snt,
+            name: "snt",
+            shortName: "snt",
             category: TokenCategories.Category.General
         }
     ]
