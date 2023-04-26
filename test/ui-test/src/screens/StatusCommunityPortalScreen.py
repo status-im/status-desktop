@@ -4,9 +4,9 @@ import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 
-
 class MainCommunityPortalScreen(Enum):
     CREATE_COMMUNITY_BUTTON: str = "communitiesPortalLayoutContainer_createCommunityButton_StatusButton"
+    CREATE_COMMUNITY_BANNER_BUTTON: str = "createCommunity_bannerButton"
 
     
 class CreateCommunityPopup(Enum):
@@ -25,6 +25,8 @@ class StatusCommunityPortalScreen:
     
     def create_community(self, communityName: str, communityDescription: str, introMessage: str, outroMessage: str):
         click_obj_by_name(MainCommunityPortalScreen.CREATE_COMMUNITY_BUTTON.value)
+        
+        click_obj_by_name(MainCommunityPortalScreen.CREATE_COMMUNITY_BANNER_BUTTON.value)
         
         type_text(CreateCommunityPopup.COMMUNITY_NAME_INPUT.value, communityName)
         type_text(CreateCommunityPopup.COMMUNITY_DESCRIPTION_INPUT.value, communityDescription)

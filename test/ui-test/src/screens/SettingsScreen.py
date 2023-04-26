@@ -137,10 +137,6 @@ class SettingsScreen:
     def open_advanced_settings(self):
         click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
 
-    def activate_community_permission_settings(self):
-        click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_COMMUNITY_PERMISSIONS.value)
-        click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-
     def open_wallet_settings(self):
         click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
 
@@ -378,6 +374,9 @@ class SettingsScreen:
                 click_obj(delegate)
                 return
         verify(False, "Community not found")
+        
+    def toggle_experimental_feature(self, settings_type: str):
+        warning("TODO: Implement toggle_experimental_feature method foreach settings type")
 
 
 class ProfileSettingsView(BaseElement):

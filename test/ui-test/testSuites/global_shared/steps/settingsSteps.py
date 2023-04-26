@@ -61,8 +61,7 @@ def step(context: any, settings_type:str):
 
 @Given("\"|any|\" is toggled on under Experimental features")
 def step(context: any, settings_type:str):
-    #TODO: Implement parameters for settings
-    _settingsScreen.activate_community_permission_settings()
+    _settingsScreen.toggle_experimental_feature(settings_type)
 
 #########################
 ### ACTIONS region:

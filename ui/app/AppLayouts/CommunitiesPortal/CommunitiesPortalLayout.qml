@@ -143,11 +143,7 @@ StatusSectionLayout {
                     verticalPadding: 0
                     text: qsTr("Create New Community")
                     onClicked: {
-                        if (localAccountSensitiveSettings.isDiscordImportToolEnabled) {
-                            Global.openPopup(chooseCommunityCreationTypePopupComponent)
-                        } else {
-                            Global.openPopup(createCommunitiesPopupComponent)
-                        }
+                        Global.openPopup(chooseCommunityCreationTypePopupComponent)
                     }
                 }
             }
@@ -234,6 +230,7 @@ StatusSectionLayout {
             contentItem: RowLayout {
                 spacing: 20
                 CommunityBanner {
+                    objectName: "createCommunityBanner"
                     text: qsTr("Create a new Status community")
                     buttonText: qsTr("Create new")
                     icon.name: "favourite"

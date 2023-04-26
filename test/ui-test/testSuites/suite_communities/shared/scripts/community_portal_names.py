@@ -6,6 +6,10 @@ mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout = {"containe
 communitiesPortalLayoutContainer_createCommunityButton_StatusButton = {"container": mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout, "objectName": "createCommunityButton", "type": "StatusButton", "visible": True}
 navBarListView_All_Community_Buttons = {"checkable": True, "container": mainWindow_communityNavBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton"}
 
+# Create community intermediate popup:
+createCommunity_banner = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityBanner", "type": "CommunityBanner", "visible": True}
+createCommunity_bannerButton = {"container": createCommunity_banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
+
 # Create community popup:
 createCommunityNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityNameInput", "type": "TextEdit", "visible": True}
 createCommunityDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityDescriptionInput", "type": "TextEdit", "visible": True}

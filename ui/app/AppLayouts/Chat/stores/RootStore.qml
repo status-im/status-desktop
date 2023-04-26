@@ -182,8 +182,6 @@ QtObject {
 
     property var communitiesModuleInst: communitiesModule
     property var communitiesList: communitiesModuleInst.model
-    property bool communityPermissionsEnabled: localAccountSensitiveSettings.isCommunityPermissionsEnabled
-    property bool communityTokensEnabled: localAccountSensitiveSettings.isCommunityTokensEnabled
 
     property var userProfileInst: userProfile
 
