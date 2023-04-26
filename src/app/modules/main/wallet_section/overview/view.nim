@@ -16,6 +16,8 @@ QtObject:
       balanceLoading: bool
       color: string
       emoji: string
+      isAllAccounts: bool
+      hideWatchAccounts: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -88,6 +90,20 @@ QtObject:
     read = getEmoji
     notify = emojiChanged
 
+  proc getIsAllAccounts(self: View): QVariant {.slot.} =
+    return newQVariant(self.isAllAccounts)
+  proc isAllAccountsChanged(self: View) {.signal.}
+  QtProperty[QVariant] isAllAccounts:
+    read = getIsAllAccounts
+    notify = isAllAccountsChanged
+
+  proc getHideWatchAccounts(self: View): QVariant {.slot.} =
+    return newQVariant(self.hideWatchAccounts)
+  proc hideWatchAccountsChanged(self: View) {.signal.}
+  QtProperty[QVariant] hideWatchAccounts:
+    read = getHideWatchAccounts
+    notify = hideWatchAccountsChanged
+
   proc setData*(self: View, item: Item) =
     if(self.name != item.getName()):
       self.name = item.getName()
@@ -105,3 +121,9 @@ QtObject:
     if(self.emoji != item.getEmoji()):
       self.emoji = item.getEmoji()
       self.emojiChanged()
+    if(self.isAllAccounts != item.getIsAllAccounts()):
+      self.isAllAccounts = item.getIsAllAccounts()
+      self.isAllAccountsChanged()
+    if(self.hideWatchAccounts != item.getHideWatchAccounts()):
+      self.hideWatchAccounts = item.getHideWatchAccounts()
+      self.hideWatchAccountsChanged()

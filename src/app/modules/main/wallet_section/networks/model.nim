@@ -234,3 +234,9 @@ QtObject:
             chainIds.add(item.getChainId())
 
     return (chainIds, enable)
+
+  proc getAllNetworksSupportedPrefix*(self: Model): string =
+    var networkString = ""
+    for item in self.items:
+      networkString = networkString & item.getShortName() & ':'
+    return networkString

@@ -138,7 +138,7 @@ Loader {
         id: myAccountRecipient
         WalletAccountListItem {
             implicitWidth: parent.width
-            chainShortNames: store.getAllNetworksSupportedString()
+            chainShortNames: store.getAllNetworksSupportedPrefix()
             modelData: root.selectedRecipient
             radius: 8
             clearVisible: true

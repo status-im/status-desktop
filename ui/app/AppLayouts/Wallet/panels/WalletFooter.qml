@@ -9,15 +9,17 @@ import StatusQ.Core.Theme 0.1
 import utils 1.0
 import shared.controls 1.0
 
-import "../popups"
 import "../controls"
+import "../popups"
 
 Rectangle {
-    id: walletFooter
+    id: root
 
     property var sendModal
     property var walletStore
     property var networkConnectionStore
+
+    signal launchShareAddressModal()
 
     height: 61
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
@@ -48,7 +50,7 @@ Rectangle {
             icon.name: "receive"
             text: qsTr("Receive")
             onClicked: function () {
-                Global.openPopup(receiveModalComponent);
+                launchShareAddressModal()
             }
         }
 
@@ -71,13 +73,6 @@ Rectangle {
             onClicked: function () {
                 Global.openPopup(buySellModal);
             }
-        }
-    }
-
-    Component {
-        id: receiveModalComponent
-        ReceiveModal {
-            anchors.centerIn: parent
         }
     }
 

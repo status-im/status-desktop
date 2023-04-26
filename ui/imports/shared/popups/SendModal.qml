@@ -151,7 +151,7 @@ StatusDialog {
         anchors.topMargin: -height - 18
         model: popup.store.senderAccounts
         selectedAccount: !!popup.selectedAccount ? popup.selectedAccount: {}
-        chainShortNames: store.getAllNetworksSupportedString()
+        chainShortNames: store.getAllNetworksSupportedPrefix()
         onSelectedIndexChanged: store.switchSenderAccount(selectedIndex)
     }
 

@@ -36,8 +36,6 @@ SplitView {
             NetworkFilter {
                 id: networkFilter
 
-                Layout.preferredWidth: 200
-                Layout.preferredHeight: 100
                 Layout.alignment: Qt.AlignHCenter
 
                 allNetworks: simulatedNimModel
@@ -72,7 +70,6 @@ SplitView {
                 }
 
                 multiSelection: multiSelectionCheckbox.checked
-                isChainVisible: isChainVisibleCheckbox.checked
             }
 
             // Dummy item to make space for popup
@@ -229,15 +226,6 @@ SplitView {
                 checked: false
                 onCheckedChanged: Qt.callLater(simulatedNimModel.cloneModel, availableNetworks)
             }
-
-            CheckBox {
-                id: isChainVisibleCheckbox
-
-                Layout.margins: 5
-
-                text: "Is chain visible"
-                checked: true
-            }
         }
     }
 
@@ -262,10 +250,10 @@ SplitView {
         roles: ["chainId", "layer", "chainName", "isTest", "isEnabled", "iconUrl", "shortName", "chainColor"]
         rolesOverride: [{ role: "enabledState", transform: (mD) => {
                 return simulatedNimModel.areAllEnabled(sourceModel)
-                        ? NetworkSelectPopup.UxEnabledState.AllEnabled
+                        ? NetworkSelectItemDelegate.UxEnabledState.AllEnabled
                         : mD.isEnabled
-                            ? NetworkSelectPopup.UxEnabledState.Enabled
-                            : NetworkSelectPopup.UxEnabledState.Disabled
+                            ? NetworkSelectItemDelegate.UxEnabledState.Enabled
+                            : NetworkSelectItemDelegate.UxEnabledState.Disabled
             }
         }]
 
@@ -277,11 +265,11 @@ SplitView {
             let allEnabled = true
             for (let i = 0; i < simulatedNimModel.count; i++) {
                 const item = simulatedNimModel.get(i)
-                if(item.enabledState === NetworkSelectPopup.UxEnabledState.Enabled) {
+                if(item.enabledState === NetworkSelectItemDelegate.UxEnabledState.Enabled) {
                     if(item.chainId !== chainId) {
                         chainIdOnlyEnabled = false
                     }
-                } else if(item.enabledState === NetworkSelectPopup.UxEnabledState.Disabled) {
+                } else if(item.enabledState === NetworkSelectItemDelegate.UxEnabledState.Disabled) {
                     if(item.chainId !== chainId) {
                         chainIdOnlyDisabled = false
                     }
@@ -296,15 +284,15 @@ SplitView {
             for (let i = 0; i < simulatedNimModel.count; i++) {
                 const item = simulatedNimModel.get(i)
                 if(allEnabled) {
-                    simulatedNimModel.setProperty(i, "enabledState", item.chainId === chainId ? NetworkSelectPopup.UxEnabledState.Enabled : NetworkSelectPopup.UxEnabledState.Disabled)
+                    simulatedNimModel.setProperty(i, "enabledState", item.chainId === chainId ? NetworkSelectItemDelegate.UxEnabledState.Enabled : NetworkSelectItemDelegate.UxEnabledState.Disabled)
                 } else if(chainIdOnlyEnabled || chainIdOnlyDisabled) {
-                    simulatedNimModel.setProperty(i, "enabledState", NetworkSelectPopup.UxEnabledState.AllEnabled)
+                    simulatedNimModel.setProperty(i, "enabledState", NetworkSelectItemDelegate.UxEnabledState.AllEnabled)
                 } else if(item.chainId === chainId) {
-                    simulatedNimModel.setProperty(i, "enabledState", item.enabledState === NetworkSelectPopup.UxEnabledState.Enabled
-                        ? NetworkSelectPopup.UxEnabledState.Disabled
-                        :NetworkSelectPopup.UxEnabledState.Enabled)
+                    simulatedNimModel.setProperty(i, "enabledState", item.enabledState === NetworkSelectItemDelegate.UxEnabledState.Enabled
+                        ? NetworkSelectItemDelegate.UxEnabledState.Disabled
+                        :NetworkSelectItemDelegate.UxEnabledState.Enabled)
                 }
-                const haveEnabled = item.enabledState !== NetworkSelectPopup.UxEnabledState.Disabled
+                const haveEnabled = item.enabledState !== NetworkSelectItemDelegate.UxEnabledState.Disabled
                 if(item.isEnabled !== haveEnabled) {
                     simulatedNimModel.setProperty(i, "isEnabled", haveEnabled)
                 }

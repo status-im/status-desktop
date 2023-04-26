@@ -289,4 +289,8 @@ ListModel {
         title: "ProfileSocialLinksPanel"
         section: "Panels"
     }
+    ListElement {
+        title: "WalletHeader"
+        section: "Panels"
+    }
 }

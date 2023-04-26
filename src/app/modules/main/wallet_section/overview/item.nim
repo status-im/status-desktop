@@ -8,6 +8,9 @@ type
     balanceLoading: bool
     color: string
     emoji: string
+    # To do once we implement <All accounts> view
+    isAllAccounts: bool
+    hideWatchAccounts: bool
 
 proc initItem*(
   name: string = "",
@@ -15,7 +18,9 @@ proc initItem*(
   ens: string = "",
   balanceLoading: bool  = true,
   color: string,
-  emoji: string
+  emoji: string,
+  isAllAccounts: bool = false,
+  hideWatchAccounts: bool = false
 ): Item =
   result.name = name
   result.mixedCaseAddress = mixedCaseAddress
@@ -23,6 +28,8 @@ proc initItem*(
   result.balanceLoading = balanceLoading
   result.color = color
   result.emoji = emoji
+  result.isAllAccounts = isAllAccounts
+  result.hideWatchAccounts = hideWatchAccounts
 
 proc `$`*(self: Item): string =
   result = fmt"""OverviewItem(
@@ -32,6 +39,8 @@ proc `$`*(self: Item): string =
     balanceLoading: {self.balanceLoading},
     color: {self.color},
     emoji: {self.emoji},
+    isAllAccounts: {self.isAllAccounts},
+    hideWatchAccounts: {self.hideWatchAccounts}
     ]"""
 
 proc getName*(self: Item): string =
@@ -51,4 +60,10 @@ proc getColor*(self: Item): string =
 
 proc getEmoji*(self: Item): string =
   return self.emoji
+
+proc getIsAllAccounts*(self: Item): bool =
+  return self.isAllAccounts
+
+proc getHideWatchAccounts*(self: Item): bool =
+  return self.hideWatchAccounts
 

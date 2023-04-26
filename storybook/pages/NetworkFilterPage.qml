@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.13
 
 import Storybook 1.0
 import Models 1.0
@@ -33,7 +34,6 @@ SplitView {
                 enabledNetworks: NetworksModel.enabledNetworks
                 allNetworks: enabledNetworks
 
-                isChainVisible: isChainVisibleCheckBox.checked
                 multiSelection: multiSelectionCheckBox.checked
             }
         }
@@ -45,17 +45,10 @@ SplitView {
 
         SplitView.fillWidth: true
 
-        Row {
-            CheckBox {
-                id: isChainVisibleCheckBox
-                text: "Is chain visible"
-                checked: true
-            }
-            CheckBox {
-                id: multiSelectionCheckBox
-                text: "Multi selection"
-                checked: true
-            }
+        CheckBox {
+            id: multiSelectionCheckBox
+            text: "Multi selection"
+            checked: true
         }
     }
 }
