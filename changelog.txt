@@ -1,0 +1,642 @@
+38d2d4fdc ci: fix handling of stdout in MacOS notarization
+99a9f2ace feat(MintToken): Self destruct flow integration
+5944b529a feat(storybook): Added support for self destruct alert popup in storybook
+54582db3a feat(MintToken): Created self destruct alert popup
+fe22cf1bd feat(storybook): Added storybook support for remote self destruct popup
+7a77748d3 feat(MintToken): Created remote self destruct popup
+b3b53de9e feat(storybook): Added support to `TokenHoldersPanel`
+dbf05f4a5 feat(MintTokens): Holders panel updates
+7882147ea feat(SQ/StatusItemDelegate): Added property to customize text horizontal alignment
+f5a74427b fix(@desktop/community): membership request button disappears when a category is edited
+fe64d0eb0 fix(mentions): fix @everyone inserting incorrectly sometimes
+f9250e7dd feat(storybook): add ChatAnchorButtonsPanel
+620cad159 [StartChat]: fixed text input scroll
+52c01f1dd feat(@wallet): make activity respect networks selector
+fb86d8745 fix(MintTokensPanel): Update input fields validation
+056dad2ce fix(@desktop/wallet): fix first section in activity to be displayed as loading Fix balance in loading state to use loading component instead of 0 Fix width of some components in loading state. Remove property modelDataValid in favor of existing isModelDataValid. Fix loading items not always properly removed before adding new transactions.
+89055e1b0 fix(@desktop/wallet): fix scrolling transactions list reset to top when new ones are fetched.
+172c849c5 fix(AuthenticationIllustration): Final version of the authentication illustration
+3f66e4192 fix: don't trigger emoji replacement prematurely
+19e7c42cc chore: extract input cursor delegate into StatusCursorDelegate
+01e96318e fix chat input focus
+05b28e6f6 fix: unbreak handling "up" key event in multiline text
+c8877aaf9 fix: speed up emoji parsing and replacements
+5dbc08dca chore: speedup channel switching
+6385afeba fix "Unblock" chat button
+f644cdc6f ci: extend PATH to include QTDIR on linux
+3871c704a chore(windows/ci): move env var up in the list to be like other files
+1f91bbc72 ci: fix typo in arch, add tests prefix to names
+f6c1b038a fix(windows): add env paths to point to Qt5.15 when building
+65415ef34 fix(chat): load as much messages as view requires
+4a9240544 chore: extend Backpressure with `oneInTimeQueued`
+3e3c9e7bd fix(chat): use `scrollTo` mechanism for `firstUnseenMessage`
+e35086f44 [StatusChatList]: added marks indicating unread msg and mentions
+cbdc3e61b fix(images): Display image placeholder when image from album not loaded Fixes: #9990
+068267289 fix(Communities): Emit the signal about community tags changes Fixes: #10146
+349c83347 ci: allow running MacOS builds on M1 Macs
+3c606625d fix(@desktop/activityCenter): jump to message by clicking on notification
+98a232851 fix(@desktop/wallet): Browser: can't do transactions in simpledapp
+23f493f25 fix(MembershipRequests): Remove MembershipRequestsPopup and set-up the navigation to CommunityMembersSettingsPanel
+5ec4360d8 fix(ChatMessagesView): Fixing scroll to message
+79ea3e7d6 fix(CommunityMembersSettings): Add member context menu + fix user click action
+a6429133e fix(@desktop/wallet): Wallet: Active account changes when clicking send transaction from a watched account
+358869fd6 chore: improvements to `GetWalletToken` function on the `status-go` side
+52494d0b0 fix(@desktop/wallet): wallet account build token logic updated
+e02b1befd fix(@desktop/wallet): guarded access to tables of token service
+2d3ff3ebc fix(@desktop/wallet): guarded accessing values by key of template cache class
+14423dfed fix(@desktop/wallet): add missing currency uppercase
+ae397a57c chore(@desktop/general): currency and cache dto don't need to be references of object
+97b6c0fe6 fix(@desktop/general): potential crash parsing task handled
+d3746b019 fix(@desktop/wallet): unnecessary locking removed from wallet account service
+7ebfcd018 fix(SendContactRequestModal): Implemented contact info request and loading UI (#10177)
+731846c54 fix(StatusPasswordInput): Fix background image and content colors
+2501520dd fix(@desktop/wallet): Handle errors in ENS and stickers views. Disbale action and show tooltip.
+34c04f0af fix(Wallet) fix DerivationPathInput allow custom partial path
+9f3d3514a fix(CommunityPermissionsSettingsPanel): fixing duplicates detection and permission updating
+ac01824ad refactor(chat): rename MESSAGE_FIRST_UNSEEN to FIRST_UNSEEN_MESSAGE_LOADED
+9419c9aca fix(chat): mark messages as read only if all messages have been viewed
+e950162bb fix(@desktop/onboarding): if you fail your login once, it doesn't work after ever
+6d7fda53f fix(@desktop): only allow dot as decimal separator for user input
+01422fdec fix(@wallet): hide empty account type
+ca1a14fa9 fix(@desktop/channels): chat/channel messages loading state is not disappearing
+840b9986d fix(MembersListSelectro): tag item should be removed only when x is clicked
+617ff8d98 chore(@desktop): Upgrade status-go
+4ceeb905d fix(@desktop/communities): Compute deployment fees in async way.
+8dafdfceb feat(CommunityPermissions): Switch to enable/disable 'Who holds' section
+43196d9e3 feat(StatusGroupBox): Use StatusIcon to gray out label when disabled
+a2f5d81f7 fix(@desktop/wallet): derivation path is not pre-selected by default when importing account in wallet
+894cb9eff fix: Remove syncing header from ‘Notifications and Sounds’
+6885fda21 fix(@desktop/general): authenticate with previously stored pass/pin to a Keychain issue fixed
+3c5c52b13 fix(@desktop/onboarding): store to keychain after login issue fixed
+3f4dd40a3 fix(@desktop/onboarding): pressing enter/return key issue fixed
+0426d7de5 fix(@desktop/wallet): Remove auto retries for connections errors. In case of an error there are two things that can happen 1. The user can manually click on "Retry now" 2. We have a 10 in timer on wallet, after whichb all the data shown is refreshed
+ef4ffce90 fix(@wallet): warnings from wallet
+bef609265 fix: Edit Community / Community Color selector dialogue does not need the back button
+c964e99b0 chore: make it possible to customize/remove the back button
+3252eaf34 fix: Excessive vertical spacing between subtitle and standard colour selector in all colour selectors
+7523b1a62 fix: draw the inner radio indicator border
+47c874747 fix(CommunityTagsPanel): unbreak the tags panel
+cde9f810e fix(CreateCategoryPopup): move the delete button into footer
+6768f6245 feat(Airdrops): Component for selecting recipient addresses and members
+0ebc5e419 fix(StatusPasswordInput): enable mouse interaction
+13c8ce3b9 chore: handle numpad enter key as well
+49651fe04 chore: use OS enum value
+847ad5e7d fix(chat): correct logic in `switchToOrCreateOneToOneChat`
+e86a625b9 fix(edit): don't send new message event on edits
+de5f0cb96 hotfix: unbreak showing encryption splash screen
+bbf260067 fix(@desktop/wallet): fix how collectibles are shown after an error, according to the design
+7f72f87f3 fix(@desktop/wallet): make collectible loading items appear on initial fetch
+7f7d43d37 fix(@desktop/wallet): lower collectibles chunk size to improve app response time
+42139c19e fix(@desktop/wallet): handle collectibles fetch error and account deletion
+52bb59710 fix(@desktop/general): clicking anywhere outside a modal dialog should close it
+cab6af212 fix(@desktop/wallet): add account button is enabled in ambiguous state
+490e8ff25 fix(@desktop/wallet): default wallet account color sorted out
+ea53fce03 feat(@desktop/wallet): edit account reusing new "Add Account" popup
+3325241b0 feat(@desktop/wallet): right click context menu - delete account option added
+0ef309675 feat(@desktop/general): copy button identified, will be mostly used as a built in component
+d8b1e4798 feat(@desktop/wallet): right click context menu added for wallet accounts
+baa7bd161 fix(edit-message): Blocks edit function for image messages Fixes: #10072
+0302b7972 fix(Albums): Fix extra count of messages for image albums Fixes: #9958
+5dc60f578 fix(JoinCommunityView): Change Reveal Address button icon based on auth type
+b72fff3f0 feat(communities): extend community with active members count
+a6df4566d fix(@desktop/wallet): checkConnected API doesnt return correct values
+7ca3084dd fix(edit): fix mentions in edits not counting towards the badge
+eb39d2814 feat(wallet): implement DerivationPathInput control
+81c346381 feat(wallet): implement DerivationPathInput control
+3566d64f3 fix(images): Wrap text in image message Fixes: #10044
+042471581 fix(edit): fix edit message not sending mentions correctly
+14c264e35 feature(Syncing): Embed QR code scanner for syncing devices on onboarding (#9981)
+f0d57d19c fix(@desktop/messages): show reply header if we send image
+7fb9b3762 chore: bump status-go
+efc9ba41d feat(SplashScreen): Display recommendation do not close the app on re-encryption process Fixes: #10039
+44b9522ed fix(unread): fix badge disappearing because of wrong calculation
+f360a9c19 Fix `WakuConfig` enabled
+dfbaf9edb fix(LinkPreviews): Fixing implicitHeight binding loop
+57467c65b fix(permissions): check ownership of collectibles in permissions view
+40e4a3670 fix: StatusComboBox doesn't react on click outside indicator
+7d3b0a576 feat(storybook): Added support to change `tokenModel` and update `deployState` property
+6752d274e fix(MintToken): Initial item updated according to `tokenModel` changes
+3db1ce70d fix(MintToken): Fixed `deployState` property binding
+27c891fc1 feat(communities): AirdropTokensSelector component added
+1c80cbb3d fix(Storybook): correct parsing of figma urls with  in node-id
+2dc9c950d fix(StatusFlowSelector): minor adjustments to the design
+8cbe2977c fix(CommunityNewAirdropView): proper size of selectors' icons
+063198fc1 feat(@wallet): do not change value of symbol
+27285151b chore: bump status-go
+e5ff0b4a6 fix(images): fix second pasted image replaces the first one
+b580f0a81 feat:(@desktop/channels): loading state when switching channels/chats
+5479880cd chore(@desktop/wallet): add account modal - improvements
+51058d906 feat(@desktop/wallet): new add account modal - amends
+c45154c06 test(@desktop/wallet): adding account related test disabled due to massive change in ui and backend logic
+cb66ad611 fix(@desktop/keycard): authenticate flow, wrong password disabled submit button issue fixed
+223e4f1bc feat(@desktop/wallet): new "Add Account" modal added
+204f47229 fix(@desktop/keycard): `keyUid` param set for all (keycard&regular users) authentication
+bd9652cec chore(@desktop/wallet): unused keycard signal removed
+a01ff000e chore(@desktop/wallet): `buildKeyPairsList` proc moved to `src/app/modules/shared` location
+1803f477b chore(@desktop/wallet): `keypair` item/model, `keypair_account` item/model moved to `src/app/modules/shared_models` location
+44e00b953 chore(@desktop/wallet): `Accounts` and `WalletAccount` services updated
+7b16a93cc chore(@desktop/wallet): old add account modal and corresponding methods from `walletSectionAccounts` module removed
+388fab4a4 feat(StatusQ.Components): `StatusPageIndicator` component introduced
+8eba843a5 fix(Chat): Fix pin popup and actions for communities and group chats
+4d4ec22ba feat(Chat): Disable unpin action for PinnedMessagesPopup
+1f54d96f5 feat(Chat): Disable chat actions for non-contacts
+ad4838e4f feat(Chat): Disable sending messages for non contacts
+b45cc15e3 fix(community-tests): fix edit and delete category tests
+75571c9f2 fix(StatusItemsSelector): Allow icons to be provided by the model
+17834ecbc fix(MintTokens): Use localised amount for total supply
+999d76711 chore(@desktop): Set mayfail to "The user sends a transaction" scenario
+b62a204ee chore(@desktop): Upgrade status-go
+c8aefe4e6 feat(@desktop/communities): Airdrop community tokens
+5f765e354 chore(status-go): up status-go version to get mem leak fix
+caebc9b93 fix(community-members): fix pending request buttons + updates
+d759bda81 fix(@desktop/communities): Computing fees in ETH and USD for Sign Transaction dialog
+2142a6bf9 fix(ActivitiCenterTolltip): Position tooltip arrow in the middle of the button
+81d4ea05e fix(communities): only require auth for token gated communities
+27d7b822e fix(group): fix editing group image on Windows
+9d0e14b68 refactor(chats): separate calls to getChats for each section
+d75d723f5 fix: unbreak importing community from settings
+c65de87ad fix: unbreak displaying community invitation bubble
+5b3a115f5 fix(@desktop/wallet): Loading screen after adding account 1. Removing logic for loading to nim 2. Handling error state for asset view also on the nim side
+2f3392c7d feat(HoldingsDropdown): Open list of all tokens by default when no own/community tokens
+5b9017757 feat(HoldingsDropdown): All listed assets / collectibles submenu
+b3af51947 feat(HoldingsDropdown): Enable navigation to mint tokens settings section
+575ee6a22 feat(HoldingsDropdown): Added no data information message
+a6e29ebc0 feat(Airdrop): Show only collectibles in holdings dropdown
+e36270c84 feat(HoldingsDropdown): Added property `isCollectiblesOnly`
+30b4d9eb5 fix(chat): Sent images with text correctly Fixes: #9564 #6374
+6c3d5c3ab fix(MintTokens): Remote Self Desctruct property fix
+051fc625a feat(MintCollectibles): Add sign transaction dialog in minting creation flow
+76e2a46c0 feat(storybook): Added storybook support for `SignMintTokenTransationPopup`
+6bd8a18d9 feat(MintToken): Created sign mint token transaction popup
+e751f8c65 feat(SQ/StatusDialogFooter): Added new property spacing
+d24d23361 fix(JoinCommunityView): Enable activity centre and disable start chat button
+3a09ef8fa feat(Contacts): Remove ability to cancel outgoing CR
+e4f6724fd fix(Syncing): Update to newer version of status-go local pairing (#9992)
+06ca722cb fix(Syncing): Added back state for sync_device_result state (#9998)
+5592335b2 fix(chat_section): Open Chat section before creating or switching to one-to-one chat Fixes: #9880
+ec6d35a6b fix(@desktop/communities): Fix transferable and self destruct token parameters
+2f3f8f4e0 refactor(gifs): lazy load tenor api key + make search async
+21d2c00b4 feat(@desktop/chats): Keep only last 5 chats/channels in the memory
+c8ef6bcd9 fix(MembersSelectorView): Change paste event to parsing text for lookup contacts Fixes: #9881
+072537f61 feat(@desktop/wallet): Implement connection error screens
+df121445c fix(@deaktop/wallet): Implement error states with automatic retries
+054ad1853 feat: add authentication modal to join commmunity view
+5e965bcbb refactor: make accepting member requests to join async
+f39dfa87f move qzxing and SortFilterProxyModel to vendor folder
+ff5c618c8 fix(AC): fix store so that community request buttons work in the AC
+ee5e72b08 fix(HoldingsDropdown): Add basic focus management and keyboard support
+f18ceff60 fix(StatusInput): forward focus to the input component
+ad8ce70e0 fix(StatusBaseInput): forward focus to the input component and send signals on Enter/Return pressed
+858b53979 fix(tokenService): ensure token address map is properly initialized
+7e9e3ee25 fix(HoldingsDropdown): Implement dynamic height
+66c32395f feat(MintToken): Disabled token holders panel until backend ready
+87f86855e feat(storybook): Added storybook support for `StatusEmojiAndColorComboBox` component
+f691c8512 feat(MintToken) Add select wallet account option
+87f42e607 fix(MintToken): Preview dark mode boxes color
+c6517c00f feat(SQ/StatusEmojiAndColorComboBox): Created new component
+b4355f800 feat(SQ/StatusComboBox): Added new variant
+2d22f2f09 fix(Syncing): Fixed changing device name (#9921)
+3b2a8f425 fix: Status taskbar button and the Status window title bar are missing
+9af1734c6 fix(@wallet): inifinite load tx
+964aa7ebc refactor(community): make community data calls async
+fee9b31a8 chore(Community): remove unused popups
+3008e5645 fix(chat_section): fix link activation for channels inside categories
+417f206d4 fix(@desktop/communities): remove chat_section data if user left the community
+8d97203a8 chore(@desktop): Upgrade status-go
+50f64919b fix(@desktop/community): Convert community token image to base64 format
+0bb28f564 fix(CommunityNewPermissionView): Proper size of icon in "Who holds" selector
+d219d32b7 feat(CommunityPermissions): Limit of 5 permissions for "Become member" permission type
+083bea095 fix(CommunityNewPermissionView): proper color of icons in "Is allowed to" section
+9c1053c61 Chore: Bump status-go
+70143de98 Chore: Bump QR-Code-generator
+78052242b chore: Bump status-keycard-go
+4ccdcdf44 chore: Add Apple silicon support
+eecaa0c7b fix(StatusEmojiReactions): Text in own reactions has wrong color in dark mode
+36940cc81 fix(@desktop/wallet): update tests to remove wallet activation
+02ebc8744 feat(@desktop/wallet): remove isWalletEnabled from local settings and use ENABLE_WALLET env instead
+ee3d92c12 feat(@desktop/wallet): enable wallet by default
+8d955265d fix(@desktop/sections): do not unload chat and communities sections during the switching between the sections
+8ef495c60 feat: add `decimals` to token criteria
+2d2929872 refactor: add parsedText to message_item to parse msg on mention change
+0ebc81594 refactor: reduce calls to getMessageById and remove calls for reactions
+cc1a89efe fix(JoinCommunityView): update amIMember state when kicked and joined
+bef14365a chore(StatusItemSelector): Use StatusFlowSelector as a base component
+7df80bfa1 StatusQ: StatusFlowSelector added
+347da1e00 StatusGroupBox used as a base for StatusItemSelector
+840ebbe1e feat(StatusQ): StatusGroupBox component added
+0db5790f7 chore(Storybook): StatusItemSelectorPage moved from Sandbox to Storybook
+47cb1810b chore(Storybook): StatusDotsLoadingIndicator page simplified
+0689a8f38 fix(Syncing): Fixed synced devices list UI bugs (#9929)
+4e3263fdd chore(PermissionsDropdown): Temporarily hide channel-level permissions from the dropdown
+842e4565b feat(@desktop/wallet): add support for collectible "watched contracts". Re-fetch collectibles periodically.
+240fbfab6 fix(CommunityPermissionsSettingsPanel): Fix height and width for permissions views
+d8ce6f58d Nim library updates, pt 2 (#9734)
+2ca8fd04e fix: apply proxy model to collectiblesModel
+7aaa16a0c feat(storybook): Added airdrop settings panel
+b8b6f36bd feat(Airdrop): Added welcome page and basic view to create airdrop
+3feddd892 fix(MintToken): Fix network property
+8aa8b8b7c fix(StatusTooltip): long text goes out of bounds
+411961aee fix: ‘Share community’ URL is unnecessarily ellipsed
+8aabc0c4b tests(wallet) disable add watch only account failing test
+edc19d1b0 chore: up status-go version
+0b6ff5ae2 fix(activity_center): Remove notifications from activity center
+ee56e7909 chore: bump nimqml
+1998a6556 feat(Profile): New Social Links workflow
+494ab84fe fix(@desktop/chats): Always show message header in the private group chats after sestem message
+3a737f97a fix(messaging): Sync with status-go content type enum
+c7e99365a fix(contacts): Block unlimited counts of request contacts from create chat view Fixes: #9485
+1c53d1e9b fix(@desktop/communities): Chain details (name, icon) are taken from model.
+53a292640 fix(Contacts): Remove dublicated action from menu
+9ff9ad8f0 fix(Contacts): Add Reverse Contact Rejection to profile actions
+3c1775ba6 fix: Setting / Notification & Sounds - Copy update
+e19f0aa7f test(tst_communityPermissions): permissions setting is available
+55ad5409f refactor(community-service): merge curatedCommunities in communities
+33d38a408 fix: Device syncing
+d2aa9e97b fix(@desktop/wallet): disable failing test to make saved address favourite after favourite feature has been disabled
+338ad6109 fix: Set app minimum width to 1200
+1f3aef3a0 refactor(browser): make dapp permissions lazy load
+7cbe7332b feat(wallet) fetch multi-transaction information
+77ac9b0e7 fix(NotificationsView): fixup global @everyone text
+7ff2f9cfa feat(storybook): Minted collectibles list view added
+ebbb22f51 feat(@wallet/NetworkSelector): Single selection updates
+e8b1dad80 feat(MintTokens): Added list of collectibles view
+79a1a60c7 refactor(MintingToken): Navigations refactor
+d84d7a8a3 refactor(@wallet/collectibles): Updated `CollectibleView` api
+c7f18978d chore(MintingToken):  Refactor access to stores in minting components
+5db989db6 fix(@desktop/wallet): disable 'favourite' functionality for saved addresses
+fc18b7284 feat(@desktop/wallet): Added menu items to check address activity on arbiscan and optmism explorer. Fix menu position to align right of the 'more' button
+ab1393b7f fix(Chat): Show message's text for community invitation
+db7256fd1 fix(StatusChatInput): fixed input loses focus when switching chats
+ef8860edb fix(StatusChatList): fixed dnd uncategorized channels
+30294f97f feat(@desktop/wallet): add pagination to collectibles view
+6ec562c6b chore(@wallet): re-enable test
+2019e8c69 fix(@wallet): close save address modal policy
+4a0c2c52e fix(tests): fix tests that rely on creating a channel
+25b0641cc feat: introduce first JoinCommunityView for token-gated communities
+8f3a965a4 fix(@desktop/communities): Rename minting module
+37d539f06 fix(@wallet): saved address form typo
+c31903d28 [StatusChatInput]: fixed focus and reply component lost
+2fb158b81 fix(@desktop/wallet): fix send input for some locales
+ab523ee19 fix(CommunityPermissions): Temporary solution for assets icons
+a7943e79a core: Add benchmarking tools
+d8473f4d4 refactor(communities): refactor communities cache in service
+ce33c195c refactor: make loading installed sticker packs asynchronous
+433ea71d6 refactor: load recent stickers asynchronously
+5c0f1981a feat: Profile Showcase: Proof of concept for own Profile Dialog
+2204273a2 chore: don't let text overflow
+3fd196323 chore: silence warnings
+919f3dc6f refactor: load gifs asynchronously
+2ac1216b6 fix(@desktop/communities): Fix community tokens model
+948a1fb08 chore: fix qrc resource bloat
+0e92b69bc chore(CommunityPermissions): fixed warnings introduced during integration with backend
+d813cc12b chore(CommunityPermissions): refactor access to stores in CP components
+6f03a8968 fix(@desktop/wallet): keypairs are displayed wrongly after account removal
+e40ee3b07 chore: use random ports for waku and torrents
+48c322cbe refactor(ChatLayout): expose emoji and sticker popup properties and signals
+d5cddbf79 feat(@desktop/keycard): no `pcsc` service error screen
+c5c19e6c3 feat(@desktop/keycard): detecting keycard reader removal for the beginning of each flow
+21a5b10fa fix(@desktop/keycard): few small fixes applied
+7c1c178d3 QR code scanner (QML component) (#9464)
+eed98809d feat(@dekstop/wallet): support collectibles in activity tab
+4ad4a7e2b feat(storybook): Added new mint token views pages
+02cf07044 feat(MintToken): Created Preview collectible page
+72da3cdf6 feat(SQ/StatusImageSelector): Added new properties
+736f315c4 feat(SQ/StatusDotsLoadingIndicator): Created new 3 dots loading animation
+cb924053c fix(@desktop/channels): allow capitals in channel name
+601d3dd0f fix(@desktop/wallet): Fix tests for saved addresses. Minor fixes
+e27f2ec66 feat(@desktop/wallet): update saved addresses list
+3897b4282 chore: bump nimqml
+58e9e6170 fix(SplashScreen): Enable threaded renderer
+1a96700bb fix(ProfileHeader): Settings/Profile/avatar design updates
+5ffab60f5 ci(e2e): Updated squish version from 6.7.2 to 7.1-SNAPSHOT
+c48886ec1 chore(@desktop): Upgrade status-go
+5722f6796 fix(@desktop/communities): Handling community token image
+d31acbfb4 chore(translations): update translations
+2429673b8 chore(communities/portal): rename section (popular -> all)
+0e60ac493 fix(AmountInput): Skip non-digits for max input length limit validation
+405a8ee3e fix(LocaleUtils): Improve handling small numbers by fractionalPartLength(num)
+a2a1da801 chore(CommunityPermissions): Use key role name for referencing channels
+480c249ee chore(CommunityPermissions): Refactor channels handling
+2e45889a9 refactor: TokenCriteriaType -> TokenType
+467539446 chore(@desktop): Upgrade status-go
+5f28d8b80 fix(@desktop/communities): Pass chainId to status-go call
+40a157a5a fix(test): fix create category test
+38a9b4a7f feat(ActivityCenter): Support status-go PR with endpoints refactor
+702d355e8 chore(InDropdown): Adapt to flattened model for channels
+bb2e03bd8 feat(StatusQ): Added ModelChangeGuard utility to prevent altering models
+aff97d741 fix(CommunityPermissionsViewPage): prevent from modifying singleton's data from storybook's page
+ec51fbe0e feat(ActivityCenter): Override replied text for messages with rich content
+71bbb03fa Nim library upgrades, pt1 (#9703)
+e4b8814bf feat(Communities): allow for creating community permissions
+489d5d501 chore(node_config): move constants to NODE_CONFIG
+4d5d557df feat(Storybook): Add button for copying component name to clipboard
+18e5fc915 fix(chat): Display text from image message
+e6226ab56 fix(@desktop/statusq): Fix icons background square, but must be circle regression.
+c55fb9665 fix(@wallet): send modal with recipient ens
+7db4a5ca5 fix(community-service): fix community image parsing for windows
+ef99e3d01 fix: Primary nav bar vertical alignment on Windows/Linux
+a97d32346 fix(Communities): ensure community chats exist in memory upon spectating
+723bc4f38 fix(ActivityCenter): fix missing membership notifications
+95d29c76f fix(Storybook): Register StatusQ types for Storybook/qmlTests
+a0170a3fd feat(wallet) propagate multi-transaction ID to Nim
+806f6a8b3 fix(@wallet): send zero tx
+a7ecb4be9 fix: delete `appController` before `statusFoundation`
+72d40346f refactor(browser): only get bookmarks when opening the browser
+f10299ba6 fix(curated_communities): fix error handling in curated communities call
+1856c9de9 remove task-runner dependency
+c560e9b96 fix(StatusChatInput): fixed invisible text when pasting text with emoji
+9772145ce chore(Storybook): Update Readme to point CMakeLists.txt as the main way to build instead of WebAssembly
+bf9b709cc feat(@desktop/keycard): recover an account fetching previously backed up data from waku
+8a1e1947a ci: remove submodule vendor folders to save space
+16ed8739e fix(wallet) fix Add Account Modal and wallet tests
+1c7c0d7d8 fix(@desktop/statusq): Change id for StatusListItem to root. Fix some equal signs to be === and !==. Removed iconHoverEnabled property for StatusListItem.
+19436c0e5 fix(@desktop/statusq): Reverted StatusSmartIdenticon to use icon with mouse area instead of button. Added a missing bgRadius assignment.
+b901f32dd fix(@desktop/statusq): Fix StatusBaseInput marked dirty in case of rich text if visual input is empty
+bfdd9092e fix(@desktop/statusq): Fix StatusQ and shared components as part of new saved addresses UI implementation   - Fixed StatusInput and StatusBaseInput to respect rich text.   - Fixed AddressInput's height that breaks the layout when inside of QtQuick Layout.   - Added support for icon clicks in StatusListItem.   - Fixed broken right alignment in ContactsListAndSearch.
+2a1ea3b0a fix(StatusChatList): Missing space between channels in StatusChatList
+5281cae19 fix(@desktop/wallet): Fix send modal to display all balances in advanced mode, independent of network selection. Fix missing break in for loop in token model
+e9f4426e6 refactor(devices): make loading devices lazy load and async
+9b840bfbd refactor: make sure we only set active the active chat of active section
+5352ba8c6 refactor(chat-model): simplify chat model and put category as an Item
+d059fb7e1 chore(nimqml): Bump nimqml
+79b4d7638 fix(QAbstractItemModel): Fixing memory leaks and crash when using startupModule after the object is deleted
+8a2bb3e40 feat(MintTokens/storybook): Created network model and store
+db3be56d4 feat(MintTokens): Create new collectible screen
+83bdc7f10 feat(Wallet/NetworkFilter): Extended component API
+2398b8bd4 fix(SQ/StatusIntValidator): Validation function fixed
+aecb4816e feat(SQ/StatusImageSelector): Created new statusq component `StatusImageSelector`
+3441c2e18 feat(keycard): remove balance from factory reset flow if user is not logged in
+d6467923e fix(Chats): Drag/drop image files is only available for community channels
+7b250b20b feat(ActivityCenter): Move group logic to nim service layer
+a70bbd448 feat(ActivityCenter): move activity category counters on the backend
+bb9d6b312 feat(ActivityCenter): Review fixes
+c5a32ff8c feat(ActivityCenter): Switch on backend filtering for the AC notifications
+0529ea4be feat(ActivityCenter): Storing activity center group in the service level
+a0647d241 feat(ActivityCenter): Remove UI-side AC notifications filtering & sorting
+7d9a6f5a7 feat(@wallet): add pokt network + fallbark
+2accc52b1 fix(UnfurlingUrls): Fix community invitation when community cannot be fetched
+606d30abc test(suite_messaging): Disabled some code that is causing CI failures
+b4407f79c test(FileManager): Added if path exist check
+7cef44460 fix(@desktop/notifications): send OS notifications if app is not focused (#9652)
+5bf702fd0 fix: prevent spam of "requested community doesn't exists"
+c83794470 chore(keycard): sync keycard with the current app state updated
+cf5271cfe refactor(communities): load curated communities asynchronously
+ee9fe6d72 fix(Contancts): Fix retractContactRequest rpc payload
+fa1c3beb2 feat(@dekstop/wallet) use user input resolution for Send/Bridge modals
+ed1a0d04a fix(@desktop/wallet): avoid storing CurrencyAmount objects in QML
+f51dba06d chore(@desktop): Upgrade status-go
+147288b47 feat(@desktop/community): Saving community tokens in database
+4fca725b5 fix(DidYouKnowSplashScreen): Implement UI changes 1. Update messages 2. Increase messages shuffle time to 7 sec 3. Add fade in animation to DidYouKnow messages 4. Update storybook page
+4d8757a12 fix(NimThreadpool): Implement lightweight threadpool
+93ef76c3e fix: record bigger than 300 bytes
+7c87bc898 fix(scrollview instances): fixed dropdown&popup height
+7c3a6795f fix: qml warning about StatusRoundButton
+2dbf2d463 fix(@desktop/wallet): Remove the 'Load More' button from the Activity view and replace with automatic loading when the user scrolls down using a skeleton loading state
+e8ed91b3b chore: update status-go (go-waku 0.5.1)
+d9ed23b2d fix(@wallet): trim tx data
+abd1672e9 fix: provide correct content/implicit sizes
+8097d640e chore: remove unusued imports
+7d9fe2d8c chore: update en translations
+ad006cf10 fix(CommunityTokenPermissionsPopup): required models provided, storybook page fixed
+e352dcfc1 chore(CommunityPermission): Use typed properties for CommunitiesStore
+44a13eedf chore(CommunityPermissions): Dissect real and mocked CommunitiesStore, adapt Storybook's pages
+9693e19ba fix(CommunityPermissions): Adjust store API to not take models as parameters, move conversion to the caller
+34676d0ec fix(CommunityPermissions): clean warnings by preventing assigning  when some roles doesn't exist
+1e7e2084a fix(CommunityNewPermissionView): Use only key/amount to compare holdings when tracking duplicates
+c85a8d364 fix(StatusQ/Utils): Fix ModelChangeTracker and ModelUtils to handle  properly
+51928f5c2 fix(StatusQ): Removed nonexisting/unused imports from Sandbox pages
+340866612 feat: relative or absolute timestamping depending on time/date proximity
+e4d03a903 fix(@desktop/wallet): Wallet -> Bridge: can't send txn with bridge, code 32000: not available for chainID
+9ec94488a fix(@wallet): hash password lowercase
+4c0bd1058 fix(@desktop/wallet): Preferred network doesn't reflect in advanced view
+79645b53c fix: truncation of channel description and pinned message text
+ff75e862e fix(StatusLinkText): no duplicate import
+852a82612 fix(CommunityPermissions): Update initial page dark mode image
+e2811fa29 feat(CommunityPermissions): Handle update/remove by permission's key instead of index
+03e1636cf feat(StatusQ): Add cpp model utils to allow handling ListModel and generic QAbstractItemModel uniformly
+89b767cf2 chore(StatusQ): register StatusQ's cpp types for SanityChecker
+9f97ce2cd fix(StatusQ/Sandbox): move and update build script
+c23f4e173 fix(CommunityPermissions): Typos corrected
+f6ac937df fix(CommunityPermissions): Warning regarding color assignment fixed
+d025f17e2 feat(CommunityPermissions): Check if form filled completely when updating
+a97c8a720 feat(CommunityPermissions): Implement duplication checking
+c78eaef2b chore(CommunityPermissions): Permissions model and backend API simplified, separation of concerns improved
+9757002c7 chore(CommunityPermissions): Permissions model & backend API simplified, dirty state handling simplified
+7388bbfef chore(CommunityPermissionsView): component api unified and simplified
+0af9c2791 chore(CommunityNewPermissionView): simplified by introducing ModelsComparator component for tracking dirty state
+9f884605c chore(CommunityNewPermissionView): Operations on models excluded to ModelUtils singleton
+fb1938543 chore(CommunityNewPermissionView): refactor to improve separation of concerns, create/save actions moved up
+3a3d1657f chore(CommunityNewPermissionView): exclude subcomponent HidePermissionPanel
+f8f4757a0 fix(Storybook): fix cmake config to show qmldirs in QtCreator
+9a0c682ca chore(CommunityNewPermissionView): Simplify dirty values handling, extend Storybook page
+411c2a0aa chore(CommunityNewPermissionView): refactor save/reset changes handlers
+b8f6cbcfa fix(i18n): properly format floating point numbers
+a23726ffa fix(CurrenciesStore): fix missing import and raw backend access
+888d8495e fix(InformationTag): fix default size
+1e282cabb feat(MintTokens/storybook): Added storybook page for mint tokens welcome page
+c1e3050d0 feat(MintingTokens): Created welcome view
+8e9ae308d fix(qmlWarnings): Fixed minting module related warnings
+17fc999ca feat(CommunitySettings): Created base welcome settings view
+bd1a778a0 fix(@desktop/keycard): some pictures are not modified for dark mode
+5a8bc256b feat(@general): lower case password
+277de1b54 fix: contact ID verification and community intro sizing issues
+27b8180fd feat(@desktop/Wallet): use new status-go currency formatting API
+b70e1f0fb feat(ActivityCenter): Add indication for visited/unvisited AC state
+3b9b51419 fix(main): create loading item for activeSection on start
+8cc80694e fix(@desktop/general): qml warnings caused by undefined context props handled
+86fb93ecb fix(@desktop/keycard): Keycard -> Factory reset: $NaN amount is shown in factory reset flow when account has no funds
+31be818e0 fix: Pinning messages - tweaks to UI and interactions
+165271dbe fix(ActivityCenter): Fix CommunityBadge eliding
+fe5abb60d feat(TokensPermissionsPoupup): Created new popup
+a4bce9e13 fix(@desktop/keycard): update logic of enabling action buttons during the flow
+42445d4b7 fix: App crashes on uploading an image containing "+" in its name
+009861c7b fix(SplashScreen): Add Did You Know Splash screen
+c05334c32 chore(CommunityPermissions): Use enum for token category, keep string labels in UI only
+bb23131f0 fix(statusChatInput): do not replace text with emojis on links
+ed9e78226 fix(MessageView): Show message when there is one img preview and extra text
+3bb667bb7 feat(Wallet) cache fetched balance history to DB for efficiency
+7ebe5488b fix(Chat): continue of deleted message
+63bbf266a fix(chat/messages): prevent manipulation of uninitialized cursor
+7c1b4e37f fix: invalid length of multiaddr field (but loaded succesfully anyway)
+d7d9aa261 fix(wallet): improve send modal amount received text
+03d80ea9f fix(LinksMessageView): Remove HEAD validation for image urls
+f9f860a21 fix(LinksMessageView): Refactor LinksMessageView to remove business logic from qml
+a93320f68 fix(main): replace the frozen splash screen with an animator
+32dc26cba fix(ENS): For a ENS name the wrong release date is shown
+b77033ef1 chore(@desktop): Upgrade status-go
+b6f5c558a feat(@desktop:communities): Minting functionality with dummy data
+a12e599be feat(@desktop/wallet): adding wallet derivation path updates
+2c809a56e feat(JoinCommunity): Integrated join community popup into the new view `JoinCommunityView`
+8d5f62536 feat(storybook/CommunityIntroDialogPage): Improved storybook related page
+3fcf6518d fix(CommunityIntroDialog): Improved layout resizing
+37c88cbaa ci(e2e): Changed UNSTABLE state to be considered as a failure
+a62e5cc22 fix: profile preview doesn't show entire profile
+a5194e094 feat(@wallet): move query async
+26baaa0e1 fix(StatusChatList): Enable StatusChatList sizing and disable scroll filtering when the listview.height == listview.contentHeight
+243f1e560 fix(storybook): Fix cmake file for macos
+eafee302d fix: pasting a user's profile link in the ad-hoc chat search
+2bc8fa123 fix(tests): The user can manage and observe a watch only account
+b5ff5178f fix(tests): The user can manage and observe a watch only account
+505f6d59b fix(wallet) SendModal layout
+3a08ebec4 fix(wallet): some of SendModal's broken windows
+b777e20bf feat(storybook/JoinCommunityViewPage):  Created new storybook page
+8e45d6c50 feat(JoinCommunity): Created `JoinCommunityView` page
+fd67989c2 feat(storybook/StatusMessage): Added new `StatusMessagePage`
+3d8cf574f feat(storybook/JoinPermissionsOverlayPanel): Created new storybook page
+ec8b03be6 feat(JoinCommunity): Created join permission overlay panel
+842c90a31 feat(Community): Create `CommunityColumnHeaderPanel` component
+182a18981 fix(community): ensure chats are reordered when cateories have changed
+81926de73 fix: panic when enr's multiaddr is empty
+2004adafb fix(@deaktop/wallet): Fix transfer function amount
+f5d6c538c chore: consolidate & refactor popup handling
+148179018 chore(general): move cpp files of monitoring tool from DOtherSide to ui dir
+51afe05d3 chore(general): cmake include file defined for StatusQ sources
+36dc3e4c5 fix(@desktop/chats): Scroll chat to the bottom or last unread msg when chat is first time opening
+940d8cd2c chore(general): Move RXValidator to StatusQ
+f43c3e2f2 chore(general): Move StatusSyntaxHighlighter to StatusQ, remove mock from Storybook
+8f25b93f9 chore(general): Move QClipboardProxy to StatusQ
+ad3469482 chore(general): Deduplicate and move StatusWindow to StatusQ
+3a07651dd chore(DOtherSide): Use SortFilterProxyModel from StatusQ
+c0a1cd58a Removing SortFilterProxyModel submodule to avoid conflict when merging with status-desktop
+3a52e5e59 fix: correctly parse the destination folder
+e9bf6cdbd fix: download image is saving to wrong folder
+4119528eb fix(macosCmake): Prepend .mm files in order to override cpp implementation
+052549061 feat: Add additional utilities for real-time app inspection
+ce5561d3b feat: add basic tools for app real-time monitoring
+4977b7aa2 chore: fix build with Qt 5.14
+210552b92 fix(StatusSyntaxHighlighter): code block fixes
+dda5e100f chore: add QSettings beginGroup and endGroup
+68096fe9a fix(SoundManager): use logarithmic sound volume scale
+555192427 fix(hunspell): Remove hunspell cos we not use it Fixes: https://github.com/status-im/status-desktop/issues/8424
+2307356a5 fix: reuse QNetworkAccessManagers and pass cstr to lambda safely
+a7e82bfec fix: stop leaking QNetworkAccessManager and its replies
+b8fc19d38 chore(@desktop): Expose QTimer functions
+b1823f12e refactor: default clipboard image base64 to JPG instead of PNG
+f8767e0c5 fix(QClipboardProxy): return imageBase64 as a QString
+be3baf4bc QClipboardProxy: add support for images, html and urls
+496cdd064 fix: use QClipboard properly in QClipboardProxy
+23c13fd73 chore: hook into QT logs with qInstallMessageHandler
+39cce2200 feat: add RXValidator
+c96e2601d feat: implement OS notifications on Linux
+ec90b2107 fix: abort startup on QML errors
+eac67137c feat: add qml debugging
+109e45966 feat: register SortFilterProxyModel types
+e5f0387ef chore(git): add vendor/SortFilterProxyModel
+63b6e8c88 fix(StatusSyntaxHighlighter): Updated regex and text formatting
+e666ccf1a feature(desktop/general): Showing number of all notifications on tray icon badge
+3487862d2 feat: url scheme event added
+fd4971b91 feat: get text from the clipboard
+b84216490 feat: add support for download and copy image by url
+1008ea78b fix(chatinput/mentions) added clipboard proxy to prevent paste text missbehavior
+18b87996e fix: add system certificates
+3c0761196 feat: dos_add_self_signed_certificate
+84de33af4 feat: function to check if the app is active and make the app active are added
+3d08d2536 feat: sound manager added
+36167739e chore: registering types is done after `QGuiApplication` instantiation
+e2eaca42f fix rebase slipup
+a22f60222 QGuiApplication to not mess with QCoreApplication and QApplication
+5dc926f66 feat(@desktop/general): (macos) Keychain manager added
+4d1069257 feat(@desktop/general): QSettings class exposed to nim
+ca536cf71 refactor(@desktop/general): status custom events and os notification moved to the status namespace
+15b44e7b8 fix(@desktop/systemtrayicon): using proper QApplication class
+e7ba84266 feat: expose from local file
+79681fccd feat: expose to local file
+cd82993be feat(Spellchecking): Update Spellchecker
+ec0b962ba feat(Spellchecker): Add spellchecker class
+64c960fdb Passing custom events over single instance IPC
+ee4f15234 Fixing SingleInstance for *nix
+31eb8d939 fix(@desktop/chat): proper font style for code blocks
+80e2534df fix(@desktop/general): (windows) clicking push notification does expand the app but does not open correct channel/chat
+db826f58c fix(@desktop/general): (macos) clicking push notification does expand the app but does not open correct channel/chat
+859944251 chore(@desktop/general): CMake include files optimization
+c38a360e7 Added UI scale factor logic.
+2bf1bfb30 feat: Adding API's for copying/downloading an image
+08a8c0cc9 fix(desktop/chatinput) Adding custom syntax highligher for text formatting in chat input
+f0e3f0499 fix(@desktop/general): Changing System Appearance on the fly is not working
+cba2e276b Introduced SingleInstance class
+8c095ec62 feat: single instance check for StatusWindow
+1c3bbe1b8 feat: add parameter to make the translation dynamic or not
+0d4916d03 fix: show status window in center
+d62b8ee92 Removed cmdline args passing to Qt
+fd1ed3eba Passing argc, argv to QGuiApplication
+387f002c6 feat: QGuiApplication supporting icon() and installEventFilter() methods
+4be2340d3 feat: Add cutsom window without titlebar for osx
+a1b7e7040 Removing unneeded file
+1b7192935 Removing unneeded file
+be6a6167f Removing unneeded file
+df8838703 fix: ..types.h -> ..Types.h
+fd4fc7c46 fix: move dock clicker too other files
+bd668c0df Update README.md
+1471e1c1a feat: add DockClicker event filter
+37ebdf58b fix: improve defensive cstring copying
+7793f6b6e long long support
+a01981ed8 feat: Add QNetworkAccessManager and clearConnectionCache
+acf240f2a Creating a cache for network requests
+edb4b79e1 Make the scheme and path prefix optional
+c6081720e feat: get host, and update url
+956f51d38 feat: obtain url from user input
+f2590b103 Add function to escape html
+895e94d5e Add function to strip html tags
+7a286e548 fix: creating a copy of signalstring
+0b41a9b86 feat: specify tmp dir for images
+d61301460 feat: resize images
+2dfb92a16 feat: add translation function on the engine
+3cb8c466a Enable OpenGL
+1d009fa37 print connection types
+2d556fbc4 feat: create networkconfigurationamanager
+f2ce61142 feat: add clipboard support
+0229edc41 feat: appname
+cac8fe48b feat: allow setting app icon
+18cc92e02 feat: Enable HDPI
+e4d3e5f2b .gitignore: add *.dylib
+202f5cb7d more CMake options
+18c55c5dc feat: add signal handler for status-go
+561c60a0d Original dotherside repository up to 4d0d6a353c33ff2227b83562a127b3514a7e2169
+121c62bd9 Remove submodule vendor/DOtherSide
+4cefd4af2 fix: unbreak chat categories height and highlight
+4dc97dde1 chore: unbreak bad merge
+e0172c8bb chore: add mayfail to tests that fail on CI
+6ef96a6a7 test(doc): Added info about Squish versions tested
+6d658c7c8 ci: revert to using Squish 6.7.2 for Qt 5.14.x
+f8ecd9dbc refactor(chat): make getChats async to speed up start time
+5f4000b7a test(chat): re-add chat order test using 1-1 chat
+9b7c2b15c fix(wallet): add wallet account - enable advanced section all the time
+a57eb0624 test(wallet): fix user can manage and observe a watch only account
+7a3144ebf test(community): re-add mark as read test in community tests
+2f3d1fcf4 test(community): re-add sticker test as community test
+a055929f9 test(community): re-add emoji tests
+a4c8419aa test(community): re-add test for mention non existing user
+5bb4a3741 test(community): re-add test that does a mention
+b798b18c1 test(community): re-add a couple of chat tests in community tests
+aa2e6386a fix(statusApp): resolving qml errors/warnings pt2.1
+d553934b4 fix(popups): set scrollview sizing
+6f9149428 fix: changing password with wrong current one fails
+0d369129d feat(@desktop/wallet): Implement loading state for Send/Bridge Modal
+8ba10ce6b fix(@wallet): display network short name for collectible
+9e23f7818 feat(@desktop/wallet): Implement loading state for collectibles
+36f562243 fix(@wallet): add data field in tx event
+bc353a1cc chores(@wallet): remove revert reason
+6e188de21 fix(@test): enable back delete account
+46d4193bb ci: fix labels for imports CI job and QTDIR
+246e8b270 ci: add missing dependencies for Qts libqxcb.so
+5cc6ad194 fix(@wallet): no tx found
+b037d724e fix(StatusMessage): updated GIFs behavior
+3f52df4f8 fix(@desktop/wallet): opening add account popup causes the app to crash
+025729421 Chore(Qt5.15): Fix qml warning
+224fd3f42 fix(@desktop/general): invalid pin saved to keychain when enabling biometrics on account using keycard
+ca3f82848 chore:(@desktop/general): storing to keychain logic simplified, improved
+1793844cd fix(StatusMessage): stickers were not aligned correctly
+78f4560a5 Nothing happens after clicking on a pinned message
+1cc1b8a1b fix: '@everyone' in the pinned messages leads to 'qrc:/app/mainui/1'
+edc94c9d8 fix: unbreak community options layout
+1818347da fix(@desktop/wallet): migrate non profile keypair and delete account fix
+dc3bcd7da feat(Community Permissions): Integrate In section with permission creation/editing
+05b6420f8 fix(Tracer): Set high z order to avoid overlapping
+bd6dc0216 feat(Community Permissions): Add search option in assets / collectibles dropdown
+fc5dbf0d2 ci: update build setup scripts to Qt 5.15.2
+fb526840a feat: waku2 store
+810a6bb5f chore: remove bloom filter usage
+18f9c29ef chore: up status-go (fix to contact migration)
+91c8fe741 fix(@desktop/keycard): broken keycard flows fixed
+34686226d chore: point VERSION of source dev/builds to GH repo
+09b5a104c chore: bump git master version post 0.9 release
