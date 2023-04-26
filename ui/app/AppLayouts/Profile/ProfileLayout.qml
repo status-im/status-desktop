@@ -246,6 +246,7 @@ StatusSectionLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                messagingStore: root.store.messagingStore
                 advancedStore: root.store.advancedStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth

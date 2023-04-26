@@ -12,6 +12,8 @@ import shared.status 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Popups.Dialog 0.1
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
 import "../stores"
@@ -22,6 +24,7 @@ import "../panels"
 SettingsContentBase {
     id: root
 
+    property MessagingStore messagingStore
     property AdvancedStore advancedStore
 
     Item {
@@ -132,6 +135,21 @@ SettingsContentBase {
                 }
             }
 
+            Separator {
+                width: parent.width
+            }
+
+            StatusSectionHeadline {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
+                visible: root.advancedStore.isWakuV2 && root.advancedStore.fleet != Constants.status_prod
+                text: qsTr("WakuV2 options")
+                topPadding: Style.current.bigPadding
+                bottomPadding: Style.current.padding
+            }
+
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
@@ -144,6 +162,20 @@ SettingsContentBase {
                     Global.openPopup(enableWakuV2StoreComponent)
                 }
             }
+
+             StatusListItem {
+                 anchors.left: parent.left
+                 anchors.right: parent.right
+                 title: qsTr("Waku Nodes")
+                 visible: root.advancedStore.isWakuV2
+                 components: [
+                     StatusIcon {
+                         icon: "next"
+                         color: Theme.palette.baseColor1
+                     }
+                 ]
+                 onClicked: Global.openPopup(wakuNodesModalComponent)
+             }
 
             StatusSectionHeadline {
                 anchors.left: parent.left
@@ -231,17 +263,6 @@ SettingsContentBase {
                         }
                     }
                 }
-            }
-
-            StatusSectionHeadline {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
-                visible: root.advancedStore.isWakuV2 && root.advancedStore.fleet != Constants.status_prod
-                text: qsTr("WakuV2 mode")
-                topPadding: Style.current.bigPadding
-                bottomPadding: Style.current.padding
             }
 
             Row {
@@ -401,6 +422,14 @@ SettingsContentBase {
         FleetsModal {
             id: fleetModal
             advancedStore: root.advancedStore
+        }
+
+        Component {
+            id: wakuNodesModalComponent
+            WakuNodesModal {
+                messagingStore: root.messagingStore
+                advancedStore: root.advancedStore
+            }
         }
 
         Component {
