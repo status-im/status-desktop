@@ -42,112 +42,97 @@ Item {
         }
     }
 
-    ColumnLayout {
+    StackLayout {
+        id: stack
         anchors.fill: parent
-
-        StackLayout {
-            id: stack
-            Layout.fillWidth: true
-            Layout.preferredHeight: parent.height - footer.height
-            onCurrentIndexChanged: {
-                RootStore.backButtonName = d.getBackButtonText(currentIndex)
-            }
-
-            ColumnLayout {
-                WalletHeader {
-                    Layout.fillWidth: true
-                    overview: RootStore.overview
-                    store: root.store
-                    walletStore: RootStore
-                    networkConnectionStore: root.networkConnectionStore
-                }
-                StatusTabBar {
-                    id: walletTabBar
-                    objectName: "rightSideWalletTabBar"
-                    horizontalPadding: Style.current.padding
-                    Layout.fillWidth: true
-                    Layout.topMargin: Style.current.padding
-
-                    StatusTabButton {
-                        leftPadding: 0
-                        width: implicitWidth
-                        text: qsTr("Assets")
-                    }
-                    StatusTabButton {
-                        width: implicitWidth
-                        text: qsTr("Collectibles")
-                    }
-                    StatusTabButton {
-                        rightPadding: 0
-                        width: implicitWidth
-                        text: qsTr("Activity")
-                    }
-                }
-                StackLayout {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.topMargin: Style.current.padding
-                    Layout.bottomMargin: Style.current.padding
-                    currentIndex: walletTabBar.currentIndex
-
-                    AssetsView {
-                        account: RootStore.currentAccount
-                        networkConnectionStore: root.networkConnectionStore
-                        assetDetailsLaunched: stack.currentIndex === 2
-                        onAssetClicked: {
-                            assetDetailView.token = token
-                            stack.currentIndex = 2
-                        }
-                    }
-                    CollectiblesView {
-                        collectiblesModel: RootStore.flatCollectibles
-                        onCollectibleClicked: {
-                            RootStore.selectCollectible(address, tokenId)
-                            stack.currentIndex = 1
-                        }
-                    }
-                    HistoryView {
-                        assets: RootStore.assets
-                        onLaunchTransactionDetail: {
-                            transactionDetailView.transaction = transaction
-                            stack.currentIndex = 3
-                        }
-                    }
-                }
-            }
-            CollectibleDetailView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-            }
-            AssetsDetailView {
-                id: assetDetailView
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                visible: (stack.currentIndex === 2)
-
-                account: RootStore.currentAccount
-                address:  RootStore.currentAccount.address
-                networkConnectionStore: root.networkConnectionStore
-            }
-            TransactionDetailView {
-                id: transactionDetailView
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                sendModal: root.sendModal
-                contactsStore: root.contactsStore
-                visible: (stack.currentIndex === 3)
-            }
+        onCurrentIndexChanged: {
+            RootStore.backButtonName = d.getBackButtonText(currentIndex)
         }
 
-        WalletFooter {
-            id: footer
+        ColumnLayout {
+            WalletHeader {
+                Layout.fillWidth: true
+                overview: RootStore.overview
+                store: root.store
+                walletStore: RootStore
+                networkConnectionStore: root.networkConnectionStore
+            }
+            StatusTabBar {
+                id: walletTabBar
+                objectName: "rightSideWalletTabBar"
+                horizontalPadding: Style.current.padding
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.padding
+
+                StatusTabButton {
+                    leftPadding: 0
+                    width: implicitWidth
+                    text: qsTr("Assets")
+                }
+                StatusTabButton {
+                    width: implicitWidth
+                    text: qsTr("Collectibles")
+                }
+                StatusTabButton {
+                    rightPadding: 0
+                    width: implicitWidth
+                    text: qsTr("Activity")
+                }
+            }
+            StackLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.topMargin: Style.current.padding
+                Layout.bottomMargin: Style.current.padding
+                currentIndex: walletTabBar.currentIndex
+
+                AssetsView {
+                    account: RootStore.currentAccount
+                    networkConnectionStore: root.networkConnectionStore
+                    assetDetailsLaunched: stack.currentIndex === 2
+                    onAssetClicked: {
+                        assetDetailView.token = token
+                        stack.currentIndex = 2
+                    }
+                }
+                CollectiblesView {
+                    collectiblesModel: RootStore.flatCollectibles
+                    onCollectibleClicked: {
+                        RootStore.selectCollectible(address, tokenId)
+                        stack.currentIndex = 1
+                    }
+                }
+                HistoryView {
+                    assets: RootStore.assets
+                    onLaunchTransactionDetail: {
+                        transactionDetailView.transaction = transaction
+                        stack.currentIndex = 3
+                    }
+                }
+            }
+        }
+        CollectibleDetailView {
             Layout.fillWidth: true
-            Layout.leftMargin: !!root.StackView ? -root.StackView.view.anchors.leftMargin : 0
-            Layout.rightMargin: !!root.StackView ? -root.StackView.view.anchors.rightMargin : 0
-            sendModal: root.sendModal
-            walletStore: RootStore
+            Layout.fillHeight: true
+        }
+        AssetsDetailView {
+            id: assetDetailView
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            visible: (stack.currentIndex === 2)
+
+            account: RootStore.currentAccount
+            address:  RootStore.currentAccount.address
             networkConnectionStore: root.networkConnectionStore
+        }
+        TransactionDetailView {
+            id: transactionDetailView
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            sendModal: root.sendModal
+            contactsStore: root.contactsStore
+            visible: (stack.currentIndex === 3)
         }
     }
 }

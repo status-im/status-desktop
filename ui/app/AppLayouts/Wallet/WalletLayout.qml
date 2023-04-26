@@ -48,7 +48,6 @@ Item {
             anchors.right: parent ? parent.right: undefined
             contactsStore: root.contactsStore
             sendModal: root.sendModalPopup
-            networkConnectionStore: root.networkConnectionStore
         }
     }
 
@@ -103,17 +102,29 @@ Item {
             networkConnectionStore: root.networkConnectionStore
         }
 
-        centerPanel: StackView {
-            id: rightPanelStackView
+        centerPanel: ColumnLayout {
             anchors.fill: parent
             anchors.leftMargin: 64
             anchors.rightMargin: 64
-            initialItem: walletContainer
-            replaceEnter: Transition {
-                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 400; easing.type: Easing.OutCubic }
+            spacing: Style.current.halfPadding
+            StackView {
+                id: rightPanelStackView
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                initialItem: walletContainer
+                replaceEnter: Transition {
+                    NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 400; easing.type: Easing.OutCubic }
+                }
+                replaceExit: Transition {
+                    NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 400; easing.type: Easing.OutCubic }
+                }
             }
-            replaceExit: Transition {
-                NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 400; easing.type: Easing.OutCubic }
+            WalletFooter {
+                id: footer
+                Layout.fillWidth: true
+                sendModal: root.sendModalPopup
+                walletStore: RootStore
+                networkConnectionStore: root.networkConnectionStore
             }
         }
     }
