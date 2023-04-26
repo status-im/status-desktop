@@ -253,7 +253,7 @@ Item {
             chatLogView: ListView.view
 
             isActiveChannel: root.isActiveChannel
-            isChatBlocked: root.isChatBlocked || (root.isOneToOne && d.contactRequestState !== Constants.ContactRequestState.Mutual)
+            isChatBlocked: root.isChatBlocked || (root.isOneToOne && root.contactRequestState !== Constants.ContactRequestState.Mutual)
             messageContextMenu: root.messageContextMenu
 
             messageId: model.id
@@ -339,7 +339,7 @@ Item {
                 case Constants.ContactRequestState.Dismissed:
                     return sendContactRequestComponent
                 case Constants.ContactRequestState.Received:
-                    return acceptContactRequestComponent
+                    return acceptOrDeclineContactRequestComponent
                 case Constants.ContactRequestState.Sent:
                     return pendingContactRequestComponent
                 default:
@@ -371,13 +371,24 @@ Item {
     }
 
     Component {
-        id: acceptContactRequestComponent
+        id: acceptOrDeclineContactRequestComponent
 
-        StatusButton {
+        RowLayout {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Accept Contact Request")
-            onClicked: {
-                root.contactsStore.acceptContactRequest(root.publicKey, "")
+
+            StatusButton {
+                text: qsTr("Reject Contact Request")
+                type: StatusBaseButton.Type.Danger
+                onClicked: {
+                    root.contactsStore.dismissContactRequest(root.publicKey, "")
+                }
+            }
+
+            StatusButton {
+                text: qsTr("Accept Contact Request")
+                onClicked: {
+                    root.contactsStore.acceptContactRequest(root.publicKey, "")
+                }
             }
         }
     }

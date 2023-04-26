@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQml 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -124,7 +125,7 @@ ColumnLayout {
         sourceComponent: MessageContextMenuView {
             store: root.rootStore
             reactionModel: root.rootStore.emojiReactionsModel
-            disabledForChat: chatType === Constants.chatType.oneToOne && d.contactRequestState !== Constants.ContactRequestState.Mutual
+            disabledForChat: root.chatType === Constants.chatType.oneToOne && root.contactRequestState !== Constants.ContactRequestState.Mutual
 
             onPinMessage: {
                 messageStore.pinMessage(messageId)
@@ -248,7 +249,7 @@ ColumnLayout {
                     anchors.margins: Style.current.smallPadding
 
                     enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
-                             !(chatType === Constants.chatType.oneToOne && d.contactRequestState !== Constants.ContactRequestState.Mutual)
+                             !(chatType === Constants.chatType.oneToOne && root.contactRequestState !== Constants.ContactRequestState.Mutual)
 
                     store: root.rootStore
                     usersStore: root.usersStore
