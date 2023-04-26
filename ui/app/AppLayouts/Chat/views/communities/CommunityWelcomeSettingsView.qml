@@ -52,6 +52,7 @@ StatusScrollView {
                     Layout.alignment: Qt.AlignHCenter
                     fillMode: Image.PreserveAspectFit
                     mipmap: true
+                    cache: false
                 }
 
                 StatusBaseText {

@@ -46,6 +46,7 @@ Item {
             fillMode: Image.PreserveAspectFit
             source: Style.png("onboarding/welcome")
             mipmap: true
+            cache: false
         }
 
         StyledText {

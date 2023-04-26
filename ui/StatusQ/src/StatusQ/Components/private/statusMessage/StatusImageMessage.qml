@@ -32,7 +32,7 @@ Item {
 
     QtObject {
         id: _internal
-        property bool isAnimated: !!source && source.toString().endsWith('.gif')
+        readonly property bool isAnimated: !!source && source.toString().endsWith('.gif')
         property bool pausePlaying: false
     }
 
@@ -43,6 +43,7 @@ Item {
         fillMode: Image.PreserveAspectFit
         source: imageContainer.source
         playing: _internal.isAnimated && isAppWindowActive && !_internal.pausePlaying
+        cache: false
 
         layer.enabled: true
         layer.effect: OpacityMask {

@@ -53,6 +53,7 @@ SettingsContentBase {
                 Layout.preferredWidth: 434
                 Layout.preferredHeight: 213
                 Layout.topMargin: 18
+                cache: false
             }
 
             StatusBaseText {

@@ -21,6 +21,7 @@ Item {
         width: 80
         height: 80
         anchors.horizontalCenter: parent.horizontalCenter
+        cache: false
     }
 
     StatusBaseText {

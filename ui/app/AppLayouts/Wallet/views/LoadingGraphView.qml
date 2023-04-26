@@ -31,6 +31,7 @@ Loader {
             sourceSize: Qt.size(parent.width, parent.height)
             smooth: true
             visible: false
+            cache: false
         }
 
         OpacityMask {

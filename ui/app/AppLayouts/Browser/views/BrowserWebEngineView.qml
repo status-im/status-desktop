@@ -133,6 +133,7 @@ WebEngineView {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: 60
+                cache: false
             }
 
             FavoritesList {

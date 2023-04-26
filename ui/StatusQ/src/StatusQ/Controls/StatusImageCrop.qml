@@ -366,5 +366,6 @@ Item {
         // Align window center to window rect
         x: windowRect.x + windowRect.width/2
         y: windowRect.y + windowRect.height/2
+        cache: false
     }
 }

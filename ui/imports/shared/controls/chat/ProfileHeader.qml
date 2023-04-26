@@ -70,6 +70,7 @@ Item {
         Image {
             id: tmpImage
             mipmap: true
+            cache: false
         }
 
         property var keepGrabResultAlive;

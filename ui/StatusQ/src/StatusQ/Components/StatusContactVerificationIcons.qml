@@ -24,6 +24,7 @@ Row {
         property Image dummyImage: Image {
             source: mutualConnectionIcon.name ? "../../assets/img/icons/" + mutualConnectionIcon.name + ".svg": ""
             visible: false
+            cache: false
         }
     }
 
@@ -42,6 +43,7 @@ Row {
         property Image dummyImage: Image {
             source: trustContactIcon.name ? "../../assets/img/icons/" + trustContactIcon.name + ".svg": ""
             visible: false
+            cache: false
         }
     }
 

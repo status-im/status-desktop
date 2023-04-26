@@ -29,6 +29,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
+        cache: false
     }
 
     StyledText {

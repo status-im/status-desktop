@@ -364,6 +364,7 @@ Item {
             width: height
             source: Style.png("tokens/SNT")
             sourceSize: Qt.size(width, height)
+            cache: false
         }
 
         StatusBaseText {

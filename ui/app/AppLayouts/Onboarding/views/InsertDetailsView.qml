@@ -199,6 +199,7 @@ Item {
                 id: imgChains
                 anchors.horizontalCenter: parent.horizontalCenter
                 source: Style.svg("onboarding/chains")
+                cache: false
             }
             EmojiHash {
                 anchors {

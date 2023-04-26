@@ -52,6 +52,7 @@ Item {
             fillMode: Image.PreserveAspectFit
             source: Style.png("onboarding/keys")
             mipmap: true
+            cache: false
         }
 
         StatusBaseText {

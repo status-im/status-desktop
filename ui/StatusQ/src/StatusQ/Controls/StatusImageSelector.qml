@@ -220,6 +220,7 @@ Control {
 
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectFit
+                cache: false
             }
         }
     }

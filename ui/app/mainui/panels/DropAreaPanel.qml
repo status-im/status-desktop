@@ -64,6 +64,7 @@ DropArea {
             x: index * 10 + rptDraggedPreviews.x
             y: index * 10 + rptDraggedPreviews.y
             z: 1
+            cache: false
         }
     }
 }

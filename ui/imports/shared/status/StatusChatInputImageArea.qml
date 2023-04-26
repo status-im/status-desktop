@@ -31,6 +31,7 @@ Row {
                 mipmap: true
                 smooth: false
                 antialiasing: true
+                cache: false
                 source: modelData
                 layer.enabled: true
                 layer.effect: OpacityMask {

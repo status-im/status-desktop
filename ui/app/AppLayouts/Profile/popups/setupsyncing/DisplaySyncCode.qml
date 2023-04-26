@@ -73,6 +73,7 @@ ColumnLayout {
             mipmap: true
             smooth: false
             source: globalUtils.qrCode(root.connectionString)
+            cache: false
         }
 
         FastBlur {
