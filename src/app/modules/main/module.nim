@@ -750,6 +750,8 @@ proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
   # If there is a need other section may be notified the same way from here...
 
 method activeSectionSet*[T](self: Module[T], sectionId: string) =
+  if self.view.activeSection.getId() == sectionId:
+    return
   let item = self.view.model().getItemById(sectionId)
 
   if(item.isEmpty()):
