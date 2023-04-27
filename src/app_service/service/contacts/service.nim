@@ -319,11 +319,11 @@ QtObject:
   proc getContactById*(self: Service, id: string): ContactsDto =
     var pubkey = id
 
-    if len(pubkey) == 0:
-        return
-
     if service_conversion.isCompressedPubKey(id):
         pubkey = status_accounts.decompressPk(id).result
+
+    if len(pubkey) == 0:
+        return
 
     if(pubkey == singletonInstance.userProfile.getPubKey()):
       # If we try to get the contact details of ourselves, just return our own info
@@ -779,10 +779,18 @@ QtObject:
   proc asyncContactInfoLoaded*(self: Service, pubkeyAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = pubkeyAndRpcResponse.parseJson
     let publicKey = $rpcResponseObj{"publicKey"}
+    let requestError = rpcResponseObj{"error"}
+    var error : string
 
-    if (rpcResponseObj{"response"}{"error"}.kind != JNull):
-      let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
-      error "Error requesting contact info", msg = error.message, publicKey
+    if requestError.kind != JNull:
+      error = $requestError
+    else:
+      let responseError = rpcResponseObj{"response"}{"error"}
+      if responseError.kind != JNull:
+        error = Json.decode($responseError, RpcError).message
+
+    if len(error) != 0:
+      error "error requesting contact info", msg = error, publicKey
       self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: false))
       return
 

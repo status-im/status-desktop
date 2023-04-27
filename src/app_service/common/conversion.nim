@@ -8,7 +8,10 @@ const SystemMentionChars* = {'0'..'9', 'x'}
 const SystemTagMapping* = [("@everyone", "@0x00001")]
 
 proc isCompressedPubKey*(strPubKey: string): bool =
-  return strPubKey.startsWith("zQ3") and allCharsInSet(strPubKey, CompressedKeyChars)
+  let length = len(strPubKey)
+  return length >= 48 and length <= 50 and
+         strPubKey.startsWith("zQ3sh") and
+         allCharsInSet(strPubKey, CompressedKeyChars)
 
 proc isSystemMention*(mention: string) : bool =
   mention.startsWith("0x") and allCharsInSet(mention, SystemMentionChars)

@@ -67,9 +67,11 @@ const asyncRequestContactInfoTask: Task = proc(argEncoded: string) {.gcsafe, nim
     let response = status_go.requestContactInfo(arg.pubkey)
     arg.finish(%* {
       "publicKey": arg.pubkey,
-      "response":  response,
+      "response": response,
+      "error": nil,
     })
   except Exception as e:
     arg.finish(%* {
+      "publicKey": arg.pubkey,
       "error": e.msg,
     })
