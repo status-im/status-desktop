@@ -127,12 +127,9 @@ QtObject {
 //        walletModel.setInitialRange()
     }
 
-    function switchAccount(newIndex) {
-        walletSection.switchAccount(newIndex)
-    }
 
-    function switchAccountByAddress(address) {
-        walletSection.switchAccountByAddress(address)
+    function setFilterAddress(address) {
+        walletSection.setFilterAddress(address)
     }
 
     function deleteAccount(keyUid, address) {

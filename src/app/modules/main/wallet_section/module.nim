@@ -1,6 +1,6 @@
 import NimQml, chronicles
 
-import ./controller, ./view
+import ./controller, ./view, ./filter
 import ./io_interface as io_interface
 import ../io_interface as delegate_interface
 
@@ -12,6 +12,7 @@ import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
 import ./add_account/module as add_account_module
+import ./networks/module as networks_module
 import ./overview/module as overview_module
 import ./send/module as send_module
 
@@ -43,6 +44,7 @@ type
     moduleLoaded: bool
     controller: Controller
     view: View
+    filter: Filter
 
     accountsModule: accounts_module.AccessInterface
     allTokensModule: all_tokens_module.AccessInterface
@@ -54,6 +56,7 @@ type
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
     addAccountModule: add_account_module.AccessInterface
     overviewModule: overview_module.AccessInterface
+    networksModule: networks_module.AccessInterface
     keycardService: keycard_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
@@ -81,7 +84,7 @@ proc newModule*(
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
   result.moduleLoaded = false
-  result.controller = newController(result, settingsService, walletAccountService, currencyService)
+  result.controller = newController(result, settingsService, walletAccountService, currencyService, networkService)
   result.view = newView(result)
 
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
@@ -92,7 +95,9 @@ proc newModule*(
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService, transactionService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
-  result.overviewModule = overview_module.newModule(result, events, walletAccountService, networkService, currencyService)
+  result.overviewModule = overview_module.newModule(result, events, walletAccountService, currencyService)
+  result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
+  result.filter = initFilter(result.controller)
 
 method delete*(self: Module) =
   self.accountsModule.delete
@@ -105,46 +110,59 @@ method delete*(self: Module) =
   self.sendModule.delete
   self.controller.delete
   self.view.delete
+
   if not self.addAccountModule.isNil:
     self.addAccountModule.delete
 
 method updateCurrency*(self: Module, currency: string) =
   self.controller.updateCurrency(currency)
 
-method switchAccount*(self: Module, accountIndex: int) =
-  self.assetsModule.switchAccount(accountIndex)
-  self.collectiblesModule.switchAccount(accountIndex)
-  self.transactionsModule.switchAccount(accountIndex)
-  self.overviewModule.switchAccount(accountIndex)
-  self.sendModule.switchAccount(accountIndex)
-
-method switchAccountByAddress*(self: Module, address: string) =
-  let accountIndex = self.controller.getIndex(address)
-  self.switchAccount(accountIndex)
-
 method setTotalCurrencyBalance*(self: Module) =
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance())
+
+method notifyFilterChanged(self: Module) =
+  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.collectiblesModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.transactionsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
 
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
 
+
+method setFilterAddress*(self: Module, address: string) =
+  self.filter.setAddress(address)
+  self.notifyFilterChanged()
+
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
+    self.notifyFilterChanged()  
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+    let args = AccountSaved(e)
     self.setTotalCurrencyBalance()
+    self.filter.setAddress(args.account.address)
+    self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
-    self.switchAccount(0)
+    let args = AccountDeleted(e)
     self.setTotalCurrencyBalance()
+    self.filter.removeAddress(args.address)
+    self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
     self.view.setCurrentCurrency(self.controller.getCurrency())
     self.setTotalCurrencyBalance()
+    self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
+    self.filter.updateNetworks()
     self.setTotalCurrencyBalance()
+    self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.setTotalCurrencyBalance()
+    self.notifyFilterChanged()
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
+    self.notifyFilterChanged()
 
   self.controller.init()
   self.view.load()
@@ -157,6 +175,7 @@ method load*(self: Module) =
   self.buySellCryptoModule.load()
   self.overviewModule.load()
   self.sendModule.load()
+  self.networksModule.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -189,13 +208,16 @@ proc checkIfModuleDidLoad(self: Module) =
   if(not self.sendModule.isLoaded()):
     return
 
-  self.switchAccount(0)
+  if(not self.networksModule.isLoaded()):
+    return
+
   let currency = self.controller.getCurrency()
   let signingPhrase = self.controller.getSigningPhrase()
   let mnemonicBackedUp = self.controller.isMnemonicBackedUp()
   self.view.setData(currency, signingPhrase, mnemonicBackedUp)
   self.setTotalCurrencyBalance()
-
+  self.filter.load()
+  self.notifyFilterChanged()
   self.moduleLoaded = true
   self.delegate.walletSectionDidLoad()
 
@@ -229,13 +251,16 @@ method overviewModuleDidLoad*(self: Module) =
 method sendModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method destroyAddAccountPopup*(self: Module, switchToAccWithAddress: string = "") =
-  if not self.addAccountModule.isNil:
-    if switchToAccWithAddress.len > 0:
-      self.switchAccountByAddress(switchToAccWithAddress)
-    self.view.emitDestroyAddAccountPopup()
-    self.addAccountModule.delete
-    self.addAccountModule = nil
+method networksModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()
+
+method destroyAddAccountPopup*(self: Module) =
+  if self.addAccountModule.isNil:
+    return
+  
+  self.view.emitDestroyAddAccountPopup()
+  self.addAccountModule.delete
+  self.addAccountModule = nil
 
 method runAddAccountPopup*(self: Module, addingWatchOnlyAccount: bool) =
   self.destroyAddAccountPopup()

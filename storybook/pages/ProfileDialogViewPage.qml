@@ -210,8 +210,8 @@ SplitView {
                         }
 
                         walletStore: QtObject {
-                            function switchAccountByAddress(address) {
-                                logs.logEvent("walletStore::switchAccountByAddress", ["address"], arguments)
+                            function setFilterAddress(address) {
+                                logs.logEvent("walletStore::setFilterAddress", ["address"], arguments)
                             }
 
                             function selectCollectible(slug, id) {

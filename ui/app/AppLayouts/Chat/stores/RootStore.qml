@@ -598,13 +598,6 @@ QtObject {
          return globalUtilsInst.eth2Wei(eth, 18)
     }
 
-    function switchAccount(newIndex) {
-        if(Constants.isCppApp)
-            walletSectionAccounts.switchAccount(newIndex)
-        else
-            walletSection.switchAccount(newIndex)
-    }
-
     function getEtherscanLink() {
         return profileSectionModule.ensUsernamesModule.getEtherscanLink()
     }

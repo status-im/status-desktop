@@ -114,8 +114,8 @@ method viewDidLoad*(self: Module) =
   self.setEnabledChainIds()
   self.setPendingTx()
 
-method switchAccount*(self: Module, accountIndex: int) =
-  let walletAccount = self.controller.getWalletAccount(accountIndex)
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
+  let walletAccount = self.controller.getWalletAccountByAddress(addresses[0])
   self.view.switchAccount(walletAccount)
 
 method loadTransactions*(self: Module, address: string, toBlock: string = "0x0", limit: int = 20, loadMore: bool = false) =
