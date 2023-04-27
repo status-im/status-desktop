@@ -297,59 +297,13 @@ Control {
 
                             Loader {
                                 active: true
-                                sourceComponent: messageDetails.album.length > 1 ? albumComp : imageComp
-                            }
-
-                        }
-
-                        Component {
-                            id: imageComp
-                            StatusImageMessage {
-                                source: root.messageDetails.messageContent
-                                onClicked: root.imageClicked(image, mouse, imageSource)
-                                shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
-                            }
-                        }
-
-                        Component {
-                            id: albumComp
-                            RowLayout {
-                                width: messageLayout.width
-                                spacing: 9
-                                Repeater {
-                                    model: root.messageDetails.albumCount
-
-                                    delegate: Loader {
-                                        active: true
-                                        readonly property bool imageLoaded: index < root.messageDetails.album.length
-                                        readonly property string imagePath: imageLoaded ? root.messageDetails.album[index] : ""
-                                        sourceComponent: imageLoaded ? imageComponent : imagePlaceholderComponent
-                                    }
-                                }
-
-                                Component {
-                                    id: imageComponent
-                                    StatusImageMessage {
-                                        Layout.alignment: Qt.AlignLeft
-                                        imageWidth: Math.min(messageLayout.width / root.messageDetails.albumCount - 9 * (root.messageDetails.albumCount - 1), 144)
-                                        source: imagePath
-                                        onClicked: root.imageClicked(image, mouse, imageSource)
-                                        shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
-                                    }
-                                }
-
-                                Component {
-                                    id: imagePlaceholderComponent
-                                    LoadingComponent {
-                                        radius: 4
-                                        height: 194
-                                        width: 144
-                                    }
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
+                                sourceComponent: StatusMessageImageAlbum {
+                                    width: messageLayout.width
+                                    album: root.messageDetails.albumCount > 0 ? root.messageDetails.album : [root.messageDetails.messageContent]
+                                    albumCount: root.messageDetails.albumCount > 0 ? root.messageDetails.albumCount : 1
+                                    imageWidth: Math.min(messageLayout.width / root.messageDetails.albumCount - 9 * (root.messageDetails.albumCount - 1), 144)
+                                    shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                                    onImageClicked: root.imageClicked(image, mouse, imageSource)
                                 }
                             }
                         }

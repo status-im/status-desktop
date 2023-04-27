@@ -608,30 +608,37 @@ Loader {
                 }
 
                 replyDetails: StatusMessageDetails {
+                    readonly property var responseMessage: contentType === StatusMessage.ContentType.Sticker || contentType === StatusMessage.ContentType.Image
+                                                           ? root.messageStore.getMessageByIdAsJson(responseToMessageWithId)
+                                                           : null
+                    onResponseMessageChanged: {
+                        if (!responseMessage)
+                            return
+
+                        switch (contentType) {
+                        case StatusMessage.ContentType.Sticker:
+                            messageContent = responseMessage.sticker;
+                            return
+                        case StatusMessage.ContentType.Image:
+                            messageContent = responseMessage.messageImage;
+                            albumCount = responseMessage.albumImagesCount
+                            album = responseMessage.albumMessageImages
+                            return
+                        default:
+                            messageContent = ""
+                        }
+                    }
+
                     messageText: {
                         if (root.quotedMessageDeleted) {
                             return qsTr("Message deleted")
                         }
-                        if (!root.quotedMessageText) {
+                        if (!root.quotedMessageText && contentType !== StatusMessage.ContentType.Image) {
                             return qsTr("Unknown message. Try fetching more messages")
                         }
                         return root.quotedMessageText
                     }
                     contentType: d.convertContentType(root.quotedMessageContentType)
-                    messageContent: {
-                        if (contentType !== StatusMessage.ContentType.Sticker && contentType !== StatusMessage.ContentType.Image) {
-                            return ""
-                        }
-                        let message = root.messageStore.getMessageByIdAsJson(responseToMessageWithId)
-                        switch (contentType) {
-                        case StatusMessage.ContentType.Sticker:
-                            return message.sticker;
-                        case StatusMessage.ContentType.Image:
-                            return message.messageImage;
-                        }
-                        return "";
-                    }
-
                     amISender: root.quotedMessageFrom === userProfile.pubKey
                     sender.id: root.quotedMessageFrom
                     sender.isContact: quotedMessageAuthorDetailsIsContact
