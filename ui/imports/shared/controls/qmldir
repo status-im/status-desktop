@@ -13,6 +13,7 @@ Input 1.0 Input.qml
 RadioButtonSelector 1.0 RadioButtonSelector.qml
 RecipientSelector 1.0 RecipientSelector.qml
 SearchBox 1.0 SearchBox.qml
+ShapeRectangle 1.0 ShapeRectangle.qml
 SeedPhraseTextArea 1.0 SeedPhraseTextArea.qml
 SendToContractWarning 1.0 SendToContractWarning.qml
 SettingsRadioButton 1.0 SettingsRadioButton.qml
