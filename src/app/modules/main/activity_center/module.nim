@@ -143,8 +143,8 @@ method convertToItems*(
     ): seq[notification_item.Item] =
   result = activityCenterNotifications.map(
     proc(notification: ActivityCenterNotificationDto): notification_item.Item =
-      var messageItem =  msg_item_qobj.newMessageItem(nil)
-      var repliedMessageItem =  msg_item_qobj.newMessageItem(nil)
+      var messageItem: MessageItem
+      var repliedMessageItem: MessageItem
       # default section id is `Chat` section
       let sectionId = if notification.communityId.len > 0:
           notification.communityId

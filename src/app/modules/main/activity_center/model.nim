@@ -71,7 +71,10 @@ QtObject:
       of NotifRoles.Name: result = newQVariant(activityNotificationItem.name)
       of NotifRoles.Author: result = newQVariant(activityNotificationItem.author)
       of NotifRoles.NotificationType: result = newQVariant(activityNotificationItem.notificationType.int)
-      of NotifRoles.Message: result = newQVariant(activityNotificationItem.messageItem)
+      of NotifRoles.Message: result = if not activityNotificationItem.messageItem.isNil:
+                                        newQVariant(activityNotificationItem.messageItem)
+                                      else:
+                                        newQVariant()
       of NotifRoles.Timestamp: result = newQVariant(activityNotificationItem.timestamp)
       of NotifRoles.PreviousTimestamp: result = newQVariant(if index.row > 0:
                                                               self.activityCenterNotifications[index.row - 1].timestamp
