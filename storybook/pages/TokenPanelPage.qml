@@ -20,17 +20,20 @@ SplitView {
             {
                 name: "Optimism",
                 icon: Style.svg(ModelsData.networks.optimism),
-                amount: "300"
+                amount: 300,
+                infiniteAmount: false
             },
             {
                 name: "Arbitrum",
                 icon: Style.svg(ModelsData.networks.arbitrum),
-                amount: "400"
+                amount: 400,
+                infiniteAmount: false
             },
             {
                 name: "Hermez",
                 icon: Style.svg(ModelsData.networks.hermez),
-                amount: "500"
+                amount: 500,
+                infiniteAmount: true
             }
         ]
 

@@ -581,7 +581,7 @@ StatusScrollView {
             onToggled: d.dirtyValues.isPrivate = checked
         }
 
-        PermissionWarningPanel {
+        WarningPanel {
             id: duplicationPanel
 
             Layout.fillWidth: true

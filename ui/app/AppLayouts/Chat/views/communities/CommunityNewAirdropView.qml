@@ -98,9 +98,15 @@ StatusScrollView {
             readonly property real amount: model.amount
             readonly property bool infiniteSupply: model.infiniteSupply
 
+            readonly property bool valid:
+                infiniteSupply || amount * airdropRecipientsSelector.count <= supply
+
             onSupplyChanged: recipientsCountInstantiator.findRecipientsCount()
             onAmountChanged: recipientsCountInstantiator.findRecipientsCount()
             onInfiniteSupplyChanged: recipientsCountInstantiator.findRecipientsCount()
+
+            onValidChanged: model.valid = valid
+            Component.onCompleted: model.valid = valid
         }
 
         onCountChanged: findRecipientsCount()
@@ -164,6 +170,7 @@ StatusScrollView {
 
                 onAddCollectible: {
                     const entry = d.prepareEntry(key, amount)
+                    entry.valid = true
 
                     selectedHoldingsModel.append(entry)
                     dropdown.close()
@@ -348,6 +355,16 @@ StatusScrollView {
                     close()
                 }
             }
+        }
+
+        WarningPanel {
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            text: qsTr("Not enough tokens to send to all recipients. Reduce the number of recipients or change the number of tokens sent to each recipient.")
+
+            visible: !recipientsCountInstantiator.infinity &&
+                     recipientsCountInstantiator.maximumRecipientsCount < airdropRecipientsSelector.count
         }
 
         StatusButton {
