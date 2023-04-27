@@ -46,8 +46,9 @@ QtObject {
         console.warn("TODO: Compute self-destruct fee backend")
     }
 
-    function remoteSelfDestructCollectibles(holdersModel, chainId, accountName, accountAddress) {
+    function remoteSelfDestructCollectibles(selfDestructTokensList, chainId, accountName, accountAddress) {
         // TODO BACKEND
+        // selfDestructTokensList is a js array with properties: `walletAddress` and `amount`
         console.warn("TODO: Remote self-destruct collectible backend")
     }
 

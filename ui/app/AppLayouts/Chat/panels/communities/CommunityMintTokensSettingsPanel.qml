@@ -51,7 +51,7 @@ SettingsPageLayout {
 
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
-    signal remoteSelfDestructCollectibles(var tokenOwnersModel,
+    signal remoteSelfDestructCollectibles(var selfDestructTokensList, // [key , amount]
                                           int chainId,
                                           string accountName,
                                           string accountAddress)
@@ -90,6 +90,7 @@ SettingsPageLayout {
         property string chainName
 
         property var tokenOwnersModel
+        property var selfDestructTokensList
 
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
         onInitialItemChanged: updateInitialStackView()
@@ -287,6 +288,7 @@ SettingsPageLayout {
                 model: d.tokenOwnersModel
 
                 onSelfDestructClicked: {
+                    d.selfDestructTokensList = selfDestructTokensList
                     alertPopup.tokenCount = tokenCount
                     alertPopup.open()
                 }
@@ -304,7 +306,7 @@ SettingsPageLayout {
                 function signSelfRemoteDestructTransaction() {
                     root.isFeeLoading = true
                     root.feeText = ""
-                    root.remoteSelfDestructCollectibles(d.tokenOwnersModel,
+                    root.remoteSelfDestructCollectibles(d.selfDestructTokensList,
                                                         d.chainId,
                                                         d.accountName,
                                                         d.accountAddress)

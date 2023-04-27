@@ -302,7 +302,7 @@ StatusSectionLayout {
                 }
                 onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(chainId)
                 onRemoteSelfDestructCollectibles: {
-                    communityTokensStore.remoteSelfDestructCollectibles(tokenOwnersModel,
+                    communityTokensStore.remoteSelfDestructCollectibles(selfDestructTokensList,
                                                                         chainId,
                                                                         accountName,
                                                                         accountAddress)
