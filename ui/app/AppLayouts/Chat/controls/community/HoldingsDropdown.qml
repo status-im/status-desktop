@@ -429,7 +429,9 @@ StatusDropdown {
 
                     append({
                         name:chainName,
-                        icon: chainIcon
+                        icon: chainIcon,
+                        amount: collectible.supply,
+                        infiniteAmount: collectible.infiniteSupply
                     })
 
                     collectiblePanel.networksModel = this

@@ -63,7 +63,7 @@ SplitView {
                 proxyRoles: [
                     ExpressionRole {
                         name: "supply"
-                        expression: ((model.index + 1) * 115).toString()
+                        expression: (model.index + 1) * 115
                     },
                     ExpressionRole {
                         name: "infiniteSupply"
@@ -75,8 +75,8 @@ SplitView {
                     },
                     ExpressionRole {
 
-                        readonly property string icon1: Style.svg("network/Network=Optimism")
-                        readonly property string icon2: Style.svg("network/Network=Arbitrum")
+                        readonly property string icon1: "network/Network=Optimism"
+                        readonly property string icon2: "network/Network=Arbitrum"
 
                         name: "chainIcon"
                         expression: model.index ? icon1 : icon2

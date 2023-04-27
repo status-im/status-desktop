@@ -11,6 +11,11 @@ import SortFilterProxyModel 0.2
 StatusComboBox {
     id: root
 
+    readonly property string currentName: control.currentText
+    readonly property alias currentAmount: instantiator.amount
+    readonly property alias currentInfiniteAmount: instantiator.infiniteAmount
+    readonly property alias currentIcon: instantiator.icon
+
     type: StatusComboBox.Type.Secondary
     size: StatusComboBox.Size.Small
 
@@ -42,6 +47,8 @@ StatusComboBox {
         readonly property int radius: 8
         readonly property int fontSize: 13
         readonly property int iconSize: 32
+
+        readonly property string infinitySymbol: "∞"
     }
 
     component CustomText: StatusBaseText {
@@ -87,7 +94,8 @@ StatusComboBox {
         id: instantiator
 
         property string icon
-        property string amount
+        property int amount
+        property bool infiniteAmount
 
         model: SortFilterProxyModel {
             sourceModel: root.model
@@ -100,7 +108,8 @@ StatusComboBox {
             component Bind: Binding { target: instantiator }
             readonly property list<Binding> bindings: [
                 Bind { property: "icon"; value: model.icon },
-                Bind { property: "amount"; value: model.amount }
+                Bind { property: "amount"; value: model.amount },
+                Bind { property: "infiniteAmount"; value: model.infiniteAmount }
             ]
         }
     }
@@ -109,7 +118,10 @@ StatusComboBox {
         title: root.control.displayText
         iconSource: instantiator.icon
 
-        amount: !d.oneItem ? instantiator.amount : ""
+        amount: !d.oneItem
+                ? (instantiator.infiniteAmount ? d.infinitySymbol
+                                               : instantiator.amount)
+                : ""
         cursorShape: d.oneItem ? Qt.ArrowCursor : Qt.PointingHandCursor
 
         onClicked: {
@@ -123,7 +135,7 @@ StatusComboBox {
     delegate: DelegateItem {
         title: model.name
         iconSource: model.icon
-        amount: model.amount
+        amount: model.infiniteAmount ? d.infinitySymbol : model.amount
 
         width: root.width
         height: root.height
