@@ -8,6 +8,6 @@ HidePermissionPanel 1.0 HidePermissionPanel.qml
 JoinPermissionsOverlayPanel 1.0 JoinPermissionsOverlayPanel.qml
 MintTokensFooterPanel 1.0 MintTokensFooterPanel.qml
 PermissionConflictWarningPanel 1.0 PermissionConflictWarningPanel.qml
-PermissionWarningPanel 1.0 PermissionWarningPanel.qml
 PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml
 TokenHoldersPanel 1.0 TokenHoldersPanel.qml
+WarningPanel 1.0 WarningPanel.qml
