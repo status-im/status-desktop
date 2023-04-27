@@ -152,7 +152,7 @@ ColumnLayout {
                     return
                 }
                 if (inputAreaLoader.item) {
-                    inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+                    inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
                 }
             }
         }
@@ -187,7 +187,7 @@ ColumnLayout {
                         return
                     }
                     if (inputAreaLoader.item) {
-                        inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+                        inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
                     }
                 }
                 onOpenStickerPackPopup: {

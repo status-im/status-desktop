@@ -106,19 +106,25 @@ Item {
                         messageDetails: root.replyDetails
                     }
                 }
+
+
                 Loader {
                     Layout.fillWidth: true
                     asynchronous: true
                     active: replyDetails.contentType === StatusMessage.ContentType.Image
                     visible: active
-                    sourceComponent: StatusImageMessage {
+                    sourceComponent: StatusMessageImageAlbum {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: imageAlias.paintedHeight
+                        Layout.preferredHeight: 56
+
+                        album: replyDetails.albumCount > 0 ? replyDetails.album : [replyDetails.messageContent]
+                        albumCount: replyDetails.albumCount > 0 ? replyDetails.albumCount : 1
                         imageWidth: 56
-                        source: replyDetails.messageContent
+                        loadingComponentHeight: 56
                         shapeType: StatusImageMessage.ShapeType.ROUNDED
                     }
                 }
+
                 StatusSticker {
                     asynchronous: true
                     active: replyDetails.contentType === StatusMessage.ContentType.Sticker

@@ -7,6 +7,7 @@ import shared.panels 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Components.private 0.1
 
 Rectangle {
     id: root
@@ -26,6 +27,8 @@ Rectangle {
     property string stickerData: ""
     property string messageId: ""
     property int contentType: -1
+    property var album: []
+    property int albumCount: 0
 
     signal closeButtonClicked()
 
@@ -73,16 +76,16 @@ Rectangle {
         }
     }
 
-    StatusChatImage {
+    StatusMessageImageAlbum {
         id: imageThumbnail
         anchors.left: replyToUsername.left
         anchors.top: replyToUsername.bottom
         anchors.topMargin: 2
-        imageWidth: 64
-        imageSource: root.image
-        chatHorizontalPadding: 0
-        visible: root.contentType === Constants.messageContentType.imageType
-        playing: false
+        album: root.albumCount > 0 ? root.album : [root.image]
+        albumCount: root.albumCount > 0 ? root.albumCount : 1
+        imageWidth: 56
+        loadingComponentHeight: 56
+        shapeType: StatusImageMessage.ShapeType.ROUNDED
     }
 
     StatusSticker {
