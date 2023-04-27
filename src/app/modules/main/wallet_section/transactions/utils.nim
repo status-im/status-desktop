@@ -4,8 +4,8 @@ import ../../../../global/global_singleton
 import ../../../../../app_service/service/transaction/dto
 import ../../../../../app_service/service/currency/dto as currency_dto
 import ../../../../../app_service/service/collectible/dto as collectible_dto
+import ../../../shared/wallet_utils
 import ../../../shared_models/currency_amount
-import ../../../shared_models/currency_amount_utils
 
 import ./item
 import ./multi_transaction_item

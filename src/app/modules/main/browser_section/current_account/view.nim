@@ -121,19 +121,19 @@ QtObject:
     return self.assets.hasGas(chainId, nativeGasSymbol, requiredGas)
 
 proc setData*(self: View, item: account_item.Item) =
-    self.name = item.getName()
+    self.name = item.name()
     self.nameChanged()
-    self.address = item.getAddress()
+    self.address = item.address()
     self.addressChanged()
-    self.path = item.getPath()
+    self.path = item.path()
     self.pathChanged()
-    self.color = item.getColor()
+    self.color = item.color()
     self.colorChanged()
-    self.walletType = item.getWalletType()
+    self.walletType = item.walletType()
     self.walletTypeChanged()
-    self.currencyBalance = item.getCurrencyBalance()
+    self.currencyBalance = item.currencyBalance()
     self.currencyBalanceChanged()
-    self.emoji = item.getEmoji()
+    self.emoji = item.emoji()
     self.emojiChanged()
 
 proc isAddressCurrentAccount*(self: View, address: string): bool =

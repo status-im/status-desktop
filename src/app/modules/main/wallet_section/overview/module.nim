@@ -5,7 +5,7 @@ import ../../../../core/eventemitter
 import ../../../../../app_service/service/currency/service as currency_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
-import ../../../shared_models/currency_amount_utils
+import ../../../shared/wallet_utils
 import ../../../shared_models/currency_amount
 import ./item
 

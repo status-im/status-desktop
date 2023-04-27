@@ -1,6 +1,6 @@
 import tables, NimQml, sequtils, sugar, json, stint
 
-import ./io_interface, ./view, ./controller, ./utils
+import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
@@ -8,6 +8,7 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/currency/service as currency_service
 import ../../../../../app_service/service/transaction/service as transaction_service
+import ../../../shared/wallet_utils
 
 export io_interface
 
@@ -61,7 +62,7 @@ method refreshWalletAccounts*(self: Module) =
     let tokenFormats = collect(initTable()):
       for t in w.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
 
-    walletAccountToItem(
+    walletAccountToWalletSendAccountItem(
       w,
       chainIds,
       enabledChainIds,
