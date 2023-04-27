@@ -71,7 +71,7 @@ QtObject:
       of NotifRoles.Name: result = newQVariant(activityNotificationItem.name)
       of NotifRoles.Author: result = newQVariant(activityNotificationItem.author)
       of NotifRoles.NotificationType: result = newQVariant(activityNotificationItem.notificationType.int)
-      of NotifRoles.Message: result = if activityNotificationItem.messageItem != nil:
+      of NotifRoles.Message: result = if not activityNotificationItem.messageItem.isNil:
                                         newQVariant(activityNotificationItem.messageItem)
                                       else:
                                         newQVariant()
