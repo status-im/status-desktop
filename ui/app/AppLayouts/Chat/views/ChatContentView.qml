@@ -37,7 +37,7 @@ ColumnLayout {
     property var contactsStore
     property bool isActiveChannel: false
     property string chatId
-    property int activeChatType
+    property int chatType: Constants.chatType.unknown
 
     readonly property alias chatMessagesLoader: chatMessagesLoader
 
@@ -66,7 +66,7 @@ ColumnLayout {
         property bool isUserAdded
 
         function updateIsUserAdded() {
-            if (activeChatType !== Constants.chatType.oneToOne) {
+            if (root.chatType !== Constants.chatType.oneToOne) {
                 return false
             }
             isUserAdded = Qt.binding(() => {isActiveChannel; return Utils.getContactDetailsAsJson(root.chatId, false).isAdded})
@@ -178,7 +178,7 @@ ColumnLayout {
                 stickersPopup: root.stickersPopup
                 usersStore: root.usersStore
                 stickersLoaded: root.stickersLoaded
-                isChatBlocked: root.isBlocked || (chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne && !d.isUserAdded)
+                isChatBlocked: root.isBlocked || (root.chatType === Constants.chatType.oneToOne && !d.isUserAdded)
                 channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
                 isActiveChannel: root.isActiveChannel
                 onShowReplyArea: {
@@ -243,8 +243,8 @@ ColumnLayout {
                     isContactBlocked: root.isBlocked
                     isActiveChannel: root.isActiveChannel
                     anchors.bottom: parent.bottom
-                    chatType: chatContentModule ? chatContentModule.chatDetails.type : Constants.chatType.unknown
-                    suggestions.suggestionFilter.addSystemSuggestions: chatType == Constants.chatType.communityChat
+                    chatType: root.chatType
+                    suggestions.suggestionFilter.addSystemSuggestions: chatType === Constants.chatType.communityChat
 
                     Binding on chatInputPlaceholder {
                         when: root.isBlocked
