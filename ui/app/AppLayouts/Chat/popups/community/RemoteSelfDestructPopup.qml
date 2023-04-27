@@ -20,13 +20,14 @@ StatusDialog {
 
     property string collectibleName
 
-    signal selfDestructClicked(int tokenCount)
+    signal selfDestructClicked(int tokenCount, var selfDestructTokensList)
 
     QtObject {
         id: d
 
         readonly property int maxHeight: 560 // by design
         property int tokenCount: 0
+        readonly property ListModel selfDestructTokensList: ListModel {}
 
         function getVerticalPadding() {
             return root.topPadding + root.bottomPadding
@@ -36,15 +37,26 @@ StatusDialog {
             return root.leftPadding + root.rightPadding
         }
 
-        function calculateTotalTokensToDestruct() {
-            d.tokenCount = 0
-            for(var i = 0; i < tokenHoldersPanel.model.count; i ++) {
-                var item =  ModelUtils.get(tokenHoldersPanel.model, i)
-                if(item.selfDestruct) {
-                    d.tokenCount += item.selfDestructAmount
-                }
-            }
+        function updateTokensToDestruct(walletAddress, amount) {
+            if(ModelUtils.contains(d.selfDestructTokensList, "walletAddress", walletAddress))
+                clearTokensToDesctruct(walletAddress)
+
+            d.selfDestructTokensList.append({"walletAddress": walletAddress,
+                                            "amount": amount})
+            updateTokensCount()
         }
+
+        function clearTokensToDesctruct(walletAddress) {
+            var index = ModelUtils.indexOf(d.selfDestructTokensList, "walletAddress", walletAddress)
+            d.selfDestructTokensList.remove(index)
+            updateTokensCount()
+        }
+
+       function updateTokensCount() {
+           d.tokenCount = 0
+           for(var i = 0; i < d.selfDestructTokensList.count; i ++)
+               d.tokenCount += ModelUtils.get(d.selfDestructTokensList, i, "amount")
+       }
     }
 
     title: qsTr("Remotely self-destruct %1 token").arg(root.collectibleName)
@@ -66,7 +78,8 @@ StatusDialog {
             tokenName: root.collectibleName
             isSelectorMode: true
 
-            onSelfDestructChanged: d.calculateTotalTokensToDestruct()
+            onSelfDestructAmountChanged: d.updateTokensToDestruct(walletAddress, amount)
+            onSelfDestructRemoved: d.clearTokensToDesctruct(walletAddress)
         }
     }
 
@@ -77,7 +90,9 @@ StatusDialog {
                 enabled: d.tokenCount > 0
                 text: qsTr("Self-destruct %n token(s)", "", d.tokenCount)
                 type: StatusBaseButton.Type.Danger
-                onClicked: root.selfDestructClicked(d.tokenCount)
+                onClicked:  root.selfDestructClicked(d.tokenCount,
+                                                    ModelUtils.modelToArray(d.selfDestructTokensList,
+                                                                            ["walletAddress", "amount"]))
             }
         }
     }

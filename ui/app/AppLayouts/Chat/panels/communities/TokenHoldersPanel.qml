@@ -21,8 +21,8 @@ Control {
     property string tokenName
     property bool isSelectorMode: false
 
-    signal selfDestructChanged()
-
+    signal selfDestructAmountChanged(string walletAddress, int amount)
+    signal selfDestructRemoved(string walletAddress)
 
     QtObject {
         id: d
@@ -125,8 +125,8 @@ Control {
                     }
 
                     control.onDisplayTextChanged: {
-                        selfDestructAmount = combo.currentIndex + 1
-                        root.selfDestructChanged()
+                        if(checkBox.checked)
+                            root.selfDestructAmountChanged(walletAddress, Number(combo.currentIndex) + 1)
                     }
                 }
 
@@ -135,11 +135,12 @@ Control {
 
                     Layout.leftMargin: Style.current.padding
                     visible: root.isSelectorMode
-                    checked: root.isSelectorMode ? selfDestruct : false
                     padding: 0
                     onCheckStateChanged: {
-                        selfDestruct = checked
-                        root.selfDestructChanged()
+                        if(checked)
+                            root.selfDestructAmountChanged(model.walletAddress, Number(combo.currentIndex) + 1)
+                        else
+                            root.selfDestructRemoved(model.walletAddress)
                     }
                 }
             }
