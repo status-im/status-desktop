@@ -3,8 +3,8 @@ import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/currency/service as currency_service
 
+import ../../shared/wallet_utils
 import ../../shared_models/currency_amount
-import ../../shared_models/currency_amount_utils
 
 type
   Controller* = ref object of RootObj

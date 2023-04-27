@@ -66,7 +66,7 @@ QtObject:
   proc onUpdatedAccount*(self: Model, account: Item) = 
     var i = 0
     for item in self.items.mitems:
-      if account.getAddress() == item.getAddress():
+      if account.address == item.address:
         item.name = account.name
         item.color = account.color
         item.emoji = account.emoji
@@ -89,18 +89,18 @@ QtObject:
 
     case enumRole:
     of ModelRole.Name:
-      result = newQVariant(item.getName())
+      result = newQVariant(item.name())
     of ModelRole.Address:
-      result = newQVariant(item.getAddress())
+      result = newQVariant(item.address())
     of ModelRole.Path:
-      result = newQVariant(item.getPath())
+      result = newQVariant(item.path())
     of ModelRole.Color:
-      result = newQVariant(item.getColor())
+      result = newQVariant(item.color())
     of ModelRole.WalletType:
-      result = newQVariant(item.getWalletType())
+      result = newQVariant(item.walletType())
     of ModelRole.Emoji:
-      result = newQVariant(item.getEmoji())
+      result = newQVariant(item.emoji())
     of ModelRole.RelatedAccounts:
-      result = newQVariant(item.getRelatedAccounts())
+      result = newQVariant(item.relatedAccounts())
     of ModelRole.KeyUid:
-      result = newQVariant(item.getKeyUid())
+      result = newQVariant(item.keyUid())

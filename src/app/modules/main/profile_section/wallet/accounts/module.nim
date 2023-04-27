@@ -1,7 +1,8 @@
 import NimQml, sequtils, sugar, chronicles
 
-import ./io_interface, ./view, ./item, ./controller, ./utils
+import ./io_interface, ./view, ./item, ./controller
 import ../io_interface as delegate_interface
+import ../../../../shared/wallet_utils
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/keycard/service as keycard_service
@@ -63,7 +64,7 @@ method refreshWalletAccounts*(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
 
   let items = walletAccounts.map(w => (block:
-    walletAccountToItem(w)
+    walletAccountToWalletSettingsAccountsItem(w)
   ))
 
   self.view.setItems(items)
@@ -77,7 +78,7 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     let args = WalletAccountUpdated(e)
-    self.view.onUpdatedAccount(walletAccountToItem(args.account))
+    self.view.onUpdatedAccount(walletAccountToWalletSettingsAccountsItem(args.account))
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
     let args = KeycardActivityArgs(e)

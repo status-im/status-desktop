@@ -7,8 +7,8 @@ import ../../../../../app_service/service/currency/service as currency_service
 import ../../../../../app_service/service/currency/dto as currency_dto
 
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+import ../../../shared/wallet_utils
 import ../../../shared_models/currency_amount
-import ../../../shared_models/currency_amount_utils
 
 import ../../../../core/eventemitter
 

@@ -1,6 +1,6 @@
 import tables, NimQml, sequtils, sugar, chronicles
 
-import ./io_interface, ./view, ./item, ./controller, ./utils
+import ./io_interface, ./view, ./item, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
@@ -9,6 +9,7 @@ import ../../../../../app_service/service/keycard/service as keycard_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/currency/service as currency_service
+import ../../../shared/wallet_utils
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 export io_interface
@@ -64,7 +65,7 @@ method refreshWalletAccounts*(self: Module) =
   let currencyFormat = self.controller.getCurrencyFormat(currency)
 
   let items = walletAccounts.map(w => (block:
-    walletAccountToItem(
+    walletAccountToWalletAccountsItem(
       w,
       enabledChainIds,
       currency,

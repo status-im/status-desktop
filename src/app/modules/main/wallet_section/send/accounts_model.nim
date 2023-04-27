@@ -75,17 +75,17 @@ QtObject:
 
     case enumRole:
     of ModelRole.Name:
-      result = newQVariant(item.getName())
+      result = newQVariant(item.name())
     of ModelRole.Address:
-      result = newQVariant(item.getAddress())
+      result = newQVariant(item.address())
     of ModelRole.Color:
-      result = newQVariant(item.getColor())
+      result = newQVariant(item.color())
     of ModelRole.WalletType:
-      result = newQVariant(item.getWalletType())
+      result = newQVariant(item.walletType())
     of ModelRole.Emoji:
-      result = newQVariant(item.getEmoji())
+      result = newQVariant(item.emoji())
     of ModelRole.Assets:
-      result = newQVariant(item.getAssets())
+      result = newQVariant(item.assets())
     of ModelRole.CurrencyBalance:
-      result = newQVariant(item.getCurrencyBalance())
+      result = newQVariant(item.currencyBalance())
     

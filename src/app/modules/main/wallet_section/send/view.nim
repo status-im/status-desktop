@@ -107,7 +107,7 @@ QtObject:
 
   proc hasGas*(self: View, address: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
     for account in self.accounts.items:
-      if account.getAddress() == address:
-        return account.getAssets().hasGas(chainId, nativeGasSymbol, requiredGas)
+      if account.address() == address:
+        return account.assets().hasGas(chainId, nativeGasSymbol, requiredGas)
 
     return false

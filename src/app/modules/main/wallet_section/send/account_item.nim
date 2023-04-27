@@ -1,17 +1,14 @@
 import strformat
-import ../../../shared_models/token_model as token_model
+import ../../../shared_models/wallet_account_item
+import ../../../shared_models/token_model
 import ../../../shared_models/currency_amount
 
+export wallet_account_item
+
 type
-  AccountItem* = object
-    name: string
-    address: string
-    color: string
-    walletType: string
-    emoji: string
+  AccountItem* = ref object of WalletAccountItem
     assets: token_model.Model
     currencyBalance: CurrencyAmount
-
 
 proc initAccountItem*(
   name: string = "",
@@ -22,42 +19,26 @@ proc initAccountItem*(
   assets: token_model.Model = nil,
   currencyBalance: CurrencyAmount = nil,
 ): AccountItem =
-  result.name = name
-  result.address = address
-  result.color = color
-  result.walletType = walletType
-  result.emoji = emoji
+  result = AccountItem()
+  result.WalletAccountItem.setup(name,
+    address,
+    color,
+    emoji,
+    walletType,
+    path = "",
+    keyUid = "")
   result.assets = assets
   result.currencyBalance = currencyBalance
-
+  
 proc `$`*(self: AccountItem): string =
-  result = fmt"""WalletAccountItem(
-    name: {self.name},
-    address: {self.address},
-    color: {self.color},
-    walletType: {self.walletType},
-    emoji: {self.emoji},
-    assets: {self.assets},
-    currencyBalance: {self.currencyBalance},
-    ]"""
-
-proc getName*(self: AccountItem): string =
-  return self.name
-
-proc getAddress*(self: AccountItem): string =
-  return self.address
-
-proc getEmoji*(self: AccountItem): string =
-  return self.emoji
-
-proc getColor*(self: AccountItem): string =
-  return self.color
-
-proc getWalletType*(self: AccountItem): string =
-  return self.walletType
-
-proc getAssets*(self: AccountItem): token_model.Model =
+  result = "WalletSection-Send-Item("
+  result = result & $self.WalletAccountItem
+  result = result & "\nassets: " & $self.assets
+  result = result & "\ncurrencyBalance: " & $self.currencyBalance
+  result = result & ")"
+    
+proc assets*(self: AccountItem): token_model.Model =
   return self.assets
 
-proc getCurrencyBalance*(self: AccountItem): CurrencyAmount =
+proc currencyBalance*(self: AccountItem): CurrencyAmount =
   return self.currencyBalance

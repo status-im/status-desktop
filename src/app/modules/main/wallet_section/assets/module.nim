@@ -9,13 +9,11 @@ import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/network_connection/service as network_connection
 import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../app_service/service/node/service as node_service
-import ../../../shared_models/currency_amount_utils
+import ../../../shared/wallet_utils
 import ../../../shared_models/currency_amount
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
-import ../../../shared_models/token_utils
 import ./item as account_item
-import ./utils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -129,14 +127,13 @@ method switchAccount*(self: Module, accountIndex: int) =
     self.currentAccountIndex = 0
     walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
   
-  let accountItem = walletAccountToItem(walletAccount)
+  let accountItem = walletAccountToWalletAssetsItem(walletAccount)
   self.view.setData(accountItem)
 
   if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
     self.setLoadingAssets()
   else:
     self.setAssetsAndBalance(walletAccount.tokens)
-
 
 proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]], hasBalanceCache: bool, hasMarketValuesCache: bool) =
   let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
