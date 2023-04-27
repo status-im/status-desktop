@@ -13,7 +13,7 @@ set -eof pipefail
 BUNDLE_PATH="${1}"
 # Notarization request check intervals/retries.
 CHECK_INTERVAL_SEC="${CHECK_INTERVAL_SEC:-30}"
-CHECK_RETRY_LIMIT="${CHECK_RETRY_LIMIT:-20}"
+CHECK_RETRY_LIMIT="${CHECK_RETRY_LIMIT:-40}"
 # Unique ID of MacOS application.
 MACOS_BUNDLE_ID="${MACOS_BUNDLE_ID:-im.status.ethereum.desktop}"
 # Xcode altool log file paths
