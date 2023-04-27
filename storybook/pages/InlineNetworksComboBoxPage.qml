@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import Models 1.0
 import utils 1.0
@@ -12,17 +13,20 @@ Item {
         {
             name: "Optimism",
             icon: Style.svg(ModelsData.networks.optimism),
-            amount: "300"
+            amount: 300,
+            infiniteAmount: false
         },
         {
             name: "Arbitrum",
             icon: Style.svg(ModelsData.networks.arbitrum),
-            amount: "400"
+            amount: 400,
+            infiniteAmount: false
         },
         {
             name: "Hermez",
             icon: Style.svg(ModelsData.networks.hermez),
-            amount: "500"
+            amount: 0,
+            infiniteAmount: true
         }
     ]
 
@@ -48,19 +52,36 @@ Item {
         model: singleItemRadioButton.checked ? singleItemModel
                                              : multipleItemsModel
     }
-
-    Row {
+    Pane {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.margins: implicitHeight / 2
 
-        RadioButton {
-            id: singleItemRadioButton
-            text: "single item model"
-        }
-        RadioButton {
-            text: "multiple items model"
-            checked: true
+        ColumnLayout {
+            Row {
+                Layout.alignment: Qt.AlignHCenter
+
+                RadioButton {
+                    id: singleItemRadioButton
+                    text: "single item model"
+                }
+                RadioButton {
+                    text: "multiple items model"
+                    checked: true
+                }
+            }
+
+            Label {
+                Layout.alignment: Qt.AlignHCenter
+                text: `current name: ${comboBox.control.displayText}`
+            }
+            Label {
+                Layout.alignment: Qt.AlignHCenter
+                text: `current amount: ${comboBox.currentAmount}`
+            }
+            Label {
+                Layout.alignment: Qt.AlignHCenter
+                text: `current amount infinite: ${comboBox.currentInfiniteAmount}`
+            }
         }
     }
 }
