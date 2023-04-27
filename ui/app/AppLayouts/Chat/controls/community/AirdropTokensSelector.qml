@@ -45,7 +45,9 @@ StatusFlowSelector {
             component Text: StatusBaseText {
                 Layout.fillWidth: true
 
-                color: Theme.palette.primaryColor1
+                font.weight: Font.Medium
+                color: model.valid ? Theme.palette.primaryColor1
+                                   : Theme.palette.dangerColor1
                 elide: Text.ElideRight
             }
 
@@ -54,7 +56,8 @@ StatusFlowSelector {
             rightPadding: d.commonMargin * 2
 
             background: Rectangle {
-                color: Theme.palette.primaryColor3
+                color: model.valid ? Theme.palette.primaryColor3
+                                   : Theme.palette.dangerColor3
                 radius: root.placeholderItemHeight / 2
 
                 MouseArea {

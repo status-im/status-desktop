@@ -12,19 +12,22 @@ ColumnLayout {
             tokenText: "2 MCT",
             networkText: "Ethereum",
             tokenImage: Style.png("tokens/SNT"),
-            networkImage: Style.svg("network/Network=Ethereum")
+            networkImage: Style.svg("network/Network=Ethereum"),
+            valid: true
         },
         {
             tokenText: "64 DAI",
             networkText: "Optimism",
             tokenImage: Style.png("tokens/DAI"),
-            networkImage: Style.svg("network/Network=Optimism")
+            networkImage: Style.svg("network/Network=Optimism"),
+            valid: false
         },
         {
             tokenText: "0.125 ETH",
             networkText: "Arbitrum",
             tokenImage: Style.png("tokens/ETH"),
-            networkImage: Style.svg("network/Network=Arbitrum")
+            networkImage: Style.svg("network/Network=Arbitrum"),
+            valid: true
         }
     ]
 
