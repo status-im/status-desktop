@@ -21,7 +21,6 @@ type
     iconUrl: string
     chainColor: string
     shortName: string
-    balance: float64
     enabledState: UxEnabledState
 
 proc initItem*(
@@ -38,7 +37,6 @@ proc initItem*(
   iconUrl: string,
   chainColor: string,
   shortName: string,
-  balance: float64,
   enabledState: UxEnabledState,
 ): Item =
   result.chainId = chainId
@@ -54,7 +52,6 @@ proc initItem*(
   result.iconUrl = iconUrl
   result.chainColor = chainColor
   result.shortName = shortName
-  result.balance = balance
   result.enabledState = enabledState
 
 proc `$`*(self: Item): string =
@@ -72,7 +69,6 @@ proc `$`*(self: Item): string =
     iconUrl:{self.iconUrl},
     shortName: {self.shortName},
     chainColor: {self.chainColor},
-    balance: {self.balance},
     enabledState: {self.enabledState}
     ]"""
 
@@ -114,9 +110,6 @@ proc getShortName*(self: Item): string =
 
 proc getChainColor*(self: Item): string =
   return self.chainColor
-
-proc getBalance*(self: Item): float64 =
-  return self.balance
 
 proc getEnabledState*(self: Item): UxEnabledState =
   return self.enabledState

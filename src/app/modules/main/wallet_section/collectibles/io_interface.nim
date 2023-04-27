@@ -13,7 +13,7 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
+method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method fetchOwnedCollectibles*(self: AccessInterface) {.base.} =

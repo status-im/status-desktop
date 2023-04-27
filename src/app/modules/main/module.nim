@@ -21,7 +21,6 @@ import stickers/module as stickers_module
 import activity_center/module as activity_center_module
 import communities/module as communities_module
 import node_section/module as node_section_module
-import networks/module as networks_module
 import communities/tokens/models/token_item
 import network_connection/module as network_connection_module
 import ../../../app_service/service/contacts/dto/contacts
@@ -98,7 +97,6 @@ type
     communitiesModule: communities_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
     nodeSectionModule: node_section_module.AccessInterface
-    networksModule: networks_module.AccessInterface
     keycardSharedModule: keycard_shared_module.AccessInterface
     keycardSharedModuleKeycardSyncPurpose: keycard_shared_module.AccessInterface
     networkConnectionModule: network_connection_module.AccessInterface
@@ -212,7 +210,6 @@ proc newModule*[T](
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
-  result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
   result.networkConnectionModule = network_connection_module.newModule(result, events, networkConnectionService)
 
 method delete*[T](self: Module[T]) =
@@ -228,7 +225,6 @@ method delete*[T](self: Module[T]) =
   self.browserSectionModule.delete
   self.appSearchModule.delete
   self.nodeSectionModule.delete
-  self.networksModule.delete
   if not self.keycardSharedModule.isNil:
     self.keycardSharedModule.delete
   if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
@@ -502,7 +498,6 @@ method load*[T](
   self.browserSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
-  self.networksModule.load()
   self.activityCenterModule.load()
   self.communitiesModule.load()
   self.appSearchModule.load()
@@ -670,9 +665,6 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.appSearchModule.isLoaded()):
     return
 
-  if(not self.networksModule.isLoaded()):
-    return
-
   if(not self.networkConnectionModule.isLoaded()):
     return
 
@@ -710,9 +702,6 @@ method profileSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method nodeSectionDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method networksModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method networkConnectionModuleDidLoad*[T](self: Module[T]) =

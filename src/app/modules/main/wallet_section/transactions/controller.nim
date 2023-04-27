@@ -94,8 +94,8 @@ proc getPendingTransactions*(self: Controller): seq[TransactionDto] =
 proc getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
   self.walletAccountService.getWalletAccounts()
 
-proc getWalletAccount*(self: Controller, accountIndex: int): WalletAccountDto =
-  return self.walletAccountService.getWalletAccount(accountIndex)
+proc getWalletAccountByAddress*(self: Controller, address: string): WalletAccountDto =
+  return self.walletAccountService.getAccountByAddress(address)
 
 proc loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)

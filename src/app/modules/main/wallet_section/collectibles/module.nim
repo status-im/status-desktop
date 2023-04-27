@@ -27,9 +27,10 @@ type
     controller: Controller
     moduleLoaded: bool
 
-    currentCollectibleModule: current_collectible_module.AccessInterface
     chainId: int
     address: string
+
+    currentCollectibleModule: current_collectible_module.AccessInterface
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -45,6 +46,8 @@ proc newModule*(
   result.view = newView(result)
   result.controller = newController(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
   result.moduleLoaded = false
+  result.chainId = 0
+  result.address = ""
   result.currentCollectibleModule = currentCollectibleModule.newModule(result, collectibleService)
 
 method delete*(self: Module) =
@@ -80,13 +83,11 @@ method currentCollectibleModuleDidLoad*(self: Module) =
 method fetchOwnedCollectibles*(self: Module) =
   self.controller.fetchOwnedCollectibles(self.chainId, self.address)
 
-method switchAccount*(self: Module, accountIndex: int) =
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let network = self.controller.getNetwork()
-  let account = self.controller.getWalletAccount(accountIndex)
-
+  let account = self.controller.getWalletAccountByAddress(addresses[0])
   self.chainId = network.chainId
   self.address = account.address
-
   self.currentCollectibleModule.setCurrentAddress(network, self.address)
 
   let data = self.controller.getOwnedCollectibles(self.chainId, self.address)

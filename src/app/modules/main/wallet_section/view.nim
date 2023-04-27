@@ -63,11 +63,8 @@ QtObject:
   QtProperty[QVariant] isMnemonicBackedUp:
     read = getIsMnemonicBackedUp
 
-  proc switchAccount(self: View, accountIndex: int) {.slot.} =
-    self.delegate.switchAccount(accountIndex)
-
-  proc switchAccountByAddress(self: View, address: string) {.slot.} =
-    self.delegate.switchAccountByAddress(address)
+  proc setFilterAddress(self: View, address: string) {.slot.} =
+    self.delegate.setFilterAddress(address)
 
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =
     self.totalCurrencyBalance = totalCurrencyBalance

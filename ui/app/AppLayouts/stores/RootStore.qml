@@ -145,13 +145,6 @@ QtObject {
         mainModuleInst.setActiveSectionById(communityId);
     }
 
-    function switchAccount(newIndex) {
-        if(Constants.isCppApp)
-            walletSectionAccounts.switchAccount(newIndex)
-        else
-            walletSection.switchAccount(newIndex)
-    }
-
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }

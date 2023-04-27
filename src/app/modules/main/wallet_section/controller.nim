@@ -1,7 +1,9 @@
+import sequtils, sugar
 import io_interface
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/currency/service as currency_service
+import ../../../../app_service/service/network/service as network_service
 
 import ../../shared/wallet_utils
 import ../../shared_models/currency_amount
@@ -12,18 +14,21 @@ type
     settingsService: settings_service.Service
     walletAccountService: wallet_account_service.Service
     currencyService: currency_service.Service
+    networkService: network_service.Service
  
 proc newController*(
   delegate: io_interface.AccessInterface,
   settingsService: settings_service.Service,
   walletAccountService: wallet_account_service.Service,
   currencyService: currency_service.Service,
+  networkService: network_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate
   result.settingsService = settingsService
   result.walletAccountService = walletAccountService
   result.currencyService = currencyService
+  result.networkService = networkService
 
 proc delete*(self: Controller) =
   discard
@@ -49,5 +54,14 @@ proc getCurrencyAmount*(self: Controller, amount: float64, symbol: string): Curr
 proc updateCurrency*(self: Controller, currency: string) =
   self.walletAccountService.updateCurrency(currency)
 
-proc getIndex*(self: Controller, address: string): int =
-  return self.walletAccountService.getIndex(address)
+# proc getIndex*(self: Controller, address: string): int =
+#   return self.walletAccountService.getIndex(address)
+
+proc getNetworks*(self: Controller): seq[NetworkDto] =
+  return self.networkService.getNetworks()
+
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getWalletAccounts()
+
+proc getEnabledChainIds*(self: Controller): seq[int] = 
+  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)

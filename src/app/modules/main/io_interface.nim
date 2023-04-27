@@ -61,9 +61,6 @@ method walletSectionDidLoad*(self: AccessInterface) {.base.} =
 method browserSectionDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method networksModuleDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method networkConnectionModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

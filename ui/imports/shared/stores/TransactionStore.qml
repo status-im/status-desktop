@@ -100,13 +100,6 @@ QtObject {
         return globalUtils.hex2Eth(value)
     }
 
-    function switchAccount(newIndex) {
-        if(Constants.isCppApp)
-            walletSectionAccounts.switchAccount(newIndex)
-        else
-            walletSection.switchAccount(newIndex)
-    }
-
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }

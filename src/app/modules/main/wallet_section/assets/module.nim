@@ -27,12 +27,8 @@ type
     view: View
     controller: Controller
     moduleLoaded: bool
-    currentAccountIndex: int
 
-proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]], hasBalanceCache: bool, hasMarketValuesCache: bool)
-proc onCurrencyFormatsUpdated(self: Module)
-proc onAccountAdded(self: Module, account: WalletAccountDto)
-proc onAccountRemoved(self: Module, address: string)
+proc onTokensRebuilt(self: Module, hasBalanceCache: bool, hasMarketValuesCache: bool)
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -45,7 +41,6 @@ proc newModule*(
   result = Module()
   result.delegate = delegate
   result.events = events
-  result.currentAccountIndex = 0
   result.view = newView(result)
   result.controller = newController(result, walletAccountService, networkService, tokenService, currencyService)
   result.moduleLoaded = false
@@ -62,31 +57,10 @@ proc setLoadingAssets(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAssets", newQVariant(self.view))
 
-  # these connections should be part of the controller's init method
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
-    let args = AccountSaved(e)
-    self.onAccountAdded(args.account)
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
-    let args = AccountDeleted(e)
-    self.onAccountRemoved(args.address)
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
-    self.switchAccount(self.currentAccountIndex)
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
-    self.switchAccount(self.currentAccountIndex)
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
-    self.switchAccount(self.currentAccountIndex)
-
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     let arg = TokensPerAccountArgs(e)
-    self.onTokensRebuilt(arg.accountsTokens, arg.hasBalanceCache, arg.hasMarketValuesCache)
+    self.onTokensRebuilt(arg.hasBalanceCache, arg.hasMarketValuesCache)
   
-  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
-    self.onCurrencyFormatsUpdated()
-
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
     if self.view.getAssetsModel().getCount() == 0:
       self.setLoadingAssets()
@@ -106,26 +80,18 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.assetsModuleDidLoad()
 
-proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
+proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto], enabledChainIds: seq[int]) =
   let chainIds = self.controller.getChainIds()
-  let enabledChainIds = self.controller.getEnabledChainIds()
-
   let currency = self.controller.getCurrentCurrency()
-
   let currencyFormat = self.controller.getCurrencyFormat(currency)
 
   let items = tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, self.controller.getCurrencyFormat(t.symbol)))
-
   let totalCurrencyBalanceForAllAssets = tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0)
     
   self.view.getAssetsModel().setItems(items)
 
-method switchAccount*(self: Module, accountIndex: int) =
-  var walletAccount = self.controller.getWalletAccount(accountIndex)
-  self.currentAccountIndex = accountIndex
-  if walletAccount.isNil:
-    self.currentAccountIndex = 0
-    walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
+  let walletAccount = self.controller.getWalletAccountByAddress(addresses[0])
   
   let accountItem = walletAccountToWalletAssetsItem(walletAccount)
   self.view.setData(accountItem)
@@ -133,25 +99,8 @@ method switchAccount*(self: Module, accountIndex: int) =
   if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
     self.setLoadingAssets()
   else:
-    self.setAssetsAndBalance(walletAccount.tokens)
+    self.setAssetsAndBalance(walletAccount.tokens, chainIds)
 
-proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]], hasBalanceCache: bool, hasMarketValuesCache: bool) =
-  let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
-  if not accountsTokens.contains(walletAccount.address):
-    return
+proc onTokensRebuilt(self: Module, hasBalanceCache: bool, hasMarketValuesCache: bool) =
   self.view.setAssetsLoading(false)
-  self.setAssetsAndBalance(accountsTokens[walletAccount.address])
   self.view.setCacheValues(hasBalanceCache, hasMarketValuesCache)
-
-proc onCurrencyFormatsUpdated(self: Module) =
-  let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
-  if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
-      self.setLoadingAssets()
-  else:
-    self.setAssetsAndBalance(walletAccount.tokens)
-
-proc onAccountAdded(self: Module, account: WalletAccountDto) =
-  self.switchAccount(self.currentAccountIndex)
-
-proc onAccountRemoved(self: Module, address: string) =
-  self.switchAccount(self.currentAccountIndex)

@@ -16,7 +16,7 @@ method loadForAddingAccount*(self: AccessInterface, addingWatchOnlyAccount: bool
 method loadForEditingAccount*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method closeAddAccountPopup*(self: AccessInterface, switchToAccWithAddress: string = "") {.base.} =
+method closeAddAccountPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
@@ -105,4 +105,4 @@ method buildNewSeedPhraseKeypairAndAddItToOrigin*(self: AccessInterface) {.base.
 type
   DelegateInterface* = concept c
     c.onAddAccountModuleLoaded()
-    c.destroyAddAccountPopup(string)
+    c.destroyAddAccountPopup()

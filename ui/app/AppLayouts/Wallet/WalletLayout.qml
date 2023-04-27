@@ -85,11 +85,8 @@ Item {
         leftPanel: LeftTabView {
             id: leftTab
             anchors.fill: parent
-            changeSelectedAccount: function(newIndex) {
-                if (newIndex > RootStore.accounts) {
-                    return
-                }
-                RootStore.switchAccount(newIndex)
+            changeSelectedAccount: function(address) {
+                RootStore.setFilterAddress(address)
 
             }
             onShowSavedAddressesChanged: {

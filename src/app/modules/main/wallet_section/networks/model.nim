@@ -19,7 +19,6 @@ type
     IconUrl
     ChainColor
     ShortName
-    Balance
     EnabledState
 
 QtObject:
@@ -69,7 +68,6 @@ QtObject:
       ModelRole.IconUrl.int:"iconUrl",
       ModelRole.ShortName.int: "shortName",
       ModelRole.ChainColor.int: "chainColor",
-      ModelRole.Balance.int: "balance",
       ModelRole.EnabledState.int: "enabledState",
     }.toTable
 
@@ -110,8 +108,6 @@ QtObject:
       result = newQVariant(item.getShortName())
     of ModelRole.ChainColor:
       result = newQVariant(item.getChainColor())
-    of ModelRole.Balance:
-      result = newQVariant(item.getBalance())
     of ModelRole.EnabledState:
       result = newQVariant(item.getEnabledState().int)
 
@@ -133,7 +129,6 @@ QtObject:
       of "iconUrl": result = $item.getIconURL()
       of "chainColor": result = $item.getChainColor()
       of "shortName": result = $item.getShortName()
-      of "balance": result = $item.getBalance()
       of "enabledState": result = $item.getEnabledState().int
 
   proc setItems*(self: Model, items: seq[Item]) =

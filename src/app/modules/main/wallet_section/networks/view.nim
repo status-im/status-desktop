@@ -1,6 +1,7 @@
+
 import Tables, NimQml, sequtils, sugar
 
-import ../../../../app_service/service/network/dto
+import ../../../../../app_service/service/network/dto
 import ./io_interface
 import ./model
 import ./item
@@ -82,10 +83,10 @@ QtObject:
     read = getEnabled
     notify = enabledChanged
 
-  proc load*(self: View, networks: TableRef[NetworkDto, float64]) =
+  proc load*(self: View, networks: seq[NetworkDto]) =
     var items: seq[Item] = @[]
-    let allEnabled = areAllEnabled(toSeq(networks.keys))
-    for n, balance in networks.pairs:
+    let allEnabled = areAllEnabled(networks)
+    for n in networks:
       items.add(initItem(
         n.chainId,
         n.nativeCurrencyDecimals,
@@ -100,7 +101,6 @@ QtObject:
         n.iconUrl,
         n.chainColor,
         n.shortName,
-        balance,
         # Ensure we mark all as enabled if all are enabled
         networkEnabledToUxEnabledState(n.enabled, allEnabled)
       ))
@@ -120,11 +120,6 @@ QtObject:
   proc toggleNetwork*(self: View, chainId: int) {.slot.} =
     let (chainIds, enable) = self.all.networksToChangeStateOnUserActionFor(chainId)
     self.delegate.setNetworksState(chainIds, enable)
-
-  proc toggleTestNetworksEnabled*(self: View) {.slot.} =
-    self.delegate.toggleTestNetworksEnabled()
-    self.areTestNetworksEnabled = not self.areTestNetworksEnabled
-    self.areTestNetworksEnabledChanged()
 
   proc getMainnetChainId*(self: View): int {.slot.} =
     return self.layer1.getLayer1Network(self.areTestNetworksEnabled)

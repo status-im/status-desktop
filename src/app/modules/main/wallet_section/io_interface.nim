@@ -15,10 +15,7 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method switchAccountByAddress*(self: AccessInterface, address: string) {.base.} =
+method setFilterAddress*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
@@ -52,6 +49,9 @@ method assetsModuleDidLoad*(self: AccessInterface) {.base.} =
 method transactionsModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method networksModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method savedAddressesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -76,5 +76,5 @@ method getAddAccountModule*(self: AccessInterface): QVariant {.base.} =
 method onAddAccountModuleLoaded*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method destroyAddAccountPopup*(self: AccessInterface, switchToAccWithAddress: string = "") {.base.} =
+method destroyAddAccountPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
