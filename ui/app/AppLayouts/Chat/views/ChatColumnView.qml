@@ -1,10 +1,6 @@
 import QtQuick 2.14
-import Qt.labs.platform 1.1
 import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.0
 import QtQml 2.14
-import Qt.labs.qmlmodels 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -35,7 +31,6 @@ Item {
     property var emojiPopup
     property var stickersPopup
 
-    property bool isSectionActive: mainModule.activeSection.id === parentModule.getMySectionId()
     property string activeChatId: parentModule && parentModule.activeItem.id
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
     property int activeChatType: parentModule && parentModule.activeItem.type
@@ -140,7 +135,7 @@ Item {
             height: parent.height
             visible: !root.rootStore.openCreateChat && isActiveChannel
             chatId: model.itemId
-            activeChatType: root.activeChatType
+            chatType: model.type
             chatMessagesLoader.active: model.loaderActive
             rootStore: root.rootStore
             contactsStore: root.contactsStore
@@ -262,34 +257,4 @@ Item {
             }
         }
     }
-
-        // Not Refactored Yet
-//        Connections {
-//            target: root.rootStore.chatsModelInst.stickers
-//            onTransactionWasSent: {
-//                //% "Transaction pending..."
-//                toastMessage.title = qsTr("Transaction pending...")
-//                toastMessage.source = Style.svg("loading")
-//                toastMessage.iconColor = Style.current.primary
-//                toastMessage.iconRotates = true
-//                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txResult}`
-//                toastMessage.open()
-//            }
-//            onTransactionCompleted: {
-//                toastMessage.title = !success ?
-//                                     qsTr("Could not buy Stickerpack")
-//                                     :
-//                                     qsTr("Stickerpack bought successfully");
-//                if (success) {
-//                    toastMessage.source = Style.svg("check-circle")
-//                    toastMessage.iconColor = Style.current.success
-//                } else {
-//                    toastMessage.source = Style.svg("block-icon")
-//                    toastMessage.iconColor = Style.current.danger
-//                }
-
-//                toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
-//                toastMessage.open()
-//            }
-//        }
 }
