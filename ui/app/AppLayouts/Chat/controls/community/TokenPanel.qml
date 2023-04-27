@@ -73,6 +73,8 @@ ColumnLayout {
     }
 
     Loader {
+        id: networksComboBoxLoader
+
         active: !!root.networksModel
         visible: active
 
@@ -81,7 +83,10 @@ ColumnLayout {
         Layout.bottomMargin: d.defaultSpacing
 
         sourceComponent: ColumnLayout {
-             spacing: 10
+            spacing: 10
+
+            property alias currentAmount: inlineNetworksComboBox.currentAmount
+            property alias currentInfiniteAmount: inlineNetworksComboBox.currentInfiniteAmount
 
             CustomText {
                 id: networkLabel
@@ -94,6 +99,8 @@ ColumnLayout {
             }
 
             InlineNetworksComboBox {
+                id: inlineNetworksComboBox
+
                 Layout.fillWidth: true
 
                 model: root.networksModel
@@ -107,10 +114,18 @@ ColumnLayout {
         locale: LocaleUtils.userInputLocale
 
         Layout.fillWidth: true
-        Layout.bottomMargin: (validationError !== "") ? root.spacing : 0
+        Layout.bottomMargin: (validationError !== "") ? root.spacing * 2 : 0
         customHeight: d.defaultHeight
         allowDecimals: true
         keepHeight: true
+
+        validateMaximumAmount:
+            !!networksComboBoxLoader.item &&
+            !networksComboBoxLoader.item.currentInfiniteAmount
+
+        maximumAmount: !!networksComboBoxLoader.item
+                       ? networksComboBoxLoader.item.currentAmount : 0
+
         onKeyPressed: {
             if(!addOrUpdateButton.enabled) return
 
