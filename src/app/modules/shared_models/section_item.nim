@@ -215,8 +215,14 @@ proc hasNotification*(self: SectionItem): bool {.inline.} =
 proc `hasNotification=`*(self: var SectionItem, value: bool) {.inline.} =
   self.hasNotification = value
 
+proc setHasNotification*(self: var SectionItem, value: bool) {.inline.} =
+  self.hasNotification = value
+
 proc notificationsCount*(self: SectionItem): int {.inline.} =
   self.notificationsCount
+
+proc setNotificationsCount*(self: var SectionItem, value: int) {.inline.} =
+  self.notificationsCount = value
 
 proc `notificationsCount=`*(self: var SectionItem, value: int) {.inline.} =
   self.notificationsCount = value
