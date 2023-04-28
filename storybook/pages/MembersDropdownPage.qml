@@ -199,6 +199,39 @@ SplitView {
                 readonly property MembersDropdown membersDropdown: loader.item
 
                 RowLayout {
+                    RadioButton {
+                        id: addModeRadioButton
+
+                        text: "add mode"
+                        checked: true
+
+                        Binding {
+                            target: membersDropdown
+                            property: "mode"
+                            value: addModeRadioButton.checked
+                                   ? MembersDropdown.Mode.Add
+                                   : MembersDropdown.Mode.Update
+                        }
+                    }
+
+                    RadioButton {
+                        text: "update mode"
+                    }
+
+                    CheckBox {
+                        id: forceButtonDisabledCheckBox
+
+                        text: "force button disabled"
+
+                        Binding {
+                            target: membersDropdown
+                            property: "forceButtonDisabled"
+                            value: forceButtonDisabledCheckBox.checked
+                        }
+                    }
+                }
+
+                RowLayout {
                     Label {
                         text: "maximum list height:"
                     }
