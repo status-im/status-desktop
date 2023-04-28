@@ -173,7 +173,7 @@ QtObject:
       return @[]
 
     return toSeq(self.allTransactions[address].values)
-  
+
   proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
     let watchTxResult = parseJson(watchTxResult)
     let success = watchTxResult["isSuccessfull"].getBool
@@ -183,7 +183,7 @@ QtObject:
       let address = watchTxResult["address"].getStr
       let transactionReceipt = transactions.getTransactionReceipt(chainId, hash).result
       if transactionReceipt != nil and transactionReceipt.kind != JNull:
-        # Pending transaction will be deleted by backend after transfering multi-transaction info to history
+        # Pending transaction are deleted by backend on new state downloading
         echo watchTxResult["data"].getStr
         let ev = TransactionMinedArgs(
           data: watchTxResult["data"].getStr,
