@@ -34,6 +34,7 @@ import StatusQ.Core 0.1
 import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
+import AppLayouts.CommunitiesPortal.stores 1.0
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0
@@ -57,6 +58,7 @@ Item {
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
+    property CommunitiesStore communitiesStore: CommunitiesStore {}
     // set from main.qml
     property var sysPalette
 
@@ -114,6 +116,7 @@ Item {
         id: popups
         popupParent: appMain
         rootStore: appMain.rootStore
+        communitiesStore: appMain.communitiesStore
     }
 
     Connections {
@@ -192,7 +195,7 @@ Item {
         }
 
         function onSwitchToCommunity(communityId: string) {
-            communitiesPortalLayoutContainer.communitiesStore.setActiveCommunity(communityId)
+            appMain.communitiesStore.setActiveCommunity(communityId)
         }
     }
 
@@ -242,10 +245,13 @@ Item {
         }
     }
 
-    StatusEmojiPopup {
+    Loader {
         id: statusEmojiPopup
-        width: 360
-        height: 440
+        active: appMain.rootStore.mainModuleInst.sectionsLoaded
+        sourceComponent: StatusEmojiPopup {
+            width: 360
+            height: 440
+        }
     }
 
     Loader {
@@ -558,15 +564,15 @@ Item {
 
                 ModuleWarning {
                     Layout.fillWidth: true
-                    readonly property int progress: communitiesPortalLayoutContainer.communitiesStore.discordImportProgress
-                    readonly property bool inProgress: (progress > 0 && progress < 100) || communitiesPortalLayoutContainer.communitiesStore.discordImportInProgress
+                    readonly property int progress: appMain.communitiesStore.discordImportProgress
+                    readonly property bool inProgress: (progress > 0 && progress < 100) || appMain.communitiesStore.discordImportInProgress
                     readonly property bool finished: progress >= 100
-                    readonly property bool cancelled: communitiesPortalLayoutContainer.communitiesStore.discordImportCancelled
-                    readonly property bool stopped: communitiesPortalLayoutContainer.communitiesStore.discordImportProgressStopped
-                    readonly property int errors: communitiesPortalLayoutContainer.communitiesStore.discordImportErrorsCount
-                    readonly property int warnings: communitiesPortalLayoutContainer.communitiesStore.discordImportWarningsCount
-                    readonly property string communityId: communitiesPortalLayoutContainer.communitiesStore.discordImportCommunityId
-                    readonly property string communityName: communitiesPortalLayoutContainer.communitiesStore.discordImportCommunityName
+                    readonly property bool cancelled: appMain.communitiesStore.discordImportCancelled
+                    readonly property bool stopped: appMain.communitiesStore.discordImportProgressStopped
+                    readonly property int errors: appMain.communitiesStore.discordImportErrorsCount
+                    readonly property int warnings: appMain.communitiesStore.discordImportWarningsCount
+                    readonly property string communityId: appMain.communitiesStore.discordImportCommunityId
+                    readonly property string communityName: appMain.communitiesStore.discordImportCommunityName
 
                     active: !cancelled && (inProgress || finished || stopped)
                     type: errors ? ModuleWarning.Type.Danger : ModuleWarning.Type.Success
@@ -595,12 +601,12 @@ Item {
 
                         return ""
                     }
-                    onLinkActivated: popups.openPopup(communitiesPortalLayoutContainer.discordImportProgressPopup)
+                    onLinkActivated: popups.openDiscordImportProgressPopup()
                     progressValue: progress
                     closeBtnVisible: finished || stopped
                     buttonText: finished && !errors ? qsTr("Visit your Community") : ""
                     onClicked: function() {
-                        communitiesPortalLayoutContainer.communitiesStore.setActiveCommunity(communityId)
+                        appMain.communitiesStore.setActiveCommunity(communityId)
                     }
                     onCloseClicked: {
                         hide();
@@ -610,7 +616,7 @@ Item {
                 ModuleWarning {
                     id: downloadingArchivesBanner
                     Layout.fillWidth: true
-                    active: communitiesPortalLayoutContainer.communitiesStore.downloadingCommunityHistoryArchives
+                    active: appMain.communitiesStore.downloadingCommunityHistoryArchives
                     type: ModuleWarning.Danger
                     text: qsTr("Downloading message history archives, DO NOT CLOSE THE APP until this banner disappears.")
                     closeBtnVisible: false
@@ -881,7 +887,7 @@ Item {
                                     StatusBaseText {
                                         text: qsTr("Loading sections...")
                                     }
-                                    LoadingAnimation {}
+                                    LoadingAnimation { anchors.verticalCenter: parent.verticalCenter }
                                 }
                             }
                         }
@@ -919,7 +925,7 @@ Item {
                                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                                     networkConnectionStore: appMain.networkConnectionStore
                                 }
-                                emojiPopup: statusEmojiPopup
+                                emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
 
                                 onProfileButtonClicked: {
@@ -929,23 +935,21 @@ Item {
                                 onOpenAppSearch: {
                                     appSearch.openSearchPopup()
                                 }
-
-                                onImportCommunityClicked: {
-                                    popups.openPopup(communitiesPortalLayoutContainer.importCommunitiesPopup);
-                                }
-
-                                onCreateCommunityClicked: {
-                                    popups.openPopup(communitiesPortalLayoutContainer.createCommunitiesPopup);
-                               }
                             }
                         }
                     }
 
-                    CommunitiesPortalLayout {
-                        id: communitiesPortalLayoutContainer
-
-                        assetsModel: rootChatStore.assetsModel
-                        collectiblesModel: rootChatStore.collectiblesModel
+                    Loader {
+                        active: appView.currentIndex === Constants.appViewStackIndex.communitiesPortal
+                        asynchronous: true
+                        CommunitiesPortalLayout {
+                            anchors.fill: parent
+                            communitiesStore: appMain.communitiesStore
+                            assetsModel: appMain.rootChatStore.assetsModel
+                            collectiblesModel: appMain.rootChatStore.collectiblesModel
+                            notificationCount: appMain.activityCenterStore.unreadNotificationsCount
+                            hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
+                        }
                     }
 
                     Loader {
@@ -954,7 +958,7 @@ Item {
                         sourceComponent: WalletLayout {
                             store: appMain.rootStore
                             contactsStore: appMain.rootStore.profileSectionStore.contactsStore
-                            emojiPopup: statusEmojiPopup
+                            emojiPopup: statusEmojiPopup.item
                             sendModalPopup: sendModal
                             networkConnectionStore: appMain.networkConnectionStore
                         }
@@ -987,7 +991,7 @@ Item {
                             store: appMain.rootStore.profileSectionStore
                             globalStore: appMain.rootStore
                             systemPalette: appMain.sysPalette
-                            emojiPopup: statusEmojiPopup
+                            emojiPopup: statusEmojiPopup.item
                             networkConnectionStore: appMain.networkConnectionStore
                         }
                     }
@@ -1039,7 +1043,7 @@ Item {
                                     restoreMode: Binding.RestoreBindingOrValue
                                 }
 
-                                emojiPopup: statusEmojiPopup
+                                emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
 
@@ -1090,7 +1094,7 @@ Item {
                             openCreateChat: createChatView.opened
                             chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                         }
-                        emojiPopup: statusEmojiPopup
+                        emojiPopup: statusEmojiPopup.item
                         stickersPopup: statusStickersPopupLoader.item
                     }
                 }
@@ -1322,7 +1326,7 @@ Item {
                 settings = {}
             }
 
-            // Set Status links as true. We intercept thoseURLs so it is privacy-safe
+            // Set Status links as true. We intercept those URLs so it is privacy-safe
             if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
                 settings[Constants.deepLinkPrefix] = true
                 settings[Constants.joinStatusLink] = true

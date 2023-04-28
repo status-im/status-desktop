@@ -198,7 +198,7 @@ Rectangle {
                 width: parent.width
                 font.weight: Font.Medium
                 font.pixelSize: 22
-                loading: RootStore.currentAccount.assetsLoading
+                loading: RootStore.assetsLoading
                 visible: !networkConnectionStore.accountBalanceNotAvailable
             }
 

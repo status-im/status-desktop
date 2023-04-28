@@ -32,12 +32,8 @@ Item {
     property var contactsStore
     property var emojiPopup
 
-    // Not Refactored Yet
-    //property int chatGroupsListViewCount: channelList.model.count
     signal openProfileClicked()
     signal openAppSearch()
-    signal importCommunityClicked()
-    signal createCommunityClicked()
     signal addRemoveGroupMemberClicked()
 
     // main layout

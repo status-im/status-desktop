@@ -2,6 +2,7 @@ import QtQuick 2.15
 
 import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile.popups 1.0
+import AppLayouts.CommunitiesPortal.popups 1.0
 
 import shared.popups 1.0
 import shared.status 1.0
@@ -13,6 +14,7 @@ QtObject {
 
     required property var popupParent
     required property var rootStore
+    property var communitiesStore
 
     property var activePopupComponents: []
 
@@ -34,6 +36,8 @@ QtObject {
         Global.openEditDisplayNamePopup.connect(openEditDisplayNamePopup)
         Global.openPinnedMessagesPopupRequested.connect(openPinnedMessagesPopup)
         Global.openCommunityProfilePopupRequested.connect(openCommunityProfilePopup)
+        Global.createCommunityPopupRequested.connect(openCreateCommunityPopup)
+        Global.importCommunityPopupRequested.connect(openImportCommunityPopup)
         Global.openPopupRequested.connect(openPopup)
     }
 
@@ -180,6 +184,18 @@ QtObject {
 
     function openCommunityPopup(store, community, chatCommunitySectionModule) {
         openPopup(communityProfilePopup, {store: store, community: community, chatCommunitySectionModule: chatCommunitySectionModule})
+    }
+
+    function openCreateCommunityPopup(isDiscordImport) {
+        openPopup(createCommunitiesPopupComponent, {isDiscordImport: isDiscordImport})
+    }
+
+    function openImportCommunityPopup() {
+        openPopup(importCommunitiesPopupComponent)
+    }
+
+    function openDiscordImportProgressPopup() {
+        openPopup(discordImportProgressDialog)
     }
 
     readonly property list<Component> _components: [
@@ -389,6 +405,34 @@ QtObject {
                     close()
                 }
                 onClosed: destroy()
+            }
+        },
+
+        Component {
+            id: importCommunitiesPopupComponent
+            ImportCommunityPopup {
+                store: root.communitiesStore
+                onClosed: {
+                    destroy()
+                }
+            }
+        },
+
+        Component {
+            id: createCommunitiesPopupComponent
+            CreateCommunityPopup {
+                anchors.centerIn: parent
+                store: root.communitiesStore
+                onClosed: {
+                    destroy()
+                }
+            }
+        },
+
+        Component {
+            id: discordImportProgressDialog
+            DiscordImportProgressDialog {
+                store: root.communitiesStore
             }
         }
     ]
