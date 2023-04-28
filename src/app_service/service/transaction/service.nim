@@ -173,7 +173,7 @@ QtObject:
       return @[]
 
     return toSeq(self.allTransactions[address].values)
-  
+
   proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
     let watchTxResult = parseJson(watchTxResult)
     let success = watchTxResult["isSuccessfull"].getBool
@@ -183,7 +183,10 @@ QtObject:
       let address = watchTxResult["address"].getStr
       let transactionReceipt = transactions.getTransactionReceipt(chainId, hash).result
       if transactionReceipt != nil and transactionReceipt.kind != JNull:
-        # Pending transaction will be deleted by backend after transfering multi-transaction info to history
+        # Delete pending transaction. Deleting it in status-go didn't work for all the cases
+        # TODO: make delete pending and save transaction atomc in status-go after fixing the crash
+        discard transactions.deletePendingTransaction(chainId, hash)
+
         echo watchTxResult["data"].getStr
         let ev = TransactionMinedArgs(
           data: watchTxResult["data"].getStr,
