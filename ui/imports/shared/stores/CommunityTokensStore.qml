@@ -66,7 +66,7 @@ QtObject {
     }
 
     signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
-    signal deploymentStateChanged(int status, string url)
+    signal deploymentStateChanged(string communityId, int status, string url)
     signal selfDestructFeeUpdated(string value) // TO BE REMOVED
 
     readonly property Connections connections: Connections {
@@ -74,8 +74,8 @@ QtObject {
       function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
           root.deployFeeUpdated(ethCurrency, fiatCurrency, errorCode)
       }
-      function onDeploymentStateChanged(status, url) {
-          root.deploymentStateChanged(status, url)
+      function onDeploymentStateChanged(communityId, status, url) {
+          root.deploymentStateChanged(communityId, status, url)
       }
     }
 
