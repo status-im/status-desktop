@@ -355,7 +355,11 @@ StatusSectionLayout {
                         mintPanel.isFeeLoading = true
                     }
 
-                    function onDeploymentStateChanged(status, url) {
+                    function onDeploymentStateChanged(communityId, status, url) {
+                        if (root.community.id !== communityId) {
+                            return
+                        }
+
                         let title = ""
                         let loading = false
                         let type = Constants.ephemeralNotificationType.normal

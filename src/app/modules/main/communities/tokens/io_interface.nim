@@ -29,5 +29,5 @@ method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: st
 method onDeployFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenDeployStateChanged*(self: AccessInterface, chainId: int, transactionHash: string, deployState: DeployState) {.base.} =
+method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -47,10 +47,10 @@ proc init*(self: Controller) =
     self.communityTokensModule.onDeployFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode)
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYED) do(e: Args):
     let args = CommunityTokenDeployedArgs(e)
-    self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityToken.chainId, args.transactionHash, args.communityToken.deployState)
+    self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityToken.communityId, args.communityToken.chainId, args.transactionHash, args.communityToken.deployState)
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
     let args = CommunityTokenDeployedStatusArgs(e)
-    self.communityTokensModule.onCommunityTokenDeployStateChanged(args.chainId, args.transactionHash, args.deployState)
+    self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityId, args.chainId, args.transactionHash, args.deployState)
 
 proc deployCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
   self.communityTokensService.deployCollectibles(communityId, addressFrom, password, deploymentParams, tokenMetadata, chainId)

@@ -222,7 +222,7 @@ QtObject:
         let txData = TransactionDataDto(source: parseAddress(addressFrom)) #TODO estimate fee in UI
         let response = tokens_backend.mintTo(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, password, walletAddresses, collectibleAndAmount.amount)
         let transactionHash = response.result.getStr()
-        debug "Deployment transaction hash ", transactionHash=transactionHash
+        debug "Airdrop transaction hash ", transactionHash=transactionHash
 
         let airdropDetails = AirdropDetails(
               chainId: collectibleAndAmount.communityToken.chainId,
