@@ -14,6 +14,7 @@ StatusDropdown {
     id: root
 
     property var selectedKeys: []
+    property bool forceButtonDisabled: false
     property int maximumListHeight: 288
 
     property alias model: listView.model
@@ -22,6 +23,12 @@ StatusDropdown {
     readonly property alias searchText: filterInput.text
 
     property bool fixedYPosition: !anchors.centerIn && margins < 0
+
+    enum Mode {
+        Add, Update
+    }
+
+    property int mode: MembersDropdown.Mode.Add
 
     signal backButtonClicked
     signal addButtonClicked
@@ -36,7 +43,10 @@ StatusDropdown {
     bottomInset: 10
     bottomPadding: padding + bottomInset
 
-    onOpened: filterInput.text = ""
+    onOpened: {
+        listView.positionViewAtBeginning()
+        filterInput.text = ""
+    }
 
     QtObject {
         id: d
@@ -45,6 +55,7 @@ StatusDropdown {
         readonly property int delegateHeight: 47
 
         readonly property int vPadding: root.topPadding + root.bottomPadding
+        readonly property int scrollBarWidth: 4
 
         readonly property int availableExternalHeight:
             (root.Overlay.overlay ? root.Overlay.overlay.height : 0) - root.bottomMargin -
@@ -121,6 +132,10 @@ StatusDropdown {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            verticalScrollBar {
+                implicitWidth: d.scrollBarWidth + ScrollBar.vertical.padding * 2
+            }
 
             visible: count > 0
 
@@ -225,10 +240,25 @@ StatusDropdown {
             Layout.fillWidth: true
 
             textFillWidth: true
-            enabled: root.selectedKeys.length > 0
-            text: enabled
-                  ? qsTr("Add %n member(s)", "", root.selectedKeys.length)
-                  : qsTr("Add")
+
+            enabled: {
+                if (root.forceButtonDisabled)
+                    return false
+
+                if (root.mode === MembersDropdown.Mode.Add)
+                    return root.selectedKeys.length > 0
+
+                return true
+            }
+
+            text: {
+                if (root.mode === MembersDropdown.Mode.Update)
+                    return qsTr("Update members")
+
+                return root.selectedKeys.length > 0
+                        ? qsTr("Add %n member(s)", "", root.selectedKeys.length)
+                        : qsTr("Add")
+            }
 
             onClicked: root.addButtonClicked()
         }
