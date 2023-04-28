@@ -421,17 +421,9 @@ proc getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentio
       result.unviewed += chat.unviewedMessagesCount
     result.mentions += chat.unviewedMentionsCount
 
-proc getNumOfNotificationsForCommunity*(self: Controller, communityId: string): tuple[unviewed:int, mentions:int] =
-  result.unviewed = 0
-  result.mentions = 0
-  let chats = self.chatService.getAllChats()
-  for chat in chats:
-    if(chat.communityId != communityId):
-      continue
-
-    if not chat.muted:
-      result.unviewed += chat.unviewedMessagesCount
-    result.mentions += chat.unviewedMentionsCount
+proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string):
+    tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
+  return self.chatService.sectionUnreadMessagesAndMentionsCount(communityId)
 
 proc setCurrentUserStatus*(self: Controller, status: StatusType) =
   if(self.settingsService.saveSendStatusUpdates(status)):

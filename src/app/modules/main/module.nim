@@ -923,7 +923,14 @@ method communityEdited*[T](
     self: Module[T],
     community: CommunityDto) =
   let channelGroup = community.toChannelGroupDto()
-  self.view.editItem(self.createChannelGroupItem(channelGroup))
+  var channelGroupItem = self.createChannelGroupItem(channelGroup)
+  # We need to calculate the unread counts because the community update doesn't come with it
+  let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
+    channelGroupItem.id
+  )
+  channelGroupItem.setHasNotification(unviewedMessagesCount > 0)
+  channelGroupItem.setNotificationsCount(unviewedMentionsCount)
+  self.view.editItem(channelGroupItem)
 
 method onCommunityMuted*[T](
     self: Module[T],

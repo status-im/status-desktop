@@ -109,22 +109,6 @@ proc authenticateToRequestToJoinCommunity*(self: Controller, communityId: string
 
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_CHATS_LOADED) do(e:Args):
-    let args = ChannelGroupArgs(e)
-    if args.channelGroup.id == self.sectionId:
-      self.delegate.onChatsLoaded(
-        args.channelGroup,
-        self.events,
-        self.settingsService,
-        self.nodeConfigurationService,
-        self.contactService,
-        self.chatService,
-        self.communityService,
-        self.messageService,
-        self.gifService,
-        self.mailserversService,
-      )
-
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
     let args = MessageSendingSuccess(e)
     self.delegate.updateLastMessageTimestamp(args.chat.id, args.chat.timestamp.int)
@@ -394,12 +378,24 @@ proc getChats*(self: Controller, communityId: string, categoryId: string): seq[C
 proc getAllChats*(self: Controller, communityId: string): seq[ChatDto] =
   return self.communityService.getAllChats(communityId)
 
+proc getChatsAndBuildUI*(self: Controller) =
+  let channelGroup = self.chatService.getChannelGroupById(self.sectionId)
+  self.delegate.onChatsLoaded(
+        channelGroup,
+        self.events,
+        self.settingsService,
+        self.nodeConfigurationService,
+        self.contactService,
+        self.chatService,
+        self.communityService,
+        self.messageService,
+        self.gifService,
+        self.mailserversService,
+      )
+
 proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string):
     tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
   return self.chatService.sectionUnreadMessagesAndMentionsCount(communityId)
-
-proc asyncGetChats*(self: Controller) =
-  self.chatService.asyncGetChatsByChannelGroupId(self.sectionId)
 
 proc getChatDetails*(self: Controller, chatId: string): ChatDto =
   return self.chatService.getChatById(chatId)

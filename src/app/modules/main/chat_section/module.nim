@@ -493,15 +493,18 @@ proc updateParentBadgeNotifications(self: Module) =
 
 proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bool, unviewedMentionsCount: int) =
   let chatId = chat.id
-  # update model of this module (appropriate chat from the chats list (chats model))
-  self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
-  # update child module
-  if (self.chatContentModules.contains(chatId)):
-    self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
-  # Update category
-  if chat.categoryId != "":
-    let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chat.communityId, chat.categoryId)
-    self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
+
+  if self.chatsLoaded:
+    # update model of this module (appropriate chat from the chats list (chats model))
+    self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
+    # update child module
+    if (self.chatContentModules.contains(chatId)):
+      self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
+    # Update category
+    if chat.categoryId != "":
+      let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chat.communityId, chat.categoryId)
+      self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
+
   # update parent module
   self.updateParentBadgeNotifications()
 
@@ -514,7 +517,7 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
     return
 
   if not self.view.getChatsLoaded:
-    self.controller.asyncGetChats()
+    self.controller.getChatsAndBuildUI()
 
   self.controller.setIsCurrentSectionActive(true)
   let activeChatId = self.controller.getActiveChatId()

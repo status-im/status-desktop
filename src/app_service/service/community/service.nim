@@ -798,6 +798,7 @@ QtObject:
 
       updatedCommunity.settings = communitySettings
       self.communities[communityId] = updatedCommunity
+      # TODO improve this by only loading the data for the wanted community
       self.chatService.loadChannelGroupById(communityId)
 
       for k, chat in updatedCommunity.chats:
