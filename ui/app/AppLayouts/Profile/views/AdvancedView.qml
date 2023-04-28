@@ -133,7 +133,7 @@ SettingsContentBase {
             }
 
             // TODO: replace with StatusQ component
-             StatusSettingsLineButton {
+            StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("WakuV2 Store")
@@ -513,28 +513,6 @@ SettingsContentBase {
 
             onCancelButtonClicked: {
                 close()
-            }
-        }
-
-        Component {
-            id: errorMessageDialogCmp
-            StatusDialog {
-                id: errorMessageDialog
-                property string errorMessage: ""
-                title: qsTr("An error occoured")
-
-                StatusBaseText {
-                    anchors.fill: parent
-                    text: {
-                      if (errorMessageDialog.errorMessage.indexOf("address already in use") > -1) {
-                        return qsTr("The specified torrent client port is already in use.")
-                      }
-                      return errorMessageDialog.errorMessage
-                    }
-                }
-
-                standardButtons: Dialog.Ok
-                onAccepted: errorMessageDialog.close()
             }
         }
     }

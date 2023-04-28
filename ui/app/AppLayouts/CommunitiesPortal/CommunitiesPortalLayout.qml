@@ -16,8 +16,6 @@ import shared.panels 1.0
 
 import SortFilterProxyModel 0.2
 
-import AppLayouts.CommunitiesPortal.stores 1.0
-
 import "controls"
 import "popups"
 import "views"
@@ -25,16 +23,12 @@ import "views"
 StatusSectionLayout {
     id: root
 
-    property CommunitiesStore communitiesStore: CommunitiesStore {}
-    property var importCommunitiesPopup: importCommunitiesPopupComponent
-    property var createCommunitiesPopup: createCommunitiesPopupComponent
-    property var discordImportProgressPopup: discordImportProgressDialog
+    property var communitiesStore
 
     property alias assetsModel: communitiesGrid.assetsModel
     property alias collectiblesModel: communitiesGrid.collectiblesModel
 
     objectName: "communitiesPortalLayout"
-    notificationCount: activityCenterStore.unreadNotificationsCount
     onNotificationButtonClicked: Global.openActivityCenterPopup()
 
     onVisibleChanged: {
@@ -133,7 +127,7 @@ StatusSectionLayout {
                     Layout.preferredHeight: 38
                     text: qsTr("Import using key")
                     verticalPadding: 0
-                    onClicked: Global.openPopup(importCommunitiesPopupComponent)
+                    onClicked: Global.importCommunityPopupRequested()
                 }
 
                 StatusButton {
@@ -196,28 +190,6 @@ StatusSectionLayout {
     }
 
     Component {
-        id: importCommunitiesPopupComponent
-        ImportCommunityPopup {
-            anchors.centerIn: parent
-            store: root.communitiesStore
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: createCommunitiesPopupComponent
-        CreateCommunityPopup {
-            anchors.centerIn: parent
-            store: root.communitiesStore
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
         id: chooseCommunityCreationTypePopupComponent
         StatusDialog {
             id: chooseCommunityCreationTypePopup
@@ -236,7 +208,7 @@ StatusSectionLayout {
                     icon.name: "favourite"
                     onButtonClicked: {
                         chooseCommunityCreationTypePopup.close()
-                        Global.openPopup(createCommunitiesPopupComponent)
+                        Global.createCommunityPopupRequested(false /*isDiscordImport*/)
                     }
                 }
                 CommunityBanner {
@@ -250,17 +222,10 @@ StatusSectionLayout {
                     buttonLoading: importInProgress
                     onButtonClicked: {
                         chooseCommunityCreationTypePopup.close()
-                        Global.openPopup(createCommunitiesPopupComponent, {isDiscordImport: true})
+                        Global.createCommunityPopupRequested(true /*isDiscordImport*/)
                     }
                 }
             }
-        }
-    }
-
-    Component {
-        id: discordImportProgressDialog
-        DiscordImportProgressDialog {
-            store: root.communitiesStore
         }
     }
 }

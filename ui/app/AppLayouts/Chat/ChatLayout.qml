@@ -23,8 +23,6 @@ StackLayout {
 
     property var emojiPopup
     property var stickersPopup
-    signal importCommunityClicked()
-    signal createCommunityClicked()
     signal profileButtonClicked()
     signal openAppSearch()
 
@@ -33,7 +31,6 @@ StackLayout {
     }
 
     Loader {
-
         readonly property var chatItem: root.rootStore.chatCommunitySectionModule
         sourceComponent: chatItem.isCommunity() && chatItem.requiresTokenPermissionToJoin && !chatItem.amIMember ? joinCommunityViewComponent : chatViewComponent
     }
@@ -116,12 +113,6 @@ StackLayout {
             onCommunityInfoButtonClicked: root.currentIndex = 1
             onCommunityManageButtonClicked: root.currentIndex = 1
 
-            onImportCommunityClicked: {
-                root.importCommunityClicked();
-            }
-            onCreateCommunityClicked: {
-                root.createCommunityClicked();
-            }
             onProfileButtonClicked: {
                 root.profileButtonClicked()
             }

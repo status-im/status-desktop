@@ -67,6 +67,7 @@ Item {
         width: root.width
         backButtonName: RootStore.backButtonName
         notificationCount: activityCenterStore.unreadNotificationsCount
+        hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
         
         onNotificationButtonClicked: Global.openActivityCenterPopup()
         onBackButtonClicked: {

@@ -38,8 +38,6 @@ StatusSectionLayout {
     signal communityManageButtonClicked()
     signal profileButtonClicked()
     signal openAppSearch()
-    signal importCommunityClicked()
-    signal createCommunityClicked()
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
@@ -138,12 +136,6 @@ StatusSectionLayout {
 
             onOpenAppSearch: {
                 root.openAppSearch()
-            }
-            onImportCommunityClicked: {
-                root.importCommunityClicked();
-            }
-            onCreateCommunityClicked: {
-                root.createCommunityClicked();
             }
             onAddRemoveGroupMemberClicked: {
                 headerContent.addRemoveGroupMember()
