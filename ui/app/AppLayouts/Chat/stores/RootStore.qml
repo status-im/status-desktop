@@ -1,4 +1,5 @@
-import QtQuick 2.13
+import QtQuick 2.15
+import QtQml 2.15
 
 import utils 1.0
 import SortFilterProxyModel 0.2
@@ -60,6 +61,10 @@ QtObject {
             expression: icon(model.icon)
         }
     }
+
+    readonly property bool isUserAllowedToSendMessage: _d.isUserAllowedToSendMessage
+    readonly property string chatInputPlaceHolderText: _d.chatInputPlaceHolderText
+    readonly property var oneToOneChatContact: _d.oneToOneChatContact
     // Since qml component doesn't follow encaptulation from the backend side, we're introducing
     // a method which will return appropriate chat content module for selected chat/channel
     function currentChatContentModule(){
@@ -661,6 +666,78 @@ QtObject {
                 readonly property bool amIBanned: model.amIBanned
                 // add others when needed..
             }
+        }
+
+        readonly property string activeChatId: chatCommunitySectionModule && chatCommunitySectionModule.activeItem ? chatCommunitySectionModule.activeItem.id : ""
+        readonly property int activeChatType: chatCommunitySectionModule && chatCommunitySectionModule.activeItem ? chatCommunitySectionModule.activeItem.type : -1
+        readonly property bool amIMember: chatCommunitySectionModule ? chatCommunitySectionModule.amIMember : false
+
+        property var oneToOneChatContact: undefined
+        readonly property string oneToOneChatContactName: !!_d.oneToOneChatContact ? ProfileUtils.displayName(_d.oneToOneChatContact.localNickname, 
+                                                                                                    _d.oneToOneChatContact.name, 
+                                                                                                    _d.oneToOneChatContact.displayName, 
+                                                                                                    _d.oneToOneChatContact.alias) : ""
+
+        //Update oneToOneChatContact when the contact is updated
+        readonly property var myContactsModelConnection: Connections {
+            target: root.contactsStore.myContactsModel ?? null
+            enabled: _d.activeChatType === Constants.chatType.oneToOne
+
+            function onItemChanged(pubKey) {
+                if (pubKey === _d.activeChatId) {
+                    _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
+                }
+            }
+        }
+
+        readonly property var receivedContactsReqModelConnection: Connections {
+            target: root.contactsStore.receivedContactRequestsModel ?? null
+            enabled: _d.activeChatType === Constants.chatType.oneToOne
+
+            function onItemChanged(pubKey) {
+                if (pubKey === _d.activeChatId) {
+                    _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
+                }
+            }
+        }
+
+        readonly property var sentContactReqModelConnection: Connections {
+            target: root.contactsStore.sentContactRequestsModel ?? null
+            enabled: _d.activeChatType === Constants.chatType.oneToOne
+
+            function onItemChanged(pubKey) {
+                if (pubKey === _d.activeChatId) {
+                    _d.oneToOneChatContact = Utils.getContactDetailsAsJson(pubKey, false)
+                }
+            }
+        }
+
+        readonly property bool isUserAllowedToSendMessage: {
+            if (_d.activeChatType === Constants.chatType.oneToOne && _d.oneToOneChatContact) {
+                return _d.oneToOneChatContact.contactRequestState == Constants.ContactRequestState.Mutual
+            }
+            else if(_d.activeChatType === Constants.chatType.privateGroupChat) {
+                return _d.amIMember
+            }
+
+            return true
+        }
+
+        readonly property string chatInputPlaceHolderText: {
+            if(!_d.isUserAllowedToSendMessage && _d.activeChatType === Constants.chatType.privateGroupChat) {
+                return qsTr("You need to be a member of this group to send messages")
+            } else if(!_d.isUserAllowedToSendMessage && _d.activeChatType === Constants.chatType.oneToOne) {
+                return qsTr("Add %1 as a contact to send a message").arg(_d.oneToOneChatContactName)
+            }
+
+            return qsTr("Message")
+        }
+
+        //Update oneToOneChatContact when activeChat id changes
+        Binding on oneToOneChatContact {
+            when: _d.activeChatId && _d.activeChatType === Constants.chatType.oneToOne 
+            value: Utils.getContactDetailsAsJson(_d.activeChatId, false)
+            restoreMode: Binding.RestoreBindingOrValue
         }
     }
 }

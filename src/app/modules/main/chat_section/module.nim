@@ -436,6 +436,14 @@ method makeChatWithIdActive*(self: Module, chatId: string) =
   self.setActiveItem(chatId)
   singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(self.controller.getMySectionId(), chatId)
 
+proc updateActiveChatMembership*(self: Module) =
+  let activeChatId = self.controller.getActiveChatId()
+  let chat = self.controller.getChatDetails(activeChatId)
+
+  if chat.chatType == ChatType.PrivateGroupChat:
+    let amIMember = any(chat.members, proc (member: ChatMember): bool = member.id == singletonInstance.userProfile.getPubKey())
+    self.view.setAmIMember(amIMember)
+
 method activeItemSet*(self: Module, itemId: string) =
   let mySectionId = self.controller.getMySectionId()
   if (itemId == ""):
@@ -452,6 +460,8 @@ method activeItemSet*(self: Module, itemId: string) =
   # update view maintained by this module
   self.view.chatsModel().setActiveItem(itemId)
   self.view.activeItemSet(chat_item)
+
+  self.updateActiveChatMembership()
 
   let activeChatId = self.controller.getActiveChatId()
 
@@ -1161,6 +1171,10 @@ proc addOrUpdateChat(self: Module,
 
   if not self.chatsLoaded:
     return
+
+  let activeChatId = self.controller.getActiveChatId()
+  if chat.id == activeChatId:
+    self.updateActiveChatMembership()
 
   if chatExists:
     if (chat.chatType == ChatType.PrivateGroupChat):

@@ -221,7 +221,6 @@ Item {
 
             timestamp: new Date().getTime()
             disableHover: true
-            hideQuickActions: true
             profileClickable: false
 
             messageDetails: StatusMessageDetails {
