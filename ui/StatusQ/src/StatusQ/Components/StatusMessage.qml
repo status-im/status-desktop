@@ -55,7 +55,6 @@ Control {
     property bool showHeader: true
     property bool isActiveMessage: false
     property bool disableHover: false
-    property bool hideQuickActions: false
     property bool disableEmojis: false
     property color overrideBackgroundColor: "transparent"
     property bool overrideBackground: false
@@ -393,7 +392,7 @@ Control {
         }
 
         Loader {
-            active: root.hovered && !root.hideQuickActions
+            active: root.hovered && root.quickActions.length > 0
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top

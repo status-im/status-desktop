@@ -432,6 +432,11 @@ Loader {
 
                 readonly property int contentType: d.convertContentType(root.messageContentType)
                 property string originalMessageText: ""
+                readonly property bool hideQuickActions: root.isChatBlocked ||
+                                  root.placeholderMessage ||
+                                  root.isInPinnedPopup ||
+                                  root.editModeOn ||
+                                  !root.rootStore.mainModuleInst.activeSection.joined
 
                 function editCancelledHandler() {
                     root.messageStore.setEditModeOff(root.messageId)
@@ -492,12 +497,6 @@ Loader {
                               (root.chatLogView && root.chatLogView.moving) ||
                               (root.messageContextMenu && root.messageContextMenu.opened) ||
                               Global.popupOpened
-
-                hideQuickActions: root.isChatBlocked ||
-                                  root.placeholderMessage ||
-                                  root.isInPinnedPopup ||
-                                  root.editModeOn ||
-                                  !root.rootStore.mainModuleInst.activeSection.joined
 
                 disableEmojis: root.isChatBlocked
                 hideMessage: d.hideMessage
@@ -762,7 +761,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: !root.isInPinnedPopup && delegate.hovered
+                        active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
@@ -777,7 +776,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup && delegate.hovered
+                        active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "replyToMessageButton"
@@ -795,7 +794,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered
+                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "editMessageButton"
@@ -816,6 +815,9 @@ Loader {
                                 
                             if (!root.messageStore)
                                 return false
+                            
+                            if(delegate.hideQuickActions)
+                                return false;
 
                             const chatType = root.messageStore.chatType;
                             const pinMessageAllowedForMembers = root.messageStore.isPinMessageAllowedForMembers

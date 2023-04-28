@@ -39,7 +39,6 @@ Item {
     property bool isChatBlocked: false
     property bool isOneToOne: false
     property bool isActiveChannel: false
-    property int contactRequestState: Constants.ContactRequestState.None
 
     property var messageContextMenu
 
@@ -253,7 +252,7 @@ Item {
             chatLogView: ListView.view
 
             isActiveChannel: root.isActiveChannel
-            isChatBlocked: root.isChatBlocked || (root.isOneToOne && root.contactRequestState !== Constants.ContactRequestState.Mutual)
+            isChatBlocked: root.isChatBlocked
             messageContextMenu: root.messageContextMenu
 
             messageId: model.id
@@ -333,8 +332,8 @@ Item {
             }
         }
         header: {
-            if (root.isOneToOne) {
-                switch (root.contactRequestState) {
+            if (root.isOneToOne && root.rootStore.oneToOneChatContact) {
+                switch (root.rootStore.oneToOneChatContact.contactRequestState) {
                 case Constants.ContactRequestState.None: // no break
                 case Constants.ContactRequestState.Dismissed:
                     return sendContactRequestComponent
