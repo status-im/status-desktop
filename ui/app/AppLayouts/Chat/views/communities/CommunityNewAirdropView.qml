@@ -308,12 +308,23 @@ StatusScrollView {
                 onCommunityMembersSelected: {
                     recipientTypeSelectionDropdown.close()
                     membersDropdown.selectedKeys = selectedKeysFilter.keys
+
+                    const hasSelection =  selectedKeysFilter.keys.length !== 0
+
+                    membersDropdown.mode = hasSelection
+                            ? MembersDropdown.Mode.Update
+                            : MembersDropdown.Mode.Add
+
                     airdropRecipientsSelector.openPopup(membersDropdown)
                 }
             }
 
             MembersDropdown {
                 id: membersDropdown
+
+                forceButtonDisabled:
+                    mode === MembersDropdown.Mode.Update &&
+                    JSON.stringify(selectedKeys) === JSON.stringify(selectedKeysFilter.keys)
 
                 model: SortFilterProxyModel {
                     sourceModel: membersModel
