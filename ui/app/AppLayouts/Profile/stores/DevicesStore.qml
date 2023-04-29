@@ -13,6 +13,9 @@ QtObject {
 
     readonly property int localPairingState: devicesModule ? devicesModule.localPairingState : -1
     readonly property string localPairingError: devicesModule ? devicesModule.localPairingError : ""
+    readonly property string localPairingInstallationId: devicesModule ? devicesModule.localPairingInstallationId : ""
+    readonly property string localPairingInstallationName: devicesModule ? devicesModule.localPairingInstallationName : ""
+    readonly property string localPairingInstallationDeviceType: devicesModule ? devicesModule.localPairingInstallationDeviceType : ""
 
     function loadDevices() {
         return root.devicesModule.loadDevices()

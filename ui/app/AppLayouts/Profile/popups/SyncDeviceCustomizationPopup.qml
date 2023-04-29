@@ -42,6 +42,7 @@ StatusDialog {
 
     onOpened: {
         nameInput.text = deviceModel.name
+        nameInput.forceActiveFocus()
     }
 
     contentItem: ColumnLayout {

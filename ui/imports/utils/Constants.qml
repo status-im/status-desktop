@@ -676,10 +676,9 @@ QtObject {
 
     enum LocalPairingState {
         Idle = 0,
-        WaitingForConnection = 1,
-        Transferring = 2,
-        Error = 3,
-        Finished = 4
+        Transferring = 1,
+        Error = 2,
+        Finished = 3
     }
 
     readonly property var socialLinkPrefixesByType: [ // NB order must match the "socialLinkType" enum above

@@ -109,6 +109,24 @@ QtObject:
   proc onLocalPairingEvent*(self: View, eventType: EventType, action: Action, error: string) =
     self.localPairingEvent(ord(eventType), ord(action), error)
 
+  proc getLocalPairingInstallationId*(self: View): string {.slot.}  =
+    return self.localPairingStatus.installation.id
+  QtProperty[string] localPairingInstallationId:
+    read = getLocalPairingInstallationId
+    notify = localPairingStatusChanged
+
+  proc getLocalPairingInstallationName*(self: View): string {.slot.}  =
+    return self.localPairingStatus.installation.metadata.name
+  QtProperty[string] localPairingInstallationName:
+    read = getLocalPairingInstallationName
+    notify = localPairingStatusChanged
+
+  proc getLocalPairingInstallationDeviceType*(self: View): string {.slot.}  =
+    return self.localPairingStatus.installation.metadata.deviceType
+  QtProperty[string] localPairingInstallationDeviceType:
+    read = getLocalPairingInstallationDeviceType
+    notify = localPairingStatusChanged
+
   proc onLocalPairingStatusUpdate*(self: View, status: LocalPairingStatus) =
     self.localPairingStatus = status
     self.localPairingStatusChanged()

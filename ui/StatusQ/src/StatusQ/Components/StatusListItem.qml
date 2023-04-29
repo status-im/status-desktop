@@ -33,6 +33,7 @@ Rectangle {
     property var inlineTagModel: []
     property Component inlineTagDelegate
     property bool loading: false
+    property bool loadingSubTitle: loading
     property bool errorMode: false
 
     property StatusAssetSettings asset: StatusAssetSettings {
@@ -291,7 +292,7 @@ Rectangle {
                                      Theme.palette.baseColor1 : Theme.palette.directColor1
                     visible: !!root.subTitle
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    loading: root.loading
+                    loading: root.loadingSubTitle
                     maximumLineCount: 3
                     elide: Text.ElideRight
                 }
