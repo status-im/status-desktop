@@ -204,6 +204,8 @@ Loader {
             return fetchMoreMessagesButtonComponent
         case Constants.messageContentType.systemMessagePrivateGroupType:
             return privateGroupHeaderComponent
+        case Constants.messageContentType.systemMessagePinnedMessage:
+            return null
         case Constants.messageContentType.gapType:
             return gapComponent
         case Constants.messageContentType.newMessagesMarker:
@@ -276,6 +278,8 @@ Loader {
                 return StatusMessage.ContentType.Invitation;
             case Constants.messageContentType.discordMessageType:
                 return StatusMessage.ContentType.DiscordMessage;
+            case Constants.messageContentType.systemMessagePinnedMessage:
+                return StatusMessage.ContentType.SystemMessagePinnedMessage;
             case Constants.messageContentType.fetchMoreMessagesButton:
             case Constants.messageContentType.chatIdentifier:
             case Constants.messageContentType.unknownContentType:
@@ -371,7 +375,6 @@ Loader {
             topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
         }
     }
-
 
     Component {
         id: messageComponent
