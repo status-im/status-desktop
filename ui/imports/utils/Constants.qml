@@ -407,6 +407,7 @@ QtObject {
         readonly property int gapType: 10
         readonly property int contactRequestType: 11
         readonly property int discordMessageType: 12
+        readonly property int systemMessagePinnedMessage: 14
     }
 
     readonly property QtObject messageModelRoles: QtObject {

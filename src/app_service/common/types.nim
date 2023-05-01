@@ -17,6 +17,8 @@ type
     ContactRequest = 11
     DiscordMessage = 12
     ContactIdentityVerification = 13
+    # Local only
+    SystemMessagePinnedMessage = 14
 
 type
   StatusType* {.pure.} = enum

@@ -21,7 +21,8 @@ Control {
         Audio = 5,
         Transaction = 6,
         Invitation = 7,
-        DiscordMessage = 8
+        DiscordMessage = 8,
+        SystemMessagePinnedMessage = 14
     }
 
     property list<Item> quickActions
@@ -186,9 +187,10 @@ Control {
             id: messageLayout
             anchors.fill: parent
             spacing: 2
+
             Loader {
                 Layout.fillWidth: true
-                active: isAReply
+                active: isAReply && root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessagePinnedMessage
                 visible: active
                 sourceComponent: StatusMessageReply {
                     objectName: "StatusMessage_replyDetails"
