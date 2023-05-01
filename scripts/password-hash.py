@@ -6,7 +6,7 @@ password = input()
 
 hasher = sha3.keccak_256()
 hasher.update(password.encode())
-hash = '0x' + hasher.hexdigest().upper()
+hash = '0x' + hasher.hexdigest()
 pyperclip.copy(hash)
 
 print(f'Hash: {hash} is copied to clipboard')

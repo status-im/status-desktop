@@ -40,7 +40,7 @@ Item {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                source: Style.png("ens-header-" + Style.current.name + "@2x")
+                source: Style.png("ens/ens-header-" + Style.current.name + "@2x")
                 cache: false
             }
 

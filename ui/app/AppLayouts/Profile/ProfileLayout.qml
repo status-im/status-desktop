@@ -82,9 +82,7 @@ StatusSectionLayout {
 
             root.store.backButtonName = ""
 
-            if (currentIndex === Constants.settingsSubsection.ensUsernames) {
-                ensContainer.item.goToStart()
-            } else if (currentIndex === Constants.settingsSubsection.contacts) {
+            if (currentIndex === Constants.settingsSubsection.contacts) {
                 root.store.backButtonName = root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
             } else if (currentIndex === Constants.settingsSubsection.wallet) {
                 walletView.item.resetStack()

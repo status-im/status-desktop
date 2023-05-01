@@ -143,7 +143,11 @@ QtObject:
 
     var response: JsonNode
     try:
-      response = status_ens.getEnsUsernames().result
+      let rpcResponse = status_ens.getEnsUsernames()
+      if rpcResponse.error != nil:
+        error "failed to get ens usernames", procName="getAllMyEnsUsernames", error = $rpcResponse.error
+        return
+      response = rpcResponse.result
     except Exception as e:
       error "error occurred", procName="getAllMyEnsUsernames", msg = e.msg
       return

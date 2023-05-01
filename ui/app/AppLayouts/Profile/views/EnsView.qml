@@ -31,26 +31,19 @@ Item {
     signal goToWelcome();
     signal goToList();
 
-    function goToStart(){
-        if(ensView.ensUsernamesStore.ensUsernamesModel.count > 0){
-            goToList();
-        } else {
-            goToWelcome();
-        }
-    }
-
     Layout.fillHeight: true
     Layout.fillWidth: true
     clip: true
 
     DSM.StateMachine {
         id: stateMachine
-        initialState: welcomeState
+        initialState: ensView.ensUsernamesStore.ensUsernamesModel.count > 0 ? listState : welcomeState
         running: true
 
         DSM.State {
             id: welcomeState
             onEntered: loader.sourceComponent = welcome
+
             DSM.SignalTransition {
                 targetState: searchState
                 signal: next
