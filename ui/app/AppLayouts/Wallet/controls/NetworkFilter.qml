@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
 
 import shared 1.0
@@ -46,6 +47,7 @@ Item {
         if (d.currentModel.count > 0) {
             d.selectedChainName = d.currentModel.rowData(d.currentIndex, "chainName")
             d.selectedIconUrl = d.currentModel.rowData(d.currentIndex, "iconUrl")
+            root.toggleNetwork(ModelUtils.get(d.currentModel, d.currentIndex))
         }
     }
 
