@@ -148,18 +148,7 @@ Item {
                 input.edit.objectName: "onboardingDisplayNameInput"
                 width: parent.width
                 placeholderText: qsTr("Display name")
-                input.rightComponent: RoundedIcon {
-                    width: 14
-                    height: 14
-                    iconWidth: 14
-                    iconHeight: 14
-                    visible: (nameInput.input.text.length > 0)
-                    color: "transparent"
-                    source: Style.svg("close-filled")
-                    onClicked: {
-                        nameInput.input.edit.clear();
-                    }
-                }
+                input.clearable: true
                 errorMessageCmp.wrapMode: Text.NoWrap
                 errorMessageCmp.horizontalAlignment: Text.AlignHCenter
                 validators: Constants.validators.displayName

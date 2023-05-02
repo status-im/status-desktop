@@ -407,7 +407,8 @@ method onNodeLogin*[T](self: Module[T], error: string) =
         self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
         return
       if currStateObj.flowType() != FlowType.AppLogin:
-        discard self.controller.storeIdentityImage()
+        let images = self.controller.storeIdentityImage()
+        self.accountsService.updateLoggedInAccount(self.getDisplayName, images)
       self.delegate.finishAppLoading()
   else:
     self.moveToStartupState()

@@ -435,7 +435,9 @@ QtObject {
 
     function isEnsVerified(publicKey) {
         if (publicKey === "" || !isChatKey(publicKey) )
-            return
+            return false
+        if (!mainModuleInst)
+            return false
         return mainModuleInst.isEnsVerified(publicKey)
     }
 
