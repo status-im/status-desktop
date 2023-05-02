@@ -210,8 +210,20 @@ Loader {
             return gapComponent
         case Constants.messageContentType.newMessagesMarker:
             return newMessagesMarkerComponent
-        default:
+        case Constants.messageContentType.messageType:
+        case Constants.messageContentType.stickerType:
+        case Constants.messageContentType.emojiType:
+        case Constants.messageContentType.transactionType:
+        case Constants.messageContentType.imageType:
+        case Constants.messageContentType.audioType:
+        case Constants.messageContentType.communityInviteType:
+        case Constants.messageContentType.discordMessageType:
             return messageComponent
+        case Constants.messageContentType.unknownContentType:
+            // NOTE: We could display smth like "unknown message type, please upgrade Status to see it".
+            return null
+        default:
+            return null
         }
     }
 
