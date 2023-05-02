@@ -205,7 +205,7 @@ Loader {
         case Constants.messageContentType.systemMessagePrivateGroupType:
             return privateGroupHeaderComponent
         case Constants.messageContentType.systemMessagePinnedMessage:
-            return null
+            return systemMessagePinnedMessageComponent
         case Constants.messageContentType.gapType:
             return gapComponent
         case Constants.messageContentType.newMessagesMarker:
@@ -372,6 +372,22 @@ Loader {
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
+            topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+        }
+    }
+
+    Component {
+        id: systemMessagePinnedMessageComponent
+
+        StatusBaseText {
+            width: parent.width - 120
+            horizontalAlignment: Text.AlignHCenter
+            text: qsTr("%1 pinned a message").arg(quotedMessageAuthorDetailsDisplayName)
+            color: Theme.palette.directColor3
+            font.family: Theme.palette.baseFont.name
+            font.pixelSize: Theme.primaryTextFontSize
+            textFormat: Text.RichText
+            wrapMode: Text.Wrap
             topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
         }
     }
