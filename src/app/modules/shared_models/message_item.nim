@@ -51,7 +51,7 @@ type
     quotedMessageFrom: string
     quotedMessageText: string
     quotedMessageParsedText: string
-    quotedMessageContentType: int
+    quotedMessageContentType: ContentType
     quotedMessageDeleted: bool
     quotedMessageAuthorDisplayName: string
     quotedMessageAuthorAvatar: string
@@ -97,7 +97,7 @@ proc initItem*(
     quotedMessageFrom: string,
     quotedMessageText: string,
     quotedMessageParsedText: string,
-    quotedMessageContentType: int,
+    quotedMessageContentType: ContentType,
     quotedMessageDeleted: bool,
     quotedMessageDiscordMessage: DiscordMessage,
     quotedMessageAuthorDetails: ContactDetails,
@@ -156,7 +156,7 @@ proc initItem*(
   result.albumMessageIds = albumMessageIds
   result.albumImagesCount = albumImagesCount
 
-  if quotedMessageContentType == ContentType.DiscordMessage.int:
+  if quotedMessageContentType == ContentType.DiscordMessage:
     result.quotedMessageAuthorDisplayName = quotedMessageDiscordMessage.author.name
     result.quotedMessageAuthorAvatar = quotedMessageDiscordMessage.author.localUrl
     if result.quotedMessageAuthorAvatar == "":
@@ -222,7 +222,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     quotedMessageFrom = "",
     quotedMessageText = "",
     quotedMessageParsedText = "",
-    quotedMessageContentType = -1,
+    quotedMessageContentType = ContentType.Unknown,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
     quotedMessageAuthorDetails = ContactDetails(),
@@ -250,7 +250,7 @@ proc `$`*(self: Item): string =
     parsedText:{$self.parsedText},
     messageContainsMentions:{self.messageContainsMentions},
     timestamp:{$self.timestamp},
-    contentType:{$self.contentType.int},
+    contentType:{$self.contentType},
     messageType:{$self.messageType},
     contactRequestState:{$self.contactRequestState},
     pinned:{$self.pinned},
@@ -491,7 +491,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "quotedMessageFrom": self.quotedMessageFrom,
     "quotedMessageText": self.quotedMessageText,
     "quotedMessageParsedText": self.quotedMessageParsedText,
-    "quotedMessageContentType": self.quotedMessageContentType,
+    "quotedMessageContentType": self.quotedMessageContentType.int,
     "quotedMessageDeleted": self.quotedMessageDeleted,
     "quotedMessageAuthorDisplayName": self.quotedMessageAuthorDisplayName,
     "quotedMessageAuthorAvatar": self.quotedMessageAuthorAvatar,
@@ -546,9 +546,9 @@ proc quotedMessageParsedText*(self: Item): string {.inline.} =
 proc `quotedMessageParsedText=`*(self: Item, value: string) {.inline.} =
   self.quotedMessageParsedText = value
 
-proc quotedMessageContentType*(self: Item): int {.inline.} =
+proc quotedMessageContentType*(self: Item): ContentType {.inline.} =
   self.quotedMessageContentType
-proc `quotedMessageContentType=`*(self: Item, value: int) {.inline.} =
+proc `quotedMessageContentType=`*(self: Item, value: ContentType) {.inline.} =
   self.quotedMessageContentType = value
 
 proc quotedMessageDeleted*(self: Item): bool {.inline.} =

@@ -125,7 +125,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     quotedMessageFrom = "",
     quotedMessageText = "",
     quotedMessageParsedText = "",
-    quotedMessageContentType = -1,
+    quotedMessageContentType = ContentType.Unknown,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
     quotedMessageAuthorDetails = ContactDetails(),
@@ -184,7 +184,7 @@ proc createChatIdentifierItem(self: Module): Item =
     quotedMessageFrom = "",
     quotedMessageText = "",
     quotedMessageParsedText = "",
-    quotedMessageContentType = -1,
+    quotedMessageContentType = ContentType.Unknown,
     quotedMessageDeleted = false,
     quotedMessageDiscordMessage = DiscordMessage(),
     quotedMessageAuthorDetails = ContactDetails(),
@@ -248,7 +248,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       var renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
 
       # Add image to album if album already exists
-      if (message.contentType.ContentType == ContentType.Image and len(message.albumId) != 0):
+      if (message.contentType == ContentType.Image and len(message.albumId) != 0):
         if (self.view.model().updateAlbumIfExists(message.albumId, message.image, message.id)):
           continue
 
@@ -258,7 +258,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       var transactionContract = message.transactionParameters.contract
       var transactionValue = message.transactionParameters.value
       var isCurrentUser = sender.isCurrentUser
-      if(message.contentType.ContentType == ContentType.Transaction):
+      if(message.contentType == ContentType.Transaction):
         (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
         if message.transactionParameters.fromAddress != "":
           isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
@@ -271,7 +271,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.optionalName,
         sender.icon,
         sender.colorHash,
-        (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
+        (isCurrentUser and message.contentType != ContentType.DiscordMessage),
         sender.details.added,
         message.outgoingStatus,
         renderedMessageText,
@@ -282,7 +282,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         message.seen,
         timestamp = message.timestamp,
         clock = message.clock,
-        message.contentType.ContentType,
+        message.contentType,
         message.messageType,
         message.contactRequestState,
         sticker = message.sticker.url,
@@ -329,7 +329,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       if message.editedAt != 0:
         item.isEdited = true
 
-      if(message.contentType.ContentType == ContentType.Gap):
+      if(message.contentType == ContentType.Gap):
         item.gapFrom = message.gapParameters.`from`
         item.gapTo = message.gapParameters.to
 
@@ -374,7 +374,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
     var transactionContract = message.transactionParameters.contract
     var transactionValue = message.transactionParameters.value
     var isCurrentUser = sender.isCurrentUser
-    if message.contentType.ContentType == ContentType.Transaction:
+    if message.contentType == ContentType.Transaction:
       (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
       if message.transactionParameters.fromAddress != "":
         isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
@@ -389,7 +389,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       continue
 
     # Add image to album if album already exists
-    if (message.contentType.ContentType == ContentType.Image and len(message.albumId) != 0):
+    if (message.contentType == ContentType.Image and len(message.albumId) != 0):
       if (self.view.model().updateAlbumIfExists(message.albumId, message.image, message.id)):
         continue
       
@@ -405,7 +405,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       sender.optionalName,
       sender.icon,
       sender.colorHash,
-      (isCurrentUser and message.contentType.ContentType != ContentType.DiscordMessage),
+      (isCurrentUser and message.contentType != ContentType.DiscordMessage),
       sender.details.added,
       message.outgoingStatus,
       renderedMessageText,
@@ -416,7 +416,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       message.seen,
       timestamp = message.timestamp,
       clock = message.clock,
-      message.contentType.ContentType,
+      message.contentType,
       message.messageType,
       message.contactRequestState,
       sticker = message.sticker.url,

@@ -20,6 +20,12 @@ type
     # Local only
     SystemMessagePinnedMessage = 14
 
+proc toContentType*(value: int): ContentType =
+  try:
+    return ContentType(value)
+  except RangeDefect:
+    return ContentType.Unknown
+
 type
   StatusType* {.pure.} = enum
     Unknown = 0
