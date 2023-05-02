@@ -14,8 +14,9 @@ def hook(context):
 
 @OnScenarioEnd
 def hook(context):
-    currentApplicationContext().detach()
-    snooze(_app_closure_timeout)
+    ctx = currentApplicationContext()
+    ctx.detach()
+    assert waitFor(lambda: not ctx.isRunning, _app_closure_timeout), 'Detach application failed'
 
 @OnStepEnd
 def hook(context):
