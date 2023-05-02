@@ -1,6 +1,7 @@
 {.used.}
 
 import json, strutils
+import ../../../common/types
 
 include ../../../common/json_utils
 
@@ -59,7 +60,7 @@ type QuotedMessage* = object
   `from`*: string
   text*: string
   parsedText*: seq[ParsedText]
-  contentType*: int
+  contentType*: ContentType
   deleted*: bool
   discordMessage*: DiscordMessage
 
@@ -107,7 +108,7 @@ type MessageDto* = object
   albumImagesCount*: int
   gapParameters*: GapParameters
   timestamp*: int64
-  contentType*: int
+  contentType*: ContentType
   messageType*: int
   contactRequestState*: int
   links*: seq[string]
@@ -138,7 +139,7 @@ proc toDiscordMessageAuthor*(jsonObj: JsonNode): DiscordMessageAuthor =
   discard jsonObj.getProp("localUrl", result.localUrl)
 
 
-proc toDiscordMessageAttachment*(jsonObj: JsonNOde): DiscordMessageAttachment =
+proc toDiscordMessageAttachment*(jsonObj: JsonNode): DiscordMessageAttachment =
   result = DiscordMessageAttachment()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("url", result.fileUrl)
@@ -166,9 +167,11 @@ proc toDiscordMessage*(jsonObj: JsonNode): DiscordMessage =
 
 proc toQuotedMessage*(jsonObj: JsonNode): QuotedMessage =
   result = QuotedMessage()
+  var contentType: int
   discard jsonObj.getProp("from", result.`from`)
   discard jsonObj.getProp("text", result.text)
-  discard jsonObj.getProp("contentType", result.contentType)
+  discard jsonObj.getProp("contentType", contentType)
+  result.contentType = toContentType(contentType)
   discard jsonObj.getProp("deleted", result.deleted)
 
   var parsedTextArr: JsonNode
@@ -204,6 +207,7 @@ proc toTransactionParameters*(jsonObj: JsonNode): TransactionParameters =
 
 proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   result = MessageDto()
+  var contentType: int
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("from", result.from)
@@ -220,7 +224,8 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("responseTo", result.responseTo)
   discard jsonObj.getProp("ensName", result.ensName)
   discard jsonObj.getProp("timestamp", result.timestamp)
-  discard jsonObj.getProp("contentType", result.contentType)
+  discard jsonObj.getProp("contentType", contentType)
+  result.contentType = toContentType(contentType)
   discard jsonObj.getProp("messageType", result.messageType)
   discard jsonObj.getProp("contactRequestState", result.contactRequestState)
   discard jsonObj.getProp("image", result.image)

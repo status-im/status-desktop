@@ -226,7 +226,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
   # Add messages
   for m in messages:
-    if (m.contentType.ContentType != ContentType.Message):
+    if (m.contentType != ContentType.Message):
       continue
 
     let chatDto = self.controller.getChatDetails("", m.chatId)

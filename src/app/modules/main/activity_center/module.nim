@@ -111,7 +111,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
     message.seen,
     timestamp = message.timestamp,
     clock = message.clock,
-    ContentType(message.contentType),
+    message.contentType,
     message.messageType,
     message.contactRequestState,
     message.sticker.url,
