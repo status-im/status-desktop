@@ -18,6 +18,7 @@ QtObject {
     property int charactersLen: 1
     property string emoji
     property string emojiSize: _emojiSize
+    property int borderWidth: 0
 
     // can't have QtObject { id: d } inside QtObject, using '_' to indicate private
     readonly property int _oneLetterSize: Math.max(15, root.width / 2.0)
