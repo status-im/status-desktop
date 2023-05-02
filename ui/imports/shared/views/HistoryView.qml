@@ -56,11 +56,13 @@ ColumnLayout {
         color: Style.current.danger
     }
 
-    StyledText {
+    ShapeRectangle {
         id: noTxs
+        Layout.fillWidth: true
+        Layout.preferredHeight: 42
         visible: !d.isLoading && transactionListRoot.count === 0
-        text: qsTr("No transactions found")
         font.pixelSize: Style.current.primaryTextFontSize
+        text: qsTr("Activity for this account will appear here")
     }
 
     StatusListView {

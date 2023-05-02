@@ -30,6 +30,8 @@ Shape {
     id: root
 
     property string text
+    property color textColor: Theme.palette.baseColor1
+    property alias font: description.font
 
     property int radius: Style.current.radius
     readonly property alias path: path
@@ -41,11 +43,12 @@ Shape {
     implicitHeight: 44
 
     StatusBaseText {
+        id: description
         anchors.centerIn: parent
-        color: Theme.palette.baseColor1
+        color: root.textColor
         text: root.text
         font.pixelSize: 13
-        visible: text
+        visible: (!!text)
     }
 
     ShapePath {
