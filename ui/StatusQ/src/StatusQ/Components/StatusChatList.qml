@@ -10,7 +10,7 @@ import StatusQ.Controls 0.1
 Item {
     id: root
 
-    implicitWidth: statusChatListItems.width
+    implicitWidth: 288
     implicitHeight: statusChatListItems.contentHeight
 
     property string categoryId: ""
@@ -21,8 +21,8 @@ Item {
 
     property alias statusChatListItems: statusChatListItems
 
-    property Component popupMenu
-    property Component categoryPopupMenu
+    property alias popupMenu: popupMenuSlot.sourceComponent
+    property alias categoryPopupMenu: categoryPopupMenuSlot.sourceComponent
 
     property var isEnsVerified: function(pubKey) { return false }
 
@@ -34,8 +34,8 @@ Item {
 
     StatusListView {
         id: statusChatListItems
-        width: 288
-        height: root.height
+        width: parent.width
+        height: parent.height
         objectName: "chatListItems"
         model: root.model
         spacing: 0
@@ -44,15 +44,15 @@ Item {
         delegate: DropArea {
             id: chatListDelegate
             objectName: model.name
-            width: model.isCategory ? statusChatListCategoryItem.width : statusChatListItem.width
-            height: model.isCategory ? statusChatListCategoryItem.height : statusChatListItem.height
+            width: ListView.view.width
+            height: isCategory ? statusChatListCategoryItem.height : statusChatListItem.height
             keys: ["x-status-draggable-chat-list-item-and-categories"]
 
-            property int visualIndex: index
-            property string chatId: model.itemId
-            property string categoryId: model.categoryId
-            property string isCategory: model.isCategory
-            property Item item: isCategory ? draggableItem.actions[0] : draggableItem.actions[1]
+            readonly property int visualIndex: index
+            readonly property string chatId: model.itemId
+            readonly property string categoryId: model.categoryId
+            readonly property bool isCategory: model.isCategory
+            readonly property Item item: isCategory ? draggableItem.actions[0] : draggableItem.actions[1]
 
             onEntered: function(drag) {
                 drag.accept();
@@ -106,6 +106,7 @@ Item {
                    StatusChatListCategoryItem {
                         id: statusChatListCategoryItem
                         objectName: "categoryItem"
+                        width: chatListDelegate.width
                         visible: draggableItem.isCategory
 
                         function setupPopup() {
@@ -123,7 +124,7 @@ Item {
                         opened: model.categoryOpened
                         highlighted: draggableItem.dragActive
                         showAddButton: showCategoryActionButtons
-                        showMenuButton: !!root.onPopupMenuChanged
+                        showMenuButton: !!root.popupMenu
                         hasUnreadMessages: model.hasUnreadMessages
                         onClicked: {
                             if (mouse.button === Qt.RightButton && showCategoryActionButtons && !!root.categoryPopupMenu) {
@@ -148,7 +149,7 @@ Item {
                     StatusChatListItem {
                         id: statusChatListItem
                         objectName: model.name
-                        width: root.width
+                        width: chatListDelegate.width
                         height: visible ? (statusChatListItem.implicitHeight + 4) /*spacing between non-collapsed items*/ : 0
                         visible: (!draggableItem.isCategory && model.categoryOpened)
                         originalOrder: model.position
@@ -211,30 +212,15 @@ Item {
         }
     }
 
-    onPopupMenuChanged: {
-        if (!!popupMenu) {
-            popupMenuSlot.sourceComponent = popupMenu
-        }
-    }
-
-    onCategoryPopupMenuChanged: {
-        if (!!categoryPopupMenu) {
-            categoryPopupMenuSlot.sourceComponent = categoryPopupMenu
-        }
-    }
-
-    QtObject {
-        id: d
-        property int destinationPosition: -1
-    }
-
     Loader {
         id: popupMenuSlot
-        active: !!root.popupMenu
+        active: !!sourceComponent
+        asynchronous: true
     }
 
     Loader {
         id: categoryPopupMenuSlot
-        active: !!root.categoryPopupMenu
+        active: !!sourceComponent
+        asynchronous: true
     }
 }

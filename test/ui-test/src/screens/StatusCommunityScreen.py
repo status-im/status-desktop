@@ -447,7 +447,7 @@ class StatusCommunityScreen:
             draggable_item = chat_lists.itemAtIndex(i)
             chat = draggable_item.item
             if chat != None:
-                if chat.text == chatName:
+                if draggable_item.objectName == chatName:
                     right_click_obj(draggable_item)
                     found = True
                     break

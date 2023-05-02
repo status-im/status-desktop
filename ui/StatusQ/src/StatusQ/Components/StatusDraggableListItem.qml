@@ -338,7 +338,6 @@ ItemDelegate {
     Component {
         id: letterIdenticonComponent
         StatusLetterIdenticon {
-            letterSize: 14
             width: root.icon.width
             height: root.icon.height
             emoji: root.hasEmoji ? root.icon.name : ""

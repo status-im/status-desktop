@@ -136,7 +136,7 @@ QtObject {
         const chatContentModule = chatCommunitySectionModule.getChatContentModule()
         var result = false
 
-        let textMsg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
+        let textMsg = globalUtilsInst.plainText(StatusQUtils.Emoji.deparse(text))
         if (textMsg.trim() !== "") {
             textMsg = interpretMessage(textMsg)
 
@@ -231,7 +231,7 @@ QtObject {
         return isCurrentUser(pubkey) ? qsTr("You") : name
     }
 
-    function myPubKey() {
+    function myPublicKey() {
         return userProfileInst.pubKey
     }
 
