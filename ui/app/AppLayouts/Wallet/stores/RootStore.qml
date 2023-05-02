@@ -170,6 +170,14 @@ QtObject {
         return walletSectionSavedAddresses.getNameByAddress(address)
     }
 
+    function getNameForWalletAddress(address) {
+        let name = getNameForSavedWalletAddress(address)
+        if (name.length === 0) {
+            name = walletSectionAccounts.getNameByAddress(address)
+        }
+        return name
+    }
+
     function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {
         return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
     }

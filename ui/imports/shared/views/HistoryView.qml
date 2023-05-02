@@ -17,6 +17,8 @@ import "../popups"
 import "../stores"
 import "../controls"
 
+import "../../../app/AppLayouts/Wallet/stores" as WalletStores
+
 ColumnLayout {
     id: root
 
@@ -180,18 +182,18 @@ ColumnLayout {
         TransactionDelegate {
             width: ListView.view.width
             modelData: model
-            isIncoming: isModelDataValid ? modelData.to === root.overview.mixedcaseAddress: false
+            isIncoming: isModelDataValid && modelData.to.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase()
             currentCurrency: RootStore.currentCurrency
             cryptoValue: isModelDataValid ? modelData.value.amount : 0.0
             fiatValue: isModelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
             networkIcon: isModelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
             networkColor: isModelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
-            networkName: isModelDataValid ? RootStore.getNetworkShortName(modelData.chainId) : ""
+            networkName: isModelDataValid ? RootStore.getNetworkFullName(modelData.chainId) : ""
             symbol: isModelDataValid && !!modelData.symbol ? modelData.symbol : ""
             transferStatus: isModelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
-            shortTimeStamp: isModelDataValid ? LocaleUtils.formatTime(modelData.timestamp * 1000, Locale.ShortFormat) : ""
-            savedAddressNameTo: isModelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.to) : ""
-            savedAddressNameFrom: isModelDataValid ? RootStore.getNameForSavedWalletAddress(modelData.from) : ""
+            shortTimeStamp: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
+            savedAddressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForWalletAddress(modelData.to) : ""
+            savedAddressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForWalletAddress(modelData.from) : ""
             isSummary: true
             onClicked: launchTransactionDetail(modelData)
             loading: isModelDataValid ? modelData.loadingTransaction : false

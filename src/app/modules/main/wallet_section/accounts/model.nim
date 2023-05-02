@@ -97,3 +97,9 @@ QtObject:
       result = newQVariant(item.keyUid())
     of ModelRole.AssetsLoading:
       result = newQVariant(item.assetsLoading())
+
+  proc getNameByAddress*(self: Model, address: string): string =
+    for item in self.items:
+      if(item.address() == address):
+        return item.name()
+    return ""
