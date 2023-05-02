@@ -10,6 +10,7 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 import shared 1.0
+import shared.controls 1.0
 import shared.popups 1.0
 
 import SortFilterProxyModel 0.2
@@ -40,15 +41,15 @@ Item {
     ColumnLayout {
         anchors {
             fill: parent
-            margins: Style.current.padding
             topMargin: Style.current.smallPadding
-            bottomMargin: 0
         }
-        spacing: Style.current.padding
+        spacing: Style.current.halfPadding
 
         // Chat headline row
         RowLayout {
             Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
 
             StatusNavigationPanelHeadline {
                 objectName: "ContactsColumnView_MessagesHeadline"
@@ -86,13 +87,13 @@ Item {
         }
 
         // search field
-        StatusInput {
+        SearchBox {
             id: searchInput
             Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             Layout.preferredHeight: 36
             maximumHeight: 36
-            placeholderText: qsTr("Search")
-            input.asset.name: "search"
             leftPadding: 10
             topPadding: 4
             bottomPadding: 4
@@ -104,120 +105,109 @@ Item {
             }
         }
 
-        Item {
+        ChatsLoadingPanel {
+            Layout.fillWidth: true
+            chatSectionModule: root.chatSectionModule
+        }
+
+        // chat list
+        StatusScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            clip: true
+            StatusChatList {
+                id: channelList
+                objectName: "ContactsColumnView_chatList"
+                width: parent.availableWidth
+                model: SortFilterProxyModel {
+                    sourceModel: root.chatSectionModule.model
+                    sorters: RoleSorter {
+                        roleName: "lastMessageTimestamp"
+                        sortOrder: Qt.DescendingOrder
+                    }
+                }
 
-            ChatsLoadingPanel {
-                chatSectionModule: root.chatSectionModule
-                width: parent.width
-            }
+                highlightItem: !root.store.openCreateChat
+                isEnsVerified: function(pubKey) { return Utils.isEnsVerified(pubKey) }
+                onChatItemSelected: {
+                    Global.closeCreateChatView()
+                    root.chatSectionModule.setActiveItem(id, "")
+                }
+                onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
 
-            // chat list
-            StatusScrollView {
-                id: scroll
+                popupMenu: ChatContextMenuView {
+                    id: chatContextMenuView
+                    emojiPopup: root.emojiPopup
 
-                clip: false
-                padding: 0
-                anchors.fill: parent
-                anchors.bottomMargin: Style.current.padding
-
-                StatusChatList {
-                    id: channelList
-                    objectName: "ContactsColumnView_chatList"
-                    width: scroll.availableWidth
-                    model: SortFilterProxyModel {
-                        sourceModel: root.chatSectionModule.model
-                        sorters: RoleSorter {
-                            roleName: "lastMessageTimestamp"
-                            sortOrder: Qt.DescendingOrder
+                    openHandler: function (id) {
+                        let jsonObj = root.chatSectionModule.getItemAsJson(id)
+                        let obj = JSON.parse(jsonObj)
+                        if (obj.error) {
+                            console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                            close()
+                            return
                         }
+
+                        currentFleet = root.chatSectionModule.getCurrentFleet()
+                        isCommunityChat = root.chatSectionModule.isCommunity()
+                        amIChatAdmin = obj.amIChatAdmin
+                        chatId = obj.itemId
+                        chatName = obj.name
+                        chatDescription = obj.description
+                        chatEmoji = obj.emoji
+                        chatColor = obj.color
+                        chatIcon = obj.icon
+                        chatType = obj.type
+                        chatMuted = obj.muted
                     }
 
-                    highlightItem: !root.store.openCreateChat
-                    isEnsVerified: function(pubKey) { return Utils.isEnsVerified(pubKey) }
-                    onChatItemSelected: {
-                        Global.closeCreateChatView()
-                        root.chatSectionModule.setActiveItem(id, "")
+                    onMuteChat: {
+                        root.chatSectionModule.muteChat(chatId)
                     }
-                    onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
 
-                    popupMenu: ChatContextMenuView {
-                        id: chatContextMenuView
-                        emojiPopup: root.emojiPopup
+                    onUnmuteChat: {
+                        root.chatSectionModule.unmuteChat(chatId)
+                    }
 
-                        openHandler: function (id) {
-                            let jsonObj = root.chatSectionModule.getItemAsJson(id)
-                            let obj = JSON.parse(jsonObj)
-                            if (obj.error) {
-                                console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
-                                close()
-                                return
-                            }
+                    onMarkAllMessagesRead: {
+                        root.chatSectionModule.markAllMessagesRead(chatId)
+                    }
 
-                            currentFleet = root.chatSectionModule.getCurrentFleet()
-                            isCommunityChat = root.chatSectionModule.isCommunity()
-                            amIChatAdmin = obj.amIChatAdmin
-                            chatId = obj.itemId
-                            chatName = obj.name
-                            chatDescription = obj.description
-                            chatEmoji = obj.emoji
-                            chatColor = obj.color
-                            chatIcon = obj.icon
-                            chatType = obj.type
-                            chatMuted = obj.muted
-                        }
+                    onClearChatHistory: {
+                        root.chatSectionModule.clearChatHistory(chatId)
+                    }
 
-                        onMuteChat: {
-                            root.chatSectionModule.muteChat(chatId)
-                        }
+                    onRequestAllHistoricMessages: {
+                        // Not Refactored Yet - Check in the `master` branch if this is applicable here.
+                    }
 
-                        onUnmuteChat: {
-                            root.chatSectionModule.unmuteChat(chatId)
-                        }
+                    onLeaveChat: {
+                        root.chatSectionModule.leaveChat(chatId)
+                    }
 
-                        onMarkAllMessagesRead: {
-                            root.chatSectionModule.markAllMessagesRead(chatId)
-                        }
+                    onDeleteCommunityChat: {
+                        // Not Refactored Yet
+                    }
 
-                        onClearChatHistory: {
-                            root.chatSectionModule.clearChatHistory(chatId)
-                        }
-
-                        onRequestAllHistoricMessages: {
-                            // Not Refactored Yet - Check in the `master` branch if this is applicable here.
-                        }
-
-                        onLeaveChat: {
-                            root.chatSectionModule.leaveChat(chatId)
-                        }
-
-                        onDeleteCommunityChat: {
-                            // Not Refactored Yet
-                        }
-
-                        onDownloadMessages: {
-                            root.chatSectionModule.downloadMessages(chatId, file)
-                        }
-                        onDisplayProfilePopup: {
-                            Global.openProfilePopup(publicKey)
-                        }
-                        onLeaveGroup: {
-                            chatSectionModule.leaveChat("", chatId, true);
-                        }
-                        onUpdateGroupChatDetails: {
-                            chatSectionModule.updateGroupChatDetails(
-                                chatId,
-                                groupName,
-                                groupColor,
-                                groupImage
-                            )
-                        }
-                        onAddRemoveGroupMember: {
-                            root.addRemoveGroupMemberClicked()
-                        }
+                    onDownloadMessages: {
+                        root.chatSectionModule.downloadMessages(chatId, file)
+                    }
+                    onDisplayProfilePopup: {
+                        Global.openProfilePopup(publicKey)
+                    }
+                    onLeaveGroup: {
+                        chatSectionModule.leaveChat("", chatId, true);
+                    }
+                    onUpdateGroupChatDetails: {
+                        chatSectionModule.updateGroupChatDetails(
+                                    chatId,
+                                    groupName,
+                                    groupColor,
+                                    groupImage
+                                    )
+                    }
+                    onAddRemoveGroupMember: {
+                        root.addRemoveGroupMemberClicked()
                     }
                 }
             }

@@ -15,13 +15,6 @@ Item {
 
     property alias highlightItem: statusChatList.highlightItem
 
-    property StatusTooltipSettings categoryAddButtonToolTip: StatusTooltipSettings {
-        text: qsTr("Add channel inside category")
-    }
-    property StatusTooltipSettings categoryMenuButtonToolTip: StatusTooltipSettings {
-        text: qsTr("More")
-    }
-
     property var model: []
     property bool showCategoryActionButtons: false
     property bool showPopupMenu: true
@@ -31,19 +24,13 @@ Item {
 
     property Component categoryPopupMenu
     property Component chatListPopupMenu
-    property Component popupMenu
+    property alias popupMenu: popupMenuSlot.sourceComponent
 
     signal chatItemSelected(string categoryId, string id)
     signal chatItemUnmuted(string id)
     signal chatItemReordered(string categoryId, string chatId, int to)
     signal chatListCategoryReordered(string categoryId, int to)
     signal categoryAddButtonClicked(string id)
-
-    onPopupMenuChanged: {
-        if (!!popupMenu) {
-            popupMenuSlot.sourceComponent = popupMenu
-        }
-    }
 
     MouseArea {
         id: sensor
@@ -91,6 +78,6 @@ Item {
 
     Loader {
         id: popupMenuSlot
-        active: !!root.popupMenu
+        active: !!sourceComponent
     }
 }

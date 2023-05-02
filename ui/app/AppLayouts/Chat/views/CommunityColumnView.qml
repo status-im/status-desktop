@@ -22,7 +22,7 @@ import "../panels/communities"
 Item {
     id: root
     objectName: "communityColumnView"
-    width: 304
+    width: Constants.chatSectionLeftColumnWidth
     height: parent.height
 
     // Important:
@@ -71,7 +71,7 @@ Item {
         property bool invitationPending: root.store.isCommunityRequestPending(communityData.id)
 
         anchors.top: communityHeader.bottom
-        anchors.topMargin: 8
+        anchors.topMargin: Style.current.halfPadding
         anchors.bottomMargin: Style.current.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
         enabled: !root.communityData.amIBanned
@@ -122,7 +122,7 @@ Item {
         readonly property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
 
         anchors.top: joinCommunityButton.visible ? joinCommunityButton.bottom : communityHeader.bottom
-        anchors.topMargin: active ? 8 : 0
+        anchors.topMargin: active ? Style.current.halfPadding : 0
         anchors.horizontalCenter: parent.horizontalCenter
 
         active: communityData.amISectionAdmin && nbRequests > 0
@@ -140,7 +140,7 @@ Item {
         chatSectionModule: root.communitySectionModule
         width: parent.width
         anchors.top: membershipRequests.bottom
-        anchors.topMargin: active ? 8 : 0
+        anchors.topMargin: active ? Style.current.halfPadding : 0
     }
 
     StatusMenu {
@@ -185,11 +185,9 @@ Item {
     StatusScrollView {
         id: scrollView
         anchors.top: membershipRequests.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Style.current.halfPadding
         anchors.bottom: createChatOrCommunity.top
         anchors.horizontalCenter: parent.horizontalCenter
-
-        topPadding: Style.current.padding
 
         width: parent.width
 
@@ -197,7 +195,6 @@ Item {
         contentWidth: communityChatListAndCategories.implicitWidth
         contentHeight: communityChatListAndCategories.height
                        + bannerColumn.height
-                       + Style.current.bigPadding
 
         StatusChatListAndCategories {
             id: communityChatListAndCategories
@@ -460,7 +457,7 @@ Item {
         id: createChatOrCommunity
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottomMargin: active ? Style.current.padding : 0
         active: communityData.amISectionAdmin
         sourceComponent: Component {
             StatusBaseText {

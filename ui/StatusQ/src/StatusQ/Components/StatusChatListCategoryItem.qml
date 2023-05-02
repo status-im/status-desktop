@@ -36,6 +36,11 @@ Control {
     }
 
     contentItem: Item {
+        HoverHandler {
+            id: hoverHandler
+            cursorShape: Qt.PointingHandCursor
+        }
+
         StatusBaseText {
             width: Math.min(implicitWidth, parent.width)
             anchors.verticalCenter: parent.verticalCenter
@@ -73,10 +78,5 @@ Control {
                 onClicked: root.toggleButtonClicked(mouse)
             }
         }
-    }
-
-    HoverHandler {
-        id: hoverHandler
-        cursorShape: Qt.PointingHandCursor
     }
 }

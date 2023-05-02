@@ -885,6 +885,7 @@ Item {
                                     anchors.centerIn: parent
                                     spacing: 6
                                     StatusBaseText {
+                                        anchors.verticalCenter: parent.verticalCenter
                                         text: qsTr("Loading sections...")
                                     }
                                     LoadingAnimation { anchors.verticalCenter: parent.verticalCenter }
