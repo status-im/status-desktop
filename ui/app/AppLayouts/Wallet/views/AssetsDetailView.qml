@@ -300,7 +300,7 @@ Item {
                 readonly property double changePctHour: token.changePctHour ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("Hour")
-                secondaryText: changePctHour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2)) : Constants.dummyText
+                secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePctHour, 2))
                 secondaryLabel.customColor: changePctHour === 0 ? Theme.palette.directColor1 :
                                                                   changePctHour < 0 ? Theme.palette.dangerColor1 :
                                                                                       Theme.palette.successColor1
@@ -310,7 +310,7 @@ Item {
                 readonly property double changePctDay: token.changePctDay ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("Day")
-                secondaryText: changePctDay ? "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2)) : Constants.dummyText
+                secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePctDay, 2))
                 secondaryLabel.customColor: changePctDay === 0 ? Theme.palette.directColor1 :
                                                                  changePctDay < 0 ? Theme.palette.dangerColor1 :
                                                                                     Theme.palette.successColor1
@@ -320,7 +320,7 @@ Item {
                 readonly property double changePct24hour: token.changePct24hour ?? 0
                 maxWidth: parent.width
                 primaryText: qsTr("24 Hours")
-                secondaryText: changePct24hour ? "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2)) : Constants.dummyText
+                secondaryText: "%1%".arg(LocaleUtils.numberToLocaleString(changePct24hour, 2))
                 secondaryLabel.customColor: changePct24hour === 0 ? Theme.palette.directColor1 :
                                                                     changePct24hour < 0 ? Theme.palette.dangerColor1 :
                                                                                           Theme.palette.successColor1
