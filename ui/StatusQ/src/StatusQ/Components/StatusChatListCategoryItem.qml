@@ -1,6 +1,6 @@
-import QtQuick 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
-import QtQuick.Controls 2.12
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
@@ -12,8 +12,7 @@ Control {
     implicitWidth: visible ? 288 : 0
     implicitHeight: visible ? 28 : 0
 
-    leftPadding: 8
-    rightPadding: 8
+    horizontalPadding: 8
 
     property string text
     property bool opened: true
@@ -32,9 +31,6 @@ Control {
     signal toggleButtonClicked(var mouse)
 
     background: Rectangle {
-        HoverHandler {
-            id: hoverHandler
-        }
         color: (hoverHandler.hovered || root.highlighted) ? Theme.palette.baseColor2 : "transparent"
         radius: 8
     }
@@ -78,5 +74,9 @@ Control {
             }
         }
     }
-}
 
+    HoverHandler {
+        id: hoverHandler
+        cursorShape: Qt.PointingHandCursor
+    }
+}
