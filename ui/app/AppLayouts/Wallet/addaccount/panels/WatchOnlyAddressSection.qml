@@ -26,7 +26,7 @@ Column {
         maximumHeight: Constants.addAccountPopup.itemHeight
         minimumHeight: Constants.addAccountPopup.itemHeight
         label: qsTr("Ethereum address or ENS name")
-        placeholderText: "0x95222293DD7278Aa3Cdd389Cc1D1d165CCBAfe5"
+        placeholderText: qsTr("Type or paste ETH address")
         input.multiline: true
         input.rightComponent: StatusButton {
             anchors.verticalCenter: parent.verticalCenter
