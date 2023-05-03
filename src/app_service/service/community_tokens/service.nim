@@ -270,7 +270,7 @@ QtObject:
           collectibleAndAmount.communityToken.chainId,
         )
     except RpcException:
-      error "Error minting collectibles", message = getCurrentExceptionMsg()
+      error "Error airdropping collectibles", message = getCurrentExceptionMsg()
 
   proc getFiatValue*(self: Service, cryptoBalance: float, cryptoSymbol: string): float =
     if (cryptoSymbol == ""):

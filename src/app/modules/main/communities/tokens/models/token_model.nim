@@ -54,6 +54,7 @@ QtObject:
           result = initTokenOwnersItem("", "", owner)
         ))
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int])
         return
 
