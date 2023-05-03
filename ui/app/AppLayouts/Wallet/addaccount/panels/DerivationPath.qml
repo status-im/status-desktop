@@ -61,9 +61,6 @@ GridLayout {
             Layout.fillWidth: true
             enabled: root.store.derivedAddressModel.count > 0
 
-            initialDerivationPath: root.store.addAccountModule.derivationPath
-            initialBasePath: root.store.selectedRootPath
-
             levelsLimit: 4  // Allow only 5 separators in the derivation path
 
             onDerivationPathChanged: {
@@ -104,13 +101,11 @@ GridLayout {
 
                 onSelected: {
                     root.store.changeRootDerivationPath(rootPath)
+                    derivationPathInput.resetDerivationPath(root.store.selectedRootPath, root.store.addAccountModule.derivationPath)
                 }
             }
-        }
 
-        Connections {
-            target: root.store
-            function onSelectedRootPathChanged() {
+            Component.onCompleted: {
                 derivationPathInput.resetDerivationPath(root.store.selectedRootPath, root.store.addAccountModule.derivationPath)
             }
         }

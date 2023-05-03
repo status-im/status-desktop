@@ -18,9 +18,6 @@ Item {
     readonly property alias derivationPath: d.currentDerivationPath
     readonly property alias basePath: d.currentBasePath
 
-    required property string initialDerivationPath
-    required property string initialBasePath
-
     property alias levelsLimit: controller.levelsLimit
 
     property alias errorMessage: d.errorMessage
@@ -84,10 +81,6 @@ Item {
             expectTextUpdate = true
             input.text = controller.generateHtmlFromElements(elements)
         }
-    }
-
-    Component.onCompleted: {
-        resetDerivationPath(root.initialBasePath, root.initialDerivationPath)
     }
 
     Internals.Controller {
