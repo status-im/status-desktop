@@ -686,7 +686,7 @@ QtObject:
   proc getTokenBalanceOnChain*(self: Service, address: string, chainId: int, symbol: string): float64 =
     let account = self.getAccountByAddress(address)
     for token in account.tokens:
-      if token.symbol == symbol:
+      if token.symbol == symbol and token.balancesPerChain.hasKey(chainId):
         return token.balancesPerChain[chainId].balance
 
     return 0.0
