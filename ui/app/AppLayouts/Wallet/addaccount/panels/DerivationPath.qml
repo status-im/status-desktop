@@ -59,6 +59,7 @@ GridLayout {
             objectName: "AddAccountPopup-DerivationPathInput"
 
             Layout.fillWidth: true
+            enabled: root.store.derivedAddressModel.count > 0
 
             initialDerivationPath: root.store.addAccountModule.derivationPath
             initialBasePath: root.store.selectedRootPath
