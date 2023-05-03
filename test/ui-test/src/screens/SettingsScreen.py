@@ -23,8 +23,27 @@ from .components.cahange_password_popup import ChangePasswordPopup
 from .components.social_links_popup import SocialLinksPopup
 
 
-class SettingsScreenComponents(Enum):
-    SAVE_BUTTON: str = "settingsSave_StatusButton"
+class SignOutPopup(BaseElement):
+
+    def __init__(self):
+        super(SignOutPopup, self).__init__('statusDesktop_mainWindow_overlay')
+        self._sign_out_quit_button = Button('signOutConfirmation_StatusButton')
+
+    def sign_out_and_quit(self):
+        self._sign_out_quit_button.click()
+
+
+class MenuPanel(BaseElement):
+
+    def __init__(self):
+        super(MenuPanel, self).__init__('mainWindow_LeftTabView')
+        self._scroll = Scroll('LeftTabView_ScrollView')
+        self._back_up_seed_phrase_item = Button('sign_out_Quit_StatusNavigationListItem')
+
+    def sign_out_and_quit(self):
+        self._scroll.vertical_scroll_to(self._back_up_seed_phrase_item)
+        self._back_up_seed_phrase_item.click()
+        SignOutPopup().wait_until_appears().sign_out_and_quit()
 
 
 class SidebarComponents(Enum):
@@ -94,10 +113,6 @@ class WalletSettingsScreen(Enum):
     BACKUP_SEED_PHRASE_BUTTON: str = "settings_Wallet_MainView_BackupSeedPhrase"
 
 
-class ConfirmationDialog(Enum):
-    SIGN_OUT_CONFIRMATION: str = "signOutConfirmation_StatusButton"
-
-
 class CommunitiesSettingsScreen(Enum):
     LIST_PANEL: str = "settings_Communities_CommunitiesListPanel"
     LEAVE_COMMUNITY_BUTTONS: str = "settings_Communities_MainView_LeaveCommunityButtons"
@@ -124,6 +139,7 @@ class SettingsScreen:
 
     def __init__(self):
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
+        self.menu = MenuPanel()
         self._profile_view = ProfileSettingsView()
         self._profile_button = Button('profile_StatusNavigationListItem')
 
@@ -232,11 +248,6 @@ class SettingsScreen:
             if (accounts.itemAtIndex(index).objectName == account_name):
                 return index
         return -1
-
-    def sign_out_and_quit_the_app(self, pid: int):
-        SettingsScreen.__pid = pid
-        click_obj_by_name(SidebarComponents.SIGN_OUT_AND_QUIT_OPTION.value)
-        click_obj_by_name(ConfirmationDialog.SIGN_OUT_CONFIRMATION.value)
 
     def verify_the_app_is_closed(self):
         verify_the_app_is_closed(SettingsScreen.__pid)
@@ -383,9 +394,9 @@ class ProfileSettingsView(BaseElement):
 
     def __init__(self):
         super(ProfileSettingsView, self).__init__('mainWindow_MyProfileView')
+        self._scroll_view = Scroll('settingsContentBase_ScrollView')
         self._display_name_text_field = TextEdit('displayName_TextEdit')
         self._bio_text_field = TextEdit('bio_TextEdit')
-        self._scroll_view = Scroll('settingsContentBase_ScrollView')
         self._add_more_links_label = TextLabel('addMoreSocialLinks')
         self._save_button = Button('settingsSave_StatusButton')
         self._links_list = BaseElement('linksView')
@@ -447,9 +458,10 @@ class ProfileSettingsView(BaseElement):
     def open_social_links_popup(self):
         self._scroll_view.vertical_scroll_to(self._add_more_links_label)
         self._add_more_links_label.click()
-        return SocialLinksPopup().wait_utill_appears()
+        return SocialLinksPopup().wait_until_appears()
 
     def verify_display_name(self, display_name: str):
+        self._scroll_view.vertical_scroll_to(self._display_name_text_field)
         compare_text(display_name, self.display_name)
 
     def verify_bio(self, bio: str):
@@ -484,4 +496,4 @@ class ProfileSettingsView(BaseElement):
     def open_change_password_popup(self):
         self._scroll_view.vertical_scroll_to(self._change_password_button)
         self._change_password_button.click()
-        return ChangePasswordPopup().wait_utill_appears()
+        return ChangePasswordPopup().wait_until_appears()

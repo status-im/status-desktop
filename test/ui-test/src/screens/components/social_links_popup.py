@@ -30,4 +30,4 @@ class SocialLinksPopup(BaseElement):
         for occurrence, link in enumerate(links):
             self._get_text_field(occurrence).text = link
         self._add_button.click()
-        self.wait_utill_hidden()
+        self.wait_until_hidden()

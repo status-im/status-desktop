@@ -16,6 +16,10 @@ from drivers.SDKeyboardCommands import *
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from utils.ObjectAccess import *
+import configs
+
+from .components.splash_screen import SplashScreen
+from .components.user_canvas import UserCanvas
 
 
 class MainScreenComponents(Enum):
@@ -28,52 +32,72 @@ class MainScreenComponents(Enum):
     START_CHAT_BTN = "mainWindow_startChat"
     CHAT_LIST = "chatList"
     COMMUNITY_NAVBAR_BUTTONS = "navBarListView_All_Community_Buttons"
-    PROFILE_SETTINGS_VIEW = "mainWindow_ProfileSettingsView" 
-    PROFILE_NAVBAR_BUTTON = "mainWindow_ProfileNavBarButton"
-    USERSTATUSMENU_ALWAYS_ACTIVE_ACTION = "userContextmenu_AlwaysActiveButton"
-    USERSTATUSMENU_INACTIVE_ACTION = "userContextmenu_InActiveButton"
-    USERSTATUSMENU_AUTOMATIC_ACTION = "userContextmenu_AutomaticButton"
-    USERSTATUSMENU_OPEN_PROFILE_POPUP = "userContextMenu_ViewMyProfileAction"
-    SPLASH_SCREEN = "splashScreen"
+    PROFILE_SETTINGS_VIEW = "mainWindow_ProfileSettingsView"
     TOOLBAR_BACK_BUTTON = "main_toolBar_back_button"
     LEAVE_CHAT_MENUITEM = "leaveChatMenuItem"
     CONTACTS_COLUMN_MESSAGES_HEADLINE = "mainWindow_ContactsColumn_Messages_Headline"
     SECURE_YOUR_SEED_PHRASE_BANNER = "mainWindow_secureYourSeedPhraseBanner_ModuleWarning"
+
 
 class ProfilePopup(Enum):
     USER_IMAGE = "ProfileHeader_userImage"
     DISPLAY_NAME = "ProfilePopup_displayName"
     EDIT_PROFILE_BUTTON = "ProfilePopup_editButton"
 
+
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
     START_CHAT_BTN = "startChat_Btn"
+
 
 class SharedPopup(Enum):
     POPUP_CONTENT: str = "sharedPopup_Popup_Content"
     PASSWORD_INPUT: str = "sharedPopup_Password_Input"
     PRIMARY_BUTTON: str = "sharedPopup_Primary_Button"
 
+
 def authenticate_popup_enter_password(password):
     wait_for_object_and_type(SharedPopup.PASSWORD_INPUT.value, password)
     click_obj_by_name(SharedPopup.PRIMARY_BUTTON.value)
+
+
+class NavigationPanel(BaseElement):
+
+    def __init__(self):
+        super(NavigationPanel, self).__init__('mainWindow_StatusAppNavBar')
+        self._profile_button = Button('mainWindow_ProfileNavBarButton')
+
+    @property
+    def user_badge_color(self) -> str:
+        return str(self._profile_button.object.badge.color.name)
+
+    def open_user_canvas(self) -> UserCanvas:
+        self._profile_button.click()
+        return UserCanvas().wait_until_appears()
+
+    def user_is_online(self) -> bool:
+        return self.user_badge_color == '#4ebc60'
+
+    def user_is_offline(self):
+        return self.user_badge_color == '#7f8990'
+
+    def user_is_set_to_automatic(self):
+        return self.user_badge_color == '#4ebc60'
+
 
 class StatusMainScreen:
 
     def __init__(self):
         verify_screen(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value)
+        self.navigation_panel = NavigationPanel()
 
     # Main screen is ready to interact with it (Splash screen animation not present)
     def is_ready(self):
         self.wait_for_splash_animation_ends()
         verify(is_displayed(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value, 15000), "Verifying if the Messages headline is displayed")
 
-    def wait_for_splash_animation_ends(self, timeoutMSec: int = 10000):
-        do_until_validation_with_timeout(
-            do_fn = lambda: time.sleep(0.5),
-            validation_fn = lambda: not is_loaded_visible_and_enabled(MainScreenComponents.SPLASH_SCREEN.value, 1000)[0],
-            message = "Splash screen animation has ended",
-            timeout_ms = timeoutMSec)
+    def wait_for_splash_animation_ends(self, timeoutMSec: int = configs.squish.APP_LOAD_TIMEOUT_MSEC):
+        SplashScreen().wait_until_appears().wait_until_hidden(timeoutMSec)
 
     def open_chat_section(self):
         click_obj_by_name(MainScreenComponents.CHAT_NAVBAR_ICON.value)
@@ -125,32 +149,25 @@ class StatusMainScreen:
         verify_equals(len(objects), int(expected_count))
 
     def user_is_online(self):
-        profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
-        verify_equal(profileButton.badge.color.name, "#4ebc60", "The user is not online by default")
+        verify_equal(wait_for(self.navigation_panel.user_is_online(), 10000), True, "The user is not online")
 
     def user_is_offline(self):
-        profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
-        verify_equal(profileButton.badge.color.name, "#7f8990", "The user is not offline")
+        verify_equal(wait_for(self.navigation_panel.user_is_offline(), 10000), True, "The user is not offline")
 
     def user_is_set_to_automatic(self):
-        profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
-        verify_equal(profileButton.badge.color.name, "#4ebc60", "The user is not online by default")
+        verify_equal(wait_for(self.navigation_panel.user_is_online(), 10000), True, "The user is not autoset")
 
     def set_user_state_offline(self):
-        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
-        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_INACTIVE_ACTION.value)
+        self.navigation_panel.open_user_canvas().set_user_state_offline()
 
     def set_user_state_online(self):
-        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
-        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_ALWAYS_ACTIVE_ACTION.value)
+        self.navigation_panel.open_user_canvas().set_user_state_online()
 
     def set_user_state_to_automatic(self):
-        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
-        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_AUTOMATIC_ACTION.value)
+        self.navigation_panel.open_user_canvas().set_user_automatic_state()
 
     def open_own_profile_popup(self):
-        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
-        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_OPEN_PROFILE_POPUP.value)
+        self.navigation_panel.open_user_canvas().open_profile_popup()
 
     def verify_profile_popup_display_name(self, display_name: str):
         verify_text_matching(ProfilePopup.DISPLAY_NAME.value, display_name)
@@ -178,8 +195,7 @@ class StatusMainScreen:
         image_present("loginUserName", True, 95, 75, 100, True, profilePopupImage)
 
     def profile_modal_image_is_updated(self):
-        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
-        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_OPEN_PROFILE_POPUP.value)
+        self.navigation_panel.open_user_canvas().open_profile_popup()
         image_present("profiletestimage", True, 97, 95, 100, True)
 
     def profile_settings_image_is_updated(self):

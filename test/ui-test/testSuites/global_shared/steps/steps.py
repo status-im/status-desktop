@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 # ******************************************************************************
 # Status.im
 # *****************************************************************************/
@@ -14,11 +16,10 @@
 # *          with a pattern which is matched against the steps being executed.
 # *****************************************************************************
 import common.Common as common
-import time
-
 import steps.commonInitSteps as init_steps
-from screens.StatusMainScreen import StatusMainScreen
+from drivers.SquishDriver import start_application
 from screens.StatusChatScreen import StatusChatScreen
+from screens.StatusMainScreen import StatusMainScreen
 
 _statusMain = StatusMainScreen()
 _statusChat = StatusChatScreen()
@@ -93,9 +94,8 @@ def step(context, obj):
 ###########################################################################
 
 def the_user_restarts_the_app(context: any):
-    waitFor(lambda: currentApplicationContext().detach(), 500)
-    time.sleep(5)
-    startApplication(context.userData["aut_name"])
+    [ctx.detach() for ctx in squish.applicationContextList()]
+    start_application(context.userData["aut_name"])
     
 def the_user_joins_chat_room(room: str):
     init_steps.the_user_joins_chat_room(room)
