@@ -72,6 +72,17 @@ class CommunitySettingsComponents(Enum):
     MEMBERS_TAB_MEMBERS_LISTVIEW = "communitySettings_MembersTab_Members_ListView"
     MEMBER_KICK_BUTTON = "communitySettings_MembersTab_Member_Kick_Button"
     MEMBER_CONFIRM_KICK_BUTTON = "communitySettings_KickModal_Kick_Button"
+    
+class CommunityPermissionsComponents(Enum):
+    WELCOME_SCREEN_TITLE = "communityPermissions_welcome_title"
+    WELCOME_SCREEN_IMAGE = "communityPermissions_welcome_image"
+    WELCOME_SCREEN_SETTINGS_TITLE = "communityPermissions_welcome_settings_title"
+    WELCOME_SCREEN_SETTINGS_SUBTITLE = "communityPermissions_welcome_settings_subtitle"
+    WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT1 = "communityPermissions_welcome_settings_checkList_element1"
+    WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT2 = "communityPermissions_welcome_settings_checkList_element2"
+    WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT3 = "communityPermissions_welcome_settings_checkList_element3"
+    ADD_NEW_PERMISSION_BUTTON = "communityPermissions_welcome_settings_add_new_permission"
+
 
 class CommunityColorPanelComponents(Enum):
     HEX_COLOR_INPUT = "communitySettings_ColorPanel_HexColor_Input"
@@ -155,7 +166,7 @@ class StatusCommunityScreen:
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_EDIT_CATEGORY_MENU_ITEM.value)
 
     def verify_community_name(self, communityName: str):
-        verify_text_matching(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value, communityName)
+        verify_text_matching(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value, communityName)   
         
     def verify_community_overview_name(self, communityName: str):
         verify_text_matching(CommunitySettingsComponents.COMMUNITY_NAME_TEXT.value, communityName)
@@ -465,4 +476,43 @@ class StatusCommunityScreen:
     def verify_option_exists(self, option:str):
         if option=="Permissions":
             title = get_obj(CommunitySettingsComponents.PERMISSIONS_BUTTON.value).title
-            verify_text(option, str(title))    
+            verify_text(option, str(title))
+              
+    def select_community_settings_option(self, option:str):
+        if option=="Permissions":
+            click_obj_by_name(CommunitySettingsComponents.PERMISSIONS_BUTTON.value)
+     
+    def verify_permission_screen_title(self, option:str):
+        if option=="Permissions":
+            title = get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_TITLE.value).text
+            verify_text(option, str(title))
+             
+    def verify_welcome_permission_image(self):
+        path = get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_IMAGE.value).source.path
+        verify_text_contains(str(path), "permissions2_3")
+    
+    def verify_welcome_settings_title(self):
+        verify_equals(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_TITLE.value).text, "Permissions")    
+    
+    def verify_welcome_settings_subtitle(self):
+        verify_equals(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_SUBTITLE.value).text, "You can manage your community by creating and issuing membership and access permissions")
+        
+    def verify_welcome_settings_checklist(self, list: list):
+        checklist = []
+        checklist.append(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT1.value).text)
+        checklist.append(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT2.value).text)
+        checklist.append(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT3.value).text)
+        
+        # Check if the lists are of equal length
+        if len(checklist) != len(list):
+            return False
+        
+        # Check if the lists have the same elements in the same order
+        for i in range(len(checklist)):
+            if checklist[i] != list[i]:
+                return False
+    
+    def verify_add_permission_button_enabled(self):
+        assert BaseElement(str(CommunityPermissionsComponents.ADD_NEW_PERMISSION_BUTTON.value)).is_enabled
+        button_title = get_obj(CommunityPermissionsComponents.ADD_NEW_PERMISSION_BUTTON.value).text
+        verify_equals("Add new permission", str(button_title))

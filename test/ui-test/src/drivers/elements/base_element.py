@@ -64,6 +64,10 @@ class BaseElement:
             button or squish.MouseButton.LeftButton
         )
 
+    @property
+    def is_enabled(self) -> bool:
+        return self.object.enabled    
+
     def wait_until_appears(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
         assert squish.waitFor(lambda: self.is_visible, timeout_msec), f'Object {self} is not visible'
         return self

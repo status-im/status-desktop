@@ -47,6 +47,7 @@ StatusScrollView {
                 Image {
                     id: imageItem
 
+                    objectName: "welcomeSettingsImage"
                     Layout.preferredWidth: root.imageWidth
                     Layout.preferredHeight: root.imageHeigth
                     Layout.alignment: Qt.AlignHCenter
@@ -58,6 +59,7 @@ StatusScrollView {
                 StatusBaseText {
                     id: titleItem
 
+                    objectName: "welcomeSettingsTitle"
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter                   
                     font.pixelSize: 17
@@ -67,7 +69,7 @@ StatusScrollView {
 
                 StatusBaseText {
                     id: subtitleItem
-
+                    objectName: "welcomeSettingsSubtitle"
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                     lineHeight: 1.2
@@ -94,6 +96,8 @@ StatusScrollView {
                     Repeater {
                         id: checkersItems
 
+                        objectName: "checkListItem"
+
                         RowLayout {
                             Layout.fillWidth: true
                             spacing: checkersColumn.rowChildSpacing
@@ -104,6 +108,7 @@ StatusScrollView {
                             }
 
                             StatusBaseText {
+                                objectName: "checkListText_" + index
                                 Layout.fillWidth: true
                                 Layout.alignment: Qt.AlignVCenter
                                 text: modelData
