@@ -80,6 +80,8 @@ Button {
             return 11
         }
     }
+    implicitWidth: content.implicitWidth + 2 * horizontalPadding
+    implicitHeight: content.implicitHeight + 2 * verticalPadding
 
     spacing: root.size === StatusBaseButton.Size.Large ? 6 : 4
 
@@ -97,71 +99,75 @@ Button {
         }
     }
 
-    contentItem: RowLayout {
-        spacing: root.spacing
+    contentItem: Item {
+        RowLayout {
+            id: content
+            spacing: root.spacing
+            anchors.centerIn: parent
 
-        Component {
-            id: baseIcon
+            Component {
+                id: baseIcon
 
-            StatusIcon {
-                icon: root.icon.name
-                rotation: root.asset.rotation
-                opacity: !root.loading && root.icon.name !== ""
-                color: root.icon.color
+                StatusIcon {
+                    icon: root.icon.name
+                    rotation: root.asset.rotation
+                    opacity: !root.loading && root.icon.name !== ""
+                    color: root.icon.color
+                }
             }
-        }
 
-        Component {
-            id: roundIcon
+            Component {
+                id: roundIcon
 
-            StatusRoundIcon {
-                asset.name: root.icon.name
-                asset.color: root.asset.color
-                asset.bgColor: root.asset.bgColor
+                StatusRoundIcon {
+                    asset.name: root.icon.name
+                    asset.color: root.asset.color
+                    asset.bgColor: root.asset.bgColor
+                }
             }
-        }
 
-        Component {
-            id: text
+            Component {
+                id: text
 
-            StatusBaseText {
-                Layout.alignment: root.textAlignment
-                Layout.fillWidth: root.textFillWidth
-                opacity: !root.loading
-                font: root.font
-                text: root.text
-                color: d.textColor
-                elide: Text.ElideRight
+                StatusBaseText {
+                    Layout.alignment: root.textAlignment
+                    Layout.fillWidth: root.textFillWidth
+                    opacity: !root.loading
+                    font: root.font
+                    text: root.text
+                    color: d.textColor
+                    elide: Text.ElideRight
+                }
             }
-        }
 
-        Loader {
-            active: root.textPosition === StatusBaseButton.TextPosition.Left && !d.iconOnly
-            visible: active
-            sourceComponent: text
-        }
+            Loader {
+                active: root.textPosition === StatusBaseButton.TextPosition.Left && !d.iconOnly
+                visible: active
+                sourceComponent: text
+            }
 
-        Loader {
-            id: iconLoader
+            Loader {
+                id: iconLoader
 
-            Layout.preferredWidth: active ? root.icon.width : 0
-            Layout.preferredHeight: active ? root.icon.height : 0
-            Layout.alignment: Qt.AlignCenter
-            active: root.icon.name !== ""
-            sourceComponent: root.isRoundIcon ? roundIcon : baseIcon
-        }
+                Layout.preferredWidth: active ? root.icon.width : 0
+                Layout.preferredHeight: active ? root.icon.height : 0
+                Layout.alignment: Qt.AlignCenter
+                active: root.icon.name !== ""
+                sourceComponent: root.isRoundIcon ? roundIcon : baseIcon
+            }
 
-        StatusEmoji {
-            Layout.preferredWidth: visible ? root.icon.width : 0
-            Layout.preferredHeight: visible ? root.icon.height : 0
-            visible: root.asset.emoji
-            emojiId: Emoji.iconId(root.asset.emoji, root.asset.emojiSize) || ""
-        }
+            StatusEmoji {
+                Layout.preferredWidth: visible ? root.icon.width : 0
+                Layout.preferredHeight: visible ? root.icon.height : 0
+                visible: root.asset.emoji
+                emojiId: Emoji.iconId(root.asset.emoji, root.asset.emojiSize) || ""
+            }
 
-        Loader {
-            active: root.textPosition === StatusBaseButton.TextPosition.Right && !d.iconOnly
-            visible: active
-            sourceComponent: text
+            Loader {
+                active: root.textPosition === StatusBaseButton.TextPosition.Right && !d.iconOnly
+                visible: active
+                sourceComponent: text
+            }
         }
     }
 
