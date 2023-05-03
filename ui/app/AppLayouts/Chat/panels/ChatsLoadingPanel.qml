@@ -15,9 +15,12 @@ Loader {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 6
             StatusBaseText {
+                anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Loading chats...")
             }
-            LoadingAnimation {}
+            LoadingAnimation {
+                anchors.verticalCenter: parent.verticalCenter
+            }
         }
     }
 }
