@@ -36,7 +36,6 @@ type
 
   ChatUpdateArgs* = ref object of Args
     chats*: seq[ChatDto]
-    messages*: seq[MessageDto]
 
   CreatedChatArgs* = ref object of Args
     chat*: ChatDto
@@ -151,7 +150,7 @@ QtObject:
               self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chatDto.id, members: chatDto.members))
             self.updateOrAddChat(chatDto)
 
-        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(messages: receivedData.messages, chats: chats))
+        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
 
       if (receivedData.clearedHistories.len > 0):
         for clearedHistoryDto in receivedData.clearedHistories:
@@ -357,12 +356,12 @@ QtObject:
           break
 
   proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
-    var (chats, messages) = self.processMessageUpdateAfterSend(response)
+    var (chats, _) = self.processMessageUpdateAfterSend(response)
     self.events.emit(SIGNAL_MESSAGE_DELETED, MessageArgs(id: messageId, channel: chats[0].id))
 
   proc emitUpdate(self: Service, response: RpcResponse[JsonNode]) =
-    var (chats, messages) = self.parseChatResponse(response)
-    self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(messages: messages, chats: chats))
+    var (chats, _) = self.parseChatResponse(response)
+    self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
 
   proc getAllChats*(self: Service): seq[ChatDto] =
     return toSeq(self.chats.values)

@@ -183,7 +183,13 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.tokenService, result.networkService
   )
   result.messageService = message_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.contactsService, result.tokenService, result.walletAccountService, result.networkService
+    statusFoundation.events,
+    statusFoundation.threadpool,
+    result.chatService,
+    result.contactsService,
+    result.tokenService,
+    result.walletAccountService,
+    result.networkService,
   )
   result.communityService = community_service.newService(statusFoundation.events,
     statusFoundation.threadpool, result.chatService, result.activityCenterService, result.messageService)
