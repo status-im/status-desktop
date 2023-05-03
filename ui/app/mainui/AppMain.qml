@@ -1285,6 +1285,7 @@ Item {
         spacing: 8
         verticalLayoutDirection: ListView.BottomToTop
         model: appMain.rootStore.mainModuleInst.ephemeralNotificationModel
+        clip: false
 
         delegate: StatusToastMessage {
             primaryText: model.title
