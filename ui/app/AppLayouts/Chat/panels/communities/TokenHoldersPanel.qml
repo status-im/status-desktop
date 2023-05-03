@@ -15,7 +15,7 @@ import shared.controls 1.0
 Control {
     id: root
 
-    // Expected roles: name, walletAddress, imageSource, amount, selfDestructAmount and selfDestruct
+    // Expected roles: name, walletAddress, imageSource, amount
     property var model
 
     property string tokenName

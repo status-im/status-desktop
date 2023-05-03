@@ -1221,4 +1221,3 @@ method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
 method onDeactivateChatLoader*[T](self: Module[T], sectionId: string, chatId: string) =
   if (sectionId.len > 0 and self.channelGroupModules.contains(sectionId)):
     self.channelGroupModules[sectionId].onDeactivateChatLoader(chatId)
-  
