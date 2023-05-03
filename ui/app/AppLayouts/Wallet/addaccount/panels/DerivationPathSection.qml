@@ -104,11 +104,12 @@ Column {
         store: root.store
     }
 
-    DerivationPathDisplay {
-        visible: root.store.editMode
-        width: parent.width - 2 * root.padding
-
-        store: root.store
+    Loader {
+        active: root.store.editMode
+        sourceComponent: DerivationPathDisplay {
+            width: parent.width - 2 * root.padding
+            store: root.store
+        }
     }
 
     states: [
