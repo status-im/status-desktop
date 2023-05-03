@@ -63,6 +63,10 @@ def step(context: any, settings_type:str):
 def step(context: any, settings_type:str):
     _settingsScreen.toggle_experimental_feature(settings_type)
 
+@Given("the user opens the community named \"|any|\"")
+def step(context, community_name:str):
+    _settingsScreen.open_community(community_name)    
+    
 #########################
 ### ACTIONS region:
 #########################

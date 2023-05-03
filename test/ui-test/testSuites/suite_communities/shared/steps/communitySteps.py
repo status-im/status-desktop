@@ -50,6 +50,14 @@ def step(context, category_name, channel_names):
 def step(context: any, settings_type:str):
     _settingsScreen.toggle_experimental_feature(settings_type)
 
+@Given("\"|any|\" is clicked in the community sidebar")
+def step(context, community_sidebar_option:str):
+    _statusCommunityScreen.click_sidebar_option(community_sidebar_option)
+
+@Given("\"|any|\" should be an available option in Community Settings")
+def step(context, manage_community_option:str):
+    _statusCommunityScreen.verify_option_exists(manage_community_option)
+
 #########################
 ### ACTIONS region:
 #########################
@@ -160,6 +168,10 @@ def step(context, channel):
 @When("\"|any|\" is clicked in the community sidebar")
 def step(context, community_sidebar_option:str):
     _statusCommunityScreen.click_sidebar_option(community_sidebar_option)
+    
+@When("\"|any|\" section is selected") 
+def step(context, section_option:str):
+    _statusCommunityScreen.select_community_settings_option(section_option) 
 
 
 #########################
@@ -225,6 +237,14 @@ def step(context, communityDescription: str):
 @Then("the community overview color is \"|any|\"")
 def step(context, color: str):
     _statusCommunityScreen.verify_community_overview_color(color)
+
+@Then("the heading is \"|any|\"") 
+def step(context, community_settings_screen_name:str):
+    _statusCommunityScreen.verify_permission_screen_title(community_settings_screen_name) 
+
+@Then("the welcome permission image is present")
+def step(context):
+    _statusCommunityScreen.verify_welcome_permission_image()
     
 @Then("\"|any|\" should be an available option in Community Settings")
 def step(context, manage_community_option:str):
@@ -233,6 +253,22 @@ def step(context, manage_community_option:str):
 @Then("\"|any|\" should be in the list of uncategorized channels")
 def step(context, chat_name:str):
     _statusCommunityScreen.check_channel_is_uncategorized(chat_name)
+
+@Then("the welcome permission title is present") 
+def step(context, ):
+    _statusCommunityScreen.verify_welcome_settings_title()    
+
+@Then("the welcome permission subtitle is present") 
+def step(context, ):
+    _statusCommunityScreen.verify_welcome_settings_subtitle()
+    
+@Then("the welcome permission settings \"|any|\" is present") 
+def step(context, list):
+    _statusCommunityScreen.verify_welcome_settings_checklist(list)
+
+@Then("Add new permission button is present")
+def step (context):
+    _statusCommunityScreen.verify_add_permission_button_enabled()  
 
     
 ###########################################################################
