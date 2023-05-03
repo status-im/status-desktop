@@ -520,7 +520,7 @@ QtObject:
             )
 
           # Handle name/description changes
-          if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color:
+          if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color or chat.emoji != prev_chat.emoji:
             var updatedChat = findChatById(chat.id, updatedChats)
             updatedChat.updateMissingFields(chat)
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
@@ -665,8 +665,11 @@ QtObject:
     return toSeq(self.getFilteredCuratedCommunities.values)
 
   proc getCommunityById*(self: Service, communityId: string): CommunityDto =
-    if(not self.communities.hasKey(communityId)):
-      error "error: requested community doesn't exists", communityId
+    if communityId == "":
+      return
+
+    if not self.communities.hasKey(communityId):
+      error "requested community doesn't exists", communityId
       return
 
     return self.communities[communityId]
