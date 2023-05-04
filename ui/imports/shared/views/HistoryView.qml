@@ -144,26 +144,24 @@ ColumnLayout {
             readonly property bool isFirstSection: ListView.view.firstSection === section
 
             width: ListView.view.width
-            height: isFirstSection ? 38 : (section.length > 1 ? 58 : 0) // 1 because we don't use empty for loading state
-            visible: height > 0 // display always first section. Other sections when more items are being fetched must not be visible
+            // display always first section. Other sections when more items are being fetched must not be visible
+            visible: isFirstSection || section.length > 1
             spacing: 0
 
             required property string section
 
             Separator {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 1
                 Layout.topMargin: sectionDelegate.isFirstSection ? 0 : 20
+                implicitHeight: 1
             }
 
             StatusTextWithLoadingState {
                 id: sectionText
 
-                Layout.fillWidth: true
-                Layout.leftMargin: 16
-                Layout.fillHeight: true
-                Layout.bottomMargin: 8
-
+                Layout.topMargin: 12
+                leftPadding: 16
+                bottomPadding: 8
                 text: loading ? "dummy" : parent.section // dummy text because loading component height depends on text height, and not visible with height == 0
                 Binding on width {
                     when: sectionText.loading
