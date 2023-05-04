@@ -191,6 +191,7 @@ SettingsPageLayout {
                                       preview: true,
                                       name,
                                       artworkSource,
+                                      artworkCropRect,
                                       symbol,
                                       description,
                                       supplyAmount,

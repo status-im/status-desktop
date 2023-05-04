@@ -1,5 +1,6 @@
-import QtQuick 2.14
+import QtQuick 2.15
 import QtQuick.Layouts 1.14
+import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -19,6 +20,7 @@ StatusScrollView {
 
     // Collectible object properties:
     property alias artworkSource: image.source
+    property rect artworkCropRect
     property alias symbol: symbolBox.value
     property alias description: descriptionItem.text
     property alias chainName: chainText.text
@@ -78,14 +80,24 @@ StatusScrollView {
         Rectangle {
             Layout.preferredHeight: d.imageSelectorRectSize
             Layout.preferredWidth: Layout.preferredHeight
+
             radius: 8
-            color: Theme.palette.baseColor2
+            color:Theme.palette.baseColor2
+            clip: true
 
             Image {
                 id: image
 
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectFit
+                visible: false
+                sourceClipRect: root.artworkCropRect ? root.artworkCropRect : undefined
+            }
+
+            OpacityMask {
+                anchors.fill: image
+                source: image
+                maskSource: parent
             }
         }
 
