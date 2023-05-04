@@ -116,6 +116,7 @@ method switchAccount*(self: Module, accountIndex: int) =
   self.collectiblesModule.switchAccount(accountIndex)
   self.transactionsModule.switchAccount(accountIndex)
   self.overviewModule.switchAccount(accountIndex)
+  self.sendModule.switchAccount(accountIndex)
 
 method switchAccountByAddress*(self: Module, address: string) =
   let accountIndex = self.controller.getIndex(address)

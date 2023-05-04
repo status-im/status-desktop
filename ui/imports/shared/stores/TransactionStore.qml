@@ -21,6 +21,8 @@ QtObject {
     property var allNetworks: networksModule.all
     property var overview: walletSectionOverview
     property var accounts: walletSectionSendInst.accounts
+    property var senderAccounts: walletSectionSendInst.senderAccounts
+    property var selectedSenderAccount: walletSectionSendInst.selectedSenderAccount
     property string signingPhrase: walletSection.signingPhrase
     property var savedAddressesModel: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model
@@ -308,11 +310,7 @@ QtObject {
         return result
     }
 
-    function getUserSelectedAccountIndex(model) {
-        for (let i = 0; i < model.count; i++) {
-            if(model.get(i).address.toUpperCase() === root.overview.mixedcaseAddress.toUpperCase()) {
-                return i
-            }
-        }
+    function switchSenderAccount(index) {
+        walletSectionSendInst.switchSenderAccount(index)
     }
 }

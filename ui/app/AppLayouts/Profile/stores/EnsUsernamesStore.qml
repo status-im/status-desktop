@@ -24,8 +24,6 @@ QtObject {
 
     property string username: !!Global.userProfile? Global.userProfile.username : ""
 
-    property var walletAccounts: Global.appIsReady? walletSectionSend.accounts : null
-
     function setPrefferedEnsUsername(ensName) {
         if(!root.ensUsernamesModule)
             return

@@ -1,4 +1,4 @@
-import NimQml, sequtils, strutils, stint
+import NimQml, sequtils, strutils, stint, sugar
 
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../shared_models/token_model
@@ -12,7 +12,12 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       accounts: AccountsModel
-      accountsVariant: QVariant
+      # this one doesn't include watch accounts and its what the user switches when using the sendModal
+      senderAccounts: AccountsModel
+      # for send modal
+      selectedSenderAccount: AccountItem
+      # for receive modal
+      selectedReceiveAccount: AccountItem
 
       tmpAddress: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
@@ -20,7 +25,9 @@ QtObject:
 
   proc delete*(self: View) =
     self.accounts.delete
-    self.accountsVariant.delete
+    self.senderAccounts.delete
+    self.selectedSenderAccount.delete
+    self.selectedReceiveAccount.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -28,22 +35,52 @@ QtObject:
     result.QObject.setup
     result.delegate = delegate
     result.accounts = newAccountsModel()
-    result.accountsVariant = newQVariant(result.accounts)
+    result.senderAccounts = newAccountsModel()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
   proc accountsChanged*(self: View) {.signal.}
-
   proc getAccounts(self: View): QVariant {.slot.} =
-    return self.accountsVariant
-
+    return newQVariant(self.accounts)
   QtProperty[QVariant] accounts:
     read = getAccounts
     notify = accountsChanged
 
+  proc senderAccountsChanged*(self: View) {.signal.}
+  proc getSenderAccounts(self: View): QVariant {.slot.} =
+    return newQVariant(self.senderAccounts)
+  QtProperty[QVariant] senderAccounts:
+    read = getSenderAccounts
+    notify = senderAccountsChanged
+
+  proc selectedSenderAccountChanged*(self: View) {.signal.}
+  proc getSelectedSenderAccount(self: View): QVariant {.slot.} =
+    return newQVariant(self.selectedSenderAccount)
+  proc setSelectedSenderAccount*(self: View, account: AccountItem) =
+    self.selectedSenderAccount = account
+    self.selectedSenderAccountChanged()
+  QtProperty[QVariant] selectedSenderAccount:
+    read = getSelectedSenderAccount
+    notify = selectedSenderAccountChanged
+
+  proc selectedReceiveAccountChanged*(self: View) {.signal.}
+  proc getSelectedReceiveAccount(self: View): QVariant {.slot.} =
+    return newQVariant(self.selectedReceiveAccount)
+  proc setSelectetReceiveAccount*(self: View, account: AccountItem) =
+    self.selectedReceiveAccount = account
+    self.selectedReceiveAccountChanged()
+  QtProperty[QVariant] selectedReceiveAccount:
+    read = getSelectedReceiveAccount
+    notify = selectedReceiveAccountChanged
+
   proc setItems*(self: View, items: seq[AccountItem]) =
     self.accounts.setItems(items)
+    self.accountsChanged()
+
+    # need to remove watch only accounts as a user cant send a tx with a watch only account
+    self.senderAccounts.setItems(items.filter(a => a.walletType() != WalletTypeWatch))
+    self.senderAccountsChanged()
 
   proc prepareTokenBalanceOnChain*(self: View, address: string, chainId: int, tokenSymbol: string) {.slot.} =
     self.tmpAddress = address
@@ -108,6 +145,19 @@ QtObject:
   proc hasGas*(self: View, address: string, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
     for account in self.accounts.items:
       if account.address() == address:
-        return account.assets().hasGas(chainId, nativeGasSymbol, requiredGas)
+        return account.getAssets().hasGas(chainId, nativeGasSymbol, requiredGas)
 
     return false
+
+  proc switchSenderAccountByAddress*(self: View, address: string) =
+    let (account, index) = self.senderAccounts.getItemByAddress(address)
+    self.setSelectedSenderAccount(account)
+    self.delegate.setSelectedSenderAccountIndex(index)
+
+  proc switchSenderAccount*(self: View, index: int) {.slot.} =
+    self.setSelectedSenderAccount(self.senderAccounts.getItemByIndex(index))
+    self.delegate.setSelectedSenderAccountIndex(index)
+
+  proc switchReceiveAccount*(self: View, index: int) {.slot.} =
+    self.setSelectetReceiveAccount(self.accounts.getItemByIndex(index))
+    self.delegate.setSelectedReceiveAccountIndex(index)

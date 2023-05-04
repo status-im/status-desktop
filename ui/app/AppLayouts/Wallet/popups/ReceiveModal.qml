@@ -16,8 +16,6 @@ import utils 1.0
 import shared.controls 1.0
 import shared.popups 1.0
 
-import SortFilterProxyModel 0.2
-
 import AppLayouts.stores 1.0
 import "../stores"
 
@@ -26,7 +24,7 @@ StatusModal {
 
     QtObject {
         id: d
-        property string selectedAccountAddress
+        property string selectedAccountAddress: RootStore.selectedReceiveAccount.address
         property string networkPrefix
         property string completeAddressWithNetworkPrefix
     }
@@ -40,19 +38,9 @@ StatusModal {
 
     hasFloatingButtons: true
     advancedHeaderComponent: AccountsModalHeader {
-        id: header
-        model: SortFilterProxyModel {
-            sourceModel: RootStore.accounts
-        }
-        selectedIndex: RootStore.getUserSelectedAccountIndex(header.model)
-        onSelectedIndexChanged: selectedAccount = header.model.get(header.selectedIndex)
-        onSelectedAccountChanged: d.selectedAccountAddress = selectedAccount.address
-        Connections {
-            target: RootStore.accounts
-            function onModelReset() {
-                header.selectedAccount = header.model.get(header.selectedIndex)
-            }
-        }
+        model: RootStore.receiveAccounts
+        selectedAccount: RootStore.selectedReceiveAccount
+        onSelectedIndexChanged: RootStore.switchReceiveAccount(selectedIndex)
     }
 
     contentItem: Column {
