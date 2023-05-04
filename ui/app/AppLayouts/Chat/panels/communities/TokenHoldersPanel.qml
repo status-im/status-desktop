@@ -100,10 +100,8 @@ Control {
 
                 StatusComboBox {
                     id: combo
-
-                    Layout.preferredWidth: 70
+                    Layout.preferredWidth: 88
                     Layout.preferredHeight: 44
-
                     visible: root.isSelectorMode && amount > 1
                     control.spacing: Style.current.halfPadding / 2
                     model: amount
