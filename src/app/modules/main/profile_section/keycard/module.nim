@@ -220,14 +220,20 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
         # if there are more then one keycard for a single keypair we don't want to add the same keypair more than once
         continue
     knownAccounts.add(account)
-  if knownAccounts.len == 0:
-    return nil
   var item = initKeycardItem(keycardUid = keyPair.keycardUid,
     keyUid = keyPair.keyUid,
-    pubKey = knownAccounts[0].publicKey,
+    pubKey = "",
     locked = keyPair.keycardLocked,
-    name = keyPair.keycardName,
-    derivedFrom = knownAccounts[0].derivedfrom)
+    name = keyPair.keycardName)
+  if knownAccounts.len == 0:
+    if reason == BuildItemReason.MainView:
+      return nil
+    item.setPairType(KeyPairType.SeedImport.int)
+    item.setIcon("keycard")
+  else:
+    item.setPubKey(knownAccounts[0].publicKey)
+    item.setDerivedFrom(knownAccounts[0].derivedfrom)
+
   for ka in knownAccounts:
     var icon = ""
     if ka.walletType == WalletTypeDefaultStatusAccount:
@@ -277,7 +283,8 @@ method onLoggedInUserImageChanged*(self: Module) =
     return
   self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
-method onKeycardsSynchronized*(self: Module) =
+method rebuildKeycardsList*(self: Module) =
+  self.view.setKeycardItems(@[])
   self.buildKeycardList()
 
 method onNewKeycardSet*(self: Module, keyPair: KeyPairDto) =

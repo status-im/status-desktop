@@ -26,7 +26,8 @@ proc doMigration(self: MigratingKeyPairState, controller: Controller) =
 
 proc doConversion(self: MigratingKeyPairState, controller: Controller) =
   let password = controller.getPassword()
-  controller.convertSelectedKeyPairToKeycardAccount(password)
+  let selectedKeyPairDto = controller.getSelectedKeyPairDto()
+  controller.convertSelectedKeyPairToKeycardAccount(selectedKeyPairDto.keycardUid, password)
 
 proc runStoreMetadataFlow(self: MigratingKeyPairState, controller: Controller) =
   let selectedKeyPairDto = controller.getSelectedKeyPairDto()
@@ -48,12 +49,6 @@ method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller:
         let password = controller.getPassword()
         self.authenticationOk = controller.verifyPassword(password)
         if self.authenticationOk:
-          self.doMigration(controller)
-          return
-      if not self.addingMigratedKeypairDone:
-        self.addingMigratedKeypairDone = true
-        self.addingMigratedKeypairOk = controller.getAddingMigratedKeypairSuccess()
-        if self.addingMigratedKeypairOk:
           self.doConversion(controller)
           return
       if not self.profileConversionDone:
@@ -70,9 +65,12 @@ method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller:
 
 method getNextSecondaryState*(self: MigratingKeyPairState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
-    if controller.getSelectedKeyPairIsProfile() and self.authenticationDone and not self.authenticationOk or
-      self.addingMigratedKeypairDone and not self.addingMigratedKeypairOk or
-      self.profileConversionDone and not self.profileConversionOk:
+    if controller.getSelectedKeyPairIsProfile():
+      if self.authenticationDone and not self.authenticationOk or
+        self.profileConversionDone and not self.profileConversionOk:
+          return createState(StateType.KeyPairMigrateFailure, self.flowType, nil)
+    else:
+      if self.addingMigratedKeypairDone and not self.addingMigratedKeypairOk:
         return createState(StateType.KeyPairMigrateFailure, self.flowType, nil)
 
 method resolveKeycardNextState*(self: MigratingKeyPairState, keycardFlowType: string, keycardEvent: KeycardEvent, 
