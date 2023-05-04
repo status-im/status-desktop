@@ -421,11 +421,10 @@ QtObject:
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
-                        pinMessageAllMembersEnabled: bool, bannerJsonStr: string,
-                        encrypted: bool) {.slot.} =
+                        pinMessageAllMembersEnabled: bool, bannerJsonStr: string) {.slot.} =
     self.delegate.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
                                   imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, 
-                                  bannerJsonStr, encrypted)
+                                  bannerJsonStr)
 
   proc clearFileList*(self: View) {.slot.} =
     self.discordFileListModel.clearItems()
@@ -459,7 +458,7 @@ QtObject:
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool,
-                        fromTimestamp: int, encrypted: bool) {.slot.} =
+                        fromTimestamp: int) {.slot.} =
     let selectedItems = self.discordChannelsModel.getSelectedItems()
     var filesToImport: seq[string] = @[]
 
@@ -470,7 +469,7 @@ QtObject:
     self.setDiscordImportInProgress(true)
     self.delegate.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags,
                                   imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
-                                  filesToImport, fromTimestamp, encrypted)
+                                  filesToImport, fromTimestamp)
 
   proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
     self.delegate.deleteCommunityCategory(communityId, categoryId)

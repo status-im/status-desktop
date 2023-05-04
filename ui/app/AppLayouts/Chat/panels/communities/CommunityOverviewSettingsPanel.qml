@@ -29,7 +29,6 @@ StackLayout {
     property bool archiveSupportEnabled
     property bool requestToJoinEnabled
     property bool pinMessagesEnabled
-    property bool encrypted
     property string previousPageName: (currentIndex === 1) ? qsTr("Overview") : ""
 
     property bool editable: false
@@ -188,8 +187,6 @@ StackLayout {
                 archiveSupportEnabled: root.archiveSupportEnabled
                 requestToJoinEnabled: root.requestToJoinEnabled
                 pinMessagesEnabled: root.pinMessagesEnabled
-                encrypted: root.encrypted
-                encryptReadOnly: true
             }
 
             bottomReservedSpace: editCommunityPage.settingsDirtyToastMessageImplicitSize

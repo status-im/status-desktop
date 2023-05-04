@@ -911,8 +911,7 @@ QtObject:
       historyArchiveSupportEnabled: bool,
       pinMessageAllMembersEnabled: bool,
       filesToImport: seq[string],
-      fromTimestamp: int,
-      encrypted: bool) =
+      fromTimestamp: int) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
       var tagsString = tags
@@ -932,8 +931,7 @@ QtObject:
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled,
         filesToImport,
-        fromTimestamp,
-        encrypted)
+        fromTimestamp)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
@@ -955,8 +953,7 @@ QtObject:
       aX: int, aY: int, bX: int, bY: int,
       historyArchiveSupportEnabled: bool,
       pinMessageAllMembersEnabled: bool,
-      bannerJsonStr: string,
-      encrypted: bool) =
+      bannerJsonStr: string) =
     try:
       var bannerJson = bannerJsonStr.parseJson
       bannerJson{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(bannerJson["imagePath"].getStr))
@@ -976,8 +973,7 @@ QtObject:
         aX, aY, bX, bY,
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled,
-        $bannerJson,
-        encrypted)
+        $bannerJson)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
