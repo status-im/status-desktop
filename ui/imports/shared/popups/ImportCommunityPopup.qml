@@ -24,8 +24,9 @@ StatusDialog {
         property string importErrorMessage
         readonly property string inputErrorMessage: isInputValid ? "" : qsTr("Invalid key")
         readonly property string errorMessage: importErrorMessage || inputErrorMessage
-        readonly property bool isPrivateKey: Utils.isPrivateKey(keyInput.text)
-        readonly property bool isPublicKey: Utils.isChatKey(keyInput.text)
+        readonly property string inputKey: Utils.dropCommunityLinkPrefix(keyInput.text.trim())
+        readonly property bool isPrivateKey: Utils.isPrivateKey(inputKey)
+        readonly property bool isPublicKey: Utils.isChatKey(inputKey)
         readonly property bool isInputValid: isPrivateKey || isPublicKey
     }
 
@@ -36,24 +37,24 @@ StatusDialog {
                 onClicked: root.reject()
             }
             StatusButton {
-              id: importButton
-              enabled: d.isInputValid
-              text: d.isPrivateKey ? qsTr("Make this an Owner Node") : qsTr("Import")
-              onClicked: {
-                  let communityKey = keyInput.text.trim();
-                  if (d.isPrivateKey) {
-                    if (!communityKey.startsWith("0x")) {
-                        communityKey = "0x" + communityKey;
+                id: importButton
+                enabled: d.isInputValid
+                text: d.isPrivateKey ? qsTr("Make this an Owner Node") : qsTr("Import")
+                onClicked: {
+                    let communityKey = d.inputKey
+                    if (d.isPrivateKey) {
+                        if (!communityKey.startsWith("0x")) {
+                            communityKey = "0x" + communityKey;
+                        }
+                        root.store.importCommunity(communityKey);
+                        root.close();
                     }
-                    root.store.importCommunity(communityKey);
-                    root.close();
-                  }
-                  if (d.isPublicKey) {
-                    importButton.loading = true
-                    root.store.requestCommunityInfo(communityKey, true)
-                    root.close();
-                  }
-              }
+                    if (d.isPublicKey) {
+                        importButton.loading = true
+                        root.store.requestCommunityInfo(communityKey, true)
+                        root.close();
+                    }
+                }
             }
         }
     }

@@ -63,10 +63,7 @@ MembersSelectorBase {
 
         function lookupContact(value) {
 
-            value = value.trim()
-
-            if (value.startsWith(Constants.userLinkPrefix))
-                value = value.slice(Constants.userLinkPrefix.length)
+            value = Utils.dropUserLinkPrefix(value.trim())
 
             if (Utils.isChatKey(value)) {
                 processContact(value)
