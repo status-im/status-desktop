@@ -125,8 +125,6 @@ Button {
             id: text
 
             StatusBaseText {
-                Layout.alignment: root.textAlignment
-                Layout.fillWidth: root.textFillWidth
                 opacity: !root.loading
                 font: root.font
                 text: root.text
@@ -136,6 +134,8 @@ Button {
         }
 
         Loader {
+            Layout.alignment: root.textAlignment
+            Layout.fillWidth: root.textFillWidth
             active: root.textPosition === StatusBaseButton.TextPosition.Left && !d.iconOnly
             visible: active
             sourceComponent: text
@@ -159,6 +159,8 @@ Button {
         }
 
         Loader {
+            Layout.alignment: root.textAlignment
+            Layout.fillWidth: root.textFillWidth
             active: root.textPosition === StatusBaseButton.TextPosition.Right && !d.iconOnly
             visible: active
             sourceComponent: text
