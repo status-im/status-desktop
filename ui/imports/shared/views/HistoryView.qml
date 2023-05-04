@@ -182,7 +182,7 @@ ColumnLayout {
         TransactionDelegate {
             width: ListView.view.width
             modelData: model
-            isIncoming: isModelDataValid && modelData.to.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase()
+            transactionType: isModelDataValid && modelData.to.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase() ? TransactionDelegate.Receive : TransactionDelegate.Send
             currentCurrency: RootStore.currentCurrency
             cryptoValue: isModelDataValid ? modelData.value.amount : 0.0
             fiatValue: isModelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
@@ -191,7 +191,7 @@ ColumnLayout {
             networkName: isModelDataValid ? RootStore.getNetworkFullName(modelData.chainId) : ""
             symbol: isModelDataValid && !!modelData.symbol ? modelData.symbol : ""
             transferStatus: isModelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
-            shortTimeStamp: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
+            timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
             savedAddressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForWalletAddress(modelData.to) : ""
             savedAddressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForWalletAddress(modelData.from) : ""
             isSummary: true
