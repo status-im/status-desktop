@@ -8,11 +8,11 @@ type
   Args* = ref object of RootObj # ...args
   Handler* = proc (args: Args) {.closure.} # callback function type
   EventEmitter* = ref object
-    events: Table[string, Table[UUID, Handler]]
+    events: Table[string, OrderedTable[UUID, Handler]]
 
 proc createEventEmitter*(): EventEmitter =
   result.new
-  result.events = initTable[string, Table[UUID, Handler]]()
+  result.events = initTable[string, OrderedTable[UUID, Handler]]()
 
 
 proc on(this: EventEmitter, name: string, handlerId: UUID, handler: Handler): void =
@@ -20,7 +20,7 @@ proc on(this: EventEmitter, name: string, handlerId: UUID, handler: Handler): vo
     this.events[name].add handlerId, handler
     return
 
-  this.events[name] = [(handlerId, handler)].toTable
+  this.events[name] = [(handlerId, handler)].toOrderedTable
 
 proc on*(this: EventEmitter, name: string, handler: Handler): void =
   var handlerId = genUUID()
