@@ -28,6 +28,7 @@ StatusSectionLayout {
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
 
     property RootStore rootStore
+    property var createChatPropertiesStore
     property var sectionItemModel
 
     property var emojiPopup
@@ -80,6 +81,7 @@ StatusSectionLayout {
         anchors.fill: parent
         parentModule: root.rootStore.chatCommunitySectionModule
         rootStore: root.rootStore
+        createChatPropertiesStore: root.createChatPropertiesStore
         contactsStore: root.contactsStore
         stickersLoaded: root.stickersLoaded
         emojiPopup: root.emojiPopup

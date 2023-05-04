@@ -55,6 +55,7 @@ Item {
         openCreateChat: createChatView.opened
         networkConnectionStore: appMain.networkConnectionStore
     }
+    property var createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
@@ -926,6 +927,7 @@ Item {
                                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                                     networkConnectionStore: appMain.networkConnectionStore
                                 }
+                                createChatPropertiesStore: appMain.createChatPropertiesStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
 
@@ -1095,6 +1097,7 @@ Item {
                             openCreateChat: createChatView.opened
                             chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                         }
+                        createChatPropertiesStore: appMain.createChatPropertiesStore
                         emojiPopup: statusEmojiPopup.item
                         stickersPopup: statusStickersPopupLoader.item
                     }
