@@ -128,25 +128,6 @@ Control {
             return "transparent";
         }
 
-        Rectangle {
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                left: parent.left
-            }
-            width: 2
-            visible: root.isPinned || root.hasMention
-            color: root.hasMention ? Theme.palette.mentionColor1 : root.isPinned ? Theme.palette.pinColor1
-                                                                                 : "transparent" // not visible really
-        }
-    }
-
-    contentItem: Item {
-
-        implicitWidth: messageLayout.implicitWidth
-        implicitHeight: messageLayout.implicitHeight
-
-
         SequentialAnimation {
             id: messageFoundAnimation
 
@@ -177,6 +158,24 @@ Control {
             visible: opacity > 0.001
             color: Theme.palette.messageHighlightColor
         }
+
+        Rectangle {
+            anchors {
+                top: parent.top
+                bottom: parent.bottom
+                left: parent.left
+            }
+            width: 2
+            visible: root.isPinned || root.hasMention
+            color: root.hasMention ? Theme.palette.mentionColor1 : root.isPinned ? Theme.palette.pinColor1
+                                                                                 : "transparent" // not visible really
+        }
+    }
+
+    contentItem: Item {
+
+        implicitWidth: messageLayout.implicitWidth
+        implicitHeight: messageLayout.implicitHeight
 
         MouseArea {
             id: mouseArea
