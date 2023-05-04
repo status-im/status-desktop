@@ -23,7 +23,6 @@ Feature: Status Desktop Sign Up
     Then the user lands on the signed in app
     And the user is online
 
-  @mayfail
   Scenario Outline: The user signs up with imported seed phrase and and its state is online
     Given A first time user lands on the status desktop and navigates to import seed phrase
     When the user inputs the seed phrase "<seed>"
@@ -39,6 +38,7 @@ Feature: Status Desktop Sign Up
 		| provide between target maze travel enroll edge churn random sight grass lion diet sugar cable fiction reflect reason gaze camp tone maximum task unlock | 0xCb59031d11D233112CB57DFd667fE1FF6Cd7b6Da |
 
   @mayfail
+  # https://github.com/status-im/status-desktop/issues/10069
   Scenario: The user signs up with a profile image
     Given A first time user lands on the status desktop and generates new key
     And the user signs up with profileImage "doggo.jpeg", username "tester123" and password "TesTEr16843/!@00"
