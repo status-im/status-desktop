@@ -252,11 +252,10 @@ method createCommunity*(self: Module, name: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool,
-                        bannerJsonStr: string,
-                        encrypted: bool) =
+                        bannerJsonStr: string) =
   self.controller.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
                                   imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, 
-                                  bannerJsonStr, encrypted)
+                                  bannerJsonStr)
 
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId)
@@ -339,9 +338,9 @@ method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: 
 method requestImportDiscordCommunity*(self: Module, name: string, description, introMessage, outroMessage: string, access: int,
                         color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool, filesToImport: seq[string], 
-                        fromTimestamp: int, encrypted: bool) =
+                        fromTimestamp: int) =
   self.view.setDiscordImportHasCommunityImage(imagePath != "")
-  self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp, encrypted)
+  self.controller.requestImportDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
 
 proc getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
   return initDiscordImportTaskItem(

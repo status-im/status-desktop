@@ -197,7 +197,6 @@ StatusSectionLayout {
                 tags: root.rootStore.communityTags
                 selectedTags: root.filteredSelectedTags
                 archiveSupportEnabled: root.community.historyArchiveSupportEnabled
-                encrypted: root.community.encrypted
                 requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
                 pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
                 editable: root.community.amISectionAdmin
