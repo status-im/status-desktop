@@ -14,12 +14,11 @@ StatusModal {
     id: root
 
     required property bool simple
-    required property string accountKeyUid
     required property string accountName
     required property string accountAddress
     required property string accountDerivationPath
 
-    signal removeAccount(string keyUid, string address)
+    signal removeAccount(string address)
 
     header.title: qsTr("Remove %1").arg(root.accountName)
     focus: visible
@@ -34,7 +33,7 @@ StatusModal {
             if (!root.simple && !derivationPathWritten.checked) {
                 return
             }
-            root.removeAccount(root.accountKeyUid, root.accountAddress)
+            root.removeAccount(root.accountAddress)
         }
     }
 

@@ -57,7 +57,7 @@ proc init*(self: Controller) =
     let args = KeycardActivityArgs(e)
     if not args.success:
       return
-    self.delegate.onKeycardsSynchronized()
+    self.delegate.rebuildKeycardsList()
 
   self.events.on(SIGNAL_KEYCARD_LOCKED) do(e: Args):
     let args = KeycardActivityArgs(e)
@@ -84,6 +84,12 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e: Args):
     let args = WalletAccountUpdated(e)
     self.delegate.onWalletAccountUpdated(args.account)
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
+    self.delegate.rebuildKeycardsList()
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
+    self.delegate.rebuildKeycardsList()
 
 proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
   return self.walletAccountService.getAllMigratedKeyPairs()

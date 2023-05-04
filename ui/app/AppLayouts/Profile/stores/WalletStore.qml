@@ -23,8 +23,8 @@ QtObject {
 
     property var accounts: Global.appIsReady? accountsModule.accounts : null
     
-    function deleteAccount(keyUid, address) {
-        return accountsModule.deleteAccount(keyUid, address)
+    function deleteAccount(address) {
+        return accountsModule.deleteAccount(address)
     }
 
     function updateAccount(address, accountName, color, emoji) {

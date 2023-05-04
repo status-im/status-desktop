@@ -380,12 +380,12 @@ proc verifyPassword*(self: Controller, password: string): bool =
     return
   return self.accountsService.verifyPassword(password)
 
-proc convertSelectedKeyPairToKeycardAccount*(self: Controller, password: string) =
+proc convertSelectedKeyPairToKeycardAccount*(self: Controller, keycardUid: string, password: string) =
   if not serviceApplicable(self.accountsService):
     return
   let acc = self.accountsService.createAccountFromMnemonic(self.getSeedPhrase(), includeEncryption = true)
   singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NOT_NOW)
-  self.accountsService.convertToKeycardAccount(currentPassword = password,
+  self.accountsService.convertToKeycardAccount(keycardUid, currentPassword = password,
     newPassword = acc.derivedAccounts.encryption.publicKey)
 
 proc getConvertingProfileSuccess*(self: Controller): bool =
@@ -631,7 +631,7 @@ proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto) =
     return
   if not serviceApplicable(self.accountsService):
     return
-  self.walletAccountService.addMigratedKeyPairAsync(keyPair, self.getPassword())
+  self.walletAccountService.addMigratedKeyPairAsync(keyPair)
 
 proc removeMigratedAccountsForKeycard*(self: Controller, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
   if not serviceApplicable(self.walletAccountService):

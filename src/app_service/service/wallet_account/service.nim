@@ -465,25 +465,13 @@ QtObject:
       error "error: ", procName="getRandomMnemonic", errName=e.name, errDesription=e.msg
       return ""
 
-  proc deleteAccount*(self: Service, address: string, password: string, keyUid: string, keycardUid: string) =
+  proc deleteAccount*(self: Service, address: string) =
     try:
-      let isKeycardAccount = keycardUid.len > 0
-      var finalPassword = password
-      if not isKeycardAccount:
-        finalPassword = utils.hashPassword(password)
-      let response = status_go_accounts.deleteAccount(address, finalPassword)
+      let response = status_go_accounts.deleteAccount(address)
       if not response.error.isNil:
         error "status-go error", procName="deleteAccount", errCode=response.error.code, errDesription=response.error.message
         return
       self.removeAccountFromLocalStoreAndNotify(address)
-      if isKeycardAccount:
-        self.removeMigratedAccountsForKeycard(keyUid, keycardUid, @[address])
-        let accounts = self.getAccountsByKeyUID(keyUID)
-        if accounts.len == 0:
-          let allKnownKeycards = self.getAllKnownKeycards()
-          for kc in allKnownKeycards:
-            if kc.keyUid == keyUid:
-              self.removeMigratedAccountsForKeycard(kc.keyUid, kc.keycardUid, kc.accountsAddresses)
     except Exception as e:
       error "error: ", procName="deleteAccount", errName = e.name, errDesription = e.msg    
 
@@ -691,18 +679,12 @@ QtObject:
 
     return 0.0
 
-  proc addMigratedKeyPairAsync*(self: Service, keyPair: KeyPairDto, password = "") =
-    # Providing a password corresponding local keystore file will be removed as well, though
-    # in some contexts we just need to add keypair to the db, so password is not needed.
-    var hashedPassword = ""
-    if password.len > 0:
-      hashedPassword = utils.hashPassword(password)
+  proc addMigratedKeyPairAsync*(self: Service, keyPair: KeyPairDto) =
     let arg = AddMigratedKeyPairTaskArg(
       tptr: cast[ByteAddress](addMigratedKeyPairTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onMigratedKeyPairAdded",
-      keyPair: keyPair,
-      password: hashedPassword
+      keyPair: keyPair
     )
     self.threadpool.start(arg)
 
@@ -728,16 +710,13 @@ QtObject:
       error "error handilng migrated keypair response", errDesription=e.msg
       self.emitAddKeycardAddAccountsChange(success = false, KeyPairDto())
 
-  proc addMigratedKeyPair*(self: Service, keyPair: KeyPairDto, password = ""): bool =
-    # Providing a password corresponding local keystore file will be removed as well, though
-    # in some contexts we just need to add keypair to the db, so password is not needed.
+  proc addMigratedKeyPair*(self: Service, keyPair: KeyPairDto): bool =
     try:
       let response = backend.addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded(
         keyPair.keycardUid,
         keyPair.keycardName,
         keyPair.keyUid,
-        keyPair.accountsAddresses,
-        password
+        keyPair.accountsAddresses
         )
       result = responseHasNoErrors("addMigratedKeyPair", response)
       if result:
