@@ -31,6 +31,9 @@ type
     controller: Controller
     moduleLoaded: bool
     tmpSendTransactionDetails: TmpSendTransactionDetails
+    senderCurrentAccountIndex: int
+    # To-do we should create a dedicated module Receive
+    receiveCurrentAccountIndex: int
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -46,6 +49,8 @@ proc newModule*(
   result.view = newView(result)
   result.controller = controller.newController(result, events, walletAccountService, networkService, currencyService, transactionService)
   result.moduleLoaded = false
+  result.senderCurrentAccountIndex = 0
+  result.receiveCurrentAccountIndex = 0
 
 method delete*(self: Module) =
   self.view.delete
@@ -73,6 +78,8 @@ method refreshWalletAccounts*(self: Module) =
   ))
 
   self.view.setItems(items)
+  self.view.switchSenderAccount(self.senderCurrentAccountIndex)
+  self.view.switchReceiveAccount(self.receiveCurrentAccountIndex)
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionSend", newQVariant(self.view))
@@ -187,3 +194,15 @@ method suggestedRoutesReady*(self: Module, suggestedRoutes: string) =
 
 method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int = 
   return self.controller.getEstimatedTime(chainId, maxFeePerGas).int
+
+method switchAccount*(self: Module, accountIndex: int) =
+  var walletAccount = self.controller.getWalletAccountByIndex(accountIndex)
+  if not walletAccount.isNil:
+    self.view.switchSenderAccountByAddress(walletAccount.address)
+    self.view.switchReceiveAccount(accountIndex)
+
+method setSelectedSenderAccountIndex*(self: Module, index: int) =
+  self.senderCurrentAccountIndex = index
+
+method setSelectedReceiveAccountIndex*(self: Module, index: int) =
+  self.receiveCurrentAccountIndex = index

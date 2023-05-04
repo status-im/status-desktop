@@ -15,8 +15,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls.Validators 0.1
 
-import SortFilterProxyModel 0.2
-
 import "../panels"
 import "../controls"
 import "../views"
@@ -36,7 +34,7 @@ StatusDialog {
     property var store: TransactionStore{}
     property var contactsStore: store.contactStore
     property var currencyStore: store.currencyStore
-    property var selectedAccount
+    property var selectedAccount: store.selectedSenderAccount
     property var bestRoutes
     property alias addressText: recipientLoader.addressText
     property bool isLoading: false
@@ -95,12 +93,6 @@ StatusDialog {
             if(errorType === Constants.SendAmountExceedsBalance)
                 bestRoutes = []
         }
-
-        function setSelectedAccount() {
-            popup.selectedAccount = header.model.get(header.selectedIndex)
-            if(!!assetSelector.selectedAsset)
-                assetSelector.selectedAsset = store.getAsset(selectedAccount.assets, assetSelector.selectedAsset.symbol)
-        }
     }
 
     width: 556
@@ -155,27 +147,12 @@ StatusDialog {
     onClosed: popup.store.resetTxStoreProperties()
 
     header: AccountsModalHeader {
-        id: header
         anchors.top: parent.top
         anchors.topMargin: -height - 18
-        model: SortFilterProxyModel {
-            sourceModel: popup.store.accounts
-            filters: ValueFilter {
-                roleName: "walletType"
-                value: Constants.watchWalletType
-                inverted: true
-            }
-        }
-        selectedIndex: store.getUserSelectedAccountIndex(header.model)
+        model: popup.store.senderAccounts
         selectedAccount: !!popup.selectedAccount ? popup.selectedAccount: {}
         chainShortNames: store.getAllNetworksSupportedString()
-        onSelectedIndexChanged: d.setSelectedAccount()
-        Connections {
-            target: popup.store.accounts
-            function onModelReset() {
-                d.setSelectedAccount()
-            }
-        }
+        onSelectedIndexChanged: store.switchSenderAccount(selectedIndex)
     }
 
     StackLayout {
@@ -243,6 +220,11 @@ StatusDialog {
                             }
                             getNetworkIcon: function(chainId){
                                 return RootStore.getNetworkIcon(chainId)
+                            }
+                            onAssetsChanged: {
+                                // Todo we should not need to do this, this should be automatic when selected account changes
+                                if(!!selectedAccount && !!assetSelector.selectedAsset)
+                                    assetSelector.selectedAsset = store.getAsset(selectedAccount.assets, assetSelector.selectedAsset.symbol)
                             }
                             onSelectedAssetChanged: {
                                 if (!assetSelector.selectedAsset || !amountToSendInput.inputNumberValid) {

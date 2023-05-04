@@ -81,6 +81,10 @@ StatusComboBox {
             selectedIndex = index
             control.popup.close()
         }
+        Component.onCompleted:{
+            if(selectedAccount.address === model.address)
+                selectedIndex = index
+        }
     }
 }
 

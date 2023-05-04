@@ -6,8 +6,6 @@ QtObject {
 
     property var stickersModule
 
-    property var walletAccounts: Global.appIsReady? walletSectionAccounts.model : null
-
     function getSigningPhrase() {
         if(!root.stickersModule)
             return ""

@@ -139,7 +139,12 @@ Item {
                     implicitWidth: ListView.view.width
                     modelData: model
                     chainShortNames: root.store.getAllNetworksSupportedString()
-                    onClicked: recipientSelected(modelData, TabAddressSelectorView.Type.Account )
+                    onClicked: recipientSelected({name: modelData.name,
+                                                     address: modelData.address,
+                                                     color: modelData.color,
+                                                     emoji: modelData.emoji,
+                                                     walletType: modelData.walletType,
+                                                     currencyBalance: modelData.currencyBalance}, TabAddressSelectorView.Type.Account )
                 }
 
                 model: root.store.accounts

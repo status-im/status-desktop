@@ -56,7 +56,6 @@ QtObject:
       ModelRole.CurrencyBalance.int: "currencyBalance",
     }.toTable
 
-
   proc setItems*(self: AccountsModel, items: seq[AccountItem]) =
     self.beginResetModel()
     self.items = items
@@ -85,7 +84,20 @@ QtObject:
     of ModelRole.Emoji:
       result = newQVariant(item.emoji())
     of ModelRole.Assets:
-      result = newQVariant(item.assets())
+      result = newQVariant(item.getAssetsAsQVariant())
     of ModelRole.CurrencyBalance:
-      result = newQVariant(item.currencyBalance())
+      result = newQVariant(item.getCurrencyBalanceAsQVariant())
+
+  method getItemByIndex*(self: AccountsModel, index: int): AccountItem =
+    if index < 0 or index >= self.items.len:
+      return
+    return self.items[index]
+
+method getItemByAddress*(self: AccountsModel, address: string): tuple[account: AccountItem, index: int] =
+  for i in 0 ..< self.items.len:
+    if self.items[i].address() == address:
+      return (self.items[i], i)
+  if self.items.len > 0:
+    return (self.items[0], 0)
+
     

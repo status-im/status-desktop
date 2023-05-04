@@ -105,12 +105,12 @@ proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, chainIds: seq[in
   assets.setItems(
     w.tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, tokenFormats[t.symbol]))
   )
-  return wallet_send_account_item.initAccountItem(
+  return wallet_send_account_item.newAccountItem(
     w.name,
     w.address,
     w.color,
-    w.walletType,
     w.emoji,
+    w.walletType,
     assets,
     currencyAmountToItem(w.getCurrencyBalance(enabledChainIds, currency), currencyFormat),
   )
