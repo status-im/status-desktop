@@ -14,19 +14,6 @@ import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_modu
 
 export io_interface
 
-# TODO: remove it completely if after wallet settings part refactore this is not needed.
-type
-  AuthenticationReason {.pure.} = enum
-    DeleteAccountAuthentication = 0
-
-# TODO: remove it completely if after wallet settings part refactore this is not needed.
-type WalletAccountDetails = object
-  address: string
-  path: string
-  addressAccountIsDerivedFrom: string
-  publicKey: string
-  keyUid: string
-
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
@@ -35,8 +22,6 @@ type
     controller: Controller
     moduleLoaded: bool
     walletAccountService: wallet_account_service.Service
-    processingWalletAccount: WalletAccountDetails
-    authentiactionReason: AuthenticationReason
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -50,9 +35,8 @@ proc newModule*(
   result.events = events
   result.walletAccountService = walletAccountService
   result.view = newView(result)
-  result.controller = controller.newController(result, events, walletAccountService, networkService, currencyService)
+  result.controller = controller.newController(result, walletAccountService, networkService, currencyService)
   result.moduleLoaded = false
-  result.authentiactionReason = AuthenticationReason.DeleteAccountAuthentication
 
 method delete*(self: Module) =
   self.view.delete
@@ -123,32 +107,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
 
-proc authenticateActivityForKeyUid(self: Module, keyUid: string, reason: AuthenticationReason) =
-  self.authentiactionReason = reason
-  let keyPair = self.controller.getMigratedKeyPairByKeyUid(keyUid)
-  let keyPairMigratedToKeycard = keyPair.len > 0
-  if keyPairMigratedToKeycard:
-    self.controller.authenticateKeyPair(keyUid)
-  else:
-    self.processingWalletAccount.keyUid = singletonInstance.userProfile.getKeyUid()
-    self.controller.authenticateKeyPair()
-
-method deleteAccount*(self: Module, keyUid: string, address: string) =
-  let accountDto = self.controller.getWalletAccount(address)
-  if accountDto.walletType == WalletTypeWatch:
-    self.controller.deleteAccount(address)
-    return
-  self.processingWalletAccount = WalletAccountDetails(keyUid: keyUid, address: address)
-  self.authenticateActivityForKeyUid(keyUid, AuthenticationReason.DeleteAccountAuthentication)
-
-method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string, keycardUid: string) =
-  if self.authentiactionReason == AuthenticationReason.DeleteAccountAuthentication:
-    if self.processingWalletAccount.keyUid != keyUid:
-      error "cannot resolve key uid of an account being deleted", keyUid=keyUid
-      return
-    if password.len == 0:
-      return
-    self.controller.deleteAccount(self.processingWalletAccount.address, password, keyUid, keycardUid)
+method deleteAccount*(self: Module, address: string) =
+  self.controller.deleteAccount(address)
 
 method updateAccount*(self: Module, address: string, accountName: string, color: string, emoji: string) =
   self.controller.updateAccount(address, accountName, color, emoji)

@@ -13,7 +13,7 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteAccount*(self: AccessInterface, keyUid: string, address: string) {.base.} =
+method deleteAccount*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
@@ -26,10 +26,4 @@ method updateAccount*(self: AccessInterface, address: string, accountName: strin
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method authenticateUser*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string, keycardUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")

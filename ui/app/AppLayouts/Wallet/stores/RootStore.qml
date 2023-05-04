@@ -132,8 +132,8 @@ QtObject {
         walletSection.setFilterAddress(address)
     }
 
-    function deleteAccount(keyUid, address) {
-        return walletSectionAccounts.deleteAccount(keyUid, address)
+    function deleteAccount(address) {
+        return walletSectionAccounts.deleteAccount(address)
     }
 
     function updateCurrentAccount(address, accountName, color, emoji) {

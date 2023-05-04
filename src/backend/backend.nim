@@ -193,7 +193,6 @@ rpc(addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded, "accounts"):
   keyPairName: string
   keyUid: string
   accountAddresses: seq[string]
-  password: string
 
 rpc(removeMigratedAccountsForKeycard, "accounts"):
   keycardUid: string
