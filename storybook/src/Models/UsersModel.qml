@@ -53,7 +53,7 @@ ListModel {
         isVerified: true
         isAdmin: false
         isUntrustworthy: true
-        displayName: ""
+        displayName: "Maria"
         alias: "meth"
         localNickname: ""
         ensName: "maria.eth"
