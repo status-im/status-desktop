@@ -10,8 +10,9 @@ import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 
-import "../../../Wallet/controls"
+import AppLayouts.Wallet.controls 1.0
 import shared.panels 1.0
+import shared.popups 1.0
 
 StatusScrollView {
     id: root
@@ -26,7 +27,8 @@ StatusScrollView {
     readonly property alias notTransferable: transferableChecker.checked
     readonly property alias selfDestruct: selfDestructChecker.checked
     readonly property int supplyAmount: supplyInput.text ? parseInt(supplyInput.text) : 0
-    property url artworkSource
+    property alias artworkSource: editor.source
+    property alias artworkCropRect: editor.cropRect
     property int chainId
     property string chainName
     property string chainIcon
@@ -57,7 +59,7 @@ StatusScrollView {
                                               && (root.infiniteSupply || (!root.infiniteSupply && root.supplyAmount > 0))
 
 
-        readonly property int imageSelectorRectWidth: 280
+        readonly property int imageSelectorRectWidth: 290
     }
 
     contentWidth: mainLayout.width
@@ -70,16 +72,31 @@ StatusScrollView {
         width: root.viewWidth
         spacing: Style.current.padding
 
-        StatusImageSelector {
-            Layout.preferredHeight: d.imageSelectorRectWidth + headerHeight
-            Layout.preferredWidth: d.imageSelectorRectWidth + buttonsInsideOffset
-            labelText: qsTr("Artwork")
-            uploadText: qsTr("Drag and Drop or Upload Artwork")
-            additionalText: qsTr("Images only")
-            acceptedImageExtensions: Constants.acceptedDragNDropImageExtensions
-            file: root.artworkSource
+        StatusBaseText {
+            elide: Text.ElideRight
+            font.pixelSize: Theme.primaryTextFontSize
+            text: qsTr("Artwork")
+        }
 
-            onFileSelected: root.artworkSource = file
+        EditCroppedImagePanel {
+            id: editor
+
+            Layout.preferredHeight: d.imageSelectorRectWidth
+            Layout.preferredWidth: d.imageSelectorRectWidth
+
+            title: qsTr("Collectible artwork")
+            acceptButtonText: qsTr("Upload collectible artwork")
+            roundedImage: false
+
+            NoImageUploadedPanel {
+                width: parent.width
+                anchors.centerIn: parent
+                visible: !editor.userSelectedImage
+                uploadText: qsTr("Drag and Drop or Upload Artwork")
+                additionalText: qsTr("Images only")
+                showAdditionalInfo: true
+                additionalTextPixelSize: Theme.secondaryTextFontSize
+            }
         }
 
         CustomStatusInput {
@@ -280,11 +297,12 @@ StatusScrollView {
             isChainVisible: false
             multiSelection: false
 
-            onToggleNetwork: (network) => {
-                root.chainId = network.chainId
-                root.chainName = network.chainName
-                root.chainIcon = network.iconUrl
-            }
+            onToggleNetwork: (network) =>
+                             {
+                                 root.chainId = network.chainId
+                                 root.chainName = network.chainName
+                                 root.chainIcon = network.iconUrl
+                             }
         }
     }
 }

@@ -57,7 +57,7 @@ Item {
                 anchors.centerIn: parent
 
                 visible: !editor.userSelectedImage && !root.imageData
-                showARHint: true
+                showAdditionalInfo: true
             }
         }
     }
