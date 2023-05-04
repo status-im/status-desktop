@@ -7,9 +7,9 @@
 # * \date    February 2022
 # * \brief   It defines the status login screen behavior and properties.
 # *****************************************************************************/
-
 from enum import Enum
 
+import configs
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from screens.StatusAccountsScreen import StatusAccountsScreen
@@ -62,6 +62,7 @@ class StatusLoginScreen():
         click_obj_by_name(SLoginComponents.SUBMIT_BTN.value)
 
     def verify_error_message_is_displayed(self):
+        SplashScreen().wait_until_appears().wait_until_hidden(configs.squish.APP_LOAD_TIMEOUT_MSEC)
         verify_object_enabled(SLoginComponents.ERR_MSG_LABEL.value)
 
     def get_accounts_selector_popup(self):

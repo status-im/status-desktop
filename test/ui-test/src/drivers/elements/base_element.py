@@ -18,7 +18,6 @@ class BaseElement:
     @property
     def object(self):
         return squish.waitForObject(self.object_name)
-
     
     @property
     def existent(self):

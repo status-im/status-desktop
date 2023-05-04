@@ -153,6 +153,7 @@ StatusWindow {
             if(state === Constants.appState.startup) {
                 // we're here only in case of error when we're returning from the app loading state
                 loader.sourceComponent = undefined
+                appLoadingAnimation.active = false
                 startupOnboarding.visible = true
             }
             else if(state === Constants.appState.appLoading) {
