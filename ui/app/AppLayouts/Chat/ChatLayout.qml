@@ -16,6 +16,7 @@ StackLayout {
     id: root
 
     property RootStore rootStore
+    property var createChatPropertiesStore
     readonly property var contactsStore: rootStore.contactsStore
     readonly property var permissionsStore: rootStore.permissionsStore
 
@@ -108,6 +109,7 @@ StackLayout {
             stickersPopup: root.stickersPopup
             contactsStore: root.contactsStore
             rootStore: root.rootStore
+            createChatPropertiesStore: root.createChatPropertiesStore
             sectionItemModel: root.sectionItemModel
 
             onCommunityInfoButtonClicked: root.currentIndex = 1

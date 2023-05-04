@@ -17,6 +17,7 @@ Page {
     id: root
 
     property var rootStore
+    property var createChatPropertiesStore
     property var emojiPopup: null
     property var stickersPopup: null
 
@@ -24,8 +25,8 @@ Page {
         id: d
 
         function createChat() {
-            root.rootStore.createChatInitMessage = chatInput.textInput.text
-            root.rootStore.createChatFileUrls = chatInput.fileUrlsAndSources
+            root.createChatPropertiesStore.createChatInitMessage = chatInput.textInput.text
+            root.createChatPropertiesStore.createChatFileUrls = chatInput.fileUrlsAndSources
             membersSelector.createChat()
 
             membersSelector.cleanup()
@@ -161,17 +162,17 @@ Page {
                     usersModel: membersSelector.model
                 })
                 onSendTransactionCommandButtonClicked: {
-                    root.rootStore.createChatStartSendTransactionProcess = true;
+                    root.createChatPropertiesStore.createChatStartSendTransactionProcess = true;
                     membersSelector.createChat();
                 }
                 onReceiveTransactionCommandButtonClicked: {
-                    root.rootStore.createChatStartReceiveTransactionProcess = true;
+                    root.createChatPropertiesStore.createChatStartReceiveTransactionProcess = true;
                     membersSelector.createChat();
                 }
                 onStickerSelected: {
-                    root.rootStore.createChatStickerHashId = hashId;
-                    root.rootStore.createChatStickerPackId = packId;
-                    root.rootStore.createChatStickerUrl = url;
+                    root.createChatPropertiesStore.createChatStickerHashId = hashId;
+                    root.createChatPropertiesStore.createChatStickerPackId = packId;
+                    root.createChatPropertiesStore.createChatStickerUrl = url;
                     membersSelector.createChat();
                 }
 

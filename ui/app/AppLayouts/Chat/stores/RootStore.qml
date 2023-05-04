@@ -19,13 +19,6 @@ QtObject {
     }
 
     property bool openCreateChat: false
-    property string createChatInitMessage: ""
-    property var createChatFileUrls: []
-    property bool createChatStartSendTransactionProcess: false
-    property bool createChatStartReceiveTransactionProcess: false
-    property string createChatStickerHashId: ""
-    property string createChatStickerPackId: ""
-    property string createChatStickerUrl: ""
 
     property var contactsModel: root.contactsStore.myContactsModel
 
