@@ -275,6 +275,25 @@ StatusSectionLayout {
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
+                function setFeesInfo(ethCurrency, fiatCurrency, errorCode) {
+                    if (errorCode === Constants.ComputeFeeErrorCode.Success || errorCode === Constants.ComputeFeeErrorCode.Balance) {
+                        let valueStr = LocaleUtils.currencyAmountToLocaleString(ethCurrency) + "(" + LocaleUtils.currencyAmountToLocaleString(fiatCurrency) + ")"
+                        mintPanel.feeText = valueStr
+                        if (errorCode === Constants.ComputeFeeErrorCode.Balance) {
+                            mintPanel.errorText = qsTr("Not enough funds to make transaction")
+                        }
+                        mintPanel.isFeeLoading = false
+                        return
+                    } else if (errorCode === Constants.ComputeFeeErrorCode.Infura) {
+                        mintPanel.errorText = qsTr("Infura error")
+                        mintPanel.isFeeLoading = true
+                        return
+                    }
+
+                    mintPanel.errorText = qsTr("Unknown error")
+                    mintPanel.isFeeLoading = true
+                }
+
                 communityName: root.community.name
                 tokensModel: root.community.communityTokens
                 layer1Networks: communityTokensStore.layer1Networks
@@ -315,12 +334,11 @@ StatusSectionLayout {
                                                      accountName,
                                                      artworkCropRect)
                 }
-                onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(chainId)
+                onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(selfDestructTokensList, contractUniqueKey)
                 onRemoteSelfDestructCollectibles: {
-                    communityTokensStore.remoteSelfDestructCollectibles(selfDestructTokensList,
-                                                                        chainId,
-                                                                        accountName,
-                                                                        accountAddress)
+                    communityTokensStore.remoteSelfDestructCollectibles(root.community.id,
+                                                                        selfDestructTokensList,
+                                                                        contractUniqueKey)
                 }
                 onSignBurnTransactionOpened: communityTokensStore.computeBurnFee(chainId)
                 onBurnCollectibles: communityTokensStore.burnCollectibles(tokenKey, amount)
@@ -329,22 +347,43 @@ StatusSectionLayout {
                 Connections {
                     target: rootStore.communityTokensStore
                     function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-                        if (errorCode === Constants.ComputeFeeErrorCode.Success || errorCode === Constants.ComputeFeeErrorCode.Balance) {
-                            let valueStr = LocaleUtils.currencyAmountToLocaleString(ethCurrency) + "(" + LocaleUtils.currencyAmountToLocaleString(fiatCurrency) + ")"
-                            mintPanel.feeText = valueStr
-                            if (errorCode === Constants.ComputeFeeErrorCode.Balance) {
-                                mintPanel.errorText = qsTr("Not enough funds to make transaction")
-                            }
-                            mintPanel.isFeeLoading = false
-                            return
-                        } else if (errorCode === Constants.ComputeFeeErrorCode.Infura) {
-                            mintPanel.errorText = qsTr("Infura error")
-                            mintPanel.isFeeLoading = true
+                        mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
+                    }
+
+                    function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
+                        mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
+                    }
+
+                    function onRemoteDestructStateChanged(communityId, tokenName, status, url) {
+                        if (root.community.id !== communityId) {
                             return
                         }
 
-                        mintPanel.errorText = qsTr("Unknown error")
-                        mintPanel.isFeeLoading = true
+                        let title = ""
+                        let loading = false
+                        let type = Constants.ephemeralNotificationType.normal
+                        switch (status) {
+                        case Constants.ContractTransactionStatus.InProgress:
+                            title = qsTr("Remotely destroying tokens...")
+                            loading = true
+                            break
+                        case Constants.ContractTransactionStatus.Completed:
+                            title = qsTr("%1 tokens destroyed").arg(tokenName)
+                            type = Constants.ephemeralNotificationType.success
+                            break
+                        case Constants.ContractTransactionStatus.Failed:
+                            title = qsTr("%1 tokens destruction failed").arg(tokenName)
+                            break
+                        default:
+                            console.warn("Unknown destruction state: "+status)
+                            return
+                        }
+                        Global.displayToastMessage(title,
+                                                   qsTr("View on etherscan"),
+                                                   "",
+                                                   loading,
+                                                   type,
+                                                   url)
                     }
 
                     function onDeploymentStateChanged(communityId, status, url) {
@@ -356,15 +395,15 @@ StatusSectionLayout {
                         let loading = false
                         let type = Constants.ephemeralNotificationType.normal
                         switch (status) {
-                        case Constants.BackendProcessState.InProgress:
+                        case Constants.ContractTransactionStatus.InProgress:
                             title = qsTr("Token is being minted...")
                             loading = true
                             break
-                        case Constants.BackendProcessState.Completed:
+                        case Constants.ContractTransactionStatus.Completed:
                             title = qsTr("Token minting finished")
                             type = Constants.ephemeralNotificationType.success
                             break
-                        case Constants.BackendProcessState.Failed:
+                        case Constants.ContractTransactionStatus.Failed:
                             title = qsTr("Token minting failed")
                             break
                         default:

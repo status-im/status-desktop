@@ -893,7 +893,8 @@ QtObject {
         Everyone = 4
     }
 
-    enum BackendProcessState {
+    // refers to ContractTransactionStatus and DeployState in Nim
+    enum ContractTransactionStatus {
         Failed,
         InProgress,
         Completed,

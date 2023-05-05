@@ -67,12 +67,11 @@ SettingsPageLayout {
 
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
-    signal signSelfDestructTransactionOpened(int chainId)
+    signal signSelfDestructTransactionOpened(var selfDestructTokensList, // [key , amount]
+                                             string contractUniqueKey)
 
     signal remoteSelfDestructCollectibles(var selfDestructTokensList, // [key , amount]
-                                          int chainId,
-                                          string accountName,
-                                          string accountAddress)
+                                          string contractUniqueKey)
 
     signal signBurnTransactionOpened(int chainId)
 
@@ -109,6 +108,7 @@ SettingsPageLayout {
         property string accountName
         property int chainId
         property string chainName
+        property string contractUniqueKey
 
         property var tokenOwnersModel
         property var selfDestructTokensList
@@ -436,13 +436,9 @@ SettingsPageLayout {
                 property bool isRemotelyDestructTransaction
 
                 function signTransaction() {
-                    root.isFeeLoading = true
-                    root.feeText = ""
+                    root.setFeeLoading()
                     if(signTransactionPopup.isRemotelyDestructTransaction) {
-                        root.remoteSelfDestructCollectibles(d.selfDestructTokensList,
-                                                            d.chainId,
-                                                            d.accountName,
-                                                            d.accountAddress)
+                        root.remoteSelfDestructCollectibles(d.selfDestructTokensList, d.contractUniqueKey)
                     } else {
                         root.burnCollectibles("TODO - KEY"/*d.tokenKey*/, d.burnAmount)
                     }
@@ -457,9 +453,13 @@ SettingsPageLayout {
                 networkName: d.chainName
                 feeText: root.feeText
                 isFeeLoading: root.isFeeLoading
+                errorText: root.errorText
 
-                onOpened: signTransactionPopup.isRemotelyDestructTransaction ? root.signSelfDestructTransactionOpened(d.chainId) :
-                                                                               root.signBurnTransactionOpened(d.chainId)
+                onOpened: {
+                    root.setFeeLoading()
+                    signTransactionPopup.isRemotelyDestructTransaction ? root.signSelfDestructTransactionOpened(d.selfDestructTokensList, d.contractUniqueKey) :
+                                                                         root.signBurnTransactionOpened(d.chainId)
+                }
                 onCancelClicked: close()
                 onSignTransactionClicked: signTransaction()
             }
@@ -490,6 +490,7 @@ SettingsPageLayout {
             onItemClicked: {
                 d.accountAddress = accountAddress
                 d.chainId = chainId
+                d.contractUniqueKey = contractUniqueKey
                 d.chainName = chainName
                 d.accountName = accountName
                 //d.tokenKey = key // TODO: Backend key role

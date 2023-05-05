@@ -4,10 +4,12 @@ import token_owners_item
 import token_owners_model
 import ../../../../../../app_service/service/community_tokens/dto/community_token
 import ../../../../../../app_service/service/collectible/dto
+import ../../../../../../app_service/common/utils
 
 type
   ModelRole {.pure.} = enum
-    TokenType = UserRole + 1
+    ContractUniqueKey = UserRole + 1
+    TokenType
     TokenAddress
     Name
     Symbol
@@ -22,6 +24,7 @@ type
     ChainName
     ChainIcon
     TokenOwnersModel
+    AccountName
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -43,6 +46,7 @@ QtObject:
       if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
         self.items[i].tokenDto.deployState = deployState
         let index = self.createIndex(i, 0, nil)
+        defer: index.delete
         self.dataChanged(index, index, @[ModelRole.DeployState.int])
         return
 
@@ -87,6 +91,7 @@ QtObject:
 
   method roleNames(self: TokenModel): Table[int, string] =
     {
+      ModelRole.ContractUniqueKey.int:"contractUniqueKey",
       ModelRole.TokenType.int:"tokenType",
       ModelRole.TokenAddress.int:"tokenAddress",
       ModelRole.Name.int:"name",
@@ -102,6 +107,7 @@ QtObject:
       ModelRole.ChainName.int:"chainName",
       ModelRole.ChainIcon.int:"chainIcon",
       ModelRole.TokenOwnersModel.int:"tokenOwnersModel",
+      ModelRole.AccountName.int:"accountName",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -112,6 +118,8 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
     case enumRole:
+      of ModelRole.ContractUniqueKey:
+        result = newQVariant(contractUniqueKey(item.tokenDto.chainId, item.tokenDto.address))
       of ModelRole.TokenType:
         result = newQVariant(item.tokenDto.tokenType.int)
       of ModelRole.TokenAddress:
@@ -142,6 +150,8 @@ QtObject:
         result = newQVariant(item.chainIcon)
       of ModelRole.TokenOwnersModel:
         result = newQVariant(item.tokenOwnersModel)
+      of ModelRole.AccountName:
+        result = newQVariant(item.accountName)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:

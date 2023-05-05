@@ -81,3 +81,6 @@ proc isPathOutOfTheDefaultStatusDerivationTree*(path: string): bool =
     path.count("/") != 5: 
       return true
   return false
+
+proc contractUniqueKey*(chainId: int, contractAddress: string): string =
+  return $chainId & "_" & contractAddress

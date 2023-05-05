@@ -1,5 +1,7 @@
+import stint
 include ../../common/json_utils
 import ../../../backend/eth
+import ../../../backend/community_tokens
 import ../../../backend/collectibles
 import ../../../app/core/tasks/common
 import ../../../app/core/tasks/qt
@@ -17,6 +19,26 @@ const asyncGetSuggestedFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimca
       "fees": response.toSuggestedFeesDto(),
       "error": "",
     })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
+
+type
+  AsyncGetBurnFees = ref object of QObjectTaskArg
+    chainId: int
+    contractAddress: string
+    tokenIds: seq[UInt256]
+
+const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetBurnFees](argEncoded)
+  try:
+    let feesResponse = eth.suggestedFees(arg.chainId).result
+    let burnGas = community_tokens.estimateRemoteBurn(arg.chainId, arg.contractAddress, arg.tokenIds).result.getInt
+    arg.finish(%* {
+      "fees": feesResponse.toSuggestedFeesDto(),
+      "burnGas": burnGas,
+      "error": "" })
   except Exception as e:
     arg.finish(%* {
       "error": e.msg,

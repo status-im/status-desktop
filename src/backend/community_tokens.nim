@@ -1,4 +1,6 @@
-import json
+import json, stint
+import std/sequtils
+import std/sugar
 import ./eth
 import ../app_service/common/utils
 import ./core, ./response_type
@@ -27,6 +29,14 @@ proc updateCommunityTokenState*(contractAddress: string, deployState: DeployStat
 proc mintTo*(chainId: int, contractAddress: string, txData: JsonNode, password: string, walletAddresses: seq[string], amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), walletAddresses, amount]
   return core.callPrivateRPC("collectibles_mintTo", payload)
+
+proc remoteBurn*(chainId: int, contractAddress: string, txData: JsonNode, password: string, tokenIds: seq[UInt256]): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), tokenIds.map(x => x.toString(10))]
+  return core.callPrivateRPC("collectibles_remoteBurn", payload)
+
+proc estimateRemoteBurn*(chainId: int, contractAddress: string, tokenIds: seq[UInt256]): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, tokenIds.map(x => x.toString(10))]
+  return core.callPrivateRPC("collectibles_estimateRemoteBurn", payload)
 
 proc contractOwner*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, contractAddress]

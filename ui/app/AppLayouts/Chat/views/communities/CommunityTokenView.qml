@@ -37,13 +37,13 @@ StatusScrollView {
 
     property var tokenOwnersModel
 
-    property int deployState: Constants.BackendProcessState.None
-    property int burnState: Constants.BackendProcessState.None
+    property int deployState: Constants.ContractTransactionStatus.None
+    property int burnState: Constants.ContractTransactionStatus.None
 
     // Collectible object properties (ERC721)
     property bool transferable
     property bool selfDestruct
-    property int remotelyDestructState: Constants.BackendProcessState.None
+    property int remotelyDestructState: Constants.ContractTransactionStatus.None
 
     // Asset properties (ERC20)
     property alias assetDecimals: decimalsBox.value
@@ -88,8 +88,8 @@ StatusScrollView {
     contentHeight: mainLayout.height
     padding: 0
 
-    onRemotelyDestructStateChanged: if(remotelyDestructState === Constants.BackendProcessState.Completed) d.startAnimation(false)
-    onBurnStateChanged: if(burnState === Constants.BackendProcessState.Completed) d.startAnimation(true)
+    onRemotelyDestructStateChanged: if(remotelyDestructState === Constants.ContractTransactionStatus.Completed) d.startAnimation(false)
+    onBurnStateChanged: if(burnState === Constants.ContractTransactionStatus.Completed) d.startAnimation(true)
 
     ColumnLayout {
         id: mainLayout
@@ -98,16 +98,16 @@ StatusScrollView {
         spacing: Style.current.padding
 
         RowLayout {
-            visible: !root.preview && ((root.deployState === Constants.BackendProcessState.InProgress) ||
-                                       (root.deployState === Constants.BackendProcessState.Failed))
+            visible: !root.preview && ((root.deployState === Constants.ContractTransactionStatus.InProgress) ||
+                                       (root.deployState === Constants.ContractTransactionStatus.Failed))
             spacing: Style.current.halfPadding
 
             StatusDotsLoadingIndicator {
-                visible: (root.deployState === Constants.BackendProcessState.InProgress)
+                visible: (root.deployState === Constants.ContractTransactionStatus.InProgress)
             }
 
             StatusIcon {
-                visible: (root.deployState === Constants.BackendProcessState.Failed)
+                visible: (root.deployState === Constants.ContractTransactionStatus.Failed)
                 icon: "warning"
                 color: Theme.palette.dangerColor1
             }
@@ -115,12 +115,12 @@ StatusScrollView {
             StatusBaseText {
                 elide: Text.ElideRight
                 font.pixelSize: Theme.primaryTextFontSize
-                text: (root.deployState === Constants.BackendProcessState.InProgress) ?
+                text: (root.deployState === Constants.ContractTransactionStatus.InProgress) ?
                           (root.isAssetView ?
                                qsTr("Asset is being minted") : qsTr("Collectible is being minted")) :
-                          (root.deployState === Constants.BackendProcessState.Failed) ?
+                          (root.deployState === Constants.ContractTransactionStatus.Failed) ?
                               (root.isAssetView ? qsTr("Asset minting failed") : qsTr("Collectible minting failed")) : ""
-                color: (root.deployState === Constants.BackendProcessState.Failed) ? Theme.palette.dangerColor1 : Theme.palette.directColor1
+                color: (root.deployState === Constants.ContractTransactionStatus.Failed) ? Theme.palette.dangerColor1 : Theme.palette.directColor1
             }
         }
 
@@ -239,8 +239,8 @@ StatusScrollView {
                 label: qsTr("Total")
                 value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.supplyAmount)
                 isLoading: !root.infiniteSupply &&
-                           ((root.remotelyDestructState === Constants.BackendProcessState.InProgress) ||
-                            (root.burnState === Constants.BackendProcessState.InProgress))
+                           ((root.remotelyDestructState === Constants.ContractTransactionStatus.InProgress) ||
+                            (root.burnState === Constants.ContractTransactionStatus.InProgress))
             }
 
             CustomPreviewBox {
@@ -248,7 +248,7 @@ StatusScrollView {
 
                 label: qsTr("Remaining")
                 value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.remainingTokens)
-                isLoading: !root.infiniteSupply && (root.burnState === Constants.BackendProcessState.InProgress)
+                isLoading: !root.infiniteSupply && (root.burnState === Constants.ContractTransactionStatus.InProgress)
             }
 
             CustomPreviewBox {

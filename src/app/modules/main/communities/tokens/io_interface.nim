@@ -13,6 +13,9 @@ method load*(self: AccessInterface) {.base.} =
 method airdropCollectibles*(self: AccessInterface, communityId: string, collectiblesJsonString: string, walletsJsonString: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method selfDestructCollectibles*(self: AccessInterface, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method deployCollectible*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool,
                       selfDestruct: bool, chainId: int, image: string) {.base.} =
   raise newException(ValueError, "No implementation available")
@@ -26,8 +29,17 @@ method resetTempValues*(self: AccessInterface) {.base.} =
 method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method computeSelfDestructFee*(self: AccessInterface, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onDeployFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onSelfDestructFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onRemoteDestructStateChanged*(self: AccessInterface, communityId: string, tokenName: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) {.base.} =
   raise newException(ValueError, "No implementation available")

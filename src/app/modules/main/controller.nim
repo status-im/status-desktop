@@ -474,5 +474,8 @@ proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTo
 proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner] =
   return self.communityTokensService.getCommunityTokenOwners(communityId, chainId, contractAddress)
 
+proc getCommunityTokenOwnerName*(self: Controller, chainId: int, contractAddress: string): string =
+  return self.communityTokensService.contractOwnerName(chainId, contractAddress)
+
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)
