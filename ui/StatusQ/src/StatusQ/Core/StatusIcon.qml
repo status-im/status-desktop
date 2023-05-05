@@ -18,6 +18,10 @@ Image {
             source = icon
             objectName = "custom-icon"    
         }
+        else if (icon.startsWith("qrc:/")) {
+            source = icon
+            objectName = "custom-icon-qrc"
+        }
         else if (icon !== "") {
             source = "../../assets/img/icons/" + icon+ ".svg";
             objectName = icon + "-icon"

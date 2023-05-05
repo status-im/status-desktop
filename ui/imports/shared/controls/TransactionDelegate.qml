@@ -68,6 +68,30 @@ StatusListItem {
                                                 Utils.compactAddress(modelData.from, 4) :
                                                 ""
 
+    property StatusAssetSettings statusIconAsset: StatusAssetSettings {
+        width: 12
+        height: 12
+        bgWidth: width + 2
+        bgHeight: bgWidth
+        bgRadius: bgWidth / 2
+        bgColor: root.color
+        color: "transparent"
+        name: {
+            switch(root.transactionStatus) {
+            case TransactionDelegate.TransactionStatus.Pending:
+                return Style.svg("transaction/pending")
+            case TransactionDelegate.TransactionStatus.Verified:
+                return Style.svg("transaction/verified")
+            case TransactionDelegate.TransactionStatus.Finished:
+                return Style.svg("transaction/finished")
+            case TransactionDelegate.TransactionStatus.Failed:
+                return Style.svg("transaction/failed")
+            default:
+                return ""
+            }
+        }
+    }
+
     enum TransactionType {
         Send,
         Receive,
@@ -81,16 +105,18 @@ StatusListItem {
     enum TransactionStatus {
         Pending,
         Failed,
-        VerifyGreen,
-        VerifyBlue
+        Verified,
+        Finished
     }
 
-    state: "normal"
+    rightPadding: 16
     enabled: !loading
     color: sensor.containsMouse ? Theme.palette.baseColor5 : Theme.palette.statusListItem.backgroundColor
 
     statusListItemIcon.active: isSummary && (loading || root.asset.name)
     asset {
+        width: 24
+        height: 24
         isImage: false
         imgIsIdenticon: true
         isLetterIdenticon: loading
@@ -104,7 +130,7 @@ StatusListItem {
             case TransactionDelegate.TransactionType.Sell:
                 return "token"
             case TransactionDelegate.TransactionType.Destroy:
-                return "destroy" // TODO test asset
+                return "destroy"
             case TransactionDelegate.TransactionType.Swap:
                 return "swap"
             case TransactionDelegate.TransactionType.Bridge:
@@ -115,9 +141,20 @@ StatusListItem {
         }
         bgColor: "transparent"
         color: Theme.palette.black
-        borderWidth: 1
+        bgBorderWidth: 1
         bgBorderColor: Theme.palette.primaryColor3
     }
+
+    sensor.children: [
+        StatusRoundIcon {
+            visible: root.isSummary
+            anchors {
+                right: root.statusListItemIcon.right
+                bottom: root.statusListItemIcon.bottom
+            }
+            asset: root.statusIconAsset
+        }
+    ]
 
     // Title
     title: {
@@ -143,6 +180,7 @@ StatusListItem {
             return ""
         }
     }
+    statusListItemTitleArea.anchors.rightMargin: root.rightPadding
     statusListItemTitle.font.weight: Font.DemiBold
 
     // title icons and date

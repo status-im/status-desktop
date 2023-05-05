@@ -80,7 +80,7 @@ Loader {
             asset.name: root.asset.name
             asset.rotation: root.asset.rotation
             asset.color: root.asset.color
-            asset.borderWidth: root.asset.borderWidth
+            asset.bgBorderWidth: root.asset.bgBorderWidth
             asset.bgBorderColor: root.asset.bgBorderColor
 
             signal clicked(var mouse)
