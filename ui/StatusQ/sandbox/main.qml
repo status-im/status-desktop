@@ -37,8 +37,6 @@ StatusWindow {
 
     property real factor: 1.0
 
-    Component.onCompleted: rootWindow.updatePosition()
-
     QtObject {
         id: appSectionType
         readonly property int chat: 0

@@ -19,7 +19,7 @@ public slots:
     void restartEngine();
 
 private:
-    QQmlApplicationEngine* m_engine {};
+    std::unique_ptr<QQmlApplicationEngine> m_engine;
 
 #ifdef QT_DEBUG
     QFileSystemWatcher m_watcher;

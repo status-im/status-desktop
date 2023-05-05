@@ -46,16 +46,13 @@ void SandboxApp::restartEngine()
     if (!firstRun)
         qDebug() << "Restarting QML engine";
 
-    if (m_engine)
-        delete m_engine;
-
-    m_engine = new QQmlApplicationEngine();
+    m_engine = std::make_unique<QQmlApplicationEngine>();
     m_engine->addImportPath(STATUSQ_MODULE_IMPORT_PATH);
 
     if (firstRun)
         qDebug() << "QQmlEngine import paths: " << m_engine->importPathList();
 
-    QObject::connect(m_engine, &QQmlApplicationEngine::objectCreated,
+    QObject::connect(m_engine.get(), &QQmlApplicationEngine::objectCreated,
         this, [this](QObject *obj, const QUrl &objUrl) {
             if (!obj && m_url == objUrl)
                 QCoreApplication::exit(-1);
