@@ -83,7 +83,7 @@ StatusSectionLayout {
         ColumnLayout {
             anchors {
                 top: parent.top
-                bottom: footer.top
+                bottom: backToCommunityButton.top
                 bottomMargin: 12
                 topMargin: Style.current.smallPadding
                 horizontalCenter: parent.horizontalCenter
@@ -133,6 +133,7 @@ StatusSectionLayout {
         }
 
         StatusBaseText {
+            id: backToCommunityButton
             objectName: "communitySettingsBackToCommunityButton"
             anchors {
                 bottom: parent.bottom
