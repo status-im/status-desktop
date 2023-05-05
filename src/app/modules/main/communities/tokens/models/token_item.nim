@@ -13,17 +13,20 @@ type
     tokenDto*: CommunityTokenDto
     chainName*: string
     chainIcon*: string
+    accountName*: string
     tokenOwnersModel*: token_owners_model.TokenOwnersModel
 
 proc initTokenItem*(
   tokenDto: CommunityTokenDto,
   network: NetworkDto,
-  tokenOwners: seq[CollectibleOwner]
+  tokenOwners: seq[CollectibleOwner],
+  accountName: string
 ): TokenItem =
   result.tokenDto = tokenDto
   if network != nil:
     result.chainName = network.chainName
     result.chainIcon = network.iconURL
+  result.accountName = accountName
   result.tokenOwnersModel = newTokenOwnersModel()
   result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
           # TODO find member with the address - later when airdrop to member will be added

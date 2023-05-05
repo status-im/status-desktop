@@ -236,7 +236,8 @@ method delete*[T](self: Module[T]) =
 proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : TokenItem =
   let network = self.controller.getNetwork(tokenDto.chainId)
   let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
-  result = initTokenItem(tokenDto, network, tokenOwners)
+  let ownerAddressName = self.controller.getCommunityTokenOwnerName(tokenDto.chainId, tokenDto.address)
+  result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName)
 
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community

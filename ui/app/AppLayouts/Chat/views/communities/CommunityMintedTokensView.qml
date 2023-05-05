@@ -17,6 +17,7 @@ StatusScrollView {
 
     signal itemClicked(int index,
                        int chainId,
+                       string contractUniqueKey,
                        string chainName,
                        string accountName,
                        string accountAddress)
@@ -25,11 +26,11 @@ StatusScrollView {
         id: d
 
         function getSubtitle(deployState, remainingTokens, supply) {
-            if(deployState === Constants.BackendProcessState.Failed) {
+            if(deployState === Constants.ContractTransactionStatus.Failed) {
                 return qsTr("Minting failed")
             }
 
-            if(deployState === Constants.BackendProcessState.InProgress) {
+            if(deployState === Constants.ContractTransactionStatus.InProgress) {
                 return qsTr("Minting...")
             }
 
@@ -71,13 +72,13 @@ StatusScrollView {
                 width: gridView.cellWidth
                 title: model.name ? model.name : "..."
                 subTitle: d.getSubtitle(model.deployState, model.remainingTokens, model.supply)
-                subTitleColor: (model.deployState === Constants.BackendProcessState.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
+                subTitleColor: (model.deployState === Constants.ContractTransactionStatus.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                 fallbackImageUrl: model.image ? model.image : ""
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent" // TODO BACKEND
                 isLoading: false
                 navigationIconVisible: true
 
-                onClicked: root.itemClicked(model.index, model.chainId, model.chainName, model.accountName, model.address) // TODO: Replace to model.key when role exists in backend
+                onClicked: root.itemClicked(model.index, model.chainId, model.contractUniqueKey, model.chainName, model.accountName, model.address)
             }
         }
     }

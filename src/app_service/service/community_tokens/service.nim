@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, stint, strutils
+import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/modules/shared_models/currency_amount
@@ -15,6 +15,8 @@ import ../collectible/dto as collectibles_dto
 import ../../../backend/response_type
 
 import ../../common/conversion
+import ../../common/account_constants
+import ../../common/utils as common_utils
 import ../community/dto/community
 
 import ./dto/deployment_parameters
@@ -38,6 +40,11 @@ type
     amount*: int
 
 type
+  WalletAndAmount* = object
+    walletAddress*: string
+    amount*: int
+
+type
   CommunityTokenDeployedStatusArgs* = ref object of Args
     communityId*: string
     contractAddress*: string
@@ -51,6 +58,18 @@ type
     transactionHash*: string
 
 type
+  ContractTransactionStatus* {.pure.} = enum
+    Failed,
+    InProgress,
+    Completed
+
+type
+  RemoteDestructArgs* = ref object of Args
+    communityToken*: CommunityTokenDto
+    transactionHash*: string
+    status*: ContractTransactionStatus
+
+type
   ComputeFeeErrorCode* {.pure.} = enum
     Success,
     Infura,
@@ -58,7 +77,7 @@ type
     Other
 
 type
-  ComputeDeployFeeArgs* = ref object of Args
+  ComputeFeeArgs* = ref object of Args
     ethCurrency*: CurrencyAmount
     fiatCurrency*: CurrencyAmount
     errorCode*: ComputeFeeErrorCode
@@ -79,7 +98,9 @@ type
 const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
 const SIGNAL_COMMUNITY_TOKEN_DEPLOYED* = "communityTokenDeployed"
 const SIGNAL_COMPUTE_DEPLOY_FEE* = "computeDeployFee"
+const SIGNAL_COMPUTE_SELF_DESTRUCT_FEE* = "computeSelfDestructFee"
 const SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED* = "communityTokenOwnersFetched"
+const SIGNAL_REMOTE_DESTRUCT_STATUS* = "communityTokenRemoteDestructStatus"
 
 QtObject:
   type
@@ -92,15 +113,20 @@ QtObject:
       walletAccountService: wallet_account_service.Service
       tempAccountAddress: string
       tempChainId: int
-      addressAndTxMap: Table[ContractTuple, string]
       tokenOwnersTimer: QTimer
+      tokenOwners1SecTimer: QTimer # used to update 1 sec after changes in owners
+      tempTokenOwnersToFetch: CommunityTokenDto # used by 1sec timer
       tokenOwnersCache: Table[ContractTuple, seq[CollectibleOwner]]
+      tempSuggestedFees: SuggestedFeesDto
+      tempGasUnits: int
 
   # Forward declaration
   proc fetchAllTokenOwners*(self: Service)
+  proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner]
 
   proc delete*(self: Service) =
       delete(self.tokenOwnersTimer)
+      delete(self.tokenOwners1SecTimer)
       self.QObject.delete
 
   proc newService*(
@@ -119,10 +145,13 @@ QtObject:
     result.tokenService = tokenService
     result.settingsService = settingsService
     result.walletAccountService = walletAccountService
-    result.addressAndTxMap = initTable[ContractTuple, string]()
     result.tokenOwnersTimer = newQTimer()
     result.tokenOwnersTimer.setInterval(10*60*1000)
     signalConnect(result.tokenOwnersTimer, "timeout()", result, "onRefreshTransferableTokenOwners()", 2)
+    result.tokenOwners1SecTimer = newQTimer()
+    result.tokenOwners1SecTimer.setInterval(1000)
+    result.tokenOwners1SecTimer.setSingleShot(true)
+    signalConnect(result.tokenOwners1SecTimer, "timeout()", result, "onFetchTempTokenOwners()", 2)
 
   proc init*(self: Service) =
     self.fetchAllTokenOwners()
@@ -139,21 +168,27 @@ QtObject:
         error "Error updating collectibles contract state", message = getCurrentExceptionMsg()
       let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address,
                                                   deployState: deployState, chainId: tokenDto.chainId,
-                                                  transactionHash: self.addressAndTxMap.getOrDefault((tokenDto.address,tokenDto.chainId)))
+                                                  transactionHash: receivedData.transactionHash)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
     self.events.on(PendingTransactionTypeDto.CollectibleAirdrop.event) do(e: Args):
-      var receivedData = TransactionMinedArgs(e)
+      let receivedData = TransactionMinedArgs(e)
       let airdropDetails = toAirdropDetails(parseJson(receivedData.data))
       if not receivedData.success:
         error "Collectible airdrop failed", contractAddress=airdropDetails.contractAddress
         return
-      try:
-        # add holders to db
-        discard addTokenOwners(airdropDetails.chainId, airdropDetails.contractAddress,
-                               airdropDetails.walletAddresses, airdropDetails.amount)
-      except RpcException:
-        error "Error adding collectible token owners", message = getCurrentExceptionMsg()
+      #TODO signalize about airdrops - add when extending airdrops
+    self.events.on(PendingTransactionTypeDto.CollectibleRemoteSelfDestruct.event) do(e: Args):
+      let receivedData = TransactionMinedArgs(e)
+      let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
+      let transactionStatus = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
+      let data = RemoteDestructArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus)
+      self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
+
+      # update owners list if burn was successfull
+      if receivedData.success:
+        self.tempTokenOwnersToFetch = tokenDto
+        self.tokenOwners1SecTimer.start()
 
   proc deployCollectiblesEstimate*(self: Service): int =
     try:
@@ -180,8 +215,6 @@ QtObject:
       let transactionHash = response.result["transactionHash"].getStr()
       debug "Deployed contract address ", contractAddress=contractAddress
       debug "Deployment transaction hash ", transactionHash=transactionHash
-
-      self.addressAndTxMap[(contractAddress, chainId)] = transactionHash
 
       var communityToken: CommunityTokenDto
       communityToken.tokenType = TokenType.ERC721
@@ -245,6 +278,13 @@ QtObject:
     except RpcException:
       error "Error getting contract owner", message = getCurrentExceptionMsg()
 
+  proc contractOwnerName*(self: Service, chainId: int, contractAddress: string): string =
+    try:
+      let response = tokens_backend.contractOwner(chainId, contractAddress)
+      return self.walletAccountService.getAccountByAddress(response.result.getStr().toLower()).name
+    except RpcException:
+      error "Error getting contract owner name", message = getCurrentExceptionMsg()
+
   proc airdropCollectibles*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
     try:
       for collectibleAndAmount in collectiblesAndAmounts:
@@ -286,52 +326,147 @@ QtObject:
       let arg = AsyncGetSuggestedFees(
         tptr: cast[ByteAddress](asyncGetSuggestedFeesTask),
         vptr: cast[ByteAddress](self.vptr),
-        slot: "onSuggestedFees",
+        slot: "onDeployFees",
         chainId: chainId,
       )
       self.threadpool.start(arg)
     except Exception as e:
       error "Error loading fees", msg = e.msg
 
-  proc onSuggestedFees*(self:Service, response: string) {.slot.} =
-    let responseJson = response.parseJson()
-    const ethSymbol = "ETH"
+  proc findContractByUniqueId(self: Service, contractUniqueKey: string): CommunityTokenDto =
+    let allTokens = self.getAllCommunityTokens()
+    for token in allTokens:
+      if common_utils.contractUniqueKey(token.chainId, token.address) == contractUniqueKey:
+        return token
 
-    if responseJson{"error"}.kind != JNull and responseJson{"error"}.getStr != "":
-        let errorMessage = responseJson["error"].getStr
-        var errorCode = ComputeFeeErrorCode.Other
-        if errorMessage.contains("403 Forbidden") or errorMessage.contains("exceed"):
-          errorCode = ComputeFeeErrorCode.Infura
-        let ethCurrency = newCurrencyAmount(0.0, ethSymbol, 1, false)
-        let fiatCurrency = newCurrencyAmount(0.0, self.settingsService.getCurrency(), 1, false)
-        let data = ComputeDeployFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode)
-        self.events.emit(SIGNAL_COMPUTE_DEPLOY_FEE, data)
+  proc getOwnerBalances(self: Service, contractOwners: seq[CollectibleOwner], ownerAddress: string): seq[CollectibleBalance] =
+    for owner in contractOwners:
+      if owner.address == ownerAddress:
+        return owner.balances
+
+  proc collectTokensToBurn(self: Service, walletAndAmountList: seq[WalletAndAmount], contractOwners: seq[CollectibleOwner]): seq[UInt256] =
+    if len(walletAndAmountList) == 0 or len(contractOwners) == 0:
+      return
+    for walletAndAmount in walletAndAmountList:
+      let ownerBalances = self.getOwnerBalances(contractOwners, walletAndAmount.walletAddress)
+      let amount = walletAndAmount.amount
+      if amount > len(ownerBalances):
+        error "amount to burn is higher than the number of tokens", amount=amount, balance=len(ownerBalances), owner=walletAndAmount.walletAddress
         return
+      for i in 0..amount-1: # add the amount of tokens
+        result.add(ownerBalances[i].tokenId)
 
-    let suggestedFees = decodeSuggestedFeesDto(responseJson["fees"])
-    let contractGasUnits = self.deployCollectiblesEstimate()
+  proc getTokensToBurn(self: Service, walletAndAmountList: seq[WalletAndAmount], contract: CommunityTokenDto): seq[Uint256] =
+    if contract.address == "":
+      error "Can't find contract"
+      return
+    let tokenOwners = self.getCommunityTokenOwners(contract.communityId, contract.chainId, contract.address)
+    let tokenIds = self.collectTokensToBurn(walletAndAmountList, tokenOwners)
+    if len(tokenIds) == 0:
+      error "Can't find token ids to burn"
+    return tokenIds
+
+  # TODO use temp fees for deployment also
+  proc buildTransactionFromTempFees(self: Service, addressFrom: string): TransactionDataDto =
+    return ens_utils.buildTransaction(parseAddress(addressFrom), 0.u256, $self.tempGasUnits,
+      if self.tempSuggestedFees.eip1559Enabled: "" else: $self.tempSuggestedFees.gasPrice, self.tempSuggestedFees.eip1559Enabled,
+      if self.tempSuggestedFees.eip1559Enabled: $self.tempSuggestedFees.maxPriorityFeePerGas else: "",
+      if self.tempSuggestedFees.eip1559Enabled: $self.tempSuggestedFees.maxFeePerGasM else: "")
+
+  proc selfDestructCollectibles*(self: Service, communityId: string, password: string, walletAndAmounts: seq[WalletAndAmount], contractUniqueKey: string) =
+    try:
+      let contract = self.findContractByUniqueId(contractUniqueKey)
+      let tokenIds = self.getTokensToBurn(walletAndAmounts, contract)
+      if len(tokenIds) == 0:
+        return
+      let addressFrom = self.contractOwner(contract.chainId, contract.address)
+      let txData = self.buildTransactionFromTempFees(addressFrom)
+      debug "Remote destruct collectibles ", chainId=contract.chainId, address=contract.address, tokens=tokenIds
+      let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, password, tokenIds)
+      let transactionHash = response.result.getStr()
+      debug "Remote destruct transaction hash ", transactionHash=transactionHash
+
+      var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress)
+      self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
+
+      # observe transaction state
+      self.transactionService.watchTransaction(
+        transactionHash,
+        addressFrom,
+        contract.address,
+        $PendingTransactionTypeDto.CollectibleRemoteSelfDestruct,
+        $contract.toJsonNode(),
+        contract.chainId,
+      )
+    except Exception as e:
+      error "Remote self destruct error", msg = e.msg
+
+  proc computeSelfDestructFee*(self: Service, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string) =
+    try:
+      let contract = self.findContractByUniqueId(contractUniqueKey)
+      self.tempAccountAddress = self.contractOwner(contract.chainId, contract.address)
+      self.tempChainId = contract.chainId
+      let tokenIds = self.getTokensToBurn(walletAndAmountList, contract)
+      if len(tokenIds) == 0:
+        warn "token list is empty"
+        return
+      let arg = AsyncGetBurnFees(
+        tptr: cast[ByteAddress](asyncGetBurnFeesTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onSelfDestructFees",
+        chainId: contract.chainId,
+        contractAddress: contract.address,
+        tokenIds: tokenIds
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error loading fees", msg = e.msg
+
+  proc createComputeFeeArgs(self:Service, jsonNode: JsonNode, gasUnits: int, chainId: int, walletAddress: string): ComputeFeeArgs =
+    const ethSymbol = "ETH"
+    if jsonNode{"error"}.kind != JNull and jsonNode{"error"}.getStr != "":
+      let errorMessage = jsonNode["error"].getStr
+      var errorCode = ComputeFeeErrorCode.Other
+      if errorMessage.contains("403 Forbidden") or errorMessage.contains("exceed"):
+        errorCode = ComputeFeeErrorCode.Infura
+      let ethCurrency = newCurrencyAmount(0.0, ethSymbol, 1, false)
+      let fiatCurrency = newCurrencyAmount(0.0, self.settingsService.getCurrency(), 1, false)
+      return ComputeFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency, errorCode: errorCode)
+    let suggestedFees = decodeSuggestedFeesDto(jsonNode["fees"])
+    # save suggested fees and use during operation, we always compute fees before operation
+    self.tempSuggestedFees = suggestedFees
+    self.tempGasUnits = gasUnits
     let maxFees = suggestedFees.maxFeePerGasM
     let gasPrice = if suggestedFees.eip1559Enabled: maxFees else: suggestedFees.gasPrice
 
-    let weiValue = gwei2Wei(gasPrice) * contractGasUnits.u256
+    let weiValue = gwei2Wei(gasPrice) * gasUnits.u256
     let ethValueStr = wei2Eth(weiValue)
     let ethValue = parseFloat(ethValueStr)
     let fiatValue = self.getFiatValue(ethValue, ethSymbol)
 
-    let wallet = self.walletAccountService.getAccountByAddress(self.tempAccountAddress)
-
+    let wallet = self.walletAccountService.getAccountByAddress(walletAddress.toLower())
     var balance = 0.0
     let tokens = wallet.tokens
     for token in tokens:
       if token.symbol == ethSymbol:
-        balance = token.balancesPerChain[self.tempChainId].balance
+        balance = token.balancesPerChain[chainId].balance
         break
 
     let ethCurrency = newCurrencyAmount(ethValue, ethSymbol, 4, false)
     let fiatCurrency = newCurrencyAmount(fiatValue, self.settingsService.getCurrency(), 2, false)
 
-    let data = ComputeDeployFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency,
+    return ComputeFeeArgs(ethCurrency: ethCurrency, fiatCurrency: fiatCurrency,
                                     errorCode: (if ethValue > balance: ComputeFeeErrorCode.Balance else: ComputeFeeErrorCode.Success))
+
+  proc onSelfDestructFees*(self:Service, response: string) {.slot.} =
+    let responseJson = response.parseJson()
+    let burnGas = if responseJson{"burnGas"}.kind != JNull: responseJson{"burnGas"}.getInt else: 0
+    let data = self.createComputeFeeArgs(responseJson, burnGas, self.tempChainId, self.tempAccountAddress)
+    self.events.emit(SIGNAL_COMPUTE_SELF_DESTRUCT_FEE, data)
+
+  proc onDeployFees*(self:Service, response: string) {.slot.} =
+    let responseJson = response.parseJson()
+    let data = self.createComputeFeeArgs(responseJson, self.deployCollectiblesEstimate(), self.tempChainId, self.tempAccountAddress)
     self.events.emit(SIGNAL_COMPUTE_DEPLOY_FEE, data)
 
   proc fetchCommunityOwners*(self: Service, communityId: string, chainId: int, contractAddress: string) =
@@ -359,7 +494,9 @@ QtObject:
     let contractAddress = responseJson["contractAddress"].getStr
     let communityId = responseJson["communityId"].getStr
     let resultJson = responseJson["result"]
-    let owners = collectibles_dto.toCollectibleOwnershipDto(resultJson).owners
+    var owners = collectibles_dto.toCollectibleOwnershipDto(resultJson).owners
+    owners = owners.filter(x => x.address != ZERO_ADDRESS)
+    self.tokenOwnersCache[(contractAddress, chainId)] = owners
     let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: owners)
     self.events.emit(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED, data)
 
@@ -368,6 +505,9 @@ QtObject:
     for token in allTokens:
       if token.transferable:
         self.fetchCommunityOwners(token.communityId, token.chainId, token.address)
+
+  proc onFetchTempTokenOwners*(self: Service) {.slot.} =
+    self.fetchCommunityOwners(self.tempTokenOwnersToFetch.communityId, self.tempTokenOwnersToFetch.chainId, self.tempTokenOwnersToFetch.address)
 
   proc fetchAllTokenOwners*(self: Service) =
     let allTokens = self.getAllCommunityTokens()
