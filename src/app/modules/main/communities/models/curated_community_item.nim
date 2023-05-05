@@ -12,6 +12,7 @@ type
     tags: string
     members: int
     activeMembers: int
+    featured: bool
 
 proc initCuratedCommunityItem*(
   id: string,
@@ -23,7 +24,8 @@ proc initCuratedCommunityItem*(
   color: string,
   tags: string,
   members: int,
-  activeMembers: int
+  activeMembers: int,
+  featured: bool
 ): CuratedCommunityItem =
   result.id = id
   result.name = name
@@ -35,6 +37,7 @@ proc initCuratedCommunityItem*(
   result.tags  = tags
   result.members = members
   result.activeMembers = activeMembers
+  result.featured = featured
 
 proc `$`*(self: CuratedCommunityItem): string =
   result = fmt"""CuratedCommunityItem(
@@ -46,6 +49,7 @@ proc `$`*(self: CuratedCommunityItem): string =
     tags: {self.tags},
     members: {self.members}
     activeMembers: {self.activeMembers}
+    featured: {self.featured}
     ]"""
 
 proc getId*(self: CuratedCommunityItem): string =
@@ -77,3 +81,6 @@ proc getColor*(self: CuratedCommunityItem): string =
 
 proc getTags*(self: CuratedCommunityItem): string =
   return self.tags
+
+proc getFeatured*(self: CuratedCommunityItem): bool =
+  return self.featured

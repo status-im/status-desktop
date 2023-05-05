@@ -194,7 +194,8 @@ proc getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityIte
       c.color,
       c.tags,
       len(c.members),
-      int(c.activeMembersCount))
+      int(c.activeMembersCount),
+      c.featuredInDirectory)
 
 proc getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
   return initDiscordCategoryItem(
