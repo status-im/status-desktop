@@ -28,7 +28,10 @@ _fixtures_root = "fixtures_root"
 _search_images = "search_images"
 _feature_name = "feature_name"
 
+import test
+import os
 def context_init(context, testSettings, screenshot_on_fail = True):
+    test.warning(str(os.getenv('SQUISH_DIR', 'NONE')))
     # With this property it is enabled that every test failure will cause Squish to take a screenshot of the desktop when the failure occurred
     testSettings.logScreenshotOnFail = screenshot_on_fail
     testSettings.logScreenshotOnError = screenshot_on_fail
