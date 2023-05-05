@@ -9,43 +9,54 @@ SandboxApp::SandboxApp(int &argc, char **argv)
     : QGuiApplication(argc, argv)
 {
 #ifdef QT_DEBUG
-    connect(&m_watcher, &QFileSystemWatcher::directoryChanged, this, [this](const QString&) {
+    connect(&m_watcher, &QFileSystemWatcher::fileChanged, this, [this](const QString& path) {
+        qDebug().noquote() << QString("File change detected in '%1'").arg(path);
         restartEngine();
     });
 #endif
 }
 
-void SandboxApp::startEngine()
+void SandboxApp::watchDirectoryChanges(const QString& path)
 {
-#ifdef QT_DEBUG
-    m_watcher.addPath(applicationDirPath() + "/../");
-    QDirIterator it(applicationDirPath() + "/../", QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-    while (it.hasNext()) {
+    qDebug() << "Iterating to watch over:" << path;
+
+    const auto dirFilters = QDir::Files | QDir::NoDotAndDotDot;
+    const auto fileNameFilters = QStringList { "*.qml" };
+
+    for (QDirIterator it(path, fileNameFilters, dirFilters, QDirIterator::Subdirectories); it.hasNext(); it.next()) {
         if (!it.filePath().isEmpty()) {
             m_watcher.addPath(it.filePath());
         }
-        it.next();
     }
+}
+
+void SandboxApp::startEngine()
+{
+#ifdef QT_DEBUG
+    watchDirectoryChanges(SANDBOX_SRC_DIR);
+    watchDirectoryChanges(STATUSQ_MODULE_PATH);
 #endif
-
-    m_engine.addImportPath(STATUSQ_MODULE_IMPORT_PATH);
-    qDebug() << m_engine.importPathList();
-
-    QObject::connect(&m_engine, &QQmlApplicationEngine::objectCreated,
-        this, [this](QObject *obj, const QUrl &objUrl) {
-            if (!obj && m_url == objUrl)
-                QCoreApplication::exit(-1);
-        }, Qt::QueuedConnection);
-    m_engine.load(m_url);
+    restartEngine();
 }
 
 void SandboxApp::restartEngine()
 {
-    QWindow *rootWindow = qobject_cast<QWindow*>(m_engine.rootObjects().at(0));
-    if (rootWindow) {
-        rootWindow->close();
-        rootWindow->deleteLater();
-    }
-    m_engine.clearComponentCache();
-    m_engine.load(m_url);
+    const bool firstRun { !m_engine };
+
+    if (!firstRun)
+        qDebug() << "Restarting QML engine";
+
+    m_engine = std::make_unique<QQmlApplicationEngine>();
+    m_engine->addImportPath(STATUSQ_MODULE_IMPORT_PATH);
+
+    if (firstRun)
+        qDebug() << "QQmlEngine import paths: " << m_engine->importPathList();
+
+    QObject::connect(m_engine.get(), &QQmlApplicationEngine::objectCreated,
+        this, [this](QObject *obj, const QUrl &objUrl) {
+            if (!obj && m_url == objUrl)
+                QCoreApplication::exit(-1);
+        }, Qt::QueuedConnection);
+
+    m_engine->load(m_url);
 }
