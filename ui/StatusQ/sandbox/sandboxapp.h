@@ -19,7 +19,7 @@ public slots:
     void restartEngine();
 
 private:
-    QQmlApplicationEngine m_engine;
+    QQmlApplicationEngine* m_engine {};
 
 #ifdef QT_DEBUG
     QFileSystemWatcher m_watcher;
@@ -32,6 +32,8 @@ private:
         QStringLiteral("qrc:/main.qml")
 #endif
     };
+
+    void watchDirectoryChanges(const QString& path);
 };
 
 #endif // SANDBOXAPP_H
