@@ -270,6 +270,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusImageCropPanel"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
