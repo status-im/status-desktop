@@ -63,8 +63,6 @@ Item {
                 objectName: "transactionDetailHeader"
                 width: parent.width
 
-                readonly property bool isFailed: transactionHeader.transactionStatus === TransactionDelegate.Failed
-
                 modelData: transaction
                 transactionType: d.isIncoming ? TransactionDelegate.Receive : TransactionDelegate.Send
                 currentCurrency: RootStore.currentCurrency
@@ -78,11 +76,11 @@ Item {
                 timeStampText: root.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
                 savedAddressNameTo: root.isTransactionValid ? WalletStores.RootStore.getNameForSavedWalletAddress(transaction.to): ""
                 savedAddressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForSavedWalletAddress(transaction.from): ""
-                isSummary: false
+                isHeader: true
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 asset {
-                    bgBorderWidth: transactionHeader.isFailed ? 0 : 1
+                    bgBorderWidth: transactionHeader.transactionStatus === TransactionDelegate.Failed ? 0 : 1
                     width: 34
                     height: 34
                     bgWidth: 56
@@ -92,55 +90,6 @@ Item {
                     width: 17
                     height: 17
                 }
-
-                components: [
-                    Rectangle {
-                        width: transactionTypeIcon.width + (transactionHeader.isFailed ? retryButton.width + 5 : 0)
-                        height: transactionTypeIcon.height
-                        anchors.verticalCenter: parent.verticalCenter
-                        color: "transparent"
-                        radius: 100
-                        border {
-                            width: transactionHeader.isFailed ? 1 : 0
-                            color: transactionHeader.asset.bgBorderColor
-                        }
-
-                        StatusButton {
-                            id: retryButton
-                            anchors.left: parent.left
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.leftMargin: 10
-                            radius: height / 2
-                            height: parent.height * 0.7
-                            verticalPadding: 0
-                            horizontalPadding: radius
-                            textFillWidth: true
-                            text: qsTr("Retry")
-                            size: StatusButton.Small
-                            type: StatusButton.Primary
-                            visible: transactionHeader.isFailed
-                        }
-
-                        StatusSmartIdenticon {
-                            id: transactionTypeIcon
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.right: parent.right
-                            enabled: false
-                            asset: transactionHeader.asset
-                            active: transactionHeader.asset.name
-                            loading: transactionHeader.loading
-                            name: transactionHeader.title
-                        }
-                        StatusRoundIcon {
-                            anchors {
-                                right: transactionTypeIcon.right
-                                bottom: transactionTypeIcon.bottom
-                            }
-                            asset: transactionHeader.statusIconAsset
-                        }
-                    }
-
-                ]
             }
 
             SavedAddressesDelegate {
@@ -218,7 +167,6 @@ Item {
                 timeStampText: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
                 savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
                 savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
-                isSummary: false
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 border.width: 1
