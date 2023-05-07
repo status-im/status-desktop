@@ -5,6 +5,7 @@ import view, controller
 import internal/[state, state_factory]
 import ../../shared/keypairs
 import ../../shared_models/[keypair_model, keypair_item]
+import ../../../global/app_translatable_constants as atc
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 
@@ -534,12 +535,6 @@ method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
     paths, keyPairDto)
   self.setKeyPairForProcessing(item)
 
-proc generateRandomColor[T](self: Module[T]): string = 
-  let r = rand(0 .. 255)
-  let g = rand(0 .. 255)
-  let b = rand(0 .. 255)
-  return "#" & r.toHex(2) & g.toHex(2) & b.toHex(2) 
-
 proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: var KeyPairItem): bool =
   let accounts = self.controller.getWalletAccounts()
   for a in accounts:
@@ -575,13 +570,16 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
     result.item.setKeyUid(currKp.getKeyUid())
     result.item.setPubKey(currKp.getPubKey())
   result.knownKeyPair = true
+  var unknonwAccountNumber = 0
   for wa in cardMetadata.walletAccounts:
     if self.updateKeyPairItemIfDataAreKnown(wa.address, result.item):
       continue
     let (balance, balanceFetched) = self.controller.getOrFetchBalanceForAddressInPreferredCurrency(wa.address)
     result.knownKeyPair = false
-    result.item.addAccount(newKeyPairAccountItem(name = "", wa.path, wa.address, pubKey = wa.publicKey, emoji = "", 
-      color = self.generateRandomColor(), icon = "wallet", balance, balanceFetched))
+    unknonwAccountNumber.inc
+    let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknonwAccountNumber
+    result.item.addAccount(newKeyPairAccountItem(name, wa.path, wa.address, pubKey = wa.publicKey, emoji = "", 
+      color = "#939BA1", icon = "wallet", balance, balanceFetched))
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
   let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)

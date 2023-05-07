@@ -974,6 +974,7 @@ QtObject {
         readonly property string addAccountLabelImportNew: "LABEL-IMPORT-NEW"
         readonly property string addAccountLabelOptionAddNewMasterKey: "LABEL-OPTION-ADD-NEW-MASTER-KEY"
         readonly property string addAccountLabelOptionAddWatchOnlyAcc: "LABEL-OPTION-ADD-WATCH-ONLY-ACC"
+        readonly property string keycardAccountNameOfUnknownWalletAccount: "KEYCARD-ACCOUNT-NAME-OF-UNKNOWN-WALLET-ACCOUNT"
     }
 
     enum CommunitySettingsSections {
