@@ -3,6 +3,7 @@ import NimQml, chronicles, json, marshal, sequtils, sugar, strutils
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
+import ../../../../global/app_translatable_constants as atc
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 
@@ -252,7 +253,7 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
     var i = 0
     for ua in unknownAccountsAddresses:
       i.inc
-      let name = "acc" & $i
+      let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $i
       item.addAccount(newKeyPairAccountItem(name, path = "", ua, pubKey = "", emoji = "", color = "#939BA1", icon = "wallet", balance = 0.0))
   return item
 

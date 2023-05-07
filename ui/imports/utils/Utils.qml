@@ -653,6 +653,12 @@ QtObject {
             return qsTr("Add watch-only account")
         }
 
+        // special handling because on an index attached to the constant
+        if (key.startsWith(Constants.appTranslatableConstants.keycardAccountNameOfUnknownWalletAccount)) {
+            let num = key.substring(Constants.appTranslatableConstants.keycardAccountNameOfUnknownWalletAccount.length)
+            return "%1%2".arg(qsTr("acc")).arg(num) //short name of an unknown (removed) wallet account
+        }
+
         return key
     }
 
