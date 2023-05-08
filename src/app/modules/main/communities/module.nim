@@ -97,8 +97,6 @@ method communityDataLoaded*(self: Module) =
   self.setAllCommunities(self.controller.getAllCommunities())
 
 method onActivated*(self: Module) =
-  if self.curatedCommunitiesLoaded:
-    return
   self.controller.asyncLoadCuratedCommunities()
 
 method curatedCommunitiesLoaded*(self: Module, curatedCommunities: seq[CommunityDto]) =
@@ -232,7 +230,13 @@ method curatedCommunityAdded*(self: Module, community: CommunityDto) =
   self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
 method curatedCommunityEdited*(self: Module, community: CommunityDto) =
-  self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
+  if (self.view.curatedCommunitiesModel.containsItemWithId(community.id)):
+    # FIXME: CommunityDto should not contain fields not present in the stauts-go's community update,
+    # otherwise the state will vanish. For instance, the `listedInDirectory` and `featuredInDirectory`
+    # fields are vanished when community update is received.
+    var communityCopy = community
+    communityCopy.featuredInDirectory = self.view.curatedCommunitiesModel.getItemById(community.id).getFeatured()
+    self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(communityCopy))
 
 method createCommunity*(self: Module, name: string,
                         description, introMessage: string, outroMessage: string,
