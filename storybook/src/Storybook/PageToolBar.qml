@@ -10,6 +10,7 @@ ToolBar {
     property int figmaPagesCount: 0
 
     signal figmaPreviewClicked
+    signal inspectClicked
 
     RowLayout {
         anchors.fill: parent
@@ -59,6 +60,16 @@ ToolBar {
             text: `Figma designs (${root.figmaPagesCount})`
 
             onClicked: root.figmaPreviewClicked()
+        }
+
+        ToolSeparator {}
+
+        ToolButton {
+            text: "Inspect"
+
+            Layout.rightMargin: parent.spacing
+
+            onClicked: root.inspectClicked()
         }
     }
 }

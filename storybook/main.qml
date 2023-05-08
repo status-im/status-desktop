@@ -172,6 +172,30 @@ ApplicationWindow {
                         pageTitle: currentPageModelItem.object.title
                     })
                 }
+
+                onInspectClicked: {
+                    const getItems = typeName =>
+                                   InspectionUtils.findItemsByTypeName(
+                                       viewLoader.item, typeName)
+
+                    const items = [
+                        ...getItems(root.currentPage),
+                        ...getItems("Custom" + root.currentPage)
+                    ]
+
+                    if (items.length === 0) {
+                        console.warn(`Item of type "${root.currentPage}" not found. Nothing to inspect.`)
+                        return
+                    }
+
+                    const lca = InspectionUtils.lowestCommonAncestor(
+                                  items, viewLoader.item)
+
+                    inspectionWindow.inspect(lca.parent.contentItem === lca
+                                             ? lca.parent : lca)
+                    inspectionWindow.show()
+                    inspectionWindow.requestActivate()
+                }
             }
         }
     }
@@ -215,6 +239,10 @@ ApplicationWindow {
         id: figmaImageLinksCache
 
         figmaToken: settingsLayout.figmaToken
+    }
+
+    InspectionWindow {
+        id: inspectionWindow
     }
 
     Component {
