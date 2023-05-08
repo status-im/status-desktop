@@ -29,7 +29,6 @@ SplitView {
             anchors.fill: parent
             anchors.topMargin: 50
             tokensModel: editorModelChecked.checked ? emptyModel : MintedCollectiblesModel.mintedCollectibleModel
-            holdersModel: TokenHoldersModel {}
             layer1Networks: NetworksModel.layer1Networks
             layer2Networks: NetworksModel.layer2Networks
             testNetworks: NetworksModel.testNetworks
