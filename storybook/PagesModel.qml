@@ -258,6 +258,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "TransactionDelegate"
+        section: "Components"
+    }
+    ListElement {
         title: "CommunityPermissionsRow"
         section: "Components"
     }

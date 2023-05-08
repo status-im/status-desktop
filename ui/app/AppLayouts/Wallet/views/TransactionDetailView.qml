@@ -76,20 +76,10 @@ Item {
                 timeStampText: root.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
                 savedAddressNameTo: root.isTransactionValid ? WalletStores.RootStore.getNameForSavedWalletAddress(transaction.to): ""
                 savedAddressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForSavedWalletAddress(transaction.from): ""
-                isHeader: true
                 sensor.enabled: false
+                formatCurrencyAmount: RootStore.formatCurrencyAmount
                 color: Theme.palette.statusListItem.backgroundColor
-                asset {
-                    bgBorderWidth: transactionHeader.transactionStatus === TransactionDelegate.Failed ? 0 : 1
-                    width: 34
-                    height: 34
-                    bgWidth: 56
-                    bgHeight: 56
-                }
-                statusIconAsset {
-                    width: 17
-                    height: 17
-                }
+                state: "header"
             }
 
             SavedAddressesDelegate {
@@ -167,6 +157,7 @@ Item {
                 timeStampText: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
                 savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
                 savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
+                formatCurrencyAmount: RootStore.formatCurrencyAmount
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 border.width: 1

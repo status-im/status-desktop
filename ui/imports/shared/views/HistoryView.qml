@@ -194,7 +194,7 @@ ColumnLayout {
             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
             savedAddressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForWalletAddress(modelData.to) : ""
             savedAddressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForWalletAddress(modelData.from) : ""
-            isSummary: true
+            formatCurrencyAmount: RootStore.formatCurrencyAmount
             onClicked: launchTransactionDetail(modelData)
             loading: isModelDataValid ? modelData.loadingTransaction : false
 

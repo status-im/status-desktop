@@ -18,7 +18,7 @@ Image {
             source = icon
             objectName = "custom-icon"    
         }
-        else if (icon.startsWith("qrc:/")) {
+        else if (icon.startsWith("qrc:/") || icon.startsWith("file:/")) {
             source = icon
             objectName = "custom-icon-qrc"
         }

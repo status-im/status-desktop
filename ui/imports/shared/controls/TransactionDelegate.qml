@@ -9,7 +9,6 @@ import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared 1.0
-import shared.stores 1.0
 
 StatusListItem {
     id: root
@@ -34,7 +33,7 @@ StatusListItem {
     property string timeStampText
     property string savedAddressNameTo
     property string savedAddressNameFrom
-    property bool isHeader: false
+    property var formatCurrencyAmount: function() {}
 
     readonly property bool isModelDataValid: modelData !== undefined && !!modelData
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
@@ -44,14 +43,14 @@ StatusListItem {
         if (root.isNFT) {
             return modelData.nftName ? modelData.nftName : "#" + modelData.tokenID
         } else {
-            return RootStore.formatCurrencyAmount(cryptoValue, symbol)
+            return root.formatCurrencyAmount(cryptoValue, symbol)
         }
     }
     readonly property string swapTransactionValue: {
         if (!isModelDataValid) {
             return "N/A"
         }
-        return RootStore.formatCurrencyAmount(swapCryptoValue, swapSymbol)
+        return root.formatCurrencyAmount(swapCryptoValue, swapSymbol)
     }
 
     readonly property string tokenImage: {
@@ -106,6 +105,18 @@ StatusListItem {
         }
     }
 
+    property StatusAssetSettings tokenIconAsset: StatusAssetSettings {
+        width: 18
+        height: 18
+        bgWidth: width
+        bgHeight: height
+        bgColor: "transparent"
+        color: "transparent"
+        isImage: !loading
+        name: root.tokenImage
+        isLetterIdenticon: loading
+    }
+
     enum TransactionType {
         Send,
         Receive,
@@ -123,11 +134,20 @@ StatusListItem {
         Finished
     }
 
+    QtObject {
+        id: priv
+
+        property int loadingPixelSize: 13
+        property int datePixelSize: 12
+        property int titlePixelSize: 15
+        property int subtitlePixelSize: 13
+    }
+
     rightPadding: 16
     enabled: !loading
     color: sensor.containsMouse ? Theme.palette.baseColor5 : Theme.palette.statusListItem.backgroundColor
 
-    statusListItemIcon.active: !isHeader && (loading || root.asset.name)
+    statusListItemIcon.active: (loading || root.asset.name)
     asset {
         width: 24
         height: 24
@@ -161,7 +181,8 @@ StatusListItem {
 
     sensor.children: [
         StatusRoundIcon {
-            visible: !root.loading && !root.isHeader
+            id: leftIconStatusIcon
+            visible: !root.loading
             anchors {
                 right: root.statusListItemIcon.right
                 bottom: root.statusListItemIcon.bottom
@@ -200,7 +221,7 @@ StatusListItem {
     }
     statusListItemTitleArea.anchors.rightMargin: root.rightPadding
     statusListItemTitle.font.weight: Font.DemiBold
-    statusListItemTitle.font.pixelSize: root.loading ? 13 : 15
+    statusListItemTitle.font.pixelSize: root.loading ? priv.loadingPixelSize : priv.titlePixelSize
 
     // title icons and date
     statusListItemTitleIcons.sourceComponent: Row {
@@ -211,33 +232,23 @@ StatusListItem {
             StatusRoundIcon {
                 id: tokenImage
                 anchors.verticalCenter: parent.verticalCenter
-                asset: StatusAssetSettings {
-                    width: 18
-                    height: 18
-                    bgWidth: 18
-                    bgHeight: 18
-                    bgColor: "transparent"
-                    color: "transparent"
-                    isImage: !loading
-                    name: root.tokenImage
-                    isLetterIdenticon: loading
-                }
+                asset: root.tokenIconAsset
             }
             StatusRoundIcon {
                 id: swapTokenImage
                 visible: !root.isNFT && !!root.swapTokenImage && root.transactionType === TransactionDelegate.TransactionType.Swap
                 anchors.verticalCenter: parent.verticalCenter
                 asset: StatusAssetSettings {
-                    width: 18
-                    height: 18
-                    bgWidth: 20
-                    bgHeight: 20
+                    width: root.tokenIconAsset.width
+                    height: root.tokenIconAsset.height
+                    bgWidth: width + 2
+                    bgHeight: height + 2
                     bgRadius: bgWidth / 2
                     bgColor: root.color
-                    isImage: !loading
-                    color: "transparent"
+                    isImage:root.tokenIconAsset.isImage
+                    color: root.tokenIconAsset.color
                     name: root.swapTokenImage
-                    isLetterIdenticon: loading
+                    isLetterIdenticon: root.tokenIconAsset.isLetterIdenticon
                 }
             }
         }
@@ -245,7 +256,7 @@ StatusListItem {
             anchors.verticalCenter: parent.verticalCenter
             text: root.loading ? root.title : root.timeStampText
             verticalAlignment: Qt.AlignVCenter
-            font.pixelSize: root.loading ? root.statusListItemTitle.font.pixelSize : 12
+            font.pixelSize: root.loading ? priv.loadingPixelSize : priv.datePixelSize
             visible: !!text
             loading: root.loading
             customColor: Theme.palette.baseColor1
@@ -259,7 +270,7 @@ StatusListItem {
         }
         switch(root.transactionType) {
         case TransactionDelegate.TransactionType.Receive:
-            return qsTr("%1 to %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
+            return qsTr("%1 from %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
         case TransactionDelegate.TransactionType.Buy:
         case TransactionDelegate.TransactionType.Sell:
             return qsTr("%1 on %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
@@ -275,13 +286,14 @@ StatusListItem {
     }
     statusListItemSubTitle.maximumLoadingStateWidth: 300
     statusListItemSubTitle.customColor: Theme.palette.directColor1
-    statusListItemSubTitle.font.pixelSize: 13
+    statusListItemSubTitle.font.pixelSize: root.loading ? priv.loadingPixelSize : priv.subtitlePixelSize
     statusListItemTagsRowLayout.anchors.topMargin: 4 // Spacing between title row nad subtitle row
 
     // Right side components
     components: [
         Loader {
-            active: !root.isHeader
+            active: !headerStatusLoader.active
+            visible: active
             sourceComponent: ColumnLayout {
                 visible: !root.isNFT // Not used in Loader to show loading state
                 StatusTextWithLoadingState {
@@ -308,14 +320,14 @@ StatusListItem {
                                           .arg(Theme.palette.successColor1)
                                           .arg(root.swapTransactionValue)
                         case TransactionDelegate.TransactionType.Bridge:
-                            return "-" + RootStore.formatCurrencyAmount(feeCryptoValue, root.symbol)
+                            return "-" + root.formatCurrencyAmount(feeCryptoValue, root.symbol)
                         default:
                             return ""
                         }
                     }
                     horizontalAlignment: Qt.AlignRight
                     Layout.alignment: Qt.AlignRight
-                    font.pixelSize: 13
+                    font.pixelSize: root.loading ? priv.loadingPixelSize : 13
                     customColor: {
                         switch(root.transactionType) {
                         case TransactionDelegate.TransactionType.Receive:
@@ -343,26 +355,28 @@ StatusListItem {
                         case TransactionDelegate.TransactionType.Send:
                         case TransactionDelegate.TransactionType.Sell:
                         case TransactionDelegate.TransactionType.Buy:
-                            return "-" + RootStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
+                            return "-" + root.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
                         case TransactionDelegate.TransactionType.Receive:
-                            return "+" + RootStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
+                            return "+" + root.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
                         case TransactionDelegate.TransactionType.Swap:
-                            return String("-%1 / +%2").arg(RootStore.formatCurrencyAmount(root.fiatValue, root.currentCurrency))
-                                                      .arg(RootStore.formatCurrencyAmount(root.swapFiatValue, root.currentCurrency))
+                            return String("-%1 / +%2").arg(root.formatCurrencyAmount(root.fiatValue, root.currentCurrency))
+                                                      .arg(root.formatCurrencyAmount(root.swapFiatValue, root.currentCurrency))
                         case TransactionDelegate.TransactionType.Bridge:
-                            return "-" + RootStore.formatCurrencyAmount(root.feeFiatValue, root.currentCurrency)
+                            return "-" + root.formatCurrencyAmount(root.feeFiatValue, root.currentCurrency)
                         default:
                             return ""
                         }
                     }
-                    font.pixelSize: root.loading ? cryptoValueText.font.pixelSize : 12
+                    font.pixelSize: root.loading ? priv.loadingPixelSize : 12
                     customColor: Theme.palette.baseColor1
                     loading: root.loading
                 }
             }
         },
         Loader {
-            active: root.isHeader
+            id: headerStatusLoader
+            active: false
+            visible: active
             sourceComponent: Rectangle {
                 id: statusRect
                 readonly property bool isFailed: root.transactionStatus === TransactionDelegate.Failed
@@ -412,6 +426,48 @@ StatusListItem {
                 }
             }
         }
+    ]
 
+    states: [
+        State {
+            name: "header"
+            PropertyChanges {
+                target: headerStatusLoader
+                active: true
+            }
+            PropertyChanges {
+                target: leftIconStatusIcon
+                visible: false
+            }
+            PropertyChanges {
+                target: root.statusListItemIcon
+                active: false
+            }
+            PropertyChanges {
+                target: root.asset
+                bgBorderWidth: root.transactionStatus === TransactionDelegate.Failed ? 0 : 1
+                width: 34
+                height: 34
+                bgWidth: 56
+                bgHeight: 56
+            }
+            PropertyChanges {
+                target: root.statusIconAsset
+                width: 17
+                height: 17
+            }
+            PropertyChanges {
+                target: root.tokenIconAsset
+                width: 20
+                height: 20
+            }
+            PropertyChanges {
+                target: priv
+                titlePixelSize: 17
+                datePixelSize: 13
+                subtitlePixelSize: 15
+                loadingPixelSize: 14
+            }
+        }
     ]
 }
