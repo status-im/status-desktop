@@ -318,6 +318,11 @@ var NODE_CONFIG* = %* {
   "IPFSDir": "./ipfs",
   "LogEnabled": true,
   "LogFile": "geth.log",
+  # Set Max number of log files kept to 1
+  # Setting it to 0 creates a problem where all log files are kepts
+  # Docs: https://pkg.go.dev/gopkg.in/natefinch/lumberjack.v2@v2.0.0#readme-cleaning-up-old-log-files
+  "LogMaxBackups": 1,
+  "LogMaxSize": 100, # MB
   "LogLevel": $LogLevel.INFO,
   "MailserversConfig": {
     "Enabled": true
