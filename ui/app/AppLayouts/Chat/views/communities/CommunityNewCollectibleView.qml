@@ -87,6 +87,7 @@ StatusScrollView {
             title: qsTr("Collectible artwork")
             acceptButtonText: qsTr("Upload collectible artwork")
             roundedImage: false
+            isDraggable: true
 
             NoImageUploadedPanel {
                 width: parent.width

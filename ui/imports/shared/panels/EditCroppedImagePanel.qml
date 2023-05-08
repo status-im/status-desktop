@@ -37,6 +37,8 @@ Item {
 
     readonly property alias cropWorkflow : imageCropWorkflow
 
+    property bool isDraggable: false
+
     function chooseImageToCrop() {
         imageCropWorkflow.chooseImageToCrop()
     }
@@ -145,9 +147,18 @@ Item {
             Layout.fillHeight: true
 
             visible: root.state === d.noImageState
-
             radius: roundedImage ? Math.max(width, height)/2 : croppedPreview.radius
             color: Style.current.inputBackground
+            states: [
+                State {
+                    when: dropArea.containsDrag
+                    PropertyChanges {target: imageCropEditor; border.color: Theme.palette.primaryColor1 }
+                },
+                State {
+                    when: !dropArea.containsDrag
+                    PropertyChanges {target: imageCropEditor; border.color: Theme.palette.baseColor2 }
+                }
+            ]
 
             StatusRoundButton {
                 id: addButton
@@ -199,6 +210,18 @@ Item {
             visible: root.state == d.backgroundComponentState
 
             sourceComponent: root.backgroundComponent
+        }
+    }
+
+    DropArea {
+        id: dropArea
+
+        anchors.fill: parent
+        enabled: root.isDraggable
+        onDropped: {
+            if (drop.urls.length > 0) {
+                imageCropWorkflow.cropImage(drop.urls[0])
+            }
         }
     }
 
