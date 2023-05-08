@@ -79,7 +79,8 @@ Input {
         decimals: root.allowDecimals ? 100 : 0
         bottom: 0
         notation: DoubleValidator.StandardNotation
-        locale: root.locale.name
+        locale: root.locale.name.split("_")[0]  // For whatever reason, this doesn't work properly when being
+                                                // passed "language_country". We pass only the language part.
     }
 
     StatusBaseText {
