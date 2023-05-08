@@ -16,6 +16,7 @@ class TextEdit(BaseElement):
         assert squish.waitFor(lambda: self.text == value)
 
     def type_text(self, value: str):
+        self.click()
         squish.type(self.object, value)
         assert squish.waitFor(lambda: self.text == value), \
             f'Type text failed, value in field: "{self.text}", expected: {value}'

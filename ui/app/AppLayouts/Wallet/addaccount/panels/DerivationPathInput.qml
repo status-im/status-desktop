@@ -16,9 +16,7 @@ Item {
     id: root
 
     readonly property alias derivationPath: d.currentDerivationPath
-
-    required property string initialDerivationPath
-    required property string initialBasePath
+    readonly property alias basePath: d.currentBasePath
 
     property alias levelsLimit: controller.levelsLimit
 
@@ -26,6 +24,8 @@ Item {
     property alias warningMessage: d.warningMessage
 
     property alias input: input
+
+    readonly property alias detectedStandardBasePath: d.detectedStandardBasePath
 
     signal editingFinished()
 
@@ -41,7 +41,12 @@ Item {
         }
         d.resetMessages()
         d.elements = res.elements
+
+        // Check if we enforced a standard derivation path
+        d.frozenLevelCount = d.elements.filter((e) => e.isFrozen && e.isNumber()).length
+
         d.updateText(d.elements)
+        d.currentBasePath = basePath
         input.cursorPosition = d.elements[d.elements.length - 1].endIndex
         return true
     }
@@ -50,6 +55,7 @@ Item {
         id: d
 
         property string currentDerivationPath: ""
+        property string currentBasePath: ""
 
         property var elements: []
         /// element index at cursor position
@@ -59,6 +65,9 @@ Item {
 
         property string errorMessage: ""
         property string warningMessage: ""
+
+        property int frozenLevelCount: 0
+        property bool detectedStandardBasePath: frozenLevelCount >= 3
 
         function resetMessages() { errorMessage = ""; warningMessage = "" }
 
@@ -74,10 +83,6 @@ Item {
         }
     }
 
-    Component.onCompleted: {
-        resetDerivationPath(root.initialBasePath, root.initialDerivationPath)
-    }
-
     Internals.Controller {
         id: controller
 
@@ -85,6 +90,7 @@ Item {
         frozenColor: Theme.palette.getColor('grey5')
         errorColor: Theme.palette.dangerColor1
         warningColor: Theme.palette.warningColor1
+        complainTooBigAccIndex: d.detectedStandardBasePath
     }
 
     StatusBaseInput {

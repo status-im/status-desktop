@@ -14,6 +14,7 @@ Item {
 
     /// Don't allow inserting more than \c levelsLimit Number elements
     property int levelsLimit: 0
+    property bool complainTooBigAccIndex: true
 
     readonly property string inputError: qsTr("Please enter numbers only")
     readonly property string tooBigError: qsTr("Account number must be <100")
@@ -415,7 +416,7 @@ Item {
             return {error: root.inputError, warning: ""}
         } else if(numberLevel == 0 && !element.isEmptyNumber() && element.number() != d.ethereumCoinType) {
             return {error: "", warning: root.nonEthCoinWarning}
-        } else if(numberLevel >= d.addressIndexStart && element.number() >= 100) {
+        } else if(root.complainTooBigAccIndex && numberLevel >= d.addressIndexStart && element.number() >= 100) {
             return {error: root.tooBigError, warning: ""}
         }
         return {error: "", warning: ""}

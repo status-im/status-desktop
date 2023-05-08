@@ -930,7 +930,7 @@ Rectangle {
         return false
     }
 
-    function showReplyArea(messageId, userName, message, contentType, image, sticker) {
+    function showReplyArea(messageId, userName, message, contentType, image, album, albumCount, sticker) {
         isReply = true
         replyArea.userName = userName
         replyArea.message = message
@@ -938,6 +938,8 @@ Rectangle {
         replyArea.image = image
         replyArea.stickerData = sticker
         replyArea.messageId = messageId
+        replyArea.album = album
+        replyArea.albumCount = albumCount
         messageInputField.forceActiveFocus();
     }
 

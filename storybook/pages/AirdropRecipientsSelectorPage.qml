@@ -23,6 +23,10 @@ SplitView {
             return true
         }
 
+        function getCompressedPk(publicKey) {
+            return "compressed_" + publicKey
+        }
+
         function getColorId(publicKey) {
             return Math.floor(Math.random() * 10)
         }
@@ -106,6 +110,11 @@ SplitView {
                 showAddressesInputWhenEmpty:
                     showAddressesInputWhenEmptyCheckBox.checked
 
+                infiniteMaxNumberOfRecipients:
+                    infiniteMaxNumberOfRecipientsCheckBox.checked
+
+                maxNumberOfRecipients: maxNumberOfRecipientsSpinBox.value
+
                 onAddAddressesRequested: timer.start()
                 onRemoveAddressRequested: addresses.remove(index)
                 onRemoveMemberRequested: members.remove(index)
@@ -128,8 +137,6 @@ SplitView {
 
     LogsAndControlsPanel {
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 180
-
         logsView.logText: logs.logText
 
         ColumnLayout {
@@ -152,6 +159,26 @@ SplitView {
                     id: showAddressesInputWhenEmptyCheckBox
 
                     text: "Show addresses input when empty"
+                }
+
+                CheckBox {
+                    id: infiniteMaxNumberOfRecipientsCheckBox
+
+                    text: "Infinite number of expected recipients"
+                }
+            }
+
+            RowLayout {
+                Label {
+                    text: "Expected number of recipients:"
+                }
+
+                SpinBox {
+                    id: maxNumberOfRecipientsSpinBox
+
+                    value: 2
+                    from: 1
+                    to: 100
                 }
             }
 

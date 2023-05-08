@@ -69,8 +69,8 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_REFRESH_COLLECTIBLES) do(e:Args):
     self.collectibleService.refetchAllOwnedCollectibles()
 
-proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
-  return self.walletAccountService.getWalletAccount(accountIndex)
+proc getWalletAccountByAddress*(self: Controller, address: string): wallet_account_service.WalletAccountDto =
+  return self.walletAccountService.getAccountByAddress(address)
 
 proc getNetwork*(self: Controller): network_service.NetworkDto =
   return self.networkService.getNetworkForCollectibles()

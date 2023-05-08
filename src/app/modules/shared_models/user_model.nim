@@ -48,6 +48,9 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
+    for item in items:
+      self.itemChanged(item.pubKey)
+
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""User Model:

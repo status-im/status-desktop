@@ -21,7 +21,7 @@ SplitView {
             anchors.fill: parent
 
             DerivationPathInput {
-                id: devTxtEdit
+                id: testControl
 
                 initialDerivationPath: initialBasePath + (initialBasePath.split("'").length > 4 ? "/0" : "/0'")
                 initialBasePath: stdBaseListView.currentIndex >= 0
@@ -41,7 +41,7 @@ SplitView {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            derivationPathSelection.popup(0, devTxtEdit.height + Style.current.halfPadding)
+                            derivationPathSelection.popup(0, testControl.height + Style.current.halfPadding)
                         }
                     }
                 }
@@ -110,13 +110,13 @@ SplitView {
                 highlighted: hovered
 
                 onClicked: {
-                    devTxtEdit.resetDerivationPath(customDerivationPathBaseInput.text, customDerivationPathInput.text)
+                    testControl.resetDerivationPath(customDerivationPathBaseInput.text, customDerivationPathInput.text)
                 }
             }
 
             Label {
-                text: devTxtEdit.errorMessage
-                visible: devTxtEdit.errorMessage.length > 0
+                text: testControl.errorMessage
+                visible: testControl.errorMessage.length > 0
 
                 Layout.fillWidth: true
 
@@ -125,8 +125,8 @@ SplitView {
                 color: "red"
             }
             Label {
-                text: devTxtEdit.warningMessage
-                visible: devTxtEdit.warningMessage.length > 0
+                text: testControl.warningMessage
+                visible: testControl.warningMessage.length > 0
 
                 Layout.fillWidth: true
 
@@ -136,11 +136,37 @@ SplitView {
             }
             RowLayout {
                 Label { text: "Output: " }
-                Label { id: base; text: devTxtEdit.derivationPath }
+                Label { id: base; text: testControl.derivationPath }
             }
             RowLayout {
                 Label { text: "Last event: " }
                 Label { id: lastEvent; text: "" }
+            }
+            CheckBox {
+                id: reflexiveMode
+                text: "Auto echo derivation path onto itself every " + reflexiveTimer.interval + " ms"
+                checked: false
+            }
+            CheckBox {
+                text: "Standard base path detected"
+                checked: testControl.detectedStandardBasePath
+                enabled: false
+            }
+        }
+
+        Timer {
+            id: reflexiveTimer
+            interval: 100
+            running: false
+            repeat: false
+            onTriggered: testControl.resetDerivationPath(testControl.basePath, testControl.derivationPath)
+        }
+        Connections {
+            target: testControl
+            function onDerivationPathChanged() {
+                if (reflexiveMode.checked) {
+                    reflexiveTimer.restart()
+                }
             }
         }
 
@@ -151,10 +177,10 @@ SplitView {
             target: customDerivationPathBaseInput
         }
         Border {
-            target: devTxtEdit
+            target: testControl
         }
         Border {
-            target: devTxtEdit
+            target: testControl
             radius: 0
             border.color: "#22FF0000"
         }
@@ -172,7 +198,7 @@ SplitView {
 
             onCurrentIndexChanged: {
                 const newBasePath = standardBasePathModel.get(currentIndex).derivationPath
-                devTxtEdit.resetDerivationPath(newBasePath, newBasePath + (newBasePath.split("'").length > 3 ? "/0" : "/0'"))
+                testControl.resetDerivationPath(newBasePath, newBasePath + (newBasePath.split("'").length > 3 ? "/0" : "/0'"))
             }
 
             delegate: ItemDelegate {

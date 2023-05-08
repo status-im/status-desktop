@@ -42,8 +42,8 @@ function install_golang {
   fi
   declare -A GO_SHA256_MAP
   GO_SHA256_MAP=(
-    ["amd64"]="23d22bb6571bbd60197bee8aaa10e702f9802786c2e2ddce5c84527e86b66aa0"
-    ["arm64"]="4a67f2bf0601afe2177eb58f825adf83509511d77ab79174db0712dc9efa16c8"
+    ["amd64"]="242b099b5b9bd9c5d4d25c041216bc75abcdf8e0541aec975eeabcbce61ad47f"
+    ["arm64"]="61bd4f7f2d209e2a6a7ce17787fc5fea52fb11cc9efb3d8471187a8b39ce0dc9"
   )
   echo "Install GoLang ${GO_VERSION}"
   GO_ARCH=$(get_go_arch)

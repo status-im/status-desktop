@@ -34,7 +34,10 @@ proc runStoreMetadataFlow(self: MigratingKeyPairState, controller: Controller) =
 
 method executePrePrimaryStateCommand*(self: MigratingKeyPairState, controller: Controller) =
   if self.flowType == FlowType.SetupNewKeycard:
-    controller.authenticateUser()
+    if controller.getSelectedKeyPairIsProfile():
+      controller.authenticateUser()
+      return
+    self.doMigration(controller)
 
 method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller: Controller) =
   ## Secondary action is called after each async action during migration process. 
@@ -59,13 +62,6 @@ method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller:
         if self.profileConversionOk:
           self.runStoreMetadataFlow(controller)
     else:
-      if not self.authenticationDone:
-        self.authenticationDone = true
-        let password = controller.getPassword()
-        self.authenticationOk = controller.verifyPassword(password)
-        if self.authenticationOk:
-          self.doMigration(controller)
-          return
       if not self.addingMigratedKeypairDone:
         self.addingMigratedKeypairDone = true
         self.addingMigratedKeypairOk = controller.getAddingMigratedKeypairSuccess()
@@ -74,7 +70,7 @@ method executePreSecondaryStateCommand*(self: MigratingKeyPairState, controller:
 
 method getNextSecondaryState*(self: MigratingKeyPairState, controller: Controller): State =
   if self.flowType == FlowType.SetupNewKeycard:
-    if self.authenticationDone and not self.authenticationOk or
+    if controller.getSelectedKeyPairIsProfile() and self.authenticationDone and not self.authenticationOk or
       self.addingMigratedKeypairDone and not self.addingMigratedKeypairOk or
       self.profileConversionDone and not self.profileConversionOk:
         return createState(StateType.KeyPairMigrateFailure, self.flowType, nil)

@@ -73,8 +73,11 @@ proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
 proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
   return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
 
-proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
+proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
+
+proc getWalletAccountByIndex*(self: Controller, accountIndex: int): WalletAccountDto =
+  return self.walletAccountService.getWalletAccount(accountIndex)
 
 proc getTokenBalanceOnChain*(self: Controller, address: string, chainId: int, symbol: string): CurrencyAmount =
   return currencyAmountToItem(self.walletAccountService.getTokenBalanceOnChain(address, chainId, symbol), self.currencyService.getCurrencyFormat(symbol))

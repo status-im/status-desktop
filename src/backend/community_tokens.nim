@@ -12,6 +12,10 @@ proc getCommunityTokens*(communityId: string): RpcResponse[JsonNode] {.raises: [
   let payload = %* [communityId]
   return core.callPrivateRPC("wakuext_getCommunityTokens", payload)
 
+proc getAllCommunityTokens*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  return core.callPrivateRPC("wakuext_getAllCommunityTokens", payload)
+
 proc addCommunityToken*(token: CommunityTokenDto): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [token.toJsonNode()]
   return core.callPrivateRPC("wakuext_addCommunityToken", payload)

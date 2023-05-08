@@ -17,6 +17,14 @@ type
     ContactRequest = 11
     DiscordMessage = 12
     ContactIdentityVerification = 13
+    # Local only
+    SystemMessagePinnedMessage = 14
+
+proc toContentType*(value: int): ContentType =
+  try:
+    return ContentType(value)
+  except RangeDefect:
+    return ContentType.Unknown
 
 type
   StatusType* {.pure.} = enum

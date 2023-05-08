@@ -15,8 +15,6 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls.Validators 0.1
 
-import SortFilterProxyModel 0.2
-
 import "../panels"
 import "../controls"
 import "../views"
@@ -36,7 +34,7 @@ StatusDialog {
     property var store: TransactionStore{}
     property var contactsStore: store.contactStore
     property var currencyStore: store.currencyStore
-    property var selectedAccount
+    property var selectedAccount: store.selectedSenderAccount
     property var bestRoutes
     property alias addressText: recipientLoader.addressText
     property bool isLoading: false
@@ -151,21 +149,10 @@ StatusDialog {
     header: AccountsModalHeader {
         anchors.top: parent.top
         anchors.topMargin: -height - 18
-        model: SortFilterProxyModel {
-            sourceModel: popup.store.accounts
-            filters: ValueFilter {
-                roleName: "walletType"
-                value: Constants.watchWalletType
-                inverted: true
-            }
-        }
-        currentAddress: popup.store.overview.mixedcaseAddress
-        changeSelectedAccount: function(newAccount) {
-            popup.selectedAccount = newAccount
-            if (assetSelector.selectedAsset) {
-                assetSelector.selectedAsset = store.getAsset(popup.selectedAccount.assets, assetSelector.selectedAsset.symbol)
-            }
-        }
+        model: popup.store.senderAccounts
+        selectedAccount: !!popup.selectedAccount ? popup.selectedAccount: {}
+        chainShortNames: store.getAllNetworksSupportedString()
+        onSelectedIndexChanged: store.switchSenderAccount(selectedIndex)
     }
 
     StackLayout {
@@ -234,6 +221,11 @@ StatusDialog {
                             getNetworkIcon: function(chainId){
                                 return RootStore.getNetworkIcon(chainId)
                             }
+                            onAssetsChanged: {
+                                // Todo we should not need to do this, this should be automatic when selected account changes
+                                if(!!selectedAccount && !!assetSelector.selectedAsset)
+                                    assetSelector.selectedAsset = store.getAsset(selectedAccount.assets, assetSelector.selectedAsset.symbol)
+                            }
                             onSelectedAssetChanged: {
                                 if (!assetSelector.selectedAsset || !amountToSendInput.inputNumberValid) {
                                     return
@@ -248,7 +240,7 @@ StatusDialog {
                             visible: !!assetSelector.selectedAsset || !!assetSelector.hoveredToken
                             title: {
                                 if(!!assetSelector.hoveredToken) {
-                                    const balance = popup.currencyStore.formatCurrencyAmount(assetSelector.hoveredToken.totalCurrencyBalance.amount, assetSelector.hoveredToken.symbol)
+                                    const balance = popup.currencyStore.formatCurrencyAmount((amountToSendInput.inputIsFiat ? assetSelector.hoveredToken.totalCurrencyBalance.amount : assetSelector.hoveredToken.totalBalance.amount) , assetSelector.hoveredToken.symbol)
                                     return qsTr("Max: %1").arg(balance)
                                 }
                                 if (d.maxInputBalance <= 0)
@@ -278,7 +270,6 @@ StatusDialog {
                             return RootStore.getNetworkIcon(chainId)
                         }
                         onTokenSelected: {
-                            assetSelector.userSelectedToken = selectedToken.symbol
                             assetSelector.selectedAsset = selectedToken
                         }
                         onTokenHovered: {

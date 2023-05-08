@@ -125,6 +125,17 @@ type
     gifRecents*: JsonNode
     gifFavorites*: JsonNode
     testNetworksEnabled*: bool
+    notificationsAllowNotifications*: bool
+    notificationsOneToOneChats*: string
+    notificationsGroupChats*: string
+    notificationsPersonalMentions*: string
+    notificationsGlobalMentions*: string
+    notificationsAllMessages*: string
+    notificationsContactRequests*: string
+    notificationsIdentityVerificationRequests*: string
+    notificationsSoundsEnabled*: bool
+    notificationsVolume*: int
+    notificationsMessagePreview*: int
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet

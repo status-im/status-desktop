@@ -520,7 +520,7 @@ QtObject:
             )
 
           # Handle name/description changes
-          if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color:
+          if chat.name != prev_chat.name or chat.description != prev_chat.description or chat.color != prev_chat.color or chat.emoji != prev_chat.emoji:
             var updatedChat = findChatById(chat.id, updatedChats)
             updatedChat.updateMissingFields(chat)
             self.chatService.updateOrAddChat(updatedChat) # we have to update chats stored in the chat service.
@@ -553,6 +553,7 @@ QtObject:
       elif community.tokenPermissions.len < prev_community.tokenPermissions.len:
         for id, prvTokenPermission in prev_community.tokenPermissions:
           if not community.tokenPermissions.hasKey(id):
+            self.communities[community.id].tokenPermissions.del(id)
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
             CommunityTokenPermissionRemovedArgs(communityId: community.id, permissionId: id))
 
@@ -665,8 +666,11 @@ QtObject:
     return toSeq(self.getFilteredCuratedCommunities.values)
 
   proc getCommunityById*(self: Service, communityId: string): CommunityDto =
-    if(not self.communities.hasKey(communityId)):
-      error "error: requested community doesn't exists", communityId
+    if communityId == "":
+      return
+
+    if not self.communities.hasKey(communityId):
+      error "requested community doesn't exists", communityId
       return
 
     return self.communities[communityId]
@@ -798,6 +802,7 @@ QtObject:
 
       updatedCommunity.settings = communitySettings
       self.communities[communityId] = updatedCommunity
+      # TODO improve this by only loading the data for the wanted community
       self.chatService.loadChannelGroupById(communityId)
 
       for k, chat in updatedCommunity.chats:
@@ -906,8 +911,7 @@ QtObject:
       historyArchiveSupportEnabled: bool,
       pinMessageAllMembersEnabled: bool,
       filesToImport: seq[string],
-      fromTimestamp: int,
-      encrypted: bool) =
+      fromTimestamp: int) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
       var tagsString = tags
@@ -927,8 +931,7 @@ QtObject:
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled,
         filesToImport,
-        fromTimestamp,
-        encrypted)
+        fromTimestamp)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
@@ -950,8 +953,7 @@ QtObject:
       aX: int, aY: int, bX: int, bY: int,
       historyArchiveSupportEnabled: bool,
       pinMessageAllMembersEnabled: bool,
-      bannerJsonStr: string,
-      encrypted: bool) =
+      bannerJsonStr: string) =
     try:
       var bannerJson = bannerJsonStr.parseJson
       bannerJson{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(bannerJson["imagePath"].getStr))
@@ -971,8 +973,7 @@ QtObject:
         aX, aY, bX, bY,
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled,
-        $bannerJson,
-        encrypted)
+        $bannerJson)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)

@@ -16,25 +16,17 @@ import utils 1.0
 import shared.controls 1.0
 import shared.popups 1.0
 
-
 import AppLayouts.stores 1.0
 import "../stores"
 
 StatusModal {
     id: root
 
-    property string selectedAddress: ""
-    property string networkPrefix: ""
-    property string completeAddressWithNetworkPrefix
-
-    onSelectedAddressChanged: {
-        if (selectedAddress) {
-            txtWalletAddress.text = selectedAddress
-        }
-    }
-
-    onCompleteAddressWithNetworkPrefixChanged: {
-        qrCodeImage.source = RootStore.getQrCode(completeAddressWithNetworkPrefix)
+    QtObject {
+        id: d
+        property string selectedAccountAddress: RootStore.selectedReceiveAccount.address
+        property string networkPrefix
+        property string completeAddressWithNetworkPrefix
     }
 
     header.title: qsTr("Receive")
@@ -46,12 +38,9 @@ StatusModal {
 
     hasFloatingButtons: true
     advancedHeaderComponent: AccountsModalHeader {
-        model: RootStore.accounts
-        currentAddress: root.selectedAddress
-        changeSelectedAccount: function(newAccount, newIndex) {
-            root.selectedAddress = newAccount.address
-        }
-        showAllWalletTypes: true
+        model: RootStore.receiveAccounts
+        selectedAccount: RootStore.selectedReceiveAccount
+        onSelectedIndexChanged: RootStore.switchReceiveAccount(selectedIndex)
     }
 
     contentItem: Column {
@@ -162,6 +151,7 @@ StatusModal {
                     fillMode: Image.PreserveAspectFit
                     mipmap: true
                     smooth: false
+                    source: RootStore.getQrCode(d.completeAddressWithNetworkPrefix)
                 }
 
                 Rectangle {
@@ -209,9 +199,9 @@ StatusModal {
                                 visible: model.isEnabled
                                 onVisibleChanged: {
                                     if (visible) {
-                                        networkPrefix += text
+                                        d.networkPrefix += text
                                     } else {
-                                        networkPrefix = networkPrefix.replace(text, "")
+                                        d.networkPrefix = d.networkPrefix.replace(text, "")
                                     }
                                 }
                             }
@@ -222,6 +212,7 @@ StatusModal {
                     id: txtWalletAddress
                     color: Theme.palette.directColor1
                     font.pixelSize: 15
+                    text: d.selectedAccountAddress
                 }
             }
             Column {
@@ -301,8 +292,8 @@ StatusModal {
                     textToCopy: txtWalletAddress.text
                 }
                 PropertyChanges {
-                    target: root
-                    completeAddressWithNetworkPrefix: root.selectedAddress
+                    target: d
+                    completeAddressWithNetworkPrefix: d.selectedAccountAddress
                 }
             },
             State {
@@ -322,11 +313,11 @@ StatusModal {
                 }
                 PropertyChanges {
                     target: copyToClipBoard
-                    textToCopy: root.networkPrefix + txtWalletAddress.text
+                    textToCopy: d.networkPrefix + txtWalletAddress.text
                 }
                 PropertyChanges {
-                    target: root
-                    completeAddressWithNetworkPrefix: root.networkPrefix + root.selectedAddress
+                    target: d
+                    completeAddressWithNetworkPrefix: d.networkPrefix + d.selectedAccountAddress
                 }
             }
         ]

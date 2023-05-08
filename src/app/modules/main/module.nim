@@ -21,7 +21,6 @@ import stickers/module as stickers_module
 import activity_center/module as activity_center_module
 import communities/module as communities_module
 import node_section/module as node_section_module
-import networks/module as networks_module
 import communities/tokens/models/token_item
 import network_connection/module as network_connection_module
 import ../../../app_service/service/contacts/dto/contacts
@@ -98,7 +97,6 @@ type
     communitiesModule: communities_module.AccessInterface
     appSearchModule: app_search_module.AccessInterface
     nodeSectionModule: node_section_module.AccessInterface
-    networksModule: networks_module.AccessInterface
     keycardSharedModule: keycard_shared_module.AccessInterface
     keycardSharedModuleKeycardSyncPurpose: keycard_shared_module.AccessInterface
     networkConnectionModule: network_connection_module.AccessInterface
@@ -212,7 +210,6 @@ proc newModule*[T](
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
-  result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
   result.networkConnectionModule = network_connection_module.newModule(result, events, networkConnectionService)
 
 method delete*[T](self: Module[T]) =
@@ -228,7 +225,6 @@ method delete*[T](self: Module[T]) =
   self.browserSectionModule.delete
   self.appSearchModule.delete
   self.nodeSectionModule.delete
-  self.networksModule.delete
   if not self.keycardSharedModule.isNil:
     self.keycardSharedModule.delete
   if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
@@ -237,12 +233,10 @@ method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
 
-proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto, network: NetworkDto) : TokenItem =
-  var chainName, chainIcon: string
-  if network != nil:
-    chainName = network.chainName
-    chainIcon = network.iconURL
-  result = initTokenItem(tokenDto, chainName, chainIcon)
+proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : TokenItem =
+  let network = self.controller.getNetwork(tokenDto.chainId)
+  let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
+  result = initTokenItem(tokenDto, network, tokenOwners)
 
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
@@ -252,8 +246,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     communityDetails = self.controller.getCommunityById(channelGroup.id)
     let communityTokens = self.controller.getCommunityTokens(channelGroup.id)
     communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
-      let network = self.controller.getNetwork(tokenDto.chainId)
-      result = self.createTokenItem(tokenDto, network)
+      result = self.createTokenItem(tokenDto)
     )
 
   let unviewedCount = channelGroup.unviewedMessagesCount
@@ -502,7 +495,6 @@ method load*[T](
   self.browserSectionModule.load()
   self.profileSectionModule.load()
   self.stickersModule.load()
-  self.networksModule.load()
   self.activityCenterModule.load()
   self.communitiesModule.load()
   self.appSearchModule.load()
@@ -670,9 +662,6 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if(not self.appSearchModule.isLoaded()):
     return
 
-  if(not self.networksModule.isLoaded()):
-    return
-
   if(not self.networkConnectionModule.isLoaded()):
     return
 
@@ -710,9 +699,6 @@ method profileSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method nodeSectionDidLoad*[T](self: Module[T]) =
-  self.checkIfModuleDidLoad()
-
-method networksModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method networkConnectionModuleDidLoad*[T](self: Module[T]) =
@@ -923,7 +909,14 @@ method communityEdited*[T](
     self: Module[T],
     community: CommunityDto) =
   let channelGroup = community.toChannelGroupDto()
-  self.view.editItem(self.createChannelGroupItem(channelGroup))
+  var channelGroupItem = self.createChannelGroupItem(channelGroup)
+  # We need to calculate the unread counts because the community update doesn't come with it
+  let (unviewedMessagesCount, unviewedMentionsCount) = self.controller.sectionUnreadMessagesAndMentionsCount(
+    channelGroupItem.id
+  )
+  channelGroupItem.setHasNotification(unviewedMessagesCount > 0)
+  channelGroupItem.setNotificationsCount(unviewedMentionsCount)
+  self.view.editItem(channelGroupItem)
 
 method onCommunityMuted*[T](
     self: Module[T],
@@ -959,6 +952,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "removed": contact.removed,
     "trustStatus": contact.trustStatus.int,
     # TODO rename verificationStatus to outgoingVerificationStatus
+    "contactRequestState": contact.contactRequestState.int,
     "verificationStatus": contact.verificationStatus.int,
     "incomingVerificationStatus": requestStatus,
     "hasAddedUs": contact.hasAddedUs,
@@ -996,16 +990,20 @@ method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdat
     let status = toOnlineStatus(s.statusType)
     self.view.activeSection().setOnlineStatusForMember(s.publicKey, status)
 
-method onCommunityTokenDeployed*[T](self: Module[T], communityToken: CommunityTokenDto) {.base.} =
+method onCommunityTokenDeployed*[T](self: Module[T], communityToken: CommunityTokenDto) =
   let item = self.view.model().getItemById(communityToken.communityId)
   if item.id != "":
-    let network = self.controller.getNetwork(communityToken.chainId)
-    item.appendCommunityToken(self.createTokenItem(communityToken, network))
+    item.appendCommunityToken(self.createTokenItem(communityToken))
 
-method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, contractAddress: string, deployState: DeployState) =
+method onCommunityTokenOwnersFetched*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
-    item.updateCommunityTokenDeployState(contractAddress, deployState)
+    item.setCommunityTokenOwners(chainId, contractAddress, owners)
+
+method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, deployState: DeployState) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updateCommunityTokenDeployState(chainId, contractAddress, deployState)
 
 method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, memberKey: string) =
   let item = self.view.model().getItemById(communityId)

@@ -16,7 +16,6 @@ StatusScrollView {
 
     property int viewWidth: 560 // by design
     property bool preview: false
-    property var holdersModel
 
     // Collectible object properties:
     property alias artworkSource: image.source
@@ -31,6 +30,8 @@ StatusScrollView {
     property int chainId
     property string chainIcon
     property int deployState
+    property var tokenOwnersModel
+
     property alias accountName: accountBox.value
 
     signal mintCollectible(url artworkSource,
@@ -248,11 +249,10 @@ StatusScrollView {
             }
         }
 
-        // Disabled until backend is ready (milestone 12)
         TokenHoldersPanel {
-            visible: false//!root.preview
+            visible: !root.preview
             tokenName: root.name
-            model: root.holdersModel
+            model: root.tokenOwnersModel
             Layout.topMargin: Style.current.padding
             Layout.fillWidth: true
             Layout.fillHeight: true

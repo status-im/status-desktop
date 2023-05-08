@@ -12,8 +12,9 @@ StatusFlowSelector {
     id: root
 
     property alias model: repeater.model
+    readonly property alias count: repeater.count
 
-    signal itemClicked(int index, var mouse)
+    signal itemClicked(int index, var mouse, var item)
 
     placeholderText: qsTr("Example: 1 SOCK")
     placeholderItem.visible: repeater.count === 0
@@ -32,15 +33,21 @@ StatusFlowSelector {
         id: repeater
 
         Control {
+            id: delegateRoot
+
             component Icon: StatusRoundedImage {
                 implicitWidth: d.iconSize
                 implicitHeight: d.iconSize
+
+                image.mipmap: true
             }
 
             component Text: StatusBaseText {
                 Layout.fillWidth: true
 
-                color: Theme.palette.primaryColor1
+                font.weight: Font.Medium
+                color: model.valid ? Theme.palette.primaryColor1
+                                   : Theme.palette.dangerColor1
                 elide: Text.ElideRight
             }
 
@@ -49,13 +56,14 @@ StatusFlowSelector {
             rightPadding: d.commonMargin * 2
 
             background: Rectangle {
-                color: Theme.palette.primaryColor3
+                color: model.valid ? Theme.palette.primaryColor3
+                                   : Theme.palette.dangerColor3
                 radius: root.placeholderItemHeight / 2
 
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: root.itemClicked(model.index, mouse)
+                    onClicked: root.itemClicked(model.index, mouse, delegateRoot)
                 }
             }
 

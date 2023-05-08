@@ -169,10 +169,10 @@ proc tryKeycardSync[T](self: Module[T]) =
   )
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC, dataForKeycardToSync)
 
-method closeAddAccountPopup*[T](self: Module[T], switchToAccWithAddress: string = "") =
+method closeAddAccountPopup*[T](self: Module[T]) =
   if not self.view.getEditMode():
     self.tryKeycardSync()
-  self.delegate.destroyAddAccountPopup(switchToAccWithAddress)
+  self.delegate.destroyAddAccountPopup()
 
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
@@ -664,10 +664,7 @@ proc doAddAccount[T](self: Module[T]) =
     if not success:
       error "failed to store account", address=selectedAddrItem.getAddress()
   
-  if success:
-    self.closeAddAccountPopup(address)
-  else:
-    self.closeAddAccountPopup()
+  self.closeAddAccountPopup()
 
 proc doEditAccount[T](self: Module[T]) =
   self.view.setDisablePopup(true)
@@ -687,7 +684,7 @@ proc doEditAccount[T](self: Module[T]) =
     accountName = self.view.getAccountName(),
     color = self.view.getSelectedColor(),
     emoji = self.view.getSelectedEmoji()):
-      self.closeAddAccountPopup(address)
+      self.closeAddAccountPopup()
   else:
     self.closeAddAccountPopup()
 

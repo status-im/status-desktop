@@ -204,12 +204,26 @@ Loader {
             return fetchMoreMessagesButtonComponent
         case Constants.messageContentType.systemMessagePrivateGroupType:
             return privateGroupHeaderComponent
+        case Constants.messageContentType.systemMessagePinnedMessage:
+            return systemMessagePinnedMessageComponent
         case Constants.messageContentType.gapType:
             return gapComponent
         case Constants.messageContentType.newMessagesMarker:
             return newMessagesMarkerComponent
-        default:
+        case Constants.messageContentType.messageType:
+        case Constants.messageContentType.stickerType:
+        case Constants.messageContentType.emojiType:
+        case Constants.messageContentType.transactionType:
+        case Constants.messageContentType.imageType:
+        case Constants.messageContentType.audioType:
+        case Constants.messageContentType.communityInviteType:
+        case Constants.messageContentType.discordMessageType:
             return messageComponent
+        case Constants.messageContentType.unknownContentType:
+            // NOTE: We could display smth like "unknown message type, please upgrade Status to see it".
+            return null
+        default:
+            return null
         }
     }
 
@@ -276,6 +290,8 @@ Loader {
                 return StatusMessage.ContentType.Invitation;
             case Constants.messageContentType.discordMessageType:
                 return StatusMessage.ContentType.DiscordMessage;
+            case Constants.messageContentType.systemMessagePinnedMessage:
+                return StatusMessage.ContentType.SystemMessagePinnedMessage;
             case Constants.messageContentType.fetchMoreMessagesButton:
             case Constants.messageContentType.chatIdentifier:
             case Constants.messageContentType.unknownContentType:
@@ -372,6 +388,21 @@ Loader {
         }
     }
 
+    Component {
+        id: systemMessagePinnedMessageComponent
+
+        StatusBaseText {
+            width: parent.width - 120
+            horizontalAlignment: Text.AlignHCenter
+            text: qsTr("%1 pinned a message").arg(quotedMessageAuthorDetailsDisplayName)
+            color: Theme.palette.directColor3
+            font.family: Theme.palette.baseFont.name
+            font.pixelSize: Theme.primaryTextFontSize
+            textFormat: Text.RichText
+            wrapMode: Text.Wrap
+            topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+        }
+    }
 
     Component {
         id: messageComponent
@@ -401,6 +432,11 @@ Loader {
 
                 readonly property int contentType: d.convertContentType(root.messageContentType)
                 property string originalMessageText: ""
+                readonly property bool hideQuickActions: root.isChatBlocked ||
+                                  root.placeholderMessage ||
+                                  root.isInPinnedPopup ||
+                                  root.editModeOn ||
+                                  !root.rootStore.mainModuleInst.activeSection.joined
 
                 function editCancelledHandler() {
                     root.messageStore.setEditModeOff(root.messageId)
@@ -461,12 +497,6 @@ Loader {
                               (root.chatLogView && root.chatLogView.moving) ||
                               (root.messageContextMenu && root.messageContextMenu.opened) ||
                               Global.popupOpened
-
-                hideQuickActions: root.isChatBlocked ||
-                                  root.placeholderMessage ||
-                                  root.isInPinnedPopup ||
-                                  root.editModeOn ||
-                                  !root.rootStore.mainModuleInst.activeSection.joined
 
                 disableEmojis: root.isChatBlocked
                 hideMessage: d.hideMessage
@@ -608,30 +638,37 @@ Loader {
                 }
 
                 replyDetails: StatusMessageDetails {
+                    readonly property var responseMessage: contentType === StatusMessage.ContentType.Sticker || contentType === StatusMessage.ContentType.Image
+                                                           ? root.messageStore.getMessageByIdAsJson(responseToMessageWithId)
+                                                           : null
+                    onResponseMessageChanged: {
+                        if (!responseMessage)
+                            return
+
+                        switch (contentType) {
+                        case StatusMessage.ContentType.Sticker:
+                            messageContent = responseMessage.sticker;
+                            return
+                        case StatusMessage.ContentType.Image:
+                            messageContent = responseMessage.messageImage;
+                            albumCount = responseMessage.albumImagesCount
+                            album = responseMessage.albumMessageImages
+                            return
+                        default:
+                            messageContent = ""
+                        }
+                    }
+
                     messageText: {
                         if (root.quotedMessageDeleted) {
                             return qsTr("Message deleted")
                         }
-                        if (!root.quotedMessageText) {
+                        if (!root.quotedMessageText && contentType !== StatusMessage.ContentType.Image) {
                             return qsTr("Unknown message. Try fetching more messages")
                         }
                         return root.quotedMessageText
                     }
                     contentType: d.convertContentType(root.quotedMessageContentType)
-                    messageContent: {
-                        if (contentType !== StatusMessage.ContentType.Sticker && contentType !== StatusMessage.ContentType.Image) {
-                            return ""
-                        }
-                        let message = root.messageStore.getMessageByIdAsJson(responseToMessageWithId)
-                        switch (contentType) {
-                        case StatusMessage.ContentType.Sticker:
-                            return message.sticker;
-                        case StatusMessage.ContentType.Image:
-                            return message.messageImage;
-                        }
-                        return "";
-                    }
-
                     amISender: root.quotedMessageFrom === userProfile.pubKey
                     sender.id: root.quotedMessageFrom
                     sender.isContact: quotedMessageAuthorDetailsIsContact
@@ -724,7 +761,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: !root.isInPinnedPopup && delegate.hovered
+                        active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
@@ -739,7 +776,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup && delegate.hovered
+                        active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "replyToMessageButton"
@@ -757,7 +794,7 @@ Loader {
                         }
                     },
                     Loader {
-                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered
+                        active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             objectName: "editMessageButton"
@@ -778,6 +815,9 @@ Loader {
                                 
                             if (!root.messageStore)
                                 return false
+                            
+                            if(delegate.hideQuickActions)
+                                return false;
 
                             const chatType = root.messageStore.chatType;
                             const pinMessageAllowedForMembers = root.messageStore.isPinMessageAllowedForMembers

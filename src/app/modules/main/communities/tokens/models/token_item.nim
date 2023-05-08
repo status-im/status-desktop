@@ -1,5 +1,10 @@
-import strformat
+import strformat, sequtils
 import ../../../../../../app_service/service/community_tokens/dto/community_token
+import ../../../../../../app_service/service/collectible/dto
+import ../../../../../../app_service/service/network/dto
+
+import token_owners_model
+import token_owners_item
 
 export community_token
 
@@ -8,20 +13,28 @@ type
     tokenDto*: CommunityTokenDto
     chainName*: string
     chainIcon*: string
+    tokenOwnersModel*: token_owners_model.TokenOwnersModel
 
 proc initTokenItem*(
   tokenDto: CommunityTokenDto,
-  chainName: string,
-  chainIcon: string,
+  network: NetworkDto,
+  tokenOwners: seq[CollectibleOwner]
 ): TokenItem =
   result.tokenDto = tokenDto
-  result.chainName = chainName
-  result.chainIcon = chainIcon
+  if network != nil:
+    result.chainName = network.chainName
+    result.chainIcon = network.iconURL
+  result.tokenOwnersModel = newTokenOwnersModel()
+  result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
+          # TODO find member with the address - later when airdrop to member will be added
+          result = initTokenOwnersItem("", "", owner)
+        ))
 
 proc `$`*(self: TokenItem): string =
   result = fmt"""TokenItem(
     tokenDto: {self.tokenDto},
     chainName: {self.chainName},
-    chainIcon: {self.chainIcon}
+    chainIcon: {self.chainIcon},
+    tokenOwnersModel: {self.tokenOwnersModel}
     ]"""
 

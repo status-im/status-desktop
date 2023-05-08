@@ -1,4 +1,4 @@
-import NimQml, chronicles, json, strutils, sequtils
+import NimQml, chronicles, json, strutils, sequtils, tables
 
 import ../../common/types as common_types
 import ../../common/social_links
@@ -39,10 +39,23 @@ QtObject:
     events: EventEmitter
     settings: SettingsDto
     socialLinks: SocialLinks
+    initialized: bool
+    notifExemptionsCache: Table[string, NotificationsExemptions]
 
   # Forward declaration
   proc fetchSocialLinks*(self: Service): SocialLinks
-
+  proc initNotificationSettings*(self: Service)
+  proc getNotifSettingAllowNotifications*(self: Service): bool
+  proc getNotifSettingOneToOneChats*(self: Service): string
+  proc getNotifSettingGroupChats*(self: Service): string
+  proc getNotifSettingPersonalMentions*(self: Service): string
+  proc getNotifSettingGlobalMentions*(self: Service): string
+  proc getNotifSettingAllMessages*(self: Service): string
+  proc getNotifSettingContactRequests*(self: Service): string
+  proc getNotifSettingIdentityVerificationRequests*(self: Service): string
+  proc getNotificationSoundsEnabled*(self: Service): bool
+  proc getNotificationVolume*(self: Service): int
+  proc getNotificationMessagePreview*(self: Service): int
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -50,13 +63,15 @@ QtObject:
   proc newService*(events: EventEmitter): Service =
     new(result, delete)
     result.events = events
+    result.initialized = false
+    result.notifExemptionsCache = initTable[string, NotificationsExemptions]()
     result.QObject.setup
 
   proc init*(self: Service) =
     try:
       let response = status_settings.getSettings()
       self.settings = response.result.toSettingsDto()
-
+      self.initNotificationSettings()
       self.socialLinks = self.fetchSocialLinks()
     except Exception as e:
       let errDesription = e.msg
@@ -73,6 +88,24 @@ QtObject:
         for settingsField in receivedData.settings:
           if settingsField.name == KEY_CURRENCY:
             self.settings.currency = settingsField.value
+      
+    self.initialized = true
+
+  proc initNotificationSettings(self: Service) =
+    # set initial values from RPC before initialization is done
+    # not interested in return values here
+    discard self.getNotifSettingAllowNotifications()
+    discard self.getNotifSettingOneToOneChats()
+    discard self.getNotifSettingGroupChats()
+    discard self.getNotifSettingPersonalMentions()
+    discard self.getNotifSettingGlobalMentions()
+    discard self.getNotifSettingAllMessages()
+    discard self.getNotifSettingContactRequests()
+    discard self.getNotifSettingIdentityVerificationRequests()
+    discard self.getNotificationSoundsEnabled()
+    discard self.getNotificationVolume()
+    discard self.getNotificationMessagePreview()
+
 
   proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int): bool =
     try:
@@ -418,6 +451,9 @@ QtObject:
 
   proc notifSettingAllowNotificationsChanged*(self: Service) {.signal.}
   proc getNotifSettingAllowNotifications*(self: Service): bool {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsAllowNotifications
+
     result = true #default value
     try:
       let response = status_settings.getAllowNotifications()
@@ -425,6 +461,7 @@ QtObject:
         error "error reading allow notification setting: ", errDescription = response.error.message
         return
       result = response.result.getBool
+      self.settings.notificationsAllowNotifications = result
     except Exception as e:
       let errDesription = e.msg
       error "reading allow notification setting error: ", errDesription
@@ -435,6 +472,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving allow notification setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsAllowNotifications = value
       self.notifSettingAllowNotificationsChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -447,6 +485,9 @@ QtObject:
 
   proc notifSettingOneToOneChatsChanged*(self: Service) {.signal.}
   proc getNotifSettingOneToOneChats*(self: Service): string {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsOneToOneChats
+
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getOneToOneChats()
@@ -454,6 +495,7 @@ QtObject:
         error "error reading one to one setting: ", errDescription = response.error.message
         return
       result = response.result.getStr
+      self.settings.notificationsOneToOneChats = result
     except Exception as e:
       let errDesription = e.msg
       error "reading one to one setting error: ", errDesription
@@ -464,6 +506,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving one to one setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsOneToOneChats = value
       self.notifSettingOneToOneChatsChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -476,6 +519,9 @@ QtObject:
 
   proc notifSettingGroupChatsChanged*(self: Service) {.signal.}
   proc getNotifSettingGroupChats*(self: Service): string {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsGroupChats
+
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getGroupChats()
@@ -483,6 +529,7 @@ QtObject:
         error "error reading group chats setting: ", errDescription = response.error.message
         return
       result = response.result.getStr
+      self.settings.notificationsGroupChats = result
     except Exception as e:
       let errDesription = e.msg
       error "reading group chats setting error: ", errDesription
@@ -493,6 +540,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving group chats setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsGroupChats = value
       self.notifSettingGroupChatsChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -505,6 +553,9 @@ QtObject:
 
   proc notifSettingPersonalMentionsChanged*(self: Service) {.signal.}
   proc getNotifSettingPersonalMentions*(self: Service): string {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsPersonalMentions
+
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getPersonalMentions()
@@ -512,6 +563,7 @@ QtObject:
         error "error reading personal mentions setting: ", errDescription = response.error.message
         return
       result = response.result.getStr
+      self.settings.notificationsPersonalMentions = result
     except Exception as e:
       let errDesription = e.msg
       error "reading personal mentions setting error: ", errDesription
@@ -522,6 +574,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving personal mentions setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsPersonalMentions = value
       self.notifSettingPersonalMentionsChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -534,6 +587,9 @@ QtObject:
 
   proc notifSettingGlobalMentionsChanged*(self: Service) {.signal.}
   proc getNotifSettingGlobalMentions*(self: Service): string {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsGlobalMentions
+
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getGlobalMentions()
@@ -541,6 +597,7 @@ QtObject:
         error "error reading global mentions setting: ", errDescription = response.error.message
         return
       result = response.result.getStr
+      self.settings.notificationsGlobalMentions = result
     except Exception as e:
       let errDesription = e.msg
       error "reading global mentions setting error: ", errDesription
@@ -551,6 +608,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving global mentions setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsGlobalMentions = value
       self.notifSettingGlobalMentionsChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -563,6 +621,9 @@ QtObject:
 
   proc notifSettingAllMessagesChanged*(self: Service) {.signal.}
   proc getNotifSettingAllMessages*(self: Service): string {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsAllMessages
+
     result = VALUE_NOTIF_TURN_OFF #default value
     try:
       let response = status_settings.getAllMessages()
@@ -570,6 +631,7 @@ QtObject:
         error "error reading all messages setting: ", errDescription = response.error.message
         return
       result = response.result.getStr
+      self.settings.notificationsAllMessages = result
     except Exception as e:
       let errDesription = e.msg
       error "reading all messages setting error: ", errDesription
@@ -580,6 +642,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving all messages setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsAllMessages = value
       self.notifSettingAllMessagesChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -592,6 +655,9 @@ QtObject:
 
   proc notifSettingContactRequestsChanged*(self: Service) {.signal.}
   proc getNotifSettingContactRequests*(self: Service): string {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsContactRequests
+
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getContactRequests()
@@ -599,6 +665,7 @@ QtObject:
         error "error reading contact request setting: ", errDescription = response.error.message
         return
       result = response.result.getStr
+      self.settings.notificationsContactRequests = result
     except Exception as e:
       let errDesription = e.msg
       error "reading contact request setting error: ", errDesription
@@ -609,6 +676,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving contact request setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsContactRequests = value
       self.notifSettingContactRequestsChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -621,6 +689,9 @@ QtObject:
 
   proc notifSettingIdentityVerificationRequestsChanged*(self: Service) {.signal.}
   proc getNotifSettingIdentityVerificationRequests*(self: Service): string {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsIdentityVerificationRequests
+
     result = VALUE_NOTIF_SEND_ALERTS #default value
     try:
       let response = status_settings.getIdentityVerificationRequests()
@@ -628,6 +699,7 @@ QtObject:
         error "error reading identity verification request setting: ", errDescription = response.error.message
         return
       result = response.result.getStr
+      self.settings.notificationsIdentityVerificationRequests = result
     except Exception as e:
       let errDesription = e.msg
       error "reading identity verification request setting error: ", errDesription
@@ -638,6 +710,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving identity verification request setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsIdentityVerificationRequests = value
       self.notifSettingIdentityVerificationRequestsChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -650,6 +723,9 @@ QtObject:
 
   proc notificationSoundsEnabledChanged*(self: Service) {.signal.}
   proc getNotificationSoundsEnabled*(self: Service): bool {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsSoundsEnabled
+
     result = true #default value
     try:
       let response = status_settings.getSoundEnabled()
@@ -657,6 +733,7 @@ QtObject:
         error "error reading sound enabled setting: ", errDescription = response.error.message
         return
       result = response.result.getBool
+      self.settings.notificationsSoundsEnabled = result
     except Exception as e:
       let errDesription = e.msg
       error "reading sound enabled setting error: ", errDesription
@@ -667,6 +744,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving sound enabled setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsSoundsEnabled = value
       self.notificationSoundsEnabledChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -679,6 +757,9 @@ QtObject:
 
   proc notificationVolumeChanged*(self: Service) {.signal.}
   proc getNotificationVolume*(self: Service): int {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsVolume
+
     result = 50 #default value
     try:
       let response = status_settings.getVolume()
@@ -686,6 +767,7 @@ QtObject:
         error "error reading volume setting: ", errDescription = response.error.message
         return
       result = response.result.getInt
+      self.settings.notificationsVolume = result
     except Exception as e:
       let errDesription = e.msg
       error "reading volume setting error: ", errDesription
@@ -696,6 +778,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving volume setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsVolume = value
       self.notificationVolumeChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -709,6 +792,9 @@ QtObject:
 
   proc notificationMessagePreviewChanged*(self: Service) {.signal.}
   proc getNotificationMessagePreview*(self: Service): int {.slot.} =
+    if self.initialized:
+      return self.settings.notificationsMessagePreview
+
     result = 2 #default value
     try:
       let response = status_settings.getMessagePreview()
@@ -716,6 +802,7 @@ QtObject:
         error "error reading message preview setting: ", errDescription = response.error.message
         return
       result = response.result.getInt
+      self.settings.notificationsMessagePreview = result
     except Exception as e:
       let errDesription = e.msg
       error "reading message preview setting error: ", errDesription
@@ -726,6 +813,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving message preview setting: ", errDescription = response.error.message
         return
+      self.settings.notificationsMessagePreview = value
       self.notificationMessagePreviewChanged()
     except Exception as e:
       let errDesription = e.msg
@@ -744,6 +832,7 @@ QtObject:
       if(not response.error.isNil):
         error "error saving exemptions setting: ", id = id, errDescription = response.error.message
         return
+      self.notifExemptionsCache[id] = exemptions
       result = true
     except Exception as e:
       let errDesription = e.msg
@@ -762,6 +851,9 @@ QtObject:
       error "saving deleting exemptions setting: ", id = id, errDesription
 
   proc getNotifSettingExemptions*(self: Service, id: string): NotificationsExemptions =
+    if self.notifExemptionsCache.hasKey(id):
+      return self.notifExemptionsCache[id]
+
     #default values
     result.muteAllMessages = false
     result.personalMentions = VALUE_NOTIF_SEND_ALERTS
@@ -795,6 +887,8 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "reading exemptions setting error: ", id = id, errDesription
+
+    self.notifExemptionsCache[id] = result
 
   proc getBio*(self: Service): string =
     self.settings.bio

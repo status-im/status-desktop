@@ -61,7 +61,7 @@ QtObject:
       ModelRole.ActiveMembers.int:"activeMembers",
       ModelRole.Color.int:"color",
       ModelRole.Popularity.int:"popularity",
-      ModelRole.Tags.int:"tags"
+      ModelRole.Tags.int:"tags",
     }.toTable
 
   method data(self: CuratedCommunityModel, index: QModelIndex, role: int): QVariant =
@@ -96,11 +96,7 @@ QtObject:
       of ModelRole.Tags:
         result = newQVariant(item.getTags())
       of ModelRole.Featured:
-        # TODO: replace this with a real value
-        var featured = false
-        if index.row < 3:
-          featured = true
-        result = newQVariant(featured)
+        result = newQVariant(item.getFeatured())
 
   proc findIndexById(self: CuratedCommunityModel, id: string): int =
     for i in 0 ..< self.items.len:

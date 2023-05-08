@@ -1,7 +1,7 @@
-import strformat
+import NimQml, strformat
 
-type
-  WalletAccountItem* = ref object of RootObj
+QtObject:
+  type WalletAccountItem* = ref object of QObject
     name: string
     address: string
     color: string
@@ -10,79 +10,97 @@ type
     path: string
     keyUid: string
 
-proc setup*(self: WalletAccountItem,
-  name: string = "",
-  address: string = "",
-  color: string = "",
-  emoji: string = "",
-  walletType: string = "",
-  path: string = "",
-  keyUid: string = ""
-  ) =
-    self.name = name
-    self.address = address
-    self.color = color
-    self.emoji = emoji
-    self.walletType = walletType
-    self.path = path
-    self.keyUid = keyUid
+  proc setup*(self: WalletAccountItem,
+    name: string = "",
+    address: string = "",
+    color: string = "",
+    emoji: string = "",
+    walletType: string = "",
+    path: string = "",
+    keyUid: string = ""
+    ) =
+      self.QObject.setup
+      self.name = name
+      self.address = address
+      self.color = color
+      self.emoji = emoji
+      self.walletType = walletType
+      self.path = path
+      self.keyUid = keyUid
 
-proc initWalletAccountItem*(
-  name: string = "",
-  address: string = "",
-  color: string = "",
-  emoji: string = "",
-  walletType: string = "",
-  path: string = "",
-  keyUid: string = ""
-  ): WalletAccountItem =
-  result = WalletAccountItem()
-  result.setup(name,
-    address,
-    color,
-    emoji,
-    walletType,
-    path,
-    keyUid)
-  
+  proc delete*(self: WalletAccountItem) =
+      self.QObject.delete
 
-proc `$`*(self: WalletAccountItem): string =
-  result = fmt"""WalletAccountItem(
-    name: {self.name},
-    address: {self.address},
-    color: {self.color},
-    emoji: {self.emoji},
-    walletType: {self.walletType},
-    path: {self.path},
-    keyUid: {self.keyUid},
-    ]"""
+  proc `$`*(self: WalletAccountItem): string =
+    result = fmt"""WalletAccountItem(
+      name: {self.name},
+      address: {self.address},
+      color: {self.color},
+      emoji: {self.emoji},
+      walletType: {self.walletType},
+      path: {self.path},
+      keyUid: {self.keyUid},
+      ]"""
 
-proc name*(self: WalletAccountItem): string {.inline.} =
-  return self.name
+  proc nameChanged*(self: WalletAccountItem) {.signal.}
+  proc name*(self: WalletAccountItem): string {.slot.} =
+    return self.name
+  proc `name=`*(self: WalletAccountItem, value: string) {.inline.} =
+    self.name = value
+    self.nameChanged()
+  QtProperty[string] name:
+    read = name
+    notify = nameChanged
 
-proc `name=`*(self: WalletAccountItem, value: string) {.inline.} =
-  self.name = value
+  proc addressChanged*(self: WalletAccountItem) {.signal.}
+  proc address*(self: WalletAccountItem): string {.slot.} =
+    return self.address
+#  proc setAddress*(self: WalletAccountItem, value: string) {.slot.} =
+#    self.address = value
+#    self.addressChanged()
+  QtProperty[string] address:
+    read = address
+    notify = addressChanged
 
-proc address*(self: WalletAccountItem): string {.inline.} =
-  return self.address
+  proc colorChanged*(self: WalletAccountItem) {.signal.}
+  proc color*(self: WalletAccountItem): string {.slot.} =
+    return self.color
+  proc `color=`*(self: WalletAccountItem, value: string) {.inline.} =
+    self.color = value
+    self.colorChanged()
+  QtProperty[string] color:
+    read = color
+    notify = colorChanged
 
-proc emoji*(self: WalletAccountItem): string {.inline.} =
-  return self.emoji
+  proc emojiChanged*(self: WalletAccountItem) {.signal.}
+  proc emoji*(self: WalletAccountItem): string {.slot.} =
+    return self.emoji
+  proc `emoji=`*(self: WalletAccountItem, value: string) {.inline.} =
+    self.emoji = value
+    self.emojiChanged()
+  QtProperty[string] emoji:
+    read = emoji
+    notify = emojiChanged
 
-proc `emoji=`*(self: WalletAccountItem, value: string) {.inline.} =
-  self.emoji = value
+  proc walletTypeChanged*(self: WalletAccountItem) {.signal.}
+  proc walletType*(self: WalletAccountItem): string {.slot.} =
+    return self.walletType
+  QtProperty[string] walletType:
+    read = walletType
+    notify = walletTypeChanged
 
-proc color*(self: WalletAccountItem): string {.inline.} =
-  return self.color
+  proc pathChanged*(self: WalletAccountItem) {.signal.}
+  proc path*(self: WalletAccountItem): string {.slot.} =
+    return self.path
+  QtProperty[string] path:
+    read = path
+    notify = pathChanged
 
-proc `color=`*(self: WalletAccountItem, value: string) {.inline.} =
-  self.color = value
+  proc keyUidChanged*(self: WalletAccountItem) {.signal.}
+  proc keyUid*(self: WalletAccountItem): string {.slot.} =
+    return self.keyUid
+  QtProperty[string] keyUid:
+    read = keyUid
+    notify = keyUidChanged
 
-proc walletType*(self: WalletAccountItem): string {.inline.} =
-  return self.walletType
 
-proc path*(self: WalletAccountItem): string {.inline.} =
-  return self.path
-
-proc keyUid*(self: WalletAccountItem): string {.inline.} =
-  return self.keyUid

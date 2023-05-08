@@ -19,6 +19,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
 import AppLayouts.Chat.stores 1.0
+import AppLayouts.Chat.controls.community 1.0
 
 import shared.stores 1.0
 import shared.views.chat 1.0
@@ -67,7 +68,6 @@ StatusSectionLayout {
     }
 
     signal backToCommunityClicked
-    signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
 
     //navigate to a specific section and subsection
     function goTo(section: int, subSection: int) {
@@ -84,7 +84,7 @@ StatusSectionLayout {
         ColumnLayout {
             anchors {
                 top: parent.top
-                bottom: footer.top
+                bottom: backToCommunityButton.top
                 bottomMargin: 12
                 topMargin: Style.current.smallPadding
                 horizontalCenter: parent.horizontalCenter
@@ -133,46 +133,24 @@ StatusSectionLayout {
             }
         }
 
-        // TODO: remove me when migration to new settings is done. Only keep back button and anchor to it.
-        ColumnLayout {
-            id: footer
-
+        StatusBaseText {
+            id: backToCommunityButton
+            objectName: "communitySettingsBackToCommunityButton"
             anchors {
                 bottom: parent.bottom
                 bottomMargin: 16
+                horizontalCenter: parent.horizontalCenter
             }
-            width: parent.width
-            spacing: 16
+            text: "<- " + qsTr("Back to community")
+            color: Theme.palette.baseColor1
+            font.pixelSize: 15
+            font.underline: true
 
-            // TODO: remove me when migration to new settings is done
-            StatusBaseText {
-                Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Open legacy popup (to be removed)")
-                color: Theme.palette.baseColor1
-                font.pixelSize: 10
-                font.underline: true
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.openLegacyPopupClicked()
-                }
-            }
-
-            StatusBaseText {
-                objectName: "communitySettingsBackToCommunityButton"
-                Layout.alignment: Qt.AlignHCenter
-                text: "<- " + qsTr("Back to community")
-                color: Theme.palette.baseColor1
-                font.pixelSize: 15
-                font.underline: true
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.backToCommunityClicked()
-                    hoverEnabled: true
-                }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.backToCommunityClicked()
+                hoverEnabled: true
             }
         }
     }
@@ -197,7 +175,6 @@ StatusSectionLayout {
                 tags: root.rootStore.communityTags
                 selectedTags: root.filteredSelectedTags
                 archiveSupportEnabled: root.community.historyArchiveSupportEnabled
-                encrypted: root.community.encrypted
                 requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
                 pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
                 editable: root.community.amISectionAdmin
@@ -301,7 +278,6 @@ StatusSectionLayout {
                     rootStore.communityTokensStore
 
                 tokensModel: root.community.communityTokens
-                holdersModel: communityTokensStore.holdersModel
                 layer1Networks: communityTokensStore.layer1Networks
                 layer2Networks: communityTokensStore.layer2Networks
                 testNetworks: communityTokensStore.testNetworks
@@ -327,7 +303,7 @@ StatusSectionLayout {
                 }
                 onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(chainId)
                 onRemoteSelfDestructCollectibles: {
-                    communityTokensStore.remoteSelfDestructCollectibles(holdersModel,
+                    communityTokensStore.remoteSelfDestructCollectibles(selfDestructTokensList,
                                                                         chainId,
                                                                         accountName,
                                                                         accountAddress)
@@ -355,7 +331,11 @@ StatusSectionLayout {
                         mintPanel.isFeeLoading = true
                     }
 
-                    function onDeploymentStateChanged(status, url) {
+                    function onDeploymentStateChanged(communityId, status, url) {
+                        if (root.community.id !== communityId) {
+                            return
+                        }
+
                         let title = ""
                         let loading = false
                         let type = Constants.ephemeralNotificationType.normal
@@ -391,8 +371,48 @@ StatusSectionLayout {
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
-                assetsModel: rootStore.assetsModel
-                collectiblesModel: rootStore.collectiblesModel
+                assetsModel: ListModel {}
+
+                readonly property var communityTokens: root.community.communityTokens
+
+                Loader {
+                    id: modelLoader
+                    active: airdropPanel.communityTokens
+
+                    sourceComponent: SortFilterProxyModel {
+
+                        sourceModel: airdropPanel.communityTokens
+
+                        proxyRoles: [
+                            ExpressionRole {
+                                name: "category"
+
+                                // Singleton cannot be used directly in the epression
+                                readonly property int category: TokenCategories.Category.Own
+                                expression: category
+                            },
+                            ExpressionRole {
+                                name: "iconSource"
+                                expression: model.image
+                            },
+                            ExpressionRole {
+                                name: "key"
+                                expression: model.symbol
+                            }
+                        ]
+                    }
+                }
+
+                collectiblesModel: modelLoader.item
+
+                membersModel: {
+                    const chatContentModule = root.rootStore.currentChatContentModule()
+                    if (!chatContentModule || !chatContentModule.usersModule) {
+                        // New communities have no chats, so no chatContentModule
+                        return null
+                    }
+                    return chatContentModule.usersModule.model
+                }
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
                 onAirdropClicked: communityTokensStore.airdrop(root.community.id, airdropTokens, addresses)
@@ -434,7 +454,7 @@ StatusSectionLayout {
                 if(d.currentItem && d.currentItem.goTo) {
                     d.currentItem.goTo(subSection)
                 }
-            } 
+            }
         }
     }
 

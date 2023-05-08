@@ -33,6 +33,6 @@ QtObject:
   proc updateDeployFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
     self.deployFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
 
-  proc deploymentStateChanged*(self: View, status: int, url: string) {.signal.}
-  proc emitDeploymentStateChanged*(self: View, status: int, url: string) =
-    self.deploymentStateChanged(status, url)
+  proc deploymentStateChanged*(self: View, communityId: string, status: int, url: string) {.signal.}
+  proc emitDeploymentStateChanged*(self: View, communityId: string, status: int, url: string) =
+    self.deploymentStateChanged(communityId, status, url)

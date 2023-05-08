@@ -21,6 +21,8 @@ QtObject {
     property var assets: walletSectionAssets.assets
     property bool assetsLoading: walletSectionAssets.assetsLoading
     property var accounts: walletSectionAccounts.accounts
+    property var receiveAccounts: walletSectionSend.accounts
+    property var selectedReceiveAccount: walletSectionSend.selectedReceiveAccount
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
@@ -125,12 +127,9 @@ QtObject {
 //        walletModel.setInitialRange()
     }
 
-    function switchAccount(newIndex) {
-        walletSection.switchAccount(newIndex)
-    }
 
-    function switchAccountByAddress(address) {
-        walletSection.switchAccountByAddress(address)
+    function setFilterAddress(address) {
+        walletSection.setFilterAddress(address)
     }
 
     function deleteAccount(keyUid, address) {
@@ -204,5 +203,9 @@ QtObject {
 
     function runEditAccountPopup(address) {
         walletSection.runEditAccountPopup(address)
+    }
+
+    function switchReceiveAccount(index) {
+        walletSectionSend.switchReceiveAccount(index)
     }
 }

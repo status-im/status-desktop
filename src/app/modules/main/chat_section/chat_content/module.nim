@@ -166,7 +166,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
   var transactionContract = message.transactionParameters.contract
   var transactionValue = message.transactionParameters.value
   var isCurrentUser = contactDetails.isCurrentUser
-  if(message.contentType.ContentType == ContentType.Transaction):
+  if(message.contentType == ContentType.Transaction):
     (transactionContract, transactionValue) = self.controller.getTransactionDetails(message)
     if message.transactionParameters.fromAddress != "":
       isCurrentUser = self.currentUserWalletContainsAddress(message.transactionParameters.fromAddress)
@@ -190,7 +190,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     message.seen,
     timestamp = message.timestamp,
     clock = message.clock,
-    message.contentType.ContentType,
+    message.contentType,
     message.messageType,
     message.contactRequestState,
     message.sticker.url,

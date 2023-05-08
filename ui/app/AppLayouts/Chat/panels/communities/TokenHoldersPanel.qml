@@ -15,14 +15,14 @@ import shared.controls 1.0
 Control {
     id: root
 
-    // Expected roles: ensName, walletAddress, imageSource, amount, selfDestructAmount and selfDestruct
+    // Expected roles: name, walletAddress, imageSource, amount
     property var model
 
     property string tokenName
     property bool isSelectorMode: false
 
-    signal selfDestructChanged()
-
+    signal selfDestructAmountChanged(string walletAddress, int amount)
+    signal selfDestructRemoved(string walletAddress)
 
     QtObject {
         id: d
@@ -42,7 +42,7 @@ Control {
                 enabled: searcher.enabled
                 expression: {
                     searcher.text
-                    return model.ensName.toLowerCase().includes(searcher.text.toLowerCase()) ||
+                    return model.name.toLowerCase().includes(searcher.text.toLowerCase()) ||
                             model.walletAddress.toLowerCase().includes(searcher.text.toLowerCase())
                 }
             }
@@ -57,7 +57,7 @@ Control {
             bottomPadding: 0
             minimumHeight: 36 // by design
             maximumHeight: minimumHeight
-            enabled: root.model.count > 0
+            enabled: root.model && root.model.count > 0
             placeholderText: enabled ? qsTr("Search") : qsTr("No placeholders to search")
         }
 
@@ -81,8 +81,8 @@ Control {
                 spacing: Style.current.padding
 
                 StatusListItem {
-                    readonly property bool unknownHolder: model.ensName === ""
-                    readonly property string formattedTitle: unknownHolder ? "?" : model.ensName
+                    readonly property bool unknownHolder: model.name === ""
+                    readonly property string formattedTitle: unknownHolder ? "?" : model.name
 
                     Layout.fillWidth: true
 
@@ -100,10 +100,8 @@ Control {
 
                 StatusComboBox {
                     id: combo
-
-                    Layout.preferredWidth: 70
+                    Layout.preferredWidth: 88
                     Layout.preferredHeight: 44
-
                     visible: root.isSelectorMode && amount > 1
                     control.spacing: Style.current.halfPadding / 2
                     model: amount
@@ -125,8 +123,8 @@ Control {
                     }
 
                     control.onDisplayTextChanged: {
-                        selfDestructAmount = combo.currentIndex + 1
-                        root.selfDestructChanged()
+                        if(checkBox.checked)
+                            root.selfDestructAmountChanged(walletAddress, Number(combo.currentIndex) + 1)
                     }
                 }
 
@@ -135,11 +133,12 @@ Control {
 
                     Layout.leftMargin: Style.current.padding
                     visible: root.isSelectorMode
-                    checked: root.isSelectorMode ? selfDestruct : false
                     padding: 0
                     onCheckStateChanged: {
-                        selfDestruct = checked
-                        root.selfDestructChanged()
+                        if(checked)
+                            root.selfDestructAmountChanged(model.walletAddress, Number(combo.currentIndex) + 1)
+                        else
+                            root.selfDestructRemoved(model.walletAddress)
                     }
                 }
             }

@@ -81,3 +81,13 @@ communitySettings_EditCommunity_ColorPicker_Button = {"container": communitySett
 # Community color popup:
 communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelHexInput", "type": "TextEdit",  "visible": True}
 communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelSelectColorButton", "type": "StatusButton", "visible": True}
+
+# Community permissions:
+communityPermissions_welcome_title = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
+communityPermissions_welcome_image = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsImage", "type": "Image", "visible": True}
+communityPermissions_welcome_settings_title = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
+communityPermissions_welcome_settings_subtitle = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsSubtitle", "type": "StatusBaseText", "visible": True}
+communityPermissions_welcome_settings_checkList_element1 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_0", "type": "StatusBaseText", "visible": True}
+communityPermissions_welcome_settings_checkList_element2 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_1", "type": "StatusBaseText", "visible": True}
+communityPermissions_welcome_settings_checkList_element3 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_2", "type": "StatusBaseText", "visible": True}
+communityPermissions_welcome_settings_add_new_permission = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsAddNewPermissionButton", "type": "StatusButton", "visible": True}

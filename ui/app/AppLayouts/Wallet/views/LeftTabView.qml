@@ -268,7 +268,7 @@ Rectangle {
                         accountContextMenu.item.popup(mouse.x, mouse.y)
                         return
                     }
-                    changeSelectedAccount(index)
+                    changeSelectedAccount(model.address)
                     showSavedAddresses = false
                 }
                 components: [

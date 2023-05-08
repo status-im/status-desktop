@@ -59,9 +59,7 @@ GridLayout {
             objectName: "AddAccountPopup-DerivationPathInput"
 
             Layout.fillWidth: true
-
-            initialDerivationPath: root.store.addAccountModule.derivationPath
-            initialBasePath: root.store.selectedRootPath
+            enabled: root.store.derivedAddressModel.count > 0
 
             levelsLimit: 4  // Allow only 5 separators in the derivation path
 
@@ -103,13 +101,11 @@ GridLayout {
 
                 onSelected: {
                     root.store.changeRootDerivationPath(rootPath)
+                    derivationPathInput.resetDerivationPath(root.store.selectedRootPath, root.store.addAccountModule.derivationPath)
                 }
             }
-        }
 
-        Connections {
-            target: root.store
-            function onSelectedRootPathChanged() {
+            Component.onCompleted: {
                 derivationPathInput.resetDerivationPath(root.store.selectedRootPath, root.store.addAccountModule.derivationPath)
             }
         }

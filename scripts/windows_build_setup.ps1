@@ -18,7 +18,7 @@ function Install-Dependencies {
     scoop install --global `
         7zip git dos2unix findutils `
         wget rcedit inno-setup `
-        make cmake gcc go@1.19.5
+        make cmake gcc go@1.20.4
     scoop bucket add extras
     scoop install --global vcredist2019
 }

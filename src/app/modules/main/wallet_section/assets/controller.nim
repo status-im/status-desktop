@@ -34,17 +34,11 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
-proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
-  return self.walletAccountService.getWalletAccounts()
-
-proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
-  return self.walletAccountService.getWalletAccount(accountIndex)
+proc getWalletAccountByAddress*(self: Controller, address: string): wallet_account_service.WalletAccountDto =
+  return self.walletAccountService.getAccountByAddress(address)
 
 proc getChainIds*(self: Controller): seq[int] = 
   return self.networkService.getNetworks().map(n => n.chainId)
-
-proc getEnabledChainIds*(self: Controller): seq[int] = 
-  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()

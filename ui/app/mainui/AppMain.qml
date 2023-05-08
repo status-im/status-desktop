@@ -55,6 +55,7 @@ Item {
         openCreateChat: createChatView.opened
         networkConnectionStore: appMain.networkConnectionStore
     }
+    property var createChatPropertiesStore: ChatStores.CreateChatPropertiesStore {}
     property ActivityCenterStore activityCenterStore: ActivityCenterStore {}
     property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
     property CommunityTokensStore communityTokensStore: CommunityTokensStore {}
@@ -885,6 +886,7 @@ Item {
                                     anchors.centerIn: parent
                                     spacing: 6
                                     StatusBaseText {
+                                        anchors.verticalCenter: parent.verticalCenter
                                         text: qsTr("Loading sections...")
                                     }
                                     LoadingAnimation { anchors.verticalCenter: parent.verticalCenter }
@@ -925,6 +927,7 @@ Item {
                                     chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                                     networkConnectionStore: appMain.networkConnectionStore
                                 }
+                                createChatPropertiesStore: appMain.createChatPropertiesStore
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
 
@@ -1094,6 +1097,7 @@ Item {
                             openCreateChat: createChatView.opened
                             chatCommunitySectionModule: appMain.rootStore.mainModuleInst.getChatSectionModule()
                         }
+                        createChatPropertiesStore: appMain.createChatPropertiesStore
                         emojiPopup: statusEmojiPopup.item
                         stickersPopup: statusStickersPopupLoader.item
                     }
@@ -1285,6 +1289,7 @@ Item {
         spacing: 8
         verticalLayoutDirection: ListView.BottomToTop
         model: appMain.rootStore.mainModuleInst.ephemeralNotificationModel
+        clip: false
 
         delegate: StatusToastMessage {
             primaryText: model.title

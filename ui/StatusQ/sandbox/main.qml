@@ -1,11 +1,11 @@
-import QtQuick 2.14
-import QtQuick.Window 2.14
-import QtQuick.Controls 2.14
-import QtGraphicalEffects 1.13
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
+import QtQuick.Layouts 1.15
 import Qt.labs.settings 1.0
-import QtQml.Models 2.14
-import QtMultimedia 5.14
+import QtQml.Models 2.15
+import QtMultimedia 5.15
 
 import StatusQ 0.1 // https://github.com/status-im/status-desktop/issues/10218
 
@@ -22,10 +22,10 @@ import "demoapp/data" 1.0
 
 StatusWindow {
     id: rootWindow
-    width: Qt.platform.os == "ios" || Qt.platform.os == "android" ? Screen.width
-                                                                  :  1224
-    height: Qt.platform.os == "ios" || Qt.platform.os == "android" ? Screen.height
-                                                                   :840
+
+    width: 1224
+    height: 840
+
     visible: true
     title: qsTr("StatusQ Documentation App")
 
@@ -36,8 +36,6 @@ StatusWindow {
     readonly property real minFactor: 0.5
 
     property real factor: 1.0
-
-    Component.onCompleted: rootWindow.updatePosition()
 
     QtObject {
         id: appSectionType
@@ -592,6 +590,12 @@ StatusWindow {
 
     Settings {
         id: storeSettings
+
+        property alias x: rootWindow.x
+        property alias y: rootWindow.y
+        property alias width: rootWindow.width
+        property alias height: rootWindow.height
+
         property string selected: ""
         property string selectedExample: ""
         property bool lightTheme: true

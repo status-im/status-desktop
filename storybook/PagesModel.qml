@@ -18,6 +18,10 @@ ListModel {
          section: "Views"
     }
     ListElement {
+         title: "CommunityNewAirdropView"
+         section: "Views"
+    }
+    ListElement {
          title: "ProfileFetchingView"
          section: "Views"
     }
@@ -131,6 +135,10 @@ ListModel {
     }
     ListElement {
         title: "TokenPanel"
+        section: "Panels"
+    }
+    ListElement {
+        title: "SequenceColumnLayout"
         section: "Panels"
     }
     ListElement {

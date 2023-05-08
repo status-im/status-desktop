@@ -328,12 +328,6 @@ SettingsContentBase {
         }
 
         // SYNC WAKU SECTION
-        StatusSectionHeadline {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            text: qsTr("Message syncing")
-        }
 
         StatusListItem {
             Layout.fillWidth: true
@@ -354,34 +348,6 @@ SettingsContentBase {
                 messagingStore: root.messagingStore
                 advancedStore: root.advancedStore
             }
-        }
-
-        StatusListItem {
-            Layout.fillWidth: true
-            title: qsTr("Waku Nodes")
-            visible: root.advancedStore.isWakuV2
-            components: [
-                StatusIcon {
-                    icon: "next"
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            onClicked: Global.openPopup(wakuNodesModalComponent)
-        }
-
-        Component {
-            id: wakuNodesModalComponent
-            WakuNodesModal {
-                messagingStore: root.messagingStore
-                advancedStore: root.advancedStore
-            }
-        }
-
-        StatusSectionHeadline {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            text: qsTr("For security reasons, private chat history won't be synced.")
         }
     }
 }

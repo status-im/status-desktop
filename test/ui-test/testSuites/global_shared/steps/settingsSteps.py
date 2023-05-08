@@ -63,6 +63,10 @@ def step(context: any, settings_type:str):
 def step(context: any, settings_type:str):
     _settingsScreen.toggle_experimental_feature(settings_type)
 
+@Given("the user opens the community named \"|any|\"")
+def step(context, community_name:str):
+    _settingsScreen.open_community(community_name)    
+    
 #########################
 ### ACTIONS region:
 #########################
@@ -133,8 +137,7 @@ def step(context, native):
 
 @When("the user clicks on Sign out and Quit")
 def step(context: any):
-    ctx = currentApplicationContext()
-    _settingsScreen.sign_out_and_quit_the_app(ctx.pid)
+    _settingsScreen.menu.sign_out_and_quit()
 
 @Given("the user opens the communities settings")
 @When("the user opens the communities settings")

@@ -68,7 +68,7 @@ Control {
         }
 
         StatusBaseText {
-            visible: !!root.amount
+            visible: !!root.amount && !root.selected
             text: root.amount
             color: Theme.palette.baseColor1
             font.pixelSize: 12

@@ -22,7 +22,6 @@ Item {
     property var assets
     property var selectedAsset
     property string defaultToken
-    property string userSelectedToken
     property string currentCurrencySymbol
     property string placeholderText
     property var hoveredToken
@@ -155,7 +154,6 @@ Item {
             width: comboBox.control.popup.width
             getNetworkIcon: root.getNetworkIcon
             onTokenSelected: {
-                userSelectedToken = selectedToken.symbol
                 selectedAsset = selectedToken
                 comboBox.control.popup.close()
             }

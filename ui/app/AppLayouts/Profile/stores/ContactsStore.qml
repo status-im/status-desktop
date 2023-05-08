@@ -77,10 +77,6 @@ QtObject {
         root.contactsModule.dismissContactRequest(pubKey, contactRequestId)
     }
 
-    function removeContactRequestRejection(pubKey) {
-        root.contactsModule.removeContactRequestRejection(pubKey)
-    }
-
     function markUntrustworthy(pubKey) {
         root.contactsModule.markUntrustworthy(pubKey)
     }

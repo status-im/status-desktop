@@ -73,6 +73,7 @@ Item {
             }
 
             StatusButton {
+                objectName: "welcomeSettingsAddNewPermissionButton"
                 visible: root.headerButtonVisible
                 text: root.headerButtonText
                 Layout.preferredHeight: 44

@@ -3,6 +3,7 @@ import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
 import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../main/communities/tokens/models/token_item
+import ../../../app_service/service/collectible/dto
 
 import ../../global/global_singleton
 
@@ -215,8 +216,14 @@ proc hasNotification*(self: SectionItem): bool {.inline.} =
 proc `hasNotification=`*(self: var SectionItem, value: bool) {.inline.} =
   self.hasNotification = value
 
+proc setHasNotification*(self: var SectionItem, value: bool) {.inline.} =
+  self.hasNotification = value
+
 proc notificationsCount*(self: SectionItem): int {.inline.} =
   self.notificationsCount
+
+proc setNotificationsCount*(self: var SectionItem, value: int) {.inline.} =
+  self.notificationsCount = value
 
 proc `notificationsCount=`*(self: var SectionItem, value: int) {.inline.} =
   self.notificationsCount = value
@@ -315,8 +322,11 @@ proc encrypted*(self: SectionItem): bool {.inline.} =
 proc appendCommunityToken*(self: SectionItem, item: TokenItem) {.inline.} =
   self.communityTokensModel.appendItem(item)
 
-proc updateCommunityTokenDeployState*(self: SectionItem, contractAddress: string, deployState: DeployState) {.inline.} =
-  self.communityTokensModel.updateDeployState(contractAddress, deployState)
+proc updateCommunityTokenDeployState*(self: SectionItem, chainId: int, contractAddress: string, deployState: DeployState) {.inline.} =
+  self.communityTokensModel.updateDeployState(chainId, contractAddress, deployState)
+
+proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.inline.} =
+  self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners)
 
 proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.inline.} =
   self.communityTokensModel

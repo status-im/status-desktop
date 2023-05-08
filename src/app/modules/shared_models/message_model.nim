@@ -243,7 +243,7 @@ QtObject:
     of ModelRole.QuotedMessageParsedText:
       result = newQVariant(item.quotedMessageParsedText)
     of ModelRole.QuotedMessageContentType:
-      result = newQVariant(item.quotedMessageContentType)
+      result = newQVariant(item.quotedMessageContentType.int)
     of ModelRole.QuotedMessageDeleted:
       result = newQVariant(item.quotedMessageDeleted)
     of ModelRole.QuotedMessageAuthorName:
@@ -360,7 +360,7 @@ QtObject:
           oldItem.quotedMessageAuthorAvatar = newItem.senderIcon
           oldItem.quotedMessageParsedText = newItem.messageText
           oldItem.quotedMessageText = newItem.unparsedText
-          oldItem.quotedMessageContentType = newItem.contentType.int
+          oldItem.quotedMessageContentType = newItem.contentType
           let index = self.createIndex(i, 0, nil)
           self.dataChanged(index, index, @[
             ModelRole.QuotedMessageFrom.int,
@@ -603,7 +603,7 @@ QtObject:
       updatedMsg: string,
       updatedRawMsg: string,
       updatedParsedText: seq[ParsedText],
-      contentType: int,
+      contentType: ContentType,
       mentioned: bool,
       messageContainsMentions: bool,
       links: seq[string],

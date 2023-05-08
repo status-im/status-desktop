@@ -8,13 +8,68 @@
 # * \brief   Sign Up and Login for new users to the app.
 # *****************************************************************************/
 
-from array import array
-from enum import Enum
 import sys
+from abc import abstractmethod
+from enum import Enum
+
+import common.Common as common
+from common.SeedUtils import *
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
-from common.SeedUtils import *
-import common.Common as common
+
+
+class OnboardingBaseScreen(BaseElement):
+
+    def __init__(self, object_name):
+        super(OnboardingBaseScreen, self).__init__(object_name)
+        self._back_button = Button('onboarding_back_button')
+
+    @abstractmethod
+    def back(self):
+        pass
+
+
+class CreatePasswordView(OnboardingBaseScreen):
+
+    def __init__(self):
+        super(CreatePasswordView, self).__init__('mainWindow_CreatePasswordView')
+        self._new_password_text_field = TextEdit('onboarding_newPsw_Input')
+        self._confirm_password_text_field = TextEdit('onboarding_confirmPsw_Input')
+        self._create_button = Button('onboarding_create_password_button')
+        self._password_strength_indicator = BaseElement('onboarding_strengthInditactor')
+
+    @property
+    def new_password(self) -> str:
+        return self._new_password_text_field.text
+
+    @new_password.setter
+    def new_password(self, value: str):
+        self._new_password_text_field.text = value
+
+    @property
+    def confirm_password(self) -> str:
+        return self._new_password_text_field.text
+
+    @confirm_password.setter
+    def confirm_password(self, value: str):
+        self._new_password_text_field.text = value
+
+    @property
+    def password_strength_indicator(self):
+        return self._password_strength_indicator.image
+    
+    def is_password_strength_indicator_equal(self, indicator : str):
+        verify_text_matching(self._password_strength_indicator.symbolic_name, indicator)
+
+    def create_password(self, value: str):
+        self.new_password.text = value
+        self.confirm_password.text = value
+        self._create_button.click()
+        # TODO: return Confirm Password View
+
+    def back(self):
+        self._back_button.click()
+        # TODO: return Details View
 
 
 class AgreementPopUp(Enum):
@@ -22,6 +77,7 @@ class AgreementPopUp(Enum):
     ACKNOWLEDGE_CHECKBOX: str = "acknowledge_checkbox"
     TERMS_OF_USE_CHECK_BOX: str = "termsOfUseCheckBox_StatusCheckBox"
     GET_STARTED_BUTTON: str = "getStartedStatusButton_StatusButton"
+
 
 class SignUpComponents(Enum):
     NEW_TO_STATUS: str = "mainWindow_I_am_new_to_Status_StatusBaseText"
@@ -44,6 +100,7 @@ class SignUpComponents(Enum):
     WELCOME_SCREEN_CHAT_KEY_TEXT: str = "mainWindow_WelcomeScreen_ChatKeyText"
     BACK_BTN: str = "onboarding_back_button"
 
+
 class SeedPhraseComponents(Enum):
     IMPORT_A_SEED_TEXT: str = "import_a_seed_phrase_StatusBaseText"
     INVALID_SEED_TEXT: str = "onboarding_InvalidSeed_Text"
@@ -53,6 +110,7 @@ class SeedPhraseComponents(Enum):
     TWENTY_FOUR_BUTTON: str = "switchTabBar_24_words_Button"
     SEEDS_WORDS_TEXTFIELD_template: str = "onboarding_SeedPhrase_Input_TextField_"
     SUBMIT_BUTTON: str = "seedPhraseView_Submit_Button"
+
 
 class PasswordStrengthPossibilities(Enum):
     LOWER_VERY_WEAK = "lower_very_weak"
@@ -64,13 +122,16 @@ class PasswordStrengthPossibilities(Enum):
     NUMBERS_SYMBOLS_LOWER_UPPER_GOOD = "numbers_symbols_lower_upper_good"
     NUMBERS_SYMBOLS_LOWER_UPPER_GREAT = "numbers_symbols_lower_upper_great"
 
+
 class MainScreen(Enum):
     SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
+
 
 class LoginView(Enum):
     LOGIN_VIEW_USER_IMAGE: str = "loginView_userImage"
     PASSWORD_INPUT = "loginView_passwordInput"
     SUBMIT_BTN = "loginView_submitBtn"
+
 
 class StatusWelcomeScreen:
 

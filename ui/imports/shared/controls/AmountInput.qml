@@ -16,6 +16,9 @@ Input {
     readonly property bool valid: validationError.length === 0
     property bool allowDecimals: true
 
+    property bool validateMaximumAmount: false
+    property real maximumAmount: 0
+
     validationErrorTopMargin: 8
     fontPixelSize: 13
     customHeight: 36
@@ -28,6 +31,10 @@ Input {
         root.text = LocaleUtils.numberToLocaleString(amount, -1, root.locale)
     }
 
+    onTextChanged: d.validate()
+    onValidateMaximumAmountChanged: d.validate()
+    onMaximumAmountChanged: d.validate()
+
     QtObject {
         id: d
 
@@ -36,6 +43,33 @@ Input {
         function getEffectiveDigitsCount(str) {
             const digits = LocaleUtils.getLocalizedDigitsCount(text, root.locale)
             return str.startsWith(locale.decimalPoint) ? digits + 1 : digits
+        }
+
+        function validate() {
+            if (!root.allowDecimals)
+                root.text = root.text.replace(root.locale.decimalPoint, "")
+
+            if(root.text.length === 0) {
+                d.amount = 0
+                root.validationError = ""
+                return
+            }
+
+            if (d.getEffectiveDigitsCount(text) > root.maximumLength) {
+                root.validationError = qsTr("The maximum number of characters is %1").arg(root.maximumLength)
+                return
+            }
+
+            const amount = LocaleUtils.numberFromLocaleString(root.text, root.locale)
+            if (isNaN(amount)) {
+                d.amount = 0
+                root.validationError = qsTr("Invalid amount format")
+            } else if (root.validateMaximumAmount && amount > root.maximumAmount) {
+                root.validationError = qsTr("Amount exceeds balance")
+            } else {
+                d.amount = amount
+                root.validationError = ""
+            }
         }
     }
 
@@ -46,31 +80,6 @@ Input {
         bottom: 0
         notation: DoubleValidator.StandardNotation
         locale: root.locale.name
-    }
-
-    onTextChanged: {
-        if (!allowDecimals)
-            text = text.replace(root.locale.decimalPoint, "")
-
-        if(text.length === 0) {
-            d.amount = 0
-            root.validationError = ""
-            return
-        }
-
-        if (d.getEffectiveDigitsCount(text) > root.maximumLength) {
-            root.validationError = qsTr("The maximum number of characters is %1").arg(root.maximumLength)
-            return
-        }
-
-        let amount = LocaleUtils.numberFromLocaleString(text, root.locale)
-        if (isNaN(amount)) {
-            d.amount = 0
-            root.validationError = qsTr("Invalid amount format")
-        } else {
-            d.amount = amount
-            root.validationError = ""
-        }
     }
 
     StatusBaseText {

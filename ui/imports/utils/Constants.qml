@@ -407,6 +407,7 @@ QtObject {
         readonly property int gapType: 10
         readonly property int contactRequestType: 11
         readonly property int discordMessageType: 12
+        readonly property int systemMessagePinnedMessage: 14
     }
 
     readonly property QtObject messageModelRoles: QtObject {
@@ -705,11 +706,6 @@ QtObject {
     readonly property int communityChatInvitationOnlyAccess: 2
     readonly property int communityChatOnRequestAccess: 3
 
-    readonly property int contactRequestStateNone: 0
-    readonly property int contactRequestStatePending: 1
-    readonly property int contactRequestStateAccepted: 2
-    readonly property int contactRequestStateDismissed: 3
-
     readonly property int maxNbDaysToFetch: 30
     readonly property int fetchRangeLast24Hours: 86400
     readonly property int fetchRangeLast2Days: 172800
@@ -898,6 +894,14 @@ QtObject {
           Deployed
     }
 
+    enum ContactRequestState {
+        None = 0,
+        Mutual = 1,
+        Sent = 2,
+        Received = 3,
+        Dismissed = 4
+    }
+
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"
     }
@@ -945,8 +949,9 @@ QtObject {
     readonly property string expired: "expired"
     readonly property string failedResending: "failedResending"
 
-    readonly property var preDefinedWalletAccountColors:[ StatusColors.colors['black'],
-        StatusColors.colors['grey'],
+    readonly property var preDefinedWalletAccountColors:[
+        StatusColors.colors['black'],
+        StatusColors.colors['white'],
         StatusColors.colors['blue2'],
         StatusColors.colors['purple'],
         StatusColors.colors['cyan'],
@@ -956,7 +961,8 @@ QtObject {
         StatusColors.colors['green2'],
         StatusColors.colors['moss'],
         StatusColors.colors['brown'],
-        StatusColors.colors['brown2'] ]
+        StatusColors.colors['brown2']
+    ]
 
     readonly property QtObject appTranslatableConstants: QtObject {
         readonly property string loginAccountsListAddNewUser: "LOGIN-ACCOUNTS-LIST-ADD-NEW-USER"

@@ -165,10 +165,6 @@ SplitView {
                                 logs.logEvent("contactsStore::removeTrustStatus", ["publicKey"], arguments)
                             }
 
-                            function removeContactRequestRejection(publicKey) {
-                                logs.logEvent("contactsStore::removeContactRequestRejection", ["publicKey"], arguments)
-                            }
-
                             function verifiedUntrustworthy(publicKey) {
                                 logs.logEvent("contactsStore::verifiedUntrustworthy", ["publicKey"], arguments)
                             }
@@ -214,8 +210,8 @@ SplitView {
                         }
 
                         walletStore: QtObject {
-                            function switchAccountByAddress(address) {
-                                logs.logEvent("walletStore::switchAccountByAddress", ["address"], arguments)
+                            function setFilterAddress(address) {
+                                logs.logEvent("walletStore::setFilterAddress", ["address"], arguments)
                             }
 
                             function selectCollectible(slug, id) {

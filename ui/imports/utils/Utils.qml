@@ -435,7 +435,9 @@ QtObject {
 
     function isEnsVerified(publicKey) {
         if (publicKey === "" || !isChatKey(publicKey) )
-            return
+            return false
+        if (!mainModuleInst)
+            return false
         return mainModuleInst.isEnsVerified(publicKey)
     }
 
@@ -652,6 +654,18 @@ QtObject {
         }
 
         return key
+    }
+
+    function dropUserLinkPrefix(text) {
+        if (text.startsWith(Constants.userLinkPrefix))
+            text = text.slice(Constants.userLinkPrefix.length)
+        return text
+    }
+
+    function dropCommunityLinkPrefix(text) {
+        if (text.startsWith(Constants.communityLinkPrefix))
+            text = text.slice(Constants.communityLinkPrefix.length)
+        return text
     }
 
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this

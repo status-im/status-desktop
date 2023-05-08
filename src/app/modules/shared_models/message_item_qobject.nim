@@ -42,7 +42,7 @@ QtObject:
   QtProperty[string] quotedMessageParsedText:
     read = quotedMessageParsedText
 
-  proc quotedMessageContentType*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.quotedMessageContentType
+  proc quotedMessageContentType*(self: MessageItem): int {.slot.} = result = ?.self.messageItem.quotedMessageContentType.int
   QtProperty[int] quotedMessageContentType:
     read = quotedMessageContentType
 

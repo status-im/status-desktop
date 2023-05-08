@@ -7,6 +7,7 @@ import ../../../app/global/global_singleton
 import ../../../backend/accounts as status_accounts
 import ../../../backend/messages as status_go
 import ../contacts/service as contact_service
+import ../chat/service as chat_service
 import ../token/service as token_service
 import ../network/service as network_service
 import ../wallet_account/service as wallet_account_service
@@ -131,6 +132,7 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
+    chatService: chat_service.Service
     contactService: contact_service.Service
     tokenService: token_service.Service
     walletAccountService: wallet_account_service.Service
@@ -145,6 +147,7 @@ QtObject:
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
+    chatService: chat_service.Service,
     contactService: contact_service.Service,
     tokenService: token_service.Service,
     walletAccountService: wallet_account_service.Service,
@@ -154,6 +157,7 @@ QtObject:
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
+    result.chatService = chatService
     result.contactService = contactService
     result.tokenService = tokenService
     result.walletAccountService = walletAccountService
@@ -270,6 +274,12 @@ QtObject:
       # Ignore 1-1 chats for which we are not contact
       if(chats[i].chatType == ChatType.OneToOne and not self.contactService.getContactById(chatId).isContact):
         continue
+
+      
+      if self.chatService.getChatById(chats[i].id, showWarning = false).id == "":
+        # Chat is not present in the chat cache. We need to add it first
+        self.chatService.updateOrAddChat(chats[i])
+        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
 
       var chatMessages: seq[MessageDto]
       for msg in messages:

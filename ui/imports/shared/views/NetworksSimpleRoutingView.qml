@@ -131,7 +131,7 @@ RowLayout {
                 rightPadding: 5
                 implicitWidth: 410
                 title: chainName
-                property bool tokenBalanceOnChainValid: selectedAccount && selectedAccount !== undefined && selectedAsset !== undefined
+                property bool tokenBalanceOnChainValid: selectedAccount && selectedAccount !== undefined && selectedAsset && selectedAsset !== undefined
                 property double tokenBalanceOnChain: tokenBalanceOnChainValid ? root.store.getTokenBalanceOnChain(selectedAccount, chainId, selectedAsset.symbol).amount : 0.0
                 subTitle: tokenBalanceOnChainValid ? root.formatCurrencyAmount(tokenBalanceOnChain, selectedAsset.symbol) : "N/A"
                 statusListItemSubTitle.color: Theme.palette.primaryColor1

@@ -36,7 +36,6 @@ type
 
   ChatUpdateArgs* = ref object of Args
     chats*: seq[ChatDto]
-    messages*: seq[MessageDto]
 
   CreatedChatArgs* = ref object of Args
     chat*: ChatDto
@@ -87,9 +86,7 @@ type
 
 # Signals which may be emitted by this service:
 const SIGNAL_CHANNEL_GROUPS_LOADED* = "channelGroupsLoaded"
-const SIGNAL_CHATS_LOADED* = "chatsLoaded"
 const SIGNAL_CHANNEL_GROUPS_LOADING_FAILED* = "channelGroupsLoadingFailed"
-const SIGNAL_CHATS_LOADING_FAILED* = "chatsLoadingFailed"
 const SIGNAL_CHAT_UPDATE* = "chatUpdate"
 const SIGNAL_CHAT_LEFT* = "channelLeft"
 const SIGNAL_SENDING_FAILED* = "messageSendingFailed"
@@ -135,7 +132,7 @@ QtObject:
   # Forward declarations
   proc updateOrAddChat*(self: Service, chat: ChatDto)
   proc hydrateChannelGroups*(self: Service, data: JsonNode)
-  proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto)
+  proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto, isCommunityChannelGroup: bool = false)
 
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
@@ -151,10 +148,9 @@ QtObject:
             # Handling members update
             if self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].members != chatDto.members:
               self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chatDto.id, members: chatDto.members))
-
             self.updateOrAddChat(chatDto)
 
-        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(messages: receivedData.messages, chats: chats))
+        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
 
       if (receivedData.clearedHistories.len > 0):
         for clearedHistoryDto in receivedData.clearedHistories:
@@ -163,8 +159,8 @@ QtObject:
       # Handling community updates
       if (receivedData.communities.len > 0):
         for community in receivedData.communities:
-          if (community.joined):
-            self.updateOrAddChannelGroup(community.toChannelGroupDto())
+          if community.joined:
+            self.updateOrAddChannelGroup(community.toChannelGroupDto(), isCommunityChannelGroup = true)
   
   proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
     return toSeq(self.channelGroups.values)
@@ -174,33 +170,20 @@ QtObject:
       let response = status_chat.getChannelGroups()
       self.hydrateChannelGroups(response.result)
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
+      error "error loadChannelGroups: ", errorDescription = e.msg
 
   proc loadChannelGroupById*(self: Service, channelGroupId: string) =
     try:
-      let response = status_chat.getChatsByChannelGroupId(channelGroupId)
-      self.hydrateChannelGroups(%*{
-        channelGroupId: response.result
-      })
+      let response = status_chat.getChannelGroupById(channelGroupId)
+      self.hydrateChannelGroups(response.result)
     except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
+      error "error loadChannelGroupById: ", errorDescription = e.msg
 
   proc asyncGetChannelGroups*(self: Service) =
     let arg = AsyncGetChannelGroupsTaskArg(
       tptr: cast[ByteAddress](asyncGetChannelGroupsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncGetChannelGroupsResponse",
-    )
-    self.threadpool.start(arg)
-
-  proc asyncGetChatsByChannelGroupId*(self: Service, channelGroupId: string) =
-    let arg = AsyncGetChatsByChannelGroupIdTaskArg(
-      tptr: cast[ByteAddress](asyncGetChatsByChannelGroupIdTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onAsyncGetChatsByChannelGroupIdResponse",
-      channelGroupId: channelGroupId,
     )
     self.threadpool.start(arg)
 
@@ -242,23 +225,6 @@ QtObject:
       let errDesription = e.msg
       error "error get channel groups: ", errDesription
       self.events.emit(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED, Args())
-
-  proc onAsyncGetChatsByChannelGroupIdResponse*(self: Service, response: string) {.slot.} =
-    try:
-      let rpcResponseObj = response.parseJson
-
-      if(rpcResponseObj["channelGroup"].kind == JNull):
-        raise newException(RpcException, "No channel group returned")
-
-      let channelGroupId = rpcResponseObj["channelGroupId"].getStr
-      self.hydrateChannelGroups(%*{
-        channelGroupId: rpcResponseObj["channelGroup"]
-      })
-      self.events.emit(SIGNAL_CHATS_LOADED, ChannelGroupArgs(channelGroup: self.channelGroups[channelGroupId]))
-    except Exception as e:
-      let errDesription = e.msg
-      error "error get chats by channel group: ", errDesription
-      self.events.emit(SIGNAL_CHATS_LOADING_FAILED, Args())
 
   proc init*(self: Service) =
     self.doConnect()
@@ -328,10 +294,35 @@ QtObject:
     else:
       self.channelGroups[channelGroupId].chats[index] = self.chats[chat.id]
 
-  proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto) =
-    self.channelGroups[channelGroup.id] = channelGroup
-    for chat in channelGroup.chats:
+  proc updateMissingFieldsInCommunityChat(self: Service, channelGroupId: string, newChat: ChatDto): ChatDto =
+    var chat = newChat
+    for previousChat in self.channelGroups[channelGroupId].chats:
+      if previousChat.id != newChat.id:
+        continue
+      chat.unviewedMessagesCount = previousChat.unviewedMessagesCount
+      chat.unviewedMentionsCount = previousChat.unviewedMentionsCount
+      chat.muted = previousChat.muted
+      chat.highlight = previousChat.highlight
+      break
+    return chat
+
+  # Community channel groups have less info because they come from community signals
+  proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto, isCommunityChannelGroup: bool = false) =
+    var newChannelGroups = channelGroup
+    if isCommunityChannelGroup and self.channelGroups.contains(channelGroup.id):
+      # We need to update missing fields in the chats seq before saving
+      let newChats = channelGroup.chats.mapIt(self.updateMissingFieldsInCommunityChat(channelGroup.id, it))
+      newChannelGroups.chats = newChats
+        
+    self.channelGroups[channelGroup.id] = newChannelGroups
+    for chat in newChannelGroups.chats:
       self.updateOrAddChat(chat)
+
+  proc getChannelGroupById*(self: Service, channelGroupId: string): ChannelGroupDto =
+    if (not self.channelGroups.contains(channelGroupId)):
+      warn "Unknown channel group", channelGroupId
+      return
+    return self.channelGroups[channelGroupId]
 
   proc parseChatResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     var chats: seq[ChatDto] = @[]
@@ -365,12 +356,12 @@ QtObject:
           break
 
   proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
-    var (chats, messages) = self.processMessageUpdateAfterSend(response)
+    var (chats, _) = self.processMessageUpdateAfterSend(response)
     self.events.emit(SIGNAL_MESSAGE_DELETED, MessageArgs(id: messageId, channel: chats[0].id))
 
   proc emitUpdate(self: Service, response: RpcResponse[JsonNode]) =
-    var (chats, messages) = self.parseChatResponse(response)
-    self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(messages: messages, chats: chats))
+    var (chats, _) = self.parseChatResponse(response)
+    self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(chats: chats))
 
   proc getAllChats*(self: Service): seq[ChatDto] =
     return toSeq(self.chats.values)

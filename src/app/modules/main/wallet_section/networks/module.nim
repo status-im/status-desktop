@@ -1,11 +1,11 @@
 import Tables, NimQml
 import ../io_interface as delegate_interface
 import io_interface, view, controller
-import ../../../global/global_singleton
-import ../../../core/eventemitter
-import ../../../../app_service/service/network/service as network_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/settings/service as settings_service
+import ../../../../global/global_singleton
+import ../../../../core/eventemitter
+import ../../../../../app_service/service/network/service as network_service
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/settings/service as settings_service
 
 export io_interface
 
@@ -39,19 +39,18 @@ method delete*(self: Module) =
   self.controller.delete
 
 method refreshNetworks*(self: Module) =
-  let networks = newTable[NetworkDto, float64]()
-
-  for network in self.controller.getNetworks():
-    networks[network] = self.controller.getNetworkCurrencyBalance(network)
-  self.view.load(networks)
+  self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
+  self.view.load(self.controller.getNetworks())
 
 method load*(self: Module) =
   self.controller.init()
-  self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
   self.refreshNetworks()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
+
+method areTestNetworksEnabled*(self: Module): bool =
+  return self.controller.areTestNetworksEnabled()
 
 proc checkIfModuleDidLoad(self: Module) =
   self.moduleLoaded = true
@@ -62,10 +61,3 @@ method viewDidLoad*(self: Module) =
 
 method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
   self.controller.setNetworksState(chainIds, enabled)
-
-method areTestNetworksEnabled*(self: Module): bool =
-  return self.controller.areTestNetworksEnabled()
-
-method toggleTestNetworksEnabled*(self: Module) =
-  self.controller.toggleTestNetworksEnabled()
-  self.refreshNetworks()

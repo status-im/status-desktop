@@ -21,6 +21,8 @@ RadioButton {
         implicitHeight: control.diameter
         radius: width/2
         color: radioButtonColor
+        border.width: 1
+        border.color: Theme.palette.directColor7
 
         Rectangle {
             anchors.centerIn: parent

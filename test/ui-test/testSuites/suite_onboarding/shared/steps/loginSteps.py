@@ -1,4 +1,7 @@
+
+import configs
 from screens.StatusLoginScreen import StatusLoginScreen
+
 
 _loginScreen = StatusLoginScreen()
  
@@ -23,8 +26,6 @@ def step(context, username, password):
 
 @Then("the user is NOT able to login to Status Desktop application")
 def step(context):
-    _main_screen = StatusMainScreen()
-    _main_screen.wait_for_splash_animation_ends()
     _loginScreen.verify_error_message_is_displayed()
 
 ###########################################################################

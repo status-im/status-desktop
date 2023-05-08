@@ -1,7 +1,7 @@
-import ../../../core/eventemitter
-import ../../../../app_service/service/network/service as network_service
-import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/settings/service as settings_service
+import ../../../../core/eventemitter
+import ../../../../../app_service/service/network/service as network_service
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ./io_interface
 
 
@@ -34,9 +34,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.refreshNetworks()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-    self.delegate.refreshNetworks()
-
 proc getNetworks*(self: Controller): seq[NetworkDto] =
   return self.networkService.getNetworks()
 
@@ -45,9 +42,3 @@ proc setNetworksState*(self: Controller, chainIds: seq[int], enabled: bool) =
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.settingsService.areTestNetworksEnabled()
-
-proc toggleTestNetworksEnabled*(self: Controller) =
-  self.walletAccountService.toggleTestNetworksEnabled()
-
-proc getNetworkCurrencyBalance*(self: Controller, network: NetworkDto): float64 = 
-  return self.walletAccountService.getNetworkCurrencyBalance(network)

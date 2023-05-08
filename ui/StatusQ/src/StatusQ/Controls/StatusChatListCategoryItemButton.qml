@@ -10,7 +10,6 @@ StatusFlatRoundButton {
     radius: 4
 
     property bool highlighted: false
-    property StatusTooltipSettings tooltip: StatusTooltipSettings {}
 
     type: StatusFlatRoundButton.Type.Secondary
     icon.width: 20
@@ -19,13 +18,4 @@ StatusFlatRoundButton {
     color: hovered || highlighted ? 
         Theme.palette.statusChatListCategoryItem.buttonHoverBackgroundColor : 
         "transparent"
-
-    StatusToolTip {
-        id: statusToolTip
-        visible: !!text && parent.hovered
-        text: tooltip.text
-        orientation: tooltip.orientation
-        offset: tooltip.offset
-    }
 }
-

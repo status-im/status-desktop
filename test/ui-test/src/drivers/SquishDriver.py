@@ -28,12 +28,24 @@ _MAX_WAIT_OBJ_TIMEOUT = 5000
 # The default minimum timeout to find ui object
 _MIN_WAIT_OBJ_TIMEOUT = 500
 
+# The default maximum time to application load
+_MAX_WAIT_APP_TIMEOUT = 15000
+
 _SEARCH_IMAGES_PATH = "../shared/searchImages/"
 
 
-def start_application(app_name: str):
-    squish.startApplication(app_name)
-    toplevelwindow.ToplevelWindow(squish.waitForObject(names.statusDesktop_mainWindow)).maximize()
+def start_application(app_name: str, attempt=2):
+    try:
+        ctx = squish.startApplication(app_name)
+        assert squish.waitFor(lambda: ctx.isRunning, _MAX_WAIT_APP_TIMEOUT), 'Start application error'
+        toplevelwindow.ToplevelWindow(squish.waitForObject(names.statusDesktop_mainWindow)).maximize()
+    except (AssertionError, RuntimeError):
+        if attempt:
+            [ctx.detach() for ctx in squish.applicationContextList()]
+            time.sleep(1)
+            start_application(app_name, attempt - 1)
+        else:
+            raise
 
 
 # Waits for the given object is loaded, visible and enabled.
@@ -491,8 +503,8 @@ def sleep_test(seconds: float):
     squish.snooze(seconds)
 
 
-def wait_for(py_condition_to_check: str, timeout_msec: int = 500):
-    squish.waitFor(py_condition_to_check, timeout_msec)
+def wait_for(py_condition_to_check: str, timeout_msec: int = 500) -> bool:
+    return squish.waitFor(lambda: py_condition_to_check, timeout_msec)
 
 
 def wait_until_hidden(object_name: str, timeout_msec: int = _MAX_WAIT_OBJ_TIMEOUT) -> bool:

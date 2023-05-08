@@ -261,6 +261,40 @@ QtObject {
         property color emojiReactionActiveBackgroundHovered
     }
 
+    property QtObject walletAccountColors: QtObject {
+        function getHoveredColor(color) {
+            switch(color) {
+            case getColor('black'):
+                return getColor('blackHovered')
+            case getColor('grey'):
+                return getColor('grey2')
+            case getColor('white'):
+                return getColor('grey4')
+            case getColor('blue2'):
+                return getColor('blueHovered')
+            case getColor('purple'):
+                return getColor('purpleHovered')
+            case getColor('cyan'):
+                return getColor('cyanHovered')
+            case getColor('violet'):
+                return getColor('violetHovered')
+            case getColor('red2'):
+                return getColor('redHovered')
+            case getColor('yellow'):
+                return getColor('yellowHovered')
+            case getColor('green2'):
+                return getColor('greenHovered')
+            case getColor('moss'):
+                return getColor('mossHovered')
+            case getColor('brown'):
+                return getColor('brownHovered')
+            case getColor('brown2'):
+                return getColor('brown2Hovered')
+            default: return ""
+            }
+        }
+    }
+
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)
         actualColor.a = alpha

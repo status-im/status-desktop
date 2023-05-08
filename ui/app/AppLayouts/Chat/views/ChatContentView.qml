@@ -1,9 +1,7 @@
 import QtQuick 2.15
 import QtQml 2.15
-import Qt.labs.platform 1.1
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.0
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -57,33 +55,9 @@ ColumnLayout {
     property Component sendTransactionWithEnsModal
 
     property bool isBlocked: false
-
+    property bool isUserAllowedToSendMessage: root.rootStore.isUserAllowedToSendMessage
+    property string chatInputPlaceholder: root.rootStore.chatInputPlaceHolderText
     property bool stickersLoaded: false
-
-    QtObject {
-        id: d
-
-        property bool isUserAdded
-
-        function updateIsUserAdded() {
-            if (root.chatType !== Constants.chatType.oneToOne) {
-                return false
-            }
-            isUserAdded = Qt.binding(() => {isActiveChannel; return Utils.getContactDetailsAsJson(root.chatId, false).isAdded})
-        }
-
-        Component.onCompleted: updateIsUserAdded()
-    }
-
-    Connections {
-        target: root.contactsStore.myContactsModel
-
-        function onItemChanged(pubKey) {
-            if (pubKey === root.chatId) {
-                d.updateIsUserAdded()
-            }
-        }
-    }
 
     Loader {
         Layout.fillWidth: true
@@ -110,7 +84,7 @@ ColumnLayout {
         sourceComponent: MessageContextMenuView {
             store: root.rootStore
             reactionModel: root.rootStore.emojiReactionsModel
-            disabledForChat: chatType === Constants.chatType.oneToOne && !d.isUserAdded
+            disabledForChat: !root.isUserAllowedToSendMessage
 
             onPinMessage: {
                 messageStore.pinMessage(messageId)
@@ -152,7 +126,7 @@ ColumnLayout {
                     return
                 }
                 if (inputAreaLoader.item) {
-                    inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+                    inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
                 }
             }
         }
@@ -178,7 +152,9 @@ ColumnLayout {
                 stickersPopup: root.stickersPopup
                 usersStore: root.usersStore
                 stickersLoaded: root.stickersLoaded
-                isChatBlocked: root.isBlocked || (root.chatType === Constants.chatType.oneToOne && !d.isUserAdded)
+                publicKey: root.chatId
+                isOneToOne: root.chatType === Constants.chatType.oneToOne
+                isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
                 channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
                 isActiveChannel: root.isActiveChannel
                 onShowReplyArea: {
@@ -187,7 +163,7 @@ ColumnLayout {
                         return
                     }
                     if (inputAreaLoader.item) {
-                        inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
+                        inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
                     }
                 }
                 onOpenStickerPackPopup: {
@@ -231,12 +207,13 @@ ColumnLayout {
                     anchors.margins: Style.current.smallPadding
 
                     enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
-                             !(chatType === Constants.chatType.oneToOne && !d.isUserAdded)
+                             root.isUserAllowedToSendMessage
 
                     store: root.rootStore
                     usersStore: root.usersStore
 
                     textInput.text: inputAreaLoader.preservedText
+                    textInput.placeholderText: root.chatInputPlaceholder
                     messageContextMenu: contextMenuLoader.item
                     emojiPopup: root.emojiPopup
                     stickersPopup: root.stickersPopup

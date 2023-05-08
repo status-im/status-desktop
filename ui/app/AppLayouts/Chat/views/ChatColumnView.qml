@@ -27,6 +27,7 @@ Item {
     property var parentModule
 
     property var rootStore
+    property var createChatPropertiesStore
     property var contactsStore
     property var emojiPopup
     property var stickersPopup
@@ -63,43 +64,37 @@ Item {
 
     // This function is called once `1:1` or `group` chat is created.
     function checkForCreateChatOptions(chatId) {
-        if(root.rootStore.createChatStartSendTransactionProcess) {
+        if(root.createChatPropertiesStore.createChatStartSendTransactionProcess) {
             if (root.contactDetails.ensVerified) {
                 Global.openPopup(cmpSendTransactionWithEns);
             } else {
                 Global.openPopup(cmpSendTransactionNoEns);
             }
         }
-        else if (root.rootStore.createChatStartSendTransactionProcess) {
+        else if (root.createChatPropertiesStore.createChatStartSendTransactionProcess) {
             Global.openPopup(cmpReceiveTransaction);
         }
-        else if (root.rootStore.createChatStickerHashId !== "" &&
-                 root.rootStore.createChatStickerPackId !== "" &&
-                 root.rootStore.createChatStickerUrl !== "") {
+        else if (root.createChatPropertiesStore.createChatStickerHashId !== "" &&
+                 root.createChatPropertiesStore.createChatStickerPackId !== "" &&
+                 root.createChatPropertiesStore.createChatStickerUrl !== "") {
             root.rootStore.sendSticker(chatId,
-                                       root.rootStore.createChatStickerHashId,
+                                       root.createChatPropertiesStore.createChatStickerHashId,
                                        "",
-                                       root.rootStore.createChatStickerPackId,
-                                       root.rootStore.createChatStickerUrl);
+                                       root.createChatPropertiesStore.createChatStickerPackId,
+                                       root.createChatPropertiesStore.createChatStickerUrl);
         }
-        else if (root.rootStore.createChatInitMessage !== "" ||
-                 root.rootStore.createChatFileUrls.length > 0) {
+        else if (root.createChatPropertiesStore.createChatInitMessage !== "" ||
+                 root.createChatPropertiesStore.createChatFileUrls.length > 0) {
 
             root.rootStore.sendMessage(chatId,
                                        Qt.Key_Enter,
-                                       root.rootStore.createChatInitMessage,
+                                       root.createChatPropertiesStore.createChatInitMessage,
                                        "",
-                                       root.rootStore.createChatFileUrls
+                                       root.createChatPropertiesStore.createChatFileUrls
                                        );
         }
 
-        // Clear.
-        root.rootStore.createChatInitMessage = "";
-        root.rootStore.createChatFileUrls = [];
-        root.rootStore.createChatStartSendTransactionProcess = false;
-        root.rootStore.createChatStartReceiveTransactionProcess = false;
-        root.rootStore.createChatStickerHashId = "";
-        root.rootStore.createChatStickerPackId = "";
+        root.createChatPropertiesStore.resetProperties()
     }
 
     function updateContactDetails() {
@@ -159,16 +154,6 @@ Item {
                 chatSectionModule = root.parentModule
                 root.checkForCreateChatOptions(model.itemId)
             }
-        }
-    }
-
-    ChatRequestMessagePanel {
-        anchors.fill: parent
-        anchors.bottomMargin: Style.current.bigPadding
-        isUserAdded: root.isUserAdded
-        visible: root.activeChatType === Constants.chatType.oneToOne && !root.isUserAdded
-        onAddContactClicked: {
-            root.rootStore.addContact(root.activeChatId);
         }
     }
 

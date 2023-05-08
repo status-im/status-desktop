@@ -1,5 +1,6 @@
 include ../../common/json_utils
 import ../../../backend/eth
+import ../../../backend/collectibles
 import ../../../app/core/tasks/common
 import ../../../app/core/tasks/qt
 import ../transaction/dto
@@ -21,3 +22,30 @@ const asyncGetSuggestedFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimca
       "error": e.msg,
     })
 
+type
+  FetchCollectibleOwnersArg = ref object of QObjectTaskArg
+    chainId*: int
+    contractAddress*: string
+    communityId*: string
+
+const fetchCollectibleOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchCollectibleOwnersArg](argEncoded)
+  try:
+    let response = collectibles.getCollectibleOwnersByContractAddress(arg.chainId, arg.contractAddress)
+    let output = %* {
+      "chainId": arg.chainId,
+      "contractAddress": arg.contractAddress,
+      "communityId": arg.communityId,
+      "result": response.result,
+      "error": ""
+    }
+    arg.finish(output)
+  except Exception as e:
+    let output = %* {
+      "chainId": arg.chainId,
+      "contractAddress": arg.contractAddress,
+      "communityId": arg.communityId,
+      "result": "",
+      "error": e.msg
+    }
+    arg.finish(output)

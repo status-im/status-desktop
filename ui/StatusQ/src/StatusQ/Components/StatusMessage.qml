@@ -21,7 +21,8 @@ Control {
         Audio = 5,
         Transaction = 6,
         Invitation = 7,
-        DiscordMessage = 8
+        DiscordMessage = 8,
+        SystemMessagePinnedMessage = 14
     }
 
     property list<Item> quickActions
@@ -54,7 +55,6 @@ Control {
     property bool showHeader: true
     property bool isActiveMessage: false
     property bool disableHover: false
-    property bool hideQuickActions: false
     property bool disableEmojis: false
     property color overrideBackgroundColor: "transparent"
     property bool overrideBackground: false
@@ -127,25 +127,6 @@ Control {
             return "transparent";
         }
 
-        Rectangle {
-            anchors {
-                top: parent.top
-                bottom: parent.bottom
-                left: parent.left
-            }
-            width: 2
-            visible: root.isPinned || root.hasMention
-            color: root.hasMention ? Theme.palette.mentionColor1 : root.isPinned ? Theme.palette.pinColor1
-                                                                                 : "transparent" // not visible really
-        }
-    }
-
-    contentItem: Item {
-
-        implicitWidth: messageLayout.implicitWidth
-        implicitHeight: messageLayout.implicitHeight
-
-
         SequentialAnimation {
             id: messageFoundAnimation
 
@@ -177,6 +158,24 @@ Control {
             color: Theme.palette.messageHighlightColor
         }
 
+        Rectangle {
+            anchors {
+                top: parent.top
+                bottom: parent.bottom
+                left: parent.left
+            }
+            width: 2
+            visible: root.isPinned || root.hasMention
+            color: root.hasMention ? Theme.palette.mentionColor1 : root.isPinned ? Theme.palette.pinColor1
+                                                                                 : "transparent" // not visible really
+        }
+    }
+
+    contentItem: Item {
+
+        implicitWidth: messageLayout.implicitWidth
+        implicitHeight: messageLayout.implicitHeight
+
         MouseArea {
             id: mouseArea
             anchors.fill: parent
@@ -186,9 +185,10 @@ Control {
             id: messageLayout
             anchors.fill: parent
             spacing: 2
+
             Loader {
                 Layout.fillWidth: true
-                active: isAReply
+                active: isAReply && root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessagePinnedMessage
                 visible: active
                 sourceComponent: StatusMessageReply {
                     objectName: "StatusMessage_replyDetails"
@@ -297,59 +297,13 @@ Control {
 
                             Loader {
                                 active: true
-                                sourceComponent: messageDetails.album.length > 1 ? albumComp : imageComp
-                            }
-
-                        }
-
-                        Component {
-                            id: imageComp
-                            StatusImageMessage {
-                                source: root.messageDetails.messageContent
-                                onClicked: root.imageClicked(image, mouse, imageSource)
-                                shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
-                            }
-                        }
-
-                        Component {
-                            id: albumComp
-                            RowLayout {
-                                width: messageLayout.width
-                                spacing: 9
-                                Repeater {
-                                    model: root.messageDetails.albumCount
-
-                                    delegate: Loader {
-                                        active: true
-                                        readonly property bool imageLoaded: index < root.messageDetails.album.length
-                                        readonly property string imagePath: imageLoaded ? root.messageDetails.album[index] : ""
-                                        sourceComponent: imageLoaded ? imageComponent : imagePlaceholderComponent
-                                    }
-                                }
-
-                                Component {
-                                    id: imageComponent
-                                    StatusImageMessage {
-                                        Layout.alignment: Qt.AlignLeft
-                                        imageWidth: Math.min(messageLayout.width / root.messageDetails.albumCount - 9 * (root.messageDetails.albumCount - 1), 144)
-                                        source: imagePath
-                                        onClicked: root.imageClicked(image, mouse, imageSource)
-                                        shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
-                                    }
-                                }
-
-                                Component {
-                                    id: imagePlaceholderComponent
-                                    LoadingComponent {
-                                        radius: 4
-                                        height: 194
-                                        width: 144
-                                    }
-                                }
-
-                                Item {
-                                    Layout.fillWidth: true
-                                    Layout.fillHeight: true
+                                sourceComponent: StatusMessageImageAlbum {
+                                    width: messageLayout.width
+                                    album: root.messageDetails.albumCount > 0 ? root.messageDetails.album : [root.messageDetails.messageContent]
+                                    albumCount: root.messageDetails.albumCount > 0 ? root.messageDetails.albumCount : 1
+                                    imageWidth: Math.min(messageLayout.width / root.messageDetails.albumCount - 9 * (root.messageDetails.albumCount - 1), 144)
+                                    shapeType: root.messageDetails.amISender ? StatusImageMessage.ShapeType.RIGHT_ROUNDED : StatusImageMessage.ShapeType.LEFT_ROUNDED
+                                    onImageClicked: root.imageClicked(image, mouse, imageSource)
                                 }
                             }
                         }
@@ -438,7 +392,7 @@ Control {
         }
 
         Loader {
-            active: root.hovered && !root.hideQuickActions
+            active: root.hovered && root.quickActions.length > 0
             anchors.right: parent.right
             anchors.rightMargin: 20
             anchors.top: parent.top

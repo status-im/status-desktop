@@ -32,7 +32,7 @@ StatusListItem {
     statusListItemSubTitle.elide: Text.ElideMiddle
     statusListItemSubTitle.wrapMode: Text.NoWrap
     radius: 0
-    color: sensor.containsMouse || highlighted ? Theme.palette.statusListItem.highlightColor : "transparent"
+    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
     components: [
         ClearButton {
             width: 24

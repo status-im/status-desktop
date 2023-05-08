@@ -199,7 +199,6 @@ Control {
                             icon.name: "send"
                             tooltip.text: qsTr("Send")
                             onClicked: {
-                                root.walletStore.switchAccountByAddress(model.address)
                                 Global.openSendModal(model.address)
                             }
                         },
@@ -220,7 +219,7 @@ Control {
                     onClicked: {
                         if (root.readOnly)
                             return
-                        root.walletStore.switchAccountByAddress(model.address)
+                        root.walletStore.setFilterAddress(model.address)
                     }
                 }
             }

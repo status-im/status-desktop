@@ -126,7 +126,7 @@ method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurre
 method computeDeployFee*(self: Module, chainId: int, accountAddress: string) =
   self.controller.computeDeployFee(chainId, accountAddress)
 
-method onCommunityTokenDeployStateChanged*(self: Module, chainId: int, transactionHash: string, deployState: DeployState) =
+method onCommunityTokenDeployStateChanged*(self: Module, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) =
   let network = self.controller.getNetwork(chainId)
   let url = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
-  self.view.emitDeploymentStateChanged(deployState.int, url)
+  self.view.emitDeploymentStateChanged(communityId, deployState.int, url)

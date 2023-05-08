@@ -3,13 +3,16 @@
         <file>StatusQ/Components/private/statusMessage/StatusAudioMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusEditMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusImageMessage.qml</file>
-        <file>StatusQ/Components/private/statusMessage/StatusMessageQuickActions.qml</file>
+        <file>StatusQ/Components/private/statusMessage/StatusMessageImageAlbum.qml</file>
+       
+ <file>StatusQ/Components/private/statusMessage/StatusMessageQuickActions.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusMessageReply.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusPinMessageDetails.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusSticker.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusTextMessage.qml</file>
         <file>StatusQ/Components/private/statusMessage/StatusTimeStampLabel.qml</file>
         <file>StatusQ/Components/qmldir</file>
+        <file>StatusQ/Components/private/qmldir</file>
         <file>StatusQ/Components/StatusAddress.qml</file>
         <file>StatusQ/Components/StatusAddressPanel.qml</file>
         <file>StatusQ/Components/StatusAnimatedImage.qml</file>
@@ -86,7 +89,6 @@
         <file>StatusQ/Controls/StatusDropdown.qml</file>
         <file>StatusQ/Controls/StatusFlatButton.qml</file>
         <file>StatusQ/Controls/StatusFlatRoundButton.qml</file>
-        <file>StatusQ/Controls/StatusFloatingButtonsSelector.qml</file>
         <file>StatusQ/Controls/StatusIconTabButton.qml</file>
         <file>StatusQ/Controls/StatusIconTextButton.qml</file>
         <file>StatusQ/Controls/StatusIdenticonRing.qml</file>

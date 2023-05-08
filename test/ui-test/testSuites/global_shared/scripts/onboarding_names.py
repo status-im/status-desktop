@@ -3,9 +3,14 @@ from scripts.global_names import *
 # Main:
 mainWindow_Welcome_to_Status_StyledText = {"container": statusDesktop_mainWindow, "text": "Welcome to Status", "type": "StyledText", "unnamed": 1, "visible": True}
 mainWindow_startupOnboarding_OnboardingLayout = {"container": statusDesktop_mainWindow, "objectName": "startupOnboardingLayout", "type": "OnboardingLayout", "visible": True}
-onboarding_newPsw_Input = {"container": statusDesktop_mainWindow, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
-onboarding_confirmPsw_Input = {"container": statusDesktop_mainWindow, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
-onboarding_create_password_button = {"container": statusDesktop_mainWindow, "objectName": "onboardingCreatePasswordButton", "type": "StatusButton"}
+
+# Create Password View
+mainWindow_CreatePasswordView = {"container": statusDesktop_mainWindow, "type": "CreatePasswordView", "unnamed": 1, "visible": True}
+onboarding_newPsw_Input = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPassword", "type": "StatusPasswordInput", "visible": True}
+onboarding_confirmPsw_Input = {"container": mainWindow_CreatePasswordView, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
+onboarding_create_password_button = {"container": mainWindow_CreatePasswordView, "objectName": "onboardingCreatePasswordButton", "type": "StatusButton"}
+onboarding_strengthInditactor = {"container": mainWindow_CreatePasswordView, "type": "StatusPasswordStrengthIndicator", "unnamed": 1, "visible": True}
+
 onboarding_confirmPswAgain_Input = {"container": statusDesktop_mainWindow, "objectName": "confirmAgainPasswordInput", "type": "StatusPasswordInput", "visible": True}
 onboarding_finalise_password_button = {"container": statusDesktop_mainWindow, "objectName": "confirmPswSubmitBtn", "type": "StatusButton"}
 acknowledge_checkbox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "acknowledgeCheckBox", "type": "StatusCheckBox", "visible": True}

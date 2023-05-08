@@ -33,6 +33,8 @@ settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName"
 settings_Sidebar_ENS_Item = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.ENS_USERNAMES.value, "type": "StatusNavigationListItem"}
 settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 settingsContentBaseScrollView_Item = {"container": settingsContentBase_ScrollView, "type": "Item", "unnamed": 1, "visible": True}
+mainWindow_LeftTabView = {"container": statusDesktop_mainWindow, "type": "LeftTabView", "unnamed": 1, "visible": True}
+LeftTabView_ScrollView = {"container": mainWindow_LeftTabView, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 
 # ENS view;
 settings_ENS_Start_Button = {"container": statusDesktop_mainWindow, "objectName": "ensStartButton", "type": "StatusButton"}
@@ -52,7 +54,6 @@ sign_out_Quit_StatusNavigationListItem = {"container": mainWindow_ScrollView, "o
 communities_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.COMMUNITY.value, "type": "StatusNavigationListItem", "visible": True}
 profile_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.PROFILE.value, "type": "StatusNavigationListItem", "visible": True}
 messaging_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.MESSAGING.value, "type": "StatusNavigationListItem", "visible": True}
-
 
 # Profile Settings:
 mainWindow_MyProfileView = {"container": statusDesktop_mainWindow, "type": "MyProfileView", "unnamed": 1, "visible": True}
@@ -83,7 +84,6 @@ o_StatusBackButton = {"container": statusDesktop_mainWindow_overlay, "type": "St
 add_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
 linksView = {"container": statusDesktop_mainWindow, "id": "linksView", "type": "StatusListView", "unnamed": 1, "visible": True}
 edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
-
 
 # Wallet Settings:
 settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWindow, "objectName":'generatedAccounts', "type": 'ListView'}
@@ -158,9 +158,9 @@ backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck = {"container"
 backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal_completeAndDeleteSeedPhraseButton", "type": "StatusButton", "visible": True}
 
 # User Status Profile Menu
-userContextmenu_AlwaysActiveButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAlwaysOnlineAction", "type": "StatusMenuItem", "visible": True}
-userContextmenu_InActiveButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuInactiveAction", "type": "StatusMenuItem", "visible": True}
-userContextmenu_AutomaticButton= {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAutomaticAction", "type": "StatusMenuItem", "visible": True}
+userContextmenu_AlwaysActiveButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAlwaysOnlineAction", "type": "StatusMenuItem", "visible": True, "enabled": True}
+userContextmenu_InActiveButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuInactiveAction", "type": "StatusMenuItem", "visible": True, "enabled": True}
+userContextmenu_AutomaticButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusMenuAutomaticAction", "type": "StatusMenuItem", "visible": True, "enabled": True}
 
 # Change Password Menu 
 change_password_menu_current_password = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewCurrentPassword", "type": "StatusPasswordInput", "visible": True}
@@ -168,4 +168,3 @@ change_password_menu_new_password = {"container": statusDesktop_mainWindow_overl
 change_password_menu_new_password_confirm = {"container": statusDesktop_mainWindow_overlay, "objectName": "passwordViewNewPasswordConfirm", "type": "StatusPasswordInput", "visible": True}
 change_password_menu_submit_button = {"container": statusDesktop_mainWindow_overlay, "objectName": "changePasswordModalSubmitButton", "type": "StatusButton", "visible": True}
 change_password_success_menu_sign_out_quit_button = {"container": statusDesktop_mainWindow_overlay, "objectName": "changePasswordSuccessModalSignOutAndQuitButton", "type": "StatusButton", "visible": True}
-

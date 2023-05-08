@@ -6,37 +6,28 @@ ListModel {
                                                      nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
     readonly property var data: [
         {
-            ensName: "carmen.eth",
-            walletAddress: "0xb794f5450ba39494ce839613fffba74279579268",
+            name: "carmen.eth",
+            walletAddress: "0xb794f5450ba39494ce839613fffba74279579261",
             imageSource: image,
-            amount: 15,
-            selfDestructAmount: 2,
-            selfDestruct: false
-
+            amount: 15
         },
         {
-            ensName: "chris.eth",
-            walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579268",
+            name: "chris.eth",
+            walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579262",
             imageSource: image,
-            amount: 5,
-            selfDestructAmount: 4,
-            selfDestruct: false
+            amount: 5
         },
         {
-            ensName: "emily.eth",
-            walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579268",
+            name: "emily.eth",
+            walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579263",
             imageSource: image,
-            amount: 2,
-            selfDestructAmount: 2,
-            selfDestruct: false
+            amount: 2
         },
         {
-            ensName: "",
+            name: "",
             walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579268",
             imageSource: "",
-            amount: 1,
-            selfDestructAmount: 1,
-            selfDestruct: false
+            amount: 1
         }
     ]
 

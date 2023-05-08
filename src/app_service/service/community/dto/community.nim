@@ -1,5 +1,6 @@
 {.used.}
 
+import std/jsonutils
 import json, sequtils, sugar, tables, strutils, json_serialization
 
 import ../../../../backend/communities
@@ -91,6 +92,7 @@ type CommunityDto* = object
   isMember*: bool
   muted*: bool
   listedInDirectory*: bool
+  featuredInDirectory*: bool
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
   settings*: CommunitySettingsDto
   adminSettings*: CommunityAdminSettingsDto
@@ -355,7 +357,12 @@ proc parseCuratedCommunities*(response: JsonNode): seq[CommunityDto] =
     result = parseKnownCuratedCommunities(response["communities"])
   if (response["unknownCommunities"].kind == JArray):
     result = concat(result, parseUnknownCuratedCommunities(response["unknownCommunities"]))
-  
+  if (response["contractFeaturedCommunities"].kind == JArray):
+    let featuredCommunityIDs = response["contractFeaturedCommunities"].to(seq[string])
+    for i in 0..<result.len:
+      let communityID = result[i].id
+      result[i].featuredInDirectory = any(featuredCommunityIDs, id => id == communityID)
+
 proc contains(arrayToSearch: seq[int], searched: int): bool =
   for element in arrayToSearch:
     if element == searched:

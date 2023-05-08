@@ -20,7 +20,7 @@ SettingsPageLayout {
 
     // Models:
     property var tokensModel
-    property var holdersModel
+
     property string feeText
     property string errorText
     property bool isFeeLoading: true
@@ -51,7 +51,7 @@ SettingsPageLayout {
 
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
-    signal remoteSelfDestructCollectibles(var holdersModel,
+    signal remoteSelfDestructCollectibles(var selfDestructTokensList, // [key , amount]
                                           int chainId,
                                           string accountName,
                                           string accountAddress)
@@ -88,6 +88,9 @@ SettingsPageLayout {
         property string accountName
         property int chainId
         property string chainName
+
+        property var tokenOwnersModel
+        property var selfDestructTokensList
 
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
         onInitialItemChanged: updateInitialStackView()
@@ -228,7 +231,6 @@ SettingsPageLayout {
             }
 
             viewWidth: root.viewWidth
-            holdersModel: root.holdersModel
 
             onMintCollectible: popup.open()
 
@@ -283,9 +285,10 @@ SettingsPageLayout {
                 id: remoteSelfdestructPopup
 
                 collectibleName: root.title
-                model: root.holdersModel
+                model: d.tokenOwnersModel
 
                 onSelfDestructClicked: {
+                    d.selfDestructTokensList = selfDestructTokensList
                     alertPopup.tokenCount = tokenCount
                     alertPopup.open()
                 }
@@ -303,7 +306,7 @@ SettingsPageLayout {
                 function signSelfRemoteDestructTransaction() {
                     root.isFeeLoading = true
                     root.feeText = ""
-                    root.remoteSelfDestructCollectibles(root.holdersModel,
+                    root.remoteSelfDestructCollectibles(d.selfDestructTokensList,
                                                         d.chainId,
                                                         d.accountName,
                                                         d.accountAddress)
@@ -356,7 +359,6 @@ SettingsPageLayout {
             property int index // TODO: Update it to key when model has role key implemented
 
             viewWidth: root.viewWidth
-            holdersModel: root.holdersModel
 
             Binding {
                 target: root
@@ -364,8 +366,15 @@ SettingsPageLayout {
                 value: view.name
             }
 
+            Binding {
+                target: d
+                property: "tokenOwnersModel"
+                value: view.tokenOwnersModel
+            }
+
             Instantiator {
                 id: instantiator
+
 
                 model: SortFilterProxyModel {
                     sourceModel: root.tokensModel
@@ -388,7 +397,8 @@ SettingsPageLayout {
                         Bind { property: "chainId"; value: model.chainId },
                         Bind { property: "chainName"; value: model.chainName },
                         Bind { property: "chainIcon"; value: model.chainIcon },
-                        Bind { property: "accountName"; value: model.accountName }
+                        Bind { property: "accountName"; value: model.accountName },
+                        Bind { property: "tokenOwnersModel"; value: model.tokenOwnersModel }
                     ]
                 }
             }

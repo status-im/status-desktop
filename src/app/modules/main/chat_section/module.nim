@@ -436,6 +436,14 @@ method makeChatWithIdActive*(self: Module, chatId: string) =
   self.setActiveItem(chatId)
   singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(self.controller.getMySectionId(), chatId)
 
+proc updateActiveChatMembership*(self: Module) =
+  let activeChatId = self.controller.getActiveChatId()
+  let chat = self.controller.getChatDetails(activeChatId)
+
+  if chat.chatType == ChatType.PrivateGroupChat:
+    let amIMember = any(chat.members, proc (member: ChatMember): bool = member.id == singletonInstance.userProfile.getPubKey())
+    self.view.setAmIMember(amIMember)
+
 method activeItemSet*(self: Module, itemId: string) =
   let mySectionId = self.controller.getMySectionId()
   if (itemId == ""):
@@ -452,6 +460,8 @@ method activeItemSet*(self: Module, itemId: string) =
   # update view maintained by this module
   self.view.chatsModel().setActiveItem(itemId)
   self.view.activeItemSet(chat_item)
+
+  self.updateActiveChatMembership()
 
   let activeChatId = self.controller.getActiveChatId()
 
@@ -493,15 +503,18 @@ proc updateParentBadgeNotifications(self: Module) =
 
 proc updateBadgeNotifications(self: Module, chat: ChatDto, hasUnreadMessages: bool, unviewedMentionsCount: int) =
   let chatId = chat.id
-  # update model of this module (appropriate chat from the chats list (chats model))
-  self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
-  # update child module
-  if (self.chatContentModules.contains(chatId)):
-    self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
-  # Update category
-  if chat.categoryId != "":
-    let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chat.communityId, chat.categoryId)
-    self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
+
+  if self.chatsLoaded:
+    # update model of this module (appropriate chat from the chats list (chats model))
+    self.view.chatsModel().updateNotificationsForItemById(chatId, hasUnreadMessages, unviewedMentionsCount)
+    # update child module
+    if (self.chatContentModules.contains(chatId)):
+      self.chatContentModules[chatId].onNotificationsUpdated(hasUnreadMessages, unviewedMentionsCount)
+    # Update category
+    if chat.categoryId != "":
+      let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(chat.communityId, chat.categoryId)
+      self.view.chatsModel().setCategoryHasUnreadMessages(chat.categoryId, hasUnreadMessages)
+
   # update parent module
   self.updateParentBadgeNotifications()
 
@@ -514,7 +527,7 @@ method onActiveSectionChange*(self: Module, sectionId: string) =
     return
 
   if not self.view.getChatsLoaded:
-    self.controller.asyncGetChats()
+    self.controller.getChatsAndBuildUI()
 
   self.controller.setIsCurrentSectionActive(true)
   let activeChatId = self.controller.getActiveChatId()
@@ -768,8 +781,7 @@ method onChatUnmuted*(self: Module, chatId: string) =
   self.view.chatsModel().changeMutedOnItemById(chatId, muted=false)
 
 method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
-  self.view.tokenPermissionsModel().removeItemWithId(permissionId)
-  self.view.setRequiresTokenPermissionToJoin(self.view.tokenPermissionsModel().getCount() > 0)
+  self.rebuildCommunityTokenPermissionsModel()
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
@@ -939,7 +951,7 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
   let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
   let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
   var plainText = singletonInstance.utils.plainText(renderedMessageText)
-  if ContentType(message.contentType) == ContentType.Sticker or (ContentType(message.contentType) == ContentType.Image and len(plainText) == 0):
+  if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(plainText) == 0):
     plainText = "🖼️"
   var notificationTitle = contactDetails.defaultDisplayName
 
@@ -1159,6 +1171,10 @@ proc addOrUpdateChat(self: Module,
 
   if not self.chatsLoaded:
     return
+
+  let activeChatId = self.controller.getActiveChatId()
+  if chat.id == activeChatId:
+    self.updateActiveChatMembership()
 
   if chatExists:
     if (chat.chatType == ChatType.PrivateGroupChat):
