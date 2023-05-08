@@ -11,10 +11,12 @@ import shared.popups 1.0
 import shared.status 1.0
 
 import StatusQ.Core 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 
 import "../stores"
 import "../controls"
@@ -417,6 +419,16 @@ SettingsContentBase {
                     root.advancedStore.toggleFakeLoadingScreen()
                 }
             }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("How many log files to keep archived")
+                currentValue: root.advancedStore.logMaxBackups
+                onClicked: {
+                    Global.openPopup(changeNumberOfLogsArchived)
+                }
+            }
         }
 
         FleetsModal {
@@ -525,6 +537,77 @@ SettingsContentBase {
                 onCancelButtonClicked: {
                     close()
                 }
+            }
+        }
+
+        Component {
+            id: changeNumberOfLogsArchived
+
+            StatusModal {
+                id: logChangerModal
+
+                onClosed: destroy()
+                anchors.centerIn: parent
+                width: 400
+                header.title: qsTr("How many log files do you want to keep archived?")
+
+                contentItem: Column {
+                    width: parent.width
+                    StatusBaseText {
+                        width: parent.width
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                        padding: 15
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Choose a number between 1 and 100")
+                    }
+
+                    StatusInput {
+                        id: numberInput
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.leftMargin: Style.current.padding
+                        anchors.rightMargin: Style.current.padding
+                        label: qsTr("Number of archives files")
+                        input.text: root.advancedStore.logMaxBackups
+                        placeholderText: qsTr("Number between 1 and 100")
+                        validators: [
+                            StatusFloatValidator {
+                                bottom: 1
+                                top: 100
+                                errorMessage: qsTr("Number needs to be between 1 and 100")
+                                locale: LocaleUtils.userInputLocale
+                            }
+                        ]
+                    }
+
+                    StatusBaseText {
+                        width: parent.width
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                        padding: 15
+                        wrapMode: Text.WordWrap
+                        text: qsTr("This change will only come into action after a restart")
+                    }
+                }
+
+                rightButtons: [
+                    StatusButton {
+                        text: qsTr("Cancel")
+                        onClicked: logChangerModal.close()
+                        normalColor: "transparent"
+                        hoverColor: "transparent"
+                    },
+                    StatusButton {
+                        id: banButton
+                        text: qsTr("Change")
+                        type: StatusBaseButton.Type.Normal
+                        onClicked: {
+                            root.advancedStore.setMaxLogBackups(numberInput.input.text)
+                            logChangerModal.close()
+                        }
+                    }
+                ]
             }
         }
 

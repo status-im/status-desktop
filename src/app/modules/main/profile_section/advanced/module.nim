@@ -139,3 +139,12 @@ method toggleWakuV2Store*(self: Module) =
 
 method isWakuV2StoreEnabled*(self: Module): bool =
   self.controller.isWakuV2StoreEnabled()
+
+method getLogMaxBackups*(self: Module): int =
+  self.controller.getLogMaxBackups()
+
+method setMaxLogBackups*(self: Module, value: int) =
+  self.controller.setMaxLogBackups(value)
+
+method onLogMaxBackupsChanged*(self: Module) =
+  self.view.logMaxBackupsChanged()
