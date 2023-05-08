@@ -125,6 +125,7 @@ method notifyFilterChanged(self: Module) =
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.collectiblesModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.transactionsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
 
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
