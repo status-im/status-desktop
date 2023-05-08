@@ -18,7 +18,7 @@ type
 
 QtObject:
   type CuratedCommunityModel* = ref object of QAbstractListModel
-    items*: seq[CuratedCommunityItem]
+    items: seq[CuratedCommunityItem]
 
   proc setup(self: CuratedCommunityModel) =
     self.QAbstractListModel.setup
@@ -103,6 +103,13 @@ QtObject:
       if(self.items[i].getId() == id):
         return i
     return -1
+
+  proc getItemById*(self: CuratedCommunityModel, id: string): CuratedCommunityItem =
+    let ind = self.findIndexById(id)
+    if(ind == -1):
+      return
+
+    return self.items[ind]
 
   proc containsItemWithId*(self: CuratedCommunityModel, id: string): bool =
     return self.findIndexById(id) != -1
