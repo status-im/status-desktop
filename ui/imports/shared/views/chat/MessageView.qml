@@ -494,6 +494,7 @@ Loader {
                 topPadding: showHeader ? Style.current.halfPadding : 0
                 bottomPadding: showHeader && d.nextMessageHasHeader() ? Style.current.halfPadding : 2
                 disableHover: root.disableHover ||
+                              delegate.hideQuickActions ||
                               (root.chatLogView && root.chatLogView.moving) ||
                               (root.messageContextMenu && root.messageContextMenu.opened) ||
                               Global.popupOpened
@@ -863,6 +864,8 @@ Loader {
                             if (root.isInPinnedPopup)
                                 return false;
                             if (!root.messageStore)
+                                return false;
+                            if (delegate.hideQuickActions)
                                 return false;
                             return (root.amISender || root.amIChatAdmin) &&
                                     (messageContentType === Constants.messageContentType.messageType ||
