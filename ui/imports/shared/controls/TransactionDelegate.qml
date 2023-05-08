@@ -238,21 +238,22 @@ StatusListItem {
         }
 
         const isPending = root.transactionStatus === TransactionDelegate.TransactionStatus.Pending
+        const failed = root.transactionStatus === TransactionDelegate.TransactionStatus.Failed
         switch(root.transactionType) {
-        case TransactionDelegate.TransactionType.Send:
-            return isPending ? qsTr("Sending") : qsTr("Sent")
+        case TransactionDelegate.TransactionType.Send:            
+            return failed ? qsTr("Send failed") : (isPending ? qsTr("Sending") : qsTr("Sent"))
         case TransactionDelegate.TransactionType.Receive:
-            return isPending ? qsTr("Receiving") : qsTr("Received")
+            return failed ? qsTr("Receive failed") : (isPending ? qsTr("Receiving") : qsTr("Received"))
         case TransactionDelegate.TransactionType.Buy:
-            return isPending ? qsTr("Buying") : qsTr("Bought")
+            return failed ? qsTr("Buy failed") : (isPending ? qsTr("Buying") : qsTr("Bought"))
         case TransactionDelegate.TransactionType.Sell:
-            return isPending ? qsTr("Selling") : qsTr("Sold")
+            return failed ? qsTr("Sell failed") : (isPending ? qsTr("Selling") : qsTr("Sold"))
         case TransactionDelegate.TransactionType.Destroy:
-            return isPending ? qsTr("Destroying") : qsTr("Destroyed")
+            return failed ? qsTr("Destroy failed") : (isPending ? qsTr("Destroying") : qsTr("Destroyed"))
         case TransactionDelegate.TransactionType.Swap:
-            return isPending ? qsTr("Swapping") : qsTr("Swapped")
+            return failed ? qsTr("Swap failed") : (isPending ? qsTr("Swapping") : qsTr("Swapped"))
         case TransactionDelegate.TransactionType.Bridge:
-            return isPending ? qsTr("Bridging") : qsTr("Bridged")
+            return failed ? qsTr("Bridge failed") : (isPending ? qsTr("Bridging") : qsTr("Bridged"))
         default:
             return ""
         }
