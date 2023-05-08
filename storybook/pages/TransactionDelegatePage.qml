@@ -40,7 +40,7 @@ SplitView {
         property var maxTotalFees
         property var symbol
         property bool loadingTransaction
-        property var tokenID
+        property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         property string nftName: "Happy Meow"
         property string nftImageUrl: Style.png("collectibles/HappyMeow")
     }

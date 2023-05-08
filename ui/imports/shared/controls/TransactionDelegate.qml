@@ -10,8 +10,46 @@ import StatusQ.Controls 0.1
 import utils 1.0
 import shared 1.0
 
+/*!
+   \qmltype TransactionDelegate
+   \inherits StatusListItem
+   \inqmlmodule shared.controls
+   \since sha.Controls 0.1
+   \brief Delegate for transaction activity list
+
+   Delegate to display transaction activity data.
+
+   \qml
+    TransactionDelegate {
+        id: delegate
+        width: ListView.view.width
+        modelData: model
+        swapCryptoValue: 0.18
+        swapFiatValue: 340
+        swapSymbol: "SNT"
+        timeStampText: LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000)
+        cryptoValue: 0.1234
+        fiatValue: 123123
+        currentCurrency: "USD"
+        networkName: "Optimism"
+        symbol: "ETH"
+        bridgeNetworkName: "Mainnet"
+        feeFiatValue: 10.34
+        feeCryptoValue: 0.013
+        transactionStatus: TransactionDelegate.Pending
+        transactionType: TransactionDelegate.Send
+        formatCurrencyAmount: RootStore.formatCurrencyAmount
+        loading: isModelDataValid && modelData.loadingTransaction
+    }
+   \endqml
+
+   Additional usages should be handled using states.
+*/
+
 StatusListItem {
     id: root
+
+    signal retryClicked()
 
     property var modelData
     property string symbol
@@ -295,13 +333,12 @@ StatusListItem {
             active: !headerStatusLoader.active
             visible: active
             sourceComponent: ColumnLayout {
-                visible: !root.isNFT // Not used in Loader to show loading state
                 StatusTextWithLoadingState {
                     id: cryptoValueText
                     text: {
                         if (root.loading) {
                             return "dummy text"
-                        } else if (!root.isModelDataValid) {
+                        } else if (!root.isModelDataValid || root.isNFT) {
                             return ""
                         }
 
@@ -347,7 +384,7 @@ StatusListItem {
                     text: {
                         if (root.loading) {
                             return "dummy text"
-                        } else if (!root.isModelDataValid) {
+                        } else if (!root.isModelDataValid || root.isNFT) {
                             return ""
                         }
 
@@ -379,14 +416,13 @@ StatusListItem {
             visible: active
             sourceComponent: Rectangle {
                 id: statusRect
-                readonly property bool isFailed: root.transactionStatus === TransactionDelegate.Failed
-                width: transactionTypeIcon.width + (statusRect.isFailed ? retryButton.width + 5 : 0)
+                width: transactionTypeIcon.width + (retryButton.visible ? retryButton.width + 5 : 0)
                 height: transactionTypeIcon.height
                 anchors.verticalCenter: parent.verticalCenter
                 color: "transparent"
                 radius: 100
                 border {
-                    width: statusRect.isFailed ? 1 : 0
+                    width: retryButton.visible ? 1 : 0
                     color: root.asset.bgBorderColor
                 }
 
@@ -403,7 +439,8 @@ StatusListItem {
                     text: qsTr("Retry")
                     size: StatusButton.Small
                     type: StatusButton.Primary
-                    visible: statusRect.isFailed
+                    visible: !root.loading && root.transactionStatus === TransactionDelegate.Failed
+                    onClicked: root.retryClicked()
                 }
 
                 StatusSmartIdenticon {

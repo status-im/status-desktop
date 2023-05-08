@@ -80,6 +80,10 @@ Item {
                 formatCurrencyAmount: RootStore.formatCurrencyAmount
                 color: Theme.palette.statusListItem.backgroundColor
                 state: "header"
+
+                onRetryClicked: {
+
+                }
             }
 
             SavedAddressesDelegate {

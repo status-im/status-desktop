@@ -13,14 +13,10 @@ Image {
     fillMode: Image.PreserveAspectFit
 
     onIconChanged: {
-        if(icon.startsWith("data:image/") || icon.startsWith("https://")) {
+        if(icon.startsWith("data:image/") || icon.startsWith("https://") || icon.startsWith("qrc:/") || icon.startsWith("file:/")) {
             //raw image data
             source = icon
             objectName = "custom-icon"    
-        }
-        else if (icon.startsWith("qrc:/") || icon.startsWith("file:/")) {
-            source = icon
-            objectName = "custom-icon-qrc"
         }
         else if (icon !== "") {
             source = "../../assets/img/icons/" + icon+ ".svg";
