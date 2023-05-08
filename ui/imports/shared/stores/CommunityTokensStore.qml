@@ -19,11 +19,13 @@ QtObject {
 
     // Minting tokens:
     function deployCollectible(communityId, accountAddress, name, symbol, description, supply,
-                             infiniteSupply, transferable, selfDestruct, chainId, artworkSource, accountName)
+                             infiniteSupply, transferable, selfDestruct, chainId, artworkSource, accountName, artworkCropRect)
     {
         // TODO: Backend needs to create new role `accountName` and update this call accordingly
+        // TODO: Backend needs to modify the call to expect an image JSON file with cropped artwork information:
+        const jsonArtworkFile = Utils.getImageAndCropInfoJson(artworkSource, artworkCropRect)
         communityTokensModuleInst.deployCollectible(communityId, accountAddress, name, symbol, description, supply,
-                                                    infiniteSupply, transferable, selfDestruct, chainId, artworkSource)
+                                                    infiniteSupply, transferable, selfDestruct, chainId, artworkSource/*instead: jsonArtworkFile*/)
     }
 
     readonly property Connections connections: Connections {

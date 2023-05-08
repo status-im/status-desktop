@@ -47,7 +47,8 @@ SettingsPageLayout {
                            bool selfDestruct,
                            int chainId,
                            string accountName,
-                           string accountAddress)
+                           string accountAddress,
+                           var artworkCropRect)
 
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
@@ -226,7 +227,8 @@ SettingsPageLayout {
                                      selfDestruct,
                                      chainId,
                                      accountName,
-                                     d.accountAddress)
+                                     d.accountAddress,
+                                     artworkCropRect)
 
                 stackManager.clear(d.initialViewState, StackView.Immediate)
             }

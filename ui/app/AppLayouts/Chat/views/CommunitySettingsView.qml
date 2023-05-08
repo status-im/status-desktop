@@ -299,7 +299,8 @@ StatusSectionLayout {
                                                            selfDestruct,
                                                            chainId,
                                                            artworkSource,
-                                                           accountName)
+                                                           accountName,
+                                                           artworkCropRect)
                 }
                 onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(chainId)
                 onRemoteSelfDestructCollectibles: {
