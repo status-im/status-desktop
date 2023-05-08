@@ -38,7 +38,9 @@ proc removeAddress*(self: Filter, address: string) =
     self.addresses = @[accounts[0].address]
     return
   
-  self.addresses.delete(self.addresses.find(address))
+  let ind = self.addresses.find(address)
+  if ind > -1:
+    self.addresses.delete(ind)
   
 proc updateNetworks*(self: Filter) =
   self.chainIds = self.controller.getEnabledChainIds()
