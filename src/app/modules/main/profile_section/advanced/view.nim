@@ -132,3 +132,13 @@ QtObject:
 
   proc toggleWakuV2Store*(self: View) {.slot.} =
     self.delegate.toggleWakuV2Store()
+
+  proc logMaxBackupsChanged*(self: View) {.signal.}
+  proc getLogMaxBackups*(self: View): int {.slot.} =
+    return self.delegate.getLogMaxBackups()
+  QtProperty[int] logMaxBackups:
+    read = getLogMaxBackups
+    notify = logMaxBackupsChanged
+
+  proc setMaxLogBackups*(self: View, value: int) {.slot.} =
+    self.delegate.setMaxLogBackups(value)

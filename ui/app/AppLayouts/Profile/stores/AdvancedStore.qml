@@ -14,6 +14,7 @@ QtObject {
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
     property bool isWakuV2StoreEnabled: advancedModule ? advancedModule.isWakuV2StoreEnabled : false
+    property int logMaxBackups: advancedModule ? advancedModule.logMaxBackups : 1
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
@@ -91,6 +92,13 @@ QtObject {
             return
 
         root.advancedModule.toggleDebug()
+    }
+
+    function setMaxLogBackups(value) {
+        if(!root.advancedModule)
+            return
+
+        root.advancedModule.setMaxLogBackups(value)
     }
 
     function enableDeveloperFeatures() {

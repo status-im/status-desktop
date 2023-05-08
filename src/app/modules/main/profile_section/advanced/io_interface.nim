@@ -101,3 +101,12 @@ method isWakuV2StoreEnabled*(self: AccessInterface): bool {.base.} =
 
 method toggleWakuV2Store*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getLogMaxBackups*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setMaxLogBackups*(self: AccessInterface, value: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onLogMaxBackupsChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

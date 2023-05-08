@@ -79,16 +79,6 @@ proc init*(self: Service) =
     error "error: ", errDesription
     return
 
-proc fetchNodeConfig(self: Service) =
-  try:
-    let response = status_node_config.getNodeConfig()
-    self.configuration = response.result.toNodeConfigDto()
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
-
-
 proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
   if(not self.settingsService.saveNodeConfiguration(configuration.toJsonNode())):
     error "error saving node configuration "
@@ -293,4 +283,12 @@ proc setWakuV2StoreEnabled*(self: Service, enabled: bool, storeCapacity: int = 0
   newConfiguration.WakuV2Config.EnableStore = enabled
   newConfiguration.WakuV2Config.StoreCapacity = storeCapacity
   newConfiguration.WakuV2Config.StoreSeconds = storeSeconds
+  return self.saveConfiguration(newConfiguration)
+
+proc getLogMaxBackups*(self: Service): int =
+  return self.configuration.LogMaxBackups
+
+proc setMaxLogBackups*(self: Service, value: int): bool =
+  var newConfiguration = self.configuration
+  newConfiguration.LogMaxBackups = value
   return self.saveConfiguration(newConfiguration)

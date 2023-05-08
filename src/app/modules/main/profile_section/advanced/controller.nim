@@ -67,6 +67,16 @@ proc toggleWakuV2Store*(self: Controller) =
 proc isWakuV2StoreEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.isWakuV2StoreEnabled()
 
+proc getLogMaxBackups*(self: Controller): int =
+  return self.nodeConfigurationService.getLogMaxBackups()
+
+proc setMaxLogBackups*(self: Controller, value: int) =
+  if(not self.nodeConfigurationService.setMaxLogBackups(value)):
+    # in the future we may do a call from here to show a popup about this error
+    error "an error occurred, we couldn't set the Max Log Backups"
+    return
+
+  self.delegate.onLogMaxBackupsChanged()
 
 proc getWakuV2LightClientEnabled*(self: Controller): bool =
   return self.nodeConfigurationService.getV2LightMode()
