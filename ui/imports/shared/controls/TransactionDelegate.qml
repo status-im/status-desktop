@@ -69,15 +69,15 @@ StatusListItem {
     property string networkName
     property string bridgeNetworkName // TODO fill when bridge data is implemented
     property string timeStampText
-    property string savedAddressNameTo
-    property string savedAddressNameFrom
+    property string addressNameTo
+    property string addressNameFrom
     property var formatCurrencyAmount: function() {}
 
     readonly property bool isModelDataValid: modelData !== undefined && !!modelData
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
     readonly property string transactionValue: {
         if (!isModelDataValid)
-            return "N/A"
+            return qsTr("N/A")
         if (root.isNFT) {
             return modelData.nftName ? modelData.nftName : "#" + modelData.tokenID
         } else {
@@ -86,7 +86,7 @@ StatusListItem {
     }
     readonly property string swapTransactionValue: {
         if (!isModelDataValid) {
-            return "N/A"
+            return qsTr("N/A")
         }
         return root.formatCurrencyAmount(swapCryptoValue, swapSymbol)
     }
@@ -107,14 +107,14 @@ StatusListItem {
         return root.swapSymbol ? Style.png("tokens/%1".arg(root.swapSymbol)) : ""
     }
 
-    readonly property string toAddress: !!savedAddressNameTo ?
-                                            savedAddressNameTo :
+    readonly property string toAddress: !!addressNameTo ?
+                                            addressNameTo :
                                             isModelDataValid ?
                                                 Utils.compactAddress(modelData.to, 4) :
                                                 ""
 
-    readonly property string fromAddress: !!savedAddressNameFrom ?
-                                            savedAddressNameFrom :
+    readonly property string fromAddress: !!addressNameFrom ?
+                                            addressNameFrom :
                                             isModelDataValid ?
                                                 Utils.compactAddress(modelData.from, 4) :
                                                 ""
@@ -173,7 +173,7 @@ StatusListItem {
     }
 
     QtObject {
-        id: priv
+        id: d
 
         property int loadingPixelSize: 13
         property int datePixelSize: 12
@@ -260,7 +260,7 @@ StatusListItem {
     }
     statusListItemTitleArea.anchors.rightMargin: root.rightPadding
     statusListItemTitle.font.weight: Font.DemiBold
-    statusListItemTitle.font.pixelSize: root.loading ? priv.loadingPixelSize : priv.titlePixelSize
+    statusListItemTitle.font.pixelSize: root.loading ? d.loadingPixelSize : d.titlePixelSize
 
     // title icons and date
     statusListItemTitleIcons.sourceComponent: Row {
@@ -295,7 +295,7 @@ StatusListItem {
             anchors.verticalCenter: parent.verticalCenter
             text: root.loading ? root.title : root.timeStampText
             verticalAlignment: Qt.AlignVCenter
-            font.pixelSize: root.loading ? priv.loadingPixelSize : priv.datePixelSize
+            font.pixelSize: root.loading ? d.loadingPixelSize : d.datePixelSize
             visible: !!text
             loading: root.loading
             customColor: Theme.palette.baseColor1
@@ -325,7 +325,7 @@ StatusListItem {
     }
     statusListItemSubTitle.maximumLoadingStateWidth: 300
     statusListItemSubTitle.customColor: Theme.palette.directColor1
-    statusListItemSubTitle.font.pixelSize: root.loading ? priv.loadingPixelSize : priv.subtitlePixelSize
+    statusListItemSubTitle.font.pixelSize: root.loading ? d.loadingPixelSize : d.subtitlePixelSize
     statusListItemTagsRowLayout.anchors.topMargin: 4 // Spacing between title row nad subtitle row
 
     // Right side components
@@ -365,7 +365,7 @@ StatusListItem {
                     }
                     horizontalAlignment: Qt.AlignRight
                     Layout.alignment: Qt.AlignRight
-                    font.pixelSize: root.loading ? priv.loadingPixelSize : 13
+                    font.pixelSize: root.loading ? d.loadingPixelSize : 13
                     customColor: {
                         switch(root.transactionType) {
                         case TransactionDelegate.TransactionType.Receive:
@@ -405,7 +405,7 @@ StatusListItem {
                             return ""
                         }
                     }
-                    font.pixelSize: root.loading ? priv.loadingPixelSize : 12
+                    font.pixelSize: root.loading ? d.loadingPixelSize : 12
                     customColor: Theme.palette.baseColor1
                     loading: root.loading
                 }
@@ -500,7 +500,7 @@ StatusListItem {
                 height: 20
             }
             PropertyChanges {
-                target: priv
+                target: d
                 titlePixelSize: 17
                 datePixelSize: 13
                 subtitlePixelSize: 15

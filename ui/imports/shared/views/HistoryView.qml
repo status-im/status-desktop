@@ -17,7 +17,7 @@ import "../popups"
 import "../stores"
 import "../controls"
 
-import "../../../app/AppLayouts/Wallet/stores" as WalletStores
+import AppLayouts.Wallet.stores 1.0 as WalletStores
 
 ColumnLayout {
     id: root
@@ -202,8 +202,8 @@ ColumnLayout {
             symbol: isModelDataValid && !!modelData.symbol ? modelData.symbol : ""
             transferStatus: isModelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
-            savedAddressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForWalletAddress(modelData.to) : ""
-            savedAddressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForWalletAddress(modelData.from) : ""
+            addressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.to) : ""
+            addressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.from) : ""
             formatCurrencyAmount: RootStore.formatCurrencyAmount
             onClicked: launchTransactionDetail(modelData)
             loading: isModelDataValid ? modelData.loadingTransaction : false

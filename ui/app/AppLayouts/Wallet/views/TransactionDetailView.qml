@@ -74,14 +74,16 @@ Item {
                 symbol: root.isTransactionValid ? transaction.symbol : ""
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
                 timeStampText: root.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
-                savedAddressNameTo: root.isTransactionValid ? WalletStores.RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                savedAddressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForSavedWalletAddress(transaction.from): ""
+                addressNameTo: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.to): ""
+                addressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.from): ""
                 sensor.enabled: false
                 formatCurrencyAmount: RootStore.formatCurrencyAmount
                 color: Theme.palette.statusListItem.backgroundColor
                 state: "header"
 
                 onRetryClicked: {
+                    // TODO handle failed transaction retry
+                }
 
                 }
             }
@@ -159,8 +161,8 @@ Item {
                 symbol: root.isTransactionValid ? transaction.symbol : ""
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
                 timeStampText: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
+                addressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                addressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
                 formatCurrencyAmount: RootStore.formatCurrencyAmount
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor

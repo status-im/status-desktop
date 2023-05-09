@@ -11,46 +11,15 @@ import shared.controls 1.0
 SplitView {
     id: root
 
-    property QtObject mockupModelData: QtObject {
-        property int id: 0
-        property var type
-        property string address
-        property var blockNumber
-        property var blockHash
+    readonly property QtObject mockupModelData: QtObject {
         property int timestamp: Date.now() / 1000
-        property var gasPrice
-        property var gasLimit
-        property var gasUsed
-        property var nonce
         property int txStatus: 0
-        property var value
         property string from: "0xfB8131c260749c7835a08ccBdb64728De432858E"
         property string to: "0x3fb81384583b3910BB14Cc72582E8e8a56E83ae9"
-        property var contract
-        property var chainId
-        property var maxFeePerGas
-        property var maxPriorityFeePerGas
-        property var input
-        property var txHash
-        property var multiTransactionID
-        property var isTimeStamp
-        property bool isNFT
-        property var baseGasFees
-        property var totalFees
-        property var maxTotalFees
-        property var symbol
-        property bool loadingTransaction
+        property bool isNFT: false
         property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         property string nftName: "Happy Meow"
         property string nftImageUrl: Style.png("collectibles/HappyMeow")
-    }
-
-    property QtObject mockupRootStore: QtObject {
-        function formatCurrencyAmount(value, currency) {
-            if (isNaN(amount)) {
-                return "N/A"
-            }
-        }
     }
 
     SplitView {
