@@ -13,7 +13,7 @@ Control {
 
     property alias airdropEnabled: airdropButton.enabled
     property alias retailEnabled: retailButton.enabled
-    property alias remotelySelfDestructEnabled: remotelySelfDestructButton.enabled
+    property alias remotelySelfDestructVisible: remotelySelfDestructButton.visible
     property alias burnEnabled: burnButton.enabled
 
     signal airdropClicked
