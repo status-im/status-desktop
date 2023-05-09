@@ -197,7 +197,7 @@ proc findAccountByAccountAddress(accounts: seq[WalletAccountDto], address: strin
       return accounts[i]
   return nil
 
-proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPair: KeyPairDto, reason: BuildItemReason): 
+proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPair: KeycardDto, reason: BuildItemReason): 
   KeycardItem =
   let isAccountInKnownAccounts = proc(knownAccounts: seq[WalletAccountDto], address: string): bool =
     for i in 0 ..< knownAccounts.len:
@@ -267,7 +267,7 @@ proc areAllKnownKeycardsLockedForKeypair(self: Module, keyUid: string): bool =
 proc buildKeycardList(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
   var items: seq[KeycardItem]
-  let migratedKeyPairs = self.controller.getAllMigratedKeyPairs()
+  let migratedKeyPairs = self.controller.getAllKnownKeycardsGroupedByKeyUid()
   for kp in migratedKeyPairs:
     let item = self.buildKeycardItem(walletAccounts, kp, BuildItemReason.MainView)
     if item.isNil:
@@ -288,7 +288,7 @@ method rebuildKeycardsList*(self: Module) =
   self.view.setKeycardItems(@[])
   self.buildKeycardList()
 
-method onNewKeycardSet*(self: Module, keyPair: KeyPairDto) =
+method onNewKeycardSet*(self: Module, keyPair: KeycardDto) =
   let walletAccounts = self.controller.getWalletAccounts()
   var mainViewItem = self.view.keycardModel().getItemForKeyUid(keyPair.keyUid)
   if mainViewItem.isNil:

@@ -13,12 +13,12 @@ proc buildKeypairAndAddToMigratedKeypairs(self: CopyingKeycardState, controller:
   var addresses: seq[string]
   for wa in cardMetadata.walletAccounts:
     addresses.add(wa.address)
-  var keyPairDto = KeyPairDto(keycardUid: controller.getDestinationKeycardUid(),
+  var keycardDto = KeycardDto(keycardUid: controller.getDestinationKeycardUid(),
     keycardName: cardMetadata.name,
     keycardLocked: false,
     keyUid: controller.getKeyPairForProcessing().getKeyUid(),
     accountsAddresses: addresses)
-  controller.addMigratedKeyPair(keyPairDto)
+  controller.addKeycardOrAccounts(keycardDto)
 
 proc runStoreMetadataFlow(self: CopyingKeycardState, controller: Controller) =
   let cardMetadata = controller.getMetadataForKeycardCopy()

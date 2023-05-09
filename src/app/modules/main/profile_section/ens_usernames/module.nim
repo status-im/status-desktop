@@ -313,7 +313,7 @@ method authenticateAndRegisterEns*(self: Module, chainId: int, ensUsername: stri
   ## if acc.isNil:
   ##   echo "error: selected account to send a transaction from is not known"
   ##   return
-  ## let keyPair = self.controller.getMigratedKeyPairByKeyUid(acc.keyUid)
+  ## let keyPair = self.controller.getKeycardByKeyUid(acc.keyUid)
   ## if keyPair.len == 0:
   ##   self.controller.authenticateUser()
   ## else:

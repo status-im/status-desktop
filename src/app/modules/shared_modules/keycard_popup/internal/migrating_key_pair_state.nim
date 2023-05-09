@@ -22,7 +22,7 @@ proc delete*(self: MigratingKeyPairState) =
 
 proc doMigration(self: MigratingKeyPairState, controller: Controller) =
   let selectedKeyPairDto = controller.getSelectedKeyPairDto()
-  controller.addMigratedKeyPair(selectedKeyPairDto)
+  controller.addKeycardOrAccounts(selectedKeyPairDto)
 
 proc doConversion(self: MigratingKeyPairState, controller: Controller) =
   let password = controller.getPassword()

@@ -1,14 +1,14 @@
 import json
 import base
 
-import ../../../../app_service/service/wallet_account/[key_pair_dto]
+import ../../../../app_service/service/wallet_account/[keycard_dto]
 
 type WakuBackedUpKeycardsSignal* = ref object of Signal
-  keycards*: seq[KeyPairDto]
+  keycards*: seq[KeycardDto]
 
 proc fromEvent*(T: type WakuBackedUpKeycardsSignal, event: JsonNode): WakuBackedUpKeycardsSignal =
   result = WakuBackedUpKeycardsSignal()
 
   if event["event"]{"backedUpKeycards"} != nil:
     for jsonKc in event["event"]["backedUpKeycards"]:
-      result.keycards.add(jsonKc.toKeyPairDto())
+      result.keycards.add(jsonKc.toKeycardDto())

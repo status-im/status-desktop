@@ -188,7 +188,7 @@ rpc(fetchMarketValues, "wallet"):
 rpc(fetchTokenDetails, "wallet"):
   symbols: seq[string]
 
-rpc(addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded, "accounts"):
+rpc(addKeycardOrAddAccountsIfKeycardIsAdded, "accounts"):
   keycardUid: string
   keyPairName: string
   keyUid: string
@@ -201,10 +201,10 @@ rpc(removeMigratedAccountsForKeycard, "accounts"):
 rpc(getAllKnownKeycards, "accounts"):
   discard
 
-rpc(getAllMigratedKeyPairs, "accounts"):
+rpc(getAllKnownKeycardsGroupedByKeyUID, "accounts"):
   discard
 
-rpc(getMigratedKeyPairByKeyUID, "accounts"):
+rpc(getKeycardByKeyUID, "accounts"):
   keyUid: string
 
 rpc(setKeycardName, "accounts"):

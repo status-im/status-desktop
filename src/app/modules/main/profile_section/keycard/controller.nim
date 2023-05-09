@@ -51,7 +51,7 @@ proc init*(self: Controller) =
     let args = KeycardActivityArgs(e)
     if not args.success:
       return
-    self.delegate.onNewKeycardSet(args.keyPair)
+    self.delegate.onNewKeycardSet(args.keycard)
 
   self.events.on(SIGNAL_KEYCARDS_SYNCHRONIZED) do(e: Args):
     let args = KeycardActivityArgs(e)
@@ -61,25 +61,25 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_KEYCARD_LOCKED) do(e: Args):
     let args = KeycardActivityArgs(e)
-    self.delegate.onKeycardLocked(args.keyPair.keyUid, args.keyPair.keycardUid)
+    self.delegate.onKeycardLocked(args.keycard.keyUid, args.keycard.keycardUid)
 
   self.events.on(SIGNAL_KEYCARD_UNLOCKED) do(e: Args):
     let args = KeycardActivityArgs(e)
-    self.delegate.onKeycardUnlocked(args.keyPair.keyUid, args.keyPair.keycardUid)
+    self.delegate.onKeycardUnlocked(args.keycard.keyUid, args.keycard.keycardUid)
 
   self.events.on(SIGNAL_KEYCARD_NAME_CHANGED) do(e: Args):
     let args = KeycardActivityArgs(e)
-    self.delegate.onKeycardNameChanged(args.keyPair.keycardUid, args.keyPair.keycardName)
+    self.delegate.onKeycardNameChanged(args.keycard.keycardUid, args.keycard.keycardName)
 
   self.events.on(SIGNAL_KEYCARD_UID_UPDATED) do(e: Args):
     let args = KeycardActivityArgs(e)
-    self.delegate.onKeycardUidUpdated(args.oldKeycardUid, args.keyPair.keycardUid)
+    self.delegate.onKeycardUidUpdated(args.oldKeycardUid, args.keycard.keycardUid)
 
   self.events.on(SIGNAL_KEYCARD_ACCOUNTS_REMOVED) do(e: Args):
     let args = KeycardActivityArgs(e)
     if not args.success:
       return
-    self.delegate.onKeycardAccountsRemoved(args.keyPair.keyUid, args.keyPair.keycardUid, args.keyPair.accountsAddresses)
+    self.delegate.onKeycardAccountsRemoved(args.keycard.keyUid, args.keycard.keycardUid, args.keycard.accountsAddresses)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e: Args):
     let args = WalletAccountUpdated(e)
@@ -91,10 +91,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
     self.delegate.rebuildKeycardsList()
 
-proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
-  return self.walletAccountService.getAllMigratedKeyPairs()
+proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
+  return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
 
-proc getAllKnownKeycards*(self: Controller): seq[KeyPairDto] =
+proc getAllKnownKeycards*(self: Controller): seq[KeycardDto] =
   return self.walletAccountService.getAllKnownKeycards()
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =

@@ -1,5 +1,5 @@
 import NimQml
-from ../../../../../app_service/service/wallet_account/service import KeyPairDto
+from ../../../../../app_service/service/wallet_account/service import KeycardDto
 from ../../../../../app_service/service/wallet_account/service import WalletAccountDto
 
 type
@@ -69,7 +69,7 @@ method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
 method rebuildKeycardsList*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onNewKeycardSet*(self: AccessInterface, keyPair: KeyPairDto) {.base.} =
+method onNewKeycardSet*(self: AccessInterface, keyPair: KeycardDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardLocked*(self: AccessInterface, keyUid: string, keycardUid: string) {.base.} =

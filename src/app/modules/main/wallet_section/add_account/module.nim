@@ -78,7 +78,7 @@ method loadForAddingAccount*[T](self: Module[T], addingWatchOnlyAccount: bool) =
   self.view.setEditMode(false)
   self.view.setCurrentState(newMainState(nil))
 
-  var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
+  var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
     excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = true)
   if items.len == 0:
     error "list of identified keypairs is empty, but it must have at least a profile keypair"
@@ -132,7 +132,7 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
     self.view.setSelectedOrigin(item)
     self.view.setWatchOnlyAccAddress(addressDetailsItem)
   else:
-    var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
+    var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
       excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
     if items.len == 0:
       error "list of identified keypairs is empty, but it must have at least a profile keypair"
