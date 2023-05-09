@@ -86,51 +86,51 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   arg.finish(output)
 
 #################################################
-# Async add migrated keypair
+# Async add new keycard or accounts
 #################################################
 
 type
-  AddMigratedKeyPairTaskArg* = ref object of QObjectTaskArg
-    keyPair: KeyPairDto
+  AddKeycardOrAddAccountsIfKeycardIsAddedTaskArg* = ref object of QObjectTaskArg
+    keycard: KeycardDto
 
-const addMigratedKeyPairTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AddMigratedKeyPairTaskArg](argEncoded)
+const addKeycardOrAddAccountsIfKeycardIsAddedTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AddKeycardOrAddAccountsIfKeycardIsAddedTaskArg](argEncoded)
   try:
-    let response = backend.addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded(
-      arg.keyPair.keycardUid,
-      arg.keyPair.keycardName,
-      arg.keyPair.keyUid,
-      arg.keyPair.accountsAddresses
+    let response = backend.addKeycardOrAddAccountsIfKeycardIsAdded(
+      arg.keycard.keycardUid,
+      arg.keycard.keycardName,
+      arg.keycard.keyUid,
+      arg.keycard.accountsAddresses
       )
-    let success = responseHasNoErrors("addMigratedKeyPairOrAddAccountsIfKeyPairIsAdded", response)
+    let success = responseHasNoErrors("addKeycardOrAddAccountsIfKeycardIsAdded", response)
     let responseJson = %*{
       "success": success,
-      "keyPair": arg.keyPair.toJsonNode()
+      "keycard": arg.keycard.toJsonNode()
     }
     arg.finish(responseJson)
   except Exception as e:
-    error "error adding new keypair: ", message = e.msg  
+    error "error adding new keycard: ", message = e.msg  
     arg.finish("")
 
 #################################################
-# Async add migrated keypair
+# Async remove migrated accounts for keycard
 #################################################
 
 type
   RemoveMigratedAccountsForKeycardTaskArg* = ref object of QObjectTaskArg
-    keyPair: KeyPairDto
+    keycard: KeycardDto
 
 const removeMigratedAccountsForKeycardTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[RemoveMigratedAccountsForKeycardTaskArg](argEncoded)
   try:
     let response = backend.removeMigratedAccountsForKeycard(
-      arg.keyPair.keycardUid,
-      arg.keyPair.accountsAddresses
+      arg.keycard.keycardUid,
+      arg.keycard.accountsAddresses
       )
     let success = responseHasNoErrors("removeMigratedAccountsForKeycard", response)
     let responseJson = %*{
       "success": success,
-      "keyPair": arg.keyPair.toJsonNode()
+      "keycard": arg.keycard.toJsonNode()
     }
     arg.finish(responseJson)
   except Exception as e:

@@ -20,7 +20,7 @@ const KeycardActionUnlocked* = "UNLOCKED"
 const KeycardActionUidUpdated* = "UID_UPDATED"
 const KeycardActionNameChanged* = "NAME_CHANGED"
 
-type KeyPairDto* = object
+type KeycardDto* = object
   keycardUid*: string
   keycardName*: string
   keycardLocked*: bool  
@@ -30,10 +30,10 @@ type KeyPairDto* = object
 type KeycardActionDto* = object
   action*: string
   oldKeycardUid*: string
-  keycard*: KeyPairDto
+  keycard*: KeycardDto
 
-proc toKeyPairDto*(jsonObj: JsonNode): KeyPairDto =
-  result = KeyPairDto()
+proc toKeycardDto*(jsonObj: JsonNode): KeycardDto =
+  result = KeycardDto()
   discard jsonObj.getProp(ParamKeycardUid, result.keycardUid)
   discard jsonObj.getProp(ParamKeycardName, result.keycardName)
   discard jsonObj.getProp(ParamKeycardLocked, result.keycardLocked)
@@ -51,9 +51,9 @@ proc toKeycardActionDto*(jsonObj: JsonNode): KeycardActionDto =
   
   var keycardObj: JsonNode
   if(jsonObj.getProp("keycard", keycardObj)):
-    result.keycard = toKeyPairDto(keycardObj)
+    result.keycard = toKeycardDto(keycardObj)
 
-proc toJsonNode*(self: KeyPairDto): JsonNode =
+proc toJsonNode*(self: KeycardDto): JsonNode =
   result = %* {
     ParamKeycardUid: self.keycardUid,
     ParamKeycardName: self.keycardName,

@@ -120,8 +120,8 @@ proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
 proc getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
   return self.walletAccountService.fetchAccounts()
 
-proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
-  return self.walletAccountService.getAllMigratedKeyPairs()
+proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
+  return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
 
 proc finalizeAction*(self: Controller) =
   self.delegate.finalizeAction()

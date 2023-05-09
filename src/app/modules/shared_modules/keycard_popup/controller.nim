@@ -49,7 +49,7 @@ type
     tmpPassword: string
     tmpPairingCode: string
     tmpSelectedKeyPairIsProfile: bool
-    tmpSelectedKeyPairDto: KeyPairDto
+    tmpSelectedKeycardDto: KeycardDto
     tmpSelectedKeyPairWalletPaths: seq[string]
     tmpSeedPhrase: string
     tmpSeedPhraseLength: int
@@ -300,32 +300,32 @@ proc unlockUsingSeedPhrase*(self: Controller): bool =
 proc setUnlockUsingSeedPhrase*(self: Controller, value: bool) =
   self.tmpUnlockUsingSeedPhrase = value
 
-proc setSelectedKeyPair*(self: Controller, isProfile: bool, paths: seq[string], keyPairDto: KeyPairDto) =
-  if paths.len != keyPairDto.accountsAddresses.len:
+proc setSelectedKeyPair*(self: Controller, isProfile: bool, paths: seq[string], keycardDto: KeycardDto) =
+  if paths.len != keycardDto.accountsAddresses.len:
     error "selected keypair has different number of paths and addresses"
     return
   self.tmpSelectedKeyPairIsProfile = isProfile
   self.tmpSelectedKeyPairWalletPaths = paths
-  self.tmpSelectedKeyPairDto = keyPairDto
+  self.tmpSelectedKeycardDto = keycardDto
 
 proc getSelectedKeyPairIsProfile*(self: Controller): bool =
   return self.tmpSelectedKeyPairIsProfile
 
-proc getSelectedKeyPairDto*(self: Controller): KeyPairDto =
-  return self.tmpSelectedKeyPairDto
+proc getSelectedKeyPairDto*(self: Controller): KeycardDto =
+  return self.tmpSelectedKeycardDto
 
 proc getSelectedKeyPairWalletPaths*(self: Controller): seq[string] =
   return self.tmpSelectedKeyPairWalletPaths
 
 proc setSelectedKeypairAsKeyPairForProcessing*(self: Controller) =
-  var cardMetadata = CardMetadata(name: self.tmpSelectedKeyPairDto.keycardName)
+  var cardMetadata = CardMetadata(name: self.tmpSelectedKeycardDto.keycardName)
   for i in 0 ..< self.tmpSelectedKeyPairWalletPaths.len:
     cardMetadata.walletAccounts.add(WalletAccount(path: self.tmpSelectedKeyPairWalletPaths[i],
-      address: self.tmpSelectedKeyPairDto.accountsAddresses[i]))
+      address: self.tmpSelectedKeycardDto.accountsAddresses[i]))
   self.delegate.updateKeyPairForProcessing(cardMetadata)
 
 proc setKeycardUidTheSelectedKeypairIsMigratedTo*(self: Controller, value: string) =
-  self.tmpSelectedKeyPairDto.keycardUid = value
+  self.tmpSelectedKeycardDto.keycardUid = value
 
 proc setKeycardUid*(self: Controller, value: string) =
   self.tmpKeycardUid = value
@@ -556,7 +556,7 @@ proc cleanTmpData(self: Controller) =
   self.setPukValid(false)
   self.setPassword("")
   self.setPairingCode("")
-  self.setSelectedKeyPair(isProfile = false, paths = @[], KeyPairDto())
+  self.setSelectedKeyPair(isProfile = false, paths = @[], KeycardDto())
   self.setSeedPhrase("")
   self.setUsePinFromBiometrics(false)
   self.setOfferToStoreUpdatedPinToKeychain(false)
@@ -626,12 +626,12 @@ proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Controller, address: 
     return (0.0, true)
   return self.walletAccountService.getOrFetchBalanceForAddressInPreferredCurrency(address)
 
-proc addMigratedKeyPair*(self: Controller, keyPair: KeyPairDto) =
+proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto) =
   if not serviceApplicable(self.walletAccountService):
     return
   if not serviceApplicable(self.accountsService):
     return
-  self.walletAccountService.addMigratedKeyPairAsync(keyPair)
+  self.walletAccountService.addKeycardOrAccountsAsync(keyPair)
 
 proc removeMigratedAccountsForKeycard*(self: Controller, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
   if not serviceApplicable(self.walletAccountService):
@@ -641,17 +641,17 @@ proc removeMigratedAccountsForKeycard*(self: Controller, keyUid: string, keycard
 proc getAddingMigratedKeypairSuccess*(self: Controller): bool =
   return self.tmpAddingMigratedKeypairSuccess
 
-proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
+proc getKeycardByKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
+  return self.walletAccountService.getKeycardByKeyUid(keyUid)
 
-proc getAllMigratedKeyPairs*(self: Controller): seq[KeyPairDto] =
+proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.getAllMigratedKeyPairs()
+  return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
 
-proc getAllKnownKeycards*(self: Controller): seq[KeyPairDto] =
+proc getAllKnownKeycards*(self: Controller): seq[KeycardDto] =
   if not serviceApplicable(self.walletAccountService):
     return
   return self.walletAccountService.getAllKnownKeycards()

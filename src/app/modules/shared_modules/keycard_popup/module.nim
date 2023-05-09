@@ -229,7 +229,7 @@ proc handleKeycardSyncing[T](self: Module[T]) =
       self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
       return
     if eventType == ResponseTypeValueKeycardFlowResult and flowEvent.error.len == 0:
-      var kpDto = KeyPairDto(keycardUid: flowEvent.instanceUID,
+      var kpDto = KeycardDto(keycardUid: flowEvent.instanceUID,
         keycardName: flowEvent.cardMetadata.name,
         keycardLocked: false,
         accountsAddresses: @[],
@@ -269,7 +269,7 @@ proc handleKeycardSyncing[T](self: Module[T]) =
           if accountsToRemove.len > 0:
             self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
           if kpDto.accountsAddresses.len > 0:
-            self.controller.addMigratedKeyPair(kpDto)
+            self.controller.addKeycardOrAccounts(kpDto)
           # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
           # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
           if activeValidPathsToStoreToAKeycard.len > 0:
@@ -394,7 +394,7 @@ method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEv
 
 proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
+  let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
     excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
@@ -416,7 +416,7 @@ method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
 
 method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardUid = "") =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(), 
+  let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
     excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
@@ -447,7 +447,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycard:
-    let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllMigratedKeyPairs(),
+    let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
       excludeAlreadyMigratedPairs = true, excludePrivateKeyKeypairs = false)
     self.view.createKeyPairModel(items)
     self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))
@@ -524,15 +524,15 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
 
 method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
   var paths: seq[string]
-  var keyPairDto = KeyPairDto(keycardUid: "", # will be set during migration
+  var keycardDto = KeycardDto(keycardUid: "", # will be set during migration
     keycardName: item.getName(),
     keycardLocked: item.getLocked(),
     keyUid: item.getKeyUid())
   for a in item.getAccountsModel().getItems():
     paths.add(a.getPath())
-    keyPairDto.accountsAddresses.add(a.getAddress())
+    keycardDto.accountsAddresses.add(a.getAddress())
   self.controller.setSelectedKeyPair(isProfile = item.getPairType() == KeyPairType.Profile.int,
-    paths, keyPairDto)
+    paths, keycardDto)
   self.setKeyPairForProcessing(item)
 
 proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: var KeyPairItem): bool =

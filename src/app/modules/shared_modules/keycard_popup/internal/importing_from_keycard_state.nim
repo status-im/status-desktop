@@ -33,12 +33,12 @@ proc addAccountsToWallet(self: ImportingFromKeycardState, controller: Controller
 
 proc doMigration(self: ImportingFromKeycardState, controller: Controller) =
   let kpForProcessing = controller.getKeyPairForProcessing()
-  var kpDto = KeyPairDto(keycardUid: controller.getKeycardUid(),
+  var kpDto = KeycardDto(keycardUid: controller.getKeycardUid(),
     keycardName: kpForProcessing.getName(),
     keycardLocked: false,
     accountsAddresses: self.addresses,
     keyUid: kpForProcessing.getKeyUid())
-  controller.addMigratedKeyPair(kpDto)
+  controller.addKeycardOrAccounts(kpDto)
 
 method getNextPrimaryState*(self: ImportingFromKeycardState, controller: Controller): State =
   if self.flowType == FlowType.ImportFromKeycard:

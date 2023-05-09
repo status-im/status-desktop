@@ -28,7 +28,7 @@ method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Co
     if self.verifiedSeedPhrase:
       ## should always be true, since it's not possible to do primary command otherwise (button is disabled on the UI)
       let keyUid = controller.getKeyUidForSeedPhrase(sp)
-      self.keyPairAlreadyMigrated = controller.getMigratedKeyPairByKeyUid(keyUid).len > 0
+      self.keyPairAlreadyMigrated = controller.getKeycardByKeyUid(keyUid).len > 0
       if self.keyPairAlreadyMigrated:
         controller.prepareKeyPairForProcessing(keyUid)
         return

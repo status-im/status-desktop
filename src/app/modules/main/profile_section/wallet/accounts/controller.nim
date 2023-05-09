@@ -31,8 +31,8 @@ proc updateAccount*(self: Controller, address: string, accountName: string, colo
 proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
 
-proc getMigratedKeyPairByKeyUid*(self: Controller, keyUid: string): seq[KeyPairDto] =
-  return self.walletAccountService.getMigratedKeyPairByKeyUid(keyUid)
+proc getKeycardByKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
+  return self.walletAccountService.getKeycardByKeyUid(keyUid)
 
 proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)

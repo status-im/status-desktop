@@ -62,12 +62,12 @@ proc addAccountsToWallet(self: CreatingAccountOldSeedPhraseState, controller: Co
 
 proc doMigration(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
   let kpForProcessing = controller.getKeyPairForProcessing()
-  var kpDto = KeyPairDto(keycardUid: controller.getKeycardUid(),
+  var kpDto = KeycardDto(keycardUid: controller.getKeycardUid(),
     keycardName: kpForProcessing.getName(),
     keycardLocked: false,
     accountsAddresses: self.addresses,
     keyUid: kpForProcessing.getKeyUid())
-  controller.addMigratedKeyPair(kpDto)
+  controller.addKeycardOrAccounts(kpDto)
 
 proc runStoreMetadataFlow(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
   let kpForProcessing = controller.getKeyPairForProcessing()
@@ -79,7 +79,7 @@ method executePrePrimaryStateCommand*(self: CreatingAccountOldSeedPhraseState, c
     controller.runDeriveAccountFlow(bip44Paths = self.paths, controller.getPin())
 
 method executePreSecondaryStateCommand*(self: CreatingAccountOldSeedPhraseState, controller: Controller) =
-  ## Secondary action is called after each async action during migration process, in this case after `addMigratedKeyPair`. 
+  ## Secondary action is called after each async action during migration process, in this case after `addKeycardOrAccounts`. 
   if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
     if controller.getAddingMigratedKeypairSuccess():
       self.runStoreMetadataFlow(controller)

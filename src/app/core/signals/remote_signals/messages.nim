@@ -11,7 +11,7 @@ import ../../../../app_service/service/contacts/dto/[contacts, status_update]
 import ../../../../app_service/service/devices/dto/[installation]
 import ../../../../app_service/service/settings/dto/[settings]
 import ../../../../app_service/service/saved_address/dto as saved_address_dto
-import ../../../../app_service/service/wallet_account/[dto, key_pair_dto]
+import ../../../../app_service/service/wallet_account/[dto, keycard_dto]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
@@ -33,7 +33,7 @@ type MessageSignal* = ref object of Signal
   clearedHistories*: seq[ClearedHistoryDto]
   verificationRequests*: seq[VerificationRequest]
   savedAddresses*: seq[SavedAddressDto]
-  keycards*: seq[KeyPairDto]
+  keycards*: seq[KeycardDto]
   keycardActions*: seq[KeycardActionDto]
   walletAccounts*: seq[WalletAccountDto]
 
@@ -136,7 +136,7 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
 
   if event["event"]{"keycards"} != nil:
     for jsonKc in event["event"]["keycards"]:
-      signal.keycards.add(jsonKc.toKeyPairDto())
+      signal.keycards.add(jsonKc.toKeycardDto())
 
   if event["event"]{"keycardActions"} != nil:
     for jsonKc in event["event"]["keycardActions"]:

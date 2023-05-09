@@ -3,14 +3,14 @@ import strutils, sequtils, sugar, chronicles
 import ../shared_models/[keypair_item]
 import ../../global/global_singleton
 
-import ../../../app_service/service/wallet_account/[dto, key_pair_dto]
+import ../../../app_service/service/wallet_account/[dto, keycard_dto]
 
 export keypair_item
 
 logScope:
   topics = "shared-keypairs"
 
-proc buildKeyPairsList*(allWalletAccounts: seq[WalletAccountDto], allMigratedKeypairs: seq[KeyPairDto], 
+proc buildKeyPairsList*(allWalletAccounts: seq[WalletAccountDto], allMigratedKeypairs: seq[KeycardDto], 
   excludeAlreadyMigratedPairs: bool, excludePrivateKeyKeypairs: bool): seq[KeyPairItem] =
   let keyPairMigrated = proc(keyUid: string): bool =
     result = false
