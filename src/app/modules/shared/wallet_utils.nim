@@ -70,8 +70,10 @@ proc walletAccountToWalletAssetsItem*(w: WalletAccountDto): wallet_assets_item.I
     w.assetsLoading,
   )
 
-proc walletTokenToItem*(t: WalletTokenDto, chainIds: seq[int], enabledChainIds: seq[int], currency: string,
-  currencyFormat: CurrencyFormatDto, tokenFormat: CurrencyFormatDto): token_item.Item =
+proc walletTokenToItem*(
+  t: WalletTokenDto, chainIds: seq[int], enabledChainIds: seq[int], currency: string,
+  currencyFormat: CurrencyFormatDto, tokenFormat: CurrencyFormatDto
+): token_item.Item =
   let marketValues = t.marketValuesPerCurrency.getOrDefault(currency)
   return token_item.initItem(
     t.name,

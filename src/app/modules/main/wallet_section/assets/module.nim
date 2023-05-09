@@ -91,15 +91,16 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto], enabledChain
   self.view.getAssetsModel().setItems(items)
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
-  let walletAccount = self.controller.getWalletAccountByAddress(addresses[0])
+  let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
   
-  let accountItem = walletAccountToWalletAssetsItem(walletAccount)
+  let accountItem = walletAccountToWalletAssetsItem(walletAccounts[0])
   self.view.setData(accountItem)
 
-  if walletAccount.tokens.len == 0 and walletAccount.assetsLoading:
+  if walletAccounts[0].tokens.len == 0 and walletAccounts[0].assetsLoading:
     self.setLoadingAssets()
   else:
-    self.setAssetsAndBalance(walletAccount.tokens, chainIds)
+    let walletTokens = self.controller.getWalletTokensByAddresses(addresses)
+    self.setAssetsAndBalance(walletTokens, chainIds)
 
 proc onTokensRebuilt(self: Module, hasBalanceCache: bool, hasMarketValuesCache: bool) =
   self.view.setAssetsLoading(false)

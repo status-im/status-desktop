@@ -274,6 +274,30 @@ QtObject:
       return
     result = self.walletAccounts[address]
 
+  proc getAccountsByAddresses*(self: Service, addresses: seq[string]): seq[WalletAccountDto] = 
+    for address in addresses:
+      result.add(self.getAccountByAddress(address))
+
+  proc getTokensByAddresses*(self: Service, addresses: seq[string]): seq[WalletTokenDto] =
+    var tokens = initTable[string, WalletTokenDto]()
+    for address in addresses:
+      let walletAccount = self.getAccountByAddress(address)
+      for token in walletAccount.tokens:
+        if not tokens.hasKey(token.symbol):
+          let newToken = token.copyToken()
+          tokens[token.symbol] = newToken
+          continue
+
+        for chainId, balanceDto in token.balancesPerChain:
+          if not tokens[token.symbol].balancesPerChain.hasKey(chainId):
+            tokens[token.symbol].balancesPerChain[chainId] = balanceDto
+            continue
+
+          tokens[token.symbol].balancesPerChain[chainId].balance += balanceDto.balance
+
+    result = toSeq(tokens.values)
+    result.sort(priorityTokenCmp)
+
   proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
     result = toSeq(self.walletAccounts.values)
 
