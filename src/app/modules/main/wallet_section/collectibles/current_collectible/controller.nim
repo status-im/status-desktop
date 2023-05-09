@@ -9,7 +9,6 @@ type
     delegate: io_interface.AccessInterface
     collectibleService: collectible_service.Service
     network: network_dto.NetworkDto
-    address: string
 
 proc newController*(
   delegate: io_interface.AccessInterface,
@@ -25,9 +24,8 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
-method setCurrentAddress*(self: Controller, network: network_dto.NetworkDto, address: string) =
+method setCurrentNetwork*(self: Controller, network: network_dto.NetworkDto) =
   self.network = network
-  self.address = address
 
 proc update*(self: Controller, id: collectible_service.UniqueID) =
   let collectible = self.collectibleService.getCollectible(self.network.chainId, id)

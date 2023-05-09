@@ -22,10 +22,13 @@ method fetchOwnedCollectibles*(self: AccessInterface) {.base.} =
 method onFetchStarted*(self: AccessInterface, chainId: int, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setCollectibles*(self: AccessInterface, chainId: int, address: string, data: CollectiblesData) {.base.} =
+method setCollectibles*(self: AccessInterface, data: seq[CollectiblesData]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method appendCollectibles*(self: AccessInterface, chainId: int, address: string, data: CollectiblesData) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method resetCollectibles*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =

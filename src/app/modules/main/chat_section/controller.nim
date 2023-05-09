@@ -637,8 +637,9 @@ proc ownsCollectible*(self: Controller, chainId: int, contractAddress: string, t
   let addresses = self.walletAccountService.getWalletAccounts().filter(a => a.walletType != WalletTypeWatch).map(a => a.address)
 
   for address in addresses:
-    let data = self.collectibleService.getOwnedCollectibles(chainId, address)
-    for collectible in data.collectibles:
+    let data = self.collectibleService.getOwnedCollectibles(chainId, @[address])
+    
+    for collectible in data[0].collectibles:
       if collectible.id.contractAddress == contractAddress.toLowerAscii:
         return true
 

@@ -17,9 +17,6 @@ type
     nodeService: node_service.Service
     networkConnectionService: network_connection_service.Service
 
-  # Forward declaration
-proc refetchOwnedCollectibles*(self: Controller, chainId: int, address: string)
-
 proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -41,18 +38,14 @@ proc newController*(
 proc delete*(self: Controller) =
   discard
 
-proc resetCollectibles(self: Controller, chainId: int, address: string) =
-  let data = self.collectibleService.getOwnedCollectibles(chainId, address)
-  self.delegate.setCollectibles(chainId, address, data)
-
 proc updateCollectibles(self: Controller, chainId: int, address: string) =
-  let data = self.collectibleService.getOwnedCollectibles(chainId, address)
-  self.delegate.appendCollectibles(chainId, address, data)
+  let data = self.collectibleService.getOwnedCollectibles(chainId, @[address])
+  self.delegate.appendCollectibles(chainId, address, data[0])
 
 proc init*(self: Controller) =  
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_REFETCH) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
-    self.resetCollectibles(args.chainId, args.address)
+    self.delegate.resetCollectibles()
 
   self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_ERROR) do(e:Args):
     let args = OwnedCollectiblesUpdateArgs(e)
@@ -69,20 +62,14 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_REFRESH_COLLECTIBLES) do(e:Args):
     self.collectibleService.refetchAllOwnedCollectibles()
 
-proc getWalletAccountByAddress*(self: Controller, address: string): wallet_account_service.WalletAccountDto =
-  return self.walletAccountService.getAccountByAddress(address)
-
 proc getNetwork*(self: Controller): network_service.NetworkDto =
   return self.networkService.getNetworkForCollectibles()
 
-proc getOwnedCollectibles*(self: Controller, chainId: int, address: string): CollectiblesData =
-  return self.collectibleService.getOwnedCollectibles(chainId, address)
+proc getOwnedCollectibles*(self: Controller, chainId: int, addresses: seq[string]): seq[CollectiblesData] =
+  return self.collectibleService.getOwnedCollectibles(chainId, addresses)
 
-proc refetchOwnedCollectibles*(self: Controller, chainId: int, address: string) =
-  self.collectibleService.refetchOwnedCollectibles(chainId, address)
-
-proc fetchOwnedCollectibles*(self: Controller, chainId: int, address: string) =
-  self.collectibleService.fetchOwnedCollectibles(chainId, address)
+proc fetchOwnedCollectibles*(self: Controller, chainId: int, addresses: seq[string]) =
+  self.collectibleService.fetchOwnedCollectibles(chainId, addresses)
 
 proc getCollectible*(self: Controller, chainId: int, id: UniqueID) : CollectibleDto =
   self.collectibleService.getCollectible(chainId, id)

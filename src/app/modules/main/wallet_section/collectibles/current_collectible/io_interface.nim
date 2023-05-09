@@ -15,7 +15,7 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setCurrentAddress*(self: AccessInterface, network: network_dto.NetworkDto, address: string) {.base.} =
+method setCurrentNetwork*(self: AccessInterface, network: network_dto.NetworkDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method update*(self: AccessInterface, address: string, tokenId: Uint256) {.base.} =
