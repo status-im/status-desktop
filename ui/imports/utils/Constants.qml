@@ -347,6 +347,11 @@ QtObject {
     }
 
     readonly property QtObject onboarding: QtObject {
+        readonly property int loginHeight: 370
+        readonly property int logoImageWidth: 128
+        readonly property int logoImageHeight: 128
+        readonly property int biometricsImageWidth: 188
+        readonly property int biometricsImageHeight: 185
         readonly property int userImageWidth: 40
         readonly property int userImageHeight: 40
         readonly property int titleFontSize: 17
@@ -540,7 +545,6 @@ QtObject {
         readonly property QtObject general: QtObject {
             readonly property string purchasePage: "https://get.keycard.tech"
             readonly property int onboardingHeight: 460
-            readonly property int loginHeight: 460
             readonly property int imageWidth: 240
             readonly property int imageHeight: 240
             readonly property int seedPhraseWidth: 816
@@ -572,8 +576,6 @@ QtObject {
             readonly property int footerButtonsHeight: 44
             readonly property int loginInfoHeight1: 24
             readonly property int loginInfoHeight2: 44
-            readonly property int loginStatusLogoWidth: 128
-            readonly property int loginStatusLogoHeight: 128
         }
 
         readonly property QtObject keyPairType: QtObject {

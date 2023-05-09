@@ -31,7 +31,7 @@ Item {
 
     ColumnLayout {
         anchors.centerIn: parent
-        height: Constants.keycard.general.onboardingHeight
+        height: Constants.onboarding.loginHeight
         spacing: Style.current.bigPadding
 
         ProfileFetchingAnimation {
