@@ -307,9 +307,10 @@ QtObject:
     # Re-fetch
     self.refetchOwnedCollectibles(chainId, address)
 
-  proc getOwnedCollectibles*(self: Service, chainId: int, address: string) : CollectiblesData =
-    self.prepareOwnershipData(chainId, address)
-    return self.accountsOwnershipData[chainId][address].data
+  proc getOwnedCollectibles*(self: Service, chainId: int, addresses: seq[string]) : seq[CollectiblesData] =
+    for address in addresses:
+      self.prepareOwnershipData(chainId, address)
+      result.add(self.accountsOwnershipData[chainId][address].data)
 
   proc getCollectible*(self: Service, chainId: int, id: UniqueID) : CollectibleDto =
     try:
@@ -466,28 +467,29 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc fetchOwnedCollectibles*(self: Service, chainId: int, address: string, limit: int = ownedCollectiblesFetchLimit) =
-    self.prepareOwnershipData(chainId, address)
+  proc fetchOwnedCollectibles*(self: Service, chainId: int, addresses: seq[string], limit: int = ownedCollectiblesFetchLimit) =
+    for address in addresses:
+      self.prepareOwnershipData(chainId, address)
 
-    let ownershipData = self.accountsOwnershipData[chainId][address]
-    let watchedContractAddresses = ownershipData.watchedContractAddresses
-    let collectiblesData = ownershipData.data
+      let ownershipData = self.accountsOwnershipData[chainId][address]
+      let watchedContractAddresses = ownershipData.watchedContractAddresses
+      let collectiblesData = ownershipData.data
 
-    let state = collectiblesData.state
+      let state = collectiblesData.state
 
-    if state == State.Init and len(watchedContractAddresses) > 0:
-      collectiblesData.state = State.WatchedContractsLoading
-      self.fetchOwnedCollectiblesFromWatchedContracts(chainId, address)
-    elif state == State.Init or state == State.WatchedContractsLoaded or state == State.ChunkLoaded:
-      collectiblesData.state = State.ChunkLoading
-      self.fetchNextOwnedCollectiblesChunk(chainId, address)
-    else:
-      return
+      if state == State.Init and len(watchedContractAddresses) > 0:
+        collectiblesData.state = State.WatchedContractsLoading
+        self.fetchOwnedCollectiblesFromWatchedContracts(chainId, address)
+      elif state == State.Init or state == State.WatchedContractsLoaded or state == State.ChunkLoaded:
+        collectiblesData.state = State.ChunkLoading
+        self.fetchNextOwnedCollectiblesChunk(chainId, address)
+      else:
+        return
 
-    var data = OwnedCollectiblesUpdateArgs()
-    data.chainId = chainId
-    data.address = address
-    self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED, data)
+      var data = OwnedCollectiblesUpdateArgs()
+      data.chainId = chainId
+      data.address = address
+      self.events.emit(SIGNAL_OWNED_COLLECTIBLES_UPDATE_STARTED, data)
 
   proc refetchOwnedCollectibles*(self: Service, chainId: int, address: string) =
     self.prepareOwnershipData(chainId, address)
@@ -500,7 +502,7 @@ QtObject:
     data.address = address
     self.events.emit(SIGNAL_OWNED_COLLECTIBLES_REFETCH, data)
 
-    self.fetchOwnedCollectibles(chainId, address)
+    self.fetchOwnedCollectibles(chainId, @[address])
 
   proc refetchAllOwnedCollectibles*(self: Service) =
     for chainId, addressesData in self.accountsOwnershipData:

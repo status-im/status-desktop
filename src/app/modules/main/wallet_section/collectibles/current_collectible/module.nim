@@ -45,8 +45,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.currentCollectibleModuleDidLoad()
 
-method setCurrentAddress*(self: Module, network: network_dto.NetworkDto, address: string) =
-  self.controller.setCurrentAddress(network, address)
+method setCurrentNetwork*(self: Module, network: network_dto.NetworkDto) =
+  self.controller.setCurrentNetwork(network)
 
 method update*(self: Module, address: string, tokenId: Uint256) =
   let id = collectible_dto.UniqueID(

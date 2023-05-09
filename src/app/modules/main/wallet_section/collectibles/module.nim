@@ -28,7 +28,7 @@ type
     moduleLoaded: bool
 
     chainId: int
-    address: string
+    addresses: seq[string]
 
     currentCollectibleModule: current_collectible_module.AccessInterface
 
@@ -47,7 +47,7 @@ proc newModule*(
   result.controller = newController(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
   result.moduleLoaded = false
   result.chainId = 0
-  result.address = ""
+  result.addresses = @[]
   result.currentCollectibleModule = currentCollectibleModule.newModule(result, collectibleService)
 
 method delete*(self: Module) =
@@ -81,22 +81,21 @@ method currentCollectibleModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method fetchOwnedCollectibles*(self: Module) =
-  self.controller.fetchOwnedCollectibles(self.chainId, self.address)
+  self.controller.fetchOwnedCollectibles(self.chainId, self.addresses)
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let network = self.controller.getNetwork()
-  let account = self.controller.getWalletAccountByAddress(addresses[0])
   self.chainId = network.chainId
-  self.address = account.address
-  self.currentCollectibleModule.setCurrentAddress(network, self.address)
+  self.addresses = addresses
+  self.currentCollectibleModule.setCurrentNetwork(network)
+  self.view.setCollectibles(@[])
+  let data = self.controller.getOwnedCollectibles(self.chainId, self.addresses)
 
-  let data = self.controller.getOwnedCollectibles(self.chainId, self.address)
+  for i, addressData in data.pairs:
+    if not addressData.anyLoaded:
+      self.controller.fetchOwnedCollectibles(self.chainId, @[self.addresses[i]])
 
-  # Trigger a fetch the first time we switch to an account
-  if not data.anyLoaded:
-    self.controller.fetchOwnedCollectibles(self.chainId, self.address)
-
-  self.setCollectibles(self.chainId, self.address, data)
+  self.setCollectibles(data)
 
 proc ownedCollectibleToItem(self: Module, oc: OwnedCollectible): Item =
   let c = self.controller.getCollectible(self.chainId, oc.id)
@@ -104,45 +103,40 @@ proc ownedCollectibleToItem(self: Module, oc: OwnedCollectible): Item =
   return collectibleToItem(c, col, oc.isFromWatchedContract)
 
 method onFetchStarted*(self: Module, chainId: int, address: string) =
-  if self.chainId == chainId and self.address == address:
+  if self.chainId == chainId and address in self.addresses:
     self.view.setIsFetching(true)
 
-method setCollectibles*(self: Module, chainId: int, address: string, data: CollectiblesData) =
-  if self.chainId == chainId and self.address == address:
-    self.view.setIsError(data.isError)
-
-    if data.isError and not data.anyLoaded:
-      # If fetching failed before being able to get any collectibles info,
-      # show loading animation
-      self.view.setIsFetching(true)
-    else:
-      self.view.setIsFetching(data.isFetching)
-
-    var newCollectibles = data.collectibles.map(oc => self.ownedCollectibleToItem(oc))
-    self.view.setCollectibles(newCollectibles)
-    self.view.setAllLoaded(data.allLoaded)
+method resetCollectibles*(self: Module) =
+  let data = self.controller.getOwnedCollectibles(self.chainId, self.addresses)
+  self.setCollectibles(data)
 
 method appendCollectibles*(self: Module, chainId: int, address: string, data: CollectiblesData) =
-  if self.chainId == chainId and self.address == address:
-    self.view.setIsError(data.isError)
+  if not (self.chainId == chainId and address in self.addresses):
+    return
 
-    if data.isError and not data.anyLoaded:
-      # If fetching failed before being able to get any collectibles info,
-      # show loading animation
-      self.view.setIsFetching(true)
-    else:
-      self.view.setIsFetching(data.isFetching)
+  self.view.setIsError(data.isError)
 
-    if data.lastLoadCount > 0:
-      var ownedCollectiblesToAdd = newSeq[OwnedCollectible]()
-      for i in data.collectibles.len - data.lastLoadCount ..< data.collectibles.len:
-        ownedCollectiblesToAdd.add(data.collectibles[i])
+  if data.isError and not data.anyLoaded:
+    # If fetching failed before being able to get any collectibles info,
+    # show loading animation
+    self.view.setIsFetching(true)
+  else:
+    self.view.setIsFetching(data.isFetching)
 
-      let newCollectibles = ownedCollectiblesToAdd.map(oc => self.ownedCollectibleToItem(oc))
+  if data.lastLoadCount > 0:
+    var ownedCollectiblesToAdd = newSeq[OwnedCollectible]()
+    for i in data.collectibles.len - data.lastLoadCount ..< data.collectibles.len:
+      ownedCollectiblesToAdd.add(data.collectibles[i])
 
-      self.view.appendCollectibles(newCollectibles)
+    let newCollectibles = ownedCollectiblesToAdd.map(oc => self.ownedCollectibleToItem(oc))
 
-    self.view.setAllLoaded(data.allLoaded)
+    self.view.appendCollectibles(newCollectibles)
+
+  self.view.setAllLoaded(data.allLoaded)
+
+method setCollectibles*(self: Module, data: seq[CollectiblesData]) =
+  for index, address in self.addresses:
+    self.appendCollectibles(self.chainId, address, data[index])
 
 method getHasCollectiblesCache*(self: Module): bool =
-  return self.controller.getHasCollectiblesCache(self.address)
+  return self.controller.getHasCollectiblesCache(self.addresses[0])
