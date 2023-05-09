@@ -138,6 +138,7 @@ ColumnLayout {
         ScrollBar.vertical: StatusScrollBar {}
 
         section.property: "date"
+        topMargin: -20 // Top margin for first section. Section cannot have different sizes
         section.delegate: ColumnLayout {
             id: sectionDelegate
 
@@ -145,21 +146,23 @@ ColumnLayout {
 
             width: ListView.view.width
             // display always first section. Other sections when more items are being fetched must not be visible
-            visible: isFirstSection || section.length > 1
+            // 1 because we don't use empty for loading state
+            // Additionaly height must be defined so all sections use same height to to glitch sections when updating model
+            height: isFirstSection || section.length > 1 ? 58 : 0
+            visible: height > 0 // display always first section. Other sections when more items are being fetched must not be visible
             spacing: 0
 
             required property string section
 
             Separator {
                 Layout.fillWidth: true
-                Layout.topMargin: sectionDelegate.isFirstSection ? 0 : 20
+                Layout.topMargin: 20
                 implicitHeight: 1
             }
 
             StatusTextWithLoadingState {
                 id: sectionText
-
-                Layout.topMargin: 12
+                Layout.alignment: Qt.AlignBottom
                 leftPadding: 16
                 bottomPadding: 8
                 text: loading ? "dummy" : parent.section // dummy text because loading component height depends on text height, and not visible with height == 0
