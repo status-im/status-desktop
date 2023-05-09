@@ -36,8 +36,9 @@ Item {
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
     property int activeChatType: parentModule && parentModule.activeItem.type
     property bool stickersLoaded: false
-    property var contactDetails: null
-    property bool isUserAdded: root.contactDetails && root.contactDetails.isAdded
+
+    readonly property var contactDetails: rootStore ? rootStore.oneToOneChatContact : null
+    readonly property bool isUserAdded: root.contactDetails && root.contactDetails.isAdded
 
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
@@ -95,21 +96,6 @@ Item {
         }
 
         root.createChatPropertiesStore.resetProperties()
-    }
-
-    function updateContactDetails() {
-        contactDetails = activeChatType === Constants.chatType.oneToOne && Utils.getContactDetailsAsJson(root.activeChatId, false)
-    }
-
-    onActiveChatIdChanged: root.updateContactDetails()
-
-    Connections {
-        target: root.contactsStore.myContactsModel
-
-        function onItemChanged(pubKey) {
-            if (pubKey === root.activeChatId)
-                root.updateContactDetails()
-        }
     }
 
     EmptyChatPanel {

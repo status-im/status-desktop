@@ -41,7 +41,7 @@ StatusMenu {
     property bool isRightClickOnImage: false
     property bool pinnedPopup: false
     property bool pinMessageAllowedForMembers: false
-    property bool isDebugEnabled: store.isDebugEnabled
+    property bool isDebugEnabled: store && store.isDebugEnabled
     property bool isEmoji: false
     property bool isSticker: false
     property bool hideEmojiPicker: true

@@ -22,24 +22,8 @@ StatusDialog {
     property string messageToUnpin
     property string chatId
 
-    property bool isPinActionAvaliable: true
-
-    function updatePinActionAvaliable() {
-        const contactDetails = chatId ? Utils.getContactDetailsAsJson(chatId, false) : null
-        isPinActionAvaliable = contactDetails ? contactDetails.isContact : true
-    }
-
-    Connections {
-        target: root.store.contactsStore.myContactsModel
-
-        function onItemChanged(pubKey) {
-            if (chatId === pubKey) {
-                updatePinActionAvaliable()
-            }
-        }
-    }
-
-    Component.onCompleted: updatePinActionAvaliable()
+    readonly property var contactDetails: store ? store.oneToOneChatContact : null
+    readonly property bool isPinActionAvaliable: contactDetails ? contactDetails.isContact : true
 
     width: 800
     height: 428
