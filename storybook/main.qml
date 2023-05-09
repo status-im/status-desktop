@@ -173,28 +173,36 @@ ApplicationWindow {
                     })
                 }
 
+                function activateInspection(item) {
+                    inspectionWindow.inspect(item)
+                    inspectionWindow.show()
+                    inspectionWindow.requestActivate()
+                }
+
                 onInspectClicked: {
                     const getItems = typeName =>
                                    InspectionUtils.findItemsByTypeName(
                                        viewLoader.item, typeName)
-
                     const items = [
                         ...getItems(root.currentPage),
                         ...getItems("Custom" + root.currentPage)
                     ]
 
-                    if (items.length === 0) {
-                        console.warn(`Item of type "${root.currentPage}" not found. Nothing to inspect.`)
-                        return
-                    }
-
                     const lca = InspectionUtils.lowestCommonAncestor(
                                   items, viewLoader.item)
 
-                    inspectionWindow.inspect(lca.parent.contentItem === lca
-                                             ? lca.parent : lca)
-                    inspectionWindow.show()
-                    inspectionWindow.requestActivate()
+                    if (lca) {
+                        activateInspection(lca.parent.contentItem === lca
+                                           ? lca.parent : lca)
+                        return
+                    }
+
+                    if (Overlay.overlay.children.length > 0) {
+                        activateInspection(Overlay.overlay.children[0])
+                        return
+                    }
+
+                    nothingToInspectDialog.open()
                 }
             }
         }
@@ -243,6 +251,26 @@ ApplicationWindow {
 
     InspectionWindow {
         id: inspectionWindow
+    }
+
+    Dialog {
+        id: nothingToInspectDialog
+
+        anchors.centerIn: Overlay.overlay
+        width: contentItem.implicitWidth + leftPadding + rightPadding
+
+        title: "No items to inspect found"
+        standardButtons: Dialog.Ok
+        modal: true
+
+        contentItem: Label {
+            text: `
+Tips:
+    •   For inline components use naming convention of adding
+        "Custom" at the begining (like Custom${root.currentPage})
+    •   For popups set closePolicy to "Popup.NoAutoClose""
+`
+        }
     }
 
     Component {
