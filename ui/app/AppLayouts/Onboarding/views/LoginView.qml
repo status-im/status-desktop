@@ -63,7 +63,7 @@ Item {
 
         readonly property string stateLoginRegularUser: "regularUserLogin"
         readonly property string stateLoginKeycardUser: "keycardUserLogin"
-
+        readonly property bool isRegularLogin: (image.source.toString() === Style.png("status-logo"))
         readonly property string lostKeycardItemKey: Constants.appTranslatableConstants.loginAccountsListLostKeycard
 
         property int remainingAttempts: root.startupStore.startupModuleInst.remainingAttempts
@@ -112,6 +112,8 @@ Item {
             }
 
             image.source = Style.png("keycard/biometrics-fail")
+            image.Layout.preferredWidth = Constants.onboarding.biometricsImageWidth
+            image.Layout.preferredHeight = Constants.onboarding.biometricsImageHeight;
             info.icon = ""
             info.color = Theme.palette.dangerColor1
             info.text = qsTr("Fingerprint not recognized")
@@ -164,15 +166,15 @@ Item {
 
     ColumnLayout {
         anchors.centerIn: parent
-        height: Constants.keycard.general.loginHeight
+        //26 for input error text top margin + height
+        anchors.verticalCenterOffset: d.isRegularLogin ? 26 : 0
+        height: Constants.onboarding.loginHeight
         spacing: Style.current.bigPadding
-
         KeycardImage {
             id: image
             Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth:  Constants.keycard.general.imageWidth
             Layout.preferredHeight: Constants.keycard.general.imageHeight
-            Layout.preferredWidth: Constants.keycard.general.imageWidth
-
             onAnimationCompleted: {
                 if (root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardInsertedKeycard ||
                         root.startupStore.currentStartupState.stateType === Constants.startupState.loginKeycardReadingKeycard) {
@@ -184,15 +186,17 @@ Item {
         StatusBaseText {
             id: title
             Layout.alignment: Qt.AlignHCenter
+            //spacing between logo and title is 16px
+            Layout.topMargin: -Style.current.halfPadding
             font.weight: Font.Bold
             font.pixelSize: Constants.onboarding.titleFontSize
             color: Theme.palette.directColor1
         }
-
+        Item { Layout.fillHeight: d.isRegularLogin }
         Item {
             id: userInfo
-            Layout.preferredHeight: userImage.height
             Layout.preferredWidth: 318
+            Layout.preferredHeight: userImage.height
             Layout.alignment: Qt.AlignHCenter
             enabled: root.startupStore.currentStartupState.stateType !== Constants.startupState.loginKeycardReadingKeycard &&
                      root.startupStore.currentStartupState.stateType !== Constants.startupState.loginKeycardRecognizedKeycard &&
@@ -360,7 +364,6 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: txtPassword.height
             Layout.alignment: Qt.AlignHCenter
-
             Input {
                 id: txtPassword
                 textField.objectName: "loginPasswordInput"
@@ -472,7 +475,6 @@ Item {
             }
             StatusBaseText {
                 id: infoTxt
-                Layout.alignment: Qt.AlignHCenter
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: Constants.keycard.general.fontSize3
                 wrapMode: Text.WordWrap
@@ -515,11 +517,7 @@ Item {
                 }
             }
         }
-
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
+        Item { Layout.fillHeight: true }
     }
 
     states: [
@@ -533,11 +531,11 @@ Item {
                             Style.png("keycard/biometrics-success") : Style.png("status-logo")
                 pattern: ""
                 Layout.preferredHeight: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store?
-                                            Constants.keycard.general.imageHeight :
-                                            Constants.keycard.general.loginStatusLogoHeight
+                                            Constants.onboarding.biometricsImageWidth :
+                                            Constants.onboarding.logoImageHeight
                 Layout.preferredWidth: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store?
-                                           Constants.keycard.general.imageWidth :
-                                           Constants.keycard.general.loginStatusLogoWidth
+                                           Constants.onboarding.biometricsImageHeight :
+                                           Constants.onboarding.logoImageWidth
             }
             PropertyChanges {
                 target: title
@@ -585,6 +583,8 @@ Item {
                 target: image
                 source: Style.png("keycard/biometrics-success")
                 pattern: ""
+                Layout.preferredWidth: Constants.onboarding.biometricsImageWidth
+                Layout.preferredHeight: Constants.onboarding.biometricsImageHeight
             }
             PropertyChanges {
                 target: title
@@ -632,6 +632,8 @@ Item {
                 target: image
                 source: Style.png("keycard/empty-reader")
                 pattern: ""
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -683,6 +685,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.cardInsert.endImgIndex
                 duration: Constants.keycardAnimations.cardInsert.duration
                 loops: Constants.keycardAnimations.cardInsert.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -736,6 +740,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.cardInserted.endImgIndex
                 duration: Constants.keycardAnimations.cardInserted.duration
                 loops: Constants.keycardAnimations.cardInserted.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -787,6 +793,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.warning.endImgIndex
                 duration: Constants.keycardAnimations.warning.duration
                 loops: Constants.keycardAnimations.warning.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -838,6 +846,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.success.endImgIndex
                 duration: Constants.keycardAnimations.success.duration
                 loops: Constants.keycardAnimations.success.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -883,9 +893,9 @@ Item {
             PropertyChanges {
                 target: image
                 source: Style.png("status-logo")
+                Layout.preferredHeight: Constants.onboarding.logoImageWidth
+                Layout.preferredWidth: Constants.onboarding.logoImageHeight
                 pattern: ""
-                Layout.preferredHeight: Constants.keycard.general.loginStatusLogoHeight
-                Layout.preferredWidth: Constants.keycard.general.loginStatusLogoWidth
             }
             PropertyChanges {
                 target: title
@@ -928,6 +938,8 @@ Item {
                 target: image
                 source: Style.png("keycard/card-empty")
                 pattern: ""
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -976,6 +988,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.strongSuccess.endImgIndex
                 duration: Constants.keycardAnimations.strongSuccess.duration
                 loops: Constants.keycardAnimations.strongSuccess.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -1023,6 +1037,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
                 duration: Constants.keycardAnimations.strongError.duration
                 loops: Constants.keycardAnimations.strongError.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -1071,6 +1087,8 @@ Item {
                 target: image
                 source: Style.png("keycard/plain-error")
                 pattern: ""
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -1129,6 +1147,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
                 duration: Constants.keycardAnimations.strongError.duration
                 loops: Constants.keycardAnimations.strongError.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -1175,6 +1195,8 @@ Item {
                 target: image
                 source: Style.png("keycard/card-empty")
                 pattern: ""
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -1226,6 +1248,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
                 duration: Constants.keycardAnimations.strongError.duration
                 loops: Constants.keycardAnimations.strongError.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -1278,6 +1302,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.strongError.endImgIndex
                 duration: Constants.keycardAnimations.strongError.duration
                 loops: Constants.keycardAnimations.strongError.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: title
@@ -1331,6 +1357,8 @@ Item {
                 endImgIndex: Constants.keycardAnimations.strongSuccess.endImgIndex
                 duration: Constants.keycardAnimations.strongSuccess.duration
                 loops: Constants.keycardAnimations.strongSuccess.loops
+                Layout.preferredWidth: Constants.keycard.general.imageWidth
+                Layout.preferredHeight: Constants.keycard.general.imageHeight
             }
             PropertyChanges {
                 target: userInfo
