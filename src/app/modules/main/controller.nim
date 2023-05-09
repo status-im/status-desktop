@@ -18,6 +18,7 @@ import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/node/service as node_service
 import ../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/network/service as networks_service
@@ -48,6 +49,7 @@ type
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
     communityTokensService: community_tokens_service.Service
+    ensService: ens_service.Service
     activeSectionId: string
     authenticateUserFlowRequestedBy: string
     walletAccountService: wallet_account_service.Service
@@ -72,6 +74,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   mailserversService: mailservers_service.Service,
   nodeService: node_service.Service,
   communityTokensService: community_tokens_service.Service,
+  ensService: ens_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   networksService: networks_service.Service,
@@ -118,7 +121,8 @@ proc init*(self: Controller) =
       self.walletAccountService,
       self.tokenService,
       self.collectibleService,
-      self.communityTokensService
+      self.communityTokensService,
+      self.ensService
     )
 
   self.events.on(SIGNAL_COMMUNITY_DATA_LOADED) do(e:Args):
@@ -135,7 +139,8 @@ proc init*(self: Controller) =
       self.walletAccountService,
       self.tokenService,
       self.collectibleService,
-      self.communityTokensService
+      self.communityTokensService,
+      self.ensService
     )
 
   self.events.on(SIGNAL_CHANNEL_GROUPS_LOADING_FAILED) do(e:Args):
@@ -172,6 +177,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.collectibleService,
       self.communityTokensService,
+      self.ensService,
       setActive = args.fromUserAction
     )
 
@@ -192,6 +198,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.collectibleService,
       self.communityTokensService,
+      self.ensService,
       setActive = args.fromUserAction
     )
 
@@ -216,6 +223,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.collectibleService,
       self.communityTokensService,
+      self.ensService,
       setActive = true
     )
 
@@ -238,6 +246,7 @@ proc init*(self: Controller) =
       self.tokenService,
       self.collectibleService,
       self.communityTokensService,
+      self.ensService,
       setActive = false
     )
 

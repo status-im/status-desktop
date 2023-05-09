@@ -7,6 +7,10 @@ proc getEnsUsernames*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   return core.callPrivateRPC("ens_getEnsUsernames", payload)
 
+proc reverseResolveENS*(addresses: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [addresses]
+  return core.callPrivateRPC("reverseResolveENS".prefix, payload)
+
 proc add*(chainId: int, username: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, username]
   return core.callPrivateRPC("ens_add", payload)

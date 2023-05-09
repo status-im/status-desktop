@@ -572,15 +572,12 @@ QtObject:
 
               permissionUpdated = true
 
-          for tc in tokenPermission.tokenCriteria:
-            let index = findIndexBySymbol(tc.symbol, prevTokenPermission.tokenCriteria)
-            if index == -1:
-              continue
-
-            let prevTc = prevTokenPermission.tokenCriteria[index]
-            if tc.amount != prevTc.amount or tc.ensPattern != prevTc.ensPattern:
-              permissionUpdated = true
-              break
+          if not permissionUpdated:
+            for i, tc in tokenPermission.tokenCriteria:
+              let prevTc = prevTokenPermission.tokenCriteria[i]
+              if tc.amount != prevTc.amount or tc.ensPattern != prevTc.ensPattern or tc.`type` != prevTc.`type`:
+                permissionUpdated = true
+                break
 
           if permissionUpdated:
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, 

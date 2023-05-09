@@ -35,6 +35,7 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/collectible/service as collectible_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../app_service/service/ens/service as ens_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../../app_service/service/community/dto/community as community_dto
@@ -106,11 +107,12 @@ proc newModule*(
     tokenService: token_service.Service,
     collectibleService: collectible_service.Service,
     communityTokensService: community_tokens_service.Service,
+    ensService: ens_service.Service,
   ): Module =
   result = Module()
   result.delegate = delegate
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, nodeConfigurationService,
-  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, collectibleService, communityTokensService)
+  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, collectibleService, communityTokensService, ensService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
@@ -1303,6 +1305,9 @@ proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPerm
         tokenCriteriaMet = self.controller.ownsCollectible(chainId, address, tc.tokenIds)
         if tokenCriteriaMet:
           break
+
+    if tc.`type` == TokenType.ENS:
+      tokenCriteriaMet = self.controller.ownsENS(tc.ensPattern)
 
     let tokenCriteriaItem = initTokenCriteriaItem(
       tc.symbol,

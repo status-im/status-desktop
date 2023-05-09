@@ -13,6 +13,7 @@ import ../../../../app_service/service/mailservers/service as mailservers_servic
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../app_service/service/ens/service as ens_service
 import ../../../../app_service/service/collectible/service as collectible_service
 import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 import ../../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -44,6 +45,7 @@ type
     tokenService: token_service.Service
     collectibleService: collectible_service.Service
     communityTokensService: community_tokens_service.Service
+    ensService: ens_service.Service
     tmpRequestToJoinCommunityId: string
     tmpRequestToJoinEnsName: string
 
@@ -55,7 +57,8 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
-  communityTokensService: community_tokens_service.Service): Controller =
+  communityTokensService: community_tokens_service.Service,
+  ensService: ens_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
@@ -74,6 +77,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.tokenService = tokenService
   result.collectibleService = collectibleService
   result.communityTokensService = communityTokensService
+  result.ensService = ensService
   result.tmpRequestToJoinCommunityId = ""
   result.tmpRequestToJoinEnsName = ""
 
@@ -643,6 +647,25 @@ proc ownsCollectible*(self: Controller, chainId: int, contractAddress: string, t
     let data = self.collectibleService.getOwnedCollectibles(chainId, address)
     for collectible in data.collectibles:
       if collectible.id.contractAddress == contractAddress.toLowerAscii:
+        return true
+
+  return false
+
+proc ownsENS*(self: Controller, ensPattern: string): bool =
+  let addresses = self.walletAccountService.getWalletAccounts().filter(a => a.walletType != WalletTypeWatch).map(a => a.address)
+  let ensNames = self.ensService.reverseResolveENS(addresses)
+  if ensNames.len == 0:
+    return false
+
+  if not ensPattern.startsWith("*."):
+    for name in ensNames:
+      if name == ensPattern:
+        return true
+
+  else:
+    let parentName = ensPattern.substr(2, ensPattern.len-1)
+    for name in ensNames:
+      if name.endsWith(parentName):
         return true
 
   return false

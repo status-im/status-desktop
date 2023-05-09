@@ -54,6 +54,7 @@ import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
 import ../../../app_service/service/keycard/service as keycard_service
@@ -165,6 +166,7 @@ proc newModule*[T](
     mailserversService,
     nodeService,
     communityTokensService,
+    ensService,
     walletAccountService,
     tokenService,
     networkService,
@@ -541,7 +543,8 @@ method onChannelGroupsLoaded*[T](
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
-  communityTokensService: community_tokens_service.Service
+  communityTokensService: community_tokens_service.Service,
+  ensService: ens_service.Service
 ) =
   self.chatsLoaded = true
   if not self.communityDataLoaded:
@@ -568,7 +571,8 @@ method onChannelGroupsLoaded*[T](
       walletAccountService,
       tokenService,
       collectibleService,
-      communityTokensService
+      communityTokensService,
+      ensService
     )
     let channelGroupItem = self.createChannelGroupItem(channelGroup)
     self.view.model().addItem(channelGroupItem)
@@ -601,7 +605,8 @@ method onCommunityDataLoaded*[T](
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
-  communityTokensService: community_tokens_service.Service
+  communityTokensService: community_tokens_service.Service,
+  ensService: ens_service.Service
 ) =
   self.communityDataLoaded = true
   if not self.chatsLoaded:
@@ -621,7 +626,8 @@ method onCommunityDataLoaded*[T](
     walletAccountService,
     tokenService,
     collectibleService,
-    communityTokensService
+    communityTokensService,
+    ensService
   )
 
 method onChatsLoadingFailed*[T](self: Module[T]) =
@@ -844,6 +850,7 @@ method communityJoined*[T](
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service,
+  ensService: ens_service.Service,
   setActive: bool = false,
 ) =
   var firstCommunityJoined = false
@@ -865,7 +872,8 @@ method communityJoined*[T](
       walletAccountService,
       tokenService,
       collectibleService,
-      communityTokensService
+      communityTokensService,
+      ensService
     )
   let channelGroup = community.toChannelGroupDto()
   self.channelGroupModules[community.id].load(channelGroup, events, settingsService, nodeConfigurationService, contactsService,

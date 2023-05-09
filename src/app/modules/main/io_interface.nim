@@ -13,6 +13,7 @@ import ../../../app_service/service/wallet_account/service as wallet_account_ser
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../app_service/service/ens/service as ens_service
 from ../../../app_service/common/types import StatusType
 
 import ../../global/app_signals
@@ -88,7 +89,8 @@ method onChannelGroupsLoaded*(
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
-  communityTokensService: community_tokens_service.Service)
+  communityTokensService: community_tokens_service.Service,
+  ensService: ens_service.Service)
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -106,7 +108,8 @@ method onCommunityDataLoaded*(
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
-  communityTokensService: community_tokens_service.Service)
+  communityTokensService: community_tokens_service.Service,
+  ensService: ens_service.Service)
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -155,6 +158,7 @@ method communityJoined*(self: AccessInterface, community: CommunityDto, events: 
   tokenService: token_service.Service,
   collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service,
+  ensService: ens_service.Service,
   setActive: bool = false,) {.base.} =
   raise newException(ValueError, "No implementation available")
 

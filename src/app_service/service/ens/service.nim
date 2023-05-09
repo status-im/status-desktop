@@ -411,6 +411,17 @@ QtObject:
     let balances = status_go_backend.getTokensBalancesForChainIDs(@[self.getChainId()], @[account], @[token.addressAsString()]).result
     return ens_utils.hex2Token(balances{account}{token.addressAsString()}.getStr, token.decimals)
 
+  proc reverseResolveENS*(self: Service, addresses: seq[string]): seq[string] =
+    try:
+      let response = status_ens.reverseResolveENS(addresses)
+      result = @[]
+      if response.result.kind != JNull:
+        for ensName in response.result:
+          result.add(ensName.getStr)
+    except Exception as e:
+      error "Error reverse resolving ENS names", exception=e.msg
+      raise
+
   proc resourceUrl*(self: Service, username: string): (string, string, string) =
     try:
       let response = status_ens.resourceURL(self.getChainId(), username)
