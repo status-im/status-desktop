@@ -81,6 +81,9 @@ QtObject {
     }
 
     function lowestCommonAncestor(items, commonAncestor) {
+        if (items.length === 0)
+            return null
+
         const paths = items.map(item => pathToAncestor(item, commonAncestor))
 
         let candidate = null
