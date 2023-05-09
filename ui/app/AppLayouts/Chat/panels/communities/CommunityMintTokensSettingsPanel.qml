@@ -91,6 +91,7 @@ SettingsPageLayout {
 
         property var tokenOwnersModel
         property var selfDestructTokensList
+        property bool selfDestruct
 
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
         onInitialItemChanged: updateInitialStackView()
@@ -275,7 +276,7 @@ SettingsPageLayout {
 
             airdropEnabled: true
             retailEnabled: false
-            remotelySelfDestructEnabled: true
+            remotelySelfDestructVisible: d.selfDestruct
             burnEnabled: false
 
             onAirdropClicked: d.airdropClicked()
@@ -370,6 +371,12 @@ SettingsPageLayout {
                 target: d
                 property: "tokenOwnersModel"
                 value: view.tokenOwnersModel
+            }
+
+            Binding {
+                target: d
+                property: "selfDestruct"
+                value: view.selfDestruct
             }
 
             Instantiator {
