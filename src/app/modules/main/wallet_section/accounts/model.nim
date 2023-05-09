@@ -15,6 +15,7 @@ type
     Emoji,
     KeyUid,
     AssetsLoading,
+    Operable
 
 QtObject:
   type
@@ -59,6 +60,7 @@ QtObject:
       ModelRole.Emoji.int: "emoji",
       ModelRole.KeyUid.int: "keyUid",
       ModelRole.AssetsLoading.int: "assetsLoading",
+      ModelRole.Operable.int: "operable",
     }.toTable
 
 
@@ -97,3 +99,5 @@ QtObject:
       result = newQVariant(item.keyUid())
     of ModelRole.AssetsLoading:
       result = newQVariant(item.assetsLoading())
+    of ModelRole.Operable:
+      result = newQVariant(item.operable())

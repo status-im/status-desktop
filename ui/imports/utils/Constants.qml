@@ -730,6 +730,12 @@ QtObject {
     readonly property string seedWalletType: "seed"
     readonly property string generatedWalletType: "generated"
 
+    readonly property QtObject walletAccountOperability: QtObject {
+        readonly property string nonOperable: "no"
+        readonly property string partiallyOperable: "partially"
+        readonly property string fullyOperable: "fully"
+    }
+
 
     readonly property QtObject walletConnections: QtObject {
         readonly property string collectibles: "collectibles"

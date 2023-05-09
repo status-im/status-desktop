@@ -8,6 +8,10 @@ const WalletTypeSeed* = "seed"
 const WalletTypeWatch* = "watch"
 const WalletTypeKey* = "key"
 
+const AccountNonOperable* = "no" # an account is non operable it is not a keycard account and there is no keystore file for it and no keystore file for the address it is derived from
+const AccountPartiallyOperable* = "partially" # an account is partially operable if it is not a keycard account and there is created keystore file for the address it is derived from
+const AccountFullyOperable* = "fully" # an account is fully operable if it is not a keycard account and there is a keystore file for it
+
 const alwaysVisible = {
   1: @["ETH", "SNT", "DAI"],
   10: @["ETH", "SNT", "DAI"],
@@ -104,7 +108,8 @@ type
     lastUsedDerivationIndex*: int
     hasBalanceCache*: bool
     hasMarketValuesCache*: bool
-    removed*: bool # needs for synchronization
+    removed*: bool # needed for synchronization
+    operable*: string # needed for synchronization, possible values can be "no", "partially", "fully", meaning explained at the top of this file
 
 proc newDto*(
   name: string,
@@ -151,6 +156,7 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("keypair-name", result.keypairName)
   discard jsonObj.getProp("last-used-derivation-index", result.lastUsedDerivationIndex)
   discard jsonObj.getProp("removed", result.removed)
+  discard jsonObj.getProp("operable", result.operable)
   result.assetsLoading = true
   result.hasBalanceCache = false
   result.hasMarketValuesCache = false

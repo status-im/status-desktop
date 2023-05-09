@@ -256,7 +256,8 @@ Rectangle {
                 asset.isLetterIdenticon: !!model.emoji ? true : false
                 asset.bgColor: Theme.palette.primaryColor3
                 statusListItemTitle.font.weight: Font.Medium
-                color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
+                color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 :
+                                                             model.operable === walletAccountOperability.nonOperable? Theme.palette.dangerColor3 : "transparent"
                 statusListItemSubTitle.loading: !!model.assetsLoading
                 errorMode: networkConnectionStore.accountBalanceNotAvailable
                 errorIcon.tooltip.maxWidth: 300

@@ -19,6 +19,7 @@ proc initItem*(
   emoji: string = "",
   keyUid: string = "",
   assetsLoading: bool  = true,
+  operable: string = AccountNonOperable
 ): Item =
   result = Item()
   result.WalletAccountItem.setup(name,
@@ -27,7 +28,8 @@ proc initItem*(
     emoji,
     walletType,
     path,
-    keyUid)
+    keyUid,
+    operable)
   result.assetsLoading = assetsLoading
   result.currencyBalance = currencyBalance
   

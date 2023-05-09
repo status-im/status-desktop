@@ -358,7 +358,7 @@ QtObject:
     var found = false
     for account in accounts:
       let account = account # TODO https://github.com/nim-lang/Nim/issues/16740
-      if not self.walletAccountsContainsAddress(account.address):
+      if not account.removed and not self.walletAccountsContainsAddress(account.address):
         found = true
         newAccount = account
         break

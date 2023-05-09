@@ -1,4 +1,7 @@
 import NimQml, strformat
+from ../../../app_service/service/wallet_account/dto import AccountNonOperable
+
+export AccountNonOperable
 
 QtObject:
   type WalletAccountItem* = ref object of QObject
@@ -9,6 +12,7 @@ QtObject:
     walletType: string
     path: string
     keyUid: string
+    operable: string
 
   proc setup*(self: WalletAccountItem,
     name: string = "",
@@ -17,7 +21,8 @@ QtObject:
     emoji: string = "",
     walletType: string = "",
     path: string = "",
-    keyUid: string = ""
+    keyUid: string = "",
+    operable: string = AccountNonOperable
     ) =
       self.QObject.setup
       self.name = name
@@ -27,6 +32,7 @@ QtObject:
       self.walletType = walletType
       self.path = path
       self.keyUid = keyUid
+      self.operable = operable
 
   proc delete*(self: WalletAccountItem) =
       self.QObject.delete
@@ -40,6 +46,7 @@ QtObject:
       walletType: {self.walletType},
       path: {self.path},
       keyUid: {self.keyUid},
+      operable: {self.operable}
       ]"""
 
   proc nameChanged*(self: WalletAccountItem) {.signal.}
@@ -103,4 +110,9 @@ QtObject:
     read = keyUid
     notify = keyUidChanged
 
-
+  proc operableChanged*(self: WalletAccountItem) {.signal.}
+  proc operable*(self: WalletAccountItem): string {.slot.} =
+    return self.operable
+  QtProperty[string] operable:
+    read = operable
+    notify = operableChanged
