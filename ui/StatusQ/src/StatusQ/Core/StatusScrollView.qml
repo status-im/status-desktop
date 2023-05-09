@@ -1,8 +1,11 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Controls.impl 2.12
+import QtQuick.Templates 2.12 as T
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Theme 0.1
 
 /*!
    \qmltype StatusScrollView
@@ -19,6 +22,7 @@ import StatusQ.Core.Utils 0.1
         StatusScrollView {
             id: scrollView
             anchors.fill: parent
+            contentWidth: availableWidth
 
             ColumnView {
                 width: scrollView.availableWidth
@@ -28,42 +32,51 @@ import StatusQ.Core.Utils 0.1
 
    For a list of components available see StatusQ.
 */
-Flickable {
+
+T.ScrollView {
     id: root
 
-    // NOTE: this should be replaced with margins since Qt 5.15
-    property int padding: 8
-    property int topPadding: padding
-    property int bottomPadding: padding
-    property int leftPadding: padding
-    property int rightPadding: padding
+    readonly property Flickable flickable: root.contentItem
 
-    readonly property int availableWidth: width - leftPadding - rightPadding
-    readonly property int availableHeight: height - topPadding - bottomPadding
+    function ensureVisible(rect) {
+        Utils.ensureVisible(flickable, rect)
+    }
 
-    // NOTE: in Qt6 clip true will be default
+    function applyFlickableFix() {
+        flickable.boundsBehavior = Flickable.StopAtBounds
+        flickable.maximumFlickVelocity = 2000
+        flickable.synchronousDrag = true
+    }
+
+    implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
+                            contentWidth + leftPadding + rightPadding)
+    implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset,
+                             contentHeight + topPadding + bottomPadding)
+
+    padding: 8
     clip: true
-    topMargin: topPadding
-    bottomMargin: bottomPadding
-    leftMargin: leftPadding
-    rightMargin: rightPadding
-    contentWidth: contentItem.childrenRect.width
-    contentHeight: contentItem.childrenRect.height
-    boundsBehavior: Flickable.StopAtBounds
-    maximumFlickVelocity: 2000
-    synchronousDrag: true
 
-    ScrollBar.horizontal: StatusScrollBar {
-        policy: ScrollBar.AsNeeded
-        visible: resolveVisibility(policy, root.width, root.contentWidth)
+    Component.onCompleted: {
+        applyFlickableFix()
     }
 
     ScrollBar.vertical: StatusScrollBar {
+        parent: root
+        x: root.mirrored ? 0 : root.width - width
+        y: root.topPadding
+        height: root.availableHeight
+        active: root.ScrollBar.horizontal.active
         policy: ScrollBar.AsNeeded
-        visible: resolveVisibility(policy, root.height, root.contentHeight)
+        visible: resolveVisibility(policy, root.availableHeight, root.contentHeight)
     }
 
-    function ensureVisible(rect) {
-        Utils.ensureVisible(this, rect)
+    ScrollBar.horizontal: StatusScrollBar {
+        parent: root
+        x: root.leftPadding
+        y: root.height - height
+        width: root.availableWidth
+        active: root.ScrollBar.vertical.active
+        policy: ScrollBar.AsNeeded
+        visible: resolveVisibility(policy, root.availableWidth, root.contentWidth)
     }
 }

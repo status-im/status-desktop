@@ -39,34 +39,31 @@ ColumnLayout {
     }
 
     StatusChatListCategoryItem {
-        title: "Chat list category"
+        text: "Chat list category"
         opened: false
         showActionButtons: true
     }
 
     StatusChatListCategoryItem {
-        title: "Chat list category (opened)"
+        text: "Chat list category (opened)"
         opened: true
         showActionButtons: true
     }
 
     StatusChatListCategoryItem {
-        title: "Chat list category (no buttons)"
+        text: "Chat list category (no buttons)"
         opened: true
     }
 
     StatusChatListCategoryItem {
         id: categoryItemInteractive
-        title: "Chat category interactive"
+        text: "Chat category interactive"
         showActionButtons: true
         onAddButtonClicked: testEventsList.eventTriggered("Add button clicked")
         onMenuButtonClicked: testEventsList.eventTriggered("Menu button clicked")
         onToggleButtonClicked: {
             opened = !opened
             testEventsList.eventTriggered("Toggle button clicked")
-        }
-        onTitleClicked: {
-            testEventsList.eventTriggered("Title clicked")
         }
         onClicked: {
             opened = !opened
