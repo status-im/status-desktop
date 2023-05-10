@@ -327,6 +327,17 @@ StatusMenu {
     }
 
     StatusAction {
+        text: qsTr("Remove Contact")
+        icon.name: "remove-contact"
+        type: StatusAction.Type.Danger
+        enabled: root.isContact && !root.isBlockedContact && !root.hasPendingContactRequest
+        onTriggered: {
+            Global.removeContactRequested(root.selectedUserDisplayName, root.selectedUserPublicKey);
+            root.close();
+        }
+    }
+
+    StatusAction {
         id: blockMenuItem
         text: qsTr("Block User")
         icon.name: "cancel"

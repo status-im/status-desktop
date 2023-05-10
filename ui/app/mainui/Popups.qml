@@ -38,6 +38,7 @@ QtObject {
         Global.openCommunityProfilePopupRequested.connect(openCommunityProfilePopup)
         Global.createCommunityPopupRequested.connect(openCreateCommunityPopup)
         Global.importCommunityPopupRequested.connect(openImportCommunityPopup)
+        Global.removeContactRequested.connect(openRemoveContactConfirmationPopup)
         Global.openPopupRequested.connect(openPopup)
     }
 
@@ -198,7 +199,33 @@ QtObject {
         openPopup(discordImportProgressDialog)
     }
 
+    function openRemoveContactConfirmationPopup(displayName, publicKey) {
+        openPopup(removeContactConfirmationDialog, {
+            displayName: displayName,
+            publicKey: publicKey
+        })
+    }
+
     readonly property list<Component> _components: [
+        Component {
+            id: removeContactConfirmationDialog
+            ConfirmationDialog {
+                property string displayName
+                property string publicKey
+                header.title: qsTr("Remove '%1' as a contact").arg(displayName)
+                confirmationText: qsTr("This will mean that you and '%1' will no longer be able to send direct messages to each other. You will need to send them a new Contact Request in order to message again. All previous direct messages between you and '%1' will be retained in read-only mode.").arg(displayName)
+                showCancelButton: true
+                cancelBtnType: ""
+                onConfirmButtonClicked: {
+                    rootStore.contactStore.removeContact(publicKey);
+                    close();
+                }
+                onCancelButtonClicked: {
+                    close();
+                }
+                onClosed: { destroy(); }
+            }
+        },
         Component {
             id: contactVerificationRequestPopupComponent
             ContactVerificationRequestPopup {

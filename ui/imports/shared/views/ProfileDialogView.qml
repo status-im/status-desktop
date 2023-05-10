@@ -256,22 +256,6 @@ Pane {
     }
 
     ConfirmationDialog {
-        id: removeContactConfirmationDialog
-        header.title: qsTr("Remove '%1' as a contact").arg(d.mainDisplayName)
-        confirmationText: qsTr("This will mean that you and '%1' will no longer be able to send direct messages to each other. You will need to send them a new Contact Request in order to message again. All previous direct messages between you and '%1' will be retained in read-only mode.").arg(d.mainDisplayName)
-        showCancelButton: true
-        cancelBtnType: ""
-        onConfirmButtonClicked: {
-            root.contactsStore.removeContact(root.publicKey)
-            close()
-            d.reload()
-        }
-        onCancelButtonClicked: {
-            removeContactConfirmationDialog.close();
-        }
-    }
-
-    ConfirmationDialog {
         id: removeVerificationConfirmationDialog
         header.title: qsTr("Remove contact verification")
         confirmationText: qsTr("This will remove the contact's verified status. Please confirm.")
@@ -508,8 +492,8 @@ Pane {
                         type: StatusAction.Type.Danger
                         enabled: d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent
                         onTriggered: {
-                            moreMenu.close()
-                            removeContactConfirmationDialog.open()
+                            Global.removeContactRequested(root.mainDisplayName, root.publicKey);
+                            moreMenu.close();
                         }
                     }
                     StatusAction {
