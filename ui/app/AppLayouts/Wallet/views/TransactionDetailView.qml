@@ -84,8 +84,6 @@ Item {
                 onRetryClicked: {
                     // TODO handle failed transaction retry
                 }
-
-                }
             }
 
             SavedAddressesDelegate {
