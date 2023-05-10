@@ -9,4 +9,7 @@ QtObject {
     property bool isWalletEnabled
     property var getSelectedTextWithFormationChars
     property var gifColumnA
+
+    property var currencyStore
+    property var getNetworkIcon
 }

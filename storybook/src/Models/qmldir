@@ -8,6 +8,7 @@ IconModel 1.0 IconModel.qml
 TokenHoldersModel 1.0 TokenHoldersModel.qml
 UsersModel 1.0 UsersModel.qml
 WalletAccountsModel 1.0 WalletAccountsModel.qml
+WalletAssetsModel 1.0 WalletAssetsModel.qml
 singleton MintedCollectiblesModel 1.0 MintedCollectiblesModel.qml
 singleton ModelsData 1.0 ModelsData.qml
 singleton NetworksModel 1.0 NetworksModel.qml

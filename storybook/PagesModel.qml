@@ -58,6 +58,10 @@ ListModel {
         section: "Views"
     }
     ListElement {
+        title: "TokenListView"
+        section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }
@@ -183,6 +187,10 @@ ListModel {
     }
     ListElement {
         title: "NetworkSelectPopup"
+        section: "Popups"
+    }
+    ListElement {
+        title: "SendModal"
         section: "Popups"
     }
     ListElement {
