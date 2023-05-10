@@ -146,7 +146,8 @@ QtObject {
             var amount
             var displayDecimals
             const numIntegerDigits = integralPartLength(currencyAmount.amount)
-            const maxDigits = 10
+            const maxDigits = 11 // We add "B" suffix only after 999 Billion
+            const maxDigitsToShowDecimal = 6 // We do not display decimal places after 1 million
             // For large numbers, we use the short scale system (https://en.wikipedia.org/wiki/Long_and_short_scales)
             // and 2 decimal digits.
             if (numIntegerDigits > maxDigits && !optRawAmount) {
@@ -157,7 +158,13 @@ QtObject {
                 // For normal numbers, we show the whole integral part and as many decimal places not
                 // not to exceed the maximum
                 amount = currencyAmount.amount
-                displayDecimals = Math.min(optDisplayDecimals, Math.max(0, maxDigits - numIntegerDigits))
+		 // For numbers over 1M , dont show decimal places
+                if(numIntegerDigits > maxDigitsToShowDecimal) {
+                    displayDecimals = 0
+                }
+                else {
+                    displayDecimals = Math.min(optDisplayDecimals, Math.max(0, maxDigits - numIntegerDigits))
+                }
             }
             amountStr = numberToLocaleString(amount, displayDecimals, locale)
             if (optStripTrailingZeroes) {

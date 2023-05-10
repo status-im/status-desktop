@@ -357,13 +357,14 @@ Rectangle {
                 visible: tagsRepeater.count > 0
                 anchors.top: statusListItemTertiaryTitle.bottom
                 anchors.topMargin: visible ? 8 : 0
-                width: Math.min(statusListItemTagsSlotInline.width, parent.width)
+                width: Math.min(statusListItemTagsSlotInline.width, statusListItemTagsSlotInline.availableWidth)
                 height: visible ? statusListItemTagsSlotInline.height : 0
                 clip: true
                 interactive: contentWidth > width
 
                 Row {
                     id: statusListItemTagsSlotInline
+                    readonly property real availableWidth: root.width - iconOrImage.width - root.rightPadding - 2*root.leftPadding
                     spacing: tagsRepeater.count > 0 ? 10 : 0
 
                     Repeater {
