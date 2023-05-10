@@ -8,12 +8,13 @@ import utils 1.0
 import shared.stores 1.0
 import shared.panels 1.0
 
-import StatusQ.Controls 0.1
-import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Utils 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import "../panels"
 import "../controls"
@@ -155,22 +156,30 @@ StatusDialog {
         onSelectedIndexChanged: store.switchSenderAccount(selectedIndex)
     }
 
-    StackLayout {
-        id: stack
+
+    ColumnLayout {
+        id: group1
+
         anchors.fill: parent
-        currentIndex: 0
-        clip: true
-        ColumnLayout {
-            id: group1
+
+        // Workaround for https://bugreports.qt.io/browse/QTBUG-87804
+        onImplicitHeightChanged: {
+            margins--
+            margins++
+        }
+
+        ClippingWrapper {
             Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.preferredHeight: assetAndAmountSelector.implicitHeight
+                                    + Style.current.halfPadding
+            z: 100
+
+            clipBottomMargin: 20
 
             Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: assetAndAmountSelector.implicitHeight + Style.current.halfPadding
+                anchors.fill: parent
 
                 color: Theme.palette.baseColor3
-                z: 100
 
                 layer.enabled: scrollView.contentY > 0
                 layer.effect: DropShadow {
@@ -324,19 +333,30 @@ StatusDialog {
                     }
                 }
             }
+        }
+
+        ClippingWrapper {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            implicitWidth: scrollView.implicitWidth
+            implicitHeight: scrollView.implicitHeight
+
+            clipTopMargin: 40
+            clipBottomMargin: popup.bottomPadding
 
             StatusScrollView {
                 id: scrollView
+
                 topPadding: 12
+                anchors.fill: parent
 
                 implicitWidth: contentWidth + leftPadding + rightPadding
                 implicitHeight: contentHeight + topPadding + bottomPadding
-                Layout.fillWidth: true
-                Layout.fillHeight: true
 
-                contentHeight: layout.height + Style.current.padding
+                contentHeight: layout.implicitHeight
 
-                z: 0
+                clip: false
                 objectName: "sendModalScroll"
 
                 Column {
