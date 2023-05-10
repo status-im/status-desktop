@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, strformat, algorithm
 
 import balance_item
 import ./currency_amount
@@ -75,8 +75,13 @@ QtObject:
       of "address": result = $item.address
       of "balance": result = $item.balance
 
+
+  proc cmpBalances*(x, y: Item): int =
+    cmp(x.balance.getAmount(), y.balance.getAmount())
+
   proc setItems*(self: BalanceModel, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
+    self.items.sort(cmpBalances, SortOrder.Descending)
     self.endResetModel()
     self.countChanged()
