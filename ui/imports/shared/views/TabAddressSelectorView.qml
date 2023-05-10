@@ -22,7 +22,7 @@ import "../views"
 Item {
     id: root
     clip: true
-    implicitHeight: visible ? accountSelectionTabBar.height + stackLayout.height + Style.current.bigPadding: 0
+    implicitHeight: visible ? accountSelectionTabBar.height + stackLayout.height : 0
 
     property var selectedAccount
     property var store
@@ -38,17 +38,12 @@ Item {
         None
     }
 
-    QtObject {
-        id: d
-        readonly property int maxHeightForList: 281
-    }
-
     StatusTabBar {
         id: accountSelectionTabBar
         anchors.top: parent.top
         anchors.left: parent.left
         width: parent.width
-        
+
         StatusTabButton {
             id: assetBtn
             width: implicitWidth
@@ -87,7 +82,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 implicitWidth: parent.width
-                height: Math.min(d.maxHeightForList, savedAddresses.contentHeight)
+                height: savedAddresses.contentHeight
 
                 model: root.store.savedAddressesModel
                 header: savedAddresses.count > 0 ? search : nothingInList
@@ -133,7 +128,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
-                height: Math.min(d.maxHeightForList, myAccounts.contentHeight)
+                height: myAccounts.contentHeight
 
                 delegate: WalletAccountListItem {
                     implicitWidth: ListView.view.width
@@ -162,7 +157,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
-                height: Math.min(d.maxHeightForList, recents.contentHeight)
+                height: recents.contentHeight
 
                 header: StatusBaseText {
                     height: visible ? 56 : 0
