@@ -81,6 +81,7 @@ Rectangle {
     property alias statusListItemLabel: statusListItemLabel
     property alias subTitleBadgeComponent: subTitleBadgeLoader.sourceComponent
     property alias errorIcon: errorIcon
+    property alias statusListItemTagsRowLayout: statusListItemSubtitleTagsRow
 
     signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)

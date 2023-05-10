@@ -54,6 +54,10 @@ QtObject {
         return networksModule.all.getNetworkShortName(chainId)
     }
 
+    function getNetworkFullName(chainId) {
+        return networksModule.all.getNetworkFullName(chainId)
+    }
+
     function getNetworkIconUrl(symbol) {
         return networksModule.all.getNetworkIconUrl(symbol)
     }

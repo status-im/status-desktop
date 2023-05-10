@@ -28,7 +28,7 @@ Item {
 
     QtObject {
         id: d
-        readonly property bool isIncoming: root.isTransactionValid ? root.transaction.to === root.overview.mixedcaseAddress : false
+        readonly property bool isIncoming: root.isTransactionValid ? root.transaction.to.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase() : false
         readonly property bool isNFT: root.isTransactionValid ? root.transaction.isNFT : false
         readonly property string savedAddressNameTo: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.to) : ""
         readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.from): ""
@@ -59,26 +59,31 @@ Item {
             spacing: Style.current.bigPadding
 
             TransactionDelegate {
+                id: transactionHeader
                 objectName: "transactionDetailHeader"
                 width: parent.width
 
                 modelData: transaction
-                isIncoming: d.isIncoming
+                transactionType: d.isIncoming ? TransactionDelegate.Receive : TransactionDelegate.Send
                 currentCurrency: RootStore.currentCurrency
                 cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
                 fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
                 networkIcon: root.isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId): ""
                 networkColor: root.isTransactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
-                networkName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
+                networkName: root.isTransactionValid ? RootStore.getNetworkFullName(transaction.chainId): ""
                 symbol: root.isTransactionValid ? transaction.symbol : ""
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
-                shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
-                isSummary: false
+                timeStampText: root.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
+                addressNameTo: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.to): ""
+                addressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.from): ""
                 sensor.enabled: false
+                formatCurrencyAmount: RootStore.formatCurrencyAmount
                 color: Theme.palette.statusListItem.backgroundColor
-                state: "big"
+                state: "header"
+
+                onRetryClicked: {
+                    // TODO handle failed transaction retry
+                }
             }
 
             SavedAddressesDelegate {
@@ -144,7 +149,7 @@ Item {
             TransactionDelegate {
                 width: parent.width
                 modelData: transaction
-                isIncoming: d.isIncoming
+                transactionType: d.isIncoming ? TransactionDelegate.Receive : TransactionDelegate.Send
                 currentCurrency: RootStore.currentCurrency
                 cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
                 fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
@@ -153,10 +158,10 @@ Item {
                 networkName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId): ""
                 symbol: root.isTransactionValid ? transaction.symbol : ""
                 transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
-                shortTimeStamp: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
-                savedAddressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
-                savedAddressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
-                isSummary: false
+                timeStampText: root.isTransactionValid ? LocaleUtils.formatTime(transaction.timestamp * 1000, Locale.ShortFormat): ""
+                addressNameTo: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.to): ""
+                addressNameFrom: root.isTransactionValid ? RootStore.getNameForSavedWalletAddress(transaction.from): ""
+                formatCurrencyAmount: RootStore.formatCurrencyAmount
                 sensor.enabled: false
                 color: Theme.palette.statusListItem.backgroundColor
                 border.width: 1

@@ -35,11 +35,18 @@ StatusBaseText {
     */
     property bool loading: false
     /*!
-        \qmlproperty bool StatusTextWithLoadingState::customColor
+        \qmlproperty color StatusTextWithLoadingState::customColor
         This property sets the user defined color for the text and handles
         transparency in loading state.
     */
     property color customColor: Theme.palette.directColor1
+
+    /*!
+        \qmlproperty int StatusTextWithLoadingState::maximumLoadingStateWidth
+        This property sets maximum width of loading component.
+        The default value is 140.
+    */
+    property int maximumLoadingStateWidth: 140
 
     color: loading ? "transparent" : customColor
 
@@ -51,7 +58,7 @@ StatusBaseText {
             anchors.centerIn: parent
             radius: textMetrics.font.pixelSize === 15 ? 4 : 8
             height: textMetrics.tightBoundingRect.height
-            width: Math.min(root.width, 140)
+            width: Math.min(root.width, root.maximumLoadingStateWidth)
         }
     }
 

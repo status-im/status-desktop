@@ -20,7 +20,8 @@ Rectangle {
     implicitWidth: asset.bgWidth
     implicitHeight: asset.bgHeight
     radius: asset.bgRadius
-
+    border.width: asset.bgBorderWidth
+    border.color: asset.bgBorderColor
 
     StatusIcon {
         id: statusIcon

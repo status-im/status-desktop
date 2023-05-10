@@ -301,10 +301,13 @@ QtObject {
 
         // otherwise
         var fullFormatString = d.fixupTimeFormatString(loc.dateTimeFormat(Locale.ShortFormat))
-        if (now.getFullYear() === value.getFullYear())
-            fullFormatString = fullFormatString.replace(/y/g, "") // strip year part, if current year -> "31 December 09:41"
-        else
+        if (now.getFullYear() === value.getFullYear()) {
+            // strip year part, if current year -> "31 December 09:41"
+            // It remove preceding dot or space
+            fullFormatString = fullFormatString.replace(/([.\s])?\b(y+)\b/g, "")
+        } else if (!fullFormatString.includes("yyyy")) {
             fullFormatString = fullFormatString.replace("yy", "yyyy") // different year -> "31 December 2022 09:41"
+        }
 
         return value.toLocaleString(loc, fullFormatString)
     }

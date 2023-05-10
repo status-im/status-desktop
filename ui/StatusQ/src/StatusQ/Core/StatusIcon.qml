@@ -13,7 +13,7 @@ Image {
     fillMode: Image.PreserveAspectFit
 
     onIconChanged: {
-        if(icon.startsWith("data:image/") || icon.startsWith("https://")) {
+        if(icon.startsWith("data:image/") || icon.startsWith("https://") || icon.startsWith("qrc:/") || icon.startsWith("file:/")) {
             //raw image data
             source = icon
             objectName = "custom-icon"    

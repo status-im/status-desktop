@@ -45,3 +45,6 @@ QtObject:
 
   proc updateAccount(self: View, address: string, accountName: string, color: string, emoji: string) {.slot.} =
     self.delegate.updateAccount(address, accountName, color, emoji)
+
+  proc getNameByAddress(self: View, address: string): string {.slot.}=
+    return self.accounts.getNameByAddress(address)
