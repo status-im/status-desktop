@@ -14,7 +14,7 @@ import shared 1.0
    \qmltype TransactionDelegate
    \inherits StatusListItem
    \inqmlmodule shared.controls
-   \since sha.Controls 0.1
+   \since shared.controls 1.0
    \brief Delegate for transaction activity list
 
    Delegate to display transaction activity data.
@@ -351,7 +351,7 @@ StatusListItem {
                         case TransactionDelegate.TransactionType.Receive:
                             return "+" + root.transactionValue
                         case TransactionDelegate.TransactionType.Swap:
-                            return String("<font color=\"%1\">-%2</font> <font color=\"%3\">/</font> <font color=\"%4\">+%5</font>")
+                            return "<font color=\"%1\">-%2</font> <font color=\"%3\">/</font> <font color=\"%4\">+%5</font>"
                                           .arg(Theme.palette.directColor1)
                                           .arg(root.transactionValue)
                                           .arg(Theme.palette.baseColor1)
@@ -397,8 +397,8 @@ StatusListItem {
                         case TransactionDelegate.TransactionType.Receive:
                             return "+" + root.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
                         case TransactionDelegate.TransactionType.Swap:
-                            return String("-%1 / +%2").arg(root.formatCurrencyAmount(root.fiatValue, root.currentCurrency))
-                                                      .arg(root.formatCurrencyAmount(root.swapFiatValue, root.currentCurrency))
+                            return "-%1 / +%2".arg(root.formatCurrencyAmount(root.fiatValue, root.currentCurrency))
+                                              .arg(root.formatCurrencyAmount(root.swapFiatValue, root.currentCurrency))
                         case TransactionDelegate.TransactionType.Bridge:
                             return "-" + root.formatCurrencyAmount(root.feeFiatValue, root.currentCurrency)
                         default:
