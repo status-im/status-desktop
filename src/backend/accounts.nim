@@ -25,8 +25,8 @@ proc getAccountsByKeyUID*(keyUid: string): RpcResponse[JsonNode] {.raises: [Exce
   let payload = %* [keyUid]
   return core.callPrivateRPC("accounts_getAccountsByKeyUID", payload)
 
-proc deleteAccount*(address: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [address, password]
+proc deleteAccount*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [address]
   return core.callPrivateRPC("accounts_deleteAccount", payload)
 
 ## Adds a new account and creates a Keystore file if password is provided, otherwise it only creates a new account. Notifies paired devices.
@@ -312,10 +312,10 @@ proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subacco
     error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc convertToKeycardAccount*(account: JsonNode, settings: JsonNode, password: string, newPassword: string): 
+proc convertToKeycardAccount*(account: JsonNode, settings: JsonNode, keycardUid: string, password: string, newPassword: string): 
   RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
-    let response = status_go.convertToKeycardAccount($account, $settings, password, newPassword)
+    let response = status_go.convertToKeycardAccount($account, $settings, keycardUid, password, newPassword)
     result.result = Json.decode(response, JsonNode)
 
   except RpcException as e:

@@ -766,7 +766,7 @@ QtObject:
       error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc convertToKeycardAccount*(self: Service, currentPassword: string, newPassword: string) = 
+  proc convertToKeycardAccount*(self: Service, keycardUid, currentPassword: string, newPassword: string) = 
     var accountDataJson = %* {
       "key-uid": self.getLoggedInAccount().keyUid,
       "kdfIterations": KDF_ITERATIONS
@@ -787,6 +787,7 @@ QtObject:
       slot: "onConvertToKeycardAccount",
       accountDataJson: accountDataJson,
       settingsJson: settingsJson,
+      keycardUid: keycardUid,
       hashedCurrentPassword: hashedCurrentPassword,
       newPassword: newPassword
     )

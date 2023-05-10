@@ -154,6 +154,11 @@ QtObject:
     self.setSelectedSenderAccount(account)
     self.delegate.setSelectedSenderAccountIndex(index)
 
+  proc switchReceiveAccountByAddress*(self: View, address: string) =
+    let (account, index) = self.accounts.getItemByAddress(address)
+    self.setSelectetReceiveAccount(account)
+    self.delegate.setSelectedReceiveAccountIndex(index)
+
   proc switchSenderAccount*(self: View, index: int) {.slot.} =
     self.setSelectedSenderAccount(self.senderAccounts.getItemByIndex(index))
     self.delegate.setSelectedSenderAccountIndex(index)

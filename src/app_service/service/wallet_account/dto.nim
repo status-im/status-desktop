@@ -178,6 +178,23 @@ proc `$`*(self: WalletAccountDto): string =
 proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =
   return self.balance * currencyPrice
 
+proc copyToken*(self: WalletTokenDto): WalletTokenDto =
+  result = WalletTokenDto()
+  result.name = self.name
+  result.symbol = self.symbol
+  result.decimals = self.decimals
+  result.color = self.color
+  result.description = self.description
+  result.assetWebsiteUrl = self.assetWebsiteUrl
+  result.builtOn = self.builtOn
+
+  result.balancesPerChain = initTable[int, BalanceDto]()
+  for chainId, balanceDto in self.balancesPerChain:
+    result.balancesPerChain[chainId] = balanceDto
+  result.marketValuesPerCurrency = initTable[string, TokenMarketValuesDto]()
+  for chainId, tokenMarketValuesDto in self.marketValuesPerCurrency:
+    result.marketValuesPerCurrency[chainId] = tokenMarketValuesDto
+
 proc getAddress*(self: WalletTokenDto): string =
   for balance in self.balancesPerChain.values:
     return balance.address

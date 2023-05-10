@@ -88,7 +88,6 @@ Rectangle {
             width: 400
 
             simple: removeAccountConfirmation.simple
-            accountKeyUid: removeAccountConfirmation.accountKeyUid
             accountName: removeAccountConfirmation.accountName
             accountAddress: removeAccountConfirmation.accountAddress
             accountDerivationPath: removeAccountConfirmation.accountDerivationPath
@@ -99,7 +98,7 @@ Rectangle {
 
             onRemoveAccount: {
                 close()
-                RootStore.deleteAccount(keyUid, address)
+                RootStore.deleteAccount(address)
             }
         }
 
@@ -303,7 +302,6 @@ Rectangle {
 
                         onDeleteAccountClicked: {
                             removeAccountConfirmation.simple = model.walletType === Constants.watchWalletType || model.walletType === Constants.keyWalletType
-                            removeAccountConfirmation.accountKeyUid = model.keyUid
                             removeAccountConfirmation.accountName = model.name
                             removeAccountConfirmation.accountAddress = model.address
                             removeAccountConfirmation.accountDerivationPath = model.path

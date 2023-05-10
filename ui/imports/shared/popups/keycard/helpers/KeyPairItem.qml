@@ -90,7 +90,7 @@ StatusListItem {
             width: 16
             height: 16
         }
-        title: model.account.name
+        title: Utils.appTranslation(model.account.name)
         titleText.font.pixelSize: 12
         titleText.color: Theme.palette.indirectColor1
 

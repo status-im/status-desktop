@@ -40,6 +40,17 @@ StatusDialog {
     signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
     signal deleteCommunityChannel()
 
+    QtObject {
+        id: d
+        function openEmojiPopup(leftSide = false) {
+            root.emojiPopupOpened = true;
+            root.emojiPopup.open();
+            root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
+            root.emojiPopup.x = leftSide ? root.x + Style.current.padding : (root.x + (root.width - root.emojiPopup.width - Style.current.padding));
+            root.emojiPopup.y = root.y + root.header.height + root.topPadding + nameInput.height + Style.current.smallPadding;
+        }
+    }
+
     title: qsTr("New channel")
 
     onOpened: {
@@ -124,13 +135,13 @@ StatusDialog {
                     icon.height: 20
                     icon.name: "smiley"
                     onClicked: {
-                        root.emojiPopupOpened = true;
-                        root.emojiPopup.open();
-                        root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
-                        root.emojiPopup.x = root.x + (root.width - root.emojiPopup.width - Style.current.padding);
-                        root.emojiPopup.y = root.y + root.header.height + root.topPadding + nameInput.height + Style.current.smallPadding;
+                        d.openEmojiPopup();
                     }
                 }
+                onIconClicked: {
+                    d.openEmojiPopup(true);
+                }
+
                 validators: [
                     StatusMinLengthValidator {
                         minLength: 1

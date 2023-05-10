@@ -66,7 +66,7 @@ method runCreateNewPairingCodePopup*(self: AccessInterface, keyUid: string) {.ba
 method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onKeycardsSynchronized*(self: AccessInterface) {.base.} =
+method rebuildKeycardsList*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onNewKeycardSet*(self: AccessInterface, keyPair: KeyPairDto) {.base.} =

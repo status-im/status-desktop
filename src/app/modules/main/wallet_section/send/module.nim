@@ -195,11 +195,11 @@ method suggestedRoutesReady*(self: Module, suggestedRoutes: string) =
 method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int = 
   return self.controller.getEstimatedTime(chainId, maxFeePerGas).int
 
-method switchAccount*(self: Module, accountIndex: int) =
-  var walletAccount = self.controller.getWalletAccountByIndex(accountIndex)
-  if not walletAccount.isNil:
-    self.view.switchSenderAccountByAddress(walletAccount.address)
-    self.view.switchReceiveAccount(accountIndex)
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
+  if addresses.len == 0:
+    return
+  self.view.switchSenderAccountByAddress(addresses[0])
+  self.view.switchReceiveAccountByAddress(addresses[0])
 
 method setSelectedSenderAccountIndex*(self: Module, index: int) =
   self.senderCurrentAccountIndex = index

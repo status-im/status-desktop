@@ -44,5 +44,5 @@ QtObject:
   proc onUpdatedAccount*(self: View, account: Item) =
     self.accounts.onUpdatedAccount(account)
     
-  proc deleteAccount*(self: View, keyUid: string, address: string) {.slot.} =
-    self.delegate.deleteAccount(keyUid, address)
+  proc deleteAccount*(self: View, address: string) {.slot.} =
+    self.delegate.deleteAccount(address)

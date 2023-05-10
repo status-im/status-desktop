@@ -161,7 +161,7 @@ Item {
                 onConfirmButtonClicked: {
                     confirmationPopup.close();
                     root.goBack();
-                    root.walletStore.deleteAccount(root.account.keyUid, root.account.address);
+                    root.walletStore.deleteAccount(root.account.address);
                 }
 
             }

@@ -3,6 +3,7 @@ import NimQml, chronicles, json, marshal, sequtils, sugar, strutils
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
+import ../../../../global/app_translatable_constants as atc
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 
@@ -220,14 +221,20 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
         # if there are more then one keycard for a single keypair we don't want to add the same keypair more than once
         continue
     knownAccounts.add(account)
-  if knownAccounts.len == 0:
-    return nil
   var item = initKeycardItem(keycardUid = keyPair.keycardUid,
     keyUid = keyPair.keyUid,
-    pubKey = knownAccounts[0].publicKey,
+    pubKey = "",
     locked = keyPair.keycardLocked,
-    name = keyPair.keycardName,
-    derivedFrom = knownAccounts[0].derivedfrom)
+    name = keyPair.keycardName)
+  if knownAccounts.len == 0:
+    if reason == BuildItemReason.MainView:
+      return nil
+    item.setPairType(KeyPairType.SeedImport.int)
+    item.setIcon("keycard")
+  else:
+    item.setPubKey(knownAccounts[0].publicKey)
+    item.setDerivedFrom(knownAccounts[0].derivedfrom)
+
   for ka in knownAccounts:
     var icon = ""
     if ka.walletType == WalletTypeDefaultStatusAccount:
@@ -246,7 +253,7 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
     var i = 0
     for ua in unknownAccountsAddresses:
       i.inc
-      let name = "acc" & $i
+      let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $i
       item.addAccount(newKeyPairAccountItem(name, path = "", ua, pubKey = "", emoji = "", color = "#939BA1", icon = "wallet", balance = 0.0))
   return item
 
@@ -277,7 +284,8 @@ method onLoggedInUserImageChanged*(self: Module) =
     return
   self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
-method onKeycardsSynchronized*(self: Module) =
+method rebuildKeycardsList*(self: Module) =
+  self.view.setKeycardItems(@[])
   self.buildKeycardList()
 
 method onNewKeycardSet*(self: Module, keyPair: KeyPairDto) =

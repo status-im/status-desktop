@@ -14,9 +14,6 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteAccount*(self: AccessInterface, keyUid: string, address: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -57,11 +54,11 @@ method authenticateUser*(self: AccessInterface) {.base.} =
 method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method switchAccount*(self: AccessInterface, accountIndex: int) =
-  raise newException(ValueError, "No implementation available")
-
 method setSelectedSenderAccountIndex*(self: AccessInterface, index: int) =
   raise newException(ValueError, "No implementation available")
 
 method setSelectedReceiveAccountIndex*(self: AccessInterface, index: int) =
+  raise newException(ValueError, "No implementation available")
+
+method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int]) =
   raise newException(ValueError, "No implementation available")
