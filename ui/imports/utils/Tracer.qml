@@ -46,6 +46,7 @@ Rectangle {
         if (parent instanceof ColumnLayout
                 || parent instanceof RowLayout
                 || parent instanceof GridLayout
+                || parent instanceof StackLayout
                 || parent instanceof Column
                 || parent instanceof Row
                 || parent instanceof Grid
