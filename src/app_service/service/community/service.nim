@@ -181,6 +181,7 @@ QtObject:
       communities: Table[string, CommunityDto] # [community_id, CommunityDto]
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
+      requestedCommunityIds*: HashSet[string]
 
   # Forward declaration
   proc asyncLoadCuratedCommunities*(self: Service)
@@ -215,6 +216,7 @@ QtObject:
     result.communities = initTable[string, CommunityDto]()
     result.myCommunityRequests = @[]
     result.historyArchiveDownloadTaskCommunityIds = initHashSet[string]()
+    result.requestedCommunityIds = initHashSet[string]()
 
   proc getFilteredJoinedCommunities(self: Service): Table[string, CommunityDto] =
     result = initTable[string, CommunityDto]()
@@ -1336,9 +1338,11 @@ QtObject:
       return
 
     var community = rpcResponseObj{"response"}{"result"}.toCommunityDto()
+    let requestedCommunityId = rpcResponseObj{"communityId"}.getStr()
+    self.requestedCommunityIds.excl(requestedCommunityId)
 
     if community.id == "":
-      community.id = rpcResponseObj{"response"}{"communityId"}.getStr()
+      community.id = requestedCommunityId
       self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(community: community, error: "Couldn't find community info"))
       return
     
@@ -1425,17 +1429,20 @@ QtObject:
 
   proc requestCommunityInfo*(self: Service, communityId: string, importing = false) =
 
-    try:
-      let arg = AsyncRequestCommunityInfoTaskArg(
-        tptr: cast[ByteAddress](asyncRequestCommunityInfoTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "asyncCommunityInfoLoaded",
-        communityId: communityId,
-        importing: importing
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error requesting community info", msg = e.msg, communityId
+    if communityId in self.requestedCommunityIds:
+      info "requestCommunityInfo: skipping as already requested", communityId
+      return
+
+    self.requestedCommunityIds.incl(communityId)
+
+    let arg = AsyncRequestCommunityInfoTaskArg(
+      tptr: cast[ByteAddress](asyncRequestCommunityInfoTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncCommunityInfoLoaded",
+      communityId: communityId,
+      importing: importing
+    )
+    self.threadpool.start(arg)
 
   proc importCommunity*(self: Service, communityKey: string) =
     try:
