@@ -38,6 +38,7 @@ QtObject {
     signal openActivityCenterPopupRequested()
     signal openSendIDRequestPopup(string publicKey, var cb)
     signal openContactRequestPopup(string publicKey, var cb)
+    signal removeContactRequested(string displayName, string publicKey)
     signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var cb)
     signal openIncomingIDRequestPopup(string publicKey, var cb)
     signal openOutgoingIDRequestPopup(string publicKey, var cb)
