@@ -1,1 +1,3 @@
+NetworkConnectionStore 1.0 NetworkConnectionStore.qml
+TransactionStore 1.0 TransactionStore.qml
 singleton RootStore 1.0 RootStore.qml
