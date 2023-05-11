@@ -1,12 +1,16 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+
+import AppLayouts.Wallet.panels 1.0
+import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Chat.panels 1.0
+
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
 
 import Storybook 1.0
-
-import AppLayouts.Wallet.panels 1.0
 
 import Models 1.0
 
@@ -35,39 +39,46 @@ SplitView {
 
         readonly property string emptyString: ""
 
-        property var dummyOverview:({
-            name: "helloworld",
-            mixedcaseAddress: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421",
-            ens: emptyString,
-            color: "#2A4AF5",
-            emoji: "⚽",
-            balanceLoading: false,
-            hasBalanceCache: true,
-            currencyBalance: ({amount: 1.25,
-                                        symbol: "USD",
-                                        displayDecimals: 4,
-                                        stripTrailingZeroes: false}),
-            isAllAccounts: false,
-            hideWatchAccounts: false
+        property var dummyOverview: updateDummyView(StatusColors.colors['black'])
 
-        })
+        function updateDummyView(color) {
+            dummyOverview = ({
+                                 name: "helloworld",
+                                 mixedcaseAddress: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421",
+                                 ens: emptyString,
+                                 color: color,
+                                 emoji: "⚽",
+                                 balanceLoading: false,
+                                 hasBalanceCache: true,
+                                 currencyBalance: ({amount: 1.25,
+                                                       symbol: "USD",
+                                                       displayDecimals: 4,
+                                                       stripTrailingZeroes: false}),
+                                 isAllAccounts: false,
+                                 hideWatchAccounts: false
+
+                             })
+        }
 
         property var dummyAllAccountsOverview:({
-            name: "helloworld",
-            mixedcaseAddress: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421",
-            ens: emptyString,
-            color: "#2A4AF5",
-            emoji: "⚽",
-            balanceLoading: false,
-            hasBalanceCache: true,
-            currencyBalance: ({amount: 1.25,
-                                        symbol: "USD",
-                                        displayDecimals: 4,
-                                        stripTrailingZeroes: false}),
-            isAllAccounts: true,
-            hideWatchAccounts: true
-
-        })
+                                                   name: "",
+                                                   mixedcaseAddress: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421",
+                                                   ens: emptyString,
+                                                   color: "",
+                                                   emoji: "",
+                                                   balanceLoading: false,
+                                                   hasBalanceCache: true,
+                                                   currencyBalance: ({amount: 1.25,
+                                                                         symbol: "USD",
+                                                                         displayDecimals: 4,
+                                                                         stripTrailingZeroes: false}),
+                                                   isAllAccounts: true,
+                                                   hideWatchAccounts: true,
+                                                   colors: StatusColors.colors['blue2']+ ";" +
+                                                   StatusColors.colors['yellow']+ ";" +
+                                                   StatusColors.colors['green2'] + ";" +
+                                                   StatusColors.colors['red2']
+                                               })
 
         readonly property QtObject connectionStore: QtObject {
             property bool accountBalanceNotAvailable: false
@@ -108,15 +119,33 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        Loader {
-            anchors.fill: parent
-            active: globalUtilsReady && mainModuleReady
+        Rectangle {
+            id: rect
+            width: 800
+            height: 200
+            color: Theme.palette.white
+            border.width: 1
+            anchors.centerIn: parent
 
-            sourceComponent: WalletHeader {
-                networkConnectionStore: d.connectionStore
-                overview: allAccountsCheckbox.checked ? d.dummyAllAccountsOverview :  d.dummyOverview
-                walletStore: d.walletStore
+            AccountHeaderGradient {
+                anchors.top: parent.top
+                anchors.left: parent.left
                 width: parent.width
+                overview: allAccountsCheckbox.checked ? d.dummyAllAccountsOverview :  d.dummyOverview
+            }
+
+            Loader {
+                anchors.top: parent.top
+                anchors.left: parent.left
+                width: parent.width
+                active: globalUtilsReady && mainModuleReady
+
+                sourceComponent: WalletHeader {
+                    networkConnectionStore: d.connectionStore
+                    overview: allAccountsCheckbox.checked ? d.dummyAllAccountsOverview :  d.dummyOverview
+                    walletStore: d.walletStore
+                    width: parent.width
+                }
             }
         }
     }
@@ -129,10 +158,38 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        CheckBox {
-            id: allAccountsCheckbox
-            text: "All Accounts"
-            checked: false
+        Column {
+            spacing: 20
+            Row {
+                CheckBox {
+                    id: allAccountsCheckbox
+                    text: "All Accounts"
+                    checked: false
+                }
+
+                CheckBox {
+                    id: darkMode
+                    text: "Dark Mode"
+                    checked: false
+                    onCheckedChanged: rect.color = Theme.palette.baseColor3
+                }
+            }
+            Row {
+                spacing: 10
+                id: row
+                Repeater {
+                    id: repeater
+                    model: Constants.preDefinedWalletAccountColors
+                    delegate: StatusColorRadioButton {
+                        radioButtonColor: repeater.model[index]
+                        checked: index === 0
+                        onCheckedChanged: d.updateDummyView(repeater.model[index])
+                    }
+                }
+            }
+            ButtonGroup {
+                buttons: row.children
+            }
         }
     }
 }

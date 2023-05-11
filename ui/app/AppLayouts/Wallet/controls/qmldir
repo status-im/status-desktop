@@ -1,2 +1,3 @@
 NetworkFilter 1.0 NetworkFilter.qml
 NetworkSelectItemDelegate 1.0 NetworkSelectItemDelegate.qml
+AccountHeaderGradient 1.0 AccountHeaderGradient.qml

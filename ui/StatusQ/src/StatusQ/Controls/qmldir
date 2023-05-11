@@ -55,3 +55,4 @@ StatusPasswordInput 0.1 StatusPasswordInput.qml
 StatusTextWithLoadingState 0.1 StatusTextWithLoadingState.qml
 StatusLinkText 0.1 StatusLinkText.qml
 StatusImageSelector 0.1 StatusImageSelector.qml
+StatusColorRadioButton 0.1 StatusColorRadioButton.qml

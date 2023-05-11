@@ -71,7 +71,11 @@ SplitView {
         This property holds the footer of the component.
     */
     property Item footer
-
+    /*!
+        \qmlproperty Component StatusAppLayout::headerBackground
+        This property holds the headerBackground of the component.
+    */
+    property Item headerBackground
     /*!
         \qmlproperty bool StatusAppLayout::showRightPanel
         This property sets the right panel component's visibility to true/false.
@@ -145,6 +149,12 @@ SplitView {
         }
     }
 
+    onHeaderBackgroundChanged:  {
+        if (!!headerBackground) {
+            headerBackground.parent = headerBackgroundSlot
+        }
+    }
+
     Control {
         SplitView.minimumWidth: (!!leftPanel) ? 304 : 0
         SplitView.preferredWidth: (!!leftPanel) ? 304 : 0
@@ -163,8 +173,18 @@ SplitView {
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
         }
         contentItem: Item {
+            Item {
+                id: headerBackgroundSlot
+                anchors.top: parent.top
+		// Needed cause I see a gap otherwise
+                anchors.topMargin: -3
+                width: visible ? parent.width : 0
+                height: visible ? childrenRect.height : 0
+                visible: (!!headerBackground)
+            }
             StatusToolBar {
                 id: statusToolBar
+                anchors.top: parent.top
                 width: visible ? parent.width : 0
                 visible: root.showHeader
                 onBackButtonClicked: {

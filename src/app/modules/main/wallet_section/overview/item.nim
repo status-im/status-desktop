@@ -1,4 +1,4 @@
-import strformat
+import strformat, strutils
 
 type
   Item* = object
@@ -10,6 +10,7 @@ type
     emoji: string
     isAllAccounts: bool
     hideWatchAccounts: bool
+    colors: seq[string]
 
 proc initItem*(
   name: string = "",
@@ -19,7 +20,8 @@ proc initItem*(
   color: string,
   emoji: string,
   isAllAccounts: bool = false,
-  hideWatchAccounts: bool = false
+  hideWatchAccounts: bool = false,
+  colors: seq[string] = @[]
 ): Item =
   result.name = name
   result.mixedCaseAddress = mixedCaseAddress
@@ -29,6 +31,7 @@ proc initItem*(
   result.emoji = emoji
   result.isAllAccounts = isAllAccounts
   result.hideWatchAccounts = hideWatchAccounts
+  result.colors = colors
 
 proc `$`*(self: Item): string =
   result = fmt"""OverviewItem(
@@ -39,7 +42,8 @@ proc `$`*(self: Item): string =
     color: {self.color},
     emoji: {self.emoji},
     isAllAccounts: {self.isAllAccounts},
-    hideWatchAccounts: {self.hideWatchAccounts}
+    hideWatchAccounts: {self.hideWatchAccounts},
+    colors: {self.colors}
     ]"""
 
 proc getName*(self: Item): string =
@@ -65,4 +69,12 @@ proc getIsAllAccounts*(self: Item): bool =
 
 proc getHideWatchAccounts*(self: Item): bool =
   return self.hideWatchAccounts
+
+proc getColors*(self: Item): string =
+  for color in self.colors:
+    if result.isEmptyOrWhitespace:
+      result = color
+    else:
+      result = result & ";" & color
+  return result
 
