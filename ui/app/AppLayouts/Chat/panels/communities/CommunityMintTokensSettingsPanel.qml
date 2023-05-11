@@ -79,9 +79,9 @@ SettingsPageLayout {
         readonly property string previewCollectibleViewState: "PREVIEW_COLLECTIBLE"
         readonly property string collectibleViewState: "VIEW_COLLECTIBLE"
 
-        readonly property string welcomePageTitle: qsTr("Mint tokens")
+        readonly property string welcomePageTitle: qsTr("Tokens")
         readonly property string newCollectiblePageTitle: qsTr("Create new collectible")
-        readonly property string newTokenButtonText: qsTr("Create new token")
+        readonly property string newTokenButtonText: qsTr("Mint token")
         readonly property string backButtonText: qsTr("Back")
         readonly property string backTokensText: qsTr("Tokens")
 
@@ -163,12 +163,12 @@ SettingsPageLayout {
         CommunityWelcomeSettingsView {
             viewWidth: root.viewWidth
             image: Style.png("community/mint2_1")
-            title: qsTr("Mint community tokens")
-            subtitle: qsTr("You can mint custom tokens and collectibles for your community")
+            title: qsTr("Community tokens")
+            subtitle: qsTr("You can mint custom tokens and import tokens for your community")
             checkersModel: [
+                qsTr("Create remotely destructible soulbound tokens for admin permissions"),
                 qsTr("Reward individual members with custom tokens for their contribution"),
-                qsTr("Incentivise joining, retention, moderation and desired behaviour"),
-                qsTr("Monetise your community by selling exclusive tokens")
+                qsTr("Mint tokens for use with community and channel permissions")
             ]
         }
     }
