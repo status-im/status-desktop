@@ -74,7 +74,7 @@ StatusStackModal {
         objectName: "InviteFriendsToCommunityPopup_SendButton"
         implicitHeight: d.footerButtonsHeight
         enabled: root.pubKeys.length > 0
-        text: qsTr("Send Invites")
+        text: qsTr("Send %n invite(s)", "", root.pubKeys.length)
         onClicked: {
             d.sendInvites(root.pubKeys, root.inviteMessage);
             root.close();
