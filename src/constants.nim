@@ -13,6 +13,9 @@ let WALLET_ENABLED* = if (existsEnv("ENABLE_WALLET")):
 ## on other platform if we just change the value here
 const IS_MACOS* = defined(macosx)
 
+# For future supporting fingerprints on other platforms
+const SUPPORTS_FINGERPRINT* = IS_MACOS
+
 const sep* = when defined(windows): "\\" else: "/"
 
 proc defaultDataDir*(): string =
