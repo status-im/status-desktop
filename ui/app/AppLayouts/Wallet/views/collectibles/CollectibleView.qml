@@ -27,10 +27,8 @@ Control {
     implicitWidth: 176
 
     background: Rectangle {
-        radius: 18
-        border.width: 1
-        border.color: Theme.palette.primaryColor1
-        color: Theme.palette.indirectColor3
+        radius: 8
+        color: Theme.palette.baseColor2
         visible: !root.isLoading && mouse.containsMouse
     }
 
@@ -44,7 +42,7 @@ Control {
             Layout.margins: Style.current.halfPadding
             Layout.fillWidth: true
             Layout.preferredHeight: width
-            radius: 12
+            radius: 8
             mediaUrl: root.mediaUrl
             mediaType: root.mediaType
             fallbackImageUrl: root.fallbackImageUrl
@@ -112,6 +110,7 @@ Control {
         id: mouse
         anchors.fill: parent
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
         onClicked: {
             if (!root.isLoading) {
                 root.clicked()
