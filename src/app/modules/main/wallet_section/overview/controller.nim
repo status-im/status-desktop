@@ -25,8 +25,11 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
-proc getWalletAccountByAddress*(self: Controller, address: string): wallet_account_service.WalletAccountDto =
-  return self.walletAccountService.getAccountByAddress(address)
+proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletAccountDto] =
+  return self.walletAccountService.getAccountsByAddresses(addresses)
+
+proc getWalletTokensByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletTokenDto] =
+  return self.walletAccountService.getTokensByAddresses(addresses)
 
 proc getCurrentCurrency*(self: Controller): string =
   return self.walletAccountService.getCurrency()
