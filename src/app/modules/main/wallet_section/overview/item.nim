@@ -8,7 +8,6 @@ type
     balanceLoading: bool
     color: string
     emoji: string
-    # To do once we implement <All accounts> view
     isAllAccounts: bool
     hideWatchAccounts: bool
 
