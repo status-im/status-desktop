@@ -18,6 +18,7 @@ QtObject:
       emoji: string
       isAllAccounts: bool
       hideWatchAccounts: bool
+      colors: string
 
   proc setup(self: View) =
     self.QObject.setup
@@ -104,6 +105,13 @@ QtObject:
     read = getHideWatchAccounts
     notify = hideWatchAccountsChanged
 
+  proc getColors(self: View): QVariant {.slot.} =
+    return newQVariant(self.colors)
+  proc colorsChanged(self: View) {.signal.}
+  QtProperty[QVariant] colors:
+    read = getColors
+    notify = colorsChanged
+
   proc setData*(self: View, item: Item) =
     if(self.name != item.getName()):
       self.name = item.getName()
@@ -127,3 +135,6 @@ QtObject:
     if(self.hideWatchAccounts != item.getHideWatchAccounts()):
       self.hideWatchAccounts = item.getHideWatchAccounts()
       self.hideWatchAccountsChanged()
+    if(self.colors != item.getColors()):
+      self.colors = item.getColors()
+      self.colorsChanged()

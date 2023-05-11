@@ -11,6 +11,7 @@ import "popups"
 import "panels"
 import "views"
 import "stores"
+import "controls"
 
 Item {
     id: root
@@ -113,6 +114,10 @@ Item {
             replaceExit: Transition {
                 NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 400; easing.type: Easing.OutCubic }
             }
+        }
+        headerBackground: AccountHeaderGradient {
+            width: parent.width
+            overview: RootStore.overview
         }
 
         footer: WalletFooter {

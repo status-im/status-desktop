@@ -59,6 +59,12 @@ proc setBalance(self: Module, tokens: seq[WalletTokenDto], chainIds: seq[int]) =
     
   self.view.setCurrencyBalance(currencyAmountToItem(totalCurrencyBalanceForAllAssets, currencyFormat))
 
+proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) : seq[string] =
+  var colors: seq[string] = @[]
+  for account in walletAccounts:
+    colors.add(account.color)
+  return colors
+
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
   if addresses.len > 1:
@@ -70,7 +76,8 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
       "",
       "",
       isAllAccounts=true,
-      hideWatchAccounts=false # TODO(alaibe): need update when doing the action
+      hideWatchAccounts=false, # TODO(alaibe): need update when doing the action
+      self.getWalletAccoutColors(walletAccounts)
     )
     self.view.setData(item)
   else:
