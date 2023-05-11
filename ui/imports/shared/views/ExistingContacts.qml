@@ -57,9 +57,6 @@ Item {
                         root.hideCommunityMembers
                         root.communityId
 
-                        if (root.pubKeys.indexOf(model.pubKey) > -1)
-                            return true
-
                         if (!model.isContact || model.isBlocked)
                             return false
 

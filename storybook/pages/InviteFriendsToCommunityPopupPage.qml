@@ -80,6 +80,8 @@ SplitView {
                 modal: false
                 anchors.centerIn: parent
 
+                closePolicy: Popup.NoAutoClose
+
                 community: ({
                     id: "communityId",
                     name: "community-name"
