@@ -84,6 +84,7 @@ Item {
                     text: qsTr("Activity")
                 }
                 // TODO - DEV: remove me
+                // Enable for debugging activity filter
                 // currentIndex: 3
                 // StatusTabButton {
                 //     rightPadding: 0
@@ -128,6 +129,9 @@ Item {
                 //     Layout.fillHeight: true
 
                 //     controller: RootStore.activityController
+                //     networksModel: RootStore.allNetworks
+                //     assetsModel: RootStore.assets
+                //     assetsLoading: RootStore.assetsLoading
                 // }
             }
         }
@@ -144,7 +148,6 @@ Item {
 
             assetsLoading: RootStore.assetsLoading
             address: RootStore.overview.mixedcaseAddress
-            
             networkConnectionStore: root.networkConnectionStore
         }
 

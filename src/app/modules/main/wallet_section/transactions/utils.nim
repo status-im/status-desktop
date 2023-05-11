@@ -93,5 +93,5 @@ proc multiTransactionToItem*(t: MultiTransactionDto): MultiTransactionItem =
         t.fromAsset,
         t.toAsset,
         t.fromAmount,
-        t.multiTxtype
+        t.multiTxType
       )

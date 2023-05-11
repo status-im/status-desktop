@@ -1,4 +1,5 @@
 import json, json_serialization, strformat
+import hashes
 import ./core, ./response_type
 from ./gen import rpc
 
@@ -98,9 +99,19 @@ rpc(getPendingTransactionsByChainIDs, "wallet"):
 
 type
   TransactionIdentity* = ref object
-    chainId* {.serializedFieldName("chainId").}: int
-    hash* {.serializedFieldName("hash").}: string
-    address* {.serializedFieldName("address").}: string
+    chainId*: int
+    hash*: string
+    address*: string
+
+proc hash*(ti: TransactionIdentity): Hash =
+  var h: Hash = 0
+  h = h !& hash(ti.chainId)
+  h = h !& hash(ti.hash)
+  h = h !& hash(ti.address)
+  result = !$h
+
+proc `==`*(a, b: TransactionIdentity): bool =
+  result = (a.chainId == b.chainId) and (a.hash == b.hash) and (a.address == b.address)
 
 proc `$`*(self: TransactionIdentity): string =
   return fmt"""TransactionIdentity(
