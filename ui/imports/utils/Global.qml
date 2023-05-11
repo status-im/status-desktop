@@ -42,6 +42,7 @@ QtObject {
     signal openInviteFriendsToCommunityPopup(var community, var communitySectionModule, var cb)
     signal openIncomingIDRequestPopup(string publicKey, var cb)
     signal openOutgoingIDRequestPopup(string publicKey, var cb)
+    signal openDeleteMessagePopup(string messageId, var messageStore)
     signal contactRenamed(string publicKey)
 
     signal openLink(string link)

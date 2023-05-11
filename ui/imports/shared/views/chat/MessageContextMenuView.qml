@@ -471,16 +471,11 @@ StatusMenu {
                   root.messageContentType === Constants.messageContentType.imageType ||
                   root.messageContentType === Constants.messageContentType.audioType)
         text: qsTr("Delete message")
-        onTriggered: {
-            if (!localAccountSensitiveSettings.showDeleteMessageWarning) {
-                deleteMessage(messageId)
-            }
-            else {
-                Global.openPopup(deleteMessageConfirmationDialogComponent)
-            }
-        }
         icon.name: "delete"
         type: StatusAction.Type.Danger
+        onTriggered: {
+            deleteMessage(messageId)
+        }
     }
 
     StatusAction {
@@ -505,27 +500,6 @@ StatusMenu {
         onAccepted: {
             if (root.imageSource) {
                 root.store.downloadImageByUrl(root.imageSource, fileDialog.fileUrl)
-            }
-        }
-    }
-
-    Component {
-        id: deleteMessageConfirmationDialogComponent
-        ConfirmationDialog {
-            header.title: qsTr("Confirm deleting this message")
-            confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
-            height: 260
-            checkbox.visible: true
-            executeConfirm: function () {
-                if (checkbox.checked) {
-                    localAccountSensitiveSettings.showDeleteMessageWarning = false
-                }
-
-                close()
-                root.deleteMessage(messageId)
-            }
-            onClosed: {
-                destroy()
             }
         }
     }

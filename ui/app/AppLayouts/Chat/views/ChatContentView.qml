@@ -111,7 +111,7 @@ ColumnLayout {
             }
 
             onDeleteMessage: {
-                messageStore.deleteMessage(messageId)
+                messageStore.warnAndDeleteMessage(messageId)
             }
 
             onEditClicked: messageStore.setEditModeOn(messageId)
