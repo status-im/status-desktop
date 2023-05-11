@@ -120,19 +120,18 @@ Loader {
     readonly property bool isExpired: d.getIsExpired(messageTimestamp, messageOutgoingStatus)
     readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
 
-    signal imageClicked(var image)
+    signal imageClicked(var image, var mouse, var imageSource)
 
     // WARNING: To much arguments here. Create an object argument.
-    property var messageClickHandler: function(sender, point,
+    property var messageClickHandler: function(sender,
+                                               point,
                                                isProfileClick,
                                                isSticker = false,
                                                isImage = false,
                                                image = null,
                                                isEmoji = false,
                                                hideEmojiPicker = false,
-                                               isReply = false,
-                                               isRightClickOnImage = false,
-                                               imageSource = "") {
+                                               isReply = false) {
 
         if (placeholderMessage || !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
             return false
@@ -154,10 +153,7 @@ Loader {
         messageContextMenu.selectedUserDisplayName = root.senderDisplayName
         messageContextMenu.selectedUserIcon = root.senderIcon
 
-        messageContextMenu.imageSource = imageSource
-
         messageContextMenu.isProfile = !!isProfileClick
-        messageContextMenu.isRightClickOnImage = isRightClickOnImage
         messageContextMenu.isEmoji = isEmoji
         messageContextMenu.isSticker = isSticker
         messageContextMenu.hideEmojiPicker = hideEmojiPicker
@@ -514,15 +510,8 @@ Loader {
 
                 onEditCompleted: delegate.editCompletedHandler(newMsgText)
 
-                onImageClicked: {
-                    switch (mouse.button) {
-                    case Qt.LeftButton:
-                        root.imageClicked(image, mouse);
-                        break;
-                    case Qt.RightButton:
-                        root.messageClickHandler(image, Qt.point(mouse.x, mouse.y), false, false, true, image, false, true, false, true, imageSource)
-                        break;
-                    }
+                onImageClicked: (image, mouse, imageSource) => {
+                    root.imageClicked(image, mouse, imageSource)
                 }
 
                 onLinkActivated: {

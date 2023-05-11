@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
-import QtQuick.Dialogs 1.0
 
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
@@ -35,10 +34,8 @@ StatusMenu {
     property string unparsedText: ""
     property string messageSenderId: ""
     property int messageContentType: Constants.messageContentType.unknownContentType
-    property string imageSource: ""
 
     property bool isProfile: false
-    property bool isRightClickOnImage: false
     property bool pinnedPopup: false
     property bool pinMessageAllowedForMembers: false
     property bool isDebugEnabled: store && store.isDebugEnabled
@@ -138,8 +135,7 @@ StatusMenu {
         selectedUserPublicKey = ""
     }
 
-    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0,
-                    (root.isRightClickOnImage && !root.pinnedPopup) ? 176 : 230)
+    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 230)
 
     Item {
         id: emojiContainer
@@ -195,30 +191,6 @@ StatusMenu {
     StatusMenuSeparator {
         anchors.bottom: viewProfileAction.top
         visible: !root.isEmoji && !root.hideEmojiPicker && !pinnedPopup
-    }
-
-    StatusAction {
-        id: copyImageAction
-        text: (root.imageSource.endsWith(".gif")) ? qsTr("Copy GIF") : qsTr("Copy image")
-        onTriggered: {
-            if (root.imageSource) {
-                root.store.copyImageToClipboardByUrl(root.imageSource)
-            }
-            root.close()
-        }
-        icon.name: "copy"
-        enabled: root.isRightClickOnImage && !root.pinnedPopup
-    }
-
-    StatusAction {
-        id: downloadImageAction
-        text: (root.imageSource.endsWith(".gif")) ? qsTr("Download GIF") : qsTr("Download image")
-        onTriggered: {
-            fileDialog.open()
-            root.close()
-        }
-        icon.name: "download"
-        enabled: root.isRightClickOnImage && !root.pinnedPopup
     }
 
     ViewProfileMenuItem {
@@ -358,7 +330,6 @@ StatusMenu {
                   !root.isEmoji &&
                   !root.isProfile &&
                   !root.pinnedPopup &&
-                  !root.isRightClickOnImage &&
                   !root.disabledForChat)
     }
 
@@ -375,7 +346,6 @@ StatusMenu {
                  !root.isSticker &&
                  !root.isProfile &&
                  !root.pinnedPopup &&
-                 !root.isRightClickOnImage &&
                  !root.disabledForChat
     }
 
@@ -426,7 +396,7 @@ StatusMenu {
         }
         icon.name: "pin"
         enabled: {
-            if (root.isProfile || root.isEmoji || root.isRightClickOnImage || root.disabledForChat)
+            if (root.isProfile || root.isEmoji || root.disabledForChat)
                 return false
 
             if (root.pinnedPopup)
@@ -464,7 +434,6 @@ StatusMenu {
                  !root.isProfile &&
                  !root.isEmoji &&
                  !root.pinnedPopup &&
-                 !root.isRightClickOnImage &&
                  (root.messageContentType === Constants.messageContentType.messageType ||
                   root.messageContentType === Constants.messageContentType.stickerType ||
                   root.messageContentType === Constants.messageContentType.emojiType ||
@@ -488,19 +457,5 @@ StatusMenu {
             root.shouldCloseParentPopup()
         }
         icon.name: "arrow-up"
-    }
-
-    FileDialog {
-        id: fileDialog
-        title: qsTr("Please choose a directory")
-        selectFolder: true
-        selectExisting: true
-        selectMultiple: false
-        modality: Qt.NonModal
-        onAccepted: {
-            if (root.imageSource) {
-                root.store.downloadImageByUrl(root.imageSource, fileDialog.fileUrl)
-            }
-        }
     }
 }

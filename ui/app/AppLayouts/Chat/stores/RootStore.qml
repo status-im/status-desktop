@@ -209,16 +209,9 @@ QtObject {
         stickersModuleInst.send(channelId, hash, replyTo, pack, url)
     }
 
+    // TODO: This seems to be better in Utils.qml
     function copyToClipboard(text) {
         globalUtilsInst.copyToClipboard(text)
-    }
-
-    function copyImageToClipboardByUrl(content) {
-        globalUtilsInst.copyImageToClipboardByUrl(content)
-    }
-
-    function downloadImageByUrl(url, path) {
-        globalUtilsInst.downloadImageByUrl(url, path)
     }
 
     function isCurrentUser(pubkey) {

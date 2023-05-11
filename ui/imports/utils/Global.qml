@@ -32,7 +32,7 @@ QtObject {
     signal openDownloadModalRequested(bool available, string version, string url)
     signal openChangeProfilePicPopup(var cb)
     signal openBackUpSeedPopup()
-    signal openImagePopup(var image, var contextMenu)
+    signal openImagePopup(var image)
     signal openProfilePopupRequested(string publicKey, var parentPopup)
     signal openEditDisplayNamePopup()
     signal openActivityCenterPopupRequested()
@@ -43,6 +43,7 @@ QtObject {
     signal openIncomingIDRequestPopup(string publicKey, var cb)
     signal openOutgoingIDRequestPopup(string publicKey, var cb)
     signal openDeleteMessagePopup(string messageId, var messageStore)
+    signal openDownloadImageDialog(string imageSource)
     signal contactRenamed(string publicKey)
 
     signal openLink(string link)
@@ -77,5 +78,11 @@ QtObject {
 
     function changeAppSectionBySectionType(sectionType, subsection = 0) {
         root.appSectionBySectionTypeChanged(sectionType, subsection);
+    }
+
+    function openMenu(menuComponent, menuParent, params = {}) {
+        const menu = menuComponent.createObject(menuParent, params)
+        menu.popup()
+        return menu
     }
 }

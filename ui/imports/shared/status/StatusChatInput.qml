@@ -1226,7 +1226,9 @@ Rectangle {
                     Layout.leftMargin: Style.current.halfPadding
                     Layout.rightMargin: Style.current.halfPadding
                     visible: isImage
-                    onImageClicked: Global.openImagePopup(chatImage, messageContextMenu)
+                    onImageClicked: {
+                        Global.openImagePopup(chatImage)
+                    }
                     onImageRemoved: {
                         if (control.fileUrlsAndSources.length > index && control.fileUrlsAndSources[index]) {
                             control.fileUrlsAndSources.splice(index, 1)
