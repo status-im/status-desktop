@@ -13,7 +13,7 @@ import shared.controls.delegates 1.0
 StatusDropdown {
     id: root
 
-    property var selectedKeys: []
+    property var selectedKeys: new Set()
     property bool forceButtonDisabled: false
     property int maximumListHeight: 288
 
@@ -26,6 +26,33 @@ StatusDropdown {
 
     enum Mode {
         Add, Update
+    }
+
+    Instantiator {
+        id: selectionChecker
+
+        model: root.model
+
+        property var keys: []
+
+        delegate: QtObject {
+            readonly property string key: model.pubKey
+        }
+
+        readonly property bool allSelected:
+            keys.every(key => root.selectedKeys.has(key))
+
+        onObjectAdded: {
+            const keysCopy = [...keys]
+            keysCopy.splice(index, 0, object.key)
+            keys = keysCopy
+        }
+
+        onObjectRemoved: {
+            const keysCopy = [...keys]
+            keysCopy.splice(index, 1)
+            keys = keysCopy
+        }
     }
 
     property int mode: MembersDropdown.Mode.Add
@@ -145,7 +172,7 @@ StatusDropdown {
                 text: qsTr("Select all")
                 font.weight: Font.Medium
 
-                checked: root.selectedKeys.length === listView.count
+                checked: selectionChecker.allSelected
 
                 leftSide: false
                 size: StatusCheckBox.Size.Small
@@ -156,20 +183,15 @@ StatusDropdown {
                     cursorShape: Qt.PointingHandCursor
 
                     onClicked: {
-                        if (listView.headerItem.checked) {
-                            root.selectedKeys = []
-                            return
-                        }
+                        const currentKeys = selectionChecker.keys
+                        const keysSet = new Set([...root.selectedKeys])
 
-                        const count = root.model.rowCount()
-                        const keys = []
+                        if (listView.headerItem.checked)
+                            currentKeys.forEach(key => keysSet.delete(key))
+                        else
+                            currentKeys.forEach(key => keysSet.add(key))
 
-                        for (let i = 0; i < count; i++) {
-                            const key = ModelUtils.get(root.model, i, "pubKey")
-                            keys.push(key)
-                        }
-
-                        root.selectedKeys = keys
+                        root.selectedKeys = keysSet
                     }
                 }
             }
@@ -188,14 +210,12 @@ StatusDropdown {
                 color: "transparent"
 
                 onClicked: {
-                    const index = root.selectedKeys.indexOf(model.pubKey)
-                    const selectedKeysCopy = Object.assign(
-                                               [], root.selectedKeys)
+                    const selectedKeysCopy = new Set([...root.selectedKeys])
 
-                    if (index === -1)
-                        selectedKeysCopy.push(model.pubKey)
+                    if (root.selectedKeys.has(model.pubKey))
+                        selectedKeysCopy.delete(model.pubKey)
                     else
-                        selectedKeysCopy.splice(index, 1)
+                        selectedKeysCopy.add(model.pubKey)
 
                     root.selectedKeys = selectedKeysCopy
                 }
@@ -205,7 +225,7 @@ StatusDropdown {
                         id: contactCheckbox
 
                         size: StatusCheckBox.Size.Small
-                        checked: root.selectedKeys.indexOf(model.pubKey) > -1
+                        checked: root.selectedKeys.has(model.pubKey)
 
                         MouseArea {
                             anchors.fill: parent
@@ -246,7 +266,7 @@ StatusDropdown {
                     return false
 
                 if (root.mode === MembersDropdown.Mode.Add)
-                    return root.selectedKeys.length > 0
+                    return root.selectedKeys.size > 0
 
                 return true
             }
@@ -255,8 +275,8 @@ StatusDropdown {
                 if (root.mode === MembersDropdown.Mode.Update)
                     return qsTr("Update members")
 
-                return root.selectedKeys.length > 0
-                        ? qsTr("Add %n member(s)", "", root.selectedKeys.length)
+                return root.selectedKeys.size > 0
+                        ? qsTr("Add %n member(s)", "", root.selectedKeys.size)
                         : qsTr("Add")
             }
 
