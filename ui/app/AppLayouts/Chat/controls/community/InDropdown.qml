@@ -70,10 +70,12 @@ StatusDropdown {
 
         function addToSelectedChannels(model) {
             selectedChannels.add(model.itemId)
+            selectedChannelsChanged()
         }
 
         function removeFromSelectedChannels(model) {
             selectedChannels.delete(model.itemId)
+            selectedChannelsChanged()
         }
     }
 
@@ -222,10 +224,6 @@ StatusDropdown {
                         visible: {
                             if (!isCategory)
                                 return d.search(model.name, searcher.text)
-                                        || checkBox.checked
-
-                            if (checkedCount > 0)
-                                return true
 
                             const subItemsCount = subItemsRepeater.count
 
@@ -355,7 +353,7 @@ StatusDropdown {
                                 id: communitySubItem
 
                                 readonly property bool show:
-                                    d.search(model.name, searcher.text) || checked
+                                    d.search(model.name, searcher.text)
 
                                 Layout.fillWidth: true
 
@@ -392,12 +390,54 @@ StatusDropdown {
                     }
                 }
             }
+
+            StatusBaseText {
+                id: noContactsText
+
+                parent: scrollView
+
+                anchors.centerIn: parent
+
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+
+                visible: {
+                    for (let i = 0; i < topRepeater.count; i++) {
+                        const item = topRepeater.itemAt(i)
+                        if (item && item.visible)
+                            return false
+                    }
+
+                    return true
+                }
+
+                text: qsTr("No channels found")
+                color: Theme.palette.baseColor1
+                font.pixelSize: Theme.tertiaryTextFontSize
+                elide: Text.ElideRight
+                lineHeight: 1.2
+            }
         }
 
         StatusButton {
             Layout.fillWidth: true
-            text: root.acceptMode === InDropdown.AcceptMode.Add
-                  ? qsTr("Add") : qsTr("Update")
+
+            enabled: root.acceptMode === InDropdown.AcceptMode.Update
+                     || d.selectedChannels.size > 0
+
+            text: {
+                if (root.acceptMode === InDropdown.AcceptMode.Update)
+                    return qsTr("Update")
+
+                if (radioButton.checked)
+                    return qsTr("Add community")
+
+                if (d.selectedChannels.size === 0)
+                    return qsTr("Add")
+
+                return qsTr("Add %n channel(s)", "", d.selectedChannels.size)
+            }
+
 
             onClicked: {
                 if (radioButton.checked) {

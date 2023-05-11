@@ -24,6 +24,8 @@ SplitView {
             parent: pane
             anchors.centerIn: parent
 
+            closePolicy: Popup.NoAutoClose
+
             allowChoosingEntireCommunity: allowChoosingEntireCommunityCheckBox.checked
             showAddChannelButton: showAddChannelButtonCheckBox.checked
 
@@ -45,7 +47,6 @@ SplitView {
                 logs.logEvent("InDropdown::channelSelected", ["channels"], arguments)
             }
 
-            onOpened: contentItem.parent.parent = pane
             Component.onCompleted: open()
         }
     }
