@@ -244,18 +244,17 @@ StatusScrollView {
                 filters: ExpressionFilter {
                     id: selectedKeysFilter
 
-                    property var keys: []
+                    property var keys: new Set()
 
-                    expression: keys.indexOf(model.pubKey) !== -1
+                    expression: keys.has(model.pubKey)
                 }
             }
 
             onRemoveMemberRequested: {
                 const pubKey = ModelUtils.get(membersModel, index, "pubKey")
-                const keyIndex = selectedKeysFilter.keys.indexOf(pubKey)
 
-                selectedKeysFilter.keys.splice(keyIndex, 1)
-                selectedKeysFilter.keys = selectedKeysFilter.keys
+                selectedKeysFilter.keys.delete(pubKey)
+                selectedKeysFilter.keys = new Set([...selectedKeysFilter.keys])
             }
 
             onAddAddressesRequested: (addresses_) => {
@@ -309,7 +308,7 @@ StatusScrollView {
                     recipientTypeSelectionDropdown.close()
                     membersDropdown.selectedKeys = selectedKeysFilter.keys
 
-                    const hasSelection =  selectedKeysFilter.keys.length !== 0
+                    const hasSelection =  selectedKeysFilter.keys.size !== 0
 
                     membersDropdown.mode = hasSelection
                             ? MembersDropdown.Mode.Update
@@ -324,7 +323,7 @@ StatusScrollView {
 
                 forceButtonDisabled:
                     mode === MembersDropdown.Mode.Update &&
-                    JSON.stringify(selectedKeys) === JSON.stringify(selectedKeysFilter.keys)
+                    [...selectedKeys].sort().join() === [...selectedKeysFilter.keys].sort().join()
 
                 model: SortFilterProxyModel {
                     sourceModel: membersModel
@@ -338,11 +337,7 @@ StatusScrollView {
                             }
 
                             expression: {
-                                membersDropdown.selectedKeys
                                 membersDropdown.searchText
-
-                                if (membersDropdown.selectedKeys.indexOf(model.pubKey) > -1)
-                                    return true
 
                                 const filter = membersDropdown.searchText.toLowerCase()
                                 return matchesAlias(model.alias.toLowerCase(), filter)
@@ -394,7 +389,7 @@ StatusScrollView {
                 const addresses_ = ModelUtils.modelToArray(
                                     addresses, ["address"]).map(e => e.address)
 
-                const pubKeys = selectedKeysFilter.keys
+                const pubKeys = [...selectedKeysFilter.keys]
 
                 root.airdropClicked(airdropTokens, addresses_, pubKeys)
             }

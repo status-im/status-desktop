@@ -152,11 +152,7 @@ SplitView {
                             }
 
                             expression: {
-                                membersDropdown.selectedKeys
                                 membersDropdown.searchText
-
-                                if (membersDropdown.selectedKeys.indexOf(model.pubKey) > -1)
-                                    return true
 
                                 const filter = membersDropdown.searchText.toLowerCase()
                                 return matchesAlias(model.alias.toLowerCase(), filter)
@@ -175,7 +171,7 @@ SplitView {
 
                 onAddButtonClicked: {
                     logs.logEvent("MembersDropdown::addButtonClicked, keys: "
-                                  + membersDropdown.selectedKeys)
+                                  + [...membersDropdown.selectedKeys])
                 }
 
                 Component.onCompleted: open()
@@ -185,7 +181,7 @@ SplitView {
 
     LogsAndControlsPanel {
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 250
+        SplitView.preferredHeight: 320
 
         logsView.logText: logs.logText
 
@@ -343,7 +339,7 @@ SplitView {
 
                 Label {
                     Layout.fillWidth: true
-                    text: `selected members: ${membersDropdown.selectedKeys}`
+                    text: `selected members: ${[...membersDropdown.selectedKeys]}`
                     wrapMode: Label.Wrap
                 }
             }
