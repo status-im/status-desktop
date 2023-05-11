@@ -39,6 +39,7 @@ QtObject {
         Global.createCommunityPopupRequested.connect(openCreateCommunityPopup)
         Global.importCommunityPopupRequested.connect(openImportCommunityPopup)
         Global.openPopupRequested.connect(openPopup)
+        Global.openDeleteMessagePopup.connect(openDeleteMessagePopup)
     }
 
     function openPopup(popupComponent, params = {}, cb = null) {
@@ -196,6 +197,14 @@ QtObject {
 
     function openDiscordImportProgressPopup() {
         openPopup(discordImportProgressDialog)
+    }
+
+    function openDeleteMessagePopup(messageId, messageStore) {
+        openPopup(deleteMessageConfirmationDialogComponent,
+                  {
+                      messageId,
+                      messageStore
+                  })
     }
 
     readonly property list<Component> _components: [
@@ -434,6 +443,12 @@ QtObject {
             DiscordImportProgressDialog {
                 store: root.communitiesStore
             }
+        },
+
+        Component {
+            id: deleteMessageConfirmationDialogComponent
+
+            DeleteMessageConfirmationPopup { }
         }
     ]
 }

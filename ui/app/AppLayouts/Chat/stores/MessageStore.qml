@@ -124,6 +124,13 @@ QtObject {
         messageModule.deleteMessage(messageId)
     }
 
+    function warnAndDeleteMessage(messageId) {
+        if (localAccountSensitiveSettings.showDeleteMessageWarning)
+            Global.openDeleteMessagePopup(messageId, this)
+        else
+            deleteMessage(messageId)
+    }
+
     function setEditModeOn(messageId) {
         if(!messageModule)
             return

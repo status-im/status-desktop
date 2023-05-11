@@ -883,39 +883,11 @@ Loader {
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Delete")
                             onClicked: {
-                                if (!localAccountSensitiveSettings.showDeleteMessageWarning) {
-                                    messageStore.deleteMessage(root.messageId)
-                                }
-                                else {
-                                    Global.openPopup(deleteMessageConfirmationDialogComponent)
-                                }
+                                messageStore.warnAndDeleteMessage(root.messageId)
                             }
                         }
                     }
                 ]
-            }
-        }
-    }
-
-    Component {
-        id: deleteMessageConfirmationDialogComponent
-
-        ConfirmationDialog {
-            confirmButtonObjectName: "chatButtonsPanelConfirmDeleteMessageButton"
-            header.title: qsTr("Confirm deleting this message")
-            confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
-            height: 260
-            checkbox.visible: true
-            executeConfirm: function () {
-                if (checkbox.checked) {
-                    localAccountSensitiveSettings.showDeleteMessageWarning = false
-                }
-
-                close()
-                messageStore.deleteMessage(root.messageId)
-            }
-            onClosed: {
-                destroy()
             }
         }
     }
