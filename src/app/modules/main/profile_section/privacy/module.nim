@@ -109,8 +109,8 @@ method tryStoreToKeyChain*(self: Module) =
 
 method tryRemoveFromKeyChain*(self: Module) =
   self.keychainActivityReason = KeychainActivityReason.RemoveFrom
-  let myName = singletonInstance.userProfile.getName()
-  self.controller.removeFromKeychain(myName)
+  let myKeyUid = singletonInstance.userProfile.getKeyUid()
+  self.controller.removeFromKeychain(myKeyUid)
 
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
   self.keychainActivityReason = KeychainActivityReason.StoreTo

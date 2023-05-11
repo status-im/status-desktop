@@ -767,10 +767,10 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   if(not singletonInstance.userProfile.getUsingBiometricLogin()):
     return
   let loggedInAccount = self.getLoggedInAccount()
-  self.keychainService.tryToObtainData(loggedInAccount.name)
+  self.keychainService.tryToObtainData(loggedInAccount.keyUid)
 
 proc tryToStoreDataToKeychain*(self: Controller, password: string) =
   if not serviceApplicable(self.keychainService):
     return
   let loggedInAccount = self.getLoggedInAccount()
-  self.keychainService.storeData(loggedInAccount.name, password)
+  self.keychainService.storeData(loggedInAccount.keyUid, password)

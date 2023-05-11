@@ -334,7 +334,7 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   self.connectKeychain() # handling the results is done in slots connected in `connectKeychain` proc 
   self.tmpKeychainErrorOccurred = false
   let selectedAccount = self.getSelectedLoginAccount()
-  self.keychainService.tryToObtainData(selectedAccount.name)
+  self.keychainService.tryToObtainData(selectedAccount.keyUid)
 
 proc storeIdentityImage*(self: Controller): seq[Image] =
   if self.tmpProfileImageDetails.url.len == 0:

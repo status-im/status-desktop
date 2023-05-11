@@ -360,21 +360,19 @@ proc checkForStoringPasswordToKeychain(self: AppController) =
   ## This proc is used to store pass/pin depends on user's selection during onboarding flow.
   let account = self.accountsService.getLoggedInAccount()
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
-  if not main_constants.IS_MACOS or # This is MacOS only feature
+  if not main_constants.SUPPORTS_FINGERPRINT or # This is MacOS only feature
     value == LS_VALUE_STORE or # means pass is already stored, no need to store it again
     value == LS_VALUE_NEVER or # means pass doesn't need to be stored at all
     account.name.len == 0:
       return
   # We are here if stored "storeToKeychain" property for the logged in user is either empty or set to "NotNow".
 
-  #TODO: we should store PubKey of this account instead of display name (display name is not unique)
-  #      and we may run into a problem if 2 accounts with the same display name are generated.
   self.connectKeychain()
   let pass = self.startupModule.getPassword()
   if pass.len > 0:
-    self.keychainService.storeData(account.name, pass)
+    self.keychainService.storeData(account.keyUid, pass)
   else:
-    self.keychainService.storeData(account.name, self.startupModule.getPin())
+    self.keychainService.storeData(account.keyUid, self.startupModule.getPin())
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
