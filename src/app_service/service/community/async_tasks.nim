@@ -8,11 +8,8 @@ const asyncLoadCommunitiesDataTask: Task = proc(argEncoded: string) {.gcsafe, ni
   let arg = decode[AsyncLoadCommunitiesDataTaskArg](argEncoded)
   try:
     let responseTags = status_go.getCommunityTags()
-
     let responseCommunities = status_go.getAllCommunities()
-
     let responseSettings = status_go.getCommunitiesSettings()
-
     let responseMyPendingRequestsToJoin = status_go.myPendingRequestsToJoin()
 
     arg.finish(%* {
@@ -34,9 +31,20 @@ type
 
 const asyncRequestCommunityInfoTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestCommunityInfoTaskArg](argEncoded)
-  let response = status_go.requestCommunityInfo(arg.communityId)
-  let tpl: tuple[communityId: string, response: RpcResponse[JsonNode], importing: bool] = (arg.communityId, response, arg.importing)
-  arg.finish(tpl)
+  try:
+    let response = status_go.requestCommunityInfo(arg.communityId)
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "importing": arg.importing,
+      "response": response,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "importing": arg.importing,
+      "error": e.msg,
+    })
 
 type
   AsyncLoadCuratedCommunitiesTaskArg = ref object of QObjectTaskArg
