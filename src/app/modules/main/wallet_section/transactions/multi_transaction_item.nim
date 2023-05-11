@@ -14,7 +14,7 @@ type
     fromAsset: string
     toAsset: string
     fromAmount: string
-    multiTxtype: MultiTransactionType
+    multiTxType: MultiTransactionType
 
 proc initMultiTransactionItem*(
   id: int,
@@ -24,7 +24,7 @@ proc initMultiTransactionItem*(
   fromAsset: string,
   toAsset: string,
   fromAmount: string,
-  multiTxtype: MultiTransactionType,
+  multiTxType: MultiTransactionType,
 ): MultiTransactionItem =
   result.id = id
   result.timestamp = timestamp
@@ -33,7 +33,7 @@ proc initMultiTransactionItem*(
   result.fromAsset = fromAsset
   result.toAsset = toAsset
   result.fromAmount = fromAmount
-  result.multiTxtype = multiTxtype
+  result.multiTxType = multiTxType
 
 proc `$`*(self: MultiTransactionItem): string =
   result = fmt"""MultiTransactionItem(
@@ -44,7 +44,7 @@ proc `$`*(self: MultiTransactionItem): string =
     fromAsset: {self.fromAsset},
     toAsset: {self.toAsset},
     fromAmount: {self.fromAmount},
-    multiTxtype: {self.multiTxtype},
+    multiTxType: {self.multiTxType},
     ]"""
 
 proc getId*(self: MultiTransactionItem): int =
@@ -68,5 +68,5 @@ proc getToAsset*(self: MultiTransactionItem): string =
 proc getFromAmount*(self: MultiTransactionItem): string =
   return self.fromAmount
 
-proc getMultiTxtype*(self: MultiTransactionItem): MultiTransactionType =
-  return self.multiTxtype
+proc getMultiTxType*(self: MultiTransactionItem): MultiTransactionType =
+  return self.multiTxType

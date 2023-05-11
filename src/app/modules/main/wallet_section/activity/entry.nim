@@ -3,15 +3,25 @@ import NimQml, tables, json, strformat, sequtils, strutils, logging
 import ../transactions/view
 import ../transactions/item
 import ./backend/transactions
+import backend/activity as backend
 
-# The ActivityEntry contains one of the following instances transaction, pensing transaction or multi-transaction
 # It is used to display an activity history entry in the QML UI
+#
+# TODO add all required metadata from filtering
+#
+# Looking into going away from carying the whole detailed data and just keep the required data for the UI
+# and request the detailed data on demand
+#
+# Outdated: The ActivityEntry contains one of the following instances transaction, pending transaction or multi-transaction
 QtObject:
   type
     ActivityEntry* = ref object of QObject
+      # TODO: these should be removed
       multi_transaction: MultiTransactionDto
       transaction: ref Item
       isPending: bool
+
+      metadata: backend.ActivityEntry
 
   proc setup(self: ActivityEntry) =
     self.QObject.setup
@@ -19,18 +29,18 @@ QtObject:
   proc delete*(self: ActivityEntry) =
     self.QObject.delete
 
-  proc newMultiTransactionActivityEntry*(mt: MultiTransactionDto): ActivityEntry =
+  proc newMultiTransactionActivityEntry*(mt: MultiTransactionDto, metadata: backend.ActivityEntry): ActivityEntry =
     new(result, delete)
     result.multi_transaction = mt
     result.transaction = nil
     result.isPending = false
     result.setup()
 
-  proc newTransactionActivityEntry*(tr: ref Item, isPending: bool): ActivityEntry =
+  proc newTransactionActivityEntry*(tr: ref Item, metadata: backend.ActivityEntry): ActivityEntry =
     new(result, delete)
     result.multi_transaction = nil
     result.transaction = tr
-    result.isPending = isPending
+    result.isPending = metadata.payloadType == backend.PayloadType.PendingTransaction
     result.setup()
 
   proc isMultiTransaction*(self: ActivityEntry): bool {.slot.} =
@@ -125,3 +135,9 @@ QtObject:
     read = getTimestamp
 
   # TODO: properties - type, fromChains, toChains, fromAsset, toAsset, assetName
+
+  # proc getType*(self: ActivityEntry): int {.slot.} =
+  #   return self.metadata.activityType.int
+
+  # QtProperty[int] type:
+  #   read = getType
