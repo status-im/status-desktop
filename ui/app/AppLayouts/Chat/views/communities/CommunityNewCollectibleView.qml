@@ -104,7 +104,7 @@ StatusScrollView {
             id: nameInput
 
             label: qsTr("Name")
-            charLimit: 30
+            charLimit: 15
             placeholderText: qsTr("Name")
             errorText: qsTr("Collectible name")
         }
@@ -126,17 +126,17 @@ StatusScrollView {
         CustomStatusInput {
             id: symbolInput
 
-            label: qsTr("Token symbol")
-            charLimit: 7
-            placeholderText: qsTr("Letter token abbreviation e.g. ABC")
-            errorText: qsTr("Token symbol")
+            label: qsTr("Symbol")
+            charLimit: 6
+            placeholderText: qsTr("e.g. DOODLE")
+            errorText: qsTr("Collectible symbol")
             validator.regularExpression: Constants.regularExpressions.asciiPrintable
         }
 
         CustomLabelDescriptionComponent {
             Layout.topMargin: Style.current.padding
             label: qsTr("Select account")
-            description: qsTr("The account on which this token will be minted")
+            description: qsTr("Account will be required for all subsequent interactions with this token. Remember everybody in your community will be able to see this address.")
         }
 
         StatusEmojiAndColorComboBox {
@@ -161,8 +161,10 @@ StatusScrollView {
             id: unlimitedSupplyChecker
 
             label: qsTr("Unlimited supply")
-            description: qsTr("Enable to allow the minting of additional collectibles in the future. Disable to specify a finite supply")
+            description: qsTr("Enable to allow the minting of additional tokens in the future. Disable to specify a finite supply")
             checked: true
+
+            onCheckedChanged: if(!checked) supplyInput.forceActiveFocus()
         }
 
         StatusInput {
@@ -170,7 +172,7 @@ StatusScrollView {
 
             visible: !unlimitedSupplyChecker.checked
             label: qsTr("Total finite supply")
-            placeholderText: "1"
+            placeholderText: qsTr("e.g. 300")
             validators: StatusIntValidator{bottom: 1; top: 999999999;}
         }
 
@@ -185,7 +187,7 @@ StatusScrollView {
         CustomSwitchRowComponent {
             id: selfDestructChecker
 
-            label: qsTr("Remote self-destruct")
+            label: qsTr("Remotely destructible")
             description: qsTr("Enable to allow you to destroy tokens remotely. Useful for revoking permissions from individuals")
             checked: true
         }
