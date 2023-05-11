@@ -24,7 +24,6 @@ SplitView {
 
                 anchors.fill: parent
                 anchors.margins: 50
-                holdersModel: TokenHoldersModel {}
                 artworkSource: ModelsData.icons.superRare
                 preview: previewBox.checked
                 deployState: mintingStateBox.checked ? 1 : 0
