@@ -162,9 +162,9 @@ StatusWindow {
 
                     StatusListSectionHeadline { text: "StatusQ.Layout" }
                     StatusNavigationListItem {
-                        title: "Layouts"
+                        title: "Layout"
                         selected: viewLoader.source.toString().includes(title)
-                        onClicked: mainPageView.control(title.substring(0, title.length - 1));
+                        onClicked: mainPageView.control(title)
                     }
 
                     StatusListSectionHeadline { text: "StatusQ.Controls" }
