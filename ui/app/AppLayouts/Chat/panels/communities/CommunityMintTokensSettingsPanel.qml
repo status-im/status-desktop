@@ -80,7 +80,7 @@ SettingsPageLayout {
         readonly property string collectibleViewState: "VIEW_COLLECTIBLE"
 
         readonly property string welcomePageTitle: qsTr("Tokens")
-        readonly property string newCollectiblePageTitle: qsTr("Create new collectible")
+        readonly property string newCollectiblePageTitle: qsTr("Mint collectible")
         readonly property string newTokenButtonText: qsTr("Mint token")
         readonly property string backButtonText: qsTr("Back")
         readonly property string backTokensText: qsTr("Tokens")
@@ -129,7 +129,7 @@ SettingsPageLayout {
         State {
             name: d.newCollectibleViewState
             PropertyChanges {target: root; title: d.newCollectiblePageTitle}
-            PropertyChanges {target: root; previousPageName: d.welcomePageTitle}
+            PropertyChanges {target: root; previousPageName: d.backButtonText}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
         },
