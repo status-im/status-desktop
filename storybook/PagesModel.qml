@@ -293,4 +293,8 @@ ListModel {
         title: "WalletHeader"
         section: "Panels"
     }
+    ListElement {
+        title: "PopupSizing"
+        section: "Research / Examples"
+    }
 }
