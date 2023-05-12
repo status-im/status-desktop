@@ -22,8 +22,6 @@ StatusDropdown {
 
     readonly property alias searchText: filterInput.text
 
-    property bool fixedYPosition: !anchors.centerIn && margins < 0
-
     enum Mode {
         Add, Update
     }
@@ -62,10 +60,6 @@ StatusDropdown {
 
     width: 295
 
-    height: Math.min(
-                d.availableExternalHeight,
-                content.requestedHeight + d.vPadding)
-
     padding: 11
     bottomInset: 10
     bottomPadding: padding + bottomInset
@@ -80,13 +74,7 @@ StatusDropdown {
 
         readonly property int sectionDelegateHeight: 40
         readonly property int delegateHeight: 47
-
-        readonly property int vPadding: root.topPadding + root.bottomPadding
         readonly property int scrollBarWidth: 4
-
-        readonly property int availableExternalHeight:
-            (root.Overlay.overlay ? root.Overlay.overlay.height : 0) - root.bottomMargin -
-            (root.fixedYPosition ? contentItem.parent.y : root.topMargin)
     }
 
     contentItem: ColumnLayout {
@@ -95,14 +83,6 @@ StatusDropdown {
         spacing: 8
         height: root.availableHeight
         clip: true
-
-        readonly property int requestedHeight:
-            backButton.height +
-            spacing + filterInput.height +
-            spacing + (listView.count
-                       ? Math.min(listView.contentHeight, root.maximumListHeight)
-                       : noContactsText.Layout.preferredHeight) +
-            spacing + addButton.height
 
         StatusIconTextButton {
             id: backButton
@@ -159,6 +139,8 @@ StatusDropdown {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.preferredHeight: Math.min(contentHeight,
+                                             root.maximumListHeight)
 
             verticalScrollBar {
                 implicitWidth: d.scrollBarWidth + ScrollBar.vertical.padding * 2
