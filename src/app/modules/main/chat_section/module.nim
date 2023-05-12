@@ -583,6 +583,9 @@ method addNewChat*(
     chatImage = chatDto.icon
 
   var amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
+  if not amIChatAdmin and len(chatDto.communityId) != 0:
+    let community = communityService.getCommunityById(chatDto.communityId)
+    amIChatAdmin = amIChatAdmin or community.admin
   if chatDto.chatType != ChatType.PrivateGroupChat:
     amIChatAdmin = amIChatAdmin or channelGroup.admin
 
