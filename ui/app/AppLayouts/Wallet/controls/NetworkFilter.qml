@@ -39,7 +39,7 @@ StatusComboBox {
     }
 
     Component.onCompleted: {
-        if (d.currentModel.count > 0) {
+        if (!multiSelection && d.currentModel.count > 0) {
             d.selectedChainName = d.currentModel.rowData(d.currentIndex, "chainName")
             d.selectedIconUrl = d.currentModel.rowData(d.currentIndex, "iconUrl")
             root.toggleNetwork(ModelUtils.get(d.currentModel, d.currentIndex))
