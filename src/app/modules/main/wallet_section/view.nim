@@ -66,6 +66,12 @@ QtObject:
   proc setFilterAddress(self: View, address: string) {.slot.} =
     self.delegate.setFilterAddress(address)
 
+  proc setFillterAllAddresses(self: View) {.slot.} =
+    self.delegate.setFillterAllAddresses()
+
+  proc toggleWatchOnlyAccounts(self: View) {.slot.} =
+    self.delegate.toggleWatchOnlyAccounts()
+
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: CurrencyAmount) =
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()

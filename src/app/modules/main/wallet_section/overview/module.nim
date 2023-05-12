@@ -65,7 +65,7 @@ proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) 
     colors.add(account.color)
   return colors
 
-method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool) =
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
   if addresses.len > 1:
     let item = initItem(
@@ -76,7 +76,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
       "",
       "",
       isAllAccounts=true,
-      hideWatchAccounts=false, # TODO(alaibe): need update when doing the action
+      hideWatchAccounts=excludeWatchOnly,
       self.getWalletAccoutColors(walletAccounts)
     )
     self.view.setData(item)
@@ -90,7 +90,6 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
       walletAccount.color,
       walletAccount.emoji,
     )
-
     self.view.setData(item)
 
   let walletTokens = self.controller.getWalletTokensByAddresses(addresses)

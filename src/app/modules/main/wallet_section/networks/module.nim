@@ -40,11 +40,12 @@ method delete*(self: Module) =
 
 method refreshNetworks*(self: Module) =
   self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
-  self.view.load(self.controller.getNetworks())
+  self.view.setItems(self.controller.getNetworks())
 
 method load*(self: Module) =
   self.controller.init()
-  self.refreshNetworks()
+  self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
+  self.view.load(self.controller.getNetworks())
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded

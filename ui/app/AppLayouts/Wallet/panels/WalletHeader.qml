@@ -104,7 +104,6 @@ Item {
                 icon.width: 16
                 icon.color: Theme.palette.baseColor1
 
-                // To-do once all accounts view is implemented, filter watch only accounts
                 onClicked: switchHideWatchOnlyAccounts()
                 visible: overview.isAllAccounts
             }

@@ -82,8 +82,8 @@ QtObject:
   QtProperty[QVariant] enabled:
     read = getEnabled
     notify = enabledChanged
-
-  proc load*(self: View, networks: seq[NetworkDto]) =
+  
+  proc setItems*(self: View, networks: seq[NetworkDto]) =
     var items: seq[Item] = @[]
     let allEnabled = areAllEnabled(networks)
     for n in networks:
@@ -115,6 +115,8 @@ QtObject:
     self.layer2Changed()
     self.enabledChanged()
 
+  proc load*(self: View, networks: seq[NetworkDto]) =
+    self.setItems(networks)    
     self.delegate.viewDidLoad()
 
   proc toggleNetwork*(self: View, chainId: int) {.slot.} =

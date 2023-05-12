@@ -27,10 +27,20 @@ Rectangle {
     objectName: "walletLeftTab"
 
     property var networkConnectionStore
+    property var selectAllAccounts: function(){}
     property var changeSelectedAccount: function(){}
     property bool showSavedAddresses: false
+    property bool showAllAccounts: true
+    
     onShowSavedAddressesChanged: {
-        walletAccountsListView.footerItem.button.highlighted = showSavedAddresses
+        walletAccountsListView.headerItem.highlighted = root.showAllAccounts
+        walletAccountsListView.footerItem.button.highlighted = root.showSavedAddresses
+    }
+
+    onShowAllAccountsChanged: {
+        walletAccountsListView.headerItem.highlighted = root.showAllAccounts
+        walletAccountsListView.footerItem.button.highlighted = root.showSavedAddresses
+        selectAllAccounts()
     }
 
     property var emojiPopup: null
@@ -171,60 +181,6 @@ Rectangle {
             }
         }
 
-        Item {
-            height: childrenRect.height
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.RightButton
-                onClicked: {
-                    mouse.accepted = true
-                }
-            }
-
-            StyledTextEditWithLoadingState {
-                id: walletAmountValue
-                objectName: "walletLeftListAmountValue"
-                customColor: Style.current.textColor
-                text: {
-                    LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance)
-                }
-                selectByMouse: true
-                cursorVisible: true
-                readOnly: true
-                width: parent.width
-                font.weight: Font.Medium
-                font.pixelSize: 22
-                loading: RootStore.assetsLoading
-                visible: !networkConnectionStore.accountBalanceNotAvailable
-            }
-
-            StatusFlatRoundButton {
-                id: errorIcon
-                width: 14
-                height: visible ? 14 : 0
-                icon.width: 14
-                icon.height: 14
-                icon.name: "tiny/warning"
-                icon.color: Theme.palette.dangerColor1
-                tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
-                tooltip.maxWidth: 200
-                visible: networkConnectionStore.accountBalanceNotAvailable
-            }
-
-            StatusBaseText {
-                id: totalValue
-                color: Theme.palette.baseColor1
-                text: qsTr("Total value")
-                width: parent.width
-                anchors.top: walletAmountValue.bottom
-                anchors.topMargin: 4
-                font.pixelSize: 12
-            }
-        }
-
         StatusListView {
             id: walletAccountsListView
 
@@ -267,8 +223,9 @@ Rectangle {
                         accountContextMenu.item.popup(mouse.x, mouse.y)
                         return
                     }
+                    root.showSavedAddresses = false
+                    root.showAllAccounts = false
                     changeSelectedAccount(model.address)
-                    showSavedAddresses = false
                 }
                 components: [
                     StatusIcon {
@@ -320,6 +277,83 @@ Rectangle {
             }
 
             readonly property bool footerOverlayed: contentHeight > availableHeight
+
+            header: Button {
+                id: header
+                verticalPadding: Style.current.padding
+                horizontalPadding: Style.current.padding
+                highlighted: true
+                
+                leftInset: Style.current.padding
+                bottomInset: Style.current.padding
+
+                background: Rectangle {
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            root.showSavedAddresses = false
+                            root.showAllAccounts = true
+                        }
+                        hoverEnabled: true
+                    }
+                    radius: Style.current.radius
+                    color: header.highlighted || mouseArea.containsMouse ? Style.current.backgroundHover : root.color
+                    implicitWidth: parent.ListView.view.width - Style.current.padding * 2
+                    implicitHeight: parent.ListView.view.firstItem.height + Style.current.padding
+
+                    layer.effect: DropShadow {
+                        verticalOffset: -10
+                        radius: 20
+                        samples: 41
+                        fast: true
+                        cached: true
+                        color: Theme.palette.dropShadow2
+                    }
+                }
+
+                contentItem: Item {
+                    StatusBaseText {
+                        id: allAccounts
+                        leftPadding: Style.current.padding
+                        color: Theme.palette.baseColor1
+                        text: qsTr("All accounts")
+                        font.weight: Font.Medium
+                        font.pixelSize: 15
+                    }
+
+                    StatusTextWithLoadingState {
+                        id: walletAmountValue
+                        objectName: "walletLeftListAmountValue"
+                        customColor: Style.current.textColor
+                        text: {
+                            LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance)
+                        }
+                        font.pixelSize: 22
+                        loading: RootStore.assetsLoading
+                        visible: !networkConnectionStore.accountBalanceNotAvailable
+                        anchors.top: allAccounts.bottom
+                        anchors.topMargin: 4
+                        anchors.bottomMargin: Style.current.padding
+                        leftPadding: Style.current.padding
+                    }
+
+                    StatusFlatRoundButton {
+                        id: errorIcon
+                        width: 14
+                        height: visible ? 14 : 0
+                        icon.width: 14
+                        icon.height: 14
+                        icon.name: "tiny/warning"
+                        icon.color: Theme.palette.dangerColor1
+                        tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
+                        tooltip.maxWidth: 200
+                        visible: networkConnectionStore.accountBalanceNotAvailable
+                    }
+                }
+            }
 
             footerPositioning: footerOverlayed ? ListView.OverlayFooter : ListView.InlineFooter
             footer: Control {
@@ -374,12 +408,14 @@ Rectangle {
                     textFillWidth: true
                     spacing: parent.ListView.view.firstItem.statusListItemTitleArea.anchors.leftMargin
                     onClicked: {
-                        showSavedAddresses = true
+                        root.showAllAccounts = false
+                        root.showSavedAddresses = true
                     }
 
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.RightButton
+                        cursorShape: Qt.PointingHandCursor
                         propagateComposedEvents: true
                         onClicked: {
                             mouse.accepted = true
