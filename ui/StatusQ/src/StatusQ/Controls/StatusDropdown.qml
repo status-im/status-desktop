@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtGraphicalEffects 1.13
-import QtQuick.Controls 2.14 as QC
+import QtQuick 2.15
+import QtGraphicalEffects 1.15
+import QtQuick.Controls 2.15 as QC
 
 import StatusQ.Core.Theme 0.1
 
@@ -28,16 +28,17 @@ import StatusQ.Core.Theme 0.1
    For a list of components available see StatusQ.
 */
 QC.Popup {
+    id: root
+
     dim: false
     closePolicy: QC.Popup.CloseOnPressOutside | QC.Popup.CloseOnEscape
     background: Rectangle {
-       id: border
        color: Theme.palette.statusMenu.backgroundColor
        radius: 8
        border.color: "transparent"
        layer.enabled: true
        layer.effect: DropShadow {
-           source: border
+           source: root.background
            horizontalOffset: 0
            verticalOffset: 4
            radius: 12
@@ -45,5 +46,22 @@ QC.Popup {
            spread: 0.2
            color: Theme.palette.dropShadow
        }
+    }
+
+    // workaround for https://bugreports.qt.io/browse/QTBUG-87804
+    Binding on margins{
+        id: workaroundBinding
+
+        when: false
+    }
+
+    Connections {
+        target: root.contentItem
+
+        function onImplicitHeightChanged() {
+            workaroundBinding.value = root.margins + 1
+            workaroundBinding.when = true
+            workaroundBinding.when = false
+        }
     }
 }
