@@ -89,7 +89,9 @@ Item {
             anchors.fill: parent
             changeSelectedAccount: function(address) {
                 RootStore.setFilterAddress(address)
-
+            }
+            selectAllAccounts: function() {
+                RootStore.setFillterAllAddresses()
             }
             onShowSavedAddressesChanged: {
                 if(showSavedAddresses)

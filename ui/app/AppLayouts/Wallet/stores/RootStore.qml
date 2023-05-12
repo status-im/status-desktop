@@ -132,6 +132,10 @@ QtObject {
         walletSection.setFilterAddress(address)
     }
 
+    function setFillterAllAddresses() {
+        walletSection.setFillterAllAddresses()
+    }
+
     function deleteAccount(address) {
         return walletSectionAccounts.deleteAccount(address)
     }
@@ -207,5 +211,9 @@ QtObject {
 
     function switchReceiveAccount(index) {
         walletSectionSend.switchReceiveAccount(index)
+    }
+
+    function toggleWatchOnlyAccounts() {
+        walletSection.toggleWatchOnlyAccounts()
     }
 }

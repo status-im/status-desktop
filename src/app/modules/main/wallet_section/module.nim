@@ -118,10 +118,10 @@ method updateCurrency*(self: Module, currency: string) =
   self.controller.updateCurrency(currency)
 
 method setTotalCurrencyBalance*(self: Module) =
-  self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance())
+  self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance(self.filter.addresses))
 
 method notifyFilterChanged(self: Module) =
-  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.excludeWatchOnly)
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.collectiblesModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.transactionsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
@@ -130,9 +130,17 @@ method notifyFilterChanged(self: Module) =
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
 
+method toggleWatchOnlyAccounts*(self: Module) =
+  self.filter.toggleWatchOnlyAccounts()
+  self.notifyFilterChanged()
+  self.setTotalCurrencyBalance()
 
 method setFilterAddress*(self: Module, address: string) =
   self.filter.setAddress(address)
+  self.notifyFilterChanged()
+
+method setFillterAllAddresses*(self: Module) =
+  self.filter.setFillterAllAddresses()
   self.notifyFilterChanged()
 
 method load*(self: Module) =

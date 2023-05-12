@@ -689,9 +689,9 @@ QtObject:
       result.balance = 0.0
       result.fetched = false
 
-  proc getTotalCurrencyBalance*(self: Service, currency: string = ""): float64 =
+  proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], currency: string = ""): float64 =
     let chainIds = self.networkService.getNetworks().filter(a => a.enabled).map(a => a.chainId)
-    let accounts = self.getWalletAccounts()
+    let accounts = self.getWalletAccounts().filter(w => addresses.contains(w.address))
     return accounts.map(a => a.getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))).foldl(a + b, 0.0)
 
   proc getTokenBalanceOnChain*(self: Service, address: string, chainId: int, symbol: string): float64 =

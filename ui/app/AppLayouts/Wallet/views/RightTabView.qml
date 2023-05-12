@@ -60,6 +60,7 @@ Item {
                 walletStore: RootStore
                 networkConnectionStore: root.networkConnectionStore
                 onLaunchShareAddressModal: root.launchShareAddressModal()
+                onSwitchHideWatchOnlyAccounts: RootStore.toggleWatchOnlyAccounts()
             }
             StatusTabBar {
                 id: walletTabBar
