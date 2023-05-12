@@ -1,10 +1,12 @@
 from drivers.SquishDriver import *
 
+from .base_popup import BasePopup
 
-class ChangePasswordPopup(BaseElement):
+
+class ChangePasswordPopup(BasePopup):
 
     def __init__(self):
-        super(ChangePasswordPopup, self).__init__('statusDesktop_mainWindow_overlay')
+        super(ChangePasswordPopup, self).__init__()
         self._current_password_text_field = TextEdit('change_password_menu_current_password')
         self._new_password_text_field = TextEdit('change_password_menu_new_password')
         self._confirm_password_text_field = TextEdit('change_password_menu_new_password_confirm')

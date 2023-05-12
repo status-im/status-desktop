@@ -12,8 +12,10 @@ import sys
 import test
 import time
 
+import configs
 import names
 import object
+import objectMap
 # IMPORTANT: It is necessary to import manually the Squish drivers module by module.
 # More info in: https://kb.froglogic.com/display/KB/Article+-+Using+Squish+functions+in+your+own+Python+modules+or+packages
 import squish
@@ -503,9 +505,13 @@ def sleep_test(seconds: float):
     squish.snooze(seconds)
 
 
-def wait_for(py_condition_to_check: str, timeout_msec: int = 500) -> bool:
+def wait_for(py_condition_to_check, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC) -> bool:
     return squish.waitFor(lambda: py_condition_to_check, timeout_msec)
 
 
 def wait_until_hidden(object_name: str, timeout_msec: int = _MAX_WAIT_OBJ_TIMEOUT) -> bool:
     return squish.waitFor(lambda: not is_displayed(object_name), timeout_msec)
+
+
+def get_real_name(obj):
+    return objectMap.realName(obj)

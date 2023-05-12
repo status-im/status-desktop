@@ -2,11 +2,13 @@ import typing
 
 from drivers.SquishDriver import *
 
+from .base_popup import BasePopup
 
-class SocialLinksPopup(BaseElement):
+
+class SocialLinksPopup(BasePopup):
 
     def __init__(self):
-        super(SocialLinksPopup, self).__init__('statusDesktop_mainWindow_overlay')
+        super(SocialLinksPopup, self).__init__()
         self._add_social_link_list_item = BaseElement('socialLink_StatusListItem')
         self._social_link_text_field = TextEdit('edit_TextEdit')
         self._add_button = Button('add_StatusButton')
