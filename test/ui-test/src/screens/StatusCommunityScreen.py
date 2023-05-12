@@ -68,6 +68,8 @@ class CommunitySettingsComponents(Enum):
     COMMUNITY_DESCRIPTION_TEXT = "communitySettings_CommunityDescription_Text"
     COMMUNITY_LETTER_IDENTICON = "communitySettings_Community_LetterIdenticon"
     MEMBERS_BUTTON = "communitySettings_Members_NavigationListItem"
+    MINT_TOKENS_BUTTON = "communitySettingsView_NavigationListItem_Mint_Tokens"
+    AIRDROPS_BUTTON = "communitySettingsView_NavigationListItem_Airdrops"
     PERMISSIONS_BUTTON = "communitySettings_Permissions_NavigationListItem"
     MEMBERS_TAB_MEMBERS_LISTVIEW = "communitySettings_MembersTab_Members_ListView"
     MEMBER_KICK_BUTTON = "communitySettings_MembersTab_Member_Kick_Button"
@@ -477,6 +479,12 @@ class StatusCommunityScreen:
         if option=="Permissions":
             title = get_obj(CommunitySettingsComponents.PERMISSIONS_BUTTON.value).title
             verify_text(option, str(title))
+        elif option=="Members":
+            title = get_obj(CommunitySettingsComponents.MEMBERS_BUTTON.value).title
+            verify_text(option, str(title))
+        elif option=="Mint Tokens":
+            title = get_obj(CommunitySettingsComponents.MEMBERS_BUTTON.value).title
+            verify_text(option, str(title))         
               
     def select_community_settings_option(self, option:str):
         if option=="Permissions":

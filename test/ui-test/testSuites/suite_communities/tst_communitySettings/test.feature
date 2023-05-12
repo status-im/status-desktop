@@ -12,4 +12,8 @@ Background:
 
  Scenario: Community permissions is an available option is Community Settings
    When "Manage Community" is clicked in the community sidebar
-   Then "Permissions" should be an available option in Community Settings
+   Then "<settings section>" should be an available option in Community Settings
+   	|Members|
+   	|Permissions|
+   	|Mint Tokens|
+   	|Airdrops|
