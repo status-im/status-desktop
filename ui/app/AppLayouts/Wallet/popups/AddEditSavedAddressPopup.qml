@@ -45,13 +45,13 @@ StatusDialog {
         readonly property int validationMode: root.edit ?
                                          StatusInput.ValidationMode.Always
                                        : StatusInput.ValidationMode.OnlyWhenDirty
-        readonly property bool valid: addressInput.valid && nameInput.valid && root.address !== Constants.zeroAddress
+        readonly property bool valid: addressInput.valid && nameInput.valid
         property bool chainShortNamesDirty: false
         readonly property bool dirty: nameInput.input.dirty || chainShortNamesDirty
 
         readonly property var chainPrefixRegexPattern: /[^:]+\:?|:/g
         readonly property string visibleAddress: root.address == Constants.zeroAddress ? "" : root.address
-        readonly property bool addressInputIsENS: !visibleAddress
+        readonly property bool addressInputIsENS: !!root.ens
 
         /// Ensures that the \c root.address and \c root.chainShortNames are not reset when the initial text is set
         property bool initialized: false
@@ -135,7 +135,7 @@ StatusDialog {
                 StatusValidator {
                     errorMessage: addressInput.plainText ? qsTr("Please enter a valid address or ENS name.") : ""
                     validate: function (t) {
-                        return Utils.isValidAddressWithChainPrefix(t) || Utils.isValidEns(t)
+                        return t !== Constants.zeroAddress && (Utils.isValidAddressWithChainPrefix(t) || Utils.isValidEns(t))
                             ? true : { actual: t }
                     }
                 }

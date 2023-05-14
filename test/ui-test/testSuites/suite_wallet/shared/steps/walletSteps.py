@@ -25,7 +25,7 @@ def step(context):
 @When("the user opens wallet section")
 def step(context):
     wallet_init_steps.the_user_opens_wallet_screen()
-    
+
 @When("the user clicks on the default wallet account")
 def step(context):
     _walletScreen.click_default_wallet_account()
@@ -63,7 +63,7 @@ def step(context, keypair_name, name, color, emoji, password, index, order, is_e
     _walletScreen.add_account_popup_change_account_color(color)
     _walletScreen.add_account_popup_change_account_emoji(emoji)
     if keypair_name != NOT_APPLICABLE:
-        _walletScreen.add_account_popup_change_origin_by_keypair_name(keypair_name)    
+        _walletScreen.add_account_popup_change_origin_by_keypair_name(keypair_name)
     _walletScreen.add_account_popup_open_edit_derivation_path_section(password)
     _walletScreen.add_account_popup_change_derivation_path(index, order, is_ethereum_root)
     _walletScreen.add_account_popup_do_primary_action()
@@ -110,7 +110,7 @@ def step(context, name, new_name, new_color, new_emoji):
     _walletScreen.add_account_popup_change_account_color(new_color)
     _walletScreen.add_account_popup_change_account_emoji(new_emoji)
     _walletScreen.add_account_popup_do_primary_action()
-    
+
 @When("the user removes an account with name \"|any|\" and path \"|any|\" using password \"|any|\" and test cancel \"|any|\"")
 def step(context, name, path, password, test_cancel):
     _walletScreen.click_option_from_right_click_menu_of_account_with_name(MainWalletRightClickMenu.DELETE_ACCOUNT_ACTION_PLACEHOLDER.value, name)
@@ -119,15 +119,19 @@ def step(context, name, path, password, test_cancel):
         _walletScreen.remove_account_popup_do_cancel_action()
         _walletScreen.click_option_from_right_click_menu_of_account_with_name(MainWalletRightClickMenu.DELETE_ACCOUNT_ACTION_PLACEHOLDER.value, name)
         _walletScreen.remove_account_popup_verify_account_account_to_be_removed(name, path)
-    _walletScreen.remove_account_popup_do_remove_action(True if path != NOT_APPLICABLE else False, password)    
-    
+    _walletScreen.remove_account_popup_do_remove_action(True if path != NOT_APPLICABLE else False, password)
+
 @When("the user sends a transaction to himself from account \"|any|\" of \"|any|\" \"|any|\" on \"|any|\" with password \"|any|\"")
 def step(context, account_name, amount, token, chain_name, password):
     _walletScreen.send_transaction(account_name, amount, token, chain_name, password)
-    
+
 @When("the user adds a saved address named \"|any|\" and address \"|any|\"")
 def step(context, name, address):
     _walletScreen.add_saved_address(name, address)
+
+@When("the user adds a saved address named \"|any|\" and ENS name \"|any|\"")
+def step(context, name, ens_name):
+    _walletScreen.add_saved_address(name, ens_name)
 
 @When("the user edits a saved address with name \"|any|\" to \"|any|\"")
 def step(context, name, new_name):
@@ -153,11 +157,11 @@ def step(context, network_name):
 @Then("the account is correctly displayed with \"|any|\" and \"|any|\" and emoji unicode \"|any|\"")
 def step(context, name, color, emoji_unicode):
     _walletScreen.verify_account_existence(name, color, emoji_unicode)
-    
+
 @Then("settings keycard section is opened")
 def step(context):
     _walletScreen.verify_keycard_settings_is_opened()
-        
+
 @Then("the account with \"|any|\" is not displayed")
 def step(context, name):
     _walletScreen.verify_account_doesnt_exist(name)
@@ -170,27 +174,27 @@ def step(context, symbol):
 @Then("the transaction is in progress")
 def step(context):
     _walletScreen.verify_transaction()
-    
+
 @Then("the name \"|any|\" is in the list of saved addresses")
 def step(context, name: str):
-    _walletScreen.verify_saved_address_exists(name) 
-    
+    _walletScreen.verify_saved_address_exists(name)
+
 @Then("the name \"|any|\" is not in the list of saved addresses")
 def step(context, name: str):
-    _walletScreen.verify_saved_address_doesnt_exist(name)     
-    
+    _walletScreen.verify_saved_address_doesnt_exist(name)
+
 @Then("the collectibles are listed for the |any|")
 def step(context, account_name: str):
-    _walletScreen.verify_collectibles_exist(account_name)    
-    
+    _walletScreen.verify_collectibles_exist(account_name)
+
 @Then("the transactions are listed for the added account")
 def step(context):
     _walletScreen.verify_transactions_exist()
-    
+
 @Then("the saved address \"|any|\" has favourite status \"|any|\"")
 def step(context, name, favourite):
     _walletScreen.check_favourite_status_for_saved_address(name, str_to_bool(favourite))
-    
+
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
-########################################################################### 
+###########################################################################
