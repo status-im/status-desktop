@@ -131,8 +131,6 @@ Loader {
                                                isSticker = false,
                                                isImage = false,
                                                image = null,
-                                               isReactions = false,
-                                               hideEmojiPicker = false,
                                                isReply = false) {
 
         if (placeholderMessage || !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
@@ -156,9 +154,8 @@ Loader {
         messageContextMenu.selectedUserIcon = root.senderIcon
 
         messageContextMenu.isProfile = !!isProfileClick
-        messageContextMenu.isReactions = isReactions
         messageContextMenu.isSticker = isSticker
-        messageContextMenu.hideEmojiPicker = hideEmojiPicker
+        messageContextMenu.hideEmojiPicker = false
 
         if (isReply) {
             if (!quotedMessageFrom) {
@@ -235,6 +232,8 @@ Loader {
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
 
+        readonly property bool addReactionAllowed: !root.isInPinnedPopup && !root.rootStore.isUserAllowedToSendMessage
+
         function setMessageActive(messageId, active) {
 
             // TODO: Is argument messageId actually needed?
@@ -301,9 +300,15 @@ Loader {
                 return StatusMessage.ContentType.Unknown;
             }
         }
+
+        function addReactionClicked(signalSender) {
+            if (root.isChatBlocked)
+                return
+            if (d.addReactionAllowed)
+                return
+            Global.openMenu(addReactionContextMenu, signalSender)
+        }
     }
-
-
 
     Connections {
         enabled: d.isMessageActive
@@ -538,7 +543,7 @@ Loader {
                 }
 
                 onReplyProfileClicked: {
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true, false, false, null, false, false, true))
+                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true, false, false, null, true))
                         d.setMessageActive(root.messageId, true)
                 }
 
@@ -565,11 +570,7 @@ Loader {
                 }
 
                 onAddReactionClicked: {
-                    if (root.isChatBlocked)
-                        return
-
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), false, false, false, null, true, false))
-                        d.setMessageActive(root.messageId, true)
+                    d.addReactionClicked(sender)
                 }
 
                 onStickerClicked: {
@@ -586,7 +587,7 @@ Loader {
                              !root.placeholderMessage &&
                              delegate.contentType !== StatusMessage.ContentType.Image
                     onClicked: {
-                        const menuOpened = root.messageClickHandler(this, Qt.point(mouse.x, mouse.y), false, false, false, null, root.isEmoji)
+                        const menuOpened = root.messageClickHandler(this, Qt.point(mouse.x, mouse.y), false, false, false, null)
                         if (menuOpened)
                             d.setMessageActive(root.messageId, true)
                     }
@@ -755,7 +756,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
+                        active: !d.addReactionAllowed && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
@@ -764,8 +765,7 @@ Loader {
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Add reaction")
                             onClicked: {
-                                if (root.messageClickHandler(delegate, mapToItem(delegate, mouse.x, mouse.y), false, false, false, null, true, false))
-                                    d.setMessageActive(root.messageId, true)
+                                d.addReactionClicked(delegate)
                             }
                         }
                     },
@@ -891,6 +891,24 @@ Loader {
         NewMessagesMarker {
             count: root.messageStore.newMessagesCount
             timestamp: root.messageTimestamp
+        }
+    }
+
+    Component {
+        id: addReactionContextMenu
+
+        MessageAddReactionContextMenu {
+            reactionsModel: root.rootStore.emojiReactionsModel
+            onToggleReaction: (emojiId) => {
+                root.messageStore.toggleReaction(root.messageId, emojiId)
+            }
+            onOpened: {
+                d.setMessageActive(root.messageId, true)
+            }
+            onClosed: {
+                d.setMessageActive(root.messageId, false)
+                destroy()
+            }
         }
     }
 }

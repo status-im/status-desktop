@@ -39,7 +39,6 @@ StatusMenu {
     property bool pinnedPopup: false
     property bool pinMessageAllowedForMembers: false
     property bool isDebugEnabled: store && store.isDebugEnabled
-    property bool isReactions: false
     property bool isSticker: false
     property bool hideEmojiPicker: true
     property bool pinnedMessage: false
@@ -104,8 +103,6 @@ StatusMenu {
     readonly property bool userTrustIsUnknown: contactDetails && contactDetails.trustStatus === Constants.trustStatus.unknown
     readonly property bool userIsUntrustworthy: contactDetails && contactDetails.trustStatus === Constants.trustStatus.untrustworthy
 
-    property var emojiReactionsReactedByUser: []
-
     signal openProfileClicked(string publicKey)
     signal pinMessage(string messageId)
     signal unpinMessage(string messageId)
@@ -118,18 +115,6 @@ StatusMenu {
     signal deleteMessage(string messageId)
     signal editClicked(string messageId)
 
-    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
-        let newEmojiReactions = []
-        if (!!emojiReactionsModel) {
-            emojiReactionsModel.forEach(function (emojiReaction) {
-                newEmojiReactions[emojiReaction.emojiId] = emojiReaction.currentUserReacted
-            })
-        }
-        root.emojiReactionsReactedByUser = newEmojiReactions;
-
-        popup()
-    }
-
     onClosed: {
         // Reset selectedUserPublicKey so that associated properties get recalculated on re-open
         selectedUserPublicKey = ""
@@ -141,26 +126,15 @@ StatusMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.hideEmojiPicker && (root.isReactions || !root.isProfile) && !root.pinnedPopup && !root.disabledForChat
+        visible: !root.hideEmojiPicker && !root.isProfile && !root.pinnedPopup && !root.disabledForChat
 
-        Row {
+        MessageReactionsRow {
             id: emojiRow
-            spacing: Style.current.halfPadding
-            leftPadding: Style.current.halfPadding
-            rightPadding: Style.current.halfPadding
-            bottomPadding: root.isReactions ? 0 : Style.current.padding
-
-            Repeater {
-                model: root.reactionModel
-                delegate: EmojiReaction {
-                    source: Style.svg(filename)
-                    emojiId: model.emojiId
-                    reactedByUser: !!root.emojiReactionsReactedByUser[model.emojiId]
-                    onCloseModal: {
-                        root.toggleReaction(root.messageId, emojiId)
-                        root.close()
-                    }
-                }
+            reactionsModel: root.reactionModel
+            bottomPadding: Style.current.padding
+            onToggleReaction: {
+                root.toggleReaction(root.messageId, emojiId)
+                close()
             }
         }
     }
@@ -190,7 +164,7 @@ StatusMenu {
 
     StatusMenuSeparator {
         anchors.bottom: viewProfileAction.top
-        visible: !root.isReactions && !root.hideEmojiPicker && !pinnedPopup
+        visible: !root.hideEmojiPicker && !pinnedPopup
     }
 
     ViewProfileMenuItem {
@@ -327,7 +301,6 @@ StatusMenu {
             root.close()
         }
         enabled: (!root.hideEmojiPicker &&
-                  !root.isReactions &&
                   !root.isProfile &&
                   !root.pinnedPopup &&
                   !root.disabledForChat)
@@ -342,7 +315,6 @@ StatusMenu {
         icon.name: "edit"
         enabled: root.isMyMessage &&
                  !root.hideEmojiPicker &&
-                 !root.isReactions &&
                  !root.isSticker &&
                  !root.isProfile &&
                  !root.pinnedPopup &&
@@ -396,7 +368,7 @@ StatusMenu {
         }
         icon.name: "pin"
         enabled: {
-            if (root.isProfile || root.isReactions || root.disabledForChat)
+            if (root.isProfile || root.disabledForChat)
                 return false
 
             if (root.pinnedPopup)
@@ -432,7 +404,6 @@ StatusMenu {
         enabled: (root.isMyMessage || root.amIChatAdmin) &&
                  !root.disabledForChat &&
                  !root.isProfile &&
-                 !root.isReactions &&
                  !root.pinnedPopup &&
                  (root.messageContentType === Constants.messageContentType.messageType ||
                   root.messageContentType === Constants.messageContentType.stickerType ||
