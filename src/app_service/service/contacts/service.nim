@@ -101,6 +101,7 @@ QtObject:
   proc getContactById*(self: Service, id: string): ContactsDto
   proc saveContact(self: Service, contact: ContactsDto)
   proc fetchReceivedVerificationRequests*(self: Service) : seq[VerificationRequest]
+  proc requestContactInfo*(self: Service, pubkey: string)
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -361,16 +362,17 @@ QtObject:
 
       let alias = self.generateAlias(pubkey)
       let trustStatus = self.getTrustStatus(pubkey)
-      result = ContactsDto(
+      let contact = ContactsDto(
         id: pubkey,
         alias: alias,
-        ensVerified: false,
-        added: false,
-        blocked: false,
-        hasAddedUs: false,
+        ensVerified: result.ensVerified,
+        added: result.added,
+        blocked: result.blocked,
+        hasAddedUs: result.hasAddedUs,
         trustStatus: trustStatus
       )
-      self.addContact(result)
+      self.addContact(contact)
+      return contact
 
   proc getStatusForContactWithId*(self: Service, publicKey: string): StatusUpdateDto =
     if publicKey == singletonInstance.userProfile.getPubKey():
@@ -407,28 +409,39 @@ QtObject:
     # we must keep local contacts updated
     self.contacts[contact.id] = contact
 
-  proc sendContactRequest*(self: Service, chatKey: string, message: string) =
-    try:
-      let publicKey = status_accounts.decompressPk(chatKey).result
+  proc updateContact(self: Service, contact: ContactsDto) =
+    var signal = SIGNAL_CONTACT_ADDED
+    let publicKey = contact.id
+    if self.contacts.hasKey(publicKey):
+      if self.contacts[publicKey].added and not self.contacts[publicKey].removed and contact.added and not contact.removed:
+        signal = SIGNAL_CONTACT_UPDATED
+    if contact.removed:
+      signal = SIGNAL_CONTACT_REMOVED
 
+    self.contacts[publicKey] = contact
+    self.events.emit(signal, ContactArgs(contactId: publicKey))
+
+  proc parseContactsResponse*(self: Service, response: RpcResponse[JsonNode]) =
+    if response.result["contacts"] != nil:
+      for contactJson in response.result["contacts"]:
+        self.updateContact(contactJson.toContactsDto())
+    # NOTE: this response may also contain chats and messages
+    self.activityCenterService.parseActivityCenterResponse(response)
+
+  proc sendContactRequest*(self: Service, publicKey: string, message: string) =
+    # Prefetch contact to avoid race condition with AC notification
+    discard self.getContactById(publicKey)
+
+    try:
       let response = status_contacts.sendContactRequest(publicKey, message)
-      if(not response.error.isNil):
-        let msg = response.error.message
-        error "error sending contact request", msg
+      if not response.error.isNil:
+        error "error sending contact request", msg = response.error.message
         return
 
-      var contact = self.getContactById(publicKey)
-      contact.added = true
-      contact.blocked = false
-      contact.removed = false
-      contact.contactRequestState = ContactRequestState.Sent
-
-      self.saveContact(contact)
-      self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
-      self.activityCenterService.parseActivityCenterResponse(response)
+      self.parseContactsResponse(response)
 
     except Exception as e:
-      error "an error occurred while sending contact request", msg=e.msg
+      error "an error occurred while sending contact request", msg = e.msg
 
   proc acceptContactRequest*(self: Service, publicKey: string, contactRequestId: string) =
     try:
@@ -439,19 +452,11 @@ QtObject:
         else:
           status_contacts.acceptLatestContactRequestForContact(publicKey)
 
-      if (not response.error.isNil):
-        let msg = response.error.message
-        error "error accepting contact request", msg
+      if not response.error.isNil:
+        error "error accepting contact request", msg = response.error.message
         return
 
-      var contact = self.getContactById(publicKey)
-      contact.added = true
-      contact.removed = false
-      contact.contactRequestState = ContactRequestState.Mutual
-
-      self.saveContact(contact)
-      self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
-      self.activityCenterService.parseActivityCenterResponse(response)
+      self.parseContactsResponse(response)
 
     except Exception as e:
       error "an error occurred while accepting contact request", msg=e.msg
@@ -465,17 +470,12 @@ QtObject:
         else:
           status_contacts.dismissLatestContactRequestForContact(publicKey)
 
-      if(not response.error.isNil):
-        let msg = response.error.message
-        error "error dismissing contact ", msg
+      if not response.error.isNil: 
+        error "error dismissing contact ", msg = response.error.message
         return
-      var contact = self.getContactById(publicKey)
-      contact.removed = true
-      contact.contactRequestState = ContactRequestState.Dismissed
 
-      self.saveContact(contact)
-      self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
-      self.activityCenterService.parseActivityCenterResponse(response)
+      self.parseContactsResponse(response)
+
     except Exception as e:
       error "an error occurred while dismissing contact request", msg=e.msg
 
@@ -484,9 +484,8 @@ QtObject:
     contact.localNickname = nickname
 
     let response = status_contacts.setContactLocalNickname(contact.id, contact.localNickname)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error setting local name ", msg
+    if not response.error.isNil:
+      error "error setting local name ", msg = response.error.message
       return
     self.saveContact(contact)
     let data = ContactArgs(contactId: contact.id)
@@ -496,9 +495,8 @@ QtObject:
     var contact = self.getContactById(publicKey)
 
     let response = status_contacts.unblockContact(contact.id)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error unblocking contact ", msg
+    if not response.error.isNil:
+      error "error unblocking contact ", msg = response.error.message
       return
 
     contact.blocked = false
@@ -509,9 +507,8 @@ QtObject:
     var contact = self.getContactById(publicKey)
 
     let response = status_contacts.blockContact(contact.id)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error blocking contact ", msg
+    if not response.error.isNil:
+      error "error blocking contact ", msg = response.error.message
       return
 
     contact.blocked = true
@@ -520,19 +517,11 @@ QtObject:
 
   proc removeContact*(self: Service, publicKey: string) =
     let response = status_contacts.retractContactRequest(publicKey)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error removing contact ", msg
+    if not response.error.isNil:
+      error "error removing contact ", msg = response.error.message
       return
 
-    var contact = self.getContactById(publicKey)
-    contact.removed = true
-    contact.added = false
-    contact.hasAddedUs = false
-    contact.contactRequestState = ContactRequestState.None
-
-    self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
+    self.parseContactsResponse(response)
 
   proc ensResolved*(self: Service, jsonObj: string) {.slot.} =
     let jsonObj = jsonObj.parseJson()
@@ -581,8 +570,7 @@ QtObject:
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)
     if not response.error.isNil:
-      let msg = response.error.message
-      error "error marking as untrustworthy ", msg
+      error "error marking as untrustworthy ", msg = response.error.message
       return
 
     if self.contacts.hasKey(publicKey):
@@ -643,9 +631,8 @@ QtObject:
 
   proc removeTrustStatus*(self: Service, publicKey: string) =
     let response = status_contacts.removeTrustStatus(publicKey)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error removing trust status", msg
+    if not response.error.isNil:
+      error "error removing trust status", msg = response.error.message
       return
 
     if self.contacts.hasKey(publicKey):
@@ -694,9 +681,8 @@ QtObject:
   proc sendVerificationRequest*(self: Service, publicKey: string, challenge: string) =
     try:
       let response = status_contacts.sendVerificationRequest(publicKey, challenge)
-      if(not response.error.isNil):
-        let msg = response.error.message
-        error "error sending contact verification request", msg
+      if not response.error.isNil:
+        error "error sending contact verification request", msg = response.error.message
         return
 
       var contact = self.getContactById(publicKey)
@@ -719,8 +705,7 @@ QtObject:
 
       response = status_contacts.cancelVerificationRequest(request.id)
       if not response.error.isNil:
-        let msg = response.error.message
-        error "error sending contact verification request", msg
+        error "error sending contact verification request", msg = response.error.message
         return
 
       var contact = self.getContactById(publicKey)

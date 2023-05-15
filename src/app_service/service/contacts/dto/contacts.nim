@@ -88,6 +88,7 @@ proc `$`*(self: ContactsDto): string =
     isSyncing:{self.isSyncing},
     removed:{self.removed},
     trustStatus:{self.trustStatus},
+    contactRequestState:{self.contactRequestState},
     verificationStatus:{self.verificationStatus},
     )"""
 
@@ -111,12 +112,12 @@ proc toTrustStatus*(value: int): TrustStatus =
   result = TrustStatus.Unknown
   if value >= ord(low(TrustStatus)) or value <= ord(high(TrustStatus)):
       result = TrustStatus(value)
-  
+
 proc toVerificationStatus*(value: int): VerificationStatus =
   result = VerificationStatus.Unverified
   if value >= ord(low(VerificationStatus)) or value <= ord(high(VerificationStatus)):
       result = VerificationStatus(value)
-  
+
 proc toVerificationRequest*(jsonObj: JsonNode): VerificationRequest =
   result = VerificationRequest()
   discard jsonObj.getProp("id", result.id)

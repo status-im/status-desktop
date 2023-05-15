@@ -218,6 +218,7 @@ Loader {
         case Constants.messageContentType.audioType:
         case Constants.messageContentType.communityInviteType:
         case Constants.messageContentType.discordMessageType:
+        case Constants.messageContentType.contactRequestType:
             return messageComponent
         case Constants.messageContentType.unknownContentType:
             // NOTE: We could display smth like "unknown message type, please upgrade Status to see it".
