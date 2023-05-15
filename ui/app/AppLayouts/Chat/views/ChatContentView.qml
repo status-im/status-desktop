@@ -74,6 +74,20 @@ ColumnLayout {
         chatSectionModule: root.rootStore.chatCommunitySectionModule
     }
 
+    QtObject {
+        id: d
+
+        function showReplyArea(messageId) {
+            let obj = messageStore.getMessageByIdAsJson(messageId)
+            if (!obj) {
+                return
+            }
+            if (inputAreaLoader.item) {
+                inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
+            }
+        }
+    }
+
     Loader {
         id: contextMenuLoader
         active: root.isActiveChannel
@@ -84,54 +98,54 @@ ColumnLayout {
         sourceComponent: MessageContextMenuView {
             store: root.rootStore
             reactionModel: root.rootStore.emojiReactionsModel
-            disabledForChat: !root.isUserAllowedToSendMessage
+            disabledForChat: !root.rootStore.isUserAllowedToSendMessage
 
-            onPinMessage: {
-                messageStore.pinMessage(messageId)
+            onPinMessage: (messageId) => {
+                root.messageStore.pinMessage(messageId)
             }
 
-            onUnpinMessage: {
-                messageStore.unpinMessage(messageId)
+            onUnpinMessage: (messageId) => {
+                root.messageStore.unpinMessage(messageId)
             }
 
-            onPinnedMessagesLimitReached: {
-                if(!chatContentModule) {
+            onPinnedMessagesLimitReached: (messageId) => {
+                if (!root.chatContentModule) {
                     console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
                     return
                 }
-                Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, root.chatId)
+                Global.openPinnedMessagesPopupRequested(root.rootStore,
+                                                        root.messageStore,
+                                                        root.chatContentModule.pinnedMessagesModel,
+                                                        messageId,
+                                                        root.chatId)
             }
 
-            onToggleReaction: {
-                messageStore.toggleReaction(messageId, emojiId)
+            onToggleReaction: (messageId, emojiId) => {
+                root.messageStore.toggleReaction(messageId, emojiId)
             }
 
-            onOpenProfileClicked: {
+            onOpenProfileClicked: (publicKey) => {
                 Global.openProfilePopup(publicKey, null)
             }
 
-            onDeleteMessage: {
-                messageStore.warnAndDeleteMessage(messageId)
+            onDeleteMessage: (messageId) => {
+                root.messageStore.warnAndDeleteMessage(messageId)
             }
 
-            onEditClicked: messageStore.setEditModeOn(messageId)
+            onEditClicked: (messageId) => {
+                root.messageStore.setEditModeOn(messageId)
+            }
 
-            onCreateOneToOneChat: {
+            onCreateOneToOneChat: (communityId, chatId, ensName) => {
                 Global.changeAppSectionBySectionType(Constants.appSection.chat)
                 root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
             }
-            onShowReplyArea: {
-                let obj = messageStore.getMessageByIdAsJson(messageId)
-                if (!obj) {
-                    return
-                }
-                if (inputAreaLoader.item) {
-                    inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
-                }
+
+            onShowReplyArea: (messageId) => {
+                d.showReplyArea(messageId)
             }
         }
     }
-
     ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -157,19 +171,16 @@ ColumnLayout {
                 isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
                 channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
                 isActiveChannel: root.isActiveChannel
-                onShowReplyArea: {
-                    let obj = messageStore.getMessageByIdAsJson(messageId)
-                    if (!obj) {
-                        return
-                    }
-                    if (inputAreaLoader.item) {
-                        inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
-                    }
+                onShowReplyArea: (messageId, senderId) => {
+                    d.showReplyArea(messageId)
                 }
                 onOpenStickerPackPopup: {
                     root.openStickerPackPopup(stickerPackId);
                 }
-                onEditModeChanged: if (!editModeOn && inputAreaLoader.item) inputAreaLoader.item.chatInput.forceInputActiveFocus()
+                onEditModeChanged: {
+                    if (!editModeOn && inputAreaLoader.item)
+                        inputAreaLoader.item.chatInput.forceInputActiveFocus()
+                }
             }
         }
 
@@ -214,7 +225,6 @@ ColumnLayout {
 
                     textInput.text: inputAreaLoader.preservedText
                     textInput.placeholderText: root.chatInputPlaceholder
-                    messageContextMenu: contextMenuLoader.item
                     emojiPopup: root.emojiPopup
                     stickersPopup: root.stickersPopup
                     isContactBlocked: root.isBlocked

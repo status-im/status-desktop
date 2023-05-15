@@ -22,6 +22,8 @@ Loader {
     property var messageStore
     property var usersStore
     property var contactsStore
+    property var chatContentModule
+
     property var messageContextMenu: null
     property string channelEmoji
     property bool isActiveChannel: false
@@ -129,7 +131,7 @@ Loader {
                                                isSticker = false,
                                                isImage = false,
                                                image = null,
-                                               isEmoji = false,
+                                               isReactions = false,
                                                hideEmojiPicker = false,
                                                isReply = false) {
 
@@ -154,7 +156,7 @@ Loader {
         messageContextMenu.selectedUserIcon = root.senderIcon
 
         messageContextMenu.isProfile = !!isProfileClick
-        messageContextMenu.isEmoji = isEmoji
+        messageContextMenu.isReactions = isReactions
         messageContextMenu.isSticker = isSticker
         messageContextMenu.hideEmojiPicker = hideEmojiPicker
 
@@ -584,8 +586,8 @@ Loader {
                              !root.placeholderMessage &&
                              delegate.contentType !== StatusMessage.ContentType.Image
                     onClicked: {
-                        if (root.messageClickHandler(this, Qt.point(mouse.x, mouse.y),
-                            false, false, false, null, root.isEmoji, false, false, false, ""))
+                        const menuOpened = root.messageClickHandler(this, Qt.point(mouse.x, mouse.y), false, false, false, null, root.isEmoji)
+                        if (menuOpened)
                             d.setMessageActive(root.messageId, true)
                     }
                 }
@@ -703,7 +705,6 @@ Loader {
                         usersStore: root.usersStore
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
-                        messageContextMenu: root.messageContextMenu
 
                         chatType: root.messageStore.chatType
                         isEdit: true
@@ -725,8 +726,8 @@ Loader {
                         messageStore: root.messageStore
                         store: root.rootStore
                         isCurrentUser: root.amISender
-                        onImageClicked: {
-                            root.imageClicked(image);
+                        onImageClicked: (image, mouse, imageSource) => {
+                            root.imageClicked(image, mouse, imageSource)
                         }
                         onLinksLoaded: {
                             // If there is only one image and no links, hide the message

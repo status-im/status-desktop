@@ -39,7 +39,7 @@ StatusMenu {
     property bool pinnedPopup: false
     property bool pinMessageAllowedForMembers: false
     property bool isDebugEnabled: store && store.isDebugEnabled
-    property bool isEmoji: false
+    property bool isReactions: false
     property bool isSticker: false
     property bool hideEmojiPicker: true
     property bool pinnedMessage: false
@@ -113,7 +113,7 @@ StatusMenu {
     signal jumpToMessage(string messageId)
     signal shouldCloseParentPopup()
     signal createOneToOneChat(string communityId, string chatId, string ensName)
-    signal showReplyArea()
+    signal showReplyArea(string messageId)
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
     signal editClicked(string messageId)
@@ -141,14 +141,14 @@ StatusMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.hideEmojiPicker && (root.isEmoji || !root.isProfile) && !root.pinnedPopup && !root.disabledForChat
+        visible: !root.hideEmojiPicker && (root.isReactions || !root.isProfile) && !root.pinnedPopup && !root.disabledForChat
 
         Row {
             id: emojiRow
             spacing: Style.current.halfPadding
             leftPadding: Style.current.halfPadding
             rightPadding: Style.current.halfPadding
-            bottomPadding: root.isEmoji ? 0 : Style.current.padding
+            bottomPadding: root.isReactions ? 0 : Style.current.padding
 
             Repeater {
                 model: root.reactionModel
@@ -190,7 +190,7 @@ StatusMenu {
 
     StatusMenuSeparator {
         anchors.bottom: viewProfileAction.top
-        visible: !root.isEmoji && !root.hideEmojiPicker && !pinnedPopup
+        visible: !root.isReactions && !root.hideEmojiPicker && !pinnedPopup
     }
 
     ViewProfileMenuItem {
@@ -323,11 +323,11 @@ StatusMenu {
         text: qsTr("Reply to")
         icon.name: "chat"
         onTriggered: {
-            root.showReplyArea()
+            root.showReplyArea(root.messageId)
             root.close()
         }
         enabled: (!root.hideEmojiPicker &&
-                  !root.isEmoji &&
+                  !root.isReactions &&
                   !root.isProfile &&
                   !root.pinnedPopup &&
                   !root.disabledForChat)
@@ -342,7 +342,7 @@ StatusMenu {
         icon.name: "edit"
         enabled: root.isMyMessage &&
                  !root.hideEmojiPicker &&
-                 !root.isEmoji &&
+                 !root.isReactions &&
                  !root.isSticker &&
                  !root.isProfile &&
                  !root.pinnedPopup &&
@@ -396,7 +396,7 @@ StatusMenu {
         }
         icon.name: "pin"
         enabled: {
-            if (root.isProfile || root.isEmoji || root.disabledForChat)
+            if (root.isProfile || root.isReactions || root.disabledForChat)
                 return false
 
             if (root.pinnedPopup)
@@ -432,7 +432,7 @@ StatusMenu {
         enabled: (root.isMyMessage || root.amIChatAdmin) &&
                  !root.disabledForChat &&
                  !root.isProfile &&
-                 !root.isEmoji &&
+                 !root.isReactions &&
                  !root.pinnedPopup &&
                  (root.messageContentType === Constants.messageContentType.messageType ||
                   root.messageContentType === Constants.messageContentType.stickerType ||

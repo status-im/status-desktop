@@ -63,8 +63,6 @@ Rectangle {
 
     property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this proeprty?
 
-    property var messageContextMenu
-
     property alias suggestions: suggestionsBox
 
     enum ImageErrorMessageLocation {
