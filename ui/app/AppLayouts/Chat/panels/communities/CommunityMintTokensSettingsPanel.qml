@@ -280,7 +280,7 @@ SettingsPageLayout {
             id: footerPanel
 
             function closePopups() {
-                remoteSelfdestructPopup.close()
+                remotelyDestructPopup.close()
                 alertPopup.close()
                 signSelfDestructPopup.close()
             }
@@ -291,25 +291,25 @@ SettingsPageLayout {
             burnEnabled: false
 
             onAirdropClicked: d.airdropClicked()
-            onRemotelySelfDestructClicked: remoteSelfdestructPopup.open()
+            onRemotelyDestructClicked: remotelyDestructPopup.open()
 
-            RemoteSelfDestructPopup {
-                id: remoteSelfdestructPopup
+            RemotelyDestructPopup {
+                id: remotelyDestructPopup
 
                 collectibleName: root.title
                 model: d.tokenOwnersModel
 
-                onSelfDestructClicked: {
+                onRemotelyDestructClicked: {
                     d.selfDestructTokensList = selfDestructTokensList
                     alertPopup.tokenCount = tokenCount
                     alertPopup.open()
                 }
             }
 
-            SelfDestructAlertPopup {
+            RemotelyDestructAlertPopup {
                 id: alertPopup
 
-                onSelfDestructClicked: signSelfDestructPopup.open()
+                onRemotelyDestructClicked: signSelfDestructPopup.open()
             }
 
             SignMintTokenTransactionPopup {

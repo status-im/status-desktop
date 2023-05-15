@@ -17,10 +17,10 @@ StatusDialog {
 
     property int tokenCount: 0
 
-    signal selfDestructClicked
+    signal remotelyDestructClicked
     signal cancelClicked
 
-    title: qsTr("Self-destruct %n token(s)", "", root.tokenCount)
+    title: qsTr("Remotely destruct %n token(s)", "", root.tokenCount)
     implicitWidth: 400 // by design
     topPadding: Style.current.padding
     bottomPadding: topPadding
@@ -46,11 +46,11 @@ StatusDialog {
             }
 
             StatusButton {
-                text: qsTr("Self-destruct")
+                text: qsTr("Remotely destruct")
                 type: StatusBaseButton.Type.Danger
 
                 onClicked: {
-                    root.selfDestructClicked()
+                    root.remotelyDestructClicked()
                     close()
                 }
             }

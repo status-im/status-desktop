@@ -178,11 +178,11 @@ ListModel {
          section: "Popups"
     }
     ListElement {
-         title: "RemoteSelfDestructPopup"
+         title: "RemotelyDestructPopup"
          section: "Popups"
     }
     ListElement {
-         title: "SelfDestructAlertPopup"
+         title: "RemotelyDestructAlertPopup"
          section: "Popups"
     }
     ListElement {

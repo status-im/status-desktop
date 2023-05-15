@@ -29,14 +29,14 @@ SplitView {
                 onClicked: dialog.open()
             }
 
-            RemoteSelfDestructPopup {
+            RemotelyDestructAlertPopup {
                 id: dialog
 
                 anchors.centerIn: parent
-                collectibleName: editorCollectible.text
-                model: TokenHoldersModel {}
+                tokenCount: 12
 
-                onSelfDestructClicked: logs.logEvent("RemoteSelfDestructPopup::onSelfDestructClicked")
+                onRemotelyDestructClicked: logs.logEvent("RemotelyDestructAlertPopup::onRemotelyDestructClicked")
+                onCancelClicked: logs.logEvent("RemotelyDestructAlertPopup::onCancelClicked")
 
             }
         }
@@ -54,22 +54,6 @@ SplitView {
     Pane {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
-
-        ColumnLayout {
-
-            Label {
-                Layout.fillWidth: true
-                text: "Collectible name"
-            }
-
-            TextField {
-                id: editorCollectible
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "Anniversary"
-            }
-
-        }
     }
 }
 

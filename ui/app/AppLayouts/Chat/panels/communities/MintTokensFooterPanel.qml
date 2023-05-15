@@ -18,7 +18,7 @@ Control {
 
     signal airdropClicked
     signal retailClicked
-    signal remotelySelfDestructClicked
+    signal remotelyDestructClicked
     signal burnClicked
 
     height: 61 // by design
@@ -57,12 +57,12 @@ Control {
             StatusFlatButton {
                 id: remotelySelfDestructButton
 
-                icon.name: "retail"
-                text: qsTr("Remotely self destruct")
+                icon.name: "remotely-destruct"
+                text: qsTr("Remotely destruct")
                 type: StatusBaseButton.Type.Danger
                 borderColor: "transparent"
 
-                onClicked: root.remotelySelfDestructClicked()
+                onClicked: root.remotelyDestructClicked()
             }
 
             StatusFlatButton {
