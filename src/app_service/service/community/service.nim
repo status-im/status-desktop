@@ -601,7 +601,7 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_KICKED, CommunityArgs(community: community))
     
     except Exception as e:
-      error "Error handling community updates", msg = e.msg, communities, updatedChats, removedChats
+      error "Error handling community updates", msg = e.msg
 
   proc init*(self: Service) =
     self.doConnect()

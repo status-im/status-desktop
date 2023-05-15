@@ -237,6 +237,11 @@ QtObject:
 
   proc getChatIndex*(self: Service, channelGroupId, chatId: string): int =
     var i = 0
+
+    if not self.channelGroups.contains(channelGroupId):
+      warn "unknown channel group", channelGroupId
+      return -1
+
     for chat in self.channelGroups[channelGroupId].chats:
       if (chat.id == chatId):
         return i
@@ -245,6 +250,10 @@ QtObject:
       
   proc chatsWithCategoryHaveUnreadMessages*(self: Service, communityId: string, categoryId: string): bool =
     if communityId == "" or categoryId == "":
+      return false
+
+    if not self.channelGroups.contains(communityId):
+      warn "unknown community", communityId
       return false
 
     for chat in self.channelGroups[communityId].chats:
@@ -259,8 +268,13 @@ QtObject:
     if communityId == "":
       return
 
+    if not self.channelGroups.contains(communityId):
+      warn "unknown community", communityId
+      return
+
     result.unviewedMentionsCount = 0
     result.unviewedMessagesCount = 0
+
     for chat in self.channelGroups[communityId].chats:
       result.unviewedMentionsCount += chat.unviewedMentionsCount
       if chat.muted:
@@ -272,6 +286,7 @@ QtObject:
     # status-go doesn't seem to preserve categoryIDs from chat
     # objects received via new messages. So we rely on what we
     # have in memory.
+
     if chat.id == "":
       return
     var categoryId = ""
@@ -284,8 +299,9 @@ QtObject:
     var channelGroupId = chat.communityId
     if (channelGroupId == ""):
       channelGroupId = singletonInstance.userProfile.getPubKey()
-    if (not self.channelGroups.contains(channelGroupId)):
-      warn "Unknown community for new channel update", channelGroupId
+
+    if not self.channelGroups.contains(channelGroupId):
+      warn "unknown community for new channel update", channelGroupId
       return
 
     let index = self.getChatIndex(channelGroupId, chat.id)
@@ -295,6 +311,11 @@ QtObject:
       self.channelGroups[channelGroupId].chats[index] = self.chats[chat.id]
 
   proc updateMissingFieldsInCommunityChat(self: Service, channelGroupId: string, newChat: ChatDto): ChatDto =
+    
+    if not self.channelGroups.contains(channelGroupId):
+      warn "unknown channel group", channelGroupId
+      return
+
     var chat = newChat
     for previousChat in self.channelGroups[channelGroupId].chats:
       if previousChat.id != newChat.id:
@@ -308,6 +329,7 @@ QtObject:
 
   # Community channel groups have less info because they come from community signals
   proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto, isCommunityChannelGroup: bool = false) =
+
     var newChannelGroups = channelGroup
     if isCommunityChannelGroup and self.channelGroups.contains(channelGroup.id):
       # We need to update missing fields in the chats seq before saving
@@ -319,7 +341,7 @@ QtObject:
       self.updateOrAddChat(chat)
 
   proc getChannelGroupById*(self: Service, channelGroupId: string): ChannelGroupDto =
-    if (not self.channelGroups.contains(channelGroupId)):
+    if not self.channelGroups.contains(channelGroupId):
       warn "Unknown channel group", channelGroupId
       return
     return self.channelGroups[channelGroupId]
