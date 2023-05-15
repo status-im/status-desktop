@@ -24,7 +24,8 @@ Item {
         id: d
 
         // d flag and named capture groups not supported in Qt 5.15. Use multiple regexes instead
-        readonly property var derivationPathRegex: /^m\/44[’|']\/?(?:(?<coin_type_h>.*?)[’|'])?(?<coin_type_s>.*?)(?:\/(?<account>.*?)[’|']?)?(?:\/(?<change>.*?))?((?:\/.*?)?)$/
+        // Captured groups:                                     ?<coin_type_h> ?<coin_type_s> ?<account> ?<change>
+        readonly property var derivationPathRegex: /^m\/44[’|']\/?(?:(.*?)[’|'])?(.*?)(?:\/(.*?)[’|']?)?(?:\/(.*?))?((?:\/.*?)?)$/
         // The expected characters before each group. Workaround to missing capture group offsets in Qt 5.15
         readonly property var offsets: [6, 0, 2, 2]
 
