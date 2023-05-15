@@ -27,6 +27,8 @@ InlineSelectorPanel {
         return localNickname || displayName || aliasName
     }
 
+    property string pastedChatKey: ""
+
     label.text: qsTr("To:")
     warningLabel.text: qsTr("%1 USER LIMIT REACHED").arg(membersLimit)
     warningLabel.visible: limitReached
@@ -50,9 +52,13 @@ InlineSelectorPanel {
             return true
         }
 
+        function isPastedProfileLinkToContact(pubkey) {
+            return root.pastedChatKey === pubkey
+        }
+
         filters: [
             ExpressionFilter {
-                enabled: root.edit.text !== ""
+                enabled: root.edit.text !== "" && root.pastedChatKey == ""
                 expression: {
                     root.edit.text // ensure expression is reevaluated when edit.text changes
                     return _suggestionsModel.searchPredicate(model.displayName, model.localNickname, model.alias)
@@ -62,6 +68,13 @@ InlineSelectorPanel {
                 expression: {
                     root.model.count // ensure expression is reevaluated when members model changes
                     return _suggestionsModel.notAMemberPredicate(model.pubKey)
+                }
+            },
+            ExpressionFilter {
+                enabled: root.pastedChatKey != ""
+                expression: {
+                    root.pastedChatKey // ensure expression is reevaluated when members model changes
+                    return _suggestionsModel.isPastedProfileLinkToContact(model.pubKey)
                 }
             }
         ]

@@ -35,6 +35,7 @@ MembersSelectorBase {
     edit.onTextChanged: {
         // When edited, give a small delay in case next character is printed soon
         contactLookupDelayTimer.start()
+        root.pastedChatKey = ""
     }
 
     onTextPasted: (text) => {
@@ -62,7 +63,6 @@ MembersSelectorBase {
         property ListModel selectedMembers: ListModel {}
 
         function lookupContact(value) {
-
             value = Utils.dropUserLinkPrefix(value.trim())
 
             if (Utils.isChatKey(value)) {
@@ -94,7 +94,8 @@ MembersSelectorBase {
             };
 
             if (contactDetails.isContact) {
-                root.rootStore.mainModuleInst.switchTo(root.rootStore.getMySectionId(), contactDetails.publicKey)
+                root.pastedChatKey = contactDetails.publicKey
+                root.suggestionsDialog.forceHide = false
                 return
             }
 
