@@ -88,7 +88,7 @@ Item {
             }
 
             StatusButton {
-                objectName: "welcomeSettingsAddNewPermissionButton"
+                objectName: "addNewItemActionButton"
                 visible: root.headerButtonVisible
                 text: root.headerButtonText
                 Layout.preferredHeight: 44

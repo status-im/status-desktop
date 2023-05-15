@@ -27,8 +27,9 @@ community_ProfilePopupInviteMessagePanel_MessageInput = {"container": community_
 community_InviteFriend_SendButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "InviteFriendsToCommunityPopup_SendButton", "type": "StatusButton", "visible": True}
 communitySettings_Members_NavigationListItem = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Members", "type": "StatusNavigationListItem", "visible": True}
 communitySettingsView_NavigationListItem_Airdrops = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Airdrops", "type": "StatusNavigationListItem", "visible": True}
-communitySettingsView_NavigationListItem_Mint_Tokens = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Mint_Tokens", "type": "StatusNavigationListItem", "visible": True}
+communitySettingsView_NavigationListItem_Mint_Tokens = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Mint Tokens", "type": "StatusNavigationListItem", "visible": True}
 communitySettings_Permissions_NavigationListItem = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Permissions", "type": "StatusNavigationListItem", "visible": True}
+communitySettingsView_NavigationListItem_Overview = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Overview", "type": "StatusNavigationListItem", "visible": True}
 communitySettings_MembersTab_Members_ListView = {"container": statusDesktop_mainWindow, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
 communitySettings_MembersTab_Member_Kick_Button = {"container": communitySettings_MembersTab_Members_ListView, "objectName": "MemberListIten_KickButton", "type": "StatusButton", "visible": True}
 communitySettings_KickModal_Kick_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
@@ -84,12 +85,11 @@ communitySettings_EditCommunity_ColorPicker_Button = {"container": communitySett
 communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelHexInput", "type": "TextEdit",  "visible": True}
 communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelSelectColorButton", "type": "StatusButton", "visible": True}
 
-# Community permissions:
-communityPermissions_welcome_title = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
-communityPermissions_welcome_image = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsImage", "type": "Image", "visible": True}
-communityPermissions_welcome_settings_title = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
-communityPermissions_welcome_settings_subtitle = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsSubtitle", "type": "StatusBaseText", "visible": True}
-communityPermissions_welcome_settings_checkList_element1 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_0", "type": "StatusBaseText", "visible": True}
-communityPermissions_welcome_settings_checkList_element2 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_1", "type": "StatusBaseText", "visible": True}
-communityPermissions_welcome_settings_checkList_element3 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_2", "type": "StatusBaseText", "visible": True}
-communityPermissions_welcome_settings_add_new_permission = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsAddNewPermissionButton", "type": "StatusButton", "visible": True}
+# Community welcome screen
+community_welcome_screen_image = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsImage", "type": "Image", "visible": True}
+community_welcome_screen_title = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsTitle", "type": "StatusBaseText", "visible": True}
+community_welcome_screen_subtitle = {"container": statusDesktop_mainWindow, "objectName": "welcomeSettingsSubtitle", "type": "StatusBaseText", "visible": True}
+community_welcome_screen_checkList_element1 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_0", "type": "StatusBaseText", "visible": True}
+community_welcome_screen_checkList_element2 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_1", "type": "StatusBaseText", "visible": True}
+community_welcome_screen_checkList_element3 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_2", "type": "StatusBaseText", "visible": True}
+community_welcome_screen_add_new_item = {"container": statusDesktop_mainWindow, "objectName": "addNewItemActionButton", "type": "StatusButton", "visible": True}

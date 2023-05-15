@@ -168,10 +168,12 @@ def step(context, channel):
 @When("\"|any|\" is clicked in the community sidebar")
 def step(context, community_sidebar_option:str):
     _statusCommunityScreen.click_sidebar_option(community_sidebar_option)
+    time.sleep(1)
     
 @When("\"|any|\" section is selected") 
 def step(context, section_option:str):
-    _statusCommunityScreen.select_community_settings_option(section_option) 
+    _statusCommunityScreen.select_community_settings_option(section_option)
+    time.sleep(1)
 
 
 #########################
@@ -238,37 +240,33 @@ def step(context, communityDescription: str):
 def step(context, color: str):
     _statusCommunityScreen.verify_community_overview_color(color)
 
-@Then("the heading is \"|any|\"") 
-def step(context, community_settings_screen_name:str):
-    _statusCommunityScreen.verify_permission_screen_title(community_settings_screen_name) 
-
-@Then("the welcome permission image is present")
-def step(context):
-    _statusCommunityScreen.verify_welcome_permission_image()
+@Then("the welcome \"|any|\" image is present")
+def step(context, option):
+    _statusCommunityScreen.verify_welcome_image(option)    
     
-@Then("\"|any|\" should be an available option in Community Settings")
-def step(context, manage_community_option:str):
-    _statusCommunityScreen.verify_option_exists(manage_community_option)
+@Then("\"|any|\" should be an available option in Community->Manage->left navigation")
+def step(context, list):
+    _statusCommunityScreen.verify_option_exists(list)
     
 @Then("\"|any|\" should be in the list of uncategorized channels")
 def step(context, chat_name:str):
     _statusCommunityScreen.check_channel_is_uncategorized(chat_name)
 
-@Then("the welcome permission title is present") 
-def step(context, ):
-    _statusCommunityScreen.verify_welcome_settings_title()    
+@Then("the welcome \"|any|\" title is present") 
+def step(context, option:str):
+    _statusCommunityScreen.verify_welcome_title(option)     
 
-@Then("the welcome permission subtitle is present") 
-def step(context, ):
-    _statusCommunityScreen.verify_welcome_settings_subtitle()
+@Then("the welcome \"|any|\" subtitle is present")
+def step(context, option:str):
+    _statusCommunityScreen.verify_welcome_subtitle(option)    
     
-@Then("the welcome permission settings \"|any|\" is present") 
-def step(context, list):
-    _statusCommunityScreen.verify_welcome_settings_checklist(list)
+@Then("the welcome \"|any|\" settings \"|any|\" is present")
+def step(context, option:str, list):
+    _statusCommunityScreen.verify_welcome_settings_checklist(option, list)
 
-@Then("Add new permission button is present")
-def step (context):
-    _statusCommunityScreen.verify_add_permission_button_enabled()  
+@Then("\"|any|\" button is present")
+def step (context, action_button_name):
+    _statusCommunityScreen.verify_action_button_enabled(action_button_name)   
 
     
 ###########################################################################
