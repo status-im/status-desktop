@@ -394,7 +394,7 @@ Loader {
         StatusBaseText {
             width: parent.width - 120
             horizontalAlignment: Text.AlignHCenter
-            text: qsTr("%1 pinned a message").arg(quotedMessageAuthorDetailsDisplayName)
+            text: qsTr("%1 pinned a message").arg(senderDisplayName)
             color: Theme.palette.directColor3
             font.family: Theme.palette.baseFont.name
             font.pixelSize: Theme.primaryTextFontSize
