@@ -490,6 +490,7 @@ Loader {
 
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessagePrivateGroupType ||
+                            root.prevMessageContentType === Constants.messageContentType.systemMessagePinnedMessage ||
                             root.senderId !== root.prevMessageSenderId
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 0
