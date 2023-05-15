@@ -552,7 +552,8 @@ Loader {
                 }
 
                 onReplyMessageClicked: {
-                    root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
+                    if (!root.quotedMessageDeleted && root.quotedMessageFrom)
+                        root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
                 }
 
                 onSenderNameClicked: {
@@ -666,7 +667,7 @@ Loader {
                         if (root.quotedMessageDeleted) {
                             return qsTr("Message deleted")
                         }
-                        if (!root.quotedMessageText && contentType !== StatusMessage.ContentType.Image) {
+                        if (!root.quotedMessageText && !root.quotedMessageFrom) {
                             return qsTr("Unknown message. Try fetching more messages")
                         }
                         return root.quotedMessageText
