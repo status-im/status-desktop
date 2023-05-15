@@ -67,24 +67,27 @@ class CommunitySettingsComponents(Enum):
     COMMUNITY_NAME_TEXT = "communitySettings_CommunityName_Text"
     COMMUNITY_DESCRIPTION_TEXT = "communitySettings_CommunityDescription_Text"
     COMMUNITY_LETTER_IDENTICON = "communitySettings_Community_LetterIdenticon"
+    OVERVIEW_BUTTON = "communitySettingsView_NavigationListItem_Overview"
     MEMBERS_BUTTON = "communitySettings_Members_NavigationListItem"
+    PERMISSIONS_BUTTON = "communitySettings_Permissions_NavigationListItem" 
     MINT_TOKENS_BUTTON = "communitySettingsView_NavigationListItem_Mint_Tokens"
-    AIRDROPS_BUTTON = "communitySettingsView_NavigationListItem_Airdrops"
-    PERMISSIONS_BUTTON = "communitySettings_Permissions_NavigationListItem"
+    AIRDROPS_BUTTON = "communitySettingsView_NavigationListItem_Airdrops"   
     MEMBERS_TAB_MEMBERS_LISTVIEW = "communitySettings_MembersTab_Members_ListView"
     MEMBER_KICK_BUTTON = "communitySettings_MembersTab_Member_Kick_Button"
     MEMBER_CONFIRM_KICK_BUTTON = "communitySettings_KickModal_Kick_Button"
-    
-class CommunityPermissionsComponents(Enum):
-    WELCOME_SCREEN_TITLE = "communityPermissions_welcome_title"
-    WELCOME_SCREEN_IMAGE = "communityPermissions_welcome_image"
-    WELCOME_SCREEN_SETTINGS_TITLE = "communityPermissions_welcome_settings_title"
-    WELCOME_SCREEN_SETTINGS_SUBTITLE = "communityPermissions_welcome_settings_subtitle"
-    WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT1 = "communityPermissions_welcome_settings_checkList_element1"
-    WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT2 = "communityPermissions_welcome_settings_checkList_element2"
-    WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT3 = "communityPermissions_welcome_settings_checkList_element3"
-    ADD_NEW_PERMISSION_BUTTON = "communityPermissions_welcome_settings_add_new_permission"
 
+class CommunityWelcomeScreenComponents(Enum):
+    # Constants definitions:
+    PERMISSIONS_OPTION = "Permissions"
+    TOKENS_OPTION = "Mint Tokens"
+    # Components
+    WELCOME_SCREEN_IMAGE = "community_welcome_screen_image"
+    WELCOME_SCREEN_TITLE = "community_welcome_screen_title"
+    WELCOME_SCREEN_SUBTITLE = "community_welcome_screen_subtitle"
+    WELCOME_SCREEN_CHECKLIST_ELEMENT1 = "community_welcome_screen_checkList_element1"
+    WELCOME_SCREEN_CHECKLIST_ELEMENT2 = "community_welcome_screen_checkList_element2"
+    WELCOME_SCREEN_CHECKLIST_ELEMENT3 = "community_welcome_screen_checkList_element3"
+    ADD_NEW_ITEM_BUTTON = "community_welcome_screen_add_new_item"
 
 class CommunityColorPanelComponents(Enum):
     HEX_COLOR_INPUT = "communitySettings_ColorPanel_HexColor_Input"
@@ -475,41 +478,57 @@ class StatusCommunityScreen:
         if community_sidebar_option == "Manage Community":
             click_obj_by_name(CommunityScreenComponents.WELCOME_MANAGE_COMMUNITY.value)    
             
-    def verify_option_exists(self, option:str):
-        if option=="Permissions":
-            title = get_obj(CommunitySettingsComponents.PERMISSIONS_BUTTON.value).title
-            verify_text(option, str(title))
-        elif option=="Members":
-            title = get_obj(CommunitySettingsComponents.MEMBERS_BUTTON.value).title
-            verify_text(option, str(title))
-        elif option=="Mint Tokens":
-            title = get_obj(CommunitySettingsComponents.MEMBERS_BUTTON.value).title
-            verify_text(option, str(title))         
+    def verify_option_exists(self, list:list):
+        options_list = []
+        options_list.append(get_obj(CommunitySettingsComponents.OVERVIEW_BUTTON.value).title)
+        options_list.append(get_obj(CommunitySettingsComponents.MEMBERS_BUTTON.value).title)
+        options_list.append(get_obj(CommunitySettingsComponents.PERMISSIONS_BUTTON.value).title)
+        options_list.append(get_obj(CommunitySettingsComponents.MINT_TOKENS_BUTTON.value).title)
+        options_list.append(get_obj(CommunitySettingsComponents.AIRDROPS_BUTTON.value).title)
+        
+        # Check if the lists are of equal length
+        if len(options_list) != len(list):
+            return False
+        
+        # Check if the lists have the same elements in the same order
+        for i in range(len(options_list)):
+            if options_list[i] != list[i]:
+                return False
+                         
               
     def select_community_settings_option(self, option:str):
-        if option=="Permissions":
+        if option==CommunityWelcomeScreenComponents.PERMISSIONS_OPTION.value:
             click_obj_by_name(CommunitySettingsComponents.PERMISSIONS_BUTTON.value)
-     
-    def verify_permission_screen_title(self, option:str):
-        if option=="Permissions":
-            title = get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_TITLE.value).text
-            verify_text(option, str(title))
+        elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
+            click_obj_by_name(CommunitySettingsComponents.MINT_TOKENS_BUTTON.value)
              
-    def verify_welcome_permission_image(self):
-        path = get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_IMAGE.value).source.path
-        verify_text_contains(str(path), "permissions2_3")
+    def verify_welcome_image(self, option:str):
+        path = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_IMAGE.value).source.path       
+        if option==CommunityWelcomeScreenComponents.PERMISSIONS_OPTION.value:         
+            verify_text_contains(str(path), "permissions2_3")
+        elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
+            verify_text_contains(str(path), "mint2_1")
     
-    def verify_welcome_settings_title(self):
-        verify_equals(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_TITLE.value).text, "Permissions")    
+    def verify_welcome_title(self, option:str):
+        title = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_TITLE.value).text
+        if option==CommunityWelcomeScreenComponents.PERMISSIONS_OPTION.value:
+            verify_equals(title, "Permissions")    
+        elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
+            verify_equals(title, "Community tokens")    
     
-    def verify_welcome_settings_subtitle(self):
-        verify_equals(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_SUBTITLE.value).text, "You can manage your community by creating and issuing membership and access permissions")
+    def verify_welcome_subtitle(self, option:str):
+        subtitle = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_SUBTITLE.value).text
+        if option==CommunityWelcomeScreenComponents.PERMISSIONS_OPTION.value:
+            verify_equals(subtitle, "You can manage your community by creating and issuing membership and access permissions")
+        elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
+            verify_equals(subtitle, "You can mint custom tokens and import tokens for your community")
+            
         
-    def verify_welcome_settings_checklist(self, list: list):
+    def verify_welcome_settings_checklist(self, option:str, list: list):
         checklist = []
-        checklist.append(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT1.value).text)
-        checklist.append(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT2.value).text)
-        checklist.append(get_obj(CommunityPermissionsComponents.WELCOME_SCREEN_SETTINGS_CHECKLIST_ELEMENT3.value).text)
+        checklist.append(get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_CHECKLIST_ELEMENT1.value).text)
+        checklist.append(get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_CHECKLIST_ELEMENT2.value).text)
+        checklist.append(get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_CHECKLIST_ELEMENT3.value).text)
         
         # Check if the lists are of equal length
         if len(checklist) != len(list):
@@ -519,8 +538,10 @@ class StatusCommunityScreen:
         for i in range(len(checklist)):
             if checklist[i] != list[i]:
                 return False
+            
     
-    def verify_add_permission_button_enabled(self):
-        assert BaseElement(str(CommunityPermissionsComponents.ADD_NEW_PERMISSION_BUTTON.value)).is_enabled
-        button_title = get_obj(CommunityPermissionsComponents.ADD_NEW_PERMISSION_BUTTON.value).text
-        verify_equals("Add new permission", str(button_title))
+    def verify_action_button_enabled(self, option:str):
+        assert BaseElement(str(CommunityWelcomeScreenComponents.ADD_NEW_ITEM_BUTTON.value)).is_enabled
+        button_title = get_obj(CommunityWelcomeScreenComponents.ADD_NEW_ITEM_BUTTON.value).text
+        verify_equals(option, str(button_title))            
+            

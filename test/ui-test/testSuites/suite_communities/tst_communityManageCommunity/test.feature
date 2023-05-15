@@ -1,4 +1,4 @@
-Feature: Community Settings
+Feature: Community -> Manage Community
 
 Background:
 	Given A first time user lands on the status desktop and generates new key
@@ -10,10 +10,11 @@ Background:
     And the user lands on the community named "Test-Community"
 
 
- Scenario: Community permissions is an available option is Community Settings
+ Scenario: Manage community has Overview, Members, Permissions, Mint Tokens and Airdrops options
    When "Manage Community" is clicked in the community sidebar
-   Then "<settings section>" should be an available option in Community Settings
-   	|Members|
-   	|Permissions|
-   	|Mint Tokens|
-   	|Airdrops|
+   Then "<settings section>" should be an available option in Community->Manage->left navigation
+   	| Overview   |
+   	| Members    |
+   	| Permissions|
+   	| Mint Tokens|
+   	| Airdrops   |

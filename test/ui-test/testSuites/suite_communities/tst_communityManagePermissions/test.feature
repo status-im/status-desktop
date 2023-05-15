@@ -10,15 +10,14 @@ Background:
     And the user lands on the community named "Test-Community"
 
 
- Scenario: Welcome Permissions Screen content validation
+ Scenario: Permissions welcome screen content validation
     When "Manage Community" is clicked in the community sidebar
     And "Permissions" section is selected
-    Then the heading is "Permissions"
-    And the welcome permission image is present
-    And the welcome permission title is present
-    And the welcome permission subtitle is present
-    And the welcome permission settings "<user onboarding checklist>" is present
+    Then the welcome "Permissions" image is present
+    And the welcome "Permissions" title is present
+    And the welcome "Permissions" subtitle is present
+    And the welcome "Permissions" settings "<user onboarding checklist>" is present
    	| Give individual members access to private channels |
     | Monetise your community with subscriptions and fees |
     | Require holding a token or NFT to obtain exclusive membership rights |
-    And Add new permission button is present
+    And "Add new permission" button is present
