@@ -804,8 +804,10 @@ QtObject:
 
       updatedCommunity.settings = communitySettings
       self.communities[communityId] = updatedCommunity
-      # TODO improve this by only loading the data for the wanted community
       self.chatService.loadChannelGroupById(communityId)
+
+      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
+      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true))
 
       for k, chat in updatedCommunity.chats:
         let fullChatId = communityId & chat.id
@@ -819,9 +821,6 @@ QtObject:
         # TODO find a way to populate missing infos like the color
         self.chatService.updateOrAddChat(chatDto)
         self.messageService.asyncLoadInitialMessagesForChat(fullChatId)
-
-      self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
-      self.events.emit(SIGNAL_COMMUNITY_SPECTATED, CommunityArgs(community: updatedCommunity, fromUserAction: true))
     except Exception as e:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
