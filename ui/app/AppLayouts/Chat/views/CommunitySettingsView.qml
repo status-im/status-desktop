@@ -205,7 +205,7 @@ StatusSectionLayout {
                                                              null)
                 }
 
-                onAirdropTokensClicked: { /* TODO in future */ }
+                onAirdropTokensClicked: root.goTo(Constants.CommunitySettingsSections.Airdrops)
                 onBackUpClicked: {
                     Global.openPopup(transferOwnershipPopup, {
                                          privateKey: root.chatCommunitySectionModule.exportCommunity(root.community.id),
