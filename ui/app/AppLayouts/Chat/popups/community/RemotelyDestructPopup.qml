@@ -20,7 +20,7 @@ StatusDialog {
 
     property string collectibleName
 
-    signal selfDestructClicked(int tokenCount, var selfDestructTokensList)
+    signal remotelyDestructClicked(int tokenCount, var selfDestructTokensList)
 
     QtObject {
         id: d
@@ -59,7 +59,7 @@ StatusDialog {
        }
     }
 
-    title: qsTr("Remotely self-destruct %1 token").arg(root.collectibleName)
+    title: qsTr("Remotely destruct %1 token").arg(root.collectibleName)
     implicitWidth: 600 // by design
     topPadding: Style.current.padding
     bottomPadding: topPadding
@@ -88,9 +88,9 @@ StatusDialog {
         rightButtons: ObjectModel {
             StatusButton {
                 enabled: d.tokenCount > 0
-                text: qsTr("Self-destruct %n token(s)", "", d.tokenCount)
+                text: qsTr("Remotely destruct %n token(s)", "", d.tokenCount)
                 type: StatusBaseButton.Type.Danger
-                onClicked:  root.selfDestructClicked(d.tokenCount,
+                onClicked:  root.remotelyDestructClicked(d.tokenCount,
                                                     ModelUtils.modelToArray(d.selfDestructTokensList,
                                                                             ["walletAddress", "amount"]))
             }
