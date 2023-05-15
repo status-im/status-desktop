@@ -13,7 +13,7 @@ Item {
     id: root
 
     // required
-    property string title
+    property alias title: itemHeader.text
     property Component content
 
 
@@ -29,6 +29,7 @@ Item {
     property alias saveChangesText: settingsDirtyToastMessage.saveChangesText
     property alias cancelChangesText: settingsDirtyToastMessage.cancelChangesText
     property alias changesDetectedText: settingsDirtyToastMessage.changesDetectedText
+    property alias subTitle: sideTextHeader.text
 
     readonly property Item contentItem: contentLoader.item
     readonly property size settingsDirtyToastMessageImplicitSize: 
@@ -61,15 +62,29 @@ Item {
             Layout.maximumWidth: root.headerWidth === 0 ? parent.width : (root.headerWidth + itemHeader.Layout.leftMargin)
             Layout.preferredHeight: 56
 
-            StatusBaseText {
-                id: itemHeader
-                Layout.leftMargin: 64
-                Layout.fillWidth: true
+            RowLayout {
                 Layout.alignment: Qt.AlignVCenter
-                text: root.title
-                color: Theme.palette.directColor1
-                font.pixelSize: 26
-                font.bold: true
+                Layout.fillWidth: true
+
+                StatusBaseText {
+                    id: itemHeader
+
+                    Layout.leftMargin: 64
+
+                    color: Theme.palette.directColor1
+                    font.pixelSize: 26
+                    font.bold: true
+                }
+
+                StatusBaseText {
+                    id: sideTextHeader
+
+                    Layout.leftMargin: 6
+                    Layout.topMargin: 6
+
+                    color: Theme.palette.baseColor1
+                    font.pixelSize: 15
+                }
             }
 
             StatusButton {

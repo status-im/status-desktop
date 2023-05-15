@@ -26,6 +26,7 @@ StatusScrollView {
     property alias chainName: chainText.text
     property string name
     property int supplyAmount
+    property int remainingTokens
     property bool infiniteSupply
     property bool transferable
     property bool selfDestruct
@@ -52,6 +53,7 @@ StatusScrollView {
 
         readonly property int imageSelectorRectSize: 280
         readonly property int iconSize: 20
+        readonly property string infiniteSymbol: "∞"
     }
 
     contentWidth: mainLayout.width
@@ -101,15 +103,6 @@ StatusScrollView {
             }
         }
 
-        StatusBaseText {
-            id: descriptionItem
-
-            Layout.fillWidth: true
-            wrapMode: TextEdit.WordWrap
-            font.pixelSize: Theme.primaryTextFontSize
-            lineHeight: 1.2
-        }
-
         Flow {
             spacing: Style.current.halfPadding
             Layout.fillWidth: true
@@ -119,7 +112,6 @@ StatusScrollView {
 
                 property string label
                 property string value
-                property bool leftAlignment: true
 
                 radius: 8
                 border.color: Theme.palette.baseColor2
@@ -143,20 +135,28 @@ StatusScrollView {
 
                     StatusBaseText {
                         Layout.maximumWidth: mainLayout.width - Style.current.padding
-                        Layout.alignment: previewBox.leftAlignment ? Qt.AlignLeft : Qt.AlignHCenter
                         text: previewBox.value
                         elide: Text.ElideRight
                         font.pixelSize: Theme.primaryTextFontSize
                         color: Theme.palette.directColor1
-                        horizontalAlignment: previewBox.leftAlignment ? Text.AlignLeft : Text.AlignHCenter
                     }
                 }
             }
 
             CustomPreviewBox {
-                label: root.infiniteSupply ? qsTr("Infinite supply") : qsTr("Total")
-                value: root.infiniteSupply ? qsTr("Yes") : LocaleUtils.numberToLocaleString(root.supplyAmount)
-                leftAlignment: root.infiniteSupply
+                id: symbolBox
+
+                label: qsTr("Symbol")
+            }
+
+            CustomPreviewBox {
+                label: qsTr("Total")
+                value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.supplyAmount)
+            }
+
+            CustomPreviewBox {
+                label: qsTr("Remaining")
+                value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.remainingTokens)
             }
 
             CustomPreviewBox {
@@ -165,22 +165,14 @@ StatusScrollView {
             }
 
             CustomPreviewBox {
-                label: qsTr("Remote self-destruct")
+                label: qsTr("Remotely destructible")
                 value: root.selfDestruct ? qsTr("Yes") : qsTr("No")
-            }
-
-            CustomPreviewBox {
-                id: symbolBox
-
-                label: qsTr("Symbol")
-                leftAlignment: false
             }
 
             CustomPreviewBox {
                 id: accountBox
 
                 label: qsTr("Account")
-                leftAlignment: false
             }
 
             Rectangle {
@@ -218,6 +210,15 @@ StatusScrollView {
             }
         }
 
+        StatusBaseText {
+            id: descriptionItem
+
+            Layout.fillWidth: true
+            wrapMode: TextEdit.WordWrap
+            font.pixelSize: Theme.primaryTextFontSize
+            lineHeight: 1.2
+        }
+
         RowLayout {
             visible: root.preview
             Layout.fillWidth: true
@@ -235,7 +236,7 @@ StatusScrollView {
                 wrapMode: Text.Wrap
                 font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.baseColor1
-                text: qsTr("Make sure you’re happy with your collectible before minting it as it can’t be edited later")
+                text: qsTr("Make sure you’re happy with your token before minting it as it can’t be edited later")
             }
         }
 

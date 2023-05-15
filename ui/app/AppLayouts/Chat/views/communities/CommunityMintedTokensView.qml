@@ -24,7 +24,7 @@ StatusScrollView {
     QtObject {
         id: d
 
-        function getSubtitle(deployState, availableTokens, supply) {
+        function getSubtitle(deployState, remainingTokens, supply) {
             if(deployState === Constants.DeployState.Failed) {
                 return qsTr("Failed")
             }
@@ -34,11 +34,11 @@ StatusScrollView {
             }
 
             // TO REMOVE: Just added bc backend still doesn't have `availableTokens` property in model. Once it is added, the following 2 lines can be removed.
-            if(!availableTokens)
-                availableTokens = 0
+            if(!remainingTokens)
+                remainingTokens = 0
             if(supply === 0)
                 supply = "∞"
-            return  qsTr("%1 / %2 remaining").arg(availableTokens).arg(supply)
+            return  qsTr("%1 / %2 remaining").arg(remainingTokens).arg(supply)
         }
     }
 
@@ -70,7 +70,7 @@ StatusScrollView {
                 height: gridView.cellHeight
                 width: gridView.cellWidth
                 title: model.name ? model.name : "..."
-                subTitle: d.getSubtitle(model.deployState, model.availableTokens, model.supply)
+                subTitle: d.getSubtitle(model.deployState, model.remainingTokens, model.supply)
                 fallbackImageUrl: model.image ? model.image : ""
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent" // TODO BACKEND
                 isLoading: false
