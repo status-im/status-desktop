@@ -83,7 +83,6 @@ SettingsPageLayout {
         readonly property string newCollectiblePageTitle: qsTr("Mint collectible")
         readonly property string newTokenButtonText: qsTr("Mint token")
         readonly property string backButtonText: qsTr("Back")
-        readonly property string backTokensText: qsTr("Tokens")
 
         property string accountAddress
         property string accountName
@@ -121,6 +120,7 @@ SettingsPageLayout {
         State {
             name: d.initialViewState
             PropertyChanges {target: root; title: d.welcomePageTitle}
+            PropertyChanges {target: root; subTitle: ""}
             PropertyChanges {target: root; previousPageName: ""}
             PropertyChanges {target: root; headerButtonVisible: true}
             PropertyChanges {target: root; headerButtonText: d.newTokenButtonText}
@@ -129,6 +129,7 @@ SettingsPageLayout {
         State {
             name: d.newCollectibleViewState
             PropertyChanges {target: root; title: d.newCollectiblePageTitle}
+            PropertyChanges {target: root; subTitle: ""}
             PropertyChanges {target: root; previousPageName: d.backButtonText}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
@@ -141,7 +142,7 @@ SettingsPageLayout {
         },
         State {
             name: d.collectibleViewState
-            PropertyChanges {target: root; previousPageName: d.backTokensText}
+            PropertyChanges {target: root; previousPageName: d.backButtonText}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
             PropertyChanges {target: root; footer: mintTokenFooter}
@@ -242,6 +243,13 @@ SettingsPageLayout {
                 target: root
                 property: "title"
                 value: preview.name
+            }
+
+            Binding {
+                target: root
+                property: "subTitle"
+                value: preview.symbol
+                restoreMode: Binding.RestoreBindingOrValue
             }
 
             SignMintTokenTransactionPopup {
@@ -371,6 +379,13 @@ SettingsPageLayout {
             }
 
             Binding {
+                target: root
+                property: "subTitle"
+                value: view.symbol
+                restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            Binding {
                 target: d
                 property: "tokenOwnersModel"
                 value: view.tokenOwnersModel
@@ -403,6 +418,7 @@ SettingsPageLayout {
                         Bind { property: "description"; value: model.description },
                         Bind { property: "supplyAmount"; value: model.supply },
                         Bind { property: "infiniteSupply"; value: model.infiniteSupply },
+                        Bind { property: "remainingTokens"; value: model.remainingTokens },
                         Bind { property: "selfDestruct"; value: model.remoteSelfDestruct },
                         Bind { property: "chainId"; value: model.chainId },
                         Bind { property: "chainName"; value: model.chainName },
