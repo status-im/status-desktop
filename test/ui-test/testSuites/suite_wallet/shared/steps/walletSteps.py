@@ -151,7 +151,29 @@ def step(context, name, path, password, test_cancel):
         _walletScreen.remove_account_popup_verify_account_account_to_be_removed(name, path)
     _walletScreen.remove_account_popup_do_remove_action(True if path != NOT_APPLICABLE else False, password)
 
-@When("the user sends a transaction to himself from account \"|any|\" of \"|any|\" \"|any|\" on \"|any|\" with password \"|any|\"")
+@When("the user removes account \"|any|\"")
+def step(context, name):
+    _walletScreen.left_panel.delete_account(name).confirm()
+
+
+@When("the user start removing account \"|any|\" and cancel it")
+def step(context, name):
+    _walletScreen.left_panel.delete_account(name).cancel()
+
+
+@When("the user removes account \"|any|\" with authentication")
+def step(context, name):
+    _walletScreen.left_panel.delete_account(name).confirm()
+    # AuthenticatePopup().wait_until_appears().authenticate()
+
+
+@When("the user removes account \"|any|\" with agreement")
+def step(context, name):
+    _walletScreen.left_panel.delete_account(name).agree_and_confirm()
+
+
+@When(
+    "the user sends a transaction to himself from account \"|any|\" of \"|any|\" \"|any|\" on \"|any|\" with password \"|any|\"")
 def step(context, account_name, amount, token, chain_name, password):
     _walletScreen.send_transaction(account_name, amount, token, chain_name, password)
 

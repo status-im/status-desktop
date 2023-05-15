@@ -24,7 +24,6 @@ class RemoveWalletAccountPopup(BasePopup):
         self._cancel_button.click()
         self._cancel_button.wait_until_hidden()
 
-    def agree_and_confirm(self) -> AuthenticatePopup:
+    def agree_and_confirm(self):
         self._have_pen_paper_checkbox.wait_until_appears().set(True)
         self.confirm()
-        return AuthenticatePopup().wait_until_appears()

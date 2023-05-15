@@ -98,6 +98,7 @@ class AddNewAccount(BasePopup):
 class AccountPopup(BasePopup):
     def __init__(self):
         super(AccountPopup, self).__init__()
+        self._scroll = Scroll('scrollView_StatusScrollView')
         self._name_text_edit = TextEdit('mainWallet_AddEditAccountPopup_AccountName')
         self._emoji_button = Button('mainWallet_AddEditAccountPopup_AccountEmojiPopupButton')
         self._color_radiobutton = BaseElement('color_StatusColorRadioButton')

@@ -429,7 +429,6 @@ class StatusWalletScreen:
 
     def verify_account_address_correct(self, account_name: str, address: str):
         actual_address = self.left_panel.select_account(account_name).address
-        # actual_address = WalletAccountView().address
         assert actual_address.lower() == address.lower(), f'Account {account_name} has unexpected address {actual_address}'
 
     def verify_keycard_settings_is_opened(self):
