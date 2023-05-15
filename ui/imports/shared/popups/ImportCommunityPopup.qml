@@ -24,9 +24,18 @@ StatusDialog {
         property string importErrorMessage
         readonly property string inputErrorMessage: isInputValid ? "" : qsTr("Invalid key")
         readonly property string errorMessage: importErrorMessage || inputErrorMessage
-        readonly property string inputKey: Utils.dropCommunityLinkPrefix(keyInput.text.trim())
+        readonly property string inputKey: keyInput.text.trim()
         readonly property bool isPrivateKey: Utils.isPrivateKey(inputKey)
-        readonly property bool isPublicKey: Utils.isChatKey(inputKey)
+        readonly property bool isPublicKey: publicKey !== ""
+        readonly property string publicKey: {
+            const key = Utils.dropCommunityLinkPrefix(inputKey)
+            if (!Utils.isCommunityPublicKey(key))
+                return ""
+            if (!Utils.isCompressedPubKey(key))
+                return key
+            return Utils.changeCommunityKeyCompression(key)
+        }
+
         readonly property bool isInputValid: isPrivateKey || isPublicKey
     }
 
@@ -41,8 +50,8 @@ StatusDialog {
                 enabled: d.isInputValid
                 text: d.isPrivateKey ? qsTr("Make this an Owner Node") : qsTr("Import")
                 onClicked: {
-                    let communityKey = d.inputKey
                     if (d.isPrivateKey) {
+                        const communityKey = d.inputKey
                         if (!communityKey.startsWith("0x")) {
                             communityKey = "0x" + communityKey;
                         }
@@ -51,7 +60,7 @@ StatusDialog {
                     }
                     if (d.isPublicKey) {
                         importButton.loading = true
-                        root.store.requestCommunityInfo(communityKey, true)
+                        root.store.requestCommunityInfo(d.publicKey, true)
                         root.close();
                     }
                 }
