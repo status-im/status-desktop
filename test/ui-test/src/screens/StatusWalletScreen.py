@@ -19,7 +19,7 @@ from .components.confirmation_popup import ConfirmationPopup
 from .components.context_menu import ContextMenu
 from .components.remove_wallet_account_popup import RemoveWalletAccountPopup
 from .components.saved_address_popup import AddSavedAddressPopup, EditSavedAddressPopup
-from .components.wallet_account_popup import AccountPopup
+from .components.wallet_account_popups import AccountPopup
 
 NOT_APPLICABLE = "N/A"
 VALUE_YES = "yes"

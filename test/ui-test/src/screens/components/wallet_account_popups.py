@@ -48,10 +48,10 @@ class GeneratedAddressesList(BaseElement):
                 self._paginator_page.click()
 
 
-class AddNewAccount(BasePopup):
+class AddNewAccountPopup(BasePopup):
 
     def __init__(self):
-        super(AddNewAccount, self).__init__()
+        super(AddNewAccountPopup, self).__init__()
         self._import_private_key_button = Button('mainWallet_AddEditAccountPopup_MasterKey_ImportPrivateKeyOption')
         self._import_seed_phrase_button = Button('mainWallet_AddEditAccountPopup_MasterKey_ImportSeedPhraseOption')
         self._private_key_text_edit = TextEdit('mainWallet_AddEditAccountPopup_PrivateKey')
@@ -151,19 +151,19 @@ class AccountPopup(BasePopup):
     def set_origin_seed_phrase(self, value: typing.List[str]):
         self._origin_combobox.click()
         self._new_master_key_origin_item.click()
-        AddNewAccount().wait_until_appears().import_new_seed_phrase(value)
+        AddNewAccountPopup().wait_until_appears().import_new_seed_phrase(value)
         return self
 
     def set_origin_new_seed_phrase(self, value: str):
         self._origin_combobox.click()
         self._new_master_key_origin_item.click()
-        AddNewAccount().wait_until_appears().generate_new_master_key(value)
+        AddNewAccountPopup().wait_until_appears().generate_new_master_key(value)
         return self
 
     def set_origin_private_key(self, value: str):
         self._origin_combobox.click()
         self._new_master_key_origin_item.click()
-        AddNewAccount().wait_until_appears().import_private_key(value)
+        AddNewAccountPopup().wait_until_appears().import_private_key(value)
         return self
 
     def set_derivation_path(self, value: str, index: int):
