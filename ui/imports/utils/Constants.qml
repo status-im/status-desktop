@@ -888,10 +888,11 @@ QtObject {
         Everyone = 4
     }
 
-    enum DeployState {
-          Failed,
-          InProgress,
-          Deployed
+    enum BackendProcessState {
+        Failed,
+        InProgress,
+        Completed,
+        None
     }
 
     enum ContactRequestState {

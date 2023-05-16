@@ -25,11 +25,11 @@ StatusScrollView {
         id: d
 
         function getSubtitle(deployState, remainingTokens, supply) {
-            if(deployState === Constants.DeployState.Failed) {
+            if(deployState === Constants.BackendProcessState.Failed) {
                 return qsTr("Failed")
             }
 
-            if(deployState === Constants.DeployState.InProgress) {
+            if(deployState === Constants.BackendProcessState.InProgress) {
                 return qsTr("Minting...")
             }
 

@@ -6,6 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 import shared.panels 1.0
@@ -32,9 +33,10 @@ StatusScrollView {
     property bool selfDestruct
     property int chainId
     property string chainIcon
-    property int deployState
+    property int deployState: Constants.BackendProcessState.None
+    property int remotelyDestructState: Constants.BackendProcessState.None
+    property int burnState: Constants.BackendProcessState.None
     property var tokenOwnersModel
-
     property alias accountName: accountBox.value
 
     signal mintCollectible(url artworkSource,
@@ -54,11 +56,21 @@ StatusScrollView {
         readonly property int imageSelectorRectSize: 280
         readonly property int iconSize: 20
         readonly property string infiniteSymbol: "∞"
+
+        function startAnimation(isBurn) {
+            totalbox.highlighted = true
+
+            if(isBurn)
+                remainingBox.highlighted = true
+        }
     }
 
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
     padding: 0
+
+    onRemotelyDestructStateChanged: if(remotelyDestructState === Constants.BackendProcessState.Completed) d.startAnimation(false)
+    onBurnStateChanged: if(burnState === Constants.BackendProcessState.Completed) d.startAnimation(true)
 
     ColumnLayout {
         id: mainLayout
@@ -67,7 +79,7 @@ StatusScrollView {
         spacing: Style.current.padding
 
         RowLayout {
-            visible: !root.preview && (root.deployState === Constants.DeployState.InProgress)
+            visible: !root.preview && (root.deployState === Constants.BackendProcessState.InProgress)
             spacing: Style.current.halfPadding
 
             StatusDotsLoadingIndicator {}
@@ -112,12 +124,25 @@ StatusScrollView {
 
                 property string label
                 property string value
+                property bool isLoading: false
+                property bool highlighted: false
 
                 radius: 8
                 border.color: Theme.palette.baseColor2
-                color: "transparent"
                 implicitWidth: Math.min(boxContent.implicitWidth + Style.current.padding, mainLayout.width)
                 implicitHeight: boxContent.implicitHeight + Style.current.padding
+                states: [
+                    State {
+                        when: !previewBox.highlighted
+                        PropertyChanges { target: previewBox; color: "transparent" }
+                    },
+                    State {
+                        when: previewBox.highlighted
+                        PropertyChanges { target: previewBox; color: Theme.palette.primaryColor3 }
+                    }
+                ]
+
+                onHighlightedChanged: if(highlighted) animation.start()
 
                 ColumnLayout {
                     id: boxContent
@@ -130,16 +155,42 @@ StatusScrollView {
                         elide: Text.ElideRight
                         font.pixelSize: 13
                         color: Theme.palette.baseColor1
-                        horizontalAlignment: Text.AlignHCenter
                     }
 
-                    StatusBaseText {
-                        Layout.maximumWidth: mainLayout.width - Style.current.padding
-                        text: previewBox.value
-                        elide: Text.ElideRight
-                        font.pixelSize: Theme.primaryTextFontSize
-                        color: Theme.palette.directColor1
+                    RowLayout {
+                        spacing: 3
+
+                        StatusBaseText {
+                            text: StatusQUtils.Emoji.fromCodePoint("1f525") // :fire: emoji
+                            font.pixelSize: Theme.tertiaryTextFontSize
+                            visible: previewBox.isLoading
+                            color: Theme.palette.directColor1
+                        }
+
+                        StatusBaseText {
+                            Layout.maximumWidth: mainLayout.width - Style.current.padding
+                            text: previewBox.value
+                            elide: Text.ElideRight
+                            font.pixelSize: Theme.primaryTextFontSize
+                            color: Theme.palette.directColor1
+                        }
+
+                        StatusLoadingIndicator {
+                            Layout.preferredHeight: Theme.primaryTextFontSize
+                            Layout.preferredWidth: Layout.preferredHeight
+                            Layout.leftMargin: 6
+                            Layout.rightMargin: 3
+                            visible: previewBox.isLoading
+                            color: Theme.palette.primaryColor1
+                        }
                     }
+                }
+
+                Timer {
+                    id: animation
+
+                    interval: 1500
+                    onRunningChanged: if(!running) previewBox.highlighted = false
                 }
             }
 
@@ -150,13 +201,21 @@ StatusScrollView {
             }
 
             CustomPreviewBox {
+                id: totalbox
+
                 label: qsTr("Total")
                 value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.supplyAmount)
+                isLoading: !root.infiniteSupply &&
+                           ((root.remotelyDestructState === Constants.BackendProcessState.InProgress) ||
+                            (root.burnState === Constants.BackendProcessState.InProgress))
             }
 
             CustomPreviewBox {
+                id: remainingBox
+
                 label: qsTr("Remaining")
                 value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.remainingTokens)
+                isLoading: !root.infiniteSupply && (root.burnState === Constants.BackendProcessState.InProgress)
             }
 
             CustomPreviewBox {

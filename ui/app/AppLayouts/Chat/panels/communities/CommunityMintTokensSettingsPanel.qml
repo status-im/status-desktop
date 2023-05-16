@@ -412,6 +412,7 @@ SettingsPageLayout {
                     component Bind: Binding { target: view }
                     readonly property list<Binding> bindings: [
                         Bind { property: "deployState"; value: model.deployState },
+                        Bind { property: "remotelyDestructState"; value: model.remotelyDestructState },
                         Bind { property: "name"; value: model.name },
                         Bind { property: "artworkSource"; value: model.image },
                         Bind { property: "symbol"; value: model.symbol },
