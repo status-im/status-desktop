@@ -83,7 +83,7 @@ Feature: Status Desktop Wallet Section Wallet Account Management
         Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
         When the user edits an account with "<name>" to "<new_name>" with color "#<new_color>" and emoji "<new_emoji>"
         Then the account is correctly displayed with "<new_name>" and "#<new_color>" and emoji unicode "<new_emoji_unicode>" in accounts list
-        When the user removes account "<new_name>" with authentication
+        When the user removes account "<new_name>"
         Then the account with "<new_name>" is not displayed
 
         Examples:
@@ -105,12 +105,12 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | kitten tiny cup admit cactus shrug shuffle accident century faith roof plastic beach police barely vacant sign blossom                                        | SPAcc18 | 2946C4 | sunglasses | 1f60e         | SPAcc18edited | 7CDA00    | thumbsup  | 1f44d             |
             | pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial                                                                               | SPAcc12 | 2946C4 | sunglasses | 1f60e         | SPAcc12edited | 7CDA00    | thumbsup  | 1f44d             |
 
-            
+
         Scenario Outline: The user manages an account created from the imported seed phrase
         When the user adds an imported seed phrase account "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" with "SPAcc12" color "#2946C4" and emoji "sunglasses"
         And the user adds to "pcsomrselw" a custom generated account with "<name>" color "#<color>" emoji "<emoji>" and derivation "<path>" "<address_index>"
-        When the user removes account "SPAcc12" with agreement
         And the user removes account "<name>" with agreement
+        Then the account with "<name>" is not displayed
 
         Examples:
             | address_index | path                           | name          | color  | emoji      |

@@ -84,8 +84,18 @@ def step(context, seed_phrase, name, color, emoji):
     account_popup.wait_until_hidden()
 
 
-@When(
-    "the user adds to \"|any|\" a custom generated account with \"|any|\" color \"|any|\" emoji \"|any|\" and derivation \"|any|\" \"|any|\"")
+@When("the user adds a custom generated account with \"|any|\" color \"|any|\" emoji \"|any|\" and derivation \"|any|\" \"|any|\"")
+@verify_screenshot
+def step(context, name, color, emoji, derivation_path, generated_address_index):
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup \
+        .set_name(name) \
+        .set_emoji(emoji) \
+        .set_color(color) \
+        .set_derivation_path(derivation_path, generated_address_index) \
+        .save()
+
+@When("the user adds to \"|any|\" a custom generated account with \"|any|\" color \"|any|\" emoji \"|any|\" and derivation \"|any|\" \"|any|\"")
 @verify_screenshot
 def step(context, keypair_name, name, color, emoji, derivation_path, generated_address_index):
     account_popup = _walletScreen.left_panel.open_add_account_popup()
@@ -120,21 +130,9 @@ def step(context):
 
 @When("the user edits an account with \"|any|\" to \"|any|\" with color \"|any|\" and emoji \"|any|\"")
 def step(context, name, new_name, new_color, new_emoji):
-    _walletScreen.click_option_from_right_click_menu_of_account_with_name(MainWalletRightClickMenu.EDIT_ACCOUNT_ACTION_PLACEHOLDER.value, name)
-    _walletScreen.add_account_popup_change_account_name(new_name)
-    _walletScreen.add_account_popup_change_account_color(new_color)
-    _walletScreen.add_account_popup_change_account_emoji(new_emoji)
-    _walletScreen.add_account_popup_do_primary_action()
+    account_popup = _walletScreen.left_panel.open_edit_account_popup(name)
+    account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
 
-@When("the user removes an account with name \"|any|\" and path \"|any|\" using password \"|any|\" and test cancel \"|any|\"")
-def step(context, name, path, password, test_cancel):
-    _walletScreen.click_option_from_right_click_menu_of_account_with_name(MainWalletRightClickMenu.DELETE_ACCOUNT_ACTION_PLACEHOLDER.value, name)
-    _walletScreen.remove_account_popup_verify_account_account_to_be_removed(name, path)
-    if test_cancel == VALUE_YES:
-        _walletScreen.remove_account_popup_do_cancel_action()
-        _walletScreen.click_option_from_right_click_menu_of_account_with_name(MainWalletRightClickMenu.DELETE_ACCOUNT_ACTION_PLACEHOLDER.value, name)
-        _walletScreen.remove_account_popup_verify_account_account_to_be_removed(name, path)
-    _walletScreen.remove_account_popup_do_remove_action(True if path != NOT_APPLICABLE else False, password)
 
 @When("the user removes account \"|any|\"")
 def step(context, name):
