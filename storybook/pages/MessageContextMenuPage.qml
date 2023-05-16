@@ -32,21 +32,76 @@ SplitView {
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
             clip: true
 
-            StatusButton {
+            RowLayout {
                 anchors.centerIn: parent
-                text: "Open menu"
-                onClicked: {
-                    messageContextMenu.open()
+                Button {
+                    text: "Message context menu"
+                    onClicked: {
+                        menu1.createObject(this).popup()
+                    }
+                }
+                Button {
+                    text: "Message context menu (hide disabled items)"
+                    onClicked: {
+                        menu2.createObject(this).popup()
+                    }
+                }
+                Button {
+                    text: "Profile context menu"
+                    onClicked: {
+                        menu3.createObject(this).popup()
+                    }
+                }
+                Button {
+                    text: "Profile context menu (hide disabled items)"
+                    onClicked: {
+                        menu4.createObject(this).popup()
+                    }
                 }
             }
 
-            MessageContextMenuView {
-                id: messageContextMenu
-                anchors.centerIn: parent
-                visible: true
-                modal: false
-                closePolicy: Popup.NoAutoClose
-                hideDisabledItems: false
+            Component {
+                id: menu1
+                MessageContextMenuView {
+                    anchors.centerIn: parent
+                    hideDisabledItems: false
+                    onClosed: {
+                        destroy()
+                    }
+                }
+            }
+
+            Component {
+                id: menu2
+                MessageContextMenuView {
+                    anchors.centerIn: parent
+                    hideDisabledItems: true
+                    onClosed: {
+                        destroy()
+                    }
+                }
+            }
+
+            Component {
+                id: menu3
+                ProfileContextMenu {
+                    anchors.centerIn: parent
+                    hideDisabledItems: false
+                    onClosed: {
+                        destroy()
+                    }
+                }
+            }
+
+            Component {
+                id: menu4
+                ProfileContextMenu {
+                    anchors.centerIn: parent
+                    hideDisabledItems: true
+                    onClosed: {
+                        destroy()
+                    }
+                }
             }
         }
 
