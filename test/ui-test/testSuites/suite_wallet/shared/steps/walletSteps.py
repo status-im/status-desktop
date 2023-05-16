@@ -61,21 +61,6 @@ def step(context, name, color, emoji, via_right_click_menu):
     account_popup.wait_until_hidden()
 
 
-@When(
-    "the user adds a custom generated account with \"|any|\" color \"|any|\" emoji \"|any|\" and derivation \"|any|\" \"|any|\"")
-@verify_screenshot
-def step(context, keypair_name, name, color, emoji, password, index, order, is_ethereum_root):
-    _walletScreen.open_add_account_popup()
-    _walletScreen.add_account_popup_change_account_name(name)
-    _walletScreen.add_account_popup_change_account_color(color)
-    _walletScreen.add_account_popup_change_account_emoji(emoji)
-    if keypair_name != NOT_APPLICABLE:
-        _walletScreen.add_account_popup_change_origin_by_keypair_name(keypair_name)
-    _walletScreen.add_account_popup_open_edit_derivation_path_section(password)
-    _walletScreen.add_account_popup_change_derivation_path(index, order, is_ethereum_root)
-    _walletScreen.add_account_popup_do_primary_action()
-
-
 @When("the user adds a private key account \"|any|\" with \"|any|\" color \"|any|\" and emoji \"|any|\"")
 @verify_screenshot
 def step(context, private_key, name, color, emoji):
@@ -159,12 +144,6 @@ def step(context, name):
 @When("the user start removing account \"|any|\" and cancel it")
 def step(context, name):
     _walletScreen.left_panel.delete_account(name).cancel()
-
-
-@When("the user removes account \"|any|\" with authentication")
-def step(context, name):
-    _walletScreen.left_panel.delete_account(name).confirm()
-    # AuthenticatePopup().wait_until_appears().authenticate()
 
 
 @When("the user removes account \"|any|\" with agreement")
