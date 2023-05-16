@@ -71,7 +71,7 @@ Menu {
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
     topPadding: 8
     bottomPadding: 8
-    bottomMargin: 16
+    margins: 16
 
     onOpened: {
         if (typeof openHandler === "function") {

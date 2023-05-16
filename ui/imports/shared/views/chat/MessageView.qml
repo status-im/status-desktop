@@ -124,18 +124,29 @@ Loader {
 
     signal imageClicked(var image, var mouse, var imageSource)
 
-    // WARNING: To much arguments here. Create an object argument.
-    property var messageClickHandler: function(sender,
-                                               point,
-                                               isProfileClick,
-                                               isSticker = false,
-                                               isImage = false,
-                                               image = null,
-                                               isReply = false) {
+    function openProfileContextMenu(sender, mouse, isReply = false) {
 
-        if (placeholderMessage || !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
+        if (isReply && !quotedMessageFrom) {
+            // The responseTo message was deleted
+            // so we don't enable to right click the unaviable profile
             return false
         }
+
+        const params = {
+            selectedUserPublicKey: isReply ? quotedMessageFrom : root.senderId,
+            selectedUserDisplayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
+            selectedUserIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
+        }
+
+        Global.openMenu(profileContextMenuComponent, sender, params)
+        d.setMessageActive(root.messageId, true)
+    }
+
+    // WARNING: To much arguments here. Create an object argument.
+    function openMessageContextMenu() {
+
+        if (placeholderMessage || !root.rootStore.mainModuleInst.activeSection.joined)
+            return false
 
         messageContextMenu.myPublicKey = userProfile.pubKey
         messageContextMenu.amIChatAdmin = root.amIChatAdmin
@@ -148,33 +159,13 @@ Loader {
         messageContextMenu.messageContentType = root.messageContentType
         messageContextMenu.pinnedMessage = root.pinnedMessage
         messageContextMenu.canPin = !!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
+        messageContextMenu.editRestricted = root.isSticker || root.isImage
 
-        messageContextMenu.selectedUserPublicKey = root.senderId
-        messageContextMenu.selectedUserDisplayName = root.senderDisplayName
-        messageContextMenu.selectedUserIcon = root.senderIcon
+        messageContextMenu.parent = this
+        messageContextMenu.popup()
 
-        messageContextMenu.isProfile = !!isProfileClick
-        messageContextMenu.isSticker = isSticker
-        messageContextMenu.hideEmojiPicker = false
+        d.setMessageActive(root.messageId, true)
 
-        if (isReply) {
-            if (!quotedMessageFrom) {
-                // The responseTo message was deleted so we don't eneble to right click the unaviable profile
-                return false
-            }
-            messageContextMenu.messageSenderId = quotedMessageFrom
-            messageContextMenu.selectedUserPublicKey = quotedMessageFrom
-            messageContextMenu.selectedUserDisplayName = quotedMessageAuthorDetailsDisplayName
-            messageContextMenu.selectedUserIcon = quotedMessageAuthorDetailsThumbnailImage
-        }
-
-        // Emoji container is not a menu item of messageContextMenu so checking it separatly
-        if (messageContextMenu.checkIfEmpty() && !isEmoji) {
-            return false
-        }
-
-        messageContextMenu.parent = sender
-        messageContextMenu.popup(point)
         return true
     }
 
@@ -301,12 +292,14 @@ Loader {
             }
         }
 
-        function addReactionClicked(signalSender) {
+        function addReactionClicked(mouseArea, mouse) {
             if (root.isChatBlocked)
                 return
             if (d.addReactionAllowed)
                 return
-            Global.openMenu(addReactionContextMenu, signalSender)
+            // Don't use mouseArea as parent, as it will be destroyed right after opening menu
+            const point = mouseArea.mapToItem(root, mouse.x, mouse.y)
+            Global.openMenu(addReactionContextMenu, root, {}, point)
         }
     }
 
@@ -538,13 +531,11 @@ Loader {
                 }
 
                 onProfilePictureClicked: {
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true))
-                        d.setMessageActive(root.messageId, true)
+                    root.openProfileContextMenu(sender, mouse)
                 }
 
                 onReplyProfileClicked: {
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true, false, false, null, true))
-                        d.setMessageActive(root.messageId, true)
+                    root.openProfileContextMenu(sender, mouse, true)
                 }
 
                 onReplyMessageClicked: {
@@ -553,8 +544,7 @@ Loader {
                 }
 
                 onSenderNameClicked: {
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true))
-                        d.setMessageActive(root.messageId, true)
+                    root.openProfileContextMenu(sender, mouse)
                 }
 
                 onToggleReactionClicked: {
@@ -569,8 +559,8 @@ Loader {
                     root.messageStore.toggleReaction(root.messageId, emojiId)
                 }
 
-                onAddReactionClicked: {
-                    d.addReactionClicked(sender)
+                onAddReactionClicked: (sender, mouse) => {
+                    d.addReactionClicked(sender, mouse)
                 }
 
                 onStickerClicked: {
@@ -584,12 +574,9 @@ Loader {
                 mouseArea {
                     acceptedButtons: Qt.RightButton
                     enabled: !root.isChatBlocked &&
-                             !root.placeholderMessage &&
-                             delegate.contentType !== StatusMessage.ContentType.Image
+                             !root.placeholderMessage
                     onClicked: {
-                        const menuOpened = root.messageClickHandler(this, Qt.point(mouse.x, mouse.y), false, false, false, null)
-                        if (menuOpened)
-                            d.setMessageActive(root.messageId, true)
+                        root.openMessageContextMenu()
                     }
                 }
 
@@ -764,8 +751,8 @@ Loader {
                             icon.name: "reaction-b"
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Add reaction")
-                            onClicked: {
-                                d.addReactionClicked(delegate)
+                            onClicked: (mouse) => {
+                                d.addReactionClicked(this, mouse)
                             }
                         }
                     },
@@ -901,6 +888,28 @@ Loader {
             reactionsModel: root.rootStore.emojiReactionsModel
             onToggleReaction: (emojiId) => {
                 root.messageStore.toggleReaction(root.messageId, emojiId)
+            }
+            onOpened: {
+                d.setMessageActive(root.messageId, true)
+            }
+            onClosed: {
+                d.setMessageActive(root.messageId, false)
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: profileContextMenuComponent
+
+        ProfileContextMenu {
+            store: root.rootStore
+            onOpenProfileClicked: (publicKey) => {
+                Global.openProfilePopup(publicKey, null)
+            }
+            onCreateOneToOneChat: (communityId, chatId, ensName) => {
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
             }
             onOpened: {
                 d.setMessageActive(root.messageId, true)

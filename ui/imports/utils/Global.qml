@@ -80,9 +80,12 @@ QtObject {
         root.appSectionBySectionTypeChanged(sectionType, subsection);
     }
 
-    function openMenu(menuComponent, menuParent, params = {}) {
+    function openMenu(menuComponent, menuParent, params = {}, point = undefined) {
         const menu = menuComponent.createObject(menuParent, params)
-        menu.popup()
+        if (point)
+            menu.popup(point)
+        else
+            menu.popup()
         return menu
     }
 }

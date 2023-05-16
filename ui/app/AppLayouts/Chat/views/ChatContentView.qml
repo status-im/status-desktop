@@ -124,21 +124,12 @@ ColumnLayout {
                 root.messageStore.toggleReaction(messageId, emojiId)
             }
 
-            onOpenProfileClicked: (publicKey) => {
-                Global.openProfilePopup(publicKey, null)
-            }
-
             onDeleteMessage: (messageId) => {
                 root.messageStore.warnAndDeleteMessage(messageId)
             }
 
             onEditClicked: (messageId) => {
                 root.messageStore.setEditModeOn(messageId)
-            }
-
-            onCreateOneToOneChat: (communityId, chatId, ensName) => {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
             }
 
             onShowReplyArea: (messageId) => {

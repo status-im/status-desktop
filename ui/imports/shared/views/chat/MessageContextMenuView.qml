@@ -19,15 +19,10 @@ StatusMenu {
 
     property var store
     property var reactionModel
-    property alias emojiContainer: emojiContainer
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
     property bool disabledForChat: false
-
-    property string selectedUserPublicKey: ""
-    property string selectedUserDisplayName: ""
-    property string selectedUserIcon: ""
 
     property int chatType: Constants.chatType.unknown
     property string messageId: ""
@@ -35,90 +30,26 @@ StatusMenu {
     property string messageSenderId: ""
     property int messageContentType: Constants.messageContentType.unknownContentType
 
-    property bool isProfile: false
     property bool pinnedPopup: false
     property bool pinMessageAllowedForMembers: false
     property bool isDebugEnabled: store && store.isDebugEnabled
-    property bool isSticker: false
-    property bool hideEmojiPicker: true
+    property bool editRestricted: false
     property bool pinnedMessage: false
     property bool canPin: false
 
     readonly property bool isMyMessage: {
         return root.messageSenderId !== "" && root.messageSenderId === root.myPublicKey;
     }
-    readonly property bool isMe: {
-        return root.selectedUserPublicKey === root.store.contactsStore.myPublicKey;
-    }
-    readonly property var contactDetails: {
-        if (root.selectedUserPublicKey === "" || isMe) {
-            return {}
-        }
-        return Utils.getContactDetailsAsJson(root.selectedUserPublicKey);
-    }
-    readonly property bool isContact: {
-        return root.selectedUserPublicKey !== "" && !!contactDetails.isContact
-    }
-    readonly property bool isBlockedContact: (!!contactDetails && contactDetails.isBlocked) || false
 
-    readonly property int outgoingVerificationStatus: {
-        if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
-            return 0
-        }
-        return contactDetails.verificationStatus
-    }
-    readonly property int incomingVerificationStatus: {
-        if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
-            return 0
-        }
-        return contactDetails.incomingVerificationStatus
-    }
-    readonly property bool hasPendingContactRequest: {
-        return !root.isMe && root.selectedUserPublicKey !== "" &&
-            root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
-    }
-    readonly property bool hasActiveReceivedVerificationRequestFrom: {
-        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
-            return false
-        }
-        return contactDetails.incomingVerificationStatus === Constants.verificationStatus.verifying ||
-                contactDetails.incomingVerificationStatus === Constants.verificationStatus.verified
-    }
-    readonly property bool isVerificationRequestSent: {
-        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
-            return false
-        }
-        return root.outgoingVerificationStatus !== Constants.verificationStatus.unverified &&
-                root.outgoingVerificationStatus !== Constants.verificationStatus.verified &&
-                root.outgoingVerificationStatus !== Constants.verificationStatus.trusted
-    }
-    readonly property bool isTrusted: {
-        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
-            return false
-        }
-        return root.outgoingVerificationStatus === Constants.verificationStatus.trusted ||
-                root.incomingVerificationStatus === Constants.verificationStatus.trusted
-    }
-
-    readonly property bool userTrustIsUnknown: contactDetails && contactDetails.trustStatus === Constants.trustStatus.unknown
-    readonly property bool userIsUntrustworthy: contactDetails && contactDetails.trustStatus === Constants.trustStatus.untrustworthy
-
-    signal openProfileClicked(string publicKey)
     signal pinMessage(string messageId)
     signal unpinMessage(string messageId)
     signal pinnedMessagesLimitReached(string messageId)
     signal jumpToMessage(string messageId)
     signal shouldCloseParentPopup()
-    signal createOneToOneChat(string communityId, string chatId, string ensName)
     signal showReplyArea(string messageId)
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
     signal editClicked(string messageId)
-
-    onClosed: {
-        // Reset selectedUserPublicKey so that associated properties get recalculated on re-open
-        selectedUserPublicKey = ""
-    }
 
     width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 230)
 
@@ -126,7 +57,7 @@ StatusMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.hideEmojiPicker && !root.isProfile && !root.pinnedPopup && !root.disabledForChat
+        visible: !root.pinnedPopup && !root.disabledForChat
 
         MessageReactionsRow {
             id: emojiRow
@@ -139,157 +70,8 @@ StatusMenu {
         }
     }
 
-    ProfileHeader {
-        visible: root.isProfile
-        width: parent.width
-        height: visible ? implicitHeight : 0
-
-        displayNameVisible: false
-        displayNamePlusIconsVisible: true
-        editButtonVisible: false
-        displayName: root.selectedUserDisplayName
-        pubkey: root.selectedUserPublicKey
-        icon: root.selectedUserIcon
-        trustStatus: contactDetails && contactDetails.trustStatus ? contactDetails.trustStatus
-                                                                  : Constants.trustStatus.unknown
-        isContact: root.isContact
-        isCurrentUser: root.isMe
-        userIsEnsVerified: (!!contactDetails && contactDetails.ensVerified) || false
-    }
-
-    Item {
-        visible: root.isProfile
-        height: visible ? root.topPadding : 0
-    }
-
     StatusMenuSeparator {
-        anchors.bottom: viewProfileAction.top
-        visible: !root.hideEmojiPicker && !pinnedPopup
-    }
-
-    ViewProfileMenuItem {
-        id: viewProfileAction
-        enabled: root.isProfile && !root.pinnedPopup
-        onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey)
-            root.close()
-        }
-    }
-
-    SendMessageMenuItem {
-        id: sendMessageMenuItem
-        enabled: root.isProfile && root.isContact && !root.isBlockedContact
-        onTriggered: {
-            root.createOneToOneChat("", root.selectedUserPublicKey, "")
-            root.close()
-        }
-    }
-
-    SendContactRequestMenuItem {
-        id: sendContactRequestMenuItem
-        enabled: root.isProfile && !root.isMe && !root.isContact
-                                && !root.isBlockedContact && !root.hasPendingContactRequest
-        onTriggered: {
-            Global.openContactRequestPopup(root.selectedUserPublicKey, null)
-            root.close()
-        }
-    }
-
-    StatusAction {
-        id: verifyIdentityAction
-        text: qsTr("Verify Identity")
-        icon.name: "checkmark-circle"
-        enabled: root.isProfile && !root.isMe && root.isContact
-                                && !root.isBlockedContact
-                                && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
-                                && !root.hasActiveReceivedVerificationRequestFrom
-        onTriggered: {
-            Global.openSendIDRequestPopup(root.selectedUserPublicKey, null)
-            root.close()
-        }
-    }
-
-    StatusAction {
-        id: pendingIdentityAction
-        text: isVerificationRequestSent ||
-            root.incomingVerificationStatus === Constants.verificationStatus.verified ?
-            qsTr("ID Request Pending....") :
-            qsTr("Respond to ID Request...")
-        icon.name: "checkmark-circle"
-        enabled: root.isProfile && !root.isMe && root.isContact
-                                && !root.isBlockedContact && !root.isTrusted
-                                && (root.hasActiveReceivedVerificationRequestFrom
-                                    || root.isVerificationRequestSent)
-        onTriggered: {
-            if (hasActiveReceivedVerificationRequestFrom) {
-                Global.openIncomingIDRequestPopup(root.selectedUserPublicKey, null)
-            } else if (root.isVerificationRequestSent) {
-                Global.openOutgoingIDRequestPopup(root.selectedUserPublicKey, null)
-            }
-
-            root.close()
-        }
-    }
-
-    StatusAction {
-        id: renameAction
-        text: qsTr("Rename")
-        icon.name: "edit_pencil"
-        enabled: root.isProfile && !root.isMe
-        onTriggered: {
-            Global.openNicknamePopupRequested(root.selectedUserPublicKey, contactDetails.localNickname,
-                                              "%1 (%2)".arg(root.selectedUserDisplayName).arg(Utils.getElidedCompressedPk(root.selectedUserPublicKey)))
-            root.close()
-        }
-    }
-
-    StatusAction {
-        id: unblockAction
-        text: qsTr("Unblock User")
-        icon.name: "remove-circle"
-        enabled: root.isProfile && !root.isMe && root.isBlockedContact
-        onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
-    }
-
-    StatusMenuSeparator {
-        visible: blockMenuItem.enabled || markUntrustworthyMenuItem.enabled || removeUntrustworthyMarkMenuItem.enabled
-    }
-
-    StatusAction {
-        id: markUntrustworthyMenuItem
-        text: qsTr("Mark as Untrustworthy")
-        icon.name: "warning"
-        type: StatusAction.Type.Danger
-        enabled: root.isProfile && !root.isMe && root.userTrustIsUnknown
-        onTriggered: root.store.contactsStore.markUntrustworthy(root.selectedUserPublicKey)
-    }
-
-    StatusAction {
-        id: removeUntrustworthyMarkMenuItem
-        text: qsTr("Remove Untrustworthy Mark")
-        icon.name: "warning"
-        enabled: root.isProfile && !root.isMe && root.userIsUntrustworthy
-        onTriggered: root.store.contactsStore.removeTrustStatus(root.selectedUserPublicKey)
-    }
-
-    StatusAction {
-        text: qsTr("Remove Contact")
-        icon.name: "remove-contact"
-        type: StatusAction.Type.Danger
-        enabled: root.isContact && !root.isBlockedContact && !root.hasPendingContactRequest
-        onTriggered: {
-            Global.removeContactRequested(root.selectedUserDisplayName, root.selectedUserPublicKey);
-            root.close();
-        }
-    }
-
-    StatusAction {
-        id: blockMenuItem
-        text: qsTr("Block User")
-        icon.name: "cancel"
-        type: StatusAction.Type.Danger
-        enabled: root.isProfile && !root.isMe && !root.isBlockedContact
-        onTriggered: Global.blockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
+        visible: emojiContainer.visible
     }
 
     StatusAction {
@@ -300,10 +82,8 @@ StatusMenu {
             root.showReplyArea(root.messageId)
             root.close()
         }
-        enabled: (!root.hideEmojiPicker &&
-                  !root.isProfile &&
-                  !root.pinnedPopup &&
-                  !root.disabledForChat)
+        enabled: !root.pinnedPopup &&
+                 !root.disabledForChat
     }
 
     StatusAction {
@@ -314,9 +94,7 @@ StatusMenu {
         }
         icon.name: "edit"
         enabled: root.isMyMessage &&
-                 !root.hideEmojiPicker &&
-                 !root.isSticker &&
-                 !root.isProfile &&
+                 !root.editRestricted &&
                  !root.pinnedPopup &&
                  !root.disabledForChat
     }
@@ -368,7 +146,7 @@ StatusMenu {
         }
         icon.name: "pin"
         enabled: {
-            if (root.isProfile || root.disabledForChat)
+            if (root.disabledForChat)
                 return false
 
             if (root.pinnedPopup)
@@ -391,9 +169,7 @@ StatusMenu {
 
     StatusMenuSeparator {
         visible: deleteMessageAction.enabled &&
-                 (viewProfileAction.enabled ||
-                  sendMessageMenuItem.enabled ||
-                  replyToMenuItem.enabled ||
+                 (replyToMenuItem.enabled ||
                   copyMessageMenuItem.enabled ||
                   editMessageAction.enabled ||
                   pinAction.enabled)
@@ -403,7 +179,6 @@ StatusMenu {
         id: deleteMessageAction
         enabled: (root.isMyMessage || root.amIChatAdmin) &&
                  !root.disabledForChat &&
-                 !root.isProfile &&
                  !root.pinnedPopup &&
                  (root.messageContentType === Constants.messageContentType.messageType ||
                   root.messageContentType === Constants.messageContentType.stickerType ||
@@ -420,7 +195,7 @@ StatusMenu {
 
     StatusAction {
         id: jumpToAction
-        enabled: root.pinnedPopup && !root.isProfile
+        enabled: root.pinnedPopup
         text: qsTr("Jump to")
         onTriggered: {
             root.jumpToMessage(root.messageId)
