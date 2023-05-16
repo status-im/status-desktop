@@ -27,6 +27,7 @@ Item {
     /*required*/ property alias imageFileDialogTitle: imageCropWorkflow.imageFileDialogTitle
     /*required*/ property alias title: imageCropWorkflow.title
     /*required*/ property alias acceptButtonText: imageCropWorkflow.acceptButtonText
+    property alias editButtonVisible: editButton.visible
 
     property string dataImage: ""
 
@@ -37,7 +38,9 @@ Item {
 
     readonly property alias cropWorkflow : imageCropWorkflow
 
-    property bool isDraggable: false
+    function cropImage(file) {
+        imageCropWorkflow.cropImage(file);
+    }
 
     function chooseImageToCrop() {
         imageCropWorkflow.chooseImageToCrop()
@@ -149,22 +152,11 @@ Item {
             visible: root.state === d.noImageState
             radius: roundedImage ? Math.max(width, height)/2 : croppedPreview.radius
             color: Style.current.inputBackground
-            states: [
-                State {
-                    when: dropArea.containsDrag
-                    PropertyChanges {target: imageCropEditor; border.color: Theme.palette.primaryColor1 }
-                },
-                State {
-                    when: !dropArea.containsDrag
-                    PropertyChanges {target: imageCropEditor; border.color: Theme.palette.baseColor2 }
-                }
-            ]
 
             StatusRoundButton {
                 id: addButton
 
                 icon.name: "add"
-
                 readonly property real rotationRadius: root.roundedImage ? parent.width/2 : imageCropEditor.radius
 
                 transform: [
@@ -210,18 +202,6 @@ Item {
             visible: root.state == d.backgroundComponentState
 
             sourceComponent: root.backgroundComponent
-        }
-    }
-
-    DropArea {
-        id: dropArea
-
-        anchors.fill: parent
-        enabled: root.isDraggable
-        onDropped: {
-            if (drop.urls.length > 0) {
-                imageCropWorkflow.cropImage(drop.urls[0])
-            }
         }
     }
 

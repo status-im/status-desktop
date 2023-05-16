@@ -26,3 +26,4 @@ SplitViewHandle 1.0 SplitViewHandle.qml
 StatusAssetSelector 1.0 StatusAssetSelector.qml
 StyledText 1.0 StyledText.qml
 TextWithLabel 1.0 TextWithLabel.qml
+DropAndEditImagePanel 1.0 DropAndEditImagePanel.qml
