@@ -219,5 +219,6 @@
         <file>StatusQ/Controls/StatusLinkText.qml</file>
         <file>StatusQ/Core/Utils/ModelChangeGuard.qml</file>
         <file>StatusQ/Core/Utils/StackViewStates.qml</file>
+        <file>StatusQ/Controls/StatusBlockProgressBar.qml</file>
     </qresource>
 </RCC>

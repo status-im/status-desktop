@@ -16,6 +16,7 @@ import shared.stores 1.0
 import "../controls"
 import "../stores" as WalletStores
 import ".."
+import "../panels"
 
 Item {
     id: root
@@ -62,6 +63,7 @@ Item {
                 id: transactionHeader
                 objectName: "transactionDetailHeader"
                 width: parent.width
+                leftPadding: 0
 
                 modelData: transaction
                 transactionType: d.isIncoming ? TransactionDelegate.Receive : TransactionDelegate.Send
@@ -78,12 +80,24 @@ Item {
                 addressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.from): ""
                 sensor.enabled: false
                 formatCurrencyAmount: RootStore.formatCurrencyAmount
-                color: Theme.palette.statusListItem.backgroundColor
+                color: Theme.palette.transparent
                 state: "header"
 
                 onRetryClicked: {
                     // TODO handle failed transaction retry
                 }
+            }
+
+            WalletTxProgressBlock {
+                width: Math.min(513, root.width)
+                error: transactionHeader.transactionStatus === TransactionDelegate.TransactionStatus.Failed
+                // To-do once we have days for finalisation for tx other than eth set this to true and also provide duration and progress values
+                isMainnetTx: true
+                confirmations: root.isTransactionValid ? Math.abs(RootStore.getLatestBlockNumber() - RootStore.hex2Dec(root.transaction.blockNumber)): 0
+                chainName: root.isTransactionValid ? RootStore.getNetworkFullName(transaction.chainId): ""
+                confirmationTimeStamp: root.isTransactionValid ? transaction.timestamp: ""
+                finalisationTimeStamp: root.isTransactionValid ? transaction.timestamp: ""
+                failedTimeStamp: root.isTransactionValid ? transaction.timestamp: ""
             }
 
             SavedAddressesDelegate {

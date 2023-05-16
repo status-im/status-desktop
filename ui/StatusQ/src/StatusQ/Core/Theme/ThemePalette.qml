@@ -181,6 +181,8 @@ QtObject {
 
     property var identiconRingColors: []
 
+    property color blockProgressBarColor
+
     property QtObject statusAppLayout: QtObject {
         property color backgroundColor
         property color rightPanelBackgroundColor

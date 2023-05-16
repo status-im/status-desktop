@@ -286,6 +286,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusBlockProgressBar"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
@@ -298,11 +302,15 @@ ListModel {
         section: "Panels"
     }
     ListElement {
-        title: "WalletHeader"
-        section: "Panels"
-    }
-    ListElement {
         title: "PopupSizing"
         section: "Research / Examples"
+    }
+    ListElement {
+        title: "WalletHeader"
+        section: "Wallet"
+    }
+    ListElement {
+        title: "StatusTxProgressBar"
+        section: "Wallet"
     }
 }
