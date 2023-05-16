@@ -62,6 +62,15 @@ Item {
             implicitHeight: messageLayout.implicitHeight
             implicitWidth: messageLayout.implicitWidth
 
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    root.messageClicked(mouse)
+                }
+            }
+
             ColumnLayout {
                 id: messageLayout
                 anchors.fill: parent
@@ -89,6 +98,19 @@ Item {
                         font.pixelSize: Theme.secondaryTextFontSize
                         font.weight: Font.Medium
                         text: replyDetails.amISender ? qsTr("You") : replyDetails.sender.displayName
+                        font.underline: mouseArea.containsMouse
+
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            acceptedButtons: Qt.LeftButton | Qt.RightButton
+                            enabled: root.profileClickable
+                            hoverEnabled: true
+                            onClicked: {
+                                root.replyProfileClicked(this, mouse)
+                            }
+                        }
                     }
                 }
                 Loader {
@@ -106,7 +128,6 @@ Item {
                         messageDetails: root.replyDetails
                     }
                 }
-
 
                 Loader {
                     Layout.fillWidth: true
@@ -147,15 +168,6 @@ Item {
                         isPreview: true
                         audioSource: replyDetails.messageContent
                     }
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    root.messageClicked(mouse)
                 }
             }
         }
