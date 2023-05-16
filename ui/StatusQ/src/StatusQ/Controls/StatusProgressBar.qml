@@ -11,6 +11,7 @@ ProgressBar {
     property color fillColor
     property color backgroundColor: Theme.palette.directColor8
     property color backgroundBorderColor: "transparent"
+    property int backgroundRadius: 5
 
     width: 416
     height: 16
@@ -21,7 +22,7 @@ ProgressBar {
         implicitHeight: parent.height
         color: control.backgroundColor
         border.color: control.backgroundBorderColor
-        radius: 5
+        radius: control.backgroundRadius
     }
     contentItem: Item {
         implicitHeight: parent.height
@@ -31,7 +32,7 @@ ProgressBar {
             width: control.visualPosition * parent.width
             height: parent.height
             color: control.fillColor
-            radius: 5
+            radius: control.backgroundRadius
 
             StatusBaseText {
                 id: textItem

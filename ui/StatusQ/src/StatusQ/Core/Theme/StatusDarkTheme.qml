@@ -95,6 +95,8 @@ ThemePalette {
                           "#000086", "#9B81FF", "#3FAEF9", "#9A6600", "#00FFFF", "#008694",
                           "#C2FFFF", "#00F0B6"]
 
+    blockProgressBarColor: directColor7
+
     statusAppLayout: QtObject {
         property color backgroundColor: baseColor3
         property color rightPanelBackgroundColor: baseColor3

@@ -212,7 +212,7 @@ StatusListItem {
             }
         }
         bgColor: "transparent"
-        color: Theme.palette.black
+        color: Theme.palette.directColor1
         bgBorderWidth: 1
         bgBorderColor: Theme.palette.primaryColor3
     }
