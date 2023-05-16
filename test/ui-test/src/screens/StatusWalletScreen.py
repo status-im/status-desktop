@@ -7,7 +7,7 @@ import configs
 import constants
 import squish
 from common.SeedUtils import *
-from drivers import *
+from drivers.SquishDriver import *
 from objectmaphelper import *
 from utils.ObjectAccess import *
 from utils.decorators import close_exists
