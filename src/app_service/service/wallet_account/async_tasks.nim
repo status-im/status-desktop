@@ -43,6 +43,7 @@ const fetchDerivedAddressesForMnemonicTask*: Task = proc(argEncoded: string) {.g
 type
   FetchDetailsForAddressesTaskArg* = ref object of QObjectTaskArg
     uniqueId: string
+    chainId: int
     addresses: seq[string]
 
 const fetchDetailsForAddressesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
@@ -54,7 +55,7 @@ const fetchDetailsForAddressesTask*: Task = proc(argEncoded: string) {.gcsafe, n
       "error": ""
     }
     try:
-      let response = status_go_accounts.getAddressDetails(address)
+      let response = status_go_accounts.getAddressDetails(arg.chainId, address)
       sleep(250)
       data["details"] = response.result
     except Exception as e:

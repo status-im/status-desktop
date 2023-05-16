@@ -402,8 +402,8 @@ proc getDerivedAddressesForMnemonic*(mnemonic: string, paths: seq[string]): RpcR
   let payload = %* [mnemonic, paths]
   result = core.callPrivateRPC("wallet_getDerivedAddressesForMnemonic", payload)
 
-proc getAddressDetails*(address: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [address]
+proc getAddressDetails*(chainId: int, address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, address]
   result = core.callPrivateRPC("wallet_getAddressDetails", payload)
 
 proc verifyPassword*(password: string): RpcResponse[JsonNode] {.raises: [Exception].} =

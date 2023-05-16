@@ -122,6 +122,9 @@ proc getNetworkForBrowser*(self: Service): NetworkDto =
 proc getNetworkForChat*(self: Service): NetworkDto =
   return self.getNetworkForStickers()
 
+proc getNetworkForActivityCheck*(self: Service): NetworkDto =
+  return self.getNetworkForStickers()
+
 proc getNetworkForCollectibles*(self: Service): NetworkDto =
   if self.settingsService.areTestNetworksEnabled():
     return self.getNetwork(Goerli)
