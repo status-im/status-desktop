@@ -36,6 +36,8 @@ QtObject {
     property var disabledChainIdsFromList: []
     property var disabledChainIdsToList: []
 
+    property var assets: walletSectionAssets.assets
+
     function addRemoveDisabledFromChain(chainID, isDisabled) {
         if(isDisabled) {
             if(!root.disabledChainIdsFromList.includes(chainID))
