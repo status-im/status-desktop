@@ -271,11 +271,6 @@ QtObject:
         error "error: new message with an unknown chat type received", chatId=chatId
         continue
 
-      # Ignore 1-1 chats for which we are not contact
-      if(chats[i].chatType == ChatType.OneToOne and not self.contactService.getContactById(chatId).isContact):
-        continue
-
-      
       if self.chatService.getChatById(chats[i].id, showWarning = false).id == "":
         # Chat is not present in the chat cache. We need to add it first
         self.chatService.updateOrAddChat(chats[i])
