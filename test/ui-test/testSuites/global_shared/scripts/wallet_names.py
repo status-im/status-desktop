@@ -171,7 +171,7 @@ mainWallet_Collectibles_Repeater = {"container": statusDesktop_mainWindow, "obje
 # Shared Popup
 sharedPopup_Popup_Content = {"container": statusDesktop_mainWindow, "objectName": "KeycardSharedPopupContent", "type": "Item"}
 sharedPopup_Password_Input = {"container": sharedPopup_Popup_Content, "objectName": "keycardPasswordInput", "type": "TextField"}
-sharedPopup_Primary_Button = {"container": statusDesktop_mainWindow, "objectName": "PrimaryButton", "type": "StatusButton"}
+sharedPopup_Primary_Button = {"container": statusDesktop_mainWindow, "objectName": "PrimaryButton", "type": "StatusButton", "visible": True, "enabled": True}
 sharedPopup_Cancel_Button = {"container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "id": "cancelButton", "visible": True}
 
 # Transactions view

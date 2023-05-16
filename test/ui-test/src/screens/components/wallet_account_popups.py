@@ -174,10 +174,11 @@ class AccountPopup(BasePopup):
             self._derivation_path_list_item.object_name['title'] = value
             self._derivation_path_list_item.click()
             del self._derivation_path_list_item.object_name['title']
-            if value != constants.wallet.DerivationPath.ETHEREUM.value:
-                self._non_eth_checkbox.set(True)
             self._address_combobox_button.click()
             GeneratedAddressesList().wait_until_appears().select(index)
+            if value != constants.wallet.DerivationPath.ETHEREUM.value:
+                self._scroll.vertical_down_to(self._non_eth_checkbox)
+                self._non_eth_checkbox.set(True)
         else:
             self._derivation_path_text_edit.type_text(str(index))
         return self

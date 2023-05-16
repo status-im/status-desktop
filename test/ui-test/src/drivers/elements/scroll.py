@@ -18,3 +18,11 @@ class Scroll(BaseElement):
             time.sleep(0.1)
             if time.monotonic() - started_at > timeout_sec:
                 raise LookupError(f'Object not found: {element.object_name}')
+
+    def vertical_down_to(self, element: BaseElement, timeout_sec: int = 5):
+        started_at = time.monotonic()
+        step = 100
+        while not element.is_visible:
+            squish.flick(self.object, 0, step)
+            if time.monotonic() - started_at > timeout_sec:
+                raise LookupError(f'Object not found: {element.object_name}')
