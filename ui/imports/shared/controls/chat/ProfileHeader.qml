@@ -138,7 +138,7 @@ Item {
 
                 onClicked: {
                     if (!!root.store.profileLargeImage)
-                        imageEditMenu.popup(this, mouse.x, mouse.y);
+                        Global.openMenu(editImageMenuComponent, this)
                     else
                         Global.openChangeProfilePicPopup(tempIcon);
                 }
@@ -271,30 +271,33 @@ Item {
         }
     }
 
-    StatusMenu {
-        id: imageEditMenu
-        width: 200
+    Component {
+        id: editImageMenuComponent
 
-        StatusAction {
-            text: qsTr("Select different image")
-            assetSettings.name: "image"
-            onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
-        }
+        StatusMenu {
+            width: 200
 
-        StatusAction {
-            text: qsTr("Use an NFT")
-            assetSettings.name: "nft-profile"
-            onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
-            enabled: false // TODO enable this with the profile showcase
-        }
+            StatusAction {
+                text: qsTr("Select different image")
+                assetSettings.name: "image"
+                onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
+            }
 
-        StatusMenuSeparator {}
+            StatusAction {
+                text: qsTr("Use an NFT")
+                assetSettings.name: "nft-profile"
+                onTriggered: Global.openChangeProfilePicPopup(editButton.tempIcon)
+                enabled: false // TODO enable this with the profile showcase
+            }
 
-        StatusAction {
-            text: qsTr("Remove image")
-            type: StatusAction.Danger
-            assetSettings.name: "delete"
-            onTriggered: root.icon = ""
+            StatusMenuSeparator {}
+
+            StatusAction {
+                text: qsTr("Remove image")
+                type: StatusAction.Danger
+                assetSettings.name: "delete"
+                onTriggered: root.icon = ""
+            }
         }
     }
 }
