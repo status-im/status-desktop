@@ -575,8 +575,10 @@ QtObject:
     ))
 
   proc fetchDetailsForAddresses*(self: Service, uniqueId: string, addresses: seq[string]) =
+    let network = self.networkService.getNetworkForActivityCheck()
     let arg = FetchDetailsForAddressesTaskArg(
       uniqueId: uniqueId,
+      chainId: network.chainId,
       addresses: addresses,
       tptr: cast[ByteAddress](fetchDetailsForAddressesTask),
       vptr: cast[ByteAddress](self.vptr),
