@@ -26,12 +26,15 @@ SplitView {
                 anchors.margins: 50
                 artworkSource: ModelsData.icons.superRare
                 preview: previewBox.checked
-                deployState: mintingStateBox.checked ? 1 : 0
+                deployState: mintingStateBox.checked ? 1 /*Completed*/ : 0 /*Failed*/
+                remotelyDestructState: remotelyDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
+                burnState: burnDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
                 name: nameText.text
                 symbol: symbolText.text
                 description: descriptionText.text
                 supplyAmount: parseInt(supplyText.text)
                 infiniteSupply: unlimitedSupplyChecker.checked
+                remainingTokens: parseInt(remainingText.text)
                 transferable: transferibleChecker.checked
                 selfDestruct: selfdestructChecker.checked
                 chainId: 1
@@ -78,6 +81,18 @@ SplitView {
                 id: mintingStateBox
                 text: "Minting in progress"
                 checked: true
+            }
+
+            CheckBox {
+                id: remotelyDestructStateBox
+                text: "Remotely destruct in progress"
+                checked: false
+            }
+
+            CheckBox {
+                id: burnDestructStateBox
+                text: "Burn in progress"
+                checked: false
             }
 
             Label {
@@ -156,6 +171,14 @@ SplitView {
 
             TextField {
                 id: supplyText
+                visible: !unlimitedSupplyChecker.checked
+                background: Rectangle { border.color: 'lightgrey' }
+                Layout.preferredWidth: 200
+                text: "123"
+            }
+
+            TextField {
+                id: remainingText
                 visible: !unlimitedSupplyChecker.checked
                 background: Rectangle { border.color: 'lightgrey' }
                 Layout.preferredWidth: 200

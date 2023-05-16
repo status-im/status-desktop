@@ -341,15 +341,15 @@ StatusSectionLayout {
                         let loading = false
                         let type = Constants.ephemeralNotificationType.normal
                         switch (status) {
-                        case Constants.DeployState.InProgress:
+                        case Constants.BackendProcessState.InProgress:
                             title = qsTr("Token is being minted...")
                             loading = true
                             break
-                        case Constants.DeployState.Deployed:
+                        case Constants.BackendProcessState.Completed:
                             title = qsTr("Token minting finished")
                             type = Constants.ephemeralNotificationType.success
                             break
-                        case Constants.DeployState.Failed:
+                        case Constants.BackendProcessState.Failed:
                             title = qsTr("Token minting failed")
                             break
                         default:
