@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.14
+import QtGraphicalEffects 1.13
 
 import utils 1.0
 import shared.panels 1.0
@@ -38,6 +39,18 @@ Control {
     */
     property alias additionalTextPixelSize: additionalText.font.pixelSize
 
+    /*!
+       \qmlproperty color StatusImageSelector::uploadTextColor.
+       This property sets the upload text color.
+    */
+    property color uploadTextColor: Theme.palette.baseColor1
+
+    /*!
+       \qmlproperty color StatusImageSelector::imgColor.
+       This property sets the image color.
+    */
+    property color imgColor: Theme.palette.baseColor1
+
     QtObject {
         id: d
 
@@ -55,6 +68,10 @@ Control {
             sourceSize.height: height || undefined
             fillMode: Image.PreserveAspectFit
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
+            layer.enabled: !Qt.colorEqual(root.imgColor, Theme.palette.baseColor1)
+            layer.effect: ColorOverlay {
+                color: root.imgColor
+            }
         }
 
         StatusBaseText {
@@ -65,7 +82,7 @@ Control {
             Layout.topMargin: 5
             Layout.preferredWidth: root.width - 2 * d.imageSelectorPadding
             font.pixelSize: Theme.primaryTextFontSize
-            color: Theme.palette.baseColor1
+            color: root.uploadTextColor
             wrapMode: Text.WordWrap
             lineHeight: 1.2
             horizontalAlignment: Text.AlignHCenter

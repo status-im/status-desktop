@@ -27,8 +27,8 @@ StatusScrollView {
     readonly property alias notTransferable: transferableChecker.checked
     readonly property alias selfDestruct: selfDestructChecker.checked
     readonly property int supplyAmount: supplyInput.text ? parseInt(supplyInput.text) : 0
-    property alias artworkSource: editor.source
-    property alias artworkCropRect: editor.cropRect
+    property alias artworkSource: dropAreaItem.artworkSource
+    property alias artworkCropRect: dropAreaItem.artworkCropRect
     property int chainId
     property string chainName
     property string chainIcon
@@ -52,6 +52,7 @@ StatusScrollView {
     QtObject {
         id: d
 
+        property bool isAssetView: (optionsTab.currentIndex === 1)
         readonly property bool isFullyFilled: root.artworkSource.toString().length > 0
                                               && !!root.name
                                               && !!root.symbol
@@ -59,7 +60,7 @@ StatusScrollView {
                                               && (root.infiniteSupply || (!root.infiniteSupply && root.supplyAmount > 0))
 
 
-        readonly property int imageSelectorRectWidth: 290
+        readonly property int imageSelectorRectWidth: d.isAssetView ? 128 : 290
     }
 
     contentWidth: mainLayout.width
@@ -72,32 +73,39 @@ StatusScrollView {
         width: root.viewWidth
         spacing: Style.current.padding
 
+        StatusTabBar {
+            //TODO replace with tab bar from design when this
+            //https://github.com/status-im/status-desktop/issues/10623 is done
+            id: optionsTab
+            StatusTabButton {
+                id: assetBtn
+                width: implicitWidth
+                text: qsTr("Collectibles")
+            }
+            StatusTabButton {
+                id: collectiblesBtn
+                width: implicitWidth
+                text: qsTr("Assets")
+            }
+        }
+
         StatusBaseText {
             elide: Text.ElideRight
             font.pixelSize: Theme.primaryTextFontSize
             text: qsTr("Artwork")
         }
 
-        EditCroppedImagePanel {
-            id: editor
-
+        DropAndEditImagePanel {
+            id: dropAreaItem
+            Layout.fillWidth: true
             Layout.preferredHeight: d.imageSelectorRectWidth
-            Layout.preferredWidth: d.imageSelectorRectWidth
-
-            title: qsTr("Collectible artwork")
+            editorAnchorLeft: !d.isAssetView
+            editorRoundedImage: d.isAssetView
+            uploadTextLabel.uploadText: d.isAssetView ? qsTr("Upload") : qsTr("Drag and Drop or Upload Artwork")
+            uploadTextLabel.additionalText: qsTr("Images only")
+            uploadTextLabel.showAdditionalInfo: !d.isAssetView
+            editorTitle: qsTr("Collectible artwork")
             acceptButtonText: qsTr("Upload collectible artwork")
-            roundedImage: false
-            isDraggable: true
-
-            NoImageUploadedPanel {
-                width: parent.width
-                anchors.centerIn: parent
-                visible: !editor.userSelectedImage
-                uploadText: qsTr("Drag and Drop or Upload Artwork")
-                additionalText: qsTr("Images only")
-                showAdditionalInfo: true
-                additionalTextPixelSize: Theme.secondaryTextFontSize
-            }
         }
 
         CustomStatusInput {
@@ -178,7 +186,7 @@ StatusScrollView {
 
         CustomSwitchRowComponent {
             id: transferableChecker
-
+            visible: (optionsTab.currentIndex === 0)
             label: checked ? qsTr("Not transferable (Soulbound)") : qsTr("Transferable")
             description: qsTr("If enabled, the token is locked to the first address it is sent to and can never be transferred to another address. Useful for tokens that represent Admin permissions")
             checked: true
@@ -186,10 +194,17 @@ StatusScrollView {
 
         CustomSwitchRowComponent {
             id: selfDestructChecker
-
+            visible: (optionsTab.currentIndex === 0)
             label: qsTr("Remotely destructible")
             description: qsTr("Enable to allow you to destroy tokens remotely. Useful for revoking permissions from individuals")
             checked: true
+        }
+
+        CustomStatusInput {
+            visible: (optionsTab.currentIndex === 1)
+            label: qsTr("Decimals")
+            secondaryLabel: "Max 10"
+            placeholderText: qsTr("2")
         }
 
         StatusButton {
