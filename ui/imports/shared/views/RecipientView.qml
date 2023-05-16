@@ -171,6 +171,7 @@ Loader {
             input.edit.readOnly: !root.interactive
             multiline: false
             input.edit.textFormat: TextEdit.RichText
+            text: addressText
 
             input.rightComponent: RowLayout {
                 StatusButton {
