@@ -137,4 +137,18 @@ Item {
             anchors.centerIn: parent
         }
     }
+
+    Connections {
+        target: RootStore.walletSectionInst
+        function onShowToastAccountAdded(name: string) {
+            Global.displayToastMessage(
+                qsTr("\"%1\" successfuly added").arg(name),
+                "",
+                "check-circle",
+                false,
+                Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
+    }
 }
