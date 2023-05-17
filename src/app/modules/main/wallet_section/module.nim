@@ -152,6 +152,7 @@ method load*(self: Module) =
     let args = AccountSaved(e)
     self.setTotalCurrencyBalance()
     self.filter.setAddress(args.account.address)
+    self.view.showToastAccountAdded(args.account.name)
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     let args = AccountDeleted(e)
