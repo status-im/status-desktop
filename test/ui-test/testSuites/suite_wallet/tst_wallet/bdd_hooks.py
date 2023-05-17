@@ -12,17 +12,20 @@ import walletInitSteps as wallet_init_steps
 _user = "tester123"
 _password = "TesTEr16843/!@00"
 
+
 @OnFeatureStart
 def hook(context):
     init_steps.context_init(context, testSettings)
     init_steps.signs_up_process_steps(context, _user, _password)
     wallet_init_steps.open_wallet()
 
+
 @OnFeatureEnd
 def hook(context):
     currentApplicationContext().detach()
     snooze(_app_closure_timeout)
-    
+
+
 @OnStepEnd
 def hook(context):
     context.userData["step_name"] = context._data["text"]

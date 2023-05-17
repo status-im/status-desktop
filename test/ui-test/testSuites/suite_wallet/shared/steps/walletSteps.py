@@ -1,14 +1,15 @@
-import walletInitSteps as wallet_init_steps
-
+from common.Common import str_to_bool
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusWalletScreen import StatusWalletScreen
-from screens.StatusWalletScreen import MainWalletRightClickMenu
-from screens.StatusWalletScreen import NOT_APPLICABLE, VALUE_YES
+from screens.StatusWalletScreen import VALUE_YES
+from screens.components.authenticate_popup import AuthenticatePopup
 from scripts.decorators import verify_screenshot
-from common.Common import str_to_bool
+
+import walletInitSteps as wallet_init_steps
 
 _statusMain = StatusMainScreen()
 _walletScreen = StatusWalletScreen()
+
 
 #########################
 ### PRECONDITIONS region:
@@ -17,6 +18,7 @@ _walletScreen = StatusWalletScreen()
 @Given("the user accepts the signing phrase")
 def step(context):
     the_user_accepts_the_signing_phrase()
+
 
 #########################
 ### ACTIONS region:
@@ -30,98 +32,125 @@ def step(context):
 def step(context):
     _walletScreen.click_default_wallet_account()
 
+
+@When("the user selects wallet account with \"|any|\"")
+def step(context, name):
+    _walletScreen.left_panel.select_account(name)
+
+
 @When("the user adds a watch only account \"|any|\" with \"|any|\" color \"|any|\" and emoji \"|any|\" via \"|any|\"")
 @verify_screenshot
 def step(context, address, name, color, emoji, via_right_click_menu):
     if via_right_click_menu == VALUE_YES:
-        _walletScreen.click_option_from_left_part_right_click_menu(MainWalletRightClickMenu.ADD_WATCH_ONLY_ACCOUNT_ACTION_PLACEHOLDER.value)
+        account_popup = _walletScreen.left_panel.open_add_watch_anly_account_popup()
     else:
-        _walletScreen.open_add_account_popup()
-    _walletScreen.add_account_popup_change_account_name(name)
-    _walletScreen.add_account_popup_change_account_color(color)
-    _walletScreen.add_account_popup_change_account_emoji(emoji)
-    _walletScreen.add_account_popup_set_watch_only_account_as_selected_origin(address)
-    _walletScreen.add_account_popup_do_primary_action()
+        account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_eth_address(address).save()
+    account_popup.wait_until_hidden()
 
-@When("the user adds a generated account with \"|any|\" color \"|any|\" and emoji \"|any|\" via \"|any|\" using password \"|any|\"")
+
+@When("the user adds a generated account with \"|any|\" color \"|any|\" and emoji \"|any|\" via \"|any|\"")
 @verify_screenshot
-def step(context, name, color, emoji, via_right_click_menu, password):
+def step(context, name, color, emoji, via_right_click_menu):
     if via_right_click_menu == VALUE_YES:
-        _walletScreen.click_option_from_left_part_right_click_menu(MainWalletRightClickMenu.ADD_NEW_ACCOUNT_ACTION_PLACEHOLDER.value)
+        account_popup = _walletScreen.left_panel.open_add_new_account_popup()
     else:
-        _walletScreen.open_add_account_popup()
-    _walletScreen.add_account_popup_change_account_name(name)
-    _walletScreen.add_account_popup_change_account_color(color)
-    _walletScreen.add_account_popup_change_account_emoji(emoji)
-    _walletScreen.add_account_popup_do_primary_action(password)
+        account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup.set_name(name).set_emoji(emoji).set_color(color).save()
+    AuthenticatePopup().wait_until_appears().authenticate()
+    account_popup.wait_until_hidden()
 
-@When("the user adds to \"|any|\" a custom generated account with \"|any|\" color \"|any|\" and emoji \"|any|\" using password \"|any|\" and setting custom path index \"|any|\" or selecting address with \"|any|\" using \"|any|\"")
-@verify_screenshot
-def step(context, keypair_name, name, color, emoji, password, index, order, is_ethereum_root):
-    _walletScreen.open_add_account_popup()
-    _walletScreen.add_account_popup_change_account_name(name)
-    _walletScreen.add_account_popup_change_account_color(color)
-    _walletScreen.add_account_popup_change_account_emoji(emoji)
-    if keypair_name != NOT_APPLICABLE:
-        _walletScreen.add_account_popup_change_origin_by_keypair_name(keypair_name)
-    _walletScreen.add_account_popup_open_edit_derivation_path_section(password)
-    _walletScreen.add_account_popup_change_derivation_path(index, order, is_ethereum_root)
-    _walletScreen.add_account_popup_do_primary_action()
 
-@When("the user adds a private key account \"|any|\" with \"|any|\" color \"|any|\" and emoji \"|any|\" using password \"|any|\" making keypair with name \"|any|\"")
+@When("the user adds a private key account \"|any|\" with \"|any|\" color \"|any|\" and emoji \"|any|\"")
 @verify_screenshot
-def step(context, private_key, name, color, emoji, password, keypair_name):
-    _walletScreen.open_add_account_popup()
-    _walletScreen.add_account_popup_change_account_name(name)
-    _walletScreen.add_account_popup_change_account_color(color)
-    _walletScreen.add_account_popup_change_account_emoji(emoji)
-    _walletScreen.add_account_popup_set_new_private_key_as_selected_origin(private_key, keypair_name)
-    _walletScreen.add_account_popup_do_primary_action(password)
+def step(context, private_key, name, color, emoji):
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_private_key(private_key).save()
+    AuthenticatePopup().wait_until_appears().authenticate()
+    account_popup.wait_until_hidden()
 
-@When("the user adds an imported seed phrase account \"|any|\" with \"|any|\" color \"|any|\" and emoji \"|any|\" using password \"|any|\" making keypair with name \"|any|\"")
-@verify_screenshot
-def step(context, seed_phrase, name, color, emoji, password, keypair_name):
-    _walletScreen.open_add_account_popup()
-    _walletScreen.add_account_popup_change_account_name(name)
-    _walletScreen.add_account_popup_change_account_color(color)
-    _walletScreen.add_account_popup_change_account_emoji(emoji)
-    _walletScreen.add_account_popup_set_new_seed_phrase_as_selected_origin(seed_phrase, keypair_name)
-    _walletScreen.add_account_popup_do_primary_action(password)
 
-@When("the user adds a generated seed phrase account with \"|any|\" color \"|any|\" and emoji \"|any|\" using password \"|any|\" making keypair with name \"|any|\"")
+@When("the user adds an imported seed phrase account \"|any|\" with \"|any|\" color \"|any|\" and emoji \"|any|\"")
 @verify_screenshot
-def step(context, name, color, emoji, password, keypair_name):
-    _walletScreen.open_add_account_popup()
-    _walletScreen.add_account_popup_change_account_name(name)
-    _walletScreen.add_account_popup_change_account_color(color)
-    _walletScreen.add_account_popup_change_account_emoji(emoji)
-    _walletScreen.add_account_popup_set_generated_seed_phrase_as_selected_origin(keypair_name)
-    _walletScreen.add_account_popup_do_primary_action(password)
+def step(context, seed_phrase, name, color, emoji):
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup \
+        .set_name(name) \
+        .set_emoji(emoji) \
+        .set_color(color) \
+        .set_origin_seed_phrase(seed_phrase.split()) \
+        .save()
+    AuthenticatePopup().wait_until_appears().authenticate()
+    account_popup.wait_until_hidden()
+
+
+@When("the user adds a custom generated account with \"|any|\" color \"|any|\" emoji \"|any|\" and derivation \"|any|\" \"|any|\"")
+@verify_screenshot
+def step(context, name, color, emoji, derivation_path, generated_address_index):
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup \
+        .set_name(name) \
+        .set_emoji(emoji) \
+        .set_color(color) \
+        .set_derivation_path(derivation_path, generated_address_index) \
+        .save()
+
+@When("the user adds to \"|any|\" a custom generated account with \"|any|\" color \"|any|\" emoji \"|any|\" and derivation \"|any|\" \"|any|\"")
+@verify_screenshot
+def step(context, keypair_name, name, color, emoji, derivation_path, generated_address_index):
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup \
+        .set_name(name) \
+        .set_emoji(emoji) \
+        .set_color(color) \
+        .set_derivation_path(derivation_path, generated_address_index) \
+        .set_origin_keypair(keypair_name) \
+        .save()
+
+
+@When(
+    "the user adds a generated seed phrase account with \"|any|\" color \"|any|\" emoji \"|any|\" and keypair \"|any|\"")
+def step(context, name, color, emoji, keypair_name):
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup \
+        .set_name(name) \
+        .set_emoji(emoji) \
+        .set_color(color) \
+        .set_origin_new_seed_phrase(keypair_name) \
+        .save()
+    AuthenticatePopup().wait_until_appears().authenticate()
+    account_popup.wait_until_hidden()
+
 
 @When("the user adds new master key and go to use a Keycard")
 def step(context):
-    _walletScreen.open_add_account_popup()
+    _walletScreen.left_panel.open_add_account_popup()
     _walletScreen.add_account_popup_go_to_keycard_settings()
+
 
 @When("the user edits an account with \"|any|\" to \"|any|\" with color \"|any|\" and emoji \"|any|\"")
 def step(context, name, new_name, new_color, new_emoji):
-    _walletScreen.click_option_from_right_click_menu_of_account_with_name(MainWalletRightClickMenu.EDIT_ACCOUNT_ACTION_PLACEHOLDER.value, name)
-    _walletScreen.add_account_popup_change_account_name(new_name)
-    _walletScreen.add_account_popup_change_account_color(new_color)
-    _walletScreen.add_account_popup_change_account_emoji(new_emoji)
-    _walletScreen.add_account_popup_do_primary_action()
+    account_popup = _walletScreen.left_panel.open_edit_account_popup(name)
+    account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
 
-@When("the user removes an account with name \"|any|\" and path \"|any|\" using password \"|any|\" and test cancel \"|any|\"")
-def step(context, name, path, password, test_cancel):
-    _walletScreen.click_option_from_right_click_menu_of_account_with_name(MainWalletRightClickMenu.DELETE_ACCOUNT_ACTION_PLACEHOLDER.value, name)
-    _walletScreen.remove_account_popup_verify_account_account_to_be_removed(name, path)
-    if test_cancel == VALUE_YES:
-        _walletScreen.remove_account_popup_do_cancel_action()
-        _walletScreen.click_option_from_right_click_menu_of_account_with_name(MainWalletRightClickMenu.DELETE_ACCOUNT_ACTION_PLACEHOLDER.value, name)
-        _walletScreen.remove_account_popup_verify_account_account_to_be_removed(name, path)
-    _walletScreen.remove_account_popup_do_remove_action(True if path != NOT_APPLICABLE else False, password)
 
-@When("the user sends a transaction to himself from account \"|any|\" of \"|any|\" \"|any|\" on \"|any|\" with password \"|any|\"")
+@When("the user removes account \"|any|\"")
+def step(context, name):
+    _walletScreen.left_panel.delete_account(name).confirm()
+
+
+@When("the user start removing account \"|any|\" and cancel it")
+def step(context, name):
+    _walletScreen.left_panel.delete_account(name).cancel()
+
+
+@When("the user removes account \"|any|\" with agreement")
+def step(context, name):
+    _walletScreen.left_panel.delete_account(name).agree_and_confirm()
+
+
+@When(
+    "the user sends a transaction to himself from account \"|any|\" of \"|any|\" \"|any|\" on \"|any|\" with password \"|any|\"")
 def step(context, account_name, amount, token, chain_name, password):
     _walletScreen.send_transaction(account_name, amount, token, chain_name, password)
 
@@ -137,13 +166,16 @@ def step(context, name, ens_name):
 def step(context, name, new_name):
     _walletScreen.edit_saved_address(name, new_name)
 
+
 @When("the user deletes the saved address with name \"|any|\"")
 def step(context, name):
     _walletScreen.delete_saved_address(name)
 
+
 @When("the user toggles favourite for the saved address with name \"|any|\"")
 def step(context, name):
     _walletScreen.toggle_favourite_for_saved_address(name)
+
 
 @When("the user toggles the network |any|")
 def step(context, network_name):
@@ -154,7 +186,7 @@ def step(context, network_name):
 ### VERIFICATIONS region:
 #########################
 
-@Then("the account is correctly displayed with \"|any|\" and \"|any|\" and emoji unicode \"|any|\"")
+@Then("the account is correctly displayed with \"|any|\" and \"|any|\" and emoji unicode \"|any|\" in accounts list")
 def step(context, name, color, emoji_unicode):
     _walletScreen.verify_account_existence(name, color, emoji_unicode)
 
@@ -165,6 +197,7 @@ def step(context):
 @Then("the account with \"|any|\" is not displayed")
 def step(context, name):
     _walletScreen.verify_account_doesnt_exist(name)
+
 
 @Then("the user has a positive balance of \"|any|\"")
 def step(context, symbol):
