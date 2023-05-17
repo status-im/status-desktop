@@ -321,17 +321,6 @@ Item {
                 root.showReplyArea(messageId, author)
             }
 
-            onImageClicked: (image, mouse, imageSource) => {
-                switch (mouse.button) {
-                case Qt.LeftButton:
-                    Global.openImagePopup(image)
-                    break;
-                case Qt.RightButton:
-                    Global.openMenu(imageContextMenu, image, { imageSource })
-                    break;
-                }
-            }
-
             stickersLoaded: root.stickersLoaded
 
             onVisibleChanged: {
@@ -407,16 +396,6 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             enabled: false
             text: qsTr("Contact Request Pending...")
-        }
-    }
-
-    Component {
-        id: imageContextMenu
-
-        ImageContextMenu {
-            onClosed: {
-                destroy()
-            }
         }
     }
 }

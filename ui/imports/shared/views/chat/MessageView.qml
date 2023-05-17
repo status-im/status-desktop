@@ -122,8 +122,6 @@ Loader {
     readonly property bool isExpired: d.getIsExpired(messageTimestamp, messageOutgoingStatus)
     readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
 
-    signal imageClicked(var image, var mouse, var imageSource)
-
     function openProfileContextMenu(sender, mouse, isReply = false) {
         if (isReply && !quotedMessageFrom) {
             // The responseTo message was deleted
@@ -293,6 +291,17 @@ Loader {
             // Don't use mouseArea as parent, as it will be destroyed right after opening menu
             const point = mouseArea.mapToItem(root, mouse.x, mouse.y)
             Global.openMenu(addReactionContextMenu, root, {}, point)
+        }
+
+        function onImageClicked(image, mouse, imageSource) {
+            switch (mouse.button) {
+            case Qt.LeftButton:
+                Global.openImagePopup(image)
+                break;
+            case Qt.RightButton:
+                Global.openMenu(imageContextMenuComponent, image, { imageSource })
+                break;
+            }
         }
     }
 
@@ -495,7 +504,7 @@ Loader {
                 onEditCompleted: delegate.editCompletedHandler(newMsgText)
 
                 onImageClicked: (image, mouse, imageSource) => {
-                    root.imageClicked(image, mouse, imageSource)
+                    d.onImageClicked(image, mouse, imageSource)
                 }
 
                 onLinkActivated: {
@@ -699,7 +708,7 @@ Loader {
                         store: root.rootStore
                         isCurrentUser: root.amISender
                         onImageClicked: (image, mouse, imageSource) => {
-                            root.imageClicked(image, mouse, imageSource)
+                            d.onImageClicked(image, mouse, imageSource)
                         }
                         onLinksLoaded: {
                             // If there is only one image and no links, hide the message
@@ -875,6 +884,16 @@ Loader {
             }
             onClosed: {
                 root.setMessageActive(root.messageId, false)
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: imageContextMenuComponent
+
+        ImageContextMenu {
+            onClosed: {
                 destroy()
             }
         }

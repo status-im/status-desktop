@@ -7,7 +7,7 @@ Row {
     id: root
 
     property var reactionsModel
-    property var messageReactionsModel: [] // TODO: We never used this correctly. And this is not Discord-like behavior.
+    property var messageReactionsModel: [] // TODO: https://github.com/status-im/status-desktop/issues/10703
 
     signal toggleReaction(int emojiId)
 
