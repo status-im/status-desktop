@@ -168,9 +168,6 @@ StatusDialog {
             store: root.store
             pinnedPopup: true
             pinnedMessage: true
-            onShouldCloseParentPopup: {
-                root.close()
-            }
 
             onUnpinMessage: {
                 root.messageStore.unpinMessage(messageId)
@@ -178,6 +175,8 @@ StatusDialog {
 
             onJumpToMessage: {
                 root.messageStore.messageModule.jumpToMessage(messageId)
+                close()
+                root.close()
             }
         }
 

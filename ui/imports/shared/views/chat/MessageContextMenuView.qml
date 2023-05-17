@@ -45,7 +45,6 @@ StatusMenu {
     signal unpinMessage(string messageId)
     signal pinnedMessagesLimitReached(string messageId)
     signal jumpToMessage(string messageId)
-    signal shouldCloseParentPopup()
     signal showReplyArea(string messageId)
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
@@ -199,8 +198,6 @@ StatusMenu {
         text: qsTr("Jump to")
         onTriggered: {
             root.jumpToMessage(root.messageId)
-            root.close()
-            root.shouldCloseParentPopup()
         }
         icon.name: "arrow-up"
     }
