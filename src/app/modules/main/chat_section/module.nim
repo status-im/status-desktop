@@ -1123,8 +1123,12 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
     )
     self.view.editCategoryChannelsModel().appendItem(chatItem, ignoreCategory = true)
 
-method reorderCommunityCategories*(self: Module, categoryId: string, position: int) =
-  self.controller.reorderCommunityCategories(categoryId, position)
+method reorderCommunityCategories*(self: Module, categoryId: string, categoryPositon: int) =
+  var finalPosition = categoryPositon
+  if finalPosition < 0:
+    finalPosition = 0
+
+  self.controller.reorderCommunityCategories(categoryId, finalPosition)
 
 method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, toPosition: int): string =
   # Calculate actual position, since the position coming from the UI is assuming a single list where categories are items

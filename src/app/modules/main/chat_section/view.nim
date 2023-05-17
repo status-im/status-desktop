@@ -344,8 +344,8 @@ QtObject:
   proc prepareEditCategoryModel*(self: View, categoryId: string) {.slot.} =
     self.delegate.prepareEditCategoryModel(categoryId)
 
-  proc reorderCommunityCategories*(self: View, categoryId: string, position: int) {.slot} =
-    self.delegate.reorderCommunityCategories(categoryId, position)
+  proc reorderCommunityCategories*(self: View, categoryId: string, categoryPositon: int) {.slot} =
+    self.delegate.reorderCommunityCategories(categoryId, categoryPositon)
 
   proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int): string {.slot} =
     self.delegate.reorderCommunityChat(categoryId, chatId, position)
