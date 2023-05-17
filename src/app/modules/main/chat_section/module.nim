@@ -589,7 +589,10 @@ method addNewChat*(
   if chatDto.chatType != ChatType.PrivateGroupChat:
     amIChatAdmin = amIChatAdmin or channelGroup.admin
 
+  var categoryOpened = true
   if chatDto.categoryId != "":
+    let categoryItem = self.view.chatsModel.getItemById(chatDto.categoryId)
+    categoryOpened = categoryItem.categoryOpened
     if channelGroup.id != "":
       for category in channelGroup.categories:
         if category.id == chatDto.categoryId:
@@ -623,8 +626,9 @@ method addNewChat*(
     colorId,
     colorHash,
     chatDto.highlight,
+    categoryOpened,
     onlineStatus = onlineStatus,
-    loaderActive = setChatAsActive
+    loaderActive = setChatAsActive,
   )
   self.addSubmodule(
     chatDto.id,

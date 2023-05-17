@@ -1061,8 +1061,7 @@ QtObject:
       color: string,
       categoryId: string) =
     try:
-      let response = status_go.createCommunityChannel(communityId, name, description, emoji, color,
-        categoryId)
+      let response = status_go.createCommunityChannel(communityId, name, description, emoji, color, categoryId)
 
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
