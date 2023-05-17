@@ -26,7 +26,7 @@ StatusScrollView {
 
         function getSubtitle(deployState, remainingTokens, supply) {
             if(deployState === Constants.BackendProcessState.Failed) {
-                return qsTr("Failed")
+                return qsTr("Minting failed")
             }
 
             if(deployState === Constants.BackendProcessState.InProgress) {
@@ -71,6 +71,7 @@ StatusScrollView {
                 width: gridView.cellWidth
                 title: model.name ? model.name : "..."
                 subTitle: d.getSubtitle(model.deployState, model.remainingTokens, model.supply)
+                subTitleColor: (model.deployState === Constants.BackendProcessState.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                 fallbackImageUrl: model.image ? model.image : ""
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent" // TODO BACKEND
                 isLoading: false
