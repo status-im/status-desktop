@@ -532,6 +532,8 @@ QtObject:
       categoryId: string,
       position: int,
     ) =
+    self.beginResetModel()
+
     for i in 0 ..< self.items.len:
       var item = self.items[i]
       if item.categoryId != categoryId:
@@ -539,8 +541,9 @@ QtObject:
       if item.categoryPosition == position:
         continue
       item.categoryPosition = position
-      let modelIndex = self.createIndex(i, 0, nil)
-      self.dataChanged(modelIndex, modelIndex, @[ModelRole.CategoryPosition.int])
+
+    self.items.sort(cmpChatsAndCats)
+    self.endResetModel()
 
   proc clearItems*(self: Model) =
     self.beginResetModel()
