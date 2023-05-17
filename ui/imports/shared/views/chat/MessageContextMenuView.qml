@@ -30,7 +30,6 @@ StatusMenu {
     property string messageSenderId: ""
     property int messageContentType: Constants.messageContentType.unknownContentType
 
-    property bool pinnedPopup: false
     property bool pinMessageAllowedForMembers: false
     property bool isDebugEnabled: store && store.isDebugEnabled
     property bool editRestricted: false
@@ -44,7 +43,6 @@ StatusMenu {
     signal pinMessage(string messageId)
     signal unpinMessage(string messageId)
     signal pinnedMessagesLimitReached(string messageId)
-    signal jumpToMessage(string messageId)
     signal showReplyArea(string messageId, string messageSenderId)
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
@@ -56,7 +54,7 @@ StatusMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.pinnedPopup && !root.disabledForChat
+        visible: !root.disabledForChat
 
         MessageReactionsRow {
             id: emojiRow
@@ -81,8 +79,7 @@ StatusMenu {
             root.showReplyArea(root.messageId, root.messageSenderId)
             root.close()
         }
-        enabled: !root.pinnedPopup &&
-                 !root.disabledForChat
+        enabled: !root.disabledForChat
     }
 
     StatusAction {
@@ -94,7 +91,6 @@ StatusMenu {
         icon.name: "edit"
         enabled: root.isMyMessage &&
                  !root.editRestricted &&
-                 !root.pinnedPopup &&
                  !root.disabledForChat
     }
 
@@ -122,13 +118,8 @@ StatusMenu {
 
     StatusAction {
         id: pinAction
-        text: {
-            if (root.pinnedMessage) {
-                return qsTr("Unpin")
-            }
-            return qsTr("Pin")
-
-        }
+        text: root.pinnedMessage ? qsTr("Unpin") : qsTr("Pin")
+        icon.name: root.pinnedMessage ? "unpin" : "pin"
         onTriggered: {
             if (root.pinnedMessage) {
                 root.unpinMessage(root.messageId)
@@ -143,13 +134,9 @@ StatusMenu {
             root.pinMessage(root.messageId)
             root.close()
         }
-        icon.name: "pin"
         enabled: {
             if (root.disabledForChat)
                 return false
-
-            if (root.pinnedPopup)
-                return true
 
             switch (root.chatType) {
             case Constants.chatType.profile:
@@ -170,6 +157,7 @@ StatusMenu {
         visible: deleteMessageAction.enabled &&
                  (replyToMenuItem.enabled ||
                   copyMessageMenuItem.enabled ||
+                  copyMessageIdAction ||
                   editMessageAction.enabled ||
                   pinAction.enabled)
     }
@@ -178,7 +166,6 @@ StatusMenu {
         id: deleteMessageAction
         enabled: (root.isMyMessage || root.amIChatAdmin) &&
                  !root.disabledForChat &&
-                 !root.pinnedPopup &&
                  (root.messageContentType === Constants.messageContentType.messageType ||
                   root.messageContentType === Constants.messageContentType.stickerType ||
                   root.messageContentType === Constants.messageContentType.emojiType ||
@@ -188,17 +175,7 @@ StatusMenu {
         icon.name: "delete"
         type: StatusAction.Type.Danger
         onTriggered: {
-            deleteMessage(messageId)
+            root.deleteMessage(messageId)
         }
-    }
-
-    StatusAction {
-        id: jumpToAction
-        enabled: root.pinnedPopup
-        text: qsTr("Jump to")
-        onTriggered: {
-            root.jumpToMessage(root.messageId)
-        }
-        icon.name: "arrow-up"
     }
 }

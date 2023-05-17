@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
@@ -132,17 +133,7 @@ StatusDialog {
                     onClicked: (mouse) => {
                         if (mouse.button === Qt.RightButton) {
                             Global.openMenu(pinnedPopupMessageContextMenuComponent, this, {
-                                                myPublicKey: userProfile.pubKey,
-                                                amIChatAdmin: root.amIChatAdmin,
-                                                pinMessageAllowedForMembers: messageStore.isPinMessageAllowedForMembers,
-                                                chatType: root.messageStore.chatType,
                                                 messageId: messageItem.messageId,
-                                                unparsedText: messageItem.unparsedText,
-                                                messageSenderId: messageItem.senderId,
-                                                messageContentType: messageItem.messageContentType,
-                                                pinnedMessage: messageItem.pinnedMessage,
-                                                canPin: !!messageItem.messageStore && messageItem.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins,
-                                                editRestricted: messageItem.isSticker || messageItem.isImage,
                                             })
                             return
                         }
@@ -192,18 +183,29 @@ StatusDialog {
                 Component {
                     id: pinnedPopupMessageContextMenuComponent
 
-                    MessageContextMenuView {
-                        store: root.store
-                        pinnedPopup: true
-                        pinnedMessage: true
+                    StatusMenu {
+                        id: messageContextMenu
 
-                        onUnpinMessage: {
-                            root.messageStore.unpinMessage(messageId)
+                        property string messageId
+
+                        StatusAction {
+                            text: qsTr("Unpin")
+                            icon.name: "unpin"
+                            onTriggered: {
+                                root.messageStore.unpinMessage(messageContextMenu.messageId)
+                                close()
+                            }
                         }
-                        onJumpToMessage: {
-                            close()
-                            d.jumpToMessage(messageId)
+
+                        StatusAction {
+                            text: qsTr("Jump to")
+                            icon.name: "arrow-up"
+                            onTriggered: {
+                                d.jumpToMessage(messageContextMenu.messageId)
+                                close()
+                            }
                         }
+
                         onOpened: {
                             messageItem.setMessageActive(model.id, true)
                         }
