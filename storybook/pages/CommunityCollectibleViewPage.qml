@@ -7,6 +7,8 @@ import AppLayouts.Chat.views.communities 1.0
 import Storybook 1.0
 import Models 1.0
 
+import utils 1.0
+
 SplitView {
 
     Logs { id: logs }
@@ -26,7 +28,6 @@ SplitView {
                 anchors.margins: 50
                 artworkSource: ModelsData.icons.superRare
                 preview: previewBox.checked
-                deployState: mintingStateBox.checked ? 1 /*Completed*/ : 0 /*Failed*/
                 remotelyDestructState: remotelyDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
                 burnState: burnDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
                 name: nameText.text
@@ -77,10 +78,29 @@ SplitView {
                 checked: true
             }
 
-            CheckBox {
-                id: mintingStateBox
-                text: "Minting in progress"
-                checked: true
+            ColumnLayout {
+                Label {
+                    text: "Minting state:"
+                }
+
+                RadioButton {
+                    id: mintingInProgress
+                    text: "In progress"
+                    onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.InProgress
+                }
+
+                RadioButton {
+                    id: mintingFailed
+                    text: "Failed"
+                    onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.Failed
+                }
+
+                RadioButton {
+                    id: mintingCompleted
+                    text: "Completed"
+                    checked: true
+                    onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.Completed
+                }
             }
 
             CheckBox {

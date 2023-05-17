@@ -21,7 +21,7 @@ QtObject {
                                           {
                                               name: "SuperRare artwork",
                                               image: ModelsData.banners.superRare,
-                                              deployState: 1,
+                                              deployState: 0,
                                               symbol: "SRW",
                                               description: "Desc",
                                               supply: 1,

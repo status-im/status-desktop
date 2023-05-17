@@ -14,6 +14,7 @@ Control {
 
     property string title: ""
     property string subTitle: ""
+    property alias subTitleColor: subTitleItem.customColor
     property string backgroundColor: "transparent"
     property url mediaUrl : ""
     property string mediaType: ""
@@ -86,6 +87,8 @@ Control {
         }
 
         StatusTextWithLoadingState {
+            id: subTitleItem
+
             Layout.alignment: Qt.AlignLeft
             Layout.leftMargin: Style.current.halfPadding
             Layout.rightMargin: Layout.leftMargin

@@ -79,15 +79,27 @@ StatusScrollView {
         spacing: Style.current.padding
 
         RowLayout {
-            visible: !root.preview && (root.deployState === Constants.BackendProcessState.InProgress)
+            visible: !root.preview && ((root.deployState === Constants.BackendProcessState.InProgress) ||
+                                       (root.deployState === Constants.BackendProcessState.Failed))
             spacing: Style.current.halfPadding
 
-            StatusDotsLoadingIndicator {}
+            StatusDotsLoadingIndicator {
+                visible: (root.deployState === Constants.BackendProcessState.InProgress)
+            }
+
+            StatusIcon {
+                visible: (root.deployState === Constants.BackendProcessState.Failed)
+                icon: "warning"
+                color: Theme.palette.dangerColor1
+            }
 
             StatusBaseText {
                 elide: Text.ElideRight
                 font.pixelSize: Theme.primaryTextFontSize
-                text: qsTr("Collectible is being minted")
+                text: (root.deployState === Constants.BackendProcessState.InProgress) ?
+                          qsTr("Collectible is being minted") :
+                          (root.deployState === Constants.BackendProcessState.Failed) ? qsTr("Collectible minting failed") : ""
+                color: (root.deployState === Constants.BackendProcessState.Failed) ? Theme.palette.dangerColor1 : Theme.palette.directColor1
             }
         }
 
