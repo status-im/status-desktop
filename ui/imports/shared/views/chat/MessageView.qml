@@ -125,7 +125,7 @@ Loader {
     function openProfileContextMenu(sender, mouse, isReply = false) {
         if (isReply && !quotedMessageFrom) {
             // The responseTo message was deleted
-            // so we don't enable to right click the unaviable profile
+            // so we don't enable to right click the unavailable profile
             return false
         }
 
@@ -231,7 +231,7 @@ Loader {
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
 
-        readonly property bool addReactionAllowed: !root.isInPinnedPopup && !root.rootStore.isUserAllowedToSendMessage
+        readonly property bool addReactionAllowed: !root.isInPinnedPopup && !root.isChatBlocked
 
         function nextMessageHasHeader() {
             if(!root.nextMessageAsJsonObj) {
@@ -284,9 +284,7 @@ Loader {
         }
 
         function addReactionClicked(mouseArea, mouse) {
-            if (root.isChatBlocked)
-                return
-            if (d.addReactionAllowed)
+            if (!d.addReactionAllowed)
                 return
             // Don't use mouseArea as parent, as it will be destroyed right after opening menu
             const point = mouseArea.mapToItem(root, mouse.x, mouse.y)
@@ -736,7 +734,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: !d.addReactionAllowed && delegate.hovered && !delegate.hideQuickActions
+                        active: d.addReactionAllowed && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize

@@ -165,7 +165,6 @@ Item {
         ProfileContextMenu {
             id: memberContextMenuView
             store: root.rootStore
-            amIChatAdmin: root.rootStore.amIChatAdmin()
             myPublicKey: root.rootStore.myPublicKey()
 
             onOpenProfileClicked: {

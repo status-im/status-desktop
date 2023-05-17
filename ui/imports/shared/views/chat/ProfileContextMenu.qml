@@ -20,8 +20,6 @@ StatusMenu {
     property var store
 
     property string myPublicKey: ""
-    property bool amIChatAdmin: false
-    property bool disabledForChat: false
 
     property string selectedUserPublicKey: ""
     property string selectedUserDisplayName: ""
