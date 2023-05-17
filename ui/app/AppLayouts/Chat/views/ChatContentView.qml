@@ -88,55 +88,6 @@ ColumnLayout {
         }
     }
 
-    Loader {
-        id: contextMenuLoader
-        active: root.isActiveChannel
-        asynchronous: true
-
-        // FIXME: `MessageContextMenuView` is way too heavy
-        // see: https://github.com/status-im/status-desktop/pull/10343#issuecomment-1515103756
-        sourceComponent: MessageContextMenuView {
-            store: root.rootStore
-            reactionModel: root.rootStore.emojiReactionsModel
-            disabledForChat: !root.rootStore.isUserAllowedToSendMessage
-
-            onPinMessage: (messageId) => {
-                root.messageStore.pinMessage(messageId)
-            }
-
-            onUnpinMessage: (messageId) => {
-                root.messageStore.unpinMessage(messageId)
-            }
-
-            onPinnedMessagesLimitReached: (messageId) => {
-                if (!root.chatContentModule) {
-                    console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
-                    return
-                }
-                Global.openPinnedMessagesPopupRequested(root.rootStore,
-                                                        root.messageStore,
-                                                        root.chatContentModule.pinnedMessagesModel,
-                                                        messageId,
-                                                        root.chatId)
-            }
-
-            onToggleReaction: (messageId, emojiId) => {
-                root.messageStore.toggleReaction(messageId, emojiId)
-            }
-
-            onDeleteMessage: (messageId) => {
-                root.messageStore.warnAndDeleteMessage(messageId)
-            }
-
-            onEditClicked: (messageId) => {
-                root.messageStore.setEditModeOn(messageId)
-            }
-
-            onShowReplyArea: (messageId) => {
-                d.showReplyArea(messageId)
-            }
-        }
-    }
     ColumnLayout {
         Layout.fillWidth: true
         Layout.fillHeight: true
@@ -151,13 +102,12 @@ ColumnLayout {
                 chatContentModule: root.chatContentModule
                 rootStore: root.rootStore
                 contactsStore: root.contactsStore
-                messageContextMenu: contextMenuLoader.item
                 messageStore: root.messageStore
                 emojiPopup: root.emojiPopup
                 stickersPopup: root.stickersPopup
                 usersStore: root.usersStore
                 stickersLoaded: root.stickersLoaded
-                publicKey: root.chatId
+                chatId: root.chatId
                 isOneToOne: root.chatType === Constants.chatType.oneToOne
                 isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
                 channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")

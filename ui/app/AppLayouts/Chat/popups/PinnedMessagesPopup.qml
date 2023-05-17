@@ -33,6 +33,15 @@ StatusDialog {
     subtitle: root.messageToPin ? qsTr("Unpin a previous message first")
                                 : qsTr("%n message(s)", "", pinnedMessageListView.count)
 
+    QtObject {
+        id: d
+
+        function jumpToMessage(messageId) {
+            root.close()
+            root.messageStore.messageModule.jumpToMessage(messageId)
+        }
+    }
+
     contentItem: ColumnLayout {
         id: column
 
@@ -67,7 +76,6 @@ StatusDialog {
 
                     rootStore: root.store
                     messageStore: root.messageStore
-                    messageContextMenu: msgContextMenu
 
                     messageId: model.id
                     responseToMessageWithId: model.responseToMessageWithId
@@ -120,14 +128,34 @@ StatusDialog {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     z: 55
-                    onClicked: {
-                        if (!!root.messageToPin) {
-                            if (!radio.checked)
-                                radio.checked = true
-                        } else {
-                            root.close()
-                            root.messageStore.messageModule.jumpToMessage(model.id)
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: (mouse) => {
+                        if (mouse.button === Qt.RightButton) {
+                            Global.openMenu(pinnedPopupMessageContextMenuComponent, this, {
+                                                myPublicKey: userProfile.pubKey,
+                                                amIChatAdmin: root.amIChatAdmin,
+                                                pinMessageAllowedForMembers: messageStore.isPinMessageAllowedForMembers,
+                                                chatType: root.messageStore.chatType,
+                                                messageId: messageItem.messageId,
+                                                unparsedText: messageItem.unparsedText,
+                                                messageSenderId: messageItem.senderId,
+                                                messageContentType: messageItem.messageContentType,
+                                                pinnedMessage: messageItem.pinnedMessage,
+                                                canPin: !!messageItem.messageStore && messageItem.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins,
+                                                editRestricted: messageItem.isSticker || messageItem.isImage,
+                                            })
+                            return
                         }
+
+                        if (mouse.button === Qt.LeftButton) {
+                           if (!!root.messageToPin) {
+                               if (!radio.checked)
+                               radio.checked = true
+                           } else {
+                               d.jumpToMessage(model.id)
+                           }
+                           return
+                       }
                     }
                 }
 
@@ -160,23 +188,31 @@ StatusDialog {
                         root.messageToUnpin = checked ? model.id : ""
                     }
                 }
-            }
-        }
 
-        MessageContextMenuView {
-            id: msgContextMenu
-            store: root.store
-            pinnedPopup: true
-            pinnedMessage: true
+                Component {
+                    id: pinnedPopupMessageContextMenuComponent
 
-            onUnpinMessage: {
-                root.messageStore.unpinMessage(messageId)
-            }
+                    MessageContextMenuView {
+                        store: root.store
+                        pinnedPopup: true
+                        pinnedMessage: true
 
-            onJumpToMessage: {
-                root.messageStore.messageModule.jumpToMessage(messageId)
-                close()
-                root.close()
+                        onUnpinMessage: {
+                            root.messageStore.unpinMessage(messageId)
+                        }
+                        onJumpToMessage: {
+                            close()
+                            d.jumpToMessage(messageId)
+                        }
+                        onOpened: {
+                            messageItem.setMessageActive(model.id, true)
+                        }
+                        onClosed: {
+                            messageItem.setMessageActive(model.id, false)
+                            destroy()
+                        }
+                    }
+                }
             }
         }
 

@@ -45,7 +45,7 @@ StatusMenu {
     signal unpinMessage(string messageId)
     signal pinnedMessagesLimitReached(string messageId)
     signal jumpToMessage(string messageId)
-    signal showReplyArea(string messageId)
+    signal showReplyArea(string messageId, string messageSenderId)
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
     signal editClicked(string messageId)
@@ -78,7 +78,7 @@ StatusMenu {
         text: qsTr("Reply to")
         icon.name: "chat"
         onTriggered: {
-            root.showReplyArea(root.messageId)
+            root.showReplyArea(root.messageId, root.messageSenderId)
             root.close()
         }
         enabled: !root.pinnedPopup &&

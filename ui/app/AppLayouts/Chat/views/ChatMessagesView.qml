@@ -33,14 +33,12 @@ Item {
     property var emojiPopup
     property var stickersPopup
 
-    property string publicKey: ""
+    property string chatId: ""
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
     property bool isChatBlocked: false
     property bool isOneToOne: false
     property bool isActiveChannel: false
-
-    property var messageContextMenu
 
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
@@ -250,11 +248,12 @@ Item {
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
             chatLogView: ListView.view
+            chatContentModule: root.chatContentModule
 
             isActiveChannel: root.isActiveChannel
             isChatBlocked: root.isChatBlocked
-            messageContextMenu: root.messageContextMenu
 
+            chatId: root.chatId
             messageId: model.id
             communityId: model.communityId
             responseToMessageWithId: model.responseToMessageWithId
@@ -373,7 +372,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Send Contact Request")
             onClicked: {
-                Global.openContactRequestPopup(root.publicKey, null)
+                Global.openContactRequestPopup(root.chatId, null)
             }
         }
     }
@@ -388,14 +387,14 @@ Item {
                 text: qsTr("Reject Contact Request")
                 type: StatusBaseButton.Type.Danger
                 onClicked: {
-                    root.contactsStore.dismissContactRequest(root.publicKey, "")
+                    root.contactsStore.dismissContactRequest(root.chatId, "")
                 }
             }
 
             StatusButton {
                 text: qsTr("Accept Contact Request")
                 onClicked: {
-                    root.contactsStore.acceptContactRequest(root.publicKey, "")
+                    root.contactsStore.acceptContactRequest(root.chatId, "")
                 }
             }
         }

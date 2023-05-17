@@ -24,7 +24,6 @@ Loader {
     property var contactsStore
     property var chatContentModule
 
-    property var messageContextMenu: null
     property string channelEmoji
     property bool isActiveChannel: false
 
@@ -36,6 +35,7 @@ Loader {
     // without an explicit need to fetch those details via message store/module.
     property bool isChatBlocked: false
 
+    property string chatId
     property string messageId: ""
     property string communityId: ""
 
@@ -125,7 +125,6 @@ Loader {
     signal imageClicked(var image, var mouse, var imageSource)
 
     function openProfileContextMenu(sender, mouse, isReply = false) {
-
         if (isReply && !quotedMessageFrom) {
             // The responseTo message was deleted
             // so we don't enable to right click the unaviable profile
@@ -139,34 +138,45 @@ Loader {
         }
 
         Global.openMenu(profileContextMenuComponent, sender, params)
-        d.setMessageActive(root.messageId, true)
     }
 
-    // WARNING: To much arguments here. Create an object argument.
     function openMessageContextMenu() {
-
         if (placeholderMessage || !root.rootStore.mainModuleInst.activeSection.joined)
-            return false
+            return
 
-        messageContextMenu.myPublicKey = userProfile.pubKey
-        messageContextMenu.amIChatAdmin = root.amIChatAdmin
-        messageContextMenu.pinMessageAllowedForMembers = messageStore.isPinMessageAllowedForMembers
-        messageContextMenu.chatType = messageStore.chatType
+        const params = {
+            myPublicKey: userProfile.pubKey,
+            amIChatAdmin: root.amIChatAdmin,
+            pinMessageAllowedForMembers: messageStore.isPinMessageAllowedForMembers,
+            chatType: messageStore.chatType,
 
-        messageContextMenu.messageId = root.messageId
-        messageContextMenu.unparsedText = root.unparsedText
-        messageContextMenu.messageSenderId = root.senderId
-        messageContextMenu.messageContentType = root.messageContentType
-        messageContextMenu.pinnedMessage = root.pinnedMessage
-        messageContextMenu.canPin = !!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
-        messageContextMenu.editRestricted = root.isSticker || root.isImage
+            messageId: root.messageId,
+            unparsedText: root.unparsedText,
+            messageSenderId: root.senderId,
+            messageContentType: root.messageContentType,
+            pinnedMessage: root.pinnedMessage,
+            canPin: !!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins,
+            editRestricted: root.isSticker || root.isImage,
+        }
 
-        messageContextMenu.parent = this
-        messageContextMenu.popup()
+        Global.openMenu(messageContextMenuComponent, this, params)
+    }
 
-        d.setMessageActive(root.messageId, true)
+    function setMessageActive(messageId, active) {
 
-        return true
+        // TODO: Is argument messageId actually needed?
+        //       It was probably used with dynamic scoping,
+        //       but not this method can be moved to private `d`.
+        //       Probably that it was done this way, because `MessageView` is reused as delegate.
+
+        if (active) {
+            d.activeMessage = messageId;
+            return;
+        }
+        if (d.activeMessage === messageId) {
+            d.activeMessage = "";
+            return;
+        }
     }
 
     signal showReplyArea(string messageId, string author)
@@ -224,23 +234,6 @@ Loader {
         readonly property bool isMessageActive: d.activeMessage === root.messageId
 
         readonly property bool addReactionAllowed: !root.isInPinnedPopup && !root.rootStore.isUserAllowedToSendMessage
-
-        function setMessageActive(messageId, active) {
-
-            // TODO: Is argument messageId actually needed?
-            //       It was probably used with dynamic scoping,
-            //       but not this method can be moved to private `d`.
-            //       Probably that it was done this way, because `MessageView` is reused as delegate.
-
-            if (active) {
-                d.activeMessage = messageId;
-                return;
-            }
-            if (d.activeMessage === messageId) {
-                d.activeMessage = "";
-                return;
-            }
-        }
 
         function nextMessageHasHeader() {
             if(!root.nextMessageAsJsonObj) {
@@ -300,14 +293,6 @@ Loader {
             // Don't use mouseArea as parent, as it will be destroyed right after opening menu
             const point = mouseArea.mapToItem(root, mouse.x, mouse.y)
             Global.openMenu(addReactionContextMenu, root, {}, point)
-        }
-    }
-
-    Connections {
-        enabled: d.isMessageActive
-        target: root.messageContextMenu
-        function onClosed() {
-            d.setMessageActive(root.messageId, false)
         }
     }
 
@@ -494,7 +479,6 @@ Loader {
                 disableHover: root.disableHover ||
                               delegate.hideQuickActions ||
                               (root.chatLogView && root.chatLogView.moving) ||
-                              (root.messageContextMenu && root.messageContextMenu.opened) ||
                               Global.popupOpened
 
                 disableEmojis: root.isChatBlocked
@@ -768,9 +752,6 @@ Loader {
                             tooltip.text: qsTr("Reply")
                             onClicked: {
                                 root.showReplyArea(root.messageId, root.senderId)
-                                if (messageContextMenu.closeParentPopup) {
-                                    messageContextMenu.closeParentPopup()
-                                }
                             }
                         }
                     },
@@ -890,10 +871,10 @@ Loader {
                 root.messageStore.toggleReaction(root.messageId, emojiId)
             }
             onOpened: {
-                d.setMessageActive(root.messageId, true)
+                root.setMessageActive(root.messageId, true)
             }
             onClosed: {
-                d.setMessageActive(root.messageId, false)
+                root.setMessageActive(root.messageId, false)
                 destroy()
             }
         }
@@ -912,12 +893,68 @@ Loader {
                 root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
             }
             onOpened: {
-                d.setMessageActive(root.messageId, true)
+                root.setMessageActive(root.messageId, true)
             }
             onClosed: {
-                d.setMessageActive(root.messageId, false)
+                root.setMessageActive(root.messageId, false)
                 destroy()
             }
         }
     }
+
+    Component {
+        id: messageContextMenuComponent
+
+        MessageContextMenuView {
+            store: root.rootStore
+            reactionModel: root.rootStore.emojiReactionsModel
+            disabledForChat: !root.rootStore.isUserAllowedToSendMessage
+
+            onPinMessage: (messageId) => {
+                root.messageStore.pinMessage(messageId)
+            }
+
+            onUnpinMessage: (messageId) => {
+                root.messageStore.unpinMessage(messageId)
+            }
+
+            onPinnedMessagesLimitReached: (messageId) => {
+                if (!root.chatContentModule) {
+                    console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
+                    return
+                }
+                Global.openPinnedMessagesPopupRequested(root.rootStore,
+                                                        root.messageStore,
+                                                        root.chatContentModule.pinnedMessagesModel,
+                                                        messageId,
+                                                        root.chatId)
+            }
+
+            onToggleReaction: (messageId, emojiId) => {
+                root.messageStore.toggleReaction(messageId, emojiId)
+            }
+
+            onDeleteMessage: (messageId) => {
+                root.messageStore.warnAndDeleteMessage(messageId)
+            }
+
+            onEditClicked: (messageId) => {
+                root.messageStore.setEditModeOn(messageId)
+            }
+
+            onShowReplyArea: (messageId, senderId) => {
+                root.showReplyArea(messageId, senderId)
+            }
+
+            onOpened: {
+                root.setMessageActive(model.id, true)
+            }
+            onClosed: {
+                root.setMessageActive(model.id, false)
+                destroy()
+            }
+        }
+    }
+
+
 }
