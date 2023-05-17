@@ -40,7 +40,6 @@ Column {
         padding: 0 // use our own (StatusTextArea) padding
         width: parent.width
         height: 120
-        TextArea.flickable: longTextArea
         StatusTextArea {
             id: longTextArea
             text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Integer imperdiet lectus quis justo. Sed vel lectus. \

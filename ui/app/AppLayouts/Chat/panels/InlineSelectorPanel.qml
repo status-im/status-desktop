@@ -84,9 +84,9 @@ Item {
 
                         function positionViewAtEnd() {
                             if (scrollView.contentWidth > scrollView.width) {
-                                scrollView.contentX = scrollView.contentWidth - scrollView.width
+                                scrollView.flickable.contentX = scrollView.contentWidth - scrollView.width
                             } else {
-                                scrollView.contentX = 0
+                                scrollView.flickable.contentX = 0
                             }
                         }
 
@@ -181,7 +181,7 @@ Item {
                             anchors.left: scrollView.left
                             anchors.right: scrollView.right
                             policy: ScrollBar.AsNeeded
-                            visible: resolveVisibility(policy, scrollView.width, scrollView.contentWidth)
+                            visible: resolveVisibility(policy, scrollView.availableWidth, scrollView.contentWidth)
                         }
                     }
                 }

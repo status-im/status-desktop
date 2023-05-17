@@ -36,7 +36,6 @@ import StatusQ.Components 0.1
         padding: 0 // use our own (StatusTextArea) padding
         width: parent.width
         height: 120
-        TextArea.flickable: longTextArea
         StatusTextArea {
           id: longTextArea
           text: "Very\nlong\ntext\nwith\nmany\nlinebreaks"

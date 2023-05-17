@@ -27,10 +27,10 @@ import StatusQ.Core.Theme 0.1
 T.ScrollBar {
     id: root
 
-    function resolveVisibility(policy, length, availableLength) {
+    function resolveVisibility(policy, availableSize, contentSize) {
         switch (policy) {
         case T.ScrollBar.AsNeeded:
-            return availableLength > length;
+            return contentSize > availableSize;
         case T.ScrollBar.AlwaysOn:
             return true;
         case T.ScrollBar.AlwaysOff:
