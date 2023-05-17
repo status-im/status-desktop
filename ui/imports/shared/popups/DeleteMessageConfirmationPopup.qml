@@ -10,6 +10,7 @@ ConfirmationDialog {
     confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
     height: 260
     checkbox.visible: true
+    confirmButtonObjectName: "chatButtonsPanelConfirmDeleteMessageButton"
 
     executeConfirm: () => {
         if (checkbox.checked) {
