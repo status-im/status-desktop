@@ -150,6 +150,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+         title: "BurnTokensPopup"
+         section: "Popups"
+    }
+    ListElement {
         title: "InviteFriendsToCommunityPopup"
         section: "Popups"
     }
