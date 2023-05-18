@@ -35,6 +35,8 @@ SettingsPageLayout {
     // Account expected roles: address, name, color, emoji
     property var accounts
 
+    property string communityName
+
     property int viewWidth: 560 // by design
 
     signal mintCollectible(url artworkSource,
@@ -52,12 +54,17 @@ SettingsPageLayout {
 
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
+    signal signSelfDestructTransactionOpened(int chainId)
+
     signal remoteSelfDestructCollectibles(var selfDestructTokensList, // [key , amount]
                                           int chainId,
                                           string accountName,
                                           string accountAddress)
 
-    signal signSelfDestructTransactionOpened(int chainId)
+    signal signBurnTransactionOpened(int chainId)
+
+    signal burnCollectibles(string tokenKey,
+                            int amount)
 
     signal airdropCollectible(string key)
 
@@ -92,6 +99,11 @@ SettingsPageLayout {
         property var tokenOwnersModel
         property var selfDestructTokensList
         property bool selfDestruct
+        property bool burnEnabled
+        //property string tokenKey -- TODO: Backend key role
+        property int burnAmount
+        property int remainingTokens
+        property url artworkSource
 
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
         onInitialItemChanged: updateInitialStackView()
@@ -283,16 +295,17 @@ SettingsPageLayout {
             function closePopups() {
                 remotelyDestructPopup.close()
                 alertPopup.close()
-                signSelfDestructPopup.close()
+                signTransactionPopup.close()
             }
 
             airdropEnabled: true
             retailEnabled: false
             remotelySelfDestructVisible: d.selfDestruct
-            burnEnabled: false
+            burnVisible: d.burnEnabled
 
             onAirdropClicked: d.airdropClicked()
             onRemotelyDestructClicked: remotelyDestructPopup.open()
+            onBurnClicked: burnTokensPopup.open()
 
             RemotelyDestructPopup {
                 id: remotelyDestructPopup
@@ -310,33 +323,59 @@ SettingsPageLayout {
             RemotelyDestructAlertPopup {
                 id: alertPopup
 
-                onRemotelyDestructClicked: signSelfDestructPopup.open()
+                onRemotelyDestructClicked: {
+                    signTransactionPopup.isRemotelyDestructTransaction = true
+                    signTransactionPopup.open()
+                }
             }
 
             SignTokenTransactionsPopup {
-                id: signSelfDestructPopup
+                id: signTransactionPopup
 
-                function signSelfRemoteDestructTransaction() {
+                property bool isRemotelyDestructTransaction
+
+                function signTransaction() {
                     root.isFeeLoading = true
                     root.feeText = ""
-                    root.remoteSelfDestructCollectibles(d.selfDestructTokensList,
-                                                        d.chainId,
-                                                        d.accountName,
-                                                        d.accountAddress)
+                    if(signTransactionPopup.isRemotelyDestructTransaction) {
+                        root.remoteSelfDestructCollectibles(d.selfDestructTokensList,
+                                                            d.chainId,
+                                                            d.accountName,
+                                                            d.accountAddress)
+                    } else {
+                        root.burnCollectibles("TODO - KEY"/*d.tokenKey*/, d.burnAmount)
+                    }
 
                     footerPanel.closePopups()
                 }
 
-                title: qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title)
+                title: signTransactionPopup.isRemotelyDestructTransaction ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title) :
+                                                                            qsTr("Sign transaction - Burn %1 tokens").arg(root.title)
                 collectibleName: root.title
                 accountName: d.accountName
                 networkName: d.chainName
                 feeText: root.feeText
                 isFeeLoading: root.isFeeLoading
 
-                onOpened: root.signSelfDestructTransactionOpened(d.chainId)
+                onOpened: signTransactionPopup.isRemotelyDestructTransaction ? root.signSelfDestructTransactionOpened(d.chainId) :
+                                                                               root.signBurnTransactionOpened(d.chainId)
                 onCancelClicked: close()
-                onSignTransactionClicked: signSelfRemoteDestructTransaction()
+                onSignTransactionClicked: signTransaction()
+            }
+
+            BurnTokensPopup {
+                id: burnTokensPopup
+
+                communityName: root.communityName
+                tokenName: root.title
+                remainingTokens: d.remainingTokens
+                tokenSource: d.artworkSource
+
+                onBurnClicked: {
+                    d.burnAmount = burnAmount
+                    signTransactionPopup.isRemotelyDestructTransaction = false
+                    signTransactionPopup.open()
+                }
             }
         }
     }
@@ -352,6 +391,7 @@ SettingsPageLayout {
                 d.chainId = chainId
                 d.chainName = chainName
                 d.accountName = accountName
+                //d.tokenKey = key // TODO: Backend key role
                 stackManager.push(d.collectibleViewState,
                                   collectibleView,
                                   {
@@ -398,6 +438,25 @@ SettingsPageLayout {
                 value: view.selfDestruct
             }
 
+            Binding {
+                target: d
+                property: "burnEnabled"
+                value: !view.infiniteSupply
+                restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            Binding {
+                target: d
+                property: "remainingTokens"
+                value: view.remainingTokens
+            }
+
+            Binding {
+                target: d
+                property: "artworkSource"
+                value: view.artworkSource
+            }
+
             Instantiator {
                 id: instantiator
 
@@ -414,6 +473,7 @@ SettingsPageLayout {
                     readonly property list<Binding> bindings: [
                         Bind { property: "deployState"; value: model.deployState },
                         Bind { property: "remotelyDestructState"; value: model.remotelyDestructState },
+                        Bind { property: "burnState"; value: model.burnState },
                         Bind { property: "name"; value: model.name },
                         Bind { property: "artworkSource"; value: model.image },
                         Bind { property: "symbol"; value: model.symbol },

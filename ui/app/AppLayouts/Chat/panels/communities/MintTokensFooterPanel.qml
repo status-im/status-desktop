@@ -14,7 +14,7 @@ Control {
     property alias airdropEnabled: airdropButton.enabled
     property alias retailEnabled: retailButton.enabled
     property alias remotelySelfDestructVisible: remotelySelfDestructButton.visible
-    property alias burnEnabled: burnButton.enabled
+    property alias burnVisible: burnButton.visible
 
     signal airdropClicked
     signal retailClicked
@@ -69,7 +69,6 @@ Control {
                 id: burnButton
 
                 icon.name: "delete"
-                visible: false // Post MVP
                 text: qsTr("Burn")
                 type: StatusBaseButton.Type.Danger
                 borderColor: "transparent"

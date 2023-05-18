@@ -275,6 +275,7 @@ StatusSectionLayout {
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore
 
+                communityName: root.community.name
                 tokensModel: root.community.communityTokens
                 layer1Networks: communityTokensStore.layer1Networks
                 layer2Networks: communityTokensStore.layer2Networks
@@ -307,6 +308,8 @@ StatusSectionLayout {
                                                                         accountName,
                                                                         accountAddress)
                 }
+                onSignBurnTransactionOpened: communityTokensStore.computeBurnFee(chainId)
+                onBurnCollectibles: communityTokensStore.burnCollectibles(tokenKey, amount)
                 onAirdropCollectible: root.goTo(Constants.CommunitySettingsSections.Airdrops)
 
                 Connections {
