@@ -110,7 +110,8 @@ QtObject:
     defer: parentModelIndex.delete
     self.beginInsertRows(parentModelIndex, indexToInsertTo, indexToInsertTo)
     self.items.insert(
-      newDerivedAddressItem(item.getOrder(), item.getAddress(), item.getPath(), item.getAlreadyCreated(), hasActivity, loaded = true), 
+      newDerivedAddressItem(item.getOrder(), item.getAddress(), item.getPublicKey(), item.getPath(), item.getAlreadyCreated(), 
+        hasActivity, loaded = true), 
       indexToInsertTo
     )
     self.endInsertRows()

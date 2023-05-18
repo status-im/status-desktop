@@ -20,7 +20,7 @@ StatusListItem {
     property bool canBeSelected: true
 
     property int keyPairType: Constants.keycard.keyPairType.unknown
-    property string keyPairPubKey: ""
+    property string keyPairKeyUid: ""
     property string keyPairName: ""
     property string keyPairIcon: ""
     property string keyPairImage: ""
@@ -118,7 +118,7 @@ StatusListItem {
                     if (!root.usedAsSelectOption || !root.canBeSelected)
                         return
                     if (checked) {
-                        root.sharedKeycardModule.setSelectedKeyPair(root.keyPairPubKey)
+                        root.sharedKeycardModule.setSelectedKeyPair(root.keyPairKeyUid)
                         root.keyPairSelected()
                     }
                 }

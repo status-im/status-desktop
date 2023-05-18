@@ -1,5 +1,6 @@
 import json, json_serialization, chronicles, strutils
 import ./core, ../app_service/common/utils
+import ../app_service/service/wallet_account/dto
 import ./response_type
 
 import status_go
@@ -21,17 +22,22 @@ const WATCH* = "watch"
 proc getAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("accounts_getAccounts")
 
-proc getAccountsByKeyUID*(keyUid: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getWatchOnlyAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("accounts_getWatchOnlyAccounts")
+
+proc getKeypairs*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("accounts_getKeypairs")
+
+proc getKeypairByKeyUid*(keyUid: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [keyUid]
-  return core.callPrivateRPC("accounts_getAccountsByKeyUID", payload)
+  return core.callPrivateRPC("accounts_getKeypairByKeyUID", payload)
 
 proc deleteAccount*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [address]
   return core.callPrivateRPC("accounts_deleteAccount", payload)
 
 ## Adds a new account and creates a Keystore file if password is provided, otherwise it only creates a new account. Notifies paired devices.
-proc addAccount*(password, name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
-  keyUid, accountType, color, emoji: string): 
+proc addAccount*(password, name, address, path, publicKey, keyUid, accountType, color, emoji: string): 
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [
     password,
@@ -41,32 +47,62 @@ proc addAccount*(password, name, keyPairName, address, path: string, lastUsedDer
       "wallet": false, #this refers to the default wallet account and it's set at the moment of Status chat account creation, cannot be changed later
       "chat": false, #this refers to Status chat account, set when the Status account is created, cannot be changed later
       "type": accountType,
-      #"storage" present on the status-go side, but we don't use it
       "path": path,
       "public-key": publicKey,
       "name": name,
       "emoji": emoji,
       "color": color,
       #"hidden" present on the status-go side, but we don't use it
-      "derived-from": rootWalletMasterKey,
       #"clock" we leave this empty, set on the status-go side
       #"removed" present on the status-go side, used for synchronization, no need to set it here
-      "keypair-name": keyPairName,
-      "last-used-derivation-index": lastUsedDerivationIndex
     }
   ]
   return core.callPrivateRPC("accounts_addAccount", payload)
 
-## Adds a new account without creating a Keystore file and notifies paired devices
-proc addAccountWithoutKeystoreFileCreation*(name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
-  keyUid, accountType, color, emoji: string):
+## Adds a new keypair and creates a Keystore file if password is provided, otherwise it only creates a new keypair. Notifies paired devices.
+proc addKeypair*(password, keyUid, keypairName, keypairType, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): 
   RpcResponse[JsonNode] {.raises: [Exception].} =
-  return addAccount(password = "", name, keyPairName, address, path, lastUsedDerivationIndex, rootWalletMasterKey, publicKey, 
-    keyUid, accountType, color, emoji)
+  var kpJson = %* {
+    "key-uid": keyUid,
+    "name": keypairName,
+    "type": keypairType,
+    "derived-from": rootWalletMasterKey,
+    "last-used-derivation-index": 0, #when adding new keypair it's always 0
+    #"synced-from": "", present on the status-go side, used for synchronization, no need to set it here
+    #"clock": 0, we leave this empty, set on the status-go side
+    "accounts": []
+  }
+
+  for acc in accounts:
+    kpJson["accounts"].add(
+      %*{
+          "address": acc.address,
+          "key-uid": keyUid,
+          "wallet": false, #this refers to the default wallet account and it's set at the moment of Status chat account creation, cannot be changed later
+          "chat": false, #this refers to Status chat account, set when the Status account is created, cannot be changed later
+          "type": acc.walletType,
+          "path": acc.path,
+          "public-key": acc.publicKey,
+          "name": acc.name,
+          "emoji": acc.emoji,
+          "color": acc.color,
+          #"hidden" present on the status-go side, but we don't use it
+          #"clock" we leave this empty, set on the status-go side
+          #"removed" present on the status-go side, used for synchronization, no need to set it here
+        }
+    )
+
+  let payload = %* [password, kpJson]
+  return core.callPrivateRPC("accounts_addKeypair", payload)
+
+## Adds a new account without creating a Keystore file and notifies paired devices
+proc addAccountWithoutKeystoreFileCreation*(name, address, path, publicKey, keyUid, accountType, color, emoji: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  return addAccount(password = "", name, address, path, publicKey, keyUid, accountType, color, emoji)
 
 ## Updates either regular or keycard account, without interaction to a Keystore file and notifies paired devices
-proc updateAccount*(name, keyPairName, address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, 
-  keyUid, accountType, color, emoji: string, walletDefaultAccount: bool, chatDefaultAccount: bool):
+proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType, color, emoji: string, 
+  walletDefaultAccount: bool, chatDefaultAccount: bool):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [
     {
@@ -75,18 +111,14 @@ proc updateAccount*(name, keyPairName, address, path: string, lastUsedDerivation
       "wallet": walletDefaultAccount,
       "chat": chatDefaultAccount,
       "type": accountType,
-      #"storage" present on the status-go side, but we don't use it
       "path": path,
       "public-key": publicKey,
       "name": name,
       "emoji": emoji,
       "color": color,
       #"hidden" present on the status-go side, but we don't use it
-      "derived-from": rootWalletMasterKey,
       #"clock" we leave this empty, set on the status-go side
       #"removed" present on the status-go side, used for synchronization, no need to set it here
-      "keypair-name": keyPairName,
-      "last-used-derivation-index": lastUsedDerivationIndex
     }
   ]
   return core.callPrivateRPC("accounts_saveAccount", payload)

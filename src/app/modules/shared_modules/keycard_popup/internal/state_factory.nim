@@ -5,7 +5,7 @@ from ../../../../../app_service/service/keycard/service import KCSFlowType
 from ../../../../../app_service/service/keycard/service import PINLengthForStatusApp
 from ../../../../../app_service/service/keycard/service import PUKLengthForStatusApp
 import ../../../../../app_service/common/account_constants
-import ../../../../../app_service/service/wallet_account/keycard_dto
+import ../../../../../app_service/service/wallet_account/[keypair_dto, keycard_dto]
 import ../controller
 import ../../../shared_models/[keypair_model]
 import state

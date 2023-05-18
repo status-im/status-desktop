@@ -11,7 +11,7 @@ import ../../../../app_service/service/contacts/dto/[contacts, status_update]
 import ../../../../app_service/service/devices/dto/[installation]
 import ../../../../app_service/service/settings/dto/[settings]
 import ../../../../app_service/service/saved_address/dto as saved_address_dto
-import ../../../../app_service/service/wallet_account/[dto, keycard_dto]
+import ../../../../app_service/service/wallet_account/[keypair_dto, keycard_dto]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
@@ -33,6 +33,7 @@ type MessageSignal* = ref object of Signal
   clearedHistories*: seq[ClearedHistoryDto]
   verificationRequests*: seq[VerificationRequest]
   savedAddresses*: seq[SavedAddressDto]
+  keypairs*: seq[KeypairDto]
   keycards*: seq[KeycardDto]
   keycardActions*: seq[KeycardActionDto]
   walletAccounts*: seq[WalletAccountDto]
@@ -133,6 +134,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"savedAddresses"} != nil:
     for jsonSavedAddress in event["event"]["savedAddresses"]:
       signal.savedAddresses.add(jsonSavedAddress.toSavedAddressDto())
+
+  if event["event"]{"keypairs"} != nil:
+    for jsonKc in event["event"]["keypairs"]:
+      signal.keypairs.add(jsonKc.toKeypairDto())
 
   if event["event"]{"keycards"} != nil:
     for jsonKc in event["event"]["keycards"]:

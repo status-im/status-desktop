@@ -191,13 +191,14 @@ method runCreateNewPairingCodePopup*(self: Module, keyUid: string) =
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangePairingCode, keyUid)
 
-proc findAccountByAccountAddress(accounts: seq[WalletAccountDto], address: string): WalletAccountDto =
-  for i in 0 ..< accounts.len:
-    if cmpIgnoreCase(accounts[i].address, address) == 0:
-      return accounts[i]
+proc findAccountByAccountAddress(keypairs: seq[KeypairDto], address: string): WalletAccountDto =
+  for kp in keypairs:
+    for acc in kp.accounts:
+      if cmpIgnoreCase(acc.address, address) == 0:
+        return acc
   return nil
 
-proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPair: KeycardDto, reason: BuildItemReason): 
+proc buildKeycardItem(self: Module, keypairs: seq[KeypairDto], keycard: KeycardDto, reason: BuildItemReason): 
   KeycardItem =
   let isAccountInKnownAccounts = proc(knownAccounts: seq[WalletAccountDto], address: string): bool =
     for i in 0 ..< knownAccounts.len:
@@ -207,8 +208,8 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
 
   var knownAccounts: seq[WalletAccountDto]
   var unknownAccountsAddresses: seq[string]
-  for accAddr in keyPair.accountsAddresses:
-    let account = findAccountByAccountAddress(walletAccounts, accAddr)
+  for accAddr in keycard.accountsAddresses:
+    let account = findAccountByAccountAddress(keypairs, accAddr)
     if account.isNil:
       ## We are here if the keycard is not sync yet with the app's state. That may happen if there are more copies of the 
       ## same keycard, then deleting an account for a keypair syncs the inserted keycard, but other copies of the card
@@ -221,19 +222,21 @@ proc buildKeycardItem(self: Module, walletAccounts: seq[WalletAccountDto], keyPa
         # if there are more then one keycard for a single keypair we don't want to add the same keypair more than once
         continue
     knownAccounts.add(account)
-  var item = initKeycardItem(keycardUid = keyPair.keycardUid,
-    keyUid = keyPair.keyUid,
+  var item = initKeycardItem(keycardUid = keycard.keycardUid,
+    keyUid = keycard.keyUid,
     pubKey = "",
-    locked = keyPair.keycardLocked,
-    name = keyPair.keycardName)
+    locked = keycard.keycardLocked,
+    name = keycard.keycardName)
   if knownAccounts.len == 0:
     if reason == BuildItemReason.MainView:
       return nil
     item.setPairType(KeyPairType.SeedImport.int)
     item.setIcon("keycard")
   else:
-    item.setPubKey(knownAccounts[0].publicKey)
-    item.setDerivedFrom(knownAccounts[0].derivedfrom)
+    for kp in keypairs:
+      if kp.keyUid == keycard.keyUid:
+        item.setDerivedFrom(kp.derivedFrom)
+        break
 
   for ka in knownAccounts:
     var icon = ""
@@ -265,11 +268,11 @@ proc areAllKnownKeycardsLockedForKeypair(self: Module, keyUid: string): bool =
   return keyUidRelatedKeycards.all(kp => kp.keycardLocked)
 
 proc buildKeycardList(self: Module) =
-  let walletAccounts = self.controller.getWalletAccounts()
+  let keypairs = self.controller.getKeypairs()
   var items: seq[KeycardItem]
   let migratedKeyPairs = self.controller.getAllKnownKeycardsGroupedByKeyUid()
   for kp in migratedKeyPairs:
-    let item = self.buildKeycardItem(walletAccounts, kp, BuildItemReason.MainView)
+    let item = self.buildKeycardItem(keypairs, kp, BuildItemReason.MainView)
     if item.isNil:
       continue
     ## If all created keycards for certain keypair are locked, then we need to display that item as locked.
@@ -289,17 +292,17 @@ method rebuildKeycardsList*(self: Module) =
   self.buildKeycardList()
 
 method onNewKeycardSet*(self: Module, keyPair: KeycardDto) =
-  let walletAccounts = self.controller.getWalletAccounts()
+  let keypairs = self.controller.getKeypairs()
   var mainViewItem = self.view.keycardModel().getItemForKeyUid(keyPair.keyUid)
   if mainViewItem.isNil:
-    mainViewItem = self.buildKeycardItem(walletAccounts, keyPair, BuildItemReason.MainView)
+    mainViewItem = self.buildKeycardItem(keypairs, keyPair, BuildItemReason.MainView)
     if not mainViewItem.isNil:
       self.view.keycardModel().addItem(mainViewItem)
   else:
     for accAddr in keyPair.accountsAddresses:
       if mainViewItem.containsAccountAddress(accAddr):
         continue
-      let account = findAccountByAccountAddress(walletAccounts, accAddr)
+      let account = findAccountByAccountAddress(keypairs, accAddr)
       if account.isNil:
         ## we should never be here cause all keypairs are firstly added to wallet
         continue
@@ -309,14 +312,14 @@ method onNewKeycardSet*(self: Module, keyPair: KeycardDto) =
     return
   var detailsViewItem = self.view.keycardDetailsModel().getItemForKeycardUid(keyPair.keycardUid)
   if detailsViewItem.isNil:
-    detailsViewItem = self.buildKeycardItem(walletAccounts, keyPair, BuildItemReason.DetailsView)
+    detailsViewItem = self.buildKeycardItem(keypairs, keyPair, BuildItemReason.DetailsView)
     if not detailsViewItem.isNil:
       self.view.keycardDetailsModel().addItem(detailsViewItem)
   else:
     for accAddr in keyPair.accountsAddresses:
       if detailsViewItem.containsAccountAddress(accAddr):
         continue
-      let account = findAccountByAccountAddress(walletAccounts, accAddr)
+      let account = findAccountByAccountAddress(keypairs, accAddr)
       if account.isNil:
         ## we should never be here cause all keypairs are firstly added to wallet
         continue
@@ -361,13 +364,13 @@ method onWalletAccountUpdated*(self: Module, account: WalletAccountDto) =
     account.color, account.emoji)
 
 method prepareKeycardDetailsModel*(self: Module, keyUid: string) =
-  let walletAccounts = self.controller.getWalletAccounts()
+  let keypairs = self.controller.getKeypairs()
   var items: seq[KeycardItem]
   let allKnownKeycards = self.controller.getAllKnownKeycards()
   for kp in allKnownKeycards:
     if kp.keyUid != keyUid:
       continue
-    let item = self.buildKeycardItem(walletAccounts, kp, BuildItemReason.DetailsView)
+    let item = self.buildKeycardItem(keypairs, kp, BuildItemReason.DetailsView)
     if item.isNil:
       continue
     items.add(item)

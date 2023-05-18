@@ -112,7 +112,7 @@ proc connectToFetchingFromWakuEvents*(self: Controller) =
   var handlerId = self.events.onWithUUID(SignalType.WakuFetchingBackupProgress.event) do(e: Args):
     var receivedData = WakuFetchingBackupProgressSignal(e)
     for k, v in receivedData.fetchingBackupProgress:
-      self.delegate.onFetchingFromWakuMessageReceived(k, v.totalNumber, v.dataNumber)
+      self.delegate.onFetchingFromWakuMessageReceived(receivedData.clock, k, v.totalNumber, v.dataNumber)
   self.connectionIds.add(handlerId)
 
 proc connectToTimeoutEventAndStratTimer*(self: Controller, timeoutInMilliseconds: int) =

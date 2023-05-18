@@ -56,7 +56,7 @@ Item {
         id: keyPairForProcessingComponent
         KeyPairItem {
             keyPairType:  root.sharedKeycardModule.keyPairForProcessing.pairType
-            keyPairPubKey: root.sharedKeycardModule.keyPairForProcessing.pubKey
+            keyPairKeyUid: root.sharedKeycardModule.keyPairForProcessing.keyUid
             keyPairName: root.sharedKeycardModule.keyPairForProcessing.name
             keyPairIcon: root.sharedKeycardModule.keyPairForProcessing.icon
             keyPairImage: root.sharedKeycardModule.keyPairForProcessing.image
@@ -69,9 +69,9 @@ Item {
     Component {
         id: unknownKeyPairCompontnt
         KeyPairUnknownItem {
-            keyPairPubKey: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
-                               root.sharedKeycardModule.keyPairHelper.pubKey
-                             : root.sharedKeycardModule.keyPairForProcessing.pubKey
+            keyPairKeyUid: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
+                               root.sharedKeycardModule.keyPairHelper.keyUid
+                             : root.sharedKeycardModule.keyPairForProcessing.keyUid
             keyPairName: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
                              root.sharedKeycardModule.keyPairHelper.name
                            : root.sharedKeycardModule.keyPairForProcessing.name
@@ -84,6 +84,9 @@ Item {
             keyPairDerivedFrom: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
                                     root.sharedKeycardModule.keyPairHelper.derivedFrom
                                   : root.sharedKeycardModule.keyPairForProcessing.derivedFrom
+            keyPairCardLocked: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
+                                 root.sharedKeycardModule.keyPairHelper.locked
+                               : root.sharedKeycardModule.keyPairForProcessing.locked
             keyPairAccounts: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
                                  root.sharedKeycardModule.keyPairHelper.accounts
                                : root.sharedKeycardModule.keyPairForProcessing.accounts

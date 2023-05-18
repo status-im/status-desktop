@@ -613,12 +613,19 @@ proc authenticateUser*(self: Controller, keyUid = "") =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.fetchAccounts()
+  return self.walletAccountService.getAccounts()
+
+proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
+  if not serviceApplicable(self.walletAccountService):
+    return
+  return self.walletAccountService.getKeypairs()
+
+proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
+  return self.walletAccountService.getKeypairByKeyUid(keyUid)
 
 proc isKeyPairAlreadyAdded*(self: Controller, keyUid: string): bool =
-  let walletAccounts = self.getWalletAccounts()
-  let accountsForKeyUid = walletAccounts.filter(a => a.keyUid == keyUid)
-  return accountsForKeyUid.len > 0
+  let keypair = self.getKeypairByKeyUid(keyUid)
+  return not keypair.isNil
 
 proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Controller, address: string): tuple[balance: float64, fetched: bool] =
   if not serviceApplicable(self.walletAccountService):
@@ -626,12 +633,12 @@ proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Controller, address: 
     return (0.0, true)
   return self.walletAccountService.getOrFetchBalanceForAddressInPreferredCurrency(address)
 
-proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto) =
+proc addKeycardOrAccounts*(self: Controller, keyPair: KeycardDto, accountsComingFromKeycard: bool = false) =
   if not serviceApplicable(self.walletAccountService):
     return
   if not serviceApplicable(self.accountsService):
     return
-  self.walletAccountService.addKeycardOrAccountsAsync(keyPair)
+  self.walletAccountService.addKeycardOrAccountsAsync(keyPair, accountsComingFromKeycard)
 
 proc removeMigratedAccountsForKeycard*(self: Controller, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
   if not serviceApplicable(self.walletAccountService):
@@ -685,14 +692,22 @@ proc updateKeycardUid*(self: Controller, keyUid: string, keycardUid: string) =
       self.tmpKeycardUid = keycardUid
       info "update keycard uid failed", oldKeycardUid=self.tmpKeycardUid, newKeycardUid=keycardUid
 
-proc addWalletAccount*(self: Controller, name, keyPairName, address, path: string, lastUsedDerivationIndex: int, 
-  rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): bool =
+proc addWalletAccount*(self: Controller, name, address, path, publicKey, keyUid, accountType, color, emoji: string): bool =
   if not serviceApplicable(self.walletAccountService):
     return false
-  let err = self.walletAccountService.addWalletAccount(password = "", doPasswordHashing = false, name, keyPairName, 
-    address, path, lastUsedDerivationIndex, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji)
+  let err = self.walletAccountService.addWalletAccount(password = "", doPasswordHashing = false, name, address, path, 
+    publicKey, keyUid, accountType, color, emoji)
   if err.len > 0:
     info "adding wallet account failed", name=name, path=path
+    return false
+  return true
+
+proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase, keyUid, keypairName, rootWalletMasterKey: string, 
+  accounts: seq[WalletAccountDto]): bool =
+  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password = "", doPasswordHashing = false, keyUid, 
+    keypairName, rootWalletMasterKey, accounts)
+  if err.len > 0:
+    info "adding new keypair from seed phrase failed", keypairName=keypairName, keyUid=keyUid
     return false
   return true
 

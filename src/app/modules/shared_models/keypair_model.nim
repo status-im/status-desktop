@@ -69,12 +69,6 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc findItemByPublicKey*(self: KeyPairModel, publicKey: string): KeyPairItem =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].getPubKey() == publicKey):
-        return self.items[i]
-    return nil
-
   proc findItemByKeyUid*(self: KeyPairModel, keyUid: string): KeyPairItem =
     for i in 0 ..< self.items.len:
       if(self.items[i].getKeyUid() == keyUid):

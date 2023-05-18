@@ -14,6 +14,7 @@ QtObject:
     Model* = ref object of QAbstractListModel
       items: seq[Item]
       allTotalsSet: bool
+      lastKnownBackedUpMsgClock: uint64
 
   proc delete(self: Model) =
     self.items = @[]
@@ -26,6 +27,7 @@ QtObject:
     new(result, delete)
     result.setup
     result.allTotalsSet = false
+    result.lastKnownBackedUpMsgClock = 0
 
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
@@ -85,6 +87,16 @@ QtObject:
     self.items[ind].receivedMessageAtPosition(position)
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.LoadedMessages.int])
+
+  proc checkLastKnownClockAndResetTotalsIfNeeded*(self: Model, backedUpMsgClock: uint64) =
+    if self.lastKnownBackedUpMsgClock >= backedUpMsgClock:
+      return
+    self.lastKnownBackedUpMsgClock = backedUpMsgClock
+    self.allTotalsSet = false
+    for i in 0..< self.items.len:
+      self.items[i].resetItem()
+      let index = self.createIndex(i, 0, nil)
+      self.dataChanged(index, index, @[ModelRole.TotalMessages.int, ModelRole.LoadedMessages.int])
 
   proc updateTotalMessages*(self: Model, entity: string, totalMessages: int) =
     if self.allTotalsSet:
