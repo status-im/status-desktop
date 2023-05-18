@@ -328,7 +328,7 @@ method prepareEditCategoryModel*(self: AccessInterface, categoryId: string) {.ba
 method reorderCommunityCategories*(self: AccessInterface, categoryId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int): string {.base.} =
+method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method downloadMessages*(self: AccessInterface, chatId: string, filePath: string) {.base.} =

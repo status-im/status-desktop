@@ -344,10 +344,10 @@ QtObject:
   proc prepareEditCategoryModel*(self: View, categoryId: string) {.slot.} =
     self.delegate.prepareEditCategoryModel(categoryId)
 
-  proc reorderCommunityCategories*(self: View, categoryId: string, categoryPositon: int) {.slot} =
-    self.delegate.reorderCommunityCategories(categoryId, categoryPositon)
+  proc reorderCommunityCategories*(self: View, categoryId: string, categoryPosition: int) {.slot} =
+    self.delegate.reorderCommunityCategories(categoryId, categoryPosition)
 
-  proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int): string {.slot} =
+  proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int) {.slot} =
     self.delegate.reorderCommunityChat(categoryId, chatId, position)
     
   proc loadingHistoryMessagesInProgressChanged*(self: View) {.signal.}

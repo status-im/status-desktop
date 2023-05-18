@@ -51,6 +51,7 @@ Item {
             readonly property int visualIndex: index
             readonly property string chatId: model.itemId
             readonly property string categoryId: model.categoryId
+            readonly property int position: model.position // needed for the DnD
             readonly property int categoryPosition: model.categoryPosition // needed for the DnD
             readonly property bool isCategory: model.isCategory
             readonly property Item item: isCategory ? draggableItem.actions[0] : draggableItem.actions[1]
@@ -70,10 +71,18 @@ Item {
                 const to = chatListDelegate.visualIndex;
                 if (to === from)
                     return;
-                if (!drop.source.isCategory) {
-                    root.chatItemReordered(statusChatListItems.itemAtIndex(from).categoryId, statusChatListItems.itemAtIndex(from).chatId, to);
+                if (drop.source.isCategory) {
+                    root.categoryReordered(
+                        statusChatListItems.itemAtIndex(from).categoryId,
+                        statusChatListItems.itemAtIndex(to).categoryPosition
+                    );
+                    
                 } else {
-                    root.categoryReordered(statusChatListItems.itemAtIndex(from).categoryId, statusChatListItems.itemAtIndex(to).categoryPosition);
+                    root.chatItemReordered(
+                        statusChatListItems.itemAtIndex(to).categoryId,
+                        statusChatListItems.itemAtIndex(from).chatId,
+                        statusChatListItems.itemAtIndex(to).position,
+                    );
                 }
             }
 
