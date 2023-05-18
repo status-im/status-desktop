@@ -406,9 +406,6 @@ proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[Ch
 proc chatsWithCategoryHaveUnreadMessages*(self: Controller, communityId: string, categoryId: string): bool =
   return self.chatService.chatsWithCategoryHaveUnreadMessages(communityId, categoryId)
 
-proc getCommunityDetails*(self: Controller, communityId: string): CommunityDto =
-  return self.communityService.getCommunityById(communityId)
-
 proc getCommunityCategoryDetails*(self: Controller, communityId: string, categoryId: string): Category =
   return self.communityService.getCategoryById(communityId, categoryId)
 
