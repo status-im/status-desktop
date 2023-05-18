@@ -9,5 +9,6 @@ type WakuBackedUpSettingsSignal* = ref object of Signal
 proc fromEvent*(T: type WakuBackedUpSettingsSignal, event: JsonNode): WakuBackedUpSettingsSignal =
   result = WakuBackedUpSettingsSignal()
   
-  if event["event"]{"backedUpSettings"} != nil:
-    result.backedUpSettings = event["event"]["backedUpSettings"].toSettingsDto()
+  let e = event["event"]
+  if e.contains("backedUpSettings"):
+    result.backedUpSettings = e["backedUpSettings"].toSettingsDto()  

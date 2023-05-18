@@ -31,6 +31,10 @@ proc receivedMessageAtPosition*(self: Item, position: int) =
   if position >= 1 and position <= self.totalMessages:
     self.trackOfLoadedMessages[position-1] = true
 
+proc resetItem*(self: Item) =
+  self.trackOfLoadedMessages = @[]
+  self.totalMessages = 0
+
 proc totalMessages*(self: Item): int =
   return self.totalMessages
 

@@ -375,7 +375,8 @@ QtObject {
                 readonly property string contacts: "contacts"
                 readonly property string communities: "communities"
                 readonly property string settings: "settings"
-                readonly property string keycards: "keycards"
+                readonly property string keypairs: "keypairs"
+                readonly property string watchOnlyAccounts: "watchOnlyAccounts"
             }
         }
     }

@@ -212,6 +212,7 @@ rpc(addKeycardOrAddAccountsIfKeycardIsAdded, "accounts"):
   keyPairName: string
   keyUid: string
   accountAddresses: seq[string]
+  accountsComingFromKeycard: bool
 
 rpc(removeMigratedAccountsForKeycard, "accounts"):
   keycardUid: string

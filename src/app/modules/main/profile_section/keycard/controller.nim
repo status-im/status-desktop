@@ -97,5 +97,5 @@ proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
 proc getAllKnownKeycards*(self: Controller): seq[KeycardDto] =
   return self.walletAccountService.getAllKnownKeycards()
 
-proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
-  return self.walletAccountService.fetchAccounts()
+proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
+  return self.walletAccountService.getKeypairs()

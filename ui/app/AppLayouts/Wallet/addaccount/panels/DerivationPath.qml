@@ -34,7 +34,8 @@ GridLayout {
 
     StatusLinkText {
         objectName: "AddAccountPopup-ResetDerivationPath"
-        enabled: root.store.addAccountModule.suggestedDerivationPath !== root.store.addAccountModule.derivationPath
+        enabled: root.store.derivedAddressModel.count > 0 &&
+                 root.store.addAccountModule.suggestedDerivationPath !== root.store.addAccountModule.derivationPath
         font.pixelSize: Constants.addAccountPopup.labelFontSize1
         text: qsTr("Reset")
         color: enabled? Theme.palette.primaryColor1 : Theme.palette.baseColor1

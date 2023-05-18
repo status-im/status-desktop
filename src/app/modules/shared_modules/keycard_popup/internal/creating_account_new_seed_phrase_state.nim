@@ -43,22 +43,25 @@ proc resolveAddresses(self: CreatingAccountNewSeedPhraseState, controller: Contr
 
 proc addAccountsToWallet(self: CreatingAccountNewSeedPhraseState, controller: Controller): bool =
   let kpForProcessing = controller.getKeyPairForProcessing()
-  var index = 0
+  var walletAccounts: seq[WalletAccountDto]
   for account in kpForProcessing.getAccountsModel().getItems():
-    if not controller.addWalletAccount(name = account.getName(), 
-      keyPairName = kpForProcessing.getName(),
-      address = account.getAddress(), 
-      path = account.getPath(), 
-      lastUsedDerivationIndex = index,
-      rootWalletMasterKey = kpForProcessing.getDerivedFrom(), 
-      publicKey = account.getPubKey(), 
-      keyUid = kpForProcessing.getKeyUid(), 
-      accountType = SEED,
-      color = account.getColor(), 
-      emoji = account.getEmoji()):
-      return false
-    index.inc
-  return true
+    walletAccounts.add(WalletAccountDto(
+      address: account.getAddress(),
+      keyUid: kpForProcessing.getKeyUid(),
+      publicKey: account.getPubKey(),
+      walletType: SEED, 
+      path: account.getPath(), 
+      name: account.getName(),
+      color: account.getColor(), 
+      emoji: account.getEmoji()
+    ))
+  return controller.addNewSeedPhraseKeypair(
+    seedPhrase = "",
+    keyUid = kpForProcessing.getKeyUid(), 
+    keypairName = kpForProcessing.getName(), 
+    rootWalletMasterKey = kpForProcessing.getDerivedFrom(),
+    accounts = walletAccounts
+  )
 
 proc doMigration(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
   let kpForProcessing = controller.getKeyPairForProcessing()
@@ -67,7 +70,7 @@ proc doMigration(self: CreatingAccountNewSeedPhraseState, controller: Controller
     keycardLocked: false,
     accountsAddresses: self.addresses,
     keyUid: kpForProcessing.getKeyUid())
-  controller.addKeycardOrAccounts(kpDto)
+  controller.addKeycardOrAccounts(kpDto, accountsComingFromKeycard = true)
 
 proc runStoreMetadataFlow(self: CreatingAccountNewSeedPhraseState, controller: Controller) =
   let kpForProcessing = controller.getKeyPairForProcessing()

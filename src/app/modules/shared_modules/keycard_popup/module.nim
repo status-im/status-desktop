@@ -394,7 +394,7 @@ method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEv
 
 proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
+  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
     excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
@@ -416,7 +416,7 @@ method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
 
 method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardUid = "") =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
+  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
     excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
@@ -447,7 +447,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycard:
-    let items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
+    let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
       excludeAlreadyMigratedPairs = true, excludePrivateKeyKeypairs = false)
     self.view.createKeyPairModel(items)
     self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))

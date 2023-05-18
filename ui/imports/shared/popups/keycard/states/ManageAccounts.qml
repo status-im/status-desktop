@@ -261,7 +261,7 @@ Item {
             tagClickable: true
             tagDisplayRemoveAccountButton: root.sharedKeycardModule.currentState.flowType !== Constants.keycardSharedFlow.importFromKeycard
             keyPairType: root.sharedKeycardModule.keyPairForProcessing.pairType
-            keyPairPubKey: root.sharedKeycardModule.keyPairForProcessing.pubKey
+            keyPairKeyUid: root.sharedKeycardModule.keyPairForProcessing.keyUid
             keyPairName: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
                              root.sharedKeycardModule.keyPairHelper.name
                            : root.sharedKeycardModule.keyPairForProcessing.name

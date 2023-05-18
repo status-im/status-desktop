@@ -59,7 +59,9 @@ QtObject:
       (signal.signalType == SignalType.WakuFetchingBackupProgress or
       signal.signalType == SignalType.WakuBackedUpProfile or
       signal.signalType == SignalType.WakuBackedUpSettings or
-      signal.signalType == SignalType.WakuBackedUpKeycards):
+      signal.signalType == SignalType.WakuBackedUpKeypair or
+      signal.signalType == SignalType.WakuBackedUpKeycards or
+      signal.signalType == SignalType.WakuBackedUpWatchOnlyAccount):
         return
 
     self.events.emit(signal.signalType.event, signal)
@@ -116,8 +118,9 @@ QtObject:
       of SignalType.WakuFetchingBackupProgress: WakuFetchingBackupProgressSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpProfile: WakuBackedUpProfileSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpSettings: WakuBackedUpSettingsSignal.fromEvent(jsonSignal)
-      of SignalType.WakuBackedUpWalletAccount: WakuBackedUpWalletAccountsSignal.fromEvent(jsonSignal)
+      of SignalType.WakuBackedUpKeypair: WakuBackedUpKeypairSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpKeycards: WakuBackedUpKeycardsSignal.fromEvent(jsonSignal)
+      of SignalType.WakuBackedUpWatchOnlyAccount: WakuBackedUpWatchOnlyAccountSignal.fromEvent(jsonSignal)
       # pairing
       of SignalType.LocalPairing: LocalPairingSignal.fromEvent(jsonSignal)
       else: Signal()

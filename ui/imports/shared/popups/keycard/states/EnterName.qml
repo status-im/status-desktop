@@ -104,7 +104,7 @@ Item {
         KeyPairItem {
             Layout.preferredWidth: parent.width
             keyPairType: root.sharedKeycardModule.keyPairForProcessing.pairType
-            keyPairPubKey: root.sharedKeycardModule.keyPairForProcessing.pubKey
+            keyPairKeyUid: root.sharedKeycardModule.keyPairForProcessing.keyUid
             keyPairName: root.sharedKeycardModule.keyPairForProcessing.name
             keyPairIcon: root.sharedKeycardModule.keyPairForProcessing.icon
             keyPairImage: root.sharedKeycardModule.keyPairForProcessing.image

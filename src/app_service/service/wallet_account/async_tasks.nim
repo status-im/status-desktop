@@ -93,6 +93,7 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 type
   AddKeycardOrAddAccountsIfKeycardIsAddedTaskArg* = ref object of QObjectTaskArg
     keycard: KeycardDto
+    accountsComingFromKeycard: bool
 
 const addKeycardOrAddAccountsIfKeycardIsAddedTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AddKeycardOrAddAccountsIfKeycardIsAddedTaskArg](argEncoded)
@@ -101,7 +102,8 @@ const addKeycardOrAddAccountsIfKeycardIsAddedTask*: Task = proc(argEncoded: stri
       arg.keycard.keycardUid,
       arg.keycard.keycardName,
       arg.keycard.keyUid,
-      arg.keycard.accountsAddresses
+      arg.keycard.accountsAddresses,
+      arg.accountsComingFromKeycard
       )
     let success = responseHasNoErrors("addKeycardOrAddAccountsIfKeycardIsAdded", response)
     let responseJson = %*{

@@ -15,11 +15,12 @@ import shared.stores 1.0 as SharedStore
 Rectangle {
     id: root
 
-    property string keyPairPubKey: ""
+    property string keyPairKeyUid: ""
     property string keyPairName: ""
     property string keyPairIcon: ""
     property string keyPairImage: ""
     property string keyPairDerivedFrom: ""
+    property bool keyPairCardLocked: false
     property var keyPairAccounts
 
     color: Theme.palette.baseColor2
@@ -38,14 +39,17 @@ Rectangle {
             title: root.keyPairName
 
             asset {
-                width: 24
-                height: 24
-                name: root.keyPairIcon
-                color: Utils.colorForPubkey(root.keyPairPubKey)
+                width: root.keyPairIcon? 24 : 40
+                height: root.keyPairIcon? 24 : 40
+                name: root.keyPairImage? root.keyPairImage : root.keyPairIcon
+                isImage: !!root.keyPairImage
+                color: root.keyPairKeyUid === userProfile.keyUid?
+                           Utils.colorForPubkey(userProfile.pubKey) :
+                           root.keyPairCardLocked? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
                 letterSize: Math.max(4, asset.width / 2.4)
                 charactersLen: 2
-                isLetterIdenticon: false
-                bgColor: Theme.palette.primaryColor3
+                isLetterIdenticon: !root.keyPairIcon && !asset.name.toString()
+                bgColor: root.keyPairCardLocked? Theme.palette.dangerColor3 : Theme.palette.primaryColor3
             }
         }
 

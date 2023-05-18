@@ -9,6 +9,7 @@ type WakuBackedUpKeycardsSignal* = ref object of Signal
 proc fromEvent*(T: type WakuBackedUpKeycardsSignal, event: JsonNode): WakuBackedUpKeycardsSignal =
   result = WakuBackedUpKeycardsSignal()
 
-  if event["event"]{"backedUpKeycards"} != nil:
-    for jsonKc in event["event"]["backedUpKeycards"]:
+  let e = event["event"]
+  if e.contains("backedUpKeycards"):
+    for jsonKc in e["backedUpKeycards"]:
       result.keycards.add(jsonKc.toKeycardDto())
