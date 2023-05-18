@@ -16,6 +16,7 @@ QtObject {
     signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
     signal deploymentStateChanged(string communityId, int status, string url)
     signal selfDestructFeeUpdated(string value) // TO BE REMOVED
+    signal burnFeeUpdated(string value) // TO BE REMOVED
 
     // Minting tokens:
     function deployCollectible(communityId, accountAddress, name, symbol, description, supply,
@@ -42,6 +43,7 @@ QtObject {
         communityTokensModuleInst.computeDeployFee(chainId, accountAddress)
     }
 
+    // Remotely destruct:
     function computeSelfDestructFee(chainId) {
         // TODO BACKEND
         root.selfDestructFeeUpdated("0,0005 ETH")
@@ -52,6 +54,18 @@ QtObject {
         // TODO BACKEND
         // selfDestructTokensList is a js array with properties: `walletAddress` and `amount`
         console.warn("TODO: Remote self-destruct collectible backend")
+    }
+
+    // Burn:
+    function computeBurnFee(chainId) {
+        // TODO BACKEND
+        root.burnFeeUpdated("0,0010 ETH")
+        console.warn("TODO: Compute burn fee backend")
+    }
+
+    function burnCollectibles(tokenKey,burnAmount) {
+        // TODO BACKEND
+        console.warn("TODO: Burn collectible backend")
     }
 
     // Airdrop tokens:
