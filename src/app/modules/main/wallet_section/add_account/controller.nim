@@ -117,8 +117,11 @@ proc closeAddAccountPopup*(self: Controller) =
 proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
 
-proc getWalletAccounts*(self: Controller): seq[WalletAccountDto] =
-  return self.walletAccountService.fetchAccounts()
+proc getKeypairs*(self: Controller): seq[KeypairDto] =
+  return self.walletAccountService.getKeypairs()
+
+proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
+  return self.walletAccountService.getKeypairByKeyUid(keyUid)
 
 proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
   return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
@@ -144,44 +147,44 @@ proc fetchDetailsForAddresses*(self: Controller, addresses: seq[string]) =
   self.uniqueFetchingDetailsId = $now().toTime().toUnix()
   self.walletAccountService.fetchDetailsForAddresses(self.uniqueFetchingDetailsId, addresses)
 
-proc addWalletAccount*(self: Controller, createKeystoreFile, doPasswordHashing: bool, name, keyPairName, address, path: string, 
-  lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): bool =
+proc addWalletAccount*(self: Controller, createKeystoreFile, doPasswordHashing: bool, name, address, path, publicKey, 
+  keyUid, accountType, color, emoji: string): bool =
   var password: string
   if createKeystoreFile:
     password = self.getPassword()
     if password.len == 0:
       info "cannot create keystore file if provided password is empty", name=name, address=address
       return false
-  let err = self.walletAccountService.addWalletAccount(password, doPasswordHashing, name, keyPairName, address, path, 
-    lastUsedDerivationIndex, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji)
+  let err = self.walletAccountService.addWalletAccount(password, doPasswordHashing, name, address, path, publicKey, 
+    keyUid, accountType, color, emoji)
   if err.len > 0:
     info "adding wallet account failed", name=name, address=address
     return false
   return true
 
-proc addNewPrivateKeyAccount*(self: Controller, privateKey: string, doPasswordHashing: bool, name, keyPairName, 
-  address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): bool =
-  let password = self.getPassword()
+proc addNewPrivateKeyKeypair*(self: Controller, privateKey: string, doPasswordHashing: bool, keyUid, keypairName, 
+  rootWalletMasterKey: string, account: WalletAccountDto): bool =
+  let password = self.getPassword() # password must not be empty in this context
   if password.len == 0:
-    info "cannot create keystore file if provided password is empty", name=name, address=address
+    info "cannot create keystore file if provided password is empty", keypairName=keypairName, keyUid=keyUid
     return false
-  let err = self.walletAccountService.addNewPrivateKeyAccount(privateKey, password, doPasswordHashing, name, keyPairName, address, path, 
-    lastUsedDerivationIndex, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji)
+  let err = self.walletAccountService.addNewPrivateKeyKeypair(privateKey, password, doPasswordHashing, keyUid, 
+    keyPairName, rootWalletMasterKey, account)
   if err.len > 0:
-    info "adding new wallet account from private key failed", name=name, address=address
+    info "adding new keypair from private key failed", keypairName=keypairName, keyUid=keyUid
     return false
   return true
 
-proc addNewSeedPhraseAccount*(self: Controller, seedPhrase: string, doPasswordHashing: bool, name, keyPairName, 
-  address, path: string, lastUsedDerivationIndex: int, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji: string): bool =
-  let password = self.getPassword()
+proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase: string, doPasswordHashing: bool, keyUid, keypairName, 
+  rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): bool =
+  let password = self.getPassword() # password must not be empty in this context
   if password.len == 0:
-    info "cannot create keystore file if provided password is empty", name=name, address=address
+    info "cannot create keystore file if provided password is empty", keypairName=keypairName, keyUid=keyUid
     return false
-  let err = self.walletAccountService.addNewSeedPhraseAccount(seedPhrase, password, doPasswordHashing, name, keyPairName, address, path, 
-    lastUsedDerivationIndex, rootWalletMasterKey, publicKey, keyUid, accountType, color, emoji)
+  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password, doPasswordHashing, keyUid, 
+    keypairName, rootWalletMasterKey, accounts)
   if err.len > 0:
-    info "adding new wallet account from seed phrase failed", name=name, address=address
+    info "adding new keypair from seed phrase failed", keypairName=keypairName, keyUid=keyUid
     return false
   return true
 

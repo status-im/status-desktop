@@ -33,8 +33,10 @@ const FetchingFromWakuCommunities = "communities"
 const FetchingFromWakuCommunitiesIcon = "communities"
 const FetchingFromWakuSettings = "settings"
 const FetchingFromWakuSettingsIcon = "settings"
-const FetchingFromWakuKeycards = "keycards"
-const FetchingFromWakuKeycardIcon = "keycard"
+const FetchingFromWakuKeypairs = "keypairs"
+const FetchingFromWakuKeypairsIcon = "wallet"
+const FetchingFromWakuWatchOnlyAccounts = "watchOnlyAccounts"
+const FetchingFromWakuWatchOnlyAccountsIcon = "wallet"
 
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
@@ -323,7 +325,9 @@ method checkFetchingStatusAndProceedWithAppLoading*[T](self: Module[T]) =
     return
   self.view.setCurrentStartupState(newProfileFetchingAnnouncementState(currStateObj.flowType(), nil))
 
-method onFetchingFromWakuMessageReceived*[T](self: Module[T], section: string, totalMessages: int, receivedMessageAtPosition: int) =
+method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string, 
+  totalMessages: int, receivedMessageAtPosition: int) =
+  self.view.fetchingDataModel().checkLastKnownClockAndResetTotalsIfNeeded(backedUpMsgClock)
   if self.view.fetchingDataModel().allMessagesLoaded():
     return
   let currStateObj = self.view.currentStartupStateObj()
@@ -348,7 +352,8 @@ proc prepareAndInitFetchingData[T](self: Module[T]) =
     (FetchingFromWakuContacts, FetchingFromWakuContactsIcon),
     (FetchingFromWakuCommunities, FetchingFromWakuCommunitiesIcon),
     (FetchingFromWakuSettings, FetchingFromWakuSettingsIcon),
-    (FetchingFromWakuKeycards, FetchingFromWakuKeycardIcon)
+    (FetchingFromWakuKeypairs, FetchingFromWakuKeypairsIcon),
+    (FetchingFromWakuWatchOnlyAccounts, FetchingFromWakuWatchOnlyAccountsIcon)
   ]
   self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
 

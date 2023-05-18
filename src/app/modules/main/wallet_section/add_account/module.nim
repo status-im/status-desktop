@@ -49,6 +49,7 @@ type
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
     authenticationReason: AuthenticationReason
+    fetchingAddressesIsInProgress: bool
 
 ## Forward declaration
 proc doAddAccount[T](self: Module[T])
@@ -67,6 +68,7 @@ proc newModule*[T](delegate: T,
   result.viewVariant = newQVariant(result.view)  
   result.controller = controller.newController(result, events, accountsService, walletAccountService, keycardService)
   result.authenticationReason = AuthenticationReason.AddingAccount
+  result.fetchingAddressesIsInProgress = false
   
 method delete*[T](self: Module[T]) =
   self.view.delete
@@ -78,7 +80,7 @@ method loadForAddingAccount*[T](self: Module[T], addingWatchOnlyAccount: bool) =
   self.view.setEditMode(false)
   self.view.setCurrentState(newMainState(nil))
 
-  var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
+  var items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
     excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = true)
   if items.len == 0:
     error "list of identified keypairs is empty, but it must have at least a profile keypair"
@@ -112,6 +114,7 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
   let accountDto = self.controller.getWalletAccount(address)
   var addressDetailsItem = newDerivedAddressItem(order = 0, 
     address = accountDto.address, 
+    publicKey = accountDto.publicKey,
     path = accountDto.path, 
     alreadyCreated = true,
     hasActivity = false,
@@ -132,7 +135,7 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
     self.view.setSelectedOrigin(item)
     self.view.setWatchOnlyAccAddress(addressDetailsItem)
   else:
-    var items = keypairs.buildKeyPairsList(self.controller.getWalletAccounts(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
+    var items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
       excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
     if items.len == 0:
       error "list of identified keypairs is empty, but it must have at least a profile keypair"
@@ -254,14 +257,17 @@ method onQuaternaryActionClicked*[T](self: Module[T]) =
   debug "waa_quaternary_action - set state", setCurrState=nextState.stateType()
 
 proc isKeyPairAlreadyAdded[T](self: Module[T], keyUid: string): bool =
-  return self.controller.getWalletAccounts().filter(x => x.keyUid == keyUid).len > 0
+  let keypair = self.controller.getKeypairByKeyUid(keyUid)
+  return not keypair.isNil
 
 proc getNumOfAddressesToGenerate[T](self: Module[T]): int =
   let selectedOrigin = self.view.getSelectedOrigin()
   if selectedOrigin.getMigratedToKeycard():
-    let walletAccounts = self.controller.getWalletAccounts()
-    let numOfAlreadyCreated = walletAccounts.filter(x => x.keyUid == selectedOrigin.getKeyUid()).len
-    let final = NumOfGeneratedAddressesKeycard + numOfAlreadyCreated # In case of a Keycard keypair always offer 10 available addresses
+    var indexOfLastDefaultCreatedAcc = 0
+    let keypair = self.controller.getKeypairByKeyUid(selectedOrigin.getKeyUid())
+    if not keypair.isNil:
+      indexOfLastDefaultCreatedAcc = keypair.lastUsedDerivationIndex
+    let final = NumOfGeneratedAddressesKeycard + indexOfLastDefaultCreatedAcc # In case of a Keycard keypair always offer 10 addresses more then the last used derivation index
     if final < MaxNumOfGeneratedAddresses:
       return final
     return MaxNumOfGeneratedAddresses
@@ -272,6 +278,9 @@ proc fetchAddressForDerivationPath[T](self: Module[T]) =
   let derivedAddress = self.view.getSelectedDerivedAddress()
   if derivationPath == derivedAddress.getPath() and derivedAddress.getAddress().len > 0:
     return
+  if self.fetchingAddressesIsInProgress:
+    return
+  self.fetchingAddressesIsInProgress = true
   self.view.setScanningForActivityIsOngoing(false)
   self.view.derivedAddressModel().reset()
   self.view.setSelectedDerivedAddress(newDerivedAddressItem())
@@ -348,19 +357,16 @@ method changeDerivationPath*[T](self: Module[T], derivationPath: string) =
   self.fetchAddressForDerivationPath()
 
 proc resolveSuggestedPathForSelectedOrigin[T](self: Module[T]): tuple[suggestedPath: string, usedIndex: int] =
-  let selectedOrigin = self.view.getSelectedOrigin()
   var nextIndex = 0
-  if self.isKeyPairAlreadyAdded(selectedOrigin.getKeyUid()):
-    nextIndex = selectedOrigin.getLastUsedDerivationIndex() + 1
-  var suggestedPath = account_constants.PATH_WALLET_ROOT & "/" & $nextIndex
-  let walletAccounts = self.controller.getWalletAccounts()
-  if walletAccounts.filter(x => x.keyUid == selectedOrigin.getKeyUid() and x.path == suggestedPath).len == 0:
+  let selectedOrigin = self.view.getSelectedOrigin()
+  let keypair = self.controller.getKeypairByKeyUid(selectedOrigin.getKeyUid())
+  if keypair.isNil:
+    let suggestedPath = account_constants.PATH_WALLET_ROOT & "/" & $nextIndex
     return (suggestedPath, nextIndex)
-
-  nextIndex.inc
+  nextIndex = selectedOrigin.getLastUsedDerivationIndex() + 1
   for i in nextIndex ..< self.getNumOfAddressesToGenerate():
-    suggestedPath = account_constants.PATH_WALLET_ROOT & "/" & $i 
-    if walletAccounts.filter(x => x.keyUid == selectedOrigin.getKeyUid() and x.path == suggestedPath).len == 0:
+    let suggestedPath = account_constants.PATH_WALLET_ROOT & "/" & $i 
+    if keypair.accounts.filter(x => x.path == suggestedPath).len == 0:
       return (suggestedPath, i)
   error "we couldn't find available path for new account"
 
@@ -425,7 +431,7 @@ method changePrivateKey*[T](self: Module[T], privateKey: string) =
     error "unable to resolve an address from the provided private key"
     return
   self.view.setScanningForActivityIsOngoing(true)
-  self.view.setPrivateKeyAccAddress(newDerivedAddressItem(order = 0, address = genAccDto.address))
+  self.view.setPrivateKeyAccAddress(newDerivedAddressItem(order = 0, address = genAccDto.address, publicKey = genAccDto.publicKey))
   self.controller.fetchDetailsForAddresses(@[genAccDto.address])
 
 method changeSeedPhrase*[T](self: Module[T], seedPhrase: string) =
@@ -442,6 +448,8 @@ method validSeedPhrase*[T](self: Module[T], seedPhrase: string): bool =
   return not self.isKeyPairAlreadyAdded(keyUid)
 
 proc setDerivedAddresses[T](self: Module[T], derivedAddresses: seq[DerivedAddressDto]) =
+  defer: self.fetchingAddressesIsInProgress = false
+  
   var items: seq[DerivedAddressItem]
   let derivationPath = self.view.getDerivationPath()
   if derivationPath.endsWith("/"):
@@ -449,15 +457,18 @@ proc setDerivedAddresses[T](self: Module[T], derivedAddresses: seq[DerivedAddres
       let path = derivationPath & $i
       for d in derivedAddresses:
         if d.path == path:
-          items.add(newDerivedAddressItem(order = i, address = d.address, path = d.path, alreadyCreated = d.alreadyCreated))
+          items.add(newDerivedAddressItem(order = i, address = d.address, publicKey = d.publicKey, path = d.path, alreadyCreated = d.alreadyCreated))
           break
     self.view.derivedAddressModel().setItems(items)
   else:
     for d in derivedAddresses:
       if d.path == derivationPath:
-        items.add(newDerivedAddressItem(order = 0, address = d.address, path = d.path, alreadyCreated = d.alreadyCreated))
+        items.add(newDerivedAddressItem(order = 0, address = d.address, publicKey = d.publicKey, path = d.path, alreadyCreated = d.alreadyCreated))
         break
     self.view.derivedAddressModel().setItems(items)
+    if items.len == 0:
+      info "couldn't resolve an address for the set path"
+      return      
     self.changeSelectedDerivedAddress(items[0].getAddress())
 
 method onDerivedAddressesFetched*[T](self: Module[T], derivedAddresses: seq[DerivedAddressDto], error: string) =
@@ -485,6 +496,7 @@ method onAddressesFromNotImportedMnemonicFetched*[T](self: Module[T], derivation
   for path, data in derivations.pairs:
     derivedAddresses.add(DerivedAddressDto(
       address: data.address,
+      publicKey: data.publicKey,
       path: path,
       hasActivity: false,
       alreadyCreated: false)
@@ -506,6 +518,7 @@ method onDerivedAddressesFromKeycardFetched*[T](self: Module[T], keycardFlowType
   for i in 0 ..< paths.len:
     # we're safe to access `generatedWalletAccounts` by index (read comment in `startExportPublicFlow`)
     derivedAddresses.add(DerivedAddressDto(address: keycardEvent.generatedWalletAccounts[i].address,
+      publicKey: keycardEvent.generatedWalletAccounts[i].publicKey,
       path: paths[i], hasActivity: false, alreadyCreated: false))
 
   if selectedOrigin.getPairType() != KeyPairType.Profile.int and
@@ -531,6 +544,7 @@ method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[Derive
   if derivedAddresses.len == 1:
     var addressDetailsItem = newDerivedAddressItem(order = 0, 
       address = derivedAddresses[0].address, 
+      publicKey = derivedAddresses[0].publicKey, 
       path = derivedAddresses[0].path, 
       alreadyCreated = derivedAddresses[0].alreadyCreated,
       hasActivity = derivedAddresses[0].hasActivity,
@@ -548,6 +562,7 @@ method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[Derive
           return
       let selectedAddress = self.view.getSelectedDerivedAddress()
       if cmpIgnoreCase(selectedAddress.getAddress(), addressDetailsItem.getAddress()) == 0:
+        addressDetailsItem.setPublicKey(selectedAddress.getPublicKey())
         addressDetailsItem.setPath(selectedAddress.getPath())
         self.view.setSelectedDerivedAddress(addressDetailsItem)
       self.view.derivedAddressModel().updateDetailsForAddressAndBubbleItToTop(addressDetailsItem.getAddress(), addressDetailsItem.getHasActivity())
@@ -569,16 +584,14 @@ proc doAddAccount[T](self: Module[T]) =
   let 
     selectedOrigin = self.view.getSelectedOrigin()
     selectedAddrItem = self.view.getSelectedDerivedAddress()
-    (suggestedPath, usedIndex) = self.resolveSuggestedPathForSelectedOrigin()
   var
     addingNewKeyPair = false
     accountType: string
-    keyPairName = selectedOrigin.getName()
+    keypairName = selectedOrigin.getName()
     address = selectedAddrItem.getAddress()
     path = selectedAddrItem.getPath()
-    lastUsedDerivationIndex = if selectedAddrItem.getPath() == suggestedPath: usedIndex else: selectedOrigin.getLastUsedDerivationIndex()
+    publicKey = selectedAddrItem.getPublicKey()
     rootWalletMasterKey = selectedOrigin.getDerivedFrom()
-    publicKey = selectedOrigin.getPubKey()
     keyUid = selectedOrigin.getKeyUid()
     createKeystoreFile = not selectedOrigin.getMigratedToKeycard()
     doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser()
@@ -593,7 +606,6 @@ proc doAddAccount[T](self: Module[T]) =
     accountType = account_constants.KEY
     address = genAcc.address
     path = "m" # from private key an address for path `m` is generate (corresponds to the master key address)
-    lastUsedDerivationIndex = 0
     rootWalletMasterKey = ""
     publicKey = genAcc.publicKey
     keyUid = genAcc.keyUid
@@ -602,10 +614,9 @@ proc doAddAccount[T](self: Module[T]) =
     accountType = account_constants.WATCH
     createKeystoreFile = false
     doPasswordHashing = false
-    keyPairName = ""
+    keypairName = ""
     address = self.view.getWatchOnlyAccAddress().getAddress()
     path = ""
-    lastUsedDerivationIndex = 0
     rootWalletMasterKey = ""
     publicKey = ""
     keyUid = ""
@@ -613,37 +624,43 @@ proc doAddAccount[T](self: Module[T]) =
   var success = false
   if addingNewKeyPair:
     if selectedOrigin.getPairType() == KeyPairType.PrivateKeyImport.int:
-      success = self.controller.addNewPrivateKeyAccount(
+      success = self.controller.addNewPrivateKeyKeypair(
         privateKey = self.controller.getGeneratedAccount().privateKey,
         doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser(),
-        name = self.view.getAccountName(), 
-        keyPairName = keyPairName, 
-        address = address, 
-        path = path,
-        lastUsedDerivationIndex = lastUsedDerivationIndex, 
-        rootWalletMasterKey = rootWalletMasterKey,
-        publicKey = publicKey, 
         keyUid = keyUid, 
-        accountType = accountType, 
-        color = self.view.getSelectedColor(), 
-        emoji = self.view.getSelectedEmoji())
+        keypairName = keypairName, 
+        rootWalletMasterKey = rootWalletMasterKey,
+        account = WalletAccountDto(
+            address: address,
+            keyUid: keyUid,
+            publicKey: publicKey,
+            walletType: accountType, 
+            path: path, 
+            name: self.view.getAccountName(),
+            color: self.view.getSelectedColor(), 
+            emoji: self.view.getSelectedEmoji()
+          )
+        )
       if not success:
         error "failed to store new private key account", address=selectedAddrItem.getAddress()
     elif selectedOrigin.getPairType() == KeyPairType.SeedImport.int:
-      success = self.controller.addNewSeedPhraseAccount(
+      success = self.controller.addNewSeedPhraseKeypair(
         seedPhrase = self.controller.getSeedPhrase(),
         doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser(),
-        name = self.view.getAccountName(), 
-        keyPairName = keyPairName, 
-        address = address, 
-        path = path,
-        lastUsedDerivationIndex = lastUsedDerivationIndex, 
-        rootWalletMasterKey = rootWalletMasterKey,
-        publicKey = publicKey, 
         keyUid = keyUid, 
-        accountType = accountType, 
-        color = self.view.getSelectedColor(), 
-        emoji = self.view.getSelectedEmoji())
+        keypairName = keypairName, 
+        rootWalletMasterKey = rootWalletMasterKey,
+        accounts = @[WalletAccountDto(
+            address: address,
+            keyUid: keyUid,
+            publicKey: publicKey,
+            walletType: accountType, 
+            path: path, 
+            name: self.view.getAccountName(),
+            color: self.view.getSelectedColor(), 
+            emoji: self.view.getSelectedEmoji()
+          )]
+        )
       if not success:
         error "failed to store new seed phrase account", address=selectedAddrItem.getAddress()
   else:
@@ -651,11 +668,8 @@ proc doAddAccount[T](self: Module[T]) =
       createKeystoreFile = createKeystoreFile,
       doPasswordHashing = doPasswordHashing,
       name = self.view.getAccountName(), 
-      keyPairName = keyPairName, 
       address = address, 
       path = path,
-      lastUsedDerivationIndex = lastUsedDerivationIndex, 
-      rootWalletMasterKey = rootWalletMasterKey,
       publicKey = publicKey, 
       keyUid = keyUid, 
       accountType = accountType, 

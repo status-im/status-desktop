@@ -21,7 +21,7 @@ Item {
         id: keyPairForProcessingComponent
         KeyPairItem {
             keyPairType:  root.sharedKeycardModule.keyPairForProcessing.pairType
-            keyPairPubKey: root.sharedKeycardModule.keyPairForProcessing.pubKey
+            keyPairKeyUid: root.sharedKeycardModule.keyPairForProcessing.keyUid
             keyPairName: root.sharedKeycardModule.keyPairForProcessing.name
             keyPairIcon: root.sharedKeycardModule.keyPairForProcessing.icon
             keyPairImage: root.sharedKeycardModule.keyPairForProcessing.image
@@ -34,12 +34,13 @@ Item {
     Component {
         id: unknownKeyPairCompontnt
         KeyPairUnknownItem {
-            keyPairPubKey: root.sharedKeycardModule.keyPairForProcessing.pubKey
+            keyPairKeyUid: root.sharedKeycardModule.keyPairForProcessing.keyUid
             keyPairName: root.sharedKeycardModule.keyPairForProcessing.name
             keyPairIcon: root.sharedKeycardModule.keyPairForProcessing.icon
             keyPairImage: root.sharedKeycardModule.keyPairForProcessing.image
             keyPairDerivedFrom: root.sharedKeycardModule.keyPairForProcessing.derivedFrom
             keyPairAccounts: root.sharedKeycardModule.keyPairForProcessing.accounts
+            keyPairCardLocked: root.sharedKeycardModule.keyPairForProcessing.locked
         }
     }
 

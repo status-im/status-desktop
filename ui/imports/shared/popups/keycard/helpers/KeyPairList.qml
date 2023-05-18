@@ -43,7 +43,7 @@ Item {
             canBeSelected: !model.keyPair.containsPathOutOfTheDefaultStatusDerivationTree()
 
             keyPairType: model.keyPair.pairType
-            keyPairPubKey: model.keyPair.pubKey
+            keyPairKeyUid: model.keyPair.keyUid
             keyPairName: model.keyPair.name
             keyPairIcon: model.keyPair.icon
             keyPairImage: model.keyPair.image

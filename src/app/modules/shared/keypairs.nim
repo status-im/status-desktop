@@ -3,14 +3,14 @@ import strutils, sequtils, sugar, chronicles
 import ../shared_models/[keypair_item]
 import ../../global/global_singleton
 
-import ../../../app_service/service/wallet_account/[dto, keycard_dto]
+import ../../../app_service/service/wallet_account/[keypair_dto, keycard_dto]
 
 export keypair_item
 
 logScope:
   topics = "shared-keypairs"
 
-proc buildKeyPairsList*(allWalletAccounts: seq[WalletAccountDto], allMigratedKeypairs: seq[KeycardDto], 
+proc buildKeyPairsList*(keypairs: seq[KeypairDto], allMigratedKeypairs: seq[KeycardDto], 
   excludeAlreadyMigratedPairs: bool, excludePrivateKeyKeypairs: bool): seq[KeyPairItem] =
   let keyPairMigrated = proc(keyUid: string): bool =
     result = false
@@ -18,63 +18,72 @@ proc buildKeyPairsList*(allWalletAccounts: seq[WalletAccountDto], allMigratedKey
       if kp.keyUid == keyUid:
         return true
 
-  let containsItemWithKeyUid = proc(items: seq[KeyPairItem], keyUid: string): bool =
-    return items.any(x => cmpIgnoreCase(x.getKeyUid(), keyUid) == 0)
-
   var items: seq[KeyPairItem]
-  for a in allWalletAccounts:
-    let kpMigrated = keyPairMigrated(a.keyUid)
-    if a.isChat or a.walletType == WalletTypeWatch or (excludeAlreadyMigratedPairs and kpMigrated):
+  for kp in keypairs:
+    if kp.accounts.len == 0:
+      ## we should never be here
+      error "there must not be any keypair without accounts", keyUid=kp.keyUid
+      return
+    let publicKey = kp.accounts[0].publicKey # in case of other but the profile keypair we take public key of first account as keypair's public key
+    let kpMigrated = keyPairMigrated(kp.keyUid)
+    if excludeAlreadyMigratedPairs and kpMigrated:
       continue
-    if a.walletType == WalletTypeDefaultStatusAccount:
-      var item = newKeyPairItem(keyUid = a.keyUid,
-        pubKey = a.publicKey,
+    if kp.keypairType == KeypairTypeProfile:
+      var item = newKeyPairItem(keyUid = kp.keyUid,
+        pubKey = singletonInstance.userProfile.getPubKey(),
         locked = false,
         name = singletonInstance.userProfile.getName(),
         image = singletonInstance.userProfile.getIcon(),
         icon = "",
         pairType = KeyPairType.Profile,
-        derivedFrom = a.derivedfrom,
-        lastUsedDerivationIndex = a.lastUsedDerivationIndex,
+        derivedFrom = kp.derivedFrom,
+        lastUsedDerivationIndex = kp.lastUsedDerivationIndex,
         migratedToKeycard = kpMigrated)
-      for ga in allWalletAccounts:
-        if cmpIgnoreCase(ga.derivedfrom, a.derivedfrom) != 0:
+      for acc in kp.accounts:
+        if acc.isChat:
           continue
         var icon = ""
-        if a.walletType == WalletTypeDefaultStatusAccount:
+        if acc.emoji.len == 0:
           icon = "wallet"
-        item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon, balance = 0.0))
+        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.color, icon, balance = 0.0))
       items.insert(item, 0) # Status Account must be at first place
       continue
-    if a.walletType == WalletTypeSeed and not containsItemWithKeyUid(items, a.keyUid):
-      var item = newKeyPairItem(keyUid = a.keyUid,
-        pubKey = a.publicKey,
+    if kp.keypairType == KeypairTypeSeed:
+      var item = newKeyPairItem(keyUid = kp.keyUid,
+        pubKey = publicKey,
         locked = false,
-        name = a.keypairName,
+        name = kp.name,
         image = "",
-        icon = if keyPairMigrated(a.keyUid): "keycard" else: "key_pair_seed_phrase",
+        icon = if keyPairMigrated(kp.keyUid): "keycard" else: "key_pair_seed_phrase",
         pairType = KeyPairType.SeedImport,
-        derivedFrom = a.derivedfrom,
-        lastUsedDerivationIndex = a.lastUsedDerivationIndex,
+        derivedFrom = kp.derivedFrom,
+        lastUsedDerivationIndex = kp.lastUsedDerivationIndex,
         migratedToKeycard = kpMigrated)
-      for ga in allWalletAccounts:
-        if cmpIgnoreCase(ga.derivedfrom, a.derivedfrom) != 0:
-          continue
-        item.addAccount(newKeyPairAccountItem(ga.name, ga.path, ga.address, ga.publicKey, ga.emoji, ga.color, icon = "", balance = 0.0))
+      for acc in kp.accounts:
+        var icon = ""
+        if acc.emoji.len == 0:
+          icon = "wallet"
+        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.color, icon, balance = 0.0))
       items.add(item)
       continue
-    if a.walletType == WalletTypeKey and not excludePrivateKeyKeypairs and not containsItemWithKeyUid(items, a.keyUid):
-      var item = newKeyPairItem(keyUid = a.keyUid,
-        pubKey = a.publicKey,
+    if kp.keypairType == KeypairTypeKey:
+      if excludePrivateKeyKeypairs:
+        continue
+      var item = newKeyPairItem(keyUid = kp.keyUid,
+        pubKey = publicKey,
         locked = false,
-        name = a.keypairName,
+        name = kp.name,
         image = "",
-        icon = if keyPairMigrated(a.keyUid): "keycard" else: "key_pair_private_key",
+        icon = if keyPairMigrated(kp.keyUid): "keycard" else: "key_pair_private_key",
         pairType = KeyPairType.PrivateKeyImport,
-        derivedFrom = a.derivedfrom,
-        lastUsedDerivationIndex = a.lastUsedDerivationIndex,
+        derivedFrom = kp.derivedFrom,
+        lastUsedDerivationIndex = kp.lastUsedDerivationIndex,
         migratedToKeycard = kpMigrated)
-      item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.color, icon = "", balance = 0.0))
+      for acc in kp.accounts:
+        var icon = ""
+        if acc.emoji.len == 0:
+          icon = "wallet"
+        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.color, icon, balance = 0.0))
       items.add(item)
       continue
   if items.len == 0:

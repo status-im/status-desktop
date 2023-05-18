@@ -8,6 +8,10 @@ const WalletTypeSeed* = "seed"
 const WalletTypeWatch* = "watch"
 const WalletTypeKey* = "key"
 
+const AccountNonOperable* = "no" # an account is non operable it is not a keycard account and there is no keystore file for it and no keystore file for the address it is derived from
+const AccountPartiallyOperable* = "partially" # an account is partially operable if it is not a keycard account and there is created keystore file for the address it is derived from
+const AccountFullyOperable* = "fully" # an account is fully operable if it is not a keycard account and there is a keystore file for it
+
 const alwaysVisible = {
   1: @["ETH", "SNT", "DAI"],
   10: @["ETH", "SNT", "DAI"],
@@ -96,42 +100,13 @@ type
     isChat*: bool
     tokens*: seq[WalletTokenDto]
     emoji*: string
-    derivedfrom*: string
     relatedAccounts*: seq[WalletAccountDto]
     ens*: string
     assetsLoading*: bool
-    keypairName*: string
-    lastUsedDerivationIndex*: int
     hasBalanceCache*: bool
     hasMarketValuesCache*: bool
     removed*: bool # needs for synchronization
-
-proc newDto*(
-  name: string,
-  address: string,
-  path: string,
-  color: string,
-  publicKey: string,
-  walletType: string,
-  isWallet: bool,
-  isChat: bool,
-  emoji: string,
-  derivedfrom: string,
-  relatedAccounts: seq[WalletAccountDto]
-): WalletAccountDto =
-  return WalletAccountDto(
-    name: name,
-    address: address,
-    path: path,
-    color: color,
-    publicKey: publicKey,
-    walletType: walletType,
-    isWallet: isWallet,
-    isChat: isChat,
-    emoji: emoji,
-    derivedfrom: derivedfrom,
-    relatedAccounts: relatedAccounts
-  )
+    operable*: string
 
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result = WalletAccountDto()
@@ -147,10 +122,8 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("public-key", result.publicKey)
   discard jsonObj.getProp("type", result.walletType)
   discard jsonObj.getProp("emoji", result.emoji)
-  discard jsonObj.getProp("derived-from", result.derivedfrom)
-  discard jsonObj.getProp("keypair-name", result.keypairName)
-  discard jsonObj.getProp("last-used-derivation-index", result.lastUsedDerivationIndex)
   discard jsonObj.getProp("removed", result.removed)
+  discard jsonObj.getProp("operable", result.operable)
   result.assetsLoading = true
   result.hasBalanceCache = false
   result.hasMarketValuesCache = false
@@ -167,12 +140,10 @@ proc `$`*(self: WalletAccountDto): string =
     walletType: {self.walletType},
     isChat: {self.isChat},
     emoji: {self.emoji},
-    derivedfrom: {self.derivedfrom},
-    keypairName: {self.keypairName},
-    lastUsedDerivationIndex: {self.lastUsedDerivationIndex},
     hasBalanceCache: {self.hasBalanceCache},
     hasMarketValuesCache: {self.hasMarketValuesCache},
     removed: {self.removed}
+    operable: {self.operable}
     ]"""
 
 proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =

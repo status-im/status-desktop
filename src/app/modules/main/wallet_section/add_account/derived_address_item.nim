@@ -4,6 +4,7 @@ QtObject:
   type DerivedAddressItem* = ref object of QObject
     order: int
     address: string
+    publicKey: string
     path: string
     hasActivity: bool
     alreadyCreated: bool
@@ -15,6 +16,7 @@ QtObject:
   proc newDerivedAddressItem*(
     order: int = 0,
     address: string = "",
+    publicKey: string = "",
     path: string = "",
     alreadyCreated: bool = false,
     hasActivity: bool = false,
@@ -24,6 +26,7 @@ QtObject:
     result.QObject.setup
     result.order = order
     result.address = address
+    result.publicKey = publicKey
     result.path = path
     result.alreadyCreated = alreadyCreated
     result.hasActivity = hasActivity
@@ -33,6 +36,7 @@ QtObject:
     result = fmt"""DerivedAddressItem(
       order: {self.order},
       address: {self.address},
+      publicKey: {self.publicKey},
       path: {self.path},
       alreadyCreated: {self.alreadyCreated},
       hasActivity: {self.hasActivity},
@@ -60,6 +64,17 @@ QtObject:
     read = getAddress
     write = setAddress
     notify = addressChanged
+
+  proc publicKeyChanged*(self: DerivedAddressItem) {.signal.}
+  proc getPublicKey*(self: DerivedAddressItem): string {.slot.} =
+    return self.publicKey
+  proc setPublicKey*(self: DerivedAddressItem, value: string) {.slot.} =
+    self.publicKey = value
+    self.publicKeyChanged()
+  QtProperty[string] publicKey:
+    read = getPublicKey
+    write = setPublicKey
+    notify = publicKeyChanged
 
   proc pathChanged*(self: DerivedAddressItem) {.signal.}
   proc getPath*(self: DerivedAddressItem): string {.slot.} =
@@ -108,6 +123,7 @@ QtObject:
   proc setItem*(self: DerivedAddressItem, item: DerivedAddressItem) =
     self.setOrder(item.getOrder())
     self.setAddress(item.getAddress())
+    self.setPublicKey(item.getPublicKey())
     self.setPath(item.getPath())
     self.setAlreadyCreated(item.getAlreadyCreated())
     self.setHasActivity(item.getHasActivity())

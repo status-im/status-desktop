@@ -129,8 +129,8 @@ QtObject:
     self.keyPairModel.setItems(items)
     self.keyPairModelChanged()
 
-  proc setSelectedKeyPair*(self: View, publicKey: string) {.slot.} =
-    let item = self.keyPairModel.findItemByPublicKey(publicKey)
+  proc setSelectedKeyPair*(self: View, keyUid: string) {.slot.} =
+    let item = self.keyPairModel.findItemByKeyUid(keyUid)
     self.delegate.setSelectedKeyPair(item)
 
   proc getKeyPairStoredOnKeycardIsKnown*(self: View): bool {.slot.} =
