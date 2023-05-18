@@ -46,6 +46,11 @@ proc updateActivityGroupCounters*(self: Controller) =
   self.delegate.setActivityGroupCounters(counters)
 
 proc init*(self: Controller) =
+  self.events.once(chat_service.SIGNAL_CHANNEL_GROUPS_LOADED) do(e:Args):
+    # Only fectch activity center notification once channel groups are loaded,
+    # since we need the chats to associate the notifications to
+    self.activity_center_service.asyncActivityNotificationLoad()
+
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED) do(e: Args):
     let args = ActivityCenterNotificationsArgs(e)
     self.delegate.addActivityCenterNotifications(args.activityCenterNotifications)

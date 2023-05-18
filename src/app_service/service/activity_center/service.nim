@@ -119,7 +119,6 @@ QtObject:
     self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_COUNT_MAY_HAVE_CHANGED, Args())
 
   proc init*(self: Service) =
-    self.asyncActivityNotificationLoad()
     self.events.on(SignalType.Message.event) do(e: Args):
       let receivedData = MessageSignal(e)
       if (receivedData.activityCenterNotifications.len > 0):
