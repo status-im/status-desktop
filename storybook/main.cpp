@@ -58,7 +58,11 @@ int main(int argc, char *argv[])
     qmlRegisterSingletonType<CacheCleaner>(
                 "Storybook", 1, 0, "CacheCleaner", cleanerFactory);
 
+#ifdef Q_OS_WIN
+    const QUrl url(QUrl::fromLocalFile(QML_IMPORT_ROOT + QStringLiteral("/main.qml")));
+#else
     const QUrl url(QML_IMPORT_ROOT + QStringLiteral("/main.qml"));
+#endif
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)

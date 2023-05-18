@@ -282,6 +282,14 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "TransactionAddress"
+        section: "Components"
+    }
+    ListElement {
+        title: "TransactionAddressTile"
+        section: "Components"
+    }
+    ListElement {
         title: "StatusImageCropPanel"
         section: "Components"
     }
