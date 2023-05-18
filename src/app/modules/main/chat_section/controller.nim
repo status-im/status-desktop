@@ -612,7 +612,7 @@ proc inviteUsersToCommunity*(self: Controller, pubKeys: string, inviteMessage: s
 proc reorderCommunityCategories*(self: Controller, categoryId: string, position: int) =
   self.communityService.reorderCommunityCategories(self.sectionId, categoryId, position)
 
-proc reorderCommunityChat*(self: Controller, categoryId: string, chatId: string, position: int): string =
+proc reorderCommunityChat*(self: Controller, categoryId: string, chatId: string, position: int) =
   self.communityService.reorderCommunityChat(self.sectionId, categoryId, chatId, position)
 
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
