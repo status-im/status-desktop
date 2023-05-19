@@ -165,13 +165,6 @@ QtObject:
   proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
     return toSeq(self.channelGroups.values)
 
-  proc loadChannelGroups*(self: Service) =
-    try:
-      let response = status_chat.getChannelGroups()
-      self.hydrateChannelGroups(response.result)
-    except Exception as e:
-      error "error loadChannelGroups: ", errorDescription = e.msg
-
   proc loadChannelGroupById*(self: Service, channelGroupId: string) =
     try:
       let response = status_chat.getChannelGroupById(channelGroupId)
@@ -329,15 +322,14 @@ QtObject:
 
   # Community channel groups have less info because they come from community signals
   proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto, isCommunityChannelGroup: bool = false) =
-
-    var newChannelGroups = channelGroup
+    var newChannelGroup = channelGroup
     if isCommunityChannelGroup and self.channelGroups.contains(channelGroup.id):
       # We need to update missing fields in the chats seq before saving
       let newChats = channelGroup.chats.mapIt(self.updateMissingFieldsInCommunityChat(channelGroup.id, it))
-      newChannelGroups.chats = newChats
+      newChannelGroup.chats = newChats
         
-    self.channelGroups[channelGroup.id] = newChannelGroups
-    for chat in newChannelGroups.chats:
+    self.channelGroups[channelGroup.id] = newChannelGroup
+    for chat in newChannelGroup.chats:
       self.updateOrAddChat(chat)
 
   proc getChannelGroupById*(self: Service, channelGroupId: string): ChannelGroupDto =
