@@ -134,6 +134,7 @@ Rectangle {
     MouseArea {
         id: sensor
 
+        z: 1 // Gives ability to hide siblings under the MouseArea
         anchors.fill: parent
         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.NoButton

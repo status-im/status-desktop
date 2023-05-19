@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, strformat, macros
 
 import ./item
 import ../../../shared_models/currency_amount
@@ -100,6 +100,6 @@ QtObject:
 
   proc getNameByAddress*(self: Model, address: string): string =
     for item in self.items:
-      if(item.address() == address):
+      if(cmpIgnoreCase(item.address(), address) == 0):
         return item.name()
     return ""

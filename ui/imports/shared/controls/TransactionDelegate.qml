@@ -309,7 +309,7 @@ StatusListItem {
         }
         switch(root.transactionType) {
         case TransactionDelegate.TransactionType.Receive:
-            return qsTr("%1 from %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
+            return qsTr("%1 from %2 via %3").arg(transactionValue).arg(fromAddress).arg(networkName)
         case TransactionDelegate.TransactionType.Buy:
         case TransactionDelegate.TransactionType.Sell:
             return qsTr("%1 on %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)

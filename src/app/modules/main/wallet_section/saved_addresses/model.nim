@@ -97,18 +97,18 @@ QtObject:
 
   proc getNameByAddress*(self: Model, address: string): string =
     for item in self.items:
-      if(item.getAddress() == address):
+      if(cmpIgnoreCase(item.getAddress(), address) == 0):
         return item.getName()
     return ""
 
   proc getChainShortNamesForAddress*(self: Model, address: string): string =
     for item in self.items:
-      if(item.getAddress() == address):
+      if(cmpIgnoreCase(item.getAddress(), address) == 0):
         return item.getChainShortNames()
     return ""
 
   proc getEnsForAddress*(self: Model, address: string): string =
     for item in self.items:
-      if(item.getAddress() == address):
+      if(cmpIgnoreCase(item.getAddress(), address) == 0):
         return item.getEns()
     return ""
