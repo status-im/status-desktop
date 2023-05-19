@@ -17,14 +17,17 @@ _MAX_WAIT_CLOSE_APP_TIMEOUT = 20
 import traceback
 
 def verify_screen(objName: str, timeout: int=1000):
+    from drivers.SquishDriver import is_loaded_visible_and_enabled
     result = is_loaded_visible_and_enabled(objName, timeout)
     test.verify(result, f'Verifying screen for real-name {objName}')
 
 def verify_object_enabled(objName: str, timeout: int=_MIN_WAIT_OBJ_TIMEOUT, condition: bool=True):
+    from drivers.SquishDriver import is_loaded_visible_and_enabled
     result = is_loaded_visible_and_enabled(objName, timeout)
     test.verify(result[0] == condition, "Checking if object enabled")
 
 def verify_text_matching(objName: str, text: str):
+    from drivers.SquishDriver import is_text_matching
     test.verify(is_text_matching(objName, text), "Checking if text matches")
 
 def verify_text_matching_insensitive(obj, text: str):
