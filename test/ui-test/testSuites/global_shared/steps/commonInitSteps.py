@@ -4,6 +4,7 @@ import os
 
 import utils.FileManager as filesMngr
 import common.Common as common
+import configs
 
 from screens.StatusWelcomeScreen import StatusWelcomeScreen
 from screens.StatusMainScreen import StatusMainScreen
@@ -58,13 +59,12 @@ def context_init(context, testSettings, screenshot_on_fail = True):
     context.userData[_fixtures_root] = os.path.join(joined_path, "fixtures/")
 
 def a_first_time_user_lands_on(context):
-    filesMngr.erase_directory(context.userData[_status_data_folder])
-    common.start_application(context.userData[_aut_name])
+    common.start_application()
 
 def a_user_starts_the_application_with_a_specific_data_folder(context, data_folder_path):
-    filesMngr.clear_directory(context.userData["status_data_folder_path"])
-    filesMngr.copy_directory(data_folder_path, context.userData["status_data_folder_path"])
-    common.start_application(context.userData[_aut_name])
+    filesMngr.clear_directory(configs.path.STATUS_USER_DATA)
+    filesMngr.copy_directory(data_folder_path, str(configs.path.STATUS_USER_DATA))
+    common.start_application(clear_user_data=False)
 
 def a_first_time_user_lands_on_and_generates_new_key(context):
     a_first_time_user_lands_on(context)
@@ -76,8 +76,7 @@ def a_user_lands_on_and_generates_new_key(context):
     welcome_screen.generate_new_key()
 
 def a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context):
-    filesMngr.erase_directory(context.userData[_status_data_folder])
-    filesMngr.start_application(context.userData[_aut_name])
+    common.start_application()
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.agree_terms_conditions_and_navigate_to_import_seed_phrase()
 
