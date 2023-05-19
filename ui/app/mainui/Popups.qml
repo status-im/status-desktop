@@ -487,6 +487,10 @@ QtObject {
                 modality: Qt.NonModal
                 onAccepted: {
                     Utils.downloadImageByUrl(imageSource, fileUrl)
+                    destroy()
+                }
+                onRejected: {
+                    destroy()
                 }
                 Component.onCompleted: {
                     open()

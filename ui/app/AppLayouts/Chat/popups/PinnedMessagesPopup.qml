@@ -131,22 +131,21 @@ StatusDialog {
                     z: 55
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: (mouse) => {
-                        if (mouse.button === Qt.RightButton) {
-                            Global.openMenu(pinnedPopupMessageContextMenuComponent, this, {
-                                                messageId: messageItem.messageId,
-                                            })
-                            return
-                        }
-
-                        if (mouse.button === Qt.LeftButton) {
-                           if (!!root.messageToPin) {
-                               if (!radio.checked)
-                               radio.checked = true
-                           } else {
-                               d.jumpToMessage(model.id)
-                           }
-                           return
-                       }
+                                   switch (mouse.button) {
+                                       case Qt.RightButton:
+                                           Global.openMenu(pinnedPopupMessageContextMenuComponent, this, {
+                                                               messageId: messageItem.messageId,
+                                                           })
+                                           break
+                                       case Qt.LeftButton:
+                                           if (!!root.messageToPin) {
+                                               if (!radio.checked)
+                                                radio.checked = true
+                                           } else {
+                                               d.jumpToMessage(model.id)
+                                           }
+                                           break
+                                   }
                     }
                 }
 
