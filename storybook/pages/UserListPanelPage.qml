@@ -66,7 +66,6 @@ SplitView {
 
             sourceComponent: UserListPanel {
                 usersModel: model
-                messageContextMenu: null
                 label: "Some label"
             }
         }

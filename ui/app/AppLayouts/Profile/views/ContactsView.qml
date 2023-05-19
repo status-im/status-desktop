@@ -34,10 +34,11 @@ SettingsContentBase {
     }
 
     function openContextMenu(publicKey, name, icon) {
-        contactContextMenu.selectedUserPublicKey = publicKey
-        contactContextMenu.selectedUserDisplayName = name
-        contactContextMenu.selectedUserIcon = icon
-        contactContextMenu.popup()
+        Global.openMenu(contactContextMenuComponent, this, {
+                            selectedUserPublicKey: publicKey,
+                            selectedUserDisplayName: name,
+                            selectedUserIcon: icon,
+                        })
     }
 
     Item {
@@ -46,17 +47,22 @@ SettingsContentBase {
         height: (searchBox.height + contactsTabBar.height
                 + stackLayout.height + (2 * Style.current.bigPadding))
 
-        MessageContextMenuView {
-            id: contactContextMenu
-            store: ({contactsStore: root.contactsStore})
-            isProfile: true
+        Component {
+            id: contactContextMenuComponent
 
-            onOpenProfileClicked: function (pubkey) {
-                Global.openProfilePopup(pubkey, null)
-            }
+            ProfileContextMenu {
+                id: contactContextMenu
+                store: ({contactsStore: root.contactsStore})
 
-            onCreateOneToOneChat: function (communityId, chatId, ensName) {
-                root.contactsStore.joinPrivateChat(chatId)
+                onOpenProfileClicked: function (pubkey) {
+                    Global.openProfilePopup(pubkey, null)
+                }
+                onCreateOneToOneChat: function (communityId, chatId, ensName) {
+                    root.contactsStore.joinPrivateChat(chatId)
+                }
+                onClosed: {
+                    destroy()
+                }
             }
         }
 

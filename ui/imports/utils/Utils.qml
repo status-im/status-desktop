@@ -678,6 +678,14 @@ QtObject {
         return text
     }
 
+    function copyImageToClipboardByUrl(content) {
+        globalUtilsInst.copyImageToClipboardByUrl(content)
+    }
+
+    function downloadImageByUrl(url, path) {
+        globalUtilsInst.downloadImageByUrl(url, path)
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

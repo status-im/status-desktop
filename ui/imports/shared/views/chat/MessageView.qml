@@ -22,7 +22,8 @@ Loader {
     property var messageStore
     property var usersStore
     property var contactsStore
-    property var messageContextMenu: null
+    property var chatContentModule
+
     property string channelEmoji
     property bool isActiveChannel: false
 
@@ -34,6 +35,7 @@ Loader {
     // without an explicit need to fetch those details via message store/module.
     property bool isChatBlocked: false
 
+    property string chatId
     property string messageId: ""
     property string communityId: ""
 
@@ -120,67 +122,59 @@ Loader {
     readonly property bool isExpired: d.getIsExpired(messageTimestamp, messageOutgoingStatus)
     readonly property bool isSending: messageOutgoingStatus === Constants.sending && !isExpired
 
-    signal imageClicked(var image)
-
-    // WARNING: To much arguments here. Create an object argument.
-    property var messageClickHandler: function(sender, point,
-                                               isProfileClick,
-                                               isSticker = false,
-                                               isImage = false,
-                                               image = null,
-                                               isEmoji = false,
-                                               hideEmojiPicker = false,
-                                               isReply = false,
-                                               isRightClickOnImage = false,
-                                               imageSource = "") {
-
-        if (placeholderMessage || !(root.rootStore.mainModuleInst.activeSection.joined || isProfileClick)) {
+    function openProfileContextMenu(sender, mouse, isReply = false) {
+        if (isReply && !quotedMessageFrom) {
+            // The responseTo message was deleted
+            // so we don't enable to right click the unavailable profile
             return false
         }
 
-        messageContextMenu.myPublicKey = userProfile.pubKey
-        messageContextMenu.amIChatAdmin = root.amIChatAdmin
-        messageContextMenu.pinMessageAllowedForMembers = messageStore.isPinMessageAllowedForMembers
-        messageContextMenu.chatType = messageStore.chatType
-
-        messageContextMenu.messageId = root.messageId
-        messageContextMenu.unparsedText = root.unparsedText
-        messageContextMenu.messageSenderId = root.senderId
-        messageContextMenu.messageContentType = root.messageContentType
-        messageContextMenu.pinnedMessage = root.pinnedMessage
-        messageContextMenu.canPin = !!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
-
-        messageContextMenu.selectedUserPublicKey = root.senderId
-        messageContextMenu.selectedUserDisplayName = root.senderDisplayName
-        messageContextMenu.selectedUserIcon = root.senderIcon
-
-        messageContextMenu.imageSource = imageSource
-
-        messageContextMenu.isProfile = !!isProfileClick
-        messageContextMenu.isRightClickOnImage = isRightClickOnImage
-        messageContextMenu.isEmoji = isEmoji
-        messageContextMenu.isSticker = isSticker
-        messageContextMenu.hideEmojiPicker = hideEmojiPicker
-
-        if (isReply) {
-            if (!quotedMessageFrom) {
-                // The responseTo message was deleted so we don't eneble to right click the unaviable profile
-                return false
-            }
-            messageContextMenu.messageSenderId = quotedMessageFrom
-            messageContextMenu.selectedUserPublicKey = quotedMessageFrom
-            messageContextMenu.selectedUserDisplayName = quotedMessageAuthorDetailsDisplayName
-            messageContextMenu.selectedUserIcon = quotedMessageAuthorDetailsThumbnailImage
+        const params = {
+            selectedUserPublicKey: isReply ? quotedMessageFrom : root.senderId,
+            selectedUserDisplayName: isReply ? quotedMessageAuthorDetailsDisplayName : root.senderDisplayName,
+            selectedUserIcon: isReply ? quotedMessageAuthorDetailsThumbnailImage : root.senderIcon,
         }
 
-        // Emoji container is not a menu item of messageContextMenu so checking it separatly
-        if (messageContextMenu.checkIfEmpty() && !isEmoji) {
-            return false
+        Global.openMenu(profileContextMenuComponent, sender, params)
+    }
+
+    function openMessageContextMenu() {
+        if (placeholderMessage || !root.rootStore.mainModuleInst.activeSection.joined)
+            return
+
+        const params = {
+            myPublicKey: userProfile.pubKey,
+            amIChatAdmin: root.amIChatAdmin,
+            pinMessageAllowedForMembers: messageStore.isPinMessageAllowedForMembers,
+            chatType: messageStore.chatType,
+
+            messageId: root.messageId,
+            unparsedText: root.unparsedText,
+            messageSenderId: root.senderId,
+            messageContentType: root.messageContentType,
+            pinnedMessage: root.pinnedMessage,
+            canPin: !!root.messageStore && root.messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins,
+            editRestricted: root.isSticker || root.isImage,
         }
 
-        messageContextMenu.parent = sender
-        messageContextMenu.popup(point)
-        return true
+        Global.openMenu(messageContextMenuComponent, this, params)
+    }
+
+    function setMessageActive(messageId, active) {
+
+        // TODO: Is argument messageId actually needed?
+        //       It was probably used with dynamic scoping,
+        //       but not this method can be moved to private `d`.
+        //       Probably that it was done this way, because `MessageView` is reused as delegate.
+
+        if (active) {
+            d.activeMessage = messageId;
+            return;
+        }
+        if (d.activeMessage === messageId) {
+            d.activeMessage = "";
+            return;
+        }
     }
 
     signal showReplyArea(string messageId, string author)
@@ -237,22 +231,7 @@ Loader {
         property string activeMessage
         readonly property bool isMessageActive: d.activeMessage === root.messageId
 
-        function setMessageActive(messageId, active) {
-
-            // TODO: Is argument messageId actually needed?
-            //       It was probably used with dynamic scoping,
-            //       but not this method can be moved to private `d`.
-            //       Probably that it was done this way, because `MessageView` is reused as delegate.
-
-            if (active) {
-                d.activeMessage = messageId;
-                return;
-            }
-            if (d.activeMessage === messageId) {
-                d.activeMessage = "";
-                return;
-            }
-        }
+        readonly property bool addReactionAllowed: !root.isInPinnedPopup && !root.isChatBlocked
 
         function nextMessageHasHeader() {
             if(!root.nextMessageAsJsonObj) {
@@ -303,15 +282,24 @@ Loader {
                 return StatusMessage.ContentType.Unknown;
             }
         }
-    }
 
+        function addReactionClicked(mouseArea, mouse) {
+            if (!d.addReactionAllowed)
+                return
+            // Don't use mouseArea as parent, as it will be destroyed right after opening menu
+            const point = mouseArea.mapToItem(root, mouse.x, mouse.y)
+            Global.openMenu(addReactionContextMenu, root, {}, point)
+        }
 
-
-    Connections {
-        enabled: d.isMessageActive
-        target: root.messageContextMenu
-        function onClosed() {
-            d.setMessageActive(root.messageId, false)
+        function onImageClicked(image, mouse, imageSource) {
+            switch (mouse.button) {
+            case Qt.LeftButton:
+                Global.openImagePopup(image)
+                break;
+            case Qt.RightButton:
+                Global.openMenu(imageContextMenuComponent, image, { imageSource })
+                break;
+            }
         }
     }
 
@@ -498,7 +486,6 @@ Loader {
                 disableHover: root.disableHover ||
                               delegate.hideQuickActions ||
                               (root.chatLogView && root.chatLogView.moving) ||
-                              (root.messageContextMenu && root.messageContextMenu.opened) ||
                               Global.popupOpened
 
                 disableEmojis: root.isChatBlocked
@@ -514,15 +501,8 @@ Loader {
 
                 onEditCompleted: delegate.editCompletedHandler(newMsgText)
 
-                onImageClicked: {
-                    switch (mouse.button) {
-                    case Qt.LeftButton:
-                        root.imageClicked(image, mouse);
-                        break;
-                    case Qt.RightButton:
-                        root.messageClickHandler(image, Qt.point(mouse.x, mouse.y), false, false, true, image, false, true, false, true, imageSource)
-                        break;
-                    }
+                onImageClicked: (image, mouse, imageSource) => {
+                    d.onImageClicked(image, mouse, imageSource)
                 }
 
                 onLinkActivated: {
@@ -542,13 +522,11 @@ Loader {
                 }
 
                 onProfilePictureClicked: {
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true))
-                        d.setMessageActive(root.messageId, true)
+                    root.openProfileContextMenu(sender, mouse)
                 }
 
                 onReplyProfileClicked: {
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true, false, false, null, false, false, true))
-                        d.setMessageActive(root.messageId, true)
+                    root.openProfileContextMenu(sender, mouse, true)
                 }
 
                 onReplyMessageClicked: {
@@ -557,8 +535,7 @@ Loader {
                 }
 
                 onSenderNameClicked: {
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), true))
-                        d.setMessageActive(root.messageId, true)
+                    root.openProfileContextMenu(sender, mouse)
                 }
 
                 onToggleReactionClicked: {
@@ -573,12 +550,8 @@ Loader {
                     root.messageStore.toggleReaction(root.messageId, emojiId)
                 }
 
-                onAddReactionClicked: {
-                    if (root.isChatBlocked)
-                        return
-
-                    if (root.messageClickHandler(sender, Qt.point(mouse.x, mouse.y), false, false, false, null, true, false))
-                        d.setMessageActive(root.messageId, true)
+                onAddReactionClicked: (sender, mouse) => {
+                    d.addReactionClicked(sender, mouse)
                 }
 
                 onStickerClicked: {
@@ -592,12 +565,9 @@ Loader {
                 mouseArea {
                     acceptedButtons: Qt.RightButton
                     enabled: !root.isChatBlocked &&
-                             !root.placeholderMessage &&
-                             delegate.contentType !== StatusMessage.ContentType.Image
+                             !root.placeholderMessage
                     onClicked: {
-                        if (root.messageClickHandler(this, Qt.point(mouse.x, mouse.y),
-                            false, false, false, null, root.isEmoji, false, false, false, ""))
-                            d.setMessageActive(root.messageId, true)
+                        root.openMessageContextMenu()
                     }
                 }
 
@@ -714,7 +684,6 @@ Loader {
                         usersStore: root.usersStore
                         emojiPopup: root.emojiPopup
                         stickersPopup: root.stickersPopup
-                        messageContextMenu: root.messageContextMenu
 
                         chatType: root.messageStore.chatType
                         isEdit: true
@@ -736,8 +705,8 @@ Loader {
                         messageStore: root.messageStore
                         store: root.rootStore
                         isCurrentUser: root.amISender
-                        onImageClicked: {
-                            root.imageClicked(image);
+                        onImageClicked: (image, mouse, imageSource) => {
+                            d.onImageClicked(image, mouse, imageSource)
                         }
                         onLinksLoaded: {
                             // If there is only one image and no links, hide the message
@@ -765,7 +734,7 @@ Loader {
 
                 quickActions: [
                     Loader {
-                        active: !root.isInPinnedPopup && delegate.hovered && !delegate.hideQuickActions
+                        active: d.addReactionAllowed && delegate.hovered && !delegate.hideQuickActions
                         visible: active
                         sourceComponent: StatusFlatRoundButton {
                             width: d.chatButtonSize
@@ -773,9 +742,8 @@ Loader {
                             icon.name: "reaction-b"
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Add reaction")
-                            onClicked: {
-                                if (root.messageClickHandler(delegate, mapToItem(delegate, mouse.x, mouse.y), false, false, false, null, true, false))
-                                    d.setMessageActive(root.messageId, true)
+                            onClicked: (mouse) => {
+                                d.addReactionClicked(this, mouse)
                             }
                         }
                     },
@@ -791,9 +759,6 @@ Loader {
                             tooltip.text: qsTr("Reply")
                             onClicked: {
                                 root.showReplyArea(root.messageId, root.senderId)
-                                if (messageContextMenu.closeParentPopup) {
-                                    messageContextMenu.closeParentPopup()
-                                }
                             }
                         }
                     },
@@ -886,39 +851,11 @@ Loader {
                             type: StatusFlatRoundButton.Type.Tertiary
                             tooltip.text: qsTr("Delete")
                             onClicked: {
-                                if (!localAccountSensitiveSettings.showDeleteMessageWarning) {
-                                    messageStore.deleteMessage(root.messageId)
-                                }
-                                else {
-                                    Global.openPopup(deleteMessageConfirmationDialogComponent)
-                                }
+                                messageStore.warnAndDeleteMessage(root.messageId)
                             }
                         }
                     }
                 ]
-            }
-        }
-    }
-
-    Component {
-        id: deleteMessageConfirmationDialogComponent
-
-        ConfirmationDialog {
-            confirmButtonObjectName: "chatButtonsPanelConfirmDeleteMessageButton"
-            header.title: qsTr("Confirm deleting this message")
-            confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
-            height: 260
-            checkbox.visible: true
-            executeConfirm: function () {
-                if (checkbox.checked) {
-                    localAccountSensitiveSettings.showDeleteMessageWarning = false
-                }
-
-                close()
-                messageStore.deleteMessage(root.messageId)
-            }
-            onClosed: {
-                destroy()
             }
         }
     }
@@ -931,4 +868,110 @@ Loader {
             timestamp: root.messageTimestamp
         }
     }
+
+    Component {
+        id: addReactionContextMenu
+
+        MessageAddReactionContextMenu {
+            reactionsModel: root.rootStore.emojiReactionsModel
+            onToggleReaction: (emojiId) => {
+                root.messageStore.toggleReaction(root.messageId, emojiId)
+            }
+            onOpened: {
+                root.setMessageActive(root.messageId, true)
+            }
+            onClosed: {
+                root.setMessageActive(root.messageId, false)
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: imageContextMenuComponent
+
+        ImageContextMenu {
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: profileContextMenuComponent
+
+        ProfileContextMenu {
+            store: root.rootStore
+            onOpenProfileClicked: (publicKey) => {
+                Global.openProfilePopup(publicKey, null)
+            }
+            onCreateOneToOneChat: (communityId, chatId, ensName) => {
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
+            }
+            onOpened: {
+                root.setMessageActive(root.messageId, true)
+            }
+            onClosed: {
+                root.setMessageActive(root.messageId, false)
+                destroy()
+            }
+        }
+    }
+
+    Component {
+        id: messageContextMenuComponent
+
+        MessageContextMenuView {
+            store: root.rootStore
+            reactionModel: root.rootStore.emojiReactionsModel
+            disabledForChat: !root.rootStore.isUserAllowedToSendMessage
+
+            onPinMessage: (messageId) => {
+                root.messageStore.pinMessage(messageId)
+            }
+
+            onUnpinMessage: (messageId) => {
+                root.messageStore.unpinMessage(messageId)
+            }
+
+            onPinnedMessagesLimitReached: (messageId) => {
+                if (!root.chatContentModule) {
+                    console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
+                    return
+                }
+                Global.openPinnedMessagesPopupRequested(root.rootStore,
+                                                        root.messageStore,
+                                                        root.chatContentModule.pinnedMessagesModel,
+                                                        messageId,
+                                                        root.chatId)
+            }
+
+            onToggleReaction: (messageId, emojiId) => {
+                root.messageStore.toggleReaction(messageId, emojiId)
+            }
+
+            onDeleteMessage: (messageId) => {
+                root.messageStore.warnAndDeleteMessage(messageId)
+            }
+
+            onEditClicked: (messageId) => {
+                root.messageStore.setEditModeOn(messageId)
+            }
+
+            onShowReplyArea: (messageId, senderId) => {
+                root.showReplyArea(messageId, senderId)
+            }
+
+            onOpened: {
+                root.setMessageActive(model.id, true)
+            }
+            onClosed: {
+                root.setMessageActive(model.id, false)
+                destroy()
+            }
+        }
+    }
+
+
 }

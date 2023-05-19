@@ -112,8 +112,9 @@ StatusSectionLayout {
     rightPanel: Component {
         id: userListComponent
         UserListPanel {
+            anchors.fill: parent
+            store: root.rootStore
             label: qsTr("Members")
-            messageContextMenu: quickActionMessageOptionsMenu
             usersModel: {
                 let chatContentModule = root.rootStore.currentChatContentModule()
                 if (!chatContentModule || !chatContentModule.usersModule) {
@@ -164,19 +165,6 @@ StatusSectionLayout {
             onClosed: {
                 destroy();
             }
-        }
-    }
-
-    MessageContextMenuView {
-        id: quickActionMessageOptionsMenu
-        store: root.rootStore
-
-        onOpenProfileClicked: {
-            Global.openProfilePopup(publicKey, null)
-        }
-        onCreateOneToOneChat: {
-            Global.changeAppSectionBySectionType(Constants.appSection.chat)
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
         }
     }
 }

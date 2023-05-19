@@ -74,60 +74,16 @@ ColumnLayout {
         chatSectionModule: root.rootStore.chatCommunitySectionModule
     }
 
-    Loader {
-        id: contextMenuLoader
-        active: root.isActiveChannel
-        asynchronous: true
+    QtObject {
+        id: d
 
-        // FIXME: `MessageContextMenuView` is way too heavy
-        // see: https://github.com/status-im/status-desktop/pull/10343#issuecomment-1515103756
-        sourceComponent: MessageContextMenuView {
-            store: root.rootStore
-            reactionModel: root.rootStore.emojiReactionsModel
-            disabledForChat: !root.isUserAllowedToSendMessage
-
-            onPinMessage: {
-                messageStore.pinMessage(messageId)
+        function showReplyArea(messageId) {
+            let obj = messageStore.getMessageByIdAsJson(messageId)
+            if (!obj) {
+                return
             }
-
-            onUnpinMessage: {
-                messageStore.unpinMessage(messageId)
-            }
-
-            onPinnedMessagesLimitReached: {
-                if(!chatContentModule) {
-                    console.warn("error on open pinned messages limit reached from message context menu - chat content module is not set")
-                    return
-                }
-                Global.openPinnedMessagesPopupRequested(rootStore, messageStore, chatContentModule.pinnedMessagesModel, messageId, root.chatId)
-            }
-
-            onToggleReaction: {
-                messageStore.toggleReaction(messageId, emojiId)
-            }
-
-            onOpenProfileClicked: {
-                Global.openProfilePopup(publicKey, null)
-            }
-
-            onDeleteMessage: {
-                messageStore.deleteMessage(messageId)
-            }
-
-            onEditClicked: messageStore.setEditModeOn(messageId)
-
-            onCreateOneToOneChat: {
-                Global.changeAppSectionBySectionType(Constants.appSection.chat)
-                root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
-            }
-            onShowReplyArea: {
-                let obj = messageStore.getMessageByIdAsJson(messageId)
-                if (!obj) {
-                    return
-                }
-                if (inputAreaLoader.item) {
-                    inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
-                }
+            if (inputAreaLoader.item) {
+                inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
             }
         }
     }
@@ -146,30 +102,26 @@ ColumnLayout {
                 chatContentModule: root.chatContentModule
                 rootStore: root.rootStore
                 contactsStore: root.contactsStore
-                messageContextMenu: contextMenuLoader.item
                 messageStore: root.messageStore
                 emojiPopup: root.emojiPopup
                 stickersPopup: root.stickersPopup
                 usersStore: root.usersStore
                 stickersLoaded: root.stickersLoaded
-                publicKey: root.chatId
+                chatId: root.chatId
                 isOneToOne: root.chatType === Constants.chatType.oneToOne
                 isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
                 channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
                 isActiveChannel: root.isActiveChannel
-                onShowReplyArea: {
-                    let obj = messageStore.getMessageByIdAsJson(messageId)
-                    if (!obj) {
-                        return
-                    }
-                    if (inputAreaLoader.item) {
-                        inputAreaLoader.item.chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.albumMessageImages, obj.albumImagesCount, obj.sticker)
-                    }
+                onShowReplyArea: (messageId, senderId) => {
+                    d.showReplyArea(messageId)
                 }
                 onOpenStickerPackPopup: {
                     root.openStickerPackPopup(stickerPackId);
                 }
-                onEditModeChanged: if (!editModeOn && inputAreaLoader.item) inputAreaLoader.item.chatInput.forceInputActiveFocus()
+                onEditModeChanged: {
+                    if (!editModeOn && inputAreaLoader.item)
+                        inputAreaLoader.item.chatInput.forceInputActiveFocus()
+                }
             }
         }
 
@@ -214,7 +166,6 @@ ColumnLayout {
 
                     textInput.text: inputAreaLoader.preservedText
                     textInput.placeholderText: root.chatInputPlaceholder
-                    messageContextMenu: contextMenuLoader.item
                     emojiPopup: root.emojiPopup
                     stickersPopup: root.stickersPopup
                     isContactBlocked: root.isBlocked

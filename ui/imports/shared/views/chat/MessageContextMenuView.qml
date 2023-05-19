@@ -2,7 +2,6 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
-import QtQuick.Dialogs 1.0
 
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
@@ -20,330 +19,56 @@ StatusMenu {
 
     property var store
     property var reactionModel
-    property alias emojiContainer: emojiContainer
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
     property bool disabledForChat: false
-
-    property string selectedUserPublicKey: ""
-    property string selectedUserDisplayName: ""
-    property string selectedUserIcon: ""
 
     property int chatType: Constants.chatType.unknown
     property string messageId: ""
     property string unparsedText: ""
     property string messageSenderId: ""
     property int messageContentType: Constants.messageContentType.unknownContentType
-    property string imageSource: ""
 
-    property bool isProfile: false
-    property bool isRightClickOnImage: false
-    property bool pinnedPopup: false
     property bool pinMessageAllowedForMembers: false
     property bool isDebugEnabled: store && store.isDebugEnabled
-    property bool isEmoji: false
-    property bool isSticker: false
-    property bool hideEmojiPicker: true
+    property bool editRestricted: false
     property bool pinnedMessage: false
     property bool canPin: false
 
     readonly property bool isMyMessage: {
         return root.messageSenderId !== "" && root.messageSenderId === root.myPublicKey;
     }
-    readonly property bool isMe: {
-        return root.selectedUserPublicKey === root.store.contactsStore.myPublicKey;
-    }
-    readonly property var contactDetails: {
-        if (root.selectedUserPublicKey === "" || isMe) {
-            return {}
-        }
-        return Utils.getContactDetailsAsJson(root.selectedUserPublicKey);
-    }
-    readonly property bool isContact: {
-        return root.selectedUserPublicKey !== "" && !!contactDetails.isContact
-    }
-    readonly property bool isBlockedContact: (!!contactDetails && contactDetails.isBlocked) || false
 
-    readonly property int outgoingVerificationStatus: {
-        if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
-            return 0
-        }
-        return contactDetails.verificationStatus
-    }
-    readonly property int incomingVerificationStatus: {
-        if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
-            return 0
-        }
-        return contactDetails.incomingVerificationStatus
-    }
-    readonly property bool hasPendingContactRequest: {
-        return !root.isMe && root.selectedUserPublicKey !== "" &&
-            root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
-    }
-    readonly property bool hasActiveReceivedVerificationRequestFrom: {
-        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
-            return false
-        }
-        return contactDetails.incomingVerificationStatus === Constants.verificationStatus.verifying ||
-                contactDetails.incomingVerificationStatus === Constants.verificationStatus.verified
-    }
-    readonly property bool isVerificationRequestSent: {
-        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
-            return false
-        }
-        return root.outgoingVerificationStatus !== Constants.verificationStatus.unverified &&
-                root.outgoingVerificationStatus !== Constants.verificationStatus.verified &&
-                root.outgoingVerificationStatus !== Constants.verificationStatus.trusted
-    }
-    readonly property bool isTrusted: {
-        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
-            return false
-        }
-        return root.outgoingVerificationStatus === Constants.verificationStatus.trusted ||
-                root.incomingVerificationStatus === Constants.verificationStatus.trusted
-    }
-
-    readonly property bool userTrustIsUnknown: contactDetails && contactDetails.trustStatus === Constants.trustStatus.unknown
-    readonly property bool userIsUntrustworthy: contactDetails && contactDetails.trustStatus === Constants.trustStatus.untrustworthy
-
-    property var emojiReactionsReactedByUser: []
-
-    signal openProfileClicked(string publicKey)
     signal pinMessage(string messageId)
     signal unpinMessage(string messageId)
     signal pinnedMessagesLimitReached(string messageId)
-    signal jumpToMessage(string messageId)
-    signal shouldCloseParentPopup()
-    signal createOneToOneChat(string communityId, string chatId, string ensName)
-    signal showReplyArea()
+    signal showReplyArea(string messageId, string messageSenderId)
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
     signal editClicked(string messageId)
 
-    function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
-        let newEmojiReactions = []
-        if (!!emojiReactionsModel) {
-            emojiReactionsModel.forEach(function (emojiReaction) {
-                newEmojiReactions[emojiReaction.emojiId] = emojiReaction.currentUserReacted
-            })
-        }
-        root.emojiReactionsReactedByUser = newEmojiReactions;
-
-        popup()
-    }
-
-    onClosed: {
-        // Reset selectedUserPublicKey so that associated properties get recalculated on re-open
-        selectedUserPublicKey = ""
-    }
-
-    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0,
-                    (root.isRightClickOnImage && !root.pinnedPopup) ? 176 : 230)
+    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 230)
 
     Item {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.hideEmojiPicker && (root.isEmoji || !root.isProfile) && !root.pinnedPopup && !root.disabledForChat
+        visible: !root.disabledForChat
 
-        Row {
+        MessageReactionsRow {
             id: emojiRow
-            spacing: Style.current.halfPadding
-            leftPadding: Style.current.halfPadding
-            rightPadding: Style.current.halfPadding
-            bottomPadding: root.isEmoji ? 0 : Style.current.padding
-
-            Repeater {
-                model: root.reactionModel
-                delegate: EmojiReaction {
-                    source: Style.svg(filename)
-                    emojiId: model.emojiId
-                    reactedByUser: !!root.emojiReactionsReactedByUser[model.emojiId]
-                    onCloseModal: {
-                        root.toggleReaction(root.messageId, emojiId)
-                        root.close()
-                    }
-                }
+            reactionsModel: root.reactionModel
+            bottomPadding: Style.current.padding
+            onToggleReaction: {
+                root.toggleReaction(root.messageId, emojiId)
+                close()
             }
         }
-    }
-
-    ProfileHeader {
-        visible: root.isProfile
-        width: parent.width
-        height: visible ? implicitHeight : 0
-
-        displayNameVisible: false
-        displayNamePlusIconsVisible: true
-        editButtonVisible: false
-        displayName: root.selectedUserDisplayName
-        pubkey: root.selectedUserPublicKey
-        icon: root.selectedUserIcon
-        trustStatus: contactDetails && contactDetails.trustStatus ? contactDetails.trustStatus
-                                                                  : Constants.trustStatus.unknown
-        isContact: root.isContact
-        isCurrentUser: root.isMe
-        userIsEnsVerified: (!!contactDetails && contactDetails.ensVerified) || false
-    }
-
-    Item {
-        visible: root.isProfile
-        height: visible ? root.topPadding : 0
     }
 
     StatusMenuSeparator {
-        anchors.bottom: viewProfileAction.top
-        visible: !root.isEmoji && !root.hideEmojiPicker && !pinnedPopup
-    }
-
-    StatusAction {
-        id: copyImageAction
-        text: (root.imageSource.endsWith(".gif")) ? qsTr("Copy GIF") : qsTr("Copy image")
-        onTriggered: {
-            if (root.imageSource) {
-                root.store.copyImageToClipboardByUrl(root.imageSource)
-            }
-            root.close()
-        }
-        icon.name: "copy"
-        enabled: root.isRightClickOnImage && !root.pinnedPopup
-    }
-
-    StatusAction {
-        id: downloadImageAction
-        text: (root.imageSource.endsWith(".gif")) ? qsTr("Download GIF") : qsTr("Download image")
-        onTriggered: {
-            fileDialog.open()
-            root.close()
-        }
-        icon.name: "download"
-        enabled: root.isRightClickOnImage && !root.pinnedPopup
-    }
-
-    ViewProfileMenuItem {
-        id: viewProfileAction
-        enabled: root.isProfile && !root.pinnedPopup
-        onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey)
-            root.close()
-        }
-    }
-
-    SendMessageMenuItem {
-        id: sendMessageMenuItem
-        enabled: root.isProfile && root.isContact && !root.isBlockedContact
-        onTriggered: {
-            root.createOneToOneChat("", root.selectedUserPublicKey, "")
-            root.close()
-        }
-    }
-
-    SendContactRequestMenuItem {
-        id: sendContactRequestMenuItem
-        enabled: root.isProfile && !root.isMe && !root.isContact
-                                && !root.isBlockedContact && !root.hasPendingContactRequest
-        onTriggered: {
-            Global.openContactRequestPopup(root.selectedUserPublicKey, null)
-            root.close()
-        }
-    }
-
-    StatusAction {
-        id: verifyIdentityAction
-        text: qsTr("Verify Identity")
-        icon.name: "checkmark-circle"
-        enabled: root.isProfile && !root.isMe && root.isContact
-                                && !root.isBlockedContact
-                                && root.outgoingVerificationStatus === Constants.verificationStatus.unverified
-                                && !root.hasActiveReceivedVerificationRequestFrom
-        onTriggered: {
-            Global.openSendIDRequestPopup(root.selectedUserPublicKey, null)
-            root.close()
-        }
-    }
-
-    StatusAction {
-        id: pendingIdentityAction
-        text: isVerificationRequestSent ||
-            root.incomingVerificationStatus === Constants.verificationStatus.verified ?
-            qsTr("ID Request Pending....") :
-            qsTr("Respond to ID Request...")
-        icon.name: "checkmark-circle"
-        enabled: root.isProfile && !root.isMe && root.isContact
-                                && !root.isBlockedContact && !root.isTrusted
-                                && (root.hasActiveReceivedVerificationRequestFrom
-                                    || root.isVerificationRequestSent)
-        onTriggered: {
-            if (hasActiveReceivedVerificationRequestFrom) {
-                Global.openIncomingIDRequestPopup(root.selectedUserPublicKey, null)
-            } else if (root.isVerificationRequestSent) {
-                Global.openOutgoingIDRequestPopup(root.selectedUserPublicKey, null)
-            }
-
-            root.close()
-        }
-    }
-
-    StatusAction {
-        id: renameAction
-        text: qsTr("Rename")
-        icon.name: "edit_pencil"
-        enabled: root.isProfile && !root.isMe
-        onTriggered: {
-            Global.openNicknamePopupRequested(root.selectedUserPublicKey, contactDetails.localNickname,
-                                              "%1 (%2)".arg(root.selectedUserDisplayName).arg(Utils.getElidedCompressedPk(root.selectedUserPublicKey)))
-            root.close()
-        }
-    }
-
-    StatusAction {
-        id: unblockAction
-        text: qsTr("Unblock User")
-        icon.name: "remove-circle"
-        enabled: root.isProfile && !root.isMe && root.isBlockedContact
-        onTriggered: Global.unblockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
-    }
-
-    StatusMenuSeparator {
-        visible: blockMenuItem.enabled || markUntrustworthyMenuItem.enabled || removeUntrustworthyMarkMenuItem.enabled
-    }
-
-    StatusAction {
-        id: markUntrustworthyMenuItem
-        text: qsTr("Mark as Untrustworthy")
-        icon.name: "warning"
-        type: StatusAction.Type.Danger
-        enabled: root.isProfile && !root.isMe && root.userTrustIsUnknown
-        onTriggered: root.store.contactsStore.markUntrustworthy(root.selectedUserPublicKey)
-    }
-
-    StatusAction {
-        id: removeUntrustworthyMarkMenuItem
-        text: qsTr("Remove Untrustworthy Mark")
-        icon.name: "warning"
-        enabled: root.isProfile && !root.isMe && root.userIsUntrustworthy
-        onTriggered: root.store.contactsStore.removeTrustStatus(root.selectedUserPublicKey)
-    }
-
-    StatusAction {
-        text: qsTr("Remove Contact")
-        icon.name: "remove-contact"
-        type: StatusAction.Type.Danger
-        enabled: root.isContact && !root.isBlockedContact && !root.hasPendingContactRequest
-        onTriggered: {
-            Global.removeContactRequested(root.selectedUserDisplayName, root.selectedUserPublicKey);
-            root.close();
-        }
-    }
-
-    StatusAction {
-        id: blockMenuItem
-        text: qsTr("Block User")
-        icon.name: "cancel"
-        type: StatusAction.Type.Danger
-        enabled: root.isProfile && !root.isMe && !root.isBlockedContact
-        onTriggered: Global.blockContactRequested(root.selectedUserPublicKey, root.selectedUserDisplayName)
+        visible: emojiContainer.visible
     }
 
     StatusAction {
@@ -351,15 +76,10 @@ StatusMenu {
         text: qsTr("Reply to")
         icon.name: "chat"
         onTriggered: {
-            root.showReplyArea()
+            root.showReplyArea(root.messageId, root.messageSenderId)
             root.close()
         }
-        enabled: (!root.hideEmojiPicker &&
-                  !root.isEmoji &&
-                  !root.isProfile &&
-                  !root.pinnedPopup &&
-                  !root.isRightClickOnImage &&
-                  !root.disabledForChat)
+        enabled: !root.disabledForChat
     }
 
     StatusAction {
@@ -370,12 +90,7 @@ StatusMenu {
         }
         icon.name: "edit"
         enabled: root.isMyMessage &&
-                 !root.hideEmojiPicker &&
-                 !root.isEmoji &&
-                 !root.isSticker &&
-                 !root.isProfile &&
-                 !root.pinnedPopup &&
-                 !root.isRightClickOnImage &&
+                 !root.editRestricted &&
                  !root.disabledForChat
     }
 
@@ -403,13 +118,8 @@ StatusMenu {
 
     StatusAction {
         id: pinAction
-        text: {
-            if (root.pinnedMessage) {
-                return qsTr("Unpin")
-            }
-            return qsTr("Pin")
-
-        }
+        text: root.pinnedMessage ? qsTr("Unpin") : qsTr("Pin")
+        icon.name: root.pinnedMessage ? "unpin" : "pin"
         onTriggered: {
             if (root.pinnedMessage) {
                 root.unpinMessage(root.messageId)
@@ -424,13 +134,9 @@ StatusMenu {
             root.pinMessage(root.messageId)
             root.close()
         }
-        icon.name: "pin"
         enabled: {
-            if (root.isProfile || root.isEmoji || root.isRightClickOnImage || root.disabledForChat)
+            if (root.disabledForChat)
                 return false
-
-            if (root.pinnedPopup)
-                return true
 
             switch (root.chatType) {
             case Constants.chatType.profile:
@@ -449,10 +155,9 @@ StatusMenu {
 
     StatusMenuSeparator {
         visible: deleteMessageAction.enabled &&
-                 (viewProfileAction.enabled ||
-                  sendMessageMenuItem.enabled ||
-                  replyToMenuItem.enabled ||
+                 (replyToMenuItem.enabled ||
                   copyMessageMenuItem.enabled ||
+                  copyMessageIdAction ||
                   editMessageAction.enabled ||
                   pinAction.enabled)
     }
@@ -461,72 +166,16 @@ StatusMenu {
         id: deleteMessageAction
         enabled: (root.isMyMessage || root.amIChatAdmin) &&
                  !root.disabledForChat &&
-                 !root.isProfile &&
-                 !root.isEmoji &&
-                 !root.pinnedPopup &&
-                 !root.isRightClickOnImage &&
                  (root.messageContentType === Constants.messageContentType.messageType ||
                   root.messageContentType === Constants.messageContentType.stickerType ||
                   root.messageContentType === Constants.messageContentType.emojiType ||
                   root.messageContentType === Constants.messageContentType.imageType ||
                   root.messageContentType === Constants.messageContentType.audioType)
         text: qsTr("Delete message")
-        onTriggered: {
-            if (!localAccountSensitiveSettings.showDeleteMessageWarning) {
-                deleteMessage(messageId)
-            }
-            else {
-                Global.openPopup(deleteMessageConfirmationDialogComponent)
-            }
-        }
         icon.name: "delete"
         type: StatusAction.Type.Danger
-    }
-
-    StatusAction {
-        id: jumpToAction
-        enabled: root.pinnedPopup && !root.isProfile
-        text: qsTr("Jump to")
         onTriggered: {
-            root.jumpToMessage(root.messageId)
-            root.close()
-            root.shouldCloseParentPopup()
-        }
-        icon.name: "arrow-up"
-    }
-
-    FileDialog {
-        id: fileDialog
-        title: qsTr("Please choose a directory")
-        selectFolder: true
-        selectExisting: true
-        selectMultiple: false
-        modality: Qt.NonModal
-        onAccepted: {
-            if (root.imageSource) {
-                root.store.downloadImageByUrl(root.imageSource, fileDialog.fileUrl)
-            }
-        }
-    }
-
-    Component {
-        id: deleteMessageConfirmationDialogComponent
-        ConfirmationDialog {
-            header.title: qsTr("Confirm deleting this message")
-            confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
-            height: 260
-            checkbox.visible: true
-            executeConfirm: function () {
-                if (checkbox.checked) {
-                    localAccountSensitiveSettings.showDeleteMessageWarning = false
-                }
-
-                close()
-                root.deleteMessage(messageId)
-            }
-            onClosed: {
-                destroy()
-            }
+            root.deleteMessage(messageId)
         }
     }
 }

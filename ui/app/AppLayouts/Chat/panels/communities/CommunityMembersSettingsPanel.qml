@@ -21,12 +21,10 @@ SettingsPageLayout {
     property var pendingMemberRequestsModel
     property var declinedMemberRequestsModel
     property string communityName
-    property var communityMemberContextMenu
 
     property bool editable: true
 
     signal membershipRequestsClicked()
-    signal userProfileClicked(string id)
     signal kickUserClicked(string id)
     signal banUserClicked(string id)
     signal unbanUserClicked(string id)
@@ -120,7 +118,6 @@ SettingsPageLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                onUserProfileClicked: root.userProfileClicked(id)
                 onKickUserClicked: {
                     kickModal.userNameToKick = name
                     kickModal.userIdToKick = id
@@ -151,7 +148,6 @@ SettingsPageLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                onUserProfileClicked: root.userProfileClicked(id)
                 onAcceptRequestToJoin: root.acceptRequestToJoin(id)
                 onDeclineRequestToJoin: root.declineRequestToJoin(id)
             }
@@ -173,7 +169,6 @@ SettingsPageLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                onUserProfileClicked: root.userProfileClicked(id)
                 onAcceptRequestToJoin: root.acceptRequestToJoin(id)
             }
 
@@ -194,7 +189,6 @@ SettingsPageLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                onUserProfileClicked: root.userProfileClicked(id)
                 onUnbanUserClicked: root.unbanUserClicked(id)
             }
         }

@@ -8,16 +8,16 @@ import StatusQ.Components 0.1
 import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
+import shared.views.chat 1.0
 import utils 1.0
 
 import SortFilterProxyModel 0.2
 
 Item {
     id: root
-    anchors.fill: parent
 
+    property var store
     property var usersModel
-    property var messageContextMenu
     property string label
 
     StatusBaseText {
@@ -98,15 +98,13 @@ Item {
                 ringSettings.ringSpecModel: model.colorHash
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
-                        // Set parent, X & Y positions for the messageContextMenu
-                        messageContextMenu.parent = this
-                        messageContextMenu.isProfile = true
-                        messageContextMenu.myPublicKey = userProfile.pubKey
-                        messageContextMenu.selectedUserPublicKey = model.pubKey
-                        messageContextMenu.selectedUserDisplayName = title
-                        messageContextMenu.selectedUserIcon = model.icon
-                        messageContextMenu.popup(4, 4)
-                    } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
+                        Global.openMenu(profileContextMenuComponent, this, {
+                                            myPublicKey: userProfile.pubKey,
+                                            selectedUserPublicKey: model.pubKey,
+                                            selectedUserDisplayName: title,
+                                            selectedUserIcon: model.icon,
+                                        })
+                    } else if (mouse.button === Qt.LeftButton) {
                         Global.openProfilePopup(model.pubKey);
                     }
                 }
@@ -133,6 +131,25 @@ Item {
                             return qsTr("Inactive")
                     }
                 }
+            }
+        }
+    }
+
+    Component {
+        id: profileContextMenuComponent
+
+        ProfileContextMenu {
+            store: root.store
+            margins: 8
+            onOpenProfileClicked: {
+                Global.openProfilePopup(publicKey, null)
+            }
+            onCreateOneToOneChat: {
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
+                root.store.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
+            }
+            onClosed: {
+                destroy()
             }
         }
     }

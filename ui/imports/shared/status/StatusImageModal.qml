@@ -6,13 +6,12 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import shared 1.0
+import shared.views.chat 1.0
 
 Popup {
     id: root
 
-    signal clicked(var mouse)
-    property string imageSource: messageImage.source
-    property var contextMenu
+    property var store
 
     modal: true
     Overlay.modal: Rectangle {
@@ -32,7 +31,6 @@ Popup {
         const maxHeight = Global.applicationWindow.height - 80
         const maxWidth = Global.applicationWindow.width - 80
 
-
         if (image.sourceSize.width >= maxWidth || image.sourceSize.height >= maxHeight) {
             this.width = maxWidth
             this.height = maxHeight
@@ -44,7 +42,7 @@ Popup {
 
     function openPopup(image) {
         setPopupData(image);
-        root.open();
+        open()
     }
 
     contentItem: AnimatedImage {
@@ -61,7 +59,22 @@ Popup {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {
-                root.clicked(mouse)
+                if (mouse.button === Qt.LeftButton)
+                    root.close()
+                if (mouse.button === Qt.RightButton)
+                    Global.openMenu(imageContextMenu,
+                                    messageImage,
+                                    { imageSource: messageImage.source })
+            }
+        }
+    }
+
+    Component {
+        id: imageContextMenu
+
+        ImageContextMenu {
+            onClosed: {
+                destroy()
             }
         }
     }

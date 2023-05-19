@@ -9,6 +9,7 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
 import utils 1.0
+import shared.views.chat 1.0
 import shared.controls.chat 1.0
 
 import "../../layouts"
@@ -20,7 +21,6 @@ Item {
     property var model
     property var communityMemberContextMenu
 
-    signal userProfileClicked(string id)
     signal kickUserClicked(string id, string name)
     signal banUserClicked(string id, string name)
     signal unbanUserClicked(string id)
@@ -146,17 +146,36 @@ Item {
 
                 onClicked: {
                     if(mouse.button === Qt.RightButton) {
-                        // Set parent, X & Y positions for the messageContextMenu
-                        root.communityMemberContextMenu.parent = this
-                        root.communityMemberContextMenu.isProfile = true
-                        root.communityMemberContextMenu.selectedUserPublicKey = model.pubKey
-                        root.communityMemberContextMenu.selectedUserDisplayName = userName
-                        root.communityMemberContextMenu.selectedUserIcon = asset.name
-                        root.communityMemberContextMenu.popup()
+                        Global.openMenu(memberContextMenuComponent, this, {
+                                            selectedUserPublicKey: model.pubKey,
+                                            selectedUserDisplayName: userName,
+                                            selectedUserIcon: asset.name,
+                                        })
                     } else {
-                        root.userProfileClicked(model.pubKey)
+                        Global.openProfilePopup(model.pubKey)
                     }
                 }
+            }
+        }
+    }
+
+    Component {
+        id: memberContextMenuComponent
+
+        ProfileContextMenu {
+            id: memberContextMenuView
+            store: root.rootStore
+            myPublicKey: root.rootStore.myPublicKey()
+
+            onOpenProfileClicked: {
+                Global.openProfilePopup(publicKey, null)
+            }
+            onCreateOneToOneChat: {
+                Global.changeAppSectionBySectionType(Constants.appSection.chat)
+                root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
+            }
+            onClosed: {
+                destroy()
             }
         }
     }

@@ -67,7 +67,9 @@ add_executable(
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         QML_IMPORT_ROOT="${CMAKE_CURRENT_LIST_DIR}"
-        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}")
+        STATUSQ_MODULE_IMPORT_PATH="${STATUSQ_MODULE_IMPORT_PATH}"
+        $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
+    )
 
 target_link_libraries(
     ${PROJECT_LIB} PUBLIC Qt5::Core Qt5::Gui Qt5::Quick Qt5::QuickControls2)

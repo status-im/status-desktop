@@ -25,7 +25,7 @@ Column {
     readonly property alias unfurledImagesCount: d.unfurledImagesCount
     property bool isCurrentUser: false
 
-    signal imageClicked(var image)
+    signal imageClicked(var image, var mouse, var imageSource)
     signal linksLoaded()
 
     spacing: 4
@@ -138,7 +138,12 @@ Column {
                 isOnline: root.store.mainModuleInst.isOnline
                 asynchronous: true
                 isAnimated: result.contentType ? result.contentType.toLowerCase().endsWith("gif") : false
-                onClicked: isAnimated && !playing ? localAnimationEnabled = true : root.imageClicked(linkImage.imageAlias)
+                onClicked: {
+                    if (isAnimated && !playing)
+                        localAnimationEnabled = true
+                    else
+                        root.imageClicked(linkImage.imageAlias, mouse, source)
+                }
                 imageAlias.cache: localAnimationEnabled // GIFs can only loop/play properly with cache enabled
                 Loader {
                     width: 45

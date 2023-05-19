@@ -62,6 +62,10 @@ ListModel {
         section: "Views"
     }
     ListElement {
+        title: "MessageContextMenu"
+        section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }

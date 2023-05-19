@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
@@ -32,6 +33,15 @@ StatusDialog {
     title: root.messageToPin ? qsTr("Pin limit reached") : qsTr("Pinned messages")
     subtitle: root.messageToPin ? qsTr("Unpin a previous message first")
                                 : qsTr("%n message(s)", "", pinnedMessageListView.count)
+
+    QtObject {
+        id: d
+
+        function jumpToMessage(messageId) {
+            root.close()
+            root.messageStore.messageModule.jumpToMessage(messageId)
+        }
+    }
 
     contentItem: ColumnLayout {
         id: column
@@ -67,7 +77,6 @@ StatusDialog {
 
                     rootStore: root.store
                     messageStore: root.messageStore
-                    messageContextMenu: msgContextMenu
 
                     messageId: model.id
                     responseToMessageWithId: model.responseToMessageWithId
@@ -120,14 +129,23 @@ StatusDialog {
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
                     z: 55
-                    onClicked: {
-                        if (!!root.messageToPin) {
-                            if (!radio.checked)
-                                radio.checked = true
-                        } else {
-                            root.close()
-                            root.messageStore.messageModule.jumpToMessage(model.id)
-                        }
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: (mouse) => {
+                                   switch (mouse.button) {
+                                       case Qt.RightButton:
+                                           Global.openMenu(pinnedPopupMessageContextMenuComponent, this, {
+                                                               messageId: messageItem.messageId,
+                                                           })
+                                           break
+                                       case Qt.LeftButton:
+                                           if (!!root.messageToPin) {
+                                               if (!radio.checked)
+                                                radio.checked = true
+                                           } else {
+                                               d.jumpToMessage(model.id)
+                                           }
+                                           break
+                                   }
                     }
                 }
 
@@ -160,24 +178,42 @@ StatusDialog {
                         root.messageToUnpin = checked ? model.id : ""
                     }
                 }
-            }
-        }
 
-        MessageContextMenuView {
-            id: msgContextMenu
-            store: root.store
-            pinnedPopup: true
-            pinnedMessage: true
-            onShouldCloseParentPopup: {
-                root.close()
-            }
+                Component {
+                    id: pinnedPopupMessageContextMenuComponent
 
-            onUnpinMessage: {
-                root.messageStore.unpinMessage(messageId)
-            }
+                    StatusMenu {
+                        id: messageContextMenu
 
-            onJumpToMessage: {
-                root.messageStore.messageModule.jumpToMessage(messageId)
+                        property string messageId
+
+                        StatusAction {
+                            text: qsTr("Unpin")
+                            icon.name: "unpin"
+                            onTriggered: {
+                                root.messageStore.unpinMessage(messageContextMenu.messageId)
+                                close()
+                            }
+                        }
+
+                        StatusAction {
+                            text: qsTr("Jump to")
+                            icon.name: "arrow-up"
+                            onTriggered: {
+                                d.jumpToMessage(messageContextMenu.messageId)
+                                close()
+                            }
+                        }
+
+                        onOpened: {
+                            messageItem.setMessageActive(model.id, true)
+                        }
+                        onClosed: {
+                            messageItem.setMessageActive(model.id, false)
+                            destroy()
+                        }
+                    }
+                }
             }
         }
 

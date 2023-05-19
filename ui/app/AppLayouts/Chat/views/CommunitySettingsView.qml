@@ -221,9 +221,7 @@ StatusSectionLayout {
                 declinedMemberRequestsModel: root.community.declinedMemberRequests
                 editable: root.community.amISectionAdmin
                 communityName: root.community.name
-                communityMemberContextMenu: memberContextMenuView
 
-                onUserProfileClicked: Global.openProfilePopup(id)
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id)
                 onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
@@ -482,22 +480,6 @@ StatusSectionLayout {
                 close()
             }
             onClosed: destroy()
-        }
-    }
-
-    MessageContextMenuView {
-        id: memberContextMenuView
-        store: root.rootStore
-        isProfile: true
-        amIChatAdmin: root.rootStore.amIChatAdmin()
-        myPublicKey: root.rootStore.myPublicKey()
-
-        onOpenProfileClicked: {
-            Global.openProfilePopup(publicKey, null)
-        }
-        onCreateOneToOneChat: {
-            Global.changeAppSectionBySectionType(Constants.appSection.chat)
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
         }
     }
 

@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Dialogs 1.0
 
 import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile.popups 1.0
@@ -40,6 +41,8 @@ QtObject {
         Global.importCommunityPopupRequested.connect(openImportCommunityPopup)
         Global.removeContactRequested.connect(openRemoveContactConfirmationPopup)
         Global.openPopupRequested.connect(openPopup)
+        Global.openDeleteMessagePopup.connect(openDeleteMessagePopup)
+        Global.openDownloadImageDialog.connect(openDownloadImageDialog)
     }
 
     function openPopup(popupComponent, params = {}, cb = null) {
@@ -77,9 +80,8 @@ QtObject {
         openPopup(downloadPageComponent, popupProperties)
     }
 
-    function openImagePopup(image, contextMenu) {
+    function openImagePopup(image) {
         var popup = imagePopupComponent.createObject(popupParent)
-        popup.contextMenu = contextMenu
         popup.openPopup(image)
     }
 
@@ -206,6 +208,21 @@ QtObject {
         })
     }
 
+    function openDeleteMessagePopup(messageId, messageStore) {
+        openPopup(deleteMessageConfirmationDialogComponent,
+                  {
+                      messageId,
+                      messageStore
+                  })
+    }
+
+    function openDownloadImageDialog(imageSource) {
+        // We don't use `openPopup`, because there's no `FileDialog::closed` signal.
+        // And multiple file dialogs are (almost) ok
+        const popup = downloadImageDialogComponent.createObject(popupParent, { imageSource })
+        popup.open()
+    }
+
     readonly property list<Component> _components: [
         Component {
             id: removeContactConfirmationDialog
@@ -316,17 +333,6 @@ QtObject {
             id: imagePopupComponent
             StatusImageModal {
                 id: imagePopup
-                onClicked: {
-                    if (mouse.button === Qt.LeftButton) {
-                        imagePopup.close()
-                    } else if(mouse.button === Qt.RightButton) {
-                        contextMenu.imageSource = imagePopup.imageSource
-                        contextMenu.hideEmojiPicker = true
-                        contextMenu.isRightClickOnImage = true
-                        contextMenu.parent = imagePopup.contentItem
-                        contextMenu.show()
-                    }
-                }
                 onClosed: destroy()
             }
         },
@@ -461,6 +467,36 @@ QtObject {
             DiscordImportProgressDialog {
                 store: root.communitiesStore
             }
+        },
+
+        Component {
+            id: deleteMessageConfirmationDialogComponent
+            DeleteMessageConfirmationPopup {
+                onClosed: destroy()
+            }
+        },
+
+        Component {
+            id: downloadImageDialogComponent
+            FileDialog {
+                property string imageSource
+                title: qsTr("Please choose a directory")
+                selectFolder: true
+                selectExisting: true
+                selectMultiple: false
+                modality: Qt.NonModal
+                onAccepted: {
+                    Utils.downloadImageByUrl(imageSource, fileUrl)
+                    destroy()
+                }
+                onRejected: {
+                    destroy()
+                }
+                Component.onCompleted: {
+                    open()
+                }
+            }
         }
+
     ]
 }

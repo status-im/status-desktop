@@ -14,3 +14,4 @@ MessageBorder 1.0 MessageBorder.qml
 EmojiReaction 1.0 EmojiReaction.qml
 ProfileHeader 1.0 ProfileHeader.qml
 VerificationLabel 1.0 VerificationLabel.qml
+MessageReactionsRow 1.0 MessageReactionsRow.qml
