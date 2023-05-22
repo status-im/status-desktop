@@ -1388,11 +1388,14 @@ QtObject:
       error "Error accepting request to join community", msg = e.msg 
 
   proc onAsyncAcceptRequestToJoinCommunityDone*(self: Service, response: string) {.slot.} =
+    var communityId: string
+    var requestId: string
+    var userKey: string
     try:
       let rpcResponseObj = response.parseJson
-      let communityId = rpcResponseObj{"communityId"}.getStr
-      let requestId = rpcResponseObj{"requestId"}.getStr
-      let userKey = self.getUserPubKeyFromPendingRequest(communityId, requestId)
+      communityId = rpcResponseObj{"communityId"}.getStr
+      requestId = rpcResponseObj{"requestId"}.getStr
+      userKey = self.getUserPubKeyFromPendingRequest(communityId, requestId)
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         let errorMessage = rpcResponseObj{"error"}.getStr
 
@@ -1416,7 +1419,7 @@ QtObject:
     except Exception as e:
       let errMsg = e.msg
       error "error accepting request to join: ", errMsg
-      self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED, Args())
+      self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
 
   proc asyncLoadCuratedCommunities*(self: Service) =
     self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING, Args())

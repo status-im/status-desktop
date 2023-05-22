@@ -1010,7 +1010,7 @@ method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, me
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, true)
 
-method onAcceptRequestToJoinFailed*[T](self: Module[T], communityId: string, memberKey: string) =
+method onAcceptRequestToJoinFailed*[T](self: Module[T], communityId: string, memberKey: string, requestId: string) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updatePendingRequestLoadingState(memberKey, false)
