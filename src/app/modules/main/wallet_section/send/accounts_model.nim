@@ -7,7 +7,7 @@ type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
     Address,
-    Color,
+    ColorId,
     WalletType,
     Emoji,
     Assets,
@@ -49,7 +49,7 @@ QtObject:
     {
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
-      ModelRole.Color.int:"color",
+      ModelRole.ColorId.int:"colorId",
       ModelRole.WalletType.int:"walletType",
       ModelRole.Emoji.int: "emoji",
       ModelRole.Assets.int: "assets",
@@ -77,8 +77,8 @@ QtObject:
       result = newQVariant(item.name())
     of ModelRole.Address:
       result = newQVariant(item.address())
-    of ModelRole.Color:
-      result = newQVariant(item.color())
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId())
     of ModelRole.WalletType:
       result = newQVariant(item.walletType())
     of ModelRole.Emoji:

@@ -13,7 +13,7 @@ proc initItem*(
   name: string = "",
   address: string = "",
   path: string = "",
-  color: string = "",
+  colorId: string = "",
   walletType: string = "",
   currencyBalance: CurrencyAmount = nil,
   emoji: string = "",
@@ -24,7 +24,7 @@ proc initItem*(
   result = Item()
   result.WalletAccountItem.setup(name,
     address,
-    color,
+    colorId,
     emoji,
     walletType,
     path,

@@ -51,7 +51,7 @@ StatusSelect {
         tagsModel : root.selectedOrigin.accounts
 
         tagsDelegate: StatusListItemTag {
-            bgColor: model.account.color
+            bgColor: Utils.getColorForId(model.account.colorId)
             height: Style.current.bigPadding
             bgRadius: 6
             tagClickable: false
@@ -114,7 +114,7 @@ StatusSelect {
         tagsModel: menu.isHeader || menu.isOption? [] : model.keyPair.accounts
 
         tagsDelegate: StatusListItemTag {
-            bgColor: model.account.color
+            bgColor: Utils.getColorForId(model.account.colorId)
             height: Style.current.bigPadding
             bgRadius: 6
             tagClickable: false

@@ -544,7 +544,7 @@ proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: 
     if a.walletType == WalletTypeDefaultStatusAccount:
       icon = "wallet"
     item.setKeyUid(a.keyUid)
-    item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.color, icon, balance = 0.0, balanceFetched = true))
+    item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.colorId, icon, balance = 0.0, balanceFetched = true))
     return true
   return false
 
@@ -579,7 +579,7 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
     unknonwAccountNumber.inc
     let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknonwAccountNumber
     result.item.addAccount(newKeyPairAccountItem(name, wa.path, wa.address, pubKey = wa.publicKey, emoji = "", 
-      color = "#939BA1", icon = "wallet", balance, balanceFetched))
+      colorId = "", icon = "undefined", balance, balanceFetched))
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
   let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)

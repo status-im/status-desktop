@@ -62,7 +62,7 @@ proc setBalance(self: Module, tokens: seq[WalletTokenDto], chainIds: seq[int]) =
 proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) : seq[string] =
   var colors: seq[string] = @[]
   for account in walletAccounts:
-    colors.add(account.color)
+    colors.add(account.colorId)
   return colors
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool) =
@@ -88,7 +88,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], 
       walletAccount.mixedCaseAddress,
       walletAccount.ens,
       walletAccount.assetsLoading,
-      walletAccount.color,
+      walletAccount.colorId,
       walletAccount.emoji,
       isWatchOnlyAccount=walletAccount.walletType == "watch"
     )

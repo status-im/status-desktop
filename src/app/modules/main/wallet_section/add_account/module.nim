@@ -122,10 +122,10 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
 
   self.view.setDisablePopup(false)
   self.view.setStoredAccountName(accountDto.name)
-  self.view.setStoredSelectedColor(accountDto.color)
+  self.view.setStoredSelectedColorId(accountDto.colorId)
   self.view.setStoredSelectedEmoji(accountDto.emoji)
   self.view.setAccountName(accountDto.name) 
-  self.view.setSelectedColor(accountDto.color) 
+  self.view.setSelectedColorId(accountDto.colorId)
   self.view.setSelectedEmoji(accountDto.emoji)
 
   if accountDto.walletType == WalletTypeWatch:
@@ -637,7 +637,7 @@ proc doAddAccount[T](self: Module[T]) =
             walletType: accountType, 
             path: path, 
             name: self.view.getAccountName(),
-            color: self.view.getSelectedColor(), 
+            colorId: self.view.getSelectedColorId(), 
             emoji: self.view.getSelectedEmoji()
           )
         )
@@ -657,7 +657,7 @@ proc doAddAccount[T](self: Module[T]) =
             walletType: accountType, 
             path: path, 
             name: self.view.getAccountName(),
-            color: self.view.getSelectedColor(), 
+            colorId: self.view.getSelectedColorId(), 
             emoji: self.view.getSelectedEmoji()
           )]
         )
@@ -673,7 +673,7 @@ proc doAddAccount[T](self: Module[T]) =
       publicKey = publicKey, 
       keyUid = keyUid, 
       accountType = accountType, 
-      color = self.view.getSelectedColor(), 
+      colorId = self.view.getSelectedColorId(),
       emoji = self.view.getSelectedEmoji())
     if not success:
       error "failed to store account", address=selectedAddrItem.getAddress()
@@ -696,7 +696,7 @@ proc doEditAccount[T](self: Module[T]) =
   if self.controller.updateAccount(
     address = address,
     accountName = self.view.getAccountName(),
-    color = self.view.getSelectedColor(),
+    colorId = self.view.getSelectedColorId(),
     emoji = self.view.getSelectedEmoji()):
       self.closeAddAccountPopup()
   else:

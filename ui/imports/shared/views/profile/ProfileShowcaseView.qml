@@ -163,7 +163,7 @@ Control {
                     width: ListView.view.width
                     title: model.name
                     subTitle: StatusQUtils.Utils.elideText(model.address, 6, 4).replace("0x", "0×")
-                    asset.color: model.color
+                    asset.color: Utils.getColorForId(model.colorId)
                     asset.emoji: model.emoji ?? ""
                     asset.name: asset.emoji || "filled-account"
                     asset.isLetterIdenticon: asset.emoji

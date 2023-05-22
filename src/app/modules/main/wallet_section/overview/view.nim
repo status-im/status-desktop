@@ -14,11 +14,11 @@ QtObject:
       currencyBalance: CurrencyAmount
       ens: string
       balanceLoading: bool
-      color: string
+      colorId: string
       emoji: string
       isAllAccounts: bool
       hideWatchAccounts: bool
-      colors: string
+      colorIds: string
       isWatchOnlyAccount: bool
 
   proc setup(self: View) =
@@ -78,12 +78,12 @@ QtObject:
       self.balanceLoading = balanceLoading
       self.balanceLoadingChanged()
 
-  proc getColor(self: View): QVariant {.slot.} =
-    return newQVariant(self.color)
-  proc colorChanged(self: View) {.signal.}
-  QtProperty[QVariant] color:
-    read = getColor
-    notify = colorChanged
+  proc getColorId(self: View): QVariant {.slot.} =
+    return newQVariant(self.colorId)
+  proc colorIdChanged(self: View) {.signal.}
+  QtProperty[QVariant] colorId:
+    read = getColorId
+    notify = colorIdChanged
 
   proc getEmoji(self: View): QVariant {.slot.} =
     return newQVariant(self.emoji)
@@ -106,12 +106,12 @@ QtObject:
     read = getHideWatchAccounts
     notify = hideWatchAccountsChanged
 
-  proc getColors(self: View): QVariant {.slot.} =
-    return newQVariant(self.colors)
-  proc colorsChanged(self: View) {.signal.}
-  QtProperty[QVariant] colors:
-    read = getColors
-    notify = colorsChanged
+  proc getColorIds(self: View): QVariant {.slot.} =
+    return newQVariant(self.colorIds)
+  proc colorIdsChanged(self: View) {.signal.}
+  QtProperty[QVariant] colorIds:
+    read = getColorIds
+    notify = colorIdsChanged
 
   proc getIsWatchOnlyAccount(self: View): QVariant {.slot.} =
     return newQVariant(self.isWatchOnlyAccount)
@@ -131,9 +131,13 @@ QtObject:
       self.ens = item.getEns()
       self.ensChanged()
     self.setBalanceLoading(item.getBalanceLoading())  
-    if(self.color != item.getColor()):
-      self.color = item.getColor()
-      self.colorChanged()
+    if(self.colorId != item.getColorId()):
+      self.colorId = item.getColorId()
+      self.colorIdChanged()
+    # set this on top of isAllAccounts so that the data is set correctly on the UI side
+    if(self.colorIds != item.getColorIds()):
+      self.colorIds = item.getColorIds()
+      self.colorIdsChanged()
     if(self.emoji != item.getEmoji()):
       self.emoji = item.getEmoji()
       self.emojiChanged()
@@ -146,6 +150,3 @@ QtObject:
     if(self.hideWatchAccounts != item.getHideWatchAccounts()):
       self.hideWatchAccounts = item.getHideWatchAccounts()
       self.hideWatchAccountsChanged()
-    if(self.colors != item.getColors()):
-      self.colors = item.getColors()
-      self.colorsChanged()

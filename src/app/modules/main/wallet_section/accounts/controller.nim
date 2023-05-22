@@ -56,5 +56,5 @@ proc getKeycardByKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
 proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
 
-proc updateAccount*(self: Controller, address: string, accountName: string, color: string, emoji: string) =
-  discard self.walletAccountService.updateWalletAccount(address, accountName, color, emoji)
+proc updateAccount*(self: Controller, address: string, accountName: string, colorId: string, emoji: string) =
+  discard self.walletAccountService.updateWalletAccount(address, accountName, colorId, emoji)

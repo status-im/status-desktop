@@ -964,21 +964,6 @@ QtObject {
     readonly property string expired: "expired"
     readonly property string failedResending: "failedResending"
 
-    readonly property var preDefinedWalletAccountColors:[
-        StatusColors.colors['black'],
-        StatusColors.colors['white'],
-        StatusColors.colors['blue2'],
-        StatusColors.colors['purple'],
-        StatusColors.colors['cyan'],
-        StatusColors.colors['violet'],
-        StatusColors.colors['red2'],
-        StatusColors.colors['yellow'],
-        StatusColors.colors['green2'],
-        StatusColors.colors['moss'],
-        StatusColors.colors['brown'],
-        StatusColors.colors['brown2']
-    ]
-
     readonly property QtObject appTranslatableConstants: QtObject {
         readonly property string loginAccountsListAddNewUser: "LOGIN-ACCOUNTS-LIST-ADD-NEW-USER"
         readonly property string loginAccountsListAddExistingUser: "LOGIN-ACCOUNTS-LIST-ADD-EXISTING-USER"
@@ -1005,6 +990,22 @@ QtObject {
         MembershipRequests,
         RejectedMembers,
         BannedMembers
+    }   
+
+    readonly property QtObject walletAccountColors: QtObject {
+        readonly property string primary: "primary"
+        readonly property string purple: "purple"
+        readonly property string orange: "orange"
+        readonly property string army: "army"
+        readonly property string turquoise: "turquoise"
+        readonly property string sky: "sky"
+        readonly property string yellow: "yellow"
+        readonly property string pink: "pink"
+        readonly property string copper: "copper"
+        readonly property string camel: "camel"
+        readonly property string magenta: "magenta"
+        readonly property string yinYang: "yinYang"
+        readonly property string undefinedAccount: "undefined"
     }
 
     enum MutingVariations {

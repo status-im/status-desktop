@@ -13,7 +13,7 @@ QtObject:
   proc setup*(self: AccountItem,
     name: string,
     address: string,
-    color: string,
+    colorId: string,
     emoji: string,
     walletType: string,
     assets: token_model.Model,
@@ -22,7 +22,7 @@ QtObject:
     self.QObject.setup
     self.WalletAccountItem.setup(name,
       address,
-      color,
+      colorId,
       emoji,
       walletType,
       path = "",
@@ -37,14 +37,14 @@ QtObject:
   proc newAccountItem*(
     name: string = "",
     address: string = "",
-    color: string = "",
+    colorId: string = "",
     emoji: string = "",
     walletType: string = "",
     assets: token_model.Model = nil,
     currencyBalance: CurrencyAmount = nil,
     ): AccountItem =
       new(result, delete)
-      result.setup(name, address, color, emoji, walletType, assets, currencyBalance)
+      result.setup(name, address, colorId, emoji, walletType, assets, currencyBalance)
 
   proc `$`*(self: AccountItem): string =
     result = "WalletSection-Send-Item("

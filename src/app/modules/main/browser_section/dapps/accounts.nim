@@ -5,7 +5,7 @@ type
   ModelRole {.pure.} = enum
     Name = UserRole + 1
     Address
-    Color
+    ColorId
     Emoji
 
 QtObject:
@@ -47,7 +47,7 @@ QtObject:
     {
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
-      ModelRole.Color.int:"color",
+      ModelRole.ColorId.int:"colorId",
       ModelRole.Emoji.int:"emoji"
     }.toTable
 
@@ -66,8 +66,8 @@ QtObject:
       result = newQVariant(item.name)
     of ModelRole.Address:
       result = newQVariant(item.address)
-    of ModelRole.Color:
-      result = newQVariant(item.color)
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId)
     of ModelRole.Emoji:
       result = newQVariant(item.emoji)
 

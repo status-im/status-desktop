@@ -204,7 +204,7 @@ Rectangle {
                 title: model.name
                 subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
                 asset.emoji: !!model.emoji ? model.emoji: ""
-                asset.color: model.color
+                asset.color: Utils.getColorForId(model.colorId)
                 asset.name: !model.emoji ? "filled-account": ""
                 asset.width: 40
                 asset.height: 40

@@ -55,7 +55,7 @@ StatusModal {
             placeholderText: qsTr("Enter an account name...")
             input.text: popup.account.name
             input.asset.emoji: popup.account.emoji
-            input.asset.color: popup.account.color
+            input.asset.color: Utils.getColorForId(popup.account.colorId)
             input.asset.name: !popup.account.emoji ? "filled-account": ""
 
             validationMode: StatusInput.ValidationMode.Always
@@ -83,9 +83,9 @@ StatusModal {
             anchors.top: selectedColor.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            model: Constants.preDefinedWalletAccountColors
-            titleText: qsTr("color").toUpperCase()
-            selectedColor: popup.account.color
+            model: Theme.palette.customisationColorsArray
+            titleText: qsTr("COLOR")
+            selectedColor: Utils.getColorForId(popup.account.colorId)
             selectedColorIndex: {
                 for (let i = 0; i < model.length; i++) {
                     if(model[i] === popup.account.color)
@@ -128,7 +128,7 @@ StatusModal {
                      return
                  }
 
-                const error = walletStore.updateAccount(popup.account.address, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.asset.emoji);
+                const error = walletStore.updateAccount(popup.account.address, accountNameInput.text, Utils.getIdForColor(accountColorInput.selectedColor), accountNameInput.input.asset.emoji);
 
                 if (error) {
                     Global.playErrorSound();

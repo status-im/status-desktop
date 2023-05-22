@@ -21,11 +21,11 @@ Item {
     implicitHeight: layout.implicitHeight
 
     Component.onCompleted: {
-        if (root.store.addAccountModule.selectedColor === "") {
+        if (root.store.addAccountModule.selectedColorId === "") {
             colorSelection.selectedColorIndex = Math.floor(Math.random() * colorSelection.model.length)
         }
         else {
-            let ind = d.evaluateColorIndex(root.store.addAccountModule.selectedColor)
+            let ind = d.evaluateColorIndex(root.store.addAccountModule.selectedColorId)
             colorSelection.selectedColorIndex = ind
         }
 
@@ -42,8 +42,8 @@ Item {
         id: d
 
         function evaluateColorIndex(color) {
-            for (let i = 0; i < Constants.preDefinedWalletAccountColors.length; i++) {
-                if(Constants.preDefinedWalletAccountColors[i] === color) {
+            for (let i = 0; i < Theme.palette.customisationColorsArray.length; i++) {
+                if(Theme.palette.customisationColorsArray[i] === color) {
                     return i
                 }
             }
@@ -107,7 +107,7 @@ Item {
                 text: root.store.addAccountModule.accountName
                 input.isIconSelectable: true
                 input.leftPadding: Style.current.padding
-                input.asset.color: root.store.addAccountModule.selectedColor
+                input.asset.color: Utils.getColorForId(root.store.addAccountModule.selectedColorId)
                 input.asset.emoji: root.store.addAccountModule.selectedEmoji
                 onIconClicked: {
                     d.openEmojiPopup(true)
@@ -152,14 +152,14 @@ Item {
                 id: colorSelection
                 objectName: "AddAccountPopup-AccountColor"
                 anchors.horizontalCenter: parent.horizontalCenter
-                model: Constants.preDefinedWalletAccountColors
+                model: Theme.palette.customisationColorsArray
                 title.color: Theme.palette.directColor1
                 title.font.pixelSize: Constants.addAccountPopup.labelFontSize1
                 title.text: qsTr("Colour")
                 selectedColorIndex: -1
 
                 onSelectedColorChanged: {
-                    root.store.addAccountModule.selectedColor = selectedColor
+                    root.store.addAccountModule.selectedColorId = Utils.getIdForColor(selectedColor)
                 }
             }
 

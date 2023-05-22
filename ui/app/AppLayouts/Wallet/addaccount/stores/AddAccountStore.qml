@@ -78,8 +78,8 @@ QtObject {
         return root.addAccountModule.getStoredSelectedEmoji()
     }
 
-    function getStoredSelectedColor() {
-        return root.addAccountModule.getStoredSelectedColor()
+    function getStoredSelectedColorId() {
+        return root.addAccountModule.getStoredSelectedColorId()
     }
 
     function submitAddAccount(event) {
@@ -198,14 +198,14 @@ QtObject {
         if (root.editMode) {
             return root.accountNameIsValid &&
                     root.addAccountModule.accountName !== root.getStoredAccountName() ||
-                    root.addAccountModule.selectedColor !== "" &&
-                    root.addAccountModule.selectedColor !== root.getStoredSelectedColor() ||
+                    root.addAccountModule.selectedColorId !== "" &&
+                    root.addAccountModule.selectedColorId !== root.getStoredSelectedColorId() ||
                     root.addAccountModule.selectedEmoji !== "" &&
                     root.addAccountModule.selectedEmoji !== root.getStoredSelectedEmoji()
         }
 
         let valid = root.accountNameIsValid &&
-            root.addAccountModule.selectedColor !== "" &&
+            root.addAccountModule.selectedColorId !== "" &&
             root.addAccountModule.selectedEmoji !== ""
 
         if (root.currentState.stateType === Constants.addAccountPopup.state.main) {

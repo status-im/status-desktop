@@ -113,13 +113,13 @@ QtObject:
         self.removeItemAtIndex(i)
         return
 
-  proc updateDetailsForAddressIfTheyAreSet*(self: KeyPairAccountModel, address, name, color, emoji: string) =
+  proc updateDetailsForAddressIfTheyAreSet*(self: KeyPairAccountModel, address, name, colorId, emoji: string) =
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         if name.len > 0:
           self.items[i].setName(name)
-        if color.len > 0:
-          self.items[i].setColor(color)
+        if colorId.len > 0:
+          self.items[i].setColorId(colorId)
         if emoji.len > 0:
           self.items[i].setEmoji(emoji)
         return

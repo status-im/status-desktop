@@ -5,7 +5,7 @@ import ./related_account_item
 type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
-    Color,
+    ColorId,
     Emoji,
 
 QtObject:
@@ -43,7 +43,7 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Name.int:"name",
-      ModelRole.Color.int:"color",
+      ModelRole.ColorId.int:"colorId",
       ModelRole.Emoji.int: "emoji",
     }.toTable
 
@@ -67,7 +67,7 @@ QtObject:
     case enumRole:
     of ModelRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.Color:
-      result = newQVariant(item.getColor())
+    of ModelRole.ColorId:
+      result = newQVariant(item.getColorId())
     of ModelRole.Emoji:
       result = newQVariant(item.getEmoji())

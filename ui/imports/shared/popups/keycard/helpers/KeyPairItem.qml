@@ -78,7 +78,7 @@ StatusListItem {
     tagsModel: root.keyPairAccounts
 
     tagsDelegate: StatusListItemTag {
-        bgColor: model.account.color
+        bgColor: Utils.getColorForId(model.account.colorId)
         height: Style.current.bigPadding
         bgRadius: 6
         tagClickable: root.tagClickable

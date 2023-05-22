@@ -169,4 +169,19 @@ ThemePalette {
         property color emojiReactionActiveBackground: getColor('blue')
         property color emojiReactionActiveBackgroundHovered: Qt.darker(emojiReactionActiveBackground, 1.1)
     }
+
+    customisationColors: QtObject {
+        property color blue: "#223BC4"
+        property color purple: "#5A33CA"
+        property color orange: "#CC6438"
+        property color army: "#1A4E52"
+        property color turquoise: "#22617C"
+        property color sky: "#1475AC"
+        property color yellow: "#C58D30"
+        property color pink: "#C55972"
+        property color copper:"#A24E45"
+        property color camel: "#9F7252"
+        property color magenta: "#BD1E56"
+        property color yinYang: "#FFFFFF"
+    }
 }

@@ -165,7 +165,7 @@ StatusSectionLayout {
                                                                             request,
                                                                             selectedAccount: {
                                                                                 name: WalletStore.dappBrowserAccount.name,
-                                                                                iconColor: WalletStore.dappBrowserAccount.color
+                                                                                iconColor: Utils.getColorForId(WalletStore.dappBrowserAccount.colorId)
                                                                             }
                                                                         })
             }
@@ -212,7 +212,7 @@ StatusSectionLayout {
             favoriteComponent: favoritesBar
             currentFavorite: _internal.currentWebView && BookmarksStore.getCurrentFavorite(_internal.currentWebView.url)
             dappBrowserAccName: WalletStore.dappBrowserAccount.name
-            dappBrowserAccIcon: WalletStore.dappBrowserAccount.color
+            dappBrowserAccIcon: Utils.getColorForId(WalletStore.dappBrowserAccount.colorId)
             settingMenu: settingsMenu
             currentUrl: !!_internal.currentWebView ? _internal.currentWebView.url : ""
             isLoading: (!!_internal.currentWebView && _internal.currentWebView.loading)

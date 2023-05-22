@@ -271,6 +271,13 @@ QtObject {
         const isMobileDevice = deviceType === "ios" || deviceType === "android"
         return isMobileDevice ? "mobile" : "desktop"
     }
+
+    function getYinYangColor(color) {
+        if (color.toString().toUpperCase() === Theme.palette.customisationColors.yinYang.toString().toUpperCase()) {
+            return Theme.palette.name === "light" ? "#FFFFFF" : "#09101C"
+        }
+        return ""
+    }
 }
 
 

@@ -6,34 +6,34 @@ type
     mixedCaseAddress: string
     ens: string
     balanceLoading: bool
-    color: string
+    colorId: string
     emoji: string
     isWatchOnlyAccount: bool
     isAllAccounts: bool
     hideWatchAccounts: bool
-    colors: seq[string]
+    colorIds: seq[string]
 
 proc initItem*(
   name: string = "",
   mixedCaseAddress: string = "",
   ens: string = "",
   balanceLoading: bool  = true,
-  color: string,
+  colorId: string,
   emoji: string,
   isWatchOnlyAccount: bool=false,
   isAllAccounts: bool = false,
   hideWatchAccounts: bool = false,
-  colors: seq[string] = @[]
+  colorIds: seq[string] = @[]
 ): Item =
   result.name = name
   result.mixedCaseAddress = mixedCaseAddress
   result.ens = ens
   result.balanceLoading = balanceLoading
-  result.color = color
+  result.colorId = colorId
   result.emoji = emoji
   result.isAllAccounts = isAllAccounts
   result.hideWatchAccounts = hideWatchAccounts
-  result.colors = colors
+  result.colorIds = colorIds
   result.isWatchOnlyAccount = isWatchOnlyAccount
 
 proc `$`*(self: Item): string =
@@ -42,12 +42,12 @@ proc `$`*(self: Item): string =
     mixedCaseAddress: {self.mixedCaseAddress},
     ens: {self.ens},
     balanceLoading: {self.balanceLoading},
-    color: {self.color},
+    colorId: {self.colorId},
     emoji: {self.emoji},
     isWatchOnlyAccount: {self.isWatchOnlyAccount},
     isAllAccounts: {self.isAllAccounts},
     hideWatchAccounts: {self.hideWatchAccounts},
-    colors: {self.colors}
+    colorIds: {self.colorIds}
     ]"""
 
 proc getName*(self: Item): string =
@@ -62,8 +62,8 @@ proc getEns*(self: Item): string =
 proc getBalanceLoading*(self: Item): bool =
   return self.balanceLoading
 
-proc getColor*(self: Item): string =
-  return self.color
+proc getColorId*(self: Item): string =
+  return self.colorId
 
 proc getEmoji*(self: Item): string =
   return self.emoji
@@ -74,13 +74,8 @@ proc getIsAllAccounts*(self: Item): bool =
 proc getHideWatchAccounts*(self: Item): bool =
   return self.hideWatchAccounts
 
-proc getColors*(self: Item): string =
-  for color in self.colors:
-    if result.isEmptyOrWhitespace:
-      result = color
-    else:
-      result = result & ";" & color
-  return result
+proc getColorIds*(self: Item): string =
+  return self.colorIds.join(";")
 
 proc getIsWatchOnlyAccount*(self: Item): bool =
   return self.isWatchOnlyAccount

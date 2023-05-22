@@ -6,6 +6,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import utils 1.0
+
 import "../controls"
 
 StatusComboBox {
@@ -14,14 +16,6 @@ StatusComboBox {
     property var selectedAccount
     property string chainShortNames
     property int selectedIndex: -1
-
-    QtObject {
-        id: d
-        function getTextColorForWhite(color) {
-            // The grey is kept for backwards compatibility for accounts already created with grey background
-            return color === StatusColors.colors['grey'] || color === StatusColors.colors['white'] ? Theme.palette.black : Theme.palette.white
-        }
-    }
 
     control.padding: 0
     control.spacing: 0
@@ -36,9 +30,9 @@ StatusComboBox {
         width: contentItem.childrenRect.width + control.leftPadding + control.rightPadding
         height: 32
         radius: 8
-        color: !!selectedAccount ? hoverHandler.containsMouse ?
-                                       Theme.palette.walletAccountColors.getHoveredColor(selectedAccount.color) :
-                                       selectedAccount.color ?? "transparent" : "transparent"
+        color: !!selectedAccount ? hoverHandler.hovered ?
+                                       Utils.getHoveredColor(selectedAccount.colorId) :
+                                       Utils.getColorForId(selectedAccount.colorId) : "transparent"
         HoverHandler {
             id: hoverHandler
             cursorShape: Qt.PointingHandCursor
@@ -59,14 +53,14 @@ StatusComboBox {
             anchors.verticalCenter: parent.verticalCenter
             text: selectedAccount.name ?? ""
             font.pixelSize: 15
-            color: d.getTextColorForWhite(selectedAccount.color ?? "")
+            color: Theme.palette.indirectColor1
         }
         StatusIcon {
             anchors.verticalCenter: parent.verticalCenter
             width: 16
             height: width
             icon: "chevron-down"
-            color: d.getTextColorForWhite(selectedAccount.color ?? "")
+            color: Theme.palette.indirectColor1
         }
     }
 

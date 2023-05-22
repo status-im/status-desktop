@@ -31,7 +31,7 @@ StatusListItem {
     }
     statusListItemSubTitle.wrapMode: Text.NoWrap
     asset.emoji: !!modelData && !!modelData.emoji ? modelData.emoji: ""
-    asset.color: !!modelData ? modelData.color: ""
+    asset.color: !!modelData ? Utils.getColorForId(modelData.colorId): ""
     asset.name: !!modelData && !modelData.emoji ? "filled-account": ""
     asset.letterSize: 14
     asset.isLetterIdenticon: !!modelData && !!modelData.emoji ? true : false

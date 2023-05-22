@@ -134,8 +134,8 @@ QtObject {
         return walletSectionAccounts.deleteAccount(address)
     }
 
-    function updateCurrentAccount(address, accountName, color, emoji) {
-        return walletSectionAccounts.updateAccount(address, accountName, color, emoji)
+    function updateCurrentAccount(address, accountName, colorId, emoji) {
+        return walletSectionAccounts.updateAccount(address, accountName, colorId, emoji)
     }
 
     function updateCurrency(newCurrency) {

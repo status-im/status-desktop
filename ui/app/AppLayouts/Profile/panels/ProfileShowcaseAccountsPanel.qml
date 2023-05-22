@@ -11,7 +11,7 @@ ProfileShowcasePanel {
 
     settingsKey: "accounts"
     keyRole: "address"
-    roleNames: ["name", "address", "walletType", "emoji", "color"]
+    roleNames: ["name", "address", "walletType", "emoji", "colorId"]
     filterFunc: (modelData) => modelData.walletType !== Constants.keyWalletType && !showcaseModel.hasItem(modelData.address)
     hiddenPlaceholderBanner: qsTr("Accounts here will show on your profile")
     showcasePlaceholderBanner: qsTr("Accounts here will be hidden from your profile")

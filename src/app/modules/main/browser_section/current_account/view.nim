@@ -13,7 +13,7 @@ QtObject:
       name: string
       address: string
       path: string
-      color: string
+      colorId: string
       walletType: string
       currencyBalance: CurrencyAmount
       assets: token_model.Model
@@ -62,14 +62,14 @@ QtObject:
     read = getPath
     notify = pathChanged
 
-  proc getColor(self: View): QVariant {.slot.} =
-    return newQVariant(self.color)
+  proc getColorId(self: View): QVariant {.slot.} =
+    return newQVariant(self.colorId)
 
-  proc colorChanged(self: View) {.signal.}
+  proc colorIdChanged(self: View) {.signal.}
 
-  QtProperty[QVariant] color:
-    read = getColor
-    notify = colorChanged
+  QtProperty[QVariant] colorId:
+    read = getColorId
+    notify = colorIdChanged
 
   proc getWalletType(self: View): QVariant {.slot.} =
     return newQVariant(self.walletType)
@@ -127,8 +127,8 @@ proc setData*(self: View, item: account_item.Item) =
     self.addressChanged()
     self.path = item.path()
     self.pathChanged()
-    self.color = item.color()
-    self.colorChanged()
+    self.colorId = item.colorId()
+    self.colorIdChanged()
     self.walletType = item.walletType()
     self.walletTypeChanged()
     self.currencyBalance = item.currencyBalance()

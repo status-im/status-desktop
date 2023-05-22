@@ -42,5 +42,5 @@ Feature: Status Desktop Wallet
         Given the user opens app settings screen
         And the user opens the wallet settings
         When the user selects the default account
-        And the user edits default account to "Default" name and "#FFCA0F" color
-        Then the default account is updated to be named "DefaultStatus account" with color "#FFCA0F"
+        And the user edits default account to "Default" name and "#f6af3c" color
+        Then the default account is updated to be named "DefaultStatus account" with color "#f6af3c"

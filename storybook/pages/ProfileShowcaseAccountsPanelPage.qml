@@ -31,28 +31,28 @@ SplitView {
         ListElement {
             name: "My Status Account"
             address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
-            color: "lightcoral"
+            colorId: "primary"
             emoji: "🇨🇿"
             walletType: ""
         }
         ListElement {
             name: "testing (no emoji, colored, seed)"
             address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
-            color: "indigo"
+            colorId: ""
             emoji: ""
             walletType: "seed"
         }
         ListElement {
             name: "My Bro's Account"
             address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
-            color: ""
+            colorId: "orange"
             emoji: "🇸🇰"
             walletType: "watch"
         }
         ListElement {
             name: "Keycard"
             address: "0xdeadbeef"
-            color: "red"
+            colorId: "turquoise"
             emoji: ""
             walletType: "key"
         }
