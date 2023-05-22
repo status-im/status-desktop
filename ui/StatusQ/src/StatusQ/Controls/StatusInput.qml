@@ -112,6 +112,11 @@ Item {
     */
     property int charLimit: 0
     /*!
+        \qmlproperty string StatusInput::charLimitLabel
+        This property overrides the char default chart limit text format.
+    */
+    property string charLimitLabel: ""
+    /*!
         \qmlproperty string StatusInput::errorMessage
         This property sets the error message text.
     */
@@ -417,11 +422,11 @@ Item {
             }
 
             StatusBaseText {
-                id: charLimitLabel
+                id: charLimitLabelItem
                 Layout.alignment: Qt.AlignVCenter
                 height: visible ? contentHeight : 0
                 visible: root.charLimit > 0
-                text: "%1 / %2".arg(Utils.encodeUtf8(statusBaseInput.text).length).arg(root.charLimit)
+                text: root.charLimitLabel ? root.charLimitLabel : "%1 / %2".arg(Utils.encodeUtf8(statusBaseInput.text).length).arg(root.charLimit)
                 font.pixelSize: 12
                 color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
             }
