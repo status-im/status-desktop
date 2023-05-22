@@ -30,7 +30,6 @@ StatusDialog {
         property int minTextWidth: 50
     }
 
-    title: qsTr("Sign transaction - Mint %1 token").arg(root.collectibleName)
     implicitWidth: 520 // by design
     topPadding: 2 * Style.current.padding // by design
     bottomPadding: topPadding

@@ -29,18 +29,19 @@ SplitView {
                 onClicked: dialog.open()
             }
 
-            SignMintTokenTransactionPopup {
+            SignTokenTransactionsPopup {
                 id: dialog
 
                 anchors.centerIn: parent
+                title: qsTr("Sign transaction - Self-destruct %1 tokens").arg(dialog.collectibleName)
                 accountName: editorAccount.text
                 collectibleName: editorCollectible.text
                 networkName: editorNetwork.text
                 feeText: editorFee.text
                 isFeeLoading: editorFeeLoader.checked
 
-                onSignTransactionClicked: logs.logEvent("SignMintTokenTransactionPopup::onSignTransactionClicked")
-                onCancelClicked: logs.logEvent("SignMintTokenTransactionPopup::onCancelClicked")
+                onSignTransactionClicked: logs.logEvent("SignTokenTransactionsPopup::onSignTransactionClicked")
+                onCancelClicked: logs.logEvent("SignTokenTransactionsPopup::onCancelClicked")
 
             }
         }
