@@ -3,6 +3,8 @@ import QtGraphicalEffects 1.12
 
 import StatusQ.Core.Theme 0.1
 
+import utils 1.0
+
 Loader {
     id: root
 
@@ -15,7 +17,7 @@ Loader {
         Rectangle {
             implicitHeight: 115
             gradient: Gradient {
-                GradientStop { position: 0.0; color:  Theme.palette.alphaColor(root.overview.color, 0.1) }
+                GradientStop { position: 0.0; color:  Theme.palette.alphaColor(Utils.getColorForId(overview.colorId), 0.1) }
                 GradientStop { position: 1.0; color: "transparent" }
             }
         }
@@ -28,14 +30,14 @@ Loader {
                 id: base
                 anchors.fill: parent
                 Component.onCompleted: {
-                    let splitWords = root.overview.colors.split(';')
+                    let splitWords = root.overview.colorIds.split(';')
 
                     var stops = []
                     let numOfColors = splitWords.length
                     let gap =  1/splitWords.length
                     let startPosition = gap
                     for (const word of splitWords) {
-                        stops.push(stopComponent.createObject(base, {"position":startPosition, "color": Theme.palette.alphaColor(word, 0.1)}))
+                        stops.push(stopComponent.createObject(base, {"position":startPosition, "color": Theme.palette.alphaColor(Utils.getColorForId(word), 0.1)}))
                         startPosition += gap
                     }
                     gradient.stops = stops

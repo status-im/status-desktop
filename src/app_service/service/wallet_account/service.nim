@@ -414,30 +414,30 @@ QtObject:
     self.setRelatedAccountsForAllAccounts(removedAcc.keyUid)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(address: address))
 
-  proc updateAccountFromLocalStoreAndNotify(self: Service, address, name, color, emoji: string) =
+  proc updateAccountFromLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string) =
     if not self.walletAccountsContainsAddress(address):
       return
     var account = self.getAccountByAddress(address)
     account.name = name
-    account.color = color
+    account.colorId = colorId
     account.emoji = emoji
     self.storeAccount(account, updateRelatedAccounts = false)
     self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
 
   ## if password is not provided local keystore file won't be created
   proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
-    keyUid, accountType, color, emoji: string): string =
+    keyUid, accountType, colorId, emoji: string): string =
     try:
       var response: RpcResponse[JsonNode]
       if password.len == 0:
         response = status_go_accounts.addAccountWithoutKeystoreFileCreation(name, address, path, publicKey, keyUid,
-          accountType, color, emoji)
+          accountType, colorId, emoji)
       else:
         var finalPassword = password
         if doPasswordHashing:
           finalPassword = utils.hashPassword(password)
         response = status_go_accounts.addAccount(finalPassword, name, address, path, publicKey, keyUid, accountType,
-          color, emoji)
+          colorId, emoji)
       if not response.error.isNil:
         error "status-go error", procName="addWalletAccount", errCode=response.error.code, errDesription=response.error.message
         return response.error.message
@@ -447,7 +447,7 @@ QtObject:
       error "error: ", procName="addWalletAccount", errName=e.name, errDesription=e.msg
       return e.msg
 
-  ## Mandatory fields for account: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `color`
+  ## Mandatory fields for account: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
   proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPasswordHashing: bool,
     keyUid, keypairName, rootWalletMasterKey: string, account: WalletAccountDto): string =
     if password.len == 0:
@@ -471,7 +471,7 @@ QtObject:
       error "error: ", procName="addNewPrivateKeyKeypair", errName=e.name, errDesription=e.msg
       return e.msg
 
-  ## Mandatory fields for all accounts: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `color`
+  ## Mandatory fields for all accounts: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
   proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPasswordHashing: bool,
     keyUid, keypairName, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): string =
     var finalPassword = password
@@ -532,18 +532,18 @@ QtObject:
     self.checkRecentHistory()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
-  proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): bool =
+  proc updateWalletAccount*(self: Service, address: string, accountName: string, colorId: string, emoji: string): bool =
     if not self.walletAccountsContainsAddress(address):
       error "account's address is not among known addresses: ", address=address
       return false
     try:
       var account = self.getAccountByAddress(address)
       let response = status_go_accounts.updateAccount(accountName, account.address, account.path, account.publicKey,
-        account.keyUid, account.walletType, color, emoji, account.isWallet, account.isChat)
+        account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat)
       if not response.error.isNil:
         error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
         return false
-      self.updateAccountFromLocalStoreAndNotify(address, accountName, color, emoji)
+      self.updateAccountFromLocalStoreAndNotify(address, accountName, colorId, emoji)
       return true
     except Exception as e:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
@@ -913,7 +913,7 @@ QtObject:
       self.removeAccountFromLocalStoreAndNotify(account.address)
     else:
       if self.walletAccountsContainsAddress(account.address):
-        self.updateAccountFromLocalStoreAndNotify(account.address, account.name, account.color, account.emoji)
+        self.updateAccountFromLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji)
       else:
         self.addNewAccountToLocalStoreAndNotify()
 

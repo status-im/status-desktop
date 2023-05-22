@@ -228,8 +228,8 @@ QtObject:
     return self.accounts.containsAccountPath(path)
   proc containsPathOutOfTheDefaultStatusDerivationTree*(self: KeyPairItem): bool {.slot.} =
     return self.accounts.containsPathOutOfTheDefaultStatusDerivationTree()
-  proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, color, emoji: string) =
-    self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, color, emoji)
+  proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, colorId, emoji: string) =
+    self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
   proc setBalanceForAddress*(self: KeyPairItem, address: string, balance: float) =
     self.accounts.setBalanceForAddress(address, balance)
 

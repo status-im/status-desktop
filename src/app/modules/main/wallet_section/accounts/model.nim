@@ -9,7 +9,7 @@ type
     Name = UserRole + 1,
     Address,
     Path,
-    Color,
+    ColorId,
     WalletType,
     CurrencyBalance,
     Emoji,
@@ -55,7 +55,7 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
       ModelRole.Path.int:"path",
-      ModelRole.Color.int:"color",
+      ModelRole.ColorId.int:"colorId",
       ModelRole.WalletType.int:"walletType",
       ModelRole.CurrencyBalance.int:"currencyBalance",
       ModelRole.Emoji.int: "emoji",
@@ -91,8 +91,8 @@ QtObject:
       result = newQVariant(item.address())
     of ModelRole.Path:
       result = newQVariant(item.path())
-    of ModelRole.Color:
-      result = newQVariant(item.color())
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId())
     of ModelRole.WalletType:
       result = newQVariant(item.walletType())
     of ModelRole.CurrencyBalance:
@@ -121,5 +121,5 @@ QtObject:
   proc getColorByAddress*(self: Model, address: string): string =
     for item in self.items:
       if(cmpIgnoreCase(item.address(), address) == 0):
-        return item.color()
+        return item.colorId()
     return ""

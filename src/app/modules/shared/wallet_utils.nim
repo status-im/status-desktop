@@ -29,7 +29,7 @@ proc balanceToItemBalanceItem*(b: BalanceDto, format: CurrencyFormatDto) : balan
 proc walletAccountToRelatedAccountItem*(w: WalletAccountDto) : related_account_item.Item =
   return related_account_item.initItem(
     w.name,
-    w.color,
+    w.colorId,
     w.emoji,
   )
 
@@ -45,7 +45,7 @@ proc walletAccountToWalletSettingsAccountsItem*(w: WalletAccountDto, keycardAcco
     w.name,
     w.address,
     w.path,
-    w.color,
+    w.colorId,
     w.walletType,
     w.emoji,
     relatedAccounts,
@@ -59,7 +59,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
     w.name,
     w.address,
     w.path,
-    w.color,
+    w.colorId,
     w.walletType,
     currencyAmountToItem(w.getCurrencyBalance(enabledChainIds, currency), currencyFormat),
     w.emoji,
@@ -113,7 +113,7 @@ proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, chainIds: seq[in
   return wallet_send_account_item.newAccountItem(
     w.name,
     w.address,
-    w.color,
+    w.colorId,
     w.emoji,
     w.walletType,
     assets,

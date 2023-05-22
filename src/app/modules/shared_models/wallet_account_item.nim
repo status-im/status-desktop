@@ -4,7 +4,7 @@ QtObject:
   type WalletAccountItem* = ref object of QObject
     name: string
     address: string
-    color: string
+    colorId: string
     emoji: string
     walletType: string
     path: string
@@ -14,7 +14,7 @@ QtObject:
   proc setup*(self: WalletAccountItem,
     name: string = "",
     address: string = "",
-    color: string = "",
+    colorId: string = "",
     emoji: string = "",
     walletType: string = "",
     path: string = "",
@@ -24,7 +24,7 @@ QtObject:
       self.QObject.setup
       self.name = name
       self.address = address
-      self.color = color
+      self.colorId = colorId
       self.emoji = emoji
       self.walletType = walletType
       self.path = path
@@ -38,7 +38,7 @@ QtObject:
     result = fmt"""WalletAccountItem(
       name: {self.name},
       address: {self.address},
-      color: {self.color},
+      colorId: {self.colorId},
       emoji: {self.emoji},
       walletType: {self.walletType},
       path: {self.path},
@@ -66,15 +66,15 @@ QtObject:
     read = address
     notify = addressChanged
 
-  proc colorChanged*(self: WalletAccountItem) {.signal.}
-  proc color*(self: WalletAccountItem): string {.slot.} =
-    return self.color
-  proc `color=`*(self: WalletAccountItem, value: string) {.inline.} =
-    self.color = value
-    self.colorChanged()
-  QtProperty[string] color:
-    read = color
-    notify = colorChanged
+  proc colorIdChanged*(self: WalletAccountItem) {.signal.}
+  proc colorId*(self: WalletAccountItem): string {.slot.} =
+    return self.colorId
+  proc `colorId=`*(self: WalletAccountItem, value: string) {.inline.} =
+    self.colorId = value
+    self.colorIdChanged()
+  QtProperty[string] colorId:
+    read = colorId
+    notify = colorIdChanged
 
   proc emojiChanged*(self: WalletAccountItem) {.signal.}
   proc emoji*(self: WalletAccountItem): string {.slot.} =

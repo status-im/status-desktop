@@ -22,7 +22,7 @@ proc addAccountsToWallet(self: ImportingFromKeycardState, controller: Controller
       walletType: SEED, 
       path: account.getPath(), 
       name: account.getName(),
-      color: account.getColor(), 
+      colorId: account.getColorId(), 
       emoji: account.getEmoji()
     ))
   return controller.addNewSeedPhraseKeypair(

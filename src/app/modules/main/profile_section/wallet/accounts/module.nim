@@ -89,8 +89,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
 
-method updateAccount*(self: Module, address: string, accountName: string, color: string, emoji: string) =
-  self.controller.updateAccount(address, accountName, color, emoji)
+method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
+  self.controller.updateAccount(address, accountName, colorId, emoji)
 
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)

@@ -251,13 +251,13 @@ proc buildKeycardItem(self: Module, keypairs: seq[KeypairDto], keycard: KeycardD
     if ka.walletType == WalletTypeKey:
       item.setPairType(KeyPairType.PrivateKeyImport.int)
       item.setIcon("keycard")
-    item.addAccount(newKeyPairAccountItem(ka.name, ka.path, ka.address, ka.publicKey, ka.emoji, ka.color, icon = icon, balance = 0.0))
+    item.addAccount(newKeyPairAccountItem(ka.name, ka.path, ka.address, ka.publicKey, ka.emoji, ka.colorId, icon = icon, balance = 0.0))
   if reason == BuildItemReason.DetailsView:
     var i = 0
     for ua in unknownAccountsAddresses:
       i.inc
       let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $i
-      item.addAccount(newKeyPairAccountItem(name, path = "", ua, pubKey = "", emoji = "", color = "#939BA1", icon = "wallet", balance = 0.0))
+      item.addAccount(newKeyPairAccountItem(name, path = "", ua, pubKey = "", emoji = "", colorId = "", icon = "wallet", balance = 0.0))
   return item
 
 proc areAllKnownKeycardsLockedForKeypair(self: Module, keyUid: string): bool =
@@ -307,7 +307,7 @@ method onNewKeycardSet*(self: Module, keyPair: KeycardDto) =
         ## we should never be here cause all keypairs are firstly added to wallet
         continue
       mainViewItem.addAccount(newKeyPairAccountItem(account.name, account.path, account.address, account.publicKey, 
-        account.emoji, account.color, icon = "", balance = 0.0))
+        account.emoji, account.colorId, icon = "", balance = 0.0))
   if self.view.keycardDetailsModel().isNil:
     return
   var detailsViewItem = self.view.keycardDetailsModel().getItemForKeycardUid(keyPair.keycardUid)
@@ -324,7 +324,7 @@ method onNewKeycardSet*(self: Module, keyPair: KeycardDto) =
         ## we should never be here cause all keypairs are firstly added to wallet
         continue
       detailsViewItem.addAccount(newKeyPairAccountItem(account.name, account.path, account.address, account.publicKey, 
-        account.emoji, account.color, icon = "", balance = 0.0))
+        account.emoji, account.colorId, icon = "", balance = 0.0))
 
 method onKeycardLocked*(self: Module, keyUid: string, keycardUid: string) =
   self.view.keycardModel().setLockedForKeycardsWithKeyUid(keyUid, true)
@@ -357,11 +357,11 @@ method onKeycardAccountsRemoved*(self: Module, keyUid: string, keycardUid: strin
 
 method onWalletAccountUpdated*(self: Module, account: WalletAccountDto) = 
   self.view.keycardModel().updateDetailsForAddressForKeyPairsWithKeyUid(account.keyUid, account.address, account.name, 
-    account.color, account.emoji)
+    account.colorId, account.emoji)
   if self.view.keycardDetailsModel().isNil:
     return
   self.view.keycardDetailsModel().updateDetailsForAddressForKeyPairsWithKeyUid(account.keyUid, account.address, account.name, 
-    account.color, account.emoji)
+    account.colorId, account.emoji)
 
 method prepareKeycardDetailsModel*(self: Module, keyUid: string) =
   let keypairs = self.controller.getKeypairs()

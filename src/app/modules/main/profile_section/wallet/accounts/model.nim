@@ -6,7 +6,7 @@ type
     Name = UserRole + 1,
     Address,
     Path,
-    Color,
+    ColorId,
     WalletType,
     Emoji,
     RelatedAccounts,
@@ -49,7 +49,7 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
       ModelRole.Path.int:"path",
-      ModelRole.Color.int:"color",
+      ModelRole.ColorId.int:"colorId",
       ModelRole.WalletType.int:"walletType",
       ModelRole.Emoji.int: "emoji",
       ModelRole.RelatedAccounts.int: "relatedAccounts",
@@ -68,11 +68,11 @@ QtObject:
     for item in self.items.mitems:
       if account.address == item.address:
         item.name = account.name
-        item.color = account.color
+        item.colorId = account.colorId
         item.emoji = account.emoji
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.Name.int])
-        self.dataChanged(index, index, @[ModelRole.Color.int])
+        self.dataChanged(index, index, @[ModelRole.ColorId.int])
         self.dataChanged(index, index, @[ModelRole.Emoji.int])
         break
       i.inc
@@ -94,8 +94,8 @@ QtObject:
       result = newQVariant(item.address())
     of ModelRole.Path:
       result = newQVariant(item.path())
-    of ModelRole.Color:
-      result = newQVariant(item.color())
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId())
     of ModelRole.WalletType:
       result = newQVariant(item.walletType())
     of ModelRole.Emoji:

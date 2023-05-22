@@ -42,14 +42,14 @@ Item {
                 d.observedAccount.name = d.emptyName
             }
 
-            if (d.observedAccount.color.length === 0) {
-                let color = Constants.preDefinedWalletAccountColors[Math.floor(Math.random() * Constants.preDefinedWalletAccountColors.length)]
+            if (d.observedAccount.colorId.length === 0) {
+                let color = Theme.palette.customisationColorsArray[Math.floor(Math.random() * Theme.palette.customisationColorsArray.length)]
                 let emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
-                d.observedAccount.color = color
+                d.observedAccount.colorId = Utils.getIdForColor(color)
                 d.observedAccount.emoji = emoji
             }
 
-            let ind = d.evaluateColorIndex(d.observedAccount.color)
+            let ind = d.evaluateColorIndex(d.observedAccount.colorId)
             colorSelection.selectedColorIndex = ind
             d.updateValidity()
             accountName.input.edit.forceActiveFocus()
@@ -61,8 +61,8 @@ Item {
         }
 
         function evaluateColorIndex(color) {
-            for (let i = 0; i < Constants.preDefinedWalletAccountColors.length; i++) {
-                if(Constants.preDefinedWalletAccountColors[i] === color) {
+            for (let i = 0; i < Theme.palette.customisationColorsArray.length; i++) {
+                if(Theme.palette.customisationColorsArray[i] === color) {
                     return i
                 }
             }
@@ -211,7 +211,7 @@ Item {
             input.acceptReturn: true
             input.isIconSelectable: true
             input.leftPadding: Style.current.padding
-            input.asset.color: d.observedAccount.color
+            input.asset.color: Utils.getColorForId(d.observedAccount.colorId)
             input.asset.emoji: d.observedAccount.emoji
 
             onTextChanged: {
@@ -242,10 +242,10 @@ Item {
             Layout.alignment: Qt.AlignCenter
             title.text: qsTr("Colour")
             title.font.pixelSize: Constants.keycard.general.fontSize2
-            model: Constants.preDefinedWalletAccountColors
+            model: Theme.palette.customisationColorsArray
 
             onSelectedColorChanged: {
-                d.observedAccount.color = selectedColor
+                d.observedAccount.colorId = Utils.getIdForColor(selectedColor)
             }
         }
 

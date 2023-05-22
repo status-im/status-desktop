@@ -40,10 +40,10 @@ Item {
                     return
                 }
 
-                let color = Constants.preDefinedWalletAccountColors[Math.floor(Math.random() * Constants.preDefinedWalletAccountColors.length)]
+                let color = Theme.palette.customisationColorsArray[Math.floor(Math.random() * Theme.palette.customisationColorsArray.length)]
                 let emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
                 root.sharedKeycardModule.keyPairForProcessing.observedAccount.name = "      "
-                root.sharedKeycardModule.keyPairForProcessing.observedAccount.color = color
+                root.sharedKeycardModule.keyPairForProcessing.observedAccount.colorId = Utils.getIdForColor(color)
                 root.sharedKeycardModule.keyPairForProcessing.observedAccount.emoji = emoji
             }
         }

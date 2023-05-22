@@ -119,12 +119,9 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        Rectangle {
-            id: rect
+        Item {
             width: 800
             height: 200
-            color: Theme.palette.white
-            border.width: 1
             anchors.centerIn: parent
 
             AccountHeaderGradient {
@@ -160,26 +157,17 @@ SplitView {
 
         Column {
             spacing: 20
-            Row {
-                CheckBox {
-                    id: allAccountsCheckbox
-                    text: "All Accounts"
-                    checked: false
-                }
-
-                CheckBox {
-                    id: darkMode
-                    text: "Dark Mode"
-                    checked: false
-                    onCheckedChanged: rect.color = Theme.palette.baseColor3
-                }
+            CheckBox {
+                id: allAccountsCheckbox
+                text: "All Accounts"
+                checked: false
             }
             Row {
                 spacing: 10
                 id: row
                 Repeater {
                     id: repeater
-                    model: Constants.preDefinedWalletAccountColors
+                    model: Theme.palette.customisationColorsArray
                     delegate: StatusColorRadioButton {
                         radioButtonColor: repeater.model[index]
                         checked: index === 0

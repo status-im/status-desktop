@@ -148,7 +148,7 @@ proc fetchDetailsForAddresses*(self: Controller, addresses: seq[string]) =
   self.walletAccountService.fetchDetailsForAddresses(self.uniqueFetchingDetailsId, addresses)
 
 proc addWalletAccount*(self: Controller, createKeystoreFile, doPasswordHashing: bool, name, address, path, publicKey, 
-  keyUid, accountType, color, emoji: string): bool =
+  keyUid, accountType, colorId, emoji: string): bool =
   var password: string
   if createKeystoreFile:
     password = self.getPassword()
@@ -156,7 +156,7 @@ proc addWalletAccount*(self: Controller, createKeystoreFile, doPasswordHashing: 
       info "cannot create keystore file if provided password is empty", name=name, address=address
       return false
   let err = self.walletAccountService.addWalletAccount(password, doPasswordHashing, name, address, path, publicKey, 
-    keyUid, accountType, color, emoji)
+    keyUid, accountType, colorId, emoji)
   if err.len > 0:
     info "adding wallet account failed", name=name, address=address
     return false
@@ -188,8 +188,8 @@ proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase: string, doPasswordHa
     return false
   return true
 
-proc updateAccount*(self: Controller, address: string, accountName: string, color: string, emoji: string): bool =
-  return self.walletAccountService.updateWalletAccount(address, accountName, color, emoji)
+proc updateAccount*(self: Controller, address: string, accountName: string, colorId: string, emoji: string): bool =
+  return self.walletAccountService.updateWalletAccount(address, accountName, colorId, emoji)
 
 proc getKeyUidForSeedPhrase*(self: Controller, seedPhrase: string): string =
   let acc = self.accountsService.createAccountFromMnemonic(seedPhrase)

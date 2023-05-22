@@ -13,7 +13,7 @@ StatusModal {
     id: root
 
     property alias color: colorSpace.color
-    property alias standartColors: colorSelectionGrid.model
+    property alias standardColors: colorSelectionGrid.model
     property alias acceptText: acceptButton.text
     property alias previewText: preview.text
 

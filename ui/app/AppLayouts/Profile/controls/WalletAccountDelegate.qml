@@ -2,6 +2,7 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 
+import utils 1.0
 
 StatusListItem {
     id: root
@@ -14,7 +15,7 @@ StatusListItem {
     title: account.name
     subTitle: account.address
     objectName: account.name
-    asset.color: account.color
+    asset.color: Utils.getColorForId(account.colorId)
     asset.emoji: account.emoji
     asset.name: !account.emoji ? "filled-account": ""
     asset.letterSize: 14

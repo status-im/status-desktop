@@ -93,7 +93,7 @@ type
     mixedcaseAddress*: string
     keyUid*: string
     path*: string
-    color*: string
+    colorId*: string
     publicKey*: string
     walletType*: string
     isWallet*: bool
@@ -115,8 +115,8 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("mixedcase-address", result.mixedcaseAddress)
   discard jsonObj.getProp("key-uid", result.keyUid)
   discard jsonObj.getProp("path", result.path)
-  discard jsonObj.getProp("color", result.color)
-  result.color = result.color.toUpper() # to match `preDefinedWalletAccountColors` on the qml side
+  discard jsonObj.getProp("colorId", result.colorId)
+  result.colorId = result.colorId.toUpper() # to match `preDefinedWalletAccountColors` on the qml side
   discard jsonObj.getProp("wallet", result.isWallet)
   discard jsonObj.getProp("chat", result.isChat)
   discard jsonObj.getProp("public-key", result.publicKey)
@@ -135,7 +135,7 @@ proc `$`*(self: WalletAccountDto): string =
     mixedcaseAddress: {self.mixedcaseAddress},
     keyUid: {self.keyUid},
     path: {self.path},
-    color: {self.color},
+    colorId: {self.colorId},
     publicKey: {self.publicKey},
     walletType: {self.walletType},
     isChat: {self.isChat},

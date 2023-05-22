@@ -264,39 +264,46 @@ QtObject {
         property color emojiReactionActiveBackgroundHovered
     }
 
-    property QtObject walletAccountColors: QtObject {
-        function getHoveredColor(color) {
-            switch(color) {
-            case getColor('black'):
-                return getColor('blackHovered')
-            case getColor('grey'):
-                return getColor('grey2')
-            case getColor('white'):
-                return getColor('grey4')
-            case getColor('blue2'):
-                return getColor('blueHovered')
-            case getColor('purple'):
-                return getColor('purpleHovered')
-            case getColor('cyan'):
-                return getColor('cyanHovered')
-            case getColor('violet'):
-                return getColor('violetHovered')
-            case getColor('red2'):
-                return getColor('redHovered')
-            case getColor('yellow'):
-                return getColor('yellowHovered')
-            case getColor('green2'):
-                return getColor('greenHovered')
-            case getColor('moss'):
-                return getColor('mossHovered')
-            case getColor('brown'):
-                return getColor('brownHovered')
-            case getColor('brown2'):
-                return getColor('brown2Hovered')
-            default: return ""
-            }
-        }
+    property QtObject customisationColors: QtObject {
+        property color blue
+        property color purple
+        property color orange
+        property color army
+        property color turquoise
+        property color sky
+        property color yellow
+        property color pink
+        property color copper
+        property color camel
+        property color magenta
+        property color yinYang
     }
+
+    property var customisationColorsArray: [
+        customisationColors.blue,
+        customisationColors.purple,
+        customisationColors.orange,
+        customisationColors.army,
+        customisationColors.turquoise,
+        customisationColors.sky,
+        customisationColors.yellow,
+        customisationColors.pink,
+        customisationColors.copper,
+        customisationColors.camel,
+        customisationColors.magenta,
+        customisationColors.yinYang
+    ]
+
+    property var communityColorsArray: [
+        customisationColors.blue,
+        customisationColors.yellow,
+        customisationColors.magenta,
+        customisationColors.purple,
+        customisationColors.army,
+        customisationColors.sky,
+        customisationColors.orange,
+        customisationColors.camel
+    ]
 
     function alphaColor(color, alpha) {
         let actualColor = Qt.darker(color, 1)

@@ -52,7 +52,7 @@ Column {
                     title: model.name
 
                     asset.emoji: !!model.emoji ? model.emoji: ""
-                    asset.color: model.color
+                    asset.color: Utils.getColorForId(model.colorId)
                     asset.name: !model.emoji ? "filled-account": ""
                     asset.letterSize: 14
                     asset.isLetterIdenticon: !!model.emoji

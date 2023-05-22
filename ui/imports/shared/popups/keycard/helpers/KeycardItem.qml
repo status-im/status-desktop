@@ -66,7 +66,7 @@ StatusListItem {
     tagsModel: root.keyPairAccounts
 
     tagsDelegate: StatusListItemTag {
-        bgColor: model.account.color
+        bgColor: Utils.getColorForId(model.account.colorId)
         bgRadius: 6
         height: Style.current.bigPadding
         closeButtonVisible: false

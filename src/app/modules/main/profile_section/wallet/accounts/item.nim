@@ -12,7 +12,7 @@ proc initItem*(
   name: string = "",
   address: string = "",
   path: string = "",
-  color: string = "",
+  colorId: string = "",
   walletType: string = "",
   emoji: string = "",
   relatedAccounts: related_accounts_model.Model = nil,
@@ -22,7 +22,7 @@ proc initItem*(
   result = Item()
   result.WalletAccountItem.setup(name,
     address,
-    color,
+    colorId,
     emoji,
     walletType,
     path,

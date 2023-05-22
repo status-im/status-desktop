@@ -7,7 +7,7 @@ QtObject:
     address: string
     pubKey: string
     emoji: string
-    color: string
+    colorId: string
     icon: string
     balance: float
     balanceFetched: bool
@@ -15,7 +15,7 @@ QtObject:
   proc delete*(self: KeyPairAccountItem) =
     self.QObject.delete
 
-  proc newKeyPairAccountItem*(name = "", path = "", address = "", pubKey = "", emoji = "", color = "", icon = "", 
+  proc newKeyPairAccountItem*(name = "", path = "", address = "", pubKey = "", emoji = "", colorId = "", icon = "",
     balance = 0.0, balanceFetched = true): KeyPairAccountItem =
     new(result, delete)
     result.QObject.setup
@@ -24,7 +24,7 @@ QtObject:
     result.address = address
     result.pubKey = pubKey
     result.emoji = emoji
-    result.color = color
+    result.colorId = colorId
     result.icon = icon
     result.balance = balance
     result.balanceFetched = balanceFetched
@@ -36,7 +36,7 @@ QtObject:
       address: {self.address},
       pubKey: {self.pubKey},
       emoji: {self.emoji},
-      color: {self.color},
+      colorId: {self.colorId},
       icon: {self.icon},
       balance: {self.balance},
       balanceFetched: {self.balanceFetched}
@@ -97,16 +97,16 @@ QtObject:
     write = setEmoji
     notify = emojiChanged
 
-  proc colorChanged*(self: KeyPairAccountItem) {.signal.}
-  proc getColor*(self: KeyPairAccountItem): string {.slot.} =
-    return self.color
-  proc setColor*(self: KeyPairAccountItem, value: string) {.slot.} =
-    self.color = value
-    self.colorChanged()
-  QtProperty[string] color:
-    read = getColor
-    write = setColor
-    notify = colorChanged
+  proc colorIdChanged*(self: KeyPairAccountItem) {.signal.}
+  proc getColorId*(self: KeyPairAccountItem): string {.slot.} =
+    return self.colorId
+  proc setColorId*(self: KeyPairAccountItem, value: string) {.slot.} =
+    self.colorId = value
+    self.colorIdChanged()
+  QtProperty[string] colorId:
+    read = getColorId
+    write = setColorId
+    notify = colorIdChanged
 
   proc iconChanged*(self: KeyPairAccountItem) {.signal.}
   proc getIcon*(self: KeyPairAccountItem): string {.slot.} =

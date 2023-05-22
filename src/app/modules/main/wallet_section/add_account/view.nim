@@ -25,10 +25,10 @@ QtObject:
       accountName: string
       newKeyPairName: string
       selectedEmoji: string
-      selectedColor: string
+      selectedColorId: string
       storedAccountName: string # used only in edit mode
       storedSelectedEmoji: string # used only in edit mode
-      storedSelectedColor: string # used only in edit mode
+      storedSelectedColorId: string # used only in edit mode
       derivationPath: string
       suggestedDerivationPath: string
       actionAuthenticated: bool
@@ -273,18 +273,18 @@ QtObject:
     write = setSelectedEmoji
     notify = selectedEmojiChanged
 
-  proc selectedColorChanged*(self: View) {.signal.}
-  proc setSelectedColor*(self: View, value: string) {.slot.} =
-    if self.selectedColor == value:
+  proc selectedColorIdChanged*(self: View) {.signal.}
+  proc setSelectedColorId*(self: View, value: string) {.slot.} =
+    if self.selectedColorId == value:
       return
-    self.selectedColor = value
-    self.selectedColorChanged()
-  proc getSelectedColor*(self: View): string {.slot.} =
-    return self.selectedColor
-  QtProperty[string] selectedColor:
-    read = getSelectedColor
-    write = setSelectedColor
-    notify = selectedColorChanged 
+    self.selectedColorId = value
+    self.selectedColorIdChanged()
+  proc getSelectedColorId*(self: View): string {.slot.} =
+    return self.selectedColorId
+  QtProperty[string] selectedColorId:
+    read = getSelectedColorId
+    write = setSelectedColorId
+    notify = selectedColorIdChanged
 
   proc getStoredAccountName*(self: View): string {.slot.} =
     return self.storedAccountName
@@ -296,10 +296,10 @@ QtObject:
   proc setStoredSelectedEmoji*(self: View, value: string) =
     self.storedSelectedEmoji = value
 
-  proc getStoredSelectedColor*(self: View): string {.slot.} =
-    return self.storedSelectedColor
-  proc setStoredSelectedColor*(self: View, value: string) =
-    self.storedSelectedColor = value
+  proc getStoredSelectedColorId*(self: View): string {.slot.} =
+    return self.storedSelectedColorId
+  proc setStoredSelectedColorId*(self: View, value: string) =
+    self.storedSelectedColorId = value
 
   proc derivationPathChanged*(self: View) {.signal.}
   proc getDerivationPath*(self: View): string {.slot.} =

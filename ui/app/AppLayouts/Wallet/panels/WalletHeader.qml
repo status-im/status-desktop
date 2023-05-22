@@ -37,7 +37,7 @@ Item {
                 objectName: "accountName"
                 Layout.alignment: Qt.AlignVCenter
                 verticalAlignment: Text.AlignVCenter
-                color: overview.isAllAccounts ? Theme.palette.directColor5 : overview.color
+                color: overview.isAllAccounts ? Theme.palette.directColor5 : Utils.getColorForId(overview.colorId)
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 38
                 font.bold: true

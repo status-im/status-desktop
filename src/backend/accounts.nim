@@ -37,7 +37,7 @@ proc deleteAccount*(address: string): RpcResponse[JsonNode] {.raises: [Exception
   return core.callPrivateRPC("accounts_deleteAccount", payload)
 
 ## Adds a new account and creates a Keystore file if password is provided, otherwise it only creates a new account. Notifies paired devices.
-proc addAccount*(password, name, address, path, publicKey, keyUid, accountType, color, emoji: string):
+proc addAccount*(password, name, address, path, publicKey, keyUid, accountType, colorId, emoji: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [
     password,
@@ -51,7 +51,7 @@ proc addAccount*(password, name, address, path, publicKey, keyUid, accountType, 
       "public-key": publicKey,
       "name": name,
       "emoji": emoji,
-      "color": color,
+      "colorId": colorId,
       #"hidden" present on the status-go side, but we don't use it
       #"clock" we leave this empty, set on the status-go side
       #"removed" present on the status-go side, used for synchronization, no need to set it here
@@ -85,7 +85,7 @@ proc addKeypair*(password, keyUid, keypairName, keypairType, rootWalletMasterKey
           "public-key": acc.publicKey,
           "name": acc.name,
           "emoji": acc.emoji,
-          "color": acc.color,
+          "colorId": acc.colorId,
           #"hidden" present on the status-go side, but we don't use it
           #"clock" we leave this empty, set on the status-go side
           #"removed" present on the status-go side, used for synchronization, no need to set it here
@@ -96,12 +96,12 @@ proc addKeypair*(password, keyUid, keypairName, keypairType, rootWalletMasterKey
   return core.callPrivateRPC("accounts_addKeypair", payload)
 
 ## Adds a new account without creating a Keystore file and notifies paired devices
-proc addAccountWithoutKeystoreFileCreation*(name, address, path, publicKey, keyUid, accountType, color, emoji: string):
+proc addAccountWithoutKeystoreFileCreation*(name, address, path, publicKey, keyUid, accountType, colorId, emoji: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
-  return addAccount(password = "", name, address, path, publicKey, keyUid, accountType, color, emoji)
+  return addAccount(password = "", name, address, path, publicKey, keyUid, accountType, colorId, emoji)
 
 ## Updates either regular or keycard account, without interaction to a Keystore file and notifies paired devices
-proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType, color, emoji: string,
+proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType, colorId, emoji: string,
   walletDefaultAccount: bool, chatDefaultAccount: bool):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [
@@ -115,7 +115,7 @@ proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType,
       "public-key": publicKey,
       "name": name,
       "emoji": emoji,
-      "color": color,
+      "colorId": colorId,
       #"hidden" present on the status-go side, but we don't use it
       #"clock" we leave this empty, set on the status-go side
       #"removed" present on the status-go side, used for synchronization, no need to set it here

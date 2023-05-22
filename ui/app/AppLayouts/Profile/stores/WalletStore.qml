@@ -27,8 +27,8 @@ QtObject {
         return accountsModule.deleteAccount(address)
     }
 
-    function updateAccount(address, accountName, color, emoji) {
-        return accountsModule.updateAccount(address, accountName, color, emoji)
+    function updateAccount(address, accountName, colorId, emoji) {
+        return accountsModule.updateAccount(address, accountName, colorId, emoji)
     }
 
     property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null

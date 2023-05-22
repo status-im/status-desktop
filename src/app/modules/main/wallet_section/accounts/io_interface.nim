@@ -19,7 +19,7 @@ method deleteAccount*(self: AccessInterface, address: string) {.base.} =
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateAccount*(self: AccessInterface, address: string, accountName: string, color: string, emoji: string) {.base.} =
+method updateAccount*(self: AccessInterface, address: string, accountName: string, colorId: string, emoji: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
