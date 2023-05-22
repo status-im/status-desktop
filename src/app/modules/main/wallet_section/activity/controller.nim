@@ -138,6 +138,7 @@ QtObject:
     var backendEntities = newSeq[backend_activity.ActivityEntry](response.result.len)
     for i in 0 ..< response.result.len:
       backendEntities[i] = fromJson(response.result[i], backend_activity.ActivityEntry)
+
     let entries = self.backendToPresentation(backendEntities)
     self.model.setEntries(entries)
 

@@ -365,6 +365,20 @@ Control {
                     Label { text: entry.recipient; Layout.maximumWidth: 200; elide: Text.ElideMiddle }
                     Label { text: "got"; Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
                     Label { text: entry.toAmount; Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
+                    Label {
+                        text: `{${
+                            function() {
+                                switch (entry.status) {
+                                    case ActivityView.ActivityStatus.Failed: return "F";
+                                    case ActivityView.ActivityStatus.Pending: return "P";
+                                    case ActivityView.ActivityStatus.Complete: return "C";
+                                    case ActivityView.ActivityStatus.Finalized: return "FZ";
+                                }
+                                return "-"
+                            }()}}`
+                        Layout.leftMargin: 5;
+                    }
+                    Label { text: entry.toAmount; Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
                     RowLayout {}    // Spacer
                 }
             }
