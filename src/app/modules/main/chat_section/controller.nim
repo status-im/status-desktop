@@ -90,12 +90,12 @@ proc setIsCurrentSectionActive*(self: Controller, active: bool) =
   self.isCurrentSectionActive = active
 
 proc requestToJoinCommunityAuthenticated*(self: Controller, password: string) =
-  self.communityService.requestToJoinCommunity(self.tmpRequestToJoinCommunityId, self.tmpRequestToJoinEnsName, password)
+  self.communityService.asyncRequestToJoinCommunity(self.tmpRequestToJoinCommunityId, self.tmpRequestToJoinEnsName, password)
   self.tmpRequestToJoinCommunityId = ""
   self.tmpRequestToJoinEnsName = ""
 
 proc requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
-  self.communityService.requestToJoinCommunity(communityId, ensName, "")
+  self.communityService.asyncRequestToJoinCommunity(communityId, ensName, "")
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_MAIN_MODULE_AUTH_IDENTIFIER,

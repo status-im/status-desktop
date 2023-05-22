@@ -79,3 +79,26 @@ const asyncAcceptRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.g
       "communityId": arg.communityId,
       "requestId": arg.requestId
     })
+
+type
+  AsyncRequestToJoinCommunityTaskArg = ref object of QObjectTaskArg
+    communityId: string
+    ensName: string
+    password: string
+
+const asyncRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncRequestToJoinCommunityTaskArg](argEncoded)
+  try:
+    let response = status_go.requestToJoinCommunity(arg.communityId, arg.ensName, arg.password)
+    arg.finish(%* {
+      "response": response,
+      "communityId": arg.communityId,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+      "communityId": arg.communityId,
+      "ensName": arg.ensName,
+      "password": arg.password
+    })

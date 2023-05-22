@@ -825,17 +825,6 @@ QtObject:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
 
-  proc requestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string) =
-    try:
-      let response = status_go.requestToJoinCommunity(communityId, ensName, password)
-      self.activityCenterService.parseActivityCenterResponse(response)
-
-      if not self.processRequestsToJoinCommunity(response.result):
-        error "error: ", procName="requestToJoinCommunity", errDesription = "no 'requestsToJoinCommunity' key in response"
-
-    except Exception as e:
-      error "Error requesting to join the community", msg = e.msg, communityId, ensName
-
   proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
     try:
       let response = status_go.canceledRequestsToJoinForCommunity(communityId)
@@ -1350,6 +1339,38 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: community))
 
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
+
+  proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string) =
+    try:
+      let arg = AsyncRequestToJoinCommunityTaskArg(
+        tptr: cast[ByteAddress](asyncRequestToJoinCommunityTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncRequestToJoinCommunityDone",
+        communityId: communityId,
+        ensName: ensName,
+        password: password
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error request to join community", msg = e.msg 
+    
+  proc onAsyncRequestToJoinCommunityDone*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
+    try:
+      let rpcResponseObj = communityIdAndRpcResponse.parseJson
+      if (rpcResponseObj{"response"}{"error"}.kind != JNull):
+        let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
+        error "Error requesting community info", msg = error.message
+        return
+
+      let communityId = rpcResponseObj{"communityId"}.getStr()
+      let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
+      self.activityCenterService.parseActivityCenterResponse(rpcResponse)
+      
+      if not self.processRequestsToJoinCommunity(rpcResponse.result):
+        error "error: ", procName="onAsyncRequestToJoinCommunityDone", errDesription = "no 'requestsToJoinCommunity' key in response"
+
+    except Exception as e:
+      error "Error requesting to join the community", msg = e.msg
 
   proc asyncAcceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
