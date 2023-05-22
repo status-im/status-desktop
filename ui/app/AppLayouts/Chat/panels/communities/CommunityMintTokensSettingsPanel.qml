@@ -7,6 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Controls 0.1
 
 import AppLayouts.Chat.layouts 1.0
 import AppLayouts.Chat.views.communities 1.0
@@ -81,13 +82,14 @@ SettingsPageLayout {
     QtObject {
         id: d
 
-        readonly property string initialViewState: "WELCOME_OR_LIST_COLLECTIBLES"
-        readonly property string newCollectibleViewState: "NEW_COLLECTIBLE"
+        readonly property string initialViewState: "WELCOME_OR_LIST_TOKENS"
+        readonly property string newTokenViewState: "NEW_TOKEN"
         readonly property string previewCollectibleViewState: "PREVIEW_COLLECTIBLE"
         readonly property string collectibleViewState: "VIEW_COLLECTIBLE"
 
         readonly property string welcomePageTitle: qsTr("Tokens")
         readonly property string newCollectiblePageTitle: qsTr("Mint collectible")
+        readonly property string newAssetPageTitle: qsTr("Mint asset")
         readonly property string newTokenButtonText: qsTr("Mint token")
         readonly property string backButtonText: qsTr("Back")
 
@@ -139,8 +141,7 @@ SettingsPageLayout {
             PropertyChanges {target: root; headerWidth: root.viewWidth}
         },
         State {
-            name: d.newCollectibleViewState
-            PropertyChanges {target: root; title: d.newCollectiblePageTitle}
+            name: d.newTokenViewState
             PropertyChanges {target: root; subTitle: ""}
             PropertyChanges {target: root; previousPageName: d.backButtonText}
             PropertyChanges {target: root; headerButtonVisible: false}
@@ -161,7 +162,7 @@ SettingsPageLayout {
         }
     ]
 
-    onHeaderButtonClicked: stackManager.push(d.newCollectibleViewState, newCollectiblesView, null, StackView.Immediate)
+    onHeaderButtonClicked: stackManager.push(d.newTokenViewState, newTokenView, null, StackView.Immediate)
 
     StackViewStates {
         id: stackManager
@@ -187,38 +188,89 @@ SettingsPageLayout {
     }
 
     Component {
-        id: newCollectiblesView
+        id: newTokenView
 
-        CommunityNewCollectibleView {
-            viewWidth: root.viewWidth
-            layer1Networks: root.layer1Networks
-            layer2Networks: root.layer2Networks
-            testNetworks: root.testNetworks
-            enabledNetworks: root.testNetworks
-            allNetworks: root.allNetworks
-            accounts: root.accounts
+        ColumnLayout {
+            width: root.viewWidth
+            spacing: Style.current.padding
 
-            onPreviewClicked: {
-                d.accountAddress = accountAddress
-                stackManager.push(d.previewCollectibleViewState,
-                                  previewCollectibleView,
-                                  {
-                                      preview: true,
-                                      name,
-                                      artworkSource,
-                                      artworkCropRect,
-                                      symbol,
-                                      description,
-                                      supplyAmount,
-                                      infiniteSupply,
-                                      transferable: !notTransferable,
-                                      selfDestruct,
-                                      chainId,
-                                      chainName,
-                                      chainIcon,
-                                      accountName
-                                  },
-                                  StackView.Immediate)
+            StatusSwitchTabBar {
+                id: optionsTab
+
+                Layout.preferredWidth: root.viewWidth
+
+                StatusSwitchTabButton {
+                    id: collectiblesTab
+
+                    text: qsTr("Collectibles")
+                }
+
+                StatusSwitchTabButton {
+                    id: assetsTab
+
+                    text: qsTr("Assets")
+                }
+
+                Binding {
+                    target: root
+                    property: "title"
+                    value: optionsTab.currentItem == collectiblesTab ? d.newCollectiblePageTitle : d.newAssetPageTitle
+                }
+            }
+
+            StackLayout {
+                Layout.preferredWidth: root.viewWidth
+                Layout.fillHeight: true
+
+                currentIndex: optionsTab.currentItem == collectiblesTab ? 0 : 1
+
+                CommunityNewCollectibleView {
+                    viewWidth: root.viewWidth
+                    layer1Networks: root.layer1Networks
+                    layer2Networks: root.layer2Networks
+                    testNetworks: root.testNetworks
+                    enabledNetworks: root.testNetworks
+                    allNetworks: root.allNetworks
+                    accounts: root.accounts
+                    tokensModel: root.tokensModel
+
+                    onPreviewClicked: {
+                        d.accountAddress = accountAddress
+                        stackManager.push(d.previewCollectibleViewState,
+                                          previewCollectibleView,
+                                          {
+                                              preview: true,
+                                              name,
+                                              artworkSource,
+                                              artworkCropRect,
+                                              symbol,
+                                              description,
+                                              supplyAmount,
+                                              infiniteSupply,
+                                              transferable: !notTransferable,
+                                              selfDestruct,
+                                              chainId,
+                                              chainName,
+                                              chainIcon,
+                                              accountName
+                                          },
+                                          StackView.Immediate)
+                    }
+                }
+
+                CommunityNewCollectibleView {
+                    viewWidth: root.viewWidth
+                    layer1Networks: root.layer1Networks
+                    layer2Networks: root.layer2Networks
+                    testNetworks: root.testNetworks
+                    enabledNetworks: root.testNetworks
+                    allNetworks: root.allNetworks
+                    accounts: root.accounts
+                    tokensModel: root.tokensModel
+                    isAssetView: true
+
+                    onPreviewClicked: console.log("TODO: Assets preview!")
+                }
             }
         }
     }

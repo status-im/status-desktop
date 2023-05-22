@@ -18,20 +18,26 @@ StatusScrollView {
     id: root
 
     property int viewWidth: 560 // by design
+    property bool isAssetView: false
 
-    // Collectible properties
+    // Token properties
     readonly property alias name: nameInput.text
     readonly property alias symbol: symbolInput.text
     readonly property alias description: descriptionInput.text
     readonly property alias infiniteSupply: unlimitedSupplyChecker.checked
-    readonly property alias notTransferable: transferableChecker.checked
-    readonly property alias selfDestruct: selfDestructChecker.checked
     readonly property int supplyAmount: supplyInput.text ? parseInt(supplyInput.text) : 0
     property alias artworkSource: dropAreaItem.artworkSource
     property alias artworkCropRect: dropAreaItem.artworkCropRect
     property int chainId
     property string chainName
     property string chainIcon
+
+    // Collectible properties
+    readonly property alias notTransferable: transferableChecker.checked
+    readonly property alias selfDestruct: selfDestructChecker.checked
+
+    // Asset properties
+    readonly property int assetDecimals: assetDecimalsInput.text ? parseInt(assetDecimalsInput.text) : 0
 
     // Network related properties:
     property var layer1Networks
@@ -52,12 +58,12 @@ StatusScrollView {
     QtObject {
         id: d
 
-        property bool isAssetView: (optionsTab.currentIndex === 1)
         readonly property bool isFullyFilled: root.artworkSource.toString().length > 0
                                               && !!root.name
                                               && !!root.symbol
                                               && !!root.description
-                                              && (root.infiniteSupply || (!root.infiniteSupply && root.supplyAmount > 0))
+                                              && (root.infiniteSupply || (!root.infiniteSupply && root.supplyAmount > 0)
+                                              && (d.isAssetView && assetDecimalsInput.valid))
 
 
         readonly property int imageSelectorRectWidth: d.isAssetView ? 128 : 290
@@ -73,26 +79,10 @@ StatusScrollView {
         width: root.viewWidth
         spacing: Style.current.padding
 
-        StatusTabBar {
-            //TODO replace with tab bar from design when this
-            //https://github.com/status-im/status-desktop/issues/10623 is done
-            id: optionsTab
-            StatusTabButton {
-                id: assetBtn
-                width: implicitWidth
-                text: qsTr("Collectibles")
-            }
-            StatusTabButton {
-                id: collectiblesBtn
-                width: implicitWidth
-                text: qsTr("Assets")
-            }
-        }
-
         StatusBaseText {
             elide: Text.ElideRight
             font.pixelSize: Theme.primaryTextFontSize
-            text: qsTr("Artwork")
+            text: root.isAssetView ? qsTr("Icon") : qsTr("Artwork")
         }
 
         DropAndEditImagePanel {
@@ -114,7 +104,7 @@ StatusScrollView {
             label: qsTr("Name")
             charLimit: 15
             placeholderText: qsTr("Name")
-            errorText: qsTr("Collectible name")
+            errorText: d.isAssetView ? qsTr("Asset name") : qsTr("Collectible name")
         }
 
         CustomStatusInput {
@@ -122,13 +112,13 @@ StatusScrollView {
 
             label: qsTr("Description")
             charLimit: 280
-            placeholderText: qsTr("Describe your collectible")
+            placeholderText: root.isAssetView ? qsTr("Describe your asset") : qsTr("Describe your collectible")
             input.multiline: true
             input.verticalAlignment: Qt.AlignTop
             input.placeholder.verticalAlignment: Qt.AlignTop
             minimumHeight: 108
             maximumHeight: minimumHeight
-            errorText: qsTr("Collectible description")
+            errorText: d.isAssetView ? qsTr("Asset description") : qsTr("Collectible description")
         }
 
         CustomStatusInput {
@@ -137,7 +127,7 @@ StatusScrollView {
             label: qsTr("Symbol")
             charLimit: 6
             placeholderText: qsTr("e.g. DOODLE")
-            errorText: qsTr("Collectible symbol")
+            errorText: d.isAssetView ? qsTr("Asset symbol") :qsTr("Collectible symbol")
             validator.regularExpression: Constants.regularExpressions.asciiPrintable
         }
 
@@ -150,7 +140,7 @@ StatusScrollView {
         StatusEmojiAndColorComboBox {
             id: accountsComboBox
 
-            readonly property string address: ModelUtils.get(root.accounts, currentIndex, "address")
+            readonly property string address: SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
 
             Layout.fillWidth: true
             model: root.accounts
@@ -186,7 +176,8 @@ StatusScrollView {
 
         CustomSwitchRowComponent {
             id: transferableChecker
-            visible: (optionsTab.currentIndex === 0)
+
+            visible: !root.isAssetView
             label: checked ? qsTr("Not transferable (Soulbound)") : qsTr("Transferable")
             description: qsTr("If enabled, the token is locked to the first address it is sent to and can never be transferred to another address. Useful for tokens that represent Admin permissions")
             checked: true
@@ -194,17 +185,24 @@ StatusScrollView {
 
         CustomSwitchRowComponent {
             id: selfDestructChecker
-            visible: (optionsTab.currentIndex === 0)
+
+            visible: !root.isAssetView
             label: qsTr("Remotely destructible")
             description: qsTr("Enable to allow you to destroy tokens remotely. Useful for revoking permissions from individuals")
             checked: true
         }
 
         CustomStatusInput {
-            visible: (optionsTab.currentIndex === 1)
+            id: assetDecimalsInput
+
+            visible: root.isAssetView
             label: qsTr("Decimals")
-            secondaryLabel: "Max 10"
-            placeholderText: qsTr("2")
+            charLimit: 2
+            charLimitLabel: qsTr("Max 10")
+            placeholderText: "2"
+            text: "2" // Default value
+            validators: StatusIntValidator{ bottom: 1; top: 10; }
+            validationMode: StatusInput.ValidationMode.Always
         }
 
         StatusButton {
