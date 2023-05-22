@@ -123,7 +123,7 @@ proc cancelRequestToJoinCommunity*(self: Controller, communityId: string) =
   self.communityService.cancelRequestToJoinCommunity(communityId)
 
 proc requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
-  self.communityService.requestToJoinCommunity(communityId, ensName, password="")
+  self.communityService.asyncRequestToJoinCommunity(communityId, ensName, password="")
 
 proc createCommunity*(
     self: Controller,

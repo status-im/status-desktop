@@ -95,6 +95,7 @@ Item {
             function onCommunityAccessRequested(communityId: string) {
                 if (communityId === communityData.id) {
                     joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                    joinCommunityButton.loading = false
                 }
             }
         }
@@ -108,7 +109,10 @@ Item {
             imageSrc: communityData.image
             accessType: communityData.access
 
-            onJoined: root.store.requestToJoinCommunity(communityData.id, root.store.userProfileInst.name)
+            onJoined: {
+                joinCommunityButton.loading = true
+                root.store.requestToJoinCommunity(communityData.id, root.store.userProfileInst.name)
+            }
             onCancelMembershipRequest: {
                 root.store.cancelPendingRequest(communityData.id)
                 joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
