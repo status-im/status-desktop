@@ -187,6 +187,14 @@ QtObject {
         return name
     }
 
+    function getEmojiForWalletAddress(address) {
+        return walletSectionAccounts.getEmojiByAddress(address)
+    }
+
+    function getColorForWalletAddress(address) {
+        return walletSectionAccounts.getColorByAddress(address)
+    }
+
     function createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens) {
         return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite, chainShortNames, ens)
     }

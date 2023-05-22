@@ -62,7 +62,7 @@ SplitView {
                     name: "",
                     alias: "",
                     localNickname: "",
-                    isContact: true
+                    isContact: d.isContact
                 })
             }
             function isEnsVerified(publicKey) { return false }
@@ -82,8 +82,48 @@ SplitView {
             property string addressPrefixString: "eth:opt:arb:"
             property string addressName: "Ariana Pearlona"
             property bool isContact: true
+            property bool isWallet: false
+            property bool isSavedAccount: false
             property bool showPrefix: true
-            property bool showAddressName: true
+            readonly property string displayAddress: (d.showPrefix ? d.addressPrefixString : "") + "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B"
+        }
+
+        QtObject {
+            id: contactsStoreMockup
+            readonly property var myContactsModel: QtObject {
+                signal itemChanged(address: string)
+            }
+
+            function getContactPublicKeyByAddress(address) {
+                return d.isContact ? "zQ3shWU7xpM5YoG19KP5JDRiSs1AdWtjpnrWEerMkxfQnYo7x" : ""
+            }
+        }
+
+        QtObject {
+            id: rootStoreMockup
+
+            readonly property var accounts: QtObject {
+                signal itemChanged(address: string)
+            }
+
+            readonly property var savedAddresses: QtObject {
+                readonly property var sourceModel: QtObject {
+                    signal itemChanged(address: string)
+                }
+            }
+
+            function getNameForSavedWalletAddress(address) {
+                return d.isSavedAccount ? d.addressName : ""
+            }
+            function getEmojiForWalletAddress(address) {
+                return '<img class="emoji" draggable="false" alt="??" src="' + Style.emoji("1f61b") + '?72x72" width="16" height="16" style="vertical-align: top"/>'
+            }
+            function getColorForWalletAddress(address) {
+                return "blue"
+            }
+            function getNameForWalletAddress(address) {
+                return d.isWallet ? d.addressName : ""
+            }
         }
 
         Loader {
@@ -93,9 +133,9 @@ SplitView {
             active: root.globalUtilsReady && root.mainModuleReady
             sourceComponent: TransactionAddress {
                 width: parent.width
-                address: (d.showPrefix ? d.addressPrefixString : "") + "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B"
-                addressName: d.showAddressName ? d.addressName : ""
-                contactPubKey: d.isContact ? "zQ3shWU7xpM5YoG19KP5JDRiSs1AdWtjpnrWEerMkxfQnYo7x" : ""
+                address: d.displayAddress
+                rootStore: rootStoreMockup
+                contactsStore: contactsStoreMockup
             }
         }
     }
@@ -108,10 +148,64 @@ SplitView {
 
         ColumnLayout {
             spacing: 5
-            CheckBox {
-                text: "is contact"
+            Label {
+                text: "Account type"
+            }
+            RadioButton {
+                text: "contact"
                 checked: d.isContact
-                onCheckedChanged: d.isContact = checked
+                onClicked: {
+                    d.isContact = true
+                    d.isWallet = false
+                    d.isSavedAccount = false
+                    rootStoreMockup.accounts.itemChanged(d.displayAddress)
+                    rootStoreMockup.savedAddresses.sourceModel.itemChanged(d.displayAddress)
+                    contactsStoreMockup.myContactsModel.itemChanged(d.displayAddress)
+                }
+            }
+            RadioButton {
+                text: "wallet"
+                checked: d.isWallet
+                onClicked: {
+                    d.isContact = false
+                    d.isWallet = true
+                    d.isSavedAccount = false
+                    rootStoreMockup.accounts.itemChanged(d.displayAddress)
+                    rootStoreMockup.savedAddresses.sourceModel.itemChanged(d.displayAddress)
+                    contactsStoreMockup.myContactsModel.itemChanged(d.displayAddress)
+                }
+            }
+            RadioButton {
+                text: "saved address"
+                checked: d.isSavedAccount
+                onClicked: {
+                    d.isContact = false
+                    d.isWallet = false
+                    d.isSavedAccount = true
+                    rootStoreMockup.accounts.itemChanged(d.displayAddress)
+                    rootStoreMockup.savedAddresses.sourceModel.itemChanged(d.displayAddress)
+                    contactsStoreMockup.myContactsModel.itemChanged(d.displayAddress)
+                }
+            }
+            RadioButton {
+                text: "unkown"
+                onClicked: {
+                    d.isContact = false
+                    d.isWallet = false
+                    d.isSavedAccount = false
+                    rootStoreMockup.accounts.itemChanged(d.displayAddress)
+                    rootStoreMockup.savedAddresses.sourceModel.itemChanged(d.displayAddress)
+                    contactsStoreMockup.myContactsModel.itemChanged(d.displayAddress)
+                }
+            }
+            Label {
+                text: "Name:"
+            }
+            RowLayout {
+                TextField {
+                    text: d.addressName
+                    onTextChanged: d.addressName = text
+                }
             }
             Label {
                 text: "Address prefix:"
@@ -125,20 +219,6 @@ SplitView {
                     text: "Show"
                     checked: d.showPrefix
                     onCheckedChanged: d.showPrefix = checked
-                }
-            }
-            Label {
-                text: "Address name:"
-            }
-            RowLayout {
-                TextField {
-                    text: d.addressName
-                    onTextChanged: d.addressName = text
-                }
-                CheckBox {
-                    text: "use"
-                    checked: d.showAddressName
-                    onCheckedChanged: d.showAddressName = checked
                 }
             }
         }

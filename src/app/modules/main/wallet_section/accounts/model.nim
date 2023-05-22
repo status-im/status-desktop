@@ -37,6 +37,7 @@ QtObject:
       result &= fmt"""[{i}]:({$self.items[i]})"""
 
   proc countChanged(self: Model) {.signal.}
+  proc itemChanged(self: Model, address: string) {.signal.}
 
   proc getCount*(self: Model): int {.slot.} =
     self.items.len
@@ -67,6 +68,9 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+    for item in items:
+      self.itemChanged(item.address())
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
@@ -102,4 +106,16 @@ QtObject:
     for item in self.items:
       if(cmpIgnoreCase(item.address(), address) == 0):
         return item.name()
+    return ""
+
+  proc getEmojiByAddress*(self: Model, address: string): string =
+    for item in self.items:
+      if(cmpIgnoreCase(item.address(), address) == 0):
+        return item.emoji()
+    return ""
+
+  proc getColorByAddress*(self: Model, address: string): string =
+    for item in self.items:
+      if(cmpIgnoreCase(item.address(), address) == 0):
+        return item.color()
     return ""

@@ -48,3 +48,9 @@ QtObject:
 
   proc getNameByAddress(self: View, address: string): string {.slot.}=
     return self.accounts.getNameByAddress(address)
+
+  proc getEmojiByAddress(self: View, address: string): string {.slot.}=
+    return self.accounts.getEmojiByAddress(address)
+
+  proc getColorByAddress(self: View, address: string): string {.slot.}=
+    return self.accounts.getColorByAddress(address)

@@ -32,6 +32,7 @@ QtObject:
       result &= fmt"""[{i}]:({$self.items[i]})"""
 
   proc countChanged(self: Model) {.signal.}
+  proc itemChanged(self: Model, address: string) {.signal.}
 
   proc getCount*(self: Model): int {.slot.} =
     self.items.len
@@ -94,6 +95,9 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+    for item in items:
+        self.itemChanged(item.getAddress())
 
   proc getNameByAddress*(self: Model, address: string): string =
     for item in self.items:
