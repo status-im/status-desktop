@@ -252,10 +252,11 @@ SettingsPageLayout {
                 restoreMode: Binding.RestoreBindingOrValue
             }
 
-            SignMintTokenTransactionPopup {
+            SignTokenTransactionsPopup {
                 id: popup
 
                 anchors.centerIn: Overlay.overlay
+                title: qsTr("Sign transaction - Mint %1 token").arg(popup.collectibleName)
                 collectibleName: parent.name
                 accountName: parent.accountName
                 networkName: parent.chainName
@@ -312,7 +313,7 @@ SettingsPageLayout {
                 onRemotelyDestructClicked: signSelfDestructPopup.open()
             }
 
-            SignMintTokenTransactionPopup {
+            SignTokenTransactionsPopup {
                 id: signSelfDestructPopup
 
                 function signSelfRemoteDestructTransaction() {

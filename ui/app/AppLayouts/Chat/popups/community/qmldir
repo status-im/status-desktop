@@ -3,4 +3,4 @@ CreateChannelPopup 1.0 CreateChannelPopup.qml
 CommunityTokenPermissionsPopup 1.0 CommunityTokenPermissionsPopup.qml
 RemotelyDestructPopup 1.0 RemotelyDestructPopup.qml
 RemotelyDestructAlertPopup 1.0 RemotelyDestructAlertPopup.qml
-SignMintTokenTransactionPopup 1.0 SignMintTokenTransactionPopup.qml
+SignTokenTransactionsPopup 1.0 SignTokenTransactionsPopup.qml

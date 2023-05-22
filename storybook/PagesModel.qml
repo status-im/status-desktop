@@ -178,7 +178,7 @@ ListModel {
          section: "Popups"
     }
     ListElement {
-         title: "SignMintTokenTransactionPopup"
+         title: "SignTokenTransactionsPopup"
          section: "Popups"
     }
     ListElement {
