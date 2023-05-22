@@ -596,7 +596,8 @@ QtObject {
         readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_ ]+$/
         readonly property var asciiPrintable:         /^$|^[!-~]+$/
         readonly property var ascii:                  /^$|^[\x00-\x7F]+$/
-        readonly property var numerical: /^\d+$/
+        readonly property var capitalOnly: /^$|^[A-Z]+$/
+        readonly property var numerical: /^$|^[0-9]+$/
     }
 
     readonly property QtObject errorMessages: QtObject {
