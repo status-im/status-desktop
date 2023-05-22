@@ -80,6 +80,7 @@ class CommunityWelcomeScreenComponents(Enum):
     # Constants definitions:
     PERMISSIONS_OPTION = "Permissions"
     TOKENS_OPTION = "Mint Tokens"
+    AIRDROPS_OPTION = "Airdrops"
     # Components
     WELCOME_SCREEN_IMAGE = "community_welcome_screen_image"
     WELCOME_SCREEN_TITLE = "community_welcome_screen_title"
@@ -501,6 +502,8 @@ class StatusCommunityScreen:
             click_obj_by_name(CommunitySettingsComponents.PERMISSIONS_BUTTON.value)
         elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
             click_obj_by_name(CommunitySettingsComponents.MINT_TOKENS_BUTTON.value)
+        elif option==CommunityWelcomeScreenComponents.AIRDROPS_OPTION.value:
+            click_obj_by_name(CommunitySettingsComponents.AIRDROPS_BUTTON.value)    
              
     def verify_welcome_image(self, option:str):
         path = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_IMAGE.value).source.path       
@@ -508,6 +511,8 @@ class StatusCommunityScreen:
             verify_text_contains(str(path), "permissions2_3")
         elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
             verify_text_contains(str(path), "mint2_1")
+        elif option==CommunityWelcomeScreenComponents.AIRDROPS_OPTION.value:
+            verify_text_contains(str(path), "airdrops8_1")    
     
     def verify_welcome_title(self, option:str):
         title = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_TITLE.value).text
@@ -515,6 +520,8 @@ class StatusCommunityScreen:
             verify_equals(title, "Permissions")    
         elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
             verify_equals(title, "Community tokens")    
+        elif option==CommunityWelcomeScreenComponents.AIRDROPS_OPTION.value:
+            verify_equals(title, "Airdrop community tokens")    
     
     def verify_welcome_subtitle(self, option:str):
         subtitle = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_SUBTITLE.value).text
@@ -522,7 +529,8 @@ class StatusCommunityScreen:
             verify_equals(subtitle, "You can manage your community by creating and issuing membership and access permissions")
         elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
             verify_equals(subtitle, "You can mint custom tokens and import tokens for your community")
-            
+        elif option==CommunityWelcomeScreenComponents.AIRDROPS_OPTION.value:
+            verify_equals(subtitle, "You can mint custom tokens and collectibles for your community")            
         
     def verify_welcome_settings_checklist(self, option:str, list: list):
         checklist = []
