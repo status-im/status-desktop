@@ -107,7 +107,7 @@ StatusListItem {
             delegate: TransactionAddress {
                 width: parent.width
                 address: modelData
-                addressName: !!root.rootStore ? root.rootStore.getNameForAddress(address) : ""
+                rootStore: root.rootStore
                 contactsStore: root.contactsStore
             }
         }

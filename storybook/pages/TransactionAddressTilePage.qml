@@ -70,12 +70,43 @@ SplitView {
         }
 
         QtObject {
+            id: contactsStoreMockup
+            readonly property var myContactsModel: QtObject {
+                signal itemChanged(address: string)
+            }
+
+            function getContactPublicKeyByAddress(address) {
+                return address.includes("0x29D7d1dd5B6f9C864d9db560D72a247c178aE86C") ? "zQ3shWU7xpM5YoG19KP5JDRiSs1AdWtjpnrWEerMkxfQnYo7x" : ""
+            }
+        }
+
+        QtObject {
             id: mockupRootStore
 
             function getNameForAddress(address) {
                 const nameList = [ 'Alice', 'Bob', 'Charlie', 'Dave', 'Eve','Frank', 'Grace', 'Hank', 'Iris', 'Jack' ];
                 const randomIndex = Math.floor(Math.random() * nameList.length);
                 return nameList[randomIndex];
+            }
+
+            function getNameForSavedWalletAddress(address) {
+                if (address.includes("0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35")) {
+                    return ""
+                }
+
+                return getNameForAddress(address)
+            }
+            function getEmojiForWalletAddress(address) {
+                return '<img class="emoji" draggable="false" alt="??" src="' + Style.emoji("1f61b") + '?72x72" width="16" height="16" style="vertical-align: top"/>'
+            }
+            function getColorForWalletAddress(address) {
+                return "blue"
+            }
+            function getNameForWalletAddress(address) {
+                if (address.includes("0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35") || address.includes("0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc36")) {
+                    return ""
+                }
+                return getNameForAddress(address)
             }
         }
 
@@ -91,6 +122,7 @@ SplitView {
                     title: "From"
                     width: parent.width
                     rootStore: mockupRootStore
+                    contactsStore: contactsStoreMockup
                     addresses: [
                         "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B"
                     ]
@@ -99,14 +131,15 @@ SplitView {
                     title: "To"
                     width: parent.width
                     rootStore: mockupRootStore
+                    contactsStore: contactsStoreMockup
                     addresses: [
-                        "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B",
+                        "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86C",
                         "eth:arb:opt:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
                         "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
                         "eth:opt:arb:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35",
                         "eth:opt:arb:0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B",
                         "0x29D7d1dd5B6f9C864d9db560D72a247c178aE86B",
-                        "eth:opt:arb:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
+                        "eth:opt:arb:0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc36"
                     ]
                 }
             }

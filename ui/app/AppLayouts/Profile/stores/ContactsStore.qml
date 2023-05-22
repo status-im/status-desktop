@@ -122,4 +122,8 @@ QtObject {
     function requestContactInfo(publicKey) {
         root.contactsModule.requestContactInfo(publicKey)
     }
+
+    function getContactPublicKeyByAddress(address) {
+        return "" // TODO retrive contact public key from address
+    }
 }

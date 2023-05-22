@@ -22,8 +22,6 @@ import utils 1.0
    \qml
         TransactionAddress {
             address: "0x29D7d1dd5B6f9C864d9db560D72a247c208aE86B"
-            addressName: "Test Name"
-            contactPubKey: "zQ3shWU7xpM5YoG19KP5JDRiSs1AdWtjpnrWEerMkxfQnYo8x"
         }
    \endqml
 */
@@ -36,21 +34,12 @@ Item {
        This property holds wallet address.
     */
     property string address
-    /*!
-       \qmlproperty string TransactionAddress::addressName
-       This property holds wallet address name.
-       If contact public key is not provided this name will be used for display.
-    */
-    property string addressName
-    /*!
-       \qmlproperty string TransactionAddress::contactPubKey
-       This property hold contact public key used to identify contact wallet.
-       Contact icon will be displayed. Display name take place of \l{addressName}.
-    */
-    property string contactPubKey
 
     /* /internal Property hold reference to contacts store to refresh contact data on any change. */
     property var contactsStore
+
+    /* /internal Property hold reference to root store to refresh wallet data on any change. */
+    property var rootStore
 
     /*!
        \qmlproperty \l{StatusAssetSettings} TransactionAddress::asset
@@ -59,9 +48,17 @@ Item {
     property StatusAssetSettings asset: StatusAssetSettings {
         width: 36
         height: 36
-        color: Utils.colorForPubkey(root.contactPubKey)
-        name: isImage ? d.contactData.displayIcon : nameText.text
+        color: d.isContact ? Utils.colorForPubkey(root.contactPubKey) : d.walletAddressColor
+        name: {
+            if (d.isContact) {
+                return isImage ? d.contactData.displayIcon : nameText.text
+            } else if (d.isWallet && !d.walletAddressEmoji) {
+                return "filled-account"
+            }
+            return ""
+        }
         isImage: d.isContact && d.contactData.displayIcon.includes("data")
+        emoji: d.isWallet && !!d.walletAddressEmoji ? d.walletAddressEmoji : ""
         isLetterIdenticon: d.isContact && !isImage
         charactersLen: 2
     }
@@ -70,13 +67,53 @@ Item {
 
     QtObject {
         id: d
+
+        property string contactPubKey: !!root.contactsStore ? root.contactsStore.getContactPublicKeyByAddress(root.address) : ""
         readonly property var prefixAndAddress: Utils.splitToChainPrefixAndAddress(root.address)
-        readonly property bool isContactPubKeyValid: !!root.contactPubKey
-        readonly property bool isContact: isContactPubKeyValid && contactData.isContact
-        property var contactData: Utils.getContactDetailsAsJson(root.contactPubKey)
+        readonly property bool isContact: contactData.isContact
+        readonly property bool isWallet: !isContact && !!walletAddressName
+        property var contactData: Utils.getContactDetailsAsJson(d.contactPubKey)
+        property string savedAddressName: !!root.rootStore ? root.rootStore.getNameForSavedWalletAddress(root.address) : ""
+        property string walletAddressName: !!root.rootStore ? root.rootStore.getNameForWalletAddress(root.address) : ""
+        property string walletAddressEmoji: !!root.rootStore ? root.rootStore.getEmojiForWalletAddress(root.address) : ""
+        property string walletAddressColor: !!root.rootStore ? root.rootStore.getColorForWalletAddress(root.address) : ""
 
         function refreshContactData() {
-            d.contactData = Utils.getContactDetailsAsJson(root.contactPubKey)
+            d.contactData = Utils.getContactDetailsAsJson(d.contactPubKey)
+        }
+
+        function refreshSavedAddressName() {
+            d.savedAddressName = !!root.rootStore ? root.rootStore.getNameForSavedWalletAddress(root.address) : ""
+        }
+
+        function refreshWalletAddress() {
+            d.walletAddressName = !!root.rootStore ? root.rootStore.getNameForWalletAddress(root.address) : ""
+            d.walletAddressEmoji = !!root.rootStore ? root.rootStore.getEmojiForWalletAddress(root.address) : ""
+            d.walletAddressColor = !!root.rootStore ? root.rootStore.getColorForWalletAddress(root.address) : ""
+        }
+
+        function getName() {
+            let name = ""
+            if (d.isContact) {
+                name = ProfileUtils.displayName(d.contactData.localNickname, d.contactData.name, d.contactData.displayName, d.contactData.alias)
+            }
+            return name || d.walletAddressName || d.savedAddressName
+        }
+
+        readonly property Connections savedAccountsConnection: Connections {
+            target: !!root.rootStore && !!root.rootStore.savedAddresses ? root.rootStore.savedAddresses.sourceModel ?? null : null
+            function onItemChanged(address) {
+                if (address === root.address)
+                    d.refreshSavedAddressName()
+            }
+        }
+
+        readonly property Connections walletAccountsConnection: Connections {
+            target: !!root.rootStore ? root.rootStore.accounts ?? null : null
+            function onItemChanged(address) {
+                if (address === root.address)
+                    d.refreshWalletAddress()
+            }
         }
 
         readonly property Connections myContactsModelConnection: Connections {
@@ -119,7 +156,7 @@ Item {
                 ringSpecModel: d.isContact ? Utils.getColorHashAsJson(d.contactData.publicKey) : []
                 ringPxSize: asset.width / 24
             }
-            visible: d.isContact
+            visible: d.isContact || d.isWallet
         }
 
         ColumnLayout {
@@ -132,13 +169,7 @@ Item {
                 Layout.fillWidth: true
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
-                text: {
-                    let name = ""
-                    if (d.isContact) {
-                        name = ProfileUtils.displayName(d.contactData.localNickname, d.contactData.name, d.contactData.displayName, d.contactData.alias)
-                    }
-                    return name || root.addressName
-                }
+                text: d.getName()
                 visible: !!text
                 elide: Text.ElideRight
             }
