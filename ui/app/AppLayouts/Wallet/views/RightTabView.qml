@@ -153,6 +153,7 @@ Item {
 
             assetsLoading: RootStore.assetsLoading
             address: RootStore.overview.mixedcaseAddress
+
             networkConnectionStore: root.networkConnectionStore
         }
 

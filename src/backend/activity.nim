@@ -68,6 +68,9 @@ proc `%`*(at: ActivityType): JsonNode {.inline.} =
 proc `%`*(aSt: ActivityStatus): JsonNode {.inline.} =
   return newJInt(ord(aSt))
 
+proc fromJson*(x: JsonNode, T: typedesc[ActivityStatus]): ActivityStatus {.inline.} =
+  return cast[ActivityStatus](x.getInt())
+
 proc `$`*(tc: TokenCode): string = $(string(tc))
 proc `$`*(ta: TokenAddress): string = $(string(ta))
 
@@ -154,6 +157,7 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     transaction: if e.hasKey("transaction"): fromJson(e["transaction"], Option[TransactionIdentity])
                  else: none(TransactionIdentity),
     id: e["id"].getInt(),
+    activityStatus: fromJson(e["activityStatus"], ActivityStatus),
     timestamp: e["timestamp"].getInt()
   )
 
