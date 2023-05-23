@@ -50,8 +50,12 @@ const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
           uniqueIds.add(nftId)
 
     if len(uniqueIds) > 0:
-      let collectiblesResponse = collectibles.getOpenseaAssetsByNFTUniqueID(arg.chainId, uniqueIds, arg.collectiblesLimit).result
-      output["collectibles"] = collectiblesResponse
+      let collectiblesResponse = collectibles.getOpenseaAssetsByNFTUniqueID(arg.chainId, uniqueIds, arg.collectiblesLimit)
+
+      if not collectiblesResponse.error.isNil:
+        raise newException(ValueError, "Error getOpenseaAssetsByNFTUniqueID" & collectiblesResponse.error.message)
+
+      output["collectibles"] = collectiblesResponse.result
     
   except Exception as e:
     let errDesription = e.msg
