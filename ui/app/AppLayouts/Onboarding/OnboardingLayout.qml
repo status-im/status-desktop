@@ -182,10 +182,10 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
         }
 
         function onDisplayKeycardSharedModuleFlow() {
-            keycardPopup.active = true
+            Global.openPopup(keycardPopup);
         }
         function onDestroyKeycardSharedModuleFlow() {
-            keycardPopup.active = false
+            Global.closePopup();
         }
     }
 
@@ -339,16 +339,11 @@ following the \"Add existing Status user\" flow, using your seed phrase.")
         }
     }
 
-    Loader {
+    Component {
         id: keycardPopup
-        active: false
-        sourceComponent: KeycardPopup {
+        KeycardPopup {
             anchors.centerIn: parent
             sharedKeycardModule: root.startupStore.startupModuleInst.keycardSharedModule
-        }
-
-        onLoaded: {
-            keycardPopup.item.open()
         }
     }
 }

@@ -10,7 +10,7 @@ StatusModal {
 
     property var rootStore
 
-    header.title: qsTr("Download Status link")
+    headerSettings.title: qsTr("Download Status link")
     height: 156
 
     StatusDescriptionListItem {

@@ -11,10 +11,10 @@ StatusModal {
 
     anchors.centerIn: parent
 
-    header.title: "Cryptokitties"
-    header.subTitle: "Public Community"
-    header.asset.isImage: true
-    header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
+    headerSettings.title: "Cryptokitties"
+    headerSettings.subTitle: "Public Community"
+    headerSettings.asset.isImage: true
+    headerSettings.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
 
     contentItem: Column {
         width: root.width

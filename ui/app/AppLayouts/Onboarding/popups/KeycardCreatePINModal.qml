@@ -22,7 +22,7 @@ StatusModal {
     signal submitBtnClicked(string pin)
 
     id: popup
-    header.title: qsTr("Create PIN")
+    headerSettings.title: qsTr("Create PIN")
     anchors.centerIn: parent
     height: 500
 

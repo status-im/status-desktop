@@ -257,7 +257,7 @@ StatusMenu {
         ConfirmationDialog {
             confirmButtonObjectName: "deleteChatConfirmationDialogDeleteButton"
             btnType: "warn"
-            header.title: root.isCommunityChat ? qsTr("Delete #%1").arg(root.chatName) :
+            headerSettings.title: root.isCommunityChat ? qsTr("Delete #%1").arg(root.chatName) :
                                             root.chatType === Constants.chatType.oneToOne ?
                                             qsTr("Delete chat") :
                                             qsTr("Leave chat")

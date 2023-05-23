@@ -46,7 +46,7 @@ Item {
             cursorShape: Qt.PointingHandCursor
             onClicked: {
                 if (root.state === Constants.addressRequested) {
-                    selectAccountModal.open()
+                    Global.openPopup(selectAccountModalComponent);
                 } else if (root.state === Constants.transactionRequested) {
                     Global.openPopup(signTxComponent)
                 }
@@ -117,14 +117,17 @@ Item {
         }
     }
 
-    SelectAccountModal {
-        id: selectAccountModal
-        anchors.centerIn: parent
-        accounts: root.store.accounts
-        currency: root.store.currentCurrency
-        onSelectAndShareAddressButtonClicked: {
-            root.store.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
-            selectAccountModal.close()
+    Component {
+        id: selectAccountModalComponent
+        SelectAccountModal {
+            id: selectAccountModal
+            anchors.centerIn: parent
+            accounts: root.store.accounts
+            currency: root.store.currentCurrency
+            onSelectAndShareAddressButtonClicked: {
+                root.store.acceptAddressRequest(messageId, accountSelector.selectedAccount.address)
+                selectAccountModal.close()
+            }
         }
     }
 }

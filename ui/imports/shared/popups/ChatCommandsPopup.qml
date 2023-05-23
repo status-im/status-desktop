@@ -8,13 +8,13 @@ import shared.stores 1.0
 
 import StatusQ.Controls 0.1
 
-Popup {
+Dialog {
     id: root
     width: buttonRow.width
     height: buttonRow.height
     padding: 0
     margins: 0
-    closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
+    closePolicy: Popup.CloseOnReleaseOutside | Popup.CloseOnEscape
 
     signal sendTransactionCommandButtonClicked()
     signal receiveTransactionCommandButtonClicked()

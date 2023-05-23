@@ -23,7 +23,7 @@ StatusModal {
     anchors.centerIn: parent
     height: 560
     padding: 8
-    header.title: qsTr("History Nodes")
+    headerSettings.title: qsTr("History Nodes")
 
     property var messagingStore
     property var advancedStore

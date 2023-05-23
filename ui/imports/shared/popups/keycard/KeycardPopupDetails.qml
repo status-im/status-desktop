@@ -12,6 +12,8 @@ QtObject {
 
     property bool primaryButtonEnabled: false
 
+    signal cancelBtnClicked()
+
     // disables action buttons (back, cancel, primary, secondary) and close button (upper right "X" button) as well
     readonly property bool disableActionPopupButtons: {
         if (root.sharedKeycardModule.disablePopup) {
@@ -369,9 +371,8 @@ QtObject {
                 return false
             }
             enabled: !root.disableActionPopupButtons
-
             onClicked: {
-                root.sharedKeycardModule.currentState.doCancelAction()
+                root.cancelBtnClicked();
             }
         },
 

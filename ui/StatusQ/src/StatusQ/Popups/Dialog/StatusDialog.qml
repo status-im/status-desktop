@@ -11,6 +11,16 @@ Dialog {
     id: root
 
     property string subtitle
+    /*!
+       \qmlproperty destroyOnClose
+        This property decides whether the popup component should be destroyed when closed. Default value is true.
+    */
+    property bool destroyOnClose: true
+    /*!
+       \qmlproperty color backgroundColor
+        This property decides the modal background color
+    */
+    property string backgroundColor: Theme.palette.statusModal.backgroundColor
 
     anchors.centerIn: Overlay.overlay
 
@@ -24,7 +34,9 @@ Dialog {
         color: Theme.palette.backdropColor
     }
 
-    background: StatusDialogBackground {}
+    background: StatusDialogBackground {
+        color: root.backgroundColor
+    }
 
     header: StatusDialogHeader {
         visible: root.title || root.subtitle
@@ -100,5 +112,10 @@ Dialog {
                 onClicked: root.applied()
             }
         }
+    }
+
+    onClosed: {
+        if (root.destroyOnClose)
+            root.destroy();
     }
 }

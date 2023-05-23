@@ -34,10 +34,13 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: noContacts.bottom
         anchors.topMargin: Style.current.padding
-        onClicked: inviteFriendsPopup.open()
+        onClicked: Global.openPopup(inviteFriendsPopup);
     }
-    InviteFriendsPopup {
+
+    Component {
         id: inviteFriendsPopup
-        rootStore: noContactsRect.rootStore
+        InviteFriendsPopup {
+            rootStore: noContactsRect.rootStore
+        }
     }
 }

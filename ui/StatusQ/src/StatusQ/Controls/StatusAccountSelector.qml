@@ -146,7 +146,7 @@ Item {
         width: parent.width
 
         model: SortFilterProxyModel {
-            sourceModel: root.accounts
+            sourceModel: !!root.accounts ? root.accounts : null
             filters: [
                 ValueFilter {
                     roleName: "walletType"

@@ -11,7 +11,7 @@ import StatusQ.Controls 0.1
 
 StatusModal {
     id: root
-    header.title: qsTr("Select account")
+    headerSettings.title: qsTr("Select account")
     height: 284
 
     property var accounts

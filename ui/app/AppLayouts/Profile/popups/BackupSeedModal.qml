@@ -62,7 +62,7 @@ StatusStackModal {
 
     implicitHeight: 748
     width: 480
-    header.title: qsTr("Back up your seed phrase")
+    headerSettings.title: qsTr("Back up your seed phrase")
     rightButtons: [ d.skipButton, nextButton, finishButton ]
 
     nextButton: StatusButton {

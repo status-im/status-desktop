@@ -257,7 +257,7 @@ Pane {
 
     ConfirmationDialog {
         id: removeVerificationConfirmationDialog
-        header.title: qsTr("Remove contact verification")
+        headerSettings.title: qsTr("Remove contact verification")
         confirmationText: qsTr("This will remove the contact's verified status. Please confirm.")
         onConfirmButtonClicked: {
             root.contactsStore.removeTrustStatus(root.publicKey)

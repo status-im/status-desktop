@@ -14,8 +14,9 @@ StatusModal {
 
     closePolicy: d.disableActionPopupButtons || d.disableCloseButton? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !d.disableActionPopupButtons && !d.disableCloseButton
+    destroyOnClose: false
 
-    header.title: {
+    headerSettings.title: {
         switch (root.sharedKeycardModule.currentState.flowType) {
         case Constants.keycardSharedFlow.setupNewKeycard:
             return qsTr("Set up a new Keycard with an existing account")
@@ -51,10 +52,13 @@ StatusModal {
     KeycardPopupDetails {
         id: d
         sharedKeycardModule: root.sharedKeycardModule
+        onCancelBtnClicked: {
+            root.close();
+        }
     }
 
     onClosed: {
-        root.sharedKeycardModule.currentState.doCancelAction()
+        root.sharedKeycardModule.currentState.doCancelAction();
     }
 
     StatusScrollView {

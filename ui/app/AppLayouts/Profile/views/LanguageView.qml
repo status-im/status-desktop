@@ -193,7 +193,7 @@ SettingsContentBase {
             id: languageConfirmationDialog
             active: false
             sourceComponent: ConfirmationDialog {
-                header.title: qsTr("Change language")
+                headerSettings.title: qsTr("Change language")
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 confirmButtonLabel: qsTr("Close the app now")
                 onConfirmButtonClicked: {

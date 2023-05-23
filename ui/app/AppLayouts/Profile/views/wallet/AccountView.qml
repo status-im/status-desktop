@@ -155,7 +155,7 @@ Item {
             ConfirmationDialog {
                 id: confirmationPopup
                 confirmButtonObjectName: "confirmDeleteAccountButton"
-                header.title: qsTr("Confirm %1 Removal").arg(root.account ? root.account.name : "")
+                headerSettings.title: qsTr("Confirm %1 Removal").arg(root.account ? root.account.name : "")
                 confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
                 confirmButtonLabel: qsTr("Remove Account")
                 onConfirmButtonClicked: {

@@ -14,6 +14,7 @@ Popup {
     default property alias content: popupContent.children
     property alias contentWrapper: popupContent
     property alias header: headerContent.children
+    property bool destroyOnClose: true
 
     id: popup
     modal: true
@@ -33,11 +34,9 @@ Popup {
         color: Style.current.background
         radius: 8
     }
-    onOpened: {
-        Global.popupOpened = true
-    }
     onClosed: {
-        Global.popupOpened = false
+        if (popup.destroyOnClose)
+            popup.destroy();
     }
     padding: 0
     contentItem: Item {
@@ -165,5 +164,5 @@ Popup {
             anchors.rightMargin: visible ? Style.current.padding : 0
             anchors.leftMargin: visible ? Style.current.padding : 0
         }
-  }
+    }
 }

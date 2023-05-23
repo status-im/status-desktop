@@ -64,7 +64,7 @@ StatusModal {
     height: 546
     closePolicy: submitBtn.loading? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !submitBtn.loading
-    header.title: qsTr("Change password")
+    headerSettings.title: qsTr("Change password")
 
     onOpened: view.reset()
 

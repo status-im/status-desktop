@@ -8,7 +8,7 @@ import StatusQ.Core.Theme 0.1
 StatusModal {
     id: root
 
-    header.title: "Contact Requests"
+    headerSettings.title: "Contact Requests"
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
         width: 32

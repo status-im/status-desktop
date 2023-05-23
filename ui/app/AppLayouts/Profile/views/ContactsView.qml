@@ -29,7 +29,7 @@ SettingsContentBase {
         objectName: "ContactsView_ContactRequest_Button"
         text: qsTr("Send contact request to chat key")
         onClicked: {
-            sendContactRequest.open()
+            Global.openPopup(sendContactRequest);
         }
     }
 
@@ -311,26 +311,10 @@ SettingsContentBase {
             }
         }
 
-        Loader {
+        Component {
             id: sendContactRequest
-            width: parent.width
-            height: parent.height
-            active: false
-
-            function open() {
-                active = true
-                sendContactRequest.item.open()
-            }
-            function close() {
-                active = false
-            }
-
-            sourceComponent: SendContactRequestModal {
-                anchors.centerIn: parent
+            SendContactRequestModal {
                 contactsStore: root.contactsStore
-                onClosed: {
-                    sendContactRequest.close();
-                }
             }
         }
     }

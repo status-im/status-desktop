@@ -63,7 +63,7 @@ StatusModal {
     onCurrentIndexChanged: updateRightButtons()
     onReplaceItemChanged: updateRightButtons()
 
-    header.title: replaceLoader.item && typeof(replaceLoader.item.title) != "undefined"
+    headerSettings.title: replaceLoader.item && typeof(replaceLoader.item.title) != "undefined"
                                                 ? replaceLoader.item.title : stackTitle
     padding: 16
 

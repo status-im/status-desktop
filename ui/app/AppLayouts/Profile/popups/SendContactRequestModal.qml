@@ -15,7 +15,7 @@ StatusModal {
 
     property var contactsStore
 
-    header.title: qsTr("Send Contact Request to chat key")
+    headerSettings.title: qsTr("Send Contact Request to chat key")
 
     QtObject {
         id: d

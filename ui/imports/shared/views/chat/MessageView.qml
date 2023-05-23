@@ -486,7 +486,7 @@ Loader {
                 disableHover: root.disableHover ||
                               delegate.hideQuickActions ||
                               (root.chatLogView && root.chatLogView.moving) ||
-                              Global.popupOpened
+                              Global.activityPopupOpened
 
                 disableEmojis: root.isChatBlocked
                 hideMessage: d.hideMessage

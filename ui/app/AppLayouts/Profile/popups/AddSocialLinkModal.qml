@@ -22,7 +22,7 @@ StatusStackModal {
     anchors.centerIn: parent
     padding: currentIndex === 0 ? 0 : Style.current.padding
 
-    header.title: qsTr("Add more links")
+    headerSettings.title: qsTr("Add more links")
     rightButtons: [finishButton]
     finishButton: StatusButton {
         text: qsTr("Add")

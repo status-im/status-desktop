@@ -16,7 +16,7 @@ StatusModal {
     id: cryptoServicesPopupRoot
 
     height: 400
-    header.title: qsTr("Buy crypto")
+    headerSettings.title: qsTr("Buy crypto")
     anchors.centerIn: parent
 
     Loader {

@@ -7,7 +7,7 @@ QtObject {
 
     property var dragArea
     property var applicationWindow
-    property bool popupOpened: false
+    property bool activityPopupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
 
     property var userProfile
@@ -28,6 +28,7 @@ QtObject {
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
 
     signal openPopupRequested(var popupComponent, var params)
+    signal closePopupRequested()
     signal openNicknamePopupRequested(string publicKey, string nickname, string subtitle)
     signal openDownloadModalRequested(bool available, string version, string url)
     signal openChangeProfilePicPopup(var cb)
@@ -70,6 +71,10 @@ QtObject {
 
     function openPopup(popupComponent, params = {}) {
         root.openPopupRequested(popupComponent, params);
+    }
+
+    function closePopup() {
+        root.closePopupRequested();
     }
 
     function openDownloadModal(available, version, url){

@@ -53,6 +53,7 @@ Popup {
         dissapearInMs = 4000
         displayCloseButton = true
         displayLink = true
+        root.destroy();
     }
 
     Timer {

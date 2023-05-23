@@ -120,7 +120,6 @@ Rectangle {
 
     QtObject {
         id: d
-
         readonly property string emojiReplacementSymbols: ":='xX><0O;*dB8-D#%\\"
 
         //mentions helper properties
@@ -160,6 +159,8 @@ Rectangle {
                 }
             }
         }
+
+        property bool chatCommandsPopupOpen: false
 
         function copyMentions(start, end) {
             copiedMentionsPos = []
@@ -1025,27 +1026,30 @@ Rectangle {
         }
     }
 
-    // TODO remove that Loader when the Chat Commands are re-implemented and fixed
-    // Bonus if we use `openPopup` instead with a Component instead
-    Loader {
-        active: false
-        sourceComponent: ChatCommandsPopup {
-            id: chatCommandsPopup
-            x: 8
-            y: -height
+
+    Component {
+        id: chatCommandsPopup
+        ChatCommandsPopup {
+            x: (parent.width - control.width - Style.current.halfPadding)
+            y: 716
             onSendTransactionCommandButtonClicked: {
-                control.sendTransactionCommandButtonClicked()
-                chatCommandsPopup.close()
+                control.sendTransactionCommandButtonClicked();
+                chatCommandsPopup.close();
             }
             onReceiveTransactionCommandButtonClicked: {
-                control.receiveTransactionCommandButtonClicked()
-                chatCommandsPopup.close()
+                control.receiveTransactionCommandButtonClicked();
+                chatCommandsPopup.close();
             }
             onClosed: {
-                chatCommandsBtn.highlighted = false
+                chatCommandsBtnLoader.highlighted = false;
+                destroy();
+            }
+            Component.onDestruction: {
+                if (d.chatCommandsPopupOpen)
+                    d.chatCommandsPopupOpen = false;
             }
             onOpened: {
-                chatCommandsBtn.highlighted = true
+                chatCommandsBtnLoader.highlighted = true;
             }
         }
     }
@@ -1077,6 +1081,7 @@ Rectangle {
 
         // TODO remove that Loader when the Chat Commands are re-implemented and fixed
         Loader {
+            id: chatCommandsBtnLoader
             active: false
             sourceComponent: StatusQ.StatusFlatRoundButton {
                 id: chatCommandsBtn
@@ -1089,9 +1094,8 @@ Rectangle {
                 visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne
                 enabled: !control.isContactBlocked
                 onClicked: {
-                    chatCommandsPopup.opened ?
-                                chatCommandsPopup.close() :
-                                chatCommandsPopup.open()
+                    d.chatCommandsPopupOpen ? Global.closePopup() : Global.openPopup(chatCommandsPopup);
+                    d.chatCommandsPopupOpen = !d.chatCommandsPopupOpen;
                 }
             }
         }

@@ -42,7 +42,7 @@ StatusModal {
         return contentItem.categoryName.valid
     }
 
-    header.title: isEdit ? qsTr("Edit category") : qsTr("New category")
+    headerSettings.title: isEdit ? qsTr("Edit category") : qsTr("New category")
 
     contentItem: Column {
         property alias categoryName: nameInput
@@ -196,7 +196,7 @@ StatusModal {
             text: qsTr("Delete Category")
             onClicked: {
                 Global.openPopup(deleteCategoryConfirmationDialogComponent, {
-                    "header.title": qsTr("Delete '%1' category").arg(nameInput.text),
+                    "headerSettings.title": qsTr("Delete '%1' category").arg(nameInput.text),
                     confirmationText: qsTr("Are you sure you want to delete '%1' category? Channels inside the category won’t be deleted.").arg(nameInput.text)
                 })
             }

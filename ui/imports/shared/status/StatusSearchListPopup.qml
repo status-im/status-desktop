@@ -159,4 +159,8 @@ Popup {
         searchBox.text = ""
         searchBox.input.edit.forceActiveFocus()
     }
+
+    onClosed: {
+        root.destroy();
+    }
 }
