@@ -10,9 +10,12 @@ proc delete*(self: LoginKeycardWrongKeycardState) =
 
 method executePrimaryCommand*(self: LoginKeycardWrongKeycardState, controller: Controller) =
   if self.flowType == FlowType.AppLogin:
-    if controller.isSelectedLoginAccountKeycardAccount() and
-      controller.getPin().len == PINLengthForStatusApp:
+    if controller.isSelectedLoginAccountKeycardAccount():
+      if controller.getPin().len == PINLengthForStatusApp:
         controller.enterKeycardPin(controller.getPin())
+      else:
+        controller.cancelCurrentFlow()
+        controller.runLoginFlow()
 
 method getNextTertiaryState*(self: LoginKeycardWrongKeycardState, controller: Controller): State =
   if self.flowType == FlowType.AppLogin:
@@ -29,6 +32,6 @@ method getNextQuinaryState*(self: LoginKeycardWrongKeycardState, controller: Con
     controller.cancelCurrentFlow()
     return createState(StateType.LostKeycardOptions, self.flowType, self)
 
-method resolveKeycardNextState*(self: LoginKeycardWrongKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: LoginKeycardWrongKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   return ensureReaderAndCardPresenceAndResolveNextLoginState(self, keycardFlowType, keycardEvent, controller)
