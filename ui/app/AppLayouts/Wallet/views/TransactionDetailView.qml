@@ -14,6 +14,7 @@ import utils 1.0
 import shared.stores 1.0
 
 import "../controls"
+import "../popups"
 import "../stores" as WalletStores
 import ".."
 import "../panels"
@@ -252,5 +253,12 @@ Item {
                 secondaryLabel.textFormat: Text.RichText
             }
         }
+    }
+
+    TransactionAddressMenu {
+        id: addressMenu
+
+        contactsStore: root.contactsStore
+        onOpenSendModal: (address) => root.sendModal.open(address)
     }
 }
