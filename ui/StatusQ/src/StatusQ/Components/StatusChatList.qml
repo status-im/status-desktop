@@ -142,10 +142,10 @@ Item {
                                 highlighted = true;
                                 categoryPopupMenuSlot.item.popup()
                             } else if (mouse.button === Qt.LeftButton) {
-                                root.model.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                                root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
                             }
                         }
-                        onToggleButtonClicked: root.model.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
+                        onToggleButtonClicked: root.model.sourceModel.changeCategoryOpened(model.categoryId, !statusChatListCategoryItem.opened)
                         onMenuButtonClicked: {
                             statusChatListCategoryItem.setupPopup()
                             highlighted = true
