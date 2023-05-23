@@ -315,7 +315,7 @@ QtObject {
     }
 
     function isStatusDeepLink(link) {
-        return link.includes(Constants.deepLinkPrefix) || link.includes(Constants.joinStatusLink)
+        return link.includes(Constants.deepLinkPrefix) || link.includes(Constants.externalStatusLink)
     }
 
     function hasImageExtension(url) {

@@ -803,9 +803,10 @@ QtObject {
     readonly property int repeatHeaderInterval: 2
 
     readonly property string deepLinkPrefix: 'status-app://'
-    readonly property string joinStatusLink: 'join.status.im'
-    readonly property string communityLinkPrefix: 'https://join.status.im/c/'
-    readonly property string userLinkPrefix: 'https://join.status.im/u/'
+    readonly property string externalStatusLink: 'status.app'
+    readonly property string externalStatusLinkWithHttps: 'https://' + externalStatusLink
+    readonly property string communityLinkPrefix: externalStatusLinkWithHttps + '/c/'
+    readonly property string userLinkPrefix: externalStatusLinkWithHttps + '/u/'
     readonly property string statusLinkPrefix: 'https://status.im/'
 
     readonly property int maxUploadFiles: 5

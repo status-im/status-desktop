@@ -4,6 +4,8 @@ include ../../../app/core/tasks/common
 
 import ../../../backend/chat as status_go_chat
 
+import ../../../app/core/custom_urls/urls_manager
+
 
 #################################################
 # Async load messages
@@ -197,8 +199,9 @@ const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nim
     let path = uri.path
     let domain = uri.hostname.toLower()
     let isSupportedImage = any(parsedWhiteListImgExtensions, proc (extenstion: string): bool = path.endsWith(extenstion))
-    let isWhitelistedUrl = parsedWhiteListUrls.hasKey(domain)
-    let processUrl = isWhitelistedUrl or isSupportedImage
+    let isListed = parsedWhiteListUrls.hasKey(domain)
+    let isProfileLink = path.startsWith(profileLinkPrefix)
+    let processUrl = not isProfileLink and (isListed or isSupportedImage)
 
     if domain == "" or processUrl == false:
       continue
@@ -229,7 +232,7 @@ const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nim
 
     #2. Process whitelisted url
     #status deep links are handled internally
-    if domain == "status-app" or domain == "join.status.im":
+    if domain == StatusInternalLink or domain == StatusExternalLink:
       responseJson["success"] = %true
       responseJson["isStatusDeepLink"] = %true
       responseJson["result"] = %*{

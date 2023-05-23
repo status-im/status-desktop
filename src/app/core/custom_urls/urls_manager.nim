@@ -8,10 +8,12 @@ import ../../../app_service/service/accounts/utils
 logScope:
   topics = "urls-manager"
 
-const StatusInternalLink = "status-app"
-const StatusExternalLink = "join.status.im"
+const StatusInternalLink* = "status-app"
+const StatusExternalLink* = "status.app"
 
-const UriFormatUserProfile = StatusInternalLink & "://u/"
+const profileLinkPrefix* = "/u/"
+
+const UriFormatUserProfile = StatusInternalLink & ":/" & profileLinkPrefix
 
 const UriFormatCommunity = StatusInternalLink & "://c/"
 
