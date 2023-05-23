@@ -1324,7 +1324,7 @@ Item {
 
             // Add Status links to whitelist
             whiteListedSites.push({title: "Status", address: Constants.deepLinkPrefix, imageSite: false})
-            whiteListedSites.push({title: "Status", address: Constants.joinStatusLink, imageSite: false})
+            whiteListedSites.push({title: "Status", address: Constants.externalStatusLink, imageSite: false})
             let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
 
             if (!settings) {
@@ -1332,9 +1332,9 @@ Item {
             }
 
             // Set Status links as true. We intercept those URLs so it is privacy-safe
-            if (!settings[Constants.deepLinkPrefix] || !settings[Constants.joinStatusLink]) {
+            if (!settings[Constants.deepLinkPrefix] || !settings[Constants.externalStatusLink]) {
                 settings[Constants.deepLinkPrefix] = true
-                settings[Constants.joinStatusLink] = true
+                settings[Constants.externalStatusLink] = true
                 settingsUpdated = true
             }
 

@@ -488,7 +488,7 @@ QtObject {
         const result = getLinkTitleAndCb(link)
 
         return {
-            site: "https://join.status.im",
+            site: Constants.externalStatusLinkWithHttps,
             title: result.title,
             communityId: result.communityId,
             fetching: result.fetching,

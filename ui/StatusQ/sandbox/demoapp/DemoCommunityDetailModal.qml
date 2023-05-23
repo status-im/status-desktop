@@ -42,7 +42,7 @@ StatusModal {
 
         StatusDescriptionListItem {
             title: "Share community"
-            subTitle: "https://join.status.im/u/0x04...45f19"
+            subTitle: "https://status.app/u/0x04...45f19"
             tooltip.text: "Copy to clipboard"
             asset.name: "copy"
             iconButton.onClicked: tooltip.visible = !tooltip.visible

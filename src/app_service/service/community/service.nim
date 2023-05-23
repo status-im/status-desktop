@@ -1325,9 +1325,8 @@ QtObject:
 
   proc asyncCommunityInfoLoaded*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = communityIdAndRpcResponse.parseJson
-    if (rpcResponseObj{"response"}{"error"}.kind != JNull):
-      let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
-      error "Error requesting community info", msg = error.message
+    if (rpcResponseObj{"error"}.kind != JNull):
+      error "Error requesting community info", msg = rpcResponseObj{"error"}
       return
 
     var community = rpcResponseObj{"response"}{"result"}.toCommunityDto()
