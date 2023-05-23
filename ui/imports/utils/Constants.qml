@@ -802,7 +802,7 @@ QtObject {
 
     readonly property int repeatHeaderInterval: 2
 
-    readonly property string deepLinkPrefix: 'status-im://'
+    readonly property string deepLinkPrefix: 'status-app://'
     readonly property string joinStatusLink: 'join.status.im'
     readonly property string communityLinkPrefix: 'https://join.status.im/c/'
     readonly property string userLinkPrefix: 'https://join.status.im/u/'
