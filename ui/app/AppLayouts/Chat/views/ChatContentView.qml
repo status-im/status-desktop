@@ -74,14 +74,8 @@ ColumnLayout {
         chatSectionModule: root.rootStore.chatCommunitySectionModule
     }
 
-    Loader {
-        id: contextMenuLoader
-        active: root.isActiveChannel
-        asynchronous: true
-
-        // FIXME: `MessageContextMenuView` is way too heavy
-        // see: https://github.com/status-im/status-desktop/pull/10343#issuecomment-1515103756
-        sourceComponent: MessageContextMenuView {
+        MessageContextMenuView {
+            id: contextMenu
             store: root.rootStore
             reactionModel: root.rootStore.emojiReactionsModel
             disabledForChat: !root.isUserAllowedToSendMessage
@@ -130,7 +124,6 @@ ColumnLayout {
                 }
             }
         }
-    }
 
     ColumnLayout {
         Layout.fillWidth: true
@@ -146,7 +139,7 @@ ColumnLayout {
                 chatContentModule: root.chatContentModule
                 rootStore: root.rootStore
                 contactsStore: root.contactsStore
-                messageContextMenu: contextMenuLoader.item
+                messageContextMenu: contextMenu
                 messageStore: root.messageStore
                 emojiPopup: root.emojiPopup
                 stickersPopup: root.stickersPopup
@@ -214,7 +207,7 @@ ColumnLayout {
 
                     textInput.text: inputAreaLoader.preservedText
                     textInput.placeholderText: root.chatInputPlaceholder
-                    messageContextMenu: contextMenuLoader.item
+                    messageContextMenu: contextMenu
                     emojiPopup: root.emojiPopup
                     stickersPopup: root.stickersPopup
                     isContactBlocked: root.isBlocked
