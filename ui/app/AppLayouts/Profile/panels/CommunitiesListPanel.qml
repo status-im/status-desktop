@@ -78,7 +78,7 @@ StatusListView {
         property string communityId: ""
 
         anchors.centerIn: parent
-        header.title: qsTr("Leave %1").arg(community)
+        headerSettings.title: qsTr("Leave %1").arg(community)
         contentItem: Item {
             implicitWidth: 368
             implicitHeight: msg.implicitHeight + 32

@@ -249,9 +249,6 @@ Item {
 
         ENSPopup {
             ensUsernamesStore: root.ensUsernamesStore
-            onClosed: {
-                destroy()
-            }
         }
     }
 }

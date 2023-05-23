@@ -17,7 +17,7 @@ StatusModal {
     anchors.centerIn: parent
     height: 560
     padding: 8
-    header.title: qsTr("Waku nodes")
+    headerSettings.title: qsTr("Waku nodes")
 
     property var messagingStore
     property var advancedStore

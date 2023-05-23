@@ -13,7 +13,7 @@ import utils 1.0
 import "../stores"
 
 // TODO: replace with StatusMenu
-Popup {
+Dialog {
     id: popup
 
     signal sendTriggered(var selectedAccount)
@@ -211,5 +211,8 @@ Popup {
                 overview: WalletStore.dappBrowserAccount
             }
         }
+    }
+    onClosed: {
+        popup.destroy();
     }
 }

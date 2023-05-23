@@ -20,7 +20,7 @@ StatusModal {
 
     signal removeAccount(string address)
 
-    header.title: qsTr("Remove %1").arg(root.accountName)
+    headerSettings.title: qsTr("Remove %1").arg(root.accountName)
     focus: visible
     padding: Style.current.padding
 

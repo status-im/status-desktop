@@ -39,7 +39,7 @@ Item {
 
     SortFilterProxyModel {
         id: filteredModel
-        sourceModel: assets
+        sourceModel: !!assets ? assets : null
         filters: [
             ExpressionFilter {
                 expression: visibleForNetworkWithPositiveBalance || loading
@@ -67,13 +67,13 @@ Item {
     Component {
         id: tokenDelegate
         TokenDelegate {
-            objectName: "AssetView_TokenListItem_" + (modelData ? modelData.symbol : "")
-            readonly property string balance: modelData ? "%1".arg(modelData.enabledNetworkBalance.amount) : "" // Needed for the tests
-            errorTooltipText_1: modelData ? networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances) : ""
-            errorTooltipText_2: networkConnectionStore.getMarketNetworkDownText()
-            subTitle: !modelData || networkConnectionStore.noTokenBalanceAvailable ? "" :  LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
-            errorMode: networkConnectionStore.noBlockchainConnectionAndNoCache && !networkConnectionStore.noMarketConnectionAndNoCache
-            errorIcon.tooltip.text: networkConnectionStore.noBlockchainConnectionAndNoCacheText
+            objectName: "AssetView_TokenListItem_" + (!!modelData ? modelData.symbol : "")
+            readonly property string balance: !!modelData ? "%1".arg(modelData.enabledNetworkBalance.amount) : "" // Needed for the tests
+            errorTooltipText_1: !!modelData && !! networkConnectionStore ? networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances) : ""
+            errorTooltipText_2: !!networkConnectionStore ? networkConnectionStore.getMarketNetworkDownText() : ""
+            subTitle: !modelData || (!!networkConnectionStore && !networkConnectionStore.noTokenBalanceAvailable) ? "" :  LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
+            errorMode: !!networkConnectionStore ? networkConnectionStore.noBlockchainConnectionAndNoCache && !networkConnectionStore.noMarketConnectionAndNoCache : false
+            errorIcon.tooltip.text: !!networkConnectionStore ? networkConnectionStore.noBlockchainConnectionAndNoCacheText : ""
             onClicked: {
                 RootStore.getHistoricalDataForToken(modelData.symbol, RootStore.currencyStore.currentCurrency)
                 d.selectedAssetIndex = index

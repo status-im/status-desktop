@@ -15,7 +15,7 @@ import "../popups"
 import "../controls"
 
 Rectangle {
-    id: browserHeader
+    id: root
 
     property alias favoriteComponent: favoritesBarLoader.sourceComponent
     property alias addressBar: addressBar
@@ -29,7 +29,6 @@ Rectangle {
     property string dappBrowserAccName: ""
     property string dappBrowserAccIcon: ""
     property var settingMenu
-    property var walletMenu
 
     signal addNewFavoritelClicked(var xPos)
     signal launchInBrowser(var url)
@@ -38,6 +37,7 @@ Rectangle {
     signal goBack()
     signal reload()
     signal stopLoading()
+    signal openWalletMenu()
 
     QtObject {
         id: _internal
@@ -129,7 +129,7 @@ Rectangle {
                 anchors.right: reloadBtn.left
                 anchors.rightMargin: Style.current.halfPadding
                 visible: !!currentUrl
-                icon.source: !!browserHeader.currentFavorite ? Style.svg("browser/favoriteActive") : Style.svg("browser/favorite")
+                icon.source: !!root.currentFavorite ? Style.svg("browser/favoriteActive") : Style.svg("browser/favorite")
                 color: "transparent"
                 type: StatusFlatRoundButton.Type.Tertiary
                 onClicked: addNewFavoritelClicked(addFavoriteBtn.x)
@@ -150,6 +150,8 @@ Rectangle {
         }
 
         Loader {
+            Layout.preferredWidth: 44
+            Layout.preferredHeight: 44
             active: true
             sourceComponent: currentTabConnected ? connectedBtnComponent : notConnectedBtnCompoent
         }
@@ -164,12 +166,8 @@ Rectangle {
                 icon.height: 24
                 icon.name: "filled-account"
                 type: StatusFlatRoundButton.Type.Tertiary
-                onClicked: {
-                    if (walletMenu.opened) {
-                        walletMenu.close()
-                    } else {
-                        walletMenu.open()
-                    }
+                onPressed: {
+                    root.openWalletMenu()
                 }
             }
         }
@@ -183,12 +181,8 @@ Rectangle {
                 icon.height: 18
                 icon.color: dappBrowserAccIcon
                 text: dappBrowserAccName
-                onClicked: {
-                    if (walletMenu.opened) {
-                        walletMenu.close()
-                    } else {
-                        walletMenu.open()
-                    }
+                onPressed: {
+                    root.openWalletMenu();
                 }
             }
         }

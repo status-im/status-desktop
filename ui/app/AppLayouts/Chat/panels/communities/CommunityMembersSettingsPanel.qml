@@ -204,7 +204,7 @@ SettingsPageLayout {
 
         anchors.centerIn: parent
         width: 400
-        header.title: qsTr("Ban %1").arg(userNameToBan)
+        headerSettings.title: qsTr("Ban %1").arg(userNameToBan)
 
         contentItem: StatusBaseText {
             id: banContentText
@@ -245,7 +245,7 @@ SettingsPageLayout {
 
         anchors.centerIn: parent
         width: 400
-        header.title: qsTr("Kick %1").arg(userNameToKick)
+        headerSettings.title: qsTr("Kick %1").arg(userNameToKick)
 
         contentItem: StatusBaseText {
             id: kickContentText

@@ -19,7 +19,7 @@ StatusModal {
     width: 420
     height: 250
     closePolicy: Popup.NoAutoClose
-    header.title: qsTr("Edit")
+    headerSettings.title: qsTr("Edit")
     contentItem: Item {
         StatusInput {
             id: displayNameInput

@@ -22,10 +22,10 @@ Popup {
     property var store
 
     onOpened: {
-        Global.popupOpened = true
+        Global.activityPopupOpened = true
     }
     onClosed: {
-        Global.popupOpened = false
+        Global.activityPopupOpened = false
         Qt.callLater(activityCenterStore.markAsSeenActivityCenterNotifications)
     }
 

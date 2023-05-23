@@ -88,7 +88,7 @@ Item {
 
     ConfirmationDialog {
         id: confirmationPopup
-        header.title: qsTr("Remove account")
+        headerSettings.title: qsTr("Remove account")
         confirmationText: d.accountNameToBeRemoved.length > 0?
                               qsTr("Do you want to delete the %1 account?").arg(d.accountNameToBeRemoved)
                             : qsTr("Do you want to delete the last account?")

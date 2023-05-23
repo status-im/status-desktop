@@ -204,7 +204,7 @@ SettingsContentBase {
                         property string mode: "normal"
 
                         id: confirmDialog
-                        header.title: qsTr("Warning!")
+                        headerSettings.title: qsTr("Warning!")
                         confirmationText: qsTr("The account will be logged out. When you login again, the selected mode will be enabled")
                         onConfirmButtonClicked: {
                             root.advancedStore.setBloomLevel(mode)
@@ -549,7 +549,7 @@ SettingsContentBase {
                 onClosed: destroy()
                 anchors.centerIn: parent
                 width: 400
-                header.title: qsTr("How many log files do you want to keep archived?")
+                headerSettings.title: qsTr("How many log files do you want to keep archived?")
 
                 contentItem: Column {
                     width: parent.width

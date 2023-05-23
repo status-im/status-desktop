@@ -89,32 +89,32 @@ Column {
     StatusModal {
         id: simpleModal
         anchors.centerIn: parent
-        header.title: "Some Title"
-        header.subTitle: "Subtitle"
+        headerSettings.title: "Some Title"
+        headerSettings.subTitle: "Subtitle"
     }
 
     StatusModal {
         id: simpleTitleModal
         anchors.centerIn: parent
-        header.title: "Some Title"
+        headerSettings.title: "Some Title"
     }
 
     StatusModal {
         id: headerImageModal
         anchors.centerIn: parent
-        header.title: "Some Title"
-        header.subTitle: "Subtitle"
-        header.asset.isImage: true
-        header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
+        headerSettings.title: "Some Title"
+        headerSettings.subTitle: "Subtitle"
+        headerSettings.asset.isImage: true
+        headerSettings.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
     }
 
     StatusModal {
         id: footerButtonsModal
         anchors.centerIn: parent
-        header.title: "Some Title"
-        header.subTitle: "Subtitle"
-        header.asset.isImage: true
-        header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
+        headerSettings.title: "Some Title"
+        headerSettings.subTitle: "Subtitle"
+        headerSettings.asset.isImage: true
+        headerSettings.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
         leftButtons: [
             StatusBackButton { }
         ]
@@ -131,10 +131,10 @@ Column {
     StatusModal {
         id: headerActionButtonModal
         anchors.centerIn: parent
-        header.title: "Some Title"
-        header.subTitle: "Subtitle"
-        header.asset.isImage: true
-        header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
+        headerSettings.title: "Some Title"
+        headerSettings.subTitle: "Subtitle"
+        headerSettings.asset.isImage: true
+        headerSettings.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
 
         headerActionButton: StatusFlatRoundButton {
             type: StatusFlatRoundButton.Type.Secondary
@@ -162,10 +162,10 @@ Column {
     StatusModal {
         id: modalExample
         anchors.centerIn: parent
-        header.asset.isImage: true
-        header.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
-        header.title: "Header"
-        header.subTitle: "SubTitle"
+        headerSettings.asset.isImage: true
+        headerSettings.asset.name: "qrc:/demoapp/data/profile-image-1.jpeg"
+        headerSettings.title: "Header"
+        headerSettings.subTitle: "SubTitle"
         rightButtons: [
             StatusButton {
                 text: "Button"
@@ -200,8 +200,8 @@ Column {
     StatusModal {
         id: modalWithContentAccess
         anchors.centerIn: parent
-        header.title: "Header"
-        header.subTitle: "SubTitle"
+        headerSettings.title: "Header"
+        headerSettings.subTitle: "SubTitle"
 
         contentItem: StatusBaseText {
             id: text
@@ -224,10 +224,10 @@ Column {
     StatusModal {
         id: modalWithLetterIdenticon
         anchors.centerIn: parent
-        header.title: "Header"
-        header.subTitle: "SubTitle"
-        header.asset.isLetterIdenticon: true
-        header.asset.bgColor: "red"
+        headerSettings.title: "Header"
+        headerSettings.subTitle: "SubTitle"
+        headerSettings.asset.isLetterIdenticon: true
+        headerSettings.asset.bgColor: "red"
 
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -249,11 +249,11 @@ Column {
     StatusModal {
         id: modalWithIdenticon
         anchors.centerIn: parent
-        header.title: "Header"
-        header.subTitle: "SubTitle"
-        header.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+        headerSettings.title: "Header"
+        headerSettings.subTitle: "SubTitle"
+        headerSettings.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                       nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        header.asset.imgIsIdenticon: true
+        headerSettings.asset.imgIsIdenticon: true
 
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -275,12 +275,12 @@ Column {
     StatusModal {
         id: modalWithEditableIdenticon
         anchors.centerIn: parent
-        header.title: "Header"
-        header.subTitle: "SubTitle"
-        header.headerImageEditable: true
-        header.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+        headerSettings.title: "Header"
+        headerSettings.subTitle: "SubTitle"
+        headerSettings.headerImageEditable: true
+        headerSettings.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                       nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        header.asset.imgIsIdenticon: true
+        headerSettings.asset.imgIsIdenticon: true
 
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -302,12 +302,12 @@ Column {
     StatusModal {
         id: modalWithLongTitles
         anchors.centerIn: parent
-        header.title: "Some super long text here that exceeds the available space"
-        header.subTitle: "Some super long text here that exceeds the available space"
-        header.subTitleElide: Text.ElideMiddle
-        header.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+        headerSettings.title: "Some super long text here that exceeds the available space"
+        headerSettings.subTitle: "Some super long text here that exceeds the available space"
+        headerSettings.subTitleElide: Text.ElideMiddle
+        headerSettings.asset.name: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                       nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-        header.asset.imgIsIdenticon: true
+        headerSettings.asset.imgIsIdenticon: true
 
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -329,9 +329,9 @@ Column {
     StatusModal {
         id: modalWithHeaderPopupMenu
         anchors.centerIn: parent
-        header.title: "helloworld.eth"
-        header.subTitle: "Basic address"
-        header.popupMenu: StatusMenu {
+        headerSettings.title: "helloworld.eth"
+        headerSettings.subTitle: "Basic address"
+        headerSettings.popupMenu: StatusMenu {
             id: popupMenu
 
             StatusMenuInstantiator {
@@ -351,8 +351,8 @@ Column {
     StatusModal {
         id: editTitleModal
         anchors.centerIn: parent
-        header.title: "This title can be edited"
-        header.editable: true
+        headerSettings.title: "This title can be edited"
+        headerSettings.editable: true
     }
 
     StatusModal {

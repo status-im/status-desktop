@@ -20,7 +20,7 @@ StatusModal {
     closePolicy: root.store.disablePopup? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !root.store.disablePopup
 
-    header.title: root.store.editMode? qsTr("Edit account") : qsTr("Add a new account")
+    headerSettings.title: root.store.editMode? qsTr("Edit account") : qsTr("Add a new account")
 
     onOpened: {
         root.store.resetStoreValues()

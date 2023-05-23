@@ -30,7 +30,7 @@ SettingsContentBase {
     titleRowComponentLoader.sourceComponent: StatusButton {
         objectName: "profileSettingsChangePasswordButton"
         text: qsTr("Change Password")
-        onClicked: changePasswordModal.open()
+        onClicked: Global.openPopup(changePasswordModal)
         enabled: !userProfile.isKeycardUser
     }
 
@@ -92,16 +92,17 @@ SettingsContentBase {
             }
         }
 
-        ChangePasswordModal {
+        Component {
             id: changePasswordModal
-            privacyStore: root.privacyStore
-            anchors.centerIn: parent
-            onPasswordChanged: successPopup.open()
+            ChangePasswordModal {
+                privacyStore: root.privacyStore
+                onPasswordChanged: Global.openPopup(successPopup);
+            }
         }
 
-        ChangePasswordSuccessModal {
+        Component {
             id: successPopup
-            anchors.centerIn: parent
+            ChangePasswordSuccessModal { }
         }
     }
 }

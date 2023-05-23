@@ -225,8 +225,8 @@ StatusListItem {
         property string name
         property bool favourite
         anchors.centerIn: parent
-        header.title: qsTr("Are you sure?")
-        header.subTitle: name
+        headerSettings.title: qsTr("Are you sure?")
+        headerSettings.subTitle: name
         contentItem: StatusBaseText {
             anchors.centerIn: parent
             height: contentHeight + topPadding + bottomPadding

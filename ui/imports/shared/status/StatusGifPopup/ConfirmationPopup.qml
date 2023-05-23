@@ -85,4 +85,8 @@ Popup {
             root.close()
         }
     }
+
+    onClosed: {
+        root.destroy();
+    }
 }

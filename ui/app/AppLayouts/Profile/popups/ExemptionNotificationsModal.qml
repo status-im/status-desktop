@@ -28,8 +28,8 @@ StatusModal {
         globalMentions: Constants.settingsSection.notifications.sendAlertsValue,
         otherMessages: Constants.settingsSection.notifications.turnOffValue
     })
-    header.title: qsTr("%1 exemption").arg(root.item.name)
-    header.asset: StatusAssetSettings {
+    headerSettings.title: qsTr("%1 exemption").arg(root.item.name)
+    headerSettings.asset: StatusAssetSettings {
         // Once we introduce StatusSmartIdenticon in popup header, we should use the folowing
 //        color: root.item.type === Constants.settingsSection.exemptions.oneToOneChat?
 //                   Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(root.item.itemId)] :

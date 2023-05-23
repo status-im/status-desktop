@@ -50,12 +50,12 @@ Item {
     StatusModal {
         id: imageCropperModal
 
-        header.title: root.title
+        headerSettings.title: root.title
 
         anchors.centerIn: Overlay.overlay
 
         width: root.roundedImage ? 480 : 580
-
+        destroyOnClose: false
         StatusImageCropPanel {
             id: imageCropper
             objectName: "profileImageCropper"

@@ -24,7 +24,7 @@ StatusModal {
 
     id: root
     anchors.centerIn: parent
-    header.title: root.commandTitle
+    headerSettings.title: root.commandTitle
     height: 504
 
     property alias selectRecipient: selectRecipient
@@ -40,7 +40,7 @@ StatusModal {
             anchors.rightMargin: Style.current.padding
 
             onGroupActivated: {
-                root.header.title = group.headerText
+                root.headerSettings.title = group.headerText
                 btnNext.text = group.footerText
             }
             TransactionFormGroup {

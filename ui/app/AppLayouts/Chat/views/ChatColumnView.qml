@@ -155,7 +155,7 @@ Item {
             sendChatCommand: root.requestAddressForTransaction
             isRequested: false
             commandTitle: qsTr("Send")
-            header.title: commandTitle
+            headerSettings.title: commandTitle
             finalButtonLabel: qsTr("Request Address")
             selectRecipient.selectedRecipient: {
                 parentModule.prepareChatContentModuleForChatId(activeChatId)
@@ -187,7 +187,7 @@ Item {
             sendChatCommand: root.requestTransaction
             isRequested: true
             commandTitle: qsTr("Request")
-            header.title: commandTitle
+            headerSettings.title: commandTitle
             finalButtonLabel: qsTr("Request")
             selectRecipient.selectedRecipient: {
                 parentModule.prepareChatContentModuleForChatId(activeChatId)

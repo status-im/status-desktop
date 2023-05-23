@@ -204,6 +204,8 @@ StatusSectionLayout {
 
         BrowserHeader {
             id: browserHeader
+            property bool walletMenuPopupOpen: false
+
             anchors.top: parent.top
             anchors.topMargin: tabs.tabHeight + tabs.anchors.topMargin
             z: 52
@@ -212,7 +214,6 @@ StatusSectionLayout {
             dappBrowserAccName: WalletStore.dappBrowserAccount.name
             dappBrowserAccIcon: WalletStore.dappBrowserAccount.color
             settingMenu: settingsMenu
-            walletMenu: browserWalletMenu
             currentUrl: !!_internal.currentWebView ? _internal.currentWebView.url : ""
             isLoading: (!!_internal.currentWebView && _internal.currentWebView.loading)
             canGoBack: (!!_internal.currentWebView && _internal.currentWebView.canGoBack)
@@ -247,6 +248,10 @@ StatusSectionLayout {
                     url = "https://" + url
                 }
                 _internal.currentWebView.url = _internal.determineRealURL(url);
+            }
+            onOpenWalletMenu: {
+                walletMenuPopupOpen ? Global.closePopup() : Global.openPopup(browserWalletMenu);
+                walletMenuPopupOpen = !walletMenuPopupOpen;
             }
         }
 
@@ -423,25 +428,32 @@ StatusSectionLayout {
                 Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.browserSettings);
             }
         }
-
-        BrowserWalletMenu {
+        Component  {
             id: browserWalletMenu
-            y: browserHeader.height + browserHeader.anchors.topMargin
-            x: parent.width - width - Style.current.halfPadding
-            onSendTriggered: {
-                sendTransactionModal.selectedAccount = selectedAccount
-                sendTransactionModal.open()
-            }
-            onReload: {
-                for (let i = 0; i < tabs.count; ++i){
-                    tabs.getTab(i).item.reload();
+            BrowserWalletMenu {
+                property point headerPoint: Qt.point(browserHeader.x, browserHeader.y)
+                x: (parent.width - width - Style.current.halfPadding)
+                y: (Math.abs(browserHeader.mapFromGlobal(headerPoint).y) +
+                    browserHeader.anchors.topMargin + Style.current.halfPadding)
+                onSendTriggered: {
+                    sendTransactionModal.selectedAccount = selectedAccount
+                    sendTransactionModal.open()
                 }
-            }
-            onDisconnect: {
-                Web3ProviderStore.disconnect(Utils.getHostname(browserHeader.addressBar.text))
-                provider.postMessage("web3-disconnect-account", "{}");
-                _internal.currentWebView.reload()
-                close()
+                onReload: {
+                    for (let i = 0; i < tabs.count; ++i){
+                        tabs.getTab(i).item.reload();
+                    }
+                }
+                onDisconnect: {
+                    Web3ProviderStore.disconnect(Utils.getHostname(browserHeader.addressBar.text))
+                    provider.postMessage("web3-disconnect-account", "{}");
+                    _internal.currentWebView.reload()
+                    close()
+                }
+                Component.onDestruction: {
+                    if (browserHeader.walletMenuPopupOpen)
+                        browserHeader.walletMenuPopupOpen = false;
+                }
             }
         }
     }

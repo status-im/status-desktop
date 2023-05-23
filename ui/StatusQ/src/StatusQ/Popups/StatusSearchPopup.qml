@@ -13,7 +13,6 @@ StatusModal {
     id: root
     width: 700
     height: !!searchResults && searchResults.count >= 0 && searchText !== "" ? 560 : 122
-    anchors.centerIn: parent
     showHeader: false
     showFooter: false
 

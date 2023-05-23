@@ -35,7 +35,7 @@ StatusModal {
     anchors.centerIn: parent
     id: root
 
-    header.title: qsTr("Signature request")
+    headerSettings.title: qsTr("Signature request")
     height: 504
 
     onClosed: {

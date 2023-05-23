@@ -24,12 +24,12 @@ StatusModal {
         }
     }
 
-    header.title: contentItem.currentItem.headerTitle
-    header.subTitle: contentItem.currentItem.headerSubtitle || ""
-    header.asset.name: contentItem.currentItem.headerImageSource || ""
-    header.asset.isImage: !!contentItem.currentItem.headerImageSource
-    header.asset.isLetterIdenticon: contentItem.currentItem.headerTitle === root.community.name && !contentItem.currentItem.headerImageSource
-    header.asset.bgColor: root.community.color
+    headerSettings.title: contentItem.currentItem.headerTitle
+    headerSettings.subTitle: contentItem.currentItem.headerSubtitle || ""
+    headerSettings.asset.name: contentItem.currentItem.headerImageSource || ""
+    headerSettings.asset.isImage: !!contentItem.currentItem.headerImageSource
+    headerSettings.asset.isLetterIdenticon: contentItem.currentItem.headerTitle === root.community.name && !contentItem.currentItem.headerImageSource
+    headerSettings.asset.bgColor: root.community.color
 
     contentItem: StackView {
         id: stack
@@ -77,9 +77,6 @@ StatusModal {
             id: transferOwnershiproot
             TransferOwnershipPopup {
                 anchors.centerIn: parent
-                onClosed: {
-                    destroy()
-                }
             }
         }
 

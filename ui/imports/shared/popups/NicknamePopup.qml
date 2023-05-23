@@ -17,8 +17,8 @@ StatusModal {
     height: 340
     anchors.centerIn: parent
 
-    header.title: qsTr("Nickname")
-    header.subTitleElide: Text.ElideMiddle
+    headerSettings.title: qsTr("Nickname")
+    headerSettings.subTitleElide: Text.ElideMiddle
 
     /*required*/ property string publicKey
     property string nickname

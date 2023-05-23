@@ -338,7 +338,7 @@ StatusScrollView {
         id: cancelConfirmationPopupCmp
         ConfirmationDialog {
             id: cancelConfirmationPopup
-            header.title: qsTr("Are you sure you want to cancel the import?")
+            headerSettings.title: qsTr("Are you sure you want to cancel the import?")
             confirmationText: qsTr("Your new Status community will be deleted and all information entered will be lost.")
             showCancelButton: true
             cancelBtnType: "default"

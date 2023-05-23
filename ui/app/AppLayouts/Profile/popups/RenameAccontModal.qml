@@ -23,7 +23,7 @@ StatusModal {
     property var account
     property var emojiPopup
 
-    header.title: qsTr("Rename %1").arg(popup.account.name)
+    headerSettings.title: qsTr("Rename %1").arg(popup.account.name)
 
     property int marginBetweenInputs: 30
 

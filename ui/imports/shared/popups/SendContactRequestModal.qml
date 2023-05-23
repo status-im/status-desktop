@@ -29,7 +29,7 @@ StatusModal {
     width: 480
     height: 548
 
-    header.title: d.loadingContactDetails ? qsTr("Send Contact Request")
+    headerSettings.title: d.loadingContactDetails ? qsTr("Send Contact Request")
                                           : qsTr("Send Contact Request to %1").arg(d.userDisplayName)
 
     onAboutToShow: {

@@ -1,9 +1,10 @@
 import QtQuick 2.14
-import QtQuick.Controls 2.14 as QC
+import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import "statusModal" as Spares
 
@@ -19,8 +20,8 @@ import "statusModal" as Spares
    \qml
         StatusModal {
             anchors.centerIn: parent
-            header.title: "Some Title"
-            header.subTitle: "Subtitle"
+            headerSettings.title: "Some Title"
+            headerSettings.subTitle: "Subtitle"
             headerActionButton: StatusFlatRoundButton {
                 type: StatusFlatRoundButton.Type.Secondary
                 width: 32
@@ -50,9 +51,7 @@ import "statusModal" as Spares
    For a list of components available see StatusQ.
 */
 
-// Deprecation annotations come with Qt6.2
-// @Deprecated { reason: "Use StatusDialog instead, see reasoning: https://github.com/status-im/StatusQ/issues/720" }
-QC.Popup {
+StatusDialog {
     id: root
 
     /*!
@@ -135,7 +134,7 @@ QC.Popup {
         type: StatusModalHeaderSettings
         This property exposes the different properties of the standard header.
     */
-    property StatusModalHeaderSettings header: StatusModalHeaderSettings {}
+    property StatusModalHeaderSettings headerSettings: StatusModalHeaderSettings {}
     /*!
        \qmlproperty rightButtons
         This property helps user assign the right buttons on the footer.
@@ -182,16 +181,15 @@ QC.Popup {
         This property decides whether the advanced header has floating buttons on top of the Modal
     */
     property bool hasFloatingButtons: false
+
     /*!
-       \qmlproperty color backgroundColor
-        This property decides the modal background color
+       \qmlproperty destroyOnClose
+        This property decides whether the popup component should be destroyed when closed. Default value is true.
     */
-    property string backgroundColor: Theme.palette.statusModal.backgroundColor
+    property bool destroyOnClose: true
 
     signal editButtonClicked()
     signal headerImageClicked()
-
-    parent: QC.Overlay.overlay
 
     width: 480
 
@@ -201,18 +199,7 @@ QC.Popup {
     leftPadding: padding
     rightPadding: padding
 
-    margins: 64
-
-    modal: true
-
-    QC.Overlay.modal: Rectangle {
-        color: Theme.palette.backdropColor
-    }
-
-    background: Rectangle {
-        color: root.backgroundColor
-        radius: 8
-
+    header: Item {
         Spares.StatusModalHeader {
             id: headerImpl
             anchors.top: parent.top
@@ -220,14 +207,14 @@ QC.Popup {
             height: visible ? implicitHeight : 0
 
             visible: root.showHeader
-            title: header.title
-            titleElide: header.titleElide
-            subTitle: header.subTitle
-            subTitleElide: header.subTitleElide
-            asset: header.asset
-            popupMenu: header.popupMenu
-            headerImageEditable: header.headerImageEditable
-            editable: header.editable
+            title: headerSettings.title
+            titleElide: headerSettings.titleElide
+            subTitle: headerSettings.subTitle
+            subTitleElide: headerSettings.subTitleElide
+            asset: headerSettings.asset
+            popupMenu: headerSettings.popupMenu
+            headerImageEditable: headerSettings.headerImageEditable
+            editable: headerSettings.editable
 
             onEditButtonClicked: root.editButtonClicked()
             onHeaderImageClicked: root.headerImageClicked()
@@ -241,7 +228,9 @@ QC.Popup {
             width: visible ? parent.width : 0
             active: root.showAdvancedHeader
         }
+    }
 
+    footer: Item {
         Spares.StatusModalFooter {
             id: footerImpl
             anchors.bottom: parent.bottom

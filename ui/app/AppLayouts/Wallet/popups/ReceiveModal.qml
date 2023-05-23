@@ -33,7 +33,7 @@ StatusModal {
         property string completeAddressWithNetworkPrefix
     }
 
-    header.title: qsTr("Receive")
+    headerSettings.title: qsTr("Receive")
     contentHeight: layout.implicitHeight
     width: 556
 

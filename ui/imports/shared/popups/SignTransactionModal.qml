@@ -16,7 +16,7 @@ import AppLayouts.Wallet 1.0
 
 StatusModal {
     id: root
-    header.title: qsTr("Send")
+    headerSettings.title: qsTr("Send")
     height: 540
 
     property var store
@@ -88,7 +88,7 @@ StatusModal {
 //            initialItem: groupPreview
 //            isLastGroup: stack.currentGroup === groupSignTx
 //            onGroupActivated: {
-//                root.header.title = group.headerText
+//                root.headerSettings.title = group.headerText
 //                btnNext.text = group.footerText
 //            }
 //            TransactionFormGroup {

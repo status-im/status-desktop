@@ -41,29 +41,35 @@ QtObject {
         Global.importCommunityPopupRequested.connect(openImportCommunityPopup)
         Global.removeContactRequested.connect(openRemoveContactConfirmationPopup)
         Global.openPopupRequested.connect(openPopup)
+        Global.closePopupRequested.connect(closePopup)
         Global.openDeleteMessagePopup.connect(openDeleteMessagePopup)
         Global.openDownloadImageDialog.connect(openDownloadImageDialog)
     }
 
+    property var currentPopup
     function openPopup(popupComponent, params = {}, cb = null) {
         if (activePopupComponents.includes(popupComponent)) {
             return
         }
 
-        const popup = popupComponent.createObject(popupParent, params)
-        popup.open()
-
+        root.currentPopup = popupComponent.createObject(popupParent, params)
+        root.currentPopup.open();
         if (cb)
-            cb(popup)
+            cb(root.currentPopup)
 
         activePopupComponents.push(popupComponent)
 
-        popup.closed.connect(() => {
+        root.currentPopup.closed.connect(() => {
             const removeIndex = activePopupComponents.indexOf(popupComponent)
             if (removeIndex !== -1) {
                 activePopupComponents.splice(removeIndex, 1)
             }
         })
+    }
+
+    function closePopup() {
+        if (!!root.currentPopup)
+            root.currentPopup.close();
     }
 
     function openChooseBrowserPopup(link: string) {
@@ -90,7 +96,7 @@ QtObject {
     }
 
     function openNicknamePopup(publicKey: string, nickname: string, subtitle: string) {
-        openPopup(nicknamePopupComponent, {publicKey: publicKey, nickname: nickname, "header.subTitle": subtitle})
+        openPopup(nicknamePopupComponent, {publicKey: publicKey, nickname: nickname, "headerSettings.subTitle": subtitle})
     }
 
     function openBlockContactPopup(publicKey: string, contactName: string) {
@@ -125,7 +131,7 @@ QtObject {
             userDisplayName: contactDetails.displayName,
             userIcon: contactDetails.largeImage,
             userIsEnsVerified: contactDetails.ensVerified,
-            "header.title": qsTr("Verify %1's Identity").arg(contactDetails.displayName),
+            "headerSettings.title": qsTr("Verify %1's Identity").arg(contactDetails.displayName),
             challengeText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask %1 to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(contactDetails.displayName),
             buttonText: qsTr("Send verification request")
         }, cb)
@@ -229,7 +235,7 @@ QtObject {
             ConfirmationDialog {
                 property string displayName
                 property string publicKey
-                header.title: qsTr("Remove '%1' as a contact").arg(displayName)
+                headerSettings.title: qsTr("Remove '%1' as a contact").arg(displayName)
                 confirmationText: qsTr("This will mean that you and '%1' will no longer be able to send direct messages to each other. You will need to send them a new Contact Request in order to message again. All previous direct messages between you and '%1' will be retained in read-only mode.").arg(displayName)
                 showCancelButton: true
                 cancelBtnType: ""
