@@ -174,17 +174,9 @@ QtObject:
   proc getItemIdxById*(self: Model, id: string): int =
     return getItemIdxById(self.items, id)
 
-  proc cmpChatsAndCats*(x, y: Item): int =
-    # Sort proc to compare chats and categories
-    # Compares first by categoryPosition, then by position
-    result = cmp(x.categoryPosition, y.categoryPosition)
-    if result == 0:
-      result = cmp(x.position, y.position)
-
   proc setData*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
-    self.items.sort(cmpChatsAndCats)
     self.endResetModel()
 
     self.countChanged()
@@ -376,8 +368,6 @@ QtObject:
       categoryId: string,
       newCategoryPosition: int,
     ) =
-    self.beginResetModel()
-
     for i in 0 ..< self.items.len:
       var item = self.items[i]
       if item.`type` == CATEGORY_TYPE:
@@ -392,12 +382,17 @@ QtObject:
         item.position = chat.position
         item.categoryId = chat.categoryId
         item.categoryPosition = if nowHasCategory: newCategoryPosition else: -1
+        let modelIndex = self.createIndex(i, 0, nil)
+        var roleChanges = @[
+          ModelRole.Position.int,
+          ModelRole.CategoryId.int,
+          ModelRole.CategoryPosition.int,
+        ]
         if not nowHasCategory:
           item.categoryOpened = true
+          roleChanges.add(ModelRole.CategoryOpened.int)
+        self.dataChanged(modelIndex, modelIndex, roleChanges)
         break
-
-    self.items.sort(cmpChatsAndCats)
-    self.endResetModel()
 
   proc removeCategory*(
       self: Model,
@@ -406,7 +401,6 @@ QtObject:
     ) =
     self.removeItemById(categoryId)
 
-    self.beginResetModel()
     for i in 0 ..< self.items.len:
       var item = self.items[i]
       if item.categoryId != categoryId:
@@ -428,9 +422,6 @@ QtObject:
           ModelRole.CategoryOpened.int,
         ])
         break
-    
-    self.items.sort(cmpChatsAndCats)
-    self.endResetModel()
 
   proc renameCategory*(self: Model, categoryId, newName: string) =
     let index = self.getItemIdxById(categoryId)
@@ -493,13 +484,12 @@ QtObject:
       self: Model,
       updatedChats: seq[ChatDto],
     ) =
-    self.beginResetModel()
-
     for updatedChat in updatedChats:
       let index = self.getItemIdxById(updatedChat.id)
       if index == -1:
         continue
 
+      var roles = @[ModelRole.Position.int]
       if(self.items[index].categoryId != updatedChat.categoryId):
         if updatedChat.categoryId == "":
           # Moved out of a category
@@ -511,20 +501,20 @@ QtObject:
             continue
           self.items[index].categoryId = category.id
           self.items[index].categoryPosition = category.categoryPosition
+        roles = roles.concat(@[
+          ModelRole.CategoryId.int,
+          ModelRole.CategoryPosition.int,
+        ])
 
       self.items[index].position = updatedChat.position
-
-    self.items.sort(cmpChatsAndCats)
-
-    self.endResetModel()
+      let modelIndex = self.createIndex(index, 0, nil)
+      self.dataChanged(modelIndex, modelIndex, roles)
 
   proc reorderCategoryById*(
       self: Model,
       categoryId: string,
       position: int,
     ) =
-    self.beginResetModel()
-
     for i in 0 ..< self.items.len:
       var item = self.items[i]
       if item.categoryId != categoryId:
@@ -532,9 +522,8 @@ QtObject:
       if item.categoryPosition == position:
         continue
       item.categoryPosition = position
-
-    self.items.sort(cmpChatsAndCats)
-    self.endResetModel()
+      let modelIndex = self.createIndex(i, 0, nil)
+      self.dataChanged(modelIndex, modelIndex, @[ModelRole.CategoryPosition.int])
 
   proc clearItems*(self: Model) =
     self.beginResetModel()
