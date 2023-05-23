@@ -8,7 +8,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
-import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
 import utils 1.0
@@ -22,10 +21,15 @@ import "../stores"
 StatusModal {
     id: root
 
+    property string address: RootStore.selectedReceiveAccount.address
+    property string chainShortNames: ""
+
+    property string description: qsTr("Your Address")
+
+    property bool readOnly: false
+
     QtObject {
         id: d
-        property string selectedAccountAddress: RootStore.selectedReceiveAccount.address
-        property string networkPrefix
         property string completeAddressWithNetworkPrefix
     }
 
@@ -91,7 +95,8 @@ StatusModal {
                             visible: model.isEnabled
                             MouseArea {
                                 anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
+                                cursorShape: root.readOnly ? Qt.ArrowCursor : Qt.PointingHandCursor
+                                enabled: !root.readOnly
                                 onClicked: selectPopup.open()
                             }
                         }
@@ -103,6 +108,7 @@ StatusModal {
                     height: 32
                     icon.name: "edit_pencil"
                     color: Theme.palette.primaryColor3
+                    visible: !root.readOnly
                     onClicked: selectPopup.open()
                 }
             }
@@ -183,7 +189,7 @@ StatusModal {
                     id: contactsLabel
                     font.pixelSize: 15
                     color: Theme.palette.baseColor1
-                    text: qsTr("Your Address")
+                    text: root.description
                 }
                 RowLayout {
                     id: networksLabel
@@ -198,10 +204,12 @@ StatusModal {
                                 text: shortName + ":"
                                 visible: model.isEnabled
                                 onVisibleChanged: {
+                                    if (root.readOnly)
+                                        return
                                     if (visible) {
-                                        d.networkPrefix += text
+                                        root.chainShortNames += text
                                     } else {
-                                        d.networkPrefix = d.networkPrefix.replace(text, "")
+                                        root.chainShortNames = root.chainShortNames.replace(text, "")
                                     }
                                 }
                             }
@@ -212,7 +220,7 @@ StatusModal {
                     id: txtWalletAddress
                     color: Theme.palette.directColor1
                     font.pixelSize: 15
-                    text: d.selectedAccountAddress
+                    text: root.address
                 }
             }
             Column {
@@ -258,7 +266,7 @@ StatusModal {
                 // rowData used to clone returns string. Convert it to bool for bool arithmetics
                 rolesOverride: [{
                     role: "isEnabled",
-                    transform: (modelData) => Boolean(modelData.isEnabled)
+                    transform: (modelData) => root.readOnly ? root.chainShortNames.includes(modelData.shortName) : Boolean(modelData.isEnabled)
                 }]
             }
 
@@ -293,7 +301,7 @@ StatusModal {
                 }
                 PropertyChanges {
                     target: d
-                    completeAddressWithNetworkPrefix: d.selectedAccountAddress
+                    completeAddressWithNetworkPrefix: root.address
                 }
             },
             State {
@@ -313,11 +321,11 @@ StatusModal {
                 }
                 PropertyChanges {
                     target: copyToClipBoard
-                    textToCopy: d.networkPrefix + txtWalletAddress.text
+                    textToCopy: root.chainShortNames + txtWalletAddress.text
                 }
                 PropertyChanges {
                     target: d
-                    completeAddressWithNetworkPrefix: d.networkPrefix + d.selectedAccountAddress
+                    completeAddressWithNetworkPrefix: root.chainShortNames + root.address
                 }
             }
         ]

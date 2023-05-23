@@ -175,10 +175,14 @@ QtObject {
         return walletSectionSavedAddresses.getNameByAddress(address)
     }
 
+    function getNameForWalletAddress(address) {
+        return walletSectionAccounts.getNameByAddress(address)
+    }
+
     function getNameForAddress(address) {
-        let name = getNameForSavedWalletAddress(address)
+        let name = getNameForWalletAddress(address)
         if (name.length === 0) {
-            name = walletSectionAccounts.getNameByAddress(address)
+            name = getNameForSavedWalletAddress(address)
         }
         return name
     }
