@@ -32,6 +32,10 @@ const fetchCollectibleOwnersTaskArg: Task = proc(argEncoded: string) {.gcsafe, n
   let arg = decode[FetchCollectibleOwnersArg](argEncoded)
   try:
     let response = collectibles.getCollectibleOwnersByContractAddress(arg.chainId, arg.contractAddress)
+
+    if not response.error.isNil:
+      raise newException(ValueError, "Error getCollectibleOwnersByContractAddress" & response.error.message)
+
     let output = %* {
       "chainId": arg.chainId,
       "contractAddress": arg.contractAddress,
