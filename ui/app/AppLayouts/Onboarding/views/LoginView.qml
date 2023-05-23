@@ -1048,15 +1048,15 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: qsTr("Insert proper Keycard")
+                text: qsTr("Insert the correct Keycard for this profile and try again.")
                 visible: true
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
             }
             PropertyChanges {
                 target: button
-                text: ""
-                visible: false
+                text: qsTr("Try again")
+                visible: true
             }
             PropertyChanges {
                 target: link

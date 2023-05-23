@@ -199,7 +199,7 @@ proc getGeneratedAccounts*(self: Controller): seq[GeneratedAccountDto] =
 proc getImportedAccount*(self: Controller): GeneratedAccountDto =
   return self.accountsService.getImportedAccount()
 
-proc getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
+proc getPasswordStrengthScore*(self: Controller, password, userName: string): int =
   return self.generalService.getPasswordStrengthScore(password, userName)
 
 proc clearImage*(self: Controller) =
@@ -215,7 +215,7 @@ proc generateImage*(self: Controller, imageUrl: string, aX: int, aY: int, bX: in
       self.tmpProfileImageDetails = ProfileImageDetails(url: imageUrl, croppedImage: img.uri, x1: aX, y1: aY, x2: bX, y2: bY)
       return img.uri
 
-proc fetchWakuMessages*(self: Controller) = 
+proc fetchWakuMessages*(self: Controller) =
   self.generalService.fetchWakuMessages()
 
 proc getCroppedProfileImage*(self: Controller): string =
@@ -295,10 +295,10 @@ proc setMetadataFromKeycard*(self: Controller, cardMetadata: CardMetadata) =
 proc getMetadataFromKeycard*(self: Controller): CardMetadata =
   return self.tmpCardMetadata
 
-proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: Controller, oldKeycardUid: string, newKeycardUid: string) = 
+proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: Controller, oldKeycardUid: string, newKeycardUid: string) =
   self.delegate.addToKeycardUidPairsToCheckForAChangeAfterLogin(oldKeycardUid, newKeycardUid)
 
-proc syncKeycardBasedOnAppWalletStateAfterLogin(self: Controller) = 
+proc syncKeycardBasedOnAppWalletStateAfterLogin(self: Controller) =
   self.delegate.syncKeycardBasedOnAppWalletStateAfterLogin()
 
 proc keychainErrorOccurred*(self: Controller): bool =
@@ -331,7 +331,7 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   if not main_constants.IS_MACOS or # This is MacOS only feature
     value != LS_VALUE_STORE:
       return
-  self.connectKeychain() # handling the results is done in slots connected in `connectKeychain` proc 
+  self.connectKeychain() # handling the results is done in slots connected in `connectKeychain` proc
   self.tmpKeychainErrorOccurred = false
   let selectedAccount = self.getSelectedLoginAccount()
   self.keychainService.tryToObtainData(selectedAccount.keyUid)
@@ -341,7 +341,7 @@ proc storeIdentityImage*(self: Controller): seq[Image] =
     return
   let account = self.accountsService.getLoggedInAccount()
   let image = singletonInstance.utils.formatImagePath(self.tmpProfileImageDetails.url)
-  result = self.profileService.storeIdentityImage(account.keyUid, image, self.tmpProfileImageDetails.x1, 
+  result = self.profileService.storeIdentityImage(account.keyUid, image, self.tmpProfileImageDetails.x1,
   self.tmpProfileImageDetails.y1, self.tmpProfileImageDetails.x2, self.tmpProfileImageDetails.y2)
   self.tmpProfileImageDetails = ProfileImageDetails()
 
@@ -374,7 +374,7 @@ proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool) =
     self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
   else:
     self.setupKeychain(storeToKeychain)
-    
+
 proc storeGeneratedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   let accounts = self.getGeneratedAccounts()
   if accounts.len == 0:
@@ -492,8 +492,8 @@ proc getLastReceivedKeycardData*(self: Controller): tuple[flowType: string, flow
 
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
-  # in most cases we're running another flow after canceling the current one, 
-  # this way we're giving to the keycard some time to cancel the current flow 
+  # in most cases we're running another flow after canceling the current one,
+  # this way we're giving to the keycard some time to cancel the current flow
   sleep(200)
 
 proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", pin = "", puk = "", factoryReset = false) =
@@ -563,7 +563,7 @@ proc storeMetadataForNewKeycardUser(self: Controller) =
 
 proc getConnectionString*(self: Controller): string =
   return self.tmpConnectionString
-  
+
 proc setConnectionString*(self: Controller, connectionString: string) =
   self.tmpConnectionString = connectionString
 

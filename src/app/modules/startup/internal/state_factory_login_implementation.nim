@@ -1,5 +1,5 @@
 proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, keycardEvent: KeycardEvent, controller: Controller): State =
-  if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+  if keycardFlowType == ResponseTypeValueKeycardFlowResult and
     keycardEvent.error.len > 0:
       if keycardEvent.error == ErrorPCSC:
         return createState(StateType.LoginNoPCSCService, state.flowType, nil)
@@ -8,7 +8,7 @@ proc ensureReaderAndCardPresenceLogin*(state: State, keycardFlowType: string, ke
         if state.stateType == StateType.LoginPlugin:
           return nil
         return createState(StateType.LoginPlugin, state.flowType, nil)
-  if keycardFlowType == ResponseTypeValueInsertCard and 
+  if keycardFlowType == ResponseTypeValueInsertCard and
     keycardEvent.error.len > 0 and
     keycardEvent.error == ErrorConnection:
       controller.reRunCurrentFlowLater()
@@ -25,13 +25,14 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
   if not ensureState.isNil:
     return ensureState
   if state.flowType == FlowType.AppLogin:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
         return createState(StateType.LoginKeycardPinVerified, state.flowType, nil)
     if keycardFlowType == ResponseTypeValueEnterPIN:
       if keycardEvent.error.len == 0:
         if not controller.keyUidMatchSelectedLoginAccount(keycardEvent.keyUid):
+          controller.setPin("")
           return createState(StateType.LoginKeycardWrongKeycard, state.flowType, nil)
         return createState(StateType.LoginKeycardRecognizedKeycard, state.flowType, nil)
       if keycardEvent.error.len > 0:
@@ -40,11 +41,11 @@ proc ensureReaderAndCardPresenceAndResolveNextLoginState*(state: State, keycardF
           if keycardEvent.pinRetries > 0:
             return createState(StateType.LoginKeycardWrongPin, state.flowType, nil)
           return createState(StateType.LoginKeycardMaxPinRetriesReached, state.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           return createState(StateType.LoginKeycardMaxPinRetriesReached, state.flowType, nil)
-    if keycardFlowType == ResponseTypeValueSwapCard and 
+    if keycardFlowType == ResponseTypeValueSwapCard and
       keycardEvent.error.len > 0:
         if keycardEvent.error == ErrorNoKeys:
           return createState(StateType.LoginKeycardEmpty, state.flowType, nil)

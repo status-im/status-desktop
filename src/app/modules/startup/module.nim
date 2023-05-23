@@ -113,19 +113,19 @@ method load*[T](self: Module[T]) =
       var thumbnailImage: string
       var largeImage: string
       self.extractImages(acc, thumbnailImage, largeImage)
-      items.add(login_acc_item.initItem(order = i, acc.name, icon = "", thumbnailImage, largeImage, acc.keyUid, acc.colorHash, 
+      items.add(login_acc_item.initItem(order = i, acc.name, icon = "", thumbnailImage, largeImage, acc.keyUid, acc.colorHash,
         acc.colorId, acc.keycardPairing))
     # set the first account as slected one
     if items.len == 0:
-      # we should never be here, since else block of `if (shouldStartWithOnboardingScreen)` 
+      # we should never be here, since else block of `if (shouldStartWithOnboardingScreen)`
       # ensures that `openedAccounts` is not empty array
       error "cannot run the app in login flow cause list of login accounts is empty"
       quit() # quit the app
-    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_NEW_USER, icon = "add", 
+    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_NEW_USER, icon = "add",
       thumbnailImage = "", largeImage = "", keyUid = ""))
-    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_EXISTING_USER, icon = "wallet", 
+    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_ADD_EXISTING_USER, icon = "wallet",
       thumbnailImage = "", largeImage = "", keyUid = ""))
-    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_LOST_KEYCARD, icon = "keycard", 
+    items.add(login_acc_item.initItem(order = items.len, name = atc.LOGIN_ACCOUNTS_LIST_LOST_KEYCARD, icon = "keycard",
       thumbnailImage = "", largeImage = "", keyUid = ""))
     self.view.setLoginAccountsModelItems(items)
     self.setSelectedLoginAccount(items[0])
@@ -139,8 +139,8 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
     return self.keycardSharedModule.getModuleAsVariant()
 
 proc createSharedKeycardModule[T](self: Module[T]) =
-  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_STARTUP_MODULE_IDENTIFIER, 
-    self.events, self.keycardService, settingsService = nil, networkService = nil, privacyService = nil, self.accountsService, 
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_STARTUP_MODULE_IDENTIFIER,
+    self.events, self.keycardService, settingsService = nil, networkService = nil, privacyService = nil, self.accountsService,
     walletAccountService = nil, self.keychainService)
 
 method moveToLoadingAppState*[T](self: Module[T]) =
@@ -171,7 +171,7 @@ method onBackActionClicked*[T](self: Module[T]) =
     return
   self.view.setCurrentStartupState(backState)
   debug "back_action - set state", setCurrFlow=backState.flowType(), newCurrState=backState.stateType()
-    
+
 method onPrimaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
@@ -284,6 +284,9 @@ method importAccountSuccess*[T](self: Module[T]) =
 
 method setSelectedLoginAccount*[T](self: Module[T], item: login_acc_item.Item) =
   self.controller.cancelCurrentFlow()
+  if item.getKeyUid().len == 0:
+    error "all accounts must have non empty key uid"
+    return
   self.controller.setSelectedLoginAccount(item.getKeyUid(), item.getKeycardCreatedAccount())
   if item.getKeycardCreatedAccount():
     self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
@@ -413,6 +416,8 @@ method onNodeLogin*[T](self: Module[T], error: string) =
   else:
     self.moveToStartupState()
     if currStateObj.flowType() == state.FlowType.AppLogin:
+      self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
+      self.controller.runLoginFlow()
       self.emitAccountLoginError(error)
     else:
       self.emitStartupError(error, StartupErrorType.SetupAccError)
@@ -443,7 +448,7 @@ method checkRepeatedKeycardPinWhileTyping*[T](self: Module[T], pin: string): boo
       if pin[i] != storedPin[i]:
         return false
     return true
-  else: 
+  else:
     let match = pin == storedPin
     self.controller.setPinMatch(match)
     return match
@@ -459,13 +464,13 @@ method setKeycardData*[T](self: Module[T], value: string) =
 
 method setRemainingAttempts*[T](self: Module[T], value: int) =
   self.view.setRemainingAttempts(value)
-  
+
 method runFactoryResetPopup*[T](self: Module[T]) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.FactoryReset)
-  
+
 method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()
 
@@ -480,7 +485,7 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
       if currStateObj.isNil:
         error "cannot resolve current state for onboarding/login flow continuation"
         return
-      if currStateObj.flowType() == state.FlowType.FirstRunNewUserNewKeycardKeys or 
+      if currStateObj.flowType() == state.FlowType.FirstRunNewUserNewKeycardKeys or
         currStateObj.flowType() == state.FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard or
         currStateObj.flowType() == state.FlowType.LostKeycardReplacement:
           let newState = currStateObj.getBackState()

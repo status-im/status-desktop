@@ -29,24 +29,27 @@ method getNextQuinaryState*(self: LoginKeycardEnterPinState, controller: Control
     controller.cancelCurrentFlow()
     return createState(StateType.LostKeycardOptions, self.flowType, self)
 
-method resolveKeycardNextState*(self: LoginKeycardEnterPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: LoginKeycardEnterPinState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceLogin(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.AppLogin:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
+        if not controller.keyUidMatchSelectedLoginAccount(keycardEvent.keyUid):
+          controller.setPin("")
+          return createState(StateType.LoginKeycardWrongKeycard, self.flowType, nil)
         controller.setKeycardEvent(keycardEvent)
         return createState(StateType.LoginKeycardPinVerified, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
         if keycardEvent.pinRetries > 0:
           return createState(StateType.LoginKeycardWrongPin, self.flowType, nil)
         return createState(StateType.LoginKeycardMaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           return createState(StateType.LoginKeycardMaxPinRetriesReached, self.flowType, nil)
