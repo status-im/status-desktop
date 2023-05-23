@@ -24,7 +24,7 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            CommunityNewCollectibleView {
+            CommunityNewTokenView {
                 anchors.fill: parent
                 anchors.margins: 50
                 layer1Networks: NetworksModel.layer1Networks
@@ -35,7 +35,7 @@ SplitView {
                 accounts: WalletAccountsModel {}
                 tokensModel: MintedCollectiblesModel.mintedCollectibleModel
 
-                onPreviewClicked: logs.logEvent("CommunityNewCollectibleView::previewClicked")
+                onPreviewClicked: logs.logEvent("CommunityNewTokenView::previewClicked")
             }
         }
 

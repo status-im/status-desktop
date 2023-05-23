@@ -224,7 +224,7 @@ SettingsPageLayout {
 
                 currentIndex: optionsTab.currentItem == collectiblesTab ? 0 : 1
 
-                CommunityNewCollectibleView {
+                CommunityNewTokenView {
                     viewWidth: root.viewWidth
                     layer1Networks: root.layer1Networks
                     layer2Networks: root.layer2Networks
@@ -258,7 +258,7 @@ SettingsPageLayout {
                     }
                 }
 
-                CommunityNewCollectibleView {
+                CommunityNewTokenView {
                     viewWidth: root.viewWidth
                     layer1Networks: root.layer1Networks
                     layer2Networks: root.layer2Networks
