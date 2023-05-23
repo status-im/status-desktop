@@ -229,7 +229,7 @@ const asyncGetLinkPreviewDataTask: Task = proc(argEncoded: string) {.gcsafe, nim
 
     #2. Process whitelisted url
     #status deep links are handled internally
-    if domain == "status-im" or domain == "join.status.im":
+    if domain == "status-app" or domain == "join.status.im":
       responseJson["success"] = %true
       responseJson["isStatusDeepLink"] = %true
       responseJson["result"] = %*{

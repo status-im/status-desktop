@@ -48,7 +48,7 @@ type StatusDesktopConfig = object
       abbr: "d" .}: string
     uri* {.
       defaultValue: ""
-      desc: "status-im:// URI to open a chat or other"
+      desc: "status-app:// URI to open a chat or other"
       name: "uri" .}: string
 
 

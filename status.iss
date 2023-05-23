@@ -74,10 +74,10 @@ Type: files; Name: "{userdesktop}\{#Name}"
 Type: files; Name: "{commondesktop}\{#Name}"
 
 [Registry]
-Root: HKCR; Subkey: "status-im"; ValueType: "string"; ValueData: "URL:status-im Protocol"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "status-im"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
-Root: HKCR; Subkey: "status-im\DefaultIcon"; ValueType: "string"; ValueData: "{app}\Status.exe,1"
-Root: HKCR; Subkey: "status-im\shell\open\command"; ValueType: "string"; ValueData: """{app}\bin\Status.exe"" ""--uri=%1"""
+Root: HKCR; Subkey: "status-app"; ValueType: "string"; ValueData: "URL:status-app Protocol"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "status-app"; ValueType: "string"; ValueName: "URL Protocol"; ValueData: ""
+Root: HKCR; Subkey: "status-app\DefaultIcon"; ValueType: "string"; ValueData: "{app}\Status.exe,1"
+Root: HKCR; Subkey: "status-app\shell\open\command"; ValueType: "string"; ValueData: """{app}\bin\Status.exe"" ""--uri=%1"""
 
 [Code]
 function IsAppRunning(const FileName : string): Boolean;
