@@ -2,3 +2,4 @@ NetworkFilter 1.0 NetworkFilter.qml
 NetworkSelectItemDelegate 1.0 NetworkSelectItemDelegate.qml
 AccountHeaderGradient 1.0 AccountHeaderGradient.qml
 StatusTxProgressBar 1.0 StatusTxProgressBar.qml
+StatusDateRangePicker 1.0 StatusDateRangePicker.qml

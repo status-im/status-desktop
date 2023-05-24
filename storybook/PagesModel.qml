@@ -302,6 +302,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusDateRangePicker"
+        section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
