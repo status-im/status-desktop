@@ -34,10 +34,9 @@ StatusSectionLayout {
     centerPanel: Item {
         anchors.fill: parent
         clip: true
+
         StatusScrollView {
             anchors.fill: parent
-            contentHeight: column.height + d.layoutVMargin
-            contentWidth: column.width + d.layoutHMargin
 
             ColumnLayout {
                 id: column

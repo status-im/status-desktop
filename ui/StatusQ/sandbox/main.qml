@@ -467,6 +467,8 @@ StatusWindow {
                 anchors.fill: parent
                 anchors.topMargin: 48
 
+                contentWidth: availableWidth
+
                 ColumnLayout {
                     width: examplesLeftPanel.availableWidth
                     spacing: 0

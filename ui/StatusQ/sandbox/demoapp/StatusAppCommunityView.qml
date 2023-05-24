@@ -177,14 +177,15 @@ StatusSectionLayout {
             anchors.top: statusChatInfoToolBar.bottom
             anchors.topMargin: 8
             anchors.bottom: parent.bottom
-            width: leftPanel.width
+            width: parent.width
 
-            contentHeight: communityCategories.height
+            contentWidth: availableWidth
             clip: true
 
             StatusChatListAndCategories {
                 id: communityCategories
-                width: leftPanel.width
+
+                width: scrollView.availableWidth
                 height: implicitHeight > (leftPanel.height - 64) ? implicitHeight + 8 : leftPanel.height - 64
 
                 draggableItems: true

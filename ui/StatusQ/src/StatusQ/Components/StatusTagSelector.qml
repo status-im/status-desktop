@@ -254,38 +254,37 @@ Item {
                 visible: (parent.width>22)
             }
 
-            ScrollView {
-                Layout.preferredWidth: (parent.width - 177) > 0 ? ((namesList.contentWidth > (parent.width - 177)) ?
-                                       (parent.width - 177) : namesList.contentWidth) : 0
+            StatusListView {
+                id: namesList
+                model: namesModel
+                orientation: ListView.Horizontal
+                spacing: 8
+                function scrollToEnd() {
+                    if (contentWidth > width) {
+                        contentX = contentWidth;
+                    }
+                }
+
+                implicitWidth: {
+                    if (parent.width - 177 <= 0)
+                        return 0
+                    if (contentWidth > parent.width - 177)
+                        return parent.width - 177
+                    return contentWidth
+                }
                 implicitHeight: 30
                 Layout.alignment: Qt.AlignVCenter
-                visible: (namesList.count > 0)
-                contentWidth: namesList.contentWidth
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                clip: true
-                ListView {
-                    id: namesList
-                    anchors.fill: parent
-                    model: namesModel
-                    orientation: ListView.Horizontal
-                    spacing: 8
-                    function scrollToEnd() {
-                        if (contentWidth > width) {
-                            contentX = contentWidth;
-                        }
-                    }
-                    onWidthChanged: { scrollToEnd(); }
-                    onCountChanged: { scrollToEnd(); }
-                    delegate: StatusTagItem {
-                        isReadonly: model.isReadonly
-                        text: model.name
-                        icon: model.tagIcon
 
-                        onClosed: {
-                            removeMember(model.pubKey);
-                            namesModel.remove(index, 1);
-                        }
+                onWidthChanged: { scrollToEnd(); }
+                onCountChanged: { scrollToEnd(); }
+                delegate: StatusTagItem {
+                    isReadonly: model.isReadonly
+                    text: model.name
+                    icon: model.tagIcon
+
+                    onClosed: {
+                        removeMember(model.pubKey);
+                        namesModel.remove(index, 1);
                     }
                 }
             }
