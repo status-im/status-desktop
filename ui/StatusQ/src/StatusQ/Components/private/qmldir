@@ -2,3 +2,4 @@ module StatusQ.Components.private
 
 StatusImageMessage 0.1 statusMessage/StatusImageMessage.qml
 StatusMessageImageAlbum 0.1 statusMessage/StatusMessageImageAlbum.qml
+StatusBaseDateInput 0.1 dateInput/StatusBaseDateInput.qml
