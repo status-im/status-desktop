@@ -19,6 +19,7 @@ QtObject:
       isAllAccounts: bool
       hideWatchAccounts: bool
       colors: string
+      isWatchOnlyAccount: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -112,6 +113,13 @@ QtObject:
     read = getColors
     notify = colorsChanged
 
+  proc getIsWatchOnlyAccount(self: View): QVariant {.slot.} =
+    return newQVariant(self.isWatchOnlyAccount)
+  proc isWatchOnlyAccountChanged(self: View) {.signal.}
+  QtProperty[QVariant] isWatchOnlyAccount:
+    read = getIsWatchOnlyAccount
+    notify = isWatchOnlyAccountChanged
+
   proc setData*(self: View, item: Item) =
     if(self.name != item.getName()):
       self.name = item.getName()
@@ -129,6 +137,9 @@ QtObject:
     if(self.emoji != item.getEmoji()):
       self.emoji = item.getEmoji()
       self.emojiChanged()
+    if(self.isWatchOnlyAccount != item.getIsWatchOnlyAccount()):
+      self.isWatchOnlyAccount = item.getIsWatchOnlyAccount()
+      self.isWatchOnlyAccountChanged()
     if(self.isAllAccounts != item.getIsAllAccounts()):
       self.isAllAccounts = item.getIsAllAccounts()
       self.isAllAccountsChanged()

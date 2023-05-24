@@ -75,6 +75,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], 
       walletAccounts[0].assetsLoading,
       "",
       "",
+      isWatchOnlyAccount=false,
       isAllAccounts=true,
       hideWatchAccounts=excludeWatchOnly,
       self.getWalletAccoutColors(walletAccounts)
@@ -89,6 +90,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], 
       walletAccount.assetsLoading,
       walletAccount.color,
       walletAccount.emoji,
+      isWatchOnlyAccount=walletAccount.walletType == "watch"
     )
     self.view.setData(item)
 
