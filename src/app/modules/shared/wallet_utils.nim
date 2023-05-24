@@ -33,7 +33,8 @@ proc walletAccountToRelatedAccountItem*(w: WalletAccountDto) : related_account_i
     w.emoji,
   )
 
-proc walletAccountToWalletSettingsAccountsItem*(w: WalletAccountDto): wallet_settings_accounts_item.Item =
+proc walletAccountToWalletSettingsAccountsItem*(w: WalletAccountDto, keycardAccount: bool): wallet_settings_accounts_item.Item =
+  discard
   let relatedAccounts = related_accounts_model.newModel()
   if w.isNil:
     return wallet_settings_accounts_item.initItem()
@@ -49,9 +50,10 @@ proc walletAccountToWalletSettingsAccountsItem*(w: WalletAccountDto): wallet_set
     w.emoji,
     relatedAccounts,
     w.keyUid,
+    keycardAccount
   )
 
-proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, enabledChainIds: seq[int], currency: string,
+proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool, enabledChainIds: seq[int], currency: string,
   currencyFormat: CurrencyFormatDto): wallet_accounts_item.Item =
   return wallet_accounts_item.initItem(
     w.name,
@@ -62,6 +64,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, enabledChainIds: se
     currencyAmountToItem(w.getCurrencyBalance(enabledChainIds, currency), currencyFormat),
     w.emoji,
     w.keyUid,
+    keycardAccount,
     w.assetsLoading,
   )
 

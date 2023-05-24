@@ -49,8 +49,10 @@ method refreshWalletAccounts*(self: Module) =
   let currencyFormat = self.controller.getCurrencyFormat(currency)
 
   let items = walletAccounts.map(w => (block:
+    let keycardAccount = self.controller.isKeycardAccount(w)
     walletAccountToWalletAccountsItem(
       w,
+      keycardAccount,
       enabledChainIds,
       currency,
       currencyFormat,

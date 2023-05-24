@@ -17,6 +17,7 @@ proc initItem*(
   emoji: string = "",
   relatedAccounts: related_accounts_model.Model = nil,
   keyUid: string = "",
+  keycardAccount: bool = false
 ): Item =
   result = Item()
   result.WalletAccountItem.setup(name,
@@ -25,9 +26,10 @@ proc initItem*(
     emoji,
     walletType,
     path,
-    keyUid)
+    keyUid,
+    keycardAccount)
   result.relatedAccounts = relatedAccounts
-  
+
 proc `$`*(self: Item): string =
   result = "ProfileSection-Accounts-Item("
   result = result & $self.WalletAccountItem

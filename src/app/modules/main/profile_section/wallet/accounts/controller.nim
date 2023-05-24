@@ -34,5 +34,8 @@ proc deleteAccount*(self: Controller, address: string) =
 proc getKeycardByKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
   return self.walletAccountService.getKeycardByKeyUid(keyUid)
 
+proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
+  return self.walletAccountService.isKeycardAccount(account)
+
 proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)

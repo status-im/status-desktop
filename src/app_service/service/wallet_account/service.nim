@@ -53,7 +53,7 @@ proc priorityTokenCmp(a, b: WalletTokenDto): int =
       return -1
     if b.symbol == symbol:
       return 1
-  
+
   cmp(a.name, b.name)
 
 proc hex2Balance*(input: string, decimals: int): string =
@@ -84,7 +84,7 @@ type WalletAccountUpdated* = ref object of Args
   account*: WalletAccountDto
 
 type DerivedAddressesArgs* = ref object of Args
-  uniqueId*: string 
+  uniqueId*: string
   derivedAddresses*: seq[DerivedAddressDto]
   error*: string
 
@@ -214,7 +214,7 @@ QtObject:
     if keypair.isNil:
       return
     account.relatedAccounts = keypair.accounts
-    
+
   proc setRelatedAccountsForAllAccounts(self: Service, keyUid: string) =
     for wAcc in self.walletAccounts.mvalues:
       if wAcc.keyUid == keyUid:
@@ -224,7 +224,7 @@ QtObject:
     if updateRelatedAccounts:
       # updating related accounts for already added accounts
       self.setRelatedAccountsForAllAccounts(account.keyUid)
-    # add new account to store    
+    # add new account to store
     self.walletAccounts[account.address] = account
 
   proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto], areBalancesCached: bool, areMarketValuesCached: bool) =
@@ -284,7 +284,7 @@ QtObject:
       return
     result = self.walletAccounts[address]
 
-  proc getAccountsByAddresses*(self: Service, addresses: seq[string]): seq[WalletAccountDto] = 
+  proc getAccountsByAddresses*(self: Service, addresses: seq[string]): seq[WalletAccountDto] =
     for address in addresses:
       result.add(self.getAccountByAddress(address))
 
@@ -428,18 +428,18 @@ QtObject:
     self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
 
   ## if password is not provided local keystore file won't be created
-  proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey, 
+  proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
     keyUid, accountType, color, emoji: string): string =
     try:
       var response: RpcResponse[JsonNode]
       if password.len == 0:
-        response = status_go_accounts.addAccountWithoutKeystoreFileCreation(name, address, path, publicKey, keyUid, 
+        response = status_go_accounts.addAccountWithoutKeystoreFileCreation(name, address, path, publicKey, keyUid,
           accountType, color, emoji)
       else:
         var finalPassword = password
         if doPasswordHashing:
           finalPassword = utils.hashPassword(password)
-        response = status_go_accounts.addAccount(finalPassword, name, address, path, publicKey, keyUid, accountType, 
+        response = status_go_accounts.addAccount(finalPassword, name, address, path, publicKey, keyUid, accountType,
           color, emoji)
       if not response.error.isNil:
         error "status-go error", procName="addWalletAccount", errCode=response.error.code, errDesription=response.error.message
@@ -451,7 +451,7 @@ QtObject:
       return e.msg
 
   ## Mandatory fields for account: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `color`
-  proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPasswordHashing: bool, 
+  proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPasswordHashing: bool,
     keyUid, keypairName, rootWalletMasterKey: string, account: WalletAccountDto): string =
     if password.len == 0:
       error "for adding new private key account, password must be provided"
@@ -475,13 +475,13 @@ QtObject:
       return e.msg
 
   ## Mandatory fields for all accounts: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `color`
-  proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPasswordHashing: bool, 
+  proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPasswordHashing: bool,
     keyUid, keypairName, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): string =
     var finalPassword = password
     if password.len > 0 and doPasswordHashing:
       finalPassword = utils.hashPassword(password)
     try:
-      if seedPhrase.len > 0 and password.len > 0: 
+      if seedPhrase.len > 0 and password.len > 0:
         let response = status_go_accounts.importMnemonic(seedPhrase, finalPassword)
         if not response.error.isNil:
           error "status-go error importing private key", procName="addNewSeedPhraseKeypair", errCode=response.error.code, errDesription=response.error.message
@@ -516,7 +516,7 @@ QtObject:
         return
       self.removeAccountFromLocalStoreAndNotify(address)
     except Exception as e:
-      error "error: ", procName="deleteAccount", errName = e.name, errDesription = e.msg    
+      error "error: ", procName="deleteAccount", errName = e.name, errDesription = e.msg
 
   proc getCurrency*(self: Service): string =
     return self.settingsService.getCurrency()
@@ -542,7 +542,7 @@ QtObject:
       return false
     try:
       var account = self.getAccountByAddress(address)
-      let response = status_go_accounts.updateAccount(accountName, account.address, account.path, account.publicKey, 
+      let response = status_go_accounts.updateAccount(accountName, account.address, account.path, account.publicKey,
         account.keyUid, account.walletType, color, emoji, account.isWallet, account.isChat)
       if not response.error.isNil:
         error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
@@ -697,7 +697,7 @@ QtObject:
     let accounts = self.getWalletAccounts()
     for walletAccount in accounts:
       result += walletAccount.getCurrencyBalance(@[network.chainId], self.getCurrentCurrencyIfEmpty(currency))
-       
+
   proc findTokenSymbolByAddress*(self: Service, address: string): string =
     return self.tokenService.findTokenSymbolByAddress(address)
 
@@ -736,7 +736,7 @@ QtObject:
 
   proc emitAddKeycardAddAccountsChange(self: Service, success: bool, keycard: KeycardDto) =
     let data = KeycardActivityArgs(
-      success: success, 
+      success: success,
       keycard: keycard
     )
     self.events.emit(SIGNAL_NEW_KEYCARD_SET, data)
@@ -780,10 +780,10 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc emitKeycardRemovedAccountsChange(self: Service, success: bool, keyUid: string, keycardUid: string, 
+  proc emitKeycardRemovedAccountsChange(self: Service, success: bool, keyUid: string, keycardUid: string,
     removedAccounts: seq[string]) =
     let data = KeycardActivityArgs(
-      success: success, 
+      success: success,
       keycard: KeycardDto(keyUid: keyUid, keycardUid: keycardUid, accountsAddresses: removedAccounts)
     )
     self.events.emit(SIGNAL_KEYCARD_ACCOUNTS_REMOVED, data)
@@ -803,7 +803,7 @@ QtObject:
       error "error handilng migrated keycard response", errDesription=e.msg
       self.emitKeycardRemovedAccountsChange(success = false, keyUid = "", keycardUid = "", removedAccounts = @[])
 
-  proc getAllKnownKeycards*(self: Service): seq[KeycardDto] = 
+  proc getAllKnownKeycards*(self: Service): seq[KeycardDto] =
     try:
       let response = backend.getAllKnownKeycards()
       if responseHasNoErrors("getAllKnownKeycards", response):
@@ -811,7 +811,7 @@ QtObject:
     except Exception as e:
       error "error: ", procName="getAllKnownKeycards", errName = e.name, errDesription = e.msg
 
-  proc getKeycardWithKeycardUid*(self: Service, keycardUid: string): KeycardDto = 
+  proc getKeycardWithKeycardUid*(self: Service, keycardUid: string): KeycardDto =
     let allKnownKeycards = self.getAllKnownKeycards()
     let keycardsWithKeycardUid = allKnownKeycards.filter(kp => kp.keycardUid == keycardUid)
     if keycardsWithKeycardUid.len == 0:
@@ -821,7 +821,7 @@ QtObject:
       return
     return keycardsWithKeycardUid[0]
 
-  proc getAllKnownKeycardsGroupedByKeyUid*(self: Service): seq[KeycardDto] = 
+  proc getAllKnownKeycardsGroupedByKeyUid*(self: Service): seq[KeycardDto] =
     try:
       let response = backend.getAllKnownKeycardsGroupedByKeyUid()
       if responseHasNoErrors("getAllKnownKeycardsGroupedByKeyUid", response):
@@ -829,13 +829,22 @@ QtObject:
     except Exception as e:
       error "error: ", procName="getAllKnownKeycardsGroupedByKeyUid", errName = e.name, errDesription = e.msg
 
-  proc getKeycardByKeyUid*(self: Service, keyUid: string): seq[KeycardDto] = 
+  proc getKeycardByKeyUid*(self: Service, keyUid: string): seq[KeycardDto] =
     try:
       let response = backend.getKeycardByKeyUid(keyUid)
       if responseHasNoErrors("getKeycardByKeyUid", response):
         return map(response.result.getElems(), proc(x: JsonNode): KeycardDto = toKeycardDto(x))
     except Exception as e:
       error "error: ", procName="getKeycardByKeyUid", errName = e.name, errDesription = e.msg
+
+  proc isKeycardAccount*(self: Service, account: WalletAccountDto): bool =
+    if account.isNil or
+      account.keyUid.len == 0 or
+      account.path.len == 0 or
+      utils.isPathOutOfTheDefaultStatusDerivationTree(account.path):
+        return false
+    let keycards = self.getKeycardByKeyUid(account.keyUid)
+    return keycards.len > 0
 
   proc emitKeycardNameChange(self: Service, keycardUid: string, name: string) =
     let data = KeycardActivityArgs(success: true, keycard: KeycardDto(keycardUid: keycardUid, keycardName: name))
@@ -914,7 +923,7 @@ QtObject:
 
   proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto]) =
     if keycardActions.len == 0:
-      return    
+      return
     for kcAction in keycardActions:
       if kcAction.action == KeycardActionKeycardAdded or
         kcAction.action == KeycardActionAccountsAdded:
@@ -951,4 +960,4 @@ QtObject:
           if token.symbol == symbol:
             totalTokenBalance += token.getTotalBalanceOfSupportedChains()
 
-    return totalTokenBalance   
+    return totalTokenBalance

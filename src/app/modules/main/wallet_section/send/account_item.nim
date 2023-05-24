@@ -26,7 +26,8 @@ QtObject:
       emoji,
       walletType,
       path = "",
-      keyUid = "")
+      keyUid = "",
+      keycardAccount = false)
     self.assets = assets
     self.currencyBalance = currencyBalance
 
@@ -44,7 +45,7 @@ QtObject:
     ): AccountItem =
       new(result, delete)
       result.setup(name, address, color, emoji, walletType, assets, currencyBalance)
-  
+
   proc `$`*(self: AccountItem): string =
     result = "WalletSection-Send-Item("
     result = result & $self.WalletAccountItem

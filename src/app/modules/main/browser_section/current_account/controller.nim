@@ -36,16 +36,19 @@ proc init*(self: Controller) =
 proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
+proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
+  return self.walletAccountService.isKeycardAccount(account)
+
 proc getIndex*(self: Controller, address: string): int =
   return self.walletAccountService.getIndex(address)
 
 proc findTokenSymbolByAddress*(self: Controller, address: string): string =
   return self.walletAccountService.findTokenSymbolByAddress(address)
 
-proc getChainIds*(self: Controller): seq[int] = 
+proc getChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().map(n => n.chainId)
 
-proc getEnabledChainIds*(self: Controller): seq[int] = 
+proc getEnabledChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =
