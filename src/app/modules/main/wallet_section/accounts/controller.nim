@@ -35,10 +35,13 @@ proc init*(self: Controller) =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
+proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
+  return self.walletAccountService.isKeycardAccount(account)
+
 proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
 
-proc getEnabledChainIds*(self: Controller): seq[int] = 
+proc getEnabledChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =

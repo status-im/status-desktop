@@ -9,6 +9,7 @@ QtObject:
     walletType: string
     path: string
     keyUid: string
+    keycardAccount: bool
 
   proc setup*(self: WalletAccountItem,
     name: string = "",
@@ -17,7 +18,8 @@ QtObject:
     emoji: string = "",
     walletType: string = "",
     path: string = "",
-    keyUid: string = ""
+    keyUid: string = "",
+    keycardAccount: bool = false
     ) =
       self.QObject.setup
       self.name = name
@@ -27,6 +29,7 @@ QtObject:
       self.walletType = walletType
       self.path = path
       self.keyUid = keyUid
+      self.keycardAccount = keycardAccount
 
   proc delete*(self: WalletAccountItem) =
       self.QObject.delete
@@ -40,6 +43,7 @@ QtObject:
       walletType: {self.walletType},
       path: {self.path},
       keyUid: {self.keyUid},
+      keycardAccount: {self.keycardAccount},
       ]"""
 
   proc nameChanged*(self: WalletAccountItem) {.signal.}
@@ -102,5 +106,12 @@ QtObject:
   QtProperty[string] keyUid:
     read = keyUid
     notify = keyUidChanged
+
+  proc keycardAccountChanged*(self: WalletAccountItem) {.signal.}
+  proc keycardAccount*(self: WalletAccountItem): bool {.slot.} =
+    return self.keycardAccount
+  QtProperty[bool] keycardAccount:
+    read = keycardAccount
+    notify = keycardAccountChanged
 
 

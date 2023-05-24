@@ -54,13 +54,16 @@ proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
   let currencyFormat = self.controller.getCurrencyFormat(currency)
 
   let items = tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, self.controller.getCurrencyFormat(t.symbol)))
-    
+
   self.view.getAssetsModel().setItems(items)
 
 proc switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
 
   let walletAccount = self.controller.getWalletAccount(accountIndex)
+  if walletAccount.isNil:
+    return
+  let keycardAccount = self.controller.isKeycardAccount(walletAccount)
   let currency = self.controller.getCurrentCurrency()
   let enabledChainIds = self.controller.getEnabledChainIds()
 
@@ -68,6 +71,7 @@ proc switchAccount*(self: Module, accountIndex: int) =
 
   let accountItem = walletAccountToWalletAccountsItem(
     walletAccount,
+    keycardAccount,
     enabledChainIds,
     currency,
     currencyFormat,
@@ -100,7 +104,7 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
-  
+
 method switchAccountByAddress*(self: Module, address: string) =
   let accountIndex = self.controller.getIndex(address)
   self.switchAccount(accountIndex)
