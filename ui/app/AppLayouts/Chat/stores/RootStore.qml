@@ -76,6 +76,8 @@ QtObject {
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
+    signal communityInfoAlreadyRequested()
+
     signal goToMembershipRequestsPage()
 
     function setActiveCommunity(communityId) {
@@ -614,6 +616,10 @@ QtObject {
       target: communitiesModuleInst
       function onImportingCommunityStateChanged(communityId, state, errorMsg) {
           root.importingCommunityStateChanged(communityId, state, errorMsg)
+      }
+
+      function onCommunityInfoAlreadyRequested() {
+          root.communityInfoAlreadyRequested()
       }
     }
 

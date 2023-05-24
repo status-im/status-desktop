@@ -190,7 +190,8 @@ Column {
             store: root.store
             communityId: invitationData ? invitationData.communityId : ""
             anchors.left: parent.left
-            visible: !!invitationData && !invitationData.fetching
+            visible: !!invitationData
+            loading: invitationData.fetching
 
             Connections {
                 enabled: !!invitationData && invitationData.fetching
