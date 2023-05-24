@@ -66,6 +66,10 @@ ListModel {
         section: "Views"
     }
     ListElement {
+        title: "DeviceSyncingView"
+        section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }
