@@ -1318,27 +1318,30 @@ QtObject:
 
 
   proc asyncCommunityInfoLoaded*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
-    let rpcResponseObj = communityIdAndRpcResponse.parseJson
-    if (rpcResponseObj{"response"}{"error"}.kind != JNull):
-      let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
-      error "Error requesting community info", msg = error.message
-      return
+    try:
+      let rpcResponseObj = communityIdAndRpcResponse.parseJson
+      if (rpcResponseObj{"response"}{"error"}.kind != JNull):
+        let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
+        error "Error requesting community info", msg = error.message
+        return
 
-    var community = rpcResponseObj{"response"}{"result"}.toCommunityDto()
-    let requestedCommunityId = rpcResponseObj{"communityId"}.getStr()
-    self.requestedCommunityIds.excl(requestedCommunityId)
+      var community = rpcResponseObj{"response"}{"result"}.toCommunityDto()
+      let requestedCommunityId = rpcResponseObj{"communityId"}.getStr()
+      self.requestedCommunityIds.excl(requestedCommunityId)
 
-    if community.id == "":
-      community.id = requestedCommunityId
-      self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(community: community, error: "Couldn't find community info"))
-      return
-    
-    self.communities[community.id] = community
+      if community.id == "":
+        community.id = requestedCommunityId
+        self.events.emit(SIGNAL_COMMUNITY_LOAD_DATA_FAILED, CommunityArgs(community: community, error: "Couldn't find community info"))
+        return
 
-    if rpcResponseObj{"importing"}.getBool():
-      self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: community))
+      self.communities[community.id] = community
 
-    self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
+      if rpcResponseObj{"importing"}.getBool():
+        self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: community))
+
+      self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
+    except Exception as e:
+      error "Error on async community info loaded", msg = e.msg
 
   proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string) =
     try:
