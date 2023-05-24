@@ -44,6 +44,7 @@ Rectangle {
                 sendModal.open()
             }
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
+            visible: !walletStore.overview.isWatchOnlyAccount
         }
 
         StatusFlatButton {
@@ -64,6 +65,7 @@ Rectangle {
                 sendModal.open()
             }
             tooltipText: networkConnectionStore.sendBuyBridgeToolTipText
+            visible: !walletStore.overview.isWatchOnlyAccount
         }
         
         StatusFlatButton {

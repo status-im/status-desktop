@@ -8,6 +8,7 @@ type
     balanceLoading: bool
     color: string
     emoji: string
+    isWatchOnlyAccount: bool
     isAllAccounts: bool
     hideWatchAccounts: bool
     colors: seq[string]
@@ -19,6 +20,7 @@ proc initItem*(
   balanceLoading: bool  = true,
   color: string,
   emoji: string,
+  isWatchOnlyAccount: bool=false,
   isAllAccounts: bool = false,
   hideWatchAccounts: bool = false,
   colors: seq[string] = @[]
@@ -32,6 +34,7 @@ proc initItem*(
   result.isAllAccounts = isAllAccounts
   result.hideWatchAccounts = hideWatchAccounts
   result.colors = colors
+  result.isWatchOnlyAccount = isWatchOnlyAccount
 
 proc `$`*(self: Item): string =
   result = fmt"""OverviewItem(
@@ -41,6 +44,7 @@ proc `$`*(self: Item): string =
     balanceLoading: {self.balanceLoading},
     color: {self.color},
     emoji: {self.emoji},
+    isWatchOnlyAccount: {self.isWatchOnlyAccount},
     isAllAccounts: {self.isAllAccounts},
     hideWatchAccounts: {self.hideWatchAccounts},
     colors: {self.colors}
@@ -78,3 +82,5 @@ proc getColors*(self: Item): string =
       result = result & ";" & color
   return result
 
+proc getIsWatchOnlyAccount*(self: Item): bool =
+  return self.isWatchOnlyAccount
