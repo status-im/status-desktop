@@ -12,7 +12,6 @@ NicknamePopup 1.0 NicknamePopup.qml
 ModalPopup 1.0 ModalPopup.qml
 PopupMenu 1.0 PopupMenu.qml
 SendModal 1.0 SendModal.qml
-TransactionModal 1.0 TransactionModal.qml
 TransactionSettingsConfirmationPopup 1.0 TransactionSettingsConfirmationPopup.qml
 UnblockContactConfirmationDialog 1.0 UnblockContactConfirmationDialog.qml
 UserStatusContextMenu 1.0 UserStatusContextMenu.qml

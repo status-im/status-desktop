@@ -58,5 +58,5 @@ method refreshTransactions*(self: AccessInterface) {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getLastTxBlockNumber*(self: AccessInterface): string {.base.} =
+method getLatestBlockNumber*(self: AccessInterface, chainId: int): string {.base.} =
   raise newException(ValueError, "No implementation available")

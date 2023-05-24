@@ -138,8 +138,8 @@ QtObject:
   proc getChainIdForBrowser*(self: View): int {.slot.} =
     return self.delegate.getChainIdForBrowser()
 
-  proc getLastTxBlockNumber*(self: View): string {.slot.} =
-    return self.delegate.getLastTxBlockNumber()
+  proc getLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
+    return self.delegate.getLatestBlockNumber(chainId)
 
   proc setPendingTx*(self: View, pendingTx: seq[Item]) =
     for tx in pendingTx:
