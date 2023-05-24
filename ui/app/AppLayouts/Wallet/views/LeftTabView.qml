@@ -238,7 +238,7 @@ Rectangle {
                         width: !!icon ? 15: 0
                         height: !!icon ? 15: 0
                         color: Theme.palette.directColor1
-                        icon: model.migratedToKeycard ? "keycard" : ""
+                        icon: model.keycardAccount ? "keycard" : ""
                     }
                 ]
 

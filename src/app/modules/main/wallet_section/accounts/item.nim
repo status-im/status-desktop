@@ -18,6 +18,7 @@ proc initItem*(
   currencyBalance: CurrencyAmount = nil,
   emoji: string = "",
   keyUid: string = "",
+  keycardAccount: bool = false,
   assetsLoading: bool  = true,
 ): Item =
   result = Item()
@@ -27,17 +28,18 @@ proc initItem*(
     emoji,
     walletType,
     path,
-    keyUid)
+    keyUid,
+    keycardAccount)
   result.assetsLoading = assetsLoading
   result.currencyBalance = currencyBalance
-  
+
 proc `$`*(self: Item): string =
   result = "WalletSection-Accounts-Item("
   result = result & $self.WalletAccountItem
   result = result & "\nassetsLoading: " & $self.assetsLoading
   result = result & "\ncurrencyBalance: " & $self.currencyBalance
   result = result & ")"
-    
+
 proc currencyBalance*(self: Item): CurrencyAmount =
   return self.currencyBalance
 

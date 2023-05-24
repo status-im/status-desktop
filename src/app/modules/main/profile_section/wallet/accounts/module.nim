@@ -48,7 +48,8 @@ method refreshWalletAccounts*(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
 
   let items = walletAccounts.map(w => (block:
-    walletAccountToWalletSettingsAccountsItem(w)
+    let keycardAccount = self.controller.isKeycardAccount(w)
+    walletAccountToWalletSettingsAccountsItem(w, keycardAccount)
   ))
 
   self.view.setItems(items)
@@ -62,7 +63,8 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     let args = WalletAccountUpdated(e)
-    self.view.onUpdatedAccount(walletAccountToWalletSettingsAccountsItem(args.account))
+    let keycardAccount = self.controller.isKeycardAccount(args.account)
+    self.view.onUpdatedAccount(walletAccountToWalletSettingsAccountsItem(args.account, keycardAccount))
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
     let args = KeycardActivityArgs(e)
