@@ -246,45 +246,30 @@ StatusSectionLayout {
             }
 
             StatusScrollView {
-                id: scroll
-
                 anchors.fill: parent
-                ScrollBar.vertical.policy: ScrollBar.AsNeeded
-                ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-                contentHeight: content.height
-                contentWidth: content.width
                 padding: 0
 
-                Item {
-                    id: content
+                JoinPermissionsOverlayPanel {
+                    id: overlayPannel
 
-                    height: Math.max(overlayPannel.implicitHeight, panelBase.height)
-                    width: Math.max(overlayPannel.implicitWidth, panelBase.width)
+                    topPadding: 2 * bottomPadding
+                    joinCommunity: root.joinCommunity
+                    requirementsMet: root.requirementsMet
+                    isInvitationPending: root.isInvitationPending
+                    isJoinRequestRejected: root.isJoinRequestRejected
+                    requiresRequest: root.requiresRequest
+                    communityName: root.name
+                    communityHoldingsModel: root.communityHoldingsModel
+                    channelName: root.channelName
 
-                    JoinPermissionsOverlayPanel {
-                        id: overlayPannel
+                    viewOnlyHoldingsModel: root.viewOnlyHoldingsModel
+                    viewAndPostHoldingsModel: root.viewAndPostHoldingsModel
+                    moderateHoldingsModel: root.moderateHoldingsModel
+                    assetsModel: root.assetsModel
+                    collectiblesModel: root.collectiblesModel
 
-                        anchors.centerIn: parent
-                        Layout.maximumHeight: parent.height
-                        topPadding: 2 * bottomPadding
-                        joinCommunity: root.joinCommunity
-                        requirementsMet: root.requirementsMet
-                        isInvitationPending: root.isInvitationPending
-                        isJoinRequestRejected: root.isJoinRequestRejected
-                        requiresRequest: root.requiresRequest
-                        communityName: root.name
-                        communityHoldingsModel: root.communityHoldingsModel
-                        channelName: root.channelName
-
-                        viewOnlyHoldingsModel: root.viewOnlyHoldingsModel
-                        viewAndPostHoldingsModel: root.viewAndPostHoldingsModel
-                        moderateHoldingsModel: root.moderateHoldingsModel
-                        assetsModel: root.assetsModel
-                        collectiblesModel: root.collectiblesModel
-
-                        onRevealAddressClicked: root.revealAddressClicked()
-                        onInvitationPendingClicked: root.invitationPendingClicked()
-                    }
+                    onRevealAddressClicked: root.revealAddressClicked()
+                    onInvitationPendingClicked: root.invitationPendingClicked()
                 }
             }
         }

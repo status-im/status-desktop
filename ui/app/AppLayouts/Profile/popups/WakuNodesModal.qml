@@ -22,6 +22,7 @@ StatusModal {
 
     anchors.centerIn: parent
     height: 560
+    padding: 8
     header.title: qsTr("Waku nodes")
 
     property var messagingStore
@@ -31,19 +32,21 @@ StatusModal {
         destroy()
     }
     
-    contentItem: StatusScrollView {
-        height: parent.height
-        width: parent.width
+    StatusScrollView {
+        id: scrollView
+        anchors.fill: parent
+        contentWidth: availableWidth
 
         Column {
             id: nodesColumn
-            width: parent.width
+            width: scrollView.availableWidth
 
             Repeater {
                 id: wakunodesListView
                 model: root.messagingStore.wakunodes
                 delegate: Component {
                     StatusListItem {
+                        width: parent.width
                         title: qsTr("Node %1").arg(index + 1)
                         subTitle: model.nodeAddress
                         components: [

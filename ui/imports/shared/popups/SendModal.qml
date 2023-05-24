@@ -350,11 +350,7 @@ StatusDialog {
 
                 topPadding: 12
                 anchors.fill: parent
-
-                implicitWidth: contentWidth + leftPadding + rightPadding
-                implicitHeight: contentHeight + topPadding + bottomPadding
-
-                contentHeight: layout.implicitHeight
+                contentWidth: availableWidth
 
                 clip: false
                 objectName: "sendModalScroll"

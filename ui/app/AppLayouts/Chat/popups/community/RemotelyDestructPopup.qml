@@ -61,26 +61,18 @@ StatusDialog {
 
     title: qsTr("Remotely destruct %1 token").arg(root.collectibleName)
     implicitWidth: 600 // by design
-    topPadding: Style.current.padding
-    bottomPadding: topPadding
-    implicitHeight: Math.min(tokenHoldersPanel.implicitHeight + d.getVerticalPadding() + root.header.height + root.footer.height, d.maxHeight)
-    contentItem: StatusScrollView {
-        id: scrollview
+    padding: 0
 
-        contentHeight: tokenHoldersPanel.implicitHeight
-        contentWidth: tokenHoldersPanel.implicitWidth
-        rightPadding: 20
+    TokenHoldersPanel {
+        id: tokenHoldersPanel
 
-        TokenHoldersPanel {
-            id: tokenHoldersPanel
+        anchors.fill: parent
+        padding: 16
+        tokenName: root.collectibleName
+        isSelectorMode: true
 
-            width: root.width - d.getHorizontalPadding() - scrollview.rightPadding
-            tokenName: root.collectibleName
-            isSelectorMode: true
-
-            onSelfDestructAmountChanged: d.updateTokensToDestruct(walletAddress, amount)
-            onSelfDestructRemoved: d.clearTokensToDesctruct(walletAddress)
-        }
+        onSelfDestructAmountChanged: d.updateTokensToDestruct(walletAddress, amount)
+        onSelfDestructRemoved: d.clearTokensToDesctruct(walletAddress)
     }
 
     footer: StatusDialogFooter {

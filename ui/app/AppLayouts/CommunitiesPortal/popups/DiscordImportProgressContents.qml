@@ -22,13 +22,6 @@ StatusScrollView {
 
     signal close()
 
-    contentWidth: implicitWidth
-    contentHeight: implicitHeight
-    implicitWidth: column.childrenRect.width
-    implicitHeight: column.childrenRect.height
-
-    padding: 0
-
     enum ImportStatus {
         Unknown,
         InProgress,
@@ -82,6 +75,9 @@ StatusScrollView {
             }
         }
     ]
+
+    contentWidth: availableWidth
+    padding: 0
 
     QtObject {
         id: d

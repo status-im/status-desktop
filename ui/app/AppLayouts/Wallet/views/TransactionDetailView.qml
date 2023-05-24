@@ -63,17 +63,12 @@ Item {
 
     StatusScrollView {
         id: scrollView
-        anchors.top: parent.top
-        anchors.left: parent.left
-
-        width: parent.width
-        height: parent.height
-        contentHeight: column.height
+        anchors.fill: parent
+        contentWidth: availableWidth
 
         Column {
             id: column
-            width: scrollView.availableWidth - Style.current.xlPadding
-
+            width: scrollView.availableWidth
             spacing: Style.current.xlPadding + Style.current.halfPadding
 
             Column {

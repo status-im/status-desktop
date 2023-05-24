@@ -91,13 +91,14 @@ Item {
                         }
 
                         anchors.fill: parent
+                        contentHeight: availableHeight
                         padding: 0
 
                         onContentWidthChanged: positionViewAtEnd()
                         onWidthChanged: positionViewAtEnd()
 
                         RowLayout {
-                            height: scrollView.height
+                            height: scrollView.availableHeight
                             StatusListView {
                                 id: listView
                                 Layout.fillWidth: true
@@ -105,6 +106,7 @@ Item {
                                 implicitWidth: contentWidth
                                 orientation: ListView.Horizontal
                                 spacing: Style.current.halfPadding
+                                interactive: false
                             }
 
                             TextInput {

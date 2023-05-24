@@ -347,9 +347,9 @@ Item {
                 id: scrollView
                 Layout.preferredWidth: parent.width
                 Layout.preferredHeight: parent.height
-                ScrollBar.horizontal.policy: ScrollBar.AsNeeded
                 topPadding: 8
                 bottomPadding: 8
+                contentWidth: availableWidth
                 Flow {
                     id: detailsFlow
 

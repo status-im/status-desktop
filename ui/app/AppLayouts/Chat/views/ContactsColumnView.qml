@@ -112,13 +112,15 @@ Item {
 
         // chat list
         StatusScrollView {
+            id: scrollView
             Layout.fillWidth: true
             Layout.fillHeight: true
+            contentWidth: availableWidth
 
             StatusChatList {
                 id: channelList
                 objectName: "ContactsColumnView_chatList"
-                width: parent.availableWidth
+                width: scrollView.availableWidth
                 model: SortFilterProxyModel {
                     sourceModel: root.chatSectionModule.model
                     sorters: RoleSorter {

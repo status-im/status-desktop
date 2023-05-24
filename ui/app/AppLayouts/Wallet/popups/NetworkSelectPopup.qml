@@ -62,10 +62,9 @@ StatusDialog {
         }
     }
 
-    contentItem: NetworkSelectionView {
+    NetworkSelectionView {
         id: scrollView
-        width: root.width
-        height: root.height
+        anchors.fill: parent
         layer1Networks: root.layer1Networks
         layer2Networks: root.layer2Networks
         testNetworks: root.testNetworks

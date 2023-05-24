@@ -282,7 +282,7 @@ Popup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            contentWidth: availableWidth
 
             ScrollBar.vertical.onPositionChanged: function () {
                 if (vScrollBar.position < categrorySectionHeightRatios[scrollView.activeCategory - 1]) {

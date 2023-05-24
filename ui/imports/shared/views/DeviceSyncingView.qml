@@ -163,47 +163,38 @@ Item {
             opacity: listView.count ? 1 : 0
         }
 
-        StatusScrollView {
-            id: scrollView
+        StatusListView {
+            id: listView
+
             Layout.alignment: Qt.AlignHCenter
             Layout.fillHeight: true
 
-            clip: true
-            padding: 0
-
+            implicitWidth: contentWidth
+            implicitHeight: contentHeight
             contentWidth: d.deviceDelegateWidth
-            contentHeight: listView.contentHeight
-            implicitWidth: contentWidth + leftPadding + rightPadding
-            implicitHeight: contentHeight + topPadding + bottomPadding
 
-            StatusListView {
-                id: listView
+            spacing: 4
+            clip: true
 
-                width: scrollView.availableWidth
-                height: scrollView.availableHeight
-                spacing: 4
-                clip: true
+            model: SortFilterProxyModel {
+                id: sfpModel
+                filters: [
+                    ValueFilter {
+                        enabled: true
+                        roleName: "installationId"
+                        value: root.installationId
+                        inverted: true
+                    }
+                ]
+            }
 
-                model: SortFilterProxyModel {
-                    id: sfpModel
-                    filters: [
-                        ValueFilter {
-                            enabled: true
-                            roleName: "installationId"
-                            value: root.installationId
-                            inverted: true
-                        }
-                    ]
-                }
-
-                delegate: StatusSyncDeviceDelegate {
-                    width: ListView.view.width
-                    enabled: false
-                    deviceName: model.name
-                    deviceType: model.deviceType
-                    timestamp: model.timestamp
-                    isCurrentDevice: model.isCurrentDevice
-                }
+            delegate: StatusSyncDeviceDelegate {
+                width: ListView.view.width
+                enabled: false
+                deviceName: model.name
+                deviceType: model.deviceType
+                timestamp: model.timestamp
+                isCurrentDevice: model.isCurrentDevice
             }
         }
     }

@@ -22,6 +22,7 @@ StatusModal {
 
     anchors.centerIn: parent
     height: 560
+    padding: 8
     header.title: qsTr("History Nodes")
 
     property var messagingStore
@@ -33,13 +34,14 @@ StatusModal {
         destroy()
     }
     
-    contentItem: StatusScrollView {
-        height: parent.height
-        width: parent.width
+    StatusScrollView {
+        id: scrollView
+        anchors.fill: parent
+        contentWidth: availableWidth
 
         Column {
             id: nodesColumn
-            width: parent.width
+            width: scrollView.availableWidth
 
             StatusListItem {
                 width: parent.width

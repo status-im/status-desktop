@@ -16,10 +16,6 @@ StatusModal {
     property AddAccountStore store: AddAccountStore { }
 
     width: Constants.addAccountPopup.popupWidth
-    height: {
-        let availableSpace = Global.applicationWindow.height - root.margins * 2
-        return Math.min(implicitHeight, availableSpace)
-    }
 
     closePolicy: root.store.disablePopup? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !root.store.disablePopup
@@ -34,24 +30,19 @@ StatusModal {
         root.store.currentState.doCancelAction()
     }
 
-    contentItem: StatusScrollView {
+    StatusScrollView {
         id: scrollView
 
-        implicitWidth: contentWidth + leftPadding + rightPadding
-        implicitHeight: contentHeight + topPadding + bottomPadding
+        anchors.fill: parent
         padding: 0
-
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        width: parent.width
-        height: {
-            let availableSpace = Global.applicationWindow.height - (root.margins * 2 + root.topPadding + root.bottomPadding)
-            return Math.min(content.height, availableSpace)
-        }
+        contentWidth: availableWidth
 
         Item {
             id: content
             objectName: "AddAccountPopup-Content"
 
+            implicitWidth: loader.implicitWidth
+            implicitHeight: loader.implicitHeight
             width: scrollView.availableWidth
 
             Loader {

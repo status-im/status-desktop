@@ -84,8 +84,6 @@ StatusScrollView {
         }
     }
 
-    contentWidth: mainLayout.width
-    contentHeight: mainLayout.height
     padding: 0
 
     onRemotelyDestructStateChanged: if(remotelyDestructState === Constants.ContractTransactionStatus.Completed) d.startAnimation(false)

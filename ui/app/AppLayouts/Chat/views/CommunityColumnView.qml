@@ -196,13 +196,15 @@ Item {
         width: parent.width
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentWidth: communityChatListAndCategories.implicitWidth
+
+        contentWidth: availableWidth
         contentHeight: communityChatListAndCategories.height
                        + bannerColumn.height
+                       + bannerColumn.anchors.topMargin
 
         StatusChatListAndCategories {
             id: communityChatListAndCategories
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: scrollView.availableWidth
             draggableItems: communityData.amISectionAdmin
             draggableCategories: communityData.amISectionAdmin
 

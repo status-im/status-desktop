@@ -16,6 +16,7 @@ StatusModal {
 
     anchors.centerIn: parent
     height: 560
+    padding: 8
     header.title: qsTr("Waku nodes")
 
     property var messagingStore
@@ -30,15 +31,17 @@ StatusModal {
         enodeInput.text = "";
     }
     
-    contentItem: StatusScrollView {
-        height: parent.height
-        width: parent.width
+    StatusScrollView {
+        id: scrollView
+        anchors.fill: parent
+        contentWidth: availableWidth
 
         Column {
             id: nodesColumn
-            width: parent.width
+            width: scrollView.availableWidth
             StatusInput {
                 id: nameInput
+                width: parent.width
                 label: qsTr("Name")
                 placeholderText: qsTr("Specify a name")
                 validators: [StatusMinLengthValidator {
@@ -50,6 +53,7 @@ StatusModal {
 
             StatusInput {
                 id: enodeInput
+                width: parent.width
                 label: popup.advancedStore.isWakuV2 ? qsTr("Storenode multiaddress") : qsTr("History node address")
                 placeholderText: popup.advancedStore.isWakuV2 ? "/ip4/0.0.0.0/tcp/123/..." : "enode://{enode-id}:{password}@{ip-address}:{port-number}"
                 validators: [

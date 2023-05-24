@@ -20,7 +20,6 @@ StatusScrollView {
 
     signal toggleNetwork(var network, var model, int index)
 
-    contentHeight: content.height
     contentWidth: availableWidth
     padding: 0
 
@@ -28,7 +27,8 @@ StatusScrollView {
 
     Column {
         id: content
-        width: childrenRect.width
+
+        width: root.availableWidth
         spacing: 4
 
         Repeater {
@@ -69,7 +69,7 @@ StatusScrollView {
             model: root.layer2Networks
             delegate: NetworkSelectItemDelegate {
                 implicitHeight: 48
-                implicitWidth: root.width
+                width: parent.width
                 radioButtonGroup: radioBtnGroup
                 networkModel: chainRepeater2.model
                 useEnabledRole: root.useEnabledRole
@@ -83,7 +83,7 @@ StatusScrollView {
             model: root.testNetworks
             delegate: NetworkSelectItemDelegate {
                 implicitHeight: 48
-                implicitWidth: root.width
+                width: parent.width
                 radioButtonGroup: radioBtnGroup
                 networkModel: chainRepeater3.model
                 useEnabledRole: root.useEnabledRole

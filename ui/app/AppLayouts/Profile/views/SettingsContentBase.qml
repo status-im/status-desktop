@@ -129,7 +129,7 @@ Item {
         anchors.bottom: scrollView.bottom
         anchors.horizontalCenter: scrollView.horizontalCenter
         active: root.dirty
-        flickable: scrollView
+        flickable: scrollView.flickable
         saveChangesButtonEnabled: root.saveChangesButtonEnabled
         onResetChangesClicked: root.resetChangesClicked()
         onSaveChangesClicked: root.saveChangesClicked()

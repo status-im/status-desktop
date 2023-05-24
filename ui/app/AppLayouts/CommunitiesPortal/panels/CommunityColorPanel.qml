@@ -37,10 +37,7 @@ StatusScrollView {
         hexInput.text = color.toString();
     }
 
-    contentWidth: implicitWidth
-    contentHeight: implicitHeight
-    implicitWidth: column.childrenRect.width
-    implicitHeight: column.childrenRect.height
+    contentWidth: availableWidth
     padding: 0
     clip: false
 

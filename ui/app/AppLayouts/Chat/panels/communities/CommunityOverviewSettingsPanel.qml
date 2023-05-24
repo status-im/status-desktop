@@ -173,7 +173,7 @@ StackLayout {
 
         content: CommunityEditSettingsPanel {
             name: root.name
-            implicitWidth: parent.width
+            anchors.fill: parent
             description: root.description
             introMessage: root.introMessage
             outroMessage: root.outroMessage
@@ -182,7 +182,6 @@ StackLayout {
             color: root.color
             logoImageData: root.logoImageData
             bannerImageData: root.bannerImageData
-            height: root.height
             options {
                 archiveSupportEnabled: root.archiveSupportEnabled
                 requestToJoinEnabled: root.requestToJoinEnabled

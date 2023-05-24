@@ -15,8 +15,6 @@ StatusScrollView {
     property var model
     property var checkedKeys: []
 
-    property int maxHeight: 381 // default by design
-
     signal itemClicked(var key, string name, url iconSource)
 
     QtObject {
@@ -25,13 +23,11 @@ StatusScrollView {
         readonly property int columns: 2
     }
 
-    implicitHeight: Math.min(grid.implicitHeight, root.maxHeight)
-    implicitWidth: d.imageSize * d.columns + grid.columnSpacing * (d.columns - 1)
-    clip: true
+    contentWidth: availableWidth
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
     ColumnLayout {
-        Layout.fillWidth: true
+        width: root.availableWidth
 
         StatusBaseText {
             Layout.leftMargin: 8
