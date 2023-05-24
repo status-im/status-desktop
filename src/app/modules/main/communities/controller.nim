@@ -52,6 +52,9 @@ proc init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.onImportCommunityErrorOccured(args.community.id, args.error)
 
+  self.events.on(SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED) do(e: Args):
+    self.delegate.communityInfoAlreadyRequested()
+
   self.events.on(SIGNAL_CURATED_COMMUNITY_FOUND) do(e:Args):
     let args = CommunityArgs(e)
     self.delegate.curatedCommunityAdded(args.community)

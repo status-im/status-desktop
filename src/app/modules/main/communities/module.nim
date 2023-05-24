@@ -382,3 +382,5 @@ method discordImportProgressUpdated*(
 method requestCancelDiscordCommunityImport*(self: Module, id: string) =
   self.controller.requestCancelDiscordCommunityImport(id)
 
+method communityInfoAlreadyRequested*(self: Module) =
+  self.view.communityInfoAlreadyRequested()

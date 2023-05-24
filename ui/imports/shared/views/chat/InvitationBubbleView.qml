@@ -15,11 +15,12 @@ import shared.popups 1.0
 Control {
     id: root
 
-    implicitWidth: d.invitedCommunity ? 270 /*by design*/ : 0
+    implicitWidth: d.invitedCommunity || loading ? 270 /*by design*/ : 0
     padding: 1
 
     property var store
     property string communityId
+    property bool loading: false
 
     QtObject {
         id: d
@@ -133,6 +134,8 @@ Control {
                     color: d.communityColor
                     isImage: true
                 }
+
+                visible: !root.loading
             }
 
             ColumnLayout {
@@ -141,7 +144,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: d.communityName
+                    text: root.loading ? qsTr("Community data not loaded yet.") : d.communityName
                     font.weight: Font.Bold
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     font.pixelSize: 17
@@ -151,7 +154,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: d.communityDescription
+                    text: root.loading ? qsTr("Please wait for the unfurl to show") : d.communityDescription
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     color: Theme.palette.directColor1
                 }
@@ -159,7 +162,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: qsTr("%n member(s)", "", d.communityNbMembers)
+                    text: root.loading ? "" : qsTr("%n member(s)", "", d.communityNbMembers)
                     font.pixelSize: 13
                     font.weight: Font.Medium
                     color: Theme.palette.baseColor1
@@ -180,6 +183,7 @@ Control {
             Layout.preferredHeight: 44
 
             text: qsTr("Go to Community")
+            loading: root.loading
             radius: d.radius - 1 // We do -1, otherwise there's a gap between border and button
 
             onClicked: {

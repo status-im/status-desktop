@@ -166,6 +166,8 @@ const SIGNAL_ACCEPT_REQUEST_TO_JOIN_LOADING* = "acceptRequestToJoinLoading"
 const SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED* = "acceptRequestToJoinFailed"
 const SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION* = "acceptRequestToJoinFailedNoPermission"
 
+const SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED* = "communityInfoAlreadyRequested"
+
 const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
 const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
 
@@ -1453,6 +1455,7 @@ QtObject:
 
     if communityId in self.requestedCommunityIds:
       info "requestCommunityInfo: skipping as already requested", communityId
+      self.events.emit(SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED, Args())
       return
 
     self.requestedCommunityIds.incl(communityId)
