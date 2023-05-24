@@ -58,6 +58,10 @@ QtObject {
         return networksModule.all.getNetworkFullName(chainId)
     }
 
+    function getNetworkLayer(chainId) {
+        return networksModule.all.getNetworkLayer(chainId)
+    }
+
     function getNetworkIconUrl(symbol) {
         return networksModule.all.getNetworkIconUrl(symbol)
     }
@@ -208,10 +212,6 @@ QtObject {
 
     function deleteSavedAddress(addresse, ens) {
         return walletSectionSavedAddresses.deleteSavedAddress(address, ens)
-    }
-
-    function getLatestBlockNumber() {
-        return walletSectionTransactions.getLastTxBlockNumber()
     }
 
     function getCurrencyAmount(amount, symbol) {

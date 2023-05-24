@@ -132,8 +132,8 @@ method getChainIdForChat*(self: Module): int =
 method getChainIdForBrowser*(self: Module): int =
   return self.controller.getChainIdForBrowser()
 
-method getLastTxBlockNumber*(self: Module): string =
-  return self.controller.getLastTxBlockNumber()
+method getLatestBlockNumber*(self: Module, chainId: int): string =
+  return self.controller.getLatestBlockNumber(chainId)
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.setPendingTx(self.transactionsToItems(self.controller.getPendingTransactions(), @[]))

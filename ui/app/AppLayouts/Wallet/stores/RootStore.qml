@@ -118,17 +118,9 @@ QtObject {
         localAccountSensitiveSettings.hideSignPhraseModal = value;
     }
 
-    function getLatestBlockNumber() {
-        // TODO: Move to transaction root module and not wallet
-        // Not Refactored Yet
-//        return walletModel.getLatestBlockNumber()
+    function getLatestBlockNumber(chainId) {
+        return walletSectionTransactions.getLatestBlockNumber(chainId)
     }
-
-    function setInitialRange() {
-        // Not Refactored Yet
-//        walletModel.setInitialRange()
-    }
-
 
     function setFilterAddress(address) {
         walletSection.setFilterAddress(address)

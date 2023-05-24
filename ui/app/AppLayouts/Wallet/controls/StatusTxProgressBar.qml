@@ -8,11 +8,11 @@ import StatusQ.Controls 0.1
 ColumnLayout {
     id: root
 
-    property bool isMainnetTx: true
+    property bool isLayer1: true
     property bool error: false
-    property int steps: isMainnetTx ? 64 : 1
+    property int steps: isLayer1 ? 64 : 1
     property int confirmations: 0
-    property int confirmationBlocks: isMainnetTx ? 4 : 1
+    property int confirmationBlocks: isLayer1 ? 4 : 1
     property string chainName
 
     property color fillColor: Theme.palette.blockProgressBarColor
@@ -28,7 +28,7 @@ ColumnLayout {
 
     QtObject {
         id: d
-        readonly property bool finalized: isMainnetTx ? confirmations >= steps : progress === duration
+        readonly property bool finalized: isLayer1 ? confirmations >= steps : progress === duration
         readonly property bool confirmed: confirmations >= confirmationBlocks
         readonly property int hoursInADay: 24
     }
@@ -62,7 +62,7 @@ ColumnLayout {
             id: blockProgressBar
             Layout.fillWidth: true
             Layout.fillHeight: true
-            visible: root.isMainnetTx
+            visible: root.isLayer1
             steps: root.steps
             completedSteps: root.confirmations
             blockSet: root.confirmationBlocks
@@ -70,7 +70,7 @@ ColumnLayout {
         }
         RowLayout {
             spacing: 2
-            visible: !root.isMainnetTx
+            visible: !root.isLayer1
             Rectangle {
                 Layout.preferredWidth: 3
                 Layout.fillHeight: true
@@ -99,7 +99,7 @@ ColumnLayout {
         color: Theme.palette.baseColor1
         lineHeight: 18
         lineHeightMode: Text.FixedHeight
-        text: d.finalized && !root.error ? qsTr("In epoch %1").arg(root.confirmations) : d.confirmed && !root.isMainnetTx ?
+        text: d.finalized && !root.error ? qsTr("In epoch %1").arg(root.confirmations) : d.confirmed && !root.isLayer1 ?
                                                qsTr("%n day(s) until finality", "", Math.ceil((root.duration - root.progress)/d.hoursInADay)):
                                                qsTr("%1 / %2 confirmations").arg(root.confirmations).arg(root.steps)
     }

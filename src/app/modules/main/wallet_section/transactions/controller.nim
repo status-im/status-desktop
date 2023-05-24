@@ -110,8 +110,8 @@ proc getChainIdForChat*(self: Controller): int =
 proc getChainIdForBrowser*(self: Controller): int =
   return self.networkService.getNetworkForBrowser().chainId
 
-proc getLastTxBlockNumber*(self: Controller): string =
-  return self.transactionService.getLastTxBlockNumber(self.networkService.getNetworkForBrowser().chainId)
+proc getLatestBlockNumber*(self: Controller, chainId: int): string =
+  return self.transactionService.getLatestBlockNumber(chainId)
 
 proc getEnabledChainIds*(self: Controller): seq[int] = 
   return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)

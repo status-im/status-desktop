@@ -47,11 +47,11 @@ SplitView {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 500
                 error: failureCheckBox.checked
-                isMainnetTx: mainnetCheckbox.checked
+                isLayer1: mainnetCheckbox.checked
                 confirmations: confirmationsSlider.value
                 duration: durationSlider.to
                 progress: durationSlider.value
-                chainName: isMainnetTx ? "Mainnet" :"Optimism"
+                chainName: isLayer1 ? "Mainnet" :"Optimism"
             }
 
             Rectangle {
@@ -64,11 +64,11 @@ SplitView {
                     anchors.topMargin: 20
                     width: 500
                     error: failureCheckBox.checked
-                    isMainnetTx: mainnetCheckbox.checked
+                    isLayer1: mainnetCheckbox.checked
                     confirmations: confirmationsSlider.value
                     duration: durationSlider.to
                     progress: durationSlider.value
-                    chainName: isMainnetTx ? "Mainnet" :"Optimism"
+                    chainName: isLayer1 ? "Mainnet" :"Optimism"
                     confirmationTimeStamp: 1670419848
                     finalisationTimeStamp: 1670419848
                     failedTimeStamp: 1670419848

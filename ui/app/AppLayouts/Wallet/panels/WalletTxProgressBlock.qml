@@ -13,22 +13,36 @@ ColumnLayout {
     id: root
 
     // To-do adapt this for multi-tx, not sure how the data will look for that yet
-    property bool isMainnetTx: true
+    property bool isLayer1: true
     property bool error: false
     property int confirmations: 0
     property string chainName
-    property int duration: 0
-    property int progress: 0
-    property double confirmationTimeStamp
-    property double finalisationTimeStamp
-    property double failedTimeStamp
+    property double timeStamp
 
     spacing: 32
 
     QtObject {
         id: d
-        readonly property bool finalized: (isMainnetTx ? confirmations >= progressBar.steps : progress === duration) && !error
+        readonly property bool finalized: (isLayer1 ? confirmations >= progressBar.steps : progress === duration) && !error
         readonly property bool confirmed: confirmations >= progressBar.confirmationBlocks && !error
+        readonly property double confirmationTimeStamp: {
+            if (root.isLayer1) {
+                return root.timeStamp + 12 * 4 // A block on layer1 is every 12s
+            }
+
+            return root.timeStamp
+        }
+
+        readonly property double finalisationTimeStamp: {
+            if (root.isLayer1) {
+                return root.timeStamp + 12 * 64 // A block on layer1 is every 12s
+            }
+
+            return root.timeStamp + 604800 // 7 days in seconds
+        }
+
+        readonly property int duration: 168 // 7 days in hours
+        readonly property int progress: (Math.floor(Date.now() / 1000) - root.timeStamp) / 3600
     }
 
     Separator {
@@ -41,10 +55,10 @@ ColumnLayout {
         Layout.topMargin: 8
         Layout.fillWidth: true
         error: root.error
-        isMainnetTx: root.isMainnetTx
+        isLayer1: root.isLayer1
         confirmations: root.confirmations
-        duration: root.duration
-        progress: root.progress
+        duration: d.duration
+        progress: d.progress
         chainName: root.chainName
     }
 
@@ -69,7 +83,7 @@ ColumnLayout {
                 color: Theme.palette.directColor1
                 lineHeight: 18
                 lineHeightMode: Text.FixedHeight
-                text: LocaleUtils.formatDateTime(root.confirmationTimeStamp * 1000, Locale.LongFormat)
+                text: LocaleUtils.formatDateTime(d.confirmationTimeStamp * 1000, Locale.LongFormat)
             }
         }
 
@@ -92,7 +106,7 @@ ColumnLayout {
                 color: Theme.palette.directColor1
                 lineHeight: 18
                 lineHeightMode: Text.FixedHeight
-                text: LocaleUtils.formatDateTime(root.finalisationTimeStamp * 1000, Locale.LongFormat)
+                text: LocaleUtils.formatDateTime(d.finalisationTimeStamp * 1000, Locale.LongFormat)
             }
         }
 
@@ -115,7 +129,7 @@ ColumnLayout {
                 color: Theme.palette.directColor1
                 lineHeight: 18
                 lineHeightMode: Text.FixedHeight
-                text: LocaleUtils.formatDateTime(root.failedTimeStamp * 1000, Locale.LongFormat)
+                text: LocaleUtils.formatDateTime(root.timeStamp * 1000, Locale.LongFormat)
             }
         }
     }

@@ -92,13 +92,10 @@ Item {
             WalletTxProgressBlock {
                 width: Math.min(513, root.width)
                 error: transactionHeader.transactionStatus === TransactionDelegate.TransactionStatus.Failed
-                // To-do once we have days for finalisation for tx other than eth set this to true and also provide duration and progress values
-                isMainnetTx: true
-                confirmations: root.isTransactionValid ? Math.abs(RootStore.getLatestBlockNumber() - RootStore.hex2Dec(root.transaction.blockNumber)): 0
-                chainName: root.isTransactionValid ? RootStore.getNetworkFullName(transaction.chainId): ""
-                confirmationTimeStamp: root.isTransactionValid ? transaction.timestamp: ""
-                finalisationTimeStamp: root.isTransactionValid ? transaction.timestamp: ""
-                failedTimeStamp: root.isTransactionValid ? transaction.timestamp: ""
+                isLayer1: RootStore.getNetworkLayer(root.transaction.chainId) == 1
+                confirmations: root.isTransactionValid ? Math.abs(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId) - RootStore.hex2Dec(root.transaction.blockNumber)): 0
+                chainName: root.isTransactionValid ? RootStore.getNetworkFullName(root.transaction.chainId): ""
+                timeStamp: root.isTransactionValid ? transaction.timestamp: ""
             }
 
             SavedAddressesDelegate {
@@ -196,7 +193,7 @@ Item {
                     primaryText: qsTr("Confirmations")
                     secondaryText: {
                         if(root.isTransactionValid)
-                            return Math.abs(RootStore.getLatestBlockNumber() - RootStore.hex2Dec(root.transaction.blockNumber))
+                            return Math.abs(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId) - RootStore.hex2Dec(root.transaction.blockNumber))
                         else
                             return ""
                     }
