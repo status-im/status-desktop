@@ -38,7 +38,6 @@ Rectangle {
         smooth: false
         radius: root.radius
         anchors.fill: parent
-        source: thumbnail
         onClicked: root.clicked()
     }
 }

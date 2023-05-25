@@ -22,6 +22,7 @@ StatusRoundedComponent {
 
     isLoading: image.isLoading
     isError: image.isError
+    border.width: 0
 
     StatusImage {
         id: image
