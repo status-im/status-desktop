@@ -144,7 +144,7 @@ proc createChatIdentifierItem(self: Module): Item =
   var senderIsAdded = false
   if(chatDto.chatType == ChatType.OneToOne):
     let sender = self.controller.getContactDetails(chatDto.id)
-    senderIsAdded = sender.details.added
+    senderIsAdded = sender.dto.added
     (chatName, smallImage, chatIcon) = self.controller.getOneToOneChatNameAndImage()
     senderColorHash = sender.colorHash
 
@@ -272,7 +272,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.icon,
         sender.colorHash,
         (isCurrentUser and message.contentType != ContentType.DiscordMessage),
-        sender.details.added,
+        sender.dto.added,
         message.outgoingStatus,
         renderedMessageText,
         self.controller.replacePubKeysWithDisplayNames(message.text),
@@ -297,8 +297,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           message.transactionParameters.commandState,
           message.transactionParameters.signature),
         message.mentionedUsersPks(),
-        sender.details.trustStatus,
-        sender.details.ensVerified,
+        sender.dto.trustStatus,
+        sender.dto.ensVerified,
         message.discordMessage,
         resendError = "",
         message.mentioned,
@@ -406,7 +406,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
       sender.icon,
       sender.colorHash,
       (isCurrentUser and message.contentType != ContentType.DiscordMessage),
-      sender.details.added,
+      sender.dto.added,
       message.outgoingStatus,
       renderedMessageText,
       self.controller.replacePubKeysWithDisplayNames(message.text),
@@ -431,8 +431,8 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
                       message.transactionParameters.commandState,
                       message.transactionParameters.signature),
       message.mentionedUsersPks,
-      sender.details.trustStatus,
-      sender.details.ensVerified,
+      sender.dto.trustStatus,
+      sender.dto.ensVerified,
       message.discordMessage,
       resendError = "",
       message.mentioned,
@@ -578,11 +578,11 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderOptionalName = updatedContact.optionalName
       item.senderIcon = updatedContact.icon
       item.senderColorHash = updatedContact.colorHash
-      item.senderIsAdded = updatedContact.details.added
-      item.senderTrustStatus = updatedContact.details.trustStatus
-      item.senderEnsVerified = updatedContact.details.ensVerified
+      item.senderIsAdded = updatedContact.dto.added
+      item.senderTrustStatus = updatedContact.dto.trustStatus
+      item.senderEnsVerified = updatedContact.dto.ensVerified
 
-    if item.quotedMessageAuthorDetails.details.id == contactId:
+    if item.quotedMessageAuthorDetails.dto.id == contactId:
       item.quotedMessageAuthorDetails = updatedContact
       item.quotedMessageAuthorDisplayName = updatedContact.defaultDisplayName
       item.quotedMessageAuthorAvatar = updatedContact.icon

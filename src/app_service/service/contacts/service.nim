@@ -132,8 +132,8 @@ QtObject:
 
   proc addContact(self: Service, contact: ContactDetails) =
     # Private proc, used for adding contacts only.
-    self.contacts[contact.details.id] = contact
-    self.contactsStatus[contact.details.id] = StatusUpdateDto(publicKey: contact.details.id, statusType: StatusType.Unknown)
+    self.contacts[contact.dto.id] = contact
+    self.contactsStatus[contact.dto.id] = StatusUpdateDto(publicKey: contact.dto.id, statusType: StatusType.Unknown)
 
   proc fetchContacts*(self: Service) =
     try:
@@ -204,15 +204,15 @@ QtObject:
 
             if request.status == VerificationStatus.Trusted:
               if self.contacts.hasKey(request.fromId):
-                self.contacts[request.fromId].details.trustStatus = TrustStatus.Trusted
-                self.contacts[request.fromId].details.verificationStatus = VerificationStatus.Trusted
+                self.contacts[request.fromId].dto.trustStatus = TrustStatus.Trusted
+                self.contacts[request.fromId].dto.verificationStatus = VerificationStatus.Trusted
               self.events.emit(SIGNAL_CONTACT_TRUSTED,
                 TrustArgs(publicKey: request.fromId, isUntrustworthy: false))
               self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: request.fromId))
 
             if request.status == VerificationStatus.Canceled:
               if self.contacts.hasKey(request.fromId):
-                self.contacts[request.fromId].details.verificationStatus = VerificationStatus.Canceled
+                self.contacts[request.fromId].dto.verificationStatus = VerificationStatus.Canceled
               self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: request.fromId))
 
           else:
@@ -252,7 +252,7 @@ QtObject:
     # Having this logic here we ensure that the same contact group in each part of the app will have the same list
     # of contacts. Be sure when you change any condition here.
     let myPubKey = singletonInstance.userProfile.getPubKey()
-    let contacts = toSeq(self.contacts.values).map(cd => cd.details)
+    let contacts = toSeq(self.contacts.values).map(cd => cd.dto)
     if (group == ContactsGroup.IncomingPendingContactRequests):
       return contacts.filter(x => x.id != myPubKey and 
         x.isContactRequestReceived() and 
@@ -337,7 +337,7 @@ QtObject:
     result.icon = icon
     result.colorId = procs_from_visual_identity_service.colorIdOf(contactDto.id)
     result.isCurrentUser = contactDto.id == singletonInstance.userProfile.getPubKey()
-    result.details = contactDto
+    result.dto = contactDto
     if not contactDto.ensVerified:
       result.colorHash = procs_from_visual_identity_service.getColorHashAsJson(contactDto.id)
 
@@ -376,7 +376,7 @@ QtObject:
       return self.contacts[pubkey]
 
     result = self.fetchContact(pubkey)
-    if result.details.id.len == 0:
+    if result.dto.id.len == 0:
       if(not pubkey.startsWith("0x")):
         debug "id is not in a hex format"
         return
@@ -393,10 +393,10 @@ QtObject:
         ContactsDto(
           id: pubkey,
           alias: alias,
-          ensVerified: result.details.ensVerified,
-          added: result.details.added,
-          blocked: result.details.blocked,
-          hasAddedUs: result.details.hasAddedUs,
+          ensVerified: result.dto.ensVerified,
+          added: result.dto.added,
+          blocked: result.dto.blocked,
+          hasAddedUs: result.dto.hasAddedUs,
           trustStatus: trustStatus
         )
       )
@@ -404,7 +404,7 @@ QtObject:
       return contact
 
   proc getContactById*(self: Service, id: string): ContactsDto =
-    return self.getContactDetails(id).details
+    return self.getContactDetails(id).dto
 
   proc getStatusForContactWithId*(self: Service, publicKey: string): StatusUpdateDto =
     if publicKey == singletonInstance.userProfile.getPubKey():
@@ -434,7 +434,7 @@ QtObject:
     var signal = SIGNAL_CONTACT_ADDED
     let publicKey = contact.id
     if self.contacts.hasKey(publicKey):
-      if self.contacts[publicKey].details.added and not self.contacts[publicKey].details.removed and contact.added and not contact.removed:
+      if self.contacts[publicKey].dto.added and not self.contacts[publicKey].dto.removed and contact.added and not contact.removed:
         signal = SIGNAL_CONTACT_UPDATED
     if contact.removed:
       signal = SIGNAL_CONTACT_REMOVED
@@ -582,7 +582,7 @@ QtObject:
       return
 
     if self.contacts.hasKey(publicKey):
-      self.contacts[publicKey].details.trustStatus = TrustStatus.Untrustworthy
+      self.contacts[publicKey].dto.trustStatus = TrustStatus.Untrustworthy
 
     self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
       TrustArgs(publicKey: publicKey, isUntrustworthy: true))
@@ -603,8 +603,8 @@ QtObject:
       self.activityCenterService.parseActivityCenterResponse(response)
 
       if self.contacts.hasKey(publicKey):
-        self.contacts[publicKey].details.trustStatus = TrustStatus.Trusted
-        self.contacts[publicKey].details.verificationStatus = VerificationStatus.Trusted
+        self.contacts[publicKey].dto.trustStatus = TrustStatus.Trusted
+        self.contacts[publicKey].dto.verificationStatus = VerificationStatus.Trusted
 
         self.events.emit(SIGNAL_CONTACT_TRUSTED,
           TrustArgs(publicKey: publicKey, isUntrustworthy: false))
@@ -628,8 +628,8 @@ QtObject:
       self.activityCenterService.parseActivityCenterResponse(response)
 
       if self.contacts.hasKey(publicKey):
-        self.contacts[publicKey].details.trustStatus = TrustStatus.Untrustworthy
-        self.contacts[publicKey].details.verificationStatus = VerificationStatus.Untrustworthy
+        self.contacts[publicKey].dto.trustStatus = TrustStatus.Untrustworthy
+        self.contacts[publicKey].dto.verificationStatus = VerificationStatus.Untrustworthy
 
         self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
           TrustArgs(publicKey: publicKey, isUntrustworthy: true))
@@ -644,9 +644,9 @@ QtObject:
       return
 
     if self.contacts.hasKey(publicKey):
-      self.contacts[publicKey].details.trustStatus = TrustStatus.Unknown
-      if self.contacts[publicKey].details.verificationStatus == VerificationStatus.Verified:
-        self.contacts[publicKey].details.verificationStatus = VerificationStatus.Unverified
+      self.contacts[publicKey].dto.trustStatus = TrustStatus.Unknown
+      if self.contacts[publicKey].dto.verificationStatus == VerificationStatus.Verified:
+        self.contacts[publicKey].dto.verificationStatus = VerificationStatus.Unverified
 
     self.events.emit(SIGNAL_REMOVED_TRUST_STATUS,
       TrustArgs(publicKey: publicKey, isUntrustworthy: false))

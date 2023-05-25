@@ -180,7 +180,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     contactDetails.icon,
     contactDetails.colorHash,
     isCurrentUser,
-    contactDetails.details.added,
+    contactDetails.dto.added,
     message.outgoingStatus,
     self.controller.getRenderedText(message.parsedText, communityChats),
     self.controller.replacePubKeysWithDisplayNames(message.text),
@@ -205,8 +205,8 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
       message.transactionParameters.commandState,
       message.transactionParameters.signature),
     message.mentionedUsersPks,
-    contactDetails.details.trustStatus,
-    contactDetails.details.ensVerified,
+    contactDetails.dto.trustStatus,
+    contactDetails.dto.ensVerified,
     message.discordMessage,
     resendError = "",
     message.mentioned,
@@ -341,11 +341,11 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
     if item.senderId == contactId:
       item.senderDisplayName = updatedContact.defaultDisplayName
       item.senderOptionalName = updatedContact.optionalName
-      item.senderEnsVerified = updatedContact.details.ensVerified
+      item.senderEnsVerified = updatedContact.dto.ensVerified
       item.senderIcon = updatedContact.icon
-      item.senderTrustStatus = updatedContact.details.trustStatus
+      item.senderTrustStatus = updatedContact.dto.trustStatus
 
-    if item.quotedMessageAuthorDetails.details.id == contactId:
+    if item.quotedMessageAuthorDetails.dto.id == contactId:
       item.quotedMessageAuthorDetails = updatedContact
       item.quotedMessageAuthorDisplayName = updatedContact.defaultDisplayName
       item.quotedMessageAuthorAvatar = updatedContact.icon
@@ -357,7 +357,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
 
   if(self.controller.getMyChatId() == contactId):
     self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)
-    self.view.updateTrustStatus(updatedContact.details.trustStatus == TrustStatus.Untrustworthy)
+    self.view.updateTrustStatus(updatedContact.dto.trustStatus == TrustStatus.Untrustworthy)
 
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)

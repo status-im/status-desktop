@@ -44,20 +44,20 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
 
   return initUserItem(
-    pubKey = contactDetails.details.id,
-    displayName = contactDetails.details.displayName,
-    ensName = contactDetails.details.name,
-    isEnsVerified = contactDetails.details.ensVerified,
-    localNickname = contactDetails.details.localNickname,
-    alias = contactDetails.details.alias,
+    pubKey = contactDetails.dto.id,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
     colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
-    isContact = contactDetails.details.isContact(),
-    isVerified = contactDetails.details.isContactVerified(),
-    isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
-    isBlocked = contactDetails.details.isBlocked(),
+    isContact = contactDetails.dto.isContact(),
+    isVerified = contactDetails.dto.isContactVerified(),
+    isUntrustworthy = contactDetails.dto.isContactUntrustworthy(),
+    isBlocked = contactDetails.dto.isBlocked(),
   )
 
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =
@@ -180,9 +180,9 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
-  let displayName = contactDetails.details.displayName
-  let ensName = contactDetails.details.name
-  let localNickname = contactDetails.details.localNickname
+  let displayName = contactDetails.dto.displayName
+  let ensName = contactDetails.dto.name
+  let localNickname = contactDetails.dto.localNickname
 
   self.view.myMutualContactsModel().setName(publicKey, displayName, ensName, localNickname)
   self.view.receivedContactRequestsModel().setName(publicKey, displayName, ensName, localNickname)
