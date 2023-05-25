@@ -20,6 +20,9 @@ Rectangle {
     property string tertiaryTitle: ""
     property string label: ""
     property string titleTextIcon: ""
+    property string beneathTagsIcon: ""
+    property color beneathTagsIconColor: Theme.palette.primaryColor1
+    property string beneathTagsTitle: ""
     property real leftPadding: 16
     property real rightPadding: 16
     property bool highlighted: false
@@ -356,6 +359,7 @@ Rectangle {
             }
 
             Flickable {
+                id: tagsFlickable
                 visible: tagsRepeater.count > 0
                 anchors.top: statusListItemTertiaryTitle.bottom
                 anchors.topMargin: visible ? 8 : 0
@@ -373,6 +377,32 @@ Rectangle {
                         id: tagsRepeater
                         delegate: tagsDelegate
                     }
+                }
+            }
+
+            RowLayout {
+                anchors.top: tagsFlickable.bottom
+                anchors.topMargin: visible ? 8 : 0
+                width: parent.width
+                visible: !!root.beneathTagsIcon || !!root.beneathTagsTitle
+                spacing: 4
+
+                StatusIcon {
+                    id: statusListItemBeneathTagsIcon
+                    Layout.preferredWidth: visible ? 16 : 0
+                    Layout.preferredHeight: visible ? 16 : 0
+                    visible: !!root.beneathTagsIcon
+                    icon: root.beneathTagsIcon
+                    color: root.beneathTagsIconColor
+                }
+
+                StatusTextWithLoadingState {
+                    id: statusListItemBeneathTagsTitle
+                    visible: !!root.beneathTagsTitle
+                    text: root.beneathTagsTitle
+                    customColor: Theme.palette.baseColor1
+                    font.pixelSize: 13
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 }
             }
         }
