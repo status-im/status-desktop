@@ -47,10 +47,13 @@ StatusListItem {
         }
         return t
     }
-    tertiaryTitle: !root.canBeSelected?
-                       qsTr("This Keypair contains an account which is created out of the Status wallet derivation tree") :
-                       ""
-    statusListItemTertiaryTitle.color: Theme.palette.dangerColor1
+
+    beneathTagsTitle: root.keyPairType === Constants.keycard.keyPairType.profile?
+                          qsTr("Moving this key pair will require you to use your Keycard to login") :
+                          !root.canBeSelected?
+                              qsTranslate("", "Contains account(s) with Keycard incompatible derivation paths", root.keyPairAccounts.count.toString()) :
+                              ""
+    beneathTagsIcon: !!beneathTagsTitle? "info" : ""
 
     asset {
         width: root.keyPairIcon? 24 : 40
