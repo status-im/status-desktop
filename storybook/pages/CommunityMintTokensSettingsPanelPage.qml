@@ -28,7 +28,7 @@ SplitView {
         CommunityMintTokensSettingsPanel {
             anchors.fill: parent
             anchors.topMargin: 50
-            tokensModel: editorModelChecked.checked ? emptyModel : MintedCollectiblesModel.mintedCollectibleModel
+            tokensModel: editorModelChecked.checked ? emptyModel : MintedTokensModel.mintedTokensModel
             layer1Networks: NetworksModel.layer1Networks
             layer2Networks: NetworksModel.layer2Networks
             testNetworks: NetworksModel.testNetworks
@@ -71,9 +71,9 @@ SplitView {
                     checked: true
                     onCheckedChanged:{
                         if(checked)
-                            MintedCollectiblesModel.changeAllMintingStates(1/*In progress*/)
+                            MintedTokensModel.changeAllMintingStates(1/*In progress*/)
                         else
-                            MintedCollectiblesModel.changeAllMintingStates(2/*Deployed*/)
+                            MintedTokensModel.changeAllMintingStates(2/*Deployed*/)
                     }
 
                 }

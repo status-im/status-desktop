@@ -24,10 +24,10 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            CommunityMintedTokensView {
+            CommunityMintedTokensView {               
                 anchors.fill: parent
                 anchors.margins: 50
-                model: MintedCollectiblesModel.mintedCollectibleModel
+                model: MintedTokensModel.mintedTokensModel
                 onItemClicked: logs.logEvent("CommunityMintedTokensView::itemClicked")
             }
         }
@@ -39,6 +39,25 @@ SplitView {
             SplitView.preferredHeight: 150
 
             logsView.logText: logs.logText
+
+            RowLayout {
+                RadioButton {
+                   text: "Assets and collectibles"
+                   checked: true
+                   onCheckedChanged: if(checked) MintedTokensModel.buildMintedTokensModel(true, true)
+                }
+
+                RadioButton {
+                   text: "Only assets"
+                   onCheckedChanged: if(checked) MintedTokensModel.buildMintedTokensModel(true, false)
+                }
+
+                RadioButton {
+                   text: "Only collectibles"
+                   onCheckedChanged: if(checked) MintedTokensModel.buildMintedTokensModel(false, true)
+                }
+            }
         }
     }
+
 }

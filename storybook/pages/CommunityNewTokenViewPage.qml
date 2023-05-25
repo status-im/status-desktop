@@ -34,7 +34,7 @@ SplitView {
                 enabledNetworks: NetworksModel.enabledNetworks
                 allNetworks: enabledNetworks
                 accounts: WalletAccountsModel {}
-                tokensModel: MintedCollectiblesModel.mintedCollectibleModel
+                tokensModel: MintedTokensModel.mintedTokensModel
 
                 onPreviewClicked: logs.logEvent("CommunityNewTokenView::previewClicked")
             }

@@ -910,6 +910,13 @@ QtObject {
         Dismissed = 4
     }
 
+
+    enum TokenType {
+        Unknown = 0,
+        ERC20 = 1,
+        ERC721 = 2
+    }
+
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"
     }
