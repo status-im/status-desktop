@@ -48,6 +48,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMPUTE_SELF_DESTRUCT_FEE) do(e:Args):
     let args = ComputeFeeArgs(e)
     self.communityTokensModule.onSelfDestructFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode)
+  self.events.on(SIGNAL_COMPUTE_AIRDROP_FEE) do(e:Args):
+    let args = AirdropFeesArgs(e)
+    self.communityTokensModule.onAirdropFeesComputed(args)
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYED) do(e: Args):
     let args = CommunityTokenDeployedArgs(e)
     self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityToken.communityId, args.communityToken.chainId, args.transactionHash, args.communityToken.deployState)
@@ -57,12 +60,18 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_REMOTE_DESTRUCT_STATUS) do(e: Args):
     let args = RemoteDestructArgs(e)
     self.communityTokensModule.onRemoteDestructStateChanged(args.communityToken.communityId, args.communityToken.name, args.communityToken.chainId, args.transactionHash, args.status)
+  self.events.on(SIGNAL_AIRDROP_STATUS) do(e: Args):
+    let args = AirdropArgs(e)
+    self.communityTokensModule.onAirdropStateChanged(args.communityToken.communityId, args.communityToken.name, args.communityToken.chainId, args.transactionHash, args.status)
 
 proc deployCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
   self.communityTokensService.deployCollectibles(communityId, addressFrom, password, deploymentParams, tokenMetadata, chainId)
 
 proc airdropCollectibles*(self: Controller, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
   self.communityTokensService.airdropCollectibles(communityId, password, collectiblesAndAmounts, walletAddresses)
+
+proc computeAirdropCollectiblesFee*(self: Controller, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+  self.communityTokensService.computeAirdropCollectiblesFee(collectiblesAndAmounts, walletAddresses)
 
 proc selfDestructCollectibles*(self: Controller, communityId: string, password: string, walletAndAmounts: seq[WalletAndAmount], contractUniqueKey: string) =
   self.communityTokensService.selfDestructCollectibles(communityId, password, walletAndAmounts, contractUniqueKey)
@@ -80,8 +89,8 @@ proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string) =
 proc computeSelfDestructFee*(self: Controller, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string) =
   self.communityTokensService.computeSelfDestructFee(walletAndAmountList, contractUniqueKey)
 
-proc getCommunityTokenBySymbol*(self: Controller, communityId: string, symbol: string): CommunityTokenDto =
-  return self.communityTokensService.getCommunityTokenBySymbol(communityId, symbol)
+proc findContractByUniqueId*(self: Controller, contractUniqueKey: string): CommunityTokenDto =
+  return self.communityTokensService.findContractByUniqueId(contractUniqueKey)
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)

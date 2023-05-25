@@ -80,22 +80,32 @@ proc authenticate(self: Module) =
   else:
     self.controller.authenticateUser()
 
-method airdropCollectibles*(self: Module, communityId: string, collectiblesJsonString: string, walletsJsonString: string) =
-  let collectiblesJson = collectiblesJsonString.parseJson
-  self.tempTokenAndAmountList = @[]
-  for collectible in collectiblesJson:
-    let symbol = collectible["key"].getStr
-    let amount = collectible["amount"].getInt
-    let tokenDto = self.controller.getCommunityTokenBySymbol(communityId, symbol)
-    if tokenDto.tokenType == TokenType.Unknown:
-      error "Can't find token for community", communityId=communityId, symbol=symbol
-      return
-    self.tempTokenAndAmountList.add(CommunityTokenAndAmount(communityToken: tokenDto, amount: amount))
+proc getTokenAndAmountList(self: Module, communityId: string, collectiblesJsonString: string): seq[CommunityTokenAndAmount] =
+  try:
+    let collectiblesJson = collectiblesJsonString.parseJson
+    for collectible in collectiblesJson:
+      let contractUniqueKey = collectible["contractUniqueKey"].getStr
+      let amount = collectible["amount"].getInt
+      let tokenDto = self.controller.findContractByUniqueId(contractUniqueKey)
+      if tokenDto.tokenType == TokenType.Unknown:
+        error "Can't find token for community", contractUniqueKey=contractUniqueKey
+        return @[]
+      result.add(CommunityTokenAndAmount(communityToken: tokenDto, amount: amount))
+  except Exception as e:
+    error "Error getTokenAndAmountList", msg = e.msg
 
+method airdropCollectibles*(self: Module, communityId: string, collectiblesJsonString: string, walletsJsonString: string) =
+  self.tempTokenAndAmountList = self.getTokenAndAmountList(communityId, collectiblesJsonString)
+  if len(self.tempTokenAndAmountList) == 0:
+    return
   self.tempWalletAddresses = walletsJsonString.parseJson.to(seq[string])
   self.tempCommunityId = communityId
   self.tempContractAction = ContractAction.Airdrop
   self.authenticate()
+
+method computeAirdropCollectiblesFee*(self: Module, communityId: string, collectiblesJsonString: string, walletsJsonString: string) =
+  let tokenAndAmountList = self.getTokenAndAmountList(communityId, collectiblesJsonString)
+  self.controller.computeAirdropCollectiblesFee(tokenAndAmountList, walletsJsonString.parseJson.to(seq[string]))
 
 proc getWalletAndAmountListFromJson(self: Module, collectiblesToBurnJsonString: string): seq[WalletAndAmount] =
   let collectiblesToBurnJson = collectiblesToBurnJsonString.parseJson
@@ -147,6 +157,9 @@ method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurre
 method onSelfDestructFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
   self.view.updateSelfDestructFee(ethCurrency, fiatCurrency, errorCode.int)
 
+method onAirdropFeesComputed*(self: Module, args: AirdropFeesArgs) =
+  self.view.updateAirdropFees(%args)
+
 method computeDeployFee*(self: Module, chainId: int, accountAddress: string) =
   self.controller.computeDeployFee(chainId, accountAddress)
 
@@ -163,3 +176,8 @@ method onRemoteDestructStateChanged*(self: Module, communityId: string, tokenNam
   let network = self.controller.getNetwork(chainId)
   let url = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
   self.view.emitRemoteDestructStateChanged(communityId, tokenName, status.int, url)
+
+method onAirdropStateChanged*(self: Module, communityId: string, tokenName: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) =
+  let network = self.controller.getNetwork(chainId)
+  let url = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
+  self.view.emitAirdropStateChanged(communityId, tokenName, status.int, url)
