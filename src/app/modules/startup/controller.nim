@@ -12,7 +12,7 @@ import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/keycard/service as keycard_service
 import ../../../app_service/service/devices/service as devices_service
-import ../../../app_service/common/account_constants
+import ../../../app_service/common/[account_constants, utils]
 
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
@@ -445,7 +445,7 @@ proc isSelectedAccountAKeycardAccount*(self: Controller): bool =
 proc login*(self: Controller) =
   self.delegate.moveToLoadingAppState()
   let selectedAccount = self.getSelectedLoginAccount()
-  self.accountsService.login(selectedAccount, self.tmpPassword)
+  self.accountsService.login(selectedAccount, hashPassword(self.tmpPassword))
 
 proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, syncWalletAfterLogin = false) =
   if syncWalletAfterLogin:
