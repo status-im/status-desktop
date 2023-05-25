@@ -278,7 +278,7 @@ SettingsPageLayout {
     Component {
         id: previewCollectibleView
 
-        CommunityCollectibleView {
+        CommunityTokenView {
             id: preview
 
             function signMintTransaction() {
@@ -458,7 +458,7 @@ SettingsPageLayout {
     Component {
         id: collectibleView
 
-        CommunityCollectibleView {
+        CommunityTokenView {
             id: view
 
             property int index // TODO: Update it to key when model has role key implemented
