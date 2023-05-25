@@ -25,11 +25,15 @@ QtObject:
   proc airdropCollectibles*(self: View, communityId: string, collectiblesJsonString: string, walletsJsonString: string) {.slot.} =
     self.communityTokensModule.airdropCollectibles(communityId, collectiblesJsonString, walletsJsonString)
 
+  proc computeAirdropCollectiblesFee*(self: View, communityId: string, collectiblesJsonString: string, walletsJsonString: string) {.slot.} =
+    self.communityTokensModule.computeAirdropCollectiblesFee(communityId, collectiblesJsonString, walletsJsonString)
+
   proc selfDestructCollectibles*(self: View, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.selfDestructCollectibles(communityId, collectiblesToBurnJsonString, contractUniqueKey)
 
   proc deployFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
   proc selfDestructFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
+  proc airdropFeesUpdated*(self: View, json: string) {.signal.}
 
   proc computeDeployFee*(self: View, chainId: int, accountAddress: string) {.slot.} =
     self.communityTokensModule.computeDeployFee(chainId, accountAddress)
@@ -43,6 +47,9 @@ QtObject:
   proc updateSelfDestructFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
     self.selfDestructFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
 
+  proc updateAirdropFees*(self: View, args: JsonNode) =
+    self.airdropFeesUpdated($args)
+
   proc deploymentStateChanged*(self: View, communityId: string, status: int, url: string) {.signal.}
   proc emitDeploymentStateChanged*(self: View, communityId: string, status: int, url: string) =
     self.deploymentStateChanged(communityId, status, url)
@@ -50,3 +57,7 @@ QtObject:
   proc remoteDestructStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) {.signal.}
   proc emitRemoteDestructStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) =
     self.remoteDestructStateChanged(communityId, tokenName, status, url)
+
+  proc airdropStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) {.signal.}
+  proc emitAirdropStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) =
+    self.airdropStateChanged(communityId, tokenName, status, url)

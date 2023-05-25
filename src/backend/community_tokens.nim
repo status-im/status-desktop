@@ -30,6 +30,10 @@ proc mintTo*(chainId: int, contractAddress: string, txData: JsonNode, password: 
   let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), walletAddresses, amount]
   return core.callPrivateRPC("collectibles_mintTo", payload)
 
+proc estimateMintTo*(chainId: int, contractAddress: string, walletAddresses: seq[string], amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, walletAddresses, amount]
+  return core.callPrivateRPC("collectibles_estimateMintTo", payload)
+
 proc remoteBurn*(chainId: int, contractAddress: string, txData: JsonNode, password: string, tokenIds: seq[UInt256]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), tokenIds.map(x => x.toString(10))]
   return core.callPrivateRPC("collectibles_remoteBurn", payload)

@@ -79,7 +79,8 @@ StatusScrollView {
                 networkText: modelItem.chainName,
                 networkImage: Style.svg(modelItem.chainIcon),
                 supply: modelItem.supply,
-                infiniteSupply: modelItem.infiniteSupply
+                infiniteSupply: modelItem.infiniteSupply,
+                contractUniqueKey: modelItem.contractUniqueKey,
             }
         }
     }
@@ -402,7 +403,7 @@ StatusScrollView {
             onClicked: {
                 const airdropTokens = ModelUtils.modelToArray(
                                         root.selectedHoldingsModel,
-                                        ["key", "amount"])
+                                        ["contractUniqueKey", "amount"])
 
                 const addresses_ = ModelUtils.modelToArray(
                                     addresses, ["address"]).map(e => e.address)

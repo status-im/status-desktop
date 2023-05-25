@@ -58,6 +58,10 @@ QtObject {
       function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
           root.selfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode)
       }
+      function onAirdropFeesUpdated(jsonFees) {
+          console.log("Fees:", jsonFees)
+      }
+
       function onDeploymentStateChanged(communityId, status, url) {
           root.deploymentStateChanged(communityId, status, url)
       }
@@ -93,5 +97,9 @@ QtObject {
     // Airdrop tokens:
     function airdrop(communityId, airdropTokens, addresses) {
         communityTokensModuleInst.airdropCollectibles(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses))
+    }
+
+    function computeAirdropFee(communityId, airdropTokens, addresses) {
+        communityTokensModuleInst.computeAirdropCollectiblesFee(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses))
     }
 }
