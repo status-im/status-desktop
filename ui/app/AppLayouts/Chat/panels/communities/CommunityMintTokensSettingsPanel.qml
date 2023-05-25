@@ -96,7 +96,7 @@ SettingsPageLayout {
         readonly property string initialViewState: "WELCOME_OR_LIST_TOKENS"
         readonly property string newTokenViewState: "NEW_TOKEN"
         readonly property string previewTokenViewState: "PREVIEW_TOKEN"
-        readonly property string collectibleViewState: "VIEW_COLLECTIBLE"
+        readonly property string tokenViewState: "VIEW_TOKEN"
 
         readonly property string welcomePageTitle: qsTr("Tokens")
         readonly property string newCollectiblePageTitle: qsTr("Mint collectible")
@@ -166,7 +166,7 @@ SettingsPageLayout {
             PropertyChanges {target: root; headerWidth: 0}
         },
         State {
-            name: d.collectibleViewState
+            name: d.tokenViewState
             PropertyChanges {target: root; previousPageName: d.backButtonText}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
@@ -226,7 +226,7 @@ SettingsPageLayout {
                 Binding {
                     target: root
                     property: "title"
-                    value: optionsTab.currentItem == collectiblesTab ? d.newCollectiblePageTitle : d.newAssetPageTitle
+                    value: optionsTab.currentItem === collectiblesTab ? d.newCollectiblePageTitle : d.newAssetPageTitle
                 }
             }
 
@@ -494,8 +494,8 @@ SettingsPageLayout {
                 d.chainName = chainName
                 d.accountName = accountName
                 //d.tokenKey = key // TODO: Backend key role
-                stackManager.push(d.collectibleViewState,
-                                  collectibleView,
+                stackManager.push(d.tokenViewState,
+                                  tokenView,
                                   {
                                       preview: false,
                                       index
@@ -506,7 +506,7 @@ SettingsPageLayout {
     }
 
     Component {
-        id: collectibleView
+        id: tokenView
 
         CommunityTokenView {
             id: view
@@ -573,6 +573,7 @@ SettingsPageLayout {
                 delegate: QtObject {
                     component Bind: Binding { target: view }
                     readonly property list<Binding> bindings: [
+                        Bind { property: "isAssetView"; value: model.tokenType === Constants.TokenType.ERC20 },
                         Bind { property: "deployState"; value: model.deployState },
                         Bind { property: "remotelyDestructState"; value: model.remotelyDestructState },
                         Bind { property: "burnState"; value: model.burnState },
@@ -588,7 +589,8 @@ SettingsPageLayout {
                         Bind { property: "chainName"; value: model.chainName },
                         Bind { property: "chainIcon"; value: model.chainIcon },
                         Bind { property: "accountName"; value: model.accountName },
-                        Bind { property: "tokenOwnersModel"; value: model.tokenOwnersModel }
+                        Bind { property: "tokenOwnersModel"; value: model.tokenOwnersModel },
+                        Bind { property: "assetDecimals"; value: model.decimals }
                     ]
                 }
             }
