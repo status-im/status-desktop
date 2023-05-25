@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.14
 
 import AppLayouts.Chat.views.communities 1.0
 
+import StatusQ.Core 0.1
+
 import Storybook 1.0
 import Models 1.0
 
@@ -28,6 +30,7 @@ SplitView {
                 anchors.margins: 50
                 artworkSource: ModelsData.icons.superRare
                 preview: previewBox.checked
+                isAssetView: isAssetBox.checked
                 remotelyDestructState: remotelyDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
                 burnState: burnDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
                 name: nameText.text
@@ -35,6 +38,7 @@ SplitView {
                 description: descriptionText.text
                 supplyAmount: parseInt(supplyText.text)
                 infiniteSupply: unlimitedSupplyChecker.checked
+                assetDecimals: parseInt(decimalText.text)
                 remainingTokens: parseInt(remainingText.text)
                 transferable: transferibleChecker.checked
                 selfDestruct: selfdestructChecker.checked
@@ -43,7 +47,7 @@ SplitView {
                 chainIcon: ModelsData.networks.ethereum
                 accountName: "helloworld"
 
-                onMintCollectible: logs.logEvent("CommunityTokenView::mintCollectible: \n"
+                onMintCollectible: logs.logEvent("CommunityTokenView::onMintCollectible: \n"
                                                  + "artworkSource: " + artworkSource + "\n"
                                                  + "name: " + name + "\n"
                                                  + "symbol: " + symbol + "\n"
@@ -52,7 +56,19 @@ SplitView {
                                                  + "infiniteSupply: " + infiniteSupply + "\n"
                                                  + "transferable: " + transferable + "\n"
                                                  + "selfDestruct: " + selfDestruct + "\n"
-                                                 + "chainId: " + chainId)
+                                                 + "chainId: " + chainId + "\n"
+                                                 + "accountName: " + accountName)
+
+                onMintAsset: logs.logEvent("CommunityTokenView::onMintAsset: \n"
+                                           + "artworkSource: " + artworkSource + "\n"
+                                           + "name: " + name + "\n"
+                                           + "symbol: " + symbol + "\n"
+                                           + "description: " + description + "\n"
+                                           + "supply: " + supply + "\n"
+                                           + "infiniteSupply: " + infiniteSupply + "\n"
+                                           + "decimals: " + decimals + "\n"
+                                           + "chainId: " + chainId + "\n"
+                                           + "accountName: " + accountName)
             }
         }
 
@@ -70,188 +86,220 @@ SplitView {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        ColumnLayout {
-
-            CheckBox {
-                id: previewBox
-                text: "Is preview view?"
-                checked: true
-            }
+        StatusScrollView {
+            width: parent.width
+            height: parent.height
+            contentHeight: _column.implicitHeight
+            contentWidth: _column.implicitWidth
 
             ColumnLayout {
-                Label {
-                    text: "Minting state:"
-                }
+                id: _column
 
-                RadioButton {
-                    id: mintingInProgress
-                    text: "In progress"
-                    onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.InProgress
-                }
-
-                RadioButton {
-                    id: mintingFailed
-                    text: "Failed"
-                    onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.Failed
-                }
-
-                RadioButton {
-                    id: mintingCompleted
-                    text: "Completed"
+                CheckBox {
+                    id: previewBox
+                    text: "Is preview view?"
                     checked: true
-                    onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.Completed
                 }
-            }
 
-            CheckBox {
-                id: remotelyDestructStateBox
-                text: "Remotely destruct in progress"
-                checked: false
-            }
-
-            CheckBox {
-                id: burnDestructStateBox
-                text: "Burn in progress"
-                checked: false
-            }
-
-            Label {
-                Layout.topMargin: 10
-                Layout.fillWidth: true
-                text: "Artwork"
-            }
-
-            RadioButton {
-                text: "Small"
-                checked: true
-                onCheckedChanged: view.artworkSource = ModelsData.icons.superRare
-            }
-
-            RadioButton {
-                text: "Medium"
-                onCheckedChanged: view.artworkSource = ModelsData.collectibles.kitty2Big
-            }
-
-            RadioButton {
-                text: "Large"
-                onCheckedChanged: view.artworkSource = ModelsData.banners.superRare
-            }
-
-            Label {
-                Layout.topMargin: 10
-                Layout.fillWidth: true
-                text: "Name"
-            }
-
-            TextField {
-                id: nameText
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "Art work"
-            }
-
-            Label {
-                Layout.topMargin: 10
-                Layout.fillWidth: true
-                text: "Description"
-            }
-
-            TextField {
-                id: descriptionText
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description"
-            }
-
-            Label {
-                Layout.topMargin: 10
-                Layout.fillWidth: true
-                text: "Symbol"
-            }
-
-            TextField {
-                id: symbolText
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "ABC"
-            }
-
-            CheckBox {
-                id: unlimitedSupplyChecker
-                Layout.topMargin: 10
-                text: "Unlimited supply"
-                checked: true
-            }
-
-            Label {
-                visible: !unlimitedSupplyChecker.checked
-                Layout.fillWidth: true
-                text: "Supply"
-            }
-
-            TextField {
-                id: supplyText
-                visible: !unlimitedSupplyChecker.checked
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "123"
-            }
-
-            TextField {
-                id: remainingText
-                visible: !unlimitedSupplyChecker.checked
-                background: Rectangle { border.color: 'lightgrey' }
-                Layout.preferredWidth: 200
-                text: "123"
-            }
-
-            CheckBox {
-                id: transferibleChecker
-                Layout.topMargin: 10
-                text: "Tranferible"
-                checked: true
-            }
-
-            CheckBox {
-                id: selfdestructChecker
-                text: "Remote self-desctruct"
-                checked: true
-            }
-
-            Label {
-                Layout.topMargin: 10
-                Layout.fillWidth: true
-                text: "Network"
-            }
-
-            RadioButton {
-                id: eth
-                text: "Ethereum Mainnet"
-                checked: true
-                onCheckedChanged:  {
-                    view.chainName = text
-                    view.chainIcon = ModelsData.networks.ethereum
-                    view.chainId = 1
+                CheckBox {
+                    id: isAssetBox
+                    text: "Is Assets View?"
+                    checked: false
                 }
-            }
 
-            RadioButton {
-                id: opt
-                text: "Optimism"
-                onCheckedChanged:  {
-                    view.chainName = text
-                    view.chainIcon = ModelsData.networks.optimism
-                    view.chainId = 2
+                ColumnLayout {
+                    Label {
+                        text: "Minting state:"
+                    }
+
+                    RadioButton {
+                        id: mintingInProgress
+                        text: "In progress"
+                        onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.InProgress
+                    }
+
+                    RadioButton {
+                        id: mintingFailed
+                        text: "Failed"
+                        onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.Failed
+                    }
+
+                    RadioButton {
+                        id: mintingCompleted
+                        text: "Completed"
+                        checked: true
+                        onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.Completed
+                    }
                 }
-            }
 
-            RadioButton {
-                id: arb
-                text: "Arbitrum"
-                onCheckedChanged:  {
-                    view.chainName = text
-                    view.chainIcon = ModelsData.networks.arbitrum
-                    view.chainId = 3
+                CheckBox {
+                    id: remotelyDestructStateBox
+                    visible: !isAssetBox.checked
+                    text: "Remotely destruct in progress"
+                    checked: false
+                }
+
+                CheckBox {
+                    id: burnDestructStateBox
+                    text: "Burn in progress"
+                    checked: false
+                }
+
+                Label {
+                    Layout.topMargin: 10
+                    Layout.fillWidth: true
+                    text: "Artwork"
+                }
+
+                RadioButton {
+                    text: "Small"
+                    checked: true
+                    onCheckedChanged: view.artworkSource = ModelsData.icons.superRare
+                }
+
+                RadioButton {
+                    text: "Medium"
+                    onCheckedChanged: view.artworkSource = ModelsData.collectibles.kitty2Big
+                }
+
+                RadioButton {
+                    text: "Large"
+                    onCheckedChanged: view.artworkSource = ModelsData.banners.superRare
+                }
+
+                Label {
+                    Layout.topMargin: 10
+                    Layout.fillWidth: true
+                    text: "Name"
+                }
+
+                TextField {
+                    id: nameText
+                    background: Rectangle { border.color: 'lightgrey' }
+                    Layout.preferredWidth: 200
+                    text: "Art work"
+                }
+
+                Label {
+                    Layout.topMargin: 10
+                    Layout.fillWidth: true
+                    text: "Description"
+                }
+
+                TextField {
+                    id: descriptionText
+                    background: Rectangle { border.color: 'lightgrey' }
+                    Layout.preferredWidth: 200
+                    text: "Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description"
+                }
+
+                Label {
+                    Layout.topMargin: 10
+                    Layout.fillWidth: true
+                    text: "Symbol"
+                }
+
+                TextField {
+                    id: symbolText
+                    background: Rectangle { border.color: 'lightgrey' }
+                    Layout.preferredWidth: 200
+                    text: "ABC"
+                }
+
+                CheckBox {
+                    id: unlimitedSupplyChecker
+                    Layout.topMargin: 10
+                    text: "Unlimited supply"
+                    checked: true
+                }
+
+                Label {
+                    visible: !unlimitedSupplyChecker.checked
+                    Layout.fillWidth: true
+                    text: "Supply"
+                }
+
+                TextField {
+                    id: supplyText
+                    visible: !unlimitedSupplyChecker.checked
+                    background: Rectangle { border.color: 'lightgrey' }
+                    Layout.preferredWidth: 200
+                    text: "123"
+                }
+
+                TextField {
+                    id: remainingText
+                    visible: !unlimitedSupplyChecker.checked
+                    background: Rectangle { border.color: 'lightgrey' }
+                    Layout.preferredWidth: 200
+                    text: "123"
+                }
+
+                Label {
+                    Layout.topMargin: 10
+                    Layout.fillWidth: true
+                    visible: isAssetBox.checked
+                    text: "Decimal"
+                }
+
+                TextField {
+                    id: decimalText
+                    Layout.preferredWidth: 200
+                    background: Rectangle { border.color: 'lightgrey' }
+                    visible: isAssetBox.checked
+                    text: "2"
+                }
+
+                CheckBox {
+                    id: transferibleChecker
+                    Layout.topMargin: 10
+                    visible: !isAssetBox.checked
+                    text: "Tranferible"
+                    checked: true
+                }
+
+                CheckBox {
+                    id: selfdestructChecker
+                    visible: !isAssetBox.checked
+                    text: "Remote self-desctruct"
+                    checked: true
+                }
+
+                Label {
+                    Layout.topMargin: 10
+                    Layout.fillWidth: true
+                    text: "Network"
+                }
+
+                RadioButton {
+                    id: eth
+                    text: "Ethereum Mainnet"
+                    checked: true
+                    onCheckedChanged:  {
+                        view.chainName = text
+                        view.chainIcon = ModelsData.networks.ethereum
+                        view.chainId = 1
+                    }
+                }
+
+                RadioButton {
+                    id: opt
+                    text: "Optimism"
+                    onCheckedChanged:  {
+                        view.chainName = text
+                        view.chainIcon = ModelsData.networks.optimism
+                        view.chainId = 2
+                    }
+                }
+
+                RadioButton {
+                    id: arb
+                    text: "Arbitrum"
+                    onCheckedChanged:  {
+                        view.chainName = text
+                        view.chainIcon = ModelsData.networks.arbitrum
+                        view.chainId = 3
+                    }
                 }
             }
         }
