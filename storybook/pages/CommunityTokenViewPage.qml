@@ -21,7 +21,7 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            CommunityCollectibleView {
+            CommunityTokenView {
                 id: view
 
                 anchors.fill: parent
@@ -43,7 +43,7 @@ SplitView {
                 chainIcon: ModelsData.networks.ethereum
                 accountName: "helloworld"
 
-                onMintCollectible: logs.logEvent("CommunityCollectibleView::mintCollectible: \n"
+                onMintCollectible: logs.logEvent("CommunityTokenView::mintCollectible: \n"
                                                  + "artworkSource: " + artworkSource + "\n"
                                                  + "name: " + name + "\n"
                                                  + "symbol: " + symbol + "\n"

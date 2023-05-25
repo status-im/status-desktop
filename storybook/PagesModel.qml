@@ -46,7 +46,7 @@ ListModel {
          section: "Views"
     }
     ListElement {
-         title: "CommunityCollectibleView"
+         title: "CommunityTokenView"
          section: "Views"
     }
     ListElement {
