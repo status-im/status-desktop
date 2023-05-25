@@ -34,11 +34,11 @@ StatusScrollView {
     property string chainIcon
     property var tokensModel
 
-    // Collectible properties
+    // Collectible properties (ERC721)
     readonly property alias notTransferable: transferableChecker.checked
     readonly property alias selfDestruct: selfDestructChecker.checked
 
-    // Asset properties
+    // Asset properties (ERC20)
     readonly property int assetDecimals: assetDecimalsInput.text ? parseInt(assetDecimalsInput.text) : 0
 
     // Network related properties:
