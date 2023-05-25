@@ -53,6 +53,18 @@ SettingsPageLayout {
                            string accountAddress,
                            var artworkCropRect)
 
+    signal mintAsset(url artworkSource,
+                     string name,
+                     string symbol,
+                     string description,
+                     int supply,
+                     bool infiniteSupply,
+                     int decimals,
+                     int chainId,
+                     string accountName,
+                     string accountAddress,
+                     var artworkCropRect)
+
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
     signal signSelfDestructTransactionOpened(int chainId)
@@ -84,7 +96,7 @@ SettingsPageLayout {
 
         readonly property string initialViewState: "WELCOME_OR_LIST_TOKENS"
         readonly property string newTokenViewState: "NEW_TOKEN"
-        readonly property string previewCollectibleViewState: "PREVIEW_COLLECTIBLE"
+        readonly property string previewTokenViewState: "PREVIEW_TOKEN"
         readonly property string collectibleViewState: "VIEW_COLLECTIBLE"
 
         readonly property string welcomePageTitle: qsTr("Tokens")
@@ -148,7 +160,7 @@ SettingsPageLayout {
             PropertyChanges {target: root; headerWidth: 0}
         },
         State {
-            name: d.previewCollectibleViewState
+            name: d.previewTokenViewState
             PropertyChanges {target: root; previousPageName: d.backButtonText}
             PropertyChanges {target: root; headerButtonVisible: false}
             PropertyChanges {target: root; headerWidth: 0}
@@ -236,10 +248,11 @@ SettingsPageLayout {
 
                     onPreviewClicked: {
                         d.accountAddress = accountAddress
-                        stackManager.push(d.previewCollectibleViewState,
-                                          previewCollectibleView,
+                        stackManager.push(d.previewTokenViewState,
+                                          previewTokenView,
                                           {
                                               preview: true,
+                                              isAssetView: false,
                                               name,
                                               artworkSource,
                                               artworkCropRect,
@@ -269,32 +282,67 @@ SettingsPageLayout {
                     tokensModel: root.tokensModel
                     isAssetView: true
 
-                    onPreviewClicked: console.log("TODO: Assets preview!")
+                    onPreviewClicked: {
+                        d.accountAddress = accountAddress
+                        stackManager.push(d.previewTokenViewState,
+                                          previewTokenView,
+                                          {
+                                              preview: true,
+                                              isAssetView: true,
+                                              name,
+                                              artworkSource,
+                                              artworkCropRect,
+                                              symbol,
+                                              description,
+                                              supplyAmount,
+                                              infiniteSupply,
+                                              assetDecimals,
+                                              chainId,
+                                              chainName,
+                                              chainIcon,
+                                              accountName
+                                          },
+                                          StackView.Immediate)
+                    }
                 }
             }
         }
     }
 
     Component {
-        id: previewCollectibleView
+        id: previewTokenView
 
         CommunityTokenView {
             id: preview
 
             function signMintTransaction() {
                 root.setFeeLoading()
-                root.mintCollectible(artworkSource,
-                                     name,
-                                     symbol,
-                                     description,
-                                     supplyAmount,
-                                     infiniteSupply,
-                                     transferable,
-                                     selfDestruct,
-                                     chainId,
-                                     accountName,
-                                     d.accountAddress,
-                                     artworkCropRect)
+                if(preview.isAssetView) {
+                    root.mintAsset(artworkSource,
+                                   name,
+                                   symbol,
+                                   description,
+                                   supplyAmount,
+                                   infiniteSupply,
+                                   assetDecimals,
+                                   chainId,
+                                   accountName,
+                                   d.accountAddress,
+                                   artworkCropRect)
+                } else {
+                    root.mintCollectible(artworkSource,
+                                         name,
+                                         symbol,
+                                         description,
+                                         supplyAmount,
+                                         infiniteSupply,
+                                         transferable,
+                                         selfDestruct,
+                                         chainId,
+                                         accountName,
+                                         d.accountAddress,
+                                         artworkCropRect)
+                }
 
                 stackManager.clear(d.initialViewState, StackView.Immediate)
             }
@@ -302,6 +350,7 @@ SettingsPageLayout {
             viewWidth: root.viewWidth
 
             onMintCollectible: popup.open()
+            onMintAsset: popup.open()
 
             Binding {
                 target: root
@@ -320,8 +369,8 @@ SettingsPageLayout {
                 id: popup
 
                 anchors.centerIn: Overlay.overlay
-                title: qsTr("Sign transaction - Mint %1 token").arg(popup.collectibleName)
-                collectibleName: parent.name
+                title: qsTr("Sign transaction - Mint %1 token").arg(popup.tokenName)
+                tokenName: parent.name
                 accountName: parent.accountName
                 networkName: parent.chainName
                 feeText: root.feeText
@@ -403,7 +452,7 @@ SettingsPageLayout {
 
                 title: signTransactionPopup.isRemotelyDestructTransaction ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title) :
                                                                             qsTr("Sign transaction - Burn %1 tokens").arg(root.title)
-                collectibleName: root.title
+                tokenName: root.title
                 accountName: d.accountName
                 networkName: d.chainName
                 feeText: root.feeText

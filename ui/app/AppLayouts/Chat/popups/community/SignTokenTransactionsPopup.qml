@@ -18,7 +18,7 @@ StatusDialog {
     property alias errorText: errorTxt.text
     property alias isFeeLoading: feeLoading.visible
 
-    property string collectibleName
+    property string tokenName
     property string networkName
 
     signal signTransactionClicked()

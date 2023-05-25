@@ -33,9 +33,9 @@ SplitView {
                 id: dialog
 
                 anchors.centerIn: parent
-                title: qsTr("Sign transaction - Self-destruct %1 tokens").arg(dialog.collectibleName)
+                title: qsTr("Sign transaction - Self-destruct %1 tokens").arg(dialog.tokenName)
                 accountName: editorAccount.text
-                collectibleName: editorCollectible.text
+                tokenName: editorCollectible.text
                 networkName: editorNetwork.text
                 feeText: editorFee.text
                 isFeeLoading: editorFeeLoader.checked

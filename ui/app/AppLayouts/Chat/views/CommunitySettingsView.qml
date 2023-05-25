@@ -301,6 +301,20 @@ StatusSectionLayout {
                                                            accountName,
                                                            artworkCropRect)
                 }
+                onMintAsset: {
+                    communityTokensStore.deployAsset(root.community.id,
+                                                     accountAddress,
+                                                     name,
+                                                     symbol,
+                                                     description,
+                                                     supply,
+                                                     infiniteSupply,
+                                                     decimals,
+                                                     chainId,
+                                                     artworkSource,
+                                                     accountName,
+                                                     artworkCropRect)
+                }
                 onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(chainId)
                 onRemoteSelfDestructCollectibles: {
                     communityTokensStore.remoteSelfDestructCollectibles(selfDestructTokensList,

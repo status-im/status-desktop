@@ -29,6 +29,15 @@ QtObject {
                                                     infiniteSupply, transferable, selfDestruct, chainId, artworkSource/*instead: jsonArtworkFile*/)
     }
 
+    function deployAsset(communityId, accountAddress, name, symbol, description, supply,
+                         infiniteSupply, decimals, chainId, artworkSource, accountName, artworkCropRect)
+    {
+        // TODO: Backend needs to create new role `accountName` and update this call accordingly
+        // TODO: Backend needs to modify the call to expect an image JSON file with cropped artwork information:
+        const jsonArtworkFile = Utils.getImageAndCropInfoJson(artworkSource, artworkCropRect)
+        console.log("TODO: Deploy Asset backend!")
+    }
+
     readonly property Connections connections: Connections {
       target: communityTokensModuleInst
       function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
