@@ -27,6 +27,7 @@ SplitView {
             CommunityNewTokenView {
                 anchors.fill: parent
                 anchors.margins: 50
+                isAssetView: isAssetBox.checked
                 layer1Networks: NetworksModel.layer1Networks
                 layer2Networks: NetworksModel.layer2Networks
                 testNetworks: NetworksModel.testNetworks
@@ -47,6 +48,17 @@ SplitView {
             SplitView.preferredHeight: 150
 
             logsView.logText: logs.logText
+        }
+    }
+
+    Pane {
+        SplitView.minimumWidth: 300
+        SplitView.preferredWidth: 300
+
+        CheckBox {
+            id: isAssetBox
+            text: "Is Assets View?"
+            checked: false
         }
     }
 }
