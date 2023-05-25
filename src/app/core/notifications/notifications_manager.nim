@@ -276,7 +276,7 @@ QtObject:
         self.notificationCheck(title, message, details, self.settingsService.getNotifSettingIdentityVerificationRequests())
         return
 
-    # In case of new message (regardless it's message with mention or not)    
+    # In case of new message (regardless it's message with mention or not)
     elif(details.notificationType == NotificationType.NewMessage or 
       details.notificationType == NotificationType.NewMessageWithPersonalMention or
       details.notificationType == NotificationType.NewMessageWithGlobalMention):
@@ -309,7 +309,9 @@ QtObject:
       else:
         if(details.isOneToOne or details.isGroupChat):
           let exemptions = self.settingsService.getNotifSettingExemptions(details.chatId)
-          if(exemptions.muteAllMessages):
+          if exemptions.muteAllMessages or
+              # Don't show a notification for group messages that are NOT mentions
+              (details.isGroupChat and details.notificationType != NotificationType.NewMessageWithPersonalMention):
             return
 
         if(details.notificationType == NotificationType.NewMessageWithPersonalMention and 
