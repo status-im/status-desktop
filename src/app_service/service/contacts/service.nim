@@ -90,7 +90,7 @@ QtObject:
     networkService: network_service.Service
     settingsService: settings_service.Service
     activityCenterService: activity_center_service.Service
-    contacts: Table[string, ContactsDto] # [contact_id, ContactsDto]
+    contacts: Table[string, ContactDetails] # [contact_id, ContactDetails]
     contactsStatus: Table[string, StatusUpdateDto] # [contact_id, StatusUpdateDto]
     receivedIdentityRequests: Table[string, VerificationRequest] # [from_id, VerificationRequest]
     events: EventEmitter
@@ -102,6 +102,7 @@ QtObject:
   proc saveContact(self: Service, contact: ContactsDto)
   proc fetchReceivedVerificationRequests*(self: Service) : seq[VerificationRequest]
   proc requestContactInfo*(self: Service, pubkey: string)
+  proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -125,14 +126,14 @@ QtObject:
     result.settingsService = settingsService
     result.activityCenterService = activityCenterService
     result.threadpool = threadpool
-    result.contacts = initTable[string, ContactsDto]()
+    result.contacts = initTable[string, ContactDetails]()
     result.contactsStatus = initTable[string, StatusUpdateDto]()
     result.receivedIdentityRequests = initTable[string, VerificationRequest]()
 
-  proc addContact(self: Service, contact: ContactsDto) =
+  proc addContact(self: Service, contact: ContactDetails) =
     # Private proc, used for adding contacts only.
-    self.contacts[contact.id] = contact
-    self.contactsStatus[contact.id] = StatusUpdateDto(publicKey: contact.id, statusType: StatusType.Unknown)
+    self.contacts[contact.details.id] = contact
+    self.contactsStatus[contact.details.id] = StatusUpdateDto(publicKey: contact.details.id, statusType: StatusType.Unknown)
 
   proc fetchContacts*(self: Service) =
     try:
@@ -141,7 +142,7 @@ QtObject:
       let contacts = map(response.result.getElems(), proc(x: JsonNode): ContactsDto = x.toContactsDto())
 
       for contact in contacts:
-        self.addContact(contact)
+        self.addContact(self.constructContactDetails(contact))
 
       # Identity verifications
       for request in self.fetchReceivedVerificationRequests():
@@ -203,15 +204,15 @@ QtObject:
 
             if request.status == VerificationStatus.Trusted:
               if self.contacts.hasKey(request.fromId):
-                self.contacts[request.fromId].trustStatus = TrustStatus.Trusted
-                self.contacts[request.fromId].verificationStatus = VerificationStatus.Trusted
+                self.contacts[request.fromId].details.trustStatus = TrustStatus.Trusted
+                self.contacts[request.fromId].details.verificationStatus = VerificationStatus.Trusted
               self.events.emit(SIGNAL_CONTACT_TRUSTED,
                 TrustArgs(publicKey: request.fromId, isUntrustworthy: false))
               self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: request.fromId))
 
             if request.status == VerificationStatus.Canceled:
               if self.contacts.hasKey(request.fromId):
-                self.contacts[request.fromId].verificationStatus = VerificationStatus.Canceled
+                self.contacts[request.fromId].details.verificationStatus = VerificationStatus.Canceled
               self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: request.fromId))
 
           else:
@@ -251,7 +252,7 @@ QtObject:
     # Having this logic here we ensure that the same contact group in each part of the app will have the same list
     # of contacts. Be sure when you change any condition here.
     let myPubKey = singletonInstance.userProfile.getPubKey()
-    let contacts = toSeq(self.contacts.values)
+    let contacts = toSeq(self.contacts.values).map(cd => cd.details)
     if (group == ContactsGroup.IncomingPendingContactRequests):
       return contacts.filter(x => x.id != myPubKey and 
         x.isContactRequestReceived() and 
@@ -286,14 +287,15 @@ QtObject:
     elif (group == ContactsGroup.AllKnownContacts):
       return contacts
 
-  proc fetchContact(self: Service, id: string): ContactsDto =
+  proc fetchContact(self: Service, id: string): ContactDetails =
     try:
       let response = status_contacts.getContactByID(id)
 
-      result = response.result.toContactsDto()
-      if result.id.len == 0:
+      let contactDto = response.result.toContactsDto()
+      if contactDto.id.len == 0:
         return
 
+      result = self.constructContactDetails(contactDto)
       self.addContact(result)
 
     except Exception as e:
@@ -316,7 +318,30 @@ QtObject:
       error "error: ", errDesription
       return TrustStatus.Unknown
 
-  proc getContactById*(self: Service, id: string): ContactsDto =
+  proc getContactNameAndImageInternal(self: Service, contactDto: ContactsDto):
+      tuple[name: string, optionalName: string, image: string, largeImage: string] =
+    ## This proc should be used accross the app in order to have for the same contact
+    ## same image and name displayed everywhere in the app.
+    result.name = contactDto.userDefaultDisplayName()
+    result.optionalName = contactDto.userOptionalName()
+    if(contactDto.image.thumbnail.len > 0):
+      result.image = contactDto.image.thumbnail
+    if(contactDto.image.large.len > 0):
+      result.largeImage = contactDto.image.large
+
+  proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails =
+    result = ContactDetails()
+    let (name, optionalName, icon, _) = self.getContactNameAndImageInternal(contactDto)
+    result.defaultDisplayName = name
+    result.optionalName = optionalName
+    result.icon = icon
+    result.colorId = procs_from_visual_identity_service.colorIdOf(contactDto.id)
+    result.isCurrentUser = contactDto.id == singletonInstance.userProfile.getPubKey()
+    result.details = contactDto
+    if not contactDto.ensVerified:
+      result.colorHash = procs_from_visual_identity_service.getColorHashAsJson(contactDto.id)
+
+  proc getContactDetails*(self: Service, id: string): ContactDetails =
     var pubkey = id
 
     if service_conversion.isCompressedPubKey(id):
@@ -327,20 +352,22 @@ QtObject:
 
     if(pubkey == singletonInstance.userProfile.getPubKey()):
       # If we try to get the contact details of ourselves, just return our own info
-      return ContactsDto(
-        id: singletonInstance.userProfile.getPubKey(),
-        displayName: singletonInstance.userProfile.getDisplayName(),
-        name: singletonInstance.userProfile.getPreferredName(),
-        alias: singletonInstance.userProfile.getUsername(),
-        ensVerified: singletonInstance.userProfile.getPreferredName().len > 0,
-        added: true,
-        image: Images(
-          thumbnail: singletonInstance.userProfile.getThumbnailImage(),
-          large: singletonInstance.userProfile.getLargeImage()
-        ),
-        trustStatus: TrustStatus.Trusted,
-        bio: self.settingsService.getBio(),
-        socialLinks: self.settingsService.getSocialLinks()
+      return self.constructContactDetails(
+        ContactsDto(
+          id: singletonInstance.userProfile.getPubKey(),
+          displayName: singletonInstance.userProfile.getDisplayName(),
+          name: singletonInstance.userProfile.getPreferredName(),
+          alias: singletonInstance.userProfile.getUsername(),
+          ensVerified: singletonInstance.userProfile.getPreferredName().len > 0,
+          added: true,
+          image: Images(
+            thumbnail: singletonInstance.userProfile.getThumbnailImage(),
+            large: singletonInstance.userProfile.getLargeImage()
+          ),
+          trustStatus: TrustStatus.Trusted,
+          bio: self.settingsService.getBio(),
+          socialLinks: self.settingsService.getSocialLinks()
+        )
       )
 
     ## Returns contact details based on passed id (public key)
@@ -349,7 +376,7 @@ QtObject:
       return self.contacts[pubkey]
 
     result = self.fetchContact(pubkey)
-    if result.id.len == 0:
+    if result.details.id.len == 0:
       if(not pubkey.startsWith("0x")):
         debug "id is not in a hex format"
         return
@@ -362,17 +389,22 @@ QtObject:
 
       let alias = self.generateAlias(pubkey)
       let trustStatus = self.getTrustStatus(pubkey)
-      let contact = ContactsDto(
-        id: pubkey,
-        alias: alias,
-        ensVerified: result.ensVerified,
-        added: result.added,
-        blocked: result.blocked,
-        hasAddedUs: result.hasAddedUs,
-        trustStatus: trustStatus
+      let contact = self.constructContactDetails(
+        ContactsDto(
+          id: pubkey,
+          alias: alias,
+          ensVerified: result.details.ensVerified,
+          added: result.details.added,
+          blocked: result.details.blocked,
+          hasAddedUs: result.details.hasAddedUs,
+          trustStatus: trustStatus
+        )
       )
       self.addContact(contact)
       return contact
+
+  proc getContactById*(self: Service, id: string): ContactsDto =
+    return self.getContactDetails(id).details
 
   proc getStatusForContactWithId*(self: Service, publicKey: string): StatusUpdateDto =
     if publicKey == singletonInstance.userProfile.getPubKey():
@@ -388,17 +420,6 @@ QtObject:
 
     return self.contactsStatus[publicKey]
 
-  proc getContactNameAndImageInternal(self: Service, contactDto: ContactsDto):
-      tuple[name: string, optionalName: string, image: string, largeImage: string] =
-    ## This proc should be used accross the app in order to have for the same contact
-    ## same image and name displayed everywhere in the app.
-    result.name = contactDto.userDefaultDisplayName()
-    result.optionalName = contactDto.userOptionalName()
-    if(contactDto.image.thumbnail.len > 0):
-      result.image = contactDto.image.thumbnail
-    if(contactDto.image.large.len > 0):
-      result.largeImage = contactDto.image.large
-
   proc getContactNameAndImage*(self: Service, publicKey: string):
       tuple[name: string, image: string, largeImage: string] =
     let contactDto = self.getContactById(publicKey)
@@ -407,18 +428,18 @@ QtObject:
 
   proc saveContact(self: Service, contact: ContactsDto) =
     # we must keep local contacts updated
-    self.contacts[contact.id] = contact
+    self.contacts[contact.id] = self.constructContactDetails(contact)
 
   proc updateContact(self: Service, contact: ContactsDto) =
     var signal = SIGNAL_CONTACT_ADDED
     let publicKey = contact.id
     if self.contacts.hasKey(publicKey):
-      if self.contacts[publicKey].added and not self.contacts[publicKey].removed and contact.added and not contact.removed:
+      if self.contacts[publicKey].details.added and not self.contacts[publicKey].details.removed and contact.added and not contact.removed:
         signal = SIGNAL_CONTACT_UPDATED
     if contact.removed:
       signal = SIGNAL_CONTACT_REMOVED
 
-    self.contacts[publicKey] = contact
+    self.contacts[publicKey] = self.constructContactDetails(contact)
     self.events.emit(signal, ContactArgs(contactId: publicKey))
 
   proc parseContactsResponse*(self: Service, response: RpcResponse[JsonNode]) =
@@ -554,19 +575,6 @@ QtObject:
     let data = ContactsStatusUpdatedArgs(statusUpdates: @[currentUserStatusUpdate])
     self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
 
-  proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
-    result = ContactDetails()
-    let contactDto = self.getContactById(pubKey)
-    let (name, optionalName, icon, _) = self.getContactNameAndImageInternal(contactDto)
-    result.defaultDisplayName = name
-    result.optionalName = optionalName
-    result.icon = icon
-    result.colorId = procs_from_visual_identity_service.colorIdOf(pubKey)
-    result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
-    result.details = contactDto
-    if not contactDto.ensVerified:
-      result.colorHash = procs_from_visual_identity_service.getColorHashAsJson(pubKey)
-
   proc markUntrustworthy*(self: Service, publicKey: string) =
     let response = status_contacts.markUntrustworthy(publicKey)
     if not response.error.isNil:
@@ -574,7 +582,7 @@ QtObject:
       return
 
     if self.contacts.hasKey(publicKey):
-      self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
+      self.contacts[publicKey].details.trustStatus = TrustStatus.Untrustworthy
 
     self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
       TrustArgs(publicKey: publicKey, isUntrustworthy: true))
@@ -595,8 +603,8 @@ QtObject:
       self.activityCenterService.parseActivityCenterResponse(response)
 
       if self.contacts.hasKey(publicKey):
-        self.contacts[publicKey].trustStatus = TrustStatus.Trusted
-        self.contacts[publicKey].verificationStatus = VerificationStatus.Trusted
+        self.contacts[publicKey].details.trustStatus = TrustStatus.Trusted
+        self.contacts[publicKey].details.verificationStatus = VerificationStatus.Trusted
 
         self.events.emit(SIGNAL_CONTACT_TRUSTED,
           TrustArgs(publicKey: publicKey, isUntrustworthy: false))
@@ -620,8 +628,8 @@ QtObject:
       self.activityCenterService.parseActivityCenterResponse(response)
 
       if self.contacts.hasKey(publicKey):
-        self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
-        self.contacts[publicKey].verificationStatus = VerificationStatus.Untrustworthy
+        self.contacts[publicKey].details.trustStatus = TrustStatus.Untrustworthy
+        self.contacts[publicKey].details.verificationStatus = VerificationStatus.Untrustworthy
 
         self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
           TrustArgs(publicKey: publicKey, isUntrustworthy: true))
@@ -636,9 +644,9 @@ QtObject:
       return
 
     if self.contacts.hasKey(publicKey):
-      self.contacts[publicKey].trustStatus = TrustStatus.Unknown
-      if self.contacts[publicKey].verificationStatus == VerificationStatus.Verified:
-        self.contacts[publicKey].verificationStatus = VerificationStatus.Unverified
+      self.contacts[publicKey].details.trustStatus = TrustStatus.Unknown
+      if self.contacts[publicKey].details.verificationStatus == VerificationStatus.Verified:
+        self.contacts[publicKey].details.verificationStatus = VerificationStatus.Unverified
 
     self.events.emit(SIGNAL_REMOVED_TRUST_STATUS,
       TrustArgs(publicKey: publicKey, isUntrustworthy: false))
