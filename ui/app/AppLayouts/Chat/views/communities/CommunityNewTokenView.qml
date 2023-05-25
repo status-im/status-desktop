@@ -209,7 +209,7 @@ StatusScrollView {
             id: assetDecimalsInput
 
             visible: root.isAssetView
-            label: qsTr("Decimals")
+            label: qsTr("Decimals (DP)")
             charLimit: 2
             charLimitLabel: qsTr("Max 10")
             placeholderText: "2"
