@@ -250,20 +250,20 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
 
   return initUserItem(
-    pubKey = contactDetails.details.id,
-    displayName = contactDetails.details.displayName,
-    ensName = contactDetails.details.name,
-    isEnsVerified = contactDetails.details.ensVerified,
-    localNickname = contactDetails.details.localNickname,
-    alias = contactDetails.details.alias,
+    pubKey = contactDetails.dto.id,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
     colorHash = contactDetails.colorHash,
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
-    isContact = contactDetails.details.isContact(),
-    isVerified = contactDetails.details.isContactVerified(),
-    isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
-    isBlocked = contactDetails.details.isBlocked(),
+    isContact = contactDetails.dto.isContact(),
+    isVerified = contactDetails.dto.isContactVerified(),
+    isUntrustworthy = contactDetails.dto.isContactUntrustworthy(),
+    isBlocked = contactDetails.dto.isBlocked(),
   )
 
 proc initContactRequestsModel(self: Module) =
@@ -573,7 +573,7 @@ method addNewChat*(
     let contactDetails = self.controller.getContactDetails(chatDto.id)
     chatName = contactDetails.defaultDisplayName
     chatImage = contactDetails.icon
-    blocked = contactDetails.details.isBlocked()
+    blocked = contactDetails.dto.isBlocked()
     isUsersListAvailable = false
     colorHash = self.controller.getColorHash(chatDto.id)
     colorId = self.controller.getColorId(chatDto.id)
@@ -912,9 +912,9 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   if(self.controller.isCommunity()):
     return
   let contactDetails = self.controller.getContactDetails(publicKey)
-  if (contactDetails.details.isContactRequestReceived() and
-    not contactDetails.details.isContactRequestSent() and
-    not contactDetails.details.isBlocked() and
+  if (contactDetails.dto.isContactRequestReceived() and
+    not contactDetails.dto.isContactRequestSent() and
+    not contactDetails.dto.isBlocked() and
     not self.view.contactRequestsModel().isContactWithIdAdded(publicKey)):
       let item = self.createItemFromPublicKey(publicKey)
       self.view.contactRequestsModel().addItem(item)
@@ -924,7 +924,7 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
 
   let chatName = contactDetails.defaultDisplayName
   let chatImage = contactDetails.icon
-  let trustStatus = contactDetails.details.trustStatus
+  let trustStatus = contactDetails.dto.trustStatus
   self.view.chatsModel().updateItemDetailsById(publicKey, chatName, chatImage, trustStatus)
 
 method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string,

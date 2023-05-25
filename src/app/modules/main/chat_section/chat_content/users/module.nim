@@ -63,9 +63,9 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().setName(
     publicKey,
-    contactDetails.details.displayName,
-    contactDetails.details.name,
-    contactDetails.details.localNickname
+    contactDetails.dto.displayName,
+    contactDetails.dto.name,
+    contactDetails.dto.localNickname
     )
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
@@ -77,15 +77,15 @@ method contactUpdated*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().updateItem(
     pubKey = publicKey,
-    displayName = contactDetails.details.displayName,
-    ensName = contactDetails.details.name,
-    isEnsVerified = contactDetails.details.ensVerified,
-    localNickname = contactDetails.details.localNickname,
-    alias = contactDetails.details.alias,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
-    isContact = contactDetails.details.isContact,
-    isVerified = contactDetails.details.isContactVerified(),
-    isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
+    isContact = contactDetails.dto.isContact,
+    isVerified = contactDetails.dto.isContactVerified(),
+    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
   )
 
 method userProfileUpdated*(self: Module) =
@@ -119,20 +119,20 @@ proc addChatMember(self: Module,  member: ChatMember) =
 
   self.view.model().addItem(initMemberItem(
     pubKey = member.id,
-    displayName = contactDetails.details.displayName,
-    ensName = contactDetails.details.name,
-    isEnsVerified = contactDetails.details.ensVerified,
-    localNickname = contactDetails.details.localNickname,
-    alias = contactDetails.details.alias,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
     colorHash = contactDetails.colorHash,
     onlineStatus = status,
-    isContact = contactDetails.details.isContact,
-    isVerified = contactDetails.details.isContactVerified(),
+    isContact = contactDetails.dto.isContact,
+    isVerified = contactDetails.dto.isContactVerified(),
     isAdmin = member.admin,
     joined = member.joined,
-    isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy
+    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy
     ))
 
 method onChatMembersAdded*(self: Module, ids: seq[string]) =
@@ -158,17 +158,17 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().updateItem(
     pubKey = publicKey,
-    displayName = contactDetails.details.displayName,
-    ensName = contactDetails.details.name,
-    isEnsVerified = contactDetails.details.ensVerified,
-    localNickname = contactDetails.details.localNickname,
-    alias = contactDetails.details.alias,
+    displayName = contactDetails.dto.displayName,
+    ensName = contactDetails.dto.name,
+    isEnsVerified = contactDetails.dto.ensVerified,
+    localNickname = contactDetails.dto.localNickname,
+    alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
-    isContact = contactDetails.details.isContact,
-    isVerified = contactDetails.details.isContactVerified(),
+    isContact = contactDetails.dto.isContact,
+    isVerified = contactDetails.dto.isContactVerified(),
     isAdmin = admin,
     joined = joined,
-    isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
+    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
     )
 
 method addGroupMembers*(self: Module, pubKeys: seq[string]) =

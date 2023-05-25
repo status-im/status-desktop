@@ -65,7 +65,7 @@ proc createChatItem(self: Module, chatDto: ChatDto): Item =
   var itemType = item.Type.GroupChat
   if(chatDto.chatType == ChatType.OneToOne):
     let contactDetails = self.controller.getContactDetails(chatDto.id)
-    chatName = contactDetails.details.displayName
+    chatName = contactDetails.dto.displayName
     chatImage = contactDetails.icon
     itemType = item.Type.OneToOneChat
 

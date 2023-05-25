@@ -247,15 +247,15 @@ QtObject:
     of ModelRole.QuotedMessageDeleted:
       result = newQVariant(item.quotedMessageDeleted)
     of ModelRole.QuotedMessageAuthorName:
-      result = newQVariant(item.quotedMessageAuthorDetails.details.name)
+      result = newQVariant(item.quotedMessageAuthorDetails.dto.name)
     of ModelRole.QuotedMessageAuthorDisplayName:
       result = newQVariant(item.quotedMessageAuthorDisplayName)
     of ModelRole.QuotedMessageAuthorThumbnailImage:
       result = newQVariant(item.quotedMessageAuthorAvatar)
     of ModelRole.QuotedMessageAuthorEnsVerified:
-      result = newQVariant(item.quotedMessageAuthorDetails.details.ensVerified)
+      result = newQVariant(item.quotedMessageAuthorDetails.dto.ensVerified)
     of ModelRole.QuotedMessageAuthorIsContact:
-      result = newQVariant(item.quotedMessageAuthorDetails.details.isContact())
+      result = newQVariant(item.quotedMessageAuthorDetails.dto.isContact())
     of ModelRole.QuotedMessageAuthorColorHash:
       result = newQVariant(item.quotedMessageAuthorDetails.colorHash)
     of ModelRole.MessageText:
