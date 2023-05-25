@@ -54,13 +54,25 @@ const fetchDetailsForAddressesTask*: Task = proc(argEncoded: string) {.gcsafe, n
       "details": "",
       "error": ""
     }
+    var jsonReponse = %* {
+      "address": address,
+      "alreadyCreated": false,
+      "path": "",
+      "hasActivity": false
+    }
     try:
-      let response = status_go_accounts.getAddressDetails(arg.chainId, address)
+      var response = status_go_accounts.addressExists(address)
+      if response.result.getBool:
+        jsonReponse["alreadyCreated"] = %*true
+      else:
+        response = status_go_accounts.getAddressDetails(arg.chainId, address)
+        jsonReponse = response.result
       sleep(250)
-      data["details"] = response.result
+      data["details"] = jsonReponse
     except Exception as e:
-      let err = fmt"Error fetching details for an address: {e.msg}"
-      data["error"] = %* err
+      if not jsonReponse["alreadyCreated"].getBool:
+        let err = fmt"Error fetching details for an address: {e.msg}"
+        data["error"] = %* err
     arg.finish(data)
 
 #################################################
@@ -112,7 +124,7 @@ const addKeycardOrAddAccountsIfKeycardIsAddedTask*: Task = proc(argEncoded: stri
     }
     arg.finish(responseJson)
   except Exception as e:
-    error "error adding new keycard: ", message = e.msg  
+    error "error adding new keycard: ", message = e.msg
     arg.finish("")
 
 #################################################
@@ -137,5 +149,5 @@ const removeMigratedAccountsForKeycardTask*: Task = proc(argEncoded: string) {.g
     }
     arg.finish(responseJson)
   except Exception as e:
-    error "error remove accounts from keycard: ", message = e.msg  
+    error "error remove accounts from keycard: ", message = e.msg
     arg.finish("")
