@@ -690,7 +690,7 @@ QtObject:
           "DiscV5BootstrapNodes": @[]
         }
 
-      let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPassword.toUpperAscii())
+      let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
       if isOldHashPassword:
         # Start loading screen with warning
         self.events.emit(SIGNAL_REENCRYPTION_PROCESS_STARTED, Args())
@@ -719,7 +719,7 @@ QtObject:
 
   proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
     # Reencryption (can freeze and take up to 30 minutes)
-    let oldHashedPassword = self.tmpHashedPassword.toUpperAscii()
+    let oldHashedPassword = hashedPasswordToUpperCase(self.tmpHashedPassword)
     discard status_privacy.changeDatabaseHashedPassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
 
     # Normal login after reencryption
