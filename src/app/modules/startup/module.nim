@@ -421,8 +421,9 @@ method onNodeLogin*[T](self: Module[T], error: string) =
   else:
     self.moveToStartupState()
     if currStateObj.flowType() == state.FlowType.AppLogin:
-      self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
-      self.controller.runLoginFlow()
+      if self.controller.isSelectedLoginAccountKeycardAccount():
+        self.view.setCurrentStartupState(newLoginState(state.FlowType.AppLogin, nil))
+        self.controller.runLoginFlow()
       self.emitAccountLoginError(error)
     else:
       self.emitStartupError(error, StartupErrorType.SetupAccError)
