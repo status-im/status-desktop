@@ -115,20 +115,20 @@ SplitView {
                     RadioButton {
                         id: mintingInProgress
                         text: "In progress"
-                        onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.InProgress
+                        onCheckedChanged: if(checked) view.deployState = Constants.ContractTransactionStatus.InProgress
                     }
 
                     RadioButton {
                         id: mintingFailed
                         text: "Failed"
-                        onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.Failed
+                        onCheckedChanged: if(checked) view.deployState = Constants.ContractTransactionStatus.Failed
                     }
 
                     RadioButton {
                         id: mintingCompleted
                         text: "Completed"
                         checked: true
-                        onCheckedChanged: if(checked) view.deployState = Constants.BackendProcessState.Completed
+                        onCheckedChanged: if(checked) view.deployState = Constants.ContractTransactionStatus.Completed
                     }
                 }
 

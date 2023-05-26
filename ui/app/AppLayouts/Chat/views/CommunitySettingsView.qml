@@ -334,11 +334,11 @@ StatusSectionLayout {
                                                      accountName,
                                                      artworkCropRect)
                 }
-                onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(selfDestructTokensList, contractUniqueKey)
+                onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(selfDestructTokensList, tokenKey)
                 onRemoteSelfDestructCollectibles: {
                     communityTokensStore.remoteSelfDestructCollectibles(root.community.id,
                                                                         selfDestructTokensList,
-                                                                        contractUniqueKey)
+                                                                        tokenKey)
                 }
                 onSignBurnTransactionOpened: communityTokensStore.computeBurnFee(chainId)
                 onBurnCollectibles: communityTokensStore.burnCollectibles(tokenKey, amount)

@@ -68,17 +68,17 @@ SettingsPageLayout {
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
     signal signSelfDestructTransactionOpened(var selfDestructTokensList, // [key , amount]
-                                             string contractUniqueKey)
+                                             string tokenKey)
 
     signal remoteSelfDestructCollectibles(var selfDestructTokensList, // [key , amount]
-                                          string contractUniqueKey)
+                                          string tokenKey)
 
     signal signBurnTransactionOpened(int chainId)
 
     signal burnCollectibles(string tokenKey,
                             int amount)
 
-    signal airdropCollectible(string key)
+    signal airdropCollectible(string tokenKey)
 
     function setFeeLoading() {
         root.isFeeLoading = true
@@ -114,7 +114,7 @@ SettingsPageLayout {
         property var selfDestructTokensList
         property bool selfDestruct
         property bool burnEnabled
-        //property string tokenKey -- TODO: Backend key role
+        property string tokenKey
         property int burnAmount
         property int remainingTokens
         property url artworkSource
@@ -234,7 +234,7 @@ SettingsPageLayout {
                 Layout.preferredWidth: root.viewWidth
                 Layout.fillHeight: true
 
-                currentIndex: optionsTab.currentItem == collectiblesTab ? 0 : 1
+                currentIndex: optionsTab.currentItem === collectiblesTab ? 0 : 1
 
                 CommunityNewTokenView {
                     viewWidth: root.viewWidth
@@ -438,9 +438,9 @@ SettingsPageLayout {
                 function signTransaction() {
                     root.setFeeLoading()
                     if(signTransactionPopup.isRemotelyDestructTransaction) {
-                        root.remoteSelfDestructCollectibles(d.selfDestructTokensList, d.contractUniqueKey)
+                        root.remoteSelfDestructCollectibles(d.selfDestructTokensList, d.tokenKey)
                     } else {
-                        root.burnCollectibles("TODO - KEY"/*d.tokenKey*/, d.burnAmount)
+                        root.burnCollectibles(d.tokenKey, d.burnAmount)
                     }
 
                     footerPanel.closePopups()
@@ -457,7 +457,7 @@ SettingsPageLayout {
 
                 onOpened: {
                     root.setFeeLoading()
-                    signTransactionPopup.isRemotelyDestructTransaction ? root.signSelfDestructTransactionOpened(d.selfDestructTokensList, d.contractUniqueKey) :
+                    signTransactionPopup.isRemotelyDestructTransaction ? root.signSelfDestructTransactionOpened(d.selfDestructTokensList, d.tokenKey) :
                                                                          root.signBurnTransactionOpened(d.chainId)
                 }
                 onCancelClicked: close()
@@ -490,15 +490,14 @@ SettingsPageLayout {
             onItemClicked: {
                 d.accountAddress = accountAddress
                 d.chainId = chainId
-                d.contractUniqueKey = contractUniqueKey
                 d.chainName = chainName
                 d.accountName = accountName
-                //d.tokenKey = key // TODO: Backend key role
+                d.tokenKey = contractUniqueKey
                 stackManager.push(d.tokenViewState,
                                   tokenView,
                                   {
                                       preview: false,
-                                      index
+                                      contractUniqueKey
                                   },
                                   StackView.Immediate)
             }
@@ -511,7 +510,7 @@ SettingsPageLayout {
         CommunityTokenView {
             id: view
 
-            property int index // TODO: Update it to key when model has role key implemented
+            property string contractUniqueKey
 
             viewWidth: root.viewWidth
 
@@ -562,12 +561,11 @@ SettingsPageLayout {
             Instantiator {
                 id: instantiator
 
-
                 model: SortFilterProxyModel {
                     sourceModel: root.tokensModel
-                    filters: IndexFilter {
-                        minimumIndex: view.index
-                        maximumIndex: view.index
+                    filters: ValueFilter {
+                        roleName: "contractUniqueKey"
+                        value: view.contractUniqueKey
                     }
                 }
                 delegate: QtObject {

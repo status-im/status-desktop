@@ -33,6 +33,7 @@ QtObject {
 
         Component.onCompleted: append([
                                           {
+                                              contractUniqueKey: "0x1726362343",
                                               tokenType: 2,
                                               name: "SuperRare artwork",
                                               image: ModelsData.banners.superRare,
@@ -50,6 +51,7 @@ QtObject {
                                               accountName: "Status Account"
                                           },
                                           {
+                                              contractUniqueKey: "0x847843",
                                               tokenType: 2,
                                               name: "Kitty artwork",
                                               image: ModelsData.collectibles.kitty1Big,
@@ -67,6 +69,7 @@ QtObject {
                                               accountName: "Status New Account"
                                           },
                                           {
+                                              contractUniqueKey: "0x1234525",
                                               tokenType: 2,
                                               name: "More artwork",
                                               image: ModelsData.banners.status,
@@ -84,6 +87,7 @@ QtObject {
                                               accountName: "Other Account"
                                           },
                                           {
+                                              contractUniqueKey: "0x38576852",
                                               tokenType: 2,
                                               name: "Crypto Punks artwork",
                                               image: ModelsData.banners.cryptPunks,
@@ -108,6 +112,7 @@ QtObject {
 
         Component.onCompleted: append([
                                           {
+                                              contractUniqueKey: "0x38745623865",
                                               tokenType: 1,
                                               name: "Unisocks",
                                               image: ModelsData.assets.socks,
@@ -124,6 +129,7 @@ QtObject {
                                               accountName: "Status SNT Account"
                                           },
                                           {
+                                              contractUniqueKey: "0x872364871623",
                                               tokenType: 1,
                                               name: "Dai",
                                               image: ModelsData.assets.dai,
