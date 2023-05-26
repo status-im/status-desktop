@@ -98,7 +98,7 @@ var NETWORKS* = %* [
   {
     "chainId": 1,
     "chainName": "Ethereum Mainnet",
-    "rpcUrl": "https://eth-mainnet.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "rpcUrl": "https://eth-archival.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
@@ -114,7 +114,7 @@ var NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Goerli",
-    "rpcUrl": "https://eth-goerli.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
+    "rpcUrl": "https://goerli-archival.gateway.pokt.network/v1/lb/" & POKT_TOKEN_RESOLVED,
     "fallbackUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Testnet",
