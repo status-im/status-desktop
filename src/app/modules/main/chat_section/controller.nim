@@ -440,8 +440,8 @@ proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string, ensName: st
 proc leaveChat*(self: Controller, chatId: string) =
   self.chatService.leaveChat(chatId)
 
-proc muteChat*(self: Controller, chatId: string) =
-  self.chatService.muteChat(chatId)
+proc muteChat*(self: Controller, chatId: string, interval: int) =
+  self.chatService.muteChat(chatId, interval)
 
 proc unmuteChat*(self: Controller, chatId: string) =
   self.chatService.unmuteChat(chatId)

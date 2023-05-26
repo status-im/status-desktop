@@ -32,7 +32,7 @@ StatusMenu {
     signal displayProfilePopup(string publicKey)
     signal requestAllHistoricMessages(string chatId)
     signal unmuteChat(string chatId)
-    signal muteChat(string chatId)
+    signal muteChat(string chatId, int interval)
     signal markAllMessagesRead(string chatId)
     signal clearChatHistory(string chatId)
     signal downloadMessages(string file)
@@ -89,12 +89,20 @@ StatusMenu {
     }
 
     MuteChatMenuItem {
-        muted: root.chatMuted
+        enabled: !root.chatMuted
+        isCommunityChat: root.isCommunityChat
+
+        onMuteTriggered: {
+            root.muteChat(root.chatId, interval)
+        }
+    }
+
+    StatusAction {
+        enabled: root.chatMuted
+        text: root.isCommunityChat ? qsTr("Unmute Channel") : qsTr("Unmute Chat")
+        icon.name: "notification"
         onTriggered: {
-            if(root.chatMuted)
-                root.unmuteChat(root.chatId)
-            else
-                root.muteChat(root.chatId)
+            root.unmuteChat(root.chatId)
         }
     }
 

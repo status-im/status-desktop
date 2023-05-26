@@ -89,7 +89,7 @@ method getMyChatId*(self: AccessInterface): string {.base.} =
 method isMyContact*(self: AccessInterface, contactId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method muteChat*(self: AccessInterface) {.base.} =
+method muteChat*(self: AccessInterface, interval: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method unmuteChat*(self: AccessInterface) {.base.} =

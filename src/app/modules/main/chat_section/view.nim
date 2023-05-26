@@ -194,8 +194,8 @@ QtObject:
       return
     return $jsonObj
 
-  proc muteChat*(self: View, chatId: string) {.slot.} =
-    self.delegate.muteChat(chatId)
+  proc muteChat*(self: View, chatId: string, interval: int) {.slot.} =
+    self.delegate.muteChat(chatId, interval)
 
   proc unmuteChat*(self: View, chatId: string) {.slot.} =
     self.delegate.unmuteChat(chatId)

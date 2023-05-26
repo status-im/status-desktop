@@ -344,7 +344,7 @@ Item {
                 }
 
                 onMuteChat: {
-                    root.communitySectionModule.muteChat(chatId)
+                    root.communitySectionModule.muteChat(chatId, interval)
                 }
 
                 onUnmuteChat: {

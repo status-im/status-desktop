@@ -997,4 +997,13 @@ QtObject {
         RejectedMembers,
         BannedMembers
     }
+
+    enum MutingVariations {
+        For15min = 1,
+        For1hr = 2,
+        For8hr = 3,
+        For1week = 4,
+        TillUnmuted = 5,
+        For1min = 6
+    }
 }
