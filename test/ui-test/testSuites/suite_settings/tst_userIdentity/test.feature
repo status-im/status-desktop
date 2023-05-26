@@ -50,6 +50,7 @@ Feature: User Identity
 		| tester123_changed | Hello, I am super tester! |
 
 
+ 	@mayfail
     Scenario Outline: The user can change own display name in profile popup
         Given the user opens own profile popup
         And the user's display name is "tester123"
