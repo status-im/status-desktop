@@ -84,9 +84,12 @@ MenuItem {
             rotation: 0
             // Link to standard Qt properties. Not because it's a good idea,
             // but because it we use it in some places and it will make refactor easier.
-            name: d.isSubMenu ? "" : (d.hasAction ? root.action.icon.name : root.icon.name)
-            source: d.isSubMenu ? "" : (d.hasAction ? root.action.icon.source : root.icon.source)
-            color: d.isSubMenu ? "" : (d.hasAction ? root.action.icon.color : root.icon.color)
+            name: d.isSubMenu ? (d.isStatusSubMenu ? root.subMenu.assetSettings.name : "")
+                              : (d.hasAction ? root.action.icon.name : root.icon.name)
+            source: d.isSubMenu ? (d.isStatusSubMenu ? root.subMenu.assetSettings.source : "")
+                                : (d.hasAction ? root.action.icon.source : root.icon.source)
+            color: d.isSubMenu ? (d.isStatusSubMenu ? root.subMenu.assetSettings.color : "")
+                               : (d.hasAction ? root.action.icon.color : root.icon.color)
         }
 
         readonly property StatusFontSettings defaultFontSettings: StatusFontSettings {

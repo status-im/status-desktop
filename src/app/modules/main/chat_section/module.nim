@@ -763,8 +763,8 @@ method createOneToOneChat*(self: Module, communityID: string, chatId: string, en
 method leaveChat*(self: Module, chatId: string) =
   self.controller.leaveChat(chatId)
 
-method muteChat*(self: Module, chatId: string) =
-  self.controller.muteChat(chatId)
+method muteChat*(self: Module, chatId: string, interval: int) =
+  self.controller.muteChat(chatId, interval)
 
 method unmuteChat*(self: Module, chatId: string) =
   self.controller.unmuteChat(chatId)

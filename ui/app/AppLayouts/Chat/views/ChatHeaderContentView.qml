@@ -163,7 +163,7 @@ Item {
                         console.debug("error on mute chat from context menu - chat content module is not set")
                         return
                     }
-                    chatContentModule.muteChat()
+                    chatContentModule.muteChat(interval)
                 }
 
                 onUnmuteChat: {

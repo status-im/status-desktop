@@ -162,7 +162,7 @@ Item {
                     }
 
                     onMuteChat: {
-                        root.chatSectionModule.muteChat(chatId)
+                        root.chatSectionModule.muteChat(chatId, interval)
                     }
 
                     onUnmuteChat: {

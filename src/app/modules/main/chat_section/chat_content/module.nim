@@ -260,8 +260,8 @@ method getMyChatId*(self: Module): string =
 method isMyContact*(self: Module, contactId: string): bool =
   self.controller.getMyMutualContacts().filter(x => x.id == contactId).len > 0
 
-method muteChat*(self: Module) =
-  self.controller.muteChat()
+method muteChat*(self: Module, interval: int) =
+  self.controller.muteChat(interval)
 
 method unmuteChat*(self: Module) =
   self.controller.unmuteChat()

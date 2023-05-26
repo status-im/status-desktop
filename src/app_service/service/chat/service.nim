@@ -573,13 +573,13 @@ QtObject:
     except Exception as e:
       error "Error requesting transaction", msg = e.msg
 
-  proc muteChat*(self: Service, chatId: string) =
+  proc muteChat*(self: Service, chatId: string, interval: int) =
     try:
       if(chatId.len == 0):
         error "error trying to mute chat with an empty id"
         return
 
-      let response = status_chat.muteChat(chatId)
+      let response = status_chat.muteChat(chatId, interval)
       if(not response.error.isNil):
         let msg = response.error.message & " chatId=" & chatId
         error "error while mute chat ", msg
