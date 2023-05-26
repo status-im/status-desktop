@@ -9,6 +9,7 @@
 # *****************************************************************************/
 import copy
 import sys
+import squish
 import test
 
 import configs
