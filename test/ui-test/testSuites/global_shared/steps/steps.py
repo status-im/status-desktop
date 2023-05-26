@@ -17,7 +17,7 @@ import time
 # *****************************************************************************
 import common.Common as common
 import steps.commonInitSteps as init_steps
-import drivers.SquishDriver as driver
+from drivers.SquishDriver import start_application
 from screens.StatusChatScreen import StatusChatScreen
 from screens.StatusMainScreen import StatusMainScreen
 
@@ -108,8 +108,8 @@ def step(context, obj):
 ###########################################################################
 
 def the_user_restarts_the_app(context: any):
-    driver.detach()
-    driver.start_application(clear_user_data=False)
+    [ctx.detach() for ctx in squish.applicationContextList()]
+    start_application(context.userData["aut_name"])
 
 
 def the_user_joins_chat_room(room: str):

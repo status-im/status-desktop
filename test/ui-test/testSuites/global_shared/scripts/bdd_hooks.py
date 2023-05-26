@@ -4,7 +4,6 @@
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../testSuites/global_shared/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
-import drivers.SquishDriver as driver
 from steps.commonInitSteps import context_init
 
 
@@ -16,7 +15,9 @@ def hook(context):
 
 @OnScenarioEnd
 def hook(context):
-    driver.detach()
+    ctx = currentApplicationContext()
+    ctx.detach()
+    assert waitFor(lambda: not ctx.isRunning, _app_closure_timeout), 'Detach application failed'
 
 
 @OnStepEnd
