@@ -41,7 +41,7 @@ StatusIconTabButton {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
             if (mouse.button === Qt.RightButton) {
-                if (typeof popupMenuSlot.sourceComponent !== "undefined" && !popupMenuSlot.active)
+                if (!!popupMenuSlot.sourceComponent && !popupMenuSlot.active)
                     popupMenuSlot.active = true
                 if (popupMenuSlot.active) {
                     statusNavBarTabButton.highlighted = true
