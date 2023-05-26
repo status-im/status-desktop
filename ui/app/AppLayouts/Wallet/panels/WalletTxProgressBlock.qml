@@ -45,11 +45,6 @@ ColumnLayout {
         readonly property int progress: (Math.floor(Date.now() / 1000) - root.timeStamp) / 3600
     }
 
-    Separator {
-        Layout.fillWidth: true
-        implicitHeight: 1
-    }
-
     StatusTxProgressBar {
         id: progressBar
         Layout.topMargin: 8
@@ -132,11 +127,5 @@ ColumnLayout {
                 text: LocaleUtils.formatDateTime(root.timeStamp * 1000, Locale.LongFormat)
             }
         }
-    }
-
-    Separator {
-        Layout.fillWidth: true
-        Layout.topMargin: 8
-        implicitHeight: 1
     }
 }

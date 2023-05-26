@@ -137,7 +137,6 @@ Rectangle {
     MouseArea {
         id: sensor
 
-        z: 1 // Gives ability to hide siblings under the MouseArea
         anchors.fill: parent
         cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.NoButton
@@ -289,7 +288,7 @@ Rectangle {
                     objectName: "statusListItemSubTitle"
 
                     Layout.alignment: Qt.AlignVCenter
-                    Layout.preferredWidth: inlineTagModelRepeater.count > 0 ? contentWidth : parent.width
+                    Layout.preferredWidth: inlineTagModelRepeater.count > 0 ? contentWidth : parent.width - subTitleBadgeLoader.width
 
                     text: root.subTitle
                     font.pixelSize: 15

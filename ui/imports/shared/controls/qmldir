@@ -26,6 +26,7 @@ Timer 1.0 Timer.qml
 TransactionDelegate 1.0 TransactionDelegate.qml
 TransactionAddress 1.0 TransactionAddress.qml
 TransactionAddressTile 1.0 TransactionAddressTile.qml
+TransactionDataTile 1.0 TransactionDataTile.qml
 TransactionFormGroup 1.0 TransactionFormGroup.qml
 EmojiHash 1.0 EmojiHash.qml
 InformationTile 1.0 InformationTile.qml
