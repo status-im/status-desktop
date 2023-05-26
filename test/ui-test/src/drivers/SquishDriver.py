@@ -46,7 +46,7 @@ def start_application(
     if clear_user_data:
         filesMngr.clear_directory(str(app_data_dir / 'data'))
     app_data_dir.mkdir(parents=True, exist_ok=True)
-    ExecutableAut(fp).start(f'--datadir={app_data_dir}')
+    ExecutableAut(fp).start(f'--dataDir={app_data_dir}')
     toplevelwindow.ToplevelWindow(squish.waitForObject(names.statusDesktop_mainWindow)).maximize()
 
 
