@@ -15,12 +15,9 @@ import configs
 import names
 import object
 import objectMap
-import toplevelwindow
-import utils.FileManager as filesMngr
 # IMPORTANT: It is necessary to import manually the Squish drivers module by module.
 # More info in: https://kb.froglogic.com/display/KB/Article+-+Using+Squish+functions+in+your+own+Python+modules+or+packages
 from objectmaphelper import Wildcard
-from utils.system_path import SystemPath
 
 from .aut import *  # noqa
 from .context import *  # noqa
@@ -36,18 +33,6 @@ _MIN_WAIT_OBJ_TIMEOUT = 500
 _MAX_WAIT_APP_TIMEOUT = 15000
 
 _SEARCH_IMAGES_PATH = "../shared/searchImages/"
-
-
-def start_application(
-        fp: SystemPath = configs.path.AUT,
-        app_data_dir: SystemPath = configs.path.STATUS_APP_DATA,
-        clear_user_data: bool = True
-):
-    if clear_user_data:
-        filesMngr.clear_directory(str(app_data_dir / 'data'))
-    app_data_dir.mkdir(parents=True, exist_ok=True)
-    ExecutableAut(fp).start(f'--datadir={app_data_dir}')
-    toplevelwindow.ToplevelWindow(squish.waitForObject(names.statusDesktop_mainWindow)).maximize()
 
 
 # Waits for the given object is loaded, visible and enabled.

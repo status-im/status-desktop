@@ -108,8 +108,7 @@ def step(context, obj):
 ###########################################################################
 
 def the_user_restarts_the_app(context: any):
-    driver.detach()
-    driver.start_application(clear_user_data=False)
+    driver.restart_application(context)
 
 
 def the_user_joins_chat_room(room: str):
