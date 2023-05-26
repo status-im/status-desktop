@@ -6,6 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
 import drivers.SquishDriver as driver
 from steps.commonInitSteps import context_init
+import configs
 
 
 @OnScenarioStart

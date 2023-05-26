@@ -10,6 +10,7 @@ import steps.commonInitSteps as init_steps
 @OnFeatureStart
 def hook(context):
     init_steps.context_init(context, testSettings)  
+    context.userData['aut'] = []
 
 @OnScenarioEnd
 def hook(context):

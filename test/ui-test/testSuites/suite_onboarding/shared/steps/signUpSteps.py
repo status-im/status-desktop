@@ -1,6 +1,7 @@
 import steps.commonInitSteps as init_steps
 from screens.StatusWelcomeScreen import StatusWelcomeScreen
 from screens.StatusMainScreen import StatusMainScreen
+import builtins
 
 _welcomeScreen = StatusWelcomeScreen()
 _mainScreen = StatusMainScreen()
@@ -83,6 +84,10 @@ def step(context, password: str):
 @When("the user lands on the signed in app")
 def step(context):
     the_user_lands_on_the_signed_in_app()
+
+@When("the user maximizes the \"|any|\" application window")
+def step(context, index):
+    init_steps.switch_aut_context(context, builtins.int(index)-1)
     
 #########################
 ### VERIFICATIONS region:

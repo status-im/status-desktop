@@ -1,10 +1,14 @@
 """It defines starting-up or driving-the-app-into-an-idle-state static methods outside bdd context that can be reused in different `hooks` as well as in specific bdd steps files."""
 
 import os
+from datetime import datetime
 
+import constants
+import configs
 import utils.FileManager as filesMngr
 import common.Common as common
 import configs
+import drivers.SquishDriver as driver
 
 from screens.StatusWelcomeScreen import StatusWelcomeScreen
 from screens.StatusMainScreen import StatusMainScreen
@@ -37,6 +41,7 @@ def context_init(context, testSettings, screenshot_on_fail = True):
 
     filesMngr.erase_directory(_status_qt_path)
     context.userData = {}
+    context.userData['aut'] = []
     context.userData[_aut_name] = _status_desktop_app_name
     context.userData[_status_data_folder] = _status_data_folder_path
     context.userData[_fixtures_root] = os.path.join(os.path.dirname(__file__), _status_fixtures_folder_path)
@@ -59,12 +64,16 @@ def context_init(context, testSettings, screenshot_on_fail = True):
     context.userData[_fixtures_root] = os.path.join(joined_path, "fixtures/")
 
 def a_first_time_user_lands_on(context):
-    common.start_application()
+    driver.start_application(context)
+
+def switch_aut_context(context, index: int):
+    for _index, aut in enumerate(context.userData['aut']):
+        if _index != index:
+            aut.attach().window.minimize()
+    context.userData['aut'][index].attach().window.prepare()
 
 def a_user_starts_the_application_with_a_specific_data_folder(context, data_folder_path):
-    filesMngr.clear_directory(configs.path.STATUS_USER_DATA)
-    filesMngr.copy_directory(data_folder_path, str(configs.path.STATUS_USER_DATA))
-    common.start_application(clear_user_data=False)
+    driver.start_application(context, user_data=data_folder_path)
 
 def a_first_time_user_lands_on_and_generates_new_key(context):
     a_first_time_user_lands_on(context)
@@ -76,7 +85,7 @@ def a_user_lands_on_and_generates_new_key(context):
     welcome_screen.generate_new_key()
 
 def a_first_time_user_lands_on_and_navigates_to_import_seed_phrase(context):
-    common.start_application()
+    driver.start_application(context)
     welcome_screen = StatusWelcomeScreen()
     welcome_screen.agree_terms_conditions_and_navigate_to_import_seed_phrase()
 
