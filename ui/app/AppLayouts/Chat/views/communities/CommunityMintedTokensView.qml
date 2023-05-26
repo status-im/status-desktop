@@ -17,9 +17,8 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property var model
 
-    signal itemClicked(int index,
+    signal itemClicked(string contractUniqueKey,
                        int chainId,
-                       string contractUniqueKey,
                        string chainName,
                        string accountName,
                        string accountAddress)
@@ -97,7 +96,7 @@ StatusScrollView {
                         color: Theme.palette.baseColor1
                     }
                 ]
-                onClicked: root.itemClicked(model.index, model.chainId, model.chainName, model.accountName, model.address) // TODO: Replace to model.key when role exists in backend
+                onClicked: root.itemClicked(model.contractUniqueKey, model.chainId, model.chainName, model.accountName, model.address)
             }
         }
 
@@ -147,7 +146,7 @@ StatusScrollView {
                 isLoading: false
                 navigationIconVisible: true
 
-                onClicked: root.itemClicked(model.index, model.chainId, model.contractUniqueKey, model.chainName, model.accountName, model.address)
+                onClicked: root.itemClicked(model.contractUniqueKey, model.chainId, model.chainName, model.accountName, model.address)
             }
         }
 

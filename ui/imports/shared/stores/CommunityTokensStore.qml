@@ -62,12 +62,12 @@ QtObject {
         communityTokensModuleInst.computeDeployFee(chainId, accountAddress)
     }
 
-    function computeSelfDestructFee(selfDestructTokensList, contractUniqueKey) {
-        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(selfDestructTokensList), contractUniqueKey)
+    function computeSelfDestructFee(selfDestructTokensList, tokenKey) {
+        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(selfDestructTokensList), tokenKey)
     }
 
-    function remoteSelfDestructCollectibles(communityId, selfDestructTokensList, contractUniqueKey) {
-        communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(selfDestructTokensList), contractUniqueKey)
+    function remoteSelfDestructCollectibles(communityId, selfDestructTokensList, tokenKey) {
+        communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(selfDestructTokensList), tokenKey)
     }
 
     // Burn:
@@ -77,7 +77,7 @@ QtObject {
         console.warn("TODO: Compute burn fee backend")
     }
 
-    function burnCollectibles(tokenKey,burnAmount) {
+    function burnCollectibles(tokenKey, burnAmount) {
         // TODO BACKEND
         console.warn("TODO: Burn collectible backend")
     }
