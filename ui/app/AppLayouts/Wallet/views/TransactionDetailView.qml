@@ -48,9 +48,16 @@ Item {
         readonly property string bridgeNetworkFullname: ""  // TODO fill when bridge data is implemented
         readonly property string bridgeNetworkShortName: "" // TODO fill when bridge data is implemented
         readonly property int bridgeBlockNumber: 0 // TODO fill when bridge data is implemented
+        readonly property double swapCryptoValue: 0 // TODO fill when swap data is implemented
         readonly property string swapSymbol: "" // TODO fill when swap data is implemented
         readonly property string symbol: root.isTransactionValid ? transaction.symbol : ""
         readonly property var multichainNetworks: [] // TODO fill icon for networks for multichain
+        readonly property double cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
+        readonly property double fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, RootStore.currentCurrency): 0.0
+        readonly property string fiatValueFormatted: root.isTransactionValid ? RootStore.formatCurrencyAmount(d.fiatValue, RootStore.currentCurrency) : ""
+        readonly property string cryptoValueFormatted: root.isTransactionValid ? LocaleUtils.currencyAmountToLocaleString(transaction.value) : ""
+        readonly property real feeEthValue: root.isTransactionValid ? RootStore.getGasEthValue(transaction.totalFees.amount, 1) : 0
+        readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, "ETH", RootStore.currentCurrency) : 0
 
         function getNameForSavedWalletAddress(address) {
             return RootStore.getNameForSavedWalletAddress(address)
@@ -84,8 +91,8 @@ Item {
                     modelData: transaction
                     transactionType: d.isIncoming ? TransactionDelegate.Receive : TransactionDelegate.Send
                     currentCurrency: RootStore.currentCurrency
-                    cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
-                    fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
+                    cryptoValue: d.cryptoValue
+                    fiatValue: d.fiatValue
                     networkIcon: d.networkIcon
                     networkColor: root.isTransactionValid ? RootStore.getNetworkColor(transaction.chainId): ""
                     networkName: d.networkFullName
@@ -401,54 +408,125 @@ Item {
                 }
             }
 
-            StatusExpandableItem {
-                width: parent.width
-                anchors.horizontalCenter: parent.horizontalCenter
+            Column {
+                width: progressBlock.width
+                spacing: Style.current.smallPadding
+                visible: !(d.isNFT && d.isIncoming)
 
-                type: StatusExpandableItem.Type.Tertiary
-                expandable: true
-                primaryText: qsTr("Fees")
-                expandableComponent: fees
-                expanded: true
-            }
-        }
-    }
+                RowLayout {
+                    width: parent.width
+                    StatusBaseText {
+                        Layout.alignment: Qt.AlignLeft
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor5
+                        text: qsTr("Values")
+                        elide: Text.ElideRight
+                    }
 
-    Component {
-        id: fees
-        Column {
-            width: parent.width
-            spacing: 8
-            Row {
-                spacing: 8
-                InformationTile {
-                    id: baseFee
-                    maxWidth: parent.width
-                    primaryText: qsTr("Base fee")
-                    secondaryText: root.isTransactionValid ?  qsTr("%1").arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.baseGasFees)) : ""
+                    StatusBaseText {
+                        Layout.alignment: Qt.AlignRight
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor5
+                        text: root.isTransactionValid ? qsTr("as of %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)) : ""
+                        elide: Text.ElideRight
+                    }
                 }
-                InformationTile {
-                    maxWidth: parent.width
-                    primaryText: qsTr("Tip")
-                    secondaryText: root.isTransactionValid ?    "%1 <font color=\"%2\">&#8226; ".
-                                                                    arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.maxPriorityFeePerGas)).
-                                                                    arg(Theme.palette.baseColor1) +
-                                                                qsTr("Max: %1").
-                                                                    arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.maxFeePerGas)) +
-                                                                "</font>" : ""
-                    secondaryLabel.textFormat: Text.RichText
+
+                DetailsPanel {
+                    TransactionDataTile {
+                        width: parent.width
+                        title: qsTr("Amount sent")
+                        subTitle: d.cryptoValueFormatted
+                        tertiaryTitle: d.fiatValueFormatted
+                        visible: {
+                            if (d.isNFT)
+                                return false
+                            switch(transactionHeader.transactionType) {
+                            case TransactionDelegate.Send:
+                            case TransactionDelegate.Swap:
+                            case TransactionDelegate.Bridge:
+                                return true
+                            default:
+                                return false
+                            }
+                        }
+                    }
+                    TransactionDataTile {
+                        width: parent.width
+                        title: transactionHeader.transactionStatus === TransactionDelegate.Pending ? qsTr("Amount to receive") : qsTr("Amount received")
+                        subTitle: {
+                            if (d.isNFT)
+                                return ""
+                            const type = transactionHeader.transactionType
+                            if (type === TransactionDelegate.Swap) {
+                                return RootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
+                            } else if (type === TransactionDelegate.Bridge) {
+                                // Reduce crypto value by fee value
+                                const valueInCrypto = RootStore.getCryptoValue(d.fiatValue - d.feeFiatValue, d.symbol, RootStore.currentCurrency)
+                                return RootStore.formatCurrencyAmount(valueInCrypto, d.symbol)
+                            }
+                            return ""
+                        }
+                        tertiaryTitle: {
+                            const type = transactionHeader.transactionType
+                            if (type === TransactionDelegate.Swap) {
+                                return RootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
+                            } else if (type === TransactionDelegate.Bridge) {
+                                return RootStore.formatCurrencyAmount(d.fiatValue - d.feeFiatValue, RootStore.currentCurrency)
+                            }
+                            return ""
+                        }
+                        visible: !!subTitle
+                    }
+                    TransactionDataTile {
+                        width: parent.width
+                        title: qsTr("Fees")
+                        subTitle: {
+                            if (!root.isTransactionValid || d.isNFT)
+                                return ""
+                            switch(transactionHeader.transactionType) {
+                            case TransactionDelegate.Send:
+                            case TransactionDelegate.Swap:
+                            case TransactionDelegate.Bridge:
+                                return LocaleUtils.currencyAmountToLocaleString(root.transaction.totalFees)
+                            default:
+                                return ""
+                            }
+                        }
+                        tertiaryTitle: !!subTitle ? RootStore.formatCurrencyAmount(d.feeFiatValue, RootStore.currentCurrency) : ""
+                        visible: !!subTitle
+                    }
+                    TransactionDataTile {
+                        width: parent.width
+                        // Using fees in this tile because of same higlight and color settings as Total
+                        title: transactionHeader.transactionType === TransactionDelegate.Destroy || d.isNFT ? qsTr("Fees") : qsTr("Total")
+                        subTitle: {
+                            if (d.isNFT && d.isIncoming)
+                                return ""
+                            const type = transactionHeader.transactionType
+                            if (type === TransactionDelegate.Destroy || d.isNFT) {
+                                return RootStore.formatCurrencyAmount(d.feeEthValue, "ETH")
+                            } else if (type === TransactionDelegate.Receive || (type === TransactionDelegate.Buy && progressBlock.isLayer1)) {
+                                return d.cryptoValueFormatted
+                            }
+                            return "%1 + %2".arg(d.cryptoValueFormatted).arg(RootStore.formatCurrencyAmount(d.feeEthValue, "ETH"))
+                        }
+                        tertiaryTitle: {
+                            if (d.isNFT && d.isIncoming)
+                                return ""
+                            const type = transactionHeader.transactionType
+                            if (type === TransactionDelegate.Destroy || d.isNFT) {
+                                return RootStore.formatCurrencyAmount(d.feeFiatValue, RootStore.currentCurrency)
+                            } else if (type === TransactionDelegate.Receive || (type === TransactionDelegate.Buy && progressBlock.isLayer1)) {
+                                return d.fiatValueFormatted
+                            }
+                            return RootStore.formatCurrencyAmount(d.fiatValue + d.feeFiatValue, RootStore.currentCurrency)
+                        }
+                        visible: !!subTitle
+                        highlighted: true
+                        statusListItemTertiaryTitle.customColor: Theme.palette.directColor1
+                    }
                 }
-            }
-            InformationTile {
-                maxWidth: parent.width
-                primaryText: qsTr("Total fee")
-                secondaryText: root.isTransactionValid ?    "%1 <font color=\"%2\">&#8226; ".
-                                                                arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.totalFees)).
-                                                                arg(Theme.palette.baseColor1) +
-                                                            qsTr("Max: %1").
-                                                                arg(LocaleUtils.currencyAmountToLocaleString(root.transaction.maxTotalFees)) +
-                                                            "</font>" : ""
-                secondaryLabel.textFormat: Text.RichText
             }
         }
     }

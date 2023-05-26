@@ -25,4 +25,6 @@ QtObject {
     property var getNameForAddress
     property var getEnsForSavedWalletAddress
     property var getChainShortNamesForSavedWalletAddress
+    property var getGasEthValue
+    property var getNetworkLayer
 }

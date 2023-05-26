@@ -58,7 +58,7 @@ StatusListItem {
 
     leftPadding: 12
     rightPadding: 12
-    height: implicitHeight + bottomPadding
+    height: visible ? implicitHeight + bottomPadding : 0
     radius: 0
     sensor.cursorShape: Qt.ArrowCursor
 
