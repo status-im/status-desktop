@@ -31,7 +31,7 @@ Rectangle {
         height: statusRoundedIcon.asset.height
 
         color: statusRoundedIcon.asset.color
-        icon: statusRoundedIcon.asset.name
+        icon: statusRoundedIcon.asset.name || statusRoundedIcon.asset.source
         rotation: statusRoundedIcon.asset.rotation
     }
 }
