@@ -414,6 +414,7 @@ QtObject {
         readonly property int contactRequestType: 11
         readonly property int discordMessageType: 12
         readonly property int systemMessagePinnedMessage: 14
+        readonly property int systemMessageMutualStateUpdate: 15
     }
 
     readonly property QtObject messageModelRoles: QtObject {

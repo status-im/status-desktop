@@ -111,7 +111,6 @@ Loader {
     property bool isEmoji: messageContentType === Constants.messageContentType.emojiType
     property bool isImage: messageContentType === Constants.messageContentType.imageType || (isDiscordMessage && messageImage != "")
     property bool isAudio: messageContentType === Constants.messageContentType.audioType
-    property bool isStatusMessage: messageContentType === Constants.messageContentType.systemMessagePrivateGroupType
     property bool isSticker: messageContentType === Constants.messageContentType.stickerType
     property bool isDiscordMessage: messageContentType === Constants.messageContentType.discordMessageType
     property bool isText: messageContentType === Constants.messageContentType.messageType || messageContentType === Constants.messageContentType.contactRequestType || isDiscordMessage
@@ -195,8 +194,9 @@ Loader {
             return channelIdentifierComponent
         case Constants.messageContentType.fetchMoreMessagesButton:
             return fetchMoreMessagesButtonComponent
-        case Constants.messageContentType.systemMessagePrivateGroupType:
-            return privateGroupHeaderComponent
+        case Constants.messageContentType.systemMessagePrivateGroupType: // no break
+        case Constants.messageContentType.systemMessageMutualStateUpdate:
+            return systemMessageComponent
         case Constants.messageContentType.systemMessagePinnedMessage:
             return systemMessagePinnedMessageComponent
         case Constants.messageContentType.gapType:
@@ -271,6 +271,8 @@ Loader {
                 return StatusMessage.ContentType.DiscordMessage;
             case Constants.messageContentType.systemMessagePinnedMessage:
                 return StatusMessage.ContentType.SystemMessagePinnedMessage;
+            case Constants.messageContentType.systemMessageMutualStateUpdate:
+                return StatusMessage.ContentType.SystemMessageMutualStateUpdate;
             case Constants.messageContentType.fetchMoreMessagesButton:
             case Constants.messageContentType.chatIdentifier:
             case Constants.messageContentType.unknownContentType:
@@ -345,11 +347,13 @@ Loader {
         }
     }
 
-    // Private group Messages
     Component {
-        id: privateGroupHeaderComponent
+        id: systemMessageComponent
+
         StyledText {
             wrapMode: Text.Wrap
+
+            readonly property string systemMessageText: root.messageText.length > 0 ? root.messageText : root.unparsedText
             text: {
                 return `<html>`+
                         `<head>`+
@@ -361,14 +365,13 @@ Loader {
                         `</style>`+
                         `</head>`+
                         `<body>`+
-                        `${messageText}`+
+                        `${systemMessageText}`+
                         `</body>`+
                         `</html>`;
             }
-            visible: isStatusMessage
             font.pixelSize: 14
             color: Style.current.secondaryText
-            width:  parent.width - 120
+            width: parent.width - 120
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
@@ -478,6 +481,7 @@ Loader {
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessagePrivateGroupType ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessagePinnedMessage ||
+                            root.prevMessageContentType === Constants.messageContentType.systemMessageMutualStateUpdate ||
                             root.senderId !== root.prevMessageSenderId
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 0
@@ -970,6 +974,4 @@ Loader {
             }
         }
     }
-
-
 }
