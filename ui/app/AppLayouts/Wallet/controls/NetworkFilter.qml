@@ -31,7 +31,7 @@ StatusComboBox {
 
         property string selectedChainName: ""
         property string selectedIconUrl: ""
-        property bool allSelected: root.enabledNetworks.count === root.allNetworks.count
+        readonly property bool allSelected: root.enabledNetworks.count === root.allNetworks.count
 
         // Persist selection between selectPopupLoader reloads
         property var currentModel: layer1Networks
@@ -97,7 +97,7 @@ StatusComboBox {
                     visible: image.source !== ""
                     border.width: index === 0 ? 0 : 1
                     border.color: Theme.palette.white
-                    image.source: Style.svg("tiny/" + model.iconUrl)
+                    image.source: Style.svg(model.iconUrl)
                     z: index + 1
                 }
             }
