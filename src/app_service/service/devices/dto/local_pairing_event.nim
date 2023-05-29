@@ -1,3 +1,5 @@
+import json
+include ../../../common/[json_utils]
 import ../../../../app/core/eventemitter
 import ../../accounts/dto/accounts
 import installation
@@ -23,11 +25,16 @@ type
     ActionPairingInstallation = 4,
 
 type
+  LocalPairingAccountData* = ref object
+    account*: AccountDTO
+    password*: string
+
+type
   LocalPairingEventArgs* = ref object of Args
     eventType*: EventType
     action*: Action
     error*: string
-    account*: AccountDTO
+    accountData*: LocalPairingAccountData
     installation*: InstallationDto
 
 proc parse*(self: string): EventType =
@@ -63,3 +70,12 @@ proc parse*(self: int): Action =
       return ActionPairingInstallation
     else:
       return ActionUnknown
+
+
+proc toLocalPairingAccountData*(jsonObj: JsonNode): LocalPairingAccountData =
+  result = LocalPairingAccountData()
+  discard jsonObj.getProp("password", result.password)
+
+  var accountObj: JsonNode
+  if(jsonObj.getProp("account", accountObj)):
+    result.account = toAccountDto(accountObj)

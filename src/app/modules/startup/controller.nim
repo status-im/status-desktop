@@ -56,6 +56,7 @@ type
     tmpKeychainErrorOccurred: bool
     tmpRecoverUsingSeedPhraseWhileLogin: bool
     tmpConnectionString: string
+    localPairingStatus: LocalPairingStatus
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -167,8 +168,8 @@ proc init*(self: Controller) =
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
-    let args = LocalPairingStatus(e)
-    self.delegate.onLocalPairingStatusUpdate(args)
+    self.localPairingStatus = LocalPairingStatus(e)
+    self.delegate.onLocalPairingStatusUpdate(self.localPairingStatus)
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_REENCRYPTION_PROCESS_STARTED) do(e: Args):
@@ -446,6 +447,10 @@ proc login*(self: Controller) =
   self.delegate.moveToLoadingAppState()
   let selectedAccount = self.getSelectedLoginAccount()
   self.accountsService.login(selectedAccount, hashPassword(self.tmpPassword))
+
+proc loginLocalPairingAccount*(self: Controller) =
+  self.delegate.moveToLoadingAppState()
+  self.accountsService.login(self.localPairingStatus.account, self.localPairingStatus.password)
 
 proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, syncWalletAfterLogin = false) =
   if syncWalletAfterLogin:
