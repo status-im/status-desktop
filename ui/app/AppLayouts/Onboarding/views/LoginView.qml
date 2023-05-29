@@ -138,7 +138,7 @@ Item {
             if (error) {
                 if (!root.startupStore.selectedLoginAccount.keycardCreatedAccount) {
                     // SQLITE_NOTADB: "file is not a database"
-                    if (error === "file is not a database") {
+                    if (error === "file is not a database" || error.startsWith("failed to set ")) {
                         txtPassword.validationError = qsTr("Password incorrect")
                     } else {
                         txtPassword.validationError = qsTr("Login failed: %1").arg(error.toUpperCase())
