@@ -89,6 +89,8 @@ Item {
             anchors.fill: parent
             changeSelectedAccount: function(address) {
                 RootStore.setFilterAddress(address)
+                if (!!rightPanelStackView.currentItem.resetView)
+                    rightPanelStackView.currentItem.resetView()
             }
             selectAllAccounts: function() {
                 RootStore.setFillterAllAddresses()
