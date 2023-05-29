@@ -291,6 +291,7 @@ class StatusCommunityScreen:
         type_text(CommunitySettingsComponents.EDIT_COMMUNITY_DESCRIPTION_INPUT.value, new_community_description)
 
     def change_community_color(self, new_community_color: str):
+        # TODO: fix scroll to the color component on Mac https://github.com/status-im/desktop-qa-automation/issues/57
         scroll_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_SCROLL_VIEW.value)
         scroll_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_SCROLL_VIEW.value)
         scroll_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_SCROLL_VIEW.value)
@@ -305,7 +306,6 @@ class StatusCommunityScreen:
     
     def edit_community(self, new_community_name: str, new_community_description: str, new_community_color: str):
         self.open_edit_community_by_community_header()
-
         self.change_community_name(new_community_name)
         self.change_community_description(new_community_description)
         self.change_community_color(new_community_color)
