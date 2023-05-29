@@ -88,17 +88,6 @@ Feature: Status Desktop community
             | new_community_name       | new_community_description  | new_community_color |
             | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
 
-    Scenario Outline: The admin edits a community name, description and color
-        When the admin renames the community to "<new_community_name>" and description to "<new_community_description>" and color to "<new_community_color>"
-        Then the community overview name is "<new_community_name>"
-        And the community overview description is "<new_community_description>"
-        And the community overview color is "<new_community_color>"
-        When the admin goes back to the community
-        Then the user lands on the community named "<new_community_name>"
-        Examples:
-            | new_community_name       | new_community_description  | new_community_color |
-            | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
-
     Scenario Outline: The admin changes the emoji of a channel
         When the admin changes the current community channel emoji to "<new_emoji_description>"
         Then the community channel has emoji "<new_emoji>"
