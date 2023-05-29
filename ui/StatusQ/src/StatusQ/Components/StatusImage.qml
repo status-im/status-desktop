@@ -27,7 +27,7 @@ Image {
     id: root
 
     /*!
-        \qmlproperty bool StatusAnimatedImage::isLoading
+        \qmlproperty bool StatusImage::isLoading
 
         \c true when the image is currently being loaded (status === Image.Loading).
         \c false otherwise.
@@ -35,7 +35,7 @@ Image {
     */
     readonly property bool isLoading: status === Image.Loading
     /*!
-        \qmlproperty bool StatusAnimatedImage::isError
+        \qmlproperty bool StatusImage::isError
 
         \c true when an error occurred while loading the image (status === Image.Error).
         \c false otherwise.
@@ -47,7 +47,10 @@ Image {
     fillMode: Image.PreserveAspectFit
 
     onSourceChanged: {
-        if (sourceSize.width < width || sourceSize.height < height) {
+        // SVGs must have sourceSize, PNGs not; otherwise blurry
+        if (source.toString().endsWith(".svg"))
+            sourceSize = Qt.binding(() => Qt.size(width, height))
+        else if (sourceSize.width < width || sourceSize.height < height) {
             sourceSize = Qt.binding(() => Qt.size(width * 2, height * 2))
         } else {
             sourceSize = undefined
