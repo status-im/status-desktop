@@ -42,8 +42,14 @@ def step(context):
     the_group_chat_is_created()
      
 @Given("the user clicks on \"|any|\" chat")
+@When("the user clicks on \"|any|\" chat")
 def step(context, chatName):
     _statusMain.open_chat(chatName)
+
+@When("the user wait for \"|any|\" chat and open it")
+def step(context, chatName):
+    _statusMain.wait_and_open_chat(chatName)
+
     
 @Given("the user opens the edit group chat popup")
 def step(context):

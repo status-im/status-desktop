@@ -131,7 +131,7 @@ class StatusChatScreen:
     ### Screen actions region:
     #####################################
     def type_message(self, message: str):
-        type_text(ChatComponents.MESSAGE_INPUT.value, message)
+        TextEdit(ChatComponents.MESSAGE_INPUT.value).type_text(message)
 
     def press_enter(self):
         press_enter(ChatComponents.MESSAGE_INPUT.value)
@@ -160,7 +160,7 @@ class StatusChatScreen:
             click_obj_by_name(ChatComponents.DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON.value)
 
     def group_chat_edit_name(self, name):
-        setText(GroupChatEditPopup.GROUP_CHAT_EDIT_NAME.value, name)
+        TextEdit(GroupChatEditPopup.GROUP_CHAT_EDIT_NAME.value).text = name
 
     def group_chat_edit_save(self):
         # save may be disabled, eg. if color from scenario is already set

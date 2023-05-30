@@ -97,7 +97,14 @@ class StatusMainScreen:
         verify(is_displayed(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value, 15000), "Verifying if the Messages headline is displayed")
 
     def wait_for_splash_animation_ends(self, timeoutMSec: int = configs.squish.APP_LOAD_TIMEOUT_MSEC):
-        SplashScreen().wait_until_appears().wait_until_hidden(timeoutMSec)
+        splash_screen = SplashScreen()
+        try:
+            splash_screen.wait_until_appears()
+        except AssertionError as err:
+            if not BaseElement("mainWindow_ContactsColumn_Messages_Headline").is_visible:
+                raise err
+        else:
+            splash_screen.wait_until_hidden(timeoutMSec)
 
     def open_chat_section(self):
         click_obj_by_name(MainScreenComponents.CHAT_NAVBAR_ICON.value)
@@ -110,7 +117,7 @@ class StatusMainScreen:
         time.sleep(0.5)
 
     def open_start_chat_view(self):
-        click_obj_by_name(MainScreenComponents.START_CHAT_BTN.value)
+        Button(MainScreenComponents.START_CHAT_BTN.value).click(x=1, y=1)
 
     def open_chat(self, chatName: str):
         [loaded, chat_button] = self._find_chat(chatName)
@@ -121,6 +128,17 @@ class StatusMainScreen:
     def verify_chat_does_not_exist(self, chatName: str):
         [loaded, chat_button] = self._find_chat(chatName)
         verify_false(loaded, "Chat "+chatName+ " exists")
+    
+    def wait_and_open_chat(self, chat: str):
+        started_at = time.monotonic()
+        while True:
+            loaded, chat_button = self._find_chat(chat)
+            if loaded:
+                click_obj(chat_button)
+                break
+            time.sleep(1)
+            if time.monotonic() - started_at > 60:
+                raise RuntimeError('Chat not found')
 
     def _find_chat(self, chatName: str):
         [loaded, chat_lists] = is_loaded(MainScreenComponents.CHAT_LIST.value)

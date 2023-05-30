@@ -28,6 +28,11 @@ def hook(context):
     context.userData["step_name"] = context._data["text"]
 
 
+@OnScenarioStart
+def hook(context):
+    context.userData['aut'] = []
+
+
 @OnScenarioEnd
 def hook(context):
     [ctx.detach() for ctx in squish.applicationContextList()]
