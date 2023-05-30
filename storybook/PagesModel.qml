@@ -298,6 +298,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusDatePicker"
+        section: "Components"
+    }
+    ListElement {
         title: "StatusDateRangePicker"
         section: "Components"
     }
