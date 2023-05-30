@@ -66,7 +66,7 @@ method changePassword*(self: Module, password: string, newPassword: string) =
 method isMnemonicBackedUp*(self: Module): bool =
   return self.controller.isMnemonicBackedUp()
 
-method onMnemonicUpdated*(self: Module) =
+method mnemonicBackedUp*(self: Module) =
   self.view.emitMnemonicBackedUpSignal()
 
 method onPasswordChanged*(self: Module, success: bool, errorMsg: string) =
@@ -97,7 +97,7 @@ method getPasswordStrengthScore*(self: Module, password: string): int =
 method onStoreToKeychainError*(self: Module, errorDescription: string, errorType: string) =
   self.view.emitStoreToKeychainError(errorDescription)
 
-method onStoreToKeychainSuccess*(self: Module, data: string) = 
+method onStoreToKeychainSuccess*(self: Module, data: string) =
   if self.keychainActivityReason == KeychainActivityReason.StoreTo:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
   elif self.keychainActivityReason == KeychainActivityReason.RemoveFrom:

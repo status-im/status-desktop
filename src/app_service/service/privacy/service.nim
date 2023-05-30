@@ -13,7 +13,6 @@ logScope:
   topics = "privacy-service"
 
 # Signals which may be emitted by this service:
-const SIGNAL_MNEMONIC_REMOVAL* = "menmonicRemoval"
 const SIGNAL_PASSWORD_CHANGED* = "passwordChanged"
 
 type
@@ -115,8 +114,6 @@ QtObject:
     if(not self.settingsService.saveMnemonic("")):
       data.success = false
       error "error: ", procName="removeMnemonic", errDesription = "an error occurred removing mnemonic"
-
-    self.events.emit(SIGNAL_MNEMONIC_REMOVAL, data)
 
   proc getMnemonicWordAtIndex*(self: Service, index: int): string =
     let mnemonic = self.settingsService.getMnemonic()

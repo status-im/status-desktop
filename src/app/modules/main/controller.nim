@@ -290,7 +290,7 @@ proc init*(self: Controller) =
     var args = TrustArgs(e)
     self.delegate.contactUpdated(args.publicKey)
 
-  self.events.on(SIGNAL_MNEMONIC_REMOVAL) do(e: Args):
+  self.events.on(SIGNAL_MNEMONIC_REMOVED) do(e: Args):
     self.delegate.mnemonicBackedUp()
 
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
