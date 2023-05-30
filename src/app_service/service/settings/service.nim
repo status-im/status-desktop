@@ -24,6 +24,7 @@ const DEFAULT_FLEET* = $Fleet.StatusProd
 const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
 const SIGNAL_DISPLAY_NAME_UPDATED* = "displayNameUpdated"
 const SIGNAL_BIO_UPDATED* = "bioUpdated"
+const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 
 logScope:
@@ -98,6 +99,9 @@ QtObject:
           if settingsField.name == KEY_BIO:
             self.settings.bio = settingsField.value
             self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: settingsField.value))
+          if settingsField.name == KEY_MNEMONIC:
+            self.settings.mnemonic = ""
+            self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
 
     self.initialized = true
 
@@ -236,6 +240,7 @@ QtObject:
   proc saveMnemonic*(self: Service, value: string): bool =
     if(self.saveSetting(KEY_MNEMONIC, value)):
       self.settings.mnemonic = value
+      self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
       return true
     return false
 

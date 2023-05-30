@@ -41,7 +41,7 @@ method getMnemonicWordAtIndex*(self: AccessInterface, index: int): string {.base
   raise newException(ValueError, "No implementation available")
 
 # Controller Delegate Interface
-method onMnemonicUpdated*(self: AccessInterface) {.base.} =
+method mnemonicBackedUp*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onPasswordChanged*(self: AccessInterface, success: bool, errorMsg: string) {.base.} =

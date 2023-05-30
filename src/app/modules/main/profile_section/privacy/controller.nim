@@ -63,8 +63,8 @@ proc init*(self: Controller) =
       return
     self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
 
-  self.events.on(SIGNAL_MNEMONIC_REMOVAL) do(e: Args):
-    self.delegate.onMnemonicUpdated()
+  self.events.on(SIGNAL_MNEMONIC_REMOVED) do(e: Args):
+    self.delegate.mnemonicBackedUp()
 
   self.events.on(SIGNAL_PASSWORD_CHANGED) do(e: Args):
     var args = OperationSuccessArgs(e)
@@ -97,7 +97,7 @@ proc setMessagesFromContactsOnly*(self: Controller, value: bool): bool =
 proc validatePassword*(self: Controller, password: string): bool =
   return self.privacyService.validatePassword(password)
 
-method getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
+method getPasswordStrengthScore*(self: Controller, password, userName: string): int =
   return self.generalService.getPasswordStrengthScore(password, userName)
 
 proc storeToKeychain*(self: Controller, data: string) =
