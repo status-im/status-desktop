@@ -27,7 +27,9 @@ proc newService*(events: EventEmitter, settingsService: settings_service.Service
   result.settingsService = settingsService
 
 proc init*(self: Service) =
-  discard
+  self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
+    let args = SettingsTextValueArgs(e)
+    singletonInstance.userProfile.setDisplayName(args.value)
 
 proc storeIdentityImage*(self: Service, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
   try:
@@ -74,8 +76,5 @@ proc setDisplayName*(self: Service, displayName: string) =
     if(not self.settingsService.saveDisplayName(displayName)):
       error "could save display name to the settings"
       return
-    
-    singletonInstance.userProfile.setDisplayName(displayName)
-
   except Exception as e:
     error "error: ", procName="setDisplayName", errName = e.name, errDesription = e.msg
