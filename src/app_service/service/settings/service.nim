@@ -20,19 +20,20 @@ const DEFAULT_CURRENCY* = "USD"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
 const DEFAULT_FLEET* = $Fleet.StatusProd
 
+# Signals:
+const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 
 logScope:
   topics = "settings-service"
 
 type
+  SettingsTextValueArgs* = ref object of Args
+    value*: string
+
   CurrentUserStatusArgs* = ref object of Args
     statusType*: StatusType
     text*: string
-
-type
-  SettingProfilePictureArgs* = ref object of Args
-    value*: int
 
 QtObject:
   type Service* = ref object of QObject
@@ -79,7 +80,7 @@ QtObject:
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
-      
+
       if receivedData.currentStatus.len > 0:
         var statusUpdate = receivedData.currentStatus[0]
         self.events.emit(SIGNAL_CURRENT_USER_STATUS_UPDATED, CurrentUserStatusArgs(statusType: statusUpdate.statusType, text: statusUpdate.text))
@@ -88,7 +89,8 @@ QtObject:
         for settingsField in receivedData.settings:
           if settingsField.name == KEY_CURRENCY:
             self.settings.currency = settingsField.value
-      
+            self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: settingsField.value))
+
     self.initialized = true
 
   proc initNotificationSettings(self: Service) =
@@ -131,6 +133,7 @@ QtObject:
   proc saveCurrency*(self: Service, value: string): bool =
     if(self.saveSetting(KEY_CURRENCY, value)):
       self.settings.currency = value.toLowerAscii()
+      self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
       return true
     return false
 
@@ -477,7 +480,7 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "saving allow notification setting error: ", errDesription
-      
+
   QtProperty[bool] notifSettingAllowNotifications:
     read = getNotifSettingAllowNotifications
     write = setNotifSettingAllowNotifications
@@ -511,7 +514,7 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "saving one to one setting error: ", errDesription
-      
+
   QtProperty[string] notifSettingOneToOneChats:
     read = getNotifSettingOneToOneChats
     write = setNotifSettingOneToOneChats
@@ -545,7 +548,7 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "saving group chats setting error: ", errDesription
-      
+
   QtProperty[string] notifSettingGroupChats:
     read = getNotifSettingGroupChats
     write = setNotifSettingGroupChats
@@ -613,7 +616,7 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "saving global mentions setting error: ", errDesription
-      
+
   QtProperty[string] notifSettingGlobalMentions:
     read = getNotifSettingGlobalMentions
     write = setNotifSettingGlobalMentions
@@ -681,7 +684,7 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "saving contact request setting error: ", errDesription
-      
+
   QtProperty[string] notifSettingContactRequests:
     read = getNotifSettingContactRequests
     write = setNotifSettingContactRequests
@@ -715,7 +718,7 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "saving identity verification request setting error: ", errDesription
-      
+
   QtProperty[string] notifSettingIdentityVerificationRequests:
     read = getNotifSettingIdentityVerificationRequests
     write = setNotifSettingIdentityVerificationRequests
@@ -827,7 +830,7 @@ QtObject:
   proc setNotifSettingExemptions*(self: Service, id: string, exemptions: NotificationsExemptions): bool =
     result = false
     try:
-      let response = status_settings.setExemptions(id, exemptions.muteAllMessages, exemptions.personalMentions, 
+      let response = status_settings.setExemptions(id, exemptions.muteAllMessages, exemptions.personalMentions,
       exemptions.globalMentions, exemptions.otherMessages)
       if(not response.error.isNil):
         error "error saving exemptions setting: ", id = id, errDescription = response.error.message
@@ -883,7 +886,7 @@ QtObject:
         error "error reading exemptions other messages request setting: ", id = id, errDescription = response.error.message
         return
       result.otherMessages = response.result.getStr
-      
+
     except Exception as e:
       let errDesription = e.msg
       error "reading exemptions setting error: ", id = id, errDesription

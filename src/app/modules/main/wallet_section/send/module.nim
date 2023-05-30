@@ -91,9 +91,6 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
@@ -150,13 +147,13 @@ method authenticateAndTransfer*(
 
   ##################################
   ## Do Not Delete
-  ## 
+  ##
   ## Once we start with signing a transactions we shold check if the address we want to send a transaction from is migrated
   ## or not. In case it's not we should just authenticate logged in user, otherwise we should use one of the keycards that
   ## address (key pair) is migrated to and sign the transaction using it.
-  ## 
+  ##
   ## The code bellow is an example how we can achieve that in future, when we start with signing transactions.
-  ## 
+  ##
   ## let acc = self.controller.getAccountByAddress(from_addr)
   ## if acc.isNil:
   ##   echo "error: selected account to send a transaction from is not known"
@@ -166,7 +163,7 @@ method authenticateAndTransfer*(
   ##   self.controller.authenticateUser()
   ## else:
   ##   self.controller.authenticateUser(acc.keyUid, acc.path)
-  ## 
+  ##
   ##################################
 
 method onUserAuthenticated*(self: Module, password: string) =
@@ -176,14 +173,14 @@ method onUserAuthenticated*(self: Module, password: string) =
   else:
     self.controller.transfer(
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
-      self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid, 
+      self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
       self.tmpSendTransactionDetails.selectedRoutes, password
     )
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
 
-method suggestedFees*(self: Module, chainId: int): string = 
+method suggestedFees*(self: Module, chainId: int): string =
   return self.controller.suggestedFees(chainId)
 
 method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
@@ -192,7 +189,7 @@ method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: s
 method suggestedRoutesReady*(self: Module, suggestedRoutes: string) =
   self.view.suggestedRoutesReady(suggestedRoutes)
 
-method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int = 
+method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int =
   return self.controller.getEstimatedTime(chainId, maxFeePerGas).int
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =

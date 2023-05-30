@@ -8,7 +8,6 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      currentCurrency: string
       totalCurrencyBalance: CurrencyAmount
       signingPhrase: string
       isMnemonicBackedUp: bool
@@ -33,19 +32,12 @@ QtObject:
 
   proc showToastAccountAdded*(self: View, name: string) {.signal.}
 
-  proc currentCurrencyChanged*(self: View) {.signal.}
-
   proc updateCurrency*(self: View, currency: string) {.slot.} =
     self.delegate.updateCurrency(currency)
-    self.currentCurrency = currency
-    self.currentCurrencyChanged()
-
-  proc getCurrentCurrency(self: View): QVariant {.slot.} =
-    return newQVariant(self.currentCurrency)
-
-  QtProperty[QVariant] currentCurrency:
+  proc getCurrentCurrency(self: View): string {.slot.} =
+    return self.delegate.getCurrentCurrency()
+  QtProperty[string] currentCurrency:
     read = getCurrentCurrency
-    notify = currentCurrencyChanged
 
   proc totalCurrencyBalanceChanged*(self: View) {.signal.}
 
@@ -81,10 +73,6 @@ QtObject:
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()
 
-  proc setCurrentCurrency*(self: View, currency: string) =
-    self.currentCurrency = currency
-    self.currentCurrencyChanged()
-
 # Returning a QVariant from a slot with parameters other than "self" won't compile
 #  proc getCurrencyAmount*(self: View, amount: float, symbol: string): QVariant {.slot.} =
 #    return newQVariant(self.delegate.getCurrencyAmount(amount, symbol))
@@ -100,11 +88,9 @@ QtObject:
     self.tmpSymbol = "ERROR"
     return newQVariant(currencyAmount)
 
-  proc setData*(self: View, currency, signingPhrase: string, mnemonicBackedUp: bool) =
-    self.currentCurrency = currency
+  proc setData*(self: View, signingPhrase: string, mnemonicBackedUp: bool) =
     self.signingPhrase = signingPhrase
     self.isMnemonicBackedUp = mnemonicBackedUp
-    self.currentCurrencyChanged()
 
   proc runAddAccountPopup*(self: View, addingWatchOnlyAccount: bool) {.slot.} =
     self.delegate.runAddAccountPopup(addingWatchOnlyAccount)
