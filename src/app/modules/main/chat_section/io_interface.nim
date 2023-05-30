@@ -105,10 +105,7 @@ method onNewMessagesReceived*(self: AccessInterface, sectionIdMsgBelongsTo: stri
   chatTypeMsgBelongsTo: ChatType, lastMessageTimestamp: int, unviewedMessagesCount: int, unviewedMentionsCount: int, message: MessageDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatMuted*(self: AccessInterface, chatId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onChatUnmuted*(self: AccessInterface, chatId: string) {.base.} =
+method changeMutedOnChat*(self: AccessInterface, chatId: string, muted: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onMarkAllMessagesRead*(self: AccessInterface, chat: ChatDto) {.base.} =
@@ -204,7 +201,7 @@ method muteChat*(self: AccessInterface, chatId: string, interval: int) {.base.} 
 method unmuteChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method muteCategory*(self: AccessInterface, categoryId: string) {.base.} =
+method muteCategory*(self: AccessInterface, categoryId: string, interval: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method unmuteCategory*(self: AccessInterface, categoryId: string) {.base.} =

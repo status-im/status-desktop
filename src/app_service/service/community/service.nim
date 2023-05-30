@@ -1648,9 +1648,9 @@ QtObject:
       error "Error sharing community", msg = e.msg
       result = "Error sharing community: " & e.msg
 
-  proc muteCategory*(self: Service, communityId: string, categoryId: string) =
+  proc muteCategory*(self: Service, communityId: string, categoryId: string, interval: int) =
     try:
-      let response = status_go.muteCategory(communityId, categoryId)
+      let response = status_go.muteCategory(communityId, categoryId, interval)
       if (not response.error.isNil):
         let msg = response.error.message & " categoryId=" & categoryId
         error "error while mute category ", msg
