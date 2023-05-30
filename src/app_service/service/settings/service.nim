@@ -22,6 +22,7 @@ const DEFAULT_FLEET* = $Fleet.StatusProd
 
 # Signals:
 const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
+const SIGNAL_DISPLAY_NAME_UPDATED* = "displayNameUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 
 logScope:
@@ -90,6 +91,9 @@ QtObject:
           if settingsField.name == KEY_CURRENCY:
             self.settings.currency = settingsField.value
             self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: settingsField.value))
+          if settingsField.name == KEY_DISPLAY_NAME:
+            self.settings.displayName = settingsField.value
+            self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: settingsField.value))
 
     self.initialized = true
 
@@ -185,6 +189,7 @@ QtObject:
   proc saveDisplayName*(self: Service, value: string): bool =
     if(self.saveSetting(KEY_DISPLAY_NAME, value)):
       self.settings.displayName = value
+      self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: self.settings.displayName))
       return true
     return false
 
