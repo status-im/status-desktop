@@ -42,6 +42,14 @@ QtObject {
         console.log("TODO: Deploy Asset backend!")
     }
 
+    function deleteToken(communityId, contractUniqueKey) {
+        console.log("TODO: Delete token bakend!")
+    }
+
+    function retryMintToken(communityId, contractUniqueKey) {
+        console.log("TODO: Retry mint token bakend!")
+    }
+
     readonly property Connections connections: Connections {
       target: communityTokensModuleInst
       function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {

@@ -97,38 +97,34 @@ SettingsPageLayout {
             PropertyChanges {target: root; title: qsTr("Permissions")}
             PropertyChanges {target: root; previousPageName: ""}
             PropertyChanges {target: root; content: welcomeView}
-            PropertyChanges {target: root; headerButtonVisible: true}
-            PropertyChanges {target: root; headerButtonText: qsTr("Add new permission")}
-            PropertyChanges {target: root; headerWidth: root.viewWidth}
+            PropertyChanges {target: root; primaryHeaderButton.visible: true}
+            PropertyChanges {target: root; primaryHeaderButton.text: qsTr("Add new permission")}
         },
         State {
             name: d.newPermissionViewState
             PropertyChanges {target: root; title: qsTr("New permission")}
             PropertyChanges {target: root; previousPageName: qsTr("Permissions")}
             PropertyChanges {target: root; content: newPermissionView}
-            PropertyChanges {target: root; headerButtonVisible: false}
-            PropertyChanges {target: root; headerWidth: 0}
+            PropertyChanges {target: root; primaryHeaderButton.visible: false}
         },
         State {
             name: d.permissionsViewState
             PropertyChanges {target: root; title: qsTr("Permissions")}
             PropertyChanges {target: root; previousPageName: ""}
             PropertyChanges {target: root; content: permissionsView}
-            PropertyChanges {target: root; headerButtonVisible: true}
-            PropertyChanges {target: root; headerButtonText: qsTr("Add new permission")}
-            PropertyChanges {target: root; headerWidth: root.viewWidth}
+            PropertyChanges {target: root; primaryHeaderButton.visible: true}
+            PropertyChanges {target: root; primaryHeaderButton.text: qsTr("Add new permission")}
         },
         State {
             name: d.editPermissionViewState
             PropertyChanges {target: root; title: qsTr("Edit permission")}
             PropertyChanges {target: root; previousPageName: qsTr("Permissions")}
             PropertyChanges {target: root; content: newPermissionView}
-            PropertyChanges {target: root; headerButtonVisible: false}
-            PropertyChanges {target: root; headerWidth: 0}
+            PropertyChanges {target: root; primaryHeaderButton.visible: false}
         }
     ]
 
-    onHeaderButtonClicked: {
+    onPrimaryHeaderButtonClicked: {
         if(root.state === d.welcomeViewState || root.state === d.permissionsViewState) {
             d.initializeData()
             root.state = d.newPermissionViewState

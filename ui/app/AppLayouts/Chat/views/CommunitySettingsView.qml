@@ -343,6 +343,8 @@ StatusSectionLayout {
                 onSignBurnTransactionOpened: communityTokensStore.computeBurnFee(chainId)
                 onBurnCollectibles: communityTokensStore.burnCollectibles(tokenKey, amount)
                 onAirdropCollectible: root.goTo(Constants.CommunitySettingsSections.Airdrops)
+                onDeleteToken: communityTokensStore.deleteToken(root.community.id, tokenKey)
+                onRetryMintToken: communityTokensStore.retryMintToken(root.community.id, tokenKey)
 
                 Connections {
                     target: rootStore.communityTokensStore
@@ -478,7 +480,7 @@ StatusSectionLayout {
 
                     function onAirdropCollectible(key) {
                         // Here it is forced a navigation to the new airdrop form, like if it was clicked the header button
-                        airdropPanel.headerButtonClicked()
+                        airdropPanel.primaryHeaderButtonClicked()
 
                         // Force a token selection to be airdroped with default amount 1
                         airdropPanel.selectCollectible(key, 1)

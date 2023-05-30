@@ -92,4 +92,4 @@ community_welcome_screen_subtitle = {"container": statusDesktop_mainWindow, "obj
 community_welcome_screen_checkList_element1 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_0", "type": "StatusBaseText", "visible": True}
 community_welcome_screen_checkList_element2 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_1", "type": "StatusBaseText", "visible": True}
 community_welcome_screen_checkList_element3 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_2", "type": "StatusBaseText", "visible": True}
-community_welcome_screen_add_new_item = {"container": statusDesktop_mainWindow, "objectName": "addNewItemActionButton", "type": "StatusButton", "visible": True}
+community_welcome_screen_add_new_item = {"container": statusDesktop_mainWindow, "objectName": "primaryHeaderButton", "type": "StatusButton", "visible": True}

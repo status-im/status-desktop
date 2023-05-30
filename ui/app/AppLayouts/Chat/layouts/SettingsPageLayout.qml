@@ -16,16 +16,15 @@ Item {
     property alias title: itemHeader.text
     property Component content
 
-
     // optional
     property Component footer
     property bool dirty: false
     property bool editable: false
-    property bool headerButtonVisible: false
-    property string headerButtonText: ""
-    property int headerWidth: 0
+    property int headerWidth: d.defaultContentWidth
     property string previousPageName: ""
     property bool saveChangesButtonEnabled: !!root.contentItem && !!root.contentItem.saveChangesButtonEnabled
+    property alias primaryHeaderButton: primaryHeaderBtn
+    property alias secondaryHeaderButton: secondaryHeaderBtn
     property alias saveChangesText: settingsDirtyToastMessage.saveChangesText
     property alias cancelChangesText: settingsDirtyToastMessage.cancelChangesText
     property alias changesDetectedText: settingsDirtyToastMessage.changesDetectedText
@@ -38,7 +37,15 @@ Item {
 
     signal saveChangesClicked
     signal resetChangesClicked
-    signal headerButtonClicked
+    signal primaryHeaderButtonClicked
+    signal secondaryHeaderButtonClicked
+
+    QtObject {
+        id: d
+
+        readonly property int leftMargin: 64
+        readonly property int defaultContentWidth: 560
+    }
 
     function reloadContent() {
         contentLoader.active = false
@@ -49,27 +56,28 @@ Item {
         settingsDirtyToastMessage.notifyDirty()
     }
 
-    implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
+    implicitWidth: layout.implicitWidth
 
     ColumnLayout {
         id: layout
 
         anchors.fill: parent
+        anchors.bottomMargin: 24
         spacing: 16
 
         RowLayout {
-            Layout.maximumWidth: root.headerWidth === 0 ? parent.width : (root.headerWidth + itemHeader.Layout.leftMargin)
-            Layout.preferredHeight: 56
+            Layout.leftMargin: d.leftMargin
+            Layout.maximumWidth: root.headerWidth
+            Layout.maximumHeight: 44
+
+            spacing: 9
 
             RowLayout {
                 Layout.alignment: Qt.AlignVCenter
-                Layout.fillWidth: true
 
                 StatusBaseText {
                     id: itemHeader
-
-                    Layout.leftMargin: 64
 
                     color: Theme.palette.directColor1
                     font.pixelSize: 26
@@ -87,22 +95,40 @@ Item {
                 }
             }
 
+            // Filler
+            Item {
+                Layout.fillWidth: true
+            }
+
             StatusButton {
-                objectName: "addNewItemActionButton"
-                visible: root.headerButtonVisible
-                text: root.headerButtonText
-                Layout.preferredHeight: 44
-                Layout.alignment: Qt.AlignHCenter
-                onClicked: root.headerButtonClicked()
+                id: secondaryHeaderBtn
+
+                Layout.fillHeight: true
+
+                objectName: "secondaryHeaderButton"
+                visible: false
+
+                onClicked: root.secondaryHeaderButtonClicked()
+            }
+
+            StatusButton {
+                id: primaryHeaderBtn
+
+                Layout.fillHeight: true
+
+                objectName: "primaryHeaderButton"
+                visible: false
+
+                onClicked: root.primaryHeaderButtonClicked()
             }
         }
 
         Loader {
             id: contentLoader
+
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.topMargin: 16
-            Layout.leftMargin: 64
+            Layout.leftMargin: d.leftMargin
             Layout.rightMargin: 24
 
             sourceComponent: root.content
