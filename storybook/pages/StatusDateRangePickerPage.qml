@@ -34,8 +34,8 @@ SplitView {
             toTimestamp: Date.now()
             supportedStartYear: 1900
             onNewRangeSet: {
-                console.log(" from timeStamp = ",fromTimestamp)
-                console.log(" to timeStamp = ",toTimestamp)
+                console.warn(" from timeStamp = ", new Date(fromTimestamp).toISOString())
+                console.warn(" to timeStamp = ", new Date(toTimestamp).toISOString())
             }
         }
 
