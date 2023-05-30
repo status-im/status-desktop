@@ -124,6 +124,9 @@ method delete*(self: Module) =
 method updateCurrency*(self: Module, currency: string) =
   self.controller.updateCurrency(currency)
 
+method getCurrentCurrency*(self: Module): string =
+  self.controller.getCurrency()
+
 method setTotalCurrencyBalance*(self: Module) =
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance(self.filter.addresses))
 
@@ -154,7 +157,7 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
-    self.notifyFilterChanged()  
+    self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
     let args = AccountSaved(e)
     self.setTotalCurrencyBalance()
@@ -165,10 +168,6 @@ method load*(self: Module) =
     let args = AccountDeleted(e)
     self.setTotalCurrencyBalance()
     self.filter.removeAddress(args.address)
-    self.notifyFilterChanged()
-  self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
-    self.view.setCurrentCurrency(self.controller.getCurrency())
-    self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
     self.filter.updateNetworks()
@@ -228,10 +227,9 @@ proc checkIfModuleDidLoad(self: Module) =
   if(not self.networksModule.isLoaded()):
     return
 
-  let currency = self.controller.getCurrency()
   let signingPhrase = self.controller.getSigningPhrase()
   let mnemonicBackedUp = self.controller.isMnemonicBackedUp()
-  self.view.setData(currency, signingPhrase, mnemonicBackedUp)
+  self.view.setData(signingPhrase, mnemonicBackedUp)
   self.setTotalCurrencyBalance()
   self.filter.load()
   self.notifyFilterChanged()
@@ -274,20 +272,20 @@ method networksModuleDidLoad*(self: Module) =
 method destroyAddAccountPopup*(self: Module) =
   if self.addAccountModule.isNil:
     return
-  
+
   self.view.emitDestroyAddAccountPopup()
   self.addAccountModule.delete
   self.addAccountModule = nil
 
 method runAddAccountPopup*(self: Module, addingWatchOnlyAccount: bool) =
   self.destroyAddAccountPopup()
-  self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService, 
+  self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService,
     self.walletAccountService)
   self.addAccountModule.loadForAddingAccount(addingWatchOnlyAccount)
 
 method runEditAccountPopup*(self: Module, address: string) =
   self.destroyAddAccountPopup()
-  self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService, 
+  self.addAccountModule = add_account_module.newModule(self, self.events, self.keycardService, self.accountsService,
     self.walletAccountService)
   self.addAccountModule.loadForEditingAccount(address)
 

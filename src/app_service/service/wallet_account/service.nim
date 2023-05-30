@@ -26,7 +26,6 @@ logScope:
 
 const SIGNAL_WALLET_ACCOUNT_SAVED* = "walletAccount/accountSaved"
 const SIGNAL_WALLET_ACCOUNT_DELETED* = "walletAccount/accountDeleted"
-const SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED* = "walletAccount/currencyUpdated"
 const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
 const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
 const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
@@ -333,11 +332,6 @@ QtObject:
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
-      if receivedData.settings.len > 0:
-        for settingsField in receivedData.settings:
-          if settingsField.name == KEY_CURRENCY:
-            self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
-
       if receivedData.walletAccounts.len > 0:
         for acc in receivedData.walletAccounts:
           self.handleWalletAccount(acc)
@@ -350,6 +344,9 @@ QtObject:
         of "wallet-tick-reload":
           self.buildAllTokens(self.getAddresses(), store = true)
           self.checkRecentHistory()
+
+    self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
+      self.buildAllTokens(self.getAddresses(), store = true)
 
   proc reloadAccountTokens*(self: Service) =
     self.buildAllTokens(self.getAddresses(), store = true)
@@ -523,8 +520,6 @@ QtObject:
 
   proc updateCurrency*(self: Service, newCurrency: string) =
     discard self.settingsService.saveCurrency(newCurrency)
-    self.buildAllTokens(self.getAddresses(), store = true)
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
   proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
     self.networkService.setNetworksState(chainIds, enabled)

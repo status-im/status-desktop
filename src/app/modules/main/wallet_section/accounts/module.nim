@@ -71,9 +71,6 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 

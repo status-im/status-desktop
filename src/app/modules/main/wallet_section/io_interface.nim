@@ -27,6 +27,9 @@ method toggleWatchOnlyAccounts*(self: AccessInterface) {.base.} =
 method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getCurrentCurrency*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setTotalCurrencyBalance*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
