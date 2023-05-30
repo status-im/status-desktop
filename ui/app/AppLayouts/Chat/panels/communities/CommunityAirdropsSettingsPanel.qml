@@ -58,20 +58,18 @@ SettingsPageLayout {
             name: d.welcomeViewState
             PropertyChanges {target: root; title: d.welcomePageTitle}
             PropertyChanges {target: root; previousPageName: ""}
-            PropertyChanges {target: root; headerButtonVisible: true}
-            PropertyChanges {target: root; headerButtonText: qsTr("New Airdrop")}
-            PropertyChanges {target: root; headerWidth: root.viewWidth}
+            PropertyChanges {target: root; primaryHeaderButton.visible: true}
+            PropertyChanges {target: root; primaryHeaderButton.text: qsTr("New Airdrop")}
         },
         State {
             name: d.newAirdropViewState
             PropertyChanges {target: root; title: d.newAirdropViewPageTitle}
             PropertyChanges {target: root; previousPageName: d.welcomePageTitle}
-            PropertyChanges {target: root; headerButtonVisible: false}
-            PropertyChanges {target: root; headerWidth: 0}
+            PropertyChanges {target: root; primaryHeaderButton.visible: false}
         }
     ]
 
-    onHeaderButtonClicked: stackManager.push(d.newAirdropViewState, newAirdropView, null, StackView.Immediate)
+    onPrimaryHeaderButtonClicked: stackManager.push(d.newAirdropViewState, newAirdropView, null, StackView.Immediate)
 
     StackViewStates {
         id: stackManager

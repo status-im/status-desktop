@@ -15,17 +15,18 @@ import utils 1.0
 StatusDialog {
     id: root
 
-    property int tokenCount: 0
+    property alias acceptBtnText: acceptBtn.text
+    property alias alertText: contentTextItem.text
 
-    signal remotelyDestructClicked
+    signal acceptClicked
     signal cancelClicked
 
-    title: qsTr("Remotely destruct %n token(s)", "", root.tokenCount)
     implicitWidth: 400 // by design
     topPadding: Style.current.padding
     bottomPadding: topPadding
     contentItem: StatusBaseText {
-        text: qsTr("Continuing will destroy tokens held by members and revoke any perissions they given. To undo you will have to issue them new tokens.")
+        id: contentTextItem
+
         font.pixelSize: Style.current.primaryTextFontSize
         wrapMode: Text.WordWrap
         lineHeight: 1.2
@@ -46,11 +47,12 @@ StatusDialog {
             }
 
             StatusButton {
-                text: qsTr("Remotely destruct")
+                id: acceptBtn
+
                 type: StatusBaseButton.Type.Danger
 
                 onClicked: {
-                    root.remotelyDestructClicked()
+                    root.acceptClicked()
                     close()
                 }
             }

@@ -16,7 +16,8 @@ StatusScrollView {
 
     property int imageWidth: 256
     property int imageHeigth: root.imageWidth
-
+    
+    padding: 0
 
     ColumnLayout {
         id: mainLayout

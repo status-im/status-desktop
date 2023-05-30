@@ -80,6 +80,10 @@ SettingsPageLayout {
 
     signal airdropCollectible(string tokenKey)
 
+    signal deleteToken(string tokenKey)
+
+    signal retryMintToken(string tokenKey)
+
     function setFeeLoading() {
         root.isFeeLoading = true
         root.feeText = ""
@@ -124,6 +128,8 @@ SettingsPageLayout {
 
         signal airdropClicked()
 
+        signal retryMintClicked()
+
         function updateInitialStackView() {
             if(stackManager.stackView) {
                 if(initialItem === welcomeView)
@@ -133,6 +139,8 @@ SettingsPageLayout {
             }
         }
     }
+
+    secondaryHeaderButton.type: StatusBaseButton.Type.Danger
 
     content: StackView {
         anchors.fill: parent
@@ -148,33 +156,42 @@ SettingsPageLayout {
             PropertyChanges {target: root; title: d.welcomePageTitle}
             PropertyChanges {target: root; subTitle: ""}
             PropertyChanges {target: root; previousPageName: ""}
-            PropertyChanges {target: root; headerButtonVisible: true}
-            PropertyChanges {target: root; headerButtonText: d.newTokenButtonText}
-            PropertyChanges {target: root; headerWidth: root.viewWidth}
+            PropertyChanges {target: root; primaryHeaderButton.visible: true}
+            PropertyChanges {target: root; primaryHeaderButton.text: d.newTokenButtonText}
+            PropertyChanges {target: root; secondaryHeaderButton.visible: false}
         },
         State {
             name: d.newTokenViewState
             PropertyChanges {target: root; subTitle: ""}
             PropertyChanges {target: root; previousPageName: d.backButtonText}
-            PropertyChanges {target: root; headerButtonVisible: false}
-            PropertyChanges {target: root; headerWidth: 0}
+            PropertyChanges {target: root; primaryHeaderButton.visible: false}
+            PropertyChanges {target: root; secondaryHeaderButton.visible: false}
         },
         State {
             name: d.previewTokenViewState
             PropertyChanges {target: root; previousPageName: d.backButtonText}
-            PropertyChanges {target: root; headerButtonVisible: false}
-            PropertyChanges {target: root; headerWidth: 0}
+            PropertyChanges {target: root; primaryHeaderButton.visible: false}
+            PropertyChanges {target: root; secondaryHeaderButton.visible: false}
         },
         State {
             name: d.tokenViewState
             PropertyChanges {target: root; previousPageName: d.backButtonText}
-            PropertyChanges {target: root; headerButtonVisible: false}
-            PropertyChanges {target: root; headerWidth: 0}
+            PropertyChanges {target: root; primaryHeaderButton.visible: false}
             PropertyChanges {target: root; footer: mintTokenFooter}
         }
     ]
 
-    onHeaderButtonClicked: stackManager.push(d.newTokenViewState, newTokenView, null, StackView.Immediate)
+    onPrimaryHeaderButtonClicked: {
+        if(root.state == d.initialViewState)
+            stackManager.push(d.newTokenViewState, newTokenView, null, StackView.Immediate)
+        if(root.state == d.tokenViewState)
+            d.retryMintClicked()
+    }
+
+    onSecondaryHeaderButtonClicked: {
+        if(root.state == d.tokenViewState)
+            deleteTokenAlertPopup.open()
+    }
 
     StackViewStates {
         id: stackManager
@@ -421,10 +438,16 @@ SettingsPageLayout {
                 }
             }
 
-            RemotelyDestructAlertPopup {
+            AlertPopup {
                 id: alertPopup
 
-                onRemotelyDestructClicked: {
+                property int tokenCount
+
+                title: qsTr("Remotely destruct %n token(s)", "", tokenCount)
+                acceptBtnText: qsTr("Remotely destruct")
+                alertText: qsTr("Continuing will destroy tokens held by members and revoke any permissions they are given. To undo you will have to issue them new tokens.")
+
+                onAcceptClicked: {
                     signTransactionPopup.isRemotelyDestructTransaction = true
                     signTransactionPopup.open()
                 }
@@ -501,6 +524,15 @@ SettingsPageLayout {
                                   },
                                   StackView.Immediate)
             }
+
+            Connections {
+                target: d
+
+                function onRetryMintClicked() {
+                    root.retryMintToken(d.tokenKey)
+                    stackManager.clear(d.initialViewState, StackView.Immediate)
+                }
+            }
         }
     }
 
@@ -525,6 +557,30 @@ SettingsPageLayout {
                 property: "subTitle"
                 value: view.symbol
                 restoreMode: Binding.RestoreBindingOrValue
+            }
+
+            Binding {
+                target: root
+                property: "primaryHeaderButton.visible"
+                value: view.deployState === Constants.ContractTransactionStatus.Failed
+            }
+
+            Binding {
+                target: root
+                property: "primaryHeaderButton.text"
+                value: (view.deployState === Constants.ContractTransactionStatus.Failed) ? qsTr("Retry mint") : ""
+            }
+
+            Binding {
+                target: root
+                property: "secondaryHeaderButton.visible"
+                value: view.deployState === Constants.ContractTransactionStatus.Failed
+            }
+
+            Binding {
+                target: root
+                property: "secondaryHeaderButton.text"
+                value: (view.deployState === Constants.ContractTransactionStatus.Failed) ? qsTr("Delete") : ""
             }
 
             Binding {
@@ -601,5 +657,20 @@ SettingsPageLayout {
                 }
             }
         }
+    }
+
+    AlertPopup {
+        id: deleteTokenAlertPopup
+
+        width: 521
+        title: qsTr("Delete %1").arg(root.title)
+        acceptBtnText: qsTr("Delete %1 token").arg(root.title)
+        alertText: qsTr("%1 is not yet minted, are you sure you want to delete it? All data associated with this token including its icon and description will be permanently deleted.").arg(root.title)
+
+        onAcceptClicked: {
+            root.deleteToken(d.tokenKey)
+            stackManager.clear(d.initialViewState, StackView.Immediate)
+        }
+        onCancelClicked: close()
     }
 }

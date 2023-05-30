@@ -37,6 +37,8 @@ SplitView {
             accounts: WalletAccountsModel {}
 
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
+            onMintAsset: logs.logEvent("CommunityMintTokensSettingsPanel::mintAssets")
+            onDeleteToken: logs.logEvent("CommunityMintTokensSettingsPanel::deleteToken: " + key)
         }
     }
 

@@ -194,7 +194,7 @@ ListModel {
          section: "Popups"
     }
     ListElement {
-         title: "RemotelyDestructAlertPopup"
+         title: "AlertPopup"
          section: "Popups"
     }
     ListElement {

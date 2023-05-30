@@ -29,14 +29,16 @@ SplitView {
                 onClicked: dialog.open()
             }
 
-            RemotelyDestructAlertPopup {
+            AlertPopup {
                 id: dialog
 
                 anchors.centerIn: parent
-                tokenCount: 12
+                title: qsTr("Remotely destruct %n token(s)", "", 12)
+                acceptBtnText: qsTr("Remotely destruct")
+                alertText: qsTr("Continuing will destroy tokens held by members and revoke any perissions they given. To undo you will have to issue them new tokens.")
 
-                onRemotelyDestructClicked: logs.logEvent("RemotelyDestructAlertPopup::onRemotelyDestructClicked")
-                onCancelClicked: logs.logEvent("RemotelyDestructAlertPopup::onCancelClicked")
+                onAcceptClicked: logs.logEvent("AlertPopup::onAcceptClicked")
+                onCancelClicked: logs.logEvent("AlertPopup::onCancelClicked")
 
             }
         }
