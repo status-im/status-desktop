@@ -48,6 +48,7 @@ const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
 const SIGNAL_HISTORY_ERROR* = "historyError"
 const SIGNAL_NEW_TRANSFERS* = "newTransfers"
 const SIGNAL_CRYPTO_SERVICES_READY* = "cryptoServicesReady"
+const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
 
 const SIMPLE_TX_BRIDGE_NAME = "Simple"
 const HOP_TX_BRIDGE_NAME = "Hop"
@@ -95,6 +96,10 @@ type
 type
   CryptoServicesArgs* = ref object of Args
     data*: seq[CryptoRampDto]
+type
+  TransactionDecodedArgs* = ref object of Args
+    dataDecoded*: string
+    txHash*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -220,6 +225,21 @@ QtObject:
     )
     self.threadpool.start(arg)
 
+
+  proc onFetchDecodedTxData*(self: Service, response: string) {.slot.} =
+    let data = parseJson(response)
+    self.events.emit(SIGNAL_TRANSACTION_DECODED, TransactionDecodedArgs(dataDecoded: data["result"].getStr, txHash: data["txHash"].getStr))
+
+  proc fetchDecodedTxData*(self: Service, txHash: string, data: string) =
+    let arg = FetchDecodedTxDataTaskArg(
+      tptr: cast[ByteAddress](fetchDecodedTxDataTask),
+      vptr: cast[ByteAddress](self.vptr),
+      data: data,
+      txHash: txHash,
+      slot: "onFetchDecodedTxData",
+    )
+    self.threadpool.start(arg)
+
   proc watchPendingTransactions*(self: Service): seq[TransactionDto] =
     let pendingTransactions = self.getPendingTransactions()
     for tx in pendingTransactions:
@@ -234,6 +254,7 @@ QtObject:
     let allTxLoaded = historyData["allTxLoaded"].getBool
     var transactions: seq[TransactionDto] = @[]
     var collectibles: seq[CollectibleDto] = @[]
+     
     for tx in historyData["history"].getElems():
       let dto = tx.toTransactionDto()
       self.allTransactions.mgetOrPut(address, initTable[string, TransactionDto]())[dto.txHash] = dto
@@ -523,9 +544,6 @@ QtObject:
     self.events.emit(SIGNAL_CRYPTO_SERVICES_READY, CryptoServicesArgs(data: cryptoServices))
 
   proc fetchCryptoServices*(self: Service) =
-    if(not main_constants.WALLET_ENABLED):
-      return
-
     let arg = GetCryptoServicesTaskArg(
       tptr: cast[ByteAddress](getCryptoServicesTask),
       vptr: cast[ByteAddress](self.vptr),

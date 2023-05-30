@@ -159,3 +159,8 @@ QtObject:
       return newQVariant(self.models[self.tempAddress])
     else:
       return newQVariant()
+
+  proc fetchDecodedTxData*(self: View, txHash: string, data: string) {.slot.} =
+    self.delegate.fetchDecodedTxData(txHash, data)
+
+  proc txDecoded*(self: View, txHash: string, dataDecoded: string) {.signal.}

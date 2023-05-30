@@ -86,6 +86,10 @@ proc init*(self: Controller) =
     # TODO: Refresh collectible data in Transaction items
     discard
 
+  self.events.on(SIGNAL_TRANSACTION_DECODED) do(e: Args):
+    let args = TransactionDecodedArgs(e)
+    self.delegate.txDecoded(args.txHash, args.dataDecoded)
+
 proc watchPendingTransactions*(self: Controller): seq[TransactionDto] =
   return self.transactionService.watchPendingTransactions()
 
@@ -124,3 +128,6 @@ proc findTokenSymbolByAddress*(self: Controller, address: string): string =
 
 proc getMultiTransactions*(self: Controller, transactionIDs: seq[int]): seq[MultiTransactionDto] =
   return transaction_service.getMultiTransactions(transactionIDs)
+
+proc fetchDecodedTxData*(self: Controller, txHash: string, data: string) =
+  self.transactionService.fetchDecodedTxData(txHash, data)

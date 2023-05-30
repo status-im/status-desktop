@@ -143,6 +143,9 @@ rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currencies: seq[string]
 
+rpc(fetchDecodedTxData, "wallet"):
+  data: string
+
 rpc(activityCenterNotifications, "wakuext"):
   request: ActivityCenterNotificationsRequest
 
