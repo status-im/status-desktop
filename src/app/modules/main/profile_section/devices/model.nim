@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils
+import NimQml, Tables, sequtils, chronicles
 import item
 import ../../../../../app_service/service/devices/dto/[installation]
 
@@ -113,7 +113,15 @@ QtObject:
     defer: index.delete
 
     self.items[i].installation = installation
-    self.dataChanged(index, index, @[])
+    self.dataChanged(index, index, @[
+      ModelRole.Identity.int,
+      ModelRole.Version.int,
+      ModelRole.Enabled.int,
+      ModelRole.Timestamp.int,
+      ModelRole.Name.int,
+      ModelRole.DeviceType.int,
+      ModelRole.FcmToken.int,
+    ])
 
   proc updateItemName*(self: Model, installationId: string, name: string) =
     var i = self.findIndexByInstallationId(installationId)
