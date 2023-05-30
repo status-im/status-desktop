@@ -76,7 +76,7 @@ QtObject:
   proc temporarySocialLinksJsonChanged*(self: View) {.signal.}
   proc getTemporarySocialLinksJson(self: View): string {.slot.} =
     $(%*self.temporarySocialLinksModel.items)
-    
+
 
   QtProperty[string] socialLinksJson:
     read = getSocialLinksJson
@@ -126,13 +126,13 @@ QtObject:
   proc bioChanged*(self: View) {.signal.}
   proc getBio(self: View): string {.slot.} =
     self.delegate.getBio()
-
   QtProperty[string] bio:
     read = getBio
     notify = bioChanged
 
-  proc setBio(self: View, bio: string): bool {.slot.} =
-    result = self.delegate.setBio(bio)
-    if (result):
-      self.bioChanged()
+  proc setBio(self: View, bio: string) {.slot.} =
+    self.delegate.setBio(bio)
+
+  proc emitBioChangedSignal*(self: View) =
+    self.bioChanged()
 

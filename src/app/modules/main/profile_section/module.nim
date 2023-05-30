@@ -94,7 +94,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.controller = controller.newController(result)
   result.moduleLoaded = false
 
-  result.profileModule = profile_module.newModule(result, profileService, settingsService)
+  result.profileModule = profile_module.newModule(result, events, profileService, settingsService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService)
   result.languageModule = language_module.newModule(result, events, languageService)
   result.privacyModule = privacy_module.newModule(result, events, settingsService, keychainService, privacyService, generalService)
@@ -108,7 +108,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     result, events, settingsService, ensService, walletAccountService, networkService, tokenService
   )
   result.communitiesModule = communities_module.newModule(result, communityService)
-  result.keycardModule = keycard_module.newModule(result, events, keycardService, settingsService, networkService, 
+  result.keycardModule = keycard_module.newModule(result, events, keycardService, settingsService, networkService,
     privacyService, accountsService, walletAccountService, keychainService)
 
   result.walletModule = wallet_module.newModule(result, events, walletAccountService, settingsService, networkService)
