@@ -200,8 +200,8 @@ QtObject:
   proc unmuteChat*(self: View, chatId: string) {.slot.} =
     self.delegate.unmuteChat(chatId)
 
-  proc muteCategory*(self: View, categoryId: string) {.slot.} =
-    self.delegate.muteCategory(categoryId)
+  proc muteCategory*(self: View, categoryId: string, interval: int) {.slot.} =
+    self.delegate.muteCategory(categoryId, interval)
 
   proc unmuteCategory*(self: View, categoryId: string) {.slot.} =
     self.delegate.unmuteCategory(categoryId)

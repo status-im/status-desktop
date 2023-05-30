@@ -14,6 +14,8 @@ import utils 1.0
 import shared 1.0
 import shared.popups 1.0
 import shared.status 1.0
+import shared.controls.chat.menuItems 1.0
+
 import "../popups/community"
 import "../panels"
 import "../panels/communities"
@@ -229,18 +231,24 @@ Item {
             }
 
             categoryPopupMenu: StatusMenu {
-
+                id: contextMenuCategory
                 property var categoryItem
 
+                MuteChatMenuItem {
+                    enabled: !!categoryItem && !categoryItem.muted
+                    title: qsTr("Mute category")
+                    onMuteTriggered: {
+                        root.communitySectionModule.muteCategory(categoryItem.itemId, interval)
+                        contextMenuCategory.close()
+                    }
+                }
+
                 StatusAction {
-                    text: !!categoryItem ? categoryItem.muted ? qsTr("Unmute category") : qsTr("Mute category") : ""
+                    enabled: !!categoryItem && categoryItem.muted
+                    text: qsTr("Unmute category")
                     icon.name: "notification"
                     onTriggered: {
-                        if (categoryItem.muted) {
-                            root.communitySectionModule.unmuteCategory(categoryItem.itemId)
-                        } else {
-                            root.communitySectionModule.muteCategory(categoryItem.itemId)
-                        }
+                        root.communitySectionModule.unmuteCategory(categoryItem.itemId)
                     }
                 }
 

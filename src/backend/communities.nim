@@ -9,13 +9,17 @@ export response_type
 proc getCommunityTags*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("communityTags".prefix)
   
-proc muteCategory*(communityId: string, categoryId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [communityId, categoryId]
-  result = callPrivateRPC("muteCommunityCategory".prefix, payload)
+proc muteCategory*(communityId: string, categoryId: string, interval: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("muteCommunityCategory".prefix, %* [
+    {
+      "communityId": communityId,
+      "categoryId": categoryId,
+      "mutedType": interval,
+    }
+  ])
 
 proc unmuteCategory*(communityId: string, categoryId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [communityId, categoryId]
-  result = callPrivateRPC("unmuteCommunityCategory".prefix, payload)
+  result = callPrivateRPC("unmuteCommunityCategory".prefix, %* [communityId, categoryId])
 
 proc getCuratedCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []

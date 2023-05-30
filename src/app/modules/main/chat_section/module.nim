@@ -769,8 +769,8 @@ method muteChat*(self: Module, chatId: string, interval: int) =
 method unmuteChat*(self: Module, chatId: string) =
   self.controller.unmuteChat(chatId)
 
-method muteCategory*(self: Module, categoryId: string) =
-  self.controller.muteCategory(categoryId)
+method muteCategory*(self: Module, categoryId: string, interval: int) =
+  self.controller.muteCategory(categoryId, interval)
 
 method unmuteCategory*(self: Module, categoryId: string) =
   self.controller.unmuteCategory(categoryId)
@@ -781,11 +781,8 @@ method onCategoryMuted*(self: Module, categoryId: string) =
 method onCategoryUnmuted*(self: Module, categoryId: string) =
   self.view.chatsModel().changeMutedOnItemByCategoryId(categoryId, false)
 
-method onChatMuted*(self: Module, chatId: string) =
-  self.view.chatsModel().changeMutedOnItemById(chatId, muted=true)
-
-method onChatUnmuted*(self: Module, chatId: string) =
-  self.view.chatsModel().changeMutedOnItemById(chatId, muted=false)
+method changeMutedOnChat*(self: Module, chatId: string, muted: bool) =
+  self.view.chatsModel().changeMutedOnItemById(chatId, muted)
 
 method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, permissionId: string) =
   self.rebuildCommunityTokenPermissionsModel()
@@ -1175,6 +1172,7 @@ proc addOrUpdateChat(self: Module,
     self.updateActiveChatMembership()
 
   if chatExists:
+    self.changeMutedOnChat(chat.id, chat.muted)
     if (chat.chatType == ChatType.PrivateGroupChat):
       self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)
     elif (chat.chatType != ChatType.OneToOne):

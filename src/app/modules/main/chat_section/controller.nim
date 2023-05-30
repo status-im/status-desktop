@@ -122,11 +122,11 @@ proc init*(self: Controller) =
 
   self.events.on(chat_service.SIGNAL_CHAT_MUTED) do(e:Args):
     let args = chat_service.ChatArgs(e)
-    self.delegate.onChatMuted(args.chatId)
+    self.delegate.changeMutedOnChat(args.chatId, true)
 
   self.events.on(chat_service.SIGNAL_CHAT_UNMUTED) do(e:Args):
     let args = chat_service.ChatArgs(e)
-    self.delegate.onChatUnmuted(args.chatId)
+    self.delegate.changeMutedOnChat(args.chatId, false)
 
   self.events.on(message_service.SIGNAL_MESSAGES_MARKED_AS_READ) do(e: Args):
     let args = message_service.MessagesMarkedAsReadArgs(e)
@@ -597,8 +597,8 @@ proc editCommunity*(
 proc exportCommunity*(self: Controller): string =
   self.communityService.exportCommunity(self.sectionId)
 
-proc muteCategory*(self: Controller, categoryId: string) =
-  self.communityService.muteCategory(self.sectionId, categoryId)
+proc muteCategory*(self: Controller, categoryId: string, interval: int) =
+  self.communityService.muteCategory(self.sectionId, categoryId, interval)
 
 proc unmuteCategory*(self: Controller, categoryId: string) =
   self.communityService.unmuteCategory(self.sectionId, categoryId)
