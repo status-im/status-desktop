@@ -38,6 +38,15 @@ const FetchingFromWakuKeypairsIcon = "wallet"
 const FetchingFromWakuWatchOnlyAccounts = "watchOnlyAccounts"
 const FetchingFromWakuWatchOnlyAccountsIcon = "wallet"
 
+const listOfEntitiesWeExpectToBeSynced = @[
+    (FetchingFromWakuProfile, FetchingFromWakuProfileIcon),
+    (FetchingFromWakuContacts, FetchingFromWakuContactsIcon),
+    (FetchingFromWakuCommunities, FetchingFromWakuCommunitiesIcon),
+    (FetchingFromWakuSettings, FetchingFromWakuSettingsIcon),
+    (FetchingFromWakuKeypairs, FetchingFromWakuKeypairsIcon),
+    (FetchingFromWakuWatchOnlyAccounts, FetchingFromWakuWatchOnlyAccountsIcon)
+  ]
+
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
@@ -325,9 +334,10 @@ method checkFetchingStatusAndProceedWithAppLoading*[T](self: Module[T]) =
     return
   self.view.setCurrentStartupState(newProfileFetchingAnnouncementState(currStateObj.flowType(), nil))
 
-method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string, 
+method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string,
   totalMessages: int, receivedMessageAtPosition: int) =
-  self.view.fetchingDataModel().checkLastKnownClockAndResetTotalsIfNeeded(backedUpMsgClock)
+  echo "onFetchingFromWakuMessageReceived: ", backedUpMsgClock, "  section: ", section, "  tm: ", totalMessages, "  recAtPos: ", receivedMessageAtPosition
+  self.view.fetchingDataModel().checkLastKnownClockAndReinitModel(backedUpMsgClock, listOfEntitiesWeExpectToBeSynced)
   if self.view.fetchingDataModel().allMessagesLoaded():
     return
   let currStateObj = self.view.currentStartupStateObj()
@@ -340,6 +350,8 @@ method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: 
       return
   if totalMessages > 0:
     self.view.fetchingDataModel().updateTotalMessages(section, totalMessages)
+  else:
+    self.view.fetchingDataModel().removeSection(section)
   if receivedMessageAtPosition > 0:
     self.view.fetchingDataModel().receivedMessageAtPosition(section, receivedMessageAtPosition)
   if self.view.fetchingDataModel().allMessagesLoaded():
@@ -347,14 +359,6 @@ method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: 
 
 proc prepareAndInitFetchingData[T](self: Module[T]) =
   # fetching data from waku starts when messenger starts
-  const listOfEntitiesWeExpectToBeSynced = @[
-    (FetchingFromWakuProfile, FetchingFromWakuProfileIcon),
-    (FetchingFromWakuContacts, FetchingFromWakuContactsIcon),
-    (FetchingFromWakuCommunities, FetchingFromWakuCommunitiesIcon),
-    (FetchingFromWakuSettings, FetchingFromWakuSettingsIcon),
-    (FetchingFromWakuKeypairs, FetchingFromWakuKeypairsIcon),
-    (FetchingFromWakuWatchOnlyAccounts, FetchingFromWakuWatchOnlyAccountsIcon)
-  ]
   self.view.createAndInitFetchingDataModel(listOfEntitiesWeExpectToBeSynced)
 
 proc delayStartingApp[T](self: Module[T]) =

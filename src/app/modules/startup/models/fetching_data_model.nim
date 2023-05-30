@@ -74,7 +74,9 @@ QtObject:
     return -1
 
   proc init*(self: Model, entities: seq[tuple[entity: string, icon: string]]) =
+    self.allTotalsSet = false
     self.beginResetModel()
+    self.items = @[]
     for e in entities:
       self.items.add(newItem(e.entity, e.icon))
     self.endResetModel()
@@ -88,15 +90,18 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.LoadedMessages.int])
 
-  proc checkLastKnownClockAndResetTotalsIfNeeded*(self: Model, backedUpMsgClock: uint64) =
+  proc checkLastKnownClockAndReinitModel*(self: Model, backedUpMsgClock: uint64, entities: seq[tuple[entity: string, icon: string]]) =
     if self.lastKnownBackedUpMsgClock >= backedUpMsgClock:
       return
+    self.init(entities)
     self.lastKnownBackedUpMsgClock = backedUpMsgClock
-    self.allTotalsSet = false
-    for i in 0..< self.items.len:
-      self.items[i].resetItem()
-      let index = self.createIndex(i, 0, nil)
-      self.dataChanged(index, index, @[ModelRole.TotalMessages.int, ModelRole.LoadedMessages.int])
+
+  proc reevaluateAllTotals(self: Model) =
+    self.allTotalsSet = true
+    for it in self.items:
+      if it.loadedMessages != it.totalMessages:
+        self.allTotalsSet = false
+        return
 
   proc updateTotalMessages*(self: Model, entity: string, totalMessages: int) =
     if self.allTotalsSet:
@@ -105,15 +110,23 @@ QtObject:
     if(ind == -1):
       return
     self.items[ind].totalMessages = totalMessages
-
-    self.allTotalsSet = true
-    for it in self.items:
-      if it.totalMessages == 0:
-        self.allTotalsSet = false
-        break
-
+    self.reevaluateAllTotals()
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.TotalMessages.int, ModelRole.LoadedMessages.int])
+
+  proc removeSection*(self: Model, entity: string) =
+    if self.allTotalsSet:
+      return
+    let ind = self.findIndexForEntity(entity)
+    if(ind == -1):
+      return
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginRemoveRows(parentModelIndex, ind, ind)
+    self.items.delete(ind)
+    self.endRemoveRows()
+    self.countChanged()
+    self.reevaluateAllTotals()
 
   proc allMessagesLoaded*(self: Model): bool =
     if not self.allTotalsSet:
