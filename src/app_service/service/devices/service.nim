@@ -188,6 +188,7 @@ QtObject:
         "timeout": 5 * 60 * 1000,
       }
     }
+    self.localPairingStatus.reset()
     self.localPairingStatus.mode = LocalPairingMode.Sender
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
 
@@ -204,6 +205,7 @@ QtObject:
       },
       "clientConfig": %* {}
     }
+    self.localPairingStatus.reset()
     self.localPairingStatus.mode = LocalPairingMode.Receiver
 
     let arg = AsyncInputConnectionStringArg(
