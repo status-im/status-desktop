@@ -3,6 +3,7 @@
 #################################################
 
 import stint
+import ../../../backend/backend as backend
 import ../../common/conversion as service_conversion
 import ../../common/wallet_constants
 
@@ -220,4 +221,25 @@ const getCryptoServicesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     error "Error fetching crypto services", message = e.msg
     arg.finish(%* {
       "result": @[],
+    }) 
+
+type
+  FetchDecodedTxDataTaskArg* = ref object of QObjectTaskArg
+    txHash: string
+    data: string
+
+const fetchDecodedTxDataTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[FetchDecodedTxDataTaskArg](argEncoded)
+
+  try:
+    let response = backend.fetchDecodedTxData(arg.data)
+    arg.finish(%* {
+      "txHash": arg.txHash,
+      "result": $response.result,
+    })
+  except Exception as e:
+    error "Error decoding tx input", message = e.msg
+    arg.finish(%* {
+      "txHash": arg.txHash,
+      "result": "",
     }) 

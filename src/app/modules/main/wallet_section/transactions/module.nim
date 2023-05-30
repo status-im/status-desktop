@@ -137,3 +137,9 @@ method getLatestBlockNumber*(self: Module, chainId: int): string =
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.setPendingTx(self.transactionsToItems(self.controller.getPendingTransactions(), @[]))
+
+method fetchDecodedTxData*(self: Module, txHash: string, data: string) =
+  self.controller.fetchDecodedTxData(txHash, data)
+
+method txDecoded*(self: Module, txHash: string, dataDecoded: string) =
+  self.view.txDecoded(txHash, dataDecoded)
