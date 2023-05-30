@@ -87,19 +87,26 @@ MembersSelectorBase {
                 return
             }
 
-            if (contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey ||
-                contactDetails.isBlocked) {
-                root.suggestionsDialog.forceHide = false
-                return
-            };
-
             if (contactDetails.isContact) {
+                // Is a contact, we add their name to the list
                 root.pastedChatKey = contactDetails.publicKey
                 root.suggestionsDialog.forceHide = false
                 return
             }
 
-            if (root.model.count === 0 && !root.rootStore.contactsStore.hasPendingContactRequest(contactDetails.publicKey)) {
+            let hasPendingContactRequest = root.rootStore.contactsStore.hasPendingContactRequest(contactDetails.publicKey)
+
+            if ((root.model.count === 0 && hasPendingContactRequest) ||
+                    contactDetails.publicKey === root.rootStore.contactsStore.myPublicKey || contactDetails.isBlocked) {
+                // List is empty and we have a contact request
+                // OR it's our own chat key or a banned user
+                // Then open the contact's profile popup
+                Global.openProfilePopup(contactDetails.publicKey, null,  popup => popup.closed.connect(root.rejected))
+                return
+            }
+
+            if (root.model.count === 0 && !hasPendingContactRequest) {
+                // List is empty and not a contact yet. Open the contact request popup
                 Global.openContactRequestPopup(contactDetails.publicKey,
                                                popup => popup.closed.connect(root.rejected))
                 return

@@ -33,7 +33,7 @@ QtObject {
     signal openChangeProfilePicPopup(var cb)
     signal openBackUpSeedPopup()
     signal openImagePopup(var image)
-    signal openProfilePopupRequested(string publicKey, var parentPopup)
+    signal openProfilePopupRequested(string publicKey, var parentPopup, var cb)
     signal openEditDisplayNamePopup()
     signal openActivityCenterPopupRequested()
     signal openSendIDRequestPopup(string publicKey, var cb)
@@ -60,8 +60,8 @@ QtObject {
     signal playNotificationSound()
     signal playErrorSound()
 
-    function openProfilePopup(publicKey, parentPopup) {
-        root.openProfilePopupRequested(publicKey, parentPopup)
+    function openProfilePopup(publicKey, parentPopup, cb) {
+        root.openProfilePopupRequested(publicKey, parentPopup, cb)
     }
 
     function openActivityCenterPopup() {

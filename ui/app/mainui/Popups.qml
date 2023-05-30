@@ -85,8 +85,8 @@ QtObject {
         popup.openPopup(image)
     }
 
-    function openProfilePopup(publicKey: string, parentPopup) {
-        openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup})
+    function openProfilePopup(publicKey: string, parentPopup, cb) {
+        openPopup(profilePopupComponent, {publicKey: publicKey, parentPopup: parentPopup}, cb)
     }
 
     function openNicknamePopup(publicKey: string, nickname: string, subtitle: string) {
