@@ -23,6 +23,7 @@ const DEFAULT_FLEET* = $Fleet.StatusProd
 # Signals:
 const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
 const SIGNAL_DISPLAY_NAME_UPDATED* = "displayNameUpdated"
+const SIGNAL_BIO_UPDATED* = "bioUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 
 logScope:
@@ -94,6 +95,9 @@ QtObject:
           if settingsField.name == KEY_DISPLAY_NAME:
             self.settings.displayName = settingsField.value
             self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: settingsField.value))
+          if settingsField.name == KEY_BIO:
+            self.settings.bio = settingsField.value
+            self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: settingsField.value))
 
     self.initialized = true
 
@@ -901,19 +905,12 @@ QtObject:
   proc getBio*(self: Service): string =
     self.settings.bio
 
-  proc setBio*(self: Service, bio: string): bool =
-    result = false
-    try:
-      let response = status_settings.setBio(bio)
-
-      if(not response.error.isNil):
-        error "error setting bio", errDescription = response.error.message
-
-      self.settings.bio = bio
-      result = true
-    except Exception as e:
-      error "error setting bio", errDesription = e.msg
-
+  proc saveBio*(self: Service, value: string): bool =
+    if(self.saveSetting(KEY_BIO, value)):
+      self.settings.bio = value
+      self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio))
+      return true
+    return false
 
   proc getSocialLinks*(self: Service): SocialLinks =
     return self.socialLinks

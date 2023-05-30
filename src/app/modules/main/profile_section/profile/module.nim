@@ -4,6 +4,7 @@ import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
+import ../../../../core/eventemitter
 import ../../../../../app_service/service/profile/service as profile_service
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/common/social_links
@@ -24,13 +25,13 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface,
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
   profileService: profile_service.Service, settingsService: settings_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, profileService, settingsService)
+  result.controller = controller.newController(result, events, profileService, settingsService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -72,8 +73,11 @@ method setDisplayName*(self: Module, displayName: string) =
 method getBio(self: Module): string =
   self.controller.getBio()
 
-method setBio(self: Module, bio: string): bool =
-  self.controller.setBio(bio)
+method setBio(self: Module, bio: string) =
+  discard self.controller.setBio(bio)
+
+method onBioChanged*(self: Module, bio: string) =
+  self.view.emitBioChangedSignal()
 
 method saveSocialLinks*(self: Module): bool =
   let socialLinks = map(self.view.temporarySocialLinksModel.items(), x => SocialLink(text: x.text, url: x.url))

@@ -25,7 +25,10 @@ method deleteIdentityImage*(self: AccessInterface) {.base.} =
 method getBio*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setBio*(self: AccessInterface, bio: string): bool {.base.} =
+method setBio*(self: AccessInterface, bio: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onBioChanged*(self: AccessInterface, bio: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
