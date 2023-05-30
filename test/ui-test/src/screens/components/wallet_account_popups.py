@@ -118,6 +118,14 @@ class AccountPopup(BasePopup):
         self._address_combobox_button = Button('mainWallet_AddEditAccountPopup_GeneratedAddressComponent')
         self._non_eth_checkbox = CheckBox('mainWallet_AddEditAccountPopup_NonEthDerivationPathCheckBox')
 
+    def wait_until_appears(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
+        assert squish.waitFor(lambda: self._name_text_edit.is_visible, timeout_msec), f'Object {self} is not visible'
+        return self
+
+    def wait_until_hidden(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
+        assert squish.waitFor(lambda: not self._name_text_edit.is_visible, timeout_msec), f'Object {self} is visible'
+
+
     def set_name(self, value: str):
         self._name_text_edit.text = value
         return self
@@ -186,10 +194,3 @@ class AccountPopup(BasePopup):
     def save(self):
         self._add_account_button.click()
         return self
-
-    def wait_until_appears(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
-        assert squish.waitFor(lambda: self._name_text_edit.is_visible, timeout_msec), f'Object {self} is not visible'
-        return self
-
-    def wait_until_hidden(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
-        assert squish.waitFor(lambda: not self._name_text_edit.is_visible, timeout_msec), f'Object {self} is visible'
