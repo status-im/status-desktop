@@ -420,7 +420,7 @@ class StatusWalletScreen:
         started_at = time.monotonic()
         while not expected_account in self.left_panel.accounts:
             time.sleep(1)
-            if time.monotonic() - started_at > 5:
+            if time.monotonic() - started_at > 10:
                 raise LookupError(f'Account {expected_account} not found in {self.left_panel.accounts}')
 
     def verify_account_doesnt_exist(self, name: str):

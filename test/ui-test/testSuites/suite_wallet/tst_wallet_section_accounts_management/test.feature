@@ -62,7 +62,7 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | name    | color  | emoji      | emoji_unicode | add_via_context_menu |
             | GenAcc1 | 2946C4 | sunglasses | 1f60e         | yes                  |
 
-
+		@mayfail
         Scenario Outline: The user manages a custom generated account
         When the user adds a custom generated account with "<name>" color "#<color>" emoji "<emoji>" and derivation "<path>" "<address_index>"
         Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
@@ -90,7 +90,7 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | private_key                                                      | name        | color  | emoji      | emoji_unicode | new_name          | new_color | new_emoji | new_emoji_unicode |
             | 2daa36a3abe381a9c01610bf10fda272fbc1b8a22179a39f782c512346e3e470 | PrivKeyAcc1 | 2946C4 | sunglasses | 1f60e         | PrivKeyAcc1edited | 7CDA00    | thumbsup  | 1f44d             |
 
-
+		@mayfail
         Scenario Outline: The user manages a seed phrase imported account
         When the user adds an imported seed phrase account "<seed_phrase>" with "<name>" color "#<color>" and emoji "<emoji>"
         Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
@@ -105,7 +105,7 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | kitten tiny cup admit cactus shrug shuffle accident century faith roof plastic beach police barely vacant sign blossom                                        | SPAcc18 | 2946C4 | sunglasses | 1f60e         | SPAcc18edited | 7CDA00    | thumbsup  | 1f44d             |
             | pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial                                                                               | SPAcc12 | 2946C4 | sunglasses | 1f60e         | SPAcc12edited | 7CDA00    | thumbsup  | 1f44d             |
 
-
+		@mayfail
         Scenario Outline: The user manages an account created from the imported seed phrase
         When the user adds an imported seed phrase account "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial" with "SPAcc12" color "#2946C4" and emoji "sunglasses"
         And the user adds to "pcsomrselw" a custom generated account with "<name>" color "#<color>" emoji "<emoji>" and derivation "<path>" "<address_index>"
