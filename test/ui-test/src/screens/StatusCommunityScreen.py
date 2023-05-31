@@ -160,9 +160,16 @@ class StatusCommunityScreen:
 
         return result
 
-    def _open_edit_channel_popup(self):
+    def _open_edit_channel_popup(self, attempt: int = 2):
         click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
         click_obj_by_name(CommunityScreenComponents.EDIT_CHANNEL_MENU_ITEM.value)
+        try:
+            TextEdit(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value).wait_until_appears()
+        except:
+            if attempt:
+                self._open_edit_channel_popup(attempt-1)
+            else:
+                raise err
 
     def _open_category_edit_popup(self, category):
         # For some reason it clicks on a first channel in category instead of category
@@ -205,8 +212,7 @@ class StatusCommunityScreen:
         self._open_edit_channel_popup()
 
         # Select all text in the input before typing
-        wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, "<Ctrl+a>")
-        type_text(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, new_community_channel_name)
+        TextEdit(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value).text = new_community_channel_name
         click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
         time.sleep(0.5)
 
@@ -314,10 +320,16 @@ class StatusCommunityScreen:
     def go_back_to_community(self):
         click_obj_by_name(CommunitySettingsComponents.BACK_TO_COMMUNITY_BUTTON.value)
 
-    def delete_current_community_channel(self):
-        click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
-        click_obj_by_name(CommunityScreenComponents.DELETE_CHANNEL_MENU_ITEM.value)
-        click_obj_by_name(CommunityScreenComponents.DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON.value)
+    def delete_current_community_channel(self, attempt: int = 2):
+        try:
+            BaseElement(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value).click()
+            BaseElement(CommunityScreenComponents.DELETE_CHANNEL_MENU_ITEM.value).click()
+            BaseElement(CommunityScreenComponents.DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON.value).click()
+        except:
+            if attempt:
+                delete_current_community_channel(attempt-1)
+            else:
+                raise
 
     def check_channel_count(self, count_to_check: int):
         chatListObj = get_obj(CommunityScreenComponents.NOT_CATEGORIZED_CHAT_LIST.value)

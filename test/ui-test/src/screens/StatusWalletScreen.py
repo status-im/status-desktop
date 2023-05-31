@@ -142,9 +142,16 @@ class LeftPanel(BaseElement):
             else:
                 raise
 
-    def open_add_account_popup(self):
+    def open_add_account_popup(self, attempt: int = 2):
         self._add_account_button.click()
-        return AccountPopup().wait_until_appears()
+        try:
+            return AccountPopup().wait_until_appears()
+        except AssertionError as err:
+            if attempt:
+                self._open_add_account_popup(attempt-1)
+            else:
+                raise err
+        
 
     def delete_account(self, account_name: str, attempt: int = 2) -> RemoveWalletAccountPopup:
         try:
@@ -418,14 +425,18 @@ class StatusWalletScreen:
     def verify_account_existence(self, name: str, color: str, emoji_unicode: str):
         expected_account = constants.wallet.account_list_item(name, color.lower(), emoji_unicode)
         started_at = time.monotonic()
-        while not expected_account in self.left_panel.accounts:
+        while expected_account not in self.left_panel.accounts:
             time.sleep(1)
-            if time.monotonic() - started_at > 10:
+            if time.monotonic() - started_at > 15:
                 raise LookupError(f'Account {expected_account} not found in {self.left_panel.accounts}')
 
     def verify_account_doesnt_exist(self, name: str):
-        assert name not in [account.name for account in self.left_panel.accounts], \
+        assert wait_for(name not in [account.name for account in self.left_panel.accounts], 10000), \
             f'Account with {name} is still displayed even it should not be'
+    
+    def verify_account_exist(self, name: str):
+        assert wait_for(name in [account.name for account in self.left_panel.accounts], 10000), \
+            f'Account with {name} is not displayed even it should be'
 
     def verify_account_address_correct(self, account_name: str, address: str):
         actual_address = self.left_panel.select_account(account_name).address

@@ -18,8 +18,7 @@ def hook(context):
 
 @OnFeatureEnd
 def hook(context):
-    currentApplicationContext().detach()
-    snooze(_app_closure_timeout) 
+    init_steps.driver.detach()
 
 @OnStepEnd
 def hook(context):

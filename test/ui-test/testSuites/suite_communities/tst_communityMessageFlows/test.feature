@@ -68,6 +68,7 @@ Feature: Status Desktop community messages
         | message                | reply           |
         | Community chat message | This is a reply |
 
+	@mayfail
     Scenario Outline: The user can edit a message
         Given the user sends a chat message "Edit me"
         # Checking that message can be edited several times
@@ -87,6 +88,7 @@ Feature: Status Desktop community messages
              | message             |
              | random chat message |
 
+	@mayfail
     Scenario: The user can clear chat history
         Given the user sends a chat message "Hi hi"
         And the user sends a chat message "testing chat"

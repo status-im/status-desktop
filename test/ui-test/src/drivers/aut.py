@@ -46,7 +46,7 @@ class ExecutableAut(AbstractAut):
         self.fp = fp
 
     def start(self, *args) -> 'ExecutableAut':
-        cmd = ' '.join([self.fp.name] + [str(arg) for arg in args])
+        cmd = ' '.join([self.fp.name] + list(args))
         self.ctx = squish.startApplication(cmd)
         local_system.wait_for_started(self.fp.stem)
         assert squish.waitFor(lambda: self.ctx.isRunning, configs.squish.APP_LOAD_TIMEOUT_MSEC)
