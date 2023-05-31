@@ -203,6 +203,7 @@ proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module) =
       self.controller.resetLoadingMessagesPerPageFactor()
       self.view.emitScrollToMessageSignal(index)
       self.view.setMessageSearchOngoing(false)
+      self.reevaluateViewLoadingState()
     else:
       self.controller.increaseLoadingMessagesPerPageFactor()
       self.loadMoreMessages()
@@ -219,7 +220,8 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
 method reevaluateViewLoadingState*(self: Module) =
   self.view.setLoading(not self.initialMessagesLoaded or 
                        not self.firstUnseenMessageState.initialized or
-                       self.firstUnseenMessageState.fetching)
+                       self.firstUnseenMessageState.fetching or
+                       self.view.getMessageSearchOngoing())
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
   var viewItems: seq[Item]
@@ -657,13 +659,13 @@ method scrollToMessage*(self: Module, messageId: string) =
   if(messageId == ""):
     return
 
-  let scrollAlreadyOngoing = len(self.controller.getSearchedMessageId()) > 0
-  if(scrollAlreadyOngoing):
+  if(self.view.getMessageSearchOngoing()):
     return
 
   self.view.setMessageSearchOngoing(true)
   self.controller.setSearchedMessageId(messageId)
   self.checkIfMessageLoadedAndScrollToItIfItIs()
+  self.reevaluateViewLoadingState()
 
 method requestMoreMessages*(self: Module) =
   self.controller.requestMoreMessages()
