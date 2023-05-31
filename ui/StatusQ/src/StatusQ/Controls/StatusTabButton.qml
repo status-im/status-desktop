@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
@@ -30,14 +30,19 @@ TabButton {
     leftPadding: 12
     rightPadding: 12
 
-    background: Item { }
+    background: Item {
+        HoverHandler {
+            target: parent
+            cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.NoButton
+            enabled: root.enabled
+        }
+    }
 
-    contentItem: MouseArea {
+    contentItem: Item {
         implicitWidth: contentItemGrid.implicitWidth
         implicitHeight: contentItemGrid.implicitHeight + 15
 
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.NoButton
         enabled: root.enabled
 
         RowLayout {

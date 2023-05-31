@@ -224,12 +224,9 @@ ColumnLayout {
             width: root.width
             visible: !RootStore.historyTransactions.hasMore && transactionListRoot.count !== 0
             spacing: 12
-            Rectangle {
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: Style.current.padding
-                Layout.preferredWidth: parent.width - 100
-                Layout.preferredHeight: 1
-                color: Theme.palette.directColor8
+            Separator {
+                Layout.topMargin: Style.current.bigPadding
+                Layout.fillWidth: true
                 visible: !RootStore.historyTransactions.hasMore
             }
             StatusBaseText {
@@ -244,7 +241,7 @@ ColumnLayout {
             StatusButton {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Back to most recent transaction")
-                visible: !RootStore.historyTransactions.hasMore
+                visible: !RootStore.historyTransactions.hasMore && transactionListRoot.contentHeight > transactionListRoot.height
                 onClicked: transactionListRoot.positionViewAtBeginning()
             }
         }

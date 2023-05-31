@@ -24,6 +24,11 @@ Item {
 
     signal launchShareAddressModal()
 
+    function resetView() {
+        stack.currentIndex = 0
+        root.currentTabIndex = 0
+    }
+
     function resetStack() {
         stack.currentIndex = 0;
     }
