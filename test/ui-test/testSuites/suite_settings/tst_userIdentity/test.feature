@@ -9,7 +9,6 @@ Feature: User Identity
         And the user signs up with username "tester123" and password "TesTEr16843/!@00"
         And the user lands on the signed in app
 
-	@mayfail
     Scenario Outline: The user sets display name, bio and social links
         Given the user opens app settings screen
         And the user opens the profile settings
@@ -50,8 +49,6 @@ Feature: User Identity
 		| user 				| bio 						|
 		| tester123_changed | Hello, I am super tester! |
 
-
- 	@mayfail
     Scenario Outline: The user can change own display name in profile popup
         Given the user opens own profile popup
         And the user's display name is "tester123"
