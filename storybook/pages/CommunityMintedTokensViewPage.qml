@@ -28,7 +28,7 @@ SplitView {
                 anchors.fill: parent
                 anchors.margins: 50
                 model: MintedTokensModel.mintedTokensModel
-                onItemClicked: logs.logEvent("CommunityMintedTokensView::itemClicked")
+                onItemClicked: logs.logEvent("CommunityMintedTokensView::itemClicked --> " + contractUniqueKey)
             }
         }
 
