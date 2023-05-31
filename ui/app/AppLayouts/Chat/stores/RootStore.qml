@@ -699,7 +699,7 @@ QtObject {
 
         readonly property bool isUserAllowedToSendMessage: {
             if (_d.activeChatType === Constants.chatType.oneToOne && _d.oneToOneChatContact) {
-                return _d.oneToOneChatContact.contactRequestState == Constants.ContactRequestState.Mutual
+                return _d.oneToOneChatContact.contactRequestState === Constants.ContactRequestState.Mutual
             }
             else if(_d.activeChatType === Constants.chatType.privateGroupChat) {
                 return _d.amIMember

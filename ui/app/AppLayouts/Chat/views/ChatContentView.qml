@@ -77,6 +77,8 @@ ColumnLayout {
     QtObject {
         id: d
 
+        readonly property string blockedText: qsTr("This user has been blocked.")
+
         function showReplyArea(messageId) {
             let obj = messageStore.getMessageByIdAsJson(messageId)
             if (!obj) {
@@ -109,6 +111,7 @@ ColumnLayout {
                 stickersLoaded: root.stickersLoaded
                 chatId: root.chatId
                 isOneToOne: root.chatType === Constants.chatType.oneToOne
+                isContactBlocked: root.isBlocked
                 isChatBlocked: root.isBlocked || !root.isUserAllowedToSendMessage
                 channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
                 isActiveChannel: root.isActiveChannel
@@ -158,14 +161,17 @@ ColumnLayout {
                     anchors.fill: parent
                     anchors.margins: Style.current.smallPadding
 
-                    enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
-                             root.isUserAllowedToSendMessage
+                    // We enable the component if the contact is blocked, because if we disable it, the `Unban` button
+                    // becomes disabled. All the local components inside already disable themselves when blocked
+                    enabled: root.isBlocked ||
+                            (root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
+                             root.isUserAllowedToSendMessage)
 
                     store: root.rootStore
                     usersStore: root.usersStore
 
                     textInput.text: inputAreaLoader.preservedText
-                    textInput.placeholderText: root.chatInputPlaceholder
+                    textInput.placeholderText: root.isBlocked ? d.blockedText : root.chatInputPlaceholder
                     emojiPopup: root.emojiPopup
                     stickersPopup: root.stickersPopup
                     isContactBlocked: root.isBlocked
@@ -176,7 +182,7 @@ ColumnLayout {
 
                     Binding on chatInputPlaceholder {
                         when: root.isBlocked
-                        value: qsTr("This user has been blocked.")
+                        value: d.blockedText
                     }
 
                     Binding on chatInputPlaceholder {
