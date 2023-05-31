@@ -371,6 +371,7 @@ StatusStackModal {
             contentWidth: availableWidth
             readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
 
+            padding: 0
             clip: false
 
             ScrollBar.vertical: StatusScrollBar {

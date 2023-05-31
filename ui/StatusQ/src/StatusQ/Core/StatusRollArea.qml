@@ -32,19 +32,19 @@ Item {
     StatusNavigationButton {
         anchors.left: parent.left
         height: parent.height
-        visible: roll.contentX > 0
+        visible: roll.flickable.contentX > 0
         gradientColor: root.arrowsGradientColor
 
-        onClicked: roll.flick(roll.width, 0)
+        onClicked: roll.flickable.flick(roll.width, 0)
     }
 
     StatusNavigationButton {
         anchors.right: parent.right
         height: parent.height
-        visible: roll.contentX + roll.width < roll.contentWidth
+        visible: roll.flickable.contentX + roll.width < roll.contentWidth
         gradientColor: root.arrowsGradientColor
         navigateForward: true
 
-        onClicked: roll.flick(-roll.width, 0)
+        onClicked: roll.flickable.flick(-roll.width, 0)
     }
 }
