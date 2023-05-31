@@ -36,6 +36,7 @@ Item {
     property string chatId: ""
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
+    property bool isContactBlocked: false
     property bool isChatBlocked: false
     property bool isOneToOne: false
     property bool isActiveChannel: false
@@ -329,7 +330,7 @@ Item {
             }
         }
         header: {
-            if (root.isOneToOne && root.rootStore.oneToOneChatContact) {
+            if (!root.isContactBlocked && root.isOneToOne && root.rootStore.oneToOneChatContact) {
                 switch (root.rootStore.oneToOneChatContact.contactRequestState) {
                 case Constants.ContactRequestState.None: // no break
                 case Constants.ContactRequestState.Dismissed:

@@ -516,12 +516,12 @@ QtObject:
     var contact = self.getContactById(publicKey)
 
     let response = status_contacts.unblockContact(contact.id)
+    # TODO there are chat updates too. We need to send them to the chat service
     if not response.error.isNil:
       error "error unblocking contact ", msg = response.error.message
       return
 
-    contact.blocked = false
-    self.saveContact(contact)
+    self.parseContactsResponse(response)
     self.events.emit(SIGNAL_CONTACT_UNBLOCKED, ContactArgs(contactId: contact.id))
 
   proc blockContact*(self: Service, publicKey: string) =
@@ -532,8 +532,7 @@ QtObject:
       error "error blocking contact ", msg = response.error.message
       return
 
-    contact.blocked = true
-    self.saveContact(contact)
+    self.parseContactsResponse(response)
     self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contactId: contact.id))
 
   proc removeContact*(self: Service, publicKey: string) =
