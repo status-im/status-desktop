@@ -23,18 +23,20 @@ StatusSectionLayout {
         }
 
         StatusScrollView {
+            id: scrollView
             anchors.top: profileHeadline.bottom
             anchors.topMargin: 16
             anchors.bottom: parent.bottom
             width: parent.width
 
-            contentHeight: profileMenuItems.height + 8
-            contentWidth: parent.width
+            contentHeight: profileMenuItems
+            contentWidth: availableWidth
             clip: true
 
             Column {
                 id: profileMenuItems
-                anchors.horizontalCenter: parent.horizontalCenter
+
+                width: scrollView.availableWidth
                 spacing: 4
 
                 Repeater {

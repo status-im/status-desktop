@@ -14,12 +14,13 @@ import utils 1.0
 StatusModal {
     id: popup
 
-    anchors.centerIn: parent
-    height: 560
-    header.title: qsTr("Waku nodes")
-
     property var messagingStore
     property var advancedStore
+
+    anchors.centerIn: parent
+    height: 560
+    padding: 8
+    header.title: qsTr("Waku nodes")
 
     onClosed: {
         destroy()
@@ -28,17 +29,19 @@ StatusModal {
     onOpened: {
         addrInput.text = "";
     }
-    
-    contentItem: StatusScrollView {
-        height: parent.height
-        width: parent.width
+
+    StatusScrollView {
+        id: scrollView
+        anchors.fill: parent
+        contentWidth: availableWidth
 
         Column {
             id: nodesColumn
-            width: parent.width
+            width: scrollView.availableWidth
 
             StatusInput {
                 id: addrInput
+                width: parent.width
                 label: qsTr("Node multiaddress or DNS Discovery address")
                 placeholderText: "/ipv4/0.0.0.0/tcp/123/..."
                 validators: [

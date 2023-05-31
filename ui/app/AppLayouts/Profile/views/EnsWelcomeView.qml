@@ -27,12 +27,12 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
-        contentWidth: contentItem.width
-        contentHeight: contentItem.height
+
+        contentWidth: availableWidth
 
         Item {
             id: contentItem
-            width: profileContentWidth
+            width: sview.availableWidth
             height: childrenRect.height
 
             Image {

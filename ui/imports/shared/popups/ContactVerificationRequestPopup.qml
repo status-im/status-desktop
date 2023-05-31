@@ -64,20 +64,22 @@ StatusDialog {
     }
 
     title: qsTr("%1 is asking you to verify your identity").arg(d.senderDisplayName)
+    padding: 0
 
     onAboutToShow: {
         root.updateVerificationDetails()
         verificationResponse.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    contentItem: StatusScrollView {
-        padding: 0
+    StatusScrollView {
+        id: scrollView
+        anchors.fill: parent
+
+        contentWidth: availableWidth
         implicitWidth: 560
-        implicitHeight: contentColumn.childrenRect.height
 
         ColumnLayout {
-            id: contentColumn
-            width: root.availableWidth
+            width: scrollView.availableWidth
             spacing: Style.current.padding
 
             StatusBaseText {

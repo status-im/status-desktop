@@ -153,7 +153,7 @@ StatusDropdown {
             Layout.fillWidth: true
             Layout.minimumHeight: Math.min(d.maxHeightCountNo, topRepeater.count) * d.itemStandardHeight
             Layout.maximumHeight: Layout.minimumHeight
-            contentHeight: scrollableColumn.implicitHeight
+            contentWidth: availableWidth
             Layout.bottomMargin: d.defaultVMargin
             Layout.topMargin:
                 !root.allowChoosingEntireCommunity && !root.allowChoosingEntireCommunity ? d.defaultVMargin : 0
@@ -162,7 +162,7 @@ StatusDropdown {
 
             ColumnLayout {
                 id: scrollableColumn
-                width: scrollView.width
+                width: scrollView.availableWidth
                 spacing: 0
 
                 StatusIconTextButton {

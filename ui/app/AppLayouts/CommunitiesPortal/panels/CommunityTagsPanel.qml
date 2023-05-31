@@ -62,11 +62,8 @@ StatusScrollView {
     }
     onSelectedTagsChanged: updateSelectedTags()
 
+    contentWidth: availableWidth
     padding: 0
-    contentWidth: implicitWidth
-    contentHeight: implicitHeight
-    implicitWidth: column.childrenRect.width
-    implicitHeight: column.childrenRect.height
     clip: false
 
     QtObject {

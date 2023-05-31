@@ -112,9 +112,6 @@ StatusScrollView {
         onCountChanged: findRecipientsCount()
     }
 
-    contentWidth: mainLayout.width
-    contentHeight: mainLayout.height
-
     SequenceColumnLayout {
         id: mainLayout
         width: root.viewWidth

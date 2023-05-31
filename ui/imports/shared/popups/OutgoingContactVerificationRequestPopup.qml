@@ -29,6 +29,7 @@ StatusDialog {
     signal trustedVerified(string userPublicKey)
 
     title: qsTr("Verify %1's Identity").arg(root.verificationResponseDisplayName)
+    padding: 0
 
     footer: StatusDialogFooter {
         leftButtons: ObjectModel {
@@ -65,14 +66,15 @@ StatusDialog {
         }
     }
 
-    contentItem: StatusScrollView {
-        padding: 0
+    StatusScrollView {
+        id: scrollView
+        anchors.fill: parent
+
+        contentWidth: availableWidth
         implicitWidth: 560
-        implicitHeight: layout.childrenRect.height
 
         ColumnLayout {
-            id: layout
-            width: root.availableWidth
+            width: scrollView.availableWidth
             spacing: Style.current.padding
 
             SimplifiedMessageView {

@@ -105,14 +105,11 @@ Item {
 
         StatusScrollView {
             id: scroll
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            width: parent.width
-            height: parent.height
+            anchors.fill: parent
+            contentWidth: availableWidth
 
             Column {
                 spacing: Style.current.halfPadding
-                height: childrenRect.height
                 width: scroll.availableWidth
 
 
@@ -235,13 +232,14 @@ Item {
 
     StatusScrollView {
         id: sview
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         anchors.top: sectionTitle.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: startBtn.top
         anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
+
+        contentWidth: availableWidth
 
         Item {
             id: contentItem

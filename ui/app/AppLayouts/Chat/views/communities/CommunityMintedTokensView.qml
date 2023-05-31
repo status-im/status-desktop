@@ -43,8 +43,6 @@ StatusScrollView {
         }
     }
 
-    contentWidth: mainLayout.width
-    contentHeight: mainLayout.height
     padding: 0
 
     ColumnLayout {

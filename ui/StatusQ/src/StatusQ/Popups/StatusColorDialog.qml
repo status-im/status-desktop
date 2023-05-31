@@ -31,26 +31,18 @@ StatusModal {
     }
 
     width: 680
-    implicitHeight: 820
 
-    contentItem: StatusScrollView {
+    StatusScrollView {
         id: scroll
-        width: parent.width
-        height: parent.height
-        topPadding: 30
-        leftPadding: 20
-        rightPadding: 20
-        bottomPadding: 20
-        contentHeight: column.height
+        anchors.fill: parent
+        padding: 20
 
         ScrollBar.vertical.policy: ScrollBar.AsNeeded
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-        clip: true
-
         ColumnLayout {
             id: column
-            width: scroll.width - scroll.leftPadding - scroll.rightPadding
+            width: scroll.availableWidth
             spacing: 16
 
             StatusColorSpace {

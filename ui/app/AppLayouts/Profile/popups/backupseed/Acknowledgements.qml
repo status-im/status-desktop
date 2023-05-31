@@ -33,6 +33,7 @@ ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: -parent.anchors.margins
                 anchors.bottomMargin: -parent.anchors.bottomMargin
+                contentWidth: availableWidth
 
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOn
 

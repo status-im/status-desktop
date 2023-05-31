@@ -146,11 +146,14 @@ StatusWindow {
             }
 
             leftPanel: StatusScrollView {
+                id: sectionsScrollView
                 anchors.fill: parent
-                anchors.topMargin: 48
+                topPadding: 48
+                contentWidth: availableWidth
 
                 Column {
                     id: navigation
+                    width: sectionsScrollView.availableWidth
                     spacing: 0
 
                     StatusListSectionHeadline { text: "StatusQ.Core" }
@@ -158,6 +161,11 @@ StatusWindow {
                         title: "Icons"
                         selected: viewLoader.source.toString().includes(title)
                         onClicked: mainPageView.control(title);
+                    }
+                    StatusNavigationListItem {
+                        title: "ScrollView"
+                        selected: viewLoader.source.toString().includes(title)
+                        onClicked: mainPageView.page("StatusScrollView");
                     }
 
                     StatusListSectionHeadline { text: "StatusQ.Layout" }
@@ -374,34 +382,35 @@ StatusWindow {
                 anchors.fill: parent
 
                 StatusScrollView {
+                    id: scrollView
                     visible: !storeSettings.fillPage
+
                     anchors.fill: parent
-                    anchors.topMargin: 64
-                    contentHeight: (pageWrapper.height + pageWrapper.anchors.topMargin) * rootWindow.factor
-                    contentWidth: (pageWrapper.width * rootWindow.factor)
-                    clip: true
+                    topPadding: 64
+                    padding: 20
+
+                    contentWidth: viewLoader.width * rootWindow.factor
+                    contentHeight: viewLoader.height * rootWindow.factor
 
                     Item {
                         id: pageWrapper
-                        width: centerPanel.width
-                        anchors.top: parent.top
-                        height: Math.max(rootWindow.height, viewLoader.height + 128)
+
+                        width: Math.max(scrollView.availableWidth, viewLoader.width)
+                        height: Math.max(scrollView.availableHeight, viewLoader.height)
                         scale: rootWindow.factor
 
                         Loader {
                             id: viewLoader
-                            active: !storeSettings.fillPage
                             anchors.centerIn: parent
+                            active: !storeSettings.fillPage
                             source: storeSettings.selected.length === 0 ? mainPageView.control("Icons") : storeSettings.selected
                             onSourceChanged: {
                                 storeSettings.selected = viewLoader.source
-                                if (source.toString().includes("Icons")) {
-                                    item.iconColor = Theme.palette.primaryColor1;
-                                }
                             }
                         }
                     }
                 }
+
                 Loader {
                     active: storeSettings.fillPage
                     anchors.fill: parent
@@ -457,6 +466,8 @@ StatusWindow {
 
                 anchors.fill: parent
                 anchors.topMargin: 48
+
+                contentWidth: availableWidth
 
                 ColumnLayout {
                     width: examplesLeftPanel.availableWidth

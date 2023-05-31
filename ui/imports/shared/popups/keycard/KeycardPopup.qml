@@ -12,7 +12,6 @@ StatusModal {
     property var sharedKeycardModule
     property var emojiPopup
 
-    width: Constants.keycard.general.popupWidth
     closePolicy: d.disableActionPopupButtons || d.disableCloseButton? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !d.disableActionPopupButtons && !d.disableCloseButton
 
@@ -58,23 +57,17 @@ StatusModal {
         root.sharedKeycardModule.currentState.doCancelAction()
     }
 
-    contentItem: StatusScrollView {
+    StatusScrollView {
         id: scrollView
+        anchors.fill: parent
 
-        implicitWidth: contentWidth + leftPadding + rightPadding
-        implicitHeight: contentHeight + topPadding + bottomPadding
-
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        width: parent.width
-        height: {
-            let availableSpace = Global.applicationWindow.height - (root.margins * 2 + root.topPadding + root.bottomPadding)
-            return Math.min(content.height, availableSpace)
-        }
+        implicitWidth: Constants.keycard.general.popupWidth
+        contentWidth: availableWidth
 
         KeycardPopupContent {
             id: content
             width: scrollView.availableWidth
-            height: {
+            implicitHeight: {
                 // for all flows
                 if (root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.keycardMetadataDisplay ||
                         root.sharedKeycardModule.currentState.stateType === Constants.keycardSharedState.factoryResetConfirmationDisplayMetadata) {

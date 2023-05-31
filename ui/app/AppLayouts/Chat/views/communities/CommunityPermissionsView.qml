@@ -31,12 +31,9 @@ StatusScrollView {
         property int permissionIndexToRemove
     }
 
-    contentWidth: root.viewWidth
-    contentHeight: mainLayout.implicitHeight
-
     ColumnLayout {
         id: mainLayout
-        width: parent.width
+        width: root.viewWidth
         spacing: 24
 
         ListModel {
@@ -55,7 +52,7 @@ StatusScrollView {
             model: root.permissionsModel
 
             delegate: PermissionItem {
-                Layout.preferredWidth: root.viewWidth
+                Layout.fillWidth: true
 
                 holdingsListModel: HoldingsSelectionModel {
                     sourceModel: model.holdingsListModel

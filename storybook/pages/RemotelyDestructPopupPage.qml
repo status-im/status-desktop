@@ -38,6 +38,9 @@ SplitView {
 
                 onRemotelyDestructClicked: logs.logEvent("RemoteSelfDestructPopup::onRemotelyDestructClicked")
 
+                Component.onCompleted: {
+                    open()
+                }
             }
         }
 

@@ -34,9 +34,9 @@ StatusDialog {
         color: Theme.palette.baseColor4
     }
 
-    contentItem: DiscordImportProgressContents {
+    DiscordImportProgressContents {
         id: contents
-        width: root.availableWidth
+        anchors.fill: parent
         store: root.store
         onClose: root.close()
     }

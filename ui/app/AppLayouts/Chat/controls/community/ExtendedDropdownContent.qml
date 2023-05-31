@@ -543,11 +543,6 @@ Item {
                 root.itemClicked(key, name, iconSource)
             }
             onImplicitHeightChanged: root.layoutChanged()
-            Binding on implicitHeight {
-                value: contentHeight
-                //avoid too many changes of the implicit height
-                delayed: true
-            }
         }
     }
 }

@@ -83,7 +83,9 @@ Popup {
         stickersContainer.visible = true
     }
 
-    contentItem: ColumnLayout {
+    padding: 0
+
+    ColumnLayout {
         anchors.fill: parent
         spacing: 0
 
@@ -274,13 +276,17 @@ Popup {
             }
 
             StatusScrollView {
+                id: scrollView
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 leftPadding: 0
                 rightPadding: 0
+                contentWidth: availableWidth
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {
+                    width: scrollView.availableWidth
                     spacing: footerContent.spacing
 
                     Repeater {

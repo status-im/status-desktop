@@ -24,11 +24,12 @@ StatusScrollView {
     width: parent.width
     ScrollBar.vertical.policy: ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AsNeeded
+    contentWidth: availableWidth
 
     Loader {
         id: contentLoader
         active: true
-        width: parent.width
+        width: collectiblesContent.availableWidth
         height: collectiblesContent.imageSize
         sourceComponent: !!error ? errorComponent : collectiblesContentComponent
     }

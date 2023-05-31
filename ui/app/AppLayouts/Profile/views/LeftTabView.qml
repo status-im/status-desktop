@@ -27,6 +27,7 @@ Item {
     }
 
     StatusScrollView {
+        id: scrollView
         contentWidth: availableWidth
         contentHeight: profileMenu.height + Style.current.bigPadding
         anchors.right: parent.right
@@ -34,10 +35,10 @@ Item {
         anchors.top: title.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.bottom: parent.bottom
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         MenuPanel {
             id: profileMenu
+            width: scrollView.availableWidth
             privacyStore: store.privacyStore
             contactsStore: store.contactsStore
             mainMenuItems: store.mainMenuItems

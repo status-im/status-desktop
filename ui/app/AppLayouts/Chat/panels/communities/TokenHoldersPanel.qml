@@ -31,7 +31,6 @@ Control {
     }
 
     contentItem: ColumnLayout {
-        anchors.fill: parent
         spacing: Style.current.padding
 
         SortFilterProxyModel {
@@ -71,74 +70,93 @@ Control {
             text: searcher.text.length > 0 ? qsTr("Search results") : qsTr("All %1 token holders").arg(root.tokenName)
         }
 
-        StatusListView {
+        Item {
+            id: scrollViewWrapper
             Layout.fillWidth: true
-            Layout.preferredHeight: childrenRect.height
+            Layout.fillHeight: true
+            implicitWidth: scrollView.implicitWidth
+            implicitHeight: scrollView.implicitHeight
 
-            model: filteredModel
-            delegate: RowLayout {
-                width: ListView.view.width
-                spacing: Style.current.padding
+            StatusListView {
+                id: scrollView
 
-                StatusListItem {
-                    readonly property bool unknownHolder: model.name === ""
-                    readonly property string formattedTitle: unknownHolder ? "?" : model.name
+                anchors.fill: parent
+                implicitHeight: contentHeight
 
-                    Layout.fillWidth: true
+                model: filteredModel
 
-                    leftPadding: 0
-                    rightPadding: 0
-                    sensor.enabled: false
-                    title: formattedTitle
-                    statusListItemTitle.visible: !unknownHolder
-                    subTitle: model.walletAddress
-                    asset.name: model.imageSource
-                    asset.isImage: true
-                    asset.isLetterIdenticon: unknownHolder
-                    asset.color: Theme.palette.userCustomizationColors[d.red2Color]
+                ScrollBar.vertical: StatusScrollBar {
+                    parent: scrollViewWrapper
+                    anchors.top: scrollView.top
+                    anchors.bottom: scrollView.bottom
+                    anchors.left: scrollView.right
+                    anchors.leftMargin: 1
                 }
 
-                StatusComboBox {
-                    id: combo
-                    Layout.preferredWidth: 88
-                    Layout.preferredHeight: 44
-                    visible: root.isSelectorMode && amount > 1
-                    control.spacing: Style.current.halfPadding / 2
-                    model: amount
-                    size: StatusComboBox.Size.Small
-                    type: StatusComboBox.Type.Secondary
-                    delegate: StatusItemDelegate {
-                        width: combo.control.width
-                        centerTextHorizontally: true
-                        highlighted: combo.control.highlightedIndex === index
-                        font: combo.control.font
-                        text: Number(modelData) + 1
-                    }
-                    contentItem: StatusBaseText {
-                        font: combo.control.font
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                        text: Number(combo.control.displayText) + 1
-                        color: Theme.palette.baseColor1
+                delegate: RowLayout {
+                    width: ListView.view.width
+                    spacing: Style.current.padding
+
+                    StatusListItem {
+                        readonly property bool unknownHolder: model.name === ""
+                        readonly property string formattedTitle: unknownHolder ? "?" : model.name
+
+                        Layout.fillWidth: true
+
+                        leftPadding: 0
+                        rightPadding: 0
+                        sensor.enabled: false
+                        title: formattedTitle
+                        statusListItemTitle.visible: !unknownHolder
+                        subTitle: model.walletAddress
+                        asset.name: model.imageSource
+                        asset.isImage: true
+                        asset.isLetterIdenticon: unknownHolder
+                        asset.color: Theme.palette.userCustomizationColors[d.red2Color]
                     }
 
-                    control.onDisplayTextChanged: {
-                        if(checkBox.checked)
-                            root.selfDestructAmountChanged(walletAddress, Number(combo.currentIndex) + 1)
+                    StatusComboBox {
+                        id: combo
+                        Layout.preferredWidth: 88
+                        Layout.preferredHeight: 44
+                        visible: root.isSelectorMode && amount > 1
+                        control.spacing: Style.current.halfPadding / 2
+                        model: amount
+                        size: StatusComboBox.Size.Small
+                        type: StatusComboBox.Type.Secondary
+                        delegate: StatusItemDelegate {
+                            width: combo.control.width
+                            centerTextHorizontally: true
+                            highlighted: combo.control.highlightedIndex === index
+                            font: combo.control.font
+                            text: Number(modelData) + 1
+                        }
+                        contentItem: StatusBaseText {
+                            font: combo.control.font
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                            text: Number(combo.control.displayText) + 1
+                            color: Theme.palette.baseColor1
+                        }
+
+                        control.onDisplayTextChanged: {
+                            if(checkBox.checked)
+                                root.selfDestructAmountChanged(walletAddress, Number(combo.currentIndex) + 1)
+                        }
                     }
-                }
 
-                StatusCheckBox {
-                    id: checkBox
+                    StatusCheckBox {
+                        id: checkBox
 
-                    Layout.leftMargin: Style.current.padding
-                    visible: root.isSelectorMode
-                    padding: 0
-                    onCheckStateChanged: {
-                        if(checked)
-                            root.selfDestructAmountChanged(model.walletAddress, Number(combo.currentIndex) + 1)
-                        else
-                            root.selfDestructRemoved(model.walletAddress)
+                        Layout.leftMargin: Style.current.padding
+                        visible: root.isSelectorMode
+                        padding: 0
+                        onCheckStateChanged: {
+                            if(checked)
+                                root.selfDestructAmountChanged(model.walletAddress, Number(combo.currentIndex) + 1)
+                            else
+                                root.selfDestructRemoved(model.walletAddress)
+                        }
                     }
                 }
             }

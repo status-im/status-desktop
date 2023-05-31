@@ -70,8 +70,6 @@ StatusScrollView {
         readonly property int imageSelectorRectWidth: root.isAssetView ? 128 : 290
     }
 
-    contentWidth: mainLayout.width
-    contentHeight: mainLayout.height
     padding: 0
 
     ColumnLayout {

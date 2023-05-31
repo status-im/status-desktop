@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
 
@@ -18,7 +18,11 @@ import StatusQ.Controls 0.1
         StatusListView {
             id: listView
             anchors.fill: parent
+
             model: someModel
+
+            // For a vertical list bind the imlicitHeight to contentHeight
+            implicitHeight: contentHeight
 
             delegate: DelegateItem {
                 ...
@@ -28,6 +32,7 @@ import StatusQ.Controls 0.1
 
    For a list of components available see StatusQ.
 */
+
 ListView {
     id: root
 

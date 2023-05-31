@@ -39,34 +39,31 @@ ColumnLayout {
     }
 
     StatusChatListCategoryItem {
-        title: "Chat list category"
+        text: "Chat list category"
         opened: false
         showActionButtons: true
     }
 
     StatusChatListCategoryItem {
-        title: "Chat list category (opened)"
+        text: "Chat list category (opened)"
         opened: true
         showActionButtons: true
     }
 
     StatusChatListCategoryItem {
-        title: "Chat list category (no buttons)"
+        text: "Chat list category (no buttons)"
         opened: true
     }
 
     StatusChatListCategoryItem {
         id: categoryItemInteractive
-        title: "Chat category interactive"
+        text: "Chat category interactive"
         showActionButtons: true
         onAddButtonClicked: testEventsList.eventTriggered("Add button clicked")
         onMenuButtonClicked: testEventsList.eventTriggered("Menu button clicked")
         onToggleButtonClicked: {
             opened = !opened
             testEventsList.eventTriggered("Toggle button clicked")
-        }
-        onTitleClicked: {
-            testEventsList.eventTriggered("Title clicked")
         }
         onClicked: {
             opened = !opened
@@ -389,7 +386,7 @@ ColumnLayout {
     }
 
     StatusListItem {
-        title: "List Item with Tags"
+        title: "List Item with bottom Tags"
         asset.isLetterIdenticon: true
         bottomModel: 3
         bottomDelegate: StatusListItemTag {
@@ -399,7 +396,7 @@ ColumnLayout {
     }
 
     StatusListItem {
-        title: "List Item with Inline Tags"
+        title: "List Item with Tags"
         asset.isLetterIdenticon: true
         tagsModel: ListModel{
             ListElement {
@@ -435,6 +432,44 @@ ColumnLayout {
             titleText.font.pixelSize: 12
             titleText.color: Theme.palette.indirectColor1
         }
+    }
+
+    StatusListItem {
+        implicitWidth: 600
+        title: "List Item with inline Tags"
+        subTitle: "03:32"
+        asset.isLetterIdenticon: true
+        inlineTagModel: 6
+        inlineTagDelegate: StatusListItemTag {
+            height: 24
+            title: "tag"
+            asset.isLetterIdenticon: true
+        }
+        components: [
+            ColumnLayout {
+                Row {
+                    Layout.alignment: Qt.AlignRight
+                    spacing: 4
+                    StatusIcon {
+                        color:  Theme.palette.successColor1
+                        icon: "arrow-up"
+                        rotation: 135
+                        height: 18
+                    }
+                    StatusBaseText {
+                        text: "0.0000015 ETH"
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                    }
+                }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignRight
+                    text: "1201.10 USD"
+                    font.pixelSize: 15
+                    color: Theme.palette.baseColor1
+                }
+            }
+        ]
     }
 
     StatusListItem {
@@ -573,43 +608,5 @@ ColumnLayout {
     DeviceListItem {
         subTitle: "This device"
         subTitleBadgeComponent: null
-    }
-
-    StatusListItem {
-        implicitWidth: 600
-        title: "List Item with Tags"
-        subTitle: "03:32"
-        asset.isLetterIdenticon: true
-        inlineTagModel: 6
-        inlineTagDelegate: StatusListItemTag {
-            height: 24
-            title: "tag"
-            asset.isLetterIdenticon: true
-        }
-        components: [
-            ColumnLayout {
-                Row {
-                    Layout.alignment: Qt.AlignRight
-                    spacing: 4
-                    StatusIcon {
-                        color:  Theme.palette.successColor1
-                        icon: "arrow-up"
-                        rotation: 135
-                        height: 18
-                    }
-                    StatusBaseText {
-                        text: "0.0000015 ETH"
-                        font.pixelSize: 15
-                        color: Theme.palette.directColor1
-                    }
-                }
-                StatusBaseText {
-                    Layout.alignment: Qt.AlignRight
-                    text: "1201.10 USD"
-                    font.pixelSize: 15
-                    color: Theme.palette.baseColor1
-                }
-            }
-        ]
     }
 }

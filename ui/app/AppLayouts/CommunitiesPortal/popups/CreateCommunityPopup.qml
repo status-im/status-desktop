@@ -368,17 +368,23 @@ StatusStackModal {
     stackItems: [
         StatusScrollView {
             id: generalView
-            implicitWidth: root.width
-            implicitHeight: root.height
             contentWidth: availableWidth
-            contentHeight: generalViewLayout.implicitHeight
             readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
 
+            padding: 0
             clip: false
+
+            ScrollBar.vertical: StatusScrollBar {
+                parent: root
+                anchors.top: generalView.top
+                anchors.bottom: generalView.bottom
+                anchors.left: generalView.right
+                anchors.leftMargin: 1
+            }
 
             ColumnLayout {
                 id: generalViewLayout
-                width: generalView.contentWidth
+                width: generalView.availableWidth
                 spacing: 16
 
                 CommunityNameInput {

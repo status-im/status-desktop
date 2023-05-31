@@ -251,7 +251,7 @@ def scroll_obj_by_name(objName: str):
 
 def reset_scroll_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
-    obj.contentY = 0
+    obj.flickable.contentY = 0
 
 
 # execute do_fn until validation_fn returns True or timeout is reached

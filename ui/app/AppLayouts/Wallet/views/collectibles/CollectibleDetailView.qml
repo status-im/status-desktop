@@ -90,7 +90,6 @@ Item {
                     height: collectibleImageDetails.height - collectibleName.height - parent.spacing
 
                     contentWidth: availableWidth
-                    contentHeight: descriptionText.height
 
                     padding: 0
                     
@@ -128,6 +127,7 @@ Item {
             id: scrollView
             Layout.fillWidth: true
             Layout.fillHeight: true
+            contentWidth: availableWidth
             Flow {
                 width: scrollView.availableWidth
                 spacing: 10

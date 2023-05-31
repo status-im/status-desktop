@@ -522,17 +522,16 @@ Pane {
 
         StatusScrollView {
             id: scrollView
-            implicitWidth: contentWidth + leftPadding + rightPadding
-            implicitHeight: contentHeight + topPadding + bottomPadding
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.leftMargin: -column.anchors.leftMargin
             Layout.rightMargin: -column.anchors.rightMargin
             Layout.topMargin: -column.spacing
             padding: 0
+            contentWidth: availableWidth
 
             ColumnLayout {
-                width: scrollView.width
+                width: scrollView.availableWidth
                 spacing: 20
 
                 ProfileBioSocialsPanel {

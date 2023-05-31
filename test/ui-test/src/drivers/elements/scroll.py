@@ -14,7 +14,7 @@ class Scroll(BaseElement):
         while not element.is_visible:
             step *= 2
             direction *= -1
-            squish.flick(self.object, 0, step * direction)
+            squish.flick(self.object.flickable, 0, step * direction)
             time.sleep(0.1)
             if time.monotonic() - started_at > timeout_sec:
                 raise LookupError(f'Object not found: {element.object_name}')
@@ -23,6 +23,6 @@ class Scroll(BaseElement):
         started_at = time.monotonic()
         step = 100
         while not element.is_visible:
-            squish.flick(self.object, 0, step)
+            squish.flick(self.object.flickable, 0, step)
             if time.monotonic() - started_at > timeout_sec:
                 raise LookupError(f'Object not found: {element.object_name}')

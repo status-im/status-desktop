@@ -23,6 +23,7 @@ StatusDialog {
     signal joined
     signal cancelMembershipRequest
 
+    padding: 0
     title: qsTr("Welcome to %1").arg(name)
 
     footer: StatusDialogFooter {
@@ -49,16 +50,17 @@ StatusDialog {
         }
     }
 
-    contentItem: StatusScrollView {
-        padding: 0
+    StatusScrollView {
+        id: scrollView
+        anchors.fill: parent
         implicitWidth: 640 // by design
-        implicitHeight: columnContent.childrenRect.height
+        contentWidth: availableWidth
 
         ColumnLayout {
             id: columnContent
 
             spacing: 24
-            width: root.availableWidth
+            width: scrollView.availableWidth
 
             StatusRoundedImage {
                 id: roundImage

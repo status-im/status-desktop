@@ -1,7 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 import QtQuick.Dialogs 1.3
-import QtQml.Models 2.14
+import QtQml.Models 2.15
 
 import utils 1.0
 import shared.panels 1.0
@@ -52,6 +53,7 @@ StatusDialog {
     }
 
     title: qsTr("New channel")
+    padding: 0
 
     onOpened: {
         nameInput.text = ""
@@ -69,8 +71,6 @@ StatusDialog {
             nameInput.input.asset.isLetterIdenticon = true;
         }
     }
-
-    onClosed: destroy()
 
     Connections {
         enabled: root.opened && root.emojiPopupOpened
@@ -93,25 +93,27 @@ StatusDialog {
     }
 
     StatusScrollView {
-
         id: scrollView
 
         property ScrollBar vScrollBar: ScrollBar.vertical
 
-        width: root.width
-        height: Math.min(content.height, 432)
-        leftPadding: 0
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        anchors.fill: parent
+        contentWidth: availableWidth
+        padding: 16
 
         function scrollBackUp() {
             vScrollBar.setPosition(0)
         }
 
-        Column {
+        ColumnLayout {
             id: content
+
+            width: scrollView.availableWidth
+            spacing: 0
 
             StatusInput {
                 id: nameInput
+                Layout.fillWidth: true
                 input.edit.objectName: "createOrEditCommunityChannelNameInput"
                 label: qsTr("Channel name")
                 charLimit: root.maxChannelNameLength
@@ -126,7 +128,6 @@ StatusDialog {
                     }
                 }
                 input.asset.color: colorDialog.color.toString()
-                leftPadding: 16
                 input.rightComponent: StatusRoundButton {
                     objectName: "StatusChannelPopup_emojiButton"
                     implicitWidth: 32
@@ -157,10 +158,11 @@ StatusDialog {
             Item {
                 id: spacer1
                 height: 16
-                width: parent.width
+                Layout.fillWidth: true
             }
 
             StatusBaseText {
+                Layout.fillWidth: true
                 text: qsTr("Channel colour")
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
@@ -169,13 +171,12 @@ StatusDialog {
             Item {
                 id: spacer2
                 height: 8
-                width: parent.width
+                Layout.fillWidth: true
             }
 
             Item {
-                anchors.horizontalCenter: parent.horizontalCenter
                 height: colorSelectorButton.height + 16
-                width: parent.width
+                Layout.fillWidth: true
 
                 StatusPickerButton {
                     id: colorSelectorButton
@@ -218,6 +219,7 @@ StatusDialog {
 
             StatusInput {
                 id: descriptionTextArea
+                Layout.fillWidth: true
                 input.edit.objectName: "createOrEditCommunityChannelDescriptionInput"
                 input.verticalAlignment: TextEdit.AlignTop
                 label: qsTr("Description")
@@ -284,7 +286,7 @@ StatusDialog {
             /* } */
 
             Item {
-                width: parent.width
+                Layout.fillWidth: true
                 height: 8
             }
         }

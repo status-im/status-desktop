@@ -76,7 +76,9 @@ Popup {
         }
     }
 
-    contentItem: Item {
+    padding: 0
+
+    Item {
         anchors.fill: parent
 
         ColumnLayout {
@@ -137,8 +139,6 @@ Popup {
                 id: gifsLoader
                 active: root.opened && RootStore.isTenorWarningAccepted
                 Layout.fillWidth: true
-                Layout.rightMargin: Style.current.smallPadding / 2
-                Layout.leftMargin: Style.current.smallPadding / 2
                 Layout.alignment: Qt.AlignTop | Qt.AlignLeft
                 Layout.preferredHeight: {
                     const headerTextHeight = searchBox.text === "" ? headerText.height : 0
@@ -208,15 +208,12 @@ Popup {
         id: gifItemsComponent
 
         StatusScrollView {
-            topPadding: Style.current.smallPadding
-            leftPadding: Style.current.smallPadding
-            rightPadding: Style.current.smallPadding
-            ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            id: scrollView
+            contentWidth: availableWidth
 
             Row {
                 id: gifs
-                width: parent.availableWidth
+                width: scrollView.availableWidth
                 spacing: Style.current.halfPadding
 
                 property string lastHoveredId
@@ -264,6 +261,7 @@ Popup {
         id: emptyPlaceholderComponent
 
         EmptyPlaceholder {
+            Layout.margins: Style.current.smallPadding
             currentCategory: root.currentCategory
             loading: root.loading
             onDoRetry: searchBox.text === ""

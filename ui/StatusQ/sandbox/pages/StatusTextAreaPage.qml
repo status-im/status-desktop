@@ -37,12 +37,14 @@ Column {
     }
 
     StatusScrollView {
+        id: scrollView
         padding: 0 // use our own (StatusTextArea) padding
         width: parent.width
+        contentWidth: availableWidth
         height: 120
-        TextArea.flickable: longTextArea
         StatusTextArea {
             id: longTextArea
+            width: scrollView.availableWidth
             text: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Integer imperdiet lectus quis justo. Sed vel lectus. \
             Donec odio tempus molestie, porttitor ut, iaculis quis, sem. Morbi scelerisque luctus velit. Nunc auctor. Nullam at \
             arcu a est sollicitudin euismod. Cras elementum. Class aptent taciti sociosqu ad litora torquent per conubia nostra, \

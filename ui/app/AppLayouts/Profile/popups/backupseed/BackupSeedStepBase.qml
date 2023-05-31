@@ -24,7 +24,7 @@ StatusScrollView {
         inputText.input.edit.forceActiveFocus();
     }
 
-    implicitHeight: 520
+    contentWidth: availableWidth
     clip: false
 
     ColumnLayout {
@@ -56,6 +56,4 @@ StatusScrollView {
             Layout.fillWidth: true
         }
     }
-
-    ScrollIndicator.vertical: ScrollIndicator {}
 }

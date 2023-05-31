@@ -1251,7 +1251,6 @@ Rectangle {
 
                         padding: 0
                         contentWidth: availableWidth
-                        contentHeight: messageInputField.implicitHeight
 
                         TextArea {
                             id: messageInputField

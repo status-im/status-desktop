@@ -1199,7 +1199,7 @@ QtObject {
             notificationsCount: 0
         }
         ListElement {
-            sectionId: "demoApp"
+            sectionId: "qrScanner"
             sectionType: 103
             name: "QR Scanner"
             active: false
