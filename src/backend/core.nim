@@ -78,11 +78,10 @@ proc sendTransaction*(chainId: int, inputJSON: string, password: string): RpcRes
     raise newException(RpcException, e.msg)
 
 
-proc migrateKeyStoreDir*(account: string, password: string, oldKeystoreDir: string, multiaccountKeystoreDir: string)
+proc migrateKeyStoreDir*(account: string, hashedPassword: string, oldKeystoreDir: string, multiaccountKeystoreDir: string)
   {.raises: [RpcException, ValueError, Defect, SerializationError].} =
   try:
-    var hashed_password = "0x" & $keccak_256.digest(password)
-    discard status_go.migrateKeyStoreDir(account, hashed_password, oldKeystoreDir, multiaccountKeystoreDir)
+    discard status_go.migrateKeyStoreDir(account, hashedPassword, oldKeystoreDir, multiaccountKeystoreDir)
   except Exception as e:
     error "error migrating keystore dir", account, exception=e.msg
     raise newException(RpcException, e.msg)

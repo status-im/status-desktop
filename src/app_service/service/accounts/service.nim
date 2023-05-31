@@ -66,7 +66,6 @@ QtObject:
     keyStoreDir: string
     defaultWalletEmoji: string
     tmpAccount: AccountDto
-    tmpPassword: string
     tmpHashedPassword: string
     tmpThumbnailImage: string
     tmpLargeImage: string
@@ -618,9 +617,8 @@ QtObject:
     self.loggedInAccount = account
     self.setLocalAccountSettingsFile()
 
-  proc login*(self: Service, account: AccountDto, password: string) =
+  proc login*(self: Service, account: AccountDto, hashedPassword: string) =
     try:
-      let hashedPassword = hashPassword(password)
       var thumbnailImage: string
       var largeImage: string
       for img in account.images:
@@ -634,7 +632,7 @@ QtObject:
         os.createDir(keyStoreDir)
         status_core.migrateKeyStoreDir($ %* {
           "key-uid": account.keyUid
-        }, password, main_constants.ROOTKEYSTOREDIR, keyStoreDir)
+        }, hashedPassword, main_constants.ROOTKEYSTOREDIR, keyStoreDir)
 
       self.setKeyStoreDir(account.keyUid)
       # This is moved from `status-lib` here
@@ -691,15 +689,14 @@ QtObject:
           "RendezvousNodes": @[],
           "DiscV5BootstrapNodes": @[]
         }
-  
-      let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashPassword(password, lower=false))
+
+      let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
       if isOldHashPassword:
         # Start loading screen with warning
         self.events.emit(SIGNAL_REENCRYPTION_PROCESS_STARTED, Args())
   
         # Save tmp properties so that we can login after the timer
         self.tmpAccount = account
-        self.tmpPassword = password
         self.tmpHashedPassword = hashedPassword
         self.tmpThumbnailImage = thumbnailImage
         self.tmpLargeImage = largeImage
@@ -722,9 +719,8 @@ QtObject:
 
   proc onWaitForReencryptionTimeout(self: Service, response: string) {.slot.} =
     # Reencryption (can freeze and take up to 30 minutes)
-    let pwd = self.tmpPassword
-    self.tmpPassword = "" # Clear the password from memory as fast as possible
-    discard status_privacy.lowerDatabasePassword(self.tmpAccount.keyUid, pwd)
+    let oldHashedPassword = hashedPasswordToUpperCase(self.tmpHashedPassword)
+    discard status_privacy.changeDatabaseHashedPassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
 
     # Normal login after reencryption
     self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage, self.tmpNodeCfg)
