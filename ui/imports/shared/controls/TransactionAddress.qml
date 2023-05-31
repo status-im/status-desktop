@@ -178,6 +178,7 @@ Item {
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
                 wrapMode: Text.WrapAnywhere
+                enabled: false // Set to false to disable hover for rich text
                 text: {
                     if(!!root.address == false)
                         return ""

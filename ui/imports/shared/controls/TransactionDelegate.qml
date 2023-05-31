@@ -55,7 +55,7 @@ StatusListItem {
     property string symbol
     property string swapSymbol // TODO fill when swap data is implemented
     property int transactionType
-    property int transactionStatus: transferStatus === 0 ? TransactionDelegate.TransactionStatus.Failed : TransactionDelegate.TransactionStatus.Finished
+    property int transactionStatus: transferStatus === 0 ? TransactionDelegate.TransactionStatus.Pending : TransactionDelegate.TransactionStatus.Finished
     property string currentCurrency
     property int transferStatus
     property double cryptoValue

@@ -1,4 +1,4 @@
-import NimQml, strutils, uri, strformat, strutils, stint
+import NimQml, strutils, uri, strformat, strutils, stint, re
 import stew/byteutils
 import ./utils/qrcodegen
 
@@ -69,7 +69,7 @@ QtObject:
 
   proc hex2Dec*(self: Utils, value: string): string {.slot.} =
     # somehow this value crashes the app
-    if value == "0x0":
+    if value.find(re("0x0+$")) >= 0:
       return "0"
     return $stint.fromHex(StUint[256], value)
 

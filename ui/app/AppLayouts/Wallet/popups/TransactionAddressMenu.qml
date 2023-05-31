@@ -68,7 +68,7 @@ StatusMenu {
         }
 
         function openMenu(delegate) {
-            const x = delegate.width - root.contentWidth / 2
+            const x = delegate.width - 40
             const y = delegate.height / 2 + 20
             root.popup(delegate, x, y)
         }
@@ -102,6 +102,7 @@ StatusMenu {
     function openEthAddressMenu(delegate, address) {
         d.selectedAddress = address
 
+        address = address.toLowerCase()
         const contactPubKey = "" // TODO retrive contact public key or contact data directly from address
         let contactData = Utils.getContactDetailsAsJson(contactPubKey)
         let isWalletAccount = false
@@ -135,6 +136,7 @@ StatusMenu {
     function openTxMenu(delegate, address, chainShortName="") {
         d.addressType = TransactionAddressMenu.AddressType.Tx
         d.selectedAddress = address
+        chainShortName = chainShortName.toLowerCase()
         if (chainShortName === root.arbiscanShortChainName) {
             showOnArbiscanAction.enabled = true
         } else if (chainShortName === root.optimismShortChainName) {
@@ -149,6 +151,7 @@ StatusMenu {
         d.addressType = TransactionAddressMenu.AddressType.Contract
         d.contractName = name
         d.selectedAddress = address
+        chainShortName = chainShortName.toLowerCase()
         if (chainShortName === root.arbiscanShortChainName) {
             showOnArbiscanAction.enabled = true
         } else if (chainShortName === root.optimismShortChainName) {
@@ -232,8 +235,6 @@ StatusMenu {
         successText: {
             switch(d.addressType) {
             case TransactionAddressMenu.AddressType.Contract:
-                if (d.contractName.length > 0)
-                    return qsTr("%1 contract address copied").arg(d.contractName)
                 return qsTr("Contract address copied")
             case TransactionAddressMenu.AddressType.InputData:
                 return qsTr("Input data copied")
@@ -250,8 +251,6 @@ StatusMenu {
         defaultText: {
             switch(d.addressType) {
             case TransactionAddressMenu.AddressType.Contract:
-                if (d.contractName.length > 0)
-                    return qsTr("Copy %1 contract address").arg(d.contractName)
                 return qsTr("Copy contract address")
             case TransactionAddressMenu.AddressType.InputData:
                 return qsTr("Copy input data")

@@ -282,19 +282,7 @@ ListModel {
         section: "Components"
     }
     ListElement {
-        title: "TransactionDelegate"
-        section: "Components"
-    }
-    ListElement {
         title: "CommunityPermissionsRow"
-        section: "Components"
-    }
-    ListElement {
-        title: "TransactionAddress"
-        section: "Components"
-    }
-    ListElement {
-        title: "TransactionAddressTile"
         section: "Components"
     }
     ListElement {
@@ -320,6 +308,22 @@ ListModel {
     ListElement {
         title: "PopupSizing"
         section: "Research / Examples"
+    }
+    ListElement {
+        title: "TransactionDelegate"
+        section: "Wallet"
+    }
+    ListElement {
+        title: "TransactionAddress"
+        section: "Wallet"
+    }
+    ListElement {
+        title: "TransactionAddressTile"
+        section: "Wallet"
+    }
+    ListElement {
+        title: "TransactionDetailView"
+        section: "Wallet"
     }
     ListElement {
         title: "WalletHeader"
