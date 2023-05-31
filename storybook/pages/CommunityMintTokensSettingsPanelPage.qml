@@ -20,12 +20,18 @@ SplitView {
         id: emptyModel
     }
 
+    Button {
+        text: "Back"
+        onClicked: panel.navigateBack()
+    }
     Rectangle {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
+        color: Theme.palette.statusAppLayout.rightPanelBackgroundColor        
 
         CommunityMintTokensSettingsPanel {
+            id: panel
+
             anchors.fill: parent
             anchors.topMargin: 50
             tokensModel: editorModelChecked.checked ? emptyModel : MintedTokensModel.mintedTokensModel
@@ -39,6 +45,7 @@ SplitView {
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
             onMintAsset: logs.logEvent("CommunityMintTokensSettingsPanel::mintAssets")
             onDeleteToken: logs.logEvent("CommunityMintTokensSettingsPanel::deleteToken: " + key)
+            onRetryMintToken: logs.logEvent("CommunityMintTokensSettingsPanel::retryMintToken: " + key)
         }
     }
 
