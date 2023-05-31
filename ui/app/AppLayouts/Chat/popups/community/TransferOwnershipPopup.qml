@@ -53,6 +53,7 @@ StatusDialog {
                 borderColor: Theme.palette.primaryColor1
                 size: StatusBaseButton.Size.Tiny
                 text: qsTr("Copy")
+                objectName: "copyCommunityPrivateKeyButton"
                 onClicked: {
                     text = qsTr("Copied")
                     root.store.copyToClipboard(root.privateKey)

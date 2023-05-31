@@ -266,7 +266,11 @@ def step(context, option:str, list):
 
 @Then("\"|any|\" button is present")
 def step (context, action_button_name):
-    _statusCommunityScreen.verify_action_button_enabled(action_button_name)   
+    _statusCommunityScreen.verify_action_button_enabled(action_button_name)
+      
+@Then("the user is able to open Back up modal and copy private key")
+def step(context):
+    _statusCommunityScreen.verify_community_private_key() 
 
     
 ###########################################################################

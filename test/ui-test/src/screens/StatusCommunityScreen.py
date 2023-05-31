@@ -19,6 +19,7 @@ from drivers.SDKeyboardCommands import *
 from .StatusMainScreen import StatusMainScreen
 from utils.FileManager import *
 from screens.StatusChatScreen import MessageContentType
+from screens.components.community_back_up_private_key_popup import BackUpCommunityPrivateKeyPopup
 from utils.ObjectAccess import *
 
 class CommunityCreateMethods(Enum):
@@ -88,7 +89,7 @@ class CommunityWelcomeScreenComponents(Enum):
     WELCOME_SCREEN_CHECKLIST_ELEMENT1 = "community_welcome_screen_checkList_element1"
     WELCOME_SCREEN_CHECKLIST_ELEMENT2 = "community_welcome_screen_checkList_element2"
     WELCOME_SCREEN_CHECKLIST_ELEMENT3 = "community_welcome_screen_checkList_element3"
-    ADD_NEW_ITEM_BUTTON = "community_welcome_screen_add_new_item"
+    ADD_NEW_ITEM_BUTTON = "community_welcome_screen_add_new_item"  
 
 class CommunityColorPanelComponents(Enum):
     HEX_COLOR_INPUT = "communitySettings_ColorPanel_HexColor_Input"
@@ -108,6 +109,12 @@ class CreateOrEditCommunityCategoryPopup(Enum):
     COMMUNITY_CATEGORY_LIST_ITEM_PLACEHOLDER: str = "createOrEditCommunityCategoryChannelList_ListItem_Placeholder"
     COMMUNITY_CATEGORY_BUTTON: str = "createOrEditCommunityCategoryBtn_StatusButton"
     MODAL_CLOSE_BUTTON = "modal_Close_Button"
+
+class CommunityOverviewScreenComponents(Enum):
+    # Constants definitions: 
+    COMMUNITY_PRIVATE_KEY_LENGHT_UI = 35 # length of community PK on the Transfer Ownership popup
+    # Components:
+    COMMUNITY_OVERVIEW_BACK_UP_BUTTON ="communityOverview_Back_up_StatusButton"           
 
 class StatusCommunityScreen:
 
@@ -563,5 +570,12 @@ class StatusCommunityScreen:
     def verify_action_button_enabled(self, option:str):
         assert BaseElement(str(CommunityWelcomeScreenComponents.ADD_NEW_ITEM_BUTTON.value)).is_enabled
         button_title = get_obj(CommunityWelcomeScreenComponents.ADD_NEW_ITEM_BUTTON.value).text
-        verify_equals(option, str(button_title))            
-            
+        verify_equals(option, str(button_title))
+    
+    def verify_community_private_key(self):
+        Button(CommunityOverviewScreenComponents.COMMUNITY_OVERVIEW_BACK_UP_BUTTON.value).click()
+        transferOwnershipPopup = BackUpCommunityPrivateKeyPopup().wait_until_appears()
+        transferOwnershipPopup.copy_community_private_key()
+        community_private_key = transferOwnershipPopup.private_key
+        assert len(community_private_key) == (CommunityOverviewScreenComponents.COMMUNITY_PRIVATE_KEY_LENGHT_UI.value), f"Current key length: {len(community_private_key)}"
+        assert community_private_key.startswith("0x"), f"Current private key does not start with 0x: {community_private_key}"     

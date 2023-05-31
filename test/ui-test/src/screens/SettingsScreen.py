@@ -19,7 +19,7 @@ from utils.ObjectAccess import *
 
 from .StatusMainScreen import MainScreenComponents
 from .StatusMainScreen import authenticate_popup_enter_password
-from .components.cahange_password_popup import ChangePasswordPopup
+from .components.change_password_popup import ChangePasswordPopup
 from .components.social_links_popup import SocialLinksPopup
 
 

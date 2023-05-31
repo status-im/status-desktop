@@ -136,6 +136,7 @@ StackLayout {
 
             RowLayout {
                 CommunityBanner {
+                    objectName: "invitePeopleBanner"
                     text: qsTr("Welcome to your community!")
                     buttonText: qsTr("Invite new people")
                     icon.name: "invite-users"
@@ -145,6 +146,7 @@ StackLayout {
                    Layout.fillWidth: true
                 }
                 CommunityBanner {
+                    objectName: "airdropBanner"
                     text: qsTr("Try an airdrop to reward your community for engagement!")
                     buttonText: qsTr("Airdrop Tokens")
                     icon.name: "airdrop"
@@ -156,6 +158,7 @@ StackLayout {
                 }
 
                 CommunityBanner {
+                    objectName: "backUpBanner"
                     text: qsTr("Back up community key")
                     buttonText: qsTr("Back up")
                     icon.name: "objects"
