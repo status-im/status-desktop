@@ -1,4 +1,4 @@
-import json
+import json, chronicles
 
 import base
 import signal_type
@@ -10,8 +10,12 @@ type StatusUpdatesTimedoutSignal* = ref object of Signal
   statusUpdates*: seq[StatusUpdateDto]
 
 proc fromEvent*(T: type StatusUpdatesTimedoutSignal, jsonSignal: JsonNode): StatusUpdatesTimedoutSignal =
-  result = StatusUpdatesTimedoutSignal()
-  result.signalType = SignalType.StatusUpdatesTimedout
-  for jsonStatusUpdate in jsonSignal["event"]:
-    var statusUpdate = jsonStatusUpdate.toStatusUpdateDto()
-    result.statusUpdates.add(statusUpdate)
+  try:
+    result = StatusUpdatesTimedoutSignal()
+    result.signalType = SignalType.StatusUpdatesTimedout
+    for jsonStatusUpdate in jsonSignal["event"]:
+      var statusUpdate = jsonStatusUpdate.toStatusUpdateDto()
+      result.statusUpdates.add(statusUpdate)
+  except Exception as e:
+    let errDescription = e.msg
+    error "error from event: ", errDescription
