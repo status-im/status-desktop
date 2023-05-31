@@ -767,3 +767,4 @@ tests-nim-linux: | $(DOTHERSIDE)
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
 
 endif # "variables.mk" was not included
+
