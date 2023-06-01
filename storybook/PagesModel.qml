@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 ListModel {
     ListElement {
@@ -123,6 +123,10 @@ ListModel {
     }
     ListElement {
          title: "TokenHoldersPanel"
+         section: "Panels"
+    }
+    ListElement {
+         title: "SortableTokenHoldersPanel"
          section: "Panels"
     }
     ListElement {
@@ -308,6 +312,10 @@ ListModel {
     ListElement {
         title: "StatusChatListItem"
         section: "Components"
+    }
+    ListElement {
+         title: "SortableTokenHoldersList"
+         section: "Components"
     }
     ListElement {
          title: "BrowserSettings"
