@@ -116,10 +116,6 @@ proc mainProc() =
   installSelfSignedCertificate(imageCert)
 
   let app = newQGuiApplication()
-  # NOTE: https://github.com/status-im/status-desktop/issues/6930
-  # We increase js stack size to prevent "Maximum call stack size exceeded" on UI loading.
-  os.putEnv("QV4_JS_MAX_STACK_SIZE", "10485760")
-  os.putEnv("QT_QUICK_CONTROLS_HOVER_ENABLED", "1")
 
   let singleInstance = newSingleInstance($toMD5(DATADIR), openUri)
   let urlSchemeEvent = newStatusUrlSchemeEventObject()
