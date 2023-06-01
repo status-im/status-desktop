@@ -1025,23 +1025,28 @@ Rectangle {
         }
     }
 
-    ChatCommandsPopup {
-        id: chatCommandsPopup
-        x: 8
-        y: -height
-        onSendTransactionCommandButtonClicked: {
-            control.sendTransactionCommandButtonClicked()
-            chatCommandsPopup.close()
-        }
-        onReceiveTransactionCommandButtonClicked: {
-            control.receiveTransactionCommandButtonClicked()
-            chatCommandsPopup.close()
-        }
-        onClosed: {
-            chatCommandsBtn.highlighted = false
-        }
-        onOpened: {
-            chatCommandsBtn.highlighted = true
+    // TODO remove that Loader when the Chat Commands are re-implemented and fixed
+    // Bonus if we use `openPopup` instead with a Component instead
+    Loader {
+        active: false
+        sourceComponent: ChatCommandsPopup {
+            id: chatCommandsPopup
+            x: 8
+            y: -height
+            onSendTransactionCommandButtonClicked: {
+                control.sendTransactionCommandButtonClicked()
+                chatCommandsPopup.close()
+            }
+            onReceiveTransactionCommandButtonClicked: {
+                control.receiveTransactionCommandButtonClicked()
+                chatCommandsPopup.close()
+            }
+            onClosed: {
+                chatCommandsBtn.highlighted = false
+            }
+            onOpened: {
+                chatCommandsBtn.highlighted = true
+            }
         }
     }
 
@@ -1070,20 +1075,24 @@ Rectangle {
         anchors.fill: parent
         spacing: 4
 
-        StatusQ.StatusFlatRoundButton {
-            id: chatCommandsBtn
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            Layout.alignment: Qt.AlignBottom
-            Layout.bottomMargin: 4
-            icon.name: "chat-commands"
-            type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-            visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne
-            enabled: !control.isContactBlocked
-            onClicked: {
-                chatCommandsPopup.opened ?
-                            chatCommandsPopup.close() :
-                            chatCommandsPopup.open()
+        // TODO remove that Loader when the Chat Commands are re-implemented and fixed
+        Loader {
+            active: false
+            sourceComponent: StatusQ.StatusFlatRoundButton {
+                id: chatCommandsBtn
+                Layout.preferredWidth: 32
+                Layout.preferredHeight: 32
+                Layout.alignment: Qt.AlignBottom
+                Layout.bottomMargin: 4
+                icon.name: "chat-commands"
+                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+                visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne
+                enabled: !control.isContactBlocked
+                onClicked: {
+                    chatCommandsPopup.opened ?
+                                chatCommandsPopup.close() :
+                                chatCommandsPopup.open()
+                }
             }
         }
 
