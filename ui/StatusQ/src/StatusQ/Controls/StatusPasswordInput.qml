@@ -5,6 +5,7 @@ import QtQuick.Controls 2.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 /*!
    \qmltype StatusPasswordInput
@@ -63,6 +64,7 @@ TextField {
     color: Theme.palette.directColor1
     selectionColor: Theme.palette.primaryColor2
     selectedTextColor: Theme.palette.directColor1
+
     background: Rectangle {
         id: inputRectangle
         anchors.fill: parent
@@ -77,6 +79,9 @@ TextField {
         }
     }
 
+    cursorDelegate: StatusCursorDelegate {
+        cursorVisible: root.cursorVisible
+    }
 
     RowLayout {
         id: phrase
