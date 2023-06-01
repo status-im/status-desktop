@@ -29,8 +29,8 @@ SettingsPageLayout {
         stackManager.pop(StackView.Immediate)
     }
 
-    function selectCollectible(key, amount) {
-        d.selectCollectible(key, amount)
+    function selectToken(key, amount, type) {
+        d.selectToken(key, amount, type)
     }
 
     function addAddresses(addresses) {
@@ -46,7 +46,7 @@ SettingsPageLayout {
         readonly property string welcomePageTitle: qsTr("Airdrops")
         readonly property string newAirdropViewPageTitle: qsTr("New airdrop")
 
-        signal selectCollectible(string key, int amount)
+        signal selectToken(string key, int amount, int type)
         signal addAddresses(var addresses)
     }
 
@@ -116,7 +116,7 @@ SettingsPageLayout {
             onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
 
             Component.onCompleted: {
-                d.selectCollectible.connect(view.selectCollectible)
+                d.selectToken.connect(view.selectToken)
                 d.addAddresses.connect(view.addAddresses)
             }
         }

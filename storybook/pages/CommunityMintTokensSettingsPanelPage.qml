@@ -45,7 +45,6 @@ SplitView {
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
             onMintAsset: logs.logEvent("CommunityMintTokensSettingsPanel::mintAssets")
             onDeleteToken: logs.logEvent("CommunityMintTokensSettingsPanel::deleteToken: " + key)
-            onRetryMintToken: logs.logEvent("CommunityMintTokensSettingsPanel::retryMintToken: " + key)
         }
     }
 

@@ -37,11 +37,17 @@ StatusScrollView {
     signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys)
     signal navigateToMintTokenSettings
 
-    function selectCollectible(key, amount) {
-        const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                            root.collectiblesModel, key)
+    function selectToken(key, amount, type) {
+        var tokenModel = null
+        if(type === Constants.TokenType.ERC20)
+            tokenModel = root.assetsModel
+        else if (type === Constants.TokenType.ERC721)
+            tokenModel = root.collectiblesModel
 
-        const entry = d.prepareEntry(key, amount)
+        const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                            tokenModel, key)
+
+        const entry = d.prepareEntry(key, amount, type)
         entry.valid = true
         selectedHoldingsModel.append(entry)
     }
@@ -57,9 +63,14 @@ StatusScrollView {
         readonly property int dropdownHorizontalOffset: 4
         readonly property int dropdownVerticalOffset: 1
 
-        function prepareEntry(key, amount) {
-            const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                root.collectiblesModel, key)
+        function prepareEntry(key, amount, type) {
+            var tokenModel = null
+            if(type === Constants.TokenType.ERC20)
+                tokenModel = root.assetsModel
+            else if (type === Constants.TokenType.ERC721)
+                tokenModel = root.collectiblesModel
+
+            const modelItem = CommunityPermissionsHelpers.getTokenByKey(tokenModel, key)
 
             return {
                 key, amount,
@@ -170,7 +181,7 @@ StatusScrollView {
                 }
 
                 onAddCollectible: {
-                    const entry = d.prepareEntry(key, amount)
+                    const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC721)
                     entry.valid = true
 
                     selectedHoldingsModel.append(entry)
@@ -180,7 +191,7 @@ StatusScrollView {
                 onUpdateCollectible: {
                     const itemIndex = prepareUpdateIndex(key)
 
-                    const entry = d.prepareEntry(key, amount)
+                    const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC721)
                     const modelItem = CommunityPermissionsHelpers.getTokenByKey(
                                         root.collectiblesModel, key)
 

@@ -17,7 +17,7 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property var model
 
-    signal itemClicked(string contractUniqueKey,
+    signal itemClicked(string tokenKey,
                        int chainId,
                        string chainName,
                        string accountName,

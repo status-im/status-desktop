@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import AppLayouts.Chat.views.communities 1.0
+import AppLayouts.Chat.helpers 1.0
 
 import StatusQ.Core 0.1
 
@@ -23,59 +24,59 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            CommunityTokenView {
-                id: view
+            CollectibleObject {
+                id: collectibleObj
 
-                anchors.fill: parent
-                anchors.margins: 50
                 artworkSource: ModelsData.icons.superRare
-                preview: previewBox.checked
-                isAssetView: isAssetBox.checked
                 remotelyDestructState: remotelyDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
                 burnState: burnDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
                 name: nameText.text
                 symbol: symbolText.text
                 description: descriptionText.text
-                supplyAmount: parseInt(supplyText.text)
+                supply: parseInt(supplyText.text)
                 infiniteSupply: unlimitedSupplyChecker.checked
-                assetDecimals: parseInt(decimalText.text)
                 remainingTokens: parseInt(remainingText.text)
                 transferable: transferibleChecker.checked
-                selfDestruct: selfdestructChecker.checked
+                remotelyDestruct: selfdestructChecker.checked
                 chainId: 1
                 chainName: "Ethereum Mainnet"
                 chainIcon: ModelsData.networks.ethereum
                 accountName: "helloworld"
-
-                tokenOwnersModel: TokenHoldersModel {
-
-                }
-
-                onMintCollectible: logs.logEvent("CommunityTokenView::onMintCollectible: \n"
-                                                 + "artworkSource: " + artworkSource + "\n"
-                                                 + "name: " + name + "\n"
-                                                 + "symbol: " + symbol + "\n"
-                                                 + "description: " + description + "\n"
-                                                 + "supply: " + supply + "\n"
-                                                 + "infiniteSupply: " + infiniteSupply + "\n"
-                                                 + "transferable: " + transferable + "\n"
-                                                 + "selfDestruct: " + selfDestruct + "\n"
-                                                 + "chainId: " + chainId + "\n"
-                                                 + "accountName: " + accountName)
-
-                onMintAsset: logs.logEvent("CommunityTokenView::onMintAsset: \n"
-                                           + "artworkSource: " + artworkSource + "\n"
-                                           + "name: " + name + "\n"
-                                           + "symbol: " + symbol + "\n"
-                                           + "description: " + description + "\n"
-                                           + "supply: " + supply + "\n"
-                                           + "infiniteSupply: " + infiniteSupply + "\n"
-                                           + "decimals: " + decimals + "\n"
-                                           + "chainId: " + chainId + "\n"
-                                           + "accountName: " + accountName)
             }
+
+            AssetObject {
+                id: assetObj
+
+                artworkSource: ModelsData.icons.superRare
+                burnState: burnDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
+                name: nameText.text
+                symbol: symbolText.text
+                description: descriptionText.text
+                supply: parseInt(supplyText.text)
+                infiniteSupply: unlimitedSupplyChecker.checked
+                decimals: parseInt(decimalText.text)
+                remainingTokens: parseInt(remainingText.text)
+                chainId: 1
+                chainName: "Ethereum Mainnet"
+                chainIcon: ModelsData.networks.ethereum
+                accountName: "helloworld"
+            }
+
+            CommunityTokenView {
+                id: view
+
+                anchors.fill: parent
+                anchors.margins: 50
+                preview: previewBox.checked
+                isAssetView: isAssetBox.checked
+                collectible: collectibleObj
+                asset: assetObj
+                tokenOwnersModel: TokenHoldersModel {}
+                
+                onMintClicked: logs.logEvent("CommunityTokenView::onMintClicked")
         }
 
+        }
         LogsAndControlsPanel {
             id: logsAndControlsPanel
 
@@ -119,20 +120,29 @@ SplitView {
                     RadioButton {
                         id: mintingInProgress
                         text: "In progress"
-                        onCheckedChanged: if(checked) view.deployState = Constants.ContractTransactionStatus.InProgress
+                        onCheckedChanged: {
+                            if(view.isAssetView) assetObj.deployState = Constants.ContractTransactionStatus.InProgress
+                            else collectibleObj.deployState = Constants.ContractTransactionStatus.InProgress
+                        }
                     }
 
                     RadioButton {
                         id: mintingFailed
                         text: "Failed"
-                        onCheckedChanged: if(checked) view.deployState = Constants.ContractTransactionStatus.Failed
+                        onCheckedChanged: {
+                            if(view.isAssetView) assetObj.deployState = Constants.ContractTransactionStatus.Failed
+                            else collectibleObj.deployState = Constants.ContractTransactionStatus.Failed
+                        }
                     }
 
                     RadioButton {
                         id: mintingCompleted
                         text: "Completed"
                         checked: true
-                        onCheckedChanged: if(checked) view.deployState = Constants.ContractTransactionStatus.Completed
+                        onCheckedChanged: {
+                            if(view.isAssetView) assetObj.deployState = Constants.ContractTransactionStatus.Completed
+                            else collectibleObj.deployState = Constants.ContractTransactionStatus.Completed
+                        }
                     }
                 }
 
@@ -158,17 +168,26 @@ SplitView {
                 RadioButton {
                     text: "Small"
                     checked: true
-                    onCheckedChanged: view.artworkSource = ModelsData.icons.superRare
+                    onCheckedChanged: {
+                        if(view.isAssetView) assetObj.artworkSource = ModelsData.icons.superRare
+                        else collectibleObj.artworkSource = ModelsData.icons.superRare
+                    }
                 }
 
                 RadioButton {
                     text: "Medium"
-                    onCheckedChanged: view.artworkSource = ModelsData.collectibles.kitty2Big
+                    onCheckedChanged: {
+                        if(view.isAssetView) assetObj.artworkSource = ModelsData.collectibles.kitty2Big
+                        else collectibleObj.artworkSource = ModelsData.collectibles.kitty2Big
+                    }
                 }
 
                 RadioButton {
                     text: "Large"
-                    onCheckedChanged: view.artworkSource = ModelsData.banners.superRare
+                    onCheckedChanged: {
+                        if(view.isAssetView) assetObj.artworkSource = ModelsData.banners.superRare
+                        else collectibleObj.artworkSource = ModelsData.banners.superRare
+                    }
                 }
 
                 Label {
@@ -280,9 +299,15 @@ SplitView {
                     text: "Ethereum Mainnet"
                     checked: true
                     onCheckedChanged:  {
-                        view.chainName = text
-                        view.chainIcon = ModelsData.networks.ethereum
-                        view.chainId = 1
+                        if(view.isAssetView) {
+                            assetObj.chainName = text
+                            assetObj.chainIcon = ModelsData.networks.ethereum
+                            assetObj.chainId = 1
+                        } else {
+                            collectibleObj.chainName = text
+                            collectibleObj.chainIcon = ModelsData.networks.ethereum
+                            collectibleObj.chainId = 1
+                        }
                     }
                 }
 
@@ -290,9 +315,15 @@ SplitView {
                     id: opt
                     text: "Optimism"
                     onCheckedChanged:  {
-                        view.chainName = text
-                        view.chainIcon = ModelsData.networks.optimism
-                        view.chainId = 2
+                        if(view.isAssetView) {
+                            assetObj.chainName = text
+                            assetObj.chainIcon = ModelsData.networks.optimism
+                            assetObj.chainId = 2
+                        } else {
+                            collectibleObj.chainName = text
+                            collectibleObj.chainIcon = ModelsData.networks.optimism
+                            collectibleObj.chainId = 2
+                        }
                     }
                 }
 
@@ -300,9 +331,15 @@ SplitView {
                     id: arb
                     text: "Arbitrum"
                     onCheckedChanged:  {
-                        view.chainName = text
-                        view.chainIcon = ModelsData.networks.arbitrum
-                        view.chainId = 3
+                        if(view.isAssetView) {
+                            assetObj.chainName = text
+                            assetObj.chainIcon = ModelsData.networks.arbitrum
+                            assetObj.chainId = 3
+                        } else {
+                            collectibleObj.chainName = text
+                            collectibleObj.chainIcon = ModelsData.networks.arbitrum
+                            collectibleObj.chainId = 3
+                        }
                     }
                 }
             }

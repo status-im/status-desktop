@@ -20,7 +20,7 @@ StatusDialog {
 
     property string collectibleName
 
-    signal remotelyDestructClicked(int tokenCount, var selfDestructTokensList)
+    signal remotelyDestructClicked(int tokenCount, var remotelyDestructTokensList)
 
     QtObject {
         id: d
