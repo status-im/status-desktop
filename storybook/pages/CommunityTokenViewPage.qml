@@ -47,6 +47,10 @@ SplitView {
                 chainIcon: ModelsData.networks.ethereum
                 accountName: "helloworld"
 
+                tokenOwnersModel: TokenHoldersModel {
+
+                }
+
                 onMintCollectible: logs.logEvent("CommunityTokenView::onMintCollectible: \n"
                                                  + "artworkSource: " + artworkSource + "\n"
                                                  + "name: " + name + "\n"
