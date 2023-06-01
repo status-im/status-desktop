@@ -9,4 +9,4 @@ proc delete*(self: SyncDeviceResultState) =
   self.State.delete
 
 method executePrimaryCommand*(self: SyncDeviceResultState, controller: Controller) =
-  controller.login()
+  controller.loginLocalPairingAccount()

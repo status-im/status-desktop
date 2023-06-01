@@ -9,7 +9,7 @@ type LocalPairingSignal* = ref object of Signal
   eventType*: EventType
   action*: Action
   error*: string
-  account*: AccountDto
+  accountData*: LocalPairingAccountData
   installation*: InstallationDto
 
 proc fromEvent*(T: type LocalPairingSignal, event: JsonNode): LocalPairingSignal =
@@ -26,7 +26,7 @@ proc fromEvent*(T: type LocalPairingSignal, event: JsonNode): LocalPairingSignal
     return
   case result.eventType:
     of EventReceivedAccount:
-      result.account = e["data"].toAccountDto()
+      result.accountData = e["data"].toLocalPairingAccountData()
     of EventReceivedInstallation:
       result.installation = e["data"].toInstallationDto()
     else:

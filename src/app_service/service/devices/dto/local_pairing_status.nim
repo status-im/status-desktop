@@ -21,6 +21,7 @@ type
     mode*: LocalPairingMode
     state*: LocalPairingState
     account*: AccountDTO
+    password*: string
     installation*: InstallationDto
     error*: string
 
@@ -47,7 +48,8 @@ proc update*(self: LocalPairingStatus, data: LocalPairingEventArgs) =
  # process any incoming data
   case data.eventType:
   of EventReceivedAccount:
-    self.account = data.account
+    self.account = data.accountData.account
+    self.password = data.accountData.password
   of EventReceivedInstallation:
     self.installation = data.installation
   of EventConnectionError:

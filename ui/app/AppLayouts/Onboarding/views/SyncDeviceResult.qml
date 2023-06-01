@@ -60,15 +60,13 @@ Item {
             text: qsTr("Sign in")
             opacity: d.finished ? 1 : 0
             enabled: d.finished
-            onClicked: {
-                // NOTE: Current status-go implementation automatically signs in
-                //       So we don't actually ever use this button.
-                //       I leave this code here for further implementaion by design.
-                //const keyUid = "TODO: Get keyUid somehow"
-                //root.startupStore.setSelectedLoginAccountByKeyUid(keyUid)
-            }
+
             Behavior on opacity {
                 NumberAnimation { duration: 250 }
+            }
+
+            onClicked: {
+                root.startupStore.doPrimaryAction()
             }
         }
     }

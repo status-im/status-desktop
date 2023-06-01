@@ -92,7 +92,7 @@ QtObject:
       let data = LocalPairingEventArgs(
         eventType: signalData.eventType,
         action: signalData.action,
-        account: signalData.account,
+        accountData: signalData.accountData,
         installation: signalData.installation,
         error: signalData.error)
       self.updateLocalPairingStatus(data)
@@ -169,7 +169,7 @@ QtObject:
     let data = LocalPairingEventArgs(
       eventType: EventConnectionError,
       action: ActionUnknown,
-      account: AccountDto(),
+      accountData: LocalPairingAccountData(),
       error: errorDescription)
     self.updateLocalPairingStatus(data)
 
