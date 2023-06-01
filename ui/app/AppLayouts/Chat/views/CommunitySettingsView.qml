@@ -305,48 +305,18 @@ StatusSectionLayout {
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
                 onSignMintTransactionOpened: communityTokensStore.computeDeployFee(chainId, accountAddress)
-                onMintCollectible: {
-                    communityTokensStore.deployCollectible(root.community.id,
-                                                           accountAddress,
-                                                           name,
-                                                           symbol,
-                                                           description,
-                                                           supply,
-                                                           infiniteSupply,
-                                                           transferable,
-                                                           selfDestruct,
-                                                           chainId,
-                                                           artworkSource,
-                                                           accountName,
-                                                           artworkCropRect)
-                }
-                onMintAsset: {
-                    communityTokensStore.deployAsset(root.community.id,
-                                                     accountAddress,
-                                                     name,
-                                                     symbol,
-                                                     description,
-                                                     supply,
-                                                     infiniteSupply,
-                                                     decimals,
-                                                     chainId,
-                                                     artworkSource,
-                                                     accountName,
-                                                     artworkCropRect)
-                }
-                onSignSelfDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(selfDestructTokensList, tokenKey)
-                onRemoteSelfDestructCollectibles: {
+                onMintCollectible: communityTokensStore.deployCollectible(root.community.id, collectibleItem)
+                onMintAsset: communityTokensStore.deployAsset(root.community.id, assetItem)
+                onSignRemoteDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(remotelyDestructTokensList, tokenKey)
+                onRemotelyDestructCollectibles: {
                     communityTokensStore.remoteSelfDestructCollectibles(root.community.id,
-                                                                        selfDestructTokensList,
+                                                                        remotelyDestructTokensList,
                                                                         tokenKey)
                 }
                 onSignBurnTransactionOpened: communityTokensStore.computeBurnFee(chainId)
-                onBurnCollectibles: communityTokensStore.burnCollectibles(tokenKey, amount)
-                onAirdropCollectible: {
-                    root.goTo(Constants.CommunitySettingsSections.Airdrops)
-                }
+                onBurnToken: communityTokensStore.burnToken(tokenKey, amount)
+                onAirdropToken: root.goTo(Constants.CommunitySettingsSections.Airdrops)
                 onDeleteToken: communityTokensStore.deleteToken(root.community.id, tokenKey)
-                onRetryMintToken: communityTokensStore.retryMintToken(root.community.id, tokenKey)
 
                 Connections {
                     target: rootStore.communityTokensStore
@@ -480,13 +450,13 @@ StatusSectionLayout {
                 Connections {
                     target: mintPanel
 
-                    function onAirdropCollectible(key, addresses) {
+                    function onAirdropToken(tokenKey, type, addresses) {
                         // Here it is forced a navigation to the new airdrop form, like if it was clicked the header button
                         airdropPanel.primaryHeaderButtonClicked()
 
                         // Force a token selection to be airdroped with default amount 1
-                        airdropPanel.selectCollectible(key, 1)
-
+                        airdropPanel.selectToken(tokenKey, 1, type)
+                        
                         // Set given addresses as recipients
                         airdropPanel.addAddresses(addresses)
                     }

@@ -11,6 +11,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 import utils 1.0
 import shared.panels 1.0
 
+import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.panels.communities 1.0
 
 StatusScrollView {
@@ -20,54 +21,24 @@ StatusScrollView {
     property bool preview: false
     property bool isAssetView: false
 
-    // Token properties
-    property alias artworkSource: image.source
-    property rect artworkCropRect
-    property string name
-    property alias symbol: symbolBox.value
-    property alias description: descriptionItem.text
-    property int supplyAmount
-    property int remainingTokens
-    property bool infiniteSupply
+    property CollectibleObject collectible
+    property AssetObject asset
 
-    property alias accountName: accountBox.value
-    property int chainId
-    property string chainIcon
-    property alias chainName: chainText.text
+    readonly property string name: root.isAssetView ? asset.name : collectible.name
+    readonly property string symbol: root.isAssetView ? asset.symbol : collectible.symbol
+    readonly property url artworkSource: root.isAssetView ? asset.artworkSource : collectible.artworkSource
+    readonly property bool infiniteSupply: root.isAssetView ? asset.infiniteSupply : collectible.infiniteSupply
+    readonly property int remainingTokens: root.isAssetView ? asset.remainingTokens : collectible.remainingTokens
+    readonly property int deployState: root.isAssetView ? asset.deployState : collectible.deployState
+    readonly property string accountName: root.isAssetView ? asset.accountName : collectible.accountName
+    readonly property string chainName: root.isAssetView ? asset.chainName : collectible.chainName
+    readonly property string chainId: root.isAssetView ? asset.chainId : collectible.chainId
+    readonly property string accountAddress: root.isAssetView ? asset.accountAddress : collectible.accountAddress
 
+    // Models:
     property var tokenOwnersModel
 
-    property int deployState: Constants.ContractTransactionStatus.None
-    property int burnState: Constants.ContractTransactionStatus.None
-
-    // Collectible object properties (ERC721)
-    property bool transferable
-    property bool selfDestruct
-    property int remotelyDestructState: Constants.ContractTransactionStatus.None
-
-    // Asset properties (ERC20)
-    property alias assetDecimals: decimalsBox.value
-
-    signal mintCollectible(url artworkSource,
-                           string name,
-                           string symbol,
-                           string description,
-                           int supply,
-                           bool infiniteSupply,
-                           bool transferable,
-                           bool selfDestruct,
-                           int chainId,
-                           string accountName)
-
-    signal mintAsset(url artworkSource,
-                     string name,
-                     string symbol,
-                     string description,
-                     int supply,
-                     bool infiniteSupply,
-                     int decimals,
-                     int chainId,
-                     string accountName)
+    signal mintClicked()
 
     signal airdropRequested(string address)
     signal generalAirdropRequested
@@ -80,6 +51,7 @@ StatusScrollView {
         readonly property int imageSelectorRectSize: root.isAssetView ? 104 : 280
         readonly property int iconSize: 20
         readonly property string infiniteSymbol: "∞"
+        readonly property int burnState: root.isAssetView ? asset.burnState : collectible.burnState        
 
         function startAnimation(isBurn) {
             totalbox.highlighted = true
@@ -87,12 +59,11 @@ StatusScrollView {
             if(isBurn)
                 remainingBox.highlighted = true
         }
+
+        onBurnStateChanged: if(burnState === Constants.ContractTransactionStatus.Completed) d.startAnimation(true)
     }
 
     padding: 0
-
-    onRemotelyDestructStateChanged: if(remotelyDestructState === Constants.ContractTransactionStatus.Completed) d.startAnimation(false)
-    onBurnStateChanged: if(burnState === Constants.ContractTransactionStatus.Completed) d.startAnimation(true)
 
     ColumnLayout {
         id: mainLayout
@@ -105,9 +76,7 @@ StatusScrollView {
                                        (root.deployState === Constants.ContractTransactionStatus.Failed))
             spacing: Style.current.halfPadding
 
-            StatusDotsLoadingIndicator {
-                visible: (root.deployState === Constants.ContractTransactionStatus.InProgress)
-            }
+            StatusDotsLoadingIndicator { visible: (root.deployState === Constants.ContractTransactionStatus.InProgress) }
 
             StatusIcon {
                 visible: (root.deployState === Constants.ContractTransactionStatus.Failed)
@@ -138,10 +107,13 @@ StatusScrollView {
             Image {
                 id: image
 
+                property rect imageCropRect: root.isAssetView ? asset.artworkCropRect : collectible.artworkCropRect
+
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectFit
                 visible: false
-                sourceClipRect: root.artworkCropRect ? root.artworkCropRect : undefined
+                source: root.artworkSource
+                sourceClipRect: imageCropRect ? imageCropRect : undefined
             }
 
             OpacityMask {
@@ -234,16 +206,19 @@ StatusScrollView {
                 id: symbolBox
 
                 label: qsTr("Symbol")
+                value: root.symbol
             }
 
             CustomPreviewBox {
                 id: totalbox
 
+                property int supply: root.isAssetView ? asset.supply : collectible.supply
+
                 label: qsTr("Total")
-                value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.supplyAmount)
+                value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(supply)
                 isLoading: !root.infiniteSupply &&
-                           ((root.remotelyDestructState === Constants.ContractTransactionStatus.InProgress) ||
-                            (root.burnState === Constants.ContractTransactionStatus.InProgress))
+                           ((!root.isAssetView && collectible.remotelyDestructState === Constants.ContractTransactionStatus.InProgress) ||
+                            (d.burnState === Constants.ContractTransactionStatus.InProgress))
             }
 
             CustomPreviewBox {
@@ -251,32 +226,30 @@ StatusScrollView {
 
                 label: qsTr("Remaining")
                 value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.remainingTokens)
-                isLoading: !root.infiniteSupply && (root.burnState === Constants.ContractTransactionStatus.InProgress)
+                isLoading: !root.infiniteSupply && (d.burnState === Constants.ContractTransactionStatus.InProgress)
             }
 
             CustomPreviewBox {
-                id: decimalsBox
-
                 visible: root.isAssetView
                 label: qsTr("DP")
+                value: asset.decimals
             }
 
             CustomPreviewBox {
                 visible: !root.isAssetView
                 label: qsTr("Transferable")
-                value: root.transferable ? qsTr("Yes") : qsTr("No")
+                value: collectible.transferable ? qsTr("Yes") : qsTr("No")
             }
 
             CustomPreviewBox {
                 visible: !root.isAssetView
                 label: qsTr("Remotely destructible")
-                value: root.selfDestruct ? qsTr("Yes") : qsTr("No")
+                value: collectible.remotelyDestruct ? qsTr("Yes") : qsTr("No")
             }
 
             CustomPreviewBox {
-                id: accountBox
-
                 label: qsTr("Account")
+                value: root.accountName
             }
 
             Rectangle {
@@ -294,18 +267,17 @@ StatusScrollView {
                     spacing: Style.current.padding
 
                     SVGImage {
-                        id: chainIcon
-
                         Layout.alignment: Qt.AlignVCenter
+
                         height: 24
                         width: height
-                        source: Style.svg(root.chainIcon)
+                        source: Style.svg(root.isAssetView ? asset.chainIcon : collectible.chainIcon)
                     }
 
                     StatusBaseText {
-                        id: chainText
-
                         Layout.alignment: Qt.AlignVCenter
+
+                        text: root.chainName
                         font.pixelSize: 13
                         font.weight: Font.Medium
                         color: Theme.palette.baseColor1
@@ -315,9 +287,9 @@ StatusScrollView {
         }
 
         StatusBaseText {
-            id: descriptionItem
-
             Layout.fillWidth: true
+
+            text: root.isAssetView ? asset.description : collectible.description
             wrapMode: TextEdit.WordWrap
             font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
@@ -352,30 +324,7 @@ StatusScrollView {
             Layout.topMargin: Style.current.halfPadding
             text: qsTr("Mint")
 
-            onClicked: {
-                if(root.isAssetView) {
-                    root.mintAsset(root.artworkSource,
-                                   root.name,
-                                   root.symbol,
-                                   root.description,
-                                   root.supplyAmount,
-                                   root.infiniteSupply,
-                                   root.assetDecimals,
-                                   root.chainId,
-                                   root.accountName)
-                } else {
-                    root.mintCollectible(root.artworkSource,
-                                         root.name,
-                                         root.symbol,
-                                         root.description,
-                                         root.supplyAmount,
-                                         root.infiniteSupply,
-                                         root.transferable,
-                                         root.selfDestruct,
-                                         root.chainId,
-                                         root.accountName)
-                }
-            }
+            onClicked: root.mintClicked()
         }
 
         SortableTokenHoldersPanel {
@@ -383,7 +332,7 @@ StatusScrollView {
 
             model: root.tokenOwnersModel
             tokenName: root.name
-            showRemotelyDestructMenuItem: !root.isAssetView && root.selfDestruct
+            showRemotelyDestructMenuItem: !root.isAssetView && collectible.remotelyDestruct
 
             Layout.topMargin: Style.current.padding
             Layout.fillWidth: true
@@ -391,6 +340,14 @@ StatusScrollView {
             onAirdropRequested: root.airdropRequested(address)
             onGeneralAirdropRequested: root.generalAirdropRequested()
             onRemoteDestructRequested: root.remoteDestructRequested(address)
+        }
+    }
+
+    Connections {
+        target: collectible
+
+        function onRemotelyDestructStateChanged() {
+            if(collectible.remotelyDestructState === Constants.ContractTransactionStatus.Completed) d.startAnimation(false)
         }
     }
 }

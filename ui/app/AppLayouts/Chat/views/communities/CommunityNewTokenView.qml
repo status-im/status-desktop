@@ -10,6 +10,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
+import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Wallet.controls 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -21,26 +22,10 @@ StatusScrollView {
 
     property int viewWidth: 560 // by design
     property bool isAssetView: false
-
-    // Token properties
-    readonly property alias name: nameInput.text
-    readonly property alias symbol: symbolInput.text
-    readonly property alias description: descriptionInput.text
-    readonly property alias infiniteSupply: unlimitedSupplyChecker.checked
-    readonly property int supplyAmount: supplyInput.text ? parseInt(supplyInput.text) : 0
-    property alias artworkSource: dropAreaItem.artworkSource
-    property alias artworkCropRect: dropAreaItem.artworkCropRect
-    property int chainId
-    property string chainName
-    property string chainIcon
     property var tokensModel
 
-    // Collectible properties (ERC721)
-    readonly property alias notTransferable: transferableChecker.checked
-    readonly property alias selfDestruct: selfDestructChecker.checked
-
-    // Asset properties (ERC20)
-    readonly property int assetDecimals: assetDecimalsInput.text ? parseInt(assetDecimalsInput.text) : 0
+    property CollectibleObject collectible: CollectibleObject{}
+    property AssetObject asset: AssetObject{}
 
     // Network related properties:
     property var layer1Networks
@@ -49,11 +34,8 @@ StatusScrollView {
     property var enabledNetworks
     property var allNetworks
 
-    // Account related properties:
     // Account expected roles: address, name, color, emoji
     property var accounts
-    readonly property string accountAddress: accountsComboBox.address
-    readonly property string accountName: accountsComboBox.control.displayText
 
     signal chooseArtWork
     signal previewClicked
@@ -61,12 +43,12 @@ StatusScrollView {
     QtObject {
         id: d
 
-        readonly property bool isFullyFilled: root.artworkSource.toString().length > 0
+        readonly property bool isFullyFilled: dropAreaItem.artworkSource.toString().length > 0
                                               && nameInput.valid
                                               && descriptionInput.valid
                                               && symbolInput.valid
-                                              && (root.infiniteSupply || (!root.infiniteSupply && root.supplyAmount > 0))
-                                              && (!root.isAssetView  || (root.isAssetView&& assetDecimalsInput.valid))
+                                              && (unlimitedSupplyChecker.checked || (!unlimitedSupplyChecker.checked && parseInt(supplyInput.text) > 0))
+                                              && (!root.isAssetView  || (root.isAssetView && assetDecimalsInput.valid))
 
         readonly property int imageSelectorRectWidth: root.isAssetView ? 128 : 290
     }
@@ -87,8 +69,10 @@ StatusScrollView {
 
         DropAndEditImagePanel {
             id: dropAreaItem
+
             Layout.fillWidth: true
             Layout.preferredHeight: d.imageSelectorRectWidth
+            artworkSource: root.isAssetView ? assetObj.artworkSource : collectibleObj.artworkSource
             editorAnchorLeft: !root.isAssetView
             editorRoundedImage: root.isAssetView
             uploadTextLabel.uploadText: root.isAssetView ? qsTr("Upload") : qsTr("Drag and Drop or Upload Artwork")
@@ -96,24 +80,46 @@ StatusScrollView {
             uploadTextLabel.showAdditionalInfo: !root.isAssetView
             editorTitle: root.isAssetView ? qsTr("Asset icon") : qsTr("Collectible artwork")
             acceptButtonText: root.isAssetView ? qsTr("Upload asset icon") : qsTr("Upload collectible artwork")
+
+            onArtworkSourceChanged: {
+                if(root.isAssetView)
+                    asset.artworkSource = artworkSource
+                else
+                    collectible.artworkSource = artworkSource
+            }
+            onArtworkCropRectChanged: {
+                if(root.isAssetView)
+                    asset.artworkCropRect = artworkCropRect
+                else
+                    collectible.artworkCropRect = artworkCropRect
+            }
         }
 
         CustomStatusInput {
             id: nameInput
 
             label: qsTr("Name")
+            text: root.isAssetView ? asset.name : collectible.name
             charLimit: 15
             placeholderText: qsTr("Name")
             minLengthValidator.errorMessage: qsTr("Please name your token name (use A-Z and 0-9, hyphens and underscores only)")
             regexValidator.errorMessage: qsTr("Your token name contains invalid characters (use A-Z and 0-9, hyphens and underscores only)")
             extraValidator.validate: function (value) { return !SQUtils.ModelUtils.contains(root.tokensModel, "name", nameInput.text) }
             extraValidator.errorMessage: qsTr("You have used this token name before")
+
+            onTextChanged: {
+                if(root.isAssetView)
+                    asset.name = text
+                else
+                    collectible.name = text
+            }
         }
 
         CustomStatusInput {
             id: descriptionInput
 
             label: qsTr("Description")
+            text: root.isAssetView ? asset.description : collectible.description
             charLimit: 280
             placeholderText: root.isAssetView ? qsTr("Describe your asset") : qsTr("Describe your collectible")
             input.multiline: true
@@ -124,12 +130,20 @@ StatusScrollView {
             minLengthValidator.errorMessage: qsTr("Please enter a token description")
             regexValidator.regularExpression: Constants.regularExpressions.asciiPrintable
             regexValidator.errorMessage: qsTr("Only A-Z, 0-9 and standard punctuation allowed")
+
+            onTextChanged: {
+                if(root.isAssetView)
+                    asset.description = text
+                else
+                    collectible.description = text
+            }
         }
 
         CustomStatusInput {
             id: symbolInput
 
             label: qsTr("Symbol")
+            text: root.isAssetView ? asset.symbol : collectible.symbol
             charLimit: 6
             placeholderText: qsTr("e.g. DOODLE")
             minLengthValidator.errorMessage: qsTr("Please enter your token symbol (use A-Z only)")
@@ -137,6 +151,13 @@ StatusScrollView {
             regexValidator.regularExpression: Constants.regularExpressions.capitalOnly
             extraValidator.validate: function (value) { return !SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text) }
             extraValidator.errorMessage: qsTr("You have used this token symbol before")
+
+            onTextChanged: {
+                if(root.isAssetView)
+                    asset.symbol = text
+                else
+                    collectible.symbol = text
+            }
         }
 
         CustomLabelDescriptionComponent {
@@ -146,11 +167,15 @@ StatusScrollView {
         }
 
         StatusEmojiAndColorComboBox {
-            id: accountsComboBox
+            id: accountBox
 
             readonly property string address: SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
+            readonly property string initAccountName: root.isAssetView ? asset.accountName : collectible.accountName
+            readonly property int initIndex: SQUtils.ModelUtils.indexOf(root.accounts, "name", initAccountName)
 
             Layout.fillWidth: true
+
+            currentIndex: (initIndex !== -1) ? initIndex : 0
             model: SortFilterProxyModel {
                 sourceModel: root.accounts
                 proxyRoles: [
@@ -171,6 +196,19 @@ StatusScrollView {
             size: StatusComboBox.Size.Small
             implicitHeight: 44
             defaultAssetName: "filled-account"
+
+            onAddressChanged: {
+                if(root.isAssetView)
+                    asset.accountAddress = address
+                else
+                    collectible.accountAddress = address
+            }
+            control.onDisplayTextChanged: {
+                if(root.isAssetView)
+                    asset.accountName = control.displayText
+                else
+                    collectible.accountName = control.displayText
+            }
         }
 
         CustomNetworkFilterRowComponent {
@@ -183,9 +221,16 @@ StatusScrollView {
 
             label: qsTr("Unlimited supply")
             description: qsTr("Enable to allow the minting of additional tokens in the future. Disable to specify a finite supply")
-            checked: true
+            checked: root.isAssetView ? asset.infiniteSupply : collectible.infiniteSupply
 
-            onCheckedChanged: if(!checked) supplyInput.forceActiveFocus()
+            onCheckedChanged: {
+                if(!checked) supplyInput.forceActiveFocus()
+
+                if(root.isAssetView)
+                    asset.infiniteSupply = checked
+                else
+                    collectible.infiniteSupply = checked
+            }
         }
 
         CustomStatusInput {
@@ -193,12 +238,20 @@ StatusScrollView {
 
             visible: !unlimitedSupplyChecker.checked
             label: qsTr("Total finite supply")
+            text: root.isAssetView ? asset.supply : collectible.supply
             placeholderText: qsTr("e.g. 300")
             minLengthValidator.errorMessage: qsTr("Please enter a total finite supply")
             regexValidator.errorMessage: qsTr("Your total finite supply contains invalid characters (use 0-9 only)")
             regexValidator.regularExpression: Constants.regularExpressions.numerical
             extraValidator.validate: function (value) { return  parseInt(value) > 0 && parseInt(value) <= 999999999 }
             extraValidator.errorMessage: qsTr("Enter a number between 0 and 999,999,999")
+
+            onTextChanged: {
+                if(root.isAssetView)
+                    asset.supply = parseInt(text)
+                else
+                    collectible.supply = parseInt(text)
+            }
         }
 
         CustomSwitchRowComponent {
@@ -207,16 +260,19 @@ StatusScrollView {
             visible: !root.isAssetView
             label: checked ? qsTr("Not transferable (Soulbound)") : qsTr("Transferable")
             description: qsTr("If enabled, the token is locked to the first address it is sent to and can never be transferred to another address. Useful for tokens that represent Admin permissions")
-            checked: true
+            checked: !collectible.transferable
+
+            onCheckedChanged: collectible.transferable = !checked
         }
 
         CustomSwitchRowComponent {
-            id: selfDestructChecker
+            id: remotelyDestructChecker
 
             visible: !root.isAssetView
             label: qsTr("Remotely destructible")
             description: qsTr("Enable to allow you to destroy tokens remotely. Useful for revoking permissions from individuals")
-            checked: true
+            checked: !!collectible ? collectible.remotelyDestruct : true
+            onCheckedChanged: collectible.remotelyDestruct = checked
         }
 
         CustomStatusInput {
@@ -227,11 +283,13 @@ StatusScrollView {
             charLimit: 2
             charLimitLabel: qsTr("Max 10")
             placeholderText: "2"
-            text: "2" // Default value
+            text: !!asset ? asset.decimals : ""
             validationMode: StatusInput.ValidationMode.Always
             minLengthValidator.errorMessage: qsTr("Please enter how many decimals your token should have")
             regexValidator.errorMessage: qsTr("Your decimal amount contains invalid characters (use 0-9 only)")
             regexValidator.regularExpression: Constants.regularExpressions.numerical
+
+            onTextChanged: asset.decimals = parseInt(text)
         }
 
         StatusButton {
@@ -345,9 +403,15 @@ StatusScrollView {
 
             onToggleNetwork: (network) =>
                              {
-                                 root.chainId = network.chainId
-                                 root.chainName = network.chainName
-                                 root.chainIcon = network.iconUrl
+                                 if(root.isAssetView) {
+                                     asset.chainId = network.chainId
+                                     asset.chainName = network.chainName
+                                     asset.chainIcon = network.iconUrl
+                                 } else {
+                                     collectible.chainId = network.chainId
+                                     collectible.chainName = network.chainName
+                                     collectible.chainIcon = network.iconUrl
+                                 }
                              }
         }
     }

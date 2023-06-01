@@ -1,1 +1,4 @@
 singleton CommunityPermissionsHelpers 1.0 CommunityPermissionsHelpers.qml
+AssetObject 1.0 AssetObject.qml
+CollectibleObject 1.0 CollectibleObject.qml
+TokenObject 1.0 TokenObject.qml
