@@ -232,6 +232,10 @@ void dos_qguiapplication_create()
     static char *argv[] = {toCharPtr(QStringLiteral("Status"))};
 #endif
 
+    // NOTE: https://github.com/status-im/status-desktop/issues/6930
+    // We increase js stack size to prevent "Maximum call stack size exceeded" on UI loading.
+    qputenv("QV4_JS_MAX_STACK_SIZE", "10485760");
+    qputenv("QT_QUICK_CONTROLS_HOVER_ENABLED", "1");
     qInstallMessageHandler(myMessageOutput);
 
     new QGuiApplication(argc, argv);
