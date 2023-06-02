@@ -19,6 +19,7 @@ type ActivityCenterNotificationType* {.pure.}= enum
   CommunityMembershipRequest = 8,
   CommunityKicked = 9,
   ContactVerification = 10
+  ContactRemoved = 11
 
 type ActivityCenterGroup* {.pure.}= enum
   All = 0,
@@ -140,7 +141,8 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
         ActivityCenterNotificationType.CommunityRequest.int,
         ActivityCenterNotificationType.CommunityMembershipRequest.int,
         ActivityCenterNotificationType.CommunityKicked.int,
-        ActivityCenterNotificationType.ContactVerification.int
+        ActivityCenterNotificationType.ContactVerification.int,
+        ActivityCenterNotificationType.ContactRemoved.int
       ]
     of ActivityCenterGroup.Mentions:
       return @[ActivityCenterNotificationType.Mention.int]
@@ -157,7 +159,10 @@ proc activityCenterNotificationTypesByGroup*(group: ActivityCenterGroup) : seq[i
     of ActivityCenterGroup.Admin:
       return @[ActivityCenterNotificationType.CommunityMembershipRequest.int]
     of ActivityCenterGroup.ContactRequests:
-      return @[ActivityCenterNotificationType.ContactRequest.int]
+      return @[
+        ActivityCenterNotificationType.ContactRequest.int,
+        ActivityCenterNotificationType.ContactRemoved.int
+      ]
     of ActivityCenterGroup.IdentityVerification:
       return @[ActivityCenterNotificationType.ContactVerification.int]
     else:

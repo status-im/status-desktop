@@ -28,7 +28,8 @@ QtObject {
         CommunityRequest = 7,
         CommunityMembershipRequest = 8,
         CommunityKicked = 9,
-        ContactVerification = 10
+        ContactVerification = 10,
+        ContactRemoved = 11
     }
 
     enum ActivityCenterReadType {
