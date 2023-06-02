@@ -64,7 +64,7 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: root.community.amISectionAdmin
+        visible: root.community.memberRole === Constants.memberRole.owner
         title: qsTr("Transfer ownership")
         asset.name: "exchange"
         type: StatusListItem.Type.Secondary

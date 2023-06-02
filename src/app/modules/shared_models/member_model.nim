@@ -25,7 +25,7 @@ type
     ContactRequest
     IncomingVerificationStatus
     OutgoingVerificationStatus
-    IsAdmin
+    MemberRole
     Joined
     RequestToJoinId
     RequestToJoinLoading
@@ -92,7 +92,7 @@ QtObject:
       ModelRole.ContactRequest.int: "contactRequest",
       ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
       ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
-      ModelRole.IsAdmin.int: "isAdmin",
+      ModelRole.MemberRole.int: "memberRole",
       ModelRole.Joined.int: "joined",
       ModelRole.RequestToJoinId.int: "requestToJoinId",
       ModelRole.RequestToJoinLoading.int: "requestToJoinLoading",
@@ -143,8 +143,8 @@ QtObject:
       result = newQVariant(item.incomingVerificationStatus.int)
     of ModelRole.OutgoingVerificationStatus:
       result = newQVariant(item.outgoingVerificationStatus.int)
-    of ModelRole.IsAdmin:
-      result = newQVariant(item.isAdmin)
+    of ModelRole.MemberRole:
+      result = newQVariant(item.memberRole.int)
     of ModelRole.Joined:
       result = newQVariant(item.joined)
     of ModelRole.RequestToJoinId:
@@ -215,7 +215,7 @@ QtObject:
       icon: string,
       isContact: bool,
       isVerified: bool,
-      isAdmin: bool,
+      memberRole: MemberRole,
       joined: bool,
       isUntrustworthy: bool,
       ) =
@@ -231,7 +231,7 @@ QtObject:
     self.items[ind].icon = icon
     self.items[ind].isContact = isContact
     self.items[ind].isVerified = isVerified
-    self.items[ind].isAdmin = isAdmin
+    self.items[ind].memberRole = memberRole
     self.items[ind].joined = joined
     self.items[ind].isUntrustworthy = isUntrustworthy
 
@@ -245,7 +245,7 @@ QtObject:
       ModelRole.Icon.int,
       ModelRole.IsContact.int,
       ModelRole.IsVerified.int,
-      ModelRole.IsAdmin.int,
+      ModelRole.MemberRole.int,
       ModelRole.Joined.int,
       ModelRole.IsUntrustworthy.int,
     ])

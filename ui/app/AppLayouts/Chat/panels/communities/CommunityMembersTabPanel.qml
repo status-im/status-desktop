@@ -70,7 +70,7 @@ Item {
 
                 readonly property bool itsMe: model.pubKey.toLowerCase() === userProfile.pubKey.toLowerCase()
                 readonly property bool isHovered: memberItem.sensor.containsMouse
-                readonly property bool canBeBanned: !memberItem.itsMe && !model.isAdmin
+                readonly property bool canBeBanned: !memberItem.itsMe && model.memberRole !== Constants.memberRole.owner
 
                 statusListItemComponentsSlot.spacing: 16
                 statusListItemTitleArea.anchors.rightMargin: 0

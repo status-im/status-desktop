@@ -130,14 +130,14 @@ proc addChatMember(self: Module,  member: ChatMember) =
     onlineStatus = status,
     isContact = contactDetails.dto.isContact,
     isVerified = contactDetails.dto.isContactVerified(),
-    isAdmin = member.admin,
+    memberRole = member.role,
     joined = member.joined,
     isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy
     ))
 
 method onChatMembersAdded*(self: Module, ids: seq[string]) =
   for memberId in ids:
-    self.addChatMember(ChatMember(id: memberId, admin: false, joined: true, roles: @[]))
+    self.addChatMember(ChatMember(id: memberId, role: MemberRole.None, joined: true))
 
 method onChatMemberRemoved*(self: Module, id: string) =
   self.view.model().removeItemById(id)
@@ -154,7 +154,7 @@ method onMembersChanged*(self: Module,  members: seq[ChatMember]) =
     self.onChatMemberRemoved(id)
 
 
-method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined: bool) =
+method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberRole, joined: bool) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().updateItem(
     pubKey = publicKey,
@@ -166,7 +166,7 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     icon = contactDetails.icon,
     isContact = contactDetails.dto.isContact,
     isVerified = contactDetails.dto.isContactVerified(),
-    isAdmin = admin,
+    memberRole = memberRole,
     joined = joined,
     isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
     )

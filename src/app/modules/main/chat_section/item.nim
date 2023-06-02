@@ -12,7 +12,7 @@ type
     id: string
     name: string
     `type`: int
-    amIChatAdmin: bool
+    memberRole: MemberRole
     icon: string
     color: string
     colorId: int # only for oneToOne sections
@@ -42,7 +42,7 @@ proc initItem*(
     emoji,
     description: string,
     `type`: int,
-    amIChatAdmin: bool,
+    memberRole: MemberRole,
     lastMessageTimestamp: int,
     hasUnreadMessages: bool,
     notificationsCount: int,
@@ -63,7 +63,7 @@ proc initItem*(
   result = Item()
   result.id = id
   result.name = name
-  result.amIChatAdmin = amIChatAdmin
+  result.memberRole = memberRole
   result.icon = icon
   result.color = color
   result.colorId = colorId
@@ -91,7 +91,7 @@ proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
     id: {self.id},
     name: {$self.name},
-    amIChatAdmin: {$self.amIChatAdmin},
+    memberRole: {$self.memberRole},
     icon: {$self.icon},
     color: {$self.color},
     colorId: {$self.colorId},
@@ -118,7 +118,7 @@ proc toJsonNode*(self: Item): JsonNode =
   result = %* {
     "itemId": self.id,
     "name": self.name,
-    "amIChatAdmin": self.amIChatAdmin,
+    "memberRole": self.memberRole,
     "icon": self.icon,
     "color": self.color,
     "emoji": self.emoji,
@@ -152,8 +152,8 @@ proc name*(self: Item): string =
 proc `name=`*(self: var Item, value: string) =
   self.name = value
 
-proc amIChatAdmin*(self: Item): bool =
-  self.amIChatAdmin
+proc memberRole*(self: Item): MemberRole =
+  self.memberRole
 
 proc icon*(self: Item): string =
   self.icon

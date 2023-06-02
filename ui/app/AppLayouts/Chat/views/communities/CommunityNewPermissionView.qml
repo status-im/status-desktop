@@ -23,10 +23,8 @@ StatusScrollView {
     required property var collectiblesModel
     required property var channelsModel
 
-    // name, image, color properties expected
+    // name, image, color, owner properties expected
     required property var communityDetails
-
-    property bool isOwner: false
 
     property int viewWidth: 560 // by design
     property bool isEditState: false
@@ -432,7 +430,7 @@ StatusScrollView {
                 id: permissionsDropdown
 
                 initialPermissionType: d.dirtyValues.permissionType
-                enableAdminPermission: root.isOwner
+                enableAdminPermission: root.communityDetails.owner
 
                 onDone: {
                     if (d.dirtyValues.permissionType === permissionType) {

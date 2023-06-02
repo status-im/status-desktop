@@ -14,6 +14,7 @@ import ../../../../../../app_service/service/community/service as community_serv
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../../../app_service/common/types
 
 export io_interface
 
@@ -556,12 +557,12 @@ method amIChatAdmin*(self: Module): bool =
   if(not self.controller.belongsToCommunity()):
     let chatDto = self.controller.getChatDetails()
     for member in chatDto.members:
-      if (member.id == singletonInstance.userProfile.getPubKey() and member.admin):
-        return true
+      if (member.id == singletonInstance.userProfile.getPubKey()):
+        return member.role == MemberRole.Owner or member.role == MemberRole.Admin
     return false
   else:
     let communityDto = self.controller.getCommunityDetails()
-    return communityDto.admin
+    return communityDto.memberRole == MemberRole.Owner or communityDto.memberRole == MemberRole.Admin
 
 method pinMessageAllowedForMembers*(self: Module): bool =
   if(self.controller.belongsToCommunity()):
@@ -676,7 +677,7 @@ method fillGaps*(self: Module, messageId: string) =
 method leaveChat*(self: Module) =
   self.controller.leaveChat()
 
-method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined: bool) =
+method onChatMemberUpdated*(self: Module, publicKey: string, memberRole: MemberRole, joined: bool) =
   let chatDto = self.controller.getChatDetails()
   if(chatDto.chatType != ChatType.PrivateGroupChat):
     return
@@ -719,7 +720,7 @@ method markMessagesAsRead*(self: Module, messages: seq[string]) =
   self.view.model().markAsSeen(messages)
 
 method updateCommunityDetails*(self: Module, community: CommunityDto) =
-  self.view.setAmIChatAdmin(community.admin)
+  self.view.setAmIChatAdmin(community.memberRole == MemberRole.Owner or community.memberRole == MemberRole.Admin)
   self.view.setIsPinMessageAllowedForMembers(community.adminSettings.pinMessageAllMembersEnabled)
 
 proc setChatDetails(self: Module, chatDetails: ChatDto) =

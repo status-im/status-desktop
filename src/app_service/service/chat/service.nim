@@ -80,7 +80,7 @@ type
   ChatMemberUpdatedArgs* = ref object of Args
     chatId*: string
     id*: string
-    admin*: bool
+    role*: MemberRole
     joined*: bool
 
   RpcResponseArgs* = ref object of Args
@@ -674,10 +674,10 @@ QtObject:
       discard status_group_chat.makeAdmin(communityID, chatId, memberId)
       for member in self.chats[chatId].members.mitems:
         if (member.id == memberId):
-          member.admin = true
+          member.role = MemberRole.Admin
           self.events.emit(
             SIGNAL_CHAT_MEMBER_UPDATED,
-            ChatMemberUpdatedArgs(id: member.id, admin: member.admin, chatId: chatId, joined: member.joined)
+            ChatMemberUpdatedArgs(id: member.id, role: member.role, chatId: chatId, joined: member.joined)
           )
           break
     except Exception as e:

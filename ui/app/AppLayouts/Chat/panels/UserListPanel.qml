@@ -89,7 +89,7 @@ Item {
                 isContact: model.isContact
                 isVerified: model.isVerified
                 isUntrustworthy: model.isUntrustworthy
-                isAdmin: model.isAdmin
+                isAdmin: model.memberRole === Constants.memberRole.owner
                 asset.name: model.icon
                 asset.isImage: (asset.name !== "")
                 asset.isLetterIdenticon: (asset.name === "")

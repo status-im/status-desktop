@@ -25,7 +25,7 @@ type
     sectionType: SectionType
     id: string
     name: string
-    amISectionAdmin: bool
+    memberRole: MemberRole
     description: string
     introMessage: string
     outroMessage: string
@@ -61,7 +61,7 @@ proc initItem*(
     id: string,
     sectionType: SectionType,
     name: string,
-    amISectionAdmin = false,
+    memberRole = MemberRole.None,
     description = "",
     introMessage = "",
     outroMessage = "",
@@ -96,7 +96,7 @@ proc initItem*(
   result.id = id
   result.sectionType = sectionType
   result.name = name
-  result.amISectionAdmin = amISectionAdmin
+  result.memberRole = memberRole
   result.description = description
   result.introMessage = introMessage
   result.outroMessage = outroMessage
@@ -142,7 +142,7 @@ proc `$`*(self: SectionItem): string =
     id: {self.id},
     sectionType: {self.sectionType.int},
     name: {self.name},
-    amISectionAdmin: {self.amISectionAdmin},
+    memberRole: {self.memberRole},
     description: {self.description},
     introMessage: {self.introMessage},
     outroMessage: {self.outroMessage},
@@ -183,8 +183,11 @@ proc sectionType*(self: SectionItem): SectionType {.inline.} =
 proc name*(self: SectionItem): string {.inline.} =
   self.name
 
-proc amISectionAdmin*(self: SectionItem): bool {.inline.} =
-  self.amISectionAdmin
+proc memberRole*(self: SectionItem): MemberRole {.inline.} =
+  self.memberRole
+
+proc `memberRole=`*(self: var SectionItem, value: MemberRole) {.inline.} =
+  self.memberRole = value
 
 proc description*(self: SectionItem): string {.inline.} =
   self.description

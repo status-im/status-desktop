@@ -10,7 +10,6 @@ QtObject {
     property var mainModuleInst: mainModule
     property var aboutModuleInst: aboutModule
     property var communitiesModuleInst: communitiesModule
-    property var observedCommunity: communitiesModuleInst.observedCommunity
 
     property bool newVersionAvailable: false
     property string latestVersion

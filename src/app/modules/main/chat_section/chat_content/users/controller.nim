@@ -130,7 +130,7 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_CHAT_MEMBER_UPDATED) do(e: Args):
       let args = ChatMemberUpdatedArgs(e)
       if (args.chatId == self.chatId):
-        self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
+        self.delegate.onChatMemberUpdated(args.id, args.role, args.joined)
 
     # Events only for community channel
     if (self.belongsToCommunity):
