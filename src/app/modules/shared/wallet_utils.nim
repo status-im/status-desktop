@@ -64,6 +64,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
     currencyAmountToItem(w.getCurrencyBalance(enabledChainIds, currency), currencyFormat),
     w.emoji,
     w.keyUid,
+    w.createdAt,
     keycardAccount,
     w.assetsLoading,
   )

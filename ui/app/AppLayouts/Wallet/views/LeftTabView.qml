@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import SortFilterProxyModel 0.2
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -420,7 +421,12 @@ Rectangle {
                 }
             }
 
-            model: RootStore.accounts
+            model: SortFilterProxyModel {
+                sourceModel: RootStore.accounts
+
+                sorters: RoleSorter { roleName: "createdAt"; sortOrder: Qt.AscendingOrder }
+            }
+            
         }
     }
 }

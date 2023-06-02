@@ -14,6 +14,7 @@ type
     CurrencyBalance,
     Emoji,
     KeyUid,
+    CreatedAt,
     KeycardAccount,
     AssetsLoading,
 
@@ -60,6 +61,7 @@ QtObject:
       ModelRole.CurrencyBalance.int:"currencyBalance",
       ModelRole.Emoji.int: "emoji",
       ModelRole.KeyUid.int: "keyUid",
+      ModelRole.CreatedAt.int: "createdAt",
       ModelRole.KeycardAccount.int: "keycardAccount",
       ModelRole.AssetsLoading.int: "assetsLoading",
     }.toTable
@@ -101,6 +103,8 @@ QtObject:
       result = newQVariant(item.emoji())
     of ModelRole.KeyUid:
       result = newQVariant(item.keyUid())
+    of ModelRole.CreatedAt:
+      result = newQVariant(item.createdAt())
     of ModelRole.KeycardAccount:
       result = newQVariant(item.keycardAccount())
     of ModelRole.AssetsLoading:
