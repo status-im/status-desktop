@@ -14,7 +14,7 @@ import shared.controls 1.0
 Control {
     id: root
 
-    // Expected roles: name, walletAddress, imageSource, amount
+    // Expected roles: name, walletAddress, imageSource, noOfMessages, amount
     property var model
 
     property string tokenName
@@ -23,12 +23,23 @@ Control {
     readonly property alias sortBy: holdersList.sortBy
     readonly property alias sorting: holdersList.sorting
 
+    readonly property bool empty: countCheckHelper.count === 0
+
     signal viewProfileRequested(string address)
     signal viewMessagesRequested(string address)
     signal airdropRequested(string address)
     signal remoteDestructRequested(string address)
     signal kickRequested(string address)
     signal banRequested(string address)
+
+    signal generalAirdropRequested
+
+    Instantiator {
+        id: countCheckHelper
+
+        model: root.model
+        delegate: QtObject {}
+    }
 
     TokenHoldersProxyModel {
         id: proxyModel
@@ -73,6 +84,7 @@ Control {
             bottomPadding: 0
             minimumHeight: 36 // by design
             maximumHeight: minimumHeight
+
             placeholderText: qsTr("Search hodlers")
         }
 
@@ -90,8 +102,19 @@ Control {
                   ? qsTr("Search results") : qsTr("No hodlers found")
         }
 
+        NoHoldersPanel {
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            visible: root.empty
+
+            onAirdropRequested: root.generalAirdropRequested()
+        }
+
         SortableTokenHoldersList {
             id: holdersList
+
+            visible: !root.empty && proxyModel.count > 0
 
             Layout.fillWidth: true
             Layout.preferredHeight: contentHeight
