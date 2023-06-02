@@ -120,6 +120,16 @@ Item {
                 width: progressBlock.width
             }
 
+            WalletNftPreview {
+                visible: root.isTransactionValid && d.isNFT && !!transaction.nftImageUrl
+                width: Math.min(304, progressBlock.width)
+                nftName: root.isTransactionValid ? transaction.nftName : ""
+                nftUrl: root.isTransactionValid && !!transaction.nftImageUrl ? transaction.nftImageUrl : ""
+                strikethrough: transactionHeader.transactionType === TransactionDelegate.Destroy
+                tokenId: root.isTransactionValid ? transaction.tokenID : ""
+                contractAddress: root.isTransactionValid ? transaction.contract : ""
+            }
+
             Column {
                 width: progressBlock.width
                 spacing: 0
