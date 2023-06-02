@@ -74,12 +74,11 @@ def step(context, private_key, name, color, emoji):
 @verify_screenshot
 def step(context, seed_phrase, name, color, emoji):
     account_popup = _walletScreen.left_panel.open_add_account_popup()
-    account_popup \
-        .set_name(name) \
-        .set_emoji(emoji) \
-        .set_color(color) \
-        .set_origin_seed_phrase(seed_phrase.split()) \
-        .save()
+    account_popup.set_name(name)
+    account_popup.set_emoji(emoji)
+    account_popup.set_color(color)
+    account_popup.set_origin_seed_phrase(seed_phrase.split())
+    account_popup.save()
     AuthenticatePopup().wait_until_appears().authenticate()
     account_popup.wait_until_hidden()
 
@@ -88,36 +87,33 @@ def step(context, seed_phrase, name, color, emoji):
 @verify_screenshot
 def step(context, name, color, emoji, derivation_path, generated_address_index):
     account_popup = _walletScreen.left_panel.open_add_account_popup()
-    account_popup \
-        .set_name(name) \
-        .set_emoji(emoji) \
-        .set_color(color) \
-        .set_derivation_path(derivation_path, generated_address_index) \
-        .save()
+    account_popup.set_name(name)
+    account_popup.set_emoji(emoji)
+    account_popup.set_color(color)
+    account_popup.set_derivation_path(derivation_path, generated_address_index)
+    account_popup.save()
 
 @When("the user adds to \"|any|\" a custom generated account with \"|any|\" color \"|any|\" emoji \"|any|\" and derivation \"|any|\" \"|any|\"")
 @verify_screenshot
 def step(context, keypair_name, name, color, emoji, derivation_path, generated_address_index):
     account_popup = _walletScreen.left_panel.open_add_account_popup()
-    account_popup \
-        .set_name(name) \
-        .set_emoji(emoji) \
-        .set_color(color) \
-        .set_derivation_path(derivation_path, generated_address_index) \
-        .set_origin_keypair(keypair_name) \
-        .save()
+    account_popup.set_name(name)
+    account_popup.set_emoji(emoji)
+    account_popup.set_color(color)
+    account_popup.set_derivation_path(derivation_path, generated_address_index)
+    account_popup.set_origin_keypair(keypair_name)
+    account_popup.save()
 
 
 @When(
     "the user adds a generated seed phrase account with \"|any|\" color \"|any|\" emoji \"|any|\" and keypair \"|any|\"")
 def step(context, name, color, emoji, keypair_name):
     account_popup = _walletScreen.left_panel.open_add_account_popup()
-    account_popup \
-        .set_name(name) \
-        .set_emoji(emoji) \
-        .set_color(color) \
-        .set_origin_new_seed_phrase(keypair_name) \
-        .save()
+    account_popup.set_name(name)
+    account_popup.set_emoji(emoji)
+    account_popup.set_color(color)
+    account_popup.set_origin_new_seed_phrase(keypair_name)
+    account_popup.save()
     AuthenticatePopup().wait_until_appears().authenticate()
     account_popup.wait_until_hidden()
 
@@ -131,7 +127,10 @@ def step(context):
 @When("the user edits an account with \"|any|\" to \"|any|\" with color \"|any|\" and emoji \"|any|\"")
 def step(context, name, new_name, new_color, new_emoji):
     account_popup = _walletScreen.left_panel.open_edit_account_popup(name)
-    account_popup.set_name(new_name).set_emoji(new_emoji).set_color(new_color).save()
+    account_popup.set_name(new_name)
+    account_popup.set_emoji(new_emoji)
+    account_popup.set_color(new_color)
+    account_popup.save()
 
 
 @When("the user removes account \"|any|\"")
@@ -190,13 +189,20 @@ def step(context, network_name):
 def step(context, name, color, emoji_unicode):
     _walletScreen.verify_account_existence(name, color, emoji_unicode)
 
+
 @Then("settings keycard section is opened")
 def step(context):
     _walletScreen.verify_keycard_settings_is_opened()
 
+
 @Then("the account with \"|any|\" is not displayed")
 def step(context, name):
     _walletScreen.verify_account_doesnt_exist(name)
+
+
+@Then("the account with \"|any|\" is displayed")
+def step(context, name):
+    _walletScreen.verify_account_exist(name)
 
 
 @Then("the user has a positive balance of \"|any|\"")

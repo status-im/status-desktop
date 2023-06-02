@@ -24,6 +24,10 @@ class BaseElement:
     @property
     def existent(self):
         return squish.waitForObjectExists(self.object_name, configs.squish.UI_LOAD_TIMEOUT_MSEC)
+    
+    @property
+    def exists(self):
+        return object.exists(self.object_name)
 
     @property
     def bounds(self) -> squish.UiTypes.ScreenRectangle:
@@ -72,6 +76,7 @@ class BaseElement:
 
     def hover(self):
         squish.mouseMove(self.center.x, self.center.y)
+        return self
 
     def open_context_menu(
             self,

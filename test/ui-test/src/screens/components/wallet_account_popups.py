@@ -175,7 +175,7 @@ class AccountPopup(BasePopup):
         return self
 
     def set_derivation_path(self, value: str, index: int):
-        self._edit_derivation_path_button.click()
+        self._edit_derivation_path_button.hover().click()
         AuthenticatePopup().wait_until_appears().authenticate()
         if value in [_.value for _ in constants.wallet.DerivationPath]:
             self._derivation_path_combobox_button.click()

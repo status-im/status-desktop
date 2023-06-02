@@ -2,9 +2,10 @@ import time
 
 import configs
 import squish
+import utils
 
 
-def attach(aut_name: str, timeout_sec: int = 30):
+def attach(aut_name: str, timeout_sec: int = configs.squish.PROCESS_TIMEOUT_SEC):
     print(f'Attaching squish to {aut_name}')
     started_at = time.monotonic()
     while True:
@@ -15,13 +16,14 @@ def attach(aut_name: str, timeout_sec: int = 30):
         except RuntimeError as err:
             print(err)
             time.sleep(1)
-        assert time.monotonic() - started_at > timeout_sec, f'Attach error: {aut_name}'
+        assert time.monotonic() - started_at < timeout_sec, f'Attach error: {aut_name}'
 
 
-def detach():
+def detach(timeout_sec: int = configs.squish.PROCESS_TIMEOUT_SEC):
     for ctx in squish.applicationContextList():
+        started_at = time.monotonic()
         ctx.detach()
-        assert squish.waitFor(
-            lambda: not ctx.isRunning, configs.squish.PROCESS_TIMEOUT_MSEC), 'Detach application failed'
-        # TODO: close by ctx.pid and then detach
-        time.sleep(5)
+        while ctx.isRunning and time.monotonic() - started_at < timeout_sec:
+            time.sleep(1)
+                
+    utils.local_system.kill_process(configs.path.AUT.name)

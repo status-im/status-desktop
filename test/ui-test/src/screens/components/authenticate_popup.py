@@ -10,10 +10,16 @@ class AuthenticatePopup(BaseElement):
         self._primary_button = Button('sharedPopup_Primary_Button')
         self._cancel_buttom = Button('sharedPopup_Cancel_Button')
 
-    def authenticate(self, password: str = constants.user_account.PASSWORD):
+    def authenticate(self, password: str = constants.user_account.PASSWORD, attempt: int = 2):
         self._password_text_edit.text = password
         self._primary_button.click()
-        self._primary_button.wait_until_hidden()
+        try:
+            self._primary_button.wait_until_hidden()
+        except AssertionError as err:
+            if attempt:
+                self.authenticate(password, attempt-1)
+            else:
+                raise err
 
     def cancel(self):
         self._cancel_buttom.click()

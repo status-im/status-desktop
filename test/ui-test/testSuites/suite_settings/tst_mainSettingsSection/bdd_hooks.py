@@ -14,7 +14,7 @@ def hook(context):
 
 @OnScenarioEnd
 def hook(context):
-    [ctx.detach() for ctx in squish.applicationContextList()]
+    init_steps.driver.detach()
     
 @OnStepEnd
 def hook(context):
