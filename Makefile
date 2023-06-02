@@ -161,7 +161,7 @@ endif
 
 # Qt5 dirs (we can't indent with tabs here)
 ifneq ($(detected_OS),Windows)
- QT5_LIBDIR := $(shell qmake -query QT_INSTALL_LIBS 2>/dev/null)
+ export QT5_LIBDIR := $(shell qmake -query QT_INSTALL_LIBS 2>/dev/null)
  QT5_QMLDIR := $(shell qmake -query QT_INSTALL_QML 2>/dev/null)
  QT5_INSTALL_PREFIX := $(shell qmake -query QT_INSTALL_PREFIX 2>/dev/null)
  QT5_PKGCONFIG_INSTALL_PREFIX := $(shell pkg-config --variable=prefix Qt5Core 2>/dev/null)
@@ -169,17 +169,16 @@ ifneq ($(detected_OS),Windows)
   QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
  else
   QT5_PCFILEDIR := $(QT5_LIBDIR)/pkgconfig
-  # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
-  ifeq ($(detected_OS),Darwin)
-   NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
-   # Fix for failures due to 'can't allocate code signature data for'
-   NIM_PARAMS += --passL:"-headerpad_max_install_names"
-   NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
+ endif
+ # some manually installed Qt5 instances have wrong paths in their *.pc files, so we pass the right one to the linker here
+ ifeq ($(detected_OS),Darwin)
+  NIM_PARAMS += -L:"-framework Foundation -framework AppKit -framework Security -framework IOKit -framework CoreServices -framework LocalAuthentication"
+  # Fix for failures due to 'can't allocate code signature data for'
+  NIM_PARAMS += --passL:"-headerpad_max_install_names"
+  NIM_PARAMS += --passL:"-F$(QT5_LIBDIR)"
 
-   export QT5_LIBDIR
-  else
-   NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
-  endif
+ else
+  NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
  endif
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
