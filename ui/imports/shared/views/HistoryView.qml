@@ -7,6 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -18,6 +19,8 @@ import "../stores"
 import "../controls"
 
 import AppLayouts.Wallet.stores 1.0 as WalletStores
+import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.controls 1.0
 
 ColumnLayout {
     id: root
@@ -65,6 +68,30 @@ ColumnLayout {
         visible: !d.isLoading && transactionListRoot.count === 0
         font.pixelSize: Style.current.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
+    }
+
+    Rectangle {
+        id: filterComponent
+        visible: !d.isLoading && transactionListRoot.count !== 0
+        Layout.fillWidth: true
+        Layout.preferredHeight: 50
+        color: Theme.palette.transparent
+        StatusRoundButton {
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            width: 32
+            height: 32
+            border.width: 1
+            border.color:  Theme.palette.directColor8
+            icon.name: "filter"
+            onClicked: activityFilter.popup(x, y + height + 4)
+            type: StatusRoundButton.Type.Tertiary
+        }
+    }
+
+    Separator {
+        Layout.fillWidth: true
+        visible: filterComponent.visible
     }
 
     StatusListView {
@@ -160,6 +187,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.topMargin: 20
                 implicitHeight: 1
+                visible: !sectionDelegate.isFirstSection
             }
 
             StatusTextWithLoadingState {
@@ -245,5 +273,24 @@ ColumnLayout {
                 onClicked: transactionListRoot.positionViewAtBeginning()
             }
         }
+    }
+
+    ActivityFilterMenu {
+        id: activityFilter
+        selectedTime: ActivityPeriodFilterSubMenu.All
+        onSetSelectedTime: {
+            // To do connect with n=backend to set time range
+            if(selectedTime === ActivityPeriodFilterSubMenu.Custom) {
+                customDateRangePicker.open()
+            }
+        }
+    }
+
+    // To-do update once https://github.com/status-im/status-desktop/pull/10916 is updated and connect with backend values
+    StatusDateRangePicker {
+        id: customDateRangePicker
+        destroyOnClose: false
+        fromTimestamp: new Date().setDate(new Date().getDate() - 7)
+//        onNewRangeSet: d.setCustomTimeRange(fromTimestamp, toTimestamp)
     }
 }

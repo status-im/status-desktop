@@ -349,4 +349,8 @@ ListModel {
         title: "StatusTxProgressBar"
         section: "Wallet"
     }
+    ListElement {
+        title: "ActivityFilterMenu"
+        section: "Wallet"
+    }
 }
