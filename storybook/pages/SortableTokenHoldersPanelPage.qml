@@ -18,6 +18,13 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
+        Rectangle {
+            anchors.fill: holdersPanel
+
+            border.color: "lightgray"
+            anchors.margins: -1
+        }
+
         SortableTokenHoldersPanel {
             id: holdersPanel
 
