@@ -220,6 +220,8 @@ else
  # Additional optimization flags for release builds are not included at present;
  # adding them will involve refactoring config.nims in the root of this repo
  NIM_PARAMS += -d:release
+ STATUSGO_MAKE_PARAMS += CGO_CFLAGS="-O3"
+ STATUSKEYCARDGO_MAKE_PARAMS += CGO_CFLAGS="-O3"
 endif
 
 NIM_PARAMS += --outdir:./bin
