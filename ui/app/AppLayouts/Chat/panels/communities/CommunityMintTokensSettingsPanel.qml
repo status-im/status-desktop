@@ -387,19 +387,19 @@ SettingsPageLayout {
 
                 anchors.centerIn: Overlay.overlay
                 title: qsTr("Sign transaction - Mint %1 token").arg(popup.tokenName)
-                tokenName: parent.name
-                accountName: parent.accountName
-                networkName: parent.chainName
+                tokenName: preview.name
+                accountName: preview.accountName
+                networkName: preview.chainName
                 feeText: root.feeText
                 errorText: root.errorText
                 isFeeLoading: root.isFeeLoading
 
                 onOpened: {
                     root.setFeeLoading()
-                    root.signMintTransactionOpened(parent.chainId, d.accountAddress)
+                    root.signMintTransactionOpened(preview.chainId, d.accountAddress)
                 }
                 onCancelClicked: close()
-                onSignTransactionClicked: parent.signMintTransaction()
+                onSignTransactionClicked: preview.signMintTransaction()
             }
         }
     }
