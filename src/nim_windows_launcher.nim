@@ -19,4 +19,5 @@ let params = newWideCString(params_str)
 # SW_SHOW (5): activates window and displays it in its current size and position
 const showCmd: int32 = 5
 
+
 discard shellExecuteW(NULL, open, exePath, params, workDir, showCmd)
