@@ -396,7 +396,8 @@ var NODE_CONFIG* = %* {
       "420": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED
     },
     "InfuraAPIKey": INFURA_TOKEN_RESOLVED,
-    "InfuraAPIKeySecret": INFURA_TOKEN_SECRET_RESOLVED
+    "InfuraAPIKeySecret": INFURA_TOKEN_SECRET_RESOLVED,
+    "LoadAllTransfers": true,
   },
   "EnsConfig": {
     "Enabled": true
