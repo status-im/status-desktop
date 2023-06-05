@@ -217,7 +217,7 @@ Item {
                 ChatContentView {
                     width: parent.width
                     height: parent.height
-                    visible: !root.rootStore.openCreateChat && isActiveChannel
+                    visible: !root.rootStore.openCreateChat && model.active
                     chatId: model.itemId
                     chatType: model.type
                     chatMessagesLoader.active: model.loaderActive
@@ -227,7 +227,6 @@ Item {
                     stickersPopup: root.stickersPopup
                     stickersLoaded: root.stickersLoaded
                     isBlocked: model.blocked
-                    isActiveChannel: model.active
                     onOpenStickerPackPopup: {
                         root.openStickerPackPopup(stickerPackId)
                     }

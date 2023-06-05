@@ -920,7 +920,7 @@ Rectangle {
     }
 
     function showImageArea(imagePathsOrData) {
-        isImage = true;
+        isImage = imagePathsOrData.length > 0
         imageArea.imageSource = imagePathsOrData
         control.fileUrlsAndSources = imageArea.imageSource
     }
@@ -929,12 +929,8 @@ Rectangle {
     // Returns true if the images were valid and added
     function validateImagesAndShowImageArea(imagePaths) {
         const validImages = validateImages(imagePaths)
-
-        if (validImages.length > 0) {
-            showImageArea(validImages)
-            return true
-        }
-        return false
+        showImageArea(validImages)
+        return isImage
     }
 
     function showReplyArea(messageId, userName, message, contentType, image, album, albumCount, sticker) {
@@ -1263,8 +1259,7 @@ Rectangle {
                         if (control.fileUrlsAndSources.length > index && control.fileUrlsAndSources[index]) {
                             control.fileUrlsAndSources.splice(index, 1)
                         }
-                        isImage = control.fileUrlsAndSources.length > 0
-                        validateImagesAndShowImageArea(control.fileUrlsAndSources) // Explicitely assign control.fileUrlsAndSources to force the chagne signal
+                        showImageArea(control.fileUrlsAndSources)
                     }
                 }
 
