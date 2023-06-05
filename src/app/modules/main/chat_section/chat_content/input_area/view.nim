@@ -178,8 +178,6 @@ QtObject:
     let gifItem = self.findGifDto(id)
     return self.delegate.isFavorite(gifItem)
 
-  # Preserve state properties
-
   proc getPreservedProperties(self: View): QVariant {.slot.} =
     return self.preservedPropertiesVariant
 

@@ -284,8 +284,6 @@ Item {
                 d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
             }
 
-            // TODO: A lot of chatContentModule.getMyChatId is used here. Isn't it just `root.activeChatId`?
-
             onSendTransactionCommandButtonClicked: {
                 if (!d.activeChatContentModule) {
                     console.warn("error on sending transaction command - chat content module is not set")
@@ -339,14 +337,6 @@ Item {
 
             onKeyUpPress: {
                 d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
-            }
-
-            Component.onCompleted: {
-                Qt.callLater(() => {
-                            // TODO: Review, is this needed now?
-                    forceInputActiveFocus()
-                    textInput.cursorPosition = textInput.length
-                })
             }
         }
     }

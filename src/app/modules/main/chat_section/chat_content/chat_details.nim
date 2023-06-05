@@ -181,7 +181,7 @@ QtObject:
   proc setIsMutualContact*(self: ChatDetails, value: bool) = # this is not a slot
     self.isContact = value
     self.isMutualContactChanged()
-    
+
   proc isUntrustworthyChanged(self: ChatDetails) {.signal.}
   proc getIsUntrustworthy(self: ChatDetails): bool {.slot.} =
     return self.isUntrustworthy
