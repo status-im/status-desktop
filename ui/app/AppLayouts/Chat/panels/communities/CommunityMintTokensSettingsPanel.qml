@@ -78,7 +78,7 @@ SettingsPageLayout {
     signal burnCollectibles(string tokenKey,
                             int amount)
 
-    signal airdropCollectible(string tokenKey)
+    signal airdropCollectible(string tokenKey, var addresses)
 
     signal deleteToken(string tokenKey)
 
@@ -127,6 +127,7 @@ SettingsPageLayout {
         onInitialItemChanged: updateInitialStackView()
 
         signal airdropClicked()
+        signal remoteDestructAddressClicked(string address)
 
         signal retryMintClicked()
 
@@ -430,6 +431,7 @@ SettingsPageLayout {
 
                 collectibleName: root.title
                 model: d.tokenOwnersModel
+                destroyOnClose: false
 
                 onRemotelyDestructClicked: {
                     d.selfDestructTokensList = selfDestructTokensList
@@ -442,6 +444,8 @@ SettingsPageLayout {
                 id: alertPopup
 
                 property int tokenCount
+
+                destroyOnClose: false
 
                 title: qsTr("Remotely destruct %n token(s)", "", tokenCount)
                 acceptBtnText: qsTr("Remotely destruct")
@@ -499,6 +503,15 @@ SettingsPageLayout {
                     d.burnAmount = burnAmount
                     signTransactionPopup.isRemotelyDestructTransaction = false
                     signTransactionPopup.open()
+                }
+            }
+
+            Connections {
+                target: d
+
+                function onRemoteDestructAddressClicked(address) {
+                    remotelyDestructPopup.open()
+                    // TODO: set the address selected in the popup's list
                 }
             }
         }
@@ -649,11 +662,24 @@ SettingsPageLayout {
                 }
             }
 
+            onGeneralAirdropRequested: {
+                root.airdropCollectible(view.symbol, [])
+            }
+
+            onAirdropRequested: {
+                root.airdropCollectible(view.symbol, [address])
+            }
+
+            onRemoteDestructRequested: {
+                d.remoteDestructAddressClicked(address)
+            }
+
             Connections {
                 target: d
 
+                // handle airdrop request from the footer
                 function onAirdropClicked() {
-                    root.airdropCollectible(view.symbol) // TODO: Backend. It should just be the key (hash(chainId + contractAddress)
+                    root.airdropCollectible(view.symbol, []) // TODO: Backend. It should just be the key (hash(chainId + contractAddress)
                 }
             }
         }

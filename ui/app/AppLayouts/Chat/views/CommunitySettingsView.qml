@@ -342,7 +342,9 @@ StatusSectionLayout {
                 }
                 onSignBurnTransactionOpened: communityTokensStore.computeBurnFee(chainId)
                 onBurnCollectibles: communityTokensStore.burnCollectibles(tokenKey, amount)
-                onAirdropCollectible: root.goTo(Constants.CommunitySettingsSections.Airdrops)
+                onAirdropCollectible: {
+                    root.goTo(Constants.CommunitySettingsSections.Airdrops)
+                }
                 onDeleteToken: communityTokensStore.deleteToken(root.community.id, tokenKey)
                 onRetryMintToken: communityTokensStore.retryMintToken(root.community.id, tokenKey)
 
@@ -478,12 +480,15 @@ StatusSectionLayout {
                 Connections {
                     target: mintPanel
 
-                    function onAirdropCollectible(key) {
+                    function onAirdropCollectible(key, addresses) {
                         // Here it is forced a navigation to the new airdrop form, like if it was clicked the header button
                         airdropPanel.primaryHeaderButtonClicked()
 
                         // Force a token selection to be airdroped with default amount 1
                         airdropPanel.selectCollectible(key, 1)
+
+                        // Set given addresses as recipients
+                        airdropPanel.addAddresses(addresses)
                     }
                 }
             }
@@ -505,12 +510,15 @@ StatusSectionLayout {
         function goTo(section: int, subSection: int) {
             //find and enable section
             const matchingIndex = listView.model.findIndex((modelItem, index) => modelItem.id === section && modelItem.enabled)
-            if(matchingIndex !== -1) {
-                d.currentIndex = matchingIndex
-                //find and enable subsection if subSection navigation is available
-                if(d.currentItem && d.currentItem.goTo) {
-                    d.currentItem.goTo(subSection)
-                }
+
+            if(matchingIndex === -1)
+                return
+
+            d.currentIndex = matchingIndex
+
+            //find and enable subsection if subSection navigation is available
+            if(d.currentItem && d.currentItem.goTo) {
+                d.currentItem.goTo(subSection)
             }
         }
     }

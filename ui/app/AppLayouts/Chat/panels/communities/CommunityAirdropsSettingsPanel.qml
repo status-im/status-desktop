@@ -33,6 +33,10 @@ SettingsPageLayout {
         d.selectCollectible(key, amount)
     }
 
+    function addAddresses(addresses) {
+        d.addAddresses(addresses)
+    }
+
     QtObject {
         id: d
 
@@ -43,6 +47,7 @@ SettingsPageLayout {
         readonly property string newAirdropViewPageTitle: qsTr("New airdrop")
 
         signal selectCollectible(string key, int amount)
+        signal addAddresses(var addresses)
     }
 
     content: StackView {
@@ -110,7 +115,10 @@ SettingsPageLayout {
             }
             onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
 
-            Component.onCompleted: d.selectCollectible.connect(view.selectCollectible)
+            Component.onCompleted: {
+                d.selectCollectible.connect(view.selectCollectible)
+                d.addAddresses.connect(view.addAddresses)
+            }
         }
     }
 }

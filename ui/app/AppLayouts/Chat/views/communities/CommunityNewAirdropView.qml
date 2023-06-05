@@ -46,6 +46,10 @@ StatusScrollView {
         selectedHoldingsModel.append(entry)
     }
 
+    function addAddresses(_addresses) {
+        addresses.addAddresses(_addresses)
+    }
+
     QtObject {
         id: d
 
@@ -265,20 +269,26 @@ StatusScrollView {
             ListModel {
                 id: addresses
 
-                function addAddressesFromString(addresses) {
-                    const words = addresses.trim().split(/[\s+,]/)
+                function addAddresses(_addresses) {
                     const existing = new Set()
 
                     for (let i = 0; i < count; i++)
                         existing.add(get(i).address)
 
-                    words.forEach(word => {
-                        if (word === "" || existing.has(word))
+                    _addresses.forEach(address => {
+                        if (existing.has(address))
                             return
 
-                        const valid = Utils.isValidAddress(word)
-                        append({ valid, address: word })
+                        const valid = Utils.isValidAddress(address)
+                        append({ valid, address })
                     })
+                }
+
+                function addAddressesFromString(addressesString) {
+                    const words = addressesString.trim().split(/[\s+,]/)
+                    const wordsNonEmpty = words.filter(word => !!word)
+
+                    addAddresses(wordsNonEmpty)
                 }
             }
 
