@@ -16,23 +16,17 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-
         StatusButton {
-            anchors.top: parent.top
-            anchors.topMargin: 100
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Launch popoup"
+            anchors.centerIn: parent
+            text: "Launch popup"
             onClicked: dialog.open()
         }
 
         StatusDateRangePicker {
             id: dialog
             anchors.centerIn: parent
-            width: 440
-            height: 300
-            fromTimestamp: new Date().setDate(new Date().getDate() - 7)
-            toTimestamp: Date.now()
-            supportedStartYear: 1900
+            destroyOnClose: false
+            fromTimestamp: new Date().setDate(new Date().getDate() - 7) // 7 days ago
             onNewRangeSet: {
                 console.warn(" from timeStamp = ", new Date(fromTimestamp).toISOString())
                 console.warn(" to timeStamp = ", new Date(toTimestamp).toISOString())
@@ -40,6 +34,5 @@ SplitView {
         }
 
         Component.onCompleted: dialog.open()
-
     }
 }

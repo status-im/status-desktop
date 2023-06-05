@@ -1,7 +1,6 @@
 import QtQuick 2.14
-import QtQuick.Layouts 1.12
+import QtQuick.Layouts 1.15
 import QtQml.Models 2.15
-import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
@@ -14,94 +13,95 @@ StatusDialog {
 
     property double fromTimestamp: Date.now()
     property double toTimestamp: Date.now()
-    property int supportedStartYear
 
     signal newRangeSet(double fromTimestamp, double toTimestamp)
 
-    onOpened: fromInput.forceActiveFocus()
-
-    topPadding: 0
     title: qsTr("Filter activity by period")
 
-    contentItem: RowLayout {
-        spacing: 20
+    QtObject {
+        id: d
 
-        // From Date
-        ColumnLayout {
-            spacing: 8
-            StatusBaseText {
-                height: visible ? contentHeight : 0
-                elide: Text.ElideRight
-                text: qsTr("From")
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
-            }
-            StatusDateInput {
-                id: fromInput
-                datePlaceholderText: qsTr("dd")
-                monthPlaceholderText: qsTr("mm")
-                yearPlaceholderText: qsTr("yyyy")
-                presetTimestamp: fromTimestamp
-                errorMessage: qsTr("Invalid range")
-                supportedStartYear: root.supportedStartYear
-            }
+        function getFromTimestampUTC(date) {
+            date.setHours(0, 0, 0, 0)
+            return date.valueOf()
         }
 
-        // To Date
-        ColumnLayout {
-            Layout.preferredWidth: toInput.width
-            spacing: 8
+        function getToTimestampUTC(date) {
+            date.setDate(date.getDate() + 1) // next day...
+            date.setHours(0, 0, 0, -1) // ... but just 1ms before midnight -> whole day included
+            return date.valueOf()
+        }
+    }
+
+    contentItem: Item {
+        GridLayout {
+            width: parent.width
+            anchors.verticalCenter: parent.verticalCenter
+            columns: 3
+            columnSpacing: 16
+            rowSpacing: 8
+
+            StatusBaseText {
+                text: qsTr("From")
+            }
+
             RowLayout {
-                Layout.preferredWidth: parent.width
+                Layout.fillWidth: true
                 StatusBaseText {
-                    Layout.alignment: Qt.AlignLeft
-                    height: visible ? contentHeight : 0
-                    elide: Text.ElideRight
                     text: qsTr("To")
-                    font.pixelSize: 15
-                    color: Theme.palette.directColor1
                 }
-                StatusButton {
-                    Layout.alignment: Qt.AlignRight
+                Item { Layout.fillWidth: true }
+                StatusFlatButton {
                     horizontalPadding: 0
                     verticalPadding: 0
-                    spacing: 0
-                    normalColor: Theme.palette.transparent
                     hoverColor: Theme.palette.transparent
-                    font.weight: Font.Normal
-                    text: toInput.isEditMode ? qsTr("Now") : qsTr("Edit")
-                    onClicked: {
-                        if(toInput.isEditMode)
-                            root.toTimestamp = Date.now()
-                        toInput.isEditMode = !toInput.isEditMode
-                    }
+                    text: qsTr("Now")
+                    enabled: !toInput.isTodaySelected
+                    onClicked: toInput.selectedDate = new Date()
                 }
             }
-            StatusDateInput {
-                id: toInput
-                datePlaceholderText: qsTr("dd")
-                monthPlaceholderText: qsTr("mm")
-                yearPlaceholderText: qsTr("yyyy")
-                presetTimestamp: toTimestamp
-                nowText: qsTr("Now")
-                errorMessage: qsTr("Invalid range")
-                supportedStartYear: root.supportedStartYear
-            }
-        }
 
-        StatusButton {
-            Layout.preferredHeight: fromInput.height
-            Layout.alignment: Qt.AlignVCenter
-            Layout.topMargin: 28
-            text: qsTr("Reset")
-            enabled: fromInput.hasChange || toInput.hasChange
-            normalColor: Theme.palette.transparent
-            borderColor: Theme.palette.baseColor2
-            hoverColor: Theme.palette.primaryColor3
-            onClicked: {
-                toInput.isEditMode = false
-                fromInput.reset()
-                toInput.reset()
+            StatusDatePicker {
+                Layout.alignment: Qt.AlignTop
+                Layout.row: 1
+                Layout.preferredWidth: 168
+                readonly property bool hasChange: selectedDate.valueOf() !== root.fromTimestamp
+                id: fromInput
+                selectedDate: new Date(fromTimestamp)
+                customTodayText: qsTr("Now")
+                validationError: {
+                    if (selectedDate.valueOf() > toInput.selectedDate.valueOf() && !toInput.isTodaySelected) // from > to; today in both is fine
+                        return qsTr("'From' can't be later than 'To'")
+
+                    if (selectedDate.valueOf() > new Date()) // from > now
+                        return qsTr("Can't set date to future")
+
+                    return ""
+                }
+            }
+
+            StatusDatePicker {
+                Layout.alignment: Qt.AlignTop
+                Layout.preferredWidth: 168
+                readonly property bool hasChange: selectedDate.valueOf() !== root.toTimestamp
+                id: toInput
+                selectedDate: new Date(toTimestamp)
+                customTodayText: qsTr("Now")
+                validationError: selectedDate.valueOf() > new Date() // to > now
+                                 ? qsTr("Can't set date to future") : ""
+            }
+
+            StatusButton {
+                Layout.alignment: Qt.AlignTop
+                Layout.preferredHeight: toInput.control.height
+                text: qsTr("Reset")
+                enabled: fromInput.hasChange || toInput.hasChange
+                normalColor: Theme.palette.transparent
+                borderColor: Theme.palette.baseColor2
+                onClicked: {
+                    fromInput.selectedDate = new Date(root.fromTimestamp)
+                    toInput.selectedDate = new Date(root.toTimestamp)
+                }
             }
         }
     }
@@ -110,9 +110,11 @@ StatusDialog {
         rightButtons: ObjectModel {
             StatusButton {
                 text: qsTr("Apply")
-                enabled: fromInput.valid && toInput.valid && (fromInput.hasChange || toInput.hasChange)
+                enabled: !fromInput.validationError && !toInput.validationError && (fromInput.hasChange || toInput.hasChange)
                 onClicked: {
-                    root.newRangeSet(fromInput.newDate.valueOf(), toInput.newDate.valueOf())
+                    root.newRangeSet(d.getFromTimestampUTC(fromInput.selectedDate),
+                                     toInput.isTodaySelected ? new Date().valueOf() // now means now, including the time today
+                                                             : d.getToTimestampUTC(toInput.selectedDate))
                     root.close()
                 }
             }

@@ -54,6 +54,8 @@ StatusComboBox {
     */
     property string customTodayText: qsTr("Today")
 
+    readonly property alias isTodaySelected: d.isTodaySelected
+
     QtObject {
         id: d
         property date selectedDate: new Date()
@@ -71,12 +73,13 @@ StatusComboBox {
         }
     }
 
-    implicitHeight: 44
-
     indicatorIcon: "calendar"
     control.delegate: null
     control.displayText: d.isTodaySelected && root.customTodayText ? root.customTodayText
                                                                    : LocaleUtils.formatDate(d.selectedDate, root.dateFormat)
+    control.implicitHeight: 44
+    control.padding: 12
+    control.leftPadding: 16
     control.popup.horizontalPadding: 16
     control.popup.verticalPadding: 16
     control.popup.width: 340

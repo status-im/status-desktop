@@ -219,7 +219,5 @@
         <file>StatusQ/Core/Utils/ModelChangeGuard.qml</file>
         <file>StatusQ/Core/Utils/StackViewStates.qml</file>
         <file>StatusQ/Controls/StatusBlockProgressBar.qml</file>
-        <file>StatusQ/Components/StatusDateInput.qml</file>
-        <file>StatusQ/Components/private/dateInput/StatusBaseDateInput.qml</file>
     </qresource>
 </RCC>

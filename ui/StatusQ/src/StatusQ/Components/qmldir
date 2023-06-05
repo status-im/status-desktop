@@ -63,4 +63,3 @@ StatusSyncDeviceDelegate 0.1 StatusSyncDeviceDelegate.qml
 StatusOnlineBadge 0.1 StatusOnlineBadge.qml
 StatusGroupBox 0.1 StatusGroupBox.qml
 StatusPageIndicator 0.1 StatusPageIndicator.qml
-StatusDateInput 0.1 StatusDateInput.qml
