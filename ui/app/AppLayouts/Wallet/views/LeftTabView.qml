@@ -55,7 +55,6 @@ Rectangle {
         sourceComponent: AddAccountPopup {
             store.emojiPopup: root.emojiPopup
             store.addAccountModule: walletSection.addAccountModule
-            anchors.centerIn: parent
         }
 
         onLoaded: {
@@ -94,9 +93,6 @@ Rectangle {
         property string accountDerivationPath
 
         sourceComponent: RemoveAccountConfirmationPopup {
-            anchors.centerIn: parent
-            width: 400
-
             simple: removeAccountConfirmation.simple
             accountName: removeAccountConfirmation.accountName
             accountAddress: removeAccountConfirmation.accountAddress
