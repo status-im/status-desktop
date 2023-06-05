@@ -479,3 +479,9 @@ proc getCommunityTokenOwnerName*(self: Controller, chainId: int, contractAddress
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)
+
+proc slowdownArchivesImport*(self:Controller) =
+  communityService.slowdownArchivesImport()
+
+proc speedupArchivesImport*(self:Controller) =
+  communityService.speedupArchivesImport()

@@ -200,6 +200,15 @@ Item {
         }
     }
 
+    Connections {
+        target: Global.applicationWindow
+
+        function onActiveChanged() {
+            if (Global.applicationWindow.active) appMain.rootStore.windowActivated()
+            else appMain.rootStore.windowDeactivated()
+        }
+    }
+
     function changeAppSectionBySectionId(sectionId) {
         appMain.rootStore.mainModuleInst.setActiveSectionById(sectionId)
     }
