@@ -214,21 +214,30 @@ StatusMenu {
         enabled: false
         text: d.getViewText(qsTr("Etherscan"))
         assetSettings.name: "link"
-        onTriggered: Global.openLink("https://etherscan.io/address/%1".arg(d.selectedAddress))
+        onTriggered: {
+            const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
+            Global.openLink("https://etherscan.io/%1/%2".arg(type).arg(d.selectedAddress))
+        }
     }
     StatusAction {
         id: showOnArbiscanAction
         enabled: false
         text: d.getViewText(qsTr("Arbiscan"))
         assetSettings.name: "link"
-        onTriggered: Global.openLink("https://arbiscan.io/address/%1".arg(d.selectedAddress))
+        onTriggered: {
+            const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
+            Global.openLink("https://arbiscan.io/%1/%2".arg(type).arg(d.selectedAddress))
+        }
     }
     StatusAction {
         id: showOnOptimismAction
         enabled: false
         text: d.getViewText(qsTr("Optimism Explorer"))
         assetSettings.name: "link"
-        onTriggered: Global.openLink("https://optimistic.etherscan.io/address/%1".arg(d.selectedAddress))
+        onTriggered: {
+            const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
+            Global.openLink("https://optimistic.etherscan.io/%1/%2".arg(type).arg(d.selectedAddress))
+        }
     }
     StatusCopyAction {
         id: copyAddressAction

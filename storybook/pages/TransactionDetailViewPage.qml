@@ -20,8 +20,10 @@ SplitView {
     property bool mainModuleReady: false
     property bool rootStoreReady: false
 
+    property bool isIncoming: false
+
     Component.onCompleted: {
-        RootStore.getFiatValue = (cryptoValue, symbol, currentCurrency) => { return 123 }
+        RootStore.getFiatValue = (cryptoValue, symbol, currentCurrency) => { return (cryptoValue * 1800).toPrecision(2) }
         RootStore.getNetworkIcon = (chainId) => { return "tiny/network/Network=Ethereum" }
         RootStore.getLatestBlockNumber = () => { return 4 }
         RootStore.hex2Dec = (number) => { return 10 }
@@ -33,6 +35,8 @@ SplitView {
         RootStore.getNameForAddress = (address) => { return "Address Name" }
         RootStore.getEnsForSavedWalletAddress = (address) => { return "123" }
         RootStore.getChainShortNamesForSavedWalletAddress = (address) => { return "" }
+        RootStore.getGasEthValue = (gasAmount, gasPrice) => { return (gasAmount * Math.pow(10, -9)).toPrecision(5) }
+        RootStore.getNetworkLayer = (chainId) => { return 1 }
         RootStore.currentCurrency = "USD"
 
         root.rootStoreReady = true
@@ -120,8 +124,28 @@ SplitView {
 
         readonly property var value: QtObject {
             property real amount: amountSpinbox.realValue
-            property string symbol: "eth"
+            property string symbol: "ETH"
+            property int displayDecimals: 5
+            property bool stripTrailingZeroes: true
         }
+
+        readonly property var totalFees: QtObject {
+            property real amount: (transactionData.value.amount / 15) * Math.pow(10, 9)
+            property string symbol: "Gwei"
+            property int displayDecimals: 8
+            property bool stripTrailingZeroes: true
+        }
+
+        readonly property var gasPrice: QtObject {
+            property real amount: 0.0000005
+            property string symbol: "ETH"
+        }
+    }
+
+    QtObject {
+        id: overviewMockup
+
+        property var mixedcaseAddress: root.isIncoming ? transactionData.to : transactionData.from
     }
 
     SplitView {
@@ -149,6 +173,7 @@ SplitView {
                 sourceComponent: TransactionDetailView {
                     contactsStore: contactsStoreMockup
                     transaction: transactionData
+                    overview: overviewMockup
                 }
             }
         }
@@ -188,6 +213,11 @@ SplitView {
                 text: "is NFT"
                 checked:  transactionData.isNFT
                 onCheckedChanged: transactionData.isNFT = checked
+            }
+            CheckBox {
+                text: "is incoming"
+                checked:  root.isIncoming
+                onCheckedChanged: root.isIncoming = checked
             }
         }
     }
