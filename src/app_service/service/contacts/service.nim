@@ -550,7 +550,7 @@ QtObject:
     self.parseContactsResponse(response)
     self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contactId: contact.id))
 
-  proc removeContact*(self: Service, publicKey: string) =
+  proc removeContact*(self: Service, publicKey: string): RpcResponse[JsonNode] =
     let response = status_contacts.retractContactRequest(publicKey)
     if not response.error.isNil:
       error "error removing contact ", msg = response.error.message
@@ -558,7 +558,7 @@ QtObject:
 
     self.parseContactsResponse(response)
     self.activityCenterService.parseActivityCenterResponse(response)
-    self.events.emit(SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND, RpcResponseArgs(response: response))
+    return response
 
   proc ensResolved*(self: Service, jsonObj: string) {.slot.} =
     let jsonObj = jsonObj.parseJson()
