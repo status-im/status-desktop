@@ -47,6 +47,11 @@ GridLayout {
         }
     }
 
+    StatusButton {
+        text: "Status with success actions"
+        onClicked: successActionsMenu.popup()
+    }
+
     StatusMenu {
         id: simpleMenu
 
@@ -197,6 +202,21 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         StatusAction {
             text: "16px"
             fontSettings.pixelSize: 16
+        }
+    }
+
+    StatusMenu {
+        id: successActionsMenu
+        StatusSuccessAction {
+            text: "Action"
+            successText: "Success!"
+            icon.name: "copy"
+        }
+        StatusSuccessAction {
+            text: "Dismiss Action"
+            successText: "Dismiss success!"
+            icon.name: "destroy"
+            autoDismissMenu: true
         }
     }
 }

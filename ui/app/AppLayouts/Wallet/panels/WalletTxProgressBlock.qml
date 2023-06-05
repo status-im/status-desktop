@@ -23,7 +23,7 @@ ColumnLayout {
 
     QtObject {
         id: d
-        readonly property bool finalized: (isLayer1 ? confirmations >= progressBar.steps : progress === duration) && !error
+        readonly property bool finalized: (isLayer1 ? confirmations >= progressBar.steps : progress >= duration) && !error
         readonly property bool confirmed: confirmations >= progressBar.confirmationBlocks && !error
         readonly property double confirmationTimeStamp: {
             if (root.isLayer1) {

@@ -104,15 +104,15 @@ QtObject {
         locale = locale || Qt.locale()
 
         if (!currencyAmount) {
-            return "N/A"
+            return qsTr("N/A")
         }
         if (typeof(currencyAmount) !== "object") {
             console.warn("Wrong type for currencyAmount: " + JSON.stringify(currencyAmount))
             console.trace()
-            return "N/A"
+            return qsTr("N/A")
         }
         if (typeof currencyAmount.amount === "undefined")
-            return "N/A"
+            return qsTr("N/A")
 
         // Parse options
         var optNoSymbol = false
