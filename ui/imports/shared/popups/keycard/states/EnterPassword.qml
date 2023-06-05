@@ -67,12 +67,14 @@ Item {
         StatusBaseText {
             id: title
             Layout.alignment: Qt.AlignCenter
+            Layout.maximumWidth: parent.width
             font.weight: Font.Bold
         }
 
         StatusBaseText {
             id: message
             Layout.alignment: Qt.AlignCenter
+            Layout.maximumWidth: parent.width
             wrapMode: Text.WordWrap
             visible: text != ""
         }
@@ -81,6 +83,7 @@ Item {
             id: password
             objectName: "keycardPasswordInput"
             Layout.alignment: Qt.AlignHCenter
+            Layout.maximumWidth: parent.width
             signingPhrase: root.sharedKeycardModule.getSigningPhrase()
             placeholderText: qsTr("Password")
             selectByMouse: true
@@ -102,6 +105,7 @@ Item {
         StatusBaseText {
             id: info
             Layout.alignment: Qt.AlignCenter
+            Layout.maximumWidth: parent.width
             wrapMode: Text.WordWrap
         }
 
