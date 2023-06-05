@@ -89,9 +89,6 @@ StatusSectionLayout {
         onOpenStickerPackPopup: {
             Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
         }
-        onOpenAppSearch: {
-            root.openAppSearch();
-        }
     }
 
     showRightPanel: {

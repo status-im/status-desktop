@@ -25,7 +25,6 @@ Loader {
     property var chatContentModule
 
     property string channelEmoji
-    property bool isActiveChannel: false
 
     property var chatLogView
     property var emojiPopup

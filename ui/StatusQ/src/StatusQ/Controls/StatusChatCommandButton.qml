@@ -62,7 +62,7 @@ Rectangle {
             anchors.bottomMargin: 8
             font.pixelSize: 13
             font.weight: Font.Medium
-            color: Theme.palette.white
+            color: Theme.palette.directColor1
         }
     }
 }
