@@ -148,4 +148,12 @@ QtObject {
     function resolveENS(value) {
         mainModuleInst.resolveENS(value, "")
     }
+
+    function windowActivated() {
+        mainModuleInst.windowActivated()
+    }
+
+    function windowDeactivated() {
+        mainModuleInst.windowDeactivated()
+    }
 }

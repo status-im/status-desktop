@@ -317,6 +317,12 @@ proc importCommunity*(communityKey: string): RpcResponse[JsonNode] {.raises: [Ex
 proc exportCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].}  =
   result = callPrivateRPC("exportCommunity".prefix, %*[communityId])
 
+proc speedupArchivesImport*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("speedupArchivesImport".prefix)
+
+proc slowdownArchivesImport*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("slowdownArchivesImport".prefix)
+
 proc removeUserFromCommunity*(communityId: string, pubKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("removeUserFromCommunity".prefix, %*[communityId, pubKey])
 
