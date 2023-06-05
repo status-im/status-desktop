@@ -147,3 +147,6 @@ QtObject:
 
   proc downloadMessages*(self: View, filePath: string) {.slot.} =
     self.delegate.downloadMessages(filePath)
+
+  proc updateChatBlocked*(self: View, blocked: bool) =
+    self.chatDetails.setBlocked(blocked)

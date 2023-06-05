@@ -142,11 +142,13 @@ proc init*(self: Controller) =
       var args = ContactArgs(e)
       if (args.contactId == self.chatId):
         self.delegate.onMutualContactChanged()
+        self.delegate.onContactDetailsUpdated(args.contactId)
 
     self.events.on(SIGNAL_CONTACT_UNBLOCKED) do(e: Args):
       var args = ContactArgs(e)
       if (args.contactId == self.chatId):
         self.delegate.onMutualContactChanged()
+        self.delegate.onContactDetailsUpdated(args.contactId)
 
   self.events.on(SIGNAL_MESSAGE_DELETION) do(e: Args):
     let args = MessageDeletedArgs(e)
