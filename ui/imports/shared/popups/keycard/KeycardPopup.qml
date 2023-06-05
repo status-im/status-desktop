@@ -64,9 +64,8 @@ StatusModal {
     StatusScrollView {
         id: scrollView
         anchors.fill: parent
-
-        implicitWidth: Constants.keycard.general.popupWidth
         contentWidth: availableWidth
+        horizontalPadding: 0
 
         KeycardPopupContent {
             id: content
