@@ -69,6 +69,11 @@ StatusScrollView {
                      int chainId,
                      string accountName)
 
+    signal airdropRequested(string address)
+    signal generalAirdropRequested
+
+    signal remoteDestructRequested(string address)
+
     QtObject {
         id: d
 
@@ -373,13 +378,19 @@ StatusScrollView {
             }
         }
 
-        TokenHoldersPanel {
+        SortableTokenHoldersPanel {
             visible: !root.preview
-            tokenName: root.name
+
             model: root.tokenOwnersModel
+            tokenName: root.name
+            showRemotelyDestructMenuItem: !root.isAssetView && root.selfDestruct
+
             Layout.topMargin: Style.current.padding
             Layout.fillWidth: true
-            Layout.fillHeight: true
+
+            onAirdropRequested: root.airdropRequested(address)
+            onGeneralAirdropRequested: root.generalAirdropRequested()
+            onRemoteDestructRequested: root.remoteDestructRequested(address)
         }
     }
 }
