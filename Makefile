@@ -472,19 +472,24 @@ endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
 $(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | statusq check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
-	echo -e $(BUILD_MSG) "$@" && \
-		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
-		[[ $$? = 0 ]] && \
-		(([[ $(detected_OS) = Darwin ]] && \
-		install_name_tool -change \
-			libstatus.dylib \
-			@rpath/libstatus.dylib \
-			bin/nim_status_client && \
-		install_name_tool -change \
-			libkeycard.dylib \
-			@rpath/libkeycard.dylib \
-			bin/nim_status_client) || true)
+	echo -e $(BUILD_MSG) "$@"
+	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
+		--passL:"-L$(STATUSGO_LIBDIR)" \
+		--passL:"-lstatus" \
+		--passL:"-L$(STATUSKEYCARDGO_LIBDIR)" \
+		--passL:"-lkeycard" \
+		--passL:"$(QRCODEGEN)" \
+		--passL:"-lm" \
+		$(NIM_EXTRA_PARAMS) src/nim_status_client.nim
 ifeq ($(detected_OS),Darwin)
+	install_name_tool -change \
+		libstatus.dylib \
+		@rpath/libstatus.dylib \
+		bin/nim_status_client
+	install_name_tool -change \
+		libkeycard.dylib \
+		@rpath/libkeycard.dylib \
+		bin/nim_status_client
 ifeq ("$(wildcard ./node_modules/.bin/fileicon)","")
 	echo -e "\033[92mInstalling:\033[39m fileicon"
 	npm i
