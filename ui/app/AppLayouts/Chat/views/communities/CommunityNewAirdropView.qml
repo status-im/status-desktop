@@ -9,9 +9,10 @@ import StatusQ.Core.Utils 0.1
 import utils 1.0
 import shared.panels 1.0
 
+import AppLayouts.Chat.controls.community 1.0
 import AppLayouts.Chat.helpers 1.0
 import AppLayouts.Chat.panels.communities 1.0
-import AppLayouts.Chat.controls.community 1.0
+import AppLayouts.Chat.popups.community 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -26,6 +27,23 @@ StatusScrollView {
     // Community members model:
     required property var membersModel
 
+    // JS object specifing fees for the airdrop operation, should be set to
+    // provide response to airdropFeesRequested signal.
+    //
+    // The expected structure is as follows:
+    // {
+    //    fees: [{
+    //      ethFee: {CurrencyAmount JSON},
+    //      fiatFee: {CurrencyAmount JSON},
+    //      contractUniqueKey: string,
+    //      errorCode: ComputeFeeErrorCode (int)
+    //    }],
+    //    totalEthFee: {CurrencyAmount JSON},
+    //    totalFiatFee: {CurrencyAmount JSON},
+    //    errorCode: ComputeFeeErrorCode (int)
+    // }
+    property var airdropFees: null
+
     property int viewWidth: 560 // by design
 
     readonly property var selectedHoldingsModel: ListModel {}
@@ -35,6 +53,9 @@ StatusScrollView {
                                           airdropRecipientsSelector.valid
 
     signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys)
+
+    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses)
+
     signal navigateToMintTokenSettings
 
     function selectToken(key, amount, type) {
@@ -81,6 +102,7 @@ StatusScrollView {
                 supply: modelItem.supply,
                 infiniteSupply: modelItem.infiniteSupply,
                 contractUniqueKey: modelItem.contractUniqueKey,
+                accountName: modelItem.accountName
             }
         }
     }
@@ -401,6 +423,64 @@ StatusScrollView {
             enabled: root.isFullyFilled
 
             onClicked: {
+                feesPopup.open()
+            }
+        }
+
+        SignMultiTokenTransactionsPopup {
+            id: feesPopup
+
+            destroyOnClose: false
+
+            model: ListModel {
+                id: feesModel
+            }
+
+            isFeeLoading: root.airdropFees === null ||
+                          (root.airdropFees.errorCode !== Constants.ComputeFeeErrorCode.Success &&
+                          root.airdropFees.errorCode !== Constants.ComputeFeeErrorCode.Balance)
+
+            onOpened: {
+                const title1 = qsTr("Sign transaction - Airdrop %n token(s)", "",
+                                    selectedHoldingsModel.rowCount())
+                const title2 = qsTr("to %n recipient(s)", "",
+                                    addresses.count + airdropRecipientsSelector.membersModel.count)
+
+                title = `${title1} ${title2}`
+
+                root.airdropFees = null
+                errorText = ""
+                feesModel.clear()
+
+                const airdropTokens = ModelUtils.modelToArray(
+                                        root.selectedHoldingsModel,
+                                        ["contractUniqueKey", "accountName",
+                                         "key", "amount", "tokenText",
+                                         "networkText"])
+
+                airdropTokens.forEach(entry => {
+                    feesModel.append({
+                        contractUniqueKey: entry.contractUniqueKey,
+                        key: entry.key,
+                        amount: entry.amount,
+                        account: entry.accountName,
+                        symbol: entry.key,
+                        network: entry.networkText,
+                        feeText: ""
+                    })
+                })
+
+                const contractKeysAndAmounts = airdropTokens.map(item => ({
+                    amount: item.amount,
+                    contractUniqueKey: item.contractUniqueKey
+                }))
+                const addresses_ = ModelUtils.modelToArray(
+                                    addresses, ["address"]).map(e => e.address)
+
+                airdropFeesRequested(contractKeysAndAmounts, addresses_)
+            }
+
+            onSignTransactionClicked: {
                 const airdropTokens = ModelUtils.modelToArray(
                                         root.selectedHoldingsModel,
                                         ["contractUniqueKey", "amount"])
@@ -411,6 +491,52 @@ StatusScrollView {
                 const pubKeys = [...selectedKeysFilter.keys]
 
                 root.airdropClicked(airdropTokens, addresses_, pubKeys)
+            }
+
+            Connections {
+                target: root
+
+                function onAirdropFeesChanged() {
+                    if (root.airdropFees === null)
+                        return
+
+                    const fees = root.airdropFees.fees
+                    const errorCode = root.airdropFees.errorCode
+
+                    function buildFeeString(ethFee, fiatFee) {
+                        return `${LocaleUtils.currencyAmountToLocaleString(ethFee)} (${LocaleUtils.currencyAmountToLocaleString(fiatFee)})`
+                    }
+
+                    if (errorCode === Constants.ComputeFeeErrorCode.Infura) {
+                        feesPopup.errorText = qsTr("Infura error")
+                        return
+                    }
+
+                    if (errorCode === Constants.ComputeFeeErrorCode.Success ||
+                            errorCode === Constants.ComputeFeeErrorCode.Balance) {
+                        fees.forEach(fee => {
+                            const idx = ModelUtils.indexOf(
+                                             feesModel, "contractUniqueKey",
+                                             fee.contractUniqueKey)
+
+                            feesPopup.model.set(idx, {
+                                feeText: buildFeeString(fee.ethFee, fee.fiatFee)
+                            })
+                        })
+
+                        feesPopup.totalFeeText = buildFeeString(
+                                    root.airdropFees.totalEthFee,
+                                    root.airdropFees.totalFiatFee)
+
+                        if (errorCode === Constants.ComputeFeeErrorCode.Balance) {
+                            feesPopup.errorText = qsTr("Not enough funds to make transaction")
+                        }
+
+                        return
+                    }
+
+                    feesPopup.errorText = qsTr("Unknown error")
+                }
             }
         }
     }

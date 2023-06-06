@@ -1,6 +1,7 @@
 AlertPopup 1.0 AlertPopup.qml
 BurnTokensPopup 1.0 BurnTokensPopup.qml
-CreateChannelPopup 1.0 CreateChannelPopup.qml
 CommunityTokenPermissionsPopup 1.0 CommunityTokenPermissionsPopup.qml
+CreateChannelPopup 1.0 CreateChannelPopup.qml
 RemotelyDestructPopup 1.0 RemotelyDestructPopup.qml
+SignMultiTokenTransactionsPopup 1.0 SignMultiTokenTransactionsPopup.qml
 SignTokenTransactionsPopup 1.0 SignTokenTransactionsPopup.qml

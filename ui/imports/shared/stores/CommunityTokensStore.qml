@@ -15,6 +15,7 @@ QtObject {
 
     signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
     signal selfDestructFeeUpdated(var ethCurrency, var fiatCurrency, int error)
+    signal airdropFeeUpdated(var airdropFees)
 
     signal deploymentStateChanged(string communityId, int status, string url)
 
@@ -51,23 +52,27 @@ QtObject {
     }
 
     readonly property Connections connections: Connections {
-      target: communityTokensModuleInst
-      function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-          root.deployFeeUpdated(ethCurrency, fiatCurrency, errorCode)
-      }
-      function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
-          root.selfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode)
-      }
-      function onAirdropFeesUpdated(jsonFees) {
-          console.log("Fees:", jsonFees)
-      }
+        target: communityTokensModuleInst
 
-      function onDeploymentStateChanged(communityId, status, url) {
-          root.deploymentStateChanged(communityId, status, url)
-      }
-      function onRemoteDestructStateChanged(communityId, tokenName, status, url) {
-          root.remoteDestructStateChanged(communityId, tokenName, status, url)
-      }
+        function onDeployFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
+            root.deployFeeUpdated(ethCurrency, fiatCurrency, errorCode)
+        }
+
+        function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
+            root.selfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode)
+        }
+
+        function onAirdropFeesUpdated(jsonFees) {
+            root.airdropFeeUpdated(JSON.parse(jsonFees))
+        }
+
+        function onDeploymentStateChanged(communityId, status, url) {
+            root.deploymentStateChanged(communityId, status, url)
+        }
+
+        function onRemoteDestructStateChanged(communityId, tokenName, status, url) {
+            root.remoteDestructStateChanged(communityId, tokenName, status, url)
+        }
     }
 
     function computeDeployFee(chainId, accountAddress) {
@@ -99,7 +104,9 @@ QtObject {
         communityTokensModuleInst.airdropCollectibles(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses))
     }
 
-    function computeAirdropFee(communityId, airdropTokens, addresses) {
-        communityTokensModuleInst.computeAirdropCollectiblesFee(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses))
+    function computeAirdropFee(communityId, contractKeysAndAmounts, addresses) {
+        communityTokensModuleInst.computeAirdropCollectiblesFee(
+                    communityId, JSON.stringify(contractKeysAndAmounts),
+                    JSON.stringify(addresses))
     }
 }
