@@ -18,6 +18,11 @@ Scenario:  Community admin is able to back up community key from community overv
     And "Overview" section is selected
 	Then the user is able to open Back up modal and copy private key
 
+Scenario: Community admin is able to navigate to Airdrops page from Overview screen
+    When "Manage Community" is clicked in the community sidebar
+    And "Overview" section is selected
+    Then the user is able to click Airdrop Tokens button and navigate to Airdrops screen
+
 
  Scenario Outline: Manage community -> Overview: community admin edits the community name, description and color
    When the admin renames the community to "<new_community_name>" and description to "<new_community_description>" and color to "<new_community_color>"

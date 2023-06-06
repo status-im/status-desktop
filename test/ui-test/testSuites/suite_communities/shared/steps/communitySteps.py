@@ -272,6 +272,9 @@ def step (context, action_button_name):
 def step(context):
     _statusCommunityScreen.verify_community_private_key() 
 
+@Then("the user is able to click Airdrop Tokens button and navigate to Airdrops screen")
+def step(context):
+    _statusCommunityScreen.open_airdrops_from_overview()
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:

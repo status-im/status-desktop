@@ -82,6 +82,9 @@ class CommunityWelcomeScreenComponents(Enum):
     PERMISSIONS_OPTION = "Permissions"
     TOKENS_OPTION = "Mint Tokens"
     AIRDROPS_OPTION = "Airdrops"
+    WELCOME_SCREEN_TITLE_OPTION_AIRDROPS = "Airdrop community tokens"
+    WELCOME_SCREEN_TITLE_OPTION_PERMISSIONS = "Permissions"
+    WELCOME_SCREEN_TITLE_OPTION_TOKENS = "Community tokens"
     # Components
     WELCOME_SCREEN_IMAGE = "community_welcome_screen_image"
     WELCOME_SCREEN_TITLE = "community_welcome_screen_title"
@@ -114,7 +117,8 @@ class CommunityOverviewScreenComponents(Enum):
     # Constants definitions: 
     COMMUNITY_PRIVATE_KEY_LENGHT_UI = 35 # length of community PK on the Transfer Ownership popup
     # Components:
-    COMMUNITY_OVERVIEW_BACK_UP_BUTTON ="communityOverview_Back_up_StatusButton"           
+    COMMUNITY_OVERVIEW_BACK_UP_BUTTON ="communityOverview_Back_up_StatusButton"
+    COMMUNITY_OVERVIEW_AIRDROP_TOKENS_BUTTON="communityOverview_Airdrop_Tokens_StatusButton"           
 
 class StatusCommunityScreen:
 
@@ -536,11 +540,11 @@ class StatusCommunityScreen:
     def verify_welcome_title(self, option:str):
         title = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_TITLE.value).text
         if option==CommunityWelcomeScreenComponents.PERMISSIONS_OPTION.value:
-            verify_equals(title, "Permissions")    
+            verify_equals(title, CommunityWelcomeScreenComponents.WELCOME_SCREEN_TITLE_OPTION_PERMISSIONS.value)    
         elif option==CommunityWelcomeScreenComponents.TOKENS_OPTION.value:
-            verify_equals(title, "Community tokens")    
+            verify_equals(title, CommunityWelcomeScreenComponents.WELCOME_SCREEN_TITLE_OPTION_TOKENS.value)    
         elif option==CommunityWelcomeScreenComponents.AIRDROPS_OPTION.value:
-            verify_equals(title, "Airdrop community tokens")    
+            verify_equals(title, CommunityWelcomeScreenComponents.WELCOME_SCREEN_TITLE_OPTION_AIRDROPS.value)    
     
     def verify_welcome_subtitle(self, option:str):
         subtitle = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_SUBTITLE.value).text
@@ -578,4 +582,11 @@ class StatusCommunityScreen:
         transferOwnershipPopup.copy_community_private_key()
         community_private_key = transferOwnershipPopup.private_key
         assert len(community_private_key) == (CommunityOverviewScreenComponents.COMMUNITY_PRIVATE_KEY_LENGHT_UI.value), f"Current key length: {len(community_private_key)}"
-        assert community_private_key.startswith("0x"), f"Current private key does not start with 0x: {community_private_key}"     
+        assert community_private_key.startswith("0x"), f"Current private key does not start with 0x: {community_private_key}"
+    
+    def open_airdrops_from_overview(self):
+        Button(CommunityOverviewScreenComponents.COMMUNITY_OVERVIEW_AIRDROP_TOKENS_BUTTON.value).click()
+        welcome_screen_title = get_obj(CommunityWelcomeScreenComponents.WELCOME_SCREEN_TITLE.value).text
+        ref_value = CommunityWelcomeScreenComponents.WELCOME_SCREEN_TITLE_OPTION_AIRDROPS.value
+        assert welcome_screen_title  == ref_value, f"Current screen title: {welcome_screen_title}, expected: {ref_value}"
+                
