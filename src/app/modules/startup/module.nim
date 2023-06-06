@@ -336,7 +336,6 @@ method checkFetchingStatusAndProceedWithAppLoading*[T](self: Module[T]) =
 
 method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string,
   totalMessages: int, receivedMessageAtPosition: int) =
-  echo "onFetchingFromWakuMessageReceived: ", backedUpMsgClock, "  section: ", section, "  tm: ", totalMessages, "  recAtPos: ", receivedMessageAtPosition
   self.view.fetchingDataModel().checkLastKnownClockAndReinitModel(backedUpMsgClock, listOfEntitiesWeExpectToBeSynced)
   if self.view.fetchingDataModel().allMessagesLoaded():
     return

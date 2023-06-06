@@ -90,6 +90,9 @@ QtObject:
     read = areSocialLinksDirty
     notify = socialLinksDirtyChanged
 
+  proc containsSocialLink*(self: View, text: string, url: string): bool {.slot.} =
+    return self.temporarySocialLinksModel.containsSocialLink(text, url)
+
   proc createLink(self: View, text: string, url: string, linkType: int, icon: string) {.slot.} =
     self.temporarySocialLinksModel.appendItem(initSocialLinkItem(text, url, (LinkType)linkType, icon))
     self.temporarySocialLinksJsonChanged()
@@ -114,14 +117,16 @@ QtObject:
       self.socialLinksDirtyChanged()
       self.temporarySocialLinksJsonChanged()
 
-  proc saveSocialLinks(self: View, silent: bool = false): bool {.slot.} =
-    result = self.delegate.saveSocialLinks()
-    if (result):
-      self.socialLinksModel.setItems(self.temporarySocialLinksModel.items)
-      self.socialLinksJsonChanged()
-      self.temporarySocialLinksJsonChanged()
-      if not silent:
-        self.socialLinksDirtyChanged()
+  proc socialLinksSaved*(self: View, items: seq[SocialLinkItem]) =
+    self.socialLinksModel.setItems(items)
+    self.temporarySocialLinksModel.setItems(items)
+    self.socialLinksJsonChanged()
+    self.temporarySocialLinksJsonChanged()
+
+  proc saveSocialLinks(self: View, silent: bool = false) {.slot.} =
+    self.delegate.saveSocialLinks()
+    if not silent:
+      self.socialLinksDirtyChanged()
 
   proc bioChanged*(self: View) {.signal.}
   proc getBio(self: View): string {.slot.} =

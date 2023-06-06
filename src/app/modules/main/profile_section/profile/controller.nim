@@ -24,9 +24,15 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  self.settingsService.fetchAndStoreSocialLinks()
+
   self.events.on(SIGNAL_BIO_UPDATED) do(e: Args):
     let args = SettingsTextValueArgs(e)
     self.delegate.onBioChanged(args.value)
+
+  self.events.on(SIGNAL_SOCIAL_LINKS_UPDATED) do(e: Args):
+    let args = SocialLinksArgs(e)
+    self.delegate.onSocialLinksUpdated(args.socialLinks, args.error)
 
 proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
   discard self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
@@ -38,9 +44,9 @@ proc setDisplayName*(self: Controller, displayName: string) =
   self.profileService.setDisplayName(displayName)
 
 proc getSocialLinks*(self: Controller): SocialLinks =
-  self.settingsService.getSocialLinks()
+  return self.settingsService.getSocialLinks()
 
-proc setSocialLinks*(self: Controller, links: SocialLinks): bool =
+proc setSocialLinks*(self: Controller, links: SocialLinks) =
   self.settingsService.setSocialLinks(links)
 
 proc getBio*(self: Controller): string =

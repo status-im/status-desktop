@@ -55,6 +55,10 @@ QtObject {
         root.profileModule.setDisplayName(displayName)
     }
 
+    function containsSocialLink(text, url) {
+        return root.profileModule.containsSocialLink(text, url)
+    }
+
     function createLink(text, url, linkType, icon) {
         root.profileModule.createLink(text, url, linkType, icon)
     }

@@ -24,11 +24,11 @@ QtObject {
 
     function linkTypeToText(linkType) {
         if (linkType === Constants.socialLinkType.twitter) return qsTr("Twitter")
-        if (linkType === Constants.socialLinkType.personalSite) return qsTr("Personal Site")
+        if (linkType === Constants.socialLinkType.personalSite) return qsTr("Personal site")
         if (linkType === Constants.socialLinkType.github) return qsTr("Github")
-        if (linkType === Constants.socialLinkType.youtube) return qsTr("YouTube")
-        if (linkType === Constants.socialLinkType.discord) return qsTr("Discord")
-        if (linkType === Constants.socialLinkType.telegram) return qsTr("Telegram")
+        if (linkType === Constants.socialLinkType.youtube) return qsTr("YouTube channel")
+        if (linkType === Constants.socialLinkType.discord) return qsTr("Discord handle")
+        if (linkType === Constants.socialLinkType.telegram) return qsTr("Telegram handle")
         return "" // "custom" link type allows for user defined text
     }
 
@@ -42,12 +42,12 @@ QtObject {
     }
 
     function linkTypeToDescription(linkType) {
-        if (linkType === Constants.socialLinkType.twitter) return qsTr("Twitter Handle")
-        if (linkType === Constants.socialLinkType.personalSite) return qsTr("Personal Site")
+        if (linkType === Constants.socialLinkType.twitter) return qsTr("Twitter username")
+        if (linkType === Constants.socialLinkType.personalSite) return qsTr("Personal site")
         if (linkType === Constants.socialLinkType.github) return qsTr("Github")
-        if (linkType === Constants.socialLinkType.youtube) return qsTr("YouTube Channel")
-        if (linkType === Constants.socialLinkType.discord) return qsTr("Discord Handle")
-        if (linkType === Constants.socialLinkType.telegram) return qsTr("Telegram Handle")
+        if (linkType === Constants.socialLinkType.youtube) return qsTr("YouTube channel")
+        if (linkType === Constants.socialLinkType.discord) return qsTr("Discord handle")
+        if (linkType === Constants.socialLinkType.telegram) return qsTr("Telegram handle")
         return ""
     }
 

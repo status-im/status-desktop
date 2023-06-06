@@ -1,5 +1,7 @@
 import json, sequtils, sugar
 
+include json_utils
+
 const SOCIAL_LINK_TWITTER_ID* = "__twitter"
 const SOCIAL_LINK_PERSONAL_SITE_ID* = "__personal_site"
 const SOCIAL_LINK_GITHUB_ID* = "__github"
@@ -14,6 +16,10 @@ type
     icon*: string
 
   SocialLinks* = seq[SocialLink]
+
+  SocialLinksInfo* = object
+    links*: seq[SocialLink]
+    removed*: bool
 
 proc socialLinkTextToIcon(text: string): string =
   if (text == SOCIAL_LINK_TWITTER_ID): return "twitter"
@@ -30,7 +36,12 @@ proc toSocialLinks*(jsonObj: JsonNode): SocialLinks =
                                   url: node["url"].getStr(),
                                   icon: socialLinkTextToIcon(node["text"].getStr()))
               )
-  return
+
+proc toSocialLinksInfo*(jsonObj: JsonNode): SocialLinksInfo =
+  discard jsonObj.getProp("removed", result.removed)
+  var linksObj: JsonNode
+  if jsonObj.getProp("links", linksObj):
+    result.links = toSocialLinks(linksObj)
 
 proc toJsonNode*(links: SocialLinks): JsonNode =
   %*links

@@ -49,12 +49,12 @@ method isLoaded*(self: Module): bool =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
+proc updateSocialLinks(self: Module, socialLinks: SocialLinks) =
+  var socialLinkItems = toSocialLinkItems(socialLinks)
+  self.view.socialLinksSaved(socialLinkItems)
+
 method viewDidLoad*(self: Module) =
-  var socialLinkItems = toSocialLinkItems(self.controller.getSocialLinks())
-
-  self.view.socialLinksModel().setItems(socialLinkItems)
-  self.view.temporarySocialLinksModel().setItems(socialLinkItems)
-
+  self.updateSocialLinks(self.controller.getSocialLinks())
   self.moduleLoaded = true
   self.delegate.profileModuleDidLoad()
 
@@ -79,6 +79,12 @@ method setBio(self: Module, bio: string) =
 method onBioChanged*(self: Module, bio: string) =
   self.view.emitBioChangedSignal()
 
-method saveSocialLinks*(self: Module): bool =
-  let socialLinks = map(self.view.temporarySocialLinksModel.items(), x => SocialLink(text: x.text, url: x.url))
-  return self.controller.setSocialLinks(socialLinks)
+method saveSocialLinks*(self: Module) =
+  let socialLinks = map(self.view.temporarySocialLinksModel.items(), x => SocialLink(text: x.text, url: x.url, icon: x.icon))
+  self.controller.setSocialLinks(socialLinks)
+
+method onSocialLinksUpdated*(self: Module, socialLinks: SocialLinks, error: string) =
+  if error.len > 0:
+    # maybe we want in future popup or somehow display an error to a user
+    return
+  self.updateSocialLinks(socialLinks)

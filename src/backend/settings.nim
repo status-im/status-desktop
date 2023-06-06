@@ -96,8 +96,8 @@ proc setExemptions*(id: string, muteAllMessages: bool, personalMentions: string,
 proc deleteExemptions*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("settings_deleteExemptions", %* [id])
 
-proc setSocialLinks*(value: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
-  return core.callPrivateRPC("settings_setSocialLinks", %* [value])
+proc addOrReplaceSocialLinks*(value: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("settings_addOrReplaceSocialLinks", %* [value])
 
 proc getSocialLinks*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("settings_getSocialLinks")

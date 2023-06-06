@@ -1,4 +1,5 @@
 import NimQml
+import ../../../../../app_service/common/social_links
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -34,7 +35,10 @@ method onBioChanged*(self: AccessInterface, bio: string) {.base.} =
 method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method saveSocialLinks*(self: AccessInterface): bool {.base.} =
+method saveSocialLinks*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSocialLinksUpdated*(self: AccessInterface, socialLinks: SocialLinks, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

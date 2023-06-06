@@ -2,6 +2,7 @@ import json, chronicles
 
 import base
 
+import ../../../../app_service/common/social_links
 import ../../../../app_service/service/message/dto/[message, pinned_message_update, reaction, removed_message]
 import ../../../../app_service/service/chat/dto/[chat]
 import ../../../../app_service/service/bookmarks/dto/[bookmark]
@@ -30,6 +31,7 @@ type MessageSignal* = ref object of Signal
   removedChats*: seq[string]
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
+  socialLinksInfo*: SocialLinksInfo
   clearedHistories*: seq[ClearedHistoryDto]
   verificationRequests*: seq[VerificationRequest]
   savedAddresses*: seq[SavedAddressDto]
@@ -53,102 +55,110 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   signal.messages = @[]
   signal.contacts = @[]
 
-  if event["event"]{"contacts"} != nil:
-    for jsonContact in event["event"]["contacts"]:
+  if not event.contains("event"):
+    return signal
+
+  let e = event["event"]
+
+  if e.contains("contacts"):
+    for jsonContact in e["contacts"]:
       signal.contacts.add(jsonContact.toContactsDto())
 
-  if event["event"]{"messages"} != nil:
-    for jsonMsg in event["event"]["messages"]:
+  if e.contains("messages"):
+    for jsonMsg in e["messages"]:
       var message = jsonMsg.toMessageDto()
       signal.messages.add(message)
       info "received", signal="messages.new", messageID=message.id
 
-  if event["event"]{"chats"} != nil:
-    for jsonChat in event["event"]["chats"]:
+  if e.contains("chats"):
+    for jsonChat in e["chats"]:
       var chat = jsonChat.toChatDto()
       signal.chats.add(chat)
 
-  if event["event"]{"clearedHistories"} != nil:
-    for jsonClearedHistory in event["event"]{"clearedHistories"}:
+  if e.contains("clearedHistories"):
+    for jsonClearedHistory in e["clearedHistories"]:
       var clearedHistoryDto = jsonClearedHistory.toClearedHistoryDto()
       signal.clearedHistories.add(clearedHistoryDto)
 
-  if event["event"]{"statusUpdates"} != nil:
-    for jsonStatusUpdate in event["event"]["statusUpdates"]:
+  if e.contains("statusUpdates"):
+    for jsonStatusUpdate in e["statusUpdates"]:
       var statusUpdate = jsonStatusUpdate.toStatusUpdateDto()
       signal.statusUpdates.add(statusUpdate)
 
-  if event["event"]{"currentStatus"} != nil:
-      var currentStatus = event["event"]["currentStatus"].toStatusUpdateDto()
+  if e.contains("currentStatus"):
+      var currentStatus = e["currentStatus"].toStatusUpdateDto()
       signal.currentStatus.add(currentStatus)
 
-  if event["event"]{"bookmarks"} != nil:
-    for jsonBookmark in event["event"]["bookmarks"]:
+  if e.contains("bookmarks"):
+    for jsonBookmark in e["bookmarks"]:
       var bookmark = jsonBookmark.toBookmarkDto()
       signal.bookmarks.add(bookmark)
 
-  if event["event"]{"installations"} != nil:
-    for jsonDevice in event["event"]["installations"]:
+  if e.contains("installations"):
+    for jsonDevice in e["installations"]:
       signal.installations.add(jsonDevice.toInstallationDto())
 
-  if event["event"]{"emojiReactions"} != nil:
-    for jsonReaction in event["event"]["emojiReactions"]:
+  if e.contains("emojiReactions"):
+    for jsonReaction in e["emojiReactions"]:
       signal.emojiReactions.add(jsonReaction.toReactionDto())
 
-  if event["event"]{"communities"} != nil:
-    for jsonCommunity in event["event"]["communities"]:
+  if e.contains("communities"):
+    for jsonCommunity in e["communities"]:
       signal.communities.add(jsonCommunity.toCommunityDto())
 
-  if event["event"]{"communitiesSettings"} != nil:
-    for jsonCommunitySettings in event["event"]["communitiesSettings"]:
+  if e.contains("communitiesSettings"):
+    for jsonCommunitySettings in e["communitiesSettings"]:
       signal.communitiesSettings.add(jsonCommunitySettings.toCommunitySettingsDto())
 
-  if event["event"]{"requestsToJoinCommunity"} != nil:
-    for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
+  if e.contains("requestsToJoinCommunity"):
+    for jsonCommunity in e["requestsToJoinCommunity"]:
       signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequestDto())
 
-  if event["event"]{"removedMessages"} != nil:
-    for jsonRemovedMessage in event["event"]["removedMessages"]:
+  if e.contains("removedMessages"):
+    for jsonRemovedMessage in e["removedMessages"]:
       signal.deletedMessages.add(jsonRemovedMessage.toRemovedMessageDto())
 
-  if event["event"]{"removedChats"} != nil:
-    for removedChatID in event["event"]["removedChats"]:
+  if e.contains("removedChats"):
+    for removedChatID in e["removedChats"]:
       signal.removedChats.add(removedChatID.getStr())
 
-  if event["event"]{"activityCenterNotifications"} != nil:
-    for jsonNotification in event["event"]["activityCenterNotifications"]:
+  if e.contains("activityCenterNotifications"):
+    for jsonNotification in e["activityCenterNotifications"]:
       signal.activityCenterNotifications.add(jsonNotification.toActivityCenterNotificationDto())
 
-  if event["event"]{"pinMessages"} != nil:
-    for jsonPinnedMessage in event["event"]["pinMessages"]:
+  if e.contains("pinMessages"):
+    for jsonPinnedMessage in e["pinMessages"]:
       signal.pinnedMessages.add(jsonPinnedMessage.toPinnedMessageUpdateDto())
 
-  if event["event"]{"settings"} != nil:
-    for jsonSettingsField in event["event"]["settings"]:
+  if e.contains("settings"):
+    for jsonSettingsField in e["settings"]:
       signal.settings.add(jsonSettingsField.toSettingsFieldDto())
 
-  if event["event"]{"verificationRequests"} != nil:
-    for jsonVerificationRequest in event["event"]["verificationRequests"]:
+  if e.contains("socialLinksInfo"):
+    signal.socialLinksInfo = toSocialLinksInfo(e["socialLinksInfo"])
+
+  if e.contains("verificationRequests"):
+    for jsonVerificationRequest in e["verificationRequests"]:
       signal.verificationRequests.add(jsonVerificationRequest.toVerificationRequest())
 
-  if event["event"]{"savedAddresses"} != nil:
-    for jsonSavedAddress in event["event"]["savedAddresses"]:
+  if e.contains("savedAddresses"):
+    for jsonSavedAddress in e["savedAddresses"]:
       signal.savedAddresses.add(jsonSavedAddress.toSavedAddressDto())
 
-  if event["event"]{"keypairs"} != nil:
-    for jsonKc in event["event"]["keypairs"]:
+  if e.contains("keypairs"):
+    for jsonKc in e["keypairs"]:
       signal.keypairs.add(jsonKc.toKeypairDto())
 
-  if event["event"]{"keycards"} != nil:
-    for jsonKc in event["event"]["keycards"]:
+  if e.contains("keycards"):
+    for jsonKc in e["keycards"]:
       signal.keycards.add(jsonKc.toKeycardDto())
 
-  if event["event"]{"keycardActions"} != nil:
-    for jsonKc in event["event"]["keycardActions"]:
+  if e.contains("keycardActions"):
+    for jsonKc in e["keycardActions"]:
       signal.keycardActions.add(jsonKc.toKeycardActionDto())
 
-  if event["event"]{"accounts"} != nil:
-    for jsonAcc in event["event"]["accounts"]:
+  if e.contains("accounts"):
+    for jsonAcc in e["accounts"]:
       signal.walletAccounts.add(jsonAcc.toWalletAccountDto())
 
   result = signal

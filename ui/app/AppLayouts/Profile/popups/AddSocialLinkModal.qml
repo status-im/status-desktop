@@ -7,6 +7,7 @@ import utils 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
@@ -15,6 +16,7 @@ import AppLayouts.Profile.controls 1.0
 StatusStackModal {
     id: root
 
+    property var containsSocialLink: function (text, url) {return false}
     signal addLinkRequested(string linkText, string linkUrl, int linkType, string linkIcon)
 
     implicitWidth: 480 // design
@@ -26,7 +28,7 @@ StatusStackModal {
     rightButtons: [finishButton]
     finishButton: StatusButton {
         text: qsTr("Add")
-        enabled: !!linkTarget.text
+        enabled: linkTarget.valid && (!customTitle.visible || customTitle.valid)
         onClicked: {
             root.addLinkRequested(d.selectedLinkTypeText || customTitle.text, // text for custom link, otherwise the link typeId
                                   ProfileUtils.addSocialLinkPrefix(linkTarget.text, d.selectedLinkType),
@@ -84,6 +86,8 @@ StatusStackModal {
                 asset.name: model.icon
                 asset.color: ProfileUtils.linkTypeColor(model.type)
                 onClicked: {
+                    customTitle.reset()
+                    linkTarget.reset()
                     d.selectedLinkIndex = index
                     root.currentIndex++
                 }
@@ -110,6 +114,28 @@ StatusStackModal {
                 icon: "language"
                 charLimit: Constants.maxSocialLinkTextLength
                 input.tabNavItem: linkTarget.input.edit
+                validators: [
+                    StatusValidator {
+                        name: "text-validation"
+                        validate: (value) => {
+                                      return value.trim() !== ""
+                                  }
+                        errorMessage: qsTr("Invalid title")
+                    },
+                    StatusValidator {
+                        name: "check-social-link-existence"
+                        validate: (value) => {
+                                      return !root.containsSocialLink(value,
+                                                                      ProfileUtils.addSocialLinkPrefix(linkTarget.text, d.selectedLinkType))
+                                  }
+                        errorMessage: d.selectedLinkType === Constants.socialLinkType.custom?
+                                          qsTr("Name and link combination already added") :
+                                          qsTr("Link already added")
+                    }
+                ]
+
+                onValidChanged: {linkTarget.validate(true)}
+                onTextChanged: {linkTarget.validate(true)}
             }
 
             StaticSocialLinkInput {
@@ -121,6 +147,29 @@ StatusStackModal {
                 linkType: d.selectedLinkType
                 icon: d.selectedIcon
                 input.tabNavItem: customTitle.input.edit
+
+                validators: [
+                    StatusValidator {
+                        name: "link-validation"
+                        validate: (value) => {
+                                      return value.trim() !== "" && Utils.validLink(ProfileUtils.addSocialLinkPrefix(value, d.selectedLinkType))
+                                  }
+                        errorMessage: qsTr("Invalid %1").arg(ProfileUtils.linkTypeToDescription(linkTarget.linkType).toLowerCase() || qsTr("link"))
+                    },
+                    StatusValidator {
+                        name: "check-social-link-existence"
+                        validate: (value) => {
+                                      return !root.containsSocialLink(d.selectedLinkTypeText || customTitle.text,
+                                                                      ProfileUtils.addSocialLinkPrefix(value, d.selectedLinkType))
+                                  }
+                        errorMessage: d.selectedLinkType === Constants.socialLinkType.custom?
+                                          qsTr("Name and link combination already added") :
+                                          qsTr("Link already added")
+                    }
+                ]
+
+                onValidChanged: {customTitle.validate(true)}
+                onTextChanged: {customTitle.validate(true)}
             }
         }
     ]

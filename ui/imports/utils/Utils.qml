@@ -97,6 +97,14 @@ QtObject {
         return Style.current.accountColors[colorIndex]
     }
 
+    function validLink(link) {
+        if (link.length === 0) {
+            return false
+        }
+        var regex = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
+        return regex.test(link)
+    }
+
     function getLinkStyle(link, hoveredLink, textColor) {
         return `<style type="text/css">` +
                 `a {` +
