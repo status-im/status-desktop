@@ -19,6 +19,9 @@ method deleteAccount*(self: AccessInterface, address: string) {.base.} =
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method updateAccount*(self: AccessInterface, address: string, accountName: string, colorId: string, emoji: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

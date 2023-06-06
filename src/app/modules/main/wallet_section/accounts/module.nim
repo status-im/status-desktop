@@ -42,59 +42,24 @@ method delete*(self: Module) =
   self.view.delete
   self.controller.delete
 
-method refreshWalletAccounts*(self: Module) =
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool) =
   let walletAccounts = self.controller.getWalletAccounts()
   let currency = self.controller.getCurrentCurrency()
-  let enabledChainIds = self.controller.getEnabledChainIds()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
-
-  let items = walletAccounts.map(w => (block:
+  let items = walletAccounts.filter(w => not excludeWatchOnly or w.walletType != "watch").map(w => (block:
     let keycardAccount = self.controller.isKeycardAccount(w)
     walletAccountToWalletAccountsItem(
       w,
       keycardAccount,
-      enabledChainIds,
+      chainIds,
       currency,
       currencyFormat,
     )
   ))
-
-  self.view.setItems(items)
+  self.view.setItems(items)  
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAccounts", newQVariant(self.view))
-
-  # these connections should be part of the controller's init method
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-    let args = KeycardActivityArgs(e)
-    if not args.success:
-      return
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_KEYCARDS_SYNCHRONIZED) do(e: Args):
-    let args = KeycardActivityArgs(e)
-    if not args.success:
-      return
-    self.refreshWalletAccounts()
-
   self.controller.init()
   self.view.load()
 
@@ -102,7 +67,6 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.refreshWalletAccounts()
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
 
