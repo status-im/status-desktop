@@ -25,6 +25,11 @@ pipeline {
       description: 'Level of verbosity based on nimbus-build-system setup.',
       choices: ['0', '1', '2']
     )
+    string(
+      name: 'NIMFLAGS',
+      description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
+      defaultValue: '--colors:off'
+    )
   }
 
   options {
@@ -49,8 +54,6 @@ pipeline {
     TARGET = "linux/${getArch()}"
     /* Improve make performance */
     MAKEFLAGS = "-j4 V=${params.VERBOSE}"
-    /* Disable colors in Nim compiler logs */
-    NIMFLAGS = '--colors:off'
     /* Makefile assumes the compiler folder is included */
     QTDIR = "/opt/qt/5.15.2/gcc_64"
     PATH = "${env.QTDIR}/bin:${env.PATH}"
