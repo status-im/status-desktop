@@ -136,6 +136,18 @@ type DiscordImportTaskProgress* = object
   stopped*: bool
   state*: string
 
+type AccountChainIDsCombinationDto* = object
+  address*: string
+  chainIds*: seq[int]
+
+type CheckPermissionToJoinResultDto* = object
+  criteria*: seq[bool]
+
+type CheckPermissionsToJoinResponseDto* = object
+  satisfied*: bool
+  permissions*: Table[string, CheckPermissionToJoinResultDto]
+  validCombinations*: seq[AccountChainIDsCombinationDto]
+
 proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
   result = CommunityAdminSettingsDto()
   discard jsonObj.getProp("pinMessageAllMembersEnabled", result.pinMessageAllMembersEnabled)
@@ -245,6 +257,36 @@ proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermission
   # the front-end, there's a key field we have to account for
   if jsonObj.hasKey("key"):
     discard jsonObj.getProp("key", result.id)
+
+proc toCheckPermissionToJoinResultDto*(jsonObj: JsonNode): CheckPermissionToJoinResultDto =
+  result = CheckPermissionToJoinResultDto()
+  var criteriaObj: JsonNode
+  if(jsonObj.getProp("criteria", criteriaObj) and criteriaObj.kind == JArray):
+    for c in criteriaObj:
+      result.criteria.add(c.getBool)
+
+proc toAccountChainIDsCombinationDto*(jsonObj: JsonNode): AccountChainIDsCombinationDto =
+  result = AccountChainIDsCombinationDto()
+  discard jsonObj.getProp("address", result.address)
+  var chainIdsObj: JsonNode
+  if(jsonObj.getProp("chainIds", chainIdsObj) and chainIdsObj.kind == JArray):
+    for chainId in chainIdsObj:
+      result.chainIds.add(chainId.getInt)
+
+proc toCheckPermissionsToJoinResponseDto*(jsonObj: JsonNode): CheckPermissionsToJoinResponseDto =
+  result = CheckPermissionsToJoinResponseDto()
+  discard jsonObj.getProp("satisfied", result.satisfied)
+
+  var validCombinationsObj: JsonNode
+  if(jsonObj.getProp("validCombinations", validCombinationsObj) and validCombinationsObj.kind == JArray):
+    for validCombination in validCombinationsObj:
+      result.validCombinations.add(validCombination.toAccountChainIDsCombinationDto)
+
+  var permissionsObj: JsonNode
+  if(jsonObj.getProp("permissions", permissionsObj) and permissionsObj.kind == JObject):
+    result.permissions = initTable[string, CheckPermissionToJoinResultDto]()
+    for permissionId, permission in permissionsObj:
+      result.permissions[permissionId] = permission.toCheckPermissionToJoinResultDto
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()

@@ -396,3 +396,6 @@ method requestToJoinCommunityWithAuthentication*(self: AccessInterface, communit
 
 method onOwnedcollectiblesUpdated*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
