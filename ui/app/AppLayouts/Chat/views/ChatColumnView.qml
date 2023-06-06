@@ -6,6 +6,7 @@ import QtQml 2.15
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 import shared 1.0
@@ -13,6 +14,9 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
+import SortFilterProxyModel 0.2
+
+import AppLayouts.Chat.popups.community 1.0
 
 import "../helpers"
 import "../controls"
@@ -20,6 +24,7 @@ import "../popups"
 import "../panels"
 import "../../Wallet"
 import "../stores"
+import "../panels/communities"
 
 Item {
     id: root
@@ -38,6 +43,8 @@ Item {
     property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
     property int activeChatType: parentModule && parentModule.activeItem.type
     property bool stickersLoaded: false
+    property bool viewAndPostPermissionsSatisfied: true
+    property var viewAndPostPermissionsModel
 
     readonly property var contactDetails: rootStore ? rootStore.oneToOneChatContact : null
     readonly property bool isUserAdded: !!root.contactDetails && root.contactDetails.isAdded
@@ -50,8 +57,8 @@ Item {
         parentModule.prepareChatContentModuleForChatId(activeChatId)
         let chatContentModule = parentModule.getChatContentModule()
         chatContentModule.inputAreaModule.requestAddress(address,
-                                                    amount,
-                                                    tokenAddress)
+                                                         amount,
+                                                         tokenAddress)
     }
     function requestTransaction(address, amount, tokenAddress, tokenDecimals = 18) {
         amount = globalUtils.eth2Wei(amount.toString(), tokenDecimals)
@@ -60,8 +67,8 @@ Item {
         parentModule.prepareChatContentModuleForChatId(activeChatId)
         let chatContentModule = parentModule.getChatContentModule()
         chatContentModule.inputAreaModule.request(address,
-                                                    amount,
-                                                    tokenAddress)
+                                                  amount,
+                                                  tokenAddress)
     }
 
     // This function is called once `1:1` or `group` chat is created.
@@ -101,7 +108,6 @@ Item {
 
     QtObject {
         id: d
-
         readonly property var activeChatContentModule: d.getChatContentModule(root.activeChatId)
 
         readonly property UsersStore activeUsersStore: UsersStore {
@@ -216,8 +222,8 @@ Item {
                         root.openStickerPackPopup(stickerPackId)
                     }
                     onShowReplyArea: (messageId) => {
-                        d.showReplyArea(messageId)
-                    }
+                                         d.showReplyArea(messageId)
+                                     }
                     onForceInputFocus: {
                         chatInput.forceInputActiveFocus()
                     }
@@ -234,107 +240,131 @@ Item {
         RowLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.smallPadding
+            Layout.preferredHeight: chatInputItem.height
 
-            StatusChatInput {
-                id: chatInput
-
+            Item {
+                id: chatInputItem
                 Layout.fillWidth: true
-                visible: !!d.activeChatContentModule
+                Layout.preferredHeight: chatInput.height
 
-                // When `enabled` is switched true->false, `textInput.text` is cleared before d.activeChatContentModule updates.
-                // We delay the binding so that the `inputAreaModule.preservedProperties.text` doesn't get overriden with empty value.
-                Binding on enabled {
-                    delayed: true
-                    value: !!d.activeChatContentModule
-                             && !d.activeChatContentModule.chatDetails.blocked
-                             && root.rootStore.sectionDetails.joined
-                             && !root.rootStore.sectionDetails.amIBanned
-                             && root.rootStore.isUserAllowedToSendMessage
-                }
+                StatusChatInput {
+                    id: chatInput
+                    width: parent.width
+                    visible: !!d.activeChatContentModule
 
-                store: root.rootStore
-                usersStore: d.activeUsersStore
-
-                textInput.placeholderText: {
-                    if (!d.activeChatContentModule)
-                        return
-                    if (d.activeChatContentModule.chatDetails.blocked)
-                        return qsTr("This user has been blocked.")
-                    if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned)
-                        return qsTr("You need to join this community to send messages")
-                    return root.rootStore.chatInputPlaceHolderText
-                }
-
-                emojiPopup: root.emojiPopup
-                stickersPopup: root.stickersPopup
-                chatType: root.activeChatType
-                suggestions.suggestionFilter.addSystemSuggestions: chatType === Constants.chatType.communityChat
-
-                textInput.onTextChanged: {
-                    if (!!d.activeChatContentModule)
-                        d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
-                }
-
-                onReplyMessageIdChanged: {
-                    if (!!d.activeChatContentModule)
-                        d.activeChatContentModule.inputAreaModule.preservedProperties.replyMessageId = replyMessageId
-                }
-
-                onFileUrlsAndSourcesChanged: {
-                    if (!!d.activeChatContentModule)
-                        d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
-                }
-
-                onSendTransactionCommandButtonClicked: {
-                    if (!d.activeChatContentModule) {
-                        console.warn("error on sending transaction command - chat content module is not set")
-                        return
+                    // When `enabled` is switched true->false, `textInput.text` is cleared before d.activeChatContentModule updates.
+                    // We delay the binding so that the `inputAreaModule.preservedProperties.text` doesn't get overriden with empty value.
+                    Binding on enabled {
+                        delayed: true
+                        value: !!d.activeChatContentModule
+                                && !d.activeChatContentModule.chatDetails.blocked
+                                && root.rootStore.sectionDetails.joined
+                                && !root.rootStore.sectionDetails.amIBanned
+                                && root.rootStore.isUserAllowedToSendMessage
+                                && !channelPostRestrictions.visible
+                                && root.viewAndPostPermissionsSatisfied
                     }
 
-                    if (Utils.isEnsVerified(d.activeChatContentModule.getMyChatId())) {
-                        Global.openPopup(cmpSendTransactionWithEns)
-                    } else {
-                        Global.openPopup(cmpSendTransactionNoEns)
+                    store: root.rootStore
+                    usersStore: d.activeUsersStore
+
+                    textInput.placeholderText: {
+                        if (!channelPostRestrictions.visible) {
+                            if (d.activeChatContentModule.chatDetails.blocked)
+                                return qsTr("This user has been blocked.")
+                            if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned)
+                                return qsTr("You need to join this community to send messages")
+                            if (!root.viewAndPostPermissionsSatisfied) {
+                                return qsTr("Sorry, you don't have the tokens needed to post in this channel.")
+                            }
+                            return root.rootStore.chatInputPlaceHolderText
+                        } else {
+                            return "";
+                        }
                     }
-                }
 
-                onReceiveTransactionCommandButtonClicked: {
-                    Global.openPopup(cmpReceiveTransaction)
-                }
+                    emojiPopup: root.emojiPopup
+                    stickersPopup: root.stickersPopup
+                    chatType: root.activeChatType
+                    suggestions.suggestionFilter.addSystemSuggestions: chatType === Constants.chatType.communityChat
 
-                onStickerSelected: {
-                    if (!!d.activeChatContentModule)
+                    textInput.onTextChanged: {
+                        if (!!d.activeChatContentModule)
+                            d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
+                    }
+
+                    onReplyMessageIdChanged: {
+                        if (!!d.activeChatContentModule)
+                            d.activeChatContentModule.inputAreaModule.preservedProperties.replyMessageId = replyMessageId
+                    }
+
+                    onFileUrlsAndSourcesChanged: {
+                        if (!!d.activeChatContentModule)
+                            d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
+                    }
+
+                    onSendTransactionCommandButtonClicked: {
+                        if (!d.activeChatContentModule) {
+                            console.warn("error on sending transaction command - chat content module is not set")
+                            return
+                        }
+
+                        if (Utils.isEnsVerified(d.activeChatContentModule.getMyChatId())) {
+                            Global.openPopup(cmpSendTransactionWithEns)
+                        } else {
+                            Global.openPopup(cmpSendTransactionNoEns)
+                        }
+                    }
+
+                    onReceiveTransactionCommandButtonClicked: {
+                        Global.openPopup(cmpReceiveTransaction)
+                    }
+
+                    onStickerSelected: {
                         root.rootStore.sendSticker(d.activeChatContentModule.getMyChatId(),
-                                                          hashId,
-                                                          chatInput.isReply ? chatInput.replyMessageId : "",
-                                                          packId,
-                                                          url)
-                }
-
-
-                onSendMessage: {
-                    if (!d.activeChatContentModule) {
-                        console.debug("error on sending message - chat content module is not set")
-                        return
+                                                   hashId,
+                                                   chatInput.isReply ? chatInput.replyMessageId : "",
+                                                   packId,
+                                                   url)
                     }
 
-                    if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
-                                                  event,
-                                                  chatInput.getTextWithPublicKeys(),
-                                                  chatInput.isReply? chatInput.replyMessageId : "",
-                                                  chatInput.fileUrlsAndSources
-                                                  ))
-                    {
-                        Global.playSendMessageSound()
+                    onSendMessage: {
+                        if (!d.activeChatContentModule) {
+                            console.debug("error on sending message - chat content module is not set")
+                            return
+                        }
 
-                        chatInput.textInput.clear();
-                        chatInput.textInput.textFormat = TextEdit.PlainText;
-                        chatInput.textInput.textFormat = TextEdit.RichText;
+                        if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
+                                                       event,
+                                                       chatInput.getTextWithPublicKeys(),
+                                                       chatInput.isReply? chatInput.replyMessageId : "",
+                                                       chatInput.fileUrlsAndSources
+                                                       ))
+                        {
+                            Global.playSendMessageSound()
+
+                            chatInput.textInput.clear();
+                            chatInput.textInput.textFormat = TextEdit.PlainText;
+                            chatInput.textInput.textFormat = TextEdit.RichText;
+                        }
+                    }
+
+                    onKeyUpPress: {
+                        d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
                     }
                 }
 
-                onKeyUpPress: {
-                    d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
+                ChatPermissionQualificationPanel {
+                    id: channelPostRestrictions
+                    width: chatInput.textInput.width
+                    height: chatInput.textInput.height
+                    anchors.left: parent.left
+                    anchors.leftMargin: (2*Style.current.bigPadding)
+                    visible: (!!root.viewAndPostPermissionsModel && (root.viewAndPostPermissionsModel.count > 0)
+                              && !root.amISectionAdmin)
+                    assetsModel: root.rootStore.assetsModel
+                    collectiblesModel: root.rootStore.collectiblesModel
+                    holdingsModel: root.viewAndPostHoldingsModel
                 }
             }
 
@@ -352,7 +382,6 @@ Item {
             }
         }
     }
-
 
     Component {
         id: cmpSendTransactionNoEns
