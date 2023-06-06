@@ -76,7 +76,7 @@ Item {
         }
 
         onClicked: {
-            communityIntroDialog.open()
+            Global.openPopup(communityIntroDialog);
         }
 
         Connections {
@@ -88,23 +88,24 @@ Item {
                 }
             }
         }
-
-        CommunityIntroDialog {
+        Component {
             id: communityIntroDialog
+            CommunityIntroDialog {
 
-            isInvitationPending: joinCommunityButton.invitationPending
-            name: communityData.name
-            introMessage: communityData.introMessage
-            imageSrc: communityData.image
-            accessType: communityData.access
+                isInvitationPending: joinCommunityButton.invitationPending
+                name: communityData.name
+                introMessage: communityData.introMessage
+                imageSrc: communityData.image
+                accessType: communityData.access
 
-            onJoined: {
-                joinCommunityButton.loading = true
-                root.store.requestToJoinCommunity(communityData.id, root.store.userProfileInst.name)
-            }
-            onCancelMembershipRequest: {
-                root.store.cancelPendingRequest(communityData.id)
-                joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                onJoined: {
+                    joinCommunityButton.loading = true
+                    root.store.requestToJoinCommunity(communityData.id, root.store.userProfileInst.name)
+                }
+                onCancelMembershipRequest: {
+                    root.store.cancelPendingRequest(communityData.id)
+                    joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
+                }
             }
         }
     }
