@@ -41,7 +41,9 @@ Rectangle {
     onShowAllAccountsChanged: {
         walletAccountsListView.headerItem.highlighted = root.showAllAccounts
         walletAccountsListView.footerItem.button.highlighted = root.showSavedAddresses
-        selectAllAccounts()
+        if (root.showAllAccounts) {
+            selectAllAccounts()
+        }
     }
 
     property var emojiPopup: null

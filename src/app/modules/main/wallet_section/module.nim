@@ -131,10 +131,11 @@ method setTotalCurrencyBalance*(self: Module) =
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance(self.filter.addresses))
 
 method notifyFilterChanged(self: Module) =
-  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.excludeWatchOnly)
+  self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.excludeWatchOnly, self.filter.allAddresses)
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.collectiblesModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.transactionsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.excludeWatchOnly)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
 
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
@@ -178,6 +179,16 @@ method load*(self: Module) =
     self.notifyFilterChanged()
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
+    self.notifyFilterChanged()
+  self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
+    let args = KeycardActivityArgs(e)
+    if not args.success:
+      return
+    self.notifyFilterChanged()
+  self.events.on(SIGNAL_KEYCARDS_SYNCHRONIZED) do(e: Args):
+    let args = KeycardActivityArgs(e)
+    if not args.success:
+      return
     self.notifyFilterChanged()
 
   self.controller.init()

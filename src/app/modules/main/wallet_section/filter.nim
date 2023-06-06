@@ -8,6 +8,7 @@ type Filter* = ref object
   addresses*: seq[string]
   chainIds*: seq[int]
   excludeWatchOnly*: bool
+  allAddresses*: bool
 
 proc initFilter*(
   controller: Controller,
@@ -17,6 +18,7 @@ proc initFilter*(
   result.addresses = @[]
   result.chainIds = @[]
   result.excludeWatchOnly = false
+  result.allAddresses = false
 
 proc `$`*(self: Filter): string =
   result = fmt"""WalletFilter(
@@ -26,6 +28,7 @@ proc `$`*(self: Filter): string =
 
 
 proc setFillterAllAddresses*(self: Filter) = 
+  self.allAddresses = true
   self.addresses = self.controller.getWalletAccounts().map(a => a.address)
 
 proc toggleWatchOnlyAccounts*(self: Filter) =
@@ -40,10 +43,12 @@ proc load*(self: Filter) =
   self.setFillterAllAddresses()
   self.chainIds = self.controller.getEnabledChainIds()
 
-proc setAddress*(self: Filter, address: string) = 
+proc setAddress*(self: Filter, address: string) =
+  self.allAddresses = false
   self.addresses = @[address]
 
 proc removeAddress*(self: Filter, address: string) =
+  self.allAddresses = false
   if len(self.addresses) == 1 and self.addresses[0] == address:
     let accounts = self.controller.getWalletAccounts()
     self.addresses = @[accounts[0].address]

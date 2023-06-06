@@ -17,5 +17,5 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool) {.base.} =
+method filterChanged*(self: AccessInterface, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool, allAddresses: bool) {.base.} =
   raise newException(ValueError, "No implementation available")

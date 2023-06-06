@@ -65,9 +65,9 @@ proc getWalletAccoutColors(self: Module, walletAccounts: seq[WalletAccountDto]) 
     colors.add(account.colorId)
   return colors
 
-method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool) =
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool, allAddresses: bool) =
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
-  if addresses.len > 1:
+  if allAddresses:
     let item = initItem(
       "",
       "",
