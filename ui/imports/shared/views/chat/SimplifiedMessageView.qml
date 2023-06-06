@@ -36,6 +36,7 @@ RowLayout {
             name: root.messageDetails.sender.displayName
             asset: root.messageDetails.sender.profileImage.assetSettings
             ringSettings: root.messageDetails.sender.profileImage.ringSettings
+            loading: root.messageDetails.sender.contactFetching
 
             MouseArea {
                 anchors.fill: parent

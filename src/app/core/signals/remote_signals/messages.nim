@@ -18,7 +18,7 @@ type MessageSignal* = ref object of Signal
   messages*: seq[MessageDto]
   pinnedMessages*: seq[PinnedMessageUpdateDto]
   chats*: seq[ChatDto]
-  contacts*: seq[ContactsDto]
+  contacts*: seq[ContactDto]
   installations*: seq[InstallationDto]
   emojiReactions*: seq[ReactionDto]
   communities*: seq[CommunityDto]

@@ -957,6 +957,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "verificationStatus": contact.verificationStatus.int,
     "incomingVerificationStatus": requestStatus,
     "hasAddedUs": contact.hasAddedUs,
+    "fetching": contact.fetching,
     "socialLinks": $contact.socialLinks.toJsonNode(),
     "bio": contact.bio
   }

@@ -417,6 +417,7 @@ QtObject {
             requestReceived: false,
             isSyncing: false,
             removed: false,
+            fetching: false,
             trustStatus: Constants.trustStatus.unknown,
             verificationStatus: Constants.verificationStatus.unverified,
             incomingVerificationStatus: Constants.verificationStatus.unverified

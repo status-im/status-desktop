@@ -42,7 +42,7 @@ type VerificationRequest* = object
   repliedAt*: int64
   status*: VerificationStatus
 
-type ContactsDto* = object
+type ContactDto* = object
   id*: string
   name*: string
   ensVerified*: bool
@@ -59,6 +59,9 @@ type ContactsDto* = object
   hasAddedUs*: bool
   isSyncing*: bool
   removed*: bool
+  # fetching is a client only property to know if we are currently fetching the contact info
+  # it is not  a big deal if we override to false by updating from status-go, because the default is false
+  fetching*: bool
   trustStatus*: TrustStatus
   contactRequestState*: ContactRequestState
   verificationStatus*: VerificationStatus
@@ -69,7 +72,7 @@ proc `$`(self: Images): string =
     large: {self.large},
     ]"""
 
-proc `$`*(self: ContactsDto): string =
+proc `$`*(self: ContactDto): string =
   result = fmt"""ContactDto(
     id: {self.id},
     name: {self.name},
@@ -131,8 +134,8 @@ proc toVerificationRequest*(jsonObj: JsonNode): VerificationRequest =
   discard jsonObj.getProp("verification_status", verificationStatusInt)
   result.status = verificationStatusInt.toVerificationStatus()
 
-proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
-  result = ContactsDto()
+proc toContactsDto*(jsonObj: JsonNode): ContactDto =
+  result = ContactDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("ensVerified", result.ensVerified)
   result.name = ""
@@ -173,7 +176,7 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("IsSyncing", result.isSyncing)
   discard jsonObj.getProp("Removed", result.removed)
 
-proc userExtractedName(contact: ContactsDto): string =
+proc userExtractedName(contact: ContactDto): string =
   if(contact.name.len > 0 and contact.ensVerified):
     result = contact.name
   elif contact.displayName.len > 0:
@@ -181,50 +184,50 @@ proc userExtractedName(contact: ContactsDto): string =
   else:
     result = contact.alias
 
-proc userDefaultDisplayName*(contact: ContactsDto): string =
+proc userDefaultDisplayName*(contact: ContactDto): string =
   if(contact.localNickname.len > 0):
     result = contact.localNickname
   else:
     result = userExtractedName(contact)
 
-proc userOptionalName*(contact: ContactsDto): string =
+proc userOptionalName*(contact: ContactDto): string =
   if(contact.localNickname.len > 0):
     result = userExtractedName(contact)
 
-proc isContactRequestReceived*(self: ContactsDto): bool =
+proc isContactRequestReceived*(self: ContactDto): bool =
   return self.hasAddedUs
 
-proc isReceivedContactRequestRejected*(self: ContactsDto): bool =
+proc isReceivedContactRequestRejected*(self: ContactDto): bool =
   return self.contactRequestState == ContactRequestState.Dismissed
 
-proc isContactRequestSent*(self: ContactsDto): bool =
+proc isContactRequestSent*(self: ContactDto): bool =
   return self.added
 
-proc isContactRemoved*(self: ContactsDto): bool =
+proc isContactRemoved*(self: ContactDto): bool =
   return self.removed
 
 # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-# proc isSentContactRequestRejected*(self: ContactsDto): bool =
+# proc isSentContactRequestRejected*(self: ContactDto): bool =
 #   # TODO not implemented in `status-go` yet
 #   # We don't have this prop for now.
 #   return false
 
-proc isBlocked*(self: ContactsDto): bool =
+proc isBlocked*(self: ContactDto): bool =
   return self.blocked
 
-proc isContact*(self: ContactsDto): bool =
+proc isContact*(self: ContactDto): bool =
   # TODO not implemented in `status-go` yet
   # But for now we consider that contact is mutual contact if I added him and he added me.
   return self.hasAddedUs and self.added and not self.removed and not self.blocked
 
-proc trustStatus*(self: ContactsDto): TrustStatus =
+proc trustStatus*(self: ContactDto): TrustStatus =
   result = self.trustStatus
 
-proc isContactVerified*(self: ContactsDto): bool =
+proc isContactVerified*(self: ContactDto): bool =
   return self.verificationStatus == VerificationStatus.Verified
 
-proc isContactUntrustworthy*(self: ContactsDto): bool =
+proc isContactUntrustworthy*(self: ContactDto): bool =
   return self.trustStatus == TrustStatus.Untrustworthy
 
-proc isContactMarked*(self: ContactsDto): bool =
+proc isContactMarked*(self: ContactDto): bool =
   return self.isContactVerified() or self.isContactUntrustworthy()

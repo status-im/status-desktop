@@ -10,6 +10,7 @@ QtObject {
 
     property bool isEnsVerified: false
     property bool isContact: false
+    property bool contactFetching: false
     property int trustIndicator: StatusContactVerificationIcons.TrustedType.None
 
     property StatusProfileImageSettings profileImage: StatusProfileImageSettings {

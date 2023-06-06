@@ -436,10 +436,10 @@ proc setCurrentUserStatus*(self: Controller, status: StatusType) =
   else:
     error "error updating user status"
 
-proc getContact*(self: Controller, id: string): ContactsDto =
+proc getContact*(self: Controller, id: string): ContactDto =
   return self.contactsService.getContactById(id)
 
-proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
+proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactDto] =
   return self.contactsService.getContactsByGroup(group)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):

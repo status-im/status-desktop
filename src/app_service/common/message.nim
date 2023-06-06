@@ -3,7 +3,7 @@ import ../service/contacts/dto/contacts
 from conversion import SystemTagMapping
 
 
-proc replacePubKeysWithDisplayNames*(allKnownContacts: seq[ContactsDto], message: string): string =
+proc replacePubKeysWithDisplayNames*(allKnownContacts: seq[ContactDto], message: string): string =
   let pubKeyPattern = re(r"(@0x[a-f0-9]+)", flags = {reStudy, reIgnoreCase})
   let pubKeys = findAll(message, pubKeyPattern)
   var updatedMessage = message
@@ -19,7 +19,7 @@ proc replacePubKeysWithDisplayNames*(allKnownContacts: seq[ContactsDto], message
 
   return updatedMessage
 
-proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactsDto], message: string): string =
+proc replaceMentionsWithPubKeys*(allKnownContacts: seq[ContactDto], message: string): string =
   let aliasPattern = re(r"(@[A-z][a-z]+ [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
   let ensPattern = re(r"(@\w+((\.stateofus)?\.eth))", flags = {reStudy, reIgnoreCase})
   let namePattern = re(r"(@\w+)", flags = {reStudy, reIgnoreCase})

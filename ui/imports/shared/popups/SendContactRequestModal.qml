@@ -71,6 +71,9 @@ StatusModal {
         target: root.rootStore.contactStore.contactsModule
 
         function onContactInfoRequestFinished(publicKey, ok) {
+            if (publicKey !== userPublicKey) {
+                return
+            }
             if (ok) {
                 const details = Utils.getContactDetailsAsJson(userPublicKey, false)
                 d.updateContactDetails(details)

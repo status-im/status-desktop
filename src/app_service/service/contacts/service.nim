@@ -98,11 +98,11 @@ QtObject:
     imageServerUrl: string
 
   # Forward declaration
-  proc getContactById*(self: Service, id: string): ContactsDto
-  proc saveContact(self: Service, contact: ContactsDto)
+  proc getContactById*(self: Service, id: string): ContactDto
+  proc saveContact(self: Service, contact: ContactDto)
   proc fetchReceivedVerificationRequests*(self: Service) : seq[VerificationRequest]
   proc requestContactInfo*(self: Service, pubkey: string)
-  proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails
+  proc constructContactDetails(self: Service, contactDto: ContactDto): ContactDetails
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -139,11 +139,16 @@ QtObject:
     try:
       let response = status_contacts.getContacts()
 
-      let contacts = map(response.result.getElems(), proc(x: JsonNode): ContactsDto = x.toContactsDto())
+      let contacts = map(response.result.getElems(), proc(x: JsonNode): ContactDto = x.toContactsDto())
 
       for contact in contacts:
-        self.addContact(self.constructContactDetails(contact))
-
+        var c = contact
+        if contact.displayName == "":
+          # Fetch the contact info if we do not have it
+          self.requestContactInfo(contact.id)
+          # Set fetching to true so the UI can show a loader if needed
+          c.fetching = true
+        self.addContact(self.constructContactDetails(c))
       # Identity verifications
       for request in self.fetchReceivedVerificationRequests():
         self.receivedIdentityRequests[request.fromId] = request
@@ -248,7 +253,7 @@ QtObject:
     let data = Args()
     self.events.emit(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED, data)
 
-  proc getContactsByGroup*(self: Service, group: ContactsGroup): seq[ContactsDto] =
+  proc getContactsByGroup*(self: Service, group: ContactsGroup): seq[ContactDto] =
     # Having this logic here we ensure that the same contact group in each part of the app will have the same list
     # of contacts. Be sure when you change any condition here.
     let myPubKey = singletonInstance.userProfile.getPubKey()
@@ -318,7 +323,7 @@ QtObject:
       error "error: ", errDesription
       return TrustStatus.Unknown
 
-  proc getContactNameAndImageInternal(self: Service, contactDto: ContactsDto):
+  proc getContactNameAndImageInternal(self: Service, contactDto: ContactDto):
       tuple[name: string, optionalName: string, image: string, largeImage: string] =
     ## This proc should be used accross the app in order to have for the same contact
     ## same image and name displayed everywhere in the app.
@@ -329,7 +334,7 @@ QtObject:
     if(contactDto.image.large.len > 0):
       result.largeImage = contactDto.image.large
 
-  proc constructContactDetails(self: Service, contactDto: ContactsDto): ContactDetails =
+  proc constructContactDetails(self: Service, contactDto: ContactDto): ContactDetails =
     result = ContactDetails()
     let (name, optionalName, icon, _) = self.getContactNameAndImageInternal(contactDto)
     result.defaultDisplayName = name
@@ -353,7 +358,7 @@ QtObject:
     if(pubkey == singletonInstance.userProfile.getPubKey()):
       # If we try to get the contact details of ourselves, just return our own info
       return self.constructContactDetails(
-        ContactsDto(
+        ContactDto(
           id: singletonInstance.userProfile.getPubKey(),
           displayName: singletonInstance.userProfile.getDisplayName(),
           name: singletonInstance.userProfile.getPreferredName(),
@@ -390,7 +395,7 @@ QtObject:
       let alias = self.generateAlias(pubkey)
       let trustStatus = self.getTrustStatus(pubkey)
       let contact = self.constructContactDetails(
-        ContactsDto(
+        ContactDto(
           id: pubkey,
           alias: alias,
           ensVerified: result.dto.ensVerified,
@@ -403,7 +408,7 @@ QtObject:
       self.addContact(contact)
       return contact
 
-  proc getContactById*(self: Service, id: string): ContactsDto =
+  proc getContactById*(self: Service, id: string): ContactDto =
     return self.getContactDetails(id).dto
 
   proc getStatusForContactWithId*(self: Service, publicKey: string): StatusUpdateDto =
@@ -426,11 +431,11 @@ QtObject:
     let tempRes = self.getContactNameAndImageInternal(contactDto)
     return (tempRes.name, tempRes.image, tempRes.largeImage)
 
-  proc saveContact(self: Service, contact: ContactsDto) =
+  proc saveContact(self: Service, contact: ContactDto) =
     # we must keep local contacts updated
     self.contacts[contact.id] = self.constructContactDetails(contact)
 
-  proc updateContact(self: Service, contact: ContactsDto) =
+  proc updateContact(self: Service, contact: ContactDto) =
     var signal = SIGNAL_CONTACT_ADDED
     let publicKey = contact.id
     if self.contacts.hasKey(publicKey):
@@ -767,34 +772,39 @@ QtObject:
 
   proc asyncContactInfoLoaded*(self: Service, pubkeyAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = pubkeyAndRpcResponse.parseJson
-    let publicKey = $rpcResponseObj{"publicKey"}
-    let requestError = rpcResponseObj{"error"}
-    var error : string
+    let publicKey = rpcResponseObj{"publicKey"}.getStr
+    try:
+      let requestError = rpcResponseObj{"error"}
+      var error : string
 
-    if requestError.kind != JNull:
-      error = $requestError
-    else:
-      let responseError = rpcResponseObj{"response"}{"error"}
-      if responseError.kind != JNull:
-        error = Json.decode($responseError, RpcError).message
+      if requestError.kind != JNull:
+        error = $requestError
+      else:
+        let responseError = rpcResponseObj{"response"}{"error"}
+        if responseError.kind != JNull:
+          error = Json.decode($responseError, RpcError).message
 
-    if len(error) != 0:
-      error "error requesting contact info", msg = error, publicKey
+      if len(error) != 0:
+        raise newException(CatchableError, error)
+
+      var contact = rpcResponseObj{"response"}{"result"}.toContactsDto()
+
+      let foundTheContactInfo = contact.displayName != ""
+      self.updateContact(contact)
+      self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED,
+        ContactInfoRequestArgs(publicKey: publicKey, ok: foundTheContactInfo))
+    except Exception as e:
+      error "error requesting contact info", msg = e.msg, publicKey
       self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: false))
-      return
-
-    let contact = rpcResponseObj{"response"}{"result"}.toContactsDto()
-    self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_INFO_REQUEST_FINISHED, ContactInfoRequestArgs(publicKey: publicKey, ok: true))
+      var contact = self.getContactById(publicKey)
+      contact.fetching = false
+      self.updateContact(contact)
 
   proc requestContactInfo*(self: Service, pubkey: string) =
-    try:
-      let arg = AsyncRequestContactInfoTaskArg(
-        tptr: cast[ByteAddress](asyncRequestContactInfoTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "asyncContactInfoLoaded",
-        pubkey: pubkey,
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error requesting contact info", msg = e.msg, pubkey
+    let arg = AsyncRequestContactInfoTaskArg(
+      tptr: cast[ByteAddress](asyncRequestContactInfoTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncContactInfoLoaded",
+      pubkey: pubkey,
+    )
+    self.threadpool.start(arg)

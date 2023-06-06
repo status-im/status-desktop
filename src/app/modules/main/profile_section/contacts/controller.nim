@@ -89,10 +89,10 @@ proc init*(self: Controller) =
     let args = ContactInfoRequestArgs(e)
     self.delegate.onContactInfoRequestFinished(args.publicKey, args.ok)
 
-proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
+proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactDto] =
   return self.contactsService.getContactsByGroup(group)
 
-proc getContact*(self: Controller, id: string): ContactsDto =
+proc getContact*(self: Controller, id: string): ContactDto =
   return self.contactsService.getContactById(id)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):

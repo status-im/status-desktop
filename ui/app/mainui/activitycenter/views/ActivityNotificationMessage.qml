@@ -32,10 +32,13 @@ ActivityNotificationBase {
         sender.trustIndicator: contactDetails ? contactDetails.trustStatus : Constants.trustStatus.unknown
         sender.isEnsVerified: !!contactDetails && contactDetails.ensVerified
         sender.isContact: !!contactDetails && contactDetails.isContact
+        sender.contactFetching: !!contactDetails && contactDetails.fetching
         sender.profileImage {
             width: 40
             height: 40
             name: contactDetails ? contactDetails.displayIcon : ""
+            assetSettings.bgWidth: 40
+            assetSettings.bgHeight: 40
             assetSettings.isImage: contactDetails && contactDetails.displayIcon.startsWith("data")
             pubkey: contactId
             colorId: Utils.colorIdForPubkey(contactId)

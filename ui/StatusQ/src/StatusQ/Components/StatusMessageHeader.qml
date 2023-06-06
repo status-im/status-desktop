@@ -38,6 +38,7 @@ Item {
     RowLayout {
         id: layout
         spacing: 4
+
         StatusBaseText {
             id: primaryDisplayName
             objectName: "StatusMessageHeader_DisplayName"
@@ -47,7 +48,7 @@ Item {
             font.underline: mouseArea.containsMouse
             font.pixelSize: Theme.primaryTextFontSize
             wrapMode: Text.WordWrap
-            color: Theme.palette.primaryColor1
+            color: root.sender.contactFetching ? "transparent" : Theme.palette.primaryColor1
             text: root.amISender ? qsTr("You") : root.sender.displayName
             MouseArea {
                 id: mouseArea
@@ -58,6 +59,16 @@ Item {
                 hoverEnabled: true
                 onClicked: {
                     root.clicked(this, mouse)
+                }
+            }
+
+
+            Loader {
+                anchors.fill: parent
+                active: root.sender.contactFetching
+
+                sourceComponent: LoadingComponent {
+                    radius: 4
                 }
             }
         }

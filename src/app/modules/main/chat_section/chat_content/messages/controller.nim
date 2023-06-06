@@ -261,7 +261,7 @@ proc removeReaction*(self: Controller, messageId: string, emojiId: int, reaction
 proc pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
   self.messageService.pinUnpinMessage(self.chatId, messageId, pin)
 
-proc getContactById*(self: Controller, contactId: string): ContactsDto =
+proc getContactById*(self: Controller, contactId: string): ContactDto =
   return self.contactService.getContactById(contactId)
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
