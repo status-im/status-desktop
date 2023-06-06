@@ -89,6 +89,7 @@ Item {
             id: confirmation
             Layout.preferredHeight: Constants.keycard.general.messageHeight
             Layout.alignment: Qt.AlignCenter
+            Layout.fillWidth: true
             leftSide: false
             spacing: Style.current.smallPadding
             font.pixelSize: Constants.keycard.general.fontSize2
