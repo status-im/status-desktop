@@ -88,6 +88,8 @@ communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_over
 # Community Overview
 communityOverview_Back_up_Banner = {"container": statusDesktop_mainWindow, "objectName": "backUpBanner", "type": "CommunityBanner", "visible": True}
 communityOverview_Back_up_StatusButton = {"container": communityOverview_Back_up_Banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
+communityOverview_Airdrop_Tokens_Banner = {"container": statusDesktop_mainWindow, "objectName": "airdropBanner", "type": "CommunityBanner", "visible": True}
+communityOverview_Airdrop_Tokens_StatusButton = {"container": communityOverview_Airdrop_Tokens_Banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
 transferOwnerShipTextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 
 # Community transfer ownership
