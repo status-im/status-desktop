@@ -162,6 +162,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "ChatPermissionQualificationPanel"
+        section: "Panels"
+    }
+    ListElement {
          title: "BurnTokensPopup"
          section: "Popups"
     }
