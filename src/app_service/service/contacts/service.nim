@@ -252,40 +252,47 @@ QtObject:
     # Having this logic here we ensure that the same contact group in each part of the app will have the same list
     # of contacts. Be sure when you change any condition here.
     let myPubKey = singletonInstance.userProfile.getPubKey()
-    let contacts = toSeq(self.contacts.values).map(cd => cd.dto)
-    if (group == ContactsGroup.IncomingPendingContactRequests):
-      return contacts.filter(x => x.id != myPubKey and 
-        x.isContactRequestReceived() and 
-        not x.isContactRequestSent() and
-        not x.isContactRemoved() and
-        not x.isReceivedContactRequestRejected() and
-        not x.isBlocked())
-    elif (group == ContactsGroup.OutgoingPendingContactRequests):
-      return contacts.filter(x => x.id != myPubKey and 
-        x.isContactRequestSent() and 
-        not x.isContactRequestReceived() and 
-        # not x.isSentContactRequestRejected() and
-        not x.isContactRemoved() and
-        not x.isBlocked())
-    elif (group == ContactsGroup.IncomingRejectedContactRequests):
-      return contacts.filter(x => x.id != myPubKey and 
-        x.isContactRequestReceived() and 
-        x.isReceivedContactRequestRejected() and
-        not x.isBlocked())
-    # elif (group == ContactsGroup.OutgoingRejectedContactRequests):
-    #   return contacts.filter(x => x.id != myPubKey and 
-    #     x.isContactRequestSent() and 
-    #     x.isSentContactRequestRejected() and
-    #     not x.isBlocked())
-    elif (group == ContactsGroup.BlockedContacts):
-      return contacts.filter(x => x.id != myPubKey and 
-        x.isBlocked())
-    elif (group == ContactsGroup.MyMutualContacts):
-      # we need to revise this when we introduce "identity verification" feature
-      return contacts.filter(x => x.id != myPubKey and 
-        x.isContact())
-    elif (group == ContactsGroup.AllKnownContacts):
-      return contacts
+
+    var contacts: seq[ContactsDto] = @[]
+    for cd in self.contacts.values:
+      let dto = cd.dto
+      if dto.id == myPubKey: 
+        continue
+      case group
+      of ContactsGroup.AllKnownContacts:
+        contacts.add(dto)
+      of ContactsGroup.IncomingPendingContactRequests:
+        if dto.isContactRequestReceived() and 
+           not dto.isContactRequestSent() and
+           not dto.isContactRemoved() and
+           not dto.isReceivedContactRequestRejected() and
+           not dto.isBlocked():
+          contacts.add(dto)
+      of ContactsGroup.OutgoingPendingContactRequests:
+        if dto.isContactRequestSent() and 
+           not dto.isContactRequestReceived() and 
+           not dto.isContactRemoved() and
+           not dto.isBlocked():
+          contacts.add(dto)
+      of ContactsGroup.IncomingRejectedContactRequests:
+        if dto.isContactRequestReceived() and 
+           dto.isReceivedContactRequestRejected() and
+           not dto.isBlocked():
+          contacts.add(dto)
+      of ContactsGroup.OutgoingRejectedContactRequests:
+        # if dto.isContactRequestSent() and 
+        #    dto.isSentContactRequestRejected() and
+        #    not dto.isBlocked():
+        #   contacts.add(dto)
+        discard
+      of ContactsGroup.BlockedContacts:
+        if dto.isBlocked():
+          contacts.add(dto)
+      of ContactsGroup.MyMutualContacts:
+        if dto.isContact():
+          contacts.add(dto)
+
+    return contacts
 
   proc fetchContact(self: Service, id: string): ContactDetails =
     try:
