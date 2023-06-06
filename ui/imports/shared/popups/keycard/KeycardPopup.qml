@@ -14,7 +14,6 @@ StatusModal {
 
     closePolicy: d.disableActionPopupButtons || d.disableCloseButton? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !d.disableActionPopupButtons && !d.disableCloseButton
-    destroyOnClose: false
 
     headerSettings.title: {
         switch (root.sharedKeycardModule.currentState.flowType) {

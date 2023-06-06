@@ -76,7 +76,7 @@ StatusModal {
         Component {
             id: transferOwnershiproot
             TransferOwnershipPopup {
-                anchors.centerIn: parent
+                destroyOnClose: true
             }
         }
 

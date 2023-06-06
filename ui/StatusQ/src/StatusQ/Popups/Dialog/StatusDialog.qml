@@ -13,9 +13,9 @@ Dialog {
     property string subtitle
     /*!
        \qmlproperty destroyOnClose
-        This property decides whether the popup component should be destroyed when closed. Default value is true.
+        This property decides whether the popup component should be destroyed when closed. Default value is false.
     */
-    property bool destroyOnClose: true
+    property bool destroyOnClose: false
     /*!
        \qmlproperty color backgroundColor
         This property decides the modal background color
@@ -88,7 +88,7 @@ Dialog {
                     if (root.standardButtons & Dialog.SaveAll) return qsTr("Save all")
                     if (root.standardButtons & Dialog.Retry) return qsTr("Retry")
                     if (root.standardButtons & Dialog.Ignore) return qsTr("Ignore")
-                    return qsTr("Ok")
+                    return qsTr("OK")
                 }
 
                 onClicked: root.accept()

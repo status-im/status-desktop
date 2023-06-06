@@ -14,7 +14,7 @@ Popup {
     default property alias content: popupContent.children
     property alias contentWrapper: popupContent
     property alias header: headerContent.children
-    property bool destroyOnClose: true
+    property bool destroyOnClose: false
 
     id: popup
     modal: true

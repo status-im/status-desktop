@@ -9,7 +9,6 @@ import StatusQ.Popups 0.1
 
 StatusModal {
     id: confirmationDialog
-    anchors.centerIn: parent
 
     property var parentPopup
     property var value

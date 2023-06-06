@@ -13,7 +13,6 @@ ImageLoader 1.0 ImageLoader.qml
 LabelValueRow 1.0 LabelValueRow.qml
 ModuleWarning 1.0 ModuleWarning.qml
 NoImageUploadedPanel 1.0 NoImageUploadedPanel.qml
-NotificationWindow 1.0 NotificationWindow.qml
 ProfileBioSocialsPanel 1.0 ProfileBioSocialsPanel.qml
 RoundedIcon 1.0 RoundedIcon.qml
 RoundedImage 1.0 RoundedImage.qml
