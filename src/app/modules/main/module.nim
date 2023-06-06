@@ -238,7 +238,8 @@ proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : TokenIte
   let network = self.controller.getNetwork(tokenDto.chainId)
   let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
   let ownerAddressName = self.controller.getCommunityTokenOwnerName(tokenDto.chainId, tokenDto.address)
-  result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName)
+  let remainingSupply = if tokenDto.infiniteSupply: 0 else: self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
+  result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName, remainingSupply)
 
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
@@ -1007,6 +1008,12 @@ method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: stri
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateCommunityTokenDeployState(chainId, contractAddress, deployState)
+
+method onCommunityTokenSupplyChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, supply: int, remainingSupply: int) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updateCommunityTokenSupply(chainId, contractAddress, supply)
+    item.updateCommunityRemainingSupply(chainId, contractAddress, remainingSupply)
 
 method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, memberKey: string) =
   let item = self.view.model().getItemById(communityId)

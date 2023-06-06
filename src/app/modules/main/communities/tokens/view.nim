@@ -31,9 +31,13 @@ QtObject:
   proc selfDestructCollectibles*(self: View, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.selfDestructCollectibles(communityId, collectiblesToBurnJsonString, contractUniqueKey)
 
+  proc burnCollectibles*(self: View, communityId: string, contractUniqueKey: string, amount: int) {.slot.} =
+    self.communityTokensModule.burnCollectibles(communityId, contractUniqueKey, amount)
+
   proc deployFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
   proc selfDestructFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
   proc airdropFeesUpdated*(self: View, json: string) {.signal.}
+  proc burnFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
 
   proc computeDeployFee*(self: View, chainId: int, accountAddress: string) {.slot.} =
     self.communityTokensModule.computeDeployFee(chainId, accountAddress)
@@ -41,8 +45,14 @@ QtObject:
   proc computeSelfDestructFee*(self: View, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.computeSelfDestructFee(collectiblesToBurnJsonString, contractUniqueKey)
 
+  proc computeBurnFee*(self: View, contractUniqueKey: string, amount: int) {.slot.} =
+    self.communityTokensModule.computeBurnFee(contractUniqueKey, amount)
+
   proc updateDeployFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
     self.deployFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
+
+  proc updateBurnFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
+    self.burnFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
 
   proc updateSelfDestructFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =
     self.selfDestructFeeUpdated(newQVariant(ethCurrency), newQVariant(fiatCurrency), errorCode)
@@ -58,6 +68,10 @@ QtObject:
   proc emitRemoteDestructStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) =
     self.remoteDestructStateChanged(communityId, tokenName, status, url)
 
-  proc airdropStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) {.signal.}
-  proc emitAirdropStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) =
-    self.airdropStateChanged(communityId, tokenName, status, url)
+  proc burnStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) {.signal.}
+  proc emitBurnStateChanged*(self: View, communityId: string, tokenName: string, status: int, url: string) =
+    self.burnStateChanged(communityId, tokenName, status, url)
+
+  proc airdropStateChanged*(self: View, communityId: string, tokenName: string, chainName: string, status: int, url: string) {.signal.}
+  proc emitAirdropStateChanged*(self: View, communityId: string, tokenName: string, chainName: string, status: int, url: string) =
+    self.airdropStateChanged(communityId, tokenName, chainName, status, url)

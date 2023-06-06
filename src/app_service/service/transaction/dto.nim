@@ -19,6 +19,7 @@ type
     CollectibleDeployment = "CollectibleDeployment"
     CollectibleAirdrop = "CollectibleAirdrop"
     CollectibleRemoteSelfDestruct = "CollectibleRemoteSelfDestruct"
+    CollectibleBurn = "CollectibleBurn"
 
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self

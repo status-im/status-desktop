@@ -57,6 +57,7 @@ type
 
 # Forward declaration
 proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
+proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): int
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -343,6 +344,18 @@ proc init*(self: Controller) =
     let args = CommunityTokenDeployedStatusArgs(e)
     self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.chainId, args.contractAddress, args.deployState)
 
+  self.events.on(SIGNAL_BURN_STATUS) do(e: Args):
+    let args = RemoteDestructArgs(e)
+    let communityToken = args.communityToken
+    self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
+      communityToken.address, communityToken.supply, self.getRemainingSupply(communityToken.chainId, communityToken.address))
+
+  self.events.on(SIGNAL_AIRDROP_STATUS) do(e: Args):
+    let args = AirdropArgs(e)
+    let communityToken = args.communityToken
+    self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
+      communityToken.address, communityToken.supply, self.getRemainingSupply(communityToken.chainId, communityToken.address))
+
   self.events.on(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED) do(e: Args):
     let args = CommunityTokenOwnersArgs(e)
     self.delegate.onCommunityTokenOwnersFetched(args.communityId, args.chainId, args.contractAddress, args.owners)
@@ -476,6 +489,9 @@ proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: in
 
 proc getCommunityTokenOwnerName*(self: Controller, chainId: int, contractAddress: string): string =
   return self.communityTokensService.contractOwnerName(chainId, contractAddress)
+
+proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): int =
+  return self.communityTokensService.getRemainingSupply(chainId, contractAddress)
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)

@@ -48,6 +48,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMPUTE_SELF_DESTRUCT_FEE) do(e:Args):
     let args = ComputeFeeArgs(e)
     self.communityTokensModule.onSelfDestructFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode)
+  self.events.on(SIGNAL_COMPUTE_BURN_FEE) do(e:Args):
+    let args = ComputeFeeArgs(e)
+    self.communityTokensModule.onBurnFeeComputed(args.ethCurrency, args.fiatCurrency, args.errorCode)
   self.events.on(SIGNAL_COMPUTE_AIRDROP_FEE) do(e:Args):
     let args = AirdropFeesArgs(e)
     self.communityTokensModule.onAirdropFeesComputed(args)
@@ -60,6 +63,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_REMOTE_DESTRUCT_STATUS) do(e: Args):
     let args = RemoteDestructArgs(e)
     self.communityTokensModule.onRemoteDestructStateChanged(args.communityToken.communityId, args.communityToken.name, args.communityToken.chainId, args.transactionHash, args.status)
+  self.events.on(SIGNAL_BURN_STATUS) do(e: Args):
+    let args = RemoteDestructArgs(e)
+    self.communityTokensModule.onBurnStateChanged(args.communityToken.communityId, args.communityToken.name, args.communityToken.chainId, args.transactionHash, args.status)
   self.events.on(SIGNAL_AIRDROP_STATUS) do(e: Args):
     let args = AirdropArgs(e)
     self.communityTokensModule.onAirdropStateChanged(args.communityToken.communityId, args.communityToken.name, args.communityToken.chainId, args.transactionHash, args.status)
@@ -76,6 +82,9 @@ proc computeAirdropCollectiblesFee*(self: Controller, collectiblesAndAmounts: se
 proc selfDestructCollectibles*(self: Controller, communityId: string, password: string, walletAndAmounts: seq[WalletAndAmount], contractUniqueKey: string) =
   self.communityTokensService.selfDestructCollectibles(communityId, password, walletAndAmounts, contractUniqueKey)
 
+proc burnCollectibles*(self: Controller, communityId: string, password: string, contractUniqueKey: string, amount: int) =
+  self.communityTokensService.burnCollectibles(communityId, password, contractUniqueKey, amount)
+
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_DEPLOY_COLLECTIBLES_COMMUNITY_TOKENS_MODULE_IDENTIFIER, keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
@@ -91,6 +100,9 @@ proc computeSelfDestructFee*(self: Controller, walletAndAmountList: seq[WalletAn
 
 proc findContractByUniqueId*(self: Controller, contractUniqueKey: string): CommunityTokenDto =
   return self.communityTokensService.findContractByUniqueId(contractUniqueKey)
+
+proc computeBurnFee*(self: Controller, contractUniqueKey: string, amount: int) =
+  self.communityTokensService.computeBurnFee(contractUniqueKey, amount)
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)

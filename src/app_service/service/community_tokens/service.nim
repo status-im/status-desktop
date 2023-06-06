@@ -149,9 +149,11 @@ const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
 const SIGNAL_COMMUNITY_TOKEN_DEPLOYED* = "communityTokenDeployed"
 const SIGNAL_COMPUTE_DEPLOY_FEE* = "computeDeployFee"
 const SIGNAL_COMPUTE_SELF_DESTRUCT_FEE* = "computeSelfDestructFee"
+const SIGNAL_COMPUTE_BURN_FEE* = "computeBurnFee"
 const SIGNAL_COMPUTE_AIRDROP_FEE* = "computeAirdropFee"
 const SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED* = "communityTokenOwnersFetched"
 const SIGNAL_REMOTE_DESTRUCT_STATUS* = "communityTokenRemoteDestructStatus"
+const SIGNAL_BURN_STATUS* = "communityTokenBurnStatus"
 const SIGNAL_AIRDROP_STATUS* = "airdropStatus"
 
 QtObject:
@@ -215,9 +217,9 @@ QtObject:
       let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
       let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
       if not receivedData.success:
-        error "Collectible contract not deployed", address=tokenDto.address
+        error "Collectible contract not deployed", chainId=tokenDto.chainId, address=tokenDto.address
       try:
-        discard updateCommunityTokenState(tokenDto.address, deployState) #update db state
+        discard updateCommunityTokenState(tokenDto.chainId, tokenDto.address, deployState) #update db state
       except RpcException:
         error "Error updating collectibles contract state", message = getCurrentExceptionMsg()
       let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address,
@@ -248,9 +250,21 @@ QtObject:
         self.tempTokenOwnersToFetch = tokenDto
         self.tokenOwners1SecTimer.start()
 
+    self.events.on(PendingTransactionTypeDto.CollectibleBurn.event) do(e: Args):
+      let receivedData = TransactionMinedArgs(e)
+      let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
+      let transactionStatus = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
+      if receivedData.success:
+        try:
+          discard updateCommunityTokenSupply(tokenDto.chainId, tokenDto.address, tokenDto.supply) #update db state
+        except RpcException:
+          error "Error updating collectibles supply", message = getCurrentExceptionMsg()
+      let data = RemoteDestructArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus)
+      self.events.emit(SIGNAL_BURN_STATUS, data)
+
   proc buildTransactionDataDto(self: Service, addressFrom: string, chainId: int, contractAddress: string): TransactionDataDto =
     let gasUnits = self.tempGasTable.getOrDefault((chainId, contractAddress), 0)
-    let suggestedFees = self.tempFeeTable[chainId]
+    let suggestedFees = self.tempFeeTable.getOrDefault(chainId, nil)
     if suggestedFees == nil:
       error "Can't find suggested fees for chainId", chainId=chainId
       return
@@ -339,6 +353,13 @@ QtObject:
       return self.walletAccountService.getAccountByAddress(response.result.getStr().toLower()).name
     except RpcException:
       error "Error getting contract owner name", message = getCurrentExceptionMsg()
+
+  proc getRemainingSupply*(self: Service, chainId: int, contractAddress: string): int =
+    try:
+      let response = tokens_backend.remainingSupply(chainId, contractAddress)
+      return response.result.getInt()
+    except RpcException:
+      error "Error getting remaining supply", message = getCurrentExceptionMsg()
 
   proc airdropCollectibles*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
     try:
@@ -472,8 +493,8 @@ QtObject:
       if len(tokenIds) == 0:
         warn "token list is empty"
         return
-      let arg = AsyncGetBurnFees(
-        tptr: cast[ByteAddress](asyncGetBurnFeesTask),
+      let arg = AsyncGetRemoteBurnFees(
+        tptr: cast[ByteAddress](asyncGetRemoteBurnFeesTask),
         vptr: cast[ByteAddress](self.vptr),
         slot: "onSelfDestructFees",
         chainId: contract.chainId,
@@ -499,6 +520,49 @@ QtObject:
     if errorMessage.contains("403 Forbidden") or errorMessage.contains("exceed"):
       errorCode = ComputeFeeErrorCode.Infura
     return errorCode
+
+  proc burnCollectibles*(self: Service, communityId: string, password: string, contractUniqueKey: string, amount: int) =
+    try:
+      var contract = self.findContractByUniqueId(contractUniqueKey)
+      let addressFrom = self.contractOwner(contract.chainId, contract.address)
+      let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
+      debug "Burn collectibles ", chainId=contract.chainId, address=contract.address, amount=amount
+      let response = tokens_backend.burn(contract.chainId, contract.address, %txData, password, amount)
+      let transactionHash = response.result.getStr()
+      debug "Burn transaction hash ", transactionHash=transactionHash
+
+      var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress)
+      self.events.emit(SIGNAL_BURN_STATUS, data)
+
+      contract.supply = contract.supply - amount # save with changed supply
+      # observe transaction state
+      self.transactionService.watchTransaction(
+        transactionHash,
+        addressFrom,
+        contract.address,
+        $PendingTransactionTypeDto.CollectibleBurn,
+        $contract.toJsonNode(),
+        contract.chainId,
+      )
+    except Exception as e:
+      error "Burn error", msg = e.msg
+
+  proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: int) =
+    try:
+      let contract = self.findContractByUniqueId(contractUniqueKey)
+      self.tempAccountAddress = self.contractOwner(contract.chainId, contract.address)
+      self.tempChainId = contract.chainId
+      let arg = AsyncGetBurnFees(
+        tptr: cast[ByteAddress](asyncGetBurnFeesTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onBurnFees",
+        chainId: contract.chainId,
+        contractAddress: contract.address,
+        amount: amount
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error loading fees", msg = e.msg
 
   proc createComputeFeeArgsWithError(self:Service, errorMessage: string): ComputeFeeArgs =
     let errorCode = self.getErrorCodeFromMessage(errorMessage)
@@ -580,6 +644,9 @@ QtObject:
 
   proc onSelfDestructFees*(self:Service, response: string) {.slot.} =
     self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_SELF_DESTRUCT_FEE)
+
+  proc onBurnFees*(self:Service, response: string) {.slot.} =
+    self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_BURN_FEE)
 
   proc onDeployFees*(self:Service, response: string) {.slot.} =
     self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_DEPLOY_FEE)

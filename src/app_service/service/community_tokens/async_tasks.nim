@@ -40,10 +40,34 @@ const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     })
 
 type
-  AsyncGetBurnFees = ref object of QObjectTaskArg
+  AsyncGetRemoteBurnFees = ref object of QObjectTaskArg
     chainId: int
     contractAddress: string
     tokenIds: seq[UInt256]
+
+const asyncGetRemoteBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetRemoteBurnFees](argEncoded)
+  try:
+    var gasTable: Table[ContractTuple, int] # gas per contract
+    var feeTable: Table[int, SuggestedFeesDto] # fees for chain
+    let fee = eth.suggestedFees(arg.chainId).result.toSuggestedFeesDto()
+    let burnGas = community_tokens.estimateRemoteBurn(arg.chainId, arg.contractAddress, arg.tokenIds).result.getInt
+    feeTable[arg.chainId] = fee
+    gasTable[(arg.chainId, arg.contractAddress)] = burnGas
+    arg.finish(%* {
+      "feeTable": tableToJsonArray(feeTable),
+      "gasTable": tableToJsonArray(gasTable),
+      "error": "" })
+  except Exception as e:
+    arg.finish(%* {
+      "error": e.msg,
+    })
+
+type
+  AsyncGetBurnFees = ref object of QObjectTaskArg
+    chainId: int
+    contractAddress: string
+    amount: int
 
 const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetBurnFees](argEncoded)
@@ -51,7 +75,7 @@ const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
     var gasTable: Table[ContractTuple, int] # gas per contract
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
     let fee = eth.suggestedFees(arg.chainId).result.toSuggestedFeesDto()
-    let burnGas = community_tokens.estimateRemoteBurn(arg.chainId, arg.contractAddress, arg.tokenIds).result.getInt
+    let burnGas = community_tokens.estimateBurn(arg.chainId, arg.contractAddress, arg.amount).result.getInt
     feeTable[arg.chainId] = fee
     gasTable[(arg.chainId, arg.contractAddress)] = burnGas
     arg.finish(%* {

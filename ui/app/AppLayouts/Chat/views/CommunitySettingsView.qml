@@ -317,8 +317,8 @@ StatusSectionLayout {
                                                                         remotelyDestructTokensList,
                                                                         tokenKey)
                 }
-                onSignBurnTransactionOpened: communityTokensStore.computeBurnFee(chainId)
-                onBurnToken: communityTokensStore.burnToken(tokenKey, amount)
+                onSignBurnTransactionOpened: communityTokensStore.computeBurnFee(tokenKey, amount)
+                onBurnToken: communityTokensStore.burnToken(root.community.id, tokenKey, amount)
                 onAirdropToken: root.goTo(Constants.CommunitySettingsSections.Airdrops)
                 onDeleteToken: communityTokensStore.deleteToken(root.community.id, tokenKey)
 
@@ -329,6 +329,10 @@ StatusSectionLayout {
                     }
 
                     function onSelfDestructFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
+                        mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
+                    }
+
+                    function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
                         mintPanel.setFeesInfo(ethCurrency, fiatCurrency, errorCode)
                     }
 
@@ -354,6 +358,70 @@ StatusSectionLayout {
                             break
                         default:
                             console.warn("Unknown destruction state: "+status)
+                            return
+                        }
+                        Global.displayToastMessage(title,
+                                                   qsTr("View on etherscan"),
+                                                   "",
+                                                   loading,
+                                                   type,
+                                                   url)
+                    }
+
+                    function onAirdropStateChanged(communityId, tokenName, chainName, status, url) {
+                        if (root.community.id !== communityId) {
+                            return
+                        }
+
+                        let title = ""
+                        let loading = false
+                        let type = Constants.ephemeralNotificationType.normal
+                        switch (status) {
+                        case Constants.ContractTransactionStatus.InProgress:
+                            title = qsTr("Airdrop on %1 in progress...").arg(chainName)
+                            loading = true
+                            break
+                        case Constants.ContractTransactionStatus.Completed:
+                            title = qsTr("Airdrop on %1 in complete").arg(chainName)
+                            type = Constants.ephemeralNotificationType.success
+                            break
+                        case Constants.ContractTransactionStatus.Failed:
+                            title = qsTr("Airdrop on %1 failed").arg(chainName)
+                            break
+                        default:
+                            console.warn("Unknown airdrop state: "+status)
+                            return
+                        }
+                        Global.displayToastMessage(title,
+                                                   qsTr("View on etherscan"),
+                                                   "",
+                                                   loading,
+                                                   type,
+                                                   url)
+                    }
+
+                    function onBurnStateChanged(communityId, tokenName, status, url) {
+                        if (root.community.id !== communityId) {
+                            return
+                        }
+
+                        let title = ""
+                        let loading = false
+                        let type = Constants.ephemeralNotificationType.normal
+                        switch (status) {
+                        case Constants.ContractTransactionStatus.InProgress:
+                            title = qsTr("%1 being burned...").arg(tokenName)
+                            loading = true
+                            break
+                        case Constants.ContractTransactionStatus.Completed:
+                            title = qsTr("%1 burning is complete").arg(tokenName)
+                            type = Constants.ephemeralNotificationType.success
+                            break
+                        case Constants.ContractTransactionStatus.Failed:
+                            title = qsTr("%1 burning is failed").arg(tokenName)
+                            break
+                        default:
+                            console.warn("Unknown burning state: "+status)
                             return
                         }
                         Global.displayToastMessage(title,
