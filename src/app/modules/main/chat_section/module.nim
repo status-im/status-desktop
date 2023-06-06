@@ -281,7 +281,6 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
 
   let community = self.controller.getMyCommunity()
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
-#  var allTokenRequirementsMet = false
 
   for id, tokenPermission in community.tokenPermissions:
     let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
@@ -866,7 +865,7 @@ method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tok
     self.view.setAllTokenRequirementsMet(true)
     return
 
-  # we now need to check whether any other permission criteria where met.
+  # we now need to check whether any other permission criteria were met.
   let community = self.controller.getMyCommunity()
   for id, permission in community.tokenPermissions:
     if id != tokenPermission.id:

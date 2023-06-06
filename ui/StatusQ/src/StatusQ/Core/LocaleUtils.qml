@@ -80,9 +80,7 @@ QtObject {
     }
 
     function numberFromLocaleString(num, locale = null) {
-
-        // TODO revert
-        locale = Qt.locale()
+        locale = locale || Qt.locale()
         try {
             return Number.fromLocaleString(locale, num)
         } catch (_) {
