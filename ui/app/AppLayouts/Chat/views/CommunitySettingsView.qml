@@ -447,6 +447,10 @@ StatusSectionLayout {
                 onAirdropClicked: communityTokensStore.airdrop(root.community.id, airdropTokens, addresses)
                 onNavigateToMintTokenSettings: root.goTo(Constants.CommunitySettingsSections.MintTokens)
 
+                onAirdropFeesRequested:
+                    communityTokensStore.computeAirdropFee(
+                        root.community.id, contractKeysAndAmounts, addresses)
+
                 Connections {
                     target: mintPanel
 
@@ -459,6 +463,14 @@ StatusSectionLayout {
                         
                         // Set given addresses as recipients
                         airdropPanel.addAddresses(addresses)
+                    }
+                }
+
+                Connections {
+                    target: rootStore.communityTokensStore
+
+                    function onAirdropFeeUpdated(airdropFees) {
+                        airdropPanel.airdropFees = airdropFees
                     }
                 }
             }

@@ -117,4 +117,8 @@ QtObject {
 
         return true
     }
+
+    function roleNames(model) {
+        return Internal.ModelUtils.roleNames(model)
+    }
 }

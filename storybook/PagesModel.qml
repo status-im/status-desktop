@@ -194,6 +194,10 @@ ListModel {
          section: "Popups"
     }
     ListElement {
+         title: "SignMultiTokenTransactionsPopup"
+         section: "Popups"
+    }
+    ListElement {
          title: "RemotelyDestructPopup"
          section: "Popups"
     }
