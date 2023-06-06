@@ -8,6 +8,7 @@ import utils 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
 
@@ -16,6 +17,7 @@ import AppLayouts.Profile.controls 1.0
 StatusDialog {
     id: root
 
+    property var containsSocialLink: function (text, url) {return false}
     property int linkType: -1
     property string icon
 
@@ -44,12 +46,7 @@ StatusDialog {
         rightButtons: ObjectModel {
             StatusButton {
                 text: qsTr("Update")
-                enabled: {
-                    if (!customTitle.visible)
-                        return linkTarget.text && linkTarget.text !== linkUrl
-                    return linkTarget.text && (linkTarget.text !== linkUrl || (customTitle.text && customTitle.text !== root.linkText))
-                }
-
+                enabled: linkTarget.valid && (!customTitle.visible || customTitle.valid)
                 onClicked: {
                     root.updateLinkRequested(root.uuid, customTitle.text, ProfileUtils.addSocialLinkPrefix(linkTarget.text, root.linkType))
                     root.close()
@@ -82,6 +79,29 @@ StatusDialog {
             text: root.linkText
             charLimit: Constants.maxSocialLinkTextLength
             input.tabNavItem: linkTarget.input.edit
+
+            validators: [
+                StatusValidator {
+                    name: "text-validation"
+                    validate: (value) => {
+                                  return value.trim() !== ""
+                              }
+                    errorMessage: qsTr("Invalid title")
+                },
+                StatusValidator {
+                    name: "check-social-link-existence"
+                    validate: (value) => {
+                                  return !root.containsSocialLink(value,
+                                                                  ProfileUtils.addSocialLinkPrefix(linkTarget.text, root.linkType))
+                              }
+                    errorMessage: root.linkType === Constants.socialLinkType.custom?
+                                      qsTr("Name and link combination already added") :
+                                      qsTr("Link already added")
+                }
+            ]
+
+            onValidChanged: {linkTarget.validate(true)}
+            onTextChanged: {linkTarget.validate(true)}
         }
 
         StaticSocialLinkInput {
@@ -94,6 +114,29 @@ StatusDialog {
             icon: root.icon
             text: root.linkUrl
             input.tabNavItem: customTitle.input.edit
+
+            validators: [
+                StatusValidator {
+                    name: "link-validation"
+                    validate: (value) => {
+                                  return value.trim() !== "" && Utils.validLink(ProfileUtils.addSocialLinkPrefix(value, root.linkType))
+                              }
+                    errorMessage: qsTr("Invalid %1").arg(ProfileUtils.linkTypeToDescription(linkTarget.linkType).toLowerCase() || qsTr("link"))
+                },
+                StatusValidator {
+                    name: "check-social-link-existence"
+                    validate: (value) => {
+                                  return !root.containsSocialLink(customTitle.text,
+                                                                  ProfileUtils.addSocialLinkPrefix(value, root.linkType))
+                              }
+                    errorMessage: root.linkType === Constants.socialLinkType.custom?
+                                      qsTr("Name and link combination already added") :
+                                      qsTr("Link already added")
+                }
+            ]
+
+            onValidChanged: {customTitle.validate(true)}
+            onTextChanged: {customTitle.validate(true)}
         }
     }
 }

@@ -1,4 +1,4 @@
-import NimQml, tables, sequtils, sugar
+import NimQml, tables, strutils, sequtils, sugar
 
 import ../../../app_service/common/social_links
 
@@ -39,10 +39,21 @@ QtObject:
     new(result, delete)
     result.setup
 
+  proc countChanged(self: SocialLinksModel) {.signal.}
+  proc getCount(self: SocialLinksModel): int {.slot.} =
+    self.items.len
+  QtProperty[int] count:
+    read = getCount
+    notify = countChanged
+
+  proc containsSocialLink*(self: SocialLinksModel, text, url: string): bool =
+    return self.items.any(item => cmpIgnoreCase(item.text, text) == 0 and cmpIgnoreCase(item.url, url) == 0)
+
   proc setItems*(self: SocialLinksModel, items: seq[SocialLinkItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
+    self.countChanged()
 
   proc appendItem*(self: SocialLinksModel, item: SocialLinkItem) =
     let parentModelIndex = newQModelIndex()
@@ -50,6 +61,7 @@ QtObject:
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
+    self.countChanged()
 
   proc removeItem*(self: SocialLinksModel, uuid: string): bool =
     for i in 0 ..< self.items.len:
@@ -59,6 +71,7 @@ QtObject:
         self.beginRemoveRows(parentModelIndex, i, i)
         self.items.delete(i)
         self.endRemoveRows()
+        self.countChanged()
         return true
     return false
 

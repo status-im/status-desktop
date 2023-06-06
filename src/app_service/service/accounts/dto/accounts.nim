@@ -4,6 +4,7 @@ import json
 import ../../visual_identity/dto
 
 include ../../../common/json_utils
+import ../../../common/social_links
 
 type
   Image* = object
@@ -28,6 +29,7 @@ type AccountDto* = object
 type WakuBackedUpProfileDto* = object
   displayName*: string
   images*: seq[Image]
+  socialLinks*: SocialLinks
 
 proc isValid*(self: AccountDto): bool =
   result = self.name.len > 0 and self.keyUid.len > 0
@@ -69,7 +71,10 @@ proc toWakuBackedUpProfileDto*(jsonObj: JsonNode): WakuBackedUpProfileDto =
   result = WakuBackedUpProfileDto()
   discard jsonObj.getProp("displayName", result.displayName)
 
-  var imagesObj: JsonNode
-  if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
-    for imgObj in imagesObj:
+  var obj: JsonNode
+  if(jsonObj.getProp("images", obj) and obj.kind == JArray):
+    for imgObj in obj:
       result.images.add(toImage(imgObj))
+
+  if(jsonObj.getProp("socialLinks", obj) and obj.kind == JArray):
+    result.socialLinks = toSocialLinks(obj)

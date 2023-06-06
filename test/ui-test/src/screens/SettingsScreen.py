@@ -440,11 +440,11 @@ class ProfileSettingsView(BaseElement):
         verify_equals(8, len(table))  # Expecting 8 as social media link fields to verify
         links = {
             'Twitter': [table[0][0]],
-            'Personal Site': [table[1][0]],
+            'Personal site': [table[1][0]],
             'Github': [table[2][0]],
-            'YouTube': [table[3][0]],
-            'Discord': [table[4][0]],
-            'Telegram': [table[5][0]],
+            'YouTube channel': [table[3][0]],
+            'Discord handle': [table[4][0]],
+            'Telegram handle': [table[5][0]],
             'Custom link': [table[6][0], table[7][0]],
         }
 
@@ -481,11 +481,11 @@ class ProfileSettingsView(BaseElement):
         links = self.social_links
 
         compare_text(links['Twitter'], twitter)
-        compare_text(links['Personal Site'], personal_site)
+        compare_text(links['Personal site'], personal_site)
         compare_text(links['Github'], github)
-        compare_text(links['YouTube'], youtube)
-        compare_text(links['Discord'], discord)
-        compare_text(links['Telegram'], telegram)
+        compare_text(links['YouTube channel'], youtube)
+        compare_text(links['Discord handle'], discord)
+        compare_text(links['Telegram handle'], telegram)
         compare_text(links[custom_link_text], custom_link)
 
     def verify_social_no_links(self):

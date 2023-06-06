@@ -26,6 +26,7 @@ Control {
     Component {
         id: addSocialLinkModalComponent
         AddSocialLinkModal {
+            containsSocialLink: root.profileStore.containsSocialLink
             onAddLinkRequested: root.profileStore.createLink(linkText, linkUrl, linkType, linkIcon)
         }
     }
@@ -33,6 +34,7 @@ Control {
     Component {
         id: modifySocialLinkModal
         ModifySocialLinkModal {
+            containsSocialLink: root.profileStore.containsSocialLink
             onUpdateLinkRequested: root.profileStore.updateLink(uuid, linkText, linkUrl)
             onRemoveLinkRequested: root.profileStore.removeLink(uuid)
         }
@@ -50,31 +52,31 @@ Control {
                 color: Theme.palette.baseColor1
             }
             Item { Layout.fillWidth: true }
-            StatusLinkText {
-                objectName: "addMoreSocialLinks"
-                text: qsTr("＋ Add more links")
-                color: Theme.palette.primaryColor1
-                font.pixelSize: Theme.tertiaryTextFontSize
-                font.weight: Font.Normal
-                onClicked: Global.openPopup(addSocialLinkModalComponent)
-            }
-        }
-
-        SortFilterProxyModel {
-            id: filteredSocialLinksModel
-            sourceModel: root.socialLinksModel
-            filters: ExpressionFilter {
-                expression: model.text !== "" && model.url !== ""
+            StatusBaseText {
+                text: qsTr("%1/%2").arg(root.profileStore.temporarySocialLinksModel.count).arg(Constants.maxNumOfSocialLinks)
+                color: Theme.palette.baseColor1
             }
         }
 
         // empty placeholder when no links; dashed rounded rectangle
         ShapeRectangle {
+            readonly property bool maxReached: root.profileStore.temporarySocialLinksModel.count === Constants.maxNumOfSocialLinks
+
             Layout.alignment: Qt.AlignHCenter
             Layout.preferredWidth: parent.width - 4 // the rectangular path is rendered outside
             Layout.preferredHeight: 44
-            visible: !filteredSocialLinksModel.count
-            text: qsTr("Your links will appear here")
+            text: maxReached? qsTr("Link limit of %1 reached").arg(Constants.maxNumOfSocialLinks) : ""
+
+            StatusLinkText {
+                objectName: "addMoreSocialLinks"
+                anchors.centerIn: parent
+                visible: !parent.maxReached
+                text: qsTr("＋ Add a link")
+                color: Theme.palette.primaryColor1
+                font.pixelSize: Theme.tertiaryTextFontSize
+                font.weight: Font.Normal
+                onClicked: Global.openPopup(addSocialLinkModalComponent)
+            }
         }
 
         StatusListView {

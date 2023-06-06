@@ -25,6 +25,7 @@ const SIGNAL_CURRENCY_UPDATED* = "currencyUpdated"
 const SIGNAL_DISPLAY_NAME_UPDATED* = "displayNameUpdated"
 const SIGNAL_BIO_UPDATED* = "bioUpdated"
 const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
+const SIGNAL_SOCIAL_LINKS_UPDATED* = "socialLinksUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 
 logScope:
@@ -38,6 +39,13 @@ type
     statusType*: StatusType
     text*: string
 
+  SocialLinksArgs* = ref object of Args
+    socialLinks*: SocialLinks
+    error*: string
+
+  SettingProfilePictureArgs* = ref object of Args
+    value*: int
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -47,7 +55,7 @@ QtObject:
     notifExemptionsCache: Table[string, NotificationsExemptions]
 
   # Forward declaration
-  proc fetchSocialLinks*(self: Service): SocialLinks
+  proc storeSocialLinksAndNotify(self: Service, data: SocialLinksArgs)
   proc initNotificationSettings*(self: Service)
   proc getNotifSettingAllowNotifications*(self: Service): bool
   proc getNotifSettingOneToOneChats*(self: Service): string
@@ -76,7 +84,6 @@ QtObject:
       let response = status_settings.getSettings()
       self.settings = response.result.toSettingsDto()
       self.initNotificationSettings()
-      self.socialLinks = self.fetchSocialLinks()
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -102,6 +109,10 @@ QtObject:
           if settingsField.name == KEY_MNEMONIC:
             self.settings.mnemonic = ""
             self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
+
+      if receivedData.socialLinksInfo.links.len > 0 or
+        receivedData.socialLinksInfo.removed:
+          self.storeSocialLinksAndNotify(SocialLinksArgs(socialLinks: receivedData.socialLinksInfo.links))
 
     self.initialized = true
 
@@ -920,32 +931,38 @@ QtObject:
   proc getSocialLinks*(self: Service): SocialLinks =
     return self.socialLinks
 
-  proc fetchSocialLinks*(self: Service): SocialLinks =
+  proc storeSocialLinksAndNotify(self: Service, data: SocialLinksArgs) =
+    self.socialLinks = data.socialLinks
+    self.events.emit(SIGNAL_SOCIAL_LINKS_UPDATED, data)
+
+  proc fetchAndStoreSocialLinks*(self: Service) =
+    var data = SocialLinksArgs()
     try:
       let response = status_settings.getSocialLinks()
-
       if(not response.error.isNil):
+        data.error = response.error.message
         error "error getting social links", errDescription = response.error.message
-
-      result = toSocialLinks(response.result)
+      data.socialLinks = toSocialLinks(response.result)
     except Exception as e:
+      data.error = e.msg
       error "error getting social links", errDesription = e.msg
+    self.storeSocialLinksAndNotify(data)
 
-  proc setSocialLinks*(self: Service, links: SocialLinks): bool =
-    result = false
+  proc setSocialLinks*(self: Service, links: SocialLinks) =
+    var data = SocialLinksArgs()
     let isValid = all(links, proc (link: SocialLink): bool = common_utils.validateLink(link.url))
-    if (not isValid):
-      error "error saving social links"
-      return result
-
+    if not isValid:
+      data.error = "invalid link provided"
+      error "validation error", errDescription=data.error
+      return
     try:
-      let response = status_settings.setSocialLinks(%*links)
-
-      if(not response.error.isNil):
-        error "error setting social links", errDescription = response.error.message
-
-      self.socialLinks = self.fetchSocialLinks()
-
-      result = true
+      let response = status_settings.addOrReplaceSocialLinks(%*links)
+      if not response.error.isNil:
+        data.error = response.error.message
+        error "error saving social links", errDescription=data.error
+        return
+      data.socialLinks = links
     except Exception as e:
-      error "error setting social links", errDesription = e.msg
+      data.error = e.msg
+      error "error saving social links", errDescription=data.error
+    self.storeSocialLinksAndNotify(data)
