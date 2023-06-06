@@ -300,6 +300,9 @@ method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onCommunityTokenSupplyChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, supply: int, remainingSupply: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onAcceptRequestToJoinFailed*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

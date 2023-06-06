@@ -86,7 +86,7 @@ StatusScrollView {
                 components: [
                     StatusBaseText {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: d.getSubtitle(model.deployState, model.remainingTokens, model.supply, false)
+                        text: d.getSubtitle(model.deployState, model.remainingSupply, model.supply, false)
                         color: (model.deployState === Constants.ContractTransactionStatus.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                         font.pixelSize: 13
                     },
@@ -139,7 +139,7 @@ StatusScrollView {
                 height: collectiblesGrid.cellHeight
                 width: collectiblesGrid.cellWidth
                 title: model.name ? model.name : "..."
-                subTitle: d.getSubtitle(model.deployState, model.remainingTokens, model.supply, true)
+                subTitle: d.getSubtitle(model.deployState, model.remainingSupply, model.supply, true)
                 subTitleColor: (model.deployState === Constants.ContractTransactionStatus.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                 fallbackImageUrl: model.image ? model.image : ""
                 backgroundColor: "transparent"

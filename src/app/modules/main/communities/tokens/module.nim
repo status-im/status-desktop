@@ -19,6 +19,7 @@ type
     Deploy = 1
     Airdrop = 2
     SelfDestruct = 3
+    Burn = 4
 
 type
   Module*  = ref object of io_interface.AccessInterface
@@ -37,6 +38,7 @@ type
     tempWalletAddresses: seq[string]
     tempContractAction: ContractAction
     tempContractUniqueKey: string
+    tempAmount: int
 
 proc newCommunityTokensModule*(
     parent: parent_interface.AccessInterface,
@@ -121,6 +123,13 @@ method selfDestructCollectibles*(self: Module, communityId: string, collectibles
   self.tempContractAction = ContractAction.SelfDestruct
   self.authenticate()
 
+method burnCollectibles*(self: Module, communityId: string, contractUniqueKey: string, amount: int) =
+  self.tempCommunityId = communityId
+  self.tempContractUniqueKey = contractUniqueKey
+  self.tempAmount = amount
+  self.tempContractAction = ContractAction.Burn
+  self.authenticate()
+
 method deployCollectible*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
                         supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, image: string) =
   self.tempAddressFrom = fromAddress
@@ -150,6 +159,8 @@ method onUserAuthenticated*(self: Module, password: string) =
       self.controller.airdropCollectibles(self.tempCommunityId, password, self.tempTokenAndAmountList, self.tempWalletAddresses)
     elif self.tempContractAction == ContractAction.SelfDestruct:
       self.controller.selfDestructCollectibles(self.tempCommunityId, password, self.tempWalletAndAmountList, self.tempContractUniqueKey)
+    elif self.tempContractAction == ContractAction.Burn:
+      self.controller.burnCollectibles(self.tempCommunityId, password, self.tempContractUniqueKey, self.tempAmount)
 
 method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
   self.view.updateDeployFee(ethCurrency, fiatCurrency, errorCode.int)
@@ -160,6 +171,9 @@ method onSelfDestructFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fia
 method onAirdropFeesComputed*(self: Module, args: AirdropFeesArgs) =
   self.view.updateAirdropFees(%args)
 
+method onBurnFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
+  self.view.updateBurnFee(ethCurrency, fiatCurrency, errorCode.int)
+
 method computeDeployFee*(self: Module, chainId: int, accountAddress: string) =
   self.controller.computeDeployFee(chainId, accountAddress)
 
@@ -167,17 +181,30 @@ method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: strin
   let walletAndAmountList = self.getWalletAndAmountListFromJson(collectiblesToBurnJsonString)
   self.controller.computeSelfDestructFee(walletAndAmountList, contractUniqueKey)
 
-method onCommunityTokenDeployStateChanged*(self: Module, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) =
+method computeBurnFee*(self: Module, contractUniqueKey: string, amount: int) =
+  self.controller.computeBurnFee(contractUniqueKey, amount)
+
+proc createUrl(self: Module, chainId: int, transactionHash: string): string =
   let network = self.controller.getNetwork(chainId)
-  let url = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
+  result = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
+
+proc getChainName(self: Module, chainId: int): string =
+  let network = self.controller.getNetwork(chainId)
+  result = if network != nil: network.chainName else: ""
+
+method onCommunityTokenDeployStateChanged*(self: Module, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) =
+  let url = self.createUrl(chainId, transactionHash)
   self.view.emitDeploymentStateChanged(communityId, deployState.int, url)
 
 method onRemoteDestructStateChanged*(self: Module, communityId: string, tokenName: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) =
-  let network = self.controller.getNetwork(chainId)
-  let url = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
+  let url = self.createUrl(chainId, transactionHash)
   self.view.emitRemoteDestructStateChanged(communityId, tokenName, status.int, url)
 
+method onBurnStateChanged*(self: Module, communityId: string, tokenName: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) =
+  let url = self.createUrl(chainId, transactionHash)
+  self.view.emitBurnStateChanged(communityId, tokenName, status.int, url)
+
 method onAirdropStateChanged*(self: Module, communityId: string, tokenName: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) =
-  let network = self.controller.getNetwork(chainId)
-  let url = if network != nil: network.blockExplorerURL & "/tx/" & transactionHash else: ""
-  self.view.emitAirdropStateChanged(communityId, tokenName, status.int, url)
+  let url = self.createUrl(chainId, transactionHash)
+  let chainName = self.getChainName(chainId)
+  self.view.emitAirdropStateChanged(communityId, tokenName, chainName, status.int, url)

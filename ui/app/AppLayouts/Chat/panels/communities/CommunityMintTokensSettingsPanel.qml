@@ -43,13 +43,19 @@ SettingsPageLayout {
     signal mintCollectible(var collectibleItem)
     signal mintAsset(var assetItem)
     signal signMintTransactionOpened(int chainId, string accountAddress)
-    signal signRemoteDestructTransactionOpened(var remotelyDestructTokensList, // [key , amount]
-                                               string tokenKey)
-    signal remotelyDestructCollectibles(var remotelyDestructTokensList, // [key , amount]
-                                        string tokenKey)
-    signal signBurnTransactionOpened(int chainId)
+
+    signal signRemoteDestructTransactionOpened(var selfDestructTokensList, // [key , amount]
+                                             string tokenKey)
+
+    signal remotelyDestructCollectibles(var selfDestructTokensList, // [key , amount]
+                                          string tokenKey)
+
+    signal signBurnTransactionOpened(string tokenKey, int amount)
+
     signal burnToken(string tokenKey, int amount)
-    signal airdropToken(string tokenKey, int type, var addresses)
+
+    signal airdropToken(string tokenKey)
+
     signal deleteToken(string tokenKey)
 
     function setFeeLoading() {
@@ -413,6 +419,7 @@ SettingsPageLayout {
                 remotelyDestructPopup.close()
                 alertPopup.close()
                 signTransactionPopup.close()
+                burnTokensPopup.close()
             }
 
             airdropEnabled: !deployStateFailed
@@ -485,7 +492,7 @@ SettingsPageLayout {
                 onOpened: {
                     root.setFeeLoading()
                     signTransactionPopup.isRemotelyDestructTransaction ? root.signRemoteDestructTransactionOpened(d.remotelyDestructTokensList, d.tokenKey) :
-                                                                         root.signBurnTransactionOpened(d.chainId)
+                                                                         root.signBurnTransactionOpened(d.tokenKey, d.burnAmount)
                 }
                 onCancelClicked: close()
                 onSignTransactionClicked: signTransaction()
@@ -662,7 +669,7 @@ SettingsPageLayout {
                         BindCollectible { property: "description"; value: model.description },
                         BindCollectible { property: "supply"; value: model.supply },
                         BindCollectible { property: "infiniteSupply"; value: model.infiniteSupply },
-                        BindCollectible { property: "remainingTokens"; value: model.remainingTokens },
+                        BindCollectible { property: "remainingTokens"; value: model.remainingSupply },
                         BindCollectible { property: "chainId"; value: model.chainId },
                         BindCollectible { property: "chainName"; value: model.chainName },
                         BindCollectible { property: "chainIcon"; value: model.chainIcon },
@@ -684,7 +691,7 @@ SettingsPageLayout {
                         BindAsset { property: "description"; value: model.description },
                         BindAsset { property: "supply"; value: model.supply },
                         BindAsset { property: "infiniteSupply"; value: model.infiniteSupply },
-                        BindAsset { property: "remainingTokens"; value: model.remainingTokens },
+                        BindAsset { property: "remainingTokens"; value: model.remainingSupply },
                         BindAsset { property: "chainId"; value: model.chainId },
                         BindAsset { property: "chainName"; value: model.chainName },
                         BindAsset { property: "chainIcon"; value: model.chainIcon },

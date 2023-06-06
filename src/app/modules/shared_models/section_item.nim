@@ -328,6 +328,12 @@ proc appendCommunityToken*(self: SectionItem, item: TokenItem) {.inline.} =
 proc updateCommunityTokenDeployState*(self: SectionItem, chainId: int, contractAddress: string, deployState: DeployState) {.inline.} =
   self.communityTokensModel.updateDeployState(chainId, contractAddress, deployState)
 
+proc updateCommunityTokenSupply*(self: SectionItem, chainId: int, contractAddress: string, supply: int) {.inline.} =
+  self.communityTokensModel.updateSupply(chainId, contractAddress, supply)
+
+proc updateCommunityRemainingSupply*(self: SectionItem, chainId: int, contractAddress: string, remainingSupply: int) {.inline.} =
+  self.communityTokensModel.updateRemainingSupply(chainId, contractAddress, remainingSupply)
+
 proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.inline.} =
   self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners)
 

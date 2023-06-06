@@ -14,19 +14,22 @@ type
     chainName*: string
     chainIcon*: string
     accountName*: string
+    remainingSupply*: int
     tokenOwnersModel*: token_owners_model.TokenOwnersModel
 
 proc initTokenItem*(
   tokenDto: CommunityTokenDto,
   network: NetworkDto,
   tokenOwners: seq[CollectibleOwner],
-  accountName: string
+  accountName: string,
+  remainingSupply: int
 ): TokenItem =
   result.tokenDto = tokenDto
   if network != nil:
     result.chainName = network.chainName
     result.chainIcon = network.iconURL
   result.accountName = accountName
+  result.remainingSupply = remainingSupply
   result.tokenOwnersModel = newTokenOwnersModel()
   result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
           # TODO find member with the address - later when airdrop to member will be added
@@ -38,6 +41,7 @@ proc `$`*(self: TokenItem): string =
     tokenDto: {self.tokenDto},
     chainName: {self.chainName},
     chainIcon: {self.chainIcon},
+    remainingSupply: {self.remainingSupply},
     tokenOwnersModel: {self.tokenOwnersModel}
     ]"""
 

@@ -16,12 +16,12 @@ QtObject {
     signal deployFeeUpdated(var ethCurrency, var fiatCurrency, int error)
     signal selfDestructFeeUpdated(var ethCurrency, var fiatCurrency, int error)
     signal airdropFeeUpdated(var airdropFees)
+    signal burnFeeUpdated(var ethCurrency, var fiatCurrency, int error)
 
     signal deploymentStateChanged(string communityId, int status, string url)
-
-    signal burnFeeUpdated(string value) // TO BE REMOVED
-
     signal remoteDestructStateChanged(string communityId, string tokenName, int status, string url)
+    signal burnStateChanged(string communityId, string tokenName, int status, string url)
+    signal airdropStateChanged(string communityId, string tokenName, string chainName, int status, string url)
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
@@ -73,6 +73,18 @@ QtObject {
         function onRemoteDestructStateChanged(communityId, tokenName, status, url) {
             root.remoteDestructStateChanged(communityId, tokenName, status, url)
         }
+
+        function onAirdropStateChanged(communityId, tokenName, chainName, status, url) {
+            root.airdropStateChanged(communityId, tokenName, chainName, status, url)
+        }
+
+        function onBurnStateChanged(communityId, tokenName, status, url) {
+            root.burnStateChanged(communityId, tokenName, status, url)
+        }
+
+        function onBurnFeeUpdated(ethCurrency, fiatCurrency, errorCode) {
+            root.burnFeeUpdated(ethCurrency, fiatCurrency, errorCode)
+        }
     }
 
     function computeDeployFee(chainId, accountAddress) {
@@ -88,15 +100,12 @@ QtObject {
     }
 
     // Burn:
-    function computeBurnFee(chainId) {
-        // TODO BACKEND
-        root.burnFeeUpdated("0,0010 ETH")
-        console.warn("TODO: Compute burn fee backend")
+    function computeBurnFee(tokenKey, amount) {
+        communityTokensModuleInst.computeBurnFee(tokenKey, amount)
     }
 
-    function burnToken(tokenKey, burnAmount) {
-        // TODO BACKEND
-        console.warn("TODO: Burn collectible backend")
+    function burnToken(communityId, tokenKey, burnAmount) {
+        communityTokensModuleInst.burnCollectibles(communityId, tokenKey, burnAmount)
     }
 
     // Airdrop tokens:

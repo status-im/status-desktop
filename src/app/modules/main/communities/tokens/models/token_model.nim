@@ -25,6 +25,7 @@ type
     ChainIcon
     TokenOwnersModel
     AccountName
+    RemainingSupply
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -48,6 +49,26 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.dataChanged(index, index, @[ModelRole.DeployState.int])
+        return
+
+  proc updateSupply*(self: TokenModel, chainId: int, contractAddress: string, supply: int) =
+    for i in 0 ..< self.items.len:
+      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
+        if self.items[i].tokenDto.supply != supply:
+          self.items[i].tokenDto.supply = supply
+          let index = self.createIndex(i, 0, nil)
+          defer: index.delete
+          self.dataChanged(index, index, @[ModelRole.Supply.int])
+        return
+
+  proc updateRemainingSupply*(self: TokenModel, chainId: int, contractAddress: string, remainingSupply: int) =
+    for i in 0 ..< self.items.len:
+      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
+        if self.items[i].remainingSupply != remainingSupply:
+          self.items[i].remainingSupply = remainingSupply
+          let index = self.createIndex(i, 0, nil)
+          defer: index.delete
+          self.dataChanged(index, index, @[ModelRole.RemainingSupply.int])
         return
 
   proc setCommunityTokenOwners*(self: TokenModel, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) =
@@ -108,6 +129,7 @@ QtObject:
       ModelRole.ChainIcon.int:"chainIcon",
       ModelRole.TokenOwnersModel.int:"tokenOwnersModel",
       ModelRole.AccountName.int:"accountName",
+      ModelRole.RemainingSupply.int:"remainingSupply",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -152,6 +174,8 @@ QtObject:
         result = newQVariant(item.tokenOwnersModel)
       of ModelRole.AccountName:
         result = newQVariant(item.accountName)
+      of ModelRole.RemainingSupply:
+        result = newQVariant(item.remainingSupply)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:
