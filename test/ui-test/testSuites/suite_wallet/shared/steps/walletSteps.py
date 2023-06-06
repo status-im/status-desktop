@@ -5,8 +5,6 @@ from screens.StatusWalletScreen import VALUE_YES
 from screens.components.authenticate_popup import AuthenticatePopup
 from scripts.decorators import verify_screenshot
 
-import walletInitSteps as wallet_init_steps
-
 _statusMain = StatusMainScreen()
 _walletScreen = StatusWalletScreen()
 
@@ -26,7 +24,7 @@ def step(context):
 
 @When("the user opens wallet section")
 def step(context):
-    wallet_init_steps.the_user_opens_wallet_screen()
+    walletInitSteps.the_user_opens_wallet_screen()
 
 @When("the user clicks on the default wallet account")
 def step(context):

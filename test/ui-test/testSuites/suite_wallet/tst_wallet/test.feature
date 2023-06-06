@@ -3,12 +3,12 @@ Feature: Status Desktop Wallet
     As a user I want to use the wallet
 
     The feature start sequence is the following (setup on its own `bdd_hooks`):
-
-    ** given A first time user lands on the status desktop and generates new key
-    ** when user signs up with username "tester123" and password "TesTEr16843/!@00"
-    ** and the user lands on the signed in app
-    ** and the user opens the wallet section
-    ** and the user accepts the signing phrase
+Background:
+    Given A first time user lands on the status desktop and generates new key
+	And the user signs up with username "tester123" and password "TesTEr16843/!@00"
+	And the user lands on the signed in app
+    And the user opens the wallet section
+    And the user accepts the signing phrase
 
 	#############################################
 	# WALLET SECTION PART
