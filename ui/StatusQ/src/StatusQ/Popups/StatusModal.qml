@@ -182,12 +182,6 @@ StatusDialog {
     */
     property bool hasFloatingButtons: false
 
-    /*!
-       \qmlproperty destroyOnClose
-        This property decides whether the popup component should be destroyed when closed. Default value is true.
-    */
-    property bool destroyOnClose: true
-
     signal editButtonClicked()
     signal headerImageClicked()
 

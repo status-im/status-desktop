@@ -286,8 +286,5 @@ Item {
                 onCountChanged: currentIndex = 0
             }
         }
-        onClosed: {
-            suggestionsDialog.destroy();
-        }
     }
 }

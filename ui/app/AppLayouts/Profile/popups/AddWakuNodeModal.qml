@@ -12,12 +12,11 @@ import StatusQ.Popups 0.1
 import utils 1.0
 
 StatusModal {
-    id: popup
+    id: root
 
     property var messagingStore
     property var advancedStore
 
-    anchors.centerIn: parent
     height: 560
     padding: 8
     headerSettings.title: qsTr("Waku nodes")
@@ -64,7 +63,7 @@ StatusModal {
             enabled: addrInput.valid
             onClicked: {
                 root.messagingStore.saveNewWakuNode(addrInput.text)
-                popup.close()
+                root.close()
             }
         }
     ]

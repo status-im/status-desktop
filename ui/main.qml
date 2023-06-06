@@ -347,10 +347,6 @@ StatusWindow {
         anchors.fill: parent
     }
 
-    NotificationWindow {
-        id: notificationWindow
-    }
-
     MacTrafficLights { // FIXME should be a direct part of StatusAppNavBar
         anchors.left: parent.left
         anchors.top: parent.top
