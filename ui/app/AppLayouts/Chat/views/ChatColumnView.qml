@@ -102,7 +102,7 @@ Item {
     QtObject {
         id: d
 
-        property var activeChatContentModule: d.getChatContentModule(root.activeChatId)
+        readonly property var activeChatContentModule: d.getChatContentModule(root.activeChatId)
 
         readonly property UsersStore activeUsersStore: UsersStore {
             usersModule: !!d.activeChatContentModule ? d.activeChatContentModule.usersModule : null
@@ -154,22 +154,7 @@ Item {
             chatInput.validateImagesAndShowImageArea(filesList)
         }
 
-        function fixUsersStore() {
-            d.activeUsersStore.usersModule = Qt.binding(() => {
-                                                            return !!d.activeChatContentModule ? d.activeChatContentModule.usersModule : null
-                                                        })
-        }
-
-        function fixMessageStore() {
-            d.activeMessagesStore.messageModule = Qt.binding(() => {
-                                                                 return d.activeChatContentModule ? d.activeChatContentModule.messagesModule : null
-                                                             })
-        }
-
-        onActiveChatContentModuleChanged: {
-            // Force immediate update of dependand stores
-            d.fixUsersStore()
-            d.fixMessageStore()
+        function restoreInputState() {
 
             if (!d.activeChatContentModule) {
                 chatInput.textInput.text = ""
@@ -185,11 +170,11 @@ Item {
             d.restoreInputReply()
             d.restoreInputAttachments()
         }
-    }
 
-    Component.onCompleted: {
-        d.fixUsersStore()
-        d.fixMessageStore()
+        onActiveChatContentModuleChanged: {
+            // Call later to make sure activeUsersStore and activeMessagesStore bindings are updated
+            Qt.callLater(d.restoreInputState)
+        }
     }
 
     EmptyChatPanel {

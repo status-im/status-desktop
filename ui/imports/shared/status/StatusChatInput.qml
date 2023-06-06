@@ -273,10 +273,6 @@ Rectangle {
             control.stickersPopup.close()
         }
 
-        if (popup !== gifPopup) {
-            gifPopup.close()
-        }
-
         if (popup !== emojiPopup) {
             emojiPopup.close()
         }
@@ -1057,7 +1053,6 @@ Rectangle {
         id: gifPopupComponent
 
         StatusGifPopup {
-            id: gifPopup
             width: 360
             height: 440
             x: control.width - width - Style.current.halfPadding
