@@ -36,7 +36,7 @@ StatusSectionLayout {
     property bool requirementsMet: true
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
-    property alias loginType: overlayPannel.loginType
+    property alias loginType: overlayPanel.loginType
 
     property var communityHoldingsModel
     property var viewOnlyHoldingsModel
@@ -167,7 +167,7 @@ StatusSectionLayout {
         // Blur background:
         Item {
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(centralPanelData.implicitHeight, parent.height - overlayPannel.implicitHeight)
+            Layout.preferredHeight: Math.min(centralPanelData.implicitHeight, parent.height - overlayPanel.implicitHeight)
 
             ColumnLayout {
                 id: centralPanelData
@@ -249,27 +249,34 @@ StatusSectionLayout {
                 anchors.fill: parent
                 padding: 0
 
-                JoinPermissionsOverlayPanel {
-                    id: overlayPannel
+                Item {
+                    implicitHeight: Math.max(overlayPanel.implicitHeight, panelBase.height)
+                    implicitWidth: Math.max(overlayPanel.implicitWidth, panelBase.width)
 
-                    topPadding: 2 * bottomPadding
-                    joinCommunity: root.joinCommunity
-                    requirementsMet: root.requirementsMet
-                    isInvitationPending: root.isInvitationPending
-                    isJoinRequestRejected: root.isJoinRequestRejected
-                    requiresRequest: root.requiresRequest
-                    communityName: root.name
-                    communityHoldingsModel: root.communityHoldingsModel
-                    channelName: root.channelName
+                    JoinPermissionsOverlayPanel {
+                        id: overlayPanel
 
-                    viewOnlyHoldingsModel: root.viewOnlyHoldingsModel
-                    viewAndPostHoldingsModel: root.viewAndPostHoldingsModel
-                    moderateHoldingsModel: root.moderateHoldingsModel
-                    assetsModel: root.assetsModel
-                    collectiblesModel: root.collectiblesModel
+                        anchors.centerIn: parent
 
-                    onRevealAddressClicked: root.revealAddressClicked()
-                    onInvitationPendingClicked: root.invitationPendingClicked()
+                        topPadding: 2 * bottomPadding
+                        joinCommunity: root.joinCommunity
+                        requirementsMet: root.requirementsMet
+                        isInvitationPending: root.isInvitationPending
+                        isJoinRequestRejected: root.isJoinRequestRejected
+                        requiresRequest: root.requiresRequest
+                        communityName: root.name
+                        communityHoldingsModel: root.communityHoldingsModel
+                        channelName: root.channelName
+
+                        viewOnlyHoldingsModel: root.viewOnlyHoldingsModel
+                        viewAndPostHoldingsModel: root.viewAndPostHoldingsModel
+                        moderateHoldingsModel: root.moderateHoldingsModel
+                        assetsModel: root.assetsModel
+                        collectiblesModel: root.collectiblesModel
+
+                        onRevealAddressClicked: root.revealAddressClicked()
+                        onInvitationPendingClicked: root.invitationPendingClicked()
+                    }
                 }
             }
         }
