@@ -97,11 +97,11 @@ proc toImages(jsonObj: JsonNode): Images =
 
   var largeObj: JsonNode
   if(jsonObj.getProp("large", largeObj)):
-    discard largeObj.getProp("uri", result.large)
+    discard largeObj.getProp("localUrl", result.large)
 
   var thumbnailObj: JsonNode
   if(jsonObj.getProp("thumbnail", thumbnailObj)):
-    discard thumbnailObj.getProp("uri", result.thumbnail)
+    discard thumbnailObj.getProp("localUrl", result.thumbnail)
 
 proc toContactRequestState*(value: int): ContactRequestState =
   result = ContactRequestState.None
