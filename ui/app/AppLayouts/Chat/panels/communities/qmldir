@@ -15,3 +15,4 @@ SortableTokenHoldersPanel 1.0 SortableTokenHoldersPanel.qml
 TokenHoldersPanel 1.0 TokenHoldersPanel.qml
 TokenHoldersProxyModel 1.0 TokenHoldersProxyModel.qml
 WarningPanel 1.0 WarningPanel.qml
+ChatPermissionQualificationPanel 1.0 ChatPermissionQualificationPanel.qml
