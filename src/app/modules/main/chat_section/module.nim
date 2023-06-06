@@ -280,23 +280,14 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
 
   let community = self.controller.getMyCommunity()
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
-  var allTokenRequirementsMet = false
 
   for id, tokenPermission in community.tokenPermissions:
     # TODO: for startes we only deal with "become member" permissions
     if tokenPermission.`type` == TokenPermissionType.BecomeMember:
       let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
-
-      # multiple permissions of the same type act as logical OR
-      # so if at least one of them is fulfilled we can mark the view
-      # as all lights green
-      if tokenPermissionItem.tokenCriteriaMet:
-          allTokenRequirementsMet = true
-
       tokenPermissionsItems.add(tokenPermissionItem)
 
   self.view.tokenPermissionsModel().setItems(tokenPermissionsItems)
-  self.view.setAllTokenRequirementsMet(allTokenRequirementsMet)
   self.view.setRequiresTokenPermissionToJoin(tokenPermissionsItems.len > 0)
 
 proc initCommunityTokenPermissionsModel(self: Module) =
@@ -397,6 +388,7 @@ method onChatsLoaded*(
     let community = self.controller.getMyCommunity()
     self.view.setAmIMember(community.joined)
     self.initCommunityTokenPermissionsModel()
+    self.controller.asyncCheckPermissionsToJoin()
 
   let activeChatId = self.controller.getActiveChatId()
   let isCurrentSectionActive = self.controller.getIsCurrentSectionActive()
@@ -792,33 +784,54 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
   if tokenPermission.`type` == TokenPermissionType.BecomeMember:
     let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
 
-    if tokenPermissionItem.tokenCriteriaMet:
-      self.view.setAllTokenRequirementsMet(true)
-
     self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
     self.view.setRequiresTokenPermissionToJoin(true)
   singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
+
+method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
+  let community = self.controller.getMyCommunity()
+
+  self.view.setAllTokenRequirementsMet(checkPermissionsToJoinResponse.satisfied)
+  for id, criteriaResult in checkPermissionsToJoinResponse.permissions:
+    if community.tokenPermissions.hasKey(id):
+
+      let tokenPermissionItem = self.view.tokenPermissionsModel.getItemById(id)
+
+      var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
+      var permissionSatisfied = true
+
+      for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
+
+        let updatedTokenCriteriaItem = initTokenCriteriaItem(
+          tokenCriteriaItem.symbol,
+          tokenCriteriaItem.name,
+          tokenCriteriaItem.amount,
+          tokenCriteriaItem.`type`,
+          tokenCriteriaItem.ensPattern,
+          criteriaResult.criteria[index]
+        )
+
+        if criteriaResult.criteria[index] == false:
+          permissionSatisfied = false
+
+        updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
+
+      let updatedTokenPermissionItem = initTokenPermissionItem(
+          tokenPermissionItem.id, 
+          tokenPermissionItem.`type`,
+          updatedTokenCriteriaItems,
+          @[], # TODO: handle chat list items
+          tokenPermissionItem.isPrivate,
+          permissionSatisfied
+      )
+      self.view.tokenPermissionsModel.updateItem(id, updatedTokenPermissionItem)
+
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   if tokenPermission.`type` == TokenPermissionType.BecomeMember:
     let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
     self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
-    if tokenPermissionItem.tokenCriteriaMet:
-      self.view.setAllTokenRequirementsMet(true)
-      return
 
-    # we now need to check whether any other permission criteria where met.
-    let community = self.controller.getMyCommunity()
-    for id, permission in community.tokenPermissions:
-      if id != tokenPermission.id:
-        for tc in permission.tokenCriteria:
-          let balance = self.controller.allAccountsTokenBalance(tc.symbol)
-          let amount = tc.amount.parseFloat
-          let tokenCriteriaMet = balance >= amount
-          if tokenCriteriaMet:
-            return
-
-    self.view.setAllTokenRequirementsMet(false)
   singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
 
 method onCommunityTokenPermissionCreationFailed*(self: Module, communityId: string) =
@@ -1283,33 +1296,17 @@ method requestToJoinCommunityWithAuthentication*(self: Module, communityId: stri
 
 proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem =
   var tokenCriteriaItems: seq[TokenCriteriaItem] = @[]
-  var allTokenCriteriaMet = true
 
   for tc in tokenPermission.tokenCriteria:
-
-    var tokenCriteriaMet = false
-    let amount = tc.amount.parseFloat
-
-    if tc.`type` == TokenType.ERC20:
-      let balance = self.controller.allAccountsTokenBalance(tc.symbol)
-      tokenCriteriaMet = balance >= amount
-
-    if tc.`type` == TokenType.ERC721:
-      for chainId, address in tc.contractAddresses:
-        tokenCriteriaMet = self.controller.ownsCollectible(chainId, address, tc.tokenIds)
-        if tokenCriteriaMet:
-          break
 
     let tokenCriteriaItem = initTokenCriteriaItem(
       tc.symbol,
       tc.name,
-      amount,
+      tc.amount.parseFloat,
       tc.`type`.int,
       tc.ensPattern,
-      tokenCriteriaMet
+      false # tokenCriteriaMet will be updated by a call to checkPermissionsToJoin
     )
-    if not tokenCriteriaMet:
-      allTokenCriteriaMet = false
 
     tokenCriteriaItems.add(tokenCriteriaItem)
 
@@ -1319,7 +1316,7 @@ proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPerm
       tokenCriteriaItems,
       @[], # TODO: handle chat list items
       tokenPermission.isPrivate,
-      allTokenCriteriaMet
+      false # allTokenCriteriaMet will be update by a call to checkPermissinosToJoin
   )
 
   return tokenPermissionItem

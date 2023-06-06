@@ -102,3 +102,22 @@ const asyncRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.gcsafe,
       "ensName": arg.ensName,
       "password": arg.password
     })
+
+type
+  AsyncCheckPermissionsToJoinTaskArg = ref object of QObjectTaskArg
+    communityId: string
+
+const asyncCheckPermissionsToJoinTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncCheckPermissionsToJoinTaskArg](argEncoded)
+  try:
+    let response = status_go.checkPermissionsToJoinCommunity(arg.communityId)
+    arg.finish(%* {
+      "response": response,
+      "communityId": arg.communityId,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "error": e.msg,
+    })

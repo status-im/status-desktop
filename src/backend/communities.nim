@@ -39,6 +39,11 @@ proc requestToJoinCommunity*(communityId: string, ensName: string, password: str
     "password": if passwordToSend != "": utils.hashPassword(password) else: ""
   }])
 
+proc checkPermissionsToJoinCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("checkPermissionsToJoinCommunity".prefix, %*[{
+    "communityId": communityId
+  }])
+
 proc myPendingRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result =  callPrivateRPC("myPendingRequestsToJoin".prefix)
 

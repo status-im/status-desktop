@@ -111,6 +111,10 @@ type
     totalChunksCount*: int
     currentChunk*: int
 
+  CheckPermissionsToJoinResponseArgs* = ref object of Args
+    communityId*: string
+    checkPermissionsToJoinResponse*: CheckPermissionsToJoinResponseDto
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -171,6 +175,8 @@ const SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED* = "communityInfoAlreadyRequested"
 
 const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
 const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
+
+const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinResponse"
 
 QtObject:
   type
@@ -1361,6 +1367,33 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(community: community))
 
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
+
+  proc asyncCheckPermissionsToJoin*(self: Service, communityId: string) =
+    try:
+      let arg = AsyncCheckPermissionsToJoinTaskArg(
+        tptr: cast[ByteAddress](asyncCheckPermissionsToJoinTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onAsyncCheckPermissionsToJoinDone",
+        communityId: communityId
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error checking permissions to join community", msg = e.msg 
+
+  proc onAsyncCheckPermissionsToJoinDone*(self: Service, rpcResponse: string) {.slot.} =
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        let error = Json.decode($rpcResponseObj["error"], RpcError)
+        error "Error requesting community info", msg = error.message
+        return
+
+      let communityId = rpcResponseObj{"communityId"}.getStr()
+      let checkPermissionsToJoinResponse = rpcResponseObj["response"]["result"].toCheckPermissionsToJoinResponseDto
+      self.events.emit(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE, CheckPermissionsToJoinResponseArgs(communityId: communityId, checkPermissionsToJoinResponse: checkPermissionsToJoinResponse))
+    except Exception as e:
+      let errMsg = e.msg
+      error "error checking permissions to join: ", errMsg
 
   proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string) =
     try:

@@ -257,6 +257,7 @@ proc init*(self: Controller) =
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionCreated(args.communityId, args.tokenPermission)
+        self.communityService.asyncCheckPermissionsToJoin(self.sectionId)
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
@@ -267,6 +268,8 @@ proc init*(self: Controller) =
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionUpdated(args.communityId, args.tokenPermission)
+        self.communityService.asyncCheckPermissionsToJoin(self.sectionId)
+
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
@@ -277,11 +280,17 @@ proc init*(self: Controller) =
       let args = CommunityTokenPermissionRemovedArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionDeleted(args.communityId, args.permissionId)
+        self.communityService.asyncCheckPermissionsToJoin(self.sectionId)
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionDeletionFailed(args.communityId)
+
+    self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE) do(e: Args):
+      let args = CheckPermissionsToJoinResponseArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCommunityCheckPermissionsToJoinResponse(args.checkPermissionsToJoinResponse)
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED) do(e: Args):
       let args = CommunityTokenMetadataArgs(e)
@@ -660,3 +669,6 @@ proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int,
 
 proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(self.getMySectionId())
+
+proc asyncCheckPermissionsToJoin*(self: Controller) =
+  self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId())
