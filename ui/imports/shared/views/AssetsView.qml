@@ -71,7 +71,16 @@ Item {
             readonly property string balance: !!modelData ? "%1".arg(modelData.enabledNetworkBalance.amount) : "" // Needed for the tests
             errorTooltipText_1: !!modelData && !! networkConnectionStore ? networkConnectionStore.getBlockchainNetworkDownTextForToken(modelData.balances) : ""
             errorTooltipText_2: !!networkConnectionStore ? networkConnectionStore.getMarketNetworkDownText() : ""
-            subTitle: !modelData || (!!networkConnectionStore && !networkConnectionStore.noTokenBalanceAvailable) ? "" :  LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
+            subTitle: {
+                if (!modelData) {
+                    return ""
+                }
+                if (networkConnectionStore && networkConnectionStore.noTokenBalanceAvailable) {
+                    return ""
+                }
+                return LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
+                
+            }
             errorMode: !!networkConnectionStore ? networkConnectionStore.noBlockchainConnectionAndNoCache && !networkConnectionStore.noMarketConnectionAndNoCache : false
             errorIcon.tooltip.text: !!networkConnectionStore ? networkConnectionStore.noBlockchainConnectionAndNoCacheText : ""
             onClicked: {
