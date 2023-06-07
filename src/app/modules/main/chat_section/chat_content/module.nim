@@ -183,7 +183,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     contactDetails.dto.added,
     message.outgoingStatus,
     self.controller.getRenderedText(message.parsedText, communityChats),
-    self.controller.replacePubKeysWithDisplayNames(message.text),
+    message.text,
     message.parsedText,
     message.image,
     message.containsContactMentions(),

@@ -273,9 +273,6 @@ proc getNumOfPinnedMessages*(self: Controller): int =
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText], communityChats: seq[ChatDto]): string =
   return self.messageService.getRenderedText(parsedTextArray, communityChats)
 
-proc replacePubKeysWithDisplayNames*(self: Controller, message: string): string =
-  return self.messageService.replacePubKeysWithDisplayNames(message)
-
 proc deleteMessage*(self: Controller, messageId: string) =
   self.messageService.deleteMessage(messageId)
 
