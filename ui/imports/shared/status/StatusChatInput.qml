@@ -36,8 +36,6 @@ Rectangle {
     property var emojiPopup: null
     property var stickersPopup: null
     // Use this to only enable the Connections only when this Input opens the Emoji popup
-    property bool emojiPopupOpened: false
-    property bool stickersPopupOpened: false
     property bool closeGifPopupAfterSelection: true
 
     property bool emojiEvent: false
@@ -130,31 +128,46 @@ Rectangle {
         property int leftOfMentionIndex: -1
         property int rightOfMentionIndex: -1
         readonly property int nbEmojisInClipboard: StatusQUtils.Emoji.nbEmojis(QClipboardProxy.html)
+
+        property bool emojiPopupOpened: false
+        property bool stickersPopupOpened: false
+
+        // common popups are emoji, jif and stickers
+        // Put controlWidth as argument with default value for binding
+        function getCommonPopupRelativePosition(popup, popupParent, controlWidth = control.width) {
+            const controlX = controlWidth - emojiPopup.width - Style.current.halfPadding
+            const controlY = -emojiPopup.height
+            return popupParent.mapFromItem(control, controlX, controlY)
+        }
+
+        readonly property point emojiPopupPosition: getCommonPopupRelativePosition(emojiPopup, emojiBtn)
+        readonly property point stickersPopupPosition: getCommonPopupRelativePosition(stickersPopup, stickersBtn)
+
         readonly property StateGroup emojiPopupTakeover: StateGroup {
             states: State {
-                when: control.emojiPopupOpened
+                when: d.emojiPopupOpened
 
                 PropertyChanges {
                     target: emojiPopup
 
-                    parent: control
+                    parent: emojiBtn
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                    x: control.width - emojiPopup.width - Style.current.halfPadding
-                    y: -emojiPopup.height
+                    x: d.emojiPopupPosition.x
+                    y: d.emojiPopupPosition.y
                 }
             }
         }
         readonly property StateGroup stickersPopupTakeover: StateGroup {
             states: State {
-                when: control.stickersPopupOpened
+                when: d.stickersPopupOpened
 
                 PropertyChanges {
                     target: stickersPopup
 
-                    parent: control
+                    parent: stickersBtn
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                    x: control.width - stickersPopup.width - Style.current.halfPadding
-                    y: -stickersPopup.height
+                    x: d.stickersPopupPosition.x
+                    y: d.stickersPopupPosition.y
                 }
             }
         }
@@ -268,26 +281,8 @@ Rectangle {
         messageInputField.insert(start, text.replace(/\n/g, "<br/>"));
     }
 
-    function togglePopup(popup, btn) {
-        if (popup !== control.stickersPopup) {
-            control.stickersPopup.close()
-        }
-
-        if (popup !== emojiPopup) {
-            emojiPopup.close()
-        }
-
-        if (popup.opened) {
-            popup.close()
-            btn.highlighted = false
-        } else {
-            popup.open()
-            btn.highlighted = true
-        }
-    }
-
     Connections {
-        enabled: control.emojiPopupOpened
+        enabled: d.emojiPopupOpened
         target: emojiPopup
 
         function onEmojiSelected(text: string, atCursor: bool) {
@@ -296,13 +291,12 @@ Rectangle {
             messageInputField.forceActiveFocus();
         }
         function onClosed() {
-            emojiBtn.highlighted = false
-            control.emojiPopupOpened = false
+            d.emojiPopupOpened = false
         }
     }
 
     Connections {
-        enabled: control.stickersPopupOpened
+        enabled: d.stickersPopupOpened
         target: control.stickersPopup
 
         function onStickerSelected(hashId: string, packId: string, url: string ) {
@@ -311,8 +305,7 @@ Rectangle {
             messageInputField.forceActiveFocus();
         }
         function onClosed() {
-            stickersBtn.highlighted = false
-            control.stickersPopupOpened = false
+            d.stickersPopupOpened = false
         }
     }
 
@@ -1053,11 +1046,7 @@ Rectangle {
         id: gifPopupComponent
 
         StatusGifPopup {
-            readonly property point relativePosition: {
-                const controlX = control.width - width - Style.current.halfPadding
-                const controlY = -height
-                return parent.mapFromItem(control, controlX, controlY)
-            }
+            readonly property point relativePosition: d.getCommonPopupRelativePosition(this, parent)
 
             width: 360
             height: 440
@@ -1480,9 +1469,14 @@ Rectangle {
                                                                      : Theme.palette.baseColor1
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                                 color: "transparent"
+                                highlighted: d.emojiPopupOpened
                                 onClicked: {
-                                    control.emojiPopupOpened = true
-                                    togglePopup(emojiPopup, emojiBtn)
+                                    if (d.emojiPopupOpened) {
+                                        emojiPopup.close()
+                                        return
+                                    }
+                                    d.emojiPopupOpened = true
+                                    emojiPopup.open()
                                 }
                             }
 
@@ -1523,9 +1517,14 @@ Rectangle {
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                                 visible: !isEdit && emojiBtn.visible
                                 color: "transparent"
+                                highlighted: d.stickersPopupOpened
                                 onClicked: {
-                                    control.stickersPopupOpened = true
-                                    togglePopup(control.stickersPopup, stickersBtn)
+                                    if (d.stickersPopupOpened) {
+                                        control.stickersPopup.close()
+                                        return
+                                    }
+                                    d.stickersPopupOpened = true
+                                    control.stickersPopup.open()
                                 }
                             }
                         }
