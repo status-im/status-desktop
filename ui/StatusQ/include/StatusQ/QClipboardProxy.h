@@ -52,6 +52,9 @@ public:
         return new QClipboardProxy;
     }
 
+    Q_INVOKABLE bool isValidImageUrl(const QUrl &url, const QStringList &acceptedExtensions) const;
+    Q_INVOKABLE qint64 getFileSize(const QUrl &url) const;
+
 signals:
     void contentChanged();
 };
