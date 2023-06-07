@@ -1,9 +1,9 @@
 import io_interface
 
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/profile/service as profile_service
-import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/common/social_links
+import app/core/eventemitter
+import app_service/service/profile/service as profile_service
+import app_service/service/settings/service as settings_service
+import app_service/common/social_links
 
 type
   Controller* = ref object of RootObj

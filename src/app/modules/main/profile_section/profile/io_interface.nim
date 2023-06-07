@@ -1,5 +1,5 @@
 import NimQml
-import ../../../../../app_service/common/social_links
+import app_service/common/social_links
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

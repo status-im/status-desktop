@@ -2,15 +2,15 @@ import NimQml, chronicles, sequtils, sugar
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
-import ../../../../global/global_singleton
+import app/global/global_singleton
 
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/profile/service as profile_service
-import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/common/social_links
+import app/core/eventemitter
+import app_service/service/profile/service as profile_service
+import app_service/service/settings/service as settings_service
+import app_service/common/social_links
 
-import ../../../shared_models/social_links_model
-import ../../../shared_models/social_link_item
+import app/modules/shared_models/social_links_model
+import app/modules/shared_models/social_link_item
 
 export io_interface
 
