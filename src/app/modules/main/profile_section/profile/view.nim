@@ -1,8 +1,8 @@
 import NimQml, json
 
 import io_interface
-import ../../../shared_models/social_links_model
-import ../../../shared_models/social_link_item
+import app/modules/shared_models/social_links_model
+import app/modules/shared_models/social_link_item
 
 QtObject:
   type
