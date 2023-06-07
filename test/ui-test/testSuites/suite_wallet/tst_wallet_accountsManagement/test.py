@@ -1,7 +1,8 @@
 source(findFile('scripts', 'python/bdd.py'))
 
-setupHooks('bdd_hooks.py')
-collectStepDefinitions('./steps', '../shared/steps/', '../../global_shared/steps/', '../../suite_onboarding/shared/steps/')
+setupHooks('../../global_shared/scripts/bdd_hooks.py')
+collectStepDefinitions('./steps', '../shared/steps/', '../../global_shared/steps/',
+                       '../../suite_onboarding/shared/steps/', '../../suite_wallet/steps/')
 
 import configs
 

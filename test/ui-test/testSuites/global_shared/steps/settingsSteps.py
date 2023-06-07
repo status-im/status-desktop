@@ -104,11 +104,11 @@ def step(context: any, account_name: str, password: str):
     _statusMain.open_settings()
     _settingsScreen.delete_account(account_name, password)
 
-@When("the user selects the default account")
+@When("the user selects the default Status account")
 def step(context: any):
     _settingsScreen.select_default_account()
 
-@When("the user edits default account to \"|any|\" name and \"|any|\" color")
+@When("the user edits default Status account to \"|any|\" name and \"|any|\" color")
 def step(context: any, account_name: str,  account_color: str):
     _settingsScreen.edit_account(account_name, account_color)
 
