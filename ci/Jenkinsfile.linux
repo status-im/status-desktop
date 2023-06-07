@@ -86,6 +86,13 @@ pipeline {
           sh 'make nim_status_client'
         } }
       } }
+      post {
+        failure {
+          archiveArtifacts('strace.log')
+          archiveArtifacts('coredump.*')
+          archiveArtifacts('/var/lib/systemd/coredump/*')
+        }
+      }
     }
 
     stage('Package') {
