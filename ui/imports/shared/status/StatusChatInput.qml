@@ -943,7 +943,15 @@ Rectangle {
         target: Global.dragArea
         ignoreUnknownSignals: true
         function onDroppedOnValidScreen(drop) {
-            if (validateImagesAndShowImageArea(drop.urls)) {
+            let dropUrls = drop.urls
+            if (!drop.hasUrls) {
+                console.warn("Trying to drop, list of URLs is empty tho; formats:", drop.formats)
+                if (drop.formats.includes("text/x-moz-url"))  { // Chrome uses a non-standard MIME type
+                    dropUrls = drop.getDataAsString("text/x-moz-url")
+                }
+            }
+
+            if (validateImagesAndShowImageArea(dropUrls)) {
                 drop.acceptProposedAction()
             }
         }
