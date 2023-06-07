@@ -76,7 +76,7 @@ Item {
                         statusChatListItems.itemAtIndex(from).categoryId,
                         statusChatListItems.itemAtIndex(to).categoryPosition
                     );
-                    
+
                 } else {
                     root.chatItemReordered(
                         statusChatListItems.itemAtIndex(to).categoryId,
@@ -174,7 +174,6 @@ Item {
                         selected: (model.active && root.highlightItem)
                         asset.emoji: !!model.emoji ? model.emoji : ""
                         asset.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
-                        asset.isImage: model.icon.includes("data")
                         asset.name: model.icon
                         ringSettings.ringSpecModel: type === StatusChatListItem.Type.OneToOneChat && root.isEnsVerified(chatId) ? undefined : model.colorHash
                         onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive

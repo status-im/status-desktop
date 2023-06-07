@@ -60,7 +60,6 @@ StatusListItem {
     asset.letterSize: asset._twoLettersSize
     asset.charactersLen: 2
     asset.name: root.iconSource
-    asset.isImage: asset.name.includes("data")
     asset.isLetterIdenticon: root.iconSource.toString() === ""
     ringSettings {
         ringSpecModel: Utils.getColorHashAsJson(root.publicKey, root.ensVerified)

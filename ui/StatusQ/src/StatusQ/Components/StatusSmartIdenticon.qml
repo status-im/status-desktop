@@ -24,8 +24,12 @@ Loader {
         distinctiveColors: Theme.palette.identiconRingColors
     }
 
-    sourceComponent: root.loading ?  loadingComp : (root.asset.isLetterIdenticon || root.asset.name === "") ? letterIdenticon :
-                     !root.asset.isImage ? roundedIcon : roundedImage
+    sourceComponent: {
+        if (root.loading) return loadingComp
+        if (root.asset.isLetterIdenticon || root.asset.name === "") return letterIdenticon
+        if (root.asset.isImage) return roundedImage
+        return roundedIcon
+    }
 
     property bool loading: false
     property bool hoverEnabled: false
