@@ -198,7 +198,7 @@ Rectangle {
                 readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
                 width: ListView.view.width - Style.current.padding * 2
                 highlighted: !ListView.view.footerItem.button.highlighted &&
-                             RootStore.overview.name === model.name
+                             RootStore.overview.mixedcaseAddress.toLowerCase() === model.address.toLowerCase()
                 anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
                 title: model.name
                 subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
