@@ -1,32 +1,38 @@
 import NimQml
-import ./model
 import ./io_interface
 import ./gif_column_model
+import ./preserved_properties
 import ../../../../../../app_service/service/gif/dto
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      model: Model
       gifColumnAModel: GifColumnModel
       gifColumnBModel: GifColumnModel
       gifColumnCModel: GifColumnModel
       gifLoading: bool
+      preservedProperties: PreservedProperties
+      preservedPropertiesVariant: QVariant
 
   proc delete*(self: View) =
-    self.model.delete
     self.QObject.delete
+    self.gifColumnAModel.delete
+    self.gifColumnBModel.delete
+    self.gifColumnCModel.delete
+    self.preservedProperties.delete
+    self.preservedPropertiesVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.model = newModel()
     result.gifColumnAModel = newGifColumnModel()
     result.gifColumnBModel = newGifColumnModel()
     result.gifColumnCModel = newGifColumnModel()
     result.gifLoading = false
+    result.preservedProperties = newPreservedProperties()
+    result.preservedPropertiesVariant = newQVariant(result.preservedProperties)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -171,3 +177,9 @@ QtObject:
   proc isFavorite*(self: View, id: string): bool {.slot.} =
     let gifItem = self.findGifDto(id)
     return self.delegate.isFavorite(gifItem)
+
+  proc getPreservedProperties(self: View): QVariant {.slot.} =
+    return self.preservedPropertiesVariant
+
+  QtProperty[QVariant] preservedProperties:
+    read = getPreservedProperties

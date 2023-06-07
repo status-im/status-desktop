@@ -86,8 +86,6 @@ Row {
                 }
                 onClicked: {
                     imageArea.imageRemoved(index)
-                    const tmp = imageArea.imageSource.filter((url, idx) => idx !== index)
-                    rptImages.model = tmp
                 }
                 MouseArea {
                     id: buttonMouseArea

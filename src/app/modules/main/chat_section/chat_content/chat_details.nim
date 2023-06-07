@@ -21,6 +21,7 @@ QtObject:
     isUntrustworthy: bool
     isContact: bool
     active: bool
+    blocked: bool
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -32,7 +33,7 @@ QtObject:
   proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity,
       isUsersListAvailable: bool, name, icon: string, color, description,
       emoji: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int,
-      isUntrustworthy: bool, isContact: bool = false) =
+      isUntrustworthy: bool, isContact: bool = false, blocked: bool = false) =
     self.id = id
     self.`type` = `type`
     self.belongsToCommunity = belongsToCommunity
@@ -49,6 +50,7 @@ QtObject:
     self.isUntrustworthy = isUntrustworthy
     self.isContact = isContact
     self.active = false
+    self.blocked = blocked
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -201,3 +203,14 @@ QtObject:
   proc setActive*(self: ChatDetails, value: bool) =
     self.active = value
     self.activeChanged()
+
+  proc blockedChanged(self: ChatDetails) {.signal.}
+  proc getBlocked(self: ChatDetails): bool {.slot.} =
+    return self.blocked
+  QtProperty[bool] blocked:
+    read = getBlocked
+    notify = blockedChanged
+
+  proc setBlocked*(self: ChatDetails, value: bool) =
+    self.blocked = value
+    self.blockedChanged()

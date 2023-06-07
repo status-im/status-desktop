@@ -43,7 +43,6 @@ Popup {
 
     modal: false
     width: 360
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
     background: Rectangle {
         radius: Style.current.radius

@@ -358,6 +358,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
   if(self.controller.getMyChatId() == contactId):
     self.view.updateChatDetailsNameAndIcon(updatedContact.defaultDisplayName, updatedContact.icon)
     self.view.updateTrustStatus(updatedContact.dto.trustStatus == TrustStatus.Untrustworthy)
+    self.view.updateChatBlocked(updatedContact.dto.blocked)
 
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)

@@ -433,7 +433,6 @@ Item {
                 enabled: communityData.amISectionAdmin
                 acceptedButtons: Qt.RightButton
                 onTapped: {
-                    console.log("<<< tapped")
                     adminPopupMenu.showInviteButton = true
                     adminPopupMenu.x = eventPoint.position.x + 4
                     adminPopupMenu.y = eventPoint.position.y + 4
