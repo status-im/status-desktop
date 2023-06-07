@@ -280,13 +280,12 @@ Popup {
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                leftPadding: 0
-                rightPadding: 0
-                contentWidth: availableWidth
+                padding: 0
+                contentHeight: availableHeight
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {
-                    width: scrollView.availableWidth
+                    height: scrollView.availableHeight
                     spacing: footerContent.spacing
 
                     Repeater {
@@ -298,8 +297,7 @@ Popup {
                         delegate: StatusStickerPackIconWithIndicator {
                             id: packIconWithIndicator
                             visible: installed
-                            Layout.preferredWidth: 24
-                            Layout.preferredHeight: 24
+                            Layout.alignment: Qt.AlignVCenter
                             selected: stickerPackListView.selectedPackId === packId
                             source: thumbnail
                             onClicked: {
@@ -314,6 +312,7 @@ Popup {
                         model: d.stickerPacksLoading ? 7 : 0
 
                         delegate: Rectangle {
+                            Layout.alignment: Qt.AlignVCenter
                             Layout.preferredWidth: 24
                             Layout.preferredHeight: 24
                             radius: width / 2

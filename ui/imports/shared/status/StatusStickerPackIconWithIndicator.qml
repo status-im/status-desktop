@@ -8,12 +8,14 @@ import shared.panels 1.0
 
 Item {
     id: root
+
     property bool selected: false
     property bool useIconInsteadOfImage: false
     property url source: Style.svg("history")
     signal clicked
-    height: 24
-    width: 24
+
+    implicitHeight: 24
+    implicitWidth: 24
 
     RoundedImage {
         visible: !useIconInsteadOfImage
@@ -25,6 +27,7 @@ Item {
             root.clicked()
         }
     }
+
     RoundedIcon {
         id: iconIcon
         visible: useIconInsteadOfImage
