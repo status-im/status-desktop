@@ -653,7 +653,7 @@ proc getTokenDecimals*(self: Controller, symbol: string): int =
 
 proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int, string] =
   var contractAddresses = self.tokenService.getContractAddressesForToken(symbol)
-  let communityToken = self.communityTokensService.getCommunityTokenBySymbol(self.getMySectionId(), symbol)
+  let communityToken = self.communityService.getCommunityTokenBySymbol(self.getMySectionId(), symbol)
   if communityToken.address != "":
     contractAddresses[communityToken.chainId] = communityToken.address
   return contractAddresses
