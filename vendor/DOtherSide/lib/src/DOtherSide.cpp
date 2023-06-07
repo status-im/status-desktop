@@ -1444,23 +1444,29 @@ char *dos_escape_html(char* input)
    return convert_to_cstring(QString(input).toHtmlEscaped().toUtf8());
 }
 
-char *dos_image_resizer(char* imagePath, int maxSize, char* tmpDirPath)
+char *dos_image_resizer(const char* imagePathOrData, int maxSize, const char* tmpDirPath)
 {
-    QImage img(imagePath);
-    img.setColorSpace(QColorSpace::SRgb);
-    int w = img.width();
-    int h = img.height();
+    const auto base64JPGPrefix = "data:image/jpeg;base64,";
+    QImage img;
+    bool loadResult = false;
 
-    QPixmap pixmap;
-    pixmap = pixmap.fromImage(img.scaled(maxSize < w ? maxSize : w, maxSize < h ? maxSize : h, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    // load the contents
+    if (qstrncmp(base64JPGPrefix, imagePathOrData, qstrlen(base64JPGPrefix)) == 0)  { // binary BLOB
+      loadResult = img.loadFromData(QByteArray::fromBase64(QByteArray(imagePathOrData).mid(qstrlen(base64JPGPrefix))));  // strip the prefix, decode from b64
+    } else { // local file or URL
+      const auto localFileUrl = QUrl::fromUserInput(imagePathOrData).toLocalFile(); // accept both "file:/foo/bar" and "/foo/bar"
+      loadResult = img.load(localFileUrl);
+    }
 
-    auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + ".jpg";
+    if (!loadResult) {
+      qWarning() << "dos_image_resizer: failed to (down)load image";
+      return nullptr;
+    }
 
-    QFile file(newFilePath);
-    file.open(QIODevice::WriteOnly);
-    pixmap.save(&file, "jpeg", 75);
-    file.close();
-
+    // scale it
+    img = img.scaled(img.size().boundedTo(QSize(maxSize, maxSize)), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    const auto newFilePath = tmpDirPath + QUuid::createUuid().toString(QUuid::WithoutBraces) + ".jpg";
+    img.save(newFilePath, "JPG");
     return convert_to_cstring(newFilePath.toUtf8());
 }
 
