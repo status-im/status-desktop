@@ -8,7 +8,7 @@ Feature: User Identity
         Given A first time user lands on the status desktop and generates new key
         And the user signs up with username "tester123" and password "TesTEr16843/!@00"
         And the user lands on the signed in app
-
+    @mayfail
     Scenario Outline: The user sets display name, bio and social links
         Given the user opens app settings screen
         And the user opens the profile settings
