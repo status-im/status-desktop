@@ -195,9 +195,9 @@ StatusListItem {
         name: {
             switch(root.transactionType) {
             case TransactionDelegate.TransactionType.Send:
-                return "receive"
-            case TransactionDelegate.TransactionType.Receive:
                 return "send"
+            case TransactionDelegate.TransactionType.Receive:
+                return "receive"
             case TransactionDelegate.TransactionType.Buy:
             case TransactionDelegate.TransactionType.Sell:
                 return "token"
