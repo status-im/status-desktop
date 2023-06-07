@@ -602,7 +602,6 @@ Loader {
                         width: 40
                         height: 40
                         name: root.senderIcon || ""
-                        assetSettings.isImage: root.isDiscordMessage || root.senderIcon.startsWith("data")
                         pubkey: root.senderId
                         colorId: Utils.colorIdForPubkey(root.senderId)
                         colorHash: root.senderColorHash

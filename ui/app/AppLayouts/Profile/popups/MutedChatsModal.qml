@@ -47,7 +47,6 @@ ModalPopup {
                 asset.width: 40
                 asset.height: 40
                 asset.name: model.icon
-                asset.isImage: asset.name.includes("data")
                 asset.isLetterIdenticon: asset.name === ""
                 asset.letterSize: 15
                 asset.color: Theme.palette.miscColor5

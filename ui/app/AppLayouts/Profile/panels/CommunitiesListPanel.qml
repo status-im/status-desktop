@@ -32,7 +32,6 @@ StatusListView {
         subTitle: model.description
         tertiaryTitle: qsTr("%n member(s)", "", model.members.count)
         asset.name: model.image
-        asset.isImage: asset.name.includes("data")
         asset.isLetterIdenticon: !model.image
         asset.bgColor: model.color || Theme.palette.primaryColor1
         asset.width: 40

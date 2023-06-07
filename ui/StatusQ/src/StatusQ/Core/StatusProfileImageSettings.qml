@@ -20,7 +20,6 @@ QtObject {
         width: root.width
         height: root.height
         name: root.name
-        isImage: name.startsWith("data")
         isLetterIdenticon: (name === "")
         imgIsIdenticon: root.isIdenticon
         color: Theme.palette.userCustomizationColors[root.colorId]

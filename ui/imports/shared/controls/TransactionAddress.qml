@@ -46,6 +46,7 @@ Item {
        Property holds asset settings for contact icon.
     */
     property StatusAssetSettings asset: StatusAssetSettings {
+        id: statusAssetSettings
         width: 36
         height: 36
         color: d.isContact ? Utils.colorForPubkey(root.contactPubKey) : d.walletAddressColor
@@ -57,7 +58,7 @@ Item {
             }
             return ""
         }
-        isImage: d.isContact && d.contactData.displayIcon.includes("data")
+        isImage: d.isContact && statusAssetSettings.isImgSrc(d.contactData.displayIcon)
         emoji: d.isWallet && !!d.walletAddressEmoji ? d.walletAddressEmoji : ""
         isLetterIdenticon: d.isContact && !isImage
         charactersLen: 2
