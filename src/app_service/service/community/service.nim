@@ -2,6 +2,7 @@ import NimQml, Tables, json, sequtils, std/sets, std/algorithm, strformat, strut
 import json_serialization/std/tables as ser_tables
 
 import ./dto/community as community_dto
+import ../community_tokens/dto/community_token as community_token_dto
 
 import ../activity_center/service as activity_center_service
 import ../message/service as message_service
@@ -681,6 +682,22 @@ QtObject:
 
   proc getCommunityIds*(self: Service): seq[string] =
     return toSeq(self.communities.keys)
+
+  proc getCommunityTokenBySymbol*(self: Service, communityId: string, symbol: string): CommunityTokenDto =
+    let community = self.getCommunityById(communityId)
+    for metadata in community.communityTokensMetadata:
+      if metadata.symbol == symbol:
+        var communityToken = CommunityTokenDto()
+        communityToken.name = metadata.name
+        communityToken.symbol = metadata.symbol
+        communityToken.description = metadata.description
+        communityToken.tokenType = metadata.tokenType
+
+        for chainId, contractAddress in metadata.addresses:
+          communityToken.chainId = chainId
+          communityToken.address = contractAddress
+          break
+        return communityToken
 
   proc sortAsc[T](t1, t2: T): int =
     if(t1.position > t2.position):
