@@ -48,5 +48,5 @@ method inviteUsersToCommunity*(self: Module, communityID: string, pubKeysJSON: s
 method leaveCommunity*(self: Module, communityID: string) =
   self.controller.leaveCommunity(communityID)
 
-method setCommunityMuted*(self: Module, communityID: string, muted: bool) =
-  self.controller.setCommunityMuted(communityID, muted)
+method setCommunityMuted*(self: Module, communityID: string, mutedType: int) =
+  self.controller.setCommunityMuted(communityID, mutedType)

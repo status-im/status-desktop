@@ -1813,10 +1813,14 @@ QtObject:
     except Exception as e:
       error "Error banning user from community", msg = e.msg
 
-  proc setCommunityMuted*(self: Service, communityId: string, muted: bool) =
+  proc setCommunityMuted*(self: Service, communityId: string, mutedType: int) =
     try:
-      discard status_go.setCommunityMuted(communityId, muted)
-
+      let response = status_go.setCommunityMuted(communityId, mutedType)
+      if not response.error.isNil:
+        error "error muting the community", msg = response.error.message
+        return
+      
+      let muted = if (MutedType(mutedType) == MutedType.Unmuted): false else: true
       self.events.emit(SIGNAL_COMMUNITY_MUTED,
         CommunityMutedArgs(communityId: communityId, muted: muted))
     except Exception as e:

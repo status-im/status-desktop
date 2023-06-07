@@ -16,6 +16,15 @@ type RequestToJoinType* {.pure.}= enum
   Accepted = 3,
   Canceled = 4
 
+type MutedType* {.pure.}= enum
+  For15min = 1,
+  For1hr = 2,
+  For8hr = 3,
+  For1week = 4,
+  TillUnmuted = 5,
+  For1min = 6,
+  Unmuted = 7
+
 type CommunityMembershipRequestDto* = object
   id*: string
   publicKey*: string

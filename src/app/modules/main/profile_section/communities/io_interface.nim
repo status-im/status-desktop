@@ -28,6 +28,6 @@ method inviteUsersToCommunity*(self: AccessInterface, communityID: string, pubKe
 method leaveCommunity*(self: AccessInterface, communityID: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setCommunityMuted*(self: AccessInterface, communityID: string, muted: bool) {.base.} =
+method setCommunityMuted*(self: AccessInterface, communityID: string, mutedType: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 

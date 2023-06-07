@@ -324,8 +324,8 @@ QtObject:
   proc exportCommunity*(self: View): string {.slot.} =
     self.delegate.exportCommunity()
 
-  proc setCommunityMuted*(self: View, muted: bool) {.slot.} =
-    self.delegate.setCommunityMuted(muted)
+  proc setCommunityMuted*(self: View, mutedType: int) {.slot.} =
+    self.delegate.setCommunityMuted(mutedType)
 
   proc inviteUsersToCommunity*(self: View, pubKeysJSON: string, inviteMessage: string): string {.slot.} =
     result = self.delegate.inviteUsersToCommunity(pubKeysJSON, inviteMessage)
