@@ -12,6 +12,7 @@ QtObject {
     property var currentCurrency
 
     property var currencyStore
+    property var history
 
     property var getNetworkIcon
     property var getFiatValue
