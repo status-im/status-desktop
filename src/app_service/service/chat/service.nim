@@ -1,5 +1,5 @@
 import NimQml, Tables, json, sequtils, strformat, chronicles, os, std/algorithm, strutils, uuids, base64
-import std/[times, os]
+import std/[times, os, httpclient, uri]
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ./dto/chat as chat_dto
@@ -474,33 +474,19 @@ QtObject:
       var imagePaths: seq[string] = @[]
 
       for imagePathOrSource in images.mitems:
+        var imageUrl = imagePathOrSource
 
-        var imagePath = ""
+        if not imageUrl.startsWith(base64JPGPrefix):
+          let parsedImageUrl = parseUri(imageUrl)
+          if parsedImageUrl.scheme.startsWith("http"): # remote URL, download it first
+            var client = newHttpClient()
+            let tmpPath = TMPDIR & $genUUID() & ".jpg"
+            client.downloadFile(parsedImageUrl, tmpPath)
+            imageUrl = tmpPath
 
-        if imagePathOrSource.startsWith(base64JPGPrefix):
-          # If an image was copied to clipboard we're receiving it from there
-          # as base64 encoded string. The base64 string will always have JPG data
-          # because image_resizer (a few lines below) will always generate jpgs
-          # (which needs to be fixed as well). 
-          #
-          # We save the image data to a tmp location because image_resizer expects
-          # a filepath to operate on.
-          #
-          # TODO: 
-          # Make image_resizer work for all image types (and ensure the same 
-          # for base64 encoded string received via clipboard
-          let base64Str = imagePathOrSource.replace(base64JPGPrefix, "")
-          let bytes = base64.decode(base64Str)
-          let tmpPath = TMPDIR & $genUUID() & ".jpg"
-          writeFile(tmpPath, bytes)
-          imagePath = tmpPath
-        else:
-          imagePath = imagePathOrSource
-
-        var image = singletonInstance.utils.formatImagePath(imagePath)
-        imagePath = image_resizer(image, 2000, TMPDIR)
-
-        imagePaths.add(imagePath)
+        let imagePath = image_resizer(imageUrl, 2000, TMPDIR)
+        if imagePath != "":
+          imagePaths.add(imagePath)
 
       let response = status_chat.sendImages(chatId, imagePaths, msg, replyTo)
 
