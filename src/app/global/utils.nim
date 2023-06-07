@@ -76,16 +76,6 @@ QtObject:
   proc generateAlias*(self: Utils, pk: string): string {.slot.} =
     return generateAliasFromPk(pk)
 
-  proc getFileSize*(self: Utils, filename: string): string {.slot.} =
-    var f: File = nil
-    if f.open(self.formatImagePath(filename)):
-      try:
-        result = $(f.getFileSize())
-      finally:
-        close(f)
-    else:
-      raise newException(IOError, "cannot open: " & filename)
-
   proc readTextFile*(self: Utils, filepath: string): string {.slot.} =
     try:
       return readFile(filepath)
