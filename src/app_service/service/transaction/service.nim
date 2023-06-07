@@ -225,10 +225,17 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-
   proc onFetchDecodedTxData*(self: Service, response: string) {.slot.} =
-    let data = parseJson(response)
-    self.events.emit(SIGNAL_TRANSACTION_DECODED, TransactionDecodedArgs(dataDecoded: data["result"].getStr, txHash: data["txHash"].getStr))
+    var args = TransactionDecodedArgs()
+    try:
+      let data = parseJson(response)
+      if data.hasKey("result"):
+        args.dataDecoded = $data["result"]
+      if data.hasKey("txHash"):
+        args.txHash = data["txHash"].getStr
+    except Exception as e:
+      error "Error parsing decoded tx input data", msg = e.msg
+    self.events.emit(SIGNAL_TRANSACTION_DECODED, args)
 
   proc fetchDecodedTxData*(self: Service, txHash: string, data: string) =
     let arg = FetchDecodedTxDataTaskArg(

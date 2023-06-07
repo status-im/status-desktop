@@ -30,6 +30,13 @@ Item {
     property var sendModal
     readonly property bool isTransactionValid: transaction !== undefined && !!transaction
 
+    onTransactionChanged: {
+        d.decodedInputData = ""
+        if (!transaction || !transaction.input || !RootStore.history)
+            return
+        RootStore.history.fetchDecodedTxData(transaction.txHash, transaction.input)
+    }
+
     QtObject {
         id: d
         readonly property bool isIncoming: root.isTransactionValid ? root.transaction.recipient.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase() : false
@@ -60,12 +67,33 @@ Item {
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, "ETH", RootStore.currentCurrency) : 0
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
 
+        property string decodedInputData: ""
+
         function getNameForSavedWalletAddress(address) {
             return RootStore.getNameForSavedWalletAddress(address)
         }
 
         function retryTransaction() {
             // TODO handle failed transaction retry
+        }
+    }
+
+    Connections {
+        target: RootStore.history
+        function onTxDecoded(txHash: string, dataDecoded: string) {
+            if (!root.isTransactionValid || txHash !== root.transaction.txHash || !dataDecoded)
+                return
+            try {
+                const decodedObject = JSON.parse(dataDecoded)
+                let text = qsTr("Function: %1").arg(decodedObject.signature)
+                text += "\n" + qsTr("MethodID: %1").arg(decodedObject.id)
+                for (const [key, value] of Object.entries(decodedObject.inputs)) {
+                    text += "\n[%1]: %2".arg(key).arg(value)
+                }
+                d.decodedInputData = text
+            } catch(e) {
+                console.error("Failed to parse decoded tx data. Data:", dataDecoded)
+            }
         }
     }
 
@@ -386,12 +414,35 @@ Item {
                         }
                     }
                     TransactionDataTile {
+                        id: inputDataTile
                         width: parent.width
+                        height: Math.min(implicitHeight + bottomPadding, 112)
                         title: qsTr("Input data")
-                        subTitle: root.isTransactionValid ? root.transaction.input : ""
+                        subTitle: {
+                            if (!!d.decodedInputData) {
+                                return d.decodedInputData
+                            } else if (root.isTransactionValid) {
+                                return root.transaction.input
+                            }
+                            return ""
+                        }
                         visible: !!subTitle
                         buttonIconName: "more"
+                        statusListItemSubTitle.maximumLineCount: 4
+                        statusListItemSubTitle.lineHeight: 1.21
                         onButtonClicked: addressMenu.openInputDataMenu(this, subTitle)
+                        statusListItemSubTitle.layer.enabled: statusListItemSubTitle.lineCount > 3
+                        statusListItemSubTitle.layer.effect: OpacityMask {
+                            maskSource: Rectangle {
+                                width: 10
+                                height: 10
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "#f00" }
+                                    GradientStop { position: 0.4; color: "#a0ff0000" }
+                                    GradientStop { position: 0.75; color: "#00ff0000" }
+                                }
+                            }
+                        }
                     }
                     TransactionDataTile {
                         width: parent.width

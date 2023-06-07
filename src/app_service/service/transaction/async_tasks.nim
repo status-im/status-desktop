@@ -230,16 +230,12 @@ type
 
 const fetchDecodedTxDataTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDecodedTxDataTaskArg](argEncoded)
-
+  var data = %* {
+    "txHash": arg.txHash
+  }
   try:
     let response = backend.fetchDecodedTxData(arg.data)
-    arg.finish(%* {
-      "txHash": arg.txHash,
-      "result": $response.result,
-    })
+    data["result"] = response.result
   except Exception as e:
     error "Error decoding tx input", message = e.msg
-    arg.finish(%* {
-      "txHash": arg.txHash,
-      "result": "",
-    }) 
+  arg.finish(data)

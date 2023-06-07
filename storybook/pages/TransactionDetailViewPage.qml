@@ -38,6 +38,7 @@ SplitView {
         RootStore.getGasEthValue = (gasAmount, gasPrice) => { return (gasAmount * Math.pow(10, -9)).toPrecision(5) }
         RootStore.getNetworkLayer = (chainId) => { return 1 }
         RootStore.currentCurrency = "USD"
+        RootStore.history = historyMockup
 
         root.rootStoreReady = true
     }
@@ -103,6 +104,37 @@ SplitView {
     }
 
     QtObject {
+        id: historyMockup
+
+        signal txDecoded(txHash: string, dataDecoded: string)
+
+        function fetchDecodedTxData(txHash, input) {
+            decodeTimer.txHash = txHash
+            decodeTimer.start()
+        }
+
+        readonly property Timer decodeTimer: Timer {
+            id: decodeTimer
+            property string txHash: ""
+            interval: 2000
+            onTriggered: {
+                const data = JSON.stringify({
+                                                name: "processDepositQueue",
+                                                signature: "processDepositQueue(address,uint256)",
+                                                id: "0xf94d2",
+                                                inputs: {
+                                                    "0": "0x3030303030303030303030303637306463613632",
+                                                    "1": "0x40e8d703000000000000000",
+                                                    "2": "0x60d8f57dh0bcdd0da0a00ad000000",
+                                                    "3": "0xd8ff5ba7fhfaafbf0fdfa0afaf1d000000"
+                                                }
+                                            })
+                historyMockup.txDecoded(txHash, data)
+            }
+        }
+    }
+
+    QtObject {
         id: transactionData
 
         property int chainId: 1
@@ -115,7 +147,7 @@ SplitView {
         property string to: "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
         property string contract: "0x4de3f6278C0DdFd3F29df9DcD979038F5c7bbc35"
         property bool isNFT: false
-        property string input: "0xdasdja214i12r0uf0jh013rfj01rfj12-09fuj12f012fuj0-129fuj012ujf1209u120912er902iue30912e"
+        property string input: "0x40e8d703000000000000000000000000670dca62b3418bddd08cbc69cb4490a5a3382a9f0000000000000000000000000000000000000000000000000000000000000064ddd08cbc69cb4490a5a3382a9f0000000000"
         property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         property string nftName: "Happy Meow"
         property string nftImageUrl: Style.png("collectibles/HappyMeow")
