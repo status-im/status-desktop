@@ -1053,10 +1053,17 @@ Rectangle {
         id: gifPopupComponent
 
         StatusGifPopup {
+            readonly property point relativePosition: {
+                const controlX = control.width - width - Style.current.halfPadding
+                const controlY = -height
+                return parent.mapFromItem(control, controlX, controlY)
+            }
+
             width: 360
             height: 440
-            x: control.width - width - Style.current.halfPadding
-            y: -height
+            x: relativePosition.x
+            y: relativePosition.y
+            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
             gifSelected: function (event, url) {
                 messageInputField.text += "\n" + url
@@ -1066,11 +1073,8 @@ Rectangle {
                 if (control.closeGifPopupAfterSelection)
                     close()
             }
-            onOpened: {
-                gifBtn.highlighted = true
-            }
             onClosed: {
-                gifBtn.highlighted = false
+                gifBtn.popup = null
                 destroy()
             }
         }
@@ -1125,7 +1129,6 @@ Rectangle {
             readonly property int defaultInputFieldHeight: 40
 
             Layout.fillWidth: true
-
 
             implicitHeight: inputLayout.implicitHeight + inputLayout.anchors.topMargin + inputLayout.anchors.bottomMargin
             implicitWidth: inputLayout.implicitWidth + inputLayout.anchors.leftMargin + inputLayout.anchors.rightMargin
@@ -1479,13 +1482,15 @@ Rectangle {
                                 color: "transparent"
                                 onClicked: {
                                     control.emojiPopupOpened = true
-
                                     togglePopup(emojiPopup, emojiBtn)
                                 }
                             }
 
                             StatusQ.StatusFlatRoundButton {
                                 id: gifBtn
+
+                                property Popup popup
+
                                 objectName: "gifPopupButton"
                                 implicitHeight: 32
                                 implicitWidth: 32
@@ -1495,10 +1500,13 @@ Rectangle {
                                                                      : Theme.palette.baseColor1
                                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                                 color: "transparent"
+                                highlighted: popup && popup.opened
                                 onClicked: {
-                                    if (highlighted)
+                                    if (popup) {
+                                        popup.close()
                                         return
-                                    const popup = gifPopupComponent.createObject(control)
+                                    }
+                                    popup = gifPopupComponent.createObject(gifBtn)
                                     popup.open()
                                 }
                             }
@@ -1517,7 +1525,6 @@ Rectangle {
                                 color: "transparent"
                                 onClicked: {
                                     control.stickersPopupOpened = true
-
                                     togglePopup(control.stickersPopup, stickersBtn)
                                 }
                             }
