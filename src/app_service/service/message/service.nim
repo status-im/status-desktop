@@ -35,7 +35,7 @@ logScope:
 
 let NEW_LINE = re"\n|\r" #must be defined as let, not const
 const MESSAGES_PER_PAGE* = 20
-const MESSAGES_PER_PAGE_MAX* = 300
+const MESSAGES_PER_PAGE_MAX* = 40
 const CURSOR_VALUE_IGNORE = "ignore"
 const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 
