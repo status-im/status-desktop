@@ -1078,6 +1078,7 @@ QtObject {
         For8hr = 3,
         For1week = 4,
         TillUnmuted = 5,
-        For1min = 6
+        For1min = 6,
+        Unmuted = 7
     }
 }

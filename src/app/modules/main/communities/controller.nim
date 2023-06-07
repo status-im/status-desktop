@@ -210,8 +210,8 @@ proc requestCommunityInfo*(self: Controller, communityId: string, importing: boo
 proc importCommunity*(self: Controller, communityKey: string) =
   self.communityService.importCommunity(communityKey)
 
-proc setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
-  self.communityService.setCommunityMuted(communityId, muted)
+proc setCommunityMuted*(self: Controller, communityId: string, mutedType: int) =
+  self.communityService.setCommunityMuted(communityId, mutedType)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, largeImage: string] =

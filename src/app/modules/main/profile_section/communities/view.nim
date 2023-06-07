@@ -25,5 +25,5 @@ QtObject:
   method leaveCommunity*(self: View, communityID: string) {.slot.} =
     self.delegate.leaveCommunity(communityID)
 
-  method setCommunityMuted*(self: View, communityID: string, muted: bool) {.slot.} =
-    self.delegate.setCommunityMuted(communityID, muted)
+  method setCommunityMuted*(self: View, communityID: string, mutedType: int) {.slot.} =
+    self.delegate.setCommunityMuted(communityID, mutedType)

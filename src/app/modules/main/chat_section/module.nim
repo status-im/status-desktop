@@ -1164,8 +1164,8 @@ method editCommunity*(self: Module, name: string,
 method exportCommunity*(self: Module): string =
   self.controller.exportCommunity()
 
-method setCommunityMuted*(self: Module, muted: bool) =
-  self.controller.setCommunityMuted(muted)
+method setCommunityMuted*(self: Module, mutedType: int) =
+  self.controller.setCommunityMuted(mutedType)
 
 method inviteUsersToCommunity*(self: Module, pubKeysJSON: string, inviteMessage: string): string =
   result = self.controller.inviteUsersToCommunity(pubKeysJSON, inviteMessage)

@@ -17,6 +17,7 @@ import AppLayouts.CommunitiesPortal 1.0
 import utils 1.0
 import shared 1.0
 import shared.controls 1.0
+import shared.controls.chat.menuItems 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.popups.keycard 1.0
@@ -327,7 +328,7 @@ Item {
                 popupMenu: Component {
                     StatusMenu {
                         id: communityContextMenu
-
+                        width: 180
                         property var chatCommunitySectionModule
 
                         openHandler: function () {
@@ -356,11 +357,21 @@ Item {
 
                         StatusMenuSeparator {}
 
+                        MuteChatMenuItem {
+                            enabled: !model.muted
+                            title: qsTr("Mute Community")
+                            onMuteTriggered: {
+                                communityContextMenu.chatCommunitySectionModule.setCommunityMuted(interval)
+                                communityContextMenu.close()
+                            }
+                        }
+
                         StatusAction {
-                            text: model.muted ? qsTr("Unmute Community") : qsTr("Mute Community")
-                            icon.name: model.muted ? "notification-muted" : "notification"
+                            enabled: model.muted
+                            text: qsTr("Unmute Community")
+                            icon.name: "notification-muted"
                             onTriggered: {
-                                communityContextMenu.chatCommunitySectionModule.setCommunityMuted(!model.muted)
+                                communityContextMenu.chatCommunitySectionModule.setCommunityMuted(Constants.MutingVariations.Unmuted)
                             }
                         }
 

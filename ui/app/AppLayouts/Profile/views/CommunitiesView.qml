@@ -124,7 +124,7 @@ SettingsContentBase {
                 }
 
                 onSetCommunityMutedClicked: {
-                    root.profileSectionStore.communitiesProfileModule.setCommunityMuted(communityId, muted)
+                    root.profileSectionStore.communitiesProfileModule.setCommunityMuted(communityId, mutedType)
                 }
 
                 onSetActiveCommunityClicked: {

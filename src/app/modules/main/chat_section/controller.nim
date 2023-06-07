@@ -636,8 +636,8 @@ proc muteCategory*(self: Controller, categoryId: string, interval: int) =
 proc unmuteCategory*(self: Controller, categoryId: string) =
   self.communityService.unmuteCategory(self.sectionId, categoryId)
 
-proc setCommunityMuted*(self: Controller, muted: bool) =
-  self.communityService.setCommunityMuted(self.sectionId, muted)
+proc setCommunityMuted*(self: Controller, mutedType: int) =
+  self.communityService.setCommunityMuted(self.sectionId, mutedType)
 
 proc inviteUsersToCommunity*(self: Controller, pubKeys: string, inviteMessage: string): string =
   result = self.communityService.inviteUsersToCommunityById(self.sectionId, pubKeys, inviteMessage)

@@ -304,7 +304,7 @@ method unbanUserFromCommunity*(self: AccessInterface, pubKey: string) {.base.} =
 method exportCommunity*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setCommunityMuted*(self: AccessInterface, muted: bool) {.base.} =
+method setCommunityMuted*(self: AccessInterface, mutedType: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method inviteUsersToCommunity*(self: AccessInterface, pubKeysJSON: string, inviteMessage: string): string {.base.} =
