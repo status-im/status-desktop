@@ -336,7 +336,8 @@ method checkFetchingStatusAndProceedWithAppLoading*[T](self: Module[T]) =
 
 method onFetchingFromWakuMessageReceived*[T](self: Module[T], backedUpMsgClock: uint64, section: string,
   totalMessages: int, receivedMessageAtPosition: int) =
-  self.view.fetchingDataModel().checkLastKnownClockAndReinitModel(backedUpMsgClock, listOfEntitiesWeExpectToBeSynced)
+  if not self.view.fetchingDataModel().evaluateWhetherToProcessReceivedData(backedUpMsgClock, listOfEntitiesWeExpectToBeSynced):
+    return
   if self.view.fetchingDataModel().allMessagesLoaded():
     return
   let currStateObj = self.view.currentStartupStateObj()

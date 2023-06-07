@@ -90,11 +90,13 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.LoadedMessages.int])
 
-  proc checkLastKnownClockAndReinitModel*(self: Model, backedUpMsgClock: uint64, entities: seq[tuple[entity: string, icon: string]]) =
-    if self.lastKnownBackedUpMsgClock >= backedUpMsgClock:
-      return
-    self.init(entities)
-    self.lastKnownBackedUpMsgClock = backedUpMsgClock
+  proc evaluateWhetherToProcessReceivedData*(self: Model, backedUpMsgClock: uint64, entities: seq[tuple[entity: string, icon: string]]): bool =
+    if self.lastKnownBackedUpMsgClock > backedUpMsgClock:
+      return false
+    if self.lastKnownBackedUpMsgClock < backedUpMsgClock:
+      self.init(entities)
+      self.lastKnownBackedUpMsgClock = backedUpMsgClock
+    return true
 
   proc reevaluateAllTotals(self: Model) =
     self.allTotalsSet = true
@@ -137,8 +139,6 @@ QtObject:
     return true
 
   proc isEntityLoaded*(self: Model, entity: string): bool =
-    if not self.allTotalsSet:
-      return false
     let ind = self.findIndexForEntity(entity)
     if(ind == -1):
       return false

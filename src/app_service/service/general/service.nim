@@ -43,7 +43,7 @@ QtObject:
     discard status_general.logout()
 
   proc getPasswordStrengthScore*(self: Service, password, userName: string): int =
-    try:    
+    try:
       let response = status_general.getPasswordStrengthScore(password, @[userName])
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr()
@@ -85,11 +85,11 @@ QtObject:
     if self.timeoutInMilliseconds <= 0:
       self.events.emit(SIGNAL_GENERAL_TIMEOUT, Args())
     else:
-      self.runTimer()  
+      self.runTimer()
 
   proc fetchWakuMessages*(self: Service) =
     try:
-      let response =  status_mailservers.requestAllHistoricMessages()
+      let response = status_mailservers.requestAllHistoricMessagesWithRetries(forceFetchingBackup = true)
       if(not response.error.isNil):
         error "could not set display name"
     except Exception as e:
