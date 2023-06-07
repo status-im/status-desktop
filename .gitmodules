@@ -27,9 +27,6 @@
 	path = vendor/semver.nim
 	url = https://github.com/euantorano/semver.nim
 	branch = main
-[submodule "spellchecking"]
-	path = spellchecking
-	url = https://github.com/status-im/desktop-spellchecking.git
 [submodule "vendor/nim-result"]
 	path = vendor/nim-result
 	url = https://github.com/arnetheduck/nim-result

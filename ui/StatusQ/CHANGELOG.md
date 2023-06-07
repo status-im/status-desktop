@@ -279,10 +279,6 @@
 
 #### Features
 
-* **Spellchecker:**  Add Spellchecker class ([c65f80d2](c65f80d2))
-* **Spellchecking:**
-  *  Add dictionaries ([1d12d222](1d12d222))
-  *  Add huspell dependency ([f9457ef3](f9457ef3))
 * **StatusChatList:**  expose `statusChatListItems` Repeater ([40c0e48b](40c0e48b))
 * **StatusExpandableItem:**  Correct placement of expandable region in tertiary type ([1f244f62](1f244f62))
 * **StatusInput:**

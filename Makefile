@@ -541,8 +541,6 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 
 	# General Files
 	cp bin/nim_status_client tmp/linux/dist/usr/bin
-	mkdir -p tmp/linux/dist/usr/bin/dictionaries
-	cp -R spellchecking/dictionaries tmp/linux/dist/usr/bin/dictionaries
 	cp nim-status.desktop tmp/linux/dist/.
 	cp status.svg tmp/linux/dist/status.svg
 	cp status.svg tmp/linux/dist/usr/.
@@ -604,7 +602,6 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/Resources
 	cp Info.plist $(MACOS_OUTER_BUNDLE)/Contents/
 	cp bin/nim_status_client $(MACOS_OUTER_BUNDLE)/Contents/MacOS/
-	cp -R spellchecking/dictionaries $(MACOS_OUTER_BUNDLE)/Contents/MacOS/dictionaries
 	cp status.icns $(MACOS_OUTER_BUNDLE)/Contents/Resources/
 	cp status-macos.svg $(MACOS_OUTER_BUNDLE)/Contents/
 	cp -R resources.rcc $(MACOS_OUTER_BUNDLE)/Contents/
