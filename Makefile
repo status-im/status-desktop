@@ -558,6 +558,7 @@ $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop
 	cp -P /usr/lib/x86_64-linux-gnu/libgst* tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer-1.0 tmp/linux/dist/usr/lib/
 	cp -r /usr/lib/x86_64-linux-gnu/gstreamer1.0 tmp/linux/dist/usr/lib/
+	cp -r /usr/lib/x86_64-linux-gnu/gio/libgvfsdbus.so tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so tmp/linux/dist/usr/lib/
 	cp vendor/status-go/build/bin/libstatus.so.0 tmp/linux/dist/usr/lib/
 	cp $(STATUSKEYCARDGO) tmp/linux/dist/usr/lib/
