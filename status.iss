@@ -1,6 +1,6 @@
 #define   Name       "Status"
 #define   Publisher  "Status.im"
-#define   URL        "https://status.im"
+#define   URL        "https://status.app"
 #define   ExeName    "Status.exe"
 #define   IcoName    "status.ico"
 
