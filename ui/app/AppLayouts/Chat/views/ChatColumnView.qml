@@ -40,7 +40,7 @@ Item {
     property bool stickersLoaded: false
 
     readonly property var contactDetails: rootStore ? rootStore.oneToOneChatContact : null
-    readonly property bool isUserAdded: root.contactDetails && root.contactDetails.isAdded
+    readonly property bool isUserAdded: !!root.contactDetails && root.contactDetails.isAdded
 
     signal openStickerPackPopup(string stickerPackId)
 
@@ -241,7 +241,7 @@ Item {
                      root.rootStore.isUserAllowedToSendMessage
 
             store: root.rootStore
-            usersStore: d.usersStore
+            usersStore: d.activeUsersStore
 
             textInput.placeholderText: {
                 if (d.activeChatContentModule.chatDetails.blocked)
