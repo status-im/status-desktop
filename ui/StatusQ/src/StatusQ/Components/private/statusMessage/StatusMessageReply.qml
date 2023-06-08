@@ -62,15 +62,6 @@ Item {
             implicitHeight: messageLayout.implicitHeight
             implicitWidth: messageLayout.implicitWidth
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    root.messageClicked(mouse)
-                }
-            }
-
             ColumnLayout {
                 id: messageLayout
                 anchors.fill: parent
@@ -113,60 +104,81 @@ Item {
                         }
                     }
                 }
-                Loader {
-                    Layout.fillWidth: true
-                    asynchronous: true
-                    active: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
-                    visible: active
-                    sourceComponent: StatusTextMessage {
-                        objectName: "StatusMessage_replyDetails_textMessage"
-                        textField.font.pixelSize: Theme.secondaryTextFontSize
-                        textField.color: Theme.palette.baseColor1
-                        allowShowMore: false
-                        stripHtmlTags: true
-                        convertToSingleLine: true
-                        messageDetails: root.replyDetails
+
+                Item {
+                    implicitWidth: messageContentsLayout.implicitWidth
+                    implicitHeight: messageContentsLayout.implicitHeight
+
+                    ColumnLayout {
+                        id: messageContentsLayout
+                        anchors.fill: parent
+
+                        Loader {
+                            Layout.fillWidth: true
+                            asynchronous: true
+                            active: !!replyDetails.messageText && replyDetails.contentType !== StatusMessage.ContentType.Sticker
+                            visible: active
+                            sourceComponent: StatusTextMessage {
+                                objectName: "StatusMessage_replyDetails_textMessage"
+                                textField.font.pixelSize: Theme.secondaryTextFontSize
+                                textField.color: Theme.palette.baseColor1
+                                allowShowMore: false
+                                stripHtmlTags: true
+                                convertToSingleLine: true
+                                messageDetails: root.replyDetails
+                            }
+                        }
+
+                        Loader {
+                            Layout.fillWidth: true
+                            asynchronous: true
+                            active: replyDetails.contentType === StatusMessage.ContentType.Image
+                            visible: active
+                            sourceComponent: StatusMessageImageAlbum {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 56
+
+                                album: replyDetails.albumCount > 0 ? replyDetails.album : [replyDetails.messageContent]
+                                albumCount: replyDetails.albumCount > 0 ? replyDetails.albumCount : 1
+                                imageWidth: 56
+                                loadingComponentHeight: 56
+                                shapeType: StatusImageMessage.ShapeType.ROUNDED
+                            }
+                        }
+
+                        StatusSticker {
+                            asynchronous: true
+                            active: replyDetails.contentType === StatusMessage.ContentType.Sticker
+                            visible: active
+                            asset.width: 48
+                            asset.height: 48
+                            asset.name: replyDetails.messageContent
+                            asset.isImage: true
+                        }
+
+                        Loader {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 22
+                            asynchronous: true
+                            active: replyDetails.contentType === StatusMessage.ContentType.Audio
+                            visible: active
+                            sourceComponent: StatusAudioMessage {
+                                anchors.left: parent.left
+                                width: 125
+                                height: 22
+                                isPreview: true
+                                audioSource: replyDetails.messageContent
+                            }
+                        }
                     }
-                }
 
-                Loader {
-                    Layout.fillWidth: true
-                    asynchronous: true
-                    active: replyDetails.contentType === StatusMessage.ContentType.Image
-                    visible: active
-                    sourceComponent: StatusMessageImageAlbum {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 56
-
-                        album: replyDetails.albumCount > 0 ? replyDetails.album : [replyDetails.messageContent]
-                        albumCount: replyDetails.albumCount > 0 ? replyDetails.albumCount : 1
-                        imageWidth: 56
-                        loadingComponentHeight: 56
-                        shapeType: StatusImageMessage.ShapeType.ROUNDED
-                    }
-                }
-
-                StatusSticker {
-                    asynchronous: true
-                    active: replyDetails.contentType === StatusMessage.ContentType.Sticker
-                    visible: active
-                    asset.width: 48
-                    asset.height: 48
-                    asset.name: replyDetails.messageContent
-                    asset.isImage: true
-                }
-                Loader {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 22
-                    asynchronous: true
-                    active: replyDetails.contentType === StatusMessage.ContentType.Audio
-                    visible: active
-                    sourceComponent: StatusAudioMessage {
-                        anchors.left: parent.left
-                        width: 125
-                        height: 22
-                        isPreview: true
-                        audioSource: replyDetails.messageContent
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            root.messageClicked(mouse)
+                        }
                     }
                 }
             }
