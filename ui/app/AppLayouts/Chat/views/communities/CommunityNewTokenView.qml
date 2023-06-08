@@ -10,10 +10,11 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
-
 import AppLayouts.Wallet.controls 1.0
 import shared.panels 1.0
 import shared.popups 1.0
+
+import SortFilterProxyModel 0.2
 
 StatusScrollView {
     id: root
@@ -150,7 +151,22 @@ StatusScrollView {
             readonly property string address: SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
 
             Layout.fillWidth: true
-            model: root.accounts
+            model: SortFilterProxyModel {
+                sourceModel: root.accounts
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "color"
+
+                        function getColor(colorId) {
+                            return Utils.getColorForId(colorId)
+                        }
+
+                        // Direct call for singleton function is not handled properly by
+                        // SortFilterProxyModel that's why helper function is used instead.
+                        expression: { return getColor(model.colorId) }
+                    }
+                ]
+            }
             type: StatusComboBox.Type.Secondary
             size: StatusComboBox.Size.Small
             implicitHeight: 44
