@@ -85,6 +85,7 @@ Item {
 
 
             StatusButton {
+                objectName: "hideShowWatchOnlyButton"
                 Layout.preferredHeight: 38
                 Layout.alignment: Qt.AlignTop
 

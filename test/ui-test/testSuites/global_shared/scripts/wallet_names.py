@@ -10,6 +10,8 @@ mainWallet_Saved_Addresses_Button = {"container": mainWindow_RighPanel, "objectN
 walletAccounts_StatusListView = {"container": statusDesktop_mainWindow, "objectName": "walletAccountsListView", "type": "StatusListView", "visible": True}
 walletAccounts_WalletAccountItem_Placeholder = {"container": walletAccounts_StatusListView, "objectName": "walletAccount-%NAME%", "type": "StatusListItem", "visible": True}
 walletAccount_StatusListItem = {"container": walletAccounts_StatusListView, "objectName": RegularExpression("walletAccount*"), "type": "StatusListItem", "visible": True}
+mainWallet_Hide_Show_Watch_Only_Button = {"container": statusDesktop_mainWindow, "objectName": "hideShowWatchOnlyButton", "type": "StatusButton", "visible": True}
+mainWallet_All_Accounts_Button = {"container": walletAccounts_StatusListView, "objectName": "allAccountsBtn", "type": "Button", "visible": True}
 
 # Context Menu
 mainWallet_CopyAddress_MenuItem = {"container": contextMenu_PopupItem, "enabled": True, "objectName": RegularExpression("AccountMenu-CopyAddressAction*"), "type": "StatusMenuItem"}

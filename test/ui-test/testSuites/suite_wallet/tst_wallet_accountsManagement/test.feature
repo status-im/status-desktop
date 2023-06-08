@@ -29,6 +29,20 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | 0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A | AccWatch1 | 2a4af5 | sunglasses | 1f60e         | yes                  | AccWatch1edited | 216266    | thumbsup  | 1f44d             |
             | 0xea123F7beFF45E3C9fdF54B324c29DBdA14a639B | AccWatch2 | 7140fd | sunglasses | 1f60e         | no                   | AccWatch2edited | 2a799b    | thumbsup  | 1f44d             |
 
+     Scenario Outline: The user can hide and show watch only account by clicking Hide / Show button
+        When the user adds a watch only account "<address>" with "<name>" color "#<color>" and emoji "<emoji>" via "<add_via_context_menu>"
+        Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
+        When the user opens All accounts view
+        And the user clicks Hide / Show watch-only button
+        Then the account with "<name>" is not displayed
+        When the user opens All accounts view
+        And the user clicks Hide / Show watch-only button
+		Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
+
+        Examples:
+            | address                                    | name      | color  | emoji      | emoji_unicode | add_via_context_menu |
+            | 0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A | AccWatch1 | 2a4af5 | sunglasses | 1f60e         | yes                  |
+
         Scenario Outline: The user cancel deliting watch only account
         When the user adds a watch only account "<address>" with "<name>" color "#<color>" and emoji "<emoji>" via "<add_via_context_menu>"
         Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
