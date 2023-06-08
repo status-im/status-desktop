@@ -1,5 +1,5 @@
 import NimQml, Tables, json, sequtils, strformat, chronicles, os, std/algorithm, strutils, uuids, base64
-import std/[times, os, httpclient, uri]
+import std/[times, os]
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ./dto/chat as chat_dto
@@ -474,17 +474,7 @@ QtObject:
       var imagePaths: seq[string] = @[]
 
       for imagePathOrSource in images.mitems:
-        var imageUrl = imagePathOrSource
-
-        if not imageUrl.startsWith(base64JPGPrefix):
-          let parsedImageUrl = parseUri(imageUrl)
-          if parsedImageUrl.scheme.startsWith("http"): # remote URL, download it first
-            var client = newHttpClient()
-            let tmpPath = TMPDIR & $genUUID() & ".jpg"
-            client.downloadFile(parsedImageUrl, tmpPath)
-            imageUrl = tmpPath
-
-        let imagePath = image_resizer(imageUrl, 2000, TMPDIR)
+        let imagePath = image_resizer(imagePathOrSource, 2000, TMPDIR)
         if imagePath != "":
           imagePaths.add(imagePath)
 

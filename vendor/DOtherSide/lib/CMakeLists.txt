@@ -31,7 +31,7 @@ macro(add_target name type)
         target_compile_definitions(${name} PRIVATE -DWIN32)
     endif()
 
-    set_target_properties(${name} PROPERTIES CXX_STANDARD 11 AUTOMOC ON)
+    set_target_properties(${name} PROPERTIES CXX_STANDARD 17 AUTOMOC ON)
 
     target_include_directories(${name} PUBLIC include include/Qt)
 

@@ -1454,8 +1454,18 @@ char *dos_image_resizer(const char* imagePathOrData, int maxSize, const char* tm
     if (qstrncmp(base64JPGPrefix, imagePathOrData, qstrlen(base64JPGPrefix)) == 0)  { // binary BLOB
       loadResult = img.loadFromData(QByteArray::fromBase64(QByteArray(imagePathOrData).mid(qstrlen(base64JPGPrefix))));  // strip the prefix, decode from b64
     } else { // local file or URL
-      const auto localFileUrl = QUrl::fromUserInput(imagePathOrData).toLocalFile(); // accept both "file:/foo/bar" and "/foo/bar"
-      loadResult = img.load(localFileUrl);
+      const auto localFileOrUrl = QUrl::fromUserInput(imagePathOrData); // accept both "file:/foo/bar" and "/foo/bar"
+      if (localFileOrUrl.isLocalFile()) {
+        loadResult = img.load(localFileOrUrl.toLocalFile());
+      } else {
+        QEventLoop loop;
+        QNetworkAccessManager mgr;
+        QObject::connect(&mgr, &QNetworkAccessManager::finished, &loop, &QEventLoop::quit);
+        auto reply = mgr.get(QNetworkRequest(localFileOrUrl));
+        loop.exec();
+        loadResult = img.loadFromData(reply->readAll());
+        reply->deleteLater();
+      }
     }
 
     if (!loadResult) {
