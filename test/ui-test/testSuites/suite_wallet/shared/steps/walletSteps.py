@@ -135,6 +135,10 @@ def step(context, name, new_name, new_color, new_emoji):
 def step(context, name):
     _walletScreen.left_panel.delete_account(name).confirm()
 
+@When("the user opens All accounts view")
+def step(context):
+    _walletScreen.left_panel.open_all_accounts_view()
+
 
 @When("the user start removing account \"|any|\" and cancel it")
 def step(context, name):
@@ -177,6 +181,10 @@ def step(context, name):
 @When("the user toggles the network |any|")
 def step(context, network_name):
     _walletScreen.toggle_network(network_name)
+
+@When("the user clicks Hide / Show watch-only button")
+def step(context):   
+    _walletScreen.click_hide_show_watch_only()  
 
 
 #########################

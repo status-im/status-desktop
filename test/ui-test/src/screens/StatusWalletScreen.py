@@ -68,6 +68,7 @@ class LeftPanel(BaseElement):
         self._saved_addresses_button = BaseElement('mainWallet_Saved_Addresses_Button')
         self._wallet_account_item = BaseElement('walletAccount_StatusListItem')
         self._add_account_button = Button('mainWallet_Add_Account_Button')
+        self._all_accounts_button = Button('mainWallet_All_Accounts_Button')
 
     @property
     def accounts(self) -> typing.List[constants.wallet.account_list_item]:
@@ -162,6 +163,9 @@ class LeftPanel(BaseElement):
                 return self.delete_account(account_name, attempt - 1)
             else:
                 raise
+    
+    def open_all_accounts_view(self):
+        self._all_accounts_button.click()        
 
 
 class SavedAddressListItem(BaseElement):
@@ -270,6 +274,7 @@ class MainWalletScreen(Enum):
     ACCOUNT_ADDRESS_PANEL: str = "mainWallet_Address_Panel"
     SEND_BUTTON_FOOTER: str = "mainWallet_Footer_Send_Button"
     NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
+    HIDE_SHOW_WATCH_ONLY_BUTTON: str = "mainWallet_Hide_Show_Watch_Only_Button"
     RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
     WALLET_ACCOUNTS_LIST: str = "walletAccounts_StatusListView"
     WALLET_ACCOUNT_ITEM_PLACEHOLDER = "walletAccounts_WalletAccountItem_Placeholder"
@@ -417,6 +422,12 @@ class StatusWalletScreen:
                 return
 
         assert False, "network name not found"
+    
+    def click_hide_show_watch_only(self):
+        button_value_before_click = get_obj(MainWalletScreen.HIDE_SHOW_WATCH_ONLY_BUTTON.value).text
+        Button(MainWalletScreen.HIDE_SHOW_WATCH_ONLY_BUTTON.value).click()
+        button_value_after_click = get_obj(MainWalletScreen.HIDE_SHOW_WATCH_ONLY_BUTTON.value).text
+        assert button_value_before_click != button_value_after_click, f"Hide/Show watch only button label is not changed, button label is {button_value_after_click}, was {button_value_before_click}"
 
 
     #####################################

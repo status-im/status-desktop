@@ -285,6 +285,7 @@ Rectangle {
                 verticalPadding: Style.current.padding
                 horizontalPadding: Style.current.padding
                 highlighted: true
+                objectName: "allAccountsBtn"
                 
                 leftInset: Style.current.padding
                 bottomInset: Style.current.padding
