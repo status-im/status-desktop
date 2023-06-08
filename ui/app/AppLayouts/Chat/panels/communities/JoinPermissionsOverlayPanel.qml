@@ -65,6 +65,38 @@ Control {
             if(root.loginType == Constants.LoginType.Password) return "password"
             return root.loginType == Constants.LoginType.Biometrics ? "touch-id" : "keycard"
         }
+
+        function filterPermissions(model) {
+            return !!model && (model.tokenCriteriaMet || !model.isPrivate)
+        }
+
+        readonly property var communityPermissionsModel: SortFilterProxyModel {
+            sourceModel: root.communityHoldingsModel
+            filters: [
+                ExpressionFilter {
+                    expression: d.filterPermissions(model)
+                }
+            ]
+        }
+
+        readonly property var viewOnlyPermissionsModel: SortFilterProxyModel {
+            sourceModel: root.viewOnlyHoldingsModel
+            filters: [
+                ExpressionFilter {
+                    expression: d.filterPermissions(model)
+                }
+            ]
+        }
+
+        readonly property var viewAndPostPermissionsModel: SortFilterProxyModel {
+            sourceModel: root.viewAndPostHoldingsModel
+            filters: [
+                ExpressionFilter {
+                    expression: d.filterPermissions(model)
+                }
+            ]
+        }
+
     }
 
     padding: 35 // default by design
@@ -84,38 +116,46 @@ Control {
         }
 
         CustomHoldingsListPanel {
-            visible: root.joinCommunity && root.communityHoldingsModel
-            introText: qsTr("To join <b>%1</b> you need to prove that you hold").arg(root.communityName)
-            model: root.communityHoldingsModel
+            id: communityRequirements
+
+            visible: root.joinCommunity
+            introText: d.communityPermissionsModel.count > 0 ? 
+                qsTr("To join <b>%1</b> you need to prove that you hold").arg(root.communityName) : 
+                qsTr("Sorry, you can't join <b>%1</b> because it's a private, closed community").arg(root.communityName)
+            model: d.communityPermissionsModel
         }
 
         CustomHoldingsListPanel {
-            visible: !root.joinCommunity && !!root.viewOnlyHoldingsModel
-            introText: qsTr("To only view the <b>%1</b> channel you need to hold").arg(root.channelName)
-            model: root.viewOnlyHoldingsModel
+            visible: !root.joinCommunity && d.viewOnlyPermissionsModel.count > 0
+            introText: root.requiresRequest ? 
+                qsTr("To view the #<b>%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
+                qsTr("To view the #<b>%1</b> channel you need to hold").arg(root.channelName)
+            model: d.viewOnlyPermissionsModel
         }
 
         CustomHoldingsListPanel {
-            visible: !root.joinCommunity && !!root.viewAndPostHoldingsModel
-            introText: qsTr("To view and post in the <b>%1</b> channel you need to hold").arg(root.channelName)
-            model: root.viewAndPostHoldingsModel
+            visible: !root.joinCommunity && d.viewAndPostPermissionsModel.count > 0
+            introText: root.requiresRequest ? 
+                qsTr("To view and post in the #<b>%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
+                qsTr("To view and post in the #<b>%1</b> channel you need to hold").arg(root.channelName)
+            model: d.viewAndPostPermissionsModel
         }
 
         HoldingsListPanel {
             Layout.fillWidth: true
             spacing: root.spacing
-            visible: !root.joinCommunity && !!root.moderateHoldings
+            visible: !root.joinCommunity && !!d.moderateHoldings
             introText: qsTr("To moderate in the <b>%1</b> channel you need to hold").arg(root.channelName)
-            model: root.moderateHoldingsModel
+            model: d.moderateHoldingsModel
         }
 
         StatusButton {
             Layout.alignment: Qt.AlignHCenter
-            visible: !root.showOnlyPanels && !root.isJoinRequestRejected
+            visible: !root.showOnlyPanels && !root.isJoinRequestRejected && root.requiresRequest
             text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
             icon.name: root.isInvitationPending ? "" : d.getRevealAddressIcon()
             font.pixelSize: 13
-            enabled: root.requirementsMet
+            enabled: root.requirementsMet || d.communityPermissionsModel.count == 0
             onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.revealAddressClicked()
         }
 

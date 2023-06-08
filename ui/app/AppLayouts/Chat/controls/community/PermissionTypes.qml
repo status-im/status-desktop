@@ -6,7 +6,7 @@ import StatusQ.Core.Theme 0.1
 
 QtObject {
     enum Type {
-        None, Admin, Member, Moderator, ViewAndPost, Read
+        None, Admin, Member, Read, ViewAndPost
     }
 
     function getName(type) {

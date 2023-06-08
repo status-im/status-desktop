@@ -33,6 +33,8 @@ type
     trustStatus: TrustStatus
     onlineStatus: OnlineStatus
     loaderActive: bool
+    locked: bool
+    requiresPermissions: bool
 
 proc initItem*(
     id,
@@ -58,7 +60,9 @@ proc initItem*(
     categoryOpened: bool = true,
     trustStatus: TrustStatus = TrustStatus.Unknown,
     onlineStatus = OnlineStatus.Inactive,
-    loaderActive = false
+    loaderActive = false,
+    locked = false,
+    requiresPermissions = false
     ): Item =
   result = Item()
   result.id = id
@@ -86,6 +90,8 @@ proc initItem*(
   result.trustStatus = trustStatus
   result.onlineStatus = onlineStatus
   result.loaderActive = loaderActive
+  result.locked = locked
+  result.requiresPermissions = requiresPermissions
 
 proc `$`*(self: Item): string =
   result = fmt"""chat_section/Item(
@@ -112,6 +118,8 @@ proc `$`*(self: Item): string =
     trustStatus: {$self.trustStatus},
     onlineStatus: {$self.onlineStatus},
     loaderActive: {$self.loaderActive},
+    locked: {$self.locked},
+    requiresPermissions: {$self.requiresPermissions},
     ]"""
 
 proc toJsonNode*(self: Item): JsonNode =
@@ -138,7 +146,9 @@ proc toJsonNode*(self: Item): JsonNode =
     "categoryOpened": self.categoryOpened,
     "trustStatus": self.trustStatus,
     "onlineStatus": self.onlineStatus,
-    "loaderActive": self.loaderActive
+    "loaderActive": self.loaderActive,
+    "locked": self.locked,
+    "requiresPermissions": self.requiresPermissions
   }
 
 proc delete*(self: Item) =
@@ -278,3 +288,15 @@ proc `loaderActive=`*(self: var Item, value: bool) =
 
 proc isCategory*(self: Item): bool =
   self.`type` == CATEGORY_TYPE
+
+proc isLocked*(self: Item): bool =
+  self.locked
+
+proc `locked=`*(self: Item, value: bool) =
+  self.locked = value
+
+proc requiresPermissions*(self: Item): bool =
+  self.requiresPermissions
+
+proc `requiresPermissions=`*(self: Item, value: bool) =
+  self.requiresPermissions = value

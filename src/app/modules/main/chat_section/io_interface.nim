@@ -343,7 +343,7 @@ method switchToChannel*(self: AccessInterface, channelName: string) {.base.} =
 method joinSpectatedCommunity*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createOrEditCommunityTokenPermission*(self: AccessInterface, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, isPrivate: bool) {.base.} =
+method createOrEditCommunityTokenPermission*(self: AccessInterface, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deleteCommunityTokenPermission*(self: AccessInterface, communityId: string, permissionId: string) {.base.} =
@@ -398,4 +398,11 @@ method onOwnedcollectiblesUpdated*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =
+ 
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckChannelPermissionsResponse*(self: AccessInterface, chatId: string, checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckAllChannelsPermissionsResponse*(self: AccessInterface, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto) {.base.} =
   raise newException(ValueError, "No implementation available")

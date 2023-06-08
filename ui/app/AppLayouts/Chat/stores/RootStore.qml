@@ -16,6 +16,7 @@ QtObject {
 
     readonly property PermissionsStore permissionsStore: PermissionsStore {
         activeSectionId: mainModuleInst.activeSection.id
+        activeChannelId: root.currentChatContentModule().chatDetails.id
         chatCommunitySectionModuleInst: chatCommunitySectionModule
     }
 
@@ -77,6 +78,8 @@ QtObject {
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
     signal communityInfoAlreadyRequested()
+
+    signal communityAccessRequested(string communityId)
 
     signal goToMembershipRequestsPage()
 
@@ -620,6 +623,10 @@ QtObject {
 
       function onCommunityInfoAlreadyRequested() {
           root.communityInfoAlreadyRequested()
+      }
+
+      function onCommunityAccessRequested(communityId) {
+          root.communityAccessRequested(communityId)
       }
     }
 

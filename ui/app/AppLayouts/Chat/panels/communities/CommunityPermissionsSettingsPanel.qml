@@ -21,10 +21,6 @@ SettingsPageLayout {
 
     property int viewWidth: 560 // by design
 
-    // TODO: temporary property, to be removed when no need to hide the switch
-    // in the app
-    property bool showWhoHoldsSwitch: false
-
     signal createPermissionRequested(
         int permissionType, var holdings, var channels, bool isPrivate)
 
@@ -181,8 +177,6 @@ SettingsPageLayout {
             isPrivate: d.isPrivateToEditValue
             holdingsRequired: selectedHoldingsModel ? selectedHoldingsModel.count > 0
                                                     : false
-
-            showWhoHoldsSwitch: root.showWhoHoldsSwitch
 
             permissionDuplicated: {
                 // dependencies

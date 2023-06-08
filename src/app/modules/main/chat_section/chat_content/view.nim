@@ -13,6 +13,8 @@ QtObject:
       pinnedMessagesModelVariant: QVariant
       chatDetails: ChatDetails
       chatDetailsVariant: QVariant
+      viewOnlyPermissionsSatisfied: bool
+      viewAndPostPermissionsSatisfied: bool
 
   proc chatDetailsChanged*(self:View) {.signal.}
 
@@ -31,6 +33,8 @@ QtObject:
     result.pinnedMessagesModelVariant = newQVariant(result.pinnedMessagesModel)
     result.chatDetails = newChatDetails()
     result.chatDetailsVariant = newQVariant(result.chatDetails)
+    result.viewOnlyPermissionsSatisfied = false
+    result.viewAndPostPermissionsSatisfied = false
 
   proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
       name, icon: string, color, description, emoji: string, hasUnreadMessages: bool,
@@ -150,3 +154,28 @@ QtObject:
 
   proc updateChatBlocked*(self: View, blocked: bool) =
     self.chatDetails.setBlocked(blocked)
+
+  proc viewOnlyPermissionsSatisfiedChanged(self: View) {.signal.}
+
+  proc setViewOnlyPermissionsSatisfied*(self: View, value: bool) =
+    self.viewOnlyPermissionsSatisfied = value
+    self.viewOnlyPermissionsSatisfiedChanged()
+
+  proc getViewOnlyPermissionsSatisfied*(self: View): bool {.slot.} =
+    return self.viewOnlyPermissionsSatisfied
+  QtProperty[bool] viewOnlyPermissionsSatisfied:
+    read = getViewOnlyPermissionsSatisfied
+    notify = viewOnlyPermissionsSatisfiedChanged
+
+  proc viewAndPostPermissionsSatisfiedChanged(self: View) {.signal.}
+
+  proc setViewAndPostPermissionsSatisfied*(self: View, value: bool) =
+    self.viewAndPostPermissionsSatisfied = value
+    self.viewAndPostPermissionsSatisfiedChanged()
+
+  proc getViewAndPostPermissionsSatisfied*(self: View): bool {.slot.} =
+    return self.viewAndPostPermissionsSatisfied
+  QtProperty[bool] viewAndPostPermissionsSatisfied:
+    read = getViewAndPostPermissionsSatisfied
+    notify = viewAndPostPermissionsSatisfiedChanged
+

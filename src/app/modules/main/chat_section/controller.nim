@@ -107,6 +107,21 @@ proc authenticateToRequestToJoinCommunity*(self: Controller, communityId: string
   self.tmpRequestToJoinEnsName = ensName
   self.authenticate()
 
+proc getMySectionId*(self: Controller): string =
+  return self.sectionId
+
+proc asyncCheckPermissionsToJoin*(self: Controller) =
+  self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId())
+
+proc asyncCheckAllChannelsPermissions*(self: Controller) =
+  self.communityService.asyncCheckAllChannelsPermissions(self.getMySectionId())
+
+proc asyncCheckChannelPermissions*(self: Controller, communityId: string, chatId: string) =
+  self.communityService.asyncCheckChannelPermissions(communityId, chatId)
+
+proc asyncCheckPermissions*(self: Controller) =
+  self.asyncCheckPermissionsToJoin()
+  self.asyncCheckAllChannelsPermissions()
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
@@ -257,7 +272,7 @@ proc init*(self: Controller) =
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionCreated(args.communityId, args.tokenPermission)
-        self.communityService.asyncCheckPermissionsToJoin(self.sectionId)
+        self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
@@ -268,7 +283,7 @@ proc init*(self: Controller) =
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionUpdated(args.communityId, args.tokenPermission)
-        self.communityService.asyncCheckPermissionsToJoin(self.sectionId)
+        self.asyncCheckPermissions()
 
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED) do(e: Args):
@@ -280,7 +295,7 @@ proc init*(self: Controller) =
       let args = CommunityTokenPermissionRemovedArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityTokenPermissionDeleted(args.communityId, args.permissionId)
-        self.communityService.asyncCheckPermissionsToJoin(self.sectionId)
+        self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
@@ -292,6 +307,16 @@ proc init*(self: Controller) =
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityCheckPermissionsToJoinResponse(args.checkPermissionsToJoinResponse)
 
+    self.events.on(SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE) do(e: Args):
+      let args = CheckChannelPermissionsResponseArgs(e)
+      if args.communityId == self.sectionId:
+        self.delegate.onCommunityCheckChannelPermissionsResponse(args.chatId, args.checkChannelPermissionsResponse)
+
+    self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE) do(e: Args):
+      let args = CheckAllChannelsPermissionsResponseArgs(e)
+      if args.communityId == self.sectionId:
+        self.delegate.onCommunityCheckAllChannelsPermissionsResponse(args.checkAllChannelsPermissionsResponse)
+
     self.events.on(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED) do(e: Args):
       let args = CommunityTokenMetadataArgs(e)
       if (args.communityId == self.sectionId):
@@ -299,9 +324,11 @@ proc init*(self: Controller) =
 
     self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e: Args):
       self.delegate.onOwnedCollectiblesUpdated()
+      self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
       self.delegate.onWalletAccountTokensRebuilt()
+      self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_KICKED) do (e: Args):
       let args = CommunityArgs(e)
@@ -365,9 +392,6 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MAILSERVER_HISTORY_REQUEST_COMPLETED) do(e:Args):
     self.delegate.setLoadingHistoryMessagesInProgress(false)
-
-proc getMySectionId*(self: Controller): string =
-  return self.sectionId
 
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
@@ -633,6 +657,12 @@ proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
 
+proc checkChatHasPermissions*(self: Controller, communityId: string, chatId: string): bool =
+  return self.communityService.checkChatHasPermissions(communityId, chatId)
+
+proc checkChatIsLocked*(self: Controller, communityId: string, chatId: string): bool =
+  return self.communityService.checkChatIsLocked(communityId, chatId)
+
 proc createOrEditCommunityTokenPermission*(self: Controller, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   self.communityService.createOrEditCommunityTokenPermission(communityId, tokenPermission)
 
@@ -670,5 +700,3 @@ proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int,
 proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(self.getMySectionId())
 
-proc asyncCheckPermissionsToJoin*(self: Controller) =
-  self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId())

@@ -180,6 +180,8 @@ Item {
                         onlineStatus: !!model.onlineStatus ? model.onlineStatus : StatusChatListItem.OnlineStatus.Inactive
                         sensor.enabled: draggableItem.dragActive
                         dragged: draggableItem.dragActive
+                        requiresPermissions: model.requiresPermissions
+                        locked: model.locked
                         onClicked: {
                             highlightWhenCreated = false
 
