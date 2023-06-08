@@ -653,7 +653,7 @@ Rectangle {
         if ((event.modifiers & Qt.ControlModifier) || (event.modifiers & Qt.MetaModifier)) // these are likely shortcuts with no meaningful text
             return
 
-        if (event.key === Qt.Key_Backspace && d.textFormatMenu.opened) {
+        if (event.key === Qt.Key_Backspace && (!!d.textFormatMenu && d.textFormatMenu.opened)) {
             d.textFormatMenu.close()
         }
         // the text doesn't get registered to the textarea fast enough
@@ -1138,8 +1138,6 @@ Rectangle {
                 id: textFormatMenuComponent
 
                 StatusTextFormatMenu {
-                    id: textFormatMenu
-
                     onClosed: {
                         messageInputField.deselect()
                         destroy()
