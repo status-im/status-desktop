@@ -9,7 +9,7 @@ type
     Status = 3
     Emoji = 4
     Transaction = 5
-    Group = 6
+    SystemMessageGroup = 6
     Image = 7
     Audio = 8
     Community = 9
@@ -19,6 +19,7 @@ type
     ContactIdentityVerification = 13
     # Local only
     SystemMessagePinnedMessage = 14
+    SystemMessageMutualStateUpdate = 15
 
 proc toContentType*(value: int): ContentType =
   try:

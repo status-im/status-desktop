@@ -111,6 +111,8 @@ Popup {
                         return communityRequestNotificationComponent
                     case ActivityCenterStore.ActivityCenterNotificationType.CommunityKicked:
                         return communityKickedNotificationComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.ContactRemoved:
+                        return contactRemovedComponent
                     default:
                         return null
                 }
@@ -199,6 +201,18 @@ Popup {
         id: communityKickedNotificationComponent
 
         ActivityNotificationCommunityKicked {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
+            store: root.store
+            activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+
+    Component {
+        id: contactRemovedComponent
+
+        ActivityNotificationContactRemoved {
             filteredIndex: parent.filteredIndex
             notification: parent.notification
             store: root.store

@@ -22,7 +22,8 @@ Control {
         Transaction = 6,
         Invitation = 7,
         DiscordMessage = 8,
-        SystemMessagePinnedMessage = 14
+        SystemMessagePinnedMessage = 14,
+        SystemMessageMutualStateUpdate = 15
     }
 
     property list<Item> quickActions
@@ -188,7 +189,10 @@ Control {
 
             Loader {
                 Layout.fillWidth: true
-                active: isAReply && root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessagePinnedMessage
+                active: isAReply &&
+                    root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessagePinnedMessage &&
+                    root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessageMutualStateUpdate
+
                 visible: active
                 sourceComponent: StatusMessageReply {
                     objectName: "StatusMessage_replyDetails"
