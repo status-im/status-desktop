@@ -32,7 +32,7 @@ pipeline {
     string(
       name: 'NIMFLAGS',
       description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
-      defaultValue: '-d:useOpenssl3 --colors:off'
+      defaultValue: '--colors:off'
     )
   }
 
@@ -67,7 +67,7 @@ pipeline {
     QTDIR = '/opt/qt/5.15.2/gcc_64'
     PATH = "${env.QTDIR}/bin:${env.PATH}"
     /* Include library in order to compile the project */
-    LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/:${env.LD_LIBRARY_PATH}"
+    LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
     /* Container ports */
     RPC_PORT = "${8545 + env.EXECUTOR_NUMBER.toInteger()}"
     P2P_PORT = "${6010 + env.EXECUTOR_NUMBER.toInteger()}"
