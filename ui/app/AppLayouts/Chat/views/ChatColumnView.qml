@@ -44,10 +44,11 @@ Item {
     property int activeChatType: parentModule && parentModule.activeItem.type
     property bool stickersLoaded: false
     property bool viewAndPostPermissionsSatisfied: true
-    property var viewAndPostPermissionsModel
+    property var viewAndPostHoldingsModel
 
     readonly property var contactDetails: rootStore ? rootStore.oneToOneChatContact : null
     readonly property bool isUserAdded: !!root.contactDetails && root.contactDetails.isAdded
+    property bool amISectionAdmin: false
 
     signal openStickerPackPopup(string stickerPackId)
 
@@ -267,8 +268,9 @@ Item {
                         if (!channelPostRestrictions.visible) {
                             if (d.activeChatContentModule.chatDetails.blocked)
                                 return qsTr("This user has been blocked.")
-                            if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned)
+                            if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned) {
                                 return qsTr("You need to join this community to send messages")
+                            }
                             if (!root.viewAndPostPermissionsSatisfied) {
                                 return qsTr("Sorry, you don't have the tokens needed to post in this channel.")
                             }
@@ -355,7 +357,7 @@ Item {
                     height: chatInput.textInput.height
                     anchors.left: parent.left
                     anchors.leftMargin: (2*Style.current.bigPadding)
-                    visible: (!!root.viewAndPostPermissionsModel && (root.viewAndPostPermissionsModel.count > 0)
+                    visible: (!!root.viewAndPostHoldingsModel && (root.viewAndPostHoldingsModel.count > 0)
                               && !root.amISectionAdmin)
                     assetsModel: root.rootStore.assetsModel
                     collectiblesModel: root.rootStore.collectiblesModel

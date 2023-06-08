@@ -63,7 +63,6 @@ proc getIsPrivate*(self: TokenPermissionItem): bool =
 proc getTokenCriteriaMet*(self: TokenPermissionItem): bool =
   return self.tokenCriteriaMet
 
-
 proc buildTokenPermissionItem*(tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem =
   var tokenCriteriaItems: seq[TokenCriteriaItem] = @[]
 
@@ -80,11 +79,15 @@ proc buildTokenPermissionItem*(tokenPermission: CommunityTokenPermissionDto): To
 
     tokenCriteriaItems.add(tokenCriteriaItem)
 
+  var tokenPermissionChatListItems: seq[TokenPermissionChatListItem] = @[]
+  for chatID in tokenPermission.chatIDs:
+    tokenPermissionChatListItems.add(initTokenPermissionChatListItem(chatID))
+
   let tokenPermissionItem = initTokenPermissionItem(
       tokenPermission.id, 
       tokenPermission.`type`.int, 
       tokenCriteriaItems,
-      @[], # TODO: handle chat list items
+      tokenPermissionChatListItems,
       tokenPermission.isPrivate,
       false # allTokenCriteriaMet will be update by a call to checkPermissinosToJoin
   )

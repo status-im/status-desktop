@@ -35,10 +35,50 @@ StatusSectionLayout {
     property var stickersPopup
     property bool stickersLoaded: false
 
+    readonly property var chatContentModule: root.rootStore.currentChatContentModule() || null
+    readonly property bool viewOnlyPermissionsSatisfied: chatContentModule.viewOnlyPermissionsSatisfied
+    readonly property bool viewAndPostPermissionsSatisfied: chatContentModule.viewAndPostPermissionsSatisfied
+    property bool hasViewOnlyPermissions: false
+    property bool hasViewAndPostPermissions: false
+    property bool amIMember: false
+    property bool amISectionAdmin: false
+
+    property bool isInvitationPending: false
+
+    property var viewOnlyPermissionsModel
+    property var viewAndPostPermissionsModel
+    property var assetsModel
+    property var collectiblesModel
+
+    readonly property bool contentLocked: {
+        if (!rootStore.chatCommunitySectionModule.isCommunity()) {
+            return false
+        }
+        if (!amIMember) {
+            return hasViewAndPostPermissions || hasViewOnlyPermissions
+        }
+        if (amISectionAdmin) {
+            return false
+        }
+        if (!hasViewAndPostPermissions && hasViewOnlyPermissions) {
+            return !viewOnlyPermissionsSatisfied
+        }
+        if (hasViewAndPostPermissions && !hasViewOnlyPermissions) {
+            return !viewAndPostPermissionsSatisfied
+        }
+        if (hasViewOnlyPermissions && hasViewAndPostPermissions) {
+            return !viewOnlyPermissionsSatisfied && !viewAndPostPermissionsSatisfied
+        }
+        return false
+    }
+
     signal communityInfoButtonClicked()
     signal communityManageButtonClicked()
     signal profileButtonClicked()
     signal openAppSearch()
+
+    signal revealAddressClicked
+    signal invitationPendingClicked
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
@@ -61,12 +101,9 @@ StatusSectionLayout {
     notificationCount: activityCenterStore.unreadNotificationsCount
     hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
 
-    headerContent: ChatHeaderContentView {
-        id: headerContent
-        visible: !!root.rootStore.currentChatContentModule()
-        rootStore: root.rootStore
-        emojiPopup: root.emojiPopup
-        onSearchButtonClicked: root.openAppSearch()
+    headerContent: Loader {
+        id: headerContentLoader
+        sourceComponent: root.contentLocked ? joinCommunityHeaderPanelComponent : chatHeaderContentViewComponent
     }
 
     leftPanel: Loader {
@@ -76,22 +113,16 @@ StatusSectionLayout {
                              contactsColumnComponent
     }
 
-    centerPanel: ChatColumnView {
-        id: chatColumn
+    centerPanel: Loader {
         anchors.fill: parent
-        parentModule: root.rootStore.chatCommunitySectionModule
-        rootStore: root.rootStore
-        createChatPropertiesStore: root.createChatPropertiesStore
-        contactsStore: root.contactsStore
-        stickersLoaded: root.stickersLoaded
-        emojiPopup: root.emojiPopup
-        stickersPopup: root.stickersPopup
-        onOpenStickerPackPopup: {
-            Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
-        }
+        sourceComponent: root.contentLocked ? joinCommunityCenterPanelComponent : chatColumnViewComponent
     }
 
     showRightPanel: {
+        if (root.contentLocked) {
+            return false
+        }
+
         if (root.rootStore.openCreateChat ||
            !localAccountSensitiveSettings.showOnlineUsers ||
            !localAccountSensitiveSettings.expandUsersList) {
@@ -124,6 +155,67 @@ StatusSectionLayout {
     }
 
     Component {
+        id: chatHeaderContentViewComponent
+        ChatHeaderContentView {
+            visible: !!root.rootStore.currentChatContentModule()
+            rootStore: root.rootStore
+            emojiPopup: root.emojiPopup
+            onSearchButtonClicked: root.openAppSearch()
+        }
+    }
+
+    Component {
+        id: joinCommunityHeaderPanelComponent
+        JoinCommunityHeaderPanel {
+            readonly property var chatContentModule: root.rootStore.currentChatContentModule() || null
+            joinCommunity: false
+            color: chatContentModule.chatDetails.color
+            channelName: chatContentModule.chatDetails.name
+            channelDesc: chatContentModule.chatDetails.description
+        }
+    }
+
+    Component {
+        id: chatColumnViewComponent
+
+        ChatColumnView {
+            parentModule: root.rootStore.chatCommunitySectionModule
+            rootStore: root.rootStore
+            createChatPropertiesStore: root.createChatPropertiesStore
+            contactsStore: root.contactsStore
+            stickersLoaded: root.stickersLoaded
+            emojiPopup: root.emojiPopup
+            stickersPopup: root.stickersPopup
+            viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
+            viewAndPostPermissionsSatisfied: !root.rootStore.chatCommunitySectionModule.isCommunity() || root.amISectionAdmin || root.viewAndPostPermissionsSatisfied
+            amISectionAdmin: root.amISectionAdmin
+            onOpenStickerPackPopup: {
+                Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId, store: root.stickersPopup.store} )
+            }
+        }
+    }
+
+    Component {
+        id: joinCommunityCenterPanelComponent
+
+        JoinCommunityCenterPanel {
+            joinCommunity: false
+            name: sectionItemModel.name
+            channelName: root.chatContentModule.chatDetails.name
+            viewOnlyHoldingsModel: root.viewOnlyPermissionsModel
+            viewAndPostHoldingsModel: root.viewAndPostPermissionsModel
+            assetsModel: root.assetsModel
+            collectiblesModel: root.collectiblesModel
+            isInvitationPending: root.isInvitationPending
+            requiresRequest: !root.amIMember
+            requirementsMet: (viewOnlyPermissionsSatisfied && viewOnlyPermissionsModel.count > 0) ||
+                             (viewAndPostPermissionsSatisfied && viewAndPostPermissionsModel.count > 0)
+            onRevealAddressClicked: root.revealAddressClicked()
+            onInvitationPendingClicked: root.invitationPendingClicked()
+        }
+    }
+
+    Component {
         id: contactsColumnComponent
         ContactsColumnView {
             chatSectionModule: root.rootStore.chatCommunitySectionModule
@@ -138,7 +230,9 @@ StatusSectionLayout {
                 root.openAppSearch()
             }
             onAddRemoveGroupMemberClicked: {
-                headerContent.addRemoveGroupMember()
+                if (headerContentLoader.item && headerContentLoader.item instanceof ChatHeaderContentView) {
+                    headerContentLoader.item.addRemoveGroupMember()
+                }
             }
         }
     }

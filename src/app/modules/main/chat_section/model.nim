@@ -31,6 +31,8 @@ type
     OnlineStatus
     IsCategory
     LoaderActive
+    Locked
+    RequiresPermissions
 
 QtObject:
   type
@@ -99,6 +101,8 @@ QtObject:
       ModelRole.OnlineStatus.int:"onlineStatus",
       ModelRole.IsCategory.int:"isCategory",
       ModelRole.LoaderActive.int:"loaderActive",
+      ModelRole.Locked.int:"locked",
+      ModelRole.RequiresPermissions.int:"requiresPermissions",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -162,6 +166,10 @@ QtObject:
       result = newQVariant(item.isCategory)
     of ModelRole.LoaderActive:
       result = newQVariant(item.loaderActive)
+    of ModelRole.Locked:
+      result = newQVariant(item.isLocked)
+    of ModelRole.RequiresPermissions:
+      result = newQVariant(item.requiresPermissions)
 
   proc getItemIdxById(items: seq[Item], id: string): int =
     var idx = 0
@@ -273,6 +281,22 @@ QtObject:
           self.dataChanged(index, index, @[ModelRole.Active.int, ModelRole.LoaderActive.int])
         else:
           self.dataChanged(index, index, @[ModelRole.Active.int])
+
+  proc setItemLocked*(self: Model, id: string, locked: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    self.items[index].locked = locked
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Locked.int])
+
+  proc setItemPermissionsRequired*(self: Model, id: string, value: bool) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+    self.items[index].requiresPermissions = value
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.RequiresPermissions.int])
 
   proc changeMutedOnItemById*(self: Model, id: string, muted: bool) =
     let index = self.getItemIdxById(id)

@@ -117,6 +117,15 @@ type
     communityId*: string
     checkPermissionsToJoinResponse*: CheckPermissionsToJoinResponseDto
 
+  CheckChannelPermissionsResponseArgs* = ref object of Args
+    communityId*: string
+    chatId*: string
+    checkChannelPermissionsResponse*: CheckChannelPermissionsResponseDto
+
+  CheckAllChannelsPermissionsResponseArgs* = ref object of Args
+    communityId*: string
+    checkAllChannelsPermissionsResponse*: CheckAllChannelsPermissionsResponseDto
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -179,6 +188,8 @@ const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
 const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
 
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinResponse"
+const SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE* = "checkChannelPermissionsResponse"
+const SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE* = "checkAllChannelsPermissionsResponse"
 
 QtObject:
   type
@@ -581,6 +592,7 @@ QtObject:
 
           if tokenPermission.tokenCriteria.len != prevTokenPermission.tokenCriteria.len or
             tokenPermission.isPrivate != prevTokenPermission.isPrivate or
+            tokenPermission.chatIds.len != prevTokenPermission.chatIds.len or
             tokenPermission.`type` != prevTokenPermission.`type`:
 
               permissionUpdated = true
@@ -588,14 +600,16 @@ QtObject:
           for tc in tokenPermission.tokenCriteria:
             let index = findIndexBySymbol(tc.symbol, prevTokenPermission.tokenCriteria)
             if index == -1:
-              continue
-
-            let prevTc = prevTokenPermission.tokenCriteria[index]
-            if tc.amount != prevTc.amount or tc.ensPattern != prevTc.ensPattern:
               permissionUpdated = true
-              break
+            else:
+
+              let prevTc = prevTokenPermission.tokenCriteria[index]
+              if tc.amount != prevTc.amount or tc.ensPattern != prevTc.ensPattern or tc.symbol != prevTc.symbol or tc.name != prevTc.name or tc.decimals != prevTc.decimals:
+                permissionUpdated = true
+                break
 
           if permissionUpdated:
+            self.communities[community.id].tokenPermissions[id] = tokenPermission
             self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, 
               CommunityTokenPermissionArgs(communityId: community.id, tokenPermission: tokenPermission))
 
@@ -1371,16 +1385,13 @@ QtObject:
     self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
 
   proc asyncCheckPermissionsToJoin*(self: Service, communityId: string) =
-    try:
-      let arg = AsyncCheckPermissionsToJoinTaskArg(
-        tptr: cast[ByteAddress](asyncCheckPermissionsToJoinTask),
-        vptr: cast[ByteAddress](self.vptr),
-        slot: "onAsyncCheckPermissionsToJoinDone",
-        communityId: communityId
-      )
-      self.threadpool.start(arg)
-    except Exception as e:
-      error "Error checking permissions to join community", msg = e.msg 
+    let arg = AsyncCheckPermissionsToJoinTaskArg(
+      tptr: cast[ByteAddress](asyncCheckPermissionsToJoinTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncCheckPermissionsToJoinDone",
+      communityId: communityId
+    )
+    self.threadpool.start(arg)
 
   proc onAsyncCheckPermissionsToJoinDone*(self: Service, rpcResponse: string) {.slot.} =
     try:
@@ -1396,6 +1407,59 @@ QtObject:
     except Exception as e:
       let errMsg = e.msg
       error "error checking permissions to join: ", errMsg
+
+  proc asyncCheckChannelPermissions*(self: Service, communityId: string, chatId: string) =
+    let arg = AsyncCheckChannelPermissionsTaskArg(
+      tptr: cast[ByteAddress](asyncCheckChannelPermissionsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncCheckChannelPermissionsDone",
+      communityId: communityId,
+      chatId: chatId
+    )
+    self.threadpool.start(arg)
+
+  proc onAsyncCheckChannelPermissionsDone*(self: Service, rpcResponse: string) {.slot.} =
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        let error = Json.decode($rpcResponseObj["error"], RpcError)
+        error "Error checking community channel permissions", msg = error.message
+        return
+
+      let communityId = rpcResponseObj{"communityId"}.getStr()
+      let chatId = rpcResponseObj{"chatId"}.getStr()
+      let checkChannelPermissionsResponse = rpcResponseObj["response"]["result"].toCheckChannelPermissionsResponseDto()
+      self.communities[communityId].channelPermissions.channels[chatId] = checkChannelPermissionsResponse
+      self.events.emit(SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE, CheckChannelPermissionsResponseArgs(communityId: communityId, chatId: chatId, checkChannelPermissionsResponse: checkChannelPermissionsResponse))
+    except Exception as e:
+      let errMsg = e.msg
+      error "error checking all channel permissions: ", errMsg
+
+  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string) =
+    let arg = AsyncCheckAllChannelsPermissionsTaskArg(
+      tptr: cast[ByteAddress](asyncCheckAllChannelsPermissionsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncCheckAllChannelsPermissionsDone",
+      communityId: communityId
+    )
+    self.threadpool.start(arg)
+
+  proc onAsyncCheckAllChannelsPermissionsDone*(self: Service, rpcResponse: string) {.slot.} =
+    try:
+      let rpcResponseObj = rpcResponse.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        let error = Json.decode($rpcResponseObj["error"], RpcError)
+        error "Error checking all community channel permissions", msg = error.message
+        return
+
+      let communityId = rpcResponseObj{"communityId"}.getStr()
+      let checkAllChannelsPermissionsResponse = rpcResponseObj["response"]["result"].toCheckAllChannelsPermissionsResponseDto()
+      self.communities[communityId].channelPermissions = checkAllChannelsPermissionsResponse
+      self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE, CheckAllChannelsPermissionsResponseArgs(communityId: communityId, checkAllChannelsPermissionsResponse: checkAllChannelsPermissionsResponse))
+
+    except Exception as e:
+      let errMsg = e.msg
+      error "error checking all channels permissions: ", errMsg
 
   proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string) =
     try:
@@ -1783,9 +1847,9 @@ QtObject:
       var response: RpcResponse[JsonNode]
 
       if editing:
-        response = status_go.editCommunityTokenPermission(communityId, tokenPermission.id, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.isPrivate)
+        response = status_go.editCommunityTokenPermission(communityId, tokenPermission.id, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.chatIDs, tokenPermission.isPrivate)
       else:
-        response = status_go.createCommunityTokenPermission(communityId, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.isPrivate)
+        response = status_go.createCommunityTokenPermission(communityId, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.chatIDs, tokenPermission.isPrivate)
 
       if response.result != nil and response.result.kind != JNull:
         var changesField = TOKEN_PERMISSIONS_ADDED
@@ -1835,3 +1899,20 @@ QtObject:
 
     let community = self.communities[communityId]
     return community.pendingRequestsToJoin[indexPending].publicKey
+
+  proc checkChatHasPermissions*(self: Service, communityId: string, chatId: string): bool =
+    let community = self.getCommunityById(communityId)
+    for id, tokenPermission in community.tokenPermissions:
+      if TokenPermissionType(tokenPermission.`type`) == TokenPermissionType.View or TokenPermissionType(tokenPermission.`type`) == TokenPermissionType.ViewAndPost:
+        for id in tokenPermission.chatIds:
+          if id == chatId:
+            return true
+    return false
+
+  proc checkChatIsLocked*(self: Service, communityId: string, chatId: string): bool =
+    if not self.communities.hasKey(communityId):
+      return false
+
+    let community = self.getCommunityById(communityId)
+    return community.channelPermissions.channels.hasKey(chatId) and not community.channelPermissions.channels[chatId].viewAndPostPermissions.satisfied
+

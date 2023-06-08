@@ -36,7 +36,7 @@ StatusSectionLayout {
     property bool requirementsMet: true
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
-    property alias loginType: overlayPanel.loginType
+    property alias loginType: joinCommunityCenterPanel.loginType
 
     property var communityHoldingsModel
     property var viewOnlyHoldingsModel
@@ -57,12 +57,7 @@ StatusSectionLayout {
     signal adHocChatButtonClicked
     signal revealAddressClicked
     signal invitationPendingClicked
-    signal joined
-    signal cancelMembershipRequest
 
-    function openJoinCommunityDialog() {
-        joinCommunityDialog.open()
-    }
 
     QtObject {
         id: d
@@ -70,50 +65,13 @@ StatusSectionLayout {
         readonly property int blurryRadius: 32
     }
 
-    // Blur background:
-    headerContent: RowLayout {
-        anchors.fill: parent
-        spacing: 30
-
-        StatusChatInfoButton {
-            id: headerInfoButton
-            Layout.preferredHeight: parent.height
-            Layout.minimumWidth: 100
-            Layout.fillWidth: true
-            title: root.joinCommunity ? root.name : root.channelName
-            subTitle: root.joinCommunity ? root.communityDesc : root.channelDesc
-            asset.color: root.color
-            enabled: false
-            type: StatusChatInfoButton.Type.CommunityChat
-            layer.enabled: root.joinCommunity // Blured when joining community but not when entering channel
-            layer.effect: fastBlur
-        }
-
-        RowLayout {
-            Layout.preferredHeight: parent.height
-            spacing: 10
-            layer.enabled: true
-            layer.effect: fastBlur
-
-            StatusFlatRoundButton {
-                id: search
-                icon.name: "search"
-                type: StatusFlatRoundButton.Type.Secondary
-                enabled: false
-            }
-
-            StatusFlatRoundButton {
-                icon.name: "group-chat"
-                type: StatusFlatRoundButton.Type.Secondary
-                enabled: false
-            }
-
-            StatusFlatRoundButton {
-                icon.name: "more"
-                type: StatusFlatRoundButton.Type.Secondary
-                enabled: false
-            }
-        }
+    headerContent: JoinCommunityHeaderPanel {
+        joinCommunity: root.joinCommunity
+        color: root.color
+        name: root.name
+        channelName: root.channelName
+        communityDesc: root.communityDesc
+        channelDesc: root.channelDesc
     }
 
     // Blur background:
@@ -135,7 +93,7 @@ StatusSectionLayout {
         ColumnLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.halfPadding
-            layer.enabled: true
+            layer.enabled: root.joinCommunity
             layer.effect: fastBlur
 
             Repeater {
@@ -160,127 +118,36 @@ StatusSectionLayout {
     }
 
     // Blur background + Permissions base information content:
-    centerPanel: ColumnLayout {
+    centerPanel: JoinCommunityCenterPanel {
+        id: joinCommunityCenterPanel
+
         anchors.fill: parent
-        spacing: 0
 
-        // Blur background:
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: Math.min(centralPanelData.implicitHeight, parent.height - overlayPanel.implicitHeight)
+        joinCommunity: root.joinCommunity // Otherwise it means join channel action
 
-            ColumnLayout {
-                id: centralPanelData
-                width: parent.width
-                layer.enabled: true
-                layer.effect: fastBlur
+        name: root.name
+        channelName: root.channelName
 
-                StatusBaseText {
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 30
-                    Layout.bottomMargin: 30
-                    text: root.chatDateTimeText
-                    font.pixelSize: 13
-                    color: Theme.palette.baseColor1
-                }
+        isInvitationPending: root.isInvitationPending
+        isJoinRequestRejected: root.isJoinRequestRejected
+        requiresRequest: root.requiresRequest
+        requirementsMet: root.requirementsMet
 
-                RowLayout {
-                    Layout.alignment: Qt.AlignHCenter
+        communityHoldingsModel: root.communityHoldingsModel
+        viewOnlyHoldingsModel: root.viewOnlyHoldingsModel
+        viewAndPostHoldingsModel: root.viewAndPostHoldingsModel
+        moderateHoldingsModel: root.moderateHoldingsModel
+        assetsModel: root.assetsModel
+        collectiblesModel: root.collectiblesModel
 
-                    StatusBaseText {
-                        text: root.listUsersText
-                        font.pixelSize: 13
-                    }
+        chatDateTimeText: root.chatDateTimeText
+        listUsersText: root.listUsersText
+        messagesModel: root.messagesModel
 
-                    StatusBaseText {
-                        text: qsTr("joined the channel")
-                        font.pixelSize: 13
-                        color: Theme.palette.baseColor1
-                    }
-                }
-
-                ListView {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: childrenRect.height + spacing
-                    Layout.topMargin: 16
-                    spacing: 16
-                    model: root.messagesModel
-                    delegate: StatusMessage {
-                        width: ListView.view.width
-                        timestamp: model.timestamp
-                        enabled: false
-                        messageDetails: StatusMessageDetails {
-                            messageText: model.message
-                            contentType: model.contentType
-                            sender.displayName: model.senderDisplayName
-                            sender.isContact: model.isContact
-                            sender.trustIndicator: model.trustIndicator
-                            sender.profileImage: StatusProfileImageSettings {
-                                width: 40
-                                height: 40
-                                name: model.profileImage || ""
-                                colorId: model.colorId
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Permissions base information content:
-        Rectangle {
-            id: panelBase
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
-            gradient: Gradient {
-                GradientStop {
-                    position: 0.000
-                    color: "transparent"
-                }
-                GradientStop {
-                    position: 0.180
-                    color: panelBase.color
-                }
-            }
-
-            StatusScrollView {
-                anchors.fill: parent
-                padding: 0
-
-                Item {
-                    implicitHeight: Math.max(overlayPanel.implicitHeight, panelBase.height)
-                    implicitWidth: Math.max(overlayPanel.implicitWidth, panelBase.width)
-
-                    JoinPermissionsOverlayPanel {
-                        id: overlayPanel
-
-                        anchors.centerIn: parent
-
-                        topPadding: 2 * bottomPadding
-                        joinCommunity: root.joinCommunity
-                        requirementsMet: root.requirementsMet
-                        isInvitationPending: root.isInvitationPending
-                        isJoinRequestRejected: root.isJoinRequestRejected
-                        requiresRequest: root.requiresRequest
-                        communityName: root.name
-                        communityHoldingsModel: root.communityHoldingsModel
-                        channelName: root.channelName
-
-                        viewOnlyHoldingsModel: root.viewOnlyHoldingsModel
-                        viewAndPostHoldingsModel: root.viewAndPostHoldingsModel
-                        moderateHoldingsModel: root.moderateHoldingsModel
-                        assetsModel: root.assetsModel
-                        collectiblesModel: root.collectiblesModel
-
-                        onRevealAddressClicked: root.revealAddressClicked()
-                        onInvitationPendingClicked: root.invitationPendingClicked()
-                    }
-                }
-            }
-        }
+        onRevealAddressClicked: root.revealAddressClicked()
+        onInvitationPendingClicked: root.invitationPendingClicked()
     }
+
     showRightPanel: false
 
     Component {
@@ -290,18 +157,5 @@ StatusSectionLayout {
             radius: d.blurryRadius
             transparentBorder: true
         }
-    }
-
-    CommunityIntroDialog {
-        id: joinCommunityDialog
-
-        name: root.name
-        introMessage: root.introMessage
-        imageSrc: root.image
-        accessType: root.accessType
-        isInvitationPending: root.isInvitationPending
-
-        onJoined: root.joined()
-        onCancelMembershipRequest: root.cancelMembershipRequest()
     }
 }

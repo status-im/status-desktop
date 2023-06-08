@@ -400,3 +400,9 @@ method amIChatAdmin*(self: Module): bool =
   else:
     let communityDto = self.controller.getCommunityDetails()
     return communityDto.memberRole == MemberRole.Owner or communityDto.memberRole == MemberRole.Admin
+
+method onUpdateViewOnlyPermissionsSatisfied*(self: Module, value: bool) =
+  self.view.setViewOnlyPermissionsSatisfied(value)
+
+method onUpdateViewAndPostPermissionsSatisfied*(self: Module, value: bool) =
+  self.view.setViewAndPostPermissionsSatisfied(value)
