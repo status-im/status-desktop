@@ -44,6 +44,17 @@ proc checkPermissionsToJoinCommunity*(communityId: string): RpcResponse[JsonNode
     "communityId": communityId
   }])
 
+proc checkCommunityChannelPermissions*(communityId: string, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("checkCommunityChannelPermissions".prefix, %*[{
+    "communityId": communityId,
+    "chatId": chatId
+  }])
+
+proc checkAllCommunityChannelsPermissions*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("checkAllCommunityChannelsPermissions".prefix, %*[{
+    "communityId": communityId
+  }])
+
 proc myPendingRequestsToJoin*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result =  callPrivateRPC("myPendingRequestsToJoin".prefix)
 
@@ -177,20 +188,22 @@ proc requestImportDiscordCommunity*(
       "filesToImport": filesToImport
     }])
 
-proc createCommunityTokenPermission*(communityId: string, permissionType: int, tokenCriteria: string, isPrivate: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc createCommunityTokenPermission*(communityId: string, permissionType: int, tokenCriteria: string, chatIDs: seq[string], isPrivate: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("createCommunityTokenPermission".prefix, %*[{
     "communityId": communityId,
     "type": permissionType,
     "tokenCriteria": parseJson(tokenCriteria),
+    "chat_ids": chatIDs,
     "isPrivate": isPrivate
   }])
 
-proc editCommunityTokenPermission*(communityId: string, permissionId: string, permissionType: int, tokenCriteria: string, isPrivate: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc editCommunityTokenPermission*(communityId: string, permissionId: string, permissionType: int, tokenCriteria: string, chatIDs: seq[string], isPrivate: bool): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("editCommunityTokenPermission".prefix, %*[{
     "communityId": communityId,
     "permissionId": permissionId,
     "type": permissionType,
     "tokenCriteria": parseJson(tokenCriteria),
+    "chat_ids": chatIDs,
     "isPrivate": isPrivate
   }])
 

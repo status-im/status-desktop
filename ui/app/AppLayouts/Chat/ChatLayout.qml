@@ -32,6 +32,7 @@ StackLayout {
     }
 
     Loader {
+        id: mainViewLoader
         readonly property var chatItem: root.rootStore.chatCommunitySectionModule
         sourceComponent: chatItem.isCommunity() && chatItem.requiresTokenPermissionToJoin && !chatItem.amIMember ? joinCommunityViewComponent : chatViewComponent
     }
@@ -41,6 +42,7 @@ StackLayout {
         JoinCommunityView {
             id: joinCommunityView
             readonly property var communityData: sectionItemModel
+            readonly property string communityId: communityData.id
             name: communityData.name
             introMessage: communityData.introMessage
             communityDesc: communityData.description
@@ -53,7 +55,10 @@ StackLayout {
                              communityData.memberRole === Constants.memberRole.admin
             communityItemsModel: root.rootStore.communityItemsModel
             requirementsMet: root.permissionsStore.allTokenRequirementsMet
-            communityHoldingsModel: root.permissionsStore.permissionsModel
+            requiresRequest: !communityData.amIMember
+            communityHoldingsModel: root.permissionsStore.becomeMemberPermissionsModel
+            viewOnlyHoldingsModel: root.permissionsStore.viewOnlyPermissionsModel
+            viewAndPostHoldingsModel: root.permissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
             isInvitationPending: root.rootStore.isCommunityRequestPending(communityData.id)
@@ -63,16 +68,17 @@ StackLayout {
             loginType: root.rootStore.loginType
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
-            onRevealAddressClicked: openJoinCommunityDialog()
+            onRevealAddressClicked: {
+                Global.openPopup(communityIntroDialogPopup, {
+                    communityId: communityData.id,
+                    isInvitationPending: joinCommunityView.isInvitationPending,
+                    name: communityData.name,
+                    introMessage: communityData.introMessage,
+                    imageSrc: communityData.image,
+                    accessType: communityData.access
+                })
+            }
             onInvitationPendingClicked: {
-                root.rootStore.cancelPendingRequest(communityData.id)
-                joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
-            }
-            onJoined: {
-                root.rootStore.requestToJoinCommunityWithAuthentication(communityData.id, root.rootStore.userProfileInst.name)
-            }
-
-            onCancelMembershipRequest: {
                 root.rootStore.cancelPendingRequest(communityData.id)
                 joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
             }
@@ -85,6 +91,25 @@ StackLayout {
                     }
                 }
             }
+
+            CommunityIntroDialog {
+                id: communityIntroDialog
+
+                isInvitationPending: joinCommunityView.isInvitationPending
+                name: communityData.name
+                introMessage: communityData.introMessage
+                imageSrc: communityData.image
+                accessType: communityData.access
+
+                onJoined: {
+                    root.rootStore.requestToJoinCommunityWithAuthentication(communityData.id, root.rootStore.userProfileInst.name)
+                }
+
+                onCancelMembershipRequest: {
+                    root.rootStore.cancelPendingRequest(communityData.id)
+                    joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
+                }
+            }
         }
     }
 
@@ -92,12 +117,26 @@ StackLayout {
         id: chatViewComponent
         ChatView {
             id: chatView
+
+            readonly property var chatItem: root.rootStore.chatCommunitySectionModule
+            readonly property string communityId: root.sectionItemModel.id
+
             emojiPopup: root.emojiPopup
             stickersPopup: root.stickersPopup
             contactsStore: root.contactsStore
             rootStore: root.rootStore
             createChatPropertiesStore: root.createChatPropertiesStore
             sectionItemModel: root.sectionItemModel
+            amIMember: chatItem.amIMember
+            amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
+                             root.sectionItemModel.memberRole === Constants.memberRole.admin
+            hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
+            hasViewAndPostPermissions: root.permissionsStore.viewAndPostPermissionsModel.count > 0
+            viewOnlyPermissionsModel: root.permissionsStore.viewOnlyPermissionsModel
+            viewAndPostPermissionsModel: root.permissionsStore.viewAndPostPermissionsModel
+            assetsModel: root.rootStore.assetsModel
+            collectiblesModel: root.rootStore.collectiblesModel
+            isInvitationPending: root.rootStore.isCommunityRequestPending(root.sectionItemModel.id)
 
             onCommunityInfoButtonClicked: root.currentIndex = 1
             onCommunityManageButtonClicked: root.currentIndex = 1
@@ -107,6 +146,20 @@ StackLayout {
             }
             onOpenAppSearch: {
                 root.openAppSearch()
+            }
+            onRevealAddressClicked: {
+                Global.openPopup(communityIntroDialogPopup, {
+                    communityId: root.sectionItemModel.id,
+                    isInvitationPending: root.rootStore.isCommunityRequestPending(root.sectionItemModel.id),
+                    name: root.sectionItemModel.name,
+                    introMessage: root.sectionItemModel.introMessage,
+                    imageSrc: root.sectionItemModel.image,
+                    accessType: root.sectionItemModel.access
+                })
+            }
+            onInvitationPendingClicked: {
+                root.rootStore.cancelPendingRequest(root.sectionItemModel.id)
+                chatView.isInvitationPending = root.rootStore.isCommunityRequestPending(root.sectionItemModel.id)
             }
         }
     }
@@ -134,4 +187,37 @@ StackLayout {
             }
         }
     }
+
+    Component {
+        id: communityIntroDialogPopup
+        CommunityIntroDialog {
+            id: communityIntroDialog
+
+            property string communityId
+
+            onJoined: {
+                root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name)
+            }
+
+            onCancelMembershipRequest: {
+                root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
+                mainViewLoader.item.isInvitationPending = root.rootStore.isCommunityRequestPending(communityIntroDialog.communityId)
+            }
+
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
+    Connections {
+        target: root.rootStore
+        enabled: mainViewLoader.item
+        function onCommunityAccessRequested(communityId: string) {
+            if (communityId === mainViewLoader.item.communityId) {
+                mainViewLoader.item.isInvitationPending = root.rootStore.isCommunityRequestPending(communityId)
+            }
+        }
+    }
+
 }

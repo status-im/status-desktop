@@ -1,5 +1,7 @@
 import NimQml, Tables
 import token_permission_item
+import token_permission_chat_list_item
+import token_permission_chat_list_model
 import token_criteria_model
 
 type
@@ -10,6 +12,7 @@ type
     TokenCriteria
     ChatList
     IsPrivate
+    TokenCriteriaMet
 
 QtObject:
   type TokenPermissionsModel* = ref object of QAbstractListModel
@@ -34,14 +37,33 @@ QtObject:
       ModelRole.TokenCriteria.int:"holdingsListModel",
       ModelRole.ChatList.int:"channelsListModel",
       ModelRole.IsPrivate.int:"isPrivate",
+      ModelRole.TokenCriteriaMet.int:"tokenCriteriaMet",
     }.toTable
 
   proc countChanged(self: TokenPermissionsModel) {.signal.}
   proc getCount*(self: TokenPermissionsModel): int {.slot.} =
     return self.items.len
+
   QtProperty[int] count:
     read = getCount
     notify = countChanged
+
+  proc findIndexById(self: TokenPermissionsModel, id: string): int =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getId() == id):
+        return i
+    return -1
+
+  proc belongsToChat*(self: TokenPermissionsModel, permissionId: string, chatId: string): bool {.slot.} =
+    let idx = self.findIndexById(permissionId)
+    if(idx == -1):
+      return false
+
+    for clItem in self.items[idx].chatList.getItems():
+      if clItem.getKey() == chatId:
+        return true
+
+    return false
 
   method rowCount(self: TokenPermissionsModel, index: QModelIndex = nil): int =
     return self.items.len
@@ -66,6 +88,8 @@ QtObject:
         result = newQVariant(item.getChatList())
       of ModelRole.IsPrivate:
         result = newQVariant(item.getIsPrivate())
+      of ModelRole.TokenCriteriaMet:
+        result = newQVariant(item.getTokenCriteriaMet())
 
   proc addItem*(self: TokenPermissionsModel, item: TokenPermissionItem) =
     let parentModelIndex = newQModelIndex()
@@ -83,12 +107,6 @@ QtObject:
 
   proc getItems*(self: TokenPermissionsModel): seq[TokenPermissionItem] =
     return self.items
-
-  proc findIndexById(self: TokenPermissionsModel, id: string): int =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].getId() == id):
-        return i
-    return -1
 
   proc removeItemWithId*(self: TokenPermissionsModel, permissionId: string) =
     let idx = self.findIndexById(permissionId)
@@ -117,6 +135,7 @@ QtObject:
 
     self.items[idx].`type` = item.`type`
     self.items[idx].tokenCriteria.setItems(item.tokenCriteria.getItems())
+    self.items[idx].chatList.setItems(item.chatList.getItems())
     self.items[idx].isPrivate = item.isPrivate
     self.items[idx].tokenCriteriaMet = item.tokenCriteriaMet
 
@@ -127,4 +146,5 @@ QtObject:
       ModelRole.Type.int,
       ModelRole.TokenCriteria.int,
       ModelRole.IsPrivate.int,
+      ModelRole.TokenCriteriaMet.int
     ])

@@ -127,3 +127,9 @@ method onMadeActive*(self: AccessInterface) {.base.} =
 
 method onMadeInactive*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onUpdateViewOnlyPermissionsSatisfied*(self: AccessInterface, value: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onUpdateViewAndPostPermissionsSatisfied*(self: AccessInterface, value: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

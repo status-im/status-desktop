@@ -16,3 +16,5 @@ TokenHoldersPanel 1.0 TokenHoldersPanel.qml
 TokenHoldersProxyModel 1.0 TokenHoldersProxyModel.qml
 WarningPanel 1.0 WarningPanel.qml
 ChatPermissionQualificationPanel 1.0 ChatPermissionQualificationPanel.qml
+JoinCommunityCenterPanel 1.0 JoinCommunityCenterPanel.qml
+JoinCommunityHeaderPanel 1.0 JoinCommunityHeaderPanel.qml

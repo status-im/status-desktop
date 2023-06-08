@@ -1,4 +1,4 @@
-import NimQml, json, sequtils
+import NimQml, json, sequtils, strutils
 import model as chats_model
 import item, active_item
 import ../../shared_models/user_model as user_model
@@ -401,8 +401,10 @@ QtObject:
   QtProperty[QVariant] permissionsModel:
     read = getTokenPermissionsModel
 
-  proc createOrEditCommunityTokenPermission*(self: View, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, isPrivate: bool) {.slot.} =
-    self.delegate.createOrEditCommunityTokenPermission(communityId, permissionId, permissionType, tokenCriteriaJson, isPrivate)
+  proc createOrEditCommunityTokenPermission*(self: View, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: string, isPrivate: bool) {.slot.} =
+
+    let chatIDs = channelIDs.split(',')
+    self.delegate.createOrEditCommunityTokenPermission(communityId, permissionId, permissionType, tokenCriteriaJson, chatIDs, isPrivate)
 
   proc deleteCommunityTokenPermission*(self: View, communityId: string, permissionId: string) {.slot.} =
     self.delegate.deleteCommunityTokenPermission(communityId, permissionId)

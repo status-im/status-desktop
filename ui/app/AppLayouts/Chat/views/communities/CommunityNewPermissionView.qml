@@ -29,10 +29,6 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property bool isEditState: false
 
-    // TODO: temporary property, to be removed when no need to hide the switch
-    // in the app
-    property bool showWhoHoldsSwitch: false
-
     readonly property bool dirty:
         root.holdingsRequired !== d.dirtyValues.holdingsRequired ||
         (d.dirtyValues.holdingsRequired && !holdingsModelComparator.equal) ||
@@ -220,8 +216,6 @@ StatusScrollView {
 
             children: StatusSwitch {
                 id: whoHoldsSwitch
-
-                visible: root.showWhoHoldsSwitch
 
                 padding: 0
                 anchors.right: parent.right

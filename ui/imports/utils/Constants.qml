@@ -404,6 +404,14 @@ QtObject {
         readonly property int admin: 4
     }
 
+    readonly property QtObject permissionType: QtObject{
+        readonly property int none: 0
+        readonly property int admin: 1
+        readonly property int member: 2
+        readonly property int read: 3
+        readonly property int viewAndPost: 4
+    }
+
     readonly property QtObject messageContentType: QtObject {
         readonly property int newMessagesMarker: -3
         readonly property int fetchMoreMessagesButton: -2

@@ -39,7 +39,6 @@ type TokenPermissionType* {.pure.}= enum
   View = 3,
   ViewAndPost = 4,
   
-
 type TokenType* {.pure.}= enum
   Unknown = 0,
   ERC20 = 1,
@@ -70,6 +69,29 @@ type CommunityTokensMetadataDto* = object
   symbol*: string
   name*: string
   tokenType*: TokenType
+
+type AccountChainIDsCombinationDto* = object
+  address*: string
+  chainIds*: seq[int]
+
+type CheckPermissionsResultDto* = object
+  criteria*: seq[bool]
+
+type CheckPermissionsToJoinResponseDto* = object
+  satisfied*: bool
+  permissions*: Table[string, CheckPermissionsResultDto]
+  validCombinations*: seq[AccountChainIDsCombinationDto]
+
+type ViewOnlyOrViewAndPostPermissionsResponseDto* = object
+  satisfied*: bool
+  permissions*: Table[string, CheckPermissionsResultDto]
+
+type CheckChannelPermissionsResponseDto* = object
+  viewOnlyPermissions*: ViewOnlyOrViewAndPostPermissionsResponseDto
+  viewAndPostPermissions*: ViewOnlyOrViewAndPostPermissionsResponseDto
+
+type CheckAllChannelsPermissionsResponseDto* = object
+  channels*: Table[string, CheckChannelPermissionsResponseDto]
 
 type CommunityDto* = object
   id*: string
@@ -106,6 +128,7 @@ type CommunityDto* = object
   canceledRequestsToJoin*: seq[CommunityMembershipRequestDto]  
   tokenPermissions*: Table[string, CommunityTokenPermissionDto]
   communityTokensMetadata*: seq[CommunityTokensMetadataDto]
+  channelPermissions*: CheckAllChannelsPermissionsResponseDto
   activeMembersCount*: int64
 
 proc isAvailable*(communityDto: CommunityDto): bool =
@@ -139,18 +162,6 @@ type DiscordImportTaskProgress* = object
   warningsCount*: int
   stopped*: bool
   state*: string
-
-type AccountChainIDsCombinationDto* = object
-  address*: string
-  chainIds*: seq[int]
-
-type CheckPermissionToJoinResultDto* = object
-  criteria*: seq[bool]
-
-type CheckPermissionsToJoinResponseDto* = object
-  satisfied*: bool
-  permissions*: Table[string, CheckPermissionToJoinResultDto]
-  validCombinations*: seq[AccountChainIDsCombinationDto]
 
 proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
   result = CommunityAdminSettingsDto()
@@ -241,7 +252,7 @@ proc toTokenCriteriaDto*(jsonObj: JsonNode): TokenCriteriaDto =
 proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermissionDto =
   result = CommunityTokenPermissionDto()
   discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("isPrivate", result.isPrivate)
+  discard jsonObj.getProp("is_private", result.isPrivate)
   var tokenPermissionTypeInt: int
   discard jsonObj.getProp("type", tokenPermissionTypeInt)
   if (tokenPermissionTypeInt >= ord(low(TokenPermissionType)) or tokenPermissionTypeInt <= ord(high(TokenPermissionType))):
@@ -253,7 +264,7 @@ proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermission
       result.tokenCriteria.add(tokenCriteria.toTokenCriteriaDto)
 
   var chatIdsObj: JsonNode
-  if(jsonObj.getProp("chatIds", chatIdsObj) and chatIdsObj.kind == JArray):
+  if(jsonObj.getProp("chat_ids", chatIdsObj) and chatIdsObj.kind == JArray):
     for chatId in chatIdsObj:
       result.chatIds.add(chatId.getStr)
 
@@ -262,8 +273,8 @@ proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermission
   if jsonObj.hasKey("key"):
     discard jsonObj.getProp("key", result.id)
 
-proc toCheckPermissionToJoinResultDto*(jsonObj: JsonNode): CheckPermissionToJoinResultDto =
-  result = CheckPermissionToJoinResultDto()
+proc toCheckPermissionsResultDto*(jsonObj: JsonNode): CheckPermissionsResultDto =
+  result = CheckPermissionsResultDto()
   var criteriaObj: JsonNode
   if(jsonObj.getProp("criteria", criteriaObj) and criteriaObj.kind == JArray):
     for c in criteriaObj:
@@ -288,9 +299,39 @@ proc toCheckPermissionsToJoinResponseDto*(jsonObj: JsonNode): CheckPermissionsTo
 
   var permissionsObj: JsonNode
   if(jsonObj.getProp("permissions", permissionsObj) and permissionsObj.kind == JObject):
-    result.permissions = initTable[string, CheckPermissionToJoinResultDto]()
+    result.permissions = initTable[string, CheckPermissionsResultDto]()
     for permissionId, permission in permissionsObj:
-      result.permissions[permissionId] = permission.toCheckPermissionToJoinResultDto
+      result.permissions[permissionId] = permission.toCheckPermissionsResultDto
+
+proc toViewOnlyOrViewAndPostPermissionsResponseDto*(jsonObj: JsonNode): ViewOnlyOrViewAndPostPermissionsResponseDto =
+  result = ViewOnlyOrViewAndPostPermissionsResponseDto()
+  discard jsonObj.getProp("satisfied", result.satisfied)
+
+  var permissionsObj: JsonNode
+  if(jsonObj.getProp("permissions", permissionsObj) and permissionsObj.kind == JObject):
+    result.permissions = initTable[string, CheckPermissionsResultDto]()
+    for permissionId, permission in permissionsObj:
+      result.permissions[permissionId] = permission.toCheckPermissionsResultDto
+
+proc toCheckChannelPermissionsResponseDto*(jsonObj: JsonNode): CheckChannelPermissionsResponseDto =
+  result = CheckChannelPermissionsResponseDto()
+
+  var viewOnlyPermissionsObj: JsonNode
+  if(jsonObj.getProp("viewOnlyPermissions", viewOnlyPermissionsObj) and viewOnlyPermissionsObj.kind == JObject):
+    result.viewOnlyPermissions = viewOnlyPermissionsObj.toViewOnlyOrViewAndPostPermissionsResponseDto()
+
+  var viewAndPostPermissionsObj: JsonNode
+  if(jsonObj.getProp("viewAndPostPermissions", viewAndPostPermissionsObj) and viewAndPostPermissionsObj.kind == JObject):
+    result.viewAndPostPermissions = viewAndPostPermissionsObj.toViewOnlyOrViewAndPostPermissionsResponseDto()
+
+proc toCheckAllChannelsPermissionsResponseDto*(jsonObj: JsonNode): CheckAllChannelsPermissionsResponseDto =
+  result = CheckAllChannelsPermissionsResponseDto()
+  result.channels = initTable[string, CheckChannelPermissionsResponseDto]()
+
+  var channelsObj: JsonNode
+  if(jsonObj.getProp("channels", channelsObj) and channelsObj.kind == JObject):
+    for channelId, permissionResponse in channelsObj:
+      result.channels[channelId] = permissionResponse.toCheckChannelPermissionsResponseDto()
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
