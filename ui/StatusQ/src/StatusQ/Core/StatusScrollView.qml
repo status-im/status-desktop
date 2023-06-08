@@ -88,7 +88,7 @@ import StatusQ.Core.Theme 0.1
 
     2. Apply paddings of the popup and make `StatusScrollView` scroll bars non-attached
 
-        Use when `StatusScrollView`/`StatusListView` is not a direct child of `contentItem`, or it's not the only child.
+       Use when `StatusScrollView`/`StatusListView` is not a direct child of `contentItem`, or it's not the only child.
 
        Though this requires more coding and custom wrappers, the result is very neat.
        All popup contents are aligned to given paddings, but the scroll bar doesn't overlay
