@@ -17,6 +17,7 @@ type
     fromAsset* {.serializedFieldName("fromAsset").}: string
     toAsset* {.serializedFieldName("toAsset").}: string
     fromAmount* {.serializedFieldName("fromAmount").}: string
+    toAmount* {.serializedFieldName("toAmount").}: string
     multiTxType* {.serializedFieldName("type").}: MultiTransactionType
 
 proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =

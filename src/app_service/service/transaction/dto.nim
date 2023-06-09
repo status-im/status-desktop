@@ -150,6 +150,7 @@ proc toMultiTransactionDto*(jsonObj: JsonNode): MultiTransactionDto =
   discard jsonObj.getProp("fromAsset", result.fromAsset)
   discard jsonObj.getProp("toAsset", result.toAsset)
   discard jsonObj.getProp("fromAmount", result.fromAmount)
+  discard jsonObj.getProp("toAmount", result.toAmount)
   var multiTxType: int
   discard jsonObj.getProp("type", multiTxType)
   result.multiTxType = cast[MultiTransactionType](multiTxType)
