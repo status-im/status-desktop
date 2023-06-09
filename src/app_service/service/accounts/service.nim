@@ -4,7 +4,7 @@ import json_serialization, chronicles
 import ../../../app/global/global_singleton
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
-from ../keycard/service import KeycardEvent, KeyDetails 
+from ../keycard/service import KeycardEvent, KeyDetails
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
 import ../../../backend/privacy as status_privacy
@@ -92,11 +92,11 @@ QtObject:
   proc getImportedAccount*(self: Service): GeneratedAccountDto =
     return self.importedAccount
 
-  proc setKeyStoreDir(self: Service, key: string) = 
+  proc setKeyStoreDir(self: Service, key: string) =
     self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
     discard status_general.initKeystore(self.keyStoreDir)
 
-  proc getKeyStoreDir*(self: Service): string = 
+  proc getKeyStoreDir*(self: Service): string =
     return self.keyStoreDir
 
   proc setDefaultWalletEmoji*(self: Service, emoji: string) =
@@ -196,7 +196,7 @@ QtObject:
     except Exception as e:
       error "error: ", procName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
 
-  proc saveKeycardAccountAndLogin(self: Service, chatKey, password: string, account, subaccounts, settings, 
+  proc saveKeycardAccountAndLogin(self: Service, chatKey, password: string, account, subaccounts, settings,
     config: JsonNode): AccountDto =
     try:
       let response = status_account.saveAccountAndLoginWithKeycard(chatKey, password, account, subaccounts, settings, config)
@@ -347,11 +347,13 @@ QtObject:
     if(main_constants.IS_MACOS and self.getLoggedInAccount.isValid()):
       singletonInstance.localAccountSettings.setFileName(self.getLoggedInAccount.name)
 
-  proc addKeycardDetails(self: Service, settingsJson: var JsonNode, accountData: var JsonNode) =
+  proc addKeycardDetails(self: Service, kcInstance: string, settingsJson: var JsonNode, accountData: var JsonNode) =
     let keycardPairingJsonString = readFile(main_constants.KEYCARDPAIRINGDATAFILE)
     let keycardPairingJsonObj = keycardPairingJsonString.parseJSON
     let now = now().toTime().toUnix()
     for instanceUid, kcDataObj in keycardPairingJsonObj:
+      if instanceUid != kcInstance:
+        continue
       if not settingsJson.isNil:
         settingsJson["keycard-instance-uid"] = %* instanceUid
         settingsJson["keycard-paired-on"] = %* now
@@ -377,12 +379,12 @@ QtObject:
       let hashedPassword = hashPassword(password)
       discard self.storeAccount(accountId, hashedPassword)
       discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
-      self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, 
+      self.loggedInAccount = self.saveAccountAndLogin(hashedPassword,
         accountDataJson,
-        subaccountDataJson, 
-        settingsJson, 
+        subaccountDataJson,
+        settingsJson,
         nodeConfigJson)
-      
+
       self.setLocalAccountSettingsFile()
 
       if self.getLoggedInAccount.isValid():
@@ -393,7 +395,7 @@ QtObject:
       error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool) = 
+  proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool) =
     try:
       var keyUid = keycardData.keyUid
       var address = keycardData.masterKey.address
@@ -422,7 +424,7 @@ QtObject:
 
       let installationId = $genUUID()
       let alias = generateAliasFromPk(whisperPublicKey)
-      
+
       var accountDataJson = %* {
         "name": if displayName == "": alias else: displayName,
         "display-name": displayName,
@@ -482,19 +484,19 @@ QtObject:
         }
       }
 
-      self.addKeycardDetails(settingsJson, accountDataJson)
-      
+      self.addKeycardDetails(keycardData.instanceUID, settingsJson, accountDataJson)
+
       if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
         nodeConfigJson.isNil):
         let description = "at least one json object is not prepared well"
         error "error: ", procName="setupAccountKeycard", errDesription = description
         return
 
-      self.loggedInAccount = self.saveKeycardAccountAndLogin(chatKey = whisperPrivateKey, 
-        password = encryptionPublicKey, 
-        accountDataJson, 
-        subaccountDataJson, 
-        settingsJson, 
+      self.loggedInAccount = self.saveKeycardAccountAndLogin(chatKey = whisperPrivateKey,
+        password = encryptionPublicKey,
+        accountDataJson,
+        subaccountDataJson,
+        settingsJson,
         nodeConfigJson)
       self.setLocalAccountSettingsFile()
     except Exception as e:
@@ -708,7 +710,7 @@ QtObject:
         )
         self.threadpool.start(arg)
         return
-      
+
       self.doLogin(account, hashedPassword, thumbnailImage, largeImage, nodeCfg)
     except Exception as e:
       error "error: ", procName="login", errName = e.name, errDesription = e.msg
@@ -721,7 +723,7 @@ QtObject:
 
     # Normal login after reencryption
     self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage, self.tmpNodeCfg)
-    
+
     # Clear out the temp properties
     self.tmpAccount = AccountDto()
     self.tmpHashedPassword = ""
@@ -729,20 +731,15 @@ QtObject:
     self.tmpLargeImage = ""
     self.tmpNodeCfg = JsonNode()
 
-  proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string = 
+  proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string =
     try:
       self.setKeyStoreDir(keycardData.keyUid)
 
       var accountDataJson = %* {
-        "name": accToBeLoggedIn.name,
-        "address": keycardData.masterKey.address,
-        "key-uid": keycardData.keyUid,
-        "kdfIterations": KDF_ITERATIONS,
+        "key-uid": accToBeLoggedIn.keyUid,
       }
-      var settingsJson: JsonNode
-      self.addKeycardDetails(settingsJson, accountDataJson)
 
-      let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey, 
+      let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey,
         keycardData.encryptionKey.publicKey,
         accountDataJson)
 
@@ -753,21 +750,20 @@ QtObject:
           debug "Account logged in succesfully"
           # this should be fetched later from waku
           self.loggedInAccount = accToBeLoggedIn
-          self.loggedInAccount.keycardPairing = accountDataJson{"keycard-pairing"}.getStr
           return
     except Exception as e:
       error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc convertToKeycardAccount*(self: Service, keycardUid, currentPassword: string, newPassword: string) = 
+  proc convertToKeycardAccount*(self: Service, keycardUid, currentPassword: string, newPassword: string) =
     var accountDataJson = %* {
       "key-uid": self.getLoggedInAccount().keyUid,
       "kdfIterations": KDF_ITERATIONS
     }
     var settingsJson = %* { }
 
-    self.addKeycardDetails(settingsJson, accountDataJson)
-    
+    self.addKeycardDetails(keycardUid, settingsJson, accountDataJson)
+
     if(accountDataJson.isNil or settingsJson.isNil):
       let description = "at least one json object is not prepared well"
       error "error: ", procName="convertToKeycardAccount", errDesription = description
@@ -802,7 +798,7 @@ QtObject:
       error "error handilng migrated keypair response", errDesription=e.msg
     self.events.emit(SIGNAL_CONVERTING_PROFILE_KEYPAIR, ResultArgs(success: result))
 
-  proc convertToRegularAccount*(self: Service, mnemonic: string, currentPassword: string, newPassword: string): string = 
+  proc convertToRegularAccount*(self: Service, mnemonic: string, currentPassword: string, newPassword: string): string =
     let hashedPassword = hashPassword(newPassword)
     try:
       let response = status_account.convertToRegularAccount(mnemonic, currentPassword, hashedPassword)
