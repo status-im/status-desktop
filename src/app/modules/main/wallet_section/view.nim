@@ -39,6 +39,8 @@ QtObject:
   QtProperty[string] currentCurrency:
     read = getCurrentCurrency
 
+  proc filterChanged*(self: View, addresses: string, excludeWatchOnly: bool, allAddresses: bool)  {.signal.}
+
   proc totalCurrencyBalanceChanged*(self: View) {.signal.}
 
   proc getTotalCurrencyBalance(self: View): QVariant {.slot.} =

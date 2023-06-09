@@ -137,6 +137,7 @@ method notifyFilterChanged(self: Module) =
   self.transactionsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.excludeWatchOnly)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.view.filterChanged(self.filter.addresses[0], self.filter.excludeWatchOnly, self.filter.allAddresses)
 
 method getCurrencyAmount*(self: Module, amount: float64, symbol: string): CurrencyAmount =
   return self.controller.getCurrencyAmount(amount, symbol)
