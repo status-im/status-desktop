@@ -160,6 +160,10 @@ Item {
             id: transactionDetailView
             Layout.fillWidth: true
             Layout.fillHeight: true
+            onVisibleChanged: {
+                if (!visible)
+                    transaction = null
+            }
             sendModal: root.sendModal
             contactsStore: root.contactsStore
             visible: (stack.currentIndex === 3)
