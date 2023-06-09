@@ -185,11 +185,11 @@ method osNotificationClicked*(self: AccessInterface, details: NotificationDetail
 method displayWindowsOsNotification*(self: AccessInterface, title: string, message: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method displayEphemeralNotification*(self: AccessInterface, title: string, subTitle: string, details: NotificationDetails) 
+method displayEphemeralNotification*(self: AccessInterface, title: string, subTitle: string, details: NotificationDetails)
   {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method displayEphemeralNotification*(self: AccessInterface, title: string, subTitle: string, icon: string, loading: bool, 
+method displayEphemeralNotification*(self: AccessInterface, title: string, subTitle: string, icon: string, loading: bool,
     ephNotifType: int, url: string, details = NotificationDetails()) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -257,7 +257,7 @@ method switchTo*(self: AccessInterface, sectionId, chatId: string) {.base.} =
 method isConnected*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, communityId: string, chatId: string, 
+method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, communityId: string, chatId: string,
   url: string, userId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -269,13 +269,13 @@ method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
 
 method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runAuthenticationPopup*(self: AccessInterface, keyUid: string) {.base.} =
+method runAuthenticationPopup*(self: AccessInterface, keyUid: string, bip44Paths: seq[string] = @[]) {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method onMyRequestAdded*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

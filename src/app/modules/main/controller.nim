@@ -390,7 +390,8 @@ proc init*(self: Controller) =
       password: args.password,
       pin: args.pin,
       keyUid: args.keyUid,
-      keycardUid: args.keycardUid)
+      keycardUid: args.keycardUid,
+      additinalPathsDetails: args.additinalPathsDetails)
     self.authenticateUserFlowRequestedBy = ""
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
 
@@ -404,7 +405,7 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER) do(e: Args):
     let args = SharedKeycarModuleAuthenticationArgs(e)
     self.authenticateUserFlowRequestedBy = args.uniqueIdentifier
-    self.delegate.runAuthenticationPopup(args.keyUid)
+    self.delegate.runAuthenticationPopup(args.keyUid, args.additionalBip44Paths)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC) do(e: Args):
     let args = SharedKeycarModuleArgs(e)

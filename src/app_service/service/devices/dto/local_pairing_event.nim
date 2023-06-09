@@ -4,7 +4,7 @@ import ../../../../app/core/eventemitter
 import ../../accounts/dto/accounts
 import installation
 
-type 
+type
   EventType* {.pure.} = enum
     EventUnknown = -1,
     EventConnectionError = 0,
@@ -16,7 +16,7 @@ type
     EventProcessSuccess = 6,
     EventProcessError = 7
 
-type 
+type
   Action* {.pure.} = enum
     ActionUnknown = 0
     ActionConnect = 1,
@@ -28,6 +28,7 @@ type
   LocalPairingAccountData* = ref object
     account*: AccountDTO
     password*: string
+    chatKey*: string
 
 type
   LocalPairingEventArgs* = ref object of Args
@@ -75,6 +76,7 @@ proc parse*(self: int): Action =
 proc toLocalPairingAccountData*(jsonObj: JsonNode): LocalPairingAccountData =
   result = LocalPairingAccountData()
   discard jsonObj.getProp("password", result.password)
+  discard jsonObj.getProp("chatKey", result.chatKey)
 
   var accountObj: JsonNode
   if(jsonObj.getProp("account", accountObj)):

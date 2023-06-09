@@ -578,7 +578,7 @@ method onChannelGroupsLoaded*[T](
     self.view.model().addItem(channelGroupItem)
     if activeSectionId == channelGroupItem.id:
       activeSection = channelGroupItem
-    
+
     self.channelGroupModules[channelGroup.id].load(channelGroup, events, settingsService, nodeConfigurationService,
       contactsService, chatService, communityService, messageService, gifService, mailserversService)
 
@@ -983,7 +983,7 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
   if(reason.len > 0 and publicKey.len == 0):
     self.displayEphemeralNotification("Unexisting contact", "Wrong public key or ens name", "", false, EphemeralNotificationType.Default.int, "")
     return
-  
+
   if(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile):
     self.view.emitDisplayUserProfileSignal(publicKey)
   else:
@@ -1084,7 +1084,7 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
 method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
 
-method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, icon: string, loading: bool, 
+method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, icon: string, loading: bool,
   ephNotifType: int, url: string, details = NotificationDetails()) =
   let now = getTime()
   let id = now.toUnix * 1000000000 + now.nanosecond
@@ -1096,7 +1096,7 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
   self.view.ephemeralNotificationModel().addItem(item)
 
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =
-  if(details.notificationType == NotificationType.NewMessage or 
+  if(details.notificationType == NotificationType.NewMessage or
     details.notificationType == NotificationType.NewMessageWithPersonalMention or
     details.notificationType == NotificationType.CommunityTokenPermissionCreated or
     details.notificationType == NotificationType.CommunityTokenPermissionUpdated or
@@ -1106,8 +1106,8 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
     details.notificationType == NotificationType.CommunityTokenPermissionDeletionFailed or
     details.notificationType == NotificationType.NewMessageWithGlobalMention):
     self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
-  
-  elif(details.notificationType == NotificationType.NewContactRequest or 
+
+  elif(details.notificationType == NotificationType.NewContactRequest or
     details.notificationType == NotificationType.IdentityVerificationRequest):
     self.displayEphemeralNotification(title, subTitle, "contact", false, EphemeralNotificationType.Default.int, "", details)
 
@@ -1121,7 +1121,7 @@ method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
   let item = self.view.ephemeralNotificationModel().getItemWithId(id)
   if(item.details.isEmpty()):
     return
-  if(item.details.notificationType == NotificationType.NewMessage or 
+  if(item.details.notificationType == NotificationType.NewMessage or
     item.details.notificationType == NotificationType.NewMessageWithPersonalMention or
     item.details.notificationType == NotificationType.NewMessageWithGlobalMention):
     self.controller.switchTo(item.details.sectionId, item.details.chatId, item.details.messageId)
@@ -1135,9 +1135,9 @@ proc getCommunityIdFromFullChatId(fullChatId: string): string =
   const communityIdLength = 68
   return fullChatId.substr(0, communityIdLength-1)
 
-method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string, 
+method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string,
   url: string, userId: string) =
-  
+
   if(action == StatusUrlAction.DisplayUserProfile):
     self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
 
@@ -1181,8 +1181,8 @@ method getKeycardSharedModule*[T](self: Module[T]): QVariant =
     return self.keycardSharedModule.getModuleAsVariant()
 
 proc createSharedKeycardModule[T](self: Module[T]) =
-  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_IDENTIFIER, 
-    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService, 
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_IDENTIFIER,
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
     self.walletAccountService, self.keychainService)
 
 method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
@@ -1191,11 +1191,11 @@ method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurr
     self.keycardSharedModule.delete
     self.keycardSharedModule = nil
 
-method runAuthenticationPopup*[T](self: Module[T], keyUid: string) =
+method runAuthenticationPopup*[T](self: Module[T], keyUid: string, bip44Paths: seq[string] = @[]) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
     return
-  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.Authentication, keyUid)
+  self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.Authentication, keyUid, bip44Paths)
 
 method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
   if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
@@ -1203,8 +1203,8 @@ method onSharedKeycarModuleKeycardSyncPurposeTerminated*[T](self: Module[T], las
     self.keycardSharedModuleKeycardSyncPurpose = nil
 
 method tryKeycardSync*[T](self: Module[T], keyUid: string, pin: string) =
-  self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER, 
-    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService, 
+  self.keycardSharedModuleKeycardSyncPurpose = keycard_shared_module.newModule[Module[T]](self, UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER,
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
     self.walletAccountService, self.keychainService)
   if self.keycardSharedModuleKeycardSyncPurpose.isNil:
     return

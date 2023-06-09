@@ -1,12 +1,15 @@
-import NimQml, chronicles
+import NimQml, tables, strutils, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
 import logging
 
-import ../../../../core/eventemitter
-import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/service/devices/service as devices_service
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/common/account_constants
+import app_service/service/settings/service as settings_service
+import app_service/service/devices/service as devices_service
+from app_service/service/keycard/service import KeyDetails
 
 export io_interface
 
@@ -77,7 +80,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 method setInstallationName*(self: Module, installationId: string, name: string) =
   self.controller.setInstallationName(installationId, name)
-  
+
 method syncAllDevices*(self: Module) =
   self.controller.syncAllDevices()
 
@@ -97,17 +100,24 @@ method updateOrAddDevice*(self: Module, installation: InstallationDto) =
 method updateInstallationName*(self: Module, installationId: string, name: string) =
   self.view.model().updateItemName(installationId, name)
 
-method authenticateUser*(self: Module, keyUid: string) =
-  self.controller.authenticateUser(keyUid)
+method authenticateLoggedInUser*(self: Module) =
+  var additionalBip44Paths: seq[string]
+  if singletonInstance.userProfile.getIsKeycardUser():
+    additionalBip44Paths.add(account_constants.PATH_WHISPER)
+  self.controller.authenticateLoggedInUser(additionalBip44Paths)
 
-method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
-  self.view.emitUserAuthenticated(pin, password, keyUid)
+method onLoggedInUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string, additinalPathsDetails: Table[string, KeyDetails]) =
+  var chatKey = ""
+  if singletonInstance.userProfile.getIsKeycardUser() and
+    additinalPathsDetails.contains(account_constants.PATH_WHISPER):
+      chatKey = additinalPathsDetails[account_constants.PATH_WHISPER].privateKey
+      if chatKey.startsWith("0x"):
+        chatKey = chatKey[2..^1]
+  let connectionString = self.controller.getConnectionStringForBootstrappingAnotherDevice(password, chatKey)
+  self.view.openPopupWithConnectionString(connectionString)
 
 proc validateConnectionString*(self: Module, connectionString: string): string =
   return self.controller.validateConnectionString(connectionString)
-
-method getConnectionStringForBootstrappingAnotherDevice*(self: Module, keyUid: string, password: string): string =
-  return self.controller.getConnectionStringForBootstrappingAnotherDevice(keyUid, password)
 
 method inputConnectionStringForBootstrapping*(self: Module, connectionString: string): string =
   return self.controller.inputConnectionStringForBootstrapping(connectionString)

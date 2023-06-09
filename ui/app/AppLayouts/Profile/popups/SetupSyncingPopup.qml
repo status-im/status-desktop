@@ -22,8 +22,7 @@ import "../stores"
 StatusDialog {
     id: root
 
-    property string password
-    property string keyUid
+    required property string rawConnectionString
 
     property DevicesStore devicesStore
     property ProfileStore profileStore
@@ -53,13 +52,11 @@ StatusDialog {
             d.connectionString = ""
             d.errorMessage = ""
 
-            const result = root.devicesStore.getConnectionStringForBootstrappingAnotherDevice(root.keyUid, root.password)
-
             try {
-                const json = JSON.parse(result)
+                const json = JSON.parse(root.rawConnectionString)
                 d.errorMessage = json.error
             } catch (e) {
-                d.connectionString = result
+                d.connectionString = root.rawConnectionString
             }
 
             if (d.errorMessage !== "") {

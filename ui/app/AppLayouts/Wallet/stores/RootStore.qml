@@ -14,8 +14,6 @@ QtObject {
     readonly property string defaultSelectedKeyUid: userProfile.keyUid
     readonly property bool defaultSelectedKeyUidMigratedToKeycard: userProfile.isKeycardUser
 
-    property bool loggedInUserAuthenticated: false
-
     property string backButtonName: ""
     property var overview: walletSectionOverview
     property var assets: walletSectionAssets.assets
