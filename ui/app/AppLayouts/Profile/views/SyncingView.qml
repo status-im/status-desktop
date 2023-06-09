@@ -54,8 +54,7 @@ SettingsContentBase {
             }
 
             function setupSyncing() {
-                const keyUid = root.profileStore.isKeycardUser ? root.profileStore.keyUid : ""
-                root.devicesStore.authenticateUser(keyUid)
+                root.devicesStore.authenticateLoggedInUser()
             }
         }
 
@@ -63,16 +62,9 @@ SettingsContentBase {
         Connections {
             target: devicesStore.devicesModule
 
-            function onUserAuthenticated(pin, password, keyUid) {
-                if (!password)
-                    return
-                // Authentication flow returns empty keyUid for non-keycard user.
-                const effectiveKeyUid = root.profileStore.isKeycardUser
-                                      ? keyUid
-                                      : root.profileStore.keyUid
+            function onOpenPopupWithConnectionStringSignal(rawConnectionString) {
                 Global.openPopup(setupSyncingPopup, {
-                                     password,
-                                     keyUid: effectiveKeyUid
+                                     rawConnectionString: rawConnectionString,
                                  })
             }
         }
@@ -135,7 +127,7 @@ SettingsContentBase {
                 timestamp: model.timestamp
                 isCurrentDevice: model.isCurrentDevice
                 onSetupSyncingButtonClicked: {
-                    d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
+                    d.setupSyncing()
                 }
                 onClicked: {
                     if (deviceEnabled)

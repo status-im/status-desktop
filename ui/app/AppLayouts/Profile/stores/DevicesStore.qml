@@ -37,17 +37,12 @@ QtObject {
         root.devicesModule.enableDevice(installationId, enable)
     }
 
-    function authenticateUser() {
-        const keyUid = "" // TODO: Support Keycard
-        root.devicesModule.authenticateUser(keyUid)
+    function authenticateLoggedInUser() {
+        root.devicesModule.authenticateLoggedInUser()
     }
 
     function validateConnectionString(connectionString) {
         return root.devicesModule.validateConnectionString(connectionString)
-    }
-
-    function getConnectionStringForBootstrappingAnotherDevice(keyUid, password) {
-        return root.devicesModule.getConnectionStringForBootstrappingAnotherDevice(keyUid, password)
     }
 
     function inputConnectionStringForBootstrapping(connectionString) {

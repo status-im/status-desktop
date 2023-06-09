@@ -454,7 +454,13 @@ proc login*(self: Controller) =
 
 proc loginLocalPairingAccount*(self: Controller) =
   self.delegate.moveToLoadingAppState()
-  self.accountsService.login(self.localPairingStatus.account, self.localPairingStatus.password)
+  if self.localPairingStatus.chatKey.len == 0:
+    self.accountsService.login(self.localPairingStatus.account, self.localPairingStatus.password)
+  else:
+    var kcEvent = KeycardEvent()
+    kcEvent.whisperKey.privateKey = self.localPairingStatus.chatKey
+    kcEvent.encryptionKey.publicKey = self.localPairingStatus.password
+    discard self.accountsService.loginAccountKeycard(self.localPairingStatus.account, kcEvent)
 
 proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, syncWalletAfterLogin = false) =
   if syncWalletAfterLogin:

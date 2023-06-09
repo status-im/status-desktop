@@ -1,8 +1,8 @@
 import NimQml, tables
-import ../../../../app/core/eventemitter
-from ../../../../app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyDetails
-from ../../../../app_service/service/wallet_account/service as wallet_account_service import WalletTokenDto
-import ../../shared_models/keypair_item
+import app/core/eventemitter
+from app_service/service/keycard/service import KeycardEvent, CardMetadata, KeyDetails
+from app_service/service/wallet_account/service as wallet_account_service import WalletTokenDto
+import app/modules/shared_models/keypair_item
 
 const SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP* = "sharedKeycarModuleDisplayPopup"
 const SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED* = "sharedKeycarModuleFlowTerminated"
@@ -11,15 +11,15 @@ const SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED* = "sharedKeycarModuleUser
 const SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC* = "sharedKeycarModuleTryKeycardSync"
 const SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED* = "sharedKeycarModuleKeycardSyncTerminated"
 
-## Authentication in the app is a global thing and may be used from any part of the app. How to achieve that... it's enough just to send 
+## Authentication in the app is a global thing and may be used from any part of the app. How to achieve that... it's enough just to send
 ## `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER` signal with properly set `SharedKeycarModuleAuthenticationArgs` and props there:
-## -- `uniqueIdentifier` - some unique string, for the readability usually name of the module which needs authentication, 
-## -- in case of non keycard user (regular) user that's enough, 
-## -- in case of keycard user we want to authenticate it with a card that his profile is migrated to, that means apart of `uniqueIdentifier` 
-## we need to set `keyUid` as well, 
-## 
-## `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER` will be handled in the `mainModule` (shared keycard popup module will be run) and as a 
-## result, when authentication gets done `SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED` signal with properly set `SharedKeycarModuleArgs` 
+## -- `uniqueIdentifier` - some unique string, for the readability usually name of the module which needs authentication,
+## -- in case of non keycard user (regular) user that's enough,
+## -- in case of keycard user we want to authenticate it with a card that his profile is migrated to, that means apart of `uniqueIdentifier`
+## we need to set `keyUid` as well,
+##
+## `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER` will be handled in the `mainModule` (shared keycard popup module will be run) and as a
+## result, when authentication gets done `SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED` signal with properly set `SharedKeycarModuleArgs`
 ## and props there will be emitted:
 ## -- `uniqueIdentifier` - will be the same as one used for running authentication process
 ## -- in case of success of a regular user authentication `keyUid`, `password` will be sent, otherwise it will be empty
@@ -27,7 +27,7 @@ const SIGNAL_SHARED_KEYCARD_MODULE_KEYCARD_SYNC_TERMINATED* = "sharedKeycarModul
 ##
 ## TLDR: when you need to authenticate user, from the module where it's needed you have to send `SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER`
 ## signal to run authentication process and connect to `SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED` signal to get the results of it.
- 
+
 type
   SharedKeycarModuleBaseArgs* = ref object of Args
     uniqueIdentifier*: string
@@ -38,6 +38,7 @@ type
     pin*: string # this is used in case we need to run another keycard flow which requires pin, after we successfully authenticated logged in user
     keyUid*: string
     keycardUid*: string
+    additinalPathsDetails*: Table[string, KeyDetails] # [path, KeyDetails]
 
 type
   SharedKeycarModuleFlowTerminatedArgs* = ref object of SharedKeycarModuleArgs
@@ -46,7 +47,7 @@ type
 type
   SharedKeycarModuleAuthenticationArgs* = ref object of SharedKeycarModuleBaseArgs
     keyUid*: string
-
+    additionalBip44Paths*: seq[string] # can be used in authentication flow to export additinal paths if needed except encryption path
 
 type FlowType* {.pure.} = enum
   General = "General"
@@ -66,13 +67,13 @@ type FlowType* {.pure.} = enum
 
 # For the following flows we don't run card syncing.
 const FlowsWeShouldNotTryAKeycardSyncFor* = @[
-  FlowType.General, 
+  FlowType.General,
   FlowType.FactoryReset,
   FlowType.UnlockKeycard,
-  FlowType.SetupNewKeycard, 
+  FlowType.SetupNewKeycard,
   FlowType.SetupNewKeycardNewSeedPhrase,
-  FlowType.SetupNewKeycardOldSeedPhrase, 
-  FlowType.ImportFromKeycard, 
+  FlowType.SetupNewKeycardOldSeedPhrase,
+  FlowType.ImportFromKeycard,
   FlowType.Authentication
 ]
 
@@ -99,7 +100,7 @@ method setRemainingAttempts*(self: AccessInterface, value: int) {.base.} =
 
 method onBackActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-    
+
 method onPrimaryActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -112,7 +113,7 @@ method onCancelActionClicked*(self: AccessInterface) {.base.} =
 method onKeycardResponse*(self: AccessInterface, keycardFlowType: string, keycardEvent: KeycardEvent) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") {.base.} =
+method runFlow*(self: AccessInterface, flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setPin*(self: AccessInterface, value: string) {.base.} =
