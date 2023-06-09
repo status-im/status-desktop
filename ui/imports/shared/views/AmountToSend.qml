@@ -83,7 +83,7 @@ ColumnLayout {
         AmountInputWithCursor {
             id: topAmountToSendInput
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            Layout.maximumWidth: 163
+            Layout.maximumWidth: 250
             Layout.preferredWidth: (!!text) ? input.edit.paintedWidth : textMetrics.advanceWidth
             placeholderText: d.zeroString
             input.edit.color: input.valid ? Theme.palette.directColor1 : Theme.palette.dangerColor1
