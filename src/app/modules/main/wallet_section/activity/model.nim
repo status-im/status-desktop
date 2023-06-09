@@ -65,26 +65,24 @@ QtObject:
     of ModelRole.ActivityEntryRole:
       result = newQVariant(entry)
 
-  proc setEntries*(self: Model, entries: seq[ActivityEntry]) =
+  proc hasMoreChanged*(self: Model) {.signal.}
+
+  proc setHasMore(self: Model, hasMore: bool) {.slot.} =
+    self.hasMore = hasMore
+    self.hasMoreChanged()
+
+  proc setEntries*(self: Model, entries: seq[ActivityEntry], hasMore: bool) =
     self.beginResetModel()
     self.entries = entries
     self.endResetModel()
     self.countChanged()
-
-  # TODO: update data
+    self.setHasMore(hasMore)
 
   # TODO: fetch more
-
-  proc hasMoreChanged*(self: Model) {.signal.}
 
   proc getHasMore*(self: Model): bool {.slot.} =
     return self.hasMore
 
-  proc setHasMore*(self: Model, hasMore: bool) {.slot.} =
-    self.hasMore = hasMore
-    self.hasMoreChanged()
-
   QtProperty[bool] hasMore:
     read = getHasMore
-    write = setHasMore
     notify = hasMoreChanged
