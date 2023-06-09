@@ -88,6 +88,8 @@ SettingsPageLayout {
         property int burnAmount
         property int remainingTokens
         property url artworkSource
+        property bool isAssetType
+        property var currentToken // CollectibleObject or AssetObject type
 
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
 
@@ -105,6 +107,13 @@ SettingsPageLayout {
         }
 
         onInitialItemChanged: updateInitialStackView()
+    }
+
+    QtObject {
+        id: temp_
+
+        property CollectibleObject collectible: CollectibleObject{}
+        property AssetObject asset: AssetObject{}
     }
 
     secondaryHeaderButton.type: StatusBaseButton.Type.Danger
@@ -129,6 +138,7 @@ SettingsPageLayout {
         },
         State {
             name: d.newTokenViewState
+            PropertyChanges {target: root; title: d.isAssetType ? d.newAssetPageTitle : d.newCollectiblePageTitle }
             PropertyChanges {target: root; subTitle: ""}
             PropertyChanges {target: root; previousPageName: d.backButtonText}
             PropertyChanges {target: root; primaryHeaderButton.visible: false}
@@ -151,8 +161,50 @@ SettingsPageLayout {
     onPrimaryHeaderButtonClicked: {
         if(root.state == d.initialViewState)
             stackManager.push(d.newTokenViewState, newTokenView, null, StackView.Immediate)
-        if(root.state == d.tokenViewState)
-            d.retryMintClicked()
+
+        if(root.state == d.tokenViewState) {
+            if(d.currentToken) {
+                if(d.isAssetType) {
+                    // Create new asset instance:
+                    temp_.asset.clearAsset()
+                    temp_.asset.copyAsset(d.currentToken)
+
+                    // Update to point to new instance
+                    d.currentToken = temp_.asset
+
+                    // Reset the stack:
+                    stackManager.clear(d.initialViewState, StackView.Immediate)
+
+                    // Then move on to the new token view, but asset pre-filled:
+                    stackManager.push(d.newTokenViewState,
+                                      newTokenView,
+                                      {
+                                          isAssetView: d.isAssetType,
+                                          asset: d.currentToken
+                                      },
+                                      StackView.Immediate)
+                } else {
+                    // Create new collectible instance:
+                    temp_.collectible.clearCollectible()
+                    temp_.collectible.copyCollectible(d.currentToken)
+
+                    // Update to point to new instance
+                    d.currentToken = temp_.collectible
+
+                    // Reset the stack:
+                    stackManager.clear(d.initialViewState, StackView.Immediate)
+
+                    // Then move on to the new token view, but collectible pre-filled:
+                    stackManager.push(d.newTokenViewState,
+                                      newTokenView,
+                                      {
+                                          isAssetView: d.isAssetType,
+                                          collectible: d.currentToken
+                                      },
+                                      StackView.Immediate)
+                }
+            } else console.warn("Mint Token Settings - Trying to retry undefined token object.")
+        }
     }
 
     onSecondaryHeaderButtonClicked: {
@@ -187,6 +239,12 @@ SettingsPageLayout {
         id: newTokenView
 
         ColumnLayout {
+            id: _colLayout
+
+            property CollectibleObject collectible: CollectibleObject{}
+            property AssetObject asset: AssetObject{}
+            property bool isAssetView: false
+
             width: root.viewWidth
             spacing: Style.current.padding
 
@@ -194,6 +252,7 @@ SettingsPageLayout {
                 id: optionsTab
 
                 Layout.preferredWidth: root.viewWidth
+                currentIndex: _colLayout.isAssetView ? 1 : 0
 
                 StatusSwitchTabButton {
                     id: collectiblesTab
@@ -206,12 +265,6 @@ SettingsPageLayout {
 
                     text: qsTr("Assets")
                 }
-
-                Binding {
-                    target: root
-                    property: "title"
-                    value: optionsTab.currentItem == collectiblesTab ? d.newCollectiblePageTitle : d.newAssetPageTitle
-                }
             }
 
             StackLayout {
@@ -220,9 +273,19 @@ SettingsPageLayout {
 
                 currentIndex: optionsTab.currentItem == collectiblesTab ? 0 : 1
 
-                CustomCommunityNewTokenView {}
+                CustomCommunityNewTokenView {
+                    id: newCollectibleView
 
-                CustomCommunityNewTokenView { isAssetView: true }
+                    isAssetView: false
+                    collectible: _colLayout.collectible
+                }
+
+                CustomCommunityNewTokenView {
+                    id: newAssetView
+
+                    isAssetView: true
+                    asset: _colLayout.asset
+                }
 
                 component CustomCommunityNewTokenView: CommunityNewTokenView {
                     isAssetView: false
@@ -247,6 +310,13 @@ SettingsPageLayout {
                                           StackView.Immediate)
                     }
                 }
+            }
+
+            Binding {
+                target: root
+                property: "title"
+                value: optionsTab.currentItem == collectiblesTab ? d.newCollectiblePageTitle : d.newAssetPageTitle
+                restoreMode: Binding.RestoreBindingOrValue
             }
         }
     }
@@ -519,6 +589,18 @@ SettingsPageLayout {
                 target: d
                 property: "artworkSource"
                 value: view.artworkSource
+            }
+
+            Binding {
+                target: d
+                property: "isAssetType"
+                value: view.tokenType === Constants.TokenType.ERC20
+            }
+
+            Binding {
+                target: d
+                property: "currentToken"
+                value: view.isAssetView ? view.asset : view.collectible
             }
 
             Instantiator {

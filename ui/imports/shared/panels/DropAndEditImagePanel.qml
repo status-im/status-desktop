@@ -24,6 +24,7 @@ Item {
     property bool editorAnchorLeft: true
     property alias uploadTextLabel: textLabel
     property alias editorRoundedImage: editor.roundedImage
+    property alias dataImage: editor.dataImage
     property alias artworkSource: editor.source
     property alias artworkCropRect: editor.cropRect
     property alias editorTitle: editor.title
@@ -75,7 +76,7 @@ Item {
             id: textLabel
             width: parent.width
             anchors.centerIn: parent
-            visible: !editor.userSelectedImage
+            visible: !editor.userSelectedImage && !root.dataImage
             additionalTextPixelSize: Theme.secondaryTextFontSize
         }
     }

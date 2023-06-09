@@ -72,7 +72,8 @@ StatusScrollView {
 
             Layout.fillWidth: true
             Layout.preferredHeight: d.imageSelectorRectWidth
-            artworkSource: root.isAssetView ? assetObj.artworkSource : collectibleObj.artworkSource
+            dataImage: root.isAssetView ? asset.artworkSource : collectible.artworkSource
+            artworkSource: root.isAssetView ? asset.artworkSource : collectible.artworkSource
             editorAnchorLeft: !root.isAssetView
             editorRoundedImage: root.isAssetView
             uploadTextLabel.uploadText: root.isAssetView ? qsTr("Upload") : qsTr("Drag and Drop or Upload Artwork")
