@@ -400,7 +400,8 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
       self.storeMetadataForNewKeycardUser()
     else:
       self.syncKeycardBasedOnAppWalletStateAfterLogin()
-    self.accountsService.setupAccountKeycard(KeycardEvent(), self.tmpDisplayName, useImportedAcc = true)
+    let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData() # we need this to get the correct instanceUID
+    self.accountsService.setupAccountKeycard(flowEvent, self.tmpDisplayName, useImportedAcc = true)
     self.setupKeychain(storeToKeychain)
   else:
     error "an error ocurred while importing mnemonic"

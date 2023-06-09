@@ -62,8 +62,5 @@ proc validateConnectionString*(self: AccessInterface, connectionString: string):
 method inputConnectionStringForBootstrapping*(self: AccessInterface, connectionString: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onLocalPairingEvent*(self: AccessInterface, eventType: EventType, action: Action, error: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
