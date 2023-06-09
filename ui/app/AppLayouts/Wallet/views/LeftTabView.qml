@@ -32,18 +32,18 @@ Rectangle {
     property var changeSelectedAccount: function(){}
     property bool showSavedAddresses: false
     property bool showAllAccounts: true
+    property string currentAddress: ""
     
     onShowSavedAddressesChanged: {
+        root.currentAddress = ""
         walletAccountsListView.headerItem.highlighted = root.showAllAccounts
         walletAccountsListView.footerItem.button.highlighted = root.showSavedAddresses
     }
 
     onShowAllAccountsChanged: {
+        root.currentAddress = ""
         walletAccountsListView.headerItem.highlighted = root.showAllAccounts
         walletAccountsListView.footerItem.button.highlighted = root.showSavedAddresses
-        if (root.showAllAccounts) {
-            selectAllAccounts()
-        }
     }
 
     property var emojiPopup: null
@@ -125,6 +125,10 @@ Rectangle {
         function onDestroyAddAccountPopup() {
             addAccount.active = false
         }
+        function onFilterChanged(address, excludeWatchOnly, allAddresses) {
+            root.currentAddress = allAddresses ? "" : address
+            root.showAllAccounts = allAddresses
+        }
     }
 
     MouseArea {
@@ -197,8 +201,7 @@ Rectangle {
                 objectName: "walletAccount-" + model.name
                 readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
                 width: ListView.view.width - Style.current.padding * 2
-                highlighted: !ListView.view.footerItem.button.highlighted &&
-                             RootStore.overview.mixedcaseAddress.toLowerCase() === model.address.toLowerCase()
+                highlighted: root.currentAddress.toLowerCase() === model.address.toLowerCase()
                 anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
                 title: model.name
                 subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
@@ -294,7 +297,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             root.showSavedAddresses = false
-                            root.showAllAccounts = true
+                            root.selectAllAccounts()
                         }
                         hoverEnabled: true
                     }
