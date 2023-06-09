@@ -224,9 +224,9 @@ Item {
                         rootStore: WalletStores.RootStore
                         onButtonClicked: {
                             if (transactionHeader.transactionType === TransactionDelegate.Swap || transactionHeader.transactionType === TransactionDelegate.Bridge) {
-                                addressMenu.openEthAddressMenu(this, addresses[0])
+                                addressMenu.openEthAddressMenu(this, addresses[0], d.networkShortName)
                             } else {
-                                addressMenu.openSenderMenu(this, addresses[0])
+                                addressMenu.openSenderMenu(this, addresses[0], d.networkShortName)
                             }
                         }
                     }
@@ -236,7 +236,7 @@ Item {
                         addresses: root.isTransactionValid ? [root.transaction.to] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
-                        onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0])
+                        onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], d.networkShortName)
                         visible: transactionHeader.transactionType !== TransactionDelegate.Swap && transactionHeader.transactionType !== TransactionDelegate.Bridge && transactionHeader.transactionType !== TransactionDelegate.Destroy
                     }
                     TransactionDataTile {
