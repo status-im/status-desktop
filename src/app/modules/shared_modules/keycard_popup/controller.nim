@@ -1,4 +1,4 @@
-import chronicles, strutils, os, sequtils, sugar
+import chronicles, tables, strutils, os, sequtils, sugar
 import uuids
 import io_interface
 
@@ -66,6 +66,7 @@ type
     tmpKeycardCopyDestinationKeycardUid: string
     tmpKeycardSyncingInProgress: bool
     tmpFlowData: SharedKeycarModuleFlowTerminatedArgs
+    tmpRequestedPathsAlongWithAuthentication: seq[string]
     tmpUnlockUsingSeedPhrase: bool # true - sp, false - puk
 
 proc newController*(delegate: io_interface.AccessInterface,
@@ -182,7 +183,7 @@ proc init*(self: Controller, fullConnect = true) =
       self.tmpAddingMigratedKeypairSuccess = args.success
       self.delegate.onSecondaryActionClicked()
     self.connectionIds.add(handlerId)
-    
+
     handlerId = self.events.onWithUUID(SIGNAL_CONVERTING_PROFILE_KEYPAIR) do(e: Args):
       let args = ResultArgs(e)
       self.tmpConvertingProfileSuccess = args.success
@@ -445,8 +446,8 @@ proc cancelCurrentFlow*(self: Controller) =
   if not serviceApplicable(self.keycardService):
     return
   self.keycardService.cancelCurrentFlow()
-  # in most cases we're running another flow after canceling the current one, 
-  # this way we're giving to the keycard some time to cancel the current flow 
+  # in most cases we're running another flow after canceling the current one,
+  # this way we're giving to the keycard some time to cancel the current flow
   sleep(200)
 
 proc runGetAppInfoFlow*(self: Controller, factoryReset = false) =
@@ -497,9 +498,9 @@ proc runDeriveAccountFlow*(self: Controller, bip44Paths: seq[string], pin: strin
   self.cancelCurrentFlow()
   self.keycardService.startExportPublicFlow(bip44Paths, exportMasterAddr=true, exportPrivateAddr=false, pin)
 
-proc runAuthenticationFlow*(self: Controller, keyUid = "") =
-  ## For signing a transaction  we need to provide a key uid of a keypair that an account we want to sign a transaction 
-  ## for belongs to. If we're just doing an authentication for a logged in user, then default key uid is always the key 
+proc runAuthenticationFlow*(self: Controller, keyUid = "", bip44Paths: seq[string] = @[]) =
+  ## For signing a transaction  we need to provide a key uid of a keypair that an account we want to sign a transaction
+  ## for belongs to. If we're just doing an authentication for a logged in user, then default key uid is always the key
   ## uid of the logged in user.
   if not serviceApplicable(self.keycardService):
     return
@@ -507,7 +508,11 @@ proc runAuthenticationFlow*(self: Controller, keyUid = "") =
   if self.tmpKeyUidWhichIsBeingAuthenticating.len == 0:
     self.tmpKeyUidWhichIsBeingAuthenticating = singletonInstance.userProfile.getKeyUid()
   self.cancelCurrentFlow()
-  self.keycardService.startExportPublicFlow(path = account_constants.PATH_ENCRYPTION)
+  self.tmpRequestedPathsAlongWithAuthentication = @[account_constants.PATH_ENCRYPTION] #order is important, when reading keycard response
+  if bip44Paths.len > 0:
+    self.tmpRequestedPathsAlongWithAuthentication.add(bip44Paths)
+    self.tmpRequestedPathsAlongWithAuthentication = self.tmpRequestedPathsAlongWithAuthentication.deduplicate()
+  self.keycardService.startExportPublicFlow(self.tmpRequestedPathsAlongWithAuthentication, exportMasterAddr = false, exportPrivateAddr = true)
 
 proc runLoadAccountFlow*(self: Controller, seedPhraseLength = 0, seedPhrase = "", pin = "", puk = "", factoryReset = false) =
   if not serviceApplicable(self.keycardService):
@@ -577,12 +582,21 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
   self.tmpFlowData = SharedKeycarModuleFlowTerminatedArgs(uniqueIdentifier: self.uniqueIdentifier,
     lastStepInTheCurrentFlow: lastStepInTheCurrentFlow)
   if lastStepInTheCurrentFlow:
-    let exportedEncryptionPubKey = flowEvent.generatedWalletAccount.publicKey
-    if exportedEncryptionPubKey.len > 0:
-      self.tmpFlowData.password = exportedEncryptionPubKey
-      self.tmpFlowData.pin = self.getPin()
-      self.tmpFlowData.keyUid = flowEvent.keyUid
-      self.tmpFlowData.keycardUid = flowEvent.instanceUID
+    var exportedEncryptionPubKey: string
+    if flowEvent.generatedWalletAccounts.len > 0:
+      exportedEncryptionPubKey = flowEvent.generatedWalletAccounts[0].publicKey # encryption key is at position 0
+      if exportedEncryptionPubKey.len > 0:
+        self.tmpFlowData.password = exportedEncryptionPubKey
+        self.tmpFlowData.pin = self.getPin()
+        self.tmpFlowData.keyUid = flowEvent.keyUid
+        self.tmpFlowData.keycardUid = flowEvent.instanceUID
+        for i in 0..< self.tmpRequestedPathsAlongWithAuthentication.len:
+          var path = self.tmpRequestedPathsAlongWithAuthentication[i]
+          self.tmpFlowData.additinalPathsDetails[path] = KeyDetails(
+            address: flowEvent.generatedWalletAccounts[i].address,
+            publicKey: flowEvent.generatedWalletAccounts[i].publicKey,
+            privateKey: flowEvent.generatedWalletAccounts[i].privateKey
+          )
     else:
       self.tmpFlowData.password = self.getPassword()
       self.tmpFlowData.keyUid = singletonInstance.userProfile.getKeyUid()
@@ -592,9 +606,9 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
   ## - the keycard syncing is not already in progress
   ## - the flow which is terminating is one of the flows which we need to perform a sync process for
   ## - the pin is known
-  if self.uniqueIdentifier != startup_io.UNIQUE_STARTUP_MODULE_IDENTIFIER and 
-    not self.keycardSyncingInProgress() and 
-    not utils.arrayContains(FlowsWeShouldNotTryAKeycardSyncFor, flowType) and 
+  if self.uniqueIdentifier != startup_io.UNIQUE_STARTUP_MODULE_IDENTIFIER and
+    not self.keycardSyncingInProgress() and
+    not utils.arrayContains(FlowsWeShouldNotTryAKeycardSyncFor, flowType) and
     self.getPin().len == PINLengthForStatusApp and
     flowEvent.keyUid.len > 0:
       let dataForKeycardToSync = SharedKeycarModuleArgs(pin: self.getPin(), keyUid: flowEvent.keyUid)
@@ -602,7 +616,7 @@ proc terminateCurrentFlow*(self: Controller, lastStepInTheCurrentFlow: bool) =
       self.connectKeycardSyncSignal()
       self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC, dataForKeycardToSync)
       return
-  self.finishFlowTermination()  
+  self.finishFlowTermination()
 
 proc authenticateUser*(self: Controller, keyUid = "") =
   self.disconnectKeycardReponseSignal()
@@ -695,16 +709,16 @@ proc updateKeycardUid*(self: Controller, keyUid: string, keycardUid: string) =
 proc addWalletAccount*(self: Controller, name, address, path, publicKey, keyUid, accountType, colorId, emoji: string): bool =
   if not serviceApplicable(self.walletAccountService):
     return false
-  let err = self.walletAccountService.addWalletAccount(password = "", doPasswordHashing = false, name, address, path, 
+  let err = self.walletAccountService.addWalletAccount(password = "", doPasswordHashing = false, name, address, path,
     publicKey, keyUid, accountType, colorId, emoji)
   if err.len > 0:
     info "adding wallet account failed", name=name, path=path
     return false
   return true
 
-proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase, keyUid, keypairName, rootWalletMasterKey: string, 
+proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase, keyUid, keypairName, rootWalletMasterKey: string,
   accounts: seq[WalletAccountDto]): bool =
-  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password = "", doPasswordHashing = false, keyUid, 
+  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password = "", doPasswordHashing = false, keyUid,
     keypairName, rootWalletMasterKey, accounts)
   if err.len > 0:
     info "adding new keypair from seed phrase failed", keypairName=keypairName, keyUid=keyUid

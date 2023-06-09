@@ -111,7 +111,7 @@ method checkRepeatedKeycardPinWhileTyping*[T](self: Module[T], pin: string): boo
       if pin[i] != storedPin[i]:
         return false
     return true
-  else: 
+  else:
     let match = pin == storedPin
     self.controller.setPinMatch(match)
     return match
@@ -126,7 +126,7 @@ method checkRepeatedKeycardPukWhileTyping*[T](self: Module[T], puk: string): boo
       if puk[i] != storedPuk[i]:
         return false
     return true
-  else: 
+  else:
     let match = puk == storedPuk
     self.controller.setPukMatch(match)
     return match
@@ -210,7 +210,7 @@ proc reEvaluateKeyPairForProcessing[T](self: Module[T], currFlowType: FlowType, 
     currFlowType == FlowType.ChangeKeycardPuk or
     currFlowType == FlowType.ChangePairingCode or
     currFlowType == FlowType.CreateCopyOfAKeycard:
-      if currStateType != StateType.PluginReader and 
+      if currStateType != StateType.PluginReader and
         currStateType != StateType.ReadingKeycard:
           return
       let (_, flowEvent) = self.controller.getLastReceivedKeycardData()
@@ -258,7 +258,7 @@ proc handleKeycardSyncing[T](self: Module[T]) =
               found = true
               break
           if found and index > -1:
-            # if account address which is present in the wallet is still present in accounts addresses of a keycard, 
+            # if account address which is present in the wallet is still present in accounts addresses of a keycard,
             # then it needs to be present in `keypairs` table in db, so remove it from the list
             accountsToRemove.delete(index)
           else:
@@ -327,7 +327,7 @@ method onCancelActionClicked*[T](self: Module[T]) =
   debug "sm_cancel_action", currFlow=currStateObj.flowType(), currState=currStateObj.stateType()
   self.preActionActivities(currStateObj.flowType(), currStateObj.stateType())
   currStateObj.executeCancelCommand(self.controller)
-    
+
 method onPrimaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
@@ -394,7 +394,7 @@ method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEv
 
 proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
+  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
     excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
@@ -416,7 +416,7 @@ method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
 
 method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardUid = "") =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
+  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
     excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
@@ -433,9 +433,9 @@ method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardU
     item.setIcon("keycard")
   self.view.setKeyPairForProcessing(item)
 
-method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path = "", txHash = "") =
-  ## In case of `Authentication` if we're signing a transaction we need to provide a key uid of a keypair that an account 
-  ## we want to sign a transaction for belongs to. If we're just doing an authentication for a logged in user, then 
+method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths: seq[string] = @[], txHash = "") =
+  ## In case of `Authentication` if we're signing a transaction we need to provide a key uid of a keypair that an account
+  ## we want to sign a transaction for belongs to. If we're just doing an authentication for a logged in user, then
   ## default key uid is always the key uid of the logged in user.
   if flowToRun == FlowType.General:
     self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
@@ -459,7 +459,7 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
       if singletonInstance.userProfile.getIsKeycardUser():
         self.prepareKeyPairItemForAuthentication(singletonInstance.userProfile.getKeyUid())
         self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
-        self.controller.runAuthenticationFlow(singletonInstance.userProfile.getKeyUid())
+        self.controller.runAuthenticationFlow(singletonInstance.userProfile.getKeyUid(), bip44Paths)
         return
       if singletonInstance.userProfile.getUsingBiometricLogin():
         self.controller.tryToObtainDataFromKeychain()
@@ -471,8 +471,8 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Path 
     else:
       self.prepareKeyPairItemForAuthentication(keyUid)
       self.tmpLocalState = newReadingKeycardState(flowToRun, nil)
-      self.controller.runAuthenticationFlow(keyUid)
-      return    
+      self.controller.runAuthenticationFlow(keyUid, bip44Paths)
+      return
   if flowToRun == FlowType.UnlockKeycard:
     ## since we can run unlock keycard flow from an already running flow, in order to avoid changing displayed keypair
     ## (locked keypair) we have to set keycard uid of a keycard used in the flow we're jumping from to `UnlockKeycard` flow.
@@ -557,7 +557,7 @@ method onTokensRebuilt*[T](self: Module[T], accountsTokens: OrderedTable[string,
     let balance = tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
     self.getKeyPairForProcessing().setBalanceForAddress(address, balance)
 
-proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardMetadata): 
+proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardMetadata):
   tuple[item: KeyPairItem, knownKeyPair: bool] =
   result.item = newKeyPairItem(keyUid = "",
     pubKey = "",
@@ -578,7 +578,7 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
     result.knownKeyPair = false
     unknonwAccountNumber.inc
     let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknonwAccountNumber
-    result.item.addAccount(newKeyPairAccountItem(name, wa.path, wa.address, pubKey = wa.publicKey, emoji = "", 
+    result.item.addAccount(newKeyPairAccountItem(name, wa.path, wa.address, pubKey = wa.publicKey, emoji = "",
       colorId = "", icon = "undefined", balance, balanceFetched))
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
@@ -599,8 +599,8 @@ method onUserAuthenticated*[T](self: Module[T], password: string, pin: string) =
 
 method keychainObtainedDataFailure*[T](self: Module[T], errorDescription: string, errorType: string) =
   let currStateObj = self.view.currentStateObj()
-  if currStateObj.isNil or 
-    currStateObj.stateType() == StateType.EnterPassword or 
+  if currStateObj.isNil or
+    currStateObj.stateType() == StateType.EnterPassword or
     currStateObj.stateType() == StateType.WrongPassword or
     currStateObj.stateType() == StateType.BiometricsPasswordFailed:
       self.view.setCurrentState(newBiometricsPasswordFailedState(FlowType.Authentication, nil))
@@ -613,8 +613,8 @@ method keychainObtainedDataFailure*[T](self: Module[T], errorDescription: string
 
 method keychainObtainedDataSuccess*[T](self: Module[T], data: string) =
   let currStateObj = self.view.currentStateObj()
-  if currStateObj.isNil or 
-    currStateObj.stateType() == StateType.EnterPassword or 
+  if currStateObj.isNil or
+    currStateObj.stateType() == StateType.EnterPassword or
     currStateObj.stateType() == StateType.WrongPassword or
     currStateObj.stateType() == StateType.BiometricsPasswordFailed:
       if self.controller.verifyPassword(data):
