@@ -22,10 +22,15 @@ StatusScrollView {
 
     property int viewWidth: 560 // by design
     property bool isAssetView: false
+    property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
     property var tokensModel
 
     property CollectibleObject collectible: CollectibleObject{}
     property AssetObject asset: AssetObject{}
+
+    // Used for reference validation when editing a failed deployment
+    property string referenceName: ""
+    property string referenceSymbol: ""
 
     // Network related properties:
     property var layer1Networks
@@ -103,9 +108,19 @@ StatusScrollView {
             text: root.isAssetView ? asset.name : collectible.name
             charLimit: 15
             placeholderText: qsTr("Name")
+            validationMode: root.validationMode
             minLengthValidator.errorMessage: qsTr("Please name your token name (use A-Z and 0-9, hyphens and underscores only)")
             regexValidator.errorMessage: qsTr("Your token name contains invalid characters (use A-Z and 0-9, hyphens and underscores only)")
-            extraValidator.validate: function (value) { return !SQUtils.ModelUtils.contains(root.tokensModel, "name", nameInput.text) }
+            extraValidator.validate: function (value) {
+                // If minted failed, we can retry same deployment, so same name allowed
+                var allowRepeatedName = (root.isAssetView ? asset.deployState : collectible.deployState) === Constants.ContractTransactionStatus.Failed
+                if(allowRepeatedName)
+                    if(nameInput.text === root.referenceName)
+                        return true
+
+                // Otherwise, no repeated names allowed:
+                return !SQUtils.ModelUtils.contains(root.tokensModel, "name", nameInput.text)
+            }
             extraValidator.errorMessage: qsTr("You have used this token name before")
 
             onTextChanged: {
@@ -128,8 +143,9 @@ StatusScrollView {
             input.placeholder.verticalAlignment: Qt.AlignTop
             minimumHeight: 108
             maximumHeight: minimumHeight
+            validationMode: root.validationMode
             minLengthValidator.errorMessage: qsTr("Please enter a token description")
-            regexValidator.regularExpression: Constants.regularExpressions.asciiPrintable
+            regexValidator.regularExpression: Constants.regularExpressions.ascii
             regexValidator.errorMessage: qsTr("Only A-Z, 0-9 and standard punctuation allowed")
 
             onTextChanged: {
@@ -147,10 +163,20 @@ StatusScrollView {
             text: root.isAssetView ? asset.symbol : collectible.symbol
             charLimit: 6
             placeholderText: qsTr("e.g. DOODLE")
+            validationMode: root.validationMode
             minLengthValidator.errorMessage: qsTr("Please enter your token symbol (use A-Z only)")
             regexValidator.errorMessage: qsTr("Your token symbol contains invalid characters (use A-Z only)")
             regexValidator.regularExpression: Constants.regularExpressions.capitalOnly
-            extraValidator.validate: function (value) { return !SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text) }
+            extraValidator.validate: function (value) {
+                // If minted failed, we can retry same deployment, so same symbol allowed
+                var allowRepeatedName = (root.isAssetView ? asset.deployState : collectible.deployState) === Constants.ContractTransactionStatus.Failed
+                if(allowRepeatedName)
+                    if(symbolInput.text === root.referenceSymbol)
+                        return true
+
+                // Otherwise, no repeated names allowed:
+                return !SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text)
+            }
             extraValidator.errorMessage: qsTr("You have used this token symbol before")
 
             onTextChanged: {
@@ -322,7 +348,7 @@ StatusScrollView {
             },
             StatusRegularExpressionValidator {
                 id: regexValidatorItem
-                regularExpression: Constants.regularExpressions.alphanumerical
+                regularExpression: Constants.regularExpressions.alphanumericalExpanded
             },
             StatusValidator {
                 id: extraValidatorItem

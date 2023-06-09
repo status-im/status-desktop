@@ -180,6 +180,9 @@ SettingsPageLayout {
                                       newTokenView,
                                       {
                                           isAssetView: d.isAssetType,
+                                          referenceName: d.currentToken.name,
+                                          referenceSymbol: d.currentToken.symbol,
+                                          validationMode: StatusInput.ValidationMode.Always,
                                           asset: d.currentToken
                                       },
                                       StackView.Immediate)
@@ -199,6 +202,9 @@ SettingsPageLayout {
                                       newTokenView,
                                       {
                                           isAssetView: d.isAssetType,
+                                          referenceName: d.currentToken.name,
+                                          referenceSymbol: d.currentToken.symbol,
+                                          validationMode: StatusInput.ValidationMode.Always,
                                           collectible: d.currentToken
                                       },
                                       StackView.Immediate)
@@ -244,6 +250,9 @@ SettingsPageLayout {
             property CollectibleObject collectible: CollectibleObject{}
             property AssetObject asset: AssetObject{}
             property bool isAssetView: false
+            property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
+            property string referenceName: ""
+            property string referenceSymbol: ""
 
             width: root.viewWidth
             spacing: Style.current.padding
@@ -277,14 +286,20 @@ SettingsPageLayout {
                     id: newCollectibleView
 
                     isAssetView: false
+                    validationMode: !_colLayout.isAssetView ? _colLayout.validationMode : StatusInput.ValidationMode.OnlyWhenDirty
                     collectible: _colLayout.collectible
+                    referenceName: _colLayout.referenceName
+                    referenceSymbol: _colLayout.referenceSymbol
                 }
 
                 CustomCommunityNewTokenView {
                     id: newAssetView
 
                     isAssetView: true
+                    validationMode: _colLayout.isAssetView ? _colLayout.validationMode : StatusInput.ValidationMode.OnlyWhenDirty
                     asset: _colLayout.asset
+                    referenceName: _colLayout.referenceName
+                    referenceSymbol: _colLayout.referenceSymbol
                 }
 
                 component CustomCommunityNewTokenView: CommunityNewTokenView {
