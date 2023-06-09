@@ -7,6 +7,9 @@ import entry
 import ../transactions/item
 import ../transactions/module as transactions_module
 
+import app/core/eventemitter
+import app/core/signals/types
+
 import backend/activity as backend_activity
 import backend/backend as backend
 import backend/transactions
@@ -17,12 +20,20 @@ proc toRef*[T](obj: T): ref T =
   new(result)
   result[] = obj
 
+const FETCH_BATCH_COUNT_DEFAULT = 10
+
 QtObject:
   type
     Controller* = ref object of QObject
       model: Model
       transactionsModule: transactions_module.AccessInterface
       currentActivityFilter: backend_activity.ActivityFilter
+
+      events: EventEmitter
+
+      loadingData: bool
+      errorCode: backend_activity.ErrorCode
+
       # TODO remove chains and addresses to use the app one
       addresses: seq[string]
       chainIds: seq[int]
@@ -33,27 +44,20 @@ QtObject:
   proc delete*(self: Controller) =
     self.QObject.delete
 
-  proc newController*(transactionsModule: transactions_module.AccessInterface): Controller =
-    new(result, delete)
-    result.model = newModel()
-    result.transactionsModule = transactionsModule
-    result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
-    result.setup()
-
   proc getModel*(self: Controller): QVariant {.slot.} =
     return newQVariant(self.model)
 
   QtProperty[QVariant] model:
     read = getModel
 
-  # TODO: move it to service, make it async and lazy load details for transactions
   proc backendToPresentation(self: Controller, backendEntities: seq[backend_activity.ActivityEntry]): seq[entry.ActivityEntry] =
     var multiTransactionsIds: seq[int] = @[]
     var transactionIdentities: seq[backend.TransactionIdentity] = @[]
     var pendingTransactionIdentities: seq[backend.TransactionIdentity] = @[]
 
     # Extract metadata required to fetch details
-    # TODO: temporary here to show the working API. Will be done as required on a detail request from UI
+    # TODO: temporary here to show the working API. Details for each entry will be done as required
+    # on a detail request from UI after metadata is extended to include the required info
     for backendEntry in backendEntities:
       case backendEntry.payloadType:
         of MultiTransaction:
@@ -122,25 +126,38 @@ QtObject:
             error "failed to find pending transaction with identity: ", identity
           ptIndex += 1
 
-  proc refreshData(self: Controller) =
+  proc loadingDataChanged*(self: Controller) {.signal.}
 
-    # result type is RpcResponse
-    let response = backend_activity.getActivityEntries(self.addresses, self.chainIds, self.currentActivityFilter, 0, 10)
-    # RPC returns null for result in case of empty array
-    if response.error != nil or (response.result.kind != JArray and response.result.kind != JNull):
+  proc setLoadingData(self: Controller, loadingData: bool) =
+    self.loadingData = loadingData
+    self.loadingDataChanged()
+
+  proc errorCodeChanged*(self: Controller) {.signal.}
+
+  proc setErrorCode(self: Controller, errorCode: int) =
+    self.errorCode = backend_activity.ErrorCode(errorCode)
+    self.errorCodeChanged()
+
+  proc refreshData(self: Controller) =
+    let response = backend_activity.filterActivityAsync(self.addresses, self.chainIds, self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
+    if response.error != nil:
       error "error fetching activity entries: ", response.error
       return
 
-    if response.result.kind == JNull:
-      self.model.setEntries(@[])
+    self.setLoadingData(true)
+
+  proc processResponse(self: Controller, response: JsonNode) =
+    let res = fromJson(response, backend_activity.FilterResponse)
+
+    defer: self.setErrorCode(res.errorCode.int)
+
+    if res.errorCode != ErrorCodeSuccess:
+      error "error fetching activity entries: ", res.errorCode
       return
 
-    var backendEntities = newSeq[backend_activity.ActivityEntry](response.result.len)
-    for i in 0 ..< response.result.len:
-      backendEntities[i] = fromJson(response.result[i], backend_activity.ActivityEntry)
-
-    let entries = self.backendToPresentation(backendEntities)
-    self.model.setEntries(entries)
+    let entries = self.backendToPresentation(res.activities)
+    self.model.setEntries(entries, res.thereMightBeMore)
+    self.setLoadingData(false)
 
   proc updateFilter*(self: Controller) {.slot.} =
     self.refreshData()
@@ -159,6 +176,31 @@ QtObject:
       types[i] = backend_activity.ActivityType(typesJson[i].getInt())
 
     self.currentActivityFilter.types = types
+
+  proc newController*(transactionsModule: transactions_module.AccessInterface, events: EventEmitter): Controller =
+    new(result, delete)
+    result.model = newModel()
+    result.transactionsModule = transactionsModule
+    result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
+    result.events = events
+    result.setup()
+
+    let controller = result
+
+    proc handleEvent(e: Args) =
+      var data = WalletSignal(e)
+      case data.eventType:
+        of backend_activity.eventActivityFilteringDone:
+          let responseJson = parseJson(data.message)
+          if responseJson.kind != JObject:
+            error "unexpected json type", responseJson.kind
+            return
+
+          controller.processResponse(responseJson)
+        else:
+          discard
+
+    result.events.on(SignalType.Wallet.event, handleEvent)
 
   proc setFilterStatus*(self: Controller, statusesArrayJsonString: string) {.slot.} =
     let statusesJson = parseJson(statusesArrayJsonString)
@@ -221,3 +263,17 @@ QtObject:
       chainIds[i] = chainIdsJson[i].getInt()
 
     self.chainIds = chainIds
+
+  proc getLoadingData*(self: Controller): bool {.slot.} =
+    return self.loadingData
+
+  QtProperty[bool] loadingData:
+    read = getLoadingData
+    notify = loadingDataChanged
+
+  proc getErrorCode*(self: Controller): int {.slot.} =
+    return self.errorCode.int
+
+  QtProperty[int] errorCode:
+    read = getErrorCode
+    notify = errorCodeChanged

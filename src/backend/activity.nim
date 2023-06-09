@@ -10,6 +10,9 @@ export response_type
 # see status-go/services/wallet/activity/filter.go NoLimitTimestampForPeriod
 const noLimitTimestampForPeriod = 0
 
+# Declared in services/wallet/activity/service.go
+const eventActivityFilteringDone*: string = "wallet-activity-filtering-done"
+
 # TODO: consider using common status-go types via protobuf
 # TODO: consider using flags instead of list of enums
 type
@@ -146,6 +149,17 @@ type
     activityStatus*: ActivityStatus
     tokenType*: TokenType
 
+  # Mirrors services/wallet/activity/service.go ErrorCode
+  ErrorCode* = enum
+    ErrorCodeSuccess = 1,
+    ErrorCodeFilterCanceled,
+    ErrorCodeFilterFailed
+
+  FilterResponse* = object
+    activities*: seq[ActivityEntry]
+    thereMightBeMore*: bool
+    errorCode*: ErrorCode
+
 # Define toJson proc for PayloadType
 proc toJson*(ae: ActivityEntry): JsonNode {.inline.} =
   return %*(ae)
@@ -174,7 +188,22 @@ proc `$`*(self: ActivityEntry): string =
     tokenType* {$self.tokenType},
   )"""
 
-rpc(getActivityEntries, "wallet"):
+proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inline.} =
+  var backendEntities: seq[ActivityEntry]
+  if e.hasKey("activities"):
+    let jsonEntries = e["activities"]
+    backendEntities = newSeq[ActivityEntry](jsonEntries.len)
+    for i in 0 ..< jsonEntries.len:
+      backendEntities[i] = fromJson(jsonEntries[i], ActivityEntry)
+
+  result = T(
+    activities: backendEntities,
+    thereMightBeMore: if e.hasKey("thereMightBeMore"): e["thereMightBeMore"].getBool()
+                      else: false,
+    errorCode: ErrorCode(e["errorCode"].getInt())
+  )
+
+rpc(filterActivityAsync, "wallet"):
   addresses: seq[string]
   chainIds: seq[int]
   filter: ActivityFilter

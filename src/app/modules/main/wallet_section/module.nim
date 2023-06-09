@@ -101,7 +101,7 @@ proc newModule*(
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
   result.filter = initFilter(result.controller)
 
-  result.activityController = activityc.newController(result.transactionsModule)
+  result.activityController = activityc.newController(result.transactionsModule, events)
   result.view = newView(result, result.activityController)
 
 
