@@ -12,29 +12,6 @@ import StatusQ.Core.Theme 0.1
 
 import QZXing 3.3
 
-/*
-    NOTE:   I'm doing some crazy workarounds here. Tested on MacOS.
-            What I wanted to achieve:
-
-            1. User only gets a OS "allow camera access" popup
-               when a page with QR code scanner is opened.
-            2. Mimize UI freezes, or at least make it obvious
-               that something is going on.
-
-    Camera component uses main UI thread to request OS for available devices.
-    Therefore, we can't simply use Loader with `asyncronous` flag.
-    Neiter we can set `loading: loader.status === Loader.Loading` to this button.
-
-    To achieve desired points, I manually set `loading` property of the button
-    and delay the camera loading for 250ms. UI quickly shows loading indicator,
-    then it will freeze until the camera is loaded.
-
-    I think this can only be improved by moving the OS requests to another thread from C++.
-
-    We also don't yet have ability to auto-detect if the camera access was already enabled.
-    So we show `Enable camera` button everytime.
-*/
-
 Item {
     id: root
 
@@ -53,7 +30,7 @@ Item {
     property bool highlightContentZone: false
     property bool highlightCaptureZone: false
 
-    readonly property alias camera: d.camera
+    readonly property alias camera: camera
     readonly property size sourceSize: Qt.size(videoOutput.sourceRect.width, videoOutput.sourceRect.height)
     readonly property size contentSize: Qt.size(videoOutput.contentRect.width, videoOutput.contentRect.height)
     readonly property real sourceRatio: videoOutput.sourceRect.width / videoOutput.sourceRect.height
@@ -75,10 +52,10 @@ Item {
         readonly property int radius: 16
 
         function setCameraDevice(deviceId) {
-            if (!d.camera)
+            if (!camera)
                 return
-            d.camera.deviceId = "" // Workaround for Qt bug. Without this the device changes only first time.
-            d.camera.deviceId = deviceId
+            camera.deviceId = "" // Workaround for Qt bug. Without this the device changes only first time.
+            camera.deviceId = deviceId
         }
 
         property QtObject camera: null
@@ -88,9 +65,7 @@ Item {
         property var availableCameras: []
 
         function onCameraLoaded() {
-            d.camera = loader.item
             d.availableCameras = QtMultimedia.availableCameras
-            button.loading = false
         }
 
         property int failsCount: 0
@@ -101,17 +76,14 @@ Item {
 
     }
 
-    Loader {
-        id: loader
-        active: false
-        visible: status == Loader.Ready
-        sourceComponent: Camera {
-            focus {
-                focusMode: CameraFocus.FocusContinuous
-                focusPointMode: CameraFocus.FocusPointAuto
-            }
+    Camera {
+        id: camera
+        focus {
+            focusMode: CameraFocus.FocusContinuous
+            focusPointMode: CameraFocus.FocusPointAuto
         }
-        onLoaded: {
+
+        Component.onCompleted: {
             d.onCameraLoaded()
         }
     }
@@ -126,14 +98,14 @@ Item {
         anchors.fill: parent
         implicitWidth: videoOutput.contentRect.width
         implicitHeight: videoOutput.contentRect.height
-        visible: d.camera && d.camera.availability === Camera.Available
+        visible: camera && camera.availability === Camera.Available
         clip: true
 
         VideoOutput {
             id: videoOutput
             anchors.fill: parent
             visible: false
-            source: d.camera
+            source: camera
             filters: [ qzxingFilter ]
             fillMode: VideoOutput.PreserveAspectCrop
         }
@@ -141,7 +113,7 @@ Item {
         Rectangle {
             id: mask
             anchors.fill: parent
-            radius: 16
+            radius: d.radius
             visible: false
             color: "black"
         }
@@ -211,53 +183,6 @@ Item {
         }
     }
 
-    ColumnLayout {
-        anchors.fill: parent
-        visible: loader.status !== Loader.Ready || loader.status === Loader.Error
-        spacing: 20
-
-        Item {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: qsTr('Enable access to your camera')
-            leftPadding: 48
-            rightPadding: 48
-            font.pixelSize: 15
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-            text: qsTr("To scan a QR, Status needs\naccess to your webcam")
-            leftPadding: 48
-            rightPadding: 48
-            font.pixelSize: 15
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
-            color: Theme.palette.directColor4
-        }
-
-        StatusButton {
-            id: button
-            Layout.alignment: Qt.AlignHCenter
-            text: qsTr("Enable camera access")
-            onClicked: {
-                loading = true
-                Backpressure.debounce(this, 250, () => { loader.active = true })()
-            }
-        }
-
-        Item {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-        }
-    }
-
     StatusComboBox {
         id: cameraComboBox
 
@@ -291,7 +216,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             color: Theme.palette.dangerColor1
-            visible: d.camera && d.camera.availability !== Camera.Available
+            visible: camera && camera.availability !== Camera.Available
             text: qsTr("Camera is not available")
         }
 
@@ -300,8 +225,8 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             color: Theme.palette.directColor5
-            visible: d.camera && d.camera.errorCode !== Camera.NoError
-            text: d.camera ? d.camera.errorString : ""
+            visible: camera && camera.errorCode !== Camera.NoError
+            text: camera ? camera.errorString : ""
         }
     }
 }
