@@ -765,35 +765,37 @@ QtObject {
     }
 
     function getColorForId(colorId) {
-        switch(colorId.toUpperCase()) {
-        case Constants.walletAccountColors.primary.toUpperCase():
-            return Theme.palette.customisationColors.blue
-        case Constants.walletAccountColors.purple.toUpperCase():
-            return Theme.palette.customisationColors.purple
-        case Constants.walletAccountColors.orange.toUpperCase():
-            return Theme.palette.customisationColors.orange
-        case  Constants.walletAccountColors.army.toUpperCase():
-            return Theme.palette.customisationColors.army
-        case  Constants.walletAccountColors.turquoise.toUpperCase():
-            return Theme.palette.customisationColors.turquoise
-        case  Constants.walletAccountColors.sky.toUpperCase():
-            return Theme.palette.customisationColors.sky
-        case  Constants.walletAccountColors.yellow.toUpperCase():
-            return Theme.palette.customisationColors.yellow
-        case  Constants.walletAccountColors.pink.toUpperCase():
-            return Theme.palette.customisationColors.pink
-        case  Constants.walletAccountColors.copper.toUpperCase():
-            return Theme.palette.customisationColors.copper
-        case  Constants.walletAccountColors.camel.toUpperCase():
-            return Theme.palette.customisationColors.camel
-        case  Constants.walletAccountColors.magenta.toUpperCase():
-            return Theme.palette.customisationColors.magenta
-        case  Constants.walletAccountColors.yinYang.toUpperCase():
-            return Theme.palette.customisationColors.yinYang
-        case  Constants.walletAccountColors.undefinedAccount.toUpperCase():
-            return Theme.palette.baseColor1
-        default:
-            return Theme.palette.customisationColors.blue
+        if(colorId) {
+            switch(colorId.toUpperCase()) {
+            case Constants.walletAccountColors.primary.toUpperCase():
+                return Theme.palette.customisationColors.blue
+            case Constants.walletAccountColors.purple.toUpperCase():
+                return Theme.palette.customisationColors.purple
+            case Constants.walletAccountColors.orange.toUpperCase():
+                return Theme.palette.customisationColors.orange
+            case  Constants.walletAccountColors.army.toUpperCase():
+                return Theme.palette.customisationColors.army
+            case  Constants.walletAccountColors.turquoise.toUpperCase():
+                return Theme.palette.customisationColors.turquoise
+            case  Constants.walletAccountColors.sky.toUpperCase():
+                return Theme.palette.customisationColors.sky
+            case  Constants.walletAccountColors.yellow.toUpperCase():
+                return Theme.palette.customisationColors.yellow
+            case  Constants.walletAccountColors.pink.toUpperCase():
+                return Theme.palette.customisationColors.pink
+            case  Constants.walletAccountColors.copper.toUpperCase():
+                return Theme.palette.customisationColors.copper
+            case  Constants.walletAccountColors.camel.toUpperCase():
+                return Theme.palette.customisationColors.camel
+            case  Constants.walletAccountColors.magenta.toUpperCase():
+                return Theme.palette.customisationColors.magenta
+            case  Constants.walletAccountColors.yinYang.toUpperCase():
+                return Theme.palette.customisationColors.yinYang
+            case  Constants.walletAccountColors.undefinedAccount.toUpperCase():
+                return Theme.palette.baseColor1
+            default:
+                return Theme.palette.customisationColors.blue
+            }
         }
     }
 

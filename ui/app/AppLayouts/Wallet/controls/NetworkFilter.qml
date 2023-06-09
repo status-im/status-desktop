@@ -31,7 +31,8 @@ StatusComboBox {
 
         property string selectedChainName: ""
         property string selectedIconUrl: ""
-        readonly property bool allSelected: root.enabledNetworks.count === root.allNetworks.count
+        readonly property bool allSelected: (!!root.enabledNetworks && !!root.allNetworks) ? root.enabledNetworks.count === root.allNetworks.count :
+                                                                                             false
 
         // Persist selection between selectPopupLoader reloads
         property var currentModel: layer1Networks
