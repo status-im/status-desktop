@@ -29,6 +29,7 @@ type
     account*: AccountDTO
     password*: string
     chatKey*: string
+    keycardPairings*: string
 
 type
   LocalPairingEventArgs* = ref object of Args
@@ -77,6 +78,7 @@ proc toLocalPairingAccountData*(jsonObj: JsonNode): LocalPairingAccountData =
   result = LocalPairingAccountData()
   discard jsonObj.getProp("password", result.password)
   discard jsonObj.getProp("chatKey", result.chatKey)
+  discard jsonObj.getProp("keycardPairings", result.keycardPairings)
 
   var accountObj: JsonNode
   if(jsonObj.getProp("account", accountObj)):

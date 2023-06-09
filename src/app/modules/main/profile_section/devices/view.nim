@@ -105,10 +105,6 @@ QtObject:
     read = getLocalPairingError
     notify = localPairingStatusChanged
 
-  proc localPairingEvent(self: View, eventType: int, action: int, error: string) {.signal.}
-  proc onLocalPairingEvent*(self: View, eventType: EventType, action: Action, error: string) =
-    self.localPairingEvent(ord(eventType), ord(action), error)
-
   proc getLocalPairingInstallationId*(self: View): string {.slot.}  =
     return self.localPairingStatus.installation.id
   QtProperty[string] localPairingInstallationId:

@@ -54,10 +54,6 @@ proc init*(self: Controller) =
       return
     self.delegate.onLoggedInUserAuthenticated(args.pin, args.password, args.keyUid, args.additinalPathsDetails)
 
-  self.events.on(SIGNAL_LOCAL_PAIRING_EVENT) do(e: Args):
-    let args = LocalPairingEventArgs(e)
-    self.delegate.onLocalPairingEvent(args.eventType, args.action, args.error)
-
   self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
     let args = LocalPairingStatus(e)
     self.delegate.onLocalPairingStatusUpdate(args)

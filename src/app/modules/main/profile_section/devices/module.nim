@@ -122,8 +122,5 @@ proc validateConnectionString*(self: Module, connectionString: string): string =
 method inputConnectionStringForBootstrapping*(self: Module, connectionString: string): string =
   return self.controller.inputConnectionStringForBootstrapping(connectionString)
 
-method onLocalPairingEvent*(self: Module, eventType: EventType, action: Action, error: string) =
-  self.view.onLocalPairingEvent(eventType, action, error)
-
 method onLocalPairingStatusUpdate*(self: Module, status: LocalPairingStatus) =
   self.view.onLocalPairingStatusUpdate(status)
