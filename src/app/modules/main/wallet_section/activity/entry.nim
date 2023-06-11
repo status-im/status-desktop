@@ -78,7 +78,7 @@ QtObject:
     return self.transaction
 
   proc getSender*(self: ActivityEntry): string {.slot.} =
-    # TODO: lookup sender's name from addressbook and cache it or in advance
+    # TODO: lookup sender's name
     if self.isMultiTransaction():
       return self.multi_transaction.fromAddress
 
@@ -88,7 +88,7 @@ QtObject:
     read = getSender
 
   proc getRecipient*(self: ActivityEntry): string {.slot.} =
-    # TODO: lookup recipient name from addressbook and cache it or in advance
+    # TODO: lookup recipient name
     if self.isMultiTransaction():
       return self.multi_transaction.toAddress
 

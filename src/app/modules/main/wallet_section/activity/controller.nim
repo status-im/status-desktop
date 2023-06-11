@@ -34,7 +34,7 @@ QtObject:
       loadingData: bool
       errorCode: backend_activity.ErrorCode
 
-      # TODO remove chains and addresses to use the app one
+      # TODO remove chains and addresses after using ground truth
       addresses: seq[string]
       chainIds: seq[int]
 
@@ -138,15 +138,9 @@ QtObject:
     self.errorCode = backend_activity.ErrorCode(errorCode)
     self.errorCodeChanged()
 
-  proc refreshData(self: Controller) =
-    let response = backend_activity.filterActivityAsync(self.addresses, self.chainIds, self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
-    if response.error != nil:
-      error "error fetching activity entries: ", response.error
-      return
-
-    self.setLoadingData(true)
-
   proc processResponse(self: Controller, response: JsonNode) =
+    defer: self.setLoadingData(false)
+
     let res = fromJson(response, backend_activity.FilterResponse)
 
     defer: self.setErrorCode(res.errorCode.int)
@@ -156,11 +150,23 @@ QtObject:
       return
 
     let entries = self.backendToPresentation(res.activities)
-    self.model.setEntries(entries, res.thereMightBeMore)
-    self.setLoadingData(false)
+    self.model.setEntries(entries, res.offset, res.hasMore)
 
   proc updateFilter*(self: Controller) {.slot.} =
-    self.refreshData()
+    self.setLoadingData(true)
+    let response = backend_activity.filterActivityAsync(self.addresses, self.chainIds, self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
+    if response.error != nil:
+      error "error fetching activity entries: ", response.error
+      self.setLoadingData(false)
+      return
+
+  proc loadMoreItems(self: Controller) {.slot.} =
+    let response = backend_activity.filterActivityAsync(self.addresses, self.chainIds, self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
+    if response.error != nil:
+      error "error fetching activity entries: ", response.error
+      return
+
+    self.setLoadingData(true)
 
   proc setFilterTime*(self: Controller, startTimestamp: int, endTimestamp: int) {.slot.} =
     self.currentActivityFilter.period = backend_activity.newPeriod(startTimestamp, endTimestamp)
