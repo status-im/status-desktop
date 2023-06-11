@@ -157,7 +157,8 @@ type
 
   FilterResponse* = object
     activities*: seq[ActivityEntry]
-    thereMightBeMore*: bool
+    offset*: int
+    hasMore*: bool
     errorCode*: ErrorCode
 
 # Define toJson proc for PayloadType
@@ -198,7 +199,8 @@ proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inlin
 
   result = T(
     activities: backendEntities,
-    thereMightBeMore: if e.hasKey("thereMightBeMore"): e["thereMightBeMore"].getBool()
+    offset: e["offset"].getInt(),
+    hasMore: if e.hasKey("hasMore"): e["hasMore"].getBool()
                       else: false,
     errorCode: ErrorCode(e["errorCode"].getInt())
   )

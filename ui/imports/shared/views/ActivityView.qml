@@ -321,24 +321,19 @@ Control {
             }
         }
 
-        Text {
-            id: loadingText
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            text: qsTr("Loading...")
-            visible: controller.loadingData
-            horizontalAlignment: Text.AlignHCenter
-        }
         ListView {
             id: listView
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
+            Component.onCompleted: {
+                if(controller.model.hasMore) {
+                    controller.loadMoreItems();
+                }
+            }
+
             model: controller.model
-            visible: !controller.loadingData
 
             delegate: Item {
                 width: parent ? parent.width : 0
@@ -346,55 +341,92 @@ Control {
 
                 readonly property var entry: model.activityEntry
 
-                RowLayout {
+                ColumnLayout {
                     id: itemLayout
                     anchors.fill: parent
+                    spacing: 5
 
-                    Label { text: entry.isMultiTransaction ? qsTr("MT") : entry.isPendingTransaction ? qsTr("PT") : qsTr(" T") }
-                    Label { text: `[${root.epochToDateStr(entry.timestamp)}] ` }
-                    Label { text: entry.isMultiTransaction ? entry.fromAmount : entry.amount }
-                    Label { text: qsTr("from"); Layout.leftMargin: 5; Layout.rightMargin: 5 }
-                    Label { text: entry.sender; Layout.maximumWidth: 200; elide: Text.ElideMiddle }
-                    Label { text: qsTr("to"); Layout.leftMargin: 5; Layout.rightMargin: 5 }
-                    Label { text: entry.recipient; Layout.maximumWidth: 200; elide: Text.ElideMiddle }
-                    Label { text: qsTr("got"); Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
-                    Label { text: entry.toAmount; Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
-                    Label {
-                        text: `{${
-                            function() {
-                                switch (entry.status) {
-                                    case Constants.TransactionStatus.Failed: return qsTr("F");
-                                    case Constants.TransactionStatus.Pending: return qsTr("P");
-                                    case Constants.TransactionStatus.Complete: return qsTr("C");
-                                    case Constants.TransactionStatus.Finalized: return qsTr("FZ");
-                                }
-                                return qsTr("-")
-                            }()}}`
-                        Layout.leftMargin: 5;
+                    RowLayout {
+                        Label { text: entry.isMultiTransaction ? entry.fromAmount : entry.amount }
+                        Label { text: qsTr("from"); Layout.leftMargin: 5; Layout.rightMargin: 5 }
+                        Label { text: entry.sender; Layout.maximumWidth: 200; elide: Text.ElideMiddle }
+                        Label { text: qsTr("to"); Layout.leftMargin: 5; Layout.rightMargin: 5 }
+                        Label { text: entry.recipient; Layout.maximumWidth: 200; elide: Text.ElideMiddle }
+                        Label { text: qsTr("got"); Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
+                        Label { text: entry.toAmount; Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
+                        RowLayout {}    // Spacer
                     }
-                    Label { text: entry.toAmount; Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
-                    RowLayout {}    // Spacer
+                    RowLayout {
+                        Label { text: entry.isMultiTransaction ? qsTr("MT") : entry.isPendingTransaction ? qsTr("PT") : qsTr(" T") }
+                        Label { text: `[${root.epochToDateStr(entry.timestamp)}] ` }
+                        Label {
+                            text: `{${
+                                function() {
+                                    switch (entry.status) {
+                                        case Constants.TransactionStatus.Failed: return qsTr("Failed");
+                                        case Constants.TransactionStatus.Pending: return qsTr("Pending");
+                                        case Constants.TransactionStatus.Complete: return qsTr("Complete");
+                                        case Constants.TransactionStatus.Finalized: return qsTr("Finalized");
+                                    }
+                                    return qsTr("-")
+                                }()}}`
+                            Layout.leftMargin: 5;
+                        }
+                        RowLayout {}    // Spacer
+                    }
                 }
             }
 
-            footer: Component {
-                Item {
-                    width: listView.width
-                    height: footerText.implicitHeight
+            onContentYChanged: checkIfFooterVisible()
+            onHeightChanged: checkIfFooterVisible()
+            onContentHeightChanged: checkIfFooterVisible()
+            Connections {
+                target: listView.footerItem
+                function onHeightChanged() {
+                    listView.checkIfFooterVisible()
+                }
+            }
+
+            function checkIfFooterVisible() {
+                if((contentY + height) > (contentHeight - footerItem.height) && controller.model.hasMore && !controller.loadingData) {
+                    controller.loadMoreItems();
+                }
+            }
+
+            footer: Column {
+                id: loadingItems
+
+                width: listView.width
+                visible: controller.model.hasMore
+
+                Repeater {
+                    model: controller.model.hasMore ? 10 : 0
 
                     Text {
-                        id: footerText
-                        text: qsTr("Loading more items...")
-                        anchors.centerIn: parent
+                        text: loadingItems.loadingPattern
                     }
+                }
 
-                    visible: controller.model.hasMore
+                property string loadingPattern: ""
+                property int glanceOffset: 0
+                Timer {
+                    interval: 25; repeat: true; running: true
 
-                    // Load more items when this footer comes into view.
-                    onVisibleChanged: {
-                        if (visible) {
-                            controller.loadMoreItems();
+                    onTriggered: {
+                        let offset = loadingItems.glanceOffset
+                        let length = 100
+                        let slashCount = 3;
+
+                        let pattern = new Array(length).fill(' ');
+
+                        for (let i = 0; i < slashCount; i++) {
+                            let position = (offset + i) % length;
+                            pattern[position] = '/';
                         }
+                        pattern = '[' + pattern.join('') + ']';
+
+                        loadingItems.loadingPattern = pattern;
+                        loadingItems.glanceOffset = (offset + 1) % length;
                     }
                 }
             }
