@@ -52,6 +52,8 @@ pipeline {
     /* WARNING: Qt 5.15.8 installed via Brew. */
     QTDIR = '/opt/homebrew/opt/qt@5'
     PATH = "${env.QTDIR}/bin:${env.PATH}"
+    /* Avoid weird bugs caused by stale cache. */
+    QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
     STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg', arch: getArch())}"
     /* Apple Team ID for Notarization */

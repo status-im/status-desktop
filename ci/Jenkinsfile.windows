@@ -49,6 +49,8 @@ pipeline {
     /* Explicitly set the QT version */
     QTDIR = "/c/Qt/5.15.2/msvc2019_64"
     PATH = "${env.QTDIR}/bin:${env.PATH}"
+    /* Avoid weird bugs caused by stale cache. */
+    QML_DISABLE_DISK_CACHE = "true"
     /* Control output the filename */
     STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch())}"
     /* 7zip archive filename */

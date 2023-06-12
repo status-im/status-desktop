@@ -66,6 +66,8 @@ pipeline {
     /* Makefile assumes the compiler folder is included */
     QTDIR = '/opt/qt/5.15.2/gcc_64'
     PATH = "${env.QTDIR}/bin:${env.PATH}"
+    /* Avoid weird bugs caused by stale cache. */
+    QML_DISABLE_DISK_CACHE = "true"
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
     /* Container ports */
