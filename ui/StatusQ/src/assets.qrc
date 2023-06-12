@@ -71,6 +71,10 @@
         <file>assets/img/icons/tiny/bridge.svg</file>
         <file>assets/img/icons/tiny/channel-white.svg</file>
         <file>assets/img/icons/tiny/channel.svg</file>
+        <file>assets/img/icons/tiny/channel-locked.svg</file>
+        <file>assets/img/icons/tiny/channel-locked-white.svg</file>
+        <file>assets/img/icons/tiny/channel-unlocked.svg</file>
+        <file>assets/img/icons/tiny/channel-unlocked-white.svg</file>
         <file>assets/img/icons/tiny/chat.svg</file>
         <file>assets/img/icons/tiny/chatbot.svg</file>
         <file>assets/img/icons/tiny/checkmark.svg</file>

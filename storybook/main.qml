@@ -18,6 +18,8 @@ ApplicationWindow {
 
     property string currentPage
 
+    title: "%1 – %2".arg(currentPage).arg(Qt.application.displayName)
+
     palette.window: Theme.palette.statusAppLayout.backgroundColor
     palette.text: Theme.palette.directColor1
     palette.windowText: Theme.palette.directColor1
