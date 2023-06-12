@@ -393,6 +393,8 @@ Item {
                 return qsTr("Search collectibles")
             }
 
+            KeyNavigation.backtab: searcher
+
             Binding on placeholderText {
                 when: d.currentItemName !== ""
                 value: qsTr("Search %1").arg(d.currentItemName)

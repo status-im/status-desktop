@@ -66,6 +66,8 @@ ColumnLayout {
                 addOrUpdateButton.clicked()
         }
 
+        KeyNavigation.backtab: domainNameInput
+
         Component.onCompleted: {
             if (text) {
                 input.dirty = true
