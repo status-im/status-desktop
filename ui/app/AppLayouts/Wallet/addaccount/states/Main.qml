@@ -25,7 +25,7 @@ Item {
             colorSelection.selectedColorIndex = Math.floor(Math.random() * colorSelection.model.length)
         }
         else {
-            let ind = d.evaluateColorIndex(root.store.addAccountModule.selectedColorId)
+            let ind = d.evaluateColorIndex(Utils.getColorForId(root.store.addAccountModule.selectedColorId))
             colorSelection.selectedColorIndex = ind
         }
 
@@ -130,8 +130,8 @@ Item {
                         errorMessage: Utils.getErrorMessage(accountName.errors, qsTr("wallet account name"))
                     },
                     StatusRegularExpressionValidator {
-                        regularExpression: Constants.regularExpressions.alphanumerical
-                        errorMessage: Constants.errorMessages.alphanumericalRegExp
+                        regularExpression: Constants.regularExpressions.alphanumericalWithSpace
+                        errorMessage: Constants.errorMessages.alphanumericalWithSpaceRegExp
                     }
                 ]
 
