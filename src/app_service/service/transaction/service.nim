@@ -359,7 +359,7 @@ QtObject:
         paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
 
       let response = transactions.createMultiTransaction(
-        MultiTransactionDto(
+        MultiTransactionCommandDto(
           fromAddress: from_addr,
           toAddress: to_addr,
           fromAsset: tokenSymbol,
@@ -426,7 +426,7 @@ QtObject:
         paths.add(self.createPath(route, txData, tokenSymbol, to_addr))
 
       let response = transactions.createMultiTransaction(
-        MultiTransactionDto(
+        MultiTransactionCommandDto(
           fromAddress: from_addr,
           toAddress: to_addr,
           fromAsset: tokenSymbol,
