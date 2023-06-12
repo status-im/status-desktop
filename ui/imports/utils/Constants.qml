@@ -772,6 +772,24 @@ QtObject {
     readonly property string networkMainnet: "Mainnet"
     readonly property string networkRopsten: "Ropsten"
 
+    readonly property QtObject networkShortChainNames: QtObject {
+        readonly property string mainnet: "eth"
+        readonly property string arbiscan: "arb"
+        readonly property string optimism: "opt"
+        readonly property string goerliMainnet: "goEth"
+        readonly property string goerliArbiscan: "goArb"
+        readonly property string goerliOptimism: "goOpt"
+    }
+
+    readonly property QtObject networkExplorerLinks: QtObject {
+        readonly property string etherscan: "https://etherscan.io"
+        readonly property string arbiscan: "https://arbiscan.io"
+        readonly property string optimistic: "https://optimistic.etherscan.io"
+        readonly property string goerliEtherscan: "https://goerli.etherscan.io"
+        readonly property string goerliArbiscan: "https://goerli.arbiscan.io"
+        readonly property string goerliOptimistic: "https://goerli-optimism.etherscan.io"
+    }
+
     readonly property string api_request: "api-request"
     readonly property string web3SendAsyncReadOnly: "web3-send-async-read-only"
     readonly property string web3DisconnectAccount: "web3-disconnect-account"

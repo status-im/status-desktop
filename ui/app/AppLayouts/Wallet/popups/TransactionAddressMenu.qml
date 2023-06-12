@@ -20,10 +20,6 @@ StatusMenu {
 
     property var contactsStore
 
-    // TODO get those names from model
-    readonly property string arbiscanShortChainName: "arb"
-    readonly property string optimismShortChainName: "opt"
-
     signal openSendModal(address: string)
 
     enum AddressType {
@@ -46,6 +42,8 @@ StatusMenu {
 
         property string contractName: ""
 
+        property bool isGoerliTestnet: false
+
         property int addressType: TransactionAddressMenu.AddressType.Address
 
         function getViewText(target) {
@@ -64,6 +62,35 @@ StatusMenu {
                 return qsTr("View receiver address on %1").arg(target)
             default:
                 return qsTr("View address on %1").arg(target)
+            }
+        }
+
+        function refreshShowOnActionsVisiblity(shortChainName) {
+            switch(shortChainName.toLowerCase()) {
+            case Constants.networkShortChainNames.arbiscan.toLowerCase():
+            case Constants.networkShortChainNames.goerliArbiscan.toLowerCase():
+                showOnArbiscanAction.enabled = true
+                break
+            case Constants.networkShortChainNames.optimism.toLowerCase():
+            case Constants.networkShortChainNames.goerliOptimism.toLowerCase():
+                showOnOptimismAction.enabled = true
+                break
+            default:
+                showOnEtherscanAction.enabled = true
+                break
+            }
+        }
+
+        function refreshIsTestnet(shortChainName) {
+            switch(shortChainName.toLowerCase()) {
+            case Constants.networkShortChainNames.goerliMainnet.toLowerCase():
+            case Constants.networkShortChainNames.goerliArbiscan.toLowerCase():
+            case Constants.networkShortChainNames.goerliOptimism.toLowerCase():
+                d.isGoerliTestnet = true
+                return
+            default:
+                d.isGoerliTestnet = false
+                return
             }
         }
 
@@ -89,17 +116,17 @@ StatusMenu {
         }
     }
 
-    function openSenderMenu(delegate, address) {
+    function openSenderMenu(delegate, address, chainShortName = "") {
         d.addressType = TransactionAddressMenu.AddressType.Sender
-        openEthAddressMenu(delegate, address, true, false)
+        openEthAddressMenu(delegate, address, chainShortName)
     }
 
-    function openReceiverMenu(delegate, address) {
+    function openReceiverMenu(delegate, address, chainShortName = "") {
         d.addressType = TransactionAddressMenu.AddressType.Receiver
-        openEthAddressMenu(delegate, address)
+        openEthAddressMenu(delegate, address, chainShortName)
     }
 
-    function openEthAddressMenu(delegate, address) {
+    function openEthAddressMenu(delegate, address, chainShortName = "") {
         d.selectedAddress = address
 
         address = address.toLowerCase()
@@ -120,10 +147,11 @@ StatusMenu {
         d.addressName = contactData.isContact ? contactData.name : WalletStores.RootStore.getNameForAddress(address)
         d.addressEns = RootStore.getEnsForSavedWalletAddress(address)
         d.addressChains = RootStore.getChainShortNamesForSavedWalletAddress(address)
+        d.refreshIsTestnet(chainShortName)
 
         showOnEtherscanAction.enabled = true
-        showOnArbiscanAction.enabled = address.includes(root.arbiscanShortChainName + ":")
-        showOnOptimismAction.enabled = address.includes(root.optimismShortChainName + ":")
+        showOnArbiscanAction.enabled = address.includes(Constants.networkShortChainNames.arbiscan + ":")
+        showOnOptimismAction.enabled = address.includes(Constants.networkShortChainNames.optimism + ":")
         saveAddressAction.enabled = d.addressName.length === 0
         editAddressAction.enabled = !isWalletAccount && !isContact && d.addressName.length > 0
         copyAddressAction.isSuccessState = false
@@ -136,14 +164,8 @@ StatusMenu {
     function openTxMenu(delegate, address, chainShortName="") {
         d.addressType = TransactionAddressMenu.AddressType.Tx
         d.selectedAddress = address
-        chainShortName = chainShortName.toLowerCase()
-        if (chainShortName === root.arbiscanShortChainName) {
-            showOnArbiscanAction.enabled = true
-        } else if (chainShortName === root.optimismShortChainName) {
-            showOnOptimismAction.enabled = true
-        } else {
-            showOnEtherscanAction.enabled = true
-        }
+        d.refreshShowOnActionsVisiblity(chainShortName)
+        d.refreshIsTestnet(chainShortName)
         d.openMenu(delegate)
     }
 
@@ -151,14 +173,8 @@ StatusMenu {
         d.addressType = TransactionAddressMenu.AddressType.Contract
         d.contractName = name
         d.selectedAddress = address
-        chainShortName = chainShortName.toLowerCase()
-        if (chainShortName === root.arbiscanShortChainName) {
-            showOnArbiscanAction.enabled = true
-        } else if (chainShortName === root.optimismShortChainName) {
-            showOnOptimismAction.enabled = true
-        } else {
-            showOnEtherscanAction.enabled = true
-        }
+        d.refreshShowOnActionsVisiblity(chainShortName)
+        d.refreshIsTestnet(chainShortName)
         d.openMenu(delegate)
     }
 
@@ -195,6 +211,7 @@ StatusMenu {
     onClosed: {
         d.addressType = TransactionAddressMenu.AddressType.Address
         d.contractName = ""
+        d.isGoerliTestnet = false
 
         showOnEtherscanAction.enabled = false
         showOnArbiscanAction.enabled = false
@@ -216,7 +233,8 @@ StatusMenu {
         assetSettings.name: "link"
         onTriggered: {
             const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
-            Global.openLink("https://etherscan.io/%1/%2".arg(type).arg(d.selectedAddress))
+            const link = d.isGoerliTestnet ? Constants.networkExplorerLinks.goerliEtherscan : Constants.networkExplorerLinks.etherscan
+            Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
         }
     }
     StatusAction {
@@ -226,7 +244,8 @@ StatusMenu {
         assetSettings.name: "link"
         onTriggered: {
             const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
-            Global.openLink("https://arbiscan.io/%1/%2".arg(type).arg(d.selectedAddress))
+            const link = d.isGoerliTestnet ? Constants.networkExplorerLinks.goerliArbiscan : Constants.networkExplorerLinks.arbiscan
+            Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
         }
     }
     StatusAction {
@@ -236,7 +255,8 @@ StatusMenu {
         assetSettings.name: "link"
         onTriggered: {
             const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
-            Global.openLink("https://optimistic.etherscan.io/%1/%2".arg(type).arg(d.selectedAddress))
+            const link = d.isGoerliTestnet ? Constants.networkExplorerLinks.goerliOptimistic : Constants.networkExplorerLinks.optimistic
+            Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
         }
     }
     StatusCopyAction {
