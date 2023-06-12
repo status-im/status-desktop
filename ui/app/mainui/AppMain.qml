@@ -505,7 +505,8 @@ Item {
                     target: rootStore.aboutModuleInst
                     function onAppVersionFetched(available: bool, version: string, url: string) {
                         rootStore.setLatestVersionInfo(available, version, url);
-                        bannersLayout.processUpdateAvailable()
+                        // TODO when we re-implement check for updates, uncomment this
+                        // bannersLayout.processUpdateAvailable()
                     }
                 }
 
