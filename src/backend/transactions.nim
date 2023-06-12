@@ -9,6 +9,14 @@ type
   MultiTransactionType* = enum
     MultiTransactionSend = 0, MultiTransactionSwap = 1, MultiTransactionBridge = 2
 
+  MultiTransactionCommandDto* = ref object of RootObj
+    fromAddress* {.serializedFieldName("fromAddress").}: string
+    toAddress* {.serializedFieldName("toAddress").}: string
+    fromAsset* {.serializedFieldName("fromAsset").}: string
+    toAsset* {.serializedFieldName("toAsset").}: string
+    fromAmount* {.serializedFieldName("fromAmount").}: string
+    multiTxType* {.serializedFieldName("type").}: MultiTransactionType
+
   MultiTransactionDto* = ref object of RootObj
     id* {.serializedFieldName("id").}: int
     timestamp* {.serializedFieldName("timestamp").}: int
@@ -60,8 +68,8 @@ proc deletePendingTransaction*(chainId: int, transactionHash: string): RpcRespon
 proc fetchCryptoServices*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
 
-proc createMultiTransaction*(multiTransaction: MultiTransactionDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [multiTransaction, data, hashPassword(password)]
+proc createMultiTransaction*(multiTransactionCommand: MultiTransactionCommandDto, data: seq[TransactionBridgeDto], password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [multiTransactionCommand, data, hashPassword(password)]
   result = core.callPrivateRPC("wallet_createMultiTransaction", payload)
 
 proc getMultiTransactions*(transactionIDs: seq[int]): RpcResponse[JsonNode] {.raises: [Exception].} =
