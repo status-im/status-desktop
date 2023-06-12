@@ -55,7 +55,7 @@ QtObject {
                                               tokenType: 2,
                                               name: "Kitty artwork",
                                               image: ModelsData.collectibles.kitty1Big,
-                                              deployState: 2,
+                                              deployState: 0,
                                               symbol: "KAT",
                                               description: "Desc",
                                               supply: 10,

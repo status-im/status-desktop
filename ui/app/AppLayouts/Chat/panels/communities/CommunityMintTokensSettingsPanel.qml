@@ -83,7 +83,7 @@ SettingsPageLayout {
         property var tokenOwnersModel
         property var remotelyDestructTokensList
         property bool remotelyDestruct
-        property bool burnEnabled
+        property bool burnVisible
         property string tokenKey
         property int burnAmount
         property int remainingTokens
@@ -397,16 +397,20 @@ SettingsPageLayout {
         MintTokensFooterPanel {
             id: footerPanel
 
+            readonly property bool deployStateFailed : (!!d.currentToken) ? d.currentToken.deployState === Constants.ContractTransactionStatus.Failed : false
+
             function closePopups() {
                 remotelyDestructPopup.close()
                 alertPopup.close()
                 signTransactionPopup.close()
             }
 
-            airdropEnabled: true
-            retailEnabled: false
-            remotelySelfDestructVisible: d.remotelyDestruct
-            burnVisible: d.burnEnabled
+            airdropEnabled: !deployStateFailed
+            remotelyDestructEnabled: !deployStateFailed
+            burnEnabled: !deployStateFailed
+
+            remotelyDestructVisible: d.remotelyDestruct
+            burnVisible: d.burnVisible
 
             onAirdropClicked: d.airdropClicked()
             onRemotelyDestructClicked: remotelyDestructPopup.open()
@@ -589,7 +593,7 @@ SettingsPageLayout {
 
             Binding {
                 target: d
-                property: "burnEnabled"
+                property: "burnVisible"
                 value: !view.infiniteSupply
                 restoreMode: Binding.RestoreBindingOrValue
             }

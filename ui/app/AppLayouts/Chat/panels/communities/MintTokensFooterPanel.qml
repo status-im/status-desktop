@@ -13,7 +13,9 @@ Control {
 
     property alias airdropEnabled: airdropButton.enabled
     property alias retailEnabled: retailButton.enabled
-    property alias remotelySelfDestructVisible: remotelySelfDestructButton.visible
+    property alias remotelyDestructEnabled: remotelyDestructButton.enabled
+    property alias burnEnabled: burnButton.enabled
+    property alias remotelyDestructVisible: remotelyDestructButton.visible
     property alias burnVisible: burnButton.visible
 
     signal airdropClicked
@@ -55,7 +57,7 @@ Control {
             }
 
             StatusFlatButton {
-                id: remotelySelfDestructButton
+                id: remotelyDestructButton
 
                 icon.name: "remotely-destruct"
                 text: qsTr("Remotely destruct")
