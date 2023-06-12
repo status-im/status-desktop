@@ -65,7 +65,7 @@ ToolBar {
         ToolSeparator {}
 
         ToolButton {
-            text: "Inspect"
+            text: "Inspect (Ctrl+Shift+I)"
 
             Layout.rightMargin: parent.spacing
 

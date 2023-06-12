@@ -26,6 +26,42 @@ ApplicationWindow {
     palette.base: Theme.palette.indirectColor1
     font.pixelSize: 13
 
+    QtObject {
+        id: d
+
+        function activateInspection(item) {
+            inspectionWindow.inspect(item)
+            inspectionWindow.show()
+            inspectionWindow.requestActivate()
+        }
+
+        function performInspection() {
+            const getItems = typeName =>
+                           InspectionUtils.findItemsByTypeName(
+                               viewLoader.item, typeName)
+            const items = [
+                ...getItems(root.currentPage),
+                ...getItems("Custom" + root.currentPage)
+            ]
+
+            const lca = InspectionUtils.lowestCommonAncestor(
+                          items, viewLoader.item)
+
+            if (!!lca && lca.Overlay.overlay.children.length > 0) {
+                activateInspection(lca.Overlay.overlay.children[0])
+                return
+            }
+
+            if (lca) {
+                activateInspection(lca.parent.contentItem === lca
+                                   ? lca.parent : lca)
+                return
+            }
+
+            nothingToInspectDialog.open()
+        }
+    }
+
     PagesModel {
         id: pagesModel
     }
@@ -175,37 +211,7 @@ ApplicationWindow {
                     })
                 }
 
-                function activateInspection(item) {
-                    inspectionWindow.inspect(item)
-                    inspectionWindow.show()
-                    inspectionWindow.requestActivate()
-                }
-
-                onInspectClicked: {
-                    const getItems = typeName =>
-                                   InspectionUtils.findItemsByTypeName(
-                                       viewLoader.item, typeName)
-                    const items = [
-                        ...getItems(root.currentPage),
-                        ...getItems("Custom" + root.currentPage)
-                    ]
-
-                    const lca = InspectionUtils.lowestCommonAncestor(
-                                  items, viewLoader.item)
-
-                    if (lca) {
-                        activateInspection(lca.parent.contentItem === lca
-                                           ? lca.parent : lca)
-                        return
-                    }
-
-                    if (Overlay.overlay.children.length > 0) {
-                        activateInspection(Overlay.overlay.children[0])
-                        return
-                    }
-
-                    nothingToInspectDialog.open()
-                }
+                onInspectClicked: d.performInspection()
             }
         }
     }
@@ -303,5 +309,11 @@ Tips:
         property alias darkMode: darkModeCheckBox.checked
         property alias hotReloading: hotReloaderControls.enabled
         property alias figmaToken: settingsLayout.figmaToken
+    }
+
+    Shortcut {
+        sequence: "Ctrl+Shift+I"
+        context: Qt.ApplicationShortcut
+        onActivated: d.performInspection()
     }
 }
