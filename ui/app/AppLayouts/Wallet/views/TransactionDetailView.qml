@@ -89,7 +89,7 @@ Item {
                     leftPadding: 0
 
                     modelData: transaction
-                    transactionType: d.isIncoming ? TransactionDelegate.Receive : TransactionDelegate.Send
+                    transactionType: d.isIncoming ? Constants.TransactionType.Receive : Constants.TransactionType.Send
                     currentCurrency: RootStore.currentCurrency
                     cryptoValue: d.cryptoValue
                     fiatValue: d.fiatValue
@@ -116,7 +116,7 @@ Item {
             WalletTxProgressBlock {
                 id: progressBlock
                 width: Math.min(513, root.width)
-                error: transactionHeader.transactionStatus === TransactionDelegate.TransactionStatus.Failed
+                error: transactionHeader.transactionStatus === Constants.TransactionStatus.Failed
                 isLayer1: RootStore.getNetworkLayer(root.transaction.chainId) == 1
                 confirmations: root.isTransactionValid ? Math.abs(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId) - d.blockNumber): 0
                 chainName: d.networkFullName
@@ -132,7 +132,7 @@ Item {
                 width: Math.min(304, progressBlock.width)
                 nftName: root.isTransactionValid ? transaction.nftName : ""
                 nftUrl: root.isTransactionValid && !!transaction.nftImageUrl ? transaction.nftImageUrl : ""
-                strikethrough: transactionHeader.transactionType === TransactionDelegate.Destroy
+                strikethrough: transactionHeader.transactionType === Constants.TransactionType.Destroy
                 tokenId: root.isTransactionValid ? transaction.tokenID : ""
                 contractAddress: root.isTransactionValid ? transaction.contract : ""
             }
@@ -167,9 +167,9 @@ Item {
                             title: qsTr("From")
                             subTitle: {
                                 switch(transactionHeader.transactionType) {
-                                case TransactionDelegate.Swap:
+                                case Constants.TransactionType.Swap:
                                     return d.symbol
-                                case TransactionDelegate.Bridge:
+                                case Constants.TransactionType.Bridge:
                                     return d.networkFullName
                                 default:
                                     return ""
@@ -177,9 +177,9 @@ Item {
                             }
                             asset.name: {
                                 switch(transactionHeader.transactionType) {
-                                case TransactionDelegate.Swap:
+                                case Constants.TransactionType.Swap:
                                     return !!d.symbol ? Style.png("tokens/%1".arg(d.symbol)) : ""
-                                case TransactionDelegate.Bridge:
+                                case Constants.TransactionType.Bridge:
                                     return !!d.networkIcon ? Style.svg(d.networkIcon) : ""
                                 default:
                                     return ""
@@ -194,9 +194,9 @@ Item {
                             title: qsTr("To")
                             subTitle: {
                                 switch(transactionHeader.transactionType) {
-                                case TransactionDelegate.Swap:
+                                case Constants.TransactionType.Swap:
                                     return d.swapSymbol
-                                case TransactionDelegate.Bridge:
+                                case Constants.TransactionType.Bridge:
                                     return d.bridgeNetworkFullname
                                 default:
                                     return ""
@@ -204,9 +204,9 @@ Item {
                             }
                             asset.name: {
                                 switch(transactionHeader.transactionType) {
-                                case TransactionDelegate.Swap:
+                                case Constants.TransactionType.Swap:
                                     return !!d.swapSymbol ? Style.png("tokens/%1".arg(d.swapSymbol)) : ""
-                                case TransactionDelegate.Bridge:
+                                case Constants.TransactionType.Bridge:
                                     return !!d.bridgeNetworkIcon ? Style.svg(d.bridgeNetworkIcon) : ""
                                 default:
                                     return ""
@@ -217,13 +217,13 @@ Item {
                     }
                     TransactionAddressTile {
                         width: parent.width
-                        title: transactionHeader.transactionType === TransactionDelegate.Swap || transactionHeader.transactionType === TransactionDelegate.Bridge ?
+                        title: transactionHeader.transactionType === Constants.TransactionType.Swap || transactionHeader.transactionType === Constants.TransactionType.Bridge ?
                                    qsTr("In") : qsTr("From")
                         addresses: root.isTransactionValid ? [root.transaction.from] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
                         onButtonClicked: {
-                            if (transactionHeader.transactionType === TransactionDelegate.Swap || transactionHeader.transactionType === TransactionDelegate.Bridge) {
+                            if (transactionHeader.transactionType === Constants.TransactionType.Swap || transactionHeader.transactionType === Constants.TransactionType.Bridge) {
                                 addressMenu.openEthAddressMenu(this, addresses[0], d.networkShortName)
                             } else {
                                 addressMenu.openSenderMenu(this, addresses[0], d.networkShortName)
@@ -237,7 +237,7 @@ Item {
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
                         onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], d.networkShortName)
-                        visible: transactionHeader.transactionType !== TransactionDelegate.Swap && transactionHeader.transactionType !== TransactionDelegate.Bridge && transactionHeader.transactionType !== TransactionDelegate.Destroy
+                        visible: transactionHeader.transactionType !== Constants.TransactionType.Swap && transactionHeader.transactionType !== Constants.TransactionType.Bridge && transactionHeader.transactionType !== Constants.TransactionType.Destroy
                     }
                     TransactionDataTile {
                         width: parent.width
@@ -272,7 +272,7 @@ Item {
                         symbol: "" // TODO fill protocol name for Bridge and Swap
                         networkName: d.networkFullName
                         shortNetworkName: d.networkShortName
-                        visible: !!subTitle && (transactionHeader.transactionType === TransactionDelegate.Bridge || transactionHeader.transactionType === TransactionDelegate.Swap)
+                        visible: !!subTitle && (transactionHeader.transactionType === Constants.TransactionType.Bridge || transactionHeader.transactionType === Constants.TransactionType.Swap)
                     }
                     TransactionContractTile {
                         // Used to display contract address for any network
@@ -287,7 +287,7 @@ Item {
                         symbol: "" // TODO fill protocol name for Bridge
                         networkName: d.bridgeNetworkFullname
                         shortNetworkName: d.bridgeNetworkShortName
-                        visible: !!subTitle && transactionHeader.transactionType === TransactionDelegate.Bridge
+                        visible: !!subTitle && transactionHeader.transactionType === Constants.TransactionType.Bridge
                     }
                     TransactionContractTile {
                         // Used for Bridge and Swap to display 'To' network token contract address
@@ -295,9 +295,9 @@ Item {
                             if (!root.isTransactionValid)
                                 return ""
                             switch(transactionHeader.transactionType) {
-                            case TransactionDelegate.Swap:
+                            case Constants.TransactionType.Swap:
                                 return transaction.contract
-                            case TransactionDelegate.Bridge:
+                            case Constants.TransactionType.Bridge:
                                 return "" // TODO fill swap token's contract address for 'to' network for Bridge
                             default:
                                 return ""
@@ -307,9 +307,9 @@ Item {
                             if (!root.isTransactionValid)
                                 return ""
                             switch(transactionHeader.transactionType) {
-                            case TransactionDelegate.Swap:
+                            case Constants.TransactionType.Swap:
                                 return d.swapSymbol
-                            case TransactionDelegate.Bridge:
+                            case Constants.TransactionType.Bridge:
                                 return transaction.value.symbol.toUpperCase()
                             default:
                                 return ""
@@ -366,7 +366,7 @@ Item {
                             subTitle: d.networkFullName
                             asset.name: !!d.networkIcon ? Style.svg("%1".arg(d.networkIcon)) : ""
                             smallIcon: true
-                            visible: transactionHeader.transactionType !== TransactionDelegate.Bridge
+                            visible: transactionHeader.transactionType !== Constants.TransactionType.Bridge
                         }
                         TransactionDataTile {
                             Layout.fillHeight: true
@@ -442,9 +442,9 @@ Item {
                             if (d.isNFT)
                                 return false
                             switch(transactionHeader.transactionType) {
-                            case TransactionDelegate.Send:
-                            case TransactionDelegate.Swap:
-                            case TransactionDelegate.Bridge:
+                            case Constants.TransactionType.Send:
+                            case Constants.TransactionType.Swap:
+                            case Constants.TransactionType.Bridge:
                                 return true
                             default:
                                 return false
@@ -453,14 +453,14 @@ Item {
                     }
                     TransactionDataTile {
                         width: parent.width
-                        title: transactionHeader.transactionStatus === TransactionDelegate.Pending ? qsTr("Amount to receive") : qsTr("Amount received")
+                        title: transactionHeader.transactionStatus === Constants.TransactionType.Pending ? qsTr("Amount to receive") : qsTr("Amount received")
                         subTitle: {
                             if (d.isNFT)
                                 return ""
                             const type = transactionHeader.transactionType
-                            if (type === TransactionDelegate.Swap) {
+                            if (type === Constants.TransactionType.Swap) {
                                 return RootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
-                            } else if (type === TransactionDelegate.Bridge) {
+                            } else if (type === Constants.TransactionType.Bridge) {
                                 // Reduce crypto value by fee value
                                 const valueInCrypto = RootStore.getCryptoValue(d.fiatValue - d.feeFiatValue, d.symbol, RootStore.currentCurrency)
                                 return RootStore.formatCurrencyAmount(valueInCrypto, d.symbol)
@@ -469,9 +469,9 @@ Item {
                         }
                         tertiaryTitle: {
                             const type = transactionHeader.transactionType
-                            if (type === TransactionDelegate.Swap) {
+                            if (type === Constants.TransactionType.Swap) {
                                 return RootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
-                            } else if (type === TransactionDelegate.Bridge) {
+                            } else if (type === Constants.TransactionType.Bridge) {
                                 return RootStore.formatCurrencyAmount(d.fiatValue - d.feeFiatValue, RootStore.currentCurrency)
                             }
                             return ""
@@ -485,9 +485,9 @@ Item {
                             if (!root.isTransactionValid || d.isNFT)
                                 return ""
                             switch(transactionHeader.transactionType) {
-                            case TransactionDelegate.Send:
-                            case TransactionDelegate.Swap:
-                            case TransactionDelegate.Bridge:
+                            case Constants.TransactionType.Send:
+                            case Constants.TransactionType.Swap:
+                            case Constants.TransactionType.Bridge:
                                 return LocaleUtils.currencyAmountToLocaleString(root.transaction.totalFees)
                             default:
                                 return ""
@@ -499,14 +499,14 @@ Item {
                     TransactionDataTile {
                         width: parent.width
                         // Using fees in this tile because of same higlight and color settings as Total
-                        title: transactionHeader.transactionType === TransactionDelegate.Destroy || d.isNFT ? qsTr("Fees") : qsTr("Total")
+                        title: transactionHeader.transactionType === Constants.TransactionType.Destroy || d.isNFT ? qsTr("Fees") : qsTr("Total")
                         subTitle: {
                             if (d.isNFT && d.isIncoming)
                                 return ""
                             const type = transactionHeader.transactionType
-                            if (type === TransactionDelegate.Destroy || d.isNFT) {
+                            if (type === Constants.TransactionType.Destroy || d.isNFT) {
                                 return RootStore.formatCurrencyAmount(d.feeEthValue, "ETH")
-                            } else if (type === TransactionDelegate.Receive || (type === TransactionDelegate.Buy && progressBlock.isLayer1)) {
+                            } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && progressBlock.isLayer1)) {
                                 return d.cryptoValueFormatted
                             }
                             return "%1 + %2".arg(d.cryptoValueFormatted).arg(RootStore.formatCurrencyAmount(d.feeEthValue, "ETH"))
@@ -515,9 +515,9 @@ Item {
                             if (d.isNFT && d.isIncoming)
                                 return ""
                             const type = transactionHeader.transactionType
-                            if (type === TransactionDelegate.Destroy || d.isNFT) {
+                            if (type === Constants.TransactionType.Destroy || d.isNFT) {
                                 return RootStore.formatCurrencyAmount(d.feeFiatValue, RootStore.currentCurrency)
-                            } else if (type === TransactionDelegate.Receive || (type === TransactionDelegate.Buy && progressBlock.isLayer1)) {
+                            } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && progressBlock.isLayer1)) {
                                 return d.fiatValueFormatted
                             }
                             return RootStore.formatCurrencyAmount(d.fiatValue + d.feeFiatValue, RootStore.currentCurrency)

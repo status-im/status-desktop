@@ -55,7 +55,7 @@ StatusListItem {
     property string symbol
     property string swapSymbol // TODO fill when swap data is implemented
     property int transactionType
-    property int transactionStatus: transferStatus === 0 ? TransactionDelegate.TransactionStatus.Pending : TransactionDelegate.TransactionStatus.Finished
+    property int transactionStatus: transferStatus === 0 ? Constants.TransactionStatus.Pending : Constants.TransactionStatus.Finished
     property string currentCurrency
     property int transferStatus
     property double cryptoValue
@@ -129,13 +129,13 @@ StatusListItem {
         color: "transparent"
         name: {
             switch(root.transactionStatus) {
-            case TransactionDelegate.TransactionStatus.Pending:
+            case Constants.TransactionStatus.Pending:
                 return Style.svg("transaction/pending")
-            case TransactionDelegate.TransactionStatus.Verified:
+            case Constants.TransactionStatus.Complete:
                 return Style.svg("transaction/verified")
-            case TransactionDelegate.TransactionStatus.Finished:
+            case Constants.TransactionStatus.Finished:
                 return Style.svg("transaction/finished")
-            case TransactionDelegate.TransactionStatus.Failed:
+            case Constants.TransactionStatus.Failed:
                 return Style.svg("transaction/failed")
             default:
                 return ""
@@ -153,23 +153,6 @@ StatusListItem {
         isImage: !loading
         name: root.tokenImage
         isLetterIdenticon: loading
-    }
-
-    enum TransactionType {
-        Send,
-        Receive,
-        Buy,
-        Sell,
-        Destroy,
-        Swap,
-        Bridge
-    }
-
-    enum TransactionStatus {
-        Pending,
-        Failed,
-        Verified,
-        Finished
     }
 
     QtObject {
@@ -194,18 +177,18 @@ StatusListItem {
         isLetterIdenticon: loading
         name: {
             switch(root.transactionType) {
-            case TransactionDelegate.TransactionType.Send:
+            case Constants.TransactionType.Send:
                 return "send"
-            case TransactionDelegate.TransactionType.Receive:
+            case Constants.TransactionType.Receive:
                 return "receive"
-            case TransactionDelegate.TransactionType.Buy:
-            case TransactionDelegate.TransactionType.Sell:
+            case Constants.TransactionType.Buy:
+            case Constants.TransactionType.Sell:
                 return "token"
-            case TransactionDelegate.TransactionType.Destroy:
+            case Constants.TransactionType.Destroy:
                 return "destroy"
-            case TransactionDelegate.TransactionType.Swap:
+            case Constants.TransactionType.Swap:
                 return "swap"
-            case TransactionDelegate.TransactionType.Bridge:
+            case Constants.TransactionType.Bridge:
                 return "bridge"
             default:
                 return ""
@@ -237,22 +220,22 @@ StatusListItem {
             return ""
         }
 
-        const isPending = root.transactionStatus === TransactionDelegate.TransactionStatus.Pending
-        const failed = root.transactionStatus === TransactionDelegate.TransactionStatus.Failed
+        const isPending = root.transactionStatus === Constants.TransactionStatus.Pending
+        const failed = root.transactionStatus === Constants.TransactionStatus.Failed
         switch(root.transactionType) {
-        case TransactionDelegate.TransactionType.Send:            
+        case Constants.TransactionType.Send:
             return failed ? qsTr("Send failed") : (isPending ? qsTr("Sending") : qsTr("Sent"))
-        case TransactionDelegate.TransactionType.Receive:
+        case Constants.TransactionType.Receive:
             return failed ? qsTr("Receive failed") : (isPending ? qsTr("Receiving") : qsTr("Received"))
-        case TransactionDelegate.TransactionType.Buy:
+        case Constants.TransactionType.Buy:
             return failed ? qsTr("Buy failed") : (isPending ? qsTr("Buying") : qsTr("Bought"))
-        case TransactionDelegate.TransactionType.Sell:
+        case Constants.TransactionType.Sell:
             return failed ? qsTr("Sell failed") : (isPending ? qsTr("Selling") : qsTr("Sold"))
-        case TransactionDelegate.TransactionType.Destroy:
+        case Constants.TransactionType.Destroy:
             return failed ? qsTr("Destroy failed") : (isPending ? qsTr("Destroying") : qsTr("Destroyed"))
-        case TransactionDelegate.TransactionType.Swap:
+        case Constants.TransactionType.Swap:
             return failed ? qsTr("Swap failed") : (isPending ? qsTr("Swapping") : qsTr("Swapped"))
-        case TransactionDelegate.TransactionType.Bridge:
+        case Constants.TransactionType.Bridge:
             return failed ? qsTr("Bridge failed") : (isPending ? qsTr("Bridging") : qsTr("Bridged"))
         default:
             return ""
@@ -275,7 +258,7 @@ StatusListItem {
             }
             StatusRoundIcon {
                 id: swapTokenImage
-                visible: !root.isNFT && !!root.swapTokenImage && root.transactionType === TransactionDelegate.TransactionType.Swap
+                visible: !root.isNFT && !!root.swapTokenImage && root.transactionType === Constants.TransactionType.Swap
                 anchors.verticalCenter: parent.verticalCenter
                 asset: StatusAssetSettings {
                     width: root.tokenIconAsset.width
@@ -308,16 +291,16 @@ StatusListItem {
             return ""
         }
         switch(root.transactionType) {
-        case TransactionDelegate.TransactionType.Receive:
+        case Constants.TransactionType.Receive:
             return qsTr("%1 from %2 via %3").arg(transactionValue).arg(fromAddress).arg(networkName)
-        case TransactionDelegate.TransactionType.Buy:
-        case TransactionDelegate.TransactionType.Sell:
+        case Constants.TransactionType.Buy:
+        case Constants.TransactionType.Sell:
             return qsTr("%1 on %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
-        case TransactionDelegate.TransactionType.Destroy:
+        case Constants.TransactionType.Destroy:
             return qsTr("%1 at %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
-        case TransactionDelegate.TransactionType.Swap:
+        case Constants.TransactionType.Swap:
             return qsTr("%1 to %2 via %3").arg(transactionValue).arg(swapTransactionValue).arg(networkName)
-        case TransactionDelegate.TransactionType.Bridge:
+        case Constants.TransactionType.Bridge:
             return qsTr("%1 from %2 to %3").arg(transactionValue).arg(bridgeNetworkName).arg(networkName)
         default:
             return qsTr("%1 to %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
@@ -344,20 +327,20 @@ StatusListItem {
                         }
 
                         switch(root.transactionType) {
-                        case TransactionDelegate.TransactionType.Send:
-                        case TransactionDelegate.TransactionType.Sell:
+                        case Constants.TransactionType.Send:
+                        case Constants.TransactionType.Sell:
                             return "-" + root.transactionValue
-                        case TransactionDelegate.TransactionType.Buy:
-                        case TransactionDelegate.TransactionType.Receive:
+                        case Constants.TransactionType.Buy:
+                        case Constants.TransactionType.Receive:
                             return "+" + root.transactionValue
-                        case TransactionDelegate.TransactionType.Swap:
+                        case Constants.TransactionType.Swap:
                             return "<font color=\"%1\">-%2</font> <font color=\"%3\">/</font> <font color=\"%4\">+%5</font>"
                                           .arg(Theme.palette.directColor1)
                                           .arg(root.transactionValue)
                                           .arg(Theme.palette.baseColor1)
                                           .arg(Theme.palette.successColor1)
                                           .arg(root.swapTransactionValue)
-                        case TransactionDelegate.TransactionType.Bridge:
+                        case Constants.TransactionType.Bridge:
                             return "-" + root.formatCurrencyAmount(feeCryptoValue, root.symbol)
                         default:
                             return ""
@@ -368,9 +351,9 @@ StatusListItem {
                     font.pixelSize: root.loading ? d.loadingPixelSize : 13
                     customColor: {
                         switch(root.transactionType) {
-                        case TransactionDelegate.TransactionType.Receive:
-                        case TransactionDelegate.TransactionType.Buy:
-                        case TransactionDelegate.TransactionType.Swap:
+                        case Constants.TransactionType.Receive:
+                        case Constants.TransactionType.Buy:
+                        case Constants.TransactionType.Swap:
                             return Theme.palette.successColor1
                         default:
                             return Theme.palette.directColor1
@@ -390,16 +373,16 @@ StatusListItem {
                         }
 
                         switch(root.transactionType) {
-                        case TransactionDelegate.TransactionType.Send:
-                        case TransactionDelegate.TransactionType.Sell:
-                        case TransactionDelegate.TransactionType.Buy:
+                        case Constants.TransactionType.Send:
+                        case Constants.TransactionType.Sell:
+                        case Constants.TransactionType.Buy:
                             return "-" + root.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
-                        case TransactionDelegate.TransactionType.Receive:
+                        case Constants.TransactionType.Receive:
                             return "+" + root.formatCurrencyAmount(root.fiatValue, root.currentCurrency)
-                        case TransactionDelegate.TransactionType.Swap:
+                        case Constants.TransactionType.Swap:
                             return "-%1 / +%2".arg(root.formatCurrencyAmount(root.fiatValue, root.currentCurrency))
                                               .arg(root.formatCurrencyAmount(root.swapFiatValue, root.currentCurrency))
-                        case TransactionDelegate.TransactionType.Bridge:
+                        case Constants.TransactionType.Bridge:
                             return "-" + root.formatCurrencyAmount(root.feeFiatValue, root.currentCurrency)
                         default:
                             return ""
@@ -440,7 +423,7 @@ StatusListItem {
                     text: qsTr("Retry")
                     size: StatusButton.Small
                     type: StatusButton.Primary
-                    visible: !root.loading && root.transactionStatus === TransactionDelegate.Failed
+                    visible: !root.loading && root.transactionStatus === Constants.TransactionType.Failed
                     onClicked: root.retryClicked()
                 }
 
@@ -483,7 +466,7 @@ StatusListItem {
             }
             PropertyChanges {
                 target: root.asset
-                bgBorderWidth: root.transactionStatus === TransactionDelegate.Failed ? 0 : 1
+                bgBorderWidth: root.transactionStatus === Constants.TransactionType.Failed ? 0 : 1
                 width: 34
                 height: 34
                 bgWidth: 56

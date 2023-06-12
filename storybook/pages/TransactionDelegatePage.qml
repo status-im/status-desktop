@@ -58,8 +58,8 @@ SplitView {
                     bridgeNetworkName: "Mainnet"
                     feeFiatValue: 10.34
                     feeCryptoValue: 0.013
-                    transactionStatus: TransactionDelegate.Pending
-                    transactionType: TransactionDelegate.Send
+                    transactionStatus: Constants.TransactionStatus.Pending
+                    transactionType: Constants.TransactionType.Send
                     formatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
                         const currencyAmount = {
                             amount: amount,
@@ -115,13 +115,13 @@ SplitView {
                 textRole: "name"
                 valueRole: "type"
                 model: ListModel {
-                    ListElement { name: "Sent"; type: TransactionDelegate.Send }
-                    ListElement { name: "Receive"; type: TransactionDelegate.Receive }
-                    ListElement { name: "Buy"; type: TransactionDelegate.Buy }
-                    ListElement { name: "Sell"; type: TransactionDelegate.Sell }
-                    ListElement { name: "Destroy"; type: TransactionDelegate.Destroy }
-                    ListElement { name: "Swap"; type: TransactionDelegate.Swap }
-                    ListElement { name: "Bridge"; type: TransactionDelegate.Bridge }
+                    ListElement { name: "Sent"; type: Constants.TransactionType.Send }
+                    ListElement { name: "Receive"; type: Constants.TransactionType.Receive }
+                    ListElement { name: "Buy"; type: Constants.TransactionType.Buy }
+                    ListElement { name: "Sell"; type: Constants.TransactionType.Sell }
+                    ListElement { name: "Destroy"; type: Constants.TransactionType.Destroy }
+                    ListElement { name: "Swap"; type: Constants.TransactionType.Swap }
+                    ListElement { name: "Bridge"; type: Constants.TransactionType.Bridge }
                 }
                 onActivated: delegate.transactionType = model.get(currentIndex).type
             }
@@ -137,10 +137,10 @@ SplitView {
                 textRole: "name"
                 valueRole: "type"
                 model: ListModel {
-                    ListElement { name: "Pending"; status: TransactionDelegate.Pending }
-                    ListElement { name: "Failed"; status: TransactionDelegate.Failed }
-                    ListElement { name: "Verified"; status: TransactionDelegate.Verified }
-                    ListElement { name: "Finished"; status: TransactionDelegate.Finished }
+                    ListElement { name: "Pending"; status: Constants.TransactionStatus.Pending }
+                    ListElement { name: "Failed"; status: Constants.TransactionStatus.Failed }
+                    ListElement { name: "Complete"; status: Constants.TransactionStatus.Complete }
+                    ListElement { name: "Finished"; status: Constants.TransactionStatus.Finished }
                 }
                 onActivated: delegate.transactionStatus = model.get(currentIndex).status
             }

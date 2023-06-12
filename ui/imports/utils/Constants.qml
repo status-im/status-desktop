@@ -876,11 +876,6 @@ QtObject {
 
     readonly property int minPasswordLength: 10
 
-    enum TransactionStatus {
-        Failure = 0,
-        Success = 1
-    }
-
     enum SendType {
         Transfer,
         ENSRegister,
@@ -937,6 +932,25 @@ QtObject {
         Unknown = 0,
         ERC20 = 1,
         ERC721 = 2
+    }
+
+    // Mirrors src/backend/activity.nim ActivityStatus
+    enum TransactionStatus {
+        Failed,
+        Pending,
+        Complete,
+        Finished
+    }
+
+    // Mirrors src/backend/activity.nim ActivityType
+    enum TransactionType {
+        Send,
+        Receive,
+        Buy,
+        Swap,
+        Bridge,
+        Sell, // TODO update value when added to backend
+        Destroy // TODO update value when added to backend
     }
 
     readonly property QtObject walletSection: QtObject {
