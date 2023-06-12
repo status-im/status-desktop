@@ -1,7 +1,5 @@
-import QtQuick 2.13
-import QtQml.Models 2.13
-import QtQuick.Controls 2.13 as QC
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQml.Models 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -37,6 +35,9 @@ Rectangle {
     property bool selected: false
     property bool dragged: false
     property alias sensor: sensor
+
+    property bool requiresPermissions
+    property bool locked
 
     signal clicked(var mouse)
     signal unmute()
@@ -107,7 +108,7 @@ Rectangle {
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
 
-            width: 14
+            width: 16
             visible: root.type !== StatusChatListItem.Type.OneToOneChat
             opacity: {
                 if (root.muted && !hoverHander.hovered && !root.highlighted) {
@@ -125,8 +126,12 @@ Rectangle {
                 switch (root.type) {
                 case StatusChatListItem.Type.GroupChat:
                     return Theme.palette.name === "light" ? "tiny/group" : "tiny/group-white"
-                case StatusChatListItem.Type.CommunityChat:
-                    return Theme.palette.name === "light" ? "tiny/channel" : "tiny/channel-white"
+                case StatusChatListItem.Type.CommunityChat: {
+                    var iconName = "tiny/channel"
+                    if (root.requiresPermissions)
+                        iconName = root.locked ? "tiny/channel-locked" : "tiny/channel-unlocked"
+                    return Theme.palette.name === "light" ? iconName : iconName+"-white"
+                }
                 default:
                     return Theme.palette.name === "light" ? "tiny/public-chat" : "tiny/public-chat-white"
                 }
