@@ -9,25 +9,24 @@ import shared.panels 1.0
 import StatusQ.Controls 0.1
 
 Rectangle {
+    id: root
+
     property var buttonGroup
     property string btnText: qsTr("TODO")
-    property bool hovered: false
     property bool checkedByDefault: false
 
     signal checked()
     signal toggled(bool checked)
 
-    function click(){
+    function toggle() {
         radioBtn.toggle()
     }
 
-    id: root
-    border.color: hovered || radioBtn.checked ? Style.current.primary : Style.current.border
+    border.color: mouseArea.containsMouse || radioBtn.checked ? Style.current.primary : Style.current.border
     border.width: 1
     color: Style.current.transparent
-    width: 130
-    height: 120
-    clip: true
+    implicitWidth: 130
+    implicitHeight: 120
     radius: Style.current.radius
 
     StatusRadioButton {
@@ -53,14 +52,13 @@ Rectangle {
         anchors.topMargin: 6
     }
 
-
     MouseArea {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        onEntered: root.hovered = true
-        onExited: root.hovered = false
         onClicked: {
+            if (radioBtn.checked)
+                return
             radioBtn.toggle()
             root.toggled(radioBtn.checked)
         }
