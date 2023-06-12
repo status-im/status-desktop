@@ -195,7 +195,7 @@ ColumnLayout {
         TransactionDelegate {
             width: ListView.view.width
             modelData: model
-            transactionType: isModelDataValid && modelData.to.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase() ? TransactionDelegate.Receive : TransactionDelegate.Send
+            transactionType: isModelDataValid && modelData.to.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase() ? Constants.TransactionType.Receive : Constants.TransactionType.Send
             currentCurrency: RootStore.currentCurrency
             cryptoValue: isModelDataValid ? modelData.value.amount : 0.0
             fiatValue: isModelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0

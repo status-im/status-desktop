@@ -28,23 +28,6 @@ Control {
     property var assetsModel: null
     property bool assetsLoading: true
 
-    // Mirrors src/backend/activity.nim ActivityType
-    enum ActivityType {
-        Send,
-        Receive,
-        Buy,
-        Swap,
-        Bridge
-    }
-
-    // Mirrors src/backend/activity.nim ActivityStatus
-    enum ActivityStatus {
-        Failed,
-        Pending,
-        Complete,
-        Finalized
-    }
-
     background: Rectangle {
         anchors.fill: parent
         color: "white"
@@ -369,10 +352,10 @@ Control {
                         text: `{${
                             function() {
                                 switch (entry.status) {
-                                    case ActivityView.ActivityStatus.Failed: return "F";
-                                    case ActivityView.ActivityStatus.Pending: return "P";
-                                    case ActivityView.ActivityStatus.Complete: return "C";
-                                    case ActivityView.ActivityStatus.Finalized: return "FZ";
+                                    case Constants.TransactionStatus.Failed: return "F";
+                                    case Constants.TransactionStatus.Pending: return "P";
+                                    case Constants.TransactionStatus.Complete: return "C";
+                                    case Constants.TransactionStatus.Finalized: return "FZ";
                                 }
                                 return "-"
                             }()}}`
