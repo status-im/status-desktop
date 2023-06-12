@@ -51,6 +51,8 @@
 #include <QSettings>
 #include <QTimer>
 #include <QSysInfo>
+#include <QMimeDatabase>
+#include <QSaveFile>
 #ifdef QT_QUICKCONTROLS2_LIB
 #include <QtQuickControls2/QQuickStyle>
 #endif
@@ -304,22 +306,42 @@ void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePa
     manager.setAutoDeleteReplies(true);
 
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url)));
-    const auto path = QFile::decodeName(filePath);
+    auto targetDir = QUrl::fromUserInput(filePath).toLocalFile();  // accept both "file:/foo/bar" and "/foo/bar"
+    if (targetDir.isEmpty())
+        targetDir = QDir::homePath();
 
-    QObject::connect(reply, &QNetworkReply::finished, [reply, path] {
+    QObject::connect(reply, &QNetworkReply::finished, [reply, targetDir] {
         if(reply->error() == QNetworkReply::NoError) {
-            // Get current Date/Time information to use in naming of the image file
-            const QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_hh-mm-ss");
+            // Extract the image data to be able to load and save it
+            const auto btArray = reply->readAll();
+            Q_ASSERT(!btArray.isEmpty());
 
-            // Extract the image data to be able to load and save into a QImage
-            QByteArray btArray = reply->readAll();
-            QImage image;
-            image.loadFromData(btArray);
-            Q_ASSERT(!image.isNull());
-            image.save(path + "/image_" + dateTimeString + ".png");
+            // Get current Date/Time information to use in naming of the image file
+            const auto dateTimeString = QDateTime::currentDateTime().toString(QStringLiteral("dd-MM-yyyy_hh-mm-ss"));
+
+            // Get the preferred extension
+            QMimeDatabase mimeDb;
+            auto ext = mimeDb.mimeTypeForData(btArray).preferredSuffix();
+            if (ext.isEmpty())
+                ext = QStringLiteral("jpg");
+
+            // Construct the target path
+            const auto targetFile = QStringLiteral("%1/image_%2.%3").arg(targetDir, dateTimeString, ext);
+
+            // Save the image in a safe way
+            QSaveFile image(targetFile);
+            if (!image.open(QIODevice::WriteOnly)) {
+                qWarning() << "dos_qguiapplication_download_imageByUrl: Downloading image failed while opening the save file:" << targetFile;
+                return;
+            }
+
+            if (image.write(btArray) != -1)
+                image.commit();
+            else
+                qWarning() << "dos_qguiapplication_download_imageByUrl: Downloading image failed while saving to file:" << targetFile;
         }
         else {
-            qWarning() << "dos_qguiapplication_download_imageByUrl: Downloading image failed!";
+            qWarning() << "dos_qguiapplication_download_imageByUrl: Downloading image" << reply->request().url() << "failed!";
         }
     });
 }

@@ -224,7 +224,6 @@ QtObject {
 
     function openDownloadImageDialog(imageSource) {
         // We don't use `openPopup`, because there's no `FileDialog::closed` signal.
-        // And multiple file dialogs are (almost) ok
         const popup = downloadImageDialogComponent.createObject(popupParent, { imageSource })
         popup.open()
     }
@@ -498,11 +497,7 @@ QtObject {
                 onRejected: {
                     destroy()
                 }
-                Component.onCompleted: {
-                    open()
-                }
             }
         }
-
     ]
 }

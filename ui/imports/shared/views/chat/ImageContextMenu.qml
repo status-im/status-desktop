@@ -7,9 +7,10 @@ StatusMenu {
 
     property string imageSource
 
+    readonly property bool isGif: root.imageSource.toLowerCase().endsWith(".gif")
+
     StatusAction {
-        text: root.imageSource.endsWith(".gif") ? qsTr("Copy GIF")
-                                                : qsTr("Copy image")
+        text: root.isGif ? qsTr("Copy GIF") : qsTr("Copy image")
         icon.name: "copy"
         enabled: !!root.imageSource
         onTriggered: {
@@ -18,8 +19,7 @@ StatusMenu {
     }
 
     StatusAction {
-        text: root.imageSource.endsWith(".gif") ? qsTr("Download GIF")
-                                                : qsTr("Download image")
+        text: root.isGif ? qsTr("Download GIF") : qsTr("Download image")
         icon.name: "download"
         enabled: !!root.imageSource
         onTriggered: {
