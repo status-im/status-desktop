@@ -73,11 +73,17 @@ Item {
         readonly property var prefixAndAddress: Utils.splitToChainPrefixAndAddress(root.address)
         readonly property bool isContact: contactData.isContact
         readonly property bool isWallet: !isContact && !!walletAddressName
-        property var contactData: Utils.getContactDetailsAsJson(d.contactPubKey)
-        property string savedAddressName: !!root.rootStore ? root.rootStore.getNameForSavedWalletAddress(root.address) : ""
-        property string walletAddressName: !!root.rootStore ? root.rootStore.getNameForWalletAddress(root.address) : ""
-        property string walletAddressEmoji: !!root.rootStore ? root.rootStore.getEmojiForWalletAddress(root.address) : ""
-        property string walletAddressColor: !!root.rootStore ? root.rootStore.getColorForWalletAddress(root.address) : ""
+        property var contactData
+        property string savedAddressName
+        property string walletAddressName
+        property string walletAddressEmoji
+        property string walletAddressColor
+
+        Component.onCompleted: {
+            refreshContactData()
+            refreshSavedAddressName()
+            refreshWalletAddress()
+        }
 
         function refreshContactData() {
             d.contactData = Utils.getContactDetailsAsJson(d.contactPubKey)
@@ -90,7 +96,7 @@ Item {
         function refreshWalletAddress() {
             d.walletAddressName = !!root.rootStore ? root.rootStore.getNameForWalletAddress(root.address) : ""
             d.walletAddressEmoji = !!root.rootStore ? root.rootStore.getEmojiForWalletAddress(root.address) : ""
-            d.walletAddressColor = !!root.rootStore ? root.rootStore.getColorForWalletAddress(root.address) : ""
+            d.walletAddressColor = Utils.getColorForId(!!root.rootStore ? root.rootStore.getColorForWalletAddress(root.address) : "")
         }
 
         function getName() {
