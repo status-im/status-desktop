@@ -1,3 +1,4 @@
 WalletHeader 1.0 WalletHeader.qml
 WalletTxProgressBlock 1.0 WalletTxProgressBlock.qml
 WalletNftPreview 1.0 WalletNftPreview.qml
+ActivityFilterPanel 1.0 ActivityFilterPanel.qml

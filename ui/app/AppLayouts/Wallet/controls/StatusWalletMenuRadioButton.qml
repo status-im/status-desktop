@@ -8,6 +8,7 @@ import StatusQ.Controls 0.1
 StatusRadioButton {
     id: root
     implicitHeight: 34
+    property bool checkedState: false
     contentItem: StatusBaseText {
         width: parent.width
         font.pixelSize: 13
@@ -26,9 +27,9 @@ StatusRadioButton {
         width: 12
         height: 12
         color: Theme.palette.primaryColor1
-        visible: root.checked
+        visible: root.checkedState
     }
     background: Rectangle {
-        color: root.hovered  ?  Theme.palette.baseColor2 : Theme.palette.statusModal.backgroundColor
+        color: root.hovered ? Theme.palette.baseColor2 : Theme.palette.statusModal.backgroundColor
     }
 }

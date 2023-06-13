@@ -15,8 +15,10 @@ Control {
     property alias iconAsset : iconAsset
     property alias tagPrimaryLabel: tagPrimaryLabel
     property alias tagSecondaryLabel: tagSecondaryLabel
+    property alias middleLabel: middleLabel
     property alias rightComponent: rightComponent.sourceComponent
     property bool loading: false
+    property int secondarylabelMaxWidth: 100
 
     property Component customBackground: Component {
         Rectangle {
@@ -66,9 +68,17 @@ Control {
             visible: text !== ""
         }
         StatusBaseText {
+            id: middleLabel
+            Layout.alignment: Qt.AlignVCenter
+            font.pixelSize: Style.current.tertiaryTextFontSize
+            font.weight: Font.Normal
+            color: Theme.palette.baseColor1
+            visible: text !== ""
+        }
+        StatusBaseText {
             id: tagSecondaryLabel
             Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: 100
+            Layout.maximumWidth: root.secondarylabelMaxWidth
             font.pixelSize: Style.current.tertiaryTextFontSize
             font.weight: Font.Normal
             color: Theme.palette.baseColor1
