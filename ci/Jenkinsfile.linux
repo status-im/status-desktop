@@ -68,6 +68,7 @@ pipeline {
     stage('Deps') {
       steps {
         sh 'cat /proc/sys/kernel/core_pattern'
+        sh 'ulimit -c'
         sh 'make update'
         sh 'make deps'
       }
