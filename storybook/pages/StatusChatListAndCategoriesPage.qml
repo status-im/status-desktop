@@ -1,5 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Components 0.1
 
@@ -17,8 +18,8 @@ SplitView {
         SplitView.fillHeight: true
 
         StatusChatListAndCategories {
-
-            anchors.fill: parent
+            anchors.centerIn: parent
+            width: ctrlWidth.value
 
             model: ListModel {
                 ListElement {
@@ -27,6 +28,7 @@ SplitView {
                     name: "X"
                     subItems: []
                     isCategory: false
+                    categoryId: ""
                     active: true
                     notificationsCount: 12
                     hasUnreadMessages: false
@@ -39,8 +41,12 @@ SplitView {
                 ListElement {
                     itemId: "id2"
                     position: 0
+                    categoryPosition: 0
+                    categoryId: "id2"
                     name: "Y"
+                    icon: ""
                     isCategory: true
+                    muted: false
                     subItems: [
                         ListElement {
                             itemId: "id3"
@@ -92,5 +98,18 @@ SplitView {
         SplitView.preferredHeight: 200
 
         logsView.logText: logs.logText
+
+        RowLayout {
+            Label { text: "Width:" }
+            Slider {
+                id: ctrlWidth
+                from: 30
+                to: 600
+                stepSize: 10
+                value: 200 // smaller than the default 288
+                ToolTip.text: ctrlWidth.value
+                ToolTip.visible: ctrlWidth.pressed
+            }
+        }
     }
 }
