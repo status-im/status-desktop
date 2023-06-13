@@ -67,6 +67,7 @@ pipeline {
   stages {
     stage('Deps') {
       steps {
+        sh 'cat /proc/sys/kernel/core_pattern'
         sh 'make update'
         sh 'make deps'
       }
@@ -89,6 +90,7 @@ pipeline {
       post {
         failure {
           archiveArtifacts('strace.log')
+          archiveArtifacts('core.*')
           archiveArtifacts('coredump.*')
           archiveArtifacts('/var/lib/systemd/coredump/*')
         }
