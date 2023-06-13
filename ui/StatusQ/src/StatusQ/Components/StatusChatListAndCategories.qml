@@ -1,10 +1,6 @@
-import QtQuick 2.14
-import QtQml.Models 2.14
-import QtQuick.Controls 2.14 as QC
+import QtQuick 2.15
 
-import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 
 import SortFilterProxyModel 0.2
@@ -12,8 +8,8 @@ import SortFilterProxyModel 0.2
 Item {
     id: root
 
-    implicitHeight: chatListsAndCategories.height
-    implicitWidth: chatListsAndCategories.width
+    implicitHeight: statusChatList.height
+    implicitWidth: statusChatList.width
 
     property alias highlightItem: statusChatList.highlightItem
 
@@ -36,9 +32,7 @@ Item {
 
     MouseArea {
         id: sensor
-        anchors.top: parent.top
-        width: root.width
-        height: root.height
+        anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
             if (mouse.button === Qt.RightButton && showPopupMenu && !!root.popupMenu) {
@@ -47,46 +41,35 @@ Item {
             }
         }
 
-        Column {
-            id: chatListsAndCategories
+        StatusChatList {
+            objectName: "statusChatListAndCategoriesChatList"
+            id: statusChatList
+            width: parent.width
+            visible: statusChatList.model.count > 0
+            onChatItemSelected: root.chatItemSelected(categoryId, id)
+            onChatItemUnmuted: root.chatItemUnmuted(id)
+            onChatItemReordered: root.chatItemReordered(categoryId, chatId, to)
+            onCategoryReordered: root.chatListCategoryReordered(categoryId, to)
+            draggableItems: root.draggableItems
+            showCategoryActionButtons: root.showCategoryActionButtons
+            onCategoryAddButtonClicked: root.categoryAddButtonClicked(id)
 
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 4
-
-            StatusChatList {
-                objectName: "statusChatListAndCategoriesChatList"
-                id: statusChatList
-                visible: statusChatList.model.count > 0
-                onChatItemSelected: root.chatItemSelected(categoryId, id)
-                onChatItemUnmuted: root.chatItemUnmuted(id)
-                onChatItemReordered: {
-                    root.chatItemReordered(categoryId, chatId, to)
-                }
-                onCategoryReordered: root.chatListCategoryReordered(categoryId, to)
-                draggableItems: root.draggableItems
-                showCategoryActionButtons: root.showCategoryActionButtons
-                onCategoryAddButtonClicked: {
-                    root.categoryAddButtonClicked(id)
-                }
-
-                 model: SortFilterProxyModel {
-                    sourceModel: root.model
-                    sorters: [
-                        RoleSorter {
-                            roleName: "categoryPosition"
-                            priority: 2 // Higher number === higher priority
-                        },
-                        RoleSorter {
-                            roleName: "position"
-                            priority: 1
-                        }
-                    ]
-                }
-
-                popupMenu: root.chatListPopupMenu
-                categoryPopupMenu: root.categoryPopupMenu
+            model: SortFilterProxyModel {
+                sourceModel: root.model
+                sorters: [
+                    RoleSorter {
+                        roleName: "categoryPosition"
+                        priority: 2 // Higher number === higher priority
+                    },
+                    RoleSorter {
+                        roleName: "position"
+                        priority: 1
+                    }
+                ]
             }
+
+            popupMenu: root.chatListPopupMenu
+            categoryPopupMenu: root.categoryPopupMenu
         }
     }
 

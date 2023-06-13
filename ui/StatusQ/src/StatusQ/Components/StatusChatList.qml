@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15 as QC
 
 import StatusQ.Core 0.1
@@ -116,7 +117,7 @@ Item {
                    StatusChatListCategoryItem {
                         id: statusChatListCategoryItem
                         objectName: "categoryItem"
-                        width: chatListDelegate.width
+                        Layout.fillWidth: true
                         visible: draggableItem.isCategory
 
                         function setupPopup() {
@@ -159,7 +160,7 @@ Item {
                     StatusChatListItem {
                         id: statusChatListItem
                         objectName: model.name
-                        width: chatListDelegate.width
+                        Layout.fillWidth: true
                         height: visible ? (statusChatListItem.implicitHeight + 4) /*spacing between non-collapsed items*/ : 0
                         visible: (!draggableItem.isCategory && model.categoryOpened)
                         originalOrder: model.position
