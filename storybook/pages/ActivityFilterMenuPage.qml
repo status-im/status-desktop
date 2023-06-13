@@ -1,10 +1,13 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.Wallet.panels 1.0
 import AppLayouts.stores 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -17,6 +20,8 @@ import Models 1.0
 
 import utils 1.0
 
+import shared.controls 1.0
+
 SplitView {
     id: root
 
@@ -27,12 +32,14 @@ SplitView {
     QtObject {
         id: d
         property int selectedTime: Constants.TransactionTimePeriod.All
+        property double fromTimestamp: new Date().setDate(new Date().getDate() - 7)
+        property double toTimestamp: Date.now()
         function changeSelectedTime(newTime) {
             selectedTime = newTime
         }
         function setCustomTimeRange(fromTimestamp , toTimestamp) {
-            dialog.fromTimestamp = fromTimestamp
-            dialog.toTimestamp = toTimestamp
+            d.fromTimestamp = fromTimestamp
+            d.toTimestamp = toTimestamp
         }
         property var typeFilters: [
             Constants.TransactionType.Send,
@@ -139,6 +146,7 @@ SplitView {
             }
             else if(checkedTokens.length === 1 && checkedTokens[0].symbol === tokenSymbol) {
                 for (let j = 0; j<tempodel.count; j++) {
+                    tempodel.get(j).checked = true
                     tempodel.get(j).allChecked = true
                 }
             }
@@ -185,6 +193,7 @@ SplitView {
             }
             else if(checkedTokens.length === 1 && checkedTokens[0].name === name) {
                 for (let j = 0; j<tempodel.count; j++) {
+                    tempodel.get(j).checked = true
                     tempodel.get(j).allChecked = true
                 }
             }
@@ -207,6 +216,101 @@ SplitView {
         property var recipeintModel: RecipientModel {}
         property var simulatedSavedList: recipeintModel.savedAddresses
         property var simulatedRecentsList: recipeintModel.recents
+
+        function toggleSavedAddress(address) {
+            let tempodel = simulatedSavedList
+            let allChecked = true
+            let allChecked1 = true
+            let checkedTokens = []
+            simulatedSavedList = []
+            for (let k =0; k<tempodel.count; k++) {
+                if(!tempodel.get(k).checked)
+                    allChecked = false
+                else {
+                    checkedTokens.push(tempodel.get(k))
+                }
+            }
+
+            if(allChecked) {
+                for (let i = 0; i<tempodel.count; i++) {
+                    if(tempodel.get(i).address === address) {
+                        tempodel.get(i).checked = true
+                    }
+                    else
+                        tempodel.get(i).checked = false
+                }
+
+            }
+            else if(checkedTokens.length === 1 && checkedTokens[0].address === address) {
+                for (let j = 0; j<tempodel.count; j++) {
+                    tempodel.get(j).checked = true
+                    tempodel.get(j).allChecked = true
+                }
+            }
+            else {
+                for (let l =0; l<tempodel.count; l++) {
+                    if(tempodel.get(l).address === address)
+                        tempodel.get(l).checked = !tempodel.get(l).checked
+                }
+            }
+            for (let l =0; l<tempodel.count; l++) {
+                if(!tempodel.get(l).checked)
+                    allChecked1 = false
+            }
+            for (let j =0; j<tempodel.count; j++) {
+                tempodel.get(j).allChecked = allChecked1
+            }
+            simulatedSavedList = tempodel
+        }
+
+        function toggleRecents(address) {
+            let tempodel = simulatedRecentsList
+            let allChecked = true
+            let allChecked1 = true
+            let checkedTokens = []
+            simulatedRecentsList = []
+            for (let k =0; k<tempodel.count; k++) {
+                if(!tempodel.get(k).checked)
+                    allChecked = false
+                else {
+                    checkedTokens.push(tempodel.get(k))
+                }
+            }
+
+            if(allChecked) {
+                for (let i = 0; i<tempodel.count; i++) {
+                    let addresstoFind = tempodel.get(i).to.toLowerCase() === d.store.overview.mixedcaseAddress.toLowerCase() ? tempodel.get(i).from : tempodel.get(i).to
+                    if(addresstoFind === address) {
+                        tempodel.get(i).checked = true
+                    }
+                    else
+                        tempodel.get(i).checked = false
+                }
+
+            }
+            else if(checkedTokens.length === 1 && (checkedTokens[0].to.toLowerCase() === d.store.overview.mixedcaseAddress.toLowerCase() ? checkedTokens[0].from : checkedTokens[0].to) === address) {
+                for (let j = 0; j<tempodel.count; j++) {
+                    tempodel.get(j).checked = true
+                    tempodel.get(j).allChecked = true
+                }
+            }
+            else {
+                for (let l =0; l<tempodel.count; l++) {
+                    let addresstoFind = tempodel.get(l).to.toLowerCase() === d.store.overview.mixedcaseAddress.toLowerCase() ? tempodel.get(l).from : tempodel.get(l).to
+                    if(addresstoFind === address )
+                        tempodel.get(l).checked = !tempodel.get(l).checked
+                }
+            }
+            for (let m =0; m<tempodel.count; m++) {
+                if(!tempodel.get(m).checked)
+                    allChecked1 = false
+            }
+            for (let n =0; n<tempodel.count; n++) {
+                tempodel.get(n).allChecked = allChecked1
+            }
+            simulatedRecentsList = tempodel
+        }
+
         property var store: QtObject {
             property var overview: ({
                                         name: "helloworld",
@@ -235,46 +339,28 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        ActivityFilterMenu {
-            id: activityFilterMenu
-
+        ActivityFilterPanel {
+            id: filterComponent
+            width: 800
             anchors.centerIn: parent
-            visible: true
-
-            selectedTime: d.selectedTime
-            onSetSelectedTime: {
-                if(selectedTime === Constants.TransactionTimePeriod.Custom) {
-                    dialog.open()
-                }
-                d.changeSelectedTime(selectedTime)
-            }
-
-            typeFilters: d.typeFilters
-            onUpdateTypeFilter: d.toggleType(type)
-
-            statusFilters: d.statusFilters
-            onUpdateStatusFilter: d.toggleStatus(status)
-
-            tokensList: d.simulatedAssetsModel
-            collectiblesList: d.simulatedCollectiblesModel
-            onUpdateTokensFilter: d.toggleToken(tokenSymbol)
-            onUpdateCollectiblesFilter: d.toggleCollectibles(name)
-
             store: d.store
-            recentsList: d.simulatedRecentsList
+            fromTimestamp: d.fromTimestamp
+            toTimestamp: d.toTimestamp
+            selectedTime: d.selectedTime
+            typeFilters: d.typeFilters
+            statusFilters: d.statusFilters
+            assetsList: d.simulatedAssetsModel
+            collectiblesList: d.simulatedCollectiblesModel
             savedAddressList: d.simulatedSavedList
-            onUpdateSavedAddressFilter: console.warn("onUpdateSavedAddressFilter >> ",address)
-            onUpdateRecentsFilter: console.warn("onUpdateRecentsFilter >> ",address)
-
-            closePolicy: Popup.NoAutoClose
-        }
-
-        StatusDateRangePicker {
-            id: dialog
-            anchors.centerIn: parent
-            destroyOnClose: false
-            fromTimestamp: new Date().setDate(new Date().getDate() - 7) // 7 days ago
-            onNewRangeSet: d.setCustomTimeRange(fromTimestamp, toTimestamp)
+            recentsList: d.simulatedRecentsList
+            onChangeSelectedTime: d.changeSelectedTime(selectedTime)
+            onSetCustomTimeRange: d.setCustomTimeRange(from, to)
+            onToggleType: d.toggleType(type)
+            onToggleStatus: d.toggleStatus(status)
+            onToggleToken: d.toggleToken(tokenSymbol)
+            onToggleCollectibles: d.toggleCollectibles(name)
+            onToggleSavedAddress: d.toggleSavedAddress(address)
+            onToggleRecents: d.toggleRecents(address)
         }
     }
 

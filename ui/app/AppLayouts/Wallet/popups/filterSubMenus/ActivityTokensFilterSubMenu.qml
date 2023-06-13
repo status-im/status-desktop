@@ -96,7 +96,7 @@ StatusMenu {
                         Layout.preferredHeight: 44
                         title: model.name
                         titleAsideText: model.symbol
-                        assetSettings.name: model.symbol ? Style.png("tokens/" + model.symbol) : ""
+                        assetSettings.name: model.symbol ? Constants.tokenIcon(symbol) : ""
                         assetSettings.isImage: true
                         buttonGroup: tokenButtonGroup
                         allChecked: model.allChecked

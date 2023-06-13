@@ -14,10 +14,12 @@ StatusMenu {
 
     // Type filter
     property var typeFilters: []
+    property bool allTypesChecked: typeMenu.allChecked
     signal updateTypeFilter(int type)
 
     // Status filter
     property var statusFilters: []
+    property bool allStatusChecked: statusMenu.allChecked
     signal updateStatusFilter(int status)
 
     // Assets filter
@@ -30,7 +32,7 @@ StatusMenu {
     property var store
     property var recentsList
     property var savedAddressList
-    signal updateSavedAddressFilter(string adddress)
+    signal updateSavedAddressFilter(string address)
     signal updateRecentsFilter(string address)
 
     implicitWidth: 176
@@ -67,7 +69,7 @@ StatusMenu {
         }
         ActivityTokensFilterSubMenu {
             id: tokensMenu
-            height: Math.min(439, implicitHeight)
+            height: Math.min(439, tokensMenu.implicitHeight)
             onBack: root.open()
             tokensList: root.tokensList
             collectiblesList: root.collectiblesList
@@ -77,11 +79,13 @@ StatusMenu {
         }
         ActivityCounterpartyFilterSubMenu {
             id: counterPartyMenu
-            height: Math.min(439, implicitHeight)
+            height: Math.min(439, counterPartyMenu.implicitHeight)
             onBack: root.open()
             store: root.store
             recentsList: root.recentsList
             savedAddressList: root.savedAddressList
+            onSavedAddressToggled: root.updateSavedAddressFilter(address)
+            onRecentsToggled: root.updateRecentsFilter(address)
             closePolicy: root.closePolicy
         }
     }

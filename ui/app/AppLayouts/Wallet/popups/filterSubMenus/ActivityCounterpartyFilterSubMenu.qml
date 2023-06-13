@@ -25,7 +25,7 @@ StatusMenu {
     property var store
 
     signal back()
-    signal savedAddressToggled(string adddress)
+    signal savedAddressToggled(string address)
     signal recentsToggled(string address)
 
     property var searchTokenSymbolByAddressFn: function (address) {
@@ -104,7 +104,7 @@ StatusMenu {
                     buttonGroup: recentsButtonGroup
                     allChecked: model.allChecked
                     checked: model.checked
-                    onActionTriggered: root.recentsToggled(transactionType === Constants.TransactionType.Receive ? fromName : toName)
+                    onActionTriggered: root.recentsToggled(transactionType === Constants.TransactionType.Receive ? model.from: model.to)
                 }
             }
         }

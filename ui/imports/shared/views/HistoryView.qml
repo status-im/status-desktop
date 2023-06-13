@@ -21,6 +21,7 @@ import "../controls"
 import AppLayouts.Wallet.stores 1.0 as WalletStores
 import AppLayouts.Wallet.popups 1.0
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Wallet.panels 1.0
 
 ColumnLayout {
     id: root
@@ -70,23 +71,27 @@ ColumnLayout {
         text: qsTr("Activity for this account will appear here")
     }
 
-    Rectangle {
+    // Tp-do make connections with nim once logic is ready
+    ActivityFilterPanel {
         id: filterComponent
         visible: !d.isLoading && transactionListRoot.count !== 0
         Layout.fillWidth: true
         Layout.preferredHeight: 50
-        color: Theme.palette.transparent
-        StatusRoundButton {
-            anchors.left: parent.left
-            anchors.verticalCenter: parent.verticalCenter
-            width: 32
-            height: 32
-            border.width: 1
-            border.color:  Theme.palette.directColor8
-            icon.name: "filter"
-            onClicked: activityFilter.popup(x, y + height + 4)
-            type: StatusRoundButton.Type.Tertiary
-        }
+        store: RootStore
+        selectedTime: Constants.TransactionTimePeriod.All
+        typeFilters: [
+            Constants.TransactionType.Send,
+            Constants.TransactionType.Receive,
+            Constants.TransactionType.Buy,
+            Constants.TransactionType.Swap,
+            Constants.TransactionType.Bridge
+        ]
+        statusFilters: [
+            Constants.TransactionStatus.Failed,
+            Constants.TransactionStatus.Pending,
+            Constants.TransactionStatus.Complete,
+            Constants.TransactionStatus.Finished
+        ]
     }
 
     Separator {
@@ -338,39 +343,5 @@ ColumnLayout {
                 onClicked: transactionListRoot.positionViewAtBeginning()
             }
         }
-    }
-
-    // To-do connect with backend once its implemented
-    ActivityFilterMenu {
-        id: activityFilter
-        selectedTime: Constants.TransactionTimePeriod.All
-        onSetSelectedTime: {
-            // To do connect with n=backend to set time range
-            if(selectedTime === Constants.TransactionTimePeriod.Custom) {
-                customDateRangePicker.open()
-            }
-        }
-        typeFilters: [
-            Constants.TransactionType.Send,
-            Constants.TransactionType.Receive,
-            Constants.TransactionType.Buy,
-            Constants.TransactionType.Swap,
-            Constants.TransactionType.Bridge
-        ]
-        statusFilters: [
-            Constants.TransactionStatus.Failed,
-            Constants.TransactionStatus.Pending,
-            Constants.TransactionStatus.Complete,
-            Constants.TransactionStatus.Finished
-        ]
-        store: RootStore
-    }
-
-    // To-do update once https://github.com/status-im/status-desktop/pull/10916 is updated and connect with backend values
-    StatusDateRangePicker {
-        id: customDateRangePicker
-        destroyOnClose: false
-        fromTimestamp: new Date().setDate(new Date().getDate() - 7)
-//        onNewRangeSet: d.setCustomTimeRange(fromTimestamp, toTimestamp)
     }
 }
