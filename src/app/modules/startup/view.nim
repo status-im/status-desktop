@@ -376,3 +376,6 @@ QtObject:
 
   proc onReencryptionProcessStarted*(self: View) =
     self.setAppState(AppState.AppEncryptionProcessState)
+
+  proc onReencryptionProcessFinished*(self: View) =
+    self.setAppState(AppState.AppLoadingState)

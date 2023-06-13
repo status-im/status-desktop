@@ -158,6 +158,7 @@ StatusWindow {
             }
             else if(state === Constants.appState.appLoading) {
                 loader.sourceComponent = undefined
+                appLoadingAnimation.active = false
                 appLoadingAnimation.active = true
                 startupOnboarding.visible = false
             }

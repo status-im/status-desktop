@@ -531,3 +531,6 @@ method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatu
 
 method onReencryptionProcessStarted*[T](self: Module[T]) =
   self.view.onReencryptionProcessStarted()
+
+method onReencryptionProcessFinished*[T](self: Module[T]) =
+  self.view.onReencryptionProcessFinished()
