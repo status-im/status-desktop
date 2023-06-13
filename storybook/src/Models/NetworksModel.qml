@@ -4,6 +4,13 @@ import QtQuick 2.15
 
 QtObject {
 
+    readonly property int ethNet: 1
+    readonly property int optimismNet: 2
+    readonly property int arbitrumNet: 3
+    readonly property int hermezNet: 4
+    readonly property int testnetNet: 5
+    readonly property int customNet: 6
+
     readonly property var layer1Networks: ListModel {
         function rowData(index, propName) {
             return get(index)[propName]
@@ -12,7 +19,7 @@ QtObject {
         Component.onCompleted:
             append([
                        {
-                           chainId: 1,
+                           chainId: ethNet,
                            chainName: "Ethereum Mainnet",
                            iconUrl: ModelsData.networks.ethereum,
                            isActive: true,
@@ -28,7 +35,7 @@ QtObject {
         Component.onCompleted:
             append([
                        {
-                           chainId: 2,
+                           chainId: optimismNet,
                            chainName: "Optimism",
                            iconUrl: ModelsData.networks.optimism,
                            isActive: false,
@@ -38,7 +45,7 @@ QtObject {
                            isTest: false
                        },
                        {
-                           chainId: 3,
+                           chainId: arbitrumNet,
                            chainName: "Arbitrum",
                            iconUrl: ModelsData.networks.arbitrum,
                            isActive: false,
@@ -54,7 +61,7 @@ QtObject {
         Component.onCompleted:
             append([
                        {
-                           chainId: 4,
+                           chainId: hermezNet,
                            chainName: "Hermez",
                            iconUrl: ModelsData.networks.hermez,
                            isActive: false,
@@ -64,7 +71,7 @@ QtObject {
                            isTest: true
                        },
                        {
-                           chainId: 5,
+                           chainId: testnetNet,
                            chainName: "Testnet",
                            iconUrl: ModelsData.networks.testnet,
                            isActive: false,
@@ -74,7 +81,7 @@ QtObject {
                            isTest: true
                        },
                        {
-                           chainId: 6,
+                           chainId: customNet,
                            chainName: "Custom",
                            iconUrl: ModelsData.networks.custom,
                            isActive: false,

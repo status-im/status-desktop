@@ -26,11 +26,43 @@ StatusComboBox {
     /// If \c multiSelection is \c false, it is called only for the selected network when the selection changes
     signal toggleNetwork(var network)
 
+    function setChain(chainId) {
+        if(!multiSelection && !!d.currentModel && d.currentModel.count > 0) {
+            // Find given chain id:
+            var chainIdExists = false
+            if(chainId) {
+                if(!!root.layer1Networks && ModelUtils.contains(root.layer1Networks, "chainId", chainId)) {
+                    d.currentModel = root.layer1Networks
+                    chainIdExists = true
+                } else if(!!root.layer2Networks && ModelUtils.contains(root.layer2Networks, "chainId", chainId)) {
+                    d.currentModel = root.layer2Networks
+                    chainIdExists = true
+                } else if(!!root.testNetworks && ModelUtils.contains(root.testNetworks, "chainId", chainId)) {
+                    d.currentModel = root.testNetworks
+                    chainIdExists = true
+                }
+            }
+
+            // Set chain:
+            if(chainIdExists) {
+                d.currentIndex = ModelUtils.indexOf(d.currentModel, "chainId", chainId)
+            }
+            else {
+                 // Default value if not specified
+                d.currentModel = root.layer1Networks
+                d.currentIndex = 0
+            }
+
+            // Notify change:
+            root.toggleNetwork(ModelUtils.get(d.currentModel, d.currentIndex))
+        }
+    }
+
     QtObject {
         id: d
 
-        property string selectedChainName: ""
-        property string selectedIconUrl: ""
+        readonly property string selectedChainName: ModelUtils.get(d.currentModel, d.currentIndex, "chainName") ?? ""
+        readonly property string selectedIconUrl: ModelUtils.get(d.currentModel, d.currentIndex, "iconUrl") ?? ""
         readonly property bool allSelected: (!!root.enabledNetworks && !!root.allNetworks) ? root.enabledNetworks.count === root.allNetworks.count :
                                                                                              false
 
@@ -39,13 +71,7 @@ StatusComboBox {
         property int currentIndex: 0
     }
 
-    Component.onCompleted: {
-        if (!multiSelection && d.currentModel.count > 0) {
-            d.selectedChainName = d.currentModel.rowData(d.currentIndex, "chainName")
-            d.selectedIconUrl = d.currentModel.rowData(d.currentIndex, "iconUrl")
-            root.toggleNetwork(ModelUtils.get(d.currentModel, d.currentIndex))
-        }
-    }
+    onMultiSelectionChanged: root.setChain()
 
     control.padding: 12
     control.spacing: 0
@@ -122,8 +148,6 @@ StatusComboBox {
         useEnabledRole: false
 
         onToggleNetwork: (network, networkModel, index) => {
-                             d.selectedChainName = network.chainName
-                             d.selectedIconUrl = network.iconUrl
                              d.currentModel = networkModel
                              d.currentIndex = index
                              root.toggleNetwork(network)
