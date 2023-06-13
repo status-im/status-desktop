@@ -26,6 +26,7 @@ Column {
         id: mainMenuItems
         delegate: StatusNavigationListItem {
             objectName: itemId + "-MainMenuItem"
+            width: root.width
             itemId: model.subsection
             title: model.text
             asset.name: model.icon
@@ -52,6 +53,7 @@ Column {
 
     StatusListSectionHeadline { 
         text: qsTr("Apps")
+        width: root.width
     }
     
     Repeater {
@@ -59,6 +61,7 @@ Column {
         delegate: StatusNavigationListItem {
             id: appsMenuDelegate
             objectName: itemId + "-AppMenuItem"
+            width: root.width
             itemId: model.subsection
             title: model.text
             asset.name: model.icon
@@ -80,13 +83,17 @@ Column {
         }
     }
 
-    StatusListSectionHeadline { text: qsTr("Settings") }
+    StatusListSectionHeadline {
+        text: qsTr("Settings")
+        width: root.width
+    }
 
     Repeater {
         id: settingsMenuItems
         delegate: StatusNavigationListItem {
             id: settingsMenuDelegate
             objectName:  itemId + "-SettingsMenuItem"
+            width: root.width
             itemId: model.subsection
             title: model.text
             asset.name: model.icon
@@ -96,12 +103,16 @@ Column {
         }
     }
 
-    StatusListSectionHeadline { text: qsTr("About & Help") }
+    StatusListSectionHeadline {
+        text: qsTr("About & Help")
+        width: root.width
+    }
 
     Repeater {
         id: extraMenuItems
         delegate: StatusNavigationListItem {
             objectName:  itemId + "-ExtraMenuItem"
+            width: root.width
             itemId: model.subsection
             title: model.text
             asset.name: model.icon
