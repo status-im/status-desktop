@@ -60,6 +60,13 @@ StatusScrollView {
 
     padding: 0
 
+    Component.onCompleted: {
+        if(root.isAssetView)
+            networkSelector.setChain(asset.chainId)
+        else
+            networkSelector.setChain(collectible.chainId)
+    }
+
     ColumnLayout {
         id: mainLayout
 
@@ -239,6 +246,8 @@ StatusScrollView {
         }
 
         CustomNetworkFilterRowComponent {
+            id: networkSelector
+
             label: qsTr("Select network")
             description: qsTr("The network on which this token will be minted")
         }
@@ -408,6 +417,8 @@ StatusScrollView {
         property string label
         property string description
 
+        function setChain(chainId) { netFilter.setChain(chainId) }
+
         Layout.fillWidth: true
         Layout.topMargin: Style.current.padding
         spacing: 32
@@ -418,6 +429,8 @@ StatusScrollView {
         }
 
         NetworkFilter {
+            id: netFilter
+
             Layout.preferredWidth: 160
 
             allNetworks: root.allNetworks
