@@ -370,7 +370,7 @@ QtObject:
 
   proc getStatusToken*(self: Service): TokenDto =
     let networkDto = self.networkService.getNetworkForEns()
-    return self.tokenService.findTokenBySymbol(networkDto, networkDto.sntSymbol())
+    return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
 
   proc registerEns*(
       self: Service,

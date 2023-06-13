@@ -153,10 +153,10 @@ QtObject:
     if self.hasContractAddressesForToken(symbol):
       return self.tokensToAddressesMap[symbol].addresses
 
-  proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
-    if not self.tokens.hasKey(network.chainId):
+  proc findTokenBySymbol*(self: Service, chainId: int, symbol: string): TokenDto =
+    if not self.tokens.hasKey(chainId):
       return
-    for token in self.tokens[network.chainId]:
+    for token in self.tokens[chainId]:
       if token.symbol == symbol:
         return token
 

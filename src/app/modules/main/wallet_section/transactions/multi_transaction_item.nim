@@ -4,7 +4,6 @@ import ./backend/transactions
 
 const MultiTransactionMissingID* = 0
 
-# TODO: make it a Qt object to be referenced in QML via ActivityView
 type
   MultiTransactionItem* = object
     id: int

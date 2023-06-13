@@ -1,4 +1,4 @@
-import NimQml, tables, json, strformat, sequtils, strutils, logging, stint, strutils
+import NimQml, json, strformat, sequtils, strutils, logging, stint, strutils
 
 import ../transactions/view
 import ../transactions/item
@@ -7,7 +7,7 @@ import backend/activity as backend
 import ../../../shared_models/currency_amount
 
 # Additional data needed to build an Entry, which is
-# not included in the metadata and needs to be 
+# not included in the metadata and needs to be
 # fetched from a different source.
 type
   ExtraData* = object
@@ -269,7 +269,7 @@ QtObject:
     if self.transaction == nil:
       error "getSymbol: ActivityEntry is not an transaction.Item"
       return ""
-    
+
     if self.activityType == backend.ActivityType.Receive:
       return self.getInSymbol()
 
