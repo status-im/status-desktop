@@ -439,7 +439,7 @@ QtObject:
 
       let network = self.networkService.getNetwork(chainID)
 
-      let token = self.tokenService.findTokenBySymbol(network, tokenSymbol)
+      let token = self.tokenService.findTokenBySymbol(network.chainId, tokenSymbol)
       let amountToSend = conversion.eth2Wei(parseFloat(value), token.decimals)
       let toAddress = token.address
       let transfer = Transfer(

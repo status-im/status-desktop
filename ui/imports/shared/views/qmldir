@@ -13,4 +13,3 @@ TokenListView 1.0 TokenListView.qml
 TransactionPreview 1.0 TransactionPreview.qml
 TransactionSigner 1.0 TransactionSigner.qml
 TransactionStackView 1.0 TransactionStackView.qml
-ActivityView 1.0 ActivityView.qml

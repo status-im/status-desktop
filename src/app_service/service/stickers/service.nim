@@ -202,7 +202,7 @@ QtObject:
   proc getStatusToken*(self: Service): TokenDto =
     let networkDto = self.networkService.getNetworkForStickers()
 
-    return self.tokenService.findTokenBySymbol(networkDto, networkDto.sntSymbol())
+    return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
 
   proc buyPack*(self: Service, packId: string, address, gas, gasPrice: string, eip1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): tuple[txHash: string, error: string] =
     let

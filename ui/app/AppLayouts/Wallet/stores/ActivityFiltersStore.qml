@@ -100,7 +100,7 @@ QtObject {
         // update filters
         tokensFilter = toggleFilterState(tokensFilter, symbol, tokensList.count)
         // Set backend values
-        activityController.setFilterAssets(JSON.stringify(tokensFilter))
+        activityController.setFilterAssets(JSON.stringify(tokensFilter), false)
         activityController.updateFilter()
     }
 

@@ -88,14 +88,6 @@ Item {
                     width: implicitWidth
                     text: qsTr("Activity")
                 }
-                // TODO - DEV: remove me
-                // Enable for debugging activity filter
-                // currentIndex: 3
-                // StatusTabButton {
-                //     rightPadding: 0
-                //     width: implicitWidth
-                //     text: qsTr("DEV activity")
-                // }
             }
             StackLayout {
                 Layout.fillWidth: true
@@ -127,17 +119,6 @@ Item {
                         stack.currentIndex = 3
                     }
                 }
-                // TODO: replace with the real activity view
-                // Enable for debugging activity filter
-                // ActivityView {
-                //     Layout.fillWidth: true
-                //     Layout.fillHeight: true
-
-                //     controller: RootStore.activityController
-                //     networksModel: RootStore.allNetworks
-                //     assetsModel: RootStore.assets
-                //     assetsLoading: RootStore.assetsLoading
-                // }
             }
         }
         CollectibleDetailView {
