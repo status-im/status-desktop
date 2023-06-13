@@ -22,7 +22,9 @@ ListModel {
                         amount: 3.234
                     }
                 }
-            ]
+            ],
+            checked: true,
+            allChecked: true
         },
         {
             totalBalance: 324343.3,
@@ -44,7 +46,9 @@ ListModel {
                         amount: 324343.3
                     }
                 }
-            ]
+            ],
+            checked: true,
+            allChecked: true
         },
     ]
 

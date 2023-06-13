@@ -14,7 +14,24 @@ StatusMenu {
 
     // Type filter
     property var typeFilters: []
-    signal updateTypeFilter(int type, bool checked)
+    signal updateTypeFilter(int type)
+
+    // Status filter
+    property var statusFilters: []
+    signal updateStatusFilter(int status)
+
+    // Assets filter
+    property var tokensList: []
+    property var collectiblesList
+    signal updateTokensFilter(string tokenSymbol)
+    signal updateCollectiblesFilter(string name)
+
+    // Counterparty filter
+    property var store
+    property var recentsList
+    property var savedAddressList
+    signal updateSavedAddressFilter(string adddress)
+    signal updateRecentsFilter(string address)
 
     implicitWidth: 176
 
@@ -32,12 +49,40 @@ StatusMenu {
                 setSelectedTime(action)
             }
             selectedTime: root.selectedTime
+            closePolicy: root.closePolicy
         }
         ActivityTypeFilterSubMenu {
             id: typeMenu
             onBack: root.open()
             typeFilters: root.typeFilters
-            onActionTriggered: updateTypeFilter(action, checked)
+            onActionTriggered: updateTypeFilter(type)
+            closePolicy: root.closePolicy
+        }
+        ActivityStatusFilterSubMenu {
+            id: statusMenu
+            onBack: root.open()
+            statusFilters: root.statusFilters
+            onActionTriggered: updateStatusFilter(status)
+            closePolicy: root.closePolicy
+        }
+        ActivityTokensFilterSubMenu {
+            id: tokensMenu
+            height: Math.min(439, implicitHeight)
+            onBack: root.open()
+            tokensList: root.tokensList
+            collectiblesList: root.collectiblesList
+            onTokenToggled: updateTokensFilter(tokenSymbol)
+            onCollectibleToggled: updateCollectiblesFilter(name)
+            closePolicy: root.closePolicy
+        }
+        ActivityCounterpartyFilterSubMenu {
+            id: counterPartyMenu
+            height: Math.min(439, implicitHeight)
+            onBack: root.open()
+            store: root.store
+            recentsList: root.recentsList
+            savedAddressList: root.savedAddressList
+            closePolicy: root.closePolicy
         }
     }
 
@@ -48,14 +93,17 @@ StatusMenu {
 
     ActivityFilterMenuItem {
         text:  qsTr("Status")
+        onTriggered: statusMenu.popup(Qt.point(0, -8))
     }
 
     ActivityFilterMenuItem {
         text: qsTr("Tokens")
+        onTriggered: tokensMenu.popup(Qt.point(0, -8))
     }
 
     ActivityFilterMenuItem {
         text: qsTr("Counterparty")
+        onTriggered: counterPartyMenu.popup(Qt.point(0, -8))
     }
 }
 

@@ -3,14 +3,19 @@ import QtQuick.Controls 2.14
 
 import AppLayouts.Wallet.controls 1.0
 import AppLayouts.Wallet.popups 1.0
+import AppLayouts.stores 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
+import SortFilterProxyModel 0.2
+
 import Storybook 1.0
 
 import Models 1.0
+
+import utils 1.0
 
 SplitView {
     id: root
@@ -21,7 +26,7 @@ SplitView {
 
     QtObject {
         id: d
-        property int selectedTime: ActivityPeriodFilterSubMenu.All
+        property int selectedTime: Constants.TransactionTimePeriod.All
         function changeSelectedTime(newTime) {
             selectedTime = newTime
         }
@@ -30,56 +35,246 @@ SplitView {
             dialog.toTimestamp = toTimestamp
         }
         property var typeFilters: [
-            ActivityTypeFilterSubMenu.Send,
-            ActivityTypeFilterSubMenu.Receive,
-            ActivityTypeFilterSubMenu.Buy,
-            ActivityTypeFilterSubMenu.Swap,
-            ActivityTypeFilterSubMenu.Bridge]
+            Constants.TransactionType.Send,
+            Constants.TransactionType.Receive,
+            Constants.TransactionType.Buy,
+            Constants.TransactionType.Swap,
+            Constants.TransactionType.Bridge]
+
+        function toggleType(type) {
+            let tempFilters = typeFilters
+            let allCheckedIs = false
+            if(tempFilters.length === 5)
+                allCheckedIs = true
+
+            // if all were selected then only select one of them
+            if(allCheckedIs) {
+                tempFilters = [type]
+            }
+            else {
+                // if last one is being deselected, select all
+                if(tempFilters.length === 1 && tempFilters[0] === type) {
+                    tempFilters = [
+                                Constants.TransactionType.Send,
+                                Constants.TransactionType.Receive,
+                                Constants.TransactionType.Buy,
+                                Constants.TransactionType.Swap,
+                                Constants.TransactionType.Bridge]
+                }
+                else {
+                    let index = tempFilters.indexOf(type)
+                    if(index === -1) {
+                        tempFilters.push(type)
+                    }
+                    else {
+                        tempFilters.splice(index, 1)
+                    }
+                }
+            }
+            typeFilters = tempFilters
+        }
+
+        property var statusFilters: [
+            Constants.TransactionStatus.Failed,
+            Constants.TransactionStatus.Pending,
+            Constants.TransactionStatus.Complete,
+            Constants.TransactionStatus.Finished]
+
+        function toggleStatus(status) {
+            let tempFilters = statusFilters
+            let allCheckedIs = false
+            if(tempFilters.length === 4)
+                allCheckedIs = true
+
+            // if all were selected then only select one of them
+            if(allCheckedIs) {
+                tempFilters = [status]
+            }
+            else {
+                // if last one is being deselected, select all
+                if(tempFilters.length === 1 && tempFilters[0] === status) {
+                    tempFilters = [
+                                Constants.TransactionStatus.Failed,
+                                Constants.TransactionStatus.Pending,
+                                Constants.TransactionStatus.Complete,
+                                Constants.TransactionStatus.Finished]
+                }
+                else {
+                    let index = tempFilters.indexOf(status)
+                    if(index === -1) {
+                        tempFilters.push(status)
+                    }
+                    else {
+                        tempFilters.splice(index, 1)
+                    }
+                }
+            }
+            statusFilters = tempFilters
+        }
+
+        property var simulatedAssetsModel: WalletAssetsModel {}
+        function toggleToken(tokenSymbol) {
+            let tempodel = simulatedAssetsModel
+            let allChecked = true
+            let allChecked1 = true
+            let checkedTokens = []
+            simulatedAssetsModel = []
+            for (let k =0; k<tempodel.count; k++) {
+                if(!tempodel.get(k).checked)
+                    allChecked = false
+                else {
+                    checkedTokens.push(tempodel.get(k))
+                }
+            }
+
+            if(allChecked) {
+                for (let i = 0; i<tempodel.count; i++) {
+                    if(tempodel.get(i).symbol === tokenSymbol) {
+                        tempodel.get(i).checked = true
+                    }
+                    else
+                        tempodel.get(i).checked = false
+                }
+
+            }
+            else if(checkedTokens.length === 1 && checkedTokens[0].symbol === tokenSymbol) {
+                for (let j = 0; j<tempodel.count; j++) {
+                    tempodel.get(j).allChecked = true
+                }
+            }
+            else {
+                for (let l =0; l<tempodel.count; l++) {
+                    if(tempodel.get(l).symbol === tokenSymbol)
+                        tempodel.get(l).checked = !tempodel.get(l).checked
+                }
+            }
+            for (let l =0; l<tempodel.count; l++) {
+                if(!tempodel.get(l).checked)
+                    allChecked1 = false
+            }
+            for (let j =0; j<tempodel.count; j++) {
+                tempodel.get(j).allChecked = allChecked1
+            }
+            simulatedAssetsModel = tempodel
+        }
+
+        property var simulatedCollectiblesModel: CollectiblesModel {}
+        function toggleCollectibles(name) {
+            let tempodel = simulatedCollectiblesModel
+            let allChecked = true
+            let allChecked1 = true
+            let checkedTokens = []
+            simulatedCollectiblesModel = []
+            for (let k =0; k<tempodel.count; k++) {
+                if(!tempodel.get(k).checked)
+                    allChecked = false
+                else {
+                    checkedTokens.push(tempodel.get(k))
+                }
+            }
+
+            if(allChecked) {
+                for (let i = 0; i<tempodel.count; i++) {
+                    if(tempodel.get(i).name === name) {
+                        tempodel.get(i).checked = true
+                    }
+                    else
+                        tempodel.get(i).checked = false
+                }
+
+            }
+            else if(checkedTokens.length === 1 && checkedTokens[0].name === name) {
+                for (let j = 0; j<tempodel.count; j++) {
+                    tempodel.get(j).allChecked = true
+                }
+            }
+            else {
+                for (let l =0; l<tempodel.count; l++) {
+                    if(tempodel.get(l).name === name)
+                        tempodel.get(l).checked = !tempodel.get(l).checked
+                }
+            }
+            for (let l =0; l<tempodel.count; l++) {
+                if(!tempodel.get(l).checked)
+                    allChecked1 = false
+            }
+            for (let j =0; j<tempodel.count; j++) {
+                tempodel.get(j).allChecked = allChecked1
+            }
+            simulatedCollectiblesModel = tempodel
+        }
+
+        property var recipeintModel: RecipientModel {}
+        property var simulatedSavedList: recipeintModel.savedAddresses
+        property var simulatedRecentsList: recipeintModel.recents
+        property var store: QtObject {
+            property var overview: ({
+                                        name: "helloworld",
+                                        mixedcaseAddress: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421",
+                                        ens: "",
+                                        color: color,
+                                        emoji: "⚽",
+                                        balanceLoading: false,
+                                        hasBalanceCache: true,
+                                        currencyBalance: ({amount: 1.25,
+                                                              symbol: "USD",
+                                                              displayDecimals: 4,
+                                                              stripTrailingZeroes: false}),
+                                        isAllAccounts: false,
+                                        hideWatchAccounts: false
+
+                                    })
+
+            function getNameForAddress(address) {
+                return ""
+            }
+        }
     }
 
     Item {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        StatusRoundButton {
-            id: filterButton
-            anchors.top: parent.top
-            anchors.topMargin: 100
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: 32
-            height: 32
-            border.width: 1
-            border.color:  Theme.palette.directColor8
-            type: StatusRoundButton.Type.Tertiary
-            icon.name: "filter"
-            onClicked: {
-                activityFilterMenu.popup(filterButton.x, filterButton.y + filterButton.height + 4)
-            }
-        }
         ActivityFilterMenu {
             id: activityFilterMenu
 
+            anchors.centerIn: parent
+            visible: true
+
             selectedTime: d.selectedTime
             onSetSelectedTime: {
-                if(selectedTime === ActivityPeriodFilterSubMenu.Custom) {
+                if(selectedTime === Constants.TransactionTimePeriod.Custom) {
                     dialog.open()
                 }
                 d.changeSelectedTime(selectedTime)
             }
 
             typeFilters: d.typeFilters
-            onUpdateTypeFilter: console.warn("onUpdateTypeFilter:: type :: ", type, " checked ::", checked)
-        }
+            onUpdateTypeFilter: d.toggleType(type)
 
+            statusFilters: d.statusFilters
+            onUpdateStatusFilter: d.toggleStatus(status)
+
+            tokensList: d.simulatedAssetsModel
+            collectiblesList: d.simulatedCollectiblesModel
+            onUpdateTokensFilter: d.toggleToken(tokenSymbol)
+            onUpdateCollectiblesFilter: d.toggleCollectibles(name)
+
+            store: d.store
+            recentsList: d.simulatedRecentsList
+            savedAddressList: d.simulatedSavedList
+            onUpdateSavedAddressFilter: console.warn("onUpdateSavedAddressFilter >> ",address)
+            onUpdateRecentsFilter: console.warn("onUpdateRecentsFilter >> ",address)
+
+            closePolicy: Popup.NoAutoClose
+        }
 
         StatusDateRangePicker {
             id: dialog
             anchors.centerIn: parent
             destroyOnClose: false
             fromTimestamp: new Date().setDate(new Date().getDate() - 7) // 7 days ago
-            onNewRangeSet: {
-                d.setCustomTimeRange(fromTimestamp, toTimestamp)
-            }
+            onNewRangeSet: d.setCustomTimeRange(fromTimestamp, toTimestamp)
         }
     }
 
@@ -105,67 +300,91 @@ SplitView {
                 RadioButton {
                     checked: true
                     text: "All"
-                    onCheckedChanged: if(checked) { d.selectedTime =  ActivityPeriodFilterSubMenu.All}
+                    onCheckedChanged: if(checked) { d.selectedTime =  Constants.TransactionTimePeriod.All}
                 }
                 RadioButton {
                     text: "Today"
-                    onCheckedChanged: if(checked) { d.selectedTime =  ActivityPeriodFilterSubMenu.Today}
+                    onCheckedChanged: if(checked) { d.selectedTime =  Constants.TransactionTimePeriod.Today}
                 }
                 RadioButton {
                     text: "Yesterday"
-                    onCheckedChanged: if(checked) { d.selectedTime =  ActivityPeriodFilterSubMenu.Yesterday}
+                    onCheckedChanged: if(checked) { d.selectedTime =  Constants.TransactionTimePeriod.Yesterday}
                 }
                 RadioButton {
                     text: "ThisWeek"
-                    onCheckedChanged: if(checked) { d.selectedTime =  ActivityPeriodFilterSubMenu.ThisWeek}
+                    onCheckedChanged: if(checked) { d.selectedTime =  Constants.TransactionTimePeriod.ThisWeek}
                 }
                 RadioButton {
                     text: "LastWeek"
-                    onCheckedChanged: if(checked) { d.selectedTime =  ActivityPeriodFilterSubMenu.LastWeek}
+                    onCheckedChanged: if(checked) { d.selectedTime =  Constants.TransactionTimePeriod.LastWeek}
                 }
                 RadioButton {
                     text: "ThisMonth"
-                    onCheckedChanged: if(checked) { d.selectedTime =  ActivityPeriodFilterSubMenu.ThisMonth}
+                    onCheckedChanged: if(checked) { d.selectedTime =  Constants.TransactionTimePeriod.ThisMonth}
                 }
                 RadioButton {
                     text: "LastMonth"
-                    onCheckedChanged: if(checked) { d.selectedTime =  ActivityPeriodFilterSubMenu.LastMonth}
+                    onCheckedChanged: if(checked) { d.selectedTime =  Constants.TransactionTimePeriod.LastMonth}
                 }
                 RadioButton {
                     text: "Custom"
-                    onCheckedChanged: if(checked) { d.selectedTime =  ActivityPeriodFilterSubMenu.Custom}
+                    onCheckedChanged: if(checked) { d.selectedTime =  Constants.TransactionTimePeriod.Custom}
                 }
             }
 
             Row {
                 spacing: 20
                 CheckBox {
-                    id: sendCheckbox
                     text: "Send"
-                    checked: true
+                    checked: d.typeFilters.includes(Constants.TransactionType.Send)
+                    onClicked: d.toggleType(Constants.TransactionType.Send)
                 }
                 CheckBox {
-                    id: receiveCheckbox
                     text: "Receive"
-                    checked: true
+                    checked: d.typeFilters.includes(Constants.TransactionType.Receive)
+                    onClicked: d.toggleType(Constants.TransactionType.Receive)
                 }
                 CheckBox {
-                    id: buyCheckbox
                     text: "Buy"
-                    checked: true
+                    checked: d.typeFilters.includes(Constants.TransactionType.Buy)
+                    onClicked: d.toggleType(Constants.TransactionType.Buy)
                 }
                 CheckBox {
-                    id: swapCheckbox
                     text: "Swap"
-                    checked: true
+                    checked: d.typeFilters.includes(Constants.TransactionType.Swap)
+                    onClicked: d.toggleType(Constants.TransactionType.Swap)
                 }
                 CheckBox {
-                    id: bridgeCheckbox
                     text: "Bridge"
-                    checked: true
+                    checked: d.typeFilters.includes(Constants.TransactionType.Bridge)
+                    onClicked: d.toggleType(Constants.TransactionType.Bridge)
                 }
             }
 
+
+            Row {
+                spacing: 20
+                CheckBox {
+                    text: "Failed"
+                    checked: d.statusFilters.includes(Constants.TransactionStatus.Failed)
+                    onClicked: d.toggleStatus(Constants.TransactionStatus.Failed)
+                }
+                CheckBox {
+                    text: "Pending"
+                    checked: d.statusFilters.includes(Constants.TransactionStatus.Pending)
+                    onClicked: d.toggleStatus(Constants.TransactionStatus.Pending)
+                }
+                CheckBox {
+                    text: "Complete"
+                    checked: d.statusFilters.includes(Constants.TransactionStatus.Complete)
+                    onClicked: d.toggleStatus(Constants.TransactionStatus.Complete)
+                }
+                CheckBox {
+                    text: "Finished"
+                    checked: d.statusFilters.includes(Constants.TransactionStatus.Finished)
+                    onClicked: d.toggleStatus(Constants.TransactionStatus.Finished)
+                }
+            }
         }
     }
 }

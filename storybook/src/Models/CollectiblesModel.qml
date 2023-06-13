@@ -8,13 +8,17 @@ ListModel {
             key: "Anniversary",
             iconSource: ModelsData.collectibles.anniversary,
             name: "Anniversary",
-            category: TokenCategories.Category.Community
+            category: TokenCategories.Category.Community,
+            checked: true,
+            allChecked: true
         },
         {
             key: "Anniversary2",
             iconSource: ModelsData.collectibles.anniversary,
             name: "Anniversary2",
             category: TokenCategories.Category.Community,
+            checked: true,
+            allChecked: true
         },
         {
             key: "CryptoKitties",
@@ -64,19 +68,25 @@ ListModel {
                     imageSource: ModelsData.collectibles.kitty5Big,
                     name: "Magicat-4"
                 }
-            ]
+            ],
+            checked: true,
+            allChecked: true
         },
         {
             key: "SuperRare",
             iconSource: ModelsData.collectibles.superRare,
             name: "SuperRare",
-            category: TokenCategories.Category.Own
+            category: TokenCategories.Category.Own,
+            checked: true,
+            allChecked: true
         },
         {
             key: "Custom",
             iconSource: ModelsData.collectibles.custom,
             name: "Custom Collectible",
-            category: TokenCategories.Category.General
+            category: TokenCategories.Category.General,
+            checked: true,
+            allChecked: true
         }
     ]
 
