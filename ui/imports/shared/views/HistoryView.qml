@@ -7,6 +7,7 @@ import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
 
 import SortFilterProxyModel 0.2
 
@@ -190,6 +191,64 @@ ColumnLayout {
         onAtYEndChanged: if(atYEnd && RootStore.historyTransactions.count > 0 && RootStore.historyTransactions.hasMore) fetchHistory()
     }
 
+    StatusMenu {
+        id: delegateMenu
+
+        hideDisabledItems: true
+
+        property var transaction
+        property var transactionDelegate
+
+        function openMenu(delegate, mouse) {
+            if (!delegate || !delegate.modelData)
+                return
+
+            delegateMenu.transactionDelegate = delegate
+            delegateMenu.transaction = delegate.modelData
+            repeatTransactionAction.enabled = !overview.isWatchOnlyAccount && delegate.transactionType === TransactionDelegate.Send
+            popup(delegate, mouse.x, mouse.y)
+        }
+
+        onClosed: {
+            delegateMenu.transaction = null
+            delegateMenu.transactionDelegate = null
+        }
+
+        StatusAction {
+            id: repeatTransactionAction
+            text: qsTr("Repeat transaction")
+            enabled: false
+            icon.name: "rotate"
+            onTriggered: {
+                if (!delegateMenu.transaction)
+                    return
+                root.sendModal.open(delegateMenu.transaction.to)
+            }
+        }
+        StatusSuccessAction {
+            text: qsTr("Copy details")
+            successText: qsTr("Details copied")
+            icon.name: "copy"
+            onTriggered: {
+                if (!delegateMenu.transactionDelegate)
+                    return
+                RootStore.copyToClipboard(delegateMenu.transactionDelegate.getDetailsString())
+            }
+        }
+        StatusMenuSeparator {
+            visible: filterAction.enabled
+        }
+        StatusAction {
+            id: filterAction
+            enabled: false
+            text: qsTr("Filter by similar")
+            icon.name: "filter"
+            onTriggered: {
+                // TODO apply filter
+            }
+        }
+    }
+
     Component {
         id: transactionDelegate
         TransactionDelegate {
@@ -207,8 +266,15 @@ ColumnLayout {
             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
             addressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.to) : ""
             addressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.from) : ""
-            formatCurrencyAmount: RootStore.formatCurrencyAmount
-            onClicked: launchTransactionDetail(modelData)
+            rootStore: RootStore
+            walletRootStore: WalletStores.RootStore
+            onClicked: {
+                if (mouse.button === Qt.RightButton) {
+                    delegateMenu.openMenu(this, mouse, modelData)
+                } else {
+                    launchTransactionDetail(modelData)
+                }
+            }
             loading: isModelDataValid ? modelData.loadingTransaction : false
 
             Component.onCompleted: {

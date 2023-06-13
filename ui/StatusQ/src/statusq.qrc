@@ -166,6 +166,7 @@
         <file>StatusQ/Popups/StatusColorDialog.qml</file>
         <file>StatusQ/Popups/StatusMenuHeadline.qml</file>
         <file>StatusQ/Popups/StatusAction.qml</file>
+        <file>StatusQ/Popups/StatusSuccessAction.qml</file>
         <file>StatusQ/Popups/StatusMenuItem.qml</file>
         <file>StatusQ/Popups/StatusMenuSeparator.qml</file>
         <file>StatusQ/Popups/StatusModal.qml</file>

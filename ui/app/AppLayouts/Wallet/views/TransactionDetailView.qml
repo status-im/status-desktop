@@ -104,7 +104,8 @@ Item {
                     addressNameTo: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.to): ""
                     addressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.from): ""
                     sensor.enabled: false
-                    formatCurrencyAmount: RootStore.formatCurrencyAmount
+                    rootStore: RootStore
+                    walletRootStore: WalletStores.RootStore
                     color: Theme.palette.transparent
                     state: "header"
                     onRetryClicked: d.retryTransaction()
@@ -117,7 +118,7 @@ Item {
                 id: progressBlock
                 width: Math.min(513, root.width)
                 error: transactionHeader.transactionStatus === Constants.TransactionStatus.Failed
-                isLayer1: RootStore.getNetworkLayer(root.transaction.chainId) == 1
+                isLayer1: root.isTransactionValid && RootStore.getNetworkLayer(root.transaction.chainId) == 1
                 confirmations: root.isTransactionValid ? Math.abs(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId) - d.blockNumber): 0
                 chainName: d.networkFullName
                 timeStamp: root.isTransactionValid ? transaction.timestamp: ""
@@ -296,7 +297,7 @@ Item {
                                 return ""
                             switch(transactionHeader.transactionType) {
                             case Constants.TransactionType.Swap:
-                                return transaction.contract
+                                return "" // TODO fill swap contract address for Swap
                             case Constants.TransactionType.Bridge:
                                 return "" // TODO fill swap token's contract address for 'to' network for Bridge
                             default:
@@ -317,6 +318,7 @@ Item {
                         }
                         networkName: d.bridgeNetworkFullname
                         shortNetworkName: d.bridgeNetworkShortName
+                        visible: root.isTransactionValid && !!subTitle
                     }
                 }
 
@@ -526,6 +528,37 @@ Item {
                         highlighted: true
                         statusListItemTertiaryTitle.customColor: Theme.palette.directColor1
                     }
+                }
+            }
+            
+            Separator {
+                width: progressBlock.width
+            }
+
+            RowLayout {
+                width: progressBlock.width
+                visible: root.isTransactionValid
+                spacing: 8
+                StatusButton {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: copyDetailsButton.height
+                    text: qsTr("Repeat transaction")
+                    size: StatusButton.Small
+                    visible: root.isTransactionValid && !root.overview.isWatchOnlyAccount && transactionHeader.transactionType === TransactionDelegate.Send
+                    onClicked: {
+                        root.sendModal.open(root.transaction.to)
+                        // TODO handle other types
+                    }
+                }
+                StatusButton {
+                    id: copyDetailsButton
+                    Layout.fillWidth: true
+                    text: qsTr("Copy details")
+                    icon.name: "copy"
+                    icon.width: 20
+                    icon.height: 20
+                    size: StatusButton.Small
+                    onClicked: RootStore.copyToClipboard(transactionHeader.getDetailsString())
                 }
             }
         }

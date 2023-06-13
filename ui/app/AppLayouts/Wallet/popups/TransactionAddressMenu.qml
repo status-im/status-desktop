@@ -154,7 +154,6 @@ StatusMenu {
         showOnOptimismAction.enabled = address.includes(Constants.networkShortChainNames.optimism + ":")
         saveAddressAction.enabled = d.addressName.length === 0
         editAddressAction.enabled = !isWalletAccount && !isContact && d.addressName.length > 0
-        copyAddressAction.isSuccessState = false
         sendToAddressAction.enabled = true
         showQrAction.enabled = true
 
@@ -184,30 +183,6 @@ StatusMenu {
         d.openMenu(delegate)
     }
 
-    component StatusCopyAction: StatusMenuItem {
-        id: copyAction
-
-        property bool isSuccessState: false
-        property string successText: ""
-        property string defaultText: ""
-
-        text: isSuccessState ? successText : defaultText
-        action: StatusAction {
-            type: copyAddressAction.isSuccessState ? StatusAction.Type.Success : StatusAction.Type.Normal
-            icon.name: copyAddressAction.isSuccessState ? "tiny/checkmark" : "copy"
-        }
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-            onClicked: {
-                RootStore.copyToClipboard(d.selectedAddress)
-                copyAction.isSuccessState = true
-                Backpressure.debounce(addressMenu, 2000, () => { copyAction.isSuccessState = false })()
-            }
-        }
-    }
-
     onClosed: {
         d.addressType = TransactionAddressMenu.AddressType.Address
         d.contractName = ""
@@ -230,7 +205,7 @@ StatusMenu {
         id: showOnEtherscanAction
         enabled: false
         text: d.getViewText(qsTr("Etherscan"))
-        assetSettings.name: "link"
+        icon.name: "link"
         onTriggered: {
             const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
             const link = d.isGoerliTestnet ? Constants.networkExplorerLinks.goerliEtherscan : Constants.networkExplorerLinks.etherscan
@@ -241,7 +216,7 @@ StatusMenu {
         id: showOnArbiscanAction
         enabled: false
         text: d.getViewText(qsTr("Arbiscan"))
-        assetSettings.name: "link"
+        icon.name: "link"
         onTriggered: {
             const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
             const link = d.isGoerliTestnet ? Constants.networkExplorerLinks.goerliArbiscan : Constants.networkExplorerLinks.arbiscan
@@ -252,14 +227,14 @@ StatusMenu {
         id: showOnOptimismAction
         enabled: false
         text: d.getViewText(qsTr("Optimism Explorer"))
-        assetSettings.name: "link"
+        icon.name: "link"
         onTriggered: {
             const type = d.addressType === TransactionAddressMenu.Tx ? "tx" : "address"
             const link = d.isGoerliTestnet ? Constants.networkExplorerLinks.goerliOptimistic : Constants.networkExplorerLinks.optimistic
             Global.openLink("%1/%2/%3".arg(link).arg(type).arg(d.selectedAddress))
         }
     }
-    StatusCopyAction {
+    StatusSuccessAction {
         id: copyAddressAction
         successText: {
             switch(d.addressType) {
@@ -277,7 +252,7 @@ StatusMenu {
                 return qsTr("Address copied")
             }
         }
-        defaultText: {
+        text: {
             switch(d.addressType) {
             case TransactionAddressMenu.AddressType.Contract:
                 return qsTr("Copy contract address")
@@ -293,6 +268,8 @@ StatusMenu {
                 return qsTr("Copy address")
             }
         }
+        icon.name: "copy"
+        onTriggered: RootStore.copyToClipboard(d.selectedAddress)
     }
     StatusAction {
         id: showQrAction
@@ -307,7 +284,7 @@ StatusMenu {
                 return qsTr("Show address QR")
             }
         }
-        assetSettings.name: "qr"
+        icon.name: "qr"
         onTriggered: {
             Global.openPopup(addressQr,
                              {
@@ -329,7 +306,7 @@ StatusMenu {
                 return qsTr("Save address")
             }
         }
-        assetSettings.name: "star-icon-outline"
+        icon.name: "star-icon-outline"
         onTriggered: {
             Global.openPopup(addEditSavedAddress,
                              {
@@ -344,7 +321,7 @@ StatusMenu {
         id: editAddressAction
         enabled: false
         text: qsTr("Edit saved address")
-        assetSettings.name: "pencil-outline"
+        icon.name: "pencil-outline"
         onTriggered: Global.openPopup(addEditSavedAddress,
                                       {
                                           edit: true,
@@ -367,7 +344,7 @@ StatusMenu {
                 return qsTr("Send to address")
             }
         }
-        assetSettings.name: "send"
+        icon.name: "send"
         onTriggered: root.openSendModal(d.selectedAddress)
     }
 
