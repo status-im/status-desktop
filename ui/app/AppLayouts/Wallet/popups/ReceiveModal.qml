@@ -57,6 +57,7 @@ StatusModal {
         StatusSwitchTabBar {
             id: tabBar
             anchors.horizontalCenter: parent.horizontalCenter
+            currentIndex: 1
             StatusSwitchTabButton {
                 text: qsTr("Legacy")
             }
