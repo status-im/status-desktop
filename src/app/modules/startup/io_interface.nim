@@ -186,6 +186,9 @@ method onLocalPairingStatusUpdate*(self: AccessInterface, status: LocalPairingSt
 method onReencryptionProcessStarted*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onReencryptionProcessFinished*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

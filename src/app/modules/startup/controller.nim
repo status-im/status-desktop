@@ -172,8 +172,12 @@ proc init*(self: Controller) =
     self.delegate.onLocalPairingStatusUpdate(self.localPairingStatus)
   self.connectionIds.add(handlerId)
 
-  handlerId = self.events.onWithUUID(SIGNAL_REENCRYPTION_PROCESS_STARTED) do(e: Args):
+  handlerId = self.events.onWithUUID(SignalType.DBReEncryptionStarted.event) do(e: Args):
     self.delegate.onReencryptionProcessStarted()
+  self.connectionIds.add(handlerId)
+
+  handlerId = self.events.onWithUUID(SignalType.DBReEncryptionFinished.event) do(e: Args):
+    self.delegate.onReencryptionProcessFinished()
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_LOGIN_ERROR) do(e: Args):

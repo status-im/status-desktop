@@ -53,6 +53,8 @@ type SignalType* {.pure.} = enum
   WakuBackedUpKeycards = "waku.backedup.keycards"
   WakuBackedUpWatchOnlyAccount = "waku.backedup.watch-only-account"
   LocalPairing = "localPairing"
+  DBReEncryptionStarted = "db.reEncryption.started"
+  DBReEncryptionFinished = "db.reEncryption.finished"
   Unknown
 
 proc event*(self:SignalType):string =

@@ -37,7 +37,6 @@ let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
 
 const SIGNAL_CONVERTING_PROFILE_KEYPAIR* = "convertingProfileKeypair"
 const SIGNAL_DERIVED_ADDRESSES_FROM_NOT_IMPORTED_MNEMONIC_FETCHED* = "derivedAddressesFromNotImportedMnemonicFetched"
-const SIGNAL_REENCRYPTION_PROCESS_STARTED* = "reencryptionProcessStarted"
 const SIGNAL_LOGIN_ERROR* = "errorWhileLogin"
 
 type ResultArgs* = ref object of Args
@@ -692,9 +691,6 @@ QtObject:
 
       let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
       if isOldHashPassword:
-        # Start loading screen with warning
-        self.events.emit(SIGNAL_REENCRYPTION_PROCESS_STARTED, Args())
-  
         # Save tmp properties so that we can login after the timer
         self.tmpAccount = account
         self.tmpHashedPassword = hashedPassword
