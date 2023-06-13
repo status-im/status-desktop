@@ -340,15 +340,30 @@ ColumnLayout {
         }
     }
 
+    // To-do connect with backend once its implemented
     ActivityFilterMenu {
         id: activityFilter
-        selectedTime: ActivityPeriodFilterSubMenu.All
+        selectedTime: Constants.TransactionTimePeriod.All
         onSetSelectedTime: {
             // To do connect with n=backend to set time range
-            if(selectedTime === ActivityPeriodFilterSubMenu.Custom) {
+            if(selectedTime === Constants.TransactionTimePeriod.Custom) {
                 customDateRangePicker.open()
             }
         }
+        typeFilters: [
+            Constants.TransactionType.Send,
+            Constants.TransactionType.Receive,
+            Constants.TransactionType.Buy,
+            Constants.TransactionType.Swap,
+            Constants.TransactionType.Bridge
+        ]
+        statusFilters: [
+            Constants.TransactionStatus.Failed,
+            Constants.TransactionStatus.Pending,
+            Constants.TransactionStatus.Complete,
+            Constants.TransactionStatus.Finished
+        ]
+        store: RootStore
     }
 
     // To-do update once https://github.com/status-im/status-desktop/pull/10916 is updated and connect with backend values

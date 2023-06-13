@@ -961,6 +961,18 @@ QtObject {
         Destroy // TODO update value when added to backend
     }
 
+    // To-do sync with backend
+    enum TransactionTimePeriod {
+        All,
+        Today,
+        Yesterday,
+        ThisWeek,
+        LastWeek,
+        ThisMonth,
+        LastMonth,
+        Custom
+    }
+
     readonly property QtObject walletSection: QtObject {
         readonly property string cancelledMessage: "cancelled"
     }

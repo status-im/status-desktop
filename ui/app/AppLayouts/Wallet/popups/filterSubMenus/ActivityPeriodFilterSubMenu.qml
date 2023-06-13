@@ -2,6 +2,8 @@ import QtQuick 2.15
 
 import StatusQ.Popups 0.1
 
+import utils 1.0
+
 import "../../controls"
 
 StatusMenu {
@@ -12,17 +14,6 @@ StatusMenu {
     signal back()
     signal actionTriggered(int action)
 
-    enum TimePeriod {
-        All,
-        Today,
-        Yesterday,
-        ThisWeek,
-        LastWeek,
-        ThisMonth,
-        LastMonth,
-        Custom
-    }
-
     MenuBackButton {
         width: parent.width
         onClicked: {
@@ -31,44 +22,44 @@ StatusMenu {
         }
     }
     StatusWalletMenuRadioButton {
-        checked: root.selectedTime === ActivityPeriodFilterSubMenu.All
+        checked: root.selectedTime === Constants.TransactionTimePeriod.All
         text: qsTr("All time")
-        onClicked: actionTriggered(ActivityPeriodFilterSubMenu.All)
+        onClicked: actionTriggered(Constants.TransactionTimePeriod.All)
     }
     StatusWalletMenuRadioButton {
-        checked: root.selectedTime === ActivityPeriodFilterSubMenu.Today
+        checked: root.selectedTime === Constants.TransactionTimePeriod.Today
         text: qsTr("Today")
-        onClicked: actionTriggered(ActivityPeriodFilterSubMenu.Today)
+        onClicked: actionTriggered(Constants.TransactionTimePeriod.Today)
     }
     StatusWalletMenuRadioButton {
-        checked: root.selectedTime === ActivityPeriodFilterSubMenu.Yesterday
+        checked: root.selectedTime === Constants.TransactionTimePeriod.Yesterday
         text: qsTr("Yesterday")
-        onClicked: actionTriggered(ActivityPeriodFilterSubMenu.Yesterday)
+        onClicked: actionTriggered(Constants.TransactionTimePeriod.Yesterday)
     }
     StatusWalletMenuRadioButton {
-        checked: root.selectedTime === ActivityPeriodFilterSubMenu.ThisWeek
+        checked: root.selectedTime === Constants.TransactionTimePeriod.ThisWeek
         text: qsTr("This week")
-        onClicked: actionTriggered(ActivityPeriodFilterSubMenu.ThisWeek)
+        onClicked: actionTriggered(Constants.TransactionTimePeriod.ThisWeek)
     }
     StatusWalletMenuRadioButton {
-        checked: root.selectedTime === ActivityPeriodFilterSubMenu.LastWeek
+        checked: root.selectedTime === Constants.TransactionTimePeriod.LastWeek
         text: qsTr("Last week")
-        onClicked: actionTriggered(ActivityPeriodFilterSubMenu.LastWeek)
+        onClicked: actionTriggered(Constants.TransactionTimePeriod.LastWeek)
     }
     StatusWalletMenuRadioButton {
-        checked: root.selectedTime === ActivityPeriodFilterSubMenu.ThisMonth
+        checked: root.selectedTime === Constants.TransactionTimePeriod.ThisMonth
         text: qsTr("This month")
-        onClicked: actionTriggered(ActivityPeriodFilterSubMenu.ThisMonth)
+        onClicked: actionTriggered(Constants.TransactionTimePeriod.ThisMonth)
     }
     StatusWalletMenuRadioButton {
-        checked: root.selectedTime === ActivityPeriodFilterSubMenu.LastMonth
+        checked: root.selectedTime === Constants.TransactionTimePeriod.LastMonth
         text: qsTr("Last month")
-        onClicked: actionTriggered(ActivityPeriodFilterSubMenu.LastMonth)
+        onClicked: actionTriggered(Constants.TransactionTimePeriod.LastMonth)
     }
     StatusMenuSeparator {}
     StatusWalletMenuRadioButton {
-        checked: root.selectedTime === ActivityPeriodFilterSubMenu.Custom
+        checked: root.selectedTime === Constants.TransactionTimePeriod.Custom
         text: qsTr("Custom range")
-        onClicked: actionTriggered(ActivityPeriodFilterSubMenu.Custom)
+        onClicked: actionTriggered(Constants.TransactionTimePeriod.Custom)
     }
 }

@@ -3,32 +3,18 @@ import QtQuick.Controls 2.15
 
 import StatusQ.Popups 0.1
 
+import utils 1.0
+
 import "../../controls"
 
 StatusMenu {
     id: root
 
-    property var typeFilters:[]
+    property var typeFilters: []
+    readonly property bool allChecked: typeFilters.length === typeButtonGroup.buttons.length
 
     signal back()
-    signal actionTriggered(int action, bool checked)
-
-    property bool allChecked: {
-        let allCheckedIs = true
-        for(var i=0;i< root.contentChildren.length;i++) {
-            if(root.contentChildren[i].checkState === Qt.Unchecked)
-                allCheckedIs = false
-        }
-        return allCheckedIs
-    }
-
-    enum TxType {
-        Send,
-        Receive,
-        Buy,
-        Swap,
-        Bridge
-    }
+    signal actionTriggered(int type)
 
     MenuBackButton {
         width: parent.width
@@ -44,43 +30,57 @@ StatusMenu {
     }
 
     ActivityTypeCheckBox {
+        id: sendCheckbox
         title: qsTr("Send")
-        asset.name: "send"
-        checked: typeFilters.includes(ActivityTypeFilterSubMenu.Send)
+        assetSettings.name: "send"
         buttonGroup: typeButtonGroup
-        onActionTriggered: root.actionTriggered(ActivityTypeFilterSubMenu.Send, checked)
         allChecked: root.allChecked
+        type: Constants.TransactionType.Send
+        checked: typeFilters.includes(type)
+        onActionTriggered: root.actionTriggered(type)
     }
+
     ActivityTypeCheckBox {
+        id: receiveCheckbox
         title: qsTr("Receive")
-        asset.name: "receive"
+        assetSettings.name: "receive"
         buttonGroup: typeButtonGroup
-        checked: typeFilters.includes(ActivityTypeFilterSubMenu.Receive)
-        onActionTriggered: root.actionTriggered(ActivityTypeFilterSubMenu.Receive, checked)
         allChecked: root.allChecked
+        type: Constants.TransactionType.Receive
+        checked: typeFilters.includes(type)
+        onActionTriggered: root.actionTriggered(type)
     }
+
     ActivityTypeCheckBox {
+        id: buyCheckbox
         title: qsTr("Buy")
-        asset.name: "token"
+        assetSettings.name: "token"
         buttonGroup: typeButtonGroup
-        checked: typeFilters.includes(ActivityTypeFilterSubMenu.Buy)
-        onActionTriggered: root.actionTriggered(ActivityTypeFilterSubMenu.Buy, checked)
         allChecked: root.allChecked
+        type: Constants.TransactionType.Buy
+        checked: typeFilters.includes(type)
+        onActionTriggered: root.actionTriggered(type)
     }
+
     ActivityTypeCheckBox {
+        id: swapCheckbox
         title: qsTr("Swap")
-        asset.name: "swap"
+        assetSettings.name: "swap"
         buttonGroup: typeButtonGroup
-        checked: typeFilters.includes(ActivityTypeFilterSubMenu.Swap)
-        onActionTriggered: root.actionTriggered(ActivityTypeFilterSubMenu.Swap, checked)
         allChecked: root.allChecked
+        type: Constants.TransactionType.Swap
+        checked: typeFilters.includes(type)
+        onActionTriggered: root.actionTriggered(type)
     }
+
     ActivityTypeCheckBox {
+        id: bridgeCheckbox
         title: qsTr("Bridge")
-        asset.name: "bridge"
+        assetSettings.name: "bridge"
         buttonGroup: typeButtonGroup
-        checked: typeFilters.includes(ActivityTypeFilterSubMenu.Bridge)
-        onActionTriggered: root.actionTriggered(ActivityTypeFilterSubMenu.Bridge, checked)
         allChecked: root.allChecked
+        type: Constants.TransactionType.Bridge
+        checked: typeFilters.includes(type)
+        onActionTriggered: root.actionTriggered(type)
     }
 }
