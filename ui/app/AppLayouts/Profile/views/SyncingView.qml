@@ -30,6 +30,7 @@ SettingsContentBase {
     property DevicesStore devicesStore
     property ProfileStore profileStore
     property PrivacyStore privacyStore
+    property AdvancedStore advancedStore
 
     Component.onCompleted: {
         root.devicesStore.loadDevices()
@@ -252,6 +253,7 @@ SettingsContentBase {
             SyncDeviceCustomizationPopup {
                 anchors.centerIn: parent
                 devicesStore: root.devicesStore
+                advancedStore: root.advancedStore
             }
         }
 
