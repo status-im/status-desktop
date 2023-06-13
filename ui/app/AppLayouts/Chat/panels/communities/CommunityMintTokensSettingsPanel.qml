@@ -112,8 +112,8 @@ SettingsPageLayout {
     QtObject {
         id: temp_
 
-        property CollectibleObject collectible: CollectibleObject{}
-        property AssetObject asset: AssetObject{}
+        readonly property CollectibleObject collectible: CollectibleObject{}
+        readonly property AssetObject asset: AssetObject{}
     }
 
     secondaryHeaderButton.type: StatusBaseButton.Type.Danger
@@ -165,8 +165,7 @@ SettingsPageLayout {
         if(root.state == d.tokenViewState) {
             if(d.currentToken) {
                 if(d.isAssetType) {
-                    // Create new asset instance:
-                    temp_.asset.clearAsset()
+                    // Copy current data:
                     temp_.asset.copyAsset(d.currentToken)
 
                     // Update to point to new instance
@@ -187,8 +186,7 @@ SettingsPageLayout {
                                       },
                                       StackView.Immediate)
                 } else {
-                    // Create new collectible instance:
-                    temp_.collectible.clearCollectible()
+                    // Copy current data:
                     temp_.collectible.copyCollectible(d.currentToken)
 
                     // Update to point to new instance
@@ -245,7 +243,7 @@ SettingsPageLayout {
         id: newTokenView
 
         ColumnLayout {
-            id: _colLayout
+            id: colLayout
 
             property CollectibleObject collectible: CollectibleObject{}
             property AssetObject asset: AssetObject{}
@@ -261,7 +259,7 @@ SettingsPageLayout {
                 id: optionsTab
 
                 Layout.preferredWidth: root.viewWidth
-                currentIndex: _colLayout.isAssetView ? 1 : 0
+                currentIndex: colLayout.isAssetView ? 1 : 0
 
                 StatusSwitchTabButton {
                     id: collectiblesTab
@@ -286,20 +284,20 @@ SettingsPageLayout {
                     id: newCollectibleView
 
                     isAssetView: false
-                    validationMode: !_colLayout.isAssetView ? _colLayout.validationMode : StatusInput.ValidationMode.OnlyWhenDirty
-                    collectible: _colLayout.collectible
-                    referenceName: _colLayout.referenceName
-                    referenceSymbol: _colLayout.referenceSymbol
+                    validationMode: !colLayout.isAssetView ? colLayout.validationMode : StatusInput.ValidationMode.OnlyWhenDirty
+                    collectible: colLayout.collectible
+                    referenceName: colLayout.referenceName
+                    referenceSymbol: colLayout.referenceSymbol
                 }
 
                 CustomCommunityNewTokenView {
                     id: newAssetView
 
                     isAssetView: true
-                    validationMode: _colLayout.isAssetView ? _colLayout.validationMode : StatusInput.ValidationMode.OnlyWhenDirty
-                    asset: _colLayout.asset
-                    referenceName: _colLayout.referenceName
-                    referenceSymbol: _colLayout.referenceSymbol
+                    validationMode: colLayout.isAssetView ? colLayout.validationMode : StatusInput.ValidationMode.OnlyWhenDirty
+                    asset: colLayout.asset
+                    referenceName: colLayout.referenceName
+                    referenceSymbol: colLayout.referenceSymbol
                 }
 
                 component CustomCommunityNewTokenView: CommunityNewTokenView {
@@ -317,7 +315,7 @@ SettingsPageLayout {
                         stackManager.push(d.previewTokenViewState,
                                           previewTokenView,
                                           {
-                                              preview : true,
+                                              preview: true,
                                               isAssetView,
                                               asset,
                                               collectible
