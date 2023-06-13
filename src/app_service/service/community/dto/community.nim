@@ -35,7 +35,10 @@ type CommunityAdminSettingsDto* = object
 type TokenPermissionType* {.pure.}= enum
   Unknown = 0,
   BecomeAdmin = 1,
-  BecomeMember = 2
+  BecomeMember = 2,
+  View = 3,
+  ViewAndPost = 4,
+  
 
 type TokenType* {.pure.}= enum
   Unknown = 0,

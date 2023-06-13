@@ -37,7 +37,7 @@ Item {
     property bool hasAddedContacts: false
     property var communityData
 
-    property bool isSectionAdmin:
+    readonly property bool isSectionAdmin:
         communityData.memberRole === Constants.memberRole.owner ||
         communityData.memberRole === Constants.memberRole.admin
 

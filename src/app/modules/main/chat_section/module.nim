@@ -594,7 +594,7 @@ method addNewChat*(
 
   var memberRole = self.getUserMemberRole(chatDto.members)
   
-  if memberRole != MemberRole.None and len(chatDto.communityId) != 0:
+  if memberRole == MemberRole.None and len(chatDto.communityId) != 0:
     memberRole = channelGroup.memberRole
   if chatDto.chatType != ChatType.PrivateGroupChat:
     memberRole = channelGroup.memberRole
@@ -698,7 +698,6 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
   if (self.doesCatOrChatExist(cat.id)):
     return
 
-  # TODO get admin status
   let community = self.controller.getCommunityById(communityId)
   discard self.addCategoryItem(cat, community.memberRole, communityId)
   # Update chat items that now belong to that category
@@ -806,11 +805,6 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
   self.view.setRequiresTokenPermissionToJoin(true)
 
-<<<<<<< HEAD
-    self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
-    self.view.setRequiresTokenPermissionToJoin(true)
-=======
->>>>>>> d70d3e5f4 (chore:)
   singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
@@ -853,33 +847,9 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissions
 
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-<<<<<<< HEAD
-  if tokenPermission.`type` == TokenPermissionType.BecomeMember:
-    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
-    self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
-
-=======
   let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
   self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
-  if tokenPermissionItem.tokenCriteriaMet:
-    self.view.setAllTokenRequirementsMet(true)
-    return
 
-  # we now need to check whether any other permission criteria were met.
-  let community = self.controller.getMyCommunity()
-  for id, permission in community.tokenPermissions:
-    if id != tokenPermission.id:
-      for tc in permission.tokenCriteria:
-        let balance = self.controller.allAccountsTokenBalance(tc.symbol)
-        let amount = tc.amount.parseFloat
-        let tokenCriteriaMet = balance >= amount
-        if tokenCriteriaMet:
-          self.view.setAllTokenRequirementsMet(true)
-          return
-        
-  self.view.setAllTokenRequirementsMet(false)
-
->>>>>>> d70d3e5f4 (chore:)
   singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
 
 method onCommunityTokenPermissionCreationFailed*(self: Module, communityId: string) =
