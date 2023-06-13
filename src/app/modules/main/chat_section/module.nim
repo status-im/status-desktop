@@ -292,21 +292,8 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
   let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
     tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
 
-  # multiple permissions of the same type act as logical OR
-  # so if at least one of them is fulfilled we can mark the view
-  # as all lights green
-  let memberPermissionMet = memberPermissions.len() > 0 and any(memberPermissions, 
-    proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
-  
-  let adminPermissionMet = adminPermissions.len() > 0 and any(adminPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
-
-  let requiresPermissionToJoin = (adminPermissions.len() > 0 and adminPermissionMet) or memberPermissions.len() > 0
-
-  let tokenRequirementsMet = if requiresPermissionToJoin: adminPermissionMet or memberPermissionMet else: false
-
   self.view.tokenPermissionsModel().setItems(tokenPermissionsItems)
-  self.view.setAllTokenRequirementsMet(tokenRequirementsMet)
-  self.view.setRequiresTokenPermissionToJoin(requiresPermissionToJoin)
+  self.view.setRequiresTokenPermissionToJoin(len(memberPermissions) > 0 or len(adminPermissions) > 0)
 
 proc initCommunityTokenPermissionsModel(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
@@ -810,10 +797,8 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   let community = self.controller.getMyCommunity()
 
-  self.view.setAllTokenRequirementsMet(checkPermissionsToJoinResponse.satisfied)
   for id, criteriaResult in checkPermissionsToJoinResponse.permissions:
     if community.tokenPermissions.hasKey(id):
-
       let tokenPermissionItem = self.view.tokenPermissionsModel.getItemById(id)
 
       var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
@@ -843,8 +828,30 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissions
           tokenPermissionItem.isPrivate,
           permissionSatisfied
       )
-      self.view.tokenPermissionsModel.updateItem(id, updatedTokenPermissionItem)
+      self.view.tokenPermissionsModel().updateItem(id, updatedTokenPermissionItem)
 
+  let tokenPermissionsItems = self.view.tokenPermissionsModel().getItems()
+
+  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+    tokenPermissionsItem.getType() == TokenPermissionType.BecomeMember.int)
+  
+  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+    tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
+
+  # multiple permissions of the same type act as logical OR
+  # so if at least one of them is fulfilled we can mark the view
+  # as all lights green
+  let memberRequirementMet = memberPermissions.len() > 0 and any(memberPermissions, 
+    proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
+  
+  let adminRequirementMet = adminPermissions.len() > 0 and any(adminPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
+
+  let requiresPermissionToJoin = (adminPermissions.len() > 0 and adminRequirementMet) or memberPermissions.len() > 0
+  let tokenRequirementsMet = if requiresPermissionToJoin: adminRequirementMet or memberRequirementMet else: false
+
+  self.view.setAllTokenRequirementsMet(tokenRequirementsMet)
+  self.view.setRequiresTokenPermissionToJoin(requiresPermissionToJoin)
+      
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
