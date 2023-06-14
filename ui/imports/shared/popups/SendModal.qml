@@ -76,7 +76,7 @@ StatusDialog {
                                                                           (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
         readonly property double maxFiatBalance: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.totalCurrencyBalance.amount : 0
-        readonly property double maxCryptoBalance: !!assetSelector.selectedAsset ? popup.currencyStore.formatCurrencyAmount(assetSelector.selectedAsset.totalBalance.amount, d.inputSymbol, {noSymbol: true, rawAmount: true}, LocaleUtils.userInputLocale) : 0
+        readonly property double maxCryptoBalance: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance.amount : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
         readonly property string selectedSymbol: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol : ""
         readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.store.currentCurrency : selectedSymbol
@@ -263,7 +263,7 @@ StatusDialog {
                             bgColor: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor3 : Theme.palette.dangerColor2
                             titleText.color: amountToSendInput.input.valid || !amountToSendInput.input.text ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
                             onTagClicked: {
-                                amountToSendInput.input.text = d.maxInputBalance
+                                amountToSendInput.input.text = popup.currencyStore.formatCurrencyAmount(d.maxInputBalance, d.inputSymbol, {noSymbol: true, rawAmount: true}, LocaleUtils.userInputLocale)
                             }
                         }
                     }
