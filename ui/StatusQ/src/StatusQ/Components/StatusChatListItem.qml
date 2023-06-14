@@ -200,7 +200,7 @@ Rectangle {
             anchors.rightMargin: 8
             StatusBadge {
                 id: statusBadge
-                readonly property bool onlyUnread: (root.notificationsCount === 0 && root.hasUnreadMessages)
+                readonly property bool onlyUnread: !root.muted && root.notificationsCount === 0 && root.hasUnreadMessages
                 anchors.centerIn: parent
                 color: onlyUnread ? Theme.palette.baseColor1 :
                                     root.muted ? Theme.palette.primaryColor2 : Theme.palette.primaryColor1
