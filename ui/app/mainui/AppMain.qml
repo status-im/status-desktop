@@ -1273,8 +1273,11 @@ Item {
                     }
                     asset.width: 30
                     asset.height: 30
-                    asset.color: modelData ? modelData.color : ""
+                    asset.color: modelData ? modelData.color ? modelData.color : Utils.colorForColorId(modelData.colorId) : ""
                     asset.name: modelData ? modelData.icon : ""
+                    asset.charactersLen: 2
+                    asset.letterSize: asset._twoLettersSize
+                    ringSettings.ringSpecModel: modelData ? modelData.colorHash : undefined
                 }
 
                 onAboutToShow: rootStore.rebuildChatSearchModel()

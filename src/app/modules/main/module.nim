@@ -4,6 +4,7 @@ import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
 import ./communities/models/[pending_request_item, pending_request_model]
 import ../shared_models/[user_item, member_item, member_model, section_item, section_model, section_details]
+import ../shared_models/[color_hash_item, color_hash_model]
 import ../shared_modules/keycard_popup/module as keycard_shared_module
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
@@ -792,7 +793,7 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
 
 method rebuildChatSearchModel*[T](self: Module[T]) =
   let transformItem = proc(item: chat_item.Item, sectionId, sectionName: string): chat_search_item.Item =
-    result = chat_search_item.initItem(item.id(), item.name(), item.color(), item.icon(), sectionId, sectionName)
+    result = chat_search_item.initItem(item.id(), item.name(), item.color(), item.colorId(), item.icon(), item.colorHash().toJson(), sectionId, sectionName)
 
   let transform = proc(items: seq[chat_item.Item], sectionId, sectionName: string): seq[chat_search_item.Item] =
     for item in items:

@@ -24,7 +24,7 @@ ItemDelegate {
         StatusIcon {
             Layout.alignment: Qt.AlignVCenter
             visible: !!icon
-            icon: root.icon.name
+            icon: root.icon.name || root.icon.source
             color: root.enabled ? root.icon.color : Theme.palette.baseColor1
             width: root.icon.width
             height: root.icon.height

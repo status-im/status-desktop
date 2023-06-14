@@ -6,7 +6,9 @@ type
     ChatId = UserRole + 1
     Name
     Color
+    ColorId
     Icon
+    ColorHash
     SectionId
     SectionName
 
@@ -38,7 +40,9 @@ QtObject:
       ModelRole.ChatId.int:"chatId",
       ModelRole.Name.int:"name",
       ModelRole.Color.int:"color",
+      ModelRole.ColorId.int:"colorId",
       ModelRole.Icon.int:"icon",
+      ModelRole.ColorHash.int:"colorHash",
       ModelRole.SectionId.int:"sectionId",
       ModelRole.SectionName.int:"sectionName",
     }.toTable
@@ -58,8 +62,12 @@ QtObject:
         result = newQVariant(item.name)
       of ModelRole.Color:
         result = newQVariant(item.color)
+      of ModelRole.ColorId:
+        result = newQVariant(item.colorId)
       of ModelRole.Icon:
         result = newQVariant(item.icon)
+      of ModelRole.ColorHash:
+        result = newQVariant(item.colorHash)
       of ModelRole.SectionId:
         result = newQVariant(item.sectionId)
       of ModelRole.SectionName:
