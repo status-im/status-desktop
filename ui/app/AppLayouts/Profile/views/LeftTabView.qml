@@ -41,6 +41,7 @@ Item {
             width: scrollView.availableWidth
             privacyStore: store.privacyStore
             contactsStore: store.contactsStore
+            devicesStore: store.devicesStore
             mainMenuItems: store.mainMenuItems
             settingsMenuItems: store.settingsMenuItems
             extraMenuItems: store.extraMenuItems

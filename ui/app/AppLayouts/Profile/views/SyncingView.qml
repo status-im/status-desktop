@@ -32,10 +32,6 @@ SettingsContentBase {
     property PrivacyStore privacyStore
     property AdvancedStore advancedStore
 
-    Component.onCompleted: {
-        root.devicesStore.loadDevices()
-    }
-
     ColumnLayout {
         id: layout
         width: root.contentWidth
@@ -117,23 +113,35 @@ SettingsContentBase {
 
             model: SortFilterProxyModel {
                 sourceModel: root.devicesStore.devicesModel
-                sorters: StringSorter {
-                    roleName: "isCurrentDevice"
-                    sortOrder: Qt.DescendingOrder
-                }
+                sorters: [
+                    RoleSorter {
+                        roleName: "isCurrentDevice"
+                        sortOrder: Qt.DescendingOrder
+                        priority: 2
+                    },
+                    RoleSorter {
+                        roleName: "enabled"
+                        sortOrder: Qt.DescendingOrder
+                        priority: 1 // Higher number === higher priority
+                    }
+                ]
             }
 
             delegate: StatusSyncDeviceDelegate {
                 width: ListView.view.width
                 deviceName: model.name
                 deviceType: model.deviceType
+                deviceEnabled: model.enabled
                 timestamp: model.timestamp
                 isCurrentDevice: model.isCurrentDevice
                 onSetupSyncingButtonClicked: {
                     d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
                 }
                 onClicked: {
-                    d.personalizeDevice(model)
+                    if (deviceEnabled)
+                        d.personalizeDevice(model)
+                    else
+                        d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
                 }
             }
         }
