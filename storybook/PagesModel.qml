@@ -158,6 +158,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "FeesPanel"
+        section: "Panels"
+    }
+    ListElement {
          title: "BurnTokensPopup"
          section: "Popups"
     }
