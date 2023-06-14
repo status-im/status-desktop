@@ -93,7 +93,7 @@ method load*(self: Module, chatItem: chat_item.Item) =
     self.controller.isUsersListAvailable(), chatName, chatImage,
     chatItem.color, chatItem.description, chatItem.emoji, chatItem.hasUnreadMessages, chatItem.notificationsCount,
     chatItem.muted, chatItem.position, isUntrustworthy = trustStatus == TrustStatus.Untrustworthy,
-    isContact)
+    isContact, chatItem.blocked)
 
   self.inputAreaModule.load()
   self.messagesModule.load()
