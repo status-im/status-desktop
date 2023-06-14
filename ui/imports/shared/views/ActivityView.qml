@@ -344,13 +344,14 @@ Control {
                     spacing: 5
 
                     RowLayout {
-                        Label { text: entry.isMultiTransaction ? entry.fromAmount : entry.amount }
+                        Label { text: qsTr("in"); Layout.leftMargin: 5; Layout.rightMargin: 5 }
+                        Label { text: entry.inAmount }
+                        Label { text: qsTr("out"); Layout.leftMargin: 5; Layout.rightMargin: 5 }
+                        Label { text: entry.outAmount }
                         Label { text: qsTr("from"); Layout.leftMargin: 5; Layout.rightMargin: 5 }
                         Label { text: entry.sender; Layout.maximumWidth: 200; elide: Text.ElideMiddle }
                         Label { text: qsTr("to"); Layout.leftMargin: 5; Layout.rightMargin: 5 }
                         Label { text: entry.recipient; Layout.maximumWidth: 200; elide: Text.ElideMiddle }
-                        Label { text: qsTr("got"); Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
-                        Label { text: entry.toAmount; Layout.leftMargin: 5; Layout.rightMargin: 5; visible: entry.isMultiTransaction }
                         RowLayout {}    // Spacer
                     }
                     RowLayout {

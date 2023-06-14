@@ -52,10 +52,10 @@ Item {
         readonly property string swapSymbol: "" // TODO fill when swap data is implemented
         readonly property string symbol: root.isTransactionValid ? transaction.symbol : ""
         readonly property var multichainNetworks: [] // TODO fill icon for networks for multichain
-        readonly property double cryptoValue: root.isTransactionValid && transaction.value ? transaction.value.amount: 0.0
+        readonly property double cryptoValue: root.isTransactionValid ? transaction.value : 0.0
         readonly property double fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, RootStore.currentCurrency): 0.0
         readonly property string fiatValueFormatted: root.isTransactionValid ? RootStore.formatCurrencyAmount(d.fiatValue, RootStore.currentCurrency) : ""
-        readonly property string cryptoValueFormatted: root.isTransactionValid && transaction.value ? LocaleUtils.currencyAmountToLocaleString(transaction.value) : ""
+        readonly property string cryptoValueFormatted: root.isTransactionValid ? RootStore.formatCurrencyAmount(d.cryptoValue, symbol) : ""
         readonly property real feeEthValue: root.isTransactionValid && transaction.totalFees ? RootStore.getGasEthValue(transaction.totalFees.amount, 1) : 0
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, "ETH", RootStore.currentCurrency) : 0
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
@@ -278,7 +278,7 @@ Item {
                     TransactionContractTile {
                         // Used to display contract address for any network
                         address: root.isTransactionValid ? transaction.contract : ""
-                        symbol: root.isTransactionValid && transaction.value ? transaction.value.symbol.toUpperCase() : ""
+                        symbol: root.isTransactionValid ? d.symbol : ""
                         networkName: d.networkFullName
                         shortNetworkName: d.networkShortName
                     }
@@ -311,7 +311,7 @@ Item {
                             case Constants.TransactionType.Swap:
                                 return d.swapSymbol
                             case Constants.TransactionType.Bridge:
-                                return transaction.value.symbol.toUpperCase()
+                                return d.symbol
                             default:
                                 return ""
                             }
