@@ -1,4 +1,5 @@
 import ../../../../../app_service/service/community_tokens/service
+import ../../../../../app_service/service/community/dto/community
 import ../../../shared_models/currency_amount
 
 type
@@ -22,8 +23,12 @@ method selfDestructCollectibles*(self: AccessInterface, communityId: string, col
 method burnCollectibles*(self: AccessInterface, communityId: string, contractUniqueKey: string, amount: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deployCollectible*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool,
+method deployCollectibles*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool,
                       selfDestruct: bool, chainId: int, image: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deployAssets*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, decimals: int,
+                      chainId: int, image: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
@@ -32,7 +37,7 @@ method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
 method resetTempValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string) {.base.} =
+method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string, tokenType: TokenType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method computeSelfDestructFee*(self: AccessInterface, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.base.} =

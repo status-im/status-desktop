@@ -40,7 +40,7 @@ SettingsPageLayout {
 
     signal mintCollectible(var collectibleItem)
     signal mintAsset(var assetItem)
-    signal signMintTransactionOpened(int chainId, string accountAddress)
+    signal signMintTransactionOpened(int chainId, string accountAddress, int tokenType)
 
     signal signRemoteDestructTransactionOpened(var remotelyDestructTokensList, // [key , amount]
                                                string tokenKey)
@@ -389,7 +389,7 @@ SettingsPageLayout {
 
                 onOpened: {
                     root.setFeeLoading()
-                    root.signMintTransactionOpened(preview.chainId, preview.accountAddress)
+                    root.signMintTransactionOpened(preview.chainId, preview.accountAddress, preview.isAssetView ? Constants.TokenType.ERC20 : Constants.TokenType.ERC721)
                 }
                 onCancelClicked: close()
                 onSignTransactionClicked: preview.signMintTransaction()

@@ -303,7 +303,7 @@ StatusSectionLayout {
                 accounts: root.rootStore.accounts
 
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
-                onSignMintTransactionOpened: communityTokensStore.computeDeployFee(chainId, accountAddress)
+                onSignMintTransactionOpened: communityTokensStore.computeDeployFee(chainId, accountAddress, tokenType)
                 onMintCollectible: communityTokensStore.deployCollectible(root.community.id, collectibleItem)
                 onMintAsset: communityTokensStore.deployAsset(root.community.id, assetItem)
                 onSignRemoteDestructTransactionOpened: communityTokensStore.computeSelfDestructFee(remotelyDestructTokensList, tokenKey)

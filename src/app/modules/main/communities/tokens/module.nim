@@ -130,7 +130,7 @@ method burnCollectibles*(self: Module, communityId: string, contractUniqueKey: s
   self.tempContractAction = ContractAction.Burn
   self.authenticate()
 
-method deployCollectible*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
+method deployCollectibles*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
                         supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, image: string) =
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
@@ -142,6 +142,24 @@ method deployCollectible*(self: Module, communityId: string, fromAddress: string
   self.tempDeploymentParams.transferable = transferable
   self.tempDeploymentParams.remoteSelfDestruct = selfDestruct
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
+  self.tempTokenMetadata.tokenType = TokenType.ERC721
+  self.tempTokenMetadata.image = singletonInstance.utils.formatImagePath(image)
+  self.tempTokenMetadata.description = description
+  self.tempContractAction = ContractAction.Deploy
+  self.authenticate()
+
+method deployAssets*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, decimals: int,
+                      chainId: int, image: string) =
+  self.tempAddressFrom = fromAddress
+  self.tempCommunityId = communityId
+  self.tempChainId = chainId
+  self.tempDeploymentParams.name = name
+  self.tempDeploymentParams.symbol = symbol
+  self.tempDeploymentParams.supply = supply
+  self.tempDeploymentParams.infiniteSupply = infiniteSupply
+  self.tempDeploymentParams.decimals = decimals
+  self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
+  self.tempTokenMetadata.tokenType = TokenType.ERC20
   self.tempTokenMetadata.image = singletonInstance.utils.formatImagePath(image)
   self.tempTokenMetadata.description = description
   self.tempContractAction = ContractAction.Deploy
@@ -154,7 +172,7 @@ method onUserAuthenticated*(self: Module, password: string) =
     #TODO signalize somehow
   else:
     if self.tempContractAction == ContractAction.Deploy:
-      self.controller.deployCollectibles(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempChainId)
+      self.controller.deployContract(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempChainId)
     elif self.tempContractAction == ContractAction.Airdrop:
       self.controller.airdropCollectibles(self.tempCommunityId, password, self.tempTokenAndAmountList, self.tempWalletAddresses)
     elif self.tempContractAction == ContractAction.SelfDestruct:
@@ -174,8 +192,8 @@ method onAirdropFeesComputed*(self: Module, args: AirdropFeesArgs) =
 method onBurnFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
   self.view.updateBurnFee(ethCurrency, fiatCurrency, errorCode.int)
 
-method computeDeployFee*(self: Module, chainId: int, accountAddress: string) =
-  self.controller.computeDeployFee(chainId, accountAddress)
+method computeDeployFee*(self: Module, chainId: int, accountAddress: string, tokenType: TokenType) =
+  self.controller.computeDeployFee(chainId, accountAddress, tokenType)
 
 method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: string, contractUniqueKey: string) =
   let walletAndAmountList = self.getWalletAndAmountListFromJson(collectiblesToBurnJsonString)

@@ -70,8 +70,8 @@ proc init*(self: Controller) =
     let args = AirdropArgs(e)
     self.communityTokensModule.onAirdropStateChanged(args.communityToken.communityId, args.communityToken.name, args.communityToken.chainId, args.transactionHash, args.status)
 
-proc deployCollectibles*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
-  self.communityTokensService.deployCollectibles(communityId, addressFrom, password, deploymentParams, tokenMetadata, chainId)
+proc deployContract*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
+  self.communityTokensService.deployContract(communityId, addressFrom, password, deploymentParams, tokenMetadata, chainId)
 
 proc airdropCollectibles*(self: Controller, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
   self.communityTokensService.airdropCollectibles(communityId, password, collectiblesAndAmounts, walletAddresses)
@@ -92,8 +92,8 @@ proc authenticateUser*(self: Controller, keyUid = "") =
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(communityId)
 
-proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string) =
-  self.communityTokensService.computeDeployFee(chainId, accountAddress)
+proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string, tokenType: TokenType) =
+  self.communityTokensService.computeDeployFee(chainId, accountAddress, tokenType)
 
 proc computeSelfDestructFee*(self: Controller, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string) =
   self.communityTokensService.computeSelfDestructFee(walletAndAmountList, contractUniqueKey)

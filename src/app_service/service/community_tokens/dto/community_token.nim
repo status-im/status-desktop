@@ -26,6 +26,7 @@ type
     chainId*: int
     deployState*: DeployState
     image*: string
+    decimals*: int
 
 proc toJsonNode*(self: CommunityTokenDto): JsonNode =
   result = %* {
@@ -42,7 +43,8 @@ proc toJsonNode*(self: CommunityTokenDto): JsonNode =
     "tokenUri": self.tokenUri,
     "chainId": self.chainId,
     "deployState": self.deployState.int,
-    "image": self.image
+    "image": self.image,
+    "decimals": self.decimals
   }
 
 proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
@@ -65,6 +67,7 @@ proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
   discard jsonObj.getProp("deployState", deployStateInt)
   result.deployState = intToEnum(deployStateInt, DeployState.Failed)
   discard jsonObj.getProp("image", result.image)
+  discard jsonObj.getProp("decimals", result.decimals)
 
 proc parseCommunityTokens*(response: RpcResponse[JsonNode]): seq[CommunityTokenDto] =
   result = map(response.result.getElems(),
