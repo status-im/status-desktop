@@ -1420,4 +1420,13 @@ Item {
         width: appMain.width
         height: appMain.height
     }
+
+    Loader {
+        id: userAgreementLoader
+        active: production && !localAppSettings.testEnvironment
+        sourceComponent: UserAgreementPopup {
+            visible: appMain.visible
+            onClosed: userAgreementLoader.active = false
+        }
+    }
 }

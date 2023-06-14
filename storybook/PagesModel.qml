@@ -218,6 +218,10 @@ ListModel {
         section: "Popups"
     }
     ListElement {
+        title: "UserAgreementPopup"
+        section: "Popups"
+    }
+    ListElement {
         title: "MembersSelector"
         section: "Components"
     }
