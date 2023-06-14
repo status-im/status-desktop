@@ -43,6 +43,7 @@ Control {
     implicitHeight: d.minHeight
 
     background: Rectangle {
+        objectName: "networkTagRectangle_" + root.title
         color: root.hovered ? Theme.palette.primaryColor3 : asset.bgColor
         radius: asset.bgRadius
         border.color: asset.bgBorderColor
