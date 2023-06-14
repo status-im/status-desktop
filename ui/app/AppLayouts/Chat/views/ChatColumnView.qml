@@ -231,97 +231,114 @@ Item {
             }
         }
 
-        StatusChatInput {
-            id: chatInput
-
+        RowLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.smallPadding
 
-            enabled: root.rootStore.sectionDetails.joined && !root.rootStore.sectionDetails.amIBanned &&
-                     root.rootStore.isUserAllowedToSendMessage
+            StatusChatInput {
+                id: chatInput
 
-            store: root.rootStore
-            usersStore: d.activeUsersStore
+                Layout.fillWidth: true
 
-            textInput.placeholderText: {
-                if (d.activeChatContentModule.chatDetails.blocked)
-                    return qsTr("This user has been blocked.")
-                if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned)
-                    return qsTr("You need to join this community to send messages")
-                return root.rootStore.chatInputPlaceHolderText
-            }
+                enabled: !d.activeChatContentModule.chatDetails.blocked
+                         && root.rootStore.sectionDetails.joined
+                         && !root.rootStore.sectionDetails.amIBanned
+                         && root.rootStore.isUserAllowedToSendMessage
 
-            emojiPopup: root.emojiPopup
-            stickersPopup: root.stickersPopup
-            isContactBlocked: d.activeChatContentModule.chatDetails.blocked
-            chatType: root.activeChatType
-            suggestions.suggestionFilter.addSystemSuggestions: chatType === Constants.chatType.communityChat
+                store: root.rootStore
+                usersStore: d.activeUsersStore
 
-            textInput.onTextChanged: {
-                d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
-            }
-
-            onReplyMessageIdChanged: {
-                d.activeChatContentModule.inputAreaModule.preservedProperties.replyMessageId = replyMessageId
-            }
-
-            onFileUrlsAndSourcesChanged: {
-                d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
-            }
-
-            onSendTransactionCommandButtonClicked: {
-                if (!d.activeChatContentModule) {
-                    console.warn("error on sending transaction command - chat content module is not set")
-                    return
+                textInput.placeholderText: {
+                    if (d.activeChatContentModule.chatDetails.blocked)
+                        return qsTr("This user has been blocked.")
+                    if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned)
+                        return qsTr("You need to join this community to send messages")
+                    return root.rootStore.chatInputPlaceHolderText
                 }
 
-                if (Utils.isEnsVerified(d.activeChatContentModule.getMyChatId())) {
-                    Global.openPopup(cmpSendTransactionWithEns)
-                } else {
-                    Global.openPopup(cmpSendTransactionNoEns)
+                emojiPopup: root.emojiPopup
+                stickersPopup: root.stickersPopup
+                chatType: root.activeChatType
+                suggestions.suggestionFilter.addSystemSuggestions: chatType === Constants.chatType.communityChat
+
+                textInput.onTextChanged: {
+                    d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
+                }
+
+                onReplyMessageIdChanged: {
+                    d.activeChatContentModule.inputAreaModule.preservedProperties.replyMessageId = replyMessageId
+                }
+
+                onFileUrlsAndSourcesChanged: {
+                    d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
+                }
+
+                onSendTransactionCommandButtonClicked: {
+                    if (!d.activeChatContentModule) {
+                        console.warn("error on sending transaction command - chat content module is not set")
+                        return
+                    }
+
+                    if (Utils.isEnsVerified(d.activeChatContentModule.getMyChatId())) {
+                        Global.openPopup(cmpSendTransactionWithEns)
+                    } else {
+                        Global.openPopup(cmpSendTransactionNoEns)
+                    }
+                }
+
+                onReceiveTransactionCommandButtonClicked: {
+                    Global.openPopup(cmpReceiveTransaction)
+                }
+
+                onStickerSelected: {
+                    root.rootStore.sendSticker(d.activeChatContentModule.getMyChatId(),
+                                                          hashId,
+                                                          chatInput.isReply ? chatInput.replyMessageId : "",
+                                                          packId,
+                                                          url)
+                }
+
+
+                onSendMessage: {
+                    if (!d.activeChatContentModule) {
+                        console.debug("error on sending message - chat content module is not set")
+                        return
+                    }
+
+                    if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
+                                                  event,
+                                                  chatInput.getTextWithPublicKeys(),
+                                                  chatInput.isReply? chatInput.replyMessageId : "",
+                                                  chatInput.fileUrlsAndSources
+                                                  ))
+                    {
+                        Global.playSendMessageSound()
+
+                        chatInput.textInput.clear();
+                        chatInput.textInput.textFormat = TextEdit.PlainText;
+                        chatInput.textInput.textFormat = TextEdit.RichText;
+                    }
+                }
+
+                onUnblockChat: {
+
+                }
+
+                onKeyUpPress: {
+                    d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
                 }
             }
 
-            onReceiveTransactionCommandButtonClicked: {
-                Global.openPopup(cmpReceiveTransaction)
-            }
-
-            onStickerSelected: {
-                root.rootStore.sendSticker(d.activeChatContentModule.getMyChatId(),
-                                                      hashId,
-                                                      chatInput.isReply ? chatInput.replyMessageId : "",
-                                                      packId,
-                                                      url)
-            }
-
-
-            onSendMessage: {
-                if (!d.activeChatContentModule) {
-                    console.debug("error on sending message - chat content module is not set")
-                    return
+            StatusButton {
+                Layout.fillHeight: true
+                Layout.maximumHeight: chatInput.implicitHeight
+                verticalPadding: 0
+                visible: d.activeChatContentModule.chatDetails.blocked
+                text: qsTr("Unblock")
+                type: StatusBaseButton.Type.Danger
+                onClicked: {
+                    d.activeChatContentModule.unblockChat()
                 }
-
-                if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
-                                              event,
-                                              chatInput.getTextWithPublicKeys(),
-                                              chatInput.isReply? chatInput.replyMessageId : "",
-                                              chatInput.fileUrlsAndSources
-                                              ))
-                {
-                    Global.playSendMessageSound()
-
-                    chatInput.textInput.clear();
-                    chatInput.textInput.textFormat = TextEdit.PlainText;
-                    chatInput.textInput.textFormat = TextEdit.RichText;
-                }
-            }
-
-            onUnblockChat: {
-                d.activeChatContentModule.unblockChat()
-            }
-
-            onKeyUpPress: {
-                d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
             }
         }
     }

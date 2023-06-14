@@ -89,6 +89,7 @@ SplitView {
             sourceComponent: StatusChatInput {
                 id: chatInput
                 property var globalUtils: globalUtilsMock.globalUtils
+                enabled: enabledCheckBox.checked
                 usersStore: QtObject {
                     readonly property var usersModel: fakeUsersModel
                 }
@@ -114,14 +115,26 @@ SplitView {
          SplitView.minimumWidth: 300
          SplitView.preferredWidth: 300
 
-         UsersModelEditor {
-             id: modelEditor
+         ColumnLayout {
              anchors.fill: parent
-             model: fakeUsersModel
+             CheckBox {
+                 id: enabledCheckBox
+                 text: "enabled"
+                 checked: true
+             }
+             MenuSeparator {
+                 Layout.fillWidth: true
+             }
+             UsersModelEditor {
+                 id: modelEditor
+                 Layout.fillWidth: true
+                 Layout.fillHeight: true
+                 model: fakeUsersModel
 
-             onRemoveClicked: fakeUsersModel.remove(index, 1)
-             onRemoveAllClicked: fakeUsersModel.clear()
-             onAddClicked: fakeUsersModel.append(modelEditor.getNewUser(fakeUsersModel.count))
+                 onRemoveClicked: fakeUsersModel.remove(index, 1)
+                 onRemoveAllClicked: fakeUsersModel.clear()
+                 onAddClicked: fakeUsersModel.append(modelEditor.getNewUser(fakeUsersModel.count))
+             }
          }
      }
 }

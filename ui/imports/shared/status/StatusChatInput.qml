@@ -45,7 +45,6 @@ Rectangle {
 
     property bool isImage: false
     property bool isEdit: false
-    property bool isContactBlocked: false
 
     property int messageLimit: 2000
     property int messageLimitVisible: 200
@@ -135,8 +134,10 @@ Rectangle {
         // common popups are emoji, jif and stickers
         // Put controlWidth as argument with default value for binding
         function getCommonPopupRelativePosition(popup, popupParent, controlWidth = control.width) {
-            const controlX = controlWidth - emojiPopup.width - Style.current.halfPadding
-            const controlY = -emojiPopup.height
+            const popupWidth = emojiPopup ? emojiPopup.width : 0
+            const popupHeight = emojiPopup ? emojiPopup.height : 0
+            const controlX = controlWidth - popupWidth - Style.current.halfPadding
+            const controlY = -popupHeight
             return popupParent.mapFromItem(control, controlX, controlY)
         }
 
@@ -1094,7 +1095,6 @@ Rectangle {
                 Layout.bottomMargin: 4
                 icon.name: "chat-commands"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                enabled: !control.isContactBlocked
                 onClicked: {
                     d.chatCommandsPopupOpen ? Global.closePopup() : Global.openPopup(chatCommandsPopup);
                     d.chatCommandsPopupOpen = !d.chatCommandsPopupOpen;
@@ -1112,7 +1112,6 @@ Rectangle {
             icon.name: "image"
             type: StatusQ.StatusFlatRoundButton.Type.Tertiary
             visible: !isEdit
-            enabled: !control.isContactBlocked
             onClicked: {
                 highlighted = true
                 const popup = imageDialogComponent.createObject(control)
@@ -1130,7 +1129,6 @@ Rectangle {
             implicitHeight: inputLayout.implicitHeight + inputLayout.anchors.topMargin + inputLayout.anchors.bottomMargin
             implicitWidth: inputLayout.implicitWidth + inputLayout.anchors.leftMargin + inputLayout.anchors.rightMargin
 
-            enabled: !control.isContactBlocked
             color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
             radius: 20
 
@@ -1539,13 +1537,5 @@ Rectangle {
             }
         }
 
-        StatusQ.StatusButton {
-            Layout.fillHeight: true
-            Layout.bottomMargin: 4
-            visible: control.isContactBlocked
-            text: qsTr("Unblock")
-            type: StatusQ.StatusBaseButton.Type.Danger
-            onClicked: control.unblockChat()
-        }
     }
 }
