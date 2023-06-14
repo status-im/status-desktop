@@ -322,6 +322,7 @@ StatusWindow {
         id: app
         AppMain {
             sysPalette: systemPalette
+            visible: !appLoadingAnimation.active
         }
     }
 

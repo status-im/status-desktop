@@ -27,3 +27,4 @@ GetSyncCodeInstructionsPopup 1.0 GetSyncCodeInstructionsPopup.qml
 NoPermissionsToJoinPopup 1.0 NoPermissionsToJoinPopup.qml
 RemoveAccountConfirmationPopup 1.0 RemoveAccountConfirmationPopup.qml
 DeleteMessageConfirmationPopup 1.0 DeleteMessageConfirmationPopup.qml
+UserAgreementPopup 1.0 UserAgreementPopup.qml
