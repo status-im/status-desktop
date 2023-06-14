@@ -247,7 +247,7 @@ StatusDialog {
 
         StatusNetworkSelector {
             id: networkSelector
-
+            objectName: "addSavedAddressNetworkSelector"
             title: "Network preference"
             enabled: addressInput.valid && !d.addressInputIsENS
             defaultItemText: "Add networks"

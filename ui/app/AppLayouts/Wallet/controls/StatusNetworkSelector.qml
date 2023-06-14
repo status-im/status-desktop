@@ -156,7 +156,7 @@ Rectangle {
 
             StatusRoundButton {
                 id: addItemButton
-
+                
                 implicitHeight: 32
                 implicitWidth: implicitHeight
                 height: width
@@ -169,7 +169,7 @@ Rectangle {
 
             StatusNetworkListItemTag {
                 id: defaultListItemTag
-
+                objectName: "networkSelectorTag"
                 visible: !itemsModel || itemsModel.count === 0
                 title: root.defaultItemText
                 button.visible: true

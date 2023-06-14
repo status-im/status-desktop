@@ -47,6 +47,7 @@ StatusListItem {
     components: [
         StatusCheckBox {
             id: checkBox
+            objectName: "networkSelectionCheckbox_" + model.chainName
             tristate: true
             visible: !root.singleSelection.enabled
 
