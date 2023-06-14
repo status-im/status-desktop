@@ -279,7 +279,8 @@ QtObject:
 
     for chat in self.channelGroups[communityId].chats:
       result.unviewedMentionsCount += chat.unviewedMentionsCount
-      if chat.muted:
+      # We count the unread messages if we are unmuted and it's not a mention, we want to show a badge on mentions
+      if chat.unviewedMentionsCount == 0 and chat.muted:
         continue
       if chat.unviewedMessagesCount > 0:
         result.unviewedMessagesCount = result.unviewedMessagesCount + chat.unviewedMessagesCount

@@ -554,7 +554,7 @@ method addNewChat*(
     setChatAsActive: bool = true,
     insertIntoModel: bool = true,
   ): Item =
-  let hasNotification = not chatDto.muted and (chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0)
+  let hasNotification =chatDto.unviewedMessagesCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
 
   var chatName = chatDto.name
@@ -1198,10 +1198,7 @@ proc addOrUpdateChat(self: Module,
 
   if not self.chatsLoaded or chatExists:
     # Update badges
-    var hasUnreadMessages = false
-    if not chat.muted:
-      hasUnreadMessages = chat.unviewedMessagesCount > 0
-    self.updateBadgeNotifications(chat, hasUnreadMessages, chat.unviewedMentionsCount)
+    self.updateBadgeNotifications(chat, chat.unviewedMessagesCount > 0, chat.unviewedMentionsCount)
 
   if not self.chatsLoaded:
     return
