@@ -38,6 +38,7 @@ import ../../../../app_service/service/community_tokens/service as community_tok
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../../app_service/service/community/dto/community as community_dto
+import ../../../../app_service/common/types
 
 export io_interface
 
@@ -140,11 +141,11 @@ method isCommunity*(self: Module): bool =
 method getMySectionId*(self: Module): string =
   return self.controller.getMySectionId()
 
-proc amIMarkedAsAdminUser(self: Module, members: seq[ChatMember]): bool =
+proc getUserMemberRole(self: Module, members: seq[ChatMember]): MemberRole =
   for m in members:
-    if (m.id == singletonInstance.userProfile.getPubKey() and m.admin):
-      return true
-  return false
+    if m.id == singletonInstance.userProfile.getPubKey():
+      return m.role
+  return MemberRole.None
 
 proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsersListAvailable: bool, events: EventEmitter,
   settingsService: settings_service.Service,
@@ -165,7 +166,7 @@ proc removeSubmodule(self: Module, chatId: string) =
   self.chatContentModules.del(chatId)
 
 
-proc addCategoryItem(self: Module, category: Category, amIAdmin: bool, communityId: string, insertIntoModel: bool = true): Item =
+proc addCategoryItem(self: Module, category: Category, memberRole: MemberRole, communityId: string, insertIntoModel: bool = true): Item =
   let hasUnreadMessages = self.controller.chatsWithCategoryHaveUnreadMessages(communityId, category.id)
   result = chat_item.initItem(
         id = category.id,
@@ -175,7 +176,7 @@ proc addCategoryItem(self: Module, category: Category, amIAdmin: bool, community
         emoji = "",
         description = "",
         `type` = chat_item.CATEGORY_TYPE,
-        amIAdmin,
+        memberRole,
         lastMessageTimestamp = 0,
         hasUnreadMessages,
         notificationsCount = 0,
@@ -207,7 +208,7 @@ proc buildChatSectionUI(
   var items: seq[Item] = @[]
   for categoryDto in channelGroup.categories:
     # Add items for the categories. We use a special type to identify categories
-    items.add(self.addCategoryItem(categoryDto, channelGroup.admin, channelGroup.id))
+    items.add(self.addCategoryItem(categoryDto, channelGroup.memberRole, channelGroup.id))
 
   for chatDto in channelGroup.chats:
     var categoryPosition = -1
@@ -282,13 +283,17 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    # TODO: for startes we only deal with "become member" permissions
-    if tokenPermission.`type` == TokenPermissionType.BecomeMember:
-      let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
-      tokenPermissionsItems.add(tokenPermissionItem)
+    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+    tokenPermissionsItems.add(tokenPermissionItem)
+
+  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+    tokenPermissionsItem.getType() == TokenPermissionType.BecomeMember.int)
+  
+  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+    tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
 
   self.view.tokenPermissionsModel().setItems(tokenPermissionsItems)
-  self.view.setRequiresTokenPermissionToJoin(tokenPermissionsItems.len > 0)
+  self.view.setRequiresTokenPermissionToJoin(len(memberPermissions) > 0 or len(adminPermissions) > 0)
 
 proc initCommunityTokenPermissionsModel(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
@@ -574,12 +579,12 @@ method addNewChat*(
   elif chatDto.chatType == ChatType.PrivateGroupChat:
     chatImage = chatDto.icon
 
-  var amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
-  if not amIChatAdmin and len(chatDto.communityId) != 0:
-    let community = communityService.getCommunityById(chatDto.communityId)
-    amIChatAdmin = amIChatAdmin or community.admin
+  var memberRole = self.getUserMemberRole(chatDto.members)
+  
+  if memberRole == MemberRole.None and len(chatDto.communityId) != 0:
+    memberRole = channelGroup.memberRole
   if chatDto.chatType != ChatType.PrivateGroupChat:
-    amIChatAdmin = amIChatAdmin or channelGroup.admin
+    memberRole = channelGroup.memberRole
 
   var categoryOpened = true
   if chatDto.categoryId != "":
@@ -605,7 +610,7 @@ method addNewChat*(
     chatDto.emoji,
     chatDto.description,
     ChatType(chatDto.chatType).int,
-    amIChatAdmin,
+    memberRole,
     chatDto.timestamp.int,
     hasNotification,
     notificationsCount,
@@ -680,8 +685,8 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
   if (self.doesCatOrChatExist(cat.id)):
     return
 
-  # TODO get admin status
-  discard self.addCategoryItem(cat, false, communityId)
+  let community = self.controller.getCommunityById(communityId)
+  discard self.addCategoryItem(cat, community.memberRole, communityId)
   # Update chat items that now belong to that category
   self.view.chatsModel().updateItemsWithCategoryDetailsById(
     chats,
@@ -781,20 +786,19 @@ method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, per
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  if tokenPermission.`type` == TokenPermissionType.BecomeMember:
-    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+  let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+  if tokenPermissionItem.tokenCriteriaMet:
+    self.view.setAllTokenRequirementsMet(true)
+  self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
+  self.view.setRequiresTokenPermissionToJoin(true)
 
-    self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
-    self.view.setRequiresTokenPermissionToJoin(true)
   singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   let community = self.controller.getMyCommunity()
 
-  self.view.setAllTokenRequirementsMet(checkPermissionsToJoinResponse.satisfied)
   for id, criteriaResult in checkPermissionsToJoinResponse.permissions:
     if community.tokenPermissions.hasKey(id):
-
       let tokenPermissionItem = self.view.tokenPermissionsModel.getItemById(id)
 
       var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
@@ -824,13 +828,34 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissions
           tokenPermissionItem.isPrivate,
           permissionSatisfied
       )
-      self.view.tokenPermissionsModel.updateItem(id, updatedTokenPermissionItem)
+      self.view.tokenPermissionsModel().updateItem(id, updatedTokenPermissionItem)
 
+  let tokenPermissionsItems = self.view.tokenPermissionsModel().getItems()
+
+  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+    tokenPermissionsItem.getType() == TokenPermissionType.BecomeMember.int)
+  
+  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+    tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
+
+  # multiple permissions of the same type act as logical OR
+  # so if at least one of them is fulfilled we can mark the view
+  # as all lights green
+  let memberRequirementMet = memberPermissions.len() > 0 and any(memberPermissions, 
+    proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
+  
+  let adminRequirementMet = adminPermissions.len() > 0 and any(adminPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
+
+  let requiresPermissionToJoin = (adminPermissions.len() > 0 and adminRequirementMet) or memberPermissions.len() > 0
+  let tokenRequirementsMet = if requiresPermissionToJoin: adminRequirementMet or memberRequirementMet else: false
+
+  self.view.setAllTokenRequirementsMet(tokenRequirementsMet)
+  self.view.setRequiresTokenPermissionToJoin(requiresPermissionToJoin)
+      
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  if tokenPermission.`type` == TokenPermissionType.BecomeMember:
-    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
-    self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
+  let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+  self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
 
   singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
 
@@ -1099,7 +1124,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       c.emoji,
       c.description,
       c.chatType.int,
-      amIChatAdmin=false,
+      memberRole=MemberRole.None,
       lastMessageTimestamp=(-1),
       hasUnreadMessages=false,
       notificationsCount=0,
@@ -1121,7 +1146,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
       c.emoji,
       c.description,
       c.chatType.int,
-      amIChatAdmin=false,
+      memberRole=MemberRole.None,
       lastMessageTimestamp=(-1),
       hasUnreadMessages=false,
       notificationsCount=0,

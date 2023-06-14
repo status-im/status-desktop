@@ -15,6 +15,8 @@ import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/communities as status_go
 
+import ../../../app_service/common/types
+
 include ./async_tasks
 
 export community_dto
@@ -641,7 +643,7 @@ QtObject:
       let communities = parseCommunities(responseObj["communities"])
       for community in communities:
         self.communities[community.id] = community
-        if (community.admin):
+        if community.memberRole == MemberRole.Owner or community.memberRole == MemberRole.Admin:
           self.communities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
           self.communities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
           self.communities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
@@ -1469,7 +1471,9 @@ QtObject:
 
       self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[communityId]))
       self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
-      self.activityCenterService.parseActivityCenterNotifications(rpcResponseObj["response"]["result"]["activityCenterNotifications"])
+
+      if rpcResponseObj["response"]["result"]{"activityCenterNotifications"}.kind != JNull:
+        self.activityCenterService.parseActivityCenterNotifications(rpcResponseObj["response"]["result"]["activityCenterNotifications"])
 
     except Exception as e:
       let errMsg = e.msg

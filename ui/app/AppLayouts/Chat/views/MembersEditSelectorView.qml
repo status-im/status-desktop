@@ -46,7 +46,7 @@ MembersSelectorBase {
     model: SortFilterProxyModel {
         sourceModel: root.usersStore.temporaryModel
         sorters: RoleSorter {
-            roleName: "isAdmin"
+            roleName: "memberRole"
             sortOrder: Qt.DescendingOrder
         }
     }
@@ -58,11 +58,11 @@ MembersSelectorBase {
         text: root.tagText(model.localNickname, model.displayName, model.alias)
 
         isReadonly: {
-            if (model.isAdmin) return true
+            if (model.memberRole === Constants.memberRole.owner) return true
             if (root.rootStore.amIChatAdmin()) return false
             return index < root.usersStore.usersModel.count
         }
-        icon: model.isAdmin ? "crown" : ""
+        icon: model.memberRole === Constants.memberRole.owner ? "crown" : ""
 
         onClosed: root.entryRemoved(this)
     }

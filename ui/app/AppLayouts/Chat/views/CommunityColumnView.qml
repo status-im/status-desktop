@@ -37,6 +37,10 @@ Item {
     property bool hasAddedContacts: false
     property var communityData
 
+    readonly property bool isSectionAdmin:
+        communityData.memberRole === Constants.memberRole.owner ||
+        communityData.memberRole === Constants.memberRole.admin
+
     signal infoButtonClicked
     signal manageButtonClicked
 
@@ -50,7 +54,7 @@ Item {
         membersCount: communityData.members.count
         image: communityData.image
         color: communityData.color
-        amISectionAdmin: communityData.amISectionAdmin
+        amISectionAdmin: root.isSectionAdmin
         openCreateChat: root.store.openCreateChat
         onInfoButtonClicked: root.infoButtonClicked()
         onAdHocChatButtonClicked: root.store.openCloseCreateChatView()
@@ -121,7 +125,7 @@ Item {
 
     StatusMenu {
         id: adminPopupMenu
-        enabled: communityData.amISectionAdmin
+        enabled: root.isSectionAdmin
 
         property bool showInviteButton: false
 
@@ -177,8 +181,8 @@ Item {
         StatusChatListAndCategories {
             id: communityChatListAndCategories
             width: scrollView.availableWidth
-            draggableItems: communityData.amISectionAdmin
-            draggableCategories: communityData.amISectionAdmin
+            draggableItems: root.isSectionAdmin
+            draggableCategories: root.isSectionAdmin
 
             model: root.communitySectionModule.model
             highlightItem: !root.store.openCreateChat
@@ -188,8 +192,8 @@ Item {
                 root.communitySectionModule.setActiveItem(id)
             }
 
-            showCategoryActionButtons: communityData.amISectionAdmin
-            showPopupMenu: communityData.amISectionAdmin && communityData.canManageUsers
+            showCategoryActionButtons: root.isSectionAdmin
+            showPopupMenu: root.isSectionAdmin && communityData.canManageUsers
 
             onChatItemUnmuted: root.communitySectionModule.unmuteChat(id)
             onChatItemReordered: function(categoryId, chatId, to) {
@@ -205,14 +209,14 @@ Item {
                 StatusAction {
                     text: qsTr("Create channel")
                     icon.name: "channel"
-                    enabled: communityData.amISectionAdmin
+                    enabled: root.isSectionAdmin
                     onTriggered: Global.openPopup(createChannelPopup)
                 }
 
                 StatusAction {
                     text: qsTr("Create category")
                     icon.name: "channel-category"
-                    enabled: communityData.amISectionAdmin
+                    enabled: root.isSectionAdmin
                     onTriggered: Global.openPopup(createCategoryPopup)
                 }
 
@@ -254,7 +258,7 @@ Item {
 
                 StatusAction {
                     objectName: "editCategoryMenuItem"
-                    enabled: communityData.amISectionAdmin
+                    enabled: root.isSectionAdmin
                     text: qsTr("Edit Category")
                     icon.name: "edit"
                     onTriggered: {
@@ -268,12 +272,12 @@ Item {
                 }
 
                 StatusMenuSeparator {
-                    visible: communityData.amISectionAdmin
+                    visible: root.isSectionAdmin
                 }
 
                 StatusAction {
                     objectName: "deleteCategoryMenuItem"
-                    enabled: communityData.amISectionAdmin
+                    enabled: root.isSectionAdmin
                     text: qsTr("Delete Category")
                     icon.name: "delete"
                     type: StatusAction.Type.Danger
@@ -305,7 +309,7 @@ Item {
 
                         currentFleet = root.communitySectionModule.getCurrentFleet()
                         isCommunityChat = root.communitySectionModule.isCommunity()
-                        amIChatAdmin = obj.amIChatAdmin
+                        amIChatAdmin = root.isSectionAdmin
                         chatId = obj.itemId
                         chatName = obj.name
                         chatDescription = obj.description
@@ -379,7 +383,7 @@ Item {
             spacing: Style.current.bigPadding
 
             Loader {
-                active: communityData.amISectionAdmin &&
+                active: root.isSectionAdmin &&
                         (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
                 width: parent.width
@@ -396,7 +400,7 @@ Item {
             } // Loader
 
             Loader {
-                active: communityData.amISectionAdmin &&
+                active: root.isSectionAdmin &&
                         (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
                 width: parent.width
@@ -416,7 +420,7 @@ Item {
             } // Loader
 
             Loader {
-                active: communityData.amISectionAdmin &&
+                active: root.communityData.memberRole === Constants.memberRole.owner &&
                         (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
                          !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
                 width: parent.width
@@ -438,7 +442,7 @@ Item {
 
         background: Item {
             TapHandler {
-                enabled: communityData.amISectionAdmin
+                enabled: root.isSectionAdmin
                 acceptedButtons: Qt.RightButton
                 onTapped: {
                     adminPopupMenu.showInviteButton = true
@@ -455,7 +459,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: active ? Style.current.padding : 0
-        active: communityData.amISectionAdmin
+        active: root.isSectionAdmin
         sourceComponent: Component {
             StatusBaseText {
                 id: createChannelOrCategoryBtn

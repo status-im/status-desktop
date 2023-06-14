@@ -3,6 +3,7 @@ import NimQml
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/dto/[message]
 import ../../../../../../app_service/service/contacts/dto/[status_update]
+import ../../../../../../app_service/common/types
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -46,7 +47,7 @@ method onChatMembersAdded*(self: AccessInterface, ids: seq[string]) {.base.} =
 method onChatMemberRemoved*(self: AccessInterface, ids: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatMemberUpdated*(self: AccessInterface, id: string, admin: bool, joined: bool) {.base.} =
+method onChatMemberUpdated*(self: AccessInterface, id: string, memberRole: MemberRole, joined: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =

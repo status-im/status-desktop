@@ -16,6 +16,7 @@ Control{
 
     property int permissionType: PermissionTypes.Type.None
     property bool isPrivate: false
+    property bool showButtons: true
 
     signal editClicked
     signal duplicateClicked
@@ -174,6 +175,7 @@ Control{
 
         RowLayout {
             id: footer
+            visible: root.showButtons
             spacing: 85
             Layout.fillWidth: true
             Layout.bottomMargin: d.commonMargin

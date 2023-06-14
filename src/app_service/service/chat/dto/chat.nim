@@ -4,6 +4,7 @@ import json, strformat, strutils
 import ../../community/dto/community
 
 include ../../../common/json_utils
+import ../../../../app_service/common/types
 
 type ChatType* {.pure.}= enum
   Unknown = 0,
@@ -17,14 +18,6 @@ type ChannelGroupType* {.pure.}= enum
   Unknown = "unknown",
   Personal = "personal",
   Community = "community"
-
-type CommunityMemberRoles* {.pure.} = enum
-  Unknown = 0,
-  All = 1,
-  ManagerUsers = 2
-
-proc isMemberAdmin*(roles: seq[int]): bool =
-  return roles.contains(CommunityMemberRoles.All.int)
 
 type Category* = object
   id*: string
@@ -44,9 +37,8 @@ type
 
 type ChatMember* = object
   id*: string
-  admin*: bool
   joined*: bool
-  roles*: seq[int]
+  role*: MemberRole
 
 type ChatDto* = object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status,
@@ -85,7 +77,7 @@ type ChatDto* = object
 type ChannelGroupDto* = object
   id*: string
   channelGroupType*: ChannelGroupType
-  admin*: bool
+  memberRole*: MemberRole
   verified*: bool
   name*: string
   ensName*: string
@@ -179,18 +171,15 @@ proc toChatMember*(jsonObj: JsonNode, memberId: string): ChatMember =
   # Mapping this DTO is not strightforward since only keys are used for id
   result = ChatMember()
   result.id = memberId
-  discard jsonObj.getProp("admin", result.admin)
   discard jsonObj.getProp("joined", result.joined)
-  var rolesObj: JsonNode
-  if(jsonObj.getProp("roles", rolesObj) and rolesObj.kind == JArray):
-    for role in rolesObj:
-      result.roles.add(role.getInt)
+  discard jsonObj.getProp("role", result.role)
 
 proc toGroupChatMember*(jsonObj: JsonNode): ChatMember =
   # parse status-go "ChatMember" type
   result = ChatMember()
   discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("admin", result.admin)
+  let admin = jsonObj["admin"].getBool(false)
+  result.role = if admin: MemberRole.Owner else: MemberRole.None
   result.joined = true
 
 proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMember =
@@ -200,11 +189,22 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   result = ChatMember()
   result.id = memberId
   var rolesObj: JsonNode
+  var roles: seq[int] = @[]
   if(jsonObj.getProp("roles", rolesObj)):
     for roleObj in rolesObj:
-      result.roles.add(roleObj.getInt)
+      roles.add(roleObj.getInt)
+  
+  result.role = MemberRole.None
+  if roles.contains(MemberRole.Owner.int): 
+    result.role = MemberRole.Owner
+  elif roles.contains(MemberRole.Admin.int):
+    result.role = MemberRole.Admin
+  elif roles.contains(MemberRole.ManageUsers.int):
+    result.role = MemberRole.ManageUsers
+  elif roles.contains(MemberRole.ModerateContent.int):
+    result.role = MemberRole.ModerateContent
+
   result.joined = joined
-  result.admin = isMemberAdmin(result.roles)
 
 proc toChatDto*(jsonObj: JsonNode): ChatDto =
   result = ChatDto()
@@ -268,8 +268,9 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
 
 proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   result = ChannelGroupDto()
-  discard jsonObj.getProp("admin", result.admin)
+
   discard jsonObj.getProp("verified", result.verified)
+  discard jsonObj.getProp("memberRole", result.memberRole)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("introMessage", result.introMessage)

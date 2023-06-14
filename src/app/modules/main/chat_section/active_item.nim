@@ -1,5 +1,6 @@
 import NimQml
 import item
+import ../../../../app_service/common/types
 
 QtObject:
   type ActiveItem* = ref object of QObject
@@ -46,13 +47,13 @@ QtObject:
   QtProperty[string] name:
     read = getName
 
-  proc getAmIChatAdmin(self: ActiveItem): bool {.slot.} =
+  proc getMemberRole(self: ActiveItem): int {.slot.} =
     if(self.item.isNil):
-      return false
-    return self.item.amIChatAdmin
+      return MemberRole.None.int
+    return self.item.memberRole.int
 
-  QtProperty[bool] amIChatAdmin:
-    read = getAmIChatAdmin
+  QtProperty[int] memberRole:
+    read = getMemberRole
 
   proc getIcon(self: ActiveItem): string {.slot.} =
     if(self.item.isNil):

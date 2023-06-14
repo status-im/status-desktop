@@ -19,7 +19,6 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: SectionModel
       modelVariant: QVariant
-      observedItem: SectionDetails
       curatedCommunitiesModel: CuratedCommunityModel
       curatedCommunitiesModelVariant: QVariant
       curatedCommunitiesLoading: bool
@@ -50,7 +49,6 @@ QtObject:
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
-    self.observedItem.delete
     self.curatedCommunitiesModel.delete
     self.curatedCommunitiesModelVariant.delete
     self.discordFileListModel.delete
@@ -90,7 +88,6 @@ QtObject:
     result.discordImportHasCommunityImage = false
     result.discordImportTasksModel = newDiscordDiscordImportTasksModel()
     result.discordImportTasksModelVariant = newQVariant(result.discordImportTasksModel)
-    result.observedItem = newActiveSection()
     result.downloadingCommunityHistoryArchives = false
 
   proc load*(self: View) =
@@ -337,22 +334,6 @@ QtObject:
 
   QtProperty[QVariant] discordImportTasks:
     read = getDiscordImportTasksModel
-
-  proc observedItemChanged*(self:View) {.signal.}
-
-  proc getObservedItem(self: View): QVariant {.slot.} =
-    return newQVariant(self.observedItem)
-
-  QtProperty[QVariant] observedCommunity:
-    read = getObservedItem
-    notify = observedItemChanged
-
-  proc setObservedCommunity*(self: View, itemId: string) {.slot.} =
-    let item = self.model.getItemById(itemId)
-    if (item.id == ""):
-      return
-    self.observedItem.setActiveSectionData(item)
-    self.observedItemChanged()
 
   proc discordDataExtractionInProgressChanged*(self: View) {.signal.}
 

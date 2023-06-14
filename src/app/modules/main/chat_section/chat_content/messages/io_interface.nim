@@ -3,6 +3,7 @@ import NimQml
 import ../../../../../../app_service/service/message/dto/[message, reaction, pinned_message]
 import ../../../../../../app_service/service/community/dto/community
 import ../../../../shared_models/message_item
+import ../../../../../../app_service/common/types
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -74,7 +75,7 @@ method onMessageEdited*(self: AccessInterface, message: MessageDto) {.base.} =
 method scrollToMessage*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatMemberUpdated*(self: AccessInterface, id: string, admin: bool, joined: bool) {.base.} =
+method onChatMemberUpdated*(self: AccessInterface, id: string, memberRole: MemberRole, joined: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =

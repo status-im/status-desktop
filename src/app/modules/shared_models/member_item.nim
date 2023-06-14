@@ -7,7 +7,7 @@ export user_item
 
 type
   MemberItem* = ref object of UserItem
-    isAdmin: bool
+    memberRole: MemberRole
     joined: bool
     requestToJoinId: string
     requestToJoinLoading*: bool
@@ -31,13 +31,13 @@ proc initMemberItem*(
   contactRequest: ContactRequest = ContactRequest.None,
   incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
   outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
-  isAdmin: bool = false,
+  memberRole: MemberRole = MemberRole.None,
   joined: bool = false,
   requestToJoinId: string = "",
   requestToJoinLoading: bool = false
 ): MemberItem =
   result = MemberItem()
-  result.isAdmin = isAdmin
+  result.memberRole = memberRole
   result.joined = joined
   result.requestToJoinId = requestToJoinId
   result.requestToJoinLoading = requestToJoinLoading
@@ -80,16 +80,16 @@ proc `$`*(self: MemberItem): string =
     contactRequest: {$self.contactRequest.int},
     incomingVerificationStatus: {$self.incomingVerificationStatus.int},
     outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
-    isAdmin: {self.isAdmin},
+    memberRole: {self.memberRole},
     joined: {self.joined},
     requestToJoinId: {self.requestToJoinId}
     ]"""
 
-proc isAdmin*(self: MemberItem): bool {.inline.} =
-  self.isAdmin
+proc memberRole*(self: MemberItem): MemberRole {.inline.} =
+  self.memberRole
 
-proc `isAdmin=`*(self: MemberItem, value: bool) {.inline.} =
-  self.isAdmin = value
+proc `memberRole=`*(self: MemberItem, value: MemberRole) {.inline.} =
+  self.memberRole = value
 
 proc joined*(self: MemberItem): bool {.inline.} =
   self.joined

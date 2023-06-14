@@ -396,6 +396,14 @@ QtObject {
         readonly property int communityChat: 6
     }
 
+    readonly property QtObject memberRole: QtObject{
+        readonly property int none: 0
+        readonly property int owner: 1
+        readonly property int manageUsers: 2
+        readonly property int moderateContent: 3
+        readonly property int admin: 4
+    }
+
     readonly property QtObject messageContentType: QtObject {
         readonly property int newMessagesMarker: -3
         readonly property int fetchMoreMessagesButton: -2

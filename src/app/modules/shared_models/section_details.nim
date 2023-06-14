@@ -52,11 +52,11 @@ QtObject:
   QtProperty[string] name:
     read = getName
 
-  proc getAmISectionAdmin(self: SectionDetails): bool {.slot.} =
-    return self.item.amISectionAdmin
+  proc getMemberRole(self: SectionDetails): int {.slot.} =
+    return self.item.memberRole.int
 
-  QtProperty[bool] amISectionAdmin:
-    read = getAmISectionAdmin
+  QtProperty[int] memberRole:
+    read = getMemberRole
 
   proc description(self: SectionDetails): string {.slot.} =
     return self.item.description

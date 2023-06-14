@@ -37,9 +37,11 @@ StatusSectionLayout {
     // TODO: get this model from backend?
     property var settingsMenuModel: [{id: Constants.CommunitySettingsSections.Overview, name: qsTr("Overview"), icon: "show", enabled: true},
         {id: Constants.CommunitySettingsSections.Members, name: qsTr("Members"), icon: "group-chat", enabled: true, },
+
         {id: Constants.CommunitySettingsSections.Permissions, name: qsTr("Permissions"), icon: "objects", enabled: true},
-        {id: Constants.CommunitySettingsSections.MintTokens, name: qsTr("Mint Tokens"), icon: "token", enabled: true},
-        {id: Constants.CommunitySettingsSections.Airdrops, name: qsTr("Airdrops"), icon: "airdrop", enabled: true}]
+        {id: Constants.CommunitySettingsSections.MintTokens, name: qsTr("Mint Tokens"), icon: "token", enabled: root.community.memberRole === Constants.memberRole.owner},
+        {id: Constants.CommunitySettingsSections.Airdrops, name: qsTr("Airdrops"), icon: "airdrop", enabled: root.community.memberRole === Constants.memberRole.owner}]
+
     // TODO: Next community settings options:
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
     //                        {name: qsTr("Subscriptions"), icon: "subscription"},
@@ -48,6 +50,9 @@ StatusSectionLayout {
     property var community
     property bool hasAddedContacts: false
     property var transactionStore: TransactionStore {}
+
+    property bool isAdmin: community.memberRole === Constants.memberRole.owner ||
+                           community.memberRole === Constants.memberRole.admin
 
     readonly property string filteredSelectedTags: {
         var tagsArray = []
@@ -177,7 +182,8 @@ StatusSectionLayout {
                 archiveSupportEnabled: root.community.historyArchiveSupportEnabled
                 requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
                 pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
-                editable: root.community.amISectionAdmin
+                editable: true
+                owned: root.community.memberRole === Constants.memberRole.owner
 
                 onEdited: {
                     const error = root.chatCommunitySectionModule.editCommunity(
@@ -219,7 +225,7 @@ StatusSectionLayout {
                 bannedMembersModel: root.community.bannedMembers
                 pendingMemberRequestsModel: root.community.pendingMemberRequests
                 declinedMemberRequestsModel: root.community.declinedMemberRequests
-                editable: root.community.amISectionAdmin
+                editable: root.isAdmin
                 communityName: root.community.name
 
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
@@ -245,12 +251,10 @@ StatusSectionLayout {
                 channelsModel: rootStore.chatCommunitySectionModule.model
 
                 communityDetails: QtObject {
-                    readonly property var _activeSection:
-                        rootStore.mainModuleInst.activeSection
-
-                    readonly property string name: _activeSection.name
-                    readonly property string image: _activeSection.image
-                    readonly property string color: _activeSection.color
+                    readonly property string name: root.community.name
+                    readonly property string image: root.community.image
+                    readonly property string color: root.community.color
+                    readonly property bool owner: root.community.memberRole === Constants.memberRole.owner
                 }
 
                 onCreatePermissionRequested:

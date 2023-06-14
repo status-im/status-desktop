@@ -1,5 +1,6 @@
 import json
 import web3/ethtypes
+import types
 
 template getProp(obj: JsonNode, prop: string, value: var typedesc[int]): bool =
   var success = false
@@ -69,6 +70,14 @@ template getProp(obj: JsonNode, prop: string, value: var typedesc[Address]): boo
   var success = false
   if (obj.kind == JObject and obj.contains(prop)):
     value = fromHex(Address, obj[prop].getStr)
+    success = true
+
+  success
+
+template getProp(obj: JsonNode, prop: string, value: var typedesc[MemberRole]): bool =
+  var success = false
+  if (obj.kind == JObject and obj.contains(prop)):
+    value = MemberRole(obj[prop].getInt)
     success = true
 
   success

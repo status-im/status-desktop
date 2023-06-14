@@ -254,11 +254,12 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
   let notificationsCount = channelGroup.unviewedMentionsCount
   let hasNotification = unviewedCount > 0 or notificationsCount > 0
   let active = self.getActiveSectionId() == channelGroup.id # We must pass on if the current item section is currently active to keep that property as it is
+
   result = initItem(
     channelGroup.id,
     if isCommunity: SectionType.Community else: SectionType.Chat,
     if isCommunity: channelGroup.name else: conf.CHAT_SECTION_NAME,
-    channelGroup.admin,
+    channelGroup.memberRole,
     channelGroup.description,
     channelGroup.introMessage,
     channelGroup.outroMessage,
@@ -296,7 +297,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
         isContact = contactDetails.dto.isContact,
         isVerified = contactDetails.dto.isContactVerified(),
-        isAdmin = member.admin
+        memberRole = member.role
         )),
     # pendingRequestsToJoin
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -395,7 +396,7 @@ method load*[T](
     conf.COMMUNITIESPORTAL_SECTION_ID,
     SectionType.CommunitiesPortal,
     conf.COMMUNITIESPORTAL_SECTION_NAME,
-    amISectionAdmin = false,
+    memberRole = MemberRole.Owner,
     description = "",
     image = "",
     icon = conf.COMMUNITIESPORTAL_SECTION_ICON,
@@ -414,7 +415,7 @@ method load*[T](
     conf.WALLET_SECTION_ID,
     SectionType.Wallet,
     conf.WALLET_SECTION_NAME,
-    amISectionAdmin = false,
+    memberRole = MemberRole.Owner,
     description = "",
     introMessage = "",
     outroMessage = "",
@@ -435,7 +436,7 @@ method load*[T](
     conf.BROWSER_SECTION_ID,
     SectionType.Browser,
     conf.BROWSER_SECTION_NAME,
-    amISectionAdmin = false,
+    memberRole = MemberRole.Owner,
     description = "",
     introMessage = "",
     outroMessage = "",
@@ -456,7 +457,7 @@ method load*[T](
     conf.NODEMANAGEMENT_SECTION_ID,
     SectionType.NodeManagement,
     conf.NODEMANAGEMENT_SECTION_NAME,
-    amISectionAdmin = false,
+    memberRole = MemberRole.Owner,
     description = "",
     introMessage = "",
     outroMessage = "",
@@ -477,7 +478,7 @@ method load*[T](
     conf.SETTINGS_SECTION_ID,
     SectionType.ProfileSettings,
     conf.SETTINGS_SECTION_NAME,
-    amISectionAdmin = false,
+    memberRole = MemberRole.Owner,
     description = "",
     introMessage = "",
     outroMessage = "",
@@ -512,7 +513,7 @@ method load*[T](
       LOADING_SECTION_ID,
       SectionType.LoadingSection,
       name = "",
-      amISectionAdmin = false,
+      memberRole = MemberRole.Owner,
       description = "",
       image = "",
       icon = "",

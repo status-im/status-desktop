@@ -8,6 +8,7 @@ include ../../../common/json_utils
 import ../../../common/conversion
 
 import ../../chat/dto/chat
+import ../../../../app_service/common/types
 
 type RequestToJoinType* {.pure.}= enum
   Pending = 1,
@@ -34,7 +35,10 @@ type CommunityAdminSettingsDto* = object
 type TokenPermissionType* {.pure.}= enum
   Unknown = 0,
   BecomeAdmin = 1,
-  BecomeMember = 2
+  BecomeMember = 2,
+  View = 3,
+  ViewAndPost = 4,
+  
 
 type TokenType* {.pure.}= enum
   Unknown = 0,
@@ -69,7 +73,7 @@ type CommunityTokensMetadataDto* = object
 
 type CommunityDto* = object
   id*: string
-  admin*: bool
+  memberRole*: MemberRole
   verified*: bool
   joined*: bool
   spectated*: bool
@@ -291,7 +295,7 @@ proc toCheckPermissionsToJoinResponseDto*(jsonObj: JsonNode): CheckPermissionsTo
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
   discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("admin", result.admin)
+  discard jsonObj.getProp("memberRole", result.memberRole)
   discard jsonObj.getProp("verified", result.verified)
   discard jsonObj.getProp("joined", result.joined)
   discard jsonObj.getProp("spectated", result.spectated)
@@ -421,7 +425,7 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     categories: communityDto.categories,
     # Community doesn't have an ensName yet. Add this when it is added in status-go
     # ensName: communityDto.ensName,
-    admin: communityDto.admin,
+    memberRole: communityDto.memberRole,
     verified: communityDto.verified,
     description: communityDto.description,
     introMessage: communityDto.introMessage,
@@ -432,8 +436,7 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     members: communityDto.members.map(m => ChatMember(
         id: m.id,
         joined: true,
-        admin: isMemberAdmin(m.roles),
-        roles: m.roles
+        role: m.role
       )),
     canManageUsers: communityDto.canManageUsers,
     muted: communityDto.muted,

@@ -206,7 +206,7 @@ proc init*(self: Controller) =
     let args = ChatMemberUpdatedArgs(e)
     if (args.chatId != self.chatId):
       return
-    self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
+    self.delegate.onChatMemberUpdated(args.id, args.role, args.joined)
 
   self.events.on(SIGNAL_MAILSERVER_SYNCED) do(e: Args):
     let args = MailserverSyncedArgs(e)

@@ -8,7 +8,7 @@ type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
     Name
-    AmIChatAdmin
+    MemberRole
     Icon
     Color
     ColorId
@@ -76,7 +76,7 @@ QtObject:
     {
       ModelRole.Id.int:"itemId",
       ModelRole.Name.int:"name",
-      ModelRole.AmIChatAdmin.int:"amIChatAdmin",
+      ModelRole.MemberRole.int:"memberRole",
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
       ModelRole.ColorId.int:"colorId",
@@ -116,8 +116,8 @@ QtObject:
       result = newQVariant(item.id)
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.AmIChatAdmin:
-      result = newQVariant(item.amIChatAdmin)
+    of ModelRole.MemberRole:
+      result = newQVariant(item.memberRole.int)
     of ModelRole.Icon:
       result = newQVariant(item.icon)
     of ModelRole.Color:

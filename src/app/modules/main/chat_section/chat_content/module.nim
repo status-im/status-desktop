@@ -23,6 +23,7 @@ import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/gif/service as gif_service
 import ../../../../../app_service/service/message/service as message_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../../app_service/common/types
 
 export io_interface
 
@@ -324,17 +325,6 @@ method toggleReactionFromOthers*(self: Module, messageId: string, emojiId: int, 
 method getCurrentFleet*(self: Module): string =
   return self.controller.getCurrentFleet()
 
-method amIChatAdmin*(self: Module): bool =
-  if(not self.controller.belongsToCommunity()):
-    let chatDto = self.controller.getChatDetails()
-    for member in chatDto.members:
-      if (member.id == singletonInstance.userProfile.getPubKey() and member.admin):
-        return true
-    return false
-  else:
-    let communityDto = self.controller.getCommunityDetails()
-    return communityDto.admin
-
 method onContactDetailsUpdated*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
   for item in self.view.pinnedModel().modelContactUpdateIterator(contactId):
@@ -399,3 +389,14 @@ method onMadeInactive*(self: Module) =
   if self.controller.getChatDetails().unviewedMessagesCount == 0:
     self.messagesModule.removeNewMessagesMarker()
   self.view.setInactive()
+
+method amIChatAdmin*(self: Module): bool =
+  if not self.controller.belongsToCommunity():
+    let chatDto = self.controller.getChatDetails()
+    for member in chatDto.members:
+      if member.id == singletonInstance.userProfile.getPubKey():
+        return member.role == MemberRole.Owner or member.role == MemberRole.Admin
+    return false
+  else:
+    let communityDto = self.controller.getCommunityDetails()
+    return communityDto.memberRole == MemberRole.Owner or communityDto.memberRole == MemberRole.Admin
