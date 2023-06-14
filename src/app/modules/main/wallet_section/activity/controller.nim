@@ -1,5 +1,5 @@
 import NimQml, logging, std/json, sequtils, sugar, options
-import tables
+import tables, stint
 
 import model
 import entry
@@ -15,6 +15,7 @@ import backend/activity as backend_activity
 import backend/backend as backend
 import backend/transactions
 
+import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 
 proc toRef*[T](obj: T): ref T =
@@ -31,6 +32,7 @@ QtObject:
       recipientsModel: RecipientsModel
       transactionsModule: transactions_module.AccessInterface
       currentActivityFilter: backend_activity.ActivityFilter
+      currencyService: currency_service.Service
 
       events: EventEmitter
 
@@ -58,6 +60,20 @@ QtObject:
 
   QtProperty[QVariant] recipientsModel:
     read = getRecipientsModel
+
+  proc buildMultiTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: MultiTransactionDto): ExtraData =
+    # TODO: Use symbols from backendEntry when they're available
+    result.inSymbol = item.toAsset
+    result.inAmount = self.currencyService.parseCurrencyValue(result.inSymbol, metadata.amountIn)
+    result.outSymbol = item.fromAsset
+    result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
+
+  proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: ref Item): ExtraData =
+    # TODO: Use symbols from backendEntry when they're available
+    result.inSymbol = item[].getSymbol()
+    result.inAmount = self.currencyService.parseCurrencyValue(result.inSymbol, metadata.amountIn)
+    result.outSymbol = item[].getSymbol()
+    result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
 
   proc backendToPresentation(self: Controller, backendEntities: seq[backend_activity.ActivityEntry]): seq[entry.ActivityEntry] =
     var multiTransactionsIds: seq[int] = @[]
@@ -116,21 +132,27 @@ QtObject:
         of MultiTransaction:
           let id = multiTransactionsIds[mtIndex]
           if multiTransactions.hasKey(id):
-            result.add(entry.newMultiTransactionActivityEntry(multiTransactions[id], backendEntry))
+            let mt = multiTransactions[id]
+            let extraData = self.buildMultiTransactionExtraData(backendEntry, mt)
+            result.add(entry.newMultiTransactionActivityEntry(mt, backendEntry, extraData))
           else:
             error "failed to find multi transaction with id: ", id
           mtIndex += 1
         of SimpleTransaction:
           let identity = transactionIdentities[tIndex]
           if transactions.hasKey(identity):
-            result.add(entry.newTransactionActivityEntry(transactions[identity], backendEntry, self.addresses))
+            let tr = transactions[identity]
+            let extraData = self.buildTransactionExtraData(backendEntry, tr)
+            result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData))
           else:
             error "failed to find transaction with identity: ", identity
           tIndex += 1
         of PendingTransaction:
           let identity = pendingTransactionIdentities[ptIndex]
           if pendingTransactions.hasKey(identity):
-            result.add(entry.newTransactionActivityEntry(pendingTransactions[identity], backendEntry, self.addresses))
+            let tr = pendingTransactions[identity]
+            let extraData = self.buildTransactionExtraData(backendEntry, tr)
+            result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData))
           else:
             error "failed to find pending transaction with identity: ", identity
           ptIndex += 1
@@ -192,13 +214,14 @@ QtObject:
 
     self.currentActivityFilter.types = types
 
-  proc newController*(transactionsModule: transactions_module.AccessInterface, events: EventEmitter): Controller =
+  proc newController*(transactionsModule: transactions_module.AccessInterface, events: EventEmitter, currencyService: currency_service.Service): Controller =
     new(result, delete)
     result.model = newModel()
     result.recipientsModel = newRecipientsModel()
     result.transactionsModule = transactionsModule
     result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
     result.events = events
+    result.currencyService = currencyService
     result.setup()
 
     let controller = result

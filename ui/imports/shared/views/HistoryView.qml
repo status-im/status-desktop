@@ -275,7 +275,7 @@ ColumnLayout {
             width: ListView.view.width
             modelData: model.activityEntry
             currentCurrency: RootStore.currentCurrency
-            cryptoValue: isModelDataValid && modelData.value ? modelData.value.amount : 0.0
+            cryptoValue: isModelDataValid ? modelData.value : 0.0
             fiatValue: isModelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
             networkIcon: isModelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
             networkColor: isModelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""

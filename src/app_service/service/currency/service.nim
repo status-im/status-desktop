@@ -1,4 +1,4 @@
-import NimQml, chronicles, strutils, tables, json
+import NimQml, chronicles, strutils, tables, json, stint
 
 import ../../../backend/backend as backend
 
@@ -100,3 +100,22 @@ QtObject:
     if not self.currencyFormatCache.hasKey(symbol):
       return newCurrencyFormatDto(symbol)
     return self.currencyFormatCache[symbol]
+
+  proc toFloat(amountInt: UInt256): float64 =
+    return float64(amountInt.truncate(uint64))
+
+  proc u256ToFloat(decimals: int, amountInt: UInt256): float64 =
+    if decimals == 0:
+      return amountInt.toFloat()
+
+    # Convert to float at the end to avoid losing precision
+    let base = 10.to(UInt256)
+    let p = base.pow(decimals)
+    let i = amountInt.div(p)
+    let r = amountInt.mod(p)
+
+    return i.toFloat() + r.toFloat() / p.toFloat()
+
+  proc parseCurrencyValue*(self: Service, symbol: string, amountInt: UInt256): float64 =
+    let decimals = self.tokenService.getTokenDecimals(symbol)
+    return u256ToFloat(decimals, amountInt)

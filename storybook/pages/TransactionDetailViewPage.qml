@@ -130,7 +130,7 @@ SplitView {
         }
 
         readonly property var totalFees: QtObject {
-            property real amount: (transactionData.value.amount / 15) * Math.pow(10, 9)
+            property real amount: (transactionData.value / 15) * Math.pow(10, 9)
             property string symbol: "Gwei"
             property int displayDecimals: 8
             property bool stripTrailingZeroes: true
