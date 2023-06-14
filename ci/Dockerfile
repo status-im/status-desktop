@@ -41,7 +41,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
  && apt update -yq && apt full-upgrade -yq && apt install -yq --no-install-recommends --fix-missing  \
     gnupg2 openssh-client ca-certificates locales sudo jq curl wget fuse s3cmd file llvm tk-dev xz-utils \
-    git make build-essential pkg-config cmake extra-cmake-modules gcc-9 g++-9 \
+    git make build-essential pkg-config cmake extra-cmake-modules gcc-11 g++-11 \
     libgl1-mesa-dev libsm6 libice6 libfontconfig1 libdbus-1-3 libssl-dev libz-dev \
     zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev unixodbc-dev libpq-dev \
     libncurses5-dev libncursesw5-dev libpcsclite-dev  libpcre3-dev libnss3 \
@@ -52,8 +52,8 @@ RUN apt update -yq && apt install -yq software-properties-common \
     libxrandr2 libxcursor1 libxi6 libxcb-randr0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
     libxcb-render-util0 libxcb-shape0 libxcb-render0 libxcb-xinerama0 \
  &&  update-alternatives \
-    --install /usr/bin/gcc gcc /usr/bin/gcc-9 100 \
-    --slave /usr/bin/g++ g++ /usr/bin/g++-9 \
+    --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 \
+    --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
  && apt-get -qq clean
 
 # Install linuxdeployqt
