@@ -94,11 +94,58 @@ SplitView {
         }
     }
 
+    Timer {
+        id: feesCalculationTimer
+
+        interval: 2000
+
+        property var response
+
+        function requestMockedFees(contractKeysAndAmounts) {
+            const fees = []
+
+            function createAmount(amount, symbol, decimals) {
+                return {
+                    amount, symbol,
+                    displayDecimals: decimals, stripTrailingZeroes: false
+                }
+            }
+
+            contractKeysAndAmounts.forEach(entry => {
+                fees.push({
+                    ethFee: createAmount(0.0002120115, "ETH", 4),
+                    fiatFee: createAmount(123.15, "USD", 2),
+                    errorCode: 0,
+                    contractUniqueKey: entry.contractUniqueKey
+                })
+            })
+
+            response = {
+                fees, errorCode: feesErrorsButtonGroup.checkedButton.code,
+                totalEthFee: createAmount(0.0002120115 * fees.length, "ETH", 4),
+                totalFiatFee: createAmount(123.15 * fees.length, "USD", 2)
+            }
+
+            restart()
+        }
+
+        onTriggered: {
+            if (!loader.item)
+                return
+
+            const view = loader.item
+            view.airdropFees = response
+
+        }
+    }
+
     Pane {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
         Loader {
+            id: loader
+
             anchors.fill: parent
             active: globalUtilsReady && mainModuleReady
 
@@ -124,6 +171,14 @@ SplitView {
                             expression: !(model.index % 4)
                         },
                         ExpressionRole {
+                            name: "accountName"
+                            expression: "StatusAccount"
+                        },
+                        ExpressionRole {
+                            name: "contractUniqueKey"
+                            expression: "contractUniqueKey_" + model.index
+                        },
+                        ExpressionRole {
                             name: "chainName"
                             expression: model.index ? "Optimism" : "Arbitrum"
                         },
@@ -141,7 +196,6 @@ SplitView {
                         roleName: "category"
                         value: TokenCategories.Category.Community
                     }
-
 
                     Component.onCompleted: {
                         Qt.callLater(() => communityNewAirdropView.collectiblesModel = this)
@@ -196,7 +250,17 @@ SplitView {
                 membersModel: members
 
                 onAirdropClicked: {
-                    logs.logEvent("CommunityNewAirdropView::airdropClicked", ["airdropTokens", "addresses", "membersPubKeys"], arguments)
+                    logs.logEvent("CommunityNewAirdropView::airdropClicked",
+                                  ["airdropTokens", "addresses", "membersPubKeys"],
+                                  arguments)
+                }
+
+                onAirdropFeesRequested: {
+                    logs.logEvent("CommunityNewAirdropView::airdropFeesRequested",
+                                  ["contractKeysAndAmounts", "addresses"],
+                                  arguments)
+
+                    feesCalculationTimer.requestMockedFees(contractKeysAndAmounts)
                 }
             }
         }
@@ -211,12 +275,47 @@ SplitView {
         logsView.logText: logs.logText
 
         ColumnLayout {
-            MenuSeparator {}
-
             TextEdit {
                 readOnly: true
                 selectByMouse: true
                 text: "valid address: 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc4"
+            }
+
+            MenuSeparator {}
+
+            ButtonGroup {
+                id: feesErrorsButtonGroup
+
+                buttons: feesErrorsRow.children
+            }
+
+            RowLayout {
+                id: feesErrorsRow
+
+                Label {
+                    text: "Fees calculation errors:"
+                }
+
+                RadioButton {
+                    readonly property int code: Constants.ComputeFeeErrorCode.Success
+                    text: `Success (${code})`
+                    checked: true
+                }
+
+                RadioButton {
+                    readonly property int code: Constants.ComputeFeeErrorCode.Infura
+                    text: `Infura (${code})`
+                }
+
+                RadioButton {
+                    readonly property int code: Constants.ComputeFeeErrorCode.Balance
+                    text: `Balance (${code})`
+                }
+
+                RadioButton {
+                    readonly property int code: Constants.ComputeFeeErrorCode.Other
+                    text: `Other (${code})`
+                }
             }
         }
     }

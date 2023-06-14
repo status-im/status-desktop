@@ -4,6 +4,7 @@ CommunityMintTokensSettingsPanel 1.0 CommunityMintTokensSettingsPanel.qml
 CommunityPermissionsSettingsPanel 1.0 CommunityPermissionsSettingsPanel.qml
 CommunityProfilePopupInviteFriendsPanel 1.0 CommunityProfilePopupInviteFriendsPanel.qml
 CommunityProfilePopupInviteMessagePanel 1.0 CommunityProfilePopupInviteMessagePanel.qml
+FeesPanel 1.0 FeesPanel.qml
 HidePermissionPanel 1.0 HidePermissionPanel.qml
 JoinPermissionsOverlayPanel 1.0 JoinPermissionsOverlayPanel.qml
 MintTokensFooterPanel 1.0 MintTokensFooterPanel.qml
