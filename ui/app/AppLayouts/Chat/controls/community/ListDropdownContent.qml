@@ -188,7 +188,7 @@ StatusListView {
                 anchors.leftMargin: Style.current.halfPadding
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                width: parent.width
+                width: parent.width - anchors.leftMargin
                 text: sectionDelegateRoot.section
                 color: Theme.palette.baseColor1
                 font.pixelSize: 12

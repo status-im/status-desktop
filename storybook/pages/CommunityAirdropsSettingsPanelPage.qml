@@ -119,6 +119,49 @@ SplitView {
                     }
                 }
 
+                AssetsModel {
+                    id: assetsModel
+                }
+
+                SortFilterProxyModel {
+                    id: assetsModelWithSupply
+
+                    sourceModel: assetsModel
+
+                    proxyRoles: [
+                        ExpressionRole {
+                            name: "supply"
+                            expression: ((model.index + 1) * 258).toString()
+                        },
+                        ExpressionRole {
+                            name: "infiniteSupply"
+                            expression: !(model.index % 4)
+                        },
+                        ExpressionRole {
+                            name: "chainName"
+                            expression: model.index ? "Ethereum Mainnet" : "Goerli"
+                        },
+                        ExpressionRole {
+
+                            readonly property string icon1: "network/Network=Ethereum"
+                            readonly property string icon2: "network/Network=Testnet"
+
+                            name: "chainIcon"
+                            expression: model.index ? icon1 : icon2
+                        }
+                    ]
+
+                    filters: ValueFilter {
+                        roleName: "category"
+                        value: TokenCategories.Category.Community
+                    }
+
+
+                    Component.onCompleted: {
+                        Qt.callLater(() => communityAirdropsSettingsPanel.assetsModel = this)
+                    }
+                }
+
                 membersModel: UsersModel {}
 
                 onAirdropClicked: logs.logEvent("CommunityAirdropsSettingsPanel::onAirdropClicked")

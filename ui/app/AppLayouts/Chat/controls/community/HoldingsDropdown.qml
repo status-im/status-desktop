@@ -17,14 +17,15 @@ StatusDropdown {
     property var assetsModel
     property var collectiblesModel
     property bool isENSTab: true
-    property bool isCollectiblesOnly: false
     property string noDataText: {
         if(d.currentHoldingType  ===  HoldingTypes.Type.Asset)
-            return qsTr("No assets found")
+            return noDataTextForAssets
         if(d.currentHoldingType === HoldingTypes.Type.Collectible)
-            return qsTr("No collectibles found")
+            return noDataTextForCollectibles
         return qsTr("No data found")
     }
+    property string noDataTextForAssets: qsTr("No assets found")
+    property string noDataTextForCollectibles: qsTr("No collectibles found")
 
     property var usedTokens: []
     property var usedEnsNames: []
@@ -46,7 +47,7 @@ StatusDropdown {
     signal updateEns(string domain)
 
     signal removeClicked
-    signal navigateToMintTokenSettings
+    signal navigateToMintTokenSettings(bool isAssetType)
 
     enum FlowType {
         Selected, List_Deep1, List_Deep1_All, List_Deep2
@@ -64,11 +65,11 @@ StatusDropdown {
     }
 
     function setActiveTab(holdingType) {
-        d.currentHoldingType = root.isCollectiblesOnly ? HoldingTypes.Type.Collectible : holdingType
+        d.currentHoldingType = holdingType
     }
 
     function reset() {
-        d.currentHoldingType = root.isCollectiblesOnly ? HoldingTypes.Type.Collectible : HoldingTypes.Type.Asset
+        d.currentHoldingType = HoldingTypes.Type.Asset
         d.initialHoldingMode = HoldingTypes.Mode.Add
 
         root.assetKey = ""
@@ -93,7 +94,7 @@ StatusDropdown {
         readonly property bool ensReady: d.ensDomainNameValid
 
         property int extendedDropdownType: ExtendedDropdownContent.Type.Assets
-        property int currentHoldingType: root.isCollectiblesOnly ? HoldingTypes.Type.Collectible : HoldingTypes.Type.Asset
+        property int currentHoldingType: HoldingTypes.Type.Asset
 
         property bool updateSelected: false
 
@@ -176,7 +177,7 @@ StatusDropdown {
         StatusSwitchTabBar {
             id: tabBar
 
-            visible: !root.isCollectiblesOnly && !backButton.visible
+            visible: !backButton.visible
             Layout.preferredHeight: d.tabBarHeigh
             Layout.fillWidth: true
             currentIndex: d.holdingTypes.indexOf(d.currentHoldingType)
@@ -200,7 +201,7 @@ StatusDropdown {
 
             onCurrentIndexChanged: {
                 if(currentIndex >= 0) {
-                    d.currentHoldingType = root.isCollectiblesOnly ? HoldingTypes.Type.Collectible : d.holdingTypes[currentIndex]
+                    d.currentHoldingType = d.holdingTypes[currentIndex]
                     d.setInitialFlow()
                 }
             }
@@ -256,7 +257,6 @@ StatusDropdown {
     }
 
     onClosed: root.reset()
-    onIsCollectiblesOnlyChanged: root.reset()
     onIsENSTabChanged: root.reset()
 
     Component {
@@ -336,7 +336,7 @@ StatusDropdown {
                                         d.currentSubItems)
             }
 
-            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
+            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings(type === ExtendedDropdownContent.Type.Assets)
 
             Connections {
                 target: backButton
@@ -369,10 +369,36 @@ StatusDropdown {
             tokenShortName: CommunityPermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
             tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(root.assetsModel, root.assetKey)
             amountText: d.assetAmountText
-
             tokenCategoryText: qsTr("Asset")
             addOrUpdateButtonEnabled: d.assetsReady
             mode: d.effectiveHoldingMode
+
+            ListModel {
+                Component.onCompleted: {
+                    const asset = CommunityPermissionsHelpers.getTokenByKey(
+                                    root.assetsModel,
+                                    root.assetKey)
+
+                    if (!asset)
+                        return
+
+                    const chainName = asset.chainName ?? ""
+                    const chainIcon = asset.chainIcon
+                                    ? Style.svg(asset.chainIcon) : ""
+
+                    if (!chainName)
+                        return
+
+                    append({
+                        name:chainName,
+                        icon: chainIcon,
+                        amount: asset.supply,
+                        infiniteAmount: asset.infiniteSupply
+                    })
+
+                    assetPanel.networksModel = this
+                }
+            }
 
             onEffectiveAmountChanged: root.assetAmount = effectiveAmount
             onAmountTextChanged: d.assetAmountText = amountText
