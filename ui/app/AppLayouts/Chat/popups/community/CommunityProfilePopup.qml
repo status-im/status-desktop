@@ -64,8 +64,9 @@ StatusModal {
                     store: root.store
                 })
                 onLeaveButtonClicked: {
-                    communitySectionModule.leaveCommunity();
                     root.close();
+                    root.community.spectated ? communitySectionModule.leaveCommunity()
+                                             : Global.leaveCommunityRequested(root.community.name, root.community.id, root.community.outroMessage)
                 }
                 onCopyToClipboard: {
                     root.store.copyToClipboard(link);
@@ -77,17 +78,6 @@ StatusModal {
             id: transferOwnershiproot
             TransferOwnershipPopup {
                 destroyOnClose: true
-            }
-        }
-
-        Component {
-            id: inviteFriendsView
-            CommunityProfilePopupInviteFriendsPanel {
-                width: stack.width
-                headerTitle: qsTr("Invite friends")
-                community: root.community
-                contactsStore: root.contactsStore
-                rootStore: root.store
             }
         }
     }
@@ -102,18 +92,4 @@ StatusModal {
             }
         }
     ]
-
-    rightButtons: [
-        StatusButton {
-            text: qsTr("Invite")
-            visible: root.contentItem.depth > 2
-            height: !visible ? 0 : implicitHeight
-            enabled: root.contentItem.currentItem !== undefined && root.contentItem.currentItem.pubKeys.length > 0
-            onClicked: {
-                root.contentItem.currentItem.sendInvites(root.contentItem.currentItem.pubKeys, "") // NOTE: empty message
-                root.contentItem.pop()
-            }
-        }
-    ]
 }
-

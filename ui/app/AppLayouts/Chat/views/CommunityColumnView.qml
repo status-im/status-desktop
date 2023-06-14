@@ -112,6 +112,7 @@ Item {
                     root.store.cancelPendingRequest(communityData.id)
                     joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
                 }
+                onClosed: destroy()
             }
         }
     }

@@ -1,5 +1,13 @@
 import QtQuick 2.15
-import QtQuick.Dialogs 1.0
+import QtQuick.Layouts 1.15
+import QtQuick.Dialogs 1.3
+import QtQml.Models 2.15
+import QtQml 2.15
+
+import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 
 import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile.popups 1.0
@@ -44,6 +52,7 @@ QtObject {
         Global.closePopupRequested.connect(closePopup)
         Global.openDeleteMessagePopup.connect(openDeleteMessagePopup)
         Global.openDownloadImageDialog.connect(openDownloadImageDialog)
+        Global.leaveCommunityRequested.connect(openLeaveCommunityPopup)
     }
 
     property var currentPopup
@@ -228,6 +237,10 @@ QtObject {
         popup.open()
     }
 
+    function openLeaveCommunityPopup(community, communityId, outroMessage) {
+        openPopup(leaveCommunityPopupComponent, {community, communityId, outroMessage})
+    }
+
     readonly property list<Component> _components: [
         Component {
             id: removeContactConfirmationDialog
@@ -280,7 +293,6 @@ QtObject {
         Component {
             id: sendIDRequestPopupComponent
             SendContactRequestModal {
-                anchors.centerIn: parent
                 rootStore: root.rootStore
                 onAccepted: root.rootStore.profileSectionStore.contactsStore.sendVerificationRequest(userPublicKey, message)
                 onClosed: destroy()
@@ -291,7 +303,6 @@ QtObject {
             id: inviteFriendsToCommunityPopup
 
             InviteFriendsToCommunityPopup {
-                anchors.centerIn: parent
                 rootStore: root.rootStore
                 contactsStore: root.rootStore.contactStore
                 onClosed: destroy()
@@ -302,7 +313,6 @@ QtObject {
             id: sendContactRequestPopupComponent
 
             SendContactRequestModal {
-                anchors.centerIn: parent
                 rootStore: root.rootStore
                 onAccepted: root.rootStore.profileSectionStore.contactsStore.sendContactRequest(userPublicKey, message)
                 onClosed: destroy()
@@ -312,7 +322,6 @@ QtObject {
         Component {
             id: backupSeedModalComponent
             BackupSeedModal {
-                anchors.centerIn: parent
                 privacyStore: rootStore.profileSectionStore.privacyStore
                 onClosed: destroy()
             }
@@ -321,7 +330,6 @@ QtObject {
         Component {
             id: displayNamePopupComponent
             DisplayNamePopup {
-                anchors.centerIn: parent
                 profileStore: rootStore.profileSectionStore.profileStore
                 onClosed: destroy()
             }
@@ -395,7 +403,6 @@ QtObject {
             id: communityProfilePopup
 
             CommunityProfilePopup {
-                anchors.centerIn: parent
                 contactsStore: rootStore.contactStore
                 hasAddedContacts: rootStore.hasAddedContacts
 
@@ -459,7 +466,6 @@ QtObject {
         Component {
             id: createCommunitiesPopupComponent
             CreateCommunityPopup {
-                anchors.centerIn: parent
                 store: root.communitiesStore
                 onClosed: {
                     destroy()
@@ -497,6 +503,59 @@ QtObject {
                 onRejected: {
                     destroy()
                 }
+            }
+        },
+
+        Component {
+            id: leaveCommunityPopupComponent
+            StatusModal {
+                id: leavePopup
+
+                property string community
+                property string communityId
+                property string outroMessage
+
+                headerSettings.title: qsTr("Are you sure want to leave '%1'?").arg(community)
+                padding: 16
+                width: 640
+                contentItem: ColumnLayout {
+                    spacing: 16
+                    StatusBaseText {
+                        id: outroMessage
+                        Layout.fillWidth: true
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        text: leavePopup.outroMessage
+                        visible: !!text
+                    }
+                    StatusMenuSeparator {
+                        Layout.fillWidth: true
+                        visible: outroMessage.visible
+                    }
+                    StatusBaseText {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        font.pixelSize: 13
+                        text: qsTr("You will need to request to join if you want to become a member again in the future. If you joined the Community via public key ensure you have a copy of it before you go.")
+                    }
+                }
+
+                rightButtons: [
+                    StatusFlatButton {
+                        text: qsTr("Cancel")
+                        onClicked: leavePopup.close()
+                    },
+                    StatusButton {
+                        objectName: "CommunitiesListPanel_leaveCommunityButtonInPopup"
+                        type: StatusBaseButton.Type.Danger
+                        text: qsTr("Leave %1").arg(leavePopup.community)
+                        onClicked: {
+                            root.rootStore.profileSectionStore.communitiesProfileModule.leaveCommunity(leavePopup.communityId)
+                            leavePopup.close()
+                        }
+                    }
+                ]
+
+                onClosed: destroy()
             }
         }
     ]
