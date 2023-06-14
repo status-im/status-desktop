@@ -259,7 +259,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     alias = contactDetails.dto.alias,
     icon = contactDetails.icon,
     colorId = contactDetails.colorId,
-    colorHash = contactDetails.colorHash,
+    colorHash = if not contactDetails.dto.ensVerified: contactDetails.colorHash else: "",
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType),
     isContact = contactDetails.dto.isContact(),
     isVerified = contactDetails.dto.isContactVerified(),
@@ -572,7 +572,8 @@ method addNewChat*(
     chatImage = contactDetails.icon
     blocked = contactDetails.dto.isBlocked()
     isUsersListAvailable = false
-    colorHash = self.controller.getColorHash(chatDto.id)
+    if not contactDetails.dto.ensVerified:
+      colorHash = self.controller.getColorHash(chatDto.id)
     colorId = self.controller.getColorId(chatDto.id)
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(chatDto.id).statusType)
 

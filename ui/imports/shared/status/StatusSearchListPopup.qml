@@ -54,8 +54,6 @@ Popup {
             id: searchBox
 
             Layout.fillWidth: true
-            leftPadding: 0
-            rightPadding: 0
             placeholderText: root.searchBoxPlaceholder
             input.asset.name: "search"
 
@@ -158,9 +156,5 @@ Popup {
         listView.selectByHover = false
         searchBox.text = ""
         searchBox.input.edit.forceActiveFocus()
-    }
-
-    onClosed: {
-        root.destroy();
     }
 }

@@ -121,6 +121,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "memberRole": self.memberRole,
     "icon": self.icon,
     "color": self.color,
+    "colorId": self.colorId,
     "emoji": self.emoji,
     "description": self.description,
     "type": self.`type`,
