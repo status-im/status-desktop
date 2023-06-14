@@ -30,9 +30,7 @@ SettingsContentBase {
     titleRowComponentLoader.sourceComponent: StatusButton {
         text: qsTr("Import community")
         size: StatusBaseButton.Size.Small
-        onClicked: {
-            Global.openPopup(importCommunitiesPopupComponent)
-        }
+        onClicked: Global.importCommunityPopupRequested()
     }
 
     Item {
@@ -117,8 +115,12 @@ SettingsContentBase {
                     ]
                 }
 
-                onLeaveCommunityClicked: {
+                onCloseCommunityClicked: {
                     root.profileSectionStore.communitiesProfileModule.leaveCommunity(communityId)
+                }
+
+                onLeaveCommunityClicked: {
+                    Global.leaveCommunityRequested(community, communityId, outroMessage)
                 }
 
                 onSetCommunityMutedClicked: {
@@ -135,16 +137,6 @@ SettingsContentBase {
                                                              null)
                 }
             }
-
-        } // Column
-    } // Item
-
-    property Component importCommunitiesPopupComponent: ImportCommunityPopup {
-        anchors.centerIn: parent
-        store: root.profileSectionStore
-        onClosed: {
-            destroy()
         }
     }
-
-} // ScrollView
+}

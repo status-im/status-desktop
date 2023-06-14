@@ -15,7 +15,8 @@ StatusListView {
     property bool hasAddedContacts: false
 
     signal inviteFriends(var communityData)
-    signal leaveCommunityClicked(string communityId)
+    signal closeCommunityClicked(string communityId)
+    signal leaveCommunityClicked(string community, string communityId, string outroMessage)
     signal setCommunityMutedClicked(string communityId, bool muted)
     signal setActiveCommunityClicked(string communityId)
 
@@ -43,17 +44,14 @@ StatusListView {
 
         components: [
             StatusFlatButton {
+                anchors.verticalCenter: parent.verticalCenter
                 objectName: "CommunitiesListPanel_leaveCommunityPopupButton"
                 size: StatusBaseButton.Size.Small
                 type: StatusBaseButton.Type.Danger
                 borderColor: "transparent"
-                text: qsTr("Leave Community")
-                onClicked: {
-                    Global.openPopup(leaveCommunityPopup, {
-                                         community: model.name,
-                                         communityId: model.id
-                                     })
-                }
+                enabled: !model.amISectionAdmin
+                text: model.spectated ? qsTr("Close Community") : qsTr("Leave Community")
+                onClicked: model.spectated ? root.closeCommunityClicked(model.id) : root.leaveCommunityClicked(model.name, model.id, model.outroMessage)
             },
             StatusFlatButton {
                 anchors.verticalCenter: parent.verticalCenter
@@ -68,46 +66,5 @@ StatusListView {
                 onClicked: root.inviteFriends(model)
             }
         ]
-    } // StatusListItem
-
-    property Component leaveCommunityPopup: StatusModal {
-        id: leavePopup
-
-        property string community: ""
-        property string communityId: ""
-
-        anchors.centerIn: parent
-        headerSettings.title: qsTr("Leave %1").arg(community)
-        contentItem: Item {
-            implicitWidth: 368
-            implicitHeight: msg.implicitHeight + 32
-            StatusBaseText {
-                id: msg
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 16
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                text: qsTr("Are you sure you want to leave? Once you leave, you will have to request to rejoin if you change your mind.")
-                color: Theme.palette.directColor1
-                font.pixelSize: 15
-            }
-        }
-
-        rightButtons: [
-            StatusButton {
-                text: qsTr("Cancel")
-                onClicked: leavePopup.close()
-            },
-            StatusButton {
-                objectName: "CommunitiesListPanel_leaveCommunityButtonInPopup"
-                type: StatusBaseButton.Type.Danger
-                text: qsTr("Leave community")
-                onClicked: {
-                    root.leaveCommunityClicked(leavePopup.communityId)
-                    leavePopup.close()
-                }
-            }
-        ]
     }
-} // ListView
+}

@@ -354,6 +354,8 @@ Item {
                             onTriggered: popups.openCommunityProfilePopup(appMain.rootStore, model, communityContextMenu.chatCommunitySectionModule)
                         }
 
+                        StatusMenuSeparator {}
+
                         StatusAction {
                             text: model.muted ? qsTr("Unmute Community") : qsTr("Mute Community")
                             icon.name: model.muted ? "notification-muted" : "notification"
@@ -362,13 +364,20 @@ Item {
                             }
                         }
 
-                        StatusMenuSeparator {}
+                        StatusMenuSeparator { visible: leaveCommunityMenuItem.enabled }
 
                         StatusAction {
-                            text: qsTr("Leave Community")
-                            icon.name: "arrow-left"
+                            id: leaveCommunityMenuItem
+                            enabled: !model.amISectionAdmin
+                            text: {
+                                if (model.spectated)
+                                    return qsTr("Close Community")
+                                return qsTr("Leave Community")
+                            }
+                            icon.name: model.spectated ? "close-circle" : "arrow-left"
                             type: StatusAction.Type.Danger
-                            onTriggered: communityContextMenu.chatCommunitySectionModule.leaveCommunity()
+                            onTriggered: model.spectated ? communityContextMenu.chatCommunitySectionModule.leaveCommunity()
+                                                         : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
                         }
                     }
                 }

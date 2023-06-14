@@ -42,6 +42,7 @@ StackLayout {
             id: joinCommunityView
             readonly property var communityData: sectionItemModel
             name: communityData.name
+            introMessage: communityData.introMessage
             communityDesc: communityData.description
             color: communityData.color
             image: communityData.image
@@ -62,10 +63,16 @@ StackLayout {
             loginType: root.rootStore.loginType
             onNotificationButtonClicked: Global.openActivityCenterPopup()
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
-            onRevealAddressClicked: {
-                communityIntroDialog.open()
-            }
+            onRevealAddressClicked: openJoinCommunityDialog()
             onInvitationPendingClicked: {
+                root.rootStore.cancelPendingRequest(communityData.id)
+                joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
+            }
+            onJoined: {
+                root.rootStore.requestToJoinCommunityWithAuthentication(communityData.id, root.rootStore.userProfileInst.name)
+            }
+
+            onCancelMembershipRequest: {
                 root.rootStore.cancelPendingRequest(communityData.id)
                 joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
             }
@@ -78,28 +85,7 @@ StackLayout {
                     }
                 }
             }
-
-            CommunityIntroDialog {
-                id: communityIntroDialog
-
-                isInvitationPending: joinCommunityView.isInvitationPending
-                name: communityData.name
-                introMessage: communityData.introMessage
-                imageSrc: communityData.image
-                accessType: communityData.access
-
-                onJoined: {
-                    root.rootStore.requestToJoinCommunityWithAuthentication(communityData.id, root.rootStore.userProfileInst.name)
-                }
-
-                onCancelMembershipRequest: {
-                    root.rootStore.cancelPendingRequest(communityData.id)
-                    joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
-                }
-            }
         }
-
-
     }
 
     Component {

@@ -73,8 +73,9 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        title: qsTr("Leave community")
-        asset.name: "arrow-left"
+        visible: !root.community.amISectionAdmin
+        title: root.community.spectated ? qsTr("Close Community") : qsTr("Leave Community")
+        asset.name: root.community.spectated ? "close-circle" : "arrow-left"
         type: StatusListItem.Type.Danger
         onClicked: root.leaveButtonClicked()
     }

@@ -172,9 +172,9 @@ QtObject {
 
 
     readonly property Connections connections: Connections {
-      target: communitiesModuleInst
-      function onImportingCommunityStateChanged(communityId, state, errorMsg) {
-          root.importingCommunityStateChanged(communityId, state, errorMsg)
-      }
+        target: communitiesModuleInst
+        function onImportingCommunityStateChanged(communityId, state, errorMsg) {
+            root.importingCommunityStateChanged(communityId, state, errorMsg)
+        }
     }
 }
