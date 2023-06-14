@@ -439,11 +439,18 @@ Item {
         ListDropdownContent {
             availableData: d.availableData
             noDataText: root.noDataText
+            areHeaderButtonsVisible: root.state === d.depth1_ListState
+                                     && !root.showAllTokensMode
             headerModel: ListModel {
-                ListElement { key: "MINT"; icon: "add"; iconSize: 16; description: qsTr("Mint asset"); rotation: 0; spacing: 8 }
-                ListElement { key: "IMPORT"; icon: "invite-users"; iconSize: 16; description: qsTr("Import existing asset"); rotation: 180; spacing: 8 }
+               ListElement {
+                   key: "MINT"
+                   icon: "add"
+                   iconSize: 16
+                   description: qsTr("Mint asset")
+                   rotation: 0
+                   spacing: 8
+               }
             }
-            areHeaderButtonsVisible: false  // TEMPORARILY hidden. These 2 header options will be implemented after MVP.
             checkedKeys: root.checkedKeys
             searchMode: d.searchMode
 
@@ -454,12 +461,9 @@ Item {
             isFooterButtonVisible: !root.showAllTokensMode && !d.searchMode
                                    && filteredModel.item && d.currentModel.count > filteredModel.item.count
 
+            onHeaderItemClicked: root.navigateToMintTokenSettings()
             onFooterButtonClicked: root.footerButtonClicked()
 
-            onHeaderItemClicked: {
-                if(key === "MINT") console.log("TODO: Mint asset")
-                else if(key === "IMPORT") console.log("TODO: Import existing asset")
-            }
             onItemClicked: root.itemClicked(key, shortName, iconSource)
 
             onImplicitHeightChanged: root.layoutChanged()

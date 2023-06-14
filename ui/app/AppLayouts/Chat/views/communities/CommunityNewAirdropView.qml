@@ -56,7 +56,7 @@ StatusScrollView {
 
     signal airdropFeesRequested(var contractKeysAndAmounts, var addresses)
 
-    signal navigateToMintTokenSettings
+    signal navigateToMintTokenSettings(bool isAssetType)
 
     function selectToken(key, amount, type) {
         var tokenModel = null
@@ -94,7 +94,7 @@ StatusScrollView {
             const modelItem = CommunityPermissionsHelpers.getTokenByKey(tokenModel, key)
 
             return {
-                key, amount,
+                key, amount, type,
                 tokenText: amount + " " + modelItem.name,
                 tokenImage: modelItem.iconSource,
                 networkText: modelItem.chainName,
@@ -174,8 +174,8 @@ StatusScrollView {
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
                 isENSTab: false
-                isCollectiblesOnly: true
-                noDataText: qsTr("First you need to mint or import a collectible before you can perform an airdrop")
+                noDataTextForAssets: qsTr("First you need to mint or import an asset before you can perform an airdrop")
+                noDataTextForCollectibles: qsTr("First you need to mint or import a collectible before you can perform an airdrop")
 
                 function getHoldingIndex(key) {
                     return ModelUtils.indexOf(root.selectedHoldingsModel, "key", key)
@@ -203,6 +203,14 @@ StatusScrollView {
                                 root.selectedHoldingsModel, ["key", "amount"])
                 }
 
+                onAddAsset: {
+                    const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC20)
+                    entry.valid = true
+
+                    selectedHoldingsModel.append(entry)
+                    dropdown.close()
+                }
+
                 onAddCollectible: {
                     const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC721)
                     entry.valid = true
@@ -211,12 +219,19 @@ StatusScrollView {
                     dropdown.close()
                 }
 
+                onUpdateAsset: {
+                    const itemIndex = prepareUpdateIndex(key)
+
+                    const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC20)
+
+                    root.selectedHoldingsModel.set(itemIndex, entry)
+                    dropdown.close()
+                }
+
                 onUpdateCollectible: {
                     const itemIndex = prepareUpdateIndex(key)
 
                     const entry = d.prepareEntry(key, amount, Constants.TokenType.ERC721)
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
-                                        root.collectiblesModel, key)
 
                     root.selectedHoldingsModel.set(itemIndex, entry)
                     dropdown.close()
@@ -228,7 +243,7 @@ StatusScrollView {
                 }
 
                 onNavigateToMintTokenSettings: {
-                    root.navigateToMintTokenSettings()
+                    root.navigateToMintTokenSettings(isAssetType)
                     close()
                 }
             }
@@ -251,9 +266,22 @@ StatusScrollView {
                 dropdown.y = d.dropdownVerticalOffset
 
                 const modelItem = selectedHoldingsModel.get(index)
-                dropdown.collectibleKey = modelItem.key
-                dropdown.collectibleAmount = modelItem.amount
-                dropdown.setActiveTab(HoldingTypes.Type.Collectible)
+
+                switch(modelItem.type) {
+                    case HoldingTypes.Type.Asset:
+                        dropdown.assetKey = modelItem.key
+                        dropdown.assetAmount = modelItem.amount
+                        dropdown.setActiveTab(HoldingTypes.Type.Asset)
+                        break
+                    case HoldingTypes.Type.Collectible:
+                        dropdown.collectibleKey = modelItem.key
+                        dropdown.collectibleAmount = modelItem.amount
+                        dropdown.setActiveTab(HoldingTypes.Type.Collectible)
+                        break
+                    default:
+                        console.warn("Unsupported token type.")
+                }
+
                 dropdown.openUpdateFlow()
 
                 editedIndex = index

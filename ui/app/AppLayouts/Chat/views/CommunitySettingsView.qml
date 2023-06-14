@@ -396,26 +396,37 @@ StatusSectionLayout {
                                                    url)
                     }
                 }
+
+                Connections {
+                    target: airdropPanel
+
+                    function onNavigateToMintTokenSettings(isAssetType) {
+                        // Here it is forced a navigation to the new airdrop form, like if it was clicked the header button
+                        mintPanel.resetNavigation(isAssetType)
+                        mintPanel.primaryHeaderButtonClicked()
+                    }
+                }
             }
 
             CommunityAirdropsSettingsPanel {
                 id: airdropPanel
 
                 readonly property CommunityTokensStore communityTokensStore:
-                    rootStore.communityTokensStore
-
-                assetsModel: ListModel {}
+                    rootStore.communityTokensStore                
 
                 readonly property var communityTokens: root.community.communityTokens
 
                 Loader {
-                    id: modelLoader
+                    id: assetsModelLoader
                     active: airdropPanel.communityTokens
 
                     sourceComponent: SortFilterProxyModel {
 
                         sourceModel: airdropPanel.communityTokens
-
+                        filters: ValueFilter {
+                            roleName: "tokenType"
+                            value: Constants.TokenType.ERC20
+                        }
                         proxyRoles: [
                             ExpressionRole {
                                 name: "category"
@@ -436,8 +447,39 @@ StatusSectionLayout {
                     }
                 }
 
-                collectiblesModel: modelLoader.item
+                Loader {
+                    id: collectiblesModelLoader
+                    active: airdropPanel.communityTokens
 
+                    sourceComponent: SortFilterProxyModel {
+
+                        sourceModel: airdropPanel.communityTokens
+                        filters: ValueFilter {
+                            roleName: "tokenType"
+                            value: Constants.TokenType.ERC721
+                        }
+                        proxyRoles: [
+                            ExpressionRole {
+                                name: "category"
+
+                                // Singleton cannot be used directly in the epression
+                                readonly property int category: TokenCategories.Category.Own
+                                expression: category
+                            },
+                            ExpressionRole {
+                                name: "iconSource"
+                                expression: model.image
+                            },
+                            ExpressionRole {
+                                name: "key"
+                                expression: model.symbol
+                            }
+                        ]
+                    }
+                }
+
+                assetsModel: assetsModelLoader.item
+                collectiblesModel: collectiblesModelLoader.item
                 membersModel: {
                     const chatContentModule = root.rootStore.currentChatContentModule()
                     if (!chatContentModule || !chatContentModule.usersModule) {

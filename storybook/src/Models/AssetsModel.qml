@@ -16,7 +16,7 @@ ListModel {
             iconSource: ModelsData.assets.zrx,
             name: "Ox",
             shortName: "ZRX",
-            category: TokenCategories.Category.Own
+            category: TokenCategories.Category.Community
         },
         {
             key: "1inch",

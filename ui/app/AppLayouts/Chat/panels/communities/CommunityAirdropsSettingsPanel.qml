@@ -27,9 +27,10 @@ SettingsPageLayout {
     property int viewWidth: 560 // by design
 
     signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys)
+
     signal airdropFeesRequested(var contractKeysAndAmounts, var addresses)
 
-    signal navigateToMintTokenSettings
+    signal navigateToMintTokenSettings(bool isAssetType)
 
     function navigateBack() {
         stackManager.pop(StackView.Immediate)
@@ -123,7 +124,7 @@ SettingsPageLayout {
                 root.airdropClicked(airdropTokens, addresses, membersPubKeys)
                 stackManager.clear(d.welcomeViewState, StackView.Immediate)
             }
-            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
+            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings(isAssetType)
 
             Component.onCompleted: {
                 d.selectToken.connect(view.selectToken)
