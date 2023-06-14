@@ -44,7 +44,9 @@ QtObject {
         // otherwise, it is a new deployment.
         // TODO: Backend needs to modify the call to expect an image JSON file with cropped artwork information:
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(assetItem.artworkSource, assetItem.artworkCropRect)
-        console.log("TODO: Deploy Asset backend!")
+        communityTokensModuleInst.deployAssets(communityId, assetItem.accountAddress, assetItem.name,
+                                               assetItem.symbol, assetItem.description, assetItem.supply,
+                                               assetItem.infiniteSupply, assetItem.decimals, assetItem.chainId, assetItem.artworkSource/*instead: jsonArtworkFile*/)
     }
 
     function deleteToken(communityId, contractUniqueKey) {
@@ -87,8 +89,8 @@ QtObject {
         }
     }
 
-    function computeDeployFee(chainId, accountAddress) {
-        communityTokensModuleInst.computeDeployFee(chainId, accountAddress)
+    function computeDeployFee(chainId, accountAddress, tokenType) {
+        communityTokensModuleInst.computeDeployFee(chainId, accountAddress, tokenType)
     }
 
     function computeSelfDestructFee(selfDestructTokensList, tokenKey) {

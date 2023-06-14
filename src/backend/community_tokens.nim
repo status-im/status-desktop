@@ -8,7 +8,11 @@ import ../app_service/service/community_tokens/dto/community_token
 
 proc deployCollectibles*(chainId: int, deploymentParams: JsonNode, txData: JsonNode, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, deploymentParams, txData, utils.hashPassword(password)]
-  return core.callPrivateRPC("collectibles_deploy", payload)
+  return core.callPrivateRPC("collectibles_deployCollectibles", payload)
+
+proc deployAssets*(chainId: int, deploymentParams: JsonNode, txData: JsonNode, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, deploymentParams, txData, utils.hashPassword(password)]
+  return core.callPrivateRPC("collectibles_deployAssets", payload)
 
 proc getCommunityTokens*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [communityId]
@@ -66,6 +70,6 @@ proc deployCollectiblesEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].
   let payload = %*[]
   return core.callPrivateRPC("collectibles_deployCollectiblesEstimate", payload)
 
-proc addTokenOwners*(chainId: int, contractAddress: string, walletAddresses: seq[string], amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, contractAddress, walletAddresses, amount]
-  return core.callPrivateRPC("collectibles_addTokenOwners", payload)
+proc deployAssetsEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[]
+  return core.callPrivateRPC("collectibles_deployAssetsEstimate", payload)

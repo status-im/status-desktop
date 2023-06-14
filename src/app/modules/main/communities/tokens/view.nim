@@ -2,6 +2,8 @@ import NimQml, json, strutils, sequtils
 
 import ./io_interface as community_tokens_module_interface
 import ../../../shared_models/currency_amount
+import ../../../../../app_service/common/conversion
+import ../../../../../app_service/service/community/dto/community
 
 QtObject:
   type
@@ -20,7 +22,10 @@ QtObject:
     result.communityTokensModule = communityTokensModule
 
   proc deployCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, image: string) {.slot.} =
-    self.communityTokensModule.deployCollectible(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, transferable, selfDestruct, chainId, image)
+    self.communityTokensModule.deployCollectibles(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, transferable, selfDestruct, chainId, image)
+
+  proc deployAssets*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, decimals: int, chainId: int, image: string) {.slot.} =
+    self.communityTokensModule.deployAssets(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, decimals, chainId, image)
 
   proc airdropCollectibles*(self: View, communityId: string, collectiblesJsonString: string, walletsJsonString: string) {.slot.} =
     self.communityTokensModule.airdropCollectibles(communityId, collectiblesJsonString, walletsJsonString)
@@ -39,8 +44,8 @@ QtObject:
   proc airdropFeesUpdated*(self: View, json: string) {.signal.}
   proc burnFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
 
-  proc computeDeployFee*(self: View, chainId: int, accountAddress: string) {.slot.} =
-    self.communityTokensModule.computeDeployFee(chainId, accountAddress)
+  proc computeDeployFee*(self: View, chainId: int, accountAddress: string, tokenType: int) {.slot.} =
+    self.communityTokensModule.computeDeployFee(chainId, accountAddress, intToEnum(tokenType, TokenType.Unknown))
 
   proc computeSelfDestructFee*(self: View, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.computeSelfDestructFee(collectiblesToBurnJsonString, contractUniqueKey)

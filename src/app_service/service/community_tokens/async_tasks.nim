@@ -6,6 +6,7 @@ import ../../../backend/collectibles
 import ../../../app/core/tasks/common
 import ../../../app/core/tasks/qt
 import ../transaction/dto
+import ../community/dto/community
 
 proc tableToJsonArray[A, B](t: var Table[A, B]): JsonNode =
   let data = newJArray()
@@ -19,6 +20,7 @@ proc tableToJsonArray[A, B](t: var Table[A, B]): JsonNode =
 type
   AsyncGetDeployFeesArg = ref object of QObjectTaskArg
     chainId: int
+    tokenType: TokenType
 
 const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetDeployFeesArg](argEncoded)
@@ -27,7 +29,8 @@ const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     var feeTable: Table[int, SuggestedFeesDto] # fees for chain
     let response = eth.suggestedFees(arg.chainId).result
     feeTable[arg.chainId] = response.toSuggestedFeesDto()
-    let deployGas = community_tokens.deployCollectiblesEstimate().result.getInt
+    let deployGas = if arg.tokenType == TokenType.ERC721: community_tokens.deployCollectiblesEstimate().result.getInt
+      else: community_tokens.deployAssetsEstimate().result.getInt
     gasTable[(arg.chainId, "")] = deployGas
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),

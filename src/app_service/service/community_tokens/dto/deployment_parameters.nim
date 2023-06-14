@@ -9,6 +9,7 @@ type
     transferable*: bool
     remoteSelfDestruct*: bool
     tokenUri*: string
+    decimals*: int
 
 proc `%`*(x: DeploymentParameters): JsonNode =
   result = newJobject()
@@ -19,5 +20,6 @@ proc `%`*(x: DeploymentParameters): JsonNode =
   result["transferable"] = %x.transferable
   result["remoteSelfDestruct"] = %x.remoteSelfDestruct
   result["tokenUri"] = %x.tokenUri
+  result["decimals"] = %x.decimals
 
 

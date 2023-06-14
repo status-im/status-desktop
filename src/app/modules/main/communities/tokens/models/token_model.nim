@@ -26,6 +26,7 @@ type
     TokenOwnersModel
     AccountName
     RemainingSupply
+    Decimals
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -130,6 +131,7 @@ QtObject:
       ModelRole.TokenOwnersModel.int:"tokenOwnersModel",
       ModelRole.AccountName.int:"accountName",
       ModelRole.RemainingSupply.int:"remainingSupply",
+      ModelRole.Decimals.int:"decimals",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -176,6 +178,8 @@ QtObject:
         result = newQVariant(item.accountName)
       of ModelRole.RemainingSupply:
         result = newQVariant(item.remainingSupply)
+      of ModelRole.Decimals:
+        result = newQVariant(item.tokenDto.decimals)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:
