@@ -69,7 +69,7 @@ StatusDialog {
             id: idInput
             Layout.fillWidth: true
             label: qsTr("Installation ID")
-            input.edit.readOnly: true
+            enabled: false
             text: root.deviceModel.installationId
             visible: root.advancedStore.isDebugEnabled
         }
