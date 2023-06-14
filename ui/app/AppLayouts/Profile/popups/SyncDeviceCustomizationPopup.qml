@@ -20,6 +20,7 @@ StatusDialog {
     id: root
 
     property DevicesStore devicesStore
+    property AdvancedStore advancedStore
     property var deviceModel
 
     readonly property string deviceName: d.deviceName
@@ -46,6 +47,7 @@ StatusDialog {
     }
 
     contentItem: ColumnLayout {
+        spacing: 8
         StatusInput {
             id: nameInput
             Layout.fillWidth: true
@@ -62,6 +64,14 @@ StatusDialog {
             Keys.onReturnPressed: {
                 d.saveNewName()
             }
+        }
+        StatusInput {
+            id: idInput
+            Layout.fillWidth: true
+            label: qsTr("Installation ID")
+            enabled: false
+            text: root.deviceModel.installationId
+            visible: root.advancedStore.isDebugEnabled
         }
     }
 

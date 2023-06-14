@@ -226,6 +226,10 @@ ListModel {
         section: "Components"
     }
     ListElement {
+        title: "StatusInput"
+        section: "Components"
+    }
+    ListElement {
         title: "StatusChatInput"
         section: "Components"
     }
