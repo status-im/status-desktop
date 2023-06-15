@@ -32,14 +32,14 @@ Item {
 
     QtObject {
         id: d
-        readonly property bool isIncoming: root.isTransactionValid ? root.transaction.to.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase() : false
+        readonly property bool isIncoming: root.isTransactionValid ? root.transaction.recipient.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase() : false
         readonly property bool isNFT: root.isTransactionValid ? root.transaction.isNFT : false
-        readonly property string savedAddressNameTo: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.to) : ""
-        readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.from): ""
-        readonly property string from: root.isTransactionValid ? !!savedAddressNameFrom ? savedAddressNameFrom : Utils.compactAddress(transaction.from, 4): ""
-        readonly property string to: root.isTransactionValid ? !!savedAddressNameTo ? savedAddressNameTo : Utils.compactAddress(transaction.to, 4): ""
-        readonly property string savedAddressEns: root.isTransactionValid ? RootStore.getEnsForSavedWalletAddress(isIncoming ? transaction.from : transaction.to) : ""
-        readonly property string savedAddressChains: root.isTransactionValid ? RootStore.getChainShortNamesForSavedWalletAddress(isIncoming ? transaction.from : transaction.to) : ""
+        readonly property string savedAddressNameTo: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.recipient) : ""
+        readonly property string savedAddressNameFrom: root.isTransactionValid ? d.getNameForSavedWalletAddress(transaction.sender): ""
+        readonly property string from: root.isTransactionValid ? !!savedAddressNameFrom ? savedAddressNameFrom : Utils.compactAddress(transaction.sender, 4): ""
+        readonly property string to: root.isTransactionValid ? !!savedAddressNameTo ? savedAddressNameTo : Utils.compactAddress(transaction.recipient, 4): ""
+        readonly property string savedAddressEns: root.isTransactionValid ? RootStore.getEnsForSavedWalletAddress(isIncoming ? transaction.sender : transaction.recipient) : ""
+        readonly property string savedAddressChains: root.isTransactionValid ? RootStore.getChainShortNamesForSavedWalletAddress(isIncoming ? transaction.sender : transaction.recipient) : ""
         readonly property string networkShortName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId) : ""
         readonly property string networkFullName: root.isTransactionValid ? RootStore.getNetworkFullName(transaction.chainId): ""
         readonly property string networkIcon: root.isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId): ""
@@ -52,12 +52,13 @@ Item {
         readonly property string swapSymbol: "" // TODO fill when swap data is implemented
         readonly property string symbol: root.isTransactionValid ? transaction.symbol : ""
         readonly property var multichainNetworks: [] // TODO fill icon for networks for multichain
-        readonly property double cryptoValue: root.isTransactionValid ? transaction.value.amount: 0.0
+        readonly property double cryptoValue: root.isTransactionValid && transaction.value ? transaction.value.amount: 0.0
         readonly property double fiatValue: root.isTransactionValid ? RootStore.getFiatValue(cryptoValue, symbol, RootStore.currentCurrency): 0.0
         readonly property string fiatValueFormatted: root.isTransactionValid ? RootStore.formatCurrencyAmount(d.fiatValue, RootStore.currentCurrency) : ""
-        readonly property string cryptoValueFormatted: root.isTransactionValid ? LocaleUtils.currencyAmountToLocaleString(transaction.value) : ""
-        readonly property real feeEthValue: root.isTransactionValid ? RootStore.getGasEthValue(transaction.totalFees.amount, 1) : 0
+        readonly property string cryptoValueFormatted: root.isTransactionValid && transaction.value ? LocaleUtils.currencyAmountToLocaleString(transaction.value) : ""
+        readonly property real feeEthValue: root.isTransactionValid && transaction.totalFees ? RootStore.getGasEthValue(transaction.totalFees.amount, 1) : 0
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, "ETH", RootStore.currentCurrency) : 0
+        readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
 
         function getNameForSavedWalletAddress(address) {
             return RootStore.getNameForSavedWalletAddress(address)
@@ -89,7 +90,6 @@ Item {
                     leftPadding: 0
 
                     modelData: transaction
-                    transactionType: d.isIncoming ? Constants.TransactionType.Receive : Constants.TransactionType.Send
                     currentCurrency: RootStore.currentCurrency
                     cryptoValue: d.cryptoValue
                     fiatValue: d.fiatValue
@@ -99,10 +99,10 @@ Item {
                     swapSymbol: d.swapSymbol
                     bridgeNetworkName: d.bridgeNetworkFullname
                     symbol: d.symbol
-                    transferStatus: root.isTransactionValid ? RootStore.hex2Dec(transaction.txStatus): ""
+                    transactionStatus: root.isTransactionValid ? transaction.status : Constants.TransactionStatus.Pending
                     timeStampText: root.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
-                    addressNameTo: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.to): ""
-                    addressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.from): ""
+                    addressNameTo: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.recipient): ""
+                    addressNameFrom: root.isTransactionValid ? WalletStores.RootStore.getNameForAddress(transaction.sender): ""
                     sensor.enabled: false
                     rootStore: RootStore
                     walletRootStore: WalletStores.RootStore
@@ -133,7 +133,7 @@ Item {
                 width: Math.min(304, progressBlock.width)
                 nftName: root.isTransactionValid ? transaction.nftName : ""
                 nftUrl: root.isTransactionValid && !!transaction.nftImageUrl ? transaction.nftImageUrl : ""
-                strikethrough: transactionHeader.transactionType === Constants.TransactionType.Destroy
+                strikethrough: d.transactionType === Constants.TransactionType.Destroy
                 tokenId: root.isTransactionValid ? transaction.tokenID : ""
                 contractAddress: root.isTransactionValid ? transaction.contract : ""
             }
@@ -167,7 +167,7 @@ Item {
                             Layout.fillHeight: true
                             title: qsTr("From")
                             subTitle: {
-                                switch(transactionHeader.transactionType) {
+                                switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
                                     return d.symbol
                                 case Constants.TransactionType.Bridge:
@@ -177,9 +177,9 @@ Item {
                                 }
                             }
                             asset.name: {
-                                switch(transactionHeader.transactionType) {
+                                switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
-                                    return !!d.symbol ? Style.png("tokens/%1".arg(d.symbol)) : ""
+                                    return !!d.symbol ? Constants.tokenIcon(d.symbol) : ""
                                 case Constants.TransactionType.Bridge:
                                     return !!d.networkIcon ? Style.svg(d.networkIcon) : ""
                                 default:
@@ -194,7 +194,7 @@ Item {
                             Layout.fillHeight: true
                             title: qsTr("To")
                             subTitle: {
-                                switch(transactionHeader.transactionType) {
+                                switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
                                     return d.swapSymbol
                                 case Constants.TransactionType.Bridge:
@@ -204,9 +204,9 @@ Item {
                                 }
                             }
                             asset.name: {
-                                switch(transactionHeader.transactionType) {
+                                switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
-                                    return !!d.swapSymbol ? Style.png("tokens/%1".arg(d.swapSymbol)) : ""
+                                    return !!d.swapSymbol ? Constants.tokenIcon(d.swapSymbol) : ""
                                 case Constants.TransactionType.Bridge:
                                     return !!d.bridgeNetworkIcon ? Style.svg(d.bridgeNetworkIcon) : ""
                                 default:
@@ -218,13 +218,13 @@ Item {
                     }
                     TransactionAddressTile {
                         width: parent.width
-                        title: transactionHeader.transactionType === Constants.TransactionType.Swap || transactionHeader.transactionType === Constants.TransactionType.Bridge ?
+                        title: d.transactionType === Constants.TransactionType.Swap || d.transactionType === Constants.TransactionType.Bridge ?
                                    qsTr("In") : qsTr("From")
-                        addresses: root.isTransactionValid ? [root.transaction.from] : []
+                        addresses: root.isTransactionValid ? [root.transaction.sender] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
                         onButtonClicked: {
-                            if (transactionHeader.transactionType === Constants.TransactionType.Swap || transactionHeader.transactionType === Constants.TransactionType.Bridge) {
+                            if (d.transactionType === Constants.TransactionType.Swap || d.transactionType === Constants.TransactionType.Bridge) {
                                 addressMenu.openEthAddressMenu(this, addresses[0], d.networkShortName)
                             } else {
                                 addressMenu.openSenderMenu(this, addresses[0], d.networkShortName)
@@ -234,11 +234,11 @@ Item {
                     TransactionAddressTile {
                         width: parent.width
                         title: qsTr("To")
-                        addresses: root.isTransactionValid ? [root.transaction.to] : []
+                        addresses: root.isTransactionValid ? [root.transaction.recipient] : []
                         contactsStore: root.contactsStore
                         rootStore: WalletStores.RootStore
                         onButtonClicked: addressMenu.openReceiverMenu(this, addresses[0], d.networkShortName)
-                        visible: transactionHeader.transactionType !== Constants.TransactionType.Swap && transactionHeader.transactionType !== Constants.TransactionType.Bridge && transactionHeader.transactionType !== Constants.TransactionType.Destroy
+                        visible: d.transactionType !== Constants.TransactionType.Swap && d.transactionType !== Constants.TransactionType.Bridge && d.transactionType !== Constants.TransactionType.Destroy
                     }
                     TransactionDataTile {
                         width: parent.width
@@ -273,12 +273,12 @@ Item {
                         symbol: "" // TODO fill protocol name for Bridge and Swap
                         networkName: d.networkFullName
                         shortNetworkName: d.networkShortName
-                        visible: !!subTitle && (transactionHeader.transactionType === Constants.TransactionType.Bridge || transactionHeader.transactionType === Constants.TransactionType.Swap)
+                        visible: !!subTitle && (d.transactionType === Constants.TransactionType.Bridge || d.transactionType === Constants.TransactionType.Swap)
                     }
                     TransactionContractTile {
                         // Used to display contract address for any network
                         address: root.isTransactionValid ? transaction.contract : ""
-                        symbol: root.isTransactionValid ? transaction.value.symbol.toUpperCase() : ""
+                        symbol: root.isTransactionValid && transaction.value ? transaction.value.symbol.toUpperCase() : ""
                         networkName: d.networkFullName
                         shortNetworkName: d.networkShortName
                     }
@@ -288,14 +288,14 @@ Item {
                         symbol: "" // TODO fill protocol name for Bridge
                         networkName: d.bridgeNetworkFullname
                         shortNetworkName: d.bridgeNetworkShortName
-                        visible: !!subTitle && transactionHeader.transactionType === Constants.TransactionType.Bridge
+                        visible: !!subTitle && d.transactionType === Constants.TransactionType.Bridge
                     }
                     TransactionContractTile {
                         // Used for Bridge and Swap to display 'To' network token contract address
                         address: {
                             if (!root.isTransactionValid)
                                 return ""
-                            switch(transactionHeader.transactionType) {
+                            switch(d.transactionType) {
                             case Constants.TransactionType.Swap:
                                 return "" // TODO fill swap contract address for Swap
                             case Constants.TransactionType.Bridge:
@@ -307,7 +307,7 @@ Item {
                         symbol: {
                             if (!root.isTransactionValid)
                                 return ""
-                            switch(transactionHeader.transactionType) {
+                            switch(d.transactionType) {
                             case Constants.TransactionType.Swap:
                                 return d.swapSymbol
                             case Constants.TransactionType.Bridge:
@@ -368,7 +368,7 @@ Item {
                             subTitle: d.networkFullName
                             asset.name: !!d.networkIcon ? Style.svg("%1".arg(d.networkIcon)) : ""
                             smallIcon: true
-                            visible: transactionHeader.transactionType !== Constants.TransactionType.Bridge
+                            visible: d.transactionType !== Constants.TransactionType.Bridge
                         }
                         TransactionDataTile {
                             Layout.fillHeight: true
@@ -443,7 +443,7 @@ Item {
                         visible: {
                             if (d.isNFT)
                                 return false
-                            switch(transactionHeader.transactionType) {
+                            switch(d.transactionType) {
                             case Constants.TransactionType.Send:
                             case Constants.TransactionType.Swap:
                             case Constants.TransactionType.Bridge:
@@ -459,7 +459,7 @@ Item {
                         subTitle: {
                             if (d.isNFT)
                                 return ""
-                            const type = transactionHeader.transactionType
+                            const type = d.transactionType
                             if (type === Constants.TransactionType.Swap) {
                                 return RootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
                             } else if (type === Constants.TransactionType.Bridge) {
@@ -470,7 +470,7 @@ Item {
                             return ""
                         }
                         tertiaryTitle: {
-                            const type = transactionHeader.transactionType
+                            const type = d.transactionType
                             if (type === Constants.TransactionType.Swap) {
                                 return RootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
                             } else if (type === Constants.TransactionType.Bridge) {
@@ -486,7 +486,7 @@ Item {
                         subTitle: {
                             if (!root.isTransactionValid || d.isNFT)
                                 return ""
-                            switch(transactionHeader.transactionType) {
+                            switch(d.transactionType) {
                             case Constants.TransactionType.Send:
                             case Constants.TransactionType.Swap:
                             case Constants.TransactionType.Bridge:
@@ -501,11 +501,11 @@ Item {
                     TransactionDataTile {
                         width: parent.width
                         // Using fees in this tile because of same higlight and color settings as Total
-                        title: transactionHeader.transactionType === Constants.TransactionType.Destroy || d.isNFT ? qsTr("Fees") : qsTr("Total")
+                        title: d.transactionType === Constants.TransactionType.Destroy || d.isNFT ? qsTr("Fees") : qsTr("Total")
                         subTitle: {
                             if (d.isNFT && d.isIncoming)
                                 return ""
-                            const type = transactionHeader.transactionType
+                            const type = d.transactionType
                             if (type === Constants.TransactionType.Destroy || d.isNFT) {
                                 return RootStore.formatCurrencyAmount(d.feeEthValue, "ETH")
                             } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && progressBlock.isLayer1)) {
@@ -516,7 +516,7 @@ Item {
                         tertiaryTitle: {
                             if (d.isNFT && d.isIncoming)
                                 return ""
-                            const type = transactionHeader.transactionType
+                            const type = d.transactionType
                             if (type === Constants.TransactionType.Destroy || d.isNFT) {
                                 return RootStore.formatCurrencyAmount(d.feeFiatValue, RootStore.currentCurrency)
                             } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && progressBlock.isLayer1)) {
@@ -544,7 +544,7 @@ Item {
                     Layout.preferredHeight: copyDetailsButton.height
                     text: qsTr("Repeat transaction")
                     size: StatusButton.Small
-                    visible: root.isTransactionValid && !root.overview.isWatchOnlyAccount && transactionHeader.transactionType === TransactionDelegate.Send
+                    visible: root.isTransactionValid && !root.overview.isWatchOnlyAccount && d.transactionType === TransactionDelegate.Send
                     onClicked: {
                         root.sendModal.open(root.transaction.to)
                         // TODO handle other types

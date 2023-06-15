@@ -95,6 +95,8 @@ Item {
 
         function refreshWalletAddress() {
             d.walletAddressName = !!root.rootStore ? root.rootStore.getNameForWalletAddress(root.address) : ""
+            if (!d.walletAddressName)
+                return // No need to query other if name not found
             d.walletAddressEmoji = !!root.rootStore ? root.rootStore.getEmojiForWalletAddress(root.address) : ""
             d.walletAddressColor = Utils.getColorForId(!!root.rootStore ? root.rootStore.getColorForWalletAddress(root.address) : "")
         }

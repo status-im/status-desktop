@@ -94,6 +94,8 @@ Item {
             }
             selectAllAccounts: function() {
                 RootStore.setFillterAllAddresses()
+                if (!!rightPanelStackView.currentItem.resetView)
+                    rightPanelStackView.currentItem.resetView()
             }
             onShowSavedAddressesChanged: {
                 if(showSavedAddresses)
