@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQml 2.15
 import QtQuick.Controls 2.15
 import QtGraphicalEffects 1.15
 
@@ -32,6 +33,7 @@ import StatusQ.Popups 0.1
 Menu {
     id: root
 
+    property real maxImplicitWidth: 640
     readonly property color defaultIconColor: Theme.palette.primaryColor1
 
     property StatusAssetSettings assetSettings: StatusAssetSettings {
@@ -72,6 +74,7 @@ Menu {
     topPadding: 8
     bottomPadding: 8
     margins: 16
+    width: Math.min(implicitWidth, root.maxImplicitWidth)
 
     onOpened: {
         if (typeof openHandler === "function") {
@@ -85,15 +88,24 @@ Menu {
         }
     }
 
+    QtObject {
+        id: d
+        //helper property to get the max implicit width of the delegate
+        property real maxDelegateImplWidth: 0
+    }
+
     delegate: StatusMenuItem {
         visible: root.hideDisabledItems ? enabled : true
         height: visible ? implicitHeight : 0
+        onImplicitWidthChanged: {
+            d.maxDelegateImplWidth = Math.max(d.maxDelegateImplWidth, implicitWidth)
+        }
     }
 
     contentItem: StatusListView {
         currentIndex: root.currentIndex
         implicitHeight: contentHeight
-        implicitWidth: contentWidth
+        implicitWidth: d.maxDelegateImplWidth
         interactive: contentHeight > availableHeight
         model: root.contentModel
     }

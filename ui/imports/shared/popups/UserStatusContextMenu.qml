@@ -15,8 +15,6 @@ StatusMenu {
 
     property var store
 
-    width: 210
-
     ProfileHeader {
         width: parent.width
 

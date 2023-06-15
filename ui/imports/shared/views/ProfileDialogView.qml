@@ -393,7 +393,7 @@ Pane {
 
                 StatusMenu {
                     id: moreMenu
-                    width: 230
+
                     SendContactRequestMenuItem {
                         enabled: !d.isContact && !d.isBlocked && d.contactRequestState !== Constants.ContactRequestState.Sent &&
                                  d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy // we have an action button otherwise

@@ -207,7 +207,6 @@ Item {
 
     StatusMenu {
         id: imageEditMenu
-        width: 200
 
         StatusAction {
             text: qsTr("Select different image")
