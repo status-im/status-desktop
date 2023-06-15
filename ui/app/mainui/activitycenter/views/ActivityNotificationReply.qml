@@ -35,6 +35,7 @@ ActivityNotificationMessage {
         onReplyClicked: {
             root.activityCenterStore.switchTo(notification)
             root.closeActivityCenter()
+            root.store.messageStore.messageModule.jumpToMessage(model.id)
         }
     }
 
