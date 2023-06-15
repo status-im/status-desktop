@@ -9,9 +9,7 @@ import StatusQ.Popups 0.1
 
 MenuItem {
     id: root
-
-    implicitWidth: parent ? parent.width : 0
-    implicitHeight: 38
+    
     objectName: action ? action.objectName : "StatusMenuItemDelegate"
 
     spacing: 4

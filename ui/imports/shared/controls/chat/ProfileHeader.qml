@@ -275,7 +275,6 @@ Item {
         id: editImageMenuComponent
 
         StatusMenu {
-            width: 200
 
             StatusAction {
                 text: qsTr("Select different image")

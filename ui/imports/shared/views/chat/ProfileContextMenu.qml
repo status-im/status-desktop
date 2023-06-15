@@ -89,8 +89,6 @@ StatusMenu {
         selectedUserPublicKey = ""
     }
 
-    width: 230
-
     ProfileHeader {
         width: parent.width
         height: visible ? implicitHeight : 0
