@@ -27,16 +27,8 @@ ColumnLayout {
     id: root
 
     property var overview
-    property int pageSize: 20 // number of transactions per page
 
     signal launchTransactionDetail(var transaction)
-
-    function fetchHistory() {
-        if (!RootStore.isFetchingHistory(root.overview.mixedcaseAddress)) {
-            d.isLoading = true
-            RootStore.loadTransactionsForAccount(root.overview.mixedcaseAddress, pageSize)
-        }
-    }
 
     QtObject {
         id: d
@@ -117,14 +109,10 @@ ColumnLayout {
 
             // LocaleUtils is not accessable from inside expression, but local function works
             property var formatDate: (ms) => LocaleUtils.formatDate(ms, Locale.ShortFormat)
-            sorters: RoleSorter {
-                roleName: "timestamp"
-                sortOrder: Qt.DescendingOrder
-            }
             proxyRoles: ExpressionRole {
                 name: "date"
                 expression: {
-                    return timestamp > 0 ? txModel.formatDate(timestamp * 1000) : (d.isLoading ? " " : "") //  not empty, because section will not be displayed when loading if empty
+                    return model.activityEntry.timestamp > 0 ? txModel.formatDate(model.activityEntry.timestamp * 1000) : (d.isLoading ? " " : "") //  not empty, because section will not be displayed when loading if empty
                 }
             }
         }
@@ -220,7 +208,7 @@ ColumnLayout {
                 }
             }
         }
-        onAtYEndChanged: if(atYEnd && RootStore.historyTransactions.count > 0 && RootStore.historyTransactions.hasMore) fetchHistory()
+        onAtYEndChanged: if(atYEnd) RootStore.fetchMoreTransactions()
     }
 
     StatusMenu {
@@ -237,7 +225,7 @@ ColumnLayout {
 
             delegateMenu.transactionDelegate = delegate
             delegateMenu.transaction = delegate.modelData
-            repeatTransactionAction.enabled = !overview.isWatchOnlyAccount && delegate.transactionType === TransactionDelegate.Send
+            repeatTransactionAction.enabled = !overview.isWatchOnlyAccount && delegate.modelData.txType === TransactionDelegate.Send
             popup(delegate, mouse.x, mouse.y)
         }
 
@@ -285,19 +273,18 @@ ColumnLayout {
         id: transactionDelegate
         TransactionDelegate {
             width: ListView.view.width
-            modelData: model
-            transactionType: isModelDataValid && modelData.to.toLowerCase() === root.overview.mixedcaseAddress.toLowerCase() ? Constants.TransactionType.Receive : Constants.TransactionType.Send
+            modelData: model.activityEntry
             currentCurrency: RootStore.currentCurrency
-            cryptoValue: isModelDataValid ? modelData.value.amount : 0.0
+            cryptoValue: isModelDataValid && modelData.value ? modelData.value.amount : 0.0
             fiatValue: isModelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
             networkIcon: isModelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
             networkColor: isModelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
             networkName: isModelDataValid ? RootStore.getNetworkFullName(modelData.chainId) : ""
             symbol: isModelDataValid && !!modelData.symbol ? modelData.symbol : ""
-            transferStatus: isModelDataValid ? RootStore.hex2Dec(modelData.txStatus) : ""
+            transactionStatus: isModelDataValid ? modelData.status : 0
             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
-            addressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.to) : ""
-            addressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.from) : ""
+            addressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.recipient) : ""
+            addressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.sender) : ""
             rootStore: RootStore
             walletRootStore: WalletStores.RootStore
             onClicked: {
@@ -307,7 +294,7 @@ ColumnLayout {
                     launchTransactionDetail(modelData)
                 }
             }
-            loading: isModelDataValid ? modelData.loadingTransaction : false
+            loading: false // TODO handle loading state
 
             Component.onCompleted: {
                 if (index == 0)

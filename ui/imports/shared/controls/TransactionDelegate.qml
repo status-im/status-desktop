@@ -54,10 +54,8 @@ StatusListItem {
     property var modelData
     property string symbol
     property string swapSymbol // TODO fill when swap data is implemented
-    property int transactionType
-    property int transactionStatus: transferStatus === 0 ? Constants.TransactionStatus.Pending : Constants.TransactionStatus.Finished
+    property int transactionStatus
     property string currentCurrency
-    property int transferStatus
     property double cryptoValue
     property double swapCryptoValue // TODO fill when swap data is implemented
     property double fiatValue
@@ -98,26 +96,26 @@ StatusListItem {
         if (root.isNFT) {
             return modelData.nftImageUrl ? modelData.nftImageUrl : ""
         } else {
-            return root.symbol ? Style.png("tokens/%1".arg(root.symbol)) : ""
+            return Constants.tokenIcon(root.symbol)
         }
     }
 
     readonly property string swapTokenImage: {
         if (!isModelDataValid)
             return ""
-        return root.swapSymbol ? Style.png("tokens/%1".arg(root.swapSymbol)) : ""
+        return Constants.tokenIcon(root.swapSymbol)
     }
 
     readonly property string toAddress: !!addressNameTo ?
                                             addressNameTo :
                                             isModelDataValid ?
-                                                Utils.compactAddress(modelData.to, 4) :
+                                                Utils.compactAddress(modelData.recipient, 4) :
                                                 ""
 
     readonly property string fromAddress: !!addressNameFrom ?
                                             addressNameFrom :
                                             isModelDataValid ?
-                                                Utils.compactAddress(modelData.from, 4) :
+                                                Utils.compactAddress(modelData.sender, 4) :
                                                 ""
 
     property StatusAssetSettings statusIconAsset: StatusAssetSettings {
@@ -169,30 +167,30 @@ StatusListItem {
         let details = ""
         const endl = "\n"
         const endl2 = endl + endl
-        const type = root.transactionType
-        const feeEthValue = rootStore.getGasEthValue(modelData.totalFees.amount, 1)
+        const type = modelData.txType
+        const feeEthValue = modelData.totalFees ? rootStore.getGasEthValue(modelData.totalFees.amount, 1) : 0
 
         // TITLE
         switch (type) {
-        case TransactionDelegate.TransactionType.Send:
+        case Constants.TransactionType.Send:
             details += qsTr("Send transaction details" + endl2)
             break
-        case TransactionDelegate.TransactionType.Receive:
+        case Constants.TransactionType.Receive:
             details += qsTr("Receive transaction details") + endl2
             break
-        case TransactionDelegate.TransactionType.Buy:
+        case Constants.TransactionType.Buy:
             details += qsTr("Buy transaction details") + endl2
             break
-        case TransactionDelegate.TransactionType.Sell:
+        case Constants.TransactionType.Sell:
             details += qsTr("Sell transaction details") + endl2
             break
-        case TransactionDelegate.TransactionType.Destroy:
+        case Constants.TransactionType.Destroy:
             details += qsTr("Destroy transaction details") + endl2
             break
-        case TransactionDelegate.TransactionType.Swap:
+        case Constants.TransactionType.Swap:
             details += qsTr("Swap transaction details") + endl2
             break
-        case TransactionDelegate.TransactionType.Bridge:
+        case Constants.TransactionType.Bridge:
             details += qsTr("Bridge transaction details") + endl2
             break
         default:
@@ -200,12 +198,12 @@ StatusListItem {
         }
 
         details += qsTr("Summary") + endl
-        switch(root.transactionType) {
-        case TransactionDelegate.TransactionType.Buy:
-        case TransactionDelegate.TransactionType.Sell:
-        case TransactionDelegate.TransactionType.Destroy:
-        case TransactionDelegate.TransactionType.Swap:
-        case TransactionDelegate.TransactionType.Bridge:
+        switch(modelData.txType) {
+        case Constants.TransactionType.Buy:
+        case Constants.TransactionType.Sell:
+        case Constants.TransactionType.Destroy:
+        case Constants.TransactionType.Swap:
+        case Constants.TransactionType.Bridge:
             details += subTitle + endl2
             break
         default:
@@ -225,15 +223,15 @@ StatusListItem {
         // A block on layer1 is every 12s
         const finalisationTimeStamp = isLayer1 ? modelData.timestamp + 12 * 64 : modelData.timestamp + 604800 // 7 days in seconds
         switch(transactionStatus) {
-        case TransactionDelegate.TransactionStatus.Pending:
+        case Constants.TransactionStatus.Pending:
             details += qsTr("Status") + endl
             details += qsTr("Pending on %1").arg(root.networkName) + endl2
             break
-        case TransactionDelegate.TransactionStatus.Failed:
+        case Constants.TransactionStatus.Failed:
             details += qsTr("Status") + endl
             details += qsTr("Failed on %1").arg(root.networkName) + endl2
             break
-        case TransactionDelegate.TransactionStatus.Verified: {
+        case Constants.TransactionStatus.Verified: {
             const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
             details += qsTr("Status") + endl
             const epoch = parseFloat(Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - rootStore.hex2Dec(modelData.blockNumber)).toFixed(0)).toLocaleString()
@@ -243,7 +241,7 @@ StatusListItem {
             details += LocaleUtils.formatDateTime(confirmationTimeStamp * 1000, Locale.LongFormat) + endl2
             break
         }
-        case TransactionDelegate.TransactionStatus.Finished: {
+        case Constants.TransactionStatus.Finished: {
             const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
             details += qsTr("Status") + endl
             const epoch = Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - rootStore.hex2Dec(modelData.blockNumber))
@@ -261,12 +259,12 @@ StatusListItem {
 
         // SUMMARY ADRESSES
         switch (type) {
-        case TransactionDelegate.Swap:
+        case Constants.TransactionType.Swap:
             details += qsTr("From") + endl + root.symbol + endl2
             details += qsTr("To") + endl + root.swapSymbol + endl2
             details += qsTr("In") + endl + root.fromAddress + endl2
             break
-        case TransactionDelegate.Bridge:
+        case Constants.TransactionType.Bridge:
             details += qsTr("From") + endl + root.networkName + endl2
             details += qsTr("To") + endl + root.bridgeNetworkName + endl2
             details += qsTr("In") + endl + modelData.from + endl2
@@ -304,13 +302,13 @@ StatusListItem {
         const swapContractAddress = "" // TODO fill swap contract address for Swap
         const bridgeContractAddress = "" // TODO fill token's contract address for 'to' network for Bridge
         switch (type) {
-        case TransactionDelegate.Swap:
+        case Constants.TransactionType.Swap:
             if (!!swapContractAddress) {
                 details += qsTr("%1 %2 contract address").arg(root.networkName).arg(root.swapSymbol) + endl
                 details += swapContractAddress + endl2
             }
             break
-        case TransactionDelegate.Bridge:
+        case Constants.TransactionType.Bridge:
             if (!!bridgeContractAddress) {
                 details += qsTr("%1 %2 contract address").arg(root.bridgeNetworkName).arg(root.symbol) + endl
                 details += bridgeContractAddress + endl2
@@ -321,12 +319,12 @@ StatusListItem {
         }
 
         // SUMMARY DATA
-        if (type !== TransactionDelegate.Bridge) {
+        if (type !== Constants.TransactionType.Bridge) {
             details += qsTr("Network") + endl + networkName + endl2
         }
         details += qsTr("Token format") + endl + modelData.type.toUpperCase() + endl2
         details += qsTr("Nonce") + endl + rootStore.hex2Dec(modelData.nonce) + endl2
-        if (type === TransactionDelegate.Bridge) {
+        if (type === Constants.TransactionType.Bridge) {
             details += qsTr("Included in Block on %1").arg(networkName) + endl
             details += rootStore.hex2Dec(modelData.blockNumber)  + endl2
             details += qsTr("Included in Block on %1").arg(bridgeNetworkName) + endl
@@ -342,19 +340,19 @@ StatusListItem {
         let valuesString = ""
         if (!root.isNFT) {
             switch(type) {
-            case TransactionDelegate.Send:
-            case TransactionDelegate.Swap:
-            case TransactionDelegate.Bridge:
+            case Constants.TransactionType.Send:
+            case Constants.TransactionType.Swap:
+            case Constants.TransactionType.Bridge:
                 valuesString += qsTr("Amount sent %1 (%2)").arg(root.transactionValue).arg(fiatTransactionValue) + endl2
                 break
             default:
                 break
             }
-            if (type === TransactionDelegate.Swap) {
+            if (type === Constants.TransactionType.Swap) {
                 const crypto = rootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
                 const fiat = rootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
                 valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
-            } else if (type === TransactionDelegate.Bridge) {
+            } else if (type === Constants.TransactionType.Bridge) {
                 // Reduce crypto value by fee value
                 const valueInCrypto = rootStore.getCryptoValue(root.fiatValue - feeFiatValue, root.symbol, root.currentCurrency)
                 const crypto = rootStore.formatCurrencyAmount(valueInCrypto, d.symbol)
@@ -362,9 +360,9 @@ StatusListItem {
                 valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
             }
             switch(type) {
-            case TransactionDelegate.Send:
-            case TransactionDelegate.Swap:
-            case TransactionDelegate.Bridge:
+            case Constants.TransactionType.Send:
+            case Constants.TransactionType.Swap:
+            case Constants.TransactionType.Bridge:
                 const feeValue = LocaleUtils.currencyAmountToLocaleString(modelData.totalFees)
                 const feeFiat = rootStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Fees %1 (%2)").arg(feeValue).arg(feeFiat) + endl2
@@ -374,12 +372,12 @@ StatusListItem {
             }
         }
 
-        if (!root.isNFT || type !== TransactionDelegate.Receive) {
-            if (type === TransactionDelegate.Destroy || root.isNFT) {
+        if (!root.isNFT || type !== Constants.TransactionType.Receive) {
+            if (type === Constants.TransactionType.Destroy || root.isNFT) {
                 const feeCrypto = rootStore.formatCurrencyAmount(feeEthValue, "ETH")
                 const feeFiat = rootStore.formatCurrencyAmount(feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Fees %1 (%2)").arg(feeCrypto).arg(feeFiat) + endl2
-            } else if (type === TransactionDelegate.Receive || (type === TransactionDelegate.Buy && isLayer1)) {
+            } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && isLayer1)) {
                 valuesString += qsTr("Total %1 (%2)").arg(root.transactionValue).arg(fiatTransactionValue) + endl2
             } else {
                 const feeEth = rootStore.formatCurrencyAmount(feeEthValue, "ETH")
@@ -411,7 +409,10 @@ StatusListItem {
         imgIsIdenticon: true
         isLetterIdenticon: loading
         name: {
-            switch(root.transactionType) {
+            if (!root.isModelDataValid)
+                return ""
+
+            switch(modelData.txType) {
             case Constants.TransactionType.Send:
                 return "send"
             case Constants.TransactionType.Receive:
@@ -457,7 +458,7 @@ StatusListItem {
 
         const isPending = root.transactionStatus === Constants.TransactionStatus.Pending
         const failed = root.transactionStatus === Constants.TransactionStatus.Failed
-        switch(root.transactionType) {
+        switch(modelData.txType) {
         case Constants.TransactionType.Send:
             return failed ? qsTr("Send failed") : (isPending ? qsTr("Sending") : qsTr("Sent"))
         case Constants.TransactionType.Receive:
@@ -493,7 +494,7 @@ StatusListItem {
             }
             StatusRoundIcon {
                 id: swapTokenImage
-                visible: !root.isNFT && !!root.swapTokenImage && root.transactionType === Constants.TransactionType.Swap
+                visible: root.isModelDataValid && !root.isNFT && !!root.swapTokenImage &&modelData.txType === Constants.TransactionType.Swap
                 anchors.verticalCenter: parent.verticalCenter
                 asset: StatusAssetSettings {
                     width: root.tokenIconAsset.width
@@ -525,7 +526,7 @@ StatusListItem {
         if (!root.isModelDataValid) {
             return ""
         }
-        switch(root.transactionType) {
+        switch(modelData.txType) {
         case Constants.TransactionType.Receive:
             return qsTr("%1 from %2 via %3").arg(transactionValue).arg(fromAddress).arg(networkName)
         case Constants.TransactionType.Buy:
@@ -561,7 +562,7 @@ StatusListItem {
                             return ""
                         }
 
-                        switch(root.transactionType) {
+                        switch(modelData.txType) {
                         case Constants.TransactionType.Send:
                         case Constants.TransactionType.Sell:
                             return "−" + root.transactionValue
@@ -585,7 +586,10 @@ StatusListItem {
                     Layout.alignment: Qt.AlignRight
                     font.pixelSize: root.loading ? d.loadingPixelSize : 13
                     customColor: {
-                        switch(root.transactionType) {
+                        if (!root.isModelDataValid)
+                            return ""
+
+                        switch(modelData.txType) {
                         case Constants.TransactionType.Receive:
                         case Constants.TransactionType.Buy:
                         case Constants.TransactionType.Swap:
@@ -607,7 +611,7 @@ StatusListItem {
                             return ""
                         }
 
-                        switch(root.transactionType) {
+                        switch(modelData.txType) {
                         case Constants.TransactionType.Send:
                         case Constants.TransactionType.Sell:
                         case Constants.TransactionType.Buy:

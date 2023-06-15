@@ -58,6 +58,7 @@ type
     addAccountModule: add_account_module.AccessInterface
     overviewModule: overview_module.AccessInterface
     networksModule: networks_module.AccessInterface
+    networksService: network_service.Service
     keycardService: keycard_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
@@ -99,9 +100,10 @@ proc newModule*(
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
   result.overviewModule = overview_module.newModule(result, events, walletAccountService, currencyService)
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
-  result.filter = initFilter(result.controller)
-
+  result.networksService = networkService
   result.activityController = activityc.newController(result.transactionsModule, events)
+  result.filter = initFilter(result.controller, result.activityController)
+
   result.view = newView(result, result.activityController)
 
 

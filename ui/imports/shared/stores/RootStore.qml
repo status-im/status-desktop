@@ -37,7 +37,7 @@ QtObject {
 
     property var history: typeof walletSectionTransactions !== "undefined" ? walletSectionTransactions
                                                                           : null
-    property var historyTransactions: Global.appIsReady? walletSectionTransactions.model : null
+    property var historyTransactions: Global.appIsReady? walletSection.activityController.model : null
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
     property var marketValueStore: TokenMarketValuesStore{}
@@ -172,12 +172,12 @@ QtObject {
         return root.privacyModule.getPasswordStrengthScore(password);
     }
 
-    function isFetchingHistory(address) {
-        return history.isFetchingHistory(address)
-    }
-
-    function loadTransactionsForAccount(address, pageSize) {
-        history.loadTransactionsForAccount(address, historyTransactions.getLastTxBlockNumber(), pageSize, true)
+    function fetchMoreTransactions() {
+        if (RootStore.historyTransactions.count === 0
+                || !RootStore.historyTransactions.hasMore
+                || walletSection.activityController.loadingData)
+            return
+        walletSection.activityController.loadMoreItems()
     }
 
     function hex2Eth(value) {

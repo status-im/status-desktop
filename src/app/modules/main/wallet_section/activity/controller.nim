@@ -114,14 +114,14 @@ QtObject:
         of SimpleTransaction:
           let identity = transactionIdentities[tIndex]
           if transactions.hasKey(identity):
-            result.add(entry.newTransactionActivityEntry(transactions[identity], backendEntry))
+            result.add(entry.newTransactionActivityEntry(transactions[identity], backendEntry, self.addresses))
           else:
             error "failed to find transaction with identity: ", identity
           tIndex += 1
         of PendingTransaction:
           let identity = pendingTransactionIdentities[ptIndex]
           if pendingTransactions.hasKey(identity):
-            result.add(entry.newTransactionActivityEntry(pendingTransactions[identity], backendEntry))
+            result.add(entry.newTransactionActivityEntry(pendingTransactions[identity], backendEntry, self.addresses))
           else:
             error "failed to find pending transaction with identity: ", identity
           ptIndex += 1
@@ -256,6 +256,15 @@ QtObject:
       addresses[i] = addressesJson[i].getStr()
 
     self.addresses = addresses
+  
+  proc setFilterAddresses*(self: Controller, addresses: seq[string]) =
+    self.addresses = addresses
+  
+  proc setFilterToAddresses*(self: Controller, addresses: seq[string]) =
+    self.currentActivityFilter.counterpartyAddresses = addresses
+
+  proc setFilterChains*(self: Controller, chainIds: seq[int]) =
+    self.chainIds = chainIds
 
   # TODO: remove me and use ground truth
   proc setFilterChains*(self: Controller, chainIdsArrayJsonString: string) {.slot.} =
