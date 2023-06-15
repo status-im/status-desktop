@@ -49,15 +49,6 @@ method requestImportDiscordCommunity*(self: AccessInterface, name: string, descr
                         fromTimestamp: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method reorderCommunityCategories*(self: AccessInterface, communityId: string, categoryId: string, position: int) {.base} =
-  raise newException(ValueError, "No implementation available")
-
-method reorderCommunityChannel*(self: AccessInterface, communityId: string, categoryId: string, chatId: string, position: int) {.base} =
-  raise newException(ValueError, "No implementation available")
-
 method isUserMemberOfCommunity*(self: AccessInterface, communityId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -74,9 +65,6 @@ method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensNa
   raise newException(ValueError, "No implementation available")
 
 method requestCommunityInfo*(self: AccessInterface, communityId: string, importing: bool) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method deleteCommunityChat*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method importCommunity*(self: AccessInterface, communityKey: string) {.base.} =

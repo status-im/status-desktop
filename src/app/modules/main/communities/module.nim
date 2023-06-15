@@ -264,13 +264,6 @@ method createCommunity*(self: Module, name: string,
                                   imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, 
                                   bannerJsonStr)
 
-method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
-  self.controller.deleteCommunityCategory(communityId, categoryId)
-
-method reorderCommunityCategories*(self: Module, communityId: string, categoryId: string, position: int) =
-#   self.controller.reorderCommunityCategories(communityId, categoryId, position)
-  discard
-
 method communityMuted*(self: Module, communityId: string, muted: bool) =
   self.view.model().setMuted(communityId, muted)
 
@@ -320,9 +313,6 @@ method userCanJoin*(self: Module, communityId: string): bool =
 
 method isCommunityRequestPending*(self: Module, communityId: string): bool =
   self.controller.isCommunityRequestPending(communityId)
-
-method deleteCommunityChat*(self: Module, communityId: string, channelId: string) =
-  self.controller.deleteCommunityChat(communityId, channelId)
 
 method communityImported*(self: Module, community: CommunityDto) =
   self.view.addItem(self.getCommunityItem(community))

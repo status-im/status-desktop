@@ -464,15 +464,6 @@ QtObject:
                                   imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled,
                                   filesToImport, fromTimestamp)
 
-  proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
-    self.delegate.deleteCommunityCategory(communityId, categoryId)
-
-  proc reorderCommunityCategories*(self: View, communityId: string, categoryId: string, position: int) {.slot} =
-    self.delegate.reorderCommunityCategories(communityId, categoryId, position)
-
-  proc reorderCommunityChannel*(self: View, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
-    self.delegate.reorderCommunityChannel(communityId, categoryId, chatId, position)
-
   proc cancelRequestToJoinCommunity*(self: View, communityId: string) {.slot.} =
     self.delegate.cancelRequestToJoinCommunity(communityId)
 
@@ -503,9 +494,6 @@ QtObject:
 
   proc isCommunityRequestPending*(self: View, communityId: string): bool {.slot.} =
     self.delegate.isCommunityRequestPending(communityId)
-
-  proc deleteCommunityChat*(self: View, communityId: string, channelId: string) {.slot.} =
-    self.delegate.deleteCommunityChat(communityId, channelId)
 
   proc importCommunity*(self: View, communityKey: string) {.slot.} =
     self.delegate.importCommunity(communityKey)
