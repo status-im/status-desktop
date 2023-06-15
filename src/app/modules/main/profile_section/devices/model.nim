@@ -17,9 +17,13 @@ type
 QtObject:
   type Model* = ref object of QAbstractListModel
     items*: seq[Item]
+    pairedCount: int
+
+  proc updatePairedCount(self: Model)
 
   proc setup(self: Model) =
     self.QAbstractListModel.setup
+    self.pairedCount = 0
 
   proc delete(self: Model) =
     self.items = @[]
@@ -35,6 +39,13 @@ QtObject:
   QtProperty[int] count:
     read = getCount
     notify = countChanged
+
+  proc pairedCountChanged(self: Model) {.signal.}
+  proc getPairedCount(self: Model): int {.slot.} =
+    self.pairedCount
+  QtProperty[int] pairedCount:
+    read = getPairedCount
+    notify = pairedCountChanged
 
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
@@ -85,6 +96,7 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+    self.updatePairedCount()
 
   proc addItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
@@ -94,6 +106,7 @@ QtObject:
     self.items.add(item)
     self.endInsertRows()
     self.countChanged()
+    self.updatePairedCount()
 
   proc findIndexByInstallationId(self: Model, installationId: string): int =
     for i in 0..<self.items.len:
@@ -122,6 +135,7 @@ QtObject:
       ModelRole.DeviceType.int,
       ModelRole.FcmToken.int,
     ])
+    self.updatePairedCount()
 
   proc updateItemName*(self: Model, installationId: string, name: string) =
     var i = self.findIndexByInstallationId(installationId)
@@ -136,3 +150,12 @@ QtObject:
 
   proc getIsDeviceSetup*(self: Model, installationId: string): bool =
     return anyIt(self.items, it.installation.id == installationId and it.name != "")
+
+  proc updatePairedCount(self: Model) =
+    var count = 0
+    for i in 0..<self.items.len:
+      if self.items[i].installation.enabled:
+        count += 1
+    if count != self.pairedCount:
+      self.pairedCount = count
+      self.pairedCountChanged()

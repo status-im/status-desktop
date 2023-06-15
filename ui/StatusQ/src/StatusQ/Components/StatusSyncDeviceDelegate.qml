@@ -15,6 +15,7 @@ StatusListItem {
 
     property string deviceName: ""
     property string deviceType: ""
+    property bool deviceEnabled
     property real timestamp: 0
     property bool isCurrentDevice: false
     property bool showOnlineBadge: !isCurrentDevice
@@ -22,7 +23,7 @@ StatusListItem {
     signal itemClicked
     signal setupSyncingButtonClicked
 
-    title: root.deviceName || qsTr("No device name")
+    title: root.deviceName || qsTr("Unknown device")
 
     asset.name: Utils.deviceIcon(root.deviceType)
     asset.bgColor: Theme.palette.primaryColor3
@@ -56,7 +57,7 @@ StatusListItem {
     components: [
         StatusButton {
             anchors.verticalCenter: parent.verticalCenter
-            visible: root.enabled && !root.isCurrentDevice
+            visible: root.enabled && !root.deviceEnabled && !root.isCurrentDevice
             text: qsTr("Setup syncing")
             size: StatusBaseButton.Size.Small
             onClicked: {
@@ -65,7 +66,7 @@ StatusListItem {
         },
         StatusIcon {
             anchors.verticalCenter: parent.verticalCenter
-            visible: root.enabled
+            visible: root.deviceEnabled
             icon: "next"
             color: Theme.palette.baseColor1
         }
@@ -80,6 +81,9 @@ StatusListItem {
         readonly property int minutesFromSync: secondsFromSync / 60
         readonly property int daysFromSync: LocaleUtils.daysBetween(new Date(now), new Date(d.deviceLastTimestamp))
         readonly property bool onlineNow: secondsFromSync <= 120
+
+        // We know if the device is paired (aka syncing is set up), if we have it's metadata
+        readonly property bool paired: root.deviceName
     }
 
     Timer {

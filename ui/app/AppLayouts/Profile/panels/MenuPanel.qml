@@ -6,12 +6,15 @@ import shared 1.0
 
 import utils 1.0
 
+import "../stores"
+
 Column {
     id: root
     spacing: 8
 
-    property var privacyStore
-    property var contactsStore
+    property PrivacyStore privacyStore
+    property ContactsStore contactsStore
+    property DevicesStore devicesStore
     property alias mainMenuItems: mainMenuItems.model
     property alias settingsMenuItems: settingsMenuItems.model
     property alias extraMenuItems: extraMenuItems.model
@@ -36,6 +39,8 @@ Column {
                 switch (model.subsection) {
                     case Constants.settingsSubsection.backUpSeed:
                         return !root.privacyStore.mnemonicBackedUp
+                    case Constants.settingsSubsection.syncingSettings:
+                        return root.devicesStore.devicesModel.count - root.devicesStore.devicesModel.pairedCount
                     default: return "";
                 }
             }

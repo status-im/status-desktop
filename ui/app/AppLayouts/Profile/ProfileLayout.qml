@@ -45,6 +45,7 @@ StatusSectionLayout {
     Component.onCompleted: {
         profileContainer.currentIndex = -1
         profileContainer.currentIndex = Qt.binding(() => Global.settingsSubsection)
+        root.store.devicesStore.loadDevices() // Load devices to get non-paired number for badge
     }
 
     QtObject {
