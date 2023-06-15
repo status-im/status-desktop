@@ -155,6 +155,7 @@ type
     ErrorCodeFilterCanceled,
     ErrorCodeFilterFailed
 
+  # Mirrors services/wallet/activity/service.go FilterResponse
   FilterResponse* = object
     activities*: seq[ActivityEntry]
     offset*: int
@@ -209,5 +210,14 @@ rpc(filterActivityAsync, "wallet"):
   addresses: seq[string]
   chainIds: seq[int]
   filter: ActivityFilter
+  offset: int
+  limit: int
+
+# see services/wallet/api.go GetAllRecipientsResponse
+type GetAllRecipientsResponse* = object
+  addresses*: seq[string]
+  hasMore*: bool
+
+rpc(getAllRecipients, "wallet"):
   offset: int
   limit: int

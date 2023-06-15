@@ -3,6 +3,7 @@ import tables
 
 import model
 import entry
+import recipients_model
 
 import ../transactions/item
 import ../transactions/module as transactions_module
@@ -21,11 +22,13 @@ proc toRef*[T](obj: T): ref T =
   result[] = obj
 
 const FETCH_BATCH_COUNT_DEFAULT = 10
+const FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT = 2000
 
 QtObject:
   type
     Controller* = ref object of QObject
       model: Model
+      recipientsModel: RecipientsModel
       transactionsModule: transactions_module.AccessInterface
       currentActivityFilter: backend_activity.ActivityFilter
 
@@ -49,6 +52,12 @@ QtObject:
 
   QtProperty[QVariant] model:
     read = getModel
+
+  proc getRecipientsModel*(self: Controller): QVariant {.slot.} =
+    return newQVariant(self.recipientsModel)
+
+  QtProperty[QVariant] recipientsModel:
+    read = getRecipientsModel
 
   proc backendToPresentation(self: Controller, backendEntities: seq[backend_activity.ActivityEntry]): seq[entry.ActivityEntry] =
     var multiTransactionsIds: seq[int] = @[]
@@ -186,6 +195,7 @@ QtObject:
   proc newController*(transactionsModule: transactions_module.AccessInterface, events: EventEmitter): Controller =
     new(result, delete)
     result.model = newModel()
+    result.recipientsModel = newRecipientsModel()
     result.transactionsModule = transactionsModule
     result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
     result.events = events
@@ -256,10 +266,10 @@ QtObject:
       addresses[i] = addressesJson[i].getStr()
 
     self.addresses = addresses
-  
+
   proc setFilterAddresses*(self: Controller, addresses: seq[string]) =
     self.addresses = addresses
-  
+
   proc setFilterToAddresses*(self: Controller, addresses: seq[string]) =
     self.currentActivityFilter.counterpartyAddresses = addresses
 
@@ -292,3 +302,21 @@ QtObject:
   QtProperty[int] errorCode:
     read = getErrorCode
     notify = errorCodeChanged
+
+  proc updateRecipientsModel*(self: Controller) {.slot.} =
+    let response = backend_activity.getAllRecipients(0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
+    if response.error != nil:
+      error "error fetching recipients: ", response.error
+      return
+
+    let result = json.to(response.result, backend_activity.GetAllRecipientsResponse)
+    self.recipientsModel.addAddresses(result.addresses, 0, result.hasMore)
+
+  proc loadMoreRecipients(self: Controller) {.slot.} =
+    let response = backend_activity.getAllRecipients(self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
+    if response.error != nil:
+      error "error fetching more recipient entries: ", response.error
+      return
+
+    let result = json.to(response.result, backend_activity.GetAllRecipientsResponse)
+    self.recipientsModel.addAddresses(result.addresses, self.recipientsModel.getCount(), result.hasMore)
