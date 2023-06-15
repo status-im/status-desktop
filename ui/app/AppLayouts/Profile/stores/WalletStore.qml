@@ -10,7 +10,7 @@ QtObject {
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
 
-    property var areTestNetworksEnabled: networksModule.areTestNetworksEnabled
+    readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var networks: networksModule.networks
 
     function toggleTestNetworksEnabled(){
@@ -20,7 +20,7 @@ QtObject {
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
     property var flatCollectibles: Global.appIsReady ? walletSectionCollectibles.model : null
-
+    property var assets: walletSectionAssets.assets
     property var accounts: Global.appIsReady? accountsModule.accounts : null
     
     function deleteAccount(address) {

@@ -1,8 +1,11 @@
 import QtQuick 2.15
 
+import utils 1.0
+
 ShowcaseDelegate {
     title: !!showcaseObj && !!showcaseObj.name ? showcaseObj.name : ""
-    secondaryTitle: !!showcaseObj && !!showcaseObj.amISectionAdmin ? qsTr("Admin") : qsTr("Member")
+    secondaryTitle: !!showcaseObj && (showcaseObj.memberRole === Constants.memberRole.owner ||
+                                      showcaseObj.memberRole === Constants.memberRole.admin) ? qsTr("Admin") : qsTr("Member")
     hasImage: !!showcaseObj && !!showcaseObj.image
 
     icon.name: !!showcaseObj ? showcaseObj.name : ""

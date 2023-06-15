@@ -9,7 +9,7 @@ ProfileShowcasePanel {
 
     settingsKey: "communities"
     keyRole: "id"
-    roleNames: ["id", "name", "amISectionAdmin", "image", "color"]
+    roleNames: ["id", "name", "memberRole", "image", "color"]
     filterFunc: (modelData) => modelData.joined && !showcaseModel.hasItem(modelData.id)
     hiddenPlaceholderBanner: qsTr("Communities here will show on your profile")
     showcasePlaceholderBanner: qsTr("Communities here will be hidden from your profile")
