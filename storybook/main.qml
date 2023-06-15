@@ -36,6 +36,7 @@ ApplicationWindow {
         }
 
         function performInspection() {
+            // Find the items to inspect on the current page
             const getItems = typeName =>
                            InspectionUtils.findItemsByTypeName(
                                viewLoader.item, typeName)
@@ -44,18 +45,29 @@ ApplicationWindow {
                 ...getItems("Custom" + root.currentPage)
             ]
 
+            // Find lowest commont ancestor of found items
             const lca = InspectionUtils.lowestCommonAncestor(
                           items, viewLoader.item)
 
-            if (!!lca && lca.Overlay.overlay.children.length > 0) {
-                activateInspection(lca.Overlay.overlay.children[0])
-                return
-            }
-
+            // Inspect lca
             if (lca) {
                 activateInspection(lca.parent.contentItem === lca
                                    ? lca.parent : lca)
                 return
+            }
+
+            // Look for the item for inspection on the Overlay, skip items
+            // without contentItem which can be, for example, instance of
+            // Overlay.modal or Overlay.modeless
+            const overlayChildren = root.Overlay.overlay.children
+
+            for (let i = 0; i < overlayChildren.length; i++) {
+                const item = overlayChildren[i]
+
+                if (item.contentItem) {
+                    activateInspection(item)
+                    return
+                }
             }
 
             nothingToInspectDialog.open()
