@@ -27,7 +27,6 @@ Rectangle {
     signal receiveTransactionCommandButtonClicked()
     signal stickerSelected(string hashId, string packId, string url)
     signal sendMessage(var event)
-    signal unblockChat()
     signal keyUpPress()
 
     property var usersStore

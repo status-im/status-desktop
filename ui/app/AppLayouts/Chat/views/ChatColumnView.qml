@@ -239,8 +239,10 @@ Item {
                 id: chatInput
 
                 Layout.fillWidth: true
+                visible: !!d.activeChatContentModule
 
-                enabled: !d.activeChatContentModule.chatDetails.blocked
+                enabled: !!d.activeChatContentModule
+                         && !d.activeChatContentModule.chatDetails.blocked
                          && root.rootStore.sectionDetails.joined
                          && !root.rootStore.sectionDetails.amIBanned
                          && root.rootStore.isUserAllowedToSendMessage
@@ -249,6 +251,8 @@ Item {
                 usersStore: d.activeUsersStore
 
                 textInput.placeholderText: {
+                    if (!d.activeChatContentModule)
+                        return
                     if (d.activeChatContentModule.chatDetails.blocked)
                         return qsTr("This user has been blocked.")
                     if (!root.rootStore.sectionDetails.joined || root.rootStore.sectionDetails.amIBanned)
@@ -262,15 +266,18 @@ Item {
                 suggestions.suggestionFilter.addSystemSuggestions: chatType === Constants.chatType.communityChat
 
                 textInput.onTextChanged: {
-                    d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
+                    if (!!d.activeChatContentModule)
+                        d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
                 }
 
                 onReplyMessageIdChanged: {
-                    d.activeChatContentModule.inputAreaModule.preservedProperties.replyMessageId = replyMessageId
+                    if (!!d.activeChatContentModule)
+                        d.activeChatContentModule.inputAreaModule.preservedProperties.replyMessageId = replyMessageId
                 }
 
                 onFileUrlsAndSourcesChanged: {
-                    d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
+                    if (!!d.activeChatContentModule)
+                        d.activeChatContentModule.inputAreaModule.preservedProperties.fileUrlsAndSourcesJson = JSON.stringify(chatInput.fileUrlsAndSources)
                 }
 
                 onSendTransactionCommandButtonClicked: {
@@ -291,7 +298,8 @@ Item {
                 }
 
                 onStickerSelected: {
-                    root.rootStore.sendSticker(d.activeChatContentModule.getMyChatId(),
+                    if (!!d.activeChatContentModule)
+                        root.rootStore.sendSticker(d.activeChatContentModule.getMyChatId(),
                                                           hashId,
                                                           chatInput.isReply ? chatInput.replyMessageId : "",
                                                           packId,
@@ -320,10 +328,6 @@ Item {
                     }
                 }
 
-                onUnblockChat: {
-
-                }
-
                 onKeyUpPress: {
                     d.activeMessagesStore.setEditModeOnLastMessage(root.rootStore.userProfileInst.pubKey)
                 }
@@ -333,11 +337,12 @@ Item {
                 Layout.fillHeight: true
                 Layout.maximumHeight: chatInput.implicitHeight
                 verticalPadding: 0
-                visible: d.activeChatContentModule.chatDetails.blocked
+                visible: !!d.activeChatContentModule && d.activeChatContentModule.chatDetails.blocked
                 text: qsTr("Unblock")
                 type: StatusBaseButton.Type.Danger
                 onClicked: {
-                    d.activeChatContentModule.unblockChat()
+                    if (!!d.activeChatContentModule)
+                        d.activeChatContentModule.unblockChat()
                 }
             }
         }
