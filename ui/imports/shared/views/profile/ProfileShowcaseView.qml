@@ -84,7 +84,7 @@ Control {
                     }
                     sorters: [
                         RoleSorter {
-                            roleName: "amISectionAdmin"
+                            roleName: "memberRole"
                             sortOrder: Qt.DescendingOrder // admin first
                         },
                         StringSorter {
@@ -103,7 +103,7 @@ Control {
                     subTitle: model.description
                     tertiaryTitle: qsTr("%n member(s)", "", model.members.count)
                     asset.name: model.image ?? model.name
-                    asset.isImage: asset.name.startsWith("data:image/")
+                    asset.isImage: asset.name.startsWith(Constants.dataImagePrefix)
                     asset.isLetterIdenticon: !model.image
                     asset.color: model.color
                     asset.width: 40
@@ -112,7 +112,8 @@ Control {
                     border.color: Theme.palette.baseColor2
                     components: [
                         StatusIcon {
-                            visible: model.amISectionAdmin
+                            visible: model.memberRole === Constants.memberRole.owner ||
+                                     model.memberRole === Constants.memberRole.admin
                             anchors.verticalCenter: parent.verticalCenter
                             icon: "crown"
                             color: Theme.palette.directColor1
