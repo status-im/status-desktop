@@ -1,4 +1,4 @@
-import NimQml, chronicles
+import NimQml, chronicles, sequtils, sugar
 
 import ./controller, ./view, ./filter
 import ./io_interface as io_interface
@@ -128,7 +128,14 @@ method getCurrentCurrency*(self: Module): string =
   self.controller.getCurrency()
 
 method setTotalCurrencyBalance*(self: Module) =
-  self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance(self.filter.addresses))
+  var addresses: seq[string] = @[]
+  let walletAccounts = self.controller.getWalletAccounts()
+  if self.filter.excludeWatchOnly:
+    addresses = walletAccounts.filter(a => a.walletType != "watch").map(a => a.address)
+  else:
+    addresses = walletAccounts.map(a => a.address)
+
+  self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance(addresses))
 
 method notifyFilterChanged(self: Module) =
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, self.filter.excludeWatchOnly, self.filter.allAddresses)
