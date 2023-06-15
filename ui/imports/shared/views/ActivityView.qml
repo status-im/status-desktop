@@ -33,6 +33,8 @@ Control {
         color: "white"
     }
 
+    Component.onCompleted: controller.updateRecipientsModel()
+
     QtObject {
         id: d
 
@@ -67,17 +69,6 @@ Control {
                 }
             }
             controller.setFilterStatus(JSON.stringify(statuses))
-
-            // Counterparty addresses
-            var addresses = toAddressesInput.text.split(',')
-            if(addresses.length == 1 && addresses[0].trim() == "") {
-                addresses = []
-            } else {
-                for (var i = 0; i < addresses.length; i++) {
-                    addresses[i] = padHexAddress(addresses[i].trim());
-                }
-            }
-            controller.setFilterToAddresses(JSON.stringify(addresses))
 
             // Involved addresses
             var addresses = addressesInput.text.split(',')
@@ -219,13 +210,17 @@ Control {
                     delegate: ItemOnOffDelegate {}
                 }
 
-                Label { text: qsTr("To addresses") }
-                TextField {
-                    id: toAddressesInput
+                ComboBox {
+                    id: toAddressesComboBox
+                    model: controller.recipientsModel
 
-                    Layout.fillWidth: true
+                    displayText: qsTr("Select TO") + (controller.recipientsModel.hasMore ? qsTr(" ...") : "")
 
-                    placeholderText: qsTr("0x1234, 0x5678, ...")
+                    currentIndex: -1
+
+                    delegate: ItemOnOffDelegate {
+                        textRole: "address"
+                    }
                 }
 
                 Button {
@@ -305,6 +300,8 @@ Control {
             }
 
             component ItemOnOffDelegate: Item {
+                property string textRole: "text"
+
                 width: parent ? parent.width : 0
                 height: itemLayout.implicitHeight
 
@@ -315,7 +312,7 @@ Control {
                     anchors.fill: parent
 
                     CheckBox { checked: entry.checked; onCheckedChanged: entry.checked = checked }
-                    Label { text: entry.text }
+                    Label { text: entry[textRole] }
                     RowLayout {}
                 }
             }
