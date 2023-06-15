@@ -156,6 +156,7 @@ Rectangle {
 
             StatusRoundButton {
                 id: addItemButton
+                objectName: "addNetworkTagItemButton"
                 
                 implicitHeight: 32
                 implicitWidth: implicitHeight

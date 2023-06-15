@@ -155,7 +155,7 @@ def step(context, name):
 def step(context, account_name, amount, token, chain_name, password):
     _walletScreen.send_transaction(account_name, amount, token, chain_name, password)
 
-@When("the user adds a saved address named \"|any|\" and address \"|any|\"")
+@When("the user adds a saved address with name \"|any|\" and address \"|any|\"")
 def step(context, name, address):
     _walletScreen.add_saved_address(name, address)
 
@@ -220,11 +220,11 @@ def step(context, symbol):
 def step(context):
     _walletScreen.verify_transaction()
 
-@Then("the name \"|any|\" is in the list of saved addresses")
+@Then("the saved address with name \"|any|\" is in the list of saved addresses")
 def step(context, name: str):
     _walletScreen.verify_saved_address_exists(name)
 
-@Then("the name \"|any|\" is not in the list of saved addresses")
+@Then("the saved address with name \"|any|\" is not in the list of saved addresses")
 def step(context, name: str):
     _walletScreen.verify_saved_address_doesnt_exist(name)
 
