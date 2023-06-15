@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Layouts 1.4
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
@@ -17,6 +18,7 @@ Badge {
 
     implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
     implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
+    color: hoverArea.containsMouse ? hoverArea.pressed ? Theme.palette.baseColor3 : Theme.palette.baseColor2 : Style.current.transparent
 
     RowLayout {
         id: layout
@@ -49,6 +51,7 @@ Badge {
     }
 
     MouseArea {
+        id: hoverArea
         hoverEnabled: true
         anchors.fill: layout
         cursorShape: Qt.PointingHandCursor
