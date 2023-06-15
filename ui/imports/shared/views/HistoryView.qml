@@ -33,6 +33,7 @@ ColumnLayout {
     QtObject {
         id: d
         property bool isLoading: false
+        property var activityFiltersStore: WalletStores.ActivityFiltersStore{}
     }
 
     Connections {
@@ -58,7 +59,7 @@ ColumnLayout {
         id: noTxs
         Layout.fillWidth: true
         Layout.preferredHeight: 42
-        visible: !d.isLoading && transactionListRoot.count === 0
+        visible: !d.isLoading && transactionListRoot.count === 0 && !d.activityFiltersStore.filtersSet
         font.pixelSize: Style.current.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
     }
@@ -66,24 +67,11 @@ ColumnLayout {
     // Tp-do make connections with nim once logic is ready
     ActivityFilterPanel {
         id: filterComponent
-        visible: !d.isLoading && transactionListRoot.count !== 0
+        visible: !d.isLoading && (transactionListRoot.count !== 0 || d.activityFiltersStore.filtersSet)
         Layout.fillWidth: true
         Layout.preferredHeight: 50
-        store: RootStore
-        selectedTime: Constants.TransactionTimePeriod.All
-        typeFilters: [
-            Constants.TransactionType.Send,
-            Constants.TransactionType.Receive,
-            Constants.TransactionType.Buy,
-            Constants.TransactionType.Swap,
-            Constants.TransactionType.Bridge
-        ]
-        statusFilters: [
-            Constants.TransactionStatus.Failed,
-            Constants.TransactionStatus.Pending,
-            Constants.TransactionStatus.Complete,
-            Constants.TransactionStatus.Finished
-        ]
+        activityFilterStore: d.activityFiltersStore
+        store: WalletStores.RootStore
     }
 
     Separator {

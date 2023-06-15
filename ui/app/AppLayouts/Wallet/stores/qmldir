@@ -1,1 +1,2 @@
 singleton RootStore 1.0 RootStore.qml
+ActivityFiltersStore 1.0 ActivityFiltersStore.qml

@@ -13,25 +13,8 @@ import "../popups"
 Flow {
     id: root
 
+    property var activityFilterStore
     property var store
-    property int selectedTime
-    property double fromTimestamp
-    property double toTimestamp
-    property var typeFilters
-    property var statusFilters
-    property var assetsList
-    property var collectiblesList
-    property var savedAddressList
-    property var recentsList
-
-    signal changeSelectedTime(int selectedTime)
-    signal setCustomTimeRange(string from, string to)
-    signal toggleType(int type)
-    signal toggleStatus(int status)
-    signal toggleToken(string tokenSymbol)
-    signal toggleCollectibles(string name)
-    signal toggleSavedAddress(string address)
-    signal toggleRecents(string address)
 
     spacing: 8
 
@@ -47,53 +30,18 @@ Flow {
     }
 
     ActivityFilterTagItem {
-        tagPrimaryLabel.text: {
-            var currDate = new Date; // current date
-            switch(root.selectedTime) {
-            case Constants.TransactionTimePeriod.Today:
-                return LocaleUtils.formatDate(currDate) // Today
-            case Constants.TransactionTimePeriod.Yesterday:
-                return LocaleUtils.formatDate(new Date().setDate(currDate.getDate() - 1)) // Yesterday
-            case Constants.TransactionTimePeriod.ThisWeek:
-                var firstDayOfCurrentWeek = currDate.getDate() - currDate.getDay()
-                return LocaleUtils.formatDate(currDate.setDate(firstDayOfCurrentWeek)) // This week
-            case Constants.TransactionTimePeriod.LastWeek:
-                return LocaleUtils.formatDate(new Date().setDate(currDate.getDate() - 7)) // Last week
-            case Constants.TransactionTimePeriod.ThisMonth:
-                return LocaleUtils.formatDate(currDate.setDate(1)) // This month
-            case Constants.TransactionTimePeriod.LastMonth:
-                currDate.setDate(1);
-                currDate.setMonth(currDate.getMonth()-1);
-                return LocaleUtils.formatDate(currDate) // Last month
-            case Constants.TransactionTimePeriod.Custom:
-                return LocaleUtils.formatDate(new Date(root.fromTimestamp)) // Custom
-            default:
-                return ""
-            }
-        }
+        tagPrimaryLabel.text: LocaleUtils.formatDate(activityFilterStore.fromTimestamp)
         tagSecondaryLabel.text: {
-            switch(root.selectedTime) {
+            switch(activityFilterMenu.selectedTime) {
             case Constants.TransactionTimePeriod.Today:
             case Constants.TransactionTimePeriod.Yesterday:
                 return ""
-            case Constants.TransactionTimePeriod.ThisWeek:
-            case Constants.TransactionTimePeriod.LastWeek:
-            case Constants.TransactionTimePeriod.ThisMonth:
-                return LocaleUtils.formatDate(new Date)
-            case Constants.TransactionTimePeriod.LastMonth:
-                let x = new Date()
-                x.setDate(1);
-                x.setMonth(x.getMonth()-1);
-                x.setDate(new Date(x.getFullYear(), x.getMonth(), 0).getDate() + 1)
-                return LocaleUtils.formatDate(x)
-            case Constants.TransactionTimePeriod.Custom:
-                return LocaleUtils.formatDate(new Date(root.toTimestamp)) // Custom
             default:
-                return ""
+                return LocaleUtils.formatDate(activityFilterStore.toTimestamp)
             }
         }
-        middleLabel.text:{
-            switch(root.selectedTime) {
+        middleLabel.text: {
+            switch(activityFilterMenu.selectedTime) {
             case Constants.TransactionTimePeriod.Today:
             case Constants.TransactionTimePeriod.Yesterday:
                 return ""
@@ -101,17 +49,16 @@ Flow {
                 return qsTr("to")
             }
         }
-
         iconAsset.icon: "history"
-        visible: root.selectedTime !== Constants.TransactionTimePeriod.All
-        onClosed: root.changeSelectedTime(Constants.TransactionTimePeriod.All)
+        visible: activityFilterMenu.selectedTime !== Constants.TransactionTimePeriod.All
+        onClosed: activityFilterStore.setSelectedTimestamp(Constants.TransactionTimePeriod.All)
     }
 
     Repeater {
-        model: activityFilterMenu.allTypesChecked ? 0: root.typeFilters
+        model: activityFilterMenu.allTypesChecked ? 0: activityFilterStore.typeFilters
         delegate: ActivityFilterTagItem {
-            property int type: root.typeFilters[index]
-            tagPrimaryLabel.text: switch(root.typeFilters[index]) {
+            property int type: activityFilterStore.typeFilters[index]
+            tagPrimaryLabel.text: switch(activityFilterStore.typeFilters[index]) {
                                   case Constants.TransactionType.Send:
                                       return qsTr("Send")
                                   case Constants.TransactionType.Receive:
@@ -123,10 +70,10 @@ Flow {
                                   case Constants.TransactionType.Bridge:
                                       return qsTr("Bridge")
                                   default:
-                                      console.warn("Unhandled type :: ",root.typeFilters[index])
+                                      console.warn("Unhandled type :: ",activityFilterStore.typeFilters[index])
                                       return ""
                                   }
-            iconAsset.icon: switch(root.typeFilters[index]) {
+            iconAsset.icon: switch(activityFilterStore.typeFilters[index]) {
                             case Constants.TransactionType.Send:
                                 return "send"
                             case Constants.TransactionType.Receive:
@@ -138,18 +85,18 @@ Flow {
                             case Constants.TransactionType.Bridge:
                                 return "bridge"
                             default:
-                                console.warn("Unhandled type :: ",root.typeFilters[index])
+                                console.warn("Unhandled type :: ",activityFilterStore.typeFilters[index])
                                 return ""
                             }
-            onClosed: root.toggleType(type)
+            onClosed: activityFilterStore.toggleType(type)
         }
     }
 
     Repeater {
-        model: activityFilterMenu.allStatusChecked ? 0 : root.statusFilters
+        model: activityFilterMenu.allStatusChecked ? 0 : activityFilterStore.statusFilters
         delegate: ActivityFilterTagItem {
-            property int type: root.statusFilters[index]
-            tagPrimaryLabel.text: switch(root.statusFilters[index]) {
+            property int status: activityFilterStore.statusFilters[index]
+            tagPrimaryLabel.text: switch(activityFilterStore.statusFilters[index]) {
                                   case Constants.TransactionStatus.Failed:
                                       return qsTr("Failed")
                                   case Constants.TransactionStatus.Pending:
@@ -159,10 +106,10 @@ Flow {
                                   case Constants.TransactionStatus.Finished:
                                       return qsTr("Finalised")
                                   default:
-                                      console.warn("Unhandled status :: ",root.statusFilters[index])
+                                      console.warn("Unhandled status :: ",activityFilterStore.statusFilters[index])
                                       return ""
                                   }
-            iconAsset.icon: switch(root.statusFilters[index]) {
+            iconAsset.icon: switch(activityFilterStore.statusFilters[index]) {
                             case Constants.TransactionStatus.Failed:
                                 return Style.svg("transaction/failed")
                             case Constants.TransactionStatus.Pending:
@@ -172,96 +119,100 @@ Flow {
                             case Constants.TransactionStatus.Finished:
                                 return Style.svg("transaction/finished")
                             default:
-                                console.warn("Unhandled status :: ",root.statusFilters[index])
+                                console.warn("Unhandled status :: ",activityFilterStore.statusFilters[index])
                                 return ""
                             }
             iconAsset.color: "transparent"
-            onClosed: root.toggleStatus(type)
+            onClosed: activityFilterStore.toggleStatus(status, activityFilterMenu.allStatusChecked)
         }
     }
 
     Repeater {
-        model: root.assetsList
+        model: activityFilterStore.tokensList
         delegate: ActivityFilterTagItem {
             tagPrimaryLabel.text: symbol
             iconAsset.icon: Constants.tokenIcon(symbol)
             iconAsset.color: "transparent"
-            visible: !allChecked && checked
-            onClosed: root.toggleToken(symbol)
+            visible: !activityFilterMenu.allTokensChecked && activityFilterStore.tokensFilter.includes(symbol)
+            onClosed: activityFilterStore.toggleToken(symbol)
         }
     }
 
     Repeater {
-        model: root.collectiblesList
+        model: activityFilterStore.collectiblesList
         delegate: ActivityFilterTagItem {
-            tagPrimaryLabel.text: name
-            iconAsset.icon: model.iconSource
+            tagPrimaryLabel.text: model.name
+            iconAsset.icon: model.imageUrl
             iconAsset.color: "transparent"
-            visible: !allChecked && checked
-            onClosed: root.toggleCollectibles(name)
+            visible: !activityFilterMenu.allCollectiblesChecked && activityFilterStore.collectiblesFilter.includes(model.id)
+            onClosed: activityFilterStore.toggleCollectibles(model.id)
         }
     }
 
     Repeater {
-        model: root.recentsList
+        model: activityFilterStore.recentsList
         delegate: ActivityFilterTagItem {
             property int transactionType: to.toLowerCase() === root.store.overview.mixedcaseAddress.toLowerCase() ? Constants.TransactionType.Receive : Constants.TransactionType.Send
             tagPrimaryLabel.text: transactionType === Constants.TransactionType.Receive ?
                                       root.store.getNameForAddress(from) || StatusQUtils.Utils.elideText(from,6,4) :
                                       root.store.getNameForAddress(to) || StatusQUtils.Utils.elideText(to,6,4)
-            visible: !allChecked && checked
-            onClosed: root.toggleRecents(transactionType === Constants.TransactionType.Receive ? from : to)
+            visible: !activityFilterMenu.allRecentsChecked && activityFilterMenu.recentsFilters.includes(transactionType === Constants.TransactionType.Receive ? from : to)
+            onClosed: activityFilterStore.toggleRecents(transactionType === Constants.TransactionType.Receive ? from : to)
         }
     }
 
     Repeater {
-        model: root.savedAddressList
+        model: activityFilterStore.savedAddressList
         delegate: ActivityFilterTagItem {
             tagPrimaryLabel.text: ens.length > 0 ? ens : chainShortNames + StatusQUtils.Utils.elideText(address,6,4)
-            visible: !allChecked && checked
-            onClosed: root.toggleSavedAddress(address)
+            visible: !activityFilterMenu.allSavedAddressesChecked && activityFilterMenu.savedAddressFilters.includes(address)
+            onClosed: activityFilterStore.toggleSavedAddress(address)
         }
     }
 
     ActivityFilterMenu {
         id: activityFilterMenu
 
-        selectedTime: root.selectedTime
+        selectedTime: activityFilterStore.selectedTime
         onSetSelectedTime: {
             if(selectedTime === Constants.TransactionTimePeriod.Custom) {
                 dialog.open()
             }
-            else
-                root.changeSelectedTime(selectedTime)
+            else {
+                activityFilterStore.setSelectedTimestamp(selectedTime)
+            }
         }
 
-        typeFilters: root.typeFilters
-        onUpdateTypeFilter: root.toggleType(type)
+        typeFilters: activityFilterStore.typeFilters
+        onUpdateTypeFilter: activityFilterStore.toggleType(type, allFiltersCount)
 
-        statusFilters: root.statusFilters
-        onUpdateStatusFilter: root.toggleStatus(status)
+        statusFilters: activityFilterStore.statusFilters
+        onUpdateStatusFilter: activityFilterStore.toggleStatus(status, allFiltersCount)
 
-        tokensList: root.assetsList
-        collectiblesList: root.collectiblesList
-        onUpdateTokensFilter: root.toggleToken(tokenSymbol)
-        onUpdateCollectiblesFilter: root.toggleCollectibles(name)
+        tokensList: activityFilterStore.tokensList
+        tokensFilter: activityFilterStore.tokensFilter
+        collectiblesList: activityFilterStore.collectiblesList
+        collectiblesFilter: activityFilterStore.collectiblesFilter
+        onUpdateTokensFilter: activityFilterStore.toggleToken(tokenSymbol)
+        onUpdateCollectiblesFilter: activityFilterStore.toggleCollectibles(id)
 
         store: root.store
-        recentsList: root.recentsList
-        savedAddressList: root.savedAddressList
-        onUpdateSavedAddressFilter: root.toggleSavedAddress(address)
-        onUpdateRecentsFilter: root.toggleRecents(address)
+        recentsList: activityFilterStore.recentsList
+        recentsFilters: activityFilterStore.recentsFilters
+        savedAddressList: activityFilterStore.savedAddressList
+        savedAddressFilters: activityFilterStore.savedAddressFilters
+        onUpdateSavedAddressFilter: activityFilterStore.toggleSavedAddress(address)
+        onUpdateRecentsFilter: activityFilterStore.toggleRecents(address)
     }
 
     StatusDateRangePicker {
         id: dialog
         anchors.centerIn: parent
-        // To-do sync with backend
-        fromTimestamp: root.fromTimestamp// 7 days ago
-        toTimestamp: root.toTimestamp
+        fromTimestamp: activityFilterStore.fromTimestamp
+        toTimestamp: activityFilterStore.toTimestamp
         onNewRangeSet: {
-            root.setCustomTimeRange(fromTimestamp, toTimestamp)
-            root.changeSelectedTime(Constants.TransactionTimePeriod.Custom)
+            activityFilterStore.setCustomTimeRange(fromTimestamp, toTimestamp)
+            activityFilterStore.setSelectedTimestamp(Constants.TransactionTimePeriod.Custom)
         }
     }
 }

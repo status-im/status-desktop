@@ -9,16 +9,16 @@ ListModel {
             iconSource: ModelsData.collectibles.anniversary,
             name: "Anniversary",
             category: TokenCategories.Category.Community,
-            checked: true,
-            allChecked: true
+            imageUrl: ModelsData.collectibles.anniversary,
+            id: 1767698
         },
         {
             key: "Anniversary2",
             iconSource: ModelsData.collectibles.anniversary,
             name: "Anniversary2",
             category: TokenCategories.Category.Community,
-            checked: true,
-            allChecked: true
+            imageUrl: ModelsData.collectibles.anniversary,
+            id: 1767699
         },
         {
             key: "CryptoKitties",
@@ -69,26 +69,28 @@ ListModel {
                     name: "Magicat-4"
                 }
             ],
-            checked: true,
-            allChecked: true
+            imageUrl: ModelsData.collectibles.cryptoKitties,
+            id: 1767700
         },
         {
             key: "SuperRare",
             iconSource: ModelsData.collectibles.superRare,
             name: "SuperRare",
             category: TokenCategories.Category.Own,
-            checked: true,
-            allChecked: true
+            imageUrl: ModelsData.collectibles.superRare,
+            id: 1767701
         },
         {
             key: "Custom",
             iconSource: ModelsData.collectibles.custom,
             name: "Custom Collectible",
             category: TokenCategories.Category.General,
-            checked: true,
-            allChecked: true
+            imageUrl: ModelsData.collectibles.custom,
+            id: 1767764
         }
     ]
+
+    property bool isFetching: false
 
     Component.onCompleted: append(data)
 }

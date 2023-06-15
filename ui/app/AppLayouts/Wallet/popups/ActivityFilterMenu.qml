@@ -8,32 +8,45 @@ import "./filterSubMenus"
 StatusMenu {
     id: root
 
+    property var store
+
     // Time filter
     property int selectedTime: ActivityFilterMenu.All
     signal setSelectedTime(int selectedTime)
 
     // Type filter
     property var typeFilters: []
-    property bool allTypesChecked: typeMenu.allChecked
-    signal updateTypeFilter(int type)
+    readonly property bool allTypesChecked: typeMenu.allChecked
+    signal updateTypeFilter(int type, int allFiltersCount)
 
     // Status filter
     property var statusFilters: []
-    property bool allStatusChecked: statusMenu.allChecked
-    signal updateStatusFilter(int status)
+    readonly property bool allStatusChecked: statusMenu.allChecked
+    signal updateStatusFilter(int status, int allFiltersCount)
 
-    // Assets filter
+    // Tokens filter
     property var tokensList: []
-    property var collectiblesList
+    property var tokensFilter: []
+    readonly property bool allTokensChecked: tokensMenu.allTokensChecked
     signal updateTokensFilter(string tokenSymbol)
-    signal updateCollectiblesFilter(string name)
 
-    // Counterparty filter
-    property var store
+    // Collectibles filter
+    property var collectiblesList: []
+    property var collectiblesFilter: []
+    readonly property bool allCollectiblesChecked: tokensMenu.allCollectiblesChecked
+    signal updateCollectiblesFilter(double id)
+
+    // Recents filter
     property var recentsList
-    property var savedAddressList
-    signal updateSavedAddressFilter(string address)
+    property var recentsFilters
+    readonly property bool allRecentsChecked: counterPartyMenu.allRecentsChecked
     signal updateRecentsFilter(string address)
+
+    // Collectibles filter
+    property var savedAddressList
+    property var savedAddressFilters
+    readonly property bool allSavedAddressesChecked: counterPartyMenu.allSavedAddressesChecked
+    signal updateSavedAddressFilter(string address)
 
     implicitWidth: 176
 
@@ -57,14 +70,14 @@ StatusMenu {
             id: typeMenu
             onBack: root.open()
             typeFilters: root.typeFilters
-            onActionTriggered: updateTypeFilter(type)
+            onActionTriggered: updateTypeFilter(type, allFiltersCount)
             closePolicy: root.closePolicy
         }
         ActivityStatusFilterSubMenu {
             id: statusMenu
             onBack: root.open()
             statusFilters: root.statusFilters
-            onActionTriggered: updateStatusFilter(status)
+            onActionTriggered: updateStatusFilter(status, allFiltersCount)
             closePolicy: root.closePolicy
         }
         ActivityTokensFilterSubMenu {
@@ -72,9 +85,11 @@ StatusMenu {
             height: Math.min(439, tokensMenu.implicitHeight)
             onBack: root.open()
             tokensList: root.tokensList
+            tokensFilter: root.tokensFilter
             collectiblesList: root.collectiblesList
+            collectiblesFilter: root.collectiblesFilter
             onTokenToggled: updateTokensFilter(tokenSymbol)
-            onCollectibleToggled: updateCollectiblesFilter(name)
+            onCollectibleToggled: updateCollectiblesFilter(id)
             closePolicy: root.closePolicy
         }
         ActivityCounterpartyFilterSubMenu {
@@ -83,7 +98,9 @@ StatusMenu {
             onBack: root.open()
             store: root.store
             recentsList: root.recentsList
+            recentsFilters: root.recentsFilters
             savedAddressList: root.savedAddressList
+            savedAddressFilters: root.savedAddressFilters
             onSavedAddressToggled: root.updateSavedAddressFilter(address)
             onRecentsToggled: root.updateRecentsFilter(address)
             closePolicy: root.closePolicy

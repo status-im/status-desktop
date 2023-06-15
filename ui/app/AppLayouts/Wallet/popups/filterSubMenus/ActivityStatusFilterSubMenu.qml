@@ -11,7 +11,8 @@ StatusMenu {
     id: root
 
     property var statusFilters: []
-    readonly property bool allChecked: statusFilters.length === typeButtonGroup.buttons.length
+    readonly property bool allChecked: statusFilters.length === 0
+    readonly property int allFiltersCount: typeButtonGroup.buttons.length
 
     signal back()
     signal actionTriggered(int status)
@@ -37,7 +38,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionStatus.Failed
-        checked: statusFilters.includes(type)
+        checked: root.allChecked || statusFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 
@@ -49,7 +50,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionStatus.Pending
-        checked: statusFilters.includes(type)
+        checked: root.allChecked || statusFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 
@@ -61,7 +62,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionStatus.Complete
-        checked: statusFilters.includes(type)
+        checked: root.allChecked || statusFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 
@@ -73,7 +74,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionStatus.Finished
-        checked: statusFilters.includes(type)
+        checked: root.allChecked || statusFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 }

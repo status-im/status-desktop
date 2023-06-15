@@ -20,17 +20,19 @@ import "../../controls"
 StatusMenu {
     id: root
 
-    property var recentsList
-    property var savedAddressList
     property var store
+
+    property var recentsList
+    property var recentsFilters
+    readonly property bool allRecentsChecked: recentsFilters.length === 0
+
+    property var savedAddressList
+    property var savedAddressFilters
+    readonly property bool allSavedAddressesChecked: savedAddressFilters.length === 0
 
     signal back()
     signal savedAddressToggled(string address)
     signal recentsToggled(string address)
-
-    property var searchTokenSymbolByAddressFn: function (address) {
-        return ""
-    }
 
     implicitWidth: 289
 
@@ -75,36 +77,34 @@ StatusMenu {
             Repeater {
                 model: root.recentsList
                 delegate: ActivityTypeCheckBox {
-                    readonly property int transactionType: model.to.toLowerCase() === store.overview.mixedcaseAddress.toLowerCase() ? Constants.TransactionType.Receive : Constants.TransactionType.Send
-                    readonly property string fromName: store.getNameForAddress(model.from)
-                    readonly property string toName: store.getNameForAddress(model.to)
+                    readonly property int transactionType: model.activityEntry.recipient.toLowerCase() === store.overview.mixedcaseAddress.toLowerCase() ? Constants.TransactionType.Receive : Constants.TransactionType.Send
+                    readonly property string fromName: store.getNameForAddress(model.activityEntry.sender)
+                    readonly property string toName: store.getNameForAddress(model.activityEntry.recipient)
                     width: parent.width
                     height: 44
                     title: transactionType === Constants.TransactionType.Receive ?
-                               fromName || StatusQUtils.Utils.elideText(model.from,6,4) :
-                               toName || StatusQUtils.Utils.elideText(model.to,6,4)
+                               fromName || StatusQUtils.Utils.elideText(model.activityEntry.sender,6,4) :
+                               toName || StatusQUtils.Utils.elideText(model.activityEntry.recipient,6,4)
                     subTitle: {
                         if (transactionType === Constants.TransactionType.Receive) {
-                            return fromName ? StatusQUtils.Utils.elideText(model.from,6,4) : ""
+                            return fromName ? StatusQUtils.Utils.elideText(model.activityEntry.sender,6,4) : ""
                         } else {
-                            return toName ? StatusQUtils.Utils.elideText(model.to,6,4): ""
+                            return toName ? StatusQUtils.Utils.elideText(model.activityEntry.recipient,6,4): ""
                         }
                     }
                     statusListItemSubTitle.elide: Text.ElideMiddle
                     statusListItemSubTitle.wrapMode: Text.NoWrap
                     assetSettings.name: (transactionType === Constants.TransactionType.Receive ? fromName : toName) || "address"
-                    assetSettings.isLetterIdenticon: transactionType === Constants.TransactionType.Receive ?
-                                                         !!fromName  :
-                                                         !!toName
+                    assetSettings.isLetterIdenticon: transactionType === Constants.TransactionType.Receive ? !!fromName  : !!toName
                     assetSettings.bgHeight: 32
                     assetSettings.bgWidth: 32
                     assetSettings.bgRadius: assetSettings.bgHeight/2
                     assetSettings.width: 16
                     assetSettings.height: 16
                     buttonGroup: recentsButtonGroup
-                    allChecked: model.allChecked
-                    checked: model.checked
-                    onActionTriggered: root.recentsToggled(transactionType === Constants.TransactionType.Receive ? model.from: model.to)
+                    allChecked: root.allRecentsChecked
+                    checked: root.allRecentsChecked ? true : root.recentsFilters.includes(transactionType === Constants.TransactionType.Receive ? model.activityEntry.sender: model.activityEntry.recipient)
+                    onActionTriggered: root.recentsToggled(transactionType === Constants.TransactionType.Receive ? model.activityEntry.sender: model.activityEntry.recipient)
                 }
             }
         }
@@ -137,8 +137,8 @@ StatusMenu {
                     assetSettings.name: model.name
                     assetSettings.isLetterIdenticon: true
                     buttonGroup: savedButtonGroup
-                    allChecked: model.allChecked
-                    checked: model.checked
+                    allChecked: root.allSavedAddressesChecked
+                    checked: root.allSavedAddressesChecked ? true : root.savedAddressFilters.includes(model.address)
                     onActionTriggered: root.savedAddressToggled(model.address)
                 }
             }
