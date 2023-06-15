@@ -204,18 +204,6 @@ proc reorderCommunityChat*(
     chatId,
     position)
 
-proc deleteCommunityChat*(
-    self: Controller,
-    communityId: string,
-    chatId: string) =
-  self.communityService.deleteCommunityChat(communityId, chatId)
-
-proc deleteCommunityCategory*(
-    self: Controller,
-    communityId: string,
-    categoryId: string) =
-  self.communityService.deleteCommunityCategory(communityId, categoryId)
-
 proc requestCommunityInfo*(self: Controller, communityId: string, importing: bool) =
   self.communityService.requestCommunityInfo(communityId, importing)
 
