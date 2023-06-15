@@ -9,17 +9,13 @@ class SavedAddressPopup(BasePopup):
         self._name_text_edit = TextEdit('mainWallet_Saved_Addreses_Popup_Name_Input')
         self._save_add_address_button = Button('mainWallet_Saved_Addreses_Popup_Address_Add_Button')
         self._add_networks_selector = BaseElement('mainWallet_Saved_Addreses_Popup_Add_Network_Selector_Tag')
+        self._add_networks_button = Button('mainWallet_Saved_Addreses_Popup_Add_Network_Button')
         self._ethereum_mainnet_checkbox = CheckBox('mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Mainnet_checkbox')
         self._optimism_mainnet_checkbox = CheckBox('mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Optimism_checkbox')
         self._arbitrum_mainnet_checkbox = CheckBox('mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Arbitrum_checkbox')
         self._ethereum_mainnet_network_tag = BaseElement('mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag')
         self._optimism_mainnet_network_tag = BaseElement('mainWallet_Saved_Addresses_Popup_Network_Selector_Optimism_network_tag')
         self._arbitrum_mainnet_network_tag = BaseElement('mainWallet_Saved_Addresses_Popup_Network_Selector_Arbitrum_network_tag')
-
-class AddSavedAddressPopup(SavedAddressPopup):
-    def __init__(self):
-        super(AddSavedAddressPopup, self).__init__()
-        self._address_text_edit = TextEdit('mainWallet_Saved_Addreses_Popup_Address_Input_Edit')
 
     def set_ethereum_mainnet_network(self, value: bool):
         self._ethereum_mainnet_checkbox.set(value)
@@ -45,6 +41,13 @@ class AddSavedAddressPopup(SavedAddressPopup):
     def verify_arbitrum_mainnet_network_tag_present(self):
         assert self._arbitrum_mainnet_network_tag.is_visible, f'Arbitrum Mainnet network tag is not present'       
 
+
+
+class AddSavedAddressPopup(SavedAddressPopup):
+    def __init__(self):
+        super(AddSavedAddressPopup, self).__init__()
+        self._address_text_edit = TextEdit('mainWallet_Saved_Addreses_Popup_Address_Input_Edit')
+    
     def add_saved_address(self, name: str, address: str):
         self._name_text_edit.text = name
         self._address_text_edit.clear(verify=False)
@@ -70,5 +73,10 @@ class EditSavedAddressPopup(SavedAddressPopup):
 
     def edit_saved_address(self, name: str):
         self._name_text_edit.text = name
+        self._add_networks_button.click()
+        self.set_optimism_mainnet_network(False)
+        self.set_arbitrum_mainnet_network(False)
+        self._save_add_address_button.click()    
+        self.verify_ethereum_mainnet_network_tag_present
         self._save_add_address_button.click()
         self.wait_until_hidden()
