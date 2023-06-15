@@ -16,18 +16,26 @@ import utils 1.0
 StatusMenu {
     id: root
 
-    property var tokensList
-    property var collectiblesList
+    property var tokensFilter: []
+    property var tokensList: []
+    readonly property bool allTokensChecked: tokensFilter.length === 0
+
+    property var collectiblesList: []
+    property var collectiblesFilter: []
+    readonly property bool allCollectiblesChecked: collectiblesFilter.length === 0
 
     signal back()
     signal tokenToggled(string tokenSymbol)
-    signal collectibleToggled(string name)
+    signal collectibleToggled(double id)
 
-    property var searchTokenSymbolByAddressFn: function (address) {
-        return ""
-    }
+    property var searchTokenSymbolByAddressFn: function (address) { return "" }
 
     implicitWidth: 289
+
+    QtObject {
+        id: d
+        property bool isFetching: root.collectiblesList.isFetching
+    }
 
     MenuBackButton {
         id: backButton
@@ -82,14 +90,13 @@ StatusMenu {
                 Repeater {
                     model: SortFilterProxyModel {
                         sourceModel: root.tokensList
-                        filters: [
-                            ExpressionFilter {
-                                expression: {
-                                    var tokenSymbolByAddress = root.searchTokenSymbolByAddressFn(tokensSearchBox.text)
-                                    return symbol.startsWith(tokensSearchBox.text.toUpperCase()) || name.toUpperCase().startsWith(tokensSearchBox.text.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
-                                }
+                        filters: ExpressionFilter {
+                            enabled: root.tokensList.count > 0
+                            expression: {
+                                var tokenSymbolByAddress = root.searchTokenSymbolByAddressFn(tokensSearchBox.text)
+                                return symbol.startsWith(tokensSearchBox.text.toUpperCase()) || name.toUpperCase().startsWith(tokensSearchBox.text.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
                             }
-                        ]
+                        }
                     }
                     delegate: ActivityTypeCheckBox {
                         Layout.fillWidth: true
@@ -99,8 +106,8 @@ StatusMenu {
                         assetSettings.name: model.symbol ? Constants.tokenIcon(symbol) : ""
                         assetSettings.isImage: true
                         buttonGroup: tokenButtonGroup
-                        allChecked: model.allChecked
-                        checked: model.checked
+                        allChecked: root.allTokensChecked
+                        checked: root.allTokensChecked || root.tokensFilter.includes(model.symbol)
                         onActionTriggered: root.tokenToggled(model.symbol)
                     }
                 }
@@ -130,27 +137,28 @@ StatusMenu {
                 Repeater {
                     model: SortFilterProxyModel {
                         sourceModel: root.collectiblesList
-                        filters: [
-                            ExpressionFilter {
-                                expression: {
-                                    return model.name.toUpperCase().startsWith(collectiblesSearchBox.text.toUpperCase())
-                                }
+                        filters: ExpressionFilter {
+                            enabled: root.collectiblesList.count > 0 && !!collectiblesSearchBox.text
+                            expression: {
+                                let searchText = collectiblesSearchBox.text.toUpperCase()
+                                return name.toUpperCase().startsWith(searchText)
                             }
-                        ]
+                        }
                     }
                     delegate: ActivityTypeCheckBox {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 44
                         title: model.name
-                        assetSettings.name: model.iconSource
+                        assetSettings.name: model.imageUrl
+                        assetSettings.isImage: true
                         assetSettings.bgWidth: 32
                         assetSettings.bgHeight: 32
                         assetSettings.bgRadius: assetSettings.bgHeight/2
-                        assetSettings.isImage: true
                         buttonGroup: collectibleButtonGroup
-                        allChecked: model.allChecked
-                        checked: model.checked
-                        onActionTriggered: root.collectibleToggled(name)
+                        allChecked: root.allCollectiblesChecked
+                        checked: root.allCollectiblesChecked || root.collectiblesFilter.includes(model.id)
+                        onActionTriggered: root.collectibleToggled(model.id)
+                        loading: d.isFetching
                     }
                 }
             }

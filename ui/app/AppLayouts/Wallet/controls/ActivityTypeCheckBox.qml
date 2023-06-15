@@ -34,6 +34,7 @@ StatusListItem {
     components: [
         StatusCheckBox {
             id: checkBox
+            visible: !root.loading
             tristate: true
             checkable: true
             spacing: 0

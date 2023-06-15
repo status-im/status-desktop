@@ -11,7 +11,8 @@ StatusMenu {
     id: root
 
     property var typeFilters: []
-    readonly property bool allChecked: typeFilters.length === typeButtonGroup.buttons.length
+    readonly property bool allChecked: typeFilters.length === 0
+    readonly property int allFiltersCount: typeButtonGroup.buttons.length
 
     signal back()
     signal actionTriggered(int type)
@@ -36,7 +37,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionType.Send
-        checked: typeFilters.includes(type)
+        checked: root.allChecked || typeFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 
@@ -47,7 +48,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionType.Receive
-        checked: typeFilters.includes(type)
+        checked: root.allChecked || typeFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 
@@ -58,7 +59,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionType.Buy
-        checked: typeFilters.includes(type)
+        checked: root.allChecked || typeFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 
@@ -69,7 +70,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionType.Swap
-        checked: typeFilters.includes(type)
+        checked: root.allChecked || typeFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 
@@ -80,7 +81,7 @@ StatusMenu {
         buttonGroup: typeButtonGroup
         allChecked: root.allChecked
         type: Constants.TransactionType.Bridge
-        checked: typeFilters.includes(type)
+        checked: root.allChecked || typeFilters.includes(type)
         onActionTriggered: root.actionTriggered(type)
     }
 }
