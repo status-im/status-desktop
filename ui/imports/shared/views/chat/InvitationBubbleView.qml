@@ -37,7 +37,7 @@ Control {
         readonly property bool   communitySpectated:    !!d.invitedCommunity ? d.invitedCommunity.spectated : false
 
         readonly property int margin: 12
-        readonly property int radius: 16
+        readonly property int radius: Style.current.padding
 
         function getCommunity() {
             try {
@@ -176,21 +176,35 @@ Control {
             color: Style.current.separator
         }
 
-        StatusFlatButton {
-            id: joinBtn
-
+        Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 44
+            clip: true
 
-            text: qsTr("Go to Community")
-            loading: root.loading
-            radius: d.radius - 1 // We do -1, otherwise there's a gap between border and button
+            StatusFlatButton {
+                id: joinBtn
+                width: parent.width
+                height: (parent.height+d.radius)
+                anchors.top: parent.top
+                anchors.topMargin: -d.radius
+                loading: root.loading
+                radius: d.radius - 1 // We do -1, otherwise there's a gap between border and button
+                contentItem: Item {
+                    StatusBaseText {
+                        anchors.centerIn: parent
+                        anchors.verticalCenterOffset: d.radius/2
+                        font: joinBtn.font
+                        color: joinBtn.enabled ? joinBtn.textColor : joinBtn.disabledTextColor
+                        text: qsTr("Go to Community")
+                    }
+                }
 
-            onClicked: {
-                if (d.communityJoined || d.communitySpectated) {
-                    root.store.setActiveCommunity(communityId)
-                } else {
-                    root.store.spectateCommunity(communityId, userProfile.name)
+                onClicked: {
+                    if (d.communityJoined || d.communitySpectated) {
+                        root.store.setActiveCommunity(communityId)
+                    } else {
+                        root.store.spectateCommunity(communityId, userProfile.name)
+                    }
                 }
             }
         }
