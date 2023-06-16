@@ -7,6 +7,9 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../app_service/service/token/service as token_service
+
+import ../../shared_models/token_permissions_model
 
 type
   Controller* = ref object of RootObj
@@ -16,6 +19,7 @@ type
     contactsService: contacts_service.Service
     communityTokensService: community_tokens_service.Service
     networksService: networks_service.Service
+    tokenService: token_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -24,6 +28,7 @@ proc newController*(
     contactsService: contacts_service.Service,
     communityTokensService: community_tokens_service.Service,
     networksService: networks_service.Service,
+    tokenService: token_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -32,6 +37,7 @@ proc newController*(
   result.contactsService = contactsService
   result.communityTokensService = communityTokensService
   result.networksService = networksService
+  result.tokenService = tokenService
 
 proc delete*(self: Controller) =
   discard
@@ -252,3 +258,6 @@ proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTo
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)
+
+proc getTokenList*(self: Controller): seq[TokenDto] =
+  return self.tokenService.getTokenList()

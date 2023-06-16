@@ -228,6 +228,12 @@ Control {
     }
 
     onModelChanged: d.buildShortModel(root.model)
+    Connections {
+        target: root.model
+        function onCountChanged() {
+            d.buildShortModel(root.model)
+        }
+    }
     Component.onCompleted: d.buildShortModel(root.model)
 
     ListModel { id: shortModel }
@@ -268,6 +274,12 @@ Control {
         spacing: -root.overlapping
 
         onModelChanged: buildTokensRowModel(singlePermissionItem.model)
+        Connections {
+            target: singlePermissionItem.model
+            function onCountChanged() {
+                buildTokensRowModel(singlePermissionItem.model)
+            }
+        }
         Component.onCompleted: buildTokensRowModel(singlePermissionItem.model)
 
         ListModel{ id: shortTokensRowModel }

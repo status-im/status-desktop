@@ -1,4 +1,5 @@
 import strformat
+import ../../../shared_models/[token_permissions_model, token_permission_item]
 
 type
   CuratedCommunityItem* = object
@@ -13,6 +14,7 @@ type
     members: int
     activeMembers: int
     featured: bool
+    permissionModel: TokenPermissionsModel
 
 proc initCuratedCommunityItem*(
   id: string,
@@ -25,7 +27,8 @@ proc initCuratedCommunityItem*(
   tags: string,
   members: int,
   activeMembers: int,
-  featured: bool
+  featured: bool,
+  tokenPermissionsItems: seq[TokenPermissionItem]
 ): CuratedCommunityItem =
   result.id = id
   result.name = name
@@ -38,6 +41,9 @@ proc initCuratedCommunityItem*(
   result.members = members
   result.activeMembers = activeMembers
   result.featured = featured
+  result.permissionModel = newTokenPermissionsModel()
+  if tokenPermissionsItems.len > 0:
+    result.permissionModel.setItems(tokenPermissionsItems)
 
 proc `$`*(self: CuratedCommunityItem): string =
   result = fmt"""CuratedCommunityItem(
@@ -84,3 +90,9 @@ proc getTags*(self: CuratedCommunityItem): string =
 
 proc getFeatured*(self: CuratedCommunityItem): bool =
   return self.featured
+
+proc getPermissionsModel*(self: CuratedCommunityItem): TokenPermissionsModel =
+  return self.permissionModel
+
+proc setPermissionModelItems*(self: CuratedCommunityItem, items: seq[TokenPermissionItem]) =
+  self.permissionModel.setItems(items)

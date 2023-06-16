@@ -25,8 +25,8 @@ StatusSectionLayout {
 
     property var communitiesStore
 
-    property alias assetsModel: communitiesGrid.assetsModel
-    property alias collectiblesModel: communitiesGrid.collectiblesModel
+    property var assetsModel
+    property var collectiblesModel
 
     objectName: "communitiesPortalLayout"
     onNotificationButtonClicked: Global.openActivityCenterPopup()

@@ -12,8 +12,8 @@ import ./models/discord_channels_model
 import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
-import ../../shared_models/section_item
-import ../../shared_models/[member_item, section_model]
+import ../../shared_models/[member_item, section_model, section_item, token_permissions_model, token_permission_item,
+  token_list_item, token_criteria_item]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/common/types
@@ -22,6 +22,7 @@ import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/transaction/service as transaction_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/chat/dto/chat
 import ./tokens/module as community_tokens_module
 
@@ -47,6 +48,7 @@ type
 method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CommunityDto])
+proc buildTokenList(self: Module)
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -55,7 +57,9 @@ proc newModule*(
     contactsService: contacts_service.Service,
     communityTokensService: community_tokens_service.Service,
     networksService: networks_service.Service,
-    transactionService: transaction_service.Service): Module =
+    transactionService: transaction_service.Service,
+    tokensService: token_service.Service,
+    ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
@@ -67,6 +71,7 @@ proc newModule*(
     contactsService,
     communityTokensService,
     networksService,
+    tokensService,
   )
   result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService, transactionService, networksService)
   result.moduleLoaded = false
@@ -95,6 +100,7 @@ method viewDidLoad*(self: Module) =
 method communityDataLoaded*(self: Module) =
   self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
+  self.buildTokenList()
 
 method onActivated*(self: Module) =
   self.controller.asyncLoadCuratedCommunities()
@@ -169,19 +175,27 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       communityTokens = @[]
     )
 
-proc getCuratedCommunityItem(self: Module, c: CommunityDto): CuratedCommunityItem =
+proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedCommunityItem =
+  var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
+
+  for id, tokenPermission in community.tokenPermissions:
+    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission)
+    tokenPermissionsItems.add(tokenPermissionItem)
+
   return initCuratedCommunityItem(
-      c.id,
-      c.name,
-      c.description,
-      c.isAvailable,
-      c.images.thumbnail,
-      c.images.banner,
-      c.color,
-      c.tags,
-      len(c.members),
-      int(c.activeMembersCount),
-      c.featuredInDirectory)
+    community.id,
+    community.name,
+    community.description,
+    community.isAvailable,
+    community.images.thumbnail,
+    community.images.banner,
+    community.color,
+    community.tags,
+    len(community.members),
+    int(community.activeMembersCount),
+    community.featuredInDirectory,
+    tokenPermissionsItems,
+  )
 
 proc getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
   return initDiscordCategoryItem(
@@ -384,3 +398,37 @@ method requestCancelDiscordCommunityImport*(self: Module, id: string) =
 
 method communityInfoAlreadyRequested*(self: Module) =
   self.view.communityInfoAlreadyRequested()
+
+proc buildTokenList(self: Module) =
+  var tokenListItems: seq[TokenListItem]
+  var collectiblesListItems: seq[TokenListItem]
+
+  let communities = self.controller.getAllCommunities()
+  let erc20Tokens = self.controller.getTokenList()
+
+  for token in erc20Tokens:
+    let tokenListItem = initTokenListItem(
+      key = token.symbol,
+      name = token.name,
+      symbol = token.symbol,
+      color = token.color,
+      image = "",
+      category = ord(TokenListItemCategory.General)
+    )
+
+    tokenListItems.add(tokenListItem)
+
+  for community in communities:
+    for token in community.communityTokensMetadata:
+      let tokenListItem = initTokenListItem(
+        key = token.symbol,
+        name = token.name,
+        symbol = token.symbol,
+        color = "", # community tokens don't have `color`
+        image = token.image,
+        category = ord(TokenListItemCategory.Community)
+      )
+      collectiblesListItems.add(tokenListItem)
+
+  self.view.setTokenListItems(tokenListItems)
+  self.view.setCollectiblesListItems(collectiblesListItems)

@@ -1,9 +1,7 @@
 import NimQml, json, strutils, sequtils
 
 import ./io_interface
-import ../../shared_models/section_model
-import ../../shared_models/section_item
-import ../../shared_models/section_details
+import ../../shared_models/[section_model, section_item, section_details, token_list_model, token_list_item]
 import ./models/curated_community_model
 import ./models/discord_file_list_model
 import ./models/discord_file_item
@@ -22,6 +20,10 @@ QtObject:
       curatedCommunitiesModel: CuratedCommunityModel
       curatedCommunitiesModelVariant: QVariant
       curatedCommunitiesLoading: bool
+      tokenListModel: TokenListModel
+      tokenListModelVariant: QVariant
+      collectiblesListModel: TokenListModel
+      collectiblesListModelVariant: QVariant
       discordFileListModel: DiscordFileListModel
       discordFileListModelVariant: QVariant
       discordCategoriesModel: DiscordCategoriesModel
@@ -59,6 +61,11 @@ QtObject:
     self.discordChannelsModelVariant.delete
     self.discordImportTasksModel.delete
     self.discordImportTasksModelVariant.delete
+    self.tokenListModel.delete
+    self.tokenListModelVariant.delete
+    self.collectiblesListModel.delete
+    self.collectiblesListModelVariant.delete
+
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -89,6 +96,10 @@ QtObject:
     result.discordImportTasksModel = newDiscordDiscordImportTasksModel()
     result.discordImportTasksModelVariant = newQVariant(result.discordImportTasksModel)
     result.downloadingCommunityHistoryArchives = false
+    result.tokenListModel = newTokenListModel()
+    result.tokenListModelVariant = newQVariant(result.tokenListModel)
+    result.collectiblesListModel = newTokenListModel()
+    result.collectiblesListModelVariant = newQVariant(result.collectiblesListModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -566,3 +577,26 @@ QtObject:
       if self.discordChannelsModel.allChannelsByCategoryUnselected(item.getCategoryId()):
         self.discordCategoriesModel.unselectItem(item.getCategoryId())
 
+  proc tokenListModel*(self: View): TokenListModel =
+    result = self.tokenListModel
+
+  proc getTokenListModel(self: View): QVariant{.slot.} =
+    return self.tokenListModelVariant
+
+  QtProperty[QVariant] tokenList:
+    read = getTokenListModel
+
+  proc setTokenListItems*(self: View, tokenListItems: seq[TokenListItem]) =
+    self.tokenListModel.setItems(tokenListItems)
+
+  proc collectiblesListModel*(self: View): TokenListModel =
+    result = self.collectiblesListModel
+
+  proc getCollectiblesListModel(self: View): QVariant{.slot.} =
+    return self.collectiblesListModelVariant
+
+  QtProperty[QVariant] collectiblesModel:
+    read = getCollectiblesListModel
+
+  proc setCollectiblesListItems*(self: View, tokenListItems: seq[TokenListItem]) =
+    self.collectiblesListModel.setItems(tokenListItems)
