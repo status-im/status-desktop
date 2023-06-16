@@ -575,9 +575,11 @@ Item {
         width: parent.width
         height: detailsColumn.childrenRect.height
         default property alias content: detailsColumn.children
+
         Rectangle {
             id: tileBackground
             anchors.fill: parent
+            color: Style.current.transparent
             radius: 8
             border.width: 1
             border.color: Style.current.separator
@@ -590,7 +592,12 @@ Item {
             spacing: 0
             layer.enabled: true
             layer.effect: OpacityMask {
-                maskSource: tileBackground
+                // Separate rectangle is used as mask because background rectangle must be transaprent
+                maskSource: Rectangle {
+                    width: tileBackground.width
+                    height: tileBackground.height
+                    radius: tileBackground.radius
+                }
             }
         }
     }
