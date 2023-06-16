@@ -5,6 +5,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
+import utils 1.0
 import shared.panels 1.0
 
 /*!
@@ -61,6 +62,7 @@ StatusListItem {
     height: visible ? implicitHeight + bottomPadding : 0
     radius: 0
     sensor.cursorShape: Qt.ArrowCursor
+    color: sensor.containsMouse ? Theme.palette.baseColor5 : Style.current.transparent
 
     // Title
     statusListItemTitle.customColor: Theme.palette.directColor5

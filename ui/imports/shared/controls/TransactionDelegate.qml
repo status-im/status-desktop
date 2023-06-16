@@ -399,7 +399,7 @@ StatusListItem {
 
     rightPadding: 16
     enabled: !loading
-    color: sensor.containsMouse ? Theme.palette.baseColor5 : Theme.palette.statusListItem.backgroundColor
+    color: sensor.containsMouse ? Theme.palette.baseColor5 : Style.current.transparent
 
     statusListItemIcon.active: (loading || root.asset.name)
     asset {
