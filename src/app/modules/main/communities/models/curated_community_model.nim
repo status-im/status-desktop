@@ -1,5 +1,6 @@
 import NimQml, Tables
 import curated_community_item
+import ../../../shared_models/[token_permissions_model, token_permission_item]
 
 type
   ModelRole {.pure.} = enum
@@ -15,6 +16,7 @@ type
     Popularity
     Color
     Tags
+    Permissions
 
 QtObject:
   type CuratedCommunityModel* = ref object of QAbstractListModel
@@ -62,6 +64,7 @@ QtObject:
       ModelRole.Color.int:"color",
       ModelRole.Popularity.int:"popularity",
       ModelRole.Tags.int:"tags",
+      ModelRole.Permissions.int:"permissionsModel",
     }.toTable
 
   method data(self: CuratedCommunityModel, index: QModelIndex, role: int): QVariant =
@@ -95,6 +98,8 @@ QtObject:
         result = newQVariant(index.row)
       of ModelRole.Tags:
         result = newQVariant(item.getTags())
+      of ModelRole.Permissions:
+        result = newQVariant(item.getPermissionsModel())
       of ModelRole.Featured:
         result = newQVariant(item.getFeatured())
 
@@ -132,17 +137,20 @@ QtObject:
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
       self.items[idx] = item
-      self.dataChanged(index, index, @[ModelRole.Name.int,
-                                       ModelRole.Available.int,
-                                       ModelRole.Description.int,
-                                       ModelRole.Icon.int,
-                                       ModelRole.Banner.int,
-                                       ModelRole.Featured.int,
-                                       ModelRole.Members.int,
-                                       ModelRole.ActiveMembers.int,
-                                       ModelRole.Color.int,
-                                       ModelRole.Popularity.int,
-                                       ModelRole.Tags.int])
+      self.dataChanged(index, index, @[
+        ModelRole.Name.int,
+        ModelRole.Available.int,
+        ModelRole.Description.int,
+        ModelRole.Icon.int,
+        ModelRole.Banner.int,
+        ModelRole.Featured.int,
+        ModelRole.Members.int,
+        ModelRole.ActiveMembers.int,
+        ModelRole.Color.int,
+        ModelRole.Popularity.int,
+        ModelRole.Tags.int,
+        ModelRole.Permissions.int,
+      ])
     else:
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete
@@ -150,3 +158,10 @@ QtObject:
       self.items.add(item)
       self.endInsertRows()
       self.countChanged()
+
+  proc setPermissionItems*(self: CuratedCommunityModel, itemId: string, items: seq[TokenPermissionItem]) =
+    let idx = self.findIndexById(itemId)
+    if idx == -1:
+      echo "Tried to set permission items on an item that doesn't exist. Item ID: ", itemId
+      return
+    self.items[idx].setPermissionModelItems(items)

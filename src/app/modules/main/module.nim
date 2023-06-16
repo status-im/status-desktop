@@ -207,7 +207,7 @@ proc newModule*[T](
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService, tokenService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService, communityService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService, networkService, transactionService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, communityTokensService, networkService, transactionService, tokenService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)

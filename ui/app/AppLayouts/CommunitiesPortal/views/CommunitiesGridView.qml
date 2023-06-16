@@ -84,9 +84,10 @@ StatusScrollView {
             popularity: model.popularity
             categories: tagsJson.model
 
-            // Community restriccions
+
+            // Community restrictions
             rigthHeaderComponent: CommunityPermissionsRow {
-                visible: !!card.permissionsList
+                visible: !!card.permissionsList && card.permissionsList.count > 0
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
                 model: card.permissionsList

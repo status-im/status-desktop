@@ -86,8 +86,6 @@ proc addOrUpdateChat(self: Module,
     insertIntoModel: bool = true,
   ): Item
 
-proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem
-
 proc buildTokenList*(self: Module)
 
 proc newModule*(
@@ -283,7 +281,7 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission)
     tokenPermissionsItems.add(tokenPermissionItem)
 
   let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
@@ -787,7 +785,7 @@ method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, per
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+  let tokenPermissionItem = buildTokenPermissionItem(tokenPermission)
   if tokenPermissionItem.tokenCriteriaMet:
     self.view.setAllTokenRequirementsMet(true)
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
@@ -855,7 +853,7 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissions
       
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  let tokenPermissionItem = self.buildTokenPermissionItem(tokenPermission)
+  let tokenPermissionItem = buildTokenPermissionItem(tokenPermission)
   self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
 
   singletonInstance.globalEvents.showCommunityTokenPermissionUpdatedNotification(communityId, "Community permission updated", "A token permission has been updated")
@@ -1319,33 +1317,6 @@ method requestToJoinCommunity*(self: Module, communityId: string, ensName: strin
 
 method requestToJoinCommunityWithAuthentication*(self: Module, communityId: string, ensName: string) =
   self.controller.authenticateToRequestToJoinCommunity(communityId, ensName)
-
-proc buildTokenPermissionItem*(self: Module, tokenPermission: CommunityTokenPermissionDto): TokenPermissionItem =
-  var tokenCriteriaItems: seq[TokenCriteriaItem] = @[]
-
-  for tc in tokenPermission.tokenCriteria:
-
-    let tokenCriteriaItem = initTokenCriteriaItem(
-      tc.symbol,
-      tc.name,
-      tc.amount.parseFloat,
-      tc.`type`.int,
-      tc.ensPattern,
-      false # tokenCriteriaMet will be updated by a call to checkPermissionsToJoin
-    )
-
-    tokenCriteriaItems.add(tokenCriteriaItem)
-
-  let tokenPermissionItem = initTokenPermissionItem(
-      tokenPermission.id, 
-      tokenPermission.`type`.int, 
-      tokenCriteriaItems,
-      @[], # TODO: handle chat list items
-      tokenPermission.isPrivate,
-      false # allTokenCriteriaMet will be update by a call to checkPermissinosToJoin
-  )
-
-  return tokenPermissionItem
 
 method onDeactivateChatLoader*(self: Module, chatId: string) =
   self.view.chatsModel().disableChatLoader(chatId)
