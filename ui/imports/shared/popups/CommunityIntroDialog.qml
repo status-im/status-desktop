@@ -36,7 +36,6 @@ StatusDialog {
                 type: root.isInvitationPending ? StatusBaseButton.Type.Danger
                                                : StatusBaseButton.Type.Normal
                 enabled: checkBox.checked || root.isInvitationPending
-                textFillWidth: true
                 onClicked: {
                     if (root.isInvitationPending) {
                         root.cancelMembershipRequest()

@@ -27,7 +27,9 @@ Button {
         Right
     }
 
-    property StatusAssetSettings asset: StatusAssetSettings { }
+    property StatusAssetSettings asset: StatusAssetSettings {
+        color: d.textColor
+    }
 
     property bool loading
 
@@ -38,7 +40,6 @@ Button {
     property color textColor
     property color disabledTextColor
     property color borderColor: "transparent"
-    property int textAlignment: Qt.AlignVCenter | Qt.AlignHCenter
     property bool textFillWidth: false
 
     property int radius: size === StatusBaseButton.Size.Tiny ? 6 : 8
@@ -53,6 +54,17 @@ Button {
         id: d
         readonly property color textColor: root.enabled || root.loading ? root.textColor : root.disabledTextColor
         readonly property bool iconOnly: root.display === AbstractButton.IconOnly || root.text === ""
+        readonly property int iconSize: {
+            switch(root.size) {
+            case StatusBaseButton.Size.Tiny:
+                return 16
+            case StatusBaseButton.Size.Small:
+                return 20
+            case StatusBaseButton.Size.Large:
+            default:
+                return 24
+            }
+        }
     }
 
     font.family: Theme.palette.baseFont.name
@@ -60,16 +72,26 @@ Button {
     font.pixelSize: size === StatusBaseButton.Size.Large ? 15 : 13
 
     horizontalPadding: {
-        if (d.iconOnly)
-            return spacing
+        if (d.iconOnly) {
+            return isRoundIcon ? 8 : spacing
+        }
         if (root.icon.name) {
-            return size === StatusBaseButton.Size.Large ? 18 : 16
+            switch (size) {
+            case StatusBaseButton.Size.Tiny:
+                return 8
+            case StatusBaseButton.Size.Small:
+                return 16
+            case StatusBaseButton.Size.Large:
+            default:
+                return 18
+            }
         }
         return size === StatusBaseButton.Size.Large ? 24 : 12
     }
     verticalPadding: {
-        if (d.iconOnly)
-            return spacing
+        if (d.iconOnly) {
+            return isRoundIcon ? 8 : spacing
+        }
         switch (size) {
         case StatusBaseButton.Size.Tiny:
             return 5
@@ -83,9 +105,9 @@ Button {
 
     spacing: root.size === StatusBaseButton.Size.Large ? 6 : 4
 
-    icon.height: 24
-    icon.width: 24
-    icon.color: d.textColor
+    icon.width: d.iconSize
+    icon.height: d.iconSize
+    icon.color: asset.color
 
     background: Rectangle {
         radius: root.radius
@@ -97,73 +119,86 @@ Button {
         }
     }
 
-    contentItem: RowLayout {
-        spacing: root.spacing
+    contentItem: Item {
+        implicitWidth: layout.implicitWidth
+        implicitHeight: layout.implicitHeight
 
-        Component {
-            id: baseIcon
+        RowLayout {
+            id: layout
+            anchors.centerIn: parent
+            width: root.textFillWidth ? root.availableWidth : Math.min(root.availableWidth, implicitWidth)
+            height: Math.min(root.availableHeight, implicitHeight)
+            spacing: root.spacing
 
-            StatusIcon {
-                icon: root.icon.name
-                rotation: root.asset.rotation
-                opacity: !root.loading && root.icon.name !== ""
-                color: root.icon.color
+            Component {
+                id: baseIcon
+
+                StatusIcon {
+                    icon: root.icon.name
+                    rotation: root.asset.rotation
+                    opacity: !root.loading && root.icon.name !== "" && root.display !== AbstractButton.TextOnly
+                    color: root.icon.color
+                }
             }
-        }
 
-        Component {
-            id: roundIcon
+            Component {
+                id: roundIcon
 
-            StatusRoundIcon {
-                asset.name: root.icon.name
-                asset.color: root.asset.color
-                asset.bgColor: root.asset.bgColor
+                StatusRoundIcon {
+                    opacity: !root.loading && root.icon.name !== ""  && root.display !== AbstractButton.TextOnly
+                    asset.name: root.icon.name
+                    asset.width: d.iconSize
+                    asset.height: d.iconSize
+                    asset.color: root.icon.color
+                    asset.bgColor: root.asset.bgColor
+                }
             }
-        }
 
-        Component {
-            id: text
+            Component {
+                id: text
 
-            StatusBaseText {
-                opacity: !root.loading
-                font: root.font
-                text: root.text
-                color: d.textColor
-                elide: Text.ElideRight
+                StatusBaseText {
+                    opacity: !root.loading
+                    font: root.font
+                    text: root.text
+                    color: d.textColor
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                }
             }
-        }
 
-        Loader {
-            Layout.alignment: root.textAlignment
-            Layout.fillWidth: root.textFillWidth
-            active: root.textPosition === StatusBaseButton.TextPosition.Left && !d.iconOnly
-            visible: active
-            sourceComponent: text
-        }
+            Loader {
+                Layout.fillWidth: true
+                active: root.textPosition === StatusBaseButton.TextPosition.Left && !d.iconOnly
+                visible: active
+                sourceComponent: text
+            }
 
-        Loader {
-            id: iconLoader
+            Loader {
+                id: iconLoader
 
-            Layout.preferredWidth: active ? root.icon.width : 0
-            Layout.preferredHeight: active ? root.icon.height : 0
-            Layout.alignment: Qt.AlignCenter
-            active: root.icon.name !== ""
-            sourceComponent: root.isRoundIcon ? roundIcon : baseIcon
-        }
+                Layout.preferredWidth: active ? root.icon.width : 0
+                Layout.preferredHeight: active ? root.icon.height : 0
+                Layout.alignment: Qt.AlignCenter
+                active: root.icon.name !== ""
+                sourceComponent: root.isRoundIcon ? roundIcon : baseIcon
+            }
 
-        StatusEmoji {
-            Layout.preferredWidth: visible ? root.icon.width : 0
-            Layout.preferredHeight: visible ? root.icon.height : 0
-            visible: root.asset.emoji
-            emojiId: Emoji.iconId(root.asset.emoji, root.asset.emojiSize) || ""
-        }
+            StatusEmoji {
+                Layout.preferredWidth: visible ? root.icon.width : 0
+                Layout.preferredHeight: visible ? root.icon.height : 0
+                Layout.alignment: Qt.AlignCenter
+                opacity: !root.loading && root.display !== AbstractButton.TextOnly
+                visible: root.asset.emoji
+                emojiId: Emoji.iconId(root.asset.emoji, root.asset.emojiSize) || ""
+            }
 
-        Loader {
-            Layout.alignment: root.textAlignment
-            Layout.fillWidth: root.textFillWidth
-            active: root.textPosition === StatusBaseButton.TextPosition.Right && !d.iconOnly
-            visible: active
-            sourceComponent: text
+            Loader {
+                Layout.fillWidth: true
+                active: root.textPosition === StatusBaseButton.TextPosition.Right && !d.iconOnly
+                visible: active
+                sourceComponent: text
+            }
         }
     }
 

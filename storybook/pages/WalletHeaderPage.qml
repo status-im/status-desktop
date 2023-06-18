@@ -42,11 +42,12 @@ SplitView {
         property var dummyOverview: updateDummyView(StatusColors.colors['black'])
 
         function updateDummyView(color) {
+            const clr = Utils.getIdForColor(color)
             dummyOverview = ({
                                  name: "helloworld",
                                  mixedcaseAddress: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421",
                                  ens: emptyString,
-                                 color: color,
+                                 colorId: clr,
                                  emoji: "⚽",
                                  balanceLoading: false,
                                  hasBalanceCache: true,
@@ -56,7 +57,6 @@ SplitView {
                                                        stripTrailingZeroes: false}),
                                  isAllAccounts: false,
                                  hideWatchAccounts: false
-
                              })
         }
 
@@ -64,7 +64,7 @@ SplitView {
                                                    name: "",
                                                    mixedcaseAddress: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421",
                                                    ens: emptyString,
-                                                   color: "",
+                                                   colorId: "",
                                                    emoji: "",
                                                    balanceLoading: false,
                                                    hasBalanceCache: true,
@@ -74,10 +74,7 @@ SplitView {
                                                                          stripTrailingZeroes: false}),
                                                    isAllAccounts: true,
                                                    hideWatchAccounts: true,
-                                                   colors: StatusColors.colors['blue2']+ ";" +
-                                                   StatusColors.colors['yellow']+ ";" +
-                                                   StatusColors.colors['green2'] + ";" +
-                                                   StatusColors.colors['red2']
+                                                   colorIds: "purple;pink;magenta"
                                                })
 
         readonly property QtObject connectionStore: QtObject {
@@ -169,14 +166,11 @@ SplitView {
                     id: repeater
                     model: Theme.palette.customisationColorsArray
                     delegate: StatusColorRadioButton {
-                        radioButtonColor: repeater.model[index]
+                        radioButtonColor: modelData
                         checked: index === 0
-                        onCheckedChanged: d.updateDummyView(repeater.model[index])
+                        onToggled: d.updateDummyView(modelData)
                     }
                 }
-            }
-            ButtonGroup {
-                buttons: row.children
             }
         }
     }

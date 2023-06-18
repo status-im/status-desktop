@@ -69,7 +69,6 @@ Item {
                 hoverColor: Theme.palette.baseColor2
 
                 font.weight: Font.Normal
-                textAlignment: Qt.AlignTop | Qt.AlignHCenter
                 textPosition: StatusBaseButton.TextPosition.Left
                 textColor: Theme.palette.baseColor1
                 text: overview.ens ||  StatusQUtils.Utils.elideText(overview.mixedcaseAddress, 6, 4)
@@ -96,7 +95,6 @@ Item {
                 hoverColor: Theme.palette.baseColor2
 
                 font.weight: Font.Normal
-                textAlignment: Qt.AlignTop | Qt.AlignHCenter
                 textColor: Theme.palette.baseColor1
                 text: overview.hideWatchAccounts ? qsTr("Show watch-only"):  qsTr("Hide watch-only")
 

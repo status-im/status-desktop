@@ -222,6 +222,10 @@ ListModel {
         section: "Popups"
     }
     ListElement {
+        title: "StatusButton"
+        section: "Controls"
+    }
+    ListElement {
         title: "MembersSelector"
         section: "Components"
     }

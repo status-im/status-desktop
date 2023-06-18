@@ -13,13 +13,19 @@ SplitView {
 
     readonly property QtObject mockupModelData: QtObject {
         property int timestamp: Date.now() / 1000
-        property int txStatus: 0
+        property int txType: ctrlType.currentValue
         property string from: "0xfB8131c260749c7835a08ccBdb64728De432858E"
         property string to: "0x3fb81384583b3910BB14Cc72582E8e8a56E83ae9"
         property bool isNFT: false
         property string tokenID: "4981676894159712808201908443964193325271219637660871887967796332739046670337"
         property string nftName: "Happy Meow"
         property string nftImageUrl: Style.png("collectibles/HappyMeow")
+    }
+
+    readonly property QtObject mockupStore: QtObject {
+        function formatCurrencyAmount(cryptoValue, symbol) {
+            return "%1 %2".arg(cryptoValue).arg(symbol)
+        }
     }
 
     SplitView {
@@ -58,17 +64,8 @@ SplitView {
                     bridgeNetworkName: "Mainnet"
                     feeFiatValue: 10.34
                     feeCryptoValue: 0.013
-                    transactionStatus: Constants.TransactionStatus.Pending
-                    transactionType: Constants.TransactionType.Send
-                    formatCurrencyAmount: function(amount, symbol, options = null, locale = null) {
-                        const currencyAmount = {
-                            amount: amount,
-                            symbol: symbol,
-                            displayDecimals: 8,
-                            stripTrailingZeroes: true
-                        }
-                        return LocaleUtils.currencyAmountToLocaleString(currencyAmount, options)
-                    }
+                    transactionStatus: ctrlStatus.currentValue
+                    rootStore: root.mockupStore
                 }
             }
         }
@@ -111,6 +108,7 @@ SplitView {
             }
 
             ComboBox {
+                id: ctrlType
                 Layout.fillWidth: true
                 textRole: "name"
                 valueRole: "type"
@@ -123,7 +121,6 @@ SplitView {
                     ListElement { name: "Swap"; type: Constants.TransactionType.Swap }
                     ListElement { name: "Bridge"; type: Constants.TransactionType.Bridge }
                 }
-                onActivated: delegate.transactionType = model.get(currentIndex).type
             }
 
             Label {
@@ -133,16 +130,16 @@ SplitView {
             }
 
             ComboBox {
+                id: ctrlStatus
                 Layout.fillWidth: true
                 textRole: "name"
-                valueRole: "type"
+                valueRole: "status"
                 model: ListModel {
-                    ListElement { name: "Pending"; status: Constants.TransactionStatus.Pending }
                     ListElement { name: "Failed"; status: Constants.TransactionStatus.Failed }
+                    ListElement { name: "Pending"; status: Constants.TransactionStatus.Pending }
                     ListElement { name: "Complete"; status: Constants.TransactionStatus.Complete }
                     ListElement { name: "Finished"; status: Constants.TransactionStatus.Finished }
                 }
-                onActivated: delegate.transactionStatus = model.get(currentIndex).status
             }
         }
     }
