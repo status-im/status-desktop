@@ -731,7 +731,7 @@ QtObject {
 
 
     function getIdForColor(color){
-        let c = color.toUpperCase()
+        let c = color.toString().toUpperCase()
         switch(c) {
         case Theme.palette.customisationColors.blue.toString().toUpperCase():
             return Constants.walletAccountColors.primary

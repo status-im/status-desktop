@@ -391,23 +391,19 @@ Rectangle {
                     }
                 }
 
-                contentItem: StatusButton {
+                contentItem: StatusFlatButton {
                     id: savedAddressesBtn
 
                     objectName: "savedAddressesBtn"
-                    size: StatusBaseButton.Size.Large
-                    normalColor: "transparent"
                     hoverColor: Theme.palette.primaryColor3
-                    asset.color: Theme.palette.primaryColor1
                     asset.bgColor: Theme.palette.primaryColor3
-                    font.weight: Font.Medium
                     text: qsTr("Saved addresses")
                     icon.name: "address"
                     icon.width: 40
                     icon.height: 40
+                    icon.color: Theme.palette.primaryColor1
                     isRoundIcon: true
                     textColor: Theme.palette.directColor1
-                    textAlignment: Qt.AlignVCenter | Qt.AlignLeft
                     textFillWidth: true
                     spacing: parent.ListView.view.firstItem.statusListItemTitleArea.anchors.leftMargin
                     onClicked: {

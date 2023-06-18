@@ -59,7 +59,7 @@ AbstractButton {
          spacing: root.spacing
          StatusIcon {
              Layout.alignment: Qt.AlignVCenter
-             icon: root.statusIcon
+             icon: root.statusIcon || root.icon.source || root.icon.name
              color: root.icon.color
              width: root.icon.width
              height: root.icon.height

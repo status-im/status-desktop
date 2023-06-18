@@ -384,7 +384,6 @@ Pane {
                 Layout.preferredWidth: height
 
                 visible: !d.isCurrentUser
-                size: StatusBaseButton.Size.Small
                 horizontalPadding: 6
                 verticalPadding: 6
                 icon.name: "more"

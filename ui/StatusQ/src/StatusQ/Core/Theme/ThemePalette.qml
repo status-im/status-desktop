@@ -279,7 +279,7 @@ QtObject {
         property color yinYang
     }
 
-    property var customisationColorsArray: [
+    readonly property var customisationColorsArray: [
         customisationColors.blue,
         customisationColors.purple,
         customisationColors.orange,
@@ -294,7 +294,7 @@ QtObject {
         customisationColors.yinYang
     ]
 
-    property var communityColorsArray: [
+    readonly property var communityColorsArray: [
         customisationColors.blue,
         customisationColors.yellow,
         customisationColors.magenta,

@@ -349,13 +349,13 @@ StatusListItem {
                 break
             }
             if (type === Constants.TransactionType.Swap) {
-                const crypto = rootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
-                const fiat = rootStore.formatCurrencyAmount(d.swapCryptoValue, d.swapSymbol)
+                const crypto = rootStore.formatCurrencyAmount(root.swapCryptoValue, root.swapSymbol)
+                const fiat = rootStore.formatCurrencyAmount(root.swapCryptoValue, root.swapSymbol)
                 valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
             } else if (type === Constants.TransactionType.Bridge) {
                 // Reduce crypto value by fee value
                 const valueInCrypto = rootStore.getCryptoValue(root.fiatValue - feeFiatValue, root.symbol, root.currentCurrency)
-                const crypto = rootStore.formatCurrencyAmount(valueInCrypto, d.symbol)
+                const crypto = rootStore.formatCurrencyAmount(valueInCrypto, root.symbol)
                 const fiat = rootStore.formatCurrencyAmount(root.fiatValue - feeFiatValue, root.currentCurrency)
                 valuesString += qsTr("Amount received %1 (%2)").arg(crypto).arg(fiat) + endl2
             }
@@ -658,11 +658,10 @@ StatusListItem {
                     height: parent.height * 0.7
                     verticalPadding: 0
                     horizontalPadding: radius
-                    textFillWidth: true
                     text: qsTr("Retry")
                     size: StatusButton.Small
                     type: StatusButton.Primary
-                    visible: !root.loading && root.transactionStatus === Constants.TransactionType.Failed
+                    visible: !root.loading && root.transactionStatus === Constants.TransactionStatus.Failed
                     onClicked: root.retryClicked()
                 }
 
@@ -705,7 +704,7 @@ StatusListItem {
             }
             PropertyChanges {
                 target: root.asset
-                bgBorderWidth: root.transactionStatus === Constants.TransactionType.Failed ? 0 : 1
+                bgBorderWidth: root.transactionStatus === Constants.TransactionStatus.Failed ? 0 : 1
                 width: 34
                 height: 34
                 bgWidth: 56

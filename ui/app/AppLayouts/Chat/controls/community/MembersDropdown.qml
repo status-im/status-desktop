@@ -241,8 +241,6 @@ StatusDropdown {
 
             Layout.fillWidth: true
 
-            textFillWidth: true
-
             enabled: {
                 if (root.forceButtonDisabled)
                     return false
