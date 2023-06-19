@@ -20,6 +20,14 @@ ApplicationWindow {
         loader.setSource("InspectionPanel.qml", properties)
     }
 
+    Connections {
+        target: loader.item
+
+        function onClicked(index) {
+            itemsListView.positionViewAtIndex(index, ListView.Center)
+        }
+    }
+
     SplitView {
         anchors.fill: parent
 
