@@ -221,6 +221,7 @@ StatusSectionLayout {
             }
 
             CommunityMembersSettingsPanel {
+                rootStore: root.rootStore
                 membersModel: root.community.members
                 bannedMembersModel: root.community.bannedMembers
                 pendingMemberRequestsModel: root.community.pendingMemberRequests

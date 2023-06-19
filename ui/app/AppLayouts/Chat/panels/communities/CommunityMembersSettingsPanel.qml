@@ -16,6 +16,7 @@ import "../../layouts"
 SettingsPageLayout {
     id: root
 
+    property var rootStore
     property var membersModel
     property var bannedMembersModel
     property var pendingMemberRequestsModel
@@ -105,7 +106,7 @@ SettingsPageLayout {
 
             CommunityMembersTabPanel {
                 model: root.membersModel
-                communityMemberContextMenu: root.communityMemberContextMenu
+                rootStore: root.rootStore
                 placeholderText: {
                     if (root.membersModel.count === 0) {
                         return qsTr("No members to search")
@@ -133,7 +134,7 @@ SettingsPageLayout {
 
             CommunityMembersTabPanel {
                 model: root.pendingMemberRequestsModel
-                communityMemberContextMenu: root.communityMemberContextMenu
+                rootStore: root.rootStore
                 placeholderText: {
                     if (root.pendingMemberRequestsModel.count === 0) {
                         return qsTr("No pending requests to search")
@@ -154,7 +155,7 @@ SettingsPageLayout {
 
             CommunityMembersTabPanel {
                 model: root.declinedMemberRequestsModel
-                communityMemberContextMenu: root.communityMemberContextMenu
+                rootStore: root.rootStore
                 placeholderText: {
                     if (root.declinedMemberRequestsModel.count === 0) {
                         return qsTr("No rejected members to search")
@@ -174,7 +175,7 @@ SettingsPageLayout {
 
             CommunityMembersTabPanel {
                 model: root.bannedMembersModel
-                communityMemberContextMenu: root.communityMemberContextMenu
+                rootStore: root.rootStore
                 placeholderText: {
                     if (root.bannedMembersModel.count === 0) {
                         return qsTr("No banned members to search")

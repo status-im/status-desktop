@@ -19,7 +19,7 @@ Item {
 
     property string placeholderText
     property var model
-    property var communityMemberContextMenu
+    property var rootStore
 
     signal kickUserClicked(string id, string name)
     signal banUserClicked(string id, string name)
