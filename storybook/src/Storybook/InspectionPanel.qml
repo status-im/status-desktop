@@ -15,10 +15,16 @@ Item {
     implicitWidth: image.implicitWidth
     implicitHeight: image.implicitHeight
 
+    signal clicked(int index)
+
     Component {
         id: inspectionItemComponent
 
-        InspectionItem {}
+        InspectionItem {
+            required property int index
+
+            onClicked: root.clicked(index)
+        }
     }
 
     Image {
@@ -51,7 +57,7 @@ Item {
         const placeholders = []
         const modelItems = []
 
-        items.forEach((entry) => {
+        items.forEach((entry, index) => {
             const {item, parentIndex, level} = entry
             const isRoot = parentIndex === -1
 
@@ -65,7 +71,7 @@ Item {
             const clip = item.clip
 
             const props = {
-                name, x, y,
+                index, name, x, y,
                 width: item.width,
                 height: item.height,
                 z: item.z,

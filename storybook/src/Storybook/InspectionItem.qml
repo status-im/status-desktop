@@ -42,6 +42,8 @@ Rectangle {
 
     readonly property alias containsMouse: mouseArea.containsMouse
 
+    signal clicked
+
     component DistanceRectangle: Rectangle {
         width: 1
         height: 1
@@ -117,5 +119,7 @@ Rectangle {
         visible: isVisual || showNonVisual
         anchors.fill: parent
         hoverEnabled: true
+
+        onClicked: root.clicked()
     }
 }
