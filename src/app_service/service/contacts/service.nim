@@ -174,12 +174,11 @@ QtObject:
       if(receivedData.statusUpdates.len > 0):
         self.updateAndEmitStatuses(receivedData.statusUpdates)
 
-      if(receivedData.contacts.len > 0):
+      if receivedData.contacts.len > 0:
         for c in receivedData.contacts:
           let localContact = self.getContactById(c.id)
           var receivedContact = c
 
-          receivedContact.localNickname = localContact.localNickname
           self.saveContact(receivedContact)
 
           # Check if the contact request was sent by us and if it was approved by the recipient
