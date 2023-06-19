@@ -30,7 +30,7 @@ class SavedAddressPopup(BasePopup):
         return self
     
     def verify_network_selector_enabled(self):
-        assert self._add_networks_selector.is_visible, f'Network selector is not active'
+        assert self._add_networks_selector.is_visible, f'Network selector is not enabled'
 
     def verify_ethereum_mainnet_network_tag_present(self):
         assert self._ethereum_mainnet_network_tag.is_visible, f'Ethereum Mainnet network tag is not present'
@@ -39,7 +39,7 @@ class SavedAddressPopup(BasePopup):
         assert self._optimism_mainnet_network_tag.is_visible, f'Optimism Mainnet network tag is not present' 
 
     def verify_arbitrum_mainnet_network_tag_present(self):
-        assert self._arbitrum_mainnet_network_tag.is_visible, f'Arbitrum Mainnet network tag is not present'       
+        assert self._arbitrum_mainnet_network_tag.is_visible, f'Arbitrum Mainnet network tag is not present'
 
 
 
@@ -52,15 +52,16 @@ class AddSavedAddressPopup(SavedAddressPopup):
         self._name_text_edit.text = name
         self._address_text_edit.clear(verify=False)
         self._address_text_edit.type_text(address)
-        self.verify_network_selector_enabled()
-        self._add_networks_selector.click(1, 1)
-        self.set_ethereum_mainnet_network(True)
-        self.set_optimism_mainnet_network(True)
-        self.set_arbitrum_mainnet_network(True)
-        self._save_add_address_button.click() # i click it twice to close the network selector pop up
-        self.verify_ethereum_mainnet_network_tag_present()
-        self.verify_otimism_mainnet_network_tag_present()
-        self.verify_arbitrum_mainnet_network_tag_present()
+        if address.startswith("0x"):
+            self.verify_network_selector_enabled()
+            self._add_networks_selector.click(1, 1)
+            self.set_ethereum_mainnet_network(True)
+            self.set_optimism_mainnet_network(True)
+            self.set_arbitrum_mainnet_network(True)
+            self._save_add_address_button.click() # i click it twice to close the network selector pop up
+            self.verify_ethereum_mainnet_network_tag_present() 
+            self.verify_otimism_mainnet_network_tag_present()
+            self.verify_arbitrum_mainnet_network_tag_present(), 
         self._save_add_address_button.click()
         self.wait_until_hidden()
 
@@ -71,12 +72,13 @@ class EditSavedAddressPopup(SavedAddressPopup):
         super(EditSavedAddressPopup, self).__init__()
         self._address_text_label = TextLabel('mainWallet_Saved_Addreses_Popup_Address_Input_Edit')
 
-    def edit_saved_address(self, name: str):
-        self._name_text_edit.text = name
-        self._add_networks_button.click()
-        self.set_optimism_mainnet_network(False)
-        self.set_arbitrum_mainnet_network(False)
-        self._save_add_address_button.click()    
-        self.verify_ethereum_mainnet_network_tag_present
+    def edit_saved_address(self, new_name: str, address: str):
+        self._name_text_edit.text = new_name
+        if address.startswith("0x"):
+            self._add_networks_button.click()
+            self.set_ethereum_mainnet_network(False)
+            self.set_optimism_mainnet_network(False)
+            self.set_arbitrum_mainnet_network(False)
+            self._save_add_address_button.click()
         self._save_add_address_button.click()
         self.wait_until_hidden()

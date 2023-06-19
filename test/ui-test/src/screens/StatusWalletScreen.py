@@ -389,8 +389,8 @@ class StatusWalletScreen:
     def add_saved_address(self, name: str, address: str):
         self.left_panel.open_saved_addresses().open_add_address_popup().add_saved_address(name, address)
 
-    def edit_saved_address(self, name: str, new_name: str):
-        self.left_panel.open_saved_addresses().open_edit_address_popup(name).edit_saved_address(new_name)
+    def edit_saved_address(self, name: str, address: str, new_name: str):
+        self.left_panel.open_saved_addresses().open_edit_address_popup(name).edit_saved_address(new_name, address)
 
     def delete_saved_address(self, name: str):
         self.left_panel.open_saved_addresses().delete_saved_address(name)

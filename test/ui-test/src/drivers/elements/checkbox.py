@@ -10,4 +10,4 @@ class CheckBox(BaseElement):
         if self.is_checked is not value:
             self.click(x, y)
             assert squish.waitFor(
-                lambda: self.is_checked is value, configs.squish.UI_LOAD_TIMEOUT_MSEC), 'Value not changed'
+                lambda: self.is_checked is value, configs.squish.UI_LOAD_TIMEOUT_MSEC), 'Value has not been changed'
