@@ -159,13 +159,9 @@ def step(context, account_name, amount, token, chain_name, password):
 def step(context, name, address):
     _walletScreen.add_saved_address(name, address)
 
-@When("the user adds a saved address named \"|any|\" and ENS name \"|any|\"")
-def step(context, name, ens_name):
-    _walletScreen.add_saved_address(name, ens_name)
-
-@When("the user edits a saved address with name \"|any|\" to \"|any|\"")
-def step(context, name, new_name):
-    _walletScreen.edit_saved_address(name, new_name)
+@When("the user edits a saved address with name \"|any|\" and address \"|any|\" to \"|any|\"")
+def step(context, name, address, new_name):
+    _walletScreen.edit_saved_address(name, address, new_name)
 
 
 @When("the user deletes the saved address with name \"|any|\"")
