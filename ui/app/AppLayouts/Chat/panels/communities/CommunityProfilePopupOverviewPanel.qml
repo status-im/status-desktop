@@ -73,7 +73,7 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: !root.community.amISectionAdmin
+        visible: root.community.memberRole !== Constants.memberRole.owner
         title: root.community.spectated ? qsTr("Close Community") : qsTr("Leave Community")
         asset.name: root.community.spectated ? "close-circle" : "arrow-left"
         type: StatusListItem.Type.Danger

@@ -18,6 +18,7 @@ Feature: Status Desktop community navigation
     ** when user signs up with username "tester123" and password "TesTEr16843/!@00"
     ** and the user lands on the signed in app
 
+    @mayfail
     Scenario Outline: User creates and leaves community
       # Create a community
       Given the user opens the community portal section

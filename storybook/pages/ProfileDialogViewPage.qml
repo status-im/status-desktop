@@ -70,6 +70,7 @@ SplitView {
                                       trustStatus: trustStatus.currentValue,
                                       verificationStatus: Constants.verificationStatus.unverified,
                                       incomingVerificationStatus: Constants.verificationStatus.unverified,
+                                      contactRequestState: Constants.ContactRequestState.None,
                                       bio: bio.text,
                                       socialLinks: JSON.stringify
                                                    ([{
@@ -173,7 +174,7 @@ SplitView {
                         communitiesModel: ListModel {
                             ListElement {
                                 name: "Not the cool gang"
-                                amISectionAdmin: false
+                                memberRole: 0 // Constants.memberRole.none
                                 description: "Nothing to write home about"
                                 color: "indigo"
                                 image: ""
@@ -184,7 +185,7 @@ SplitView {
                             }
                             ListElement {
                                 name: "Awesome bunch"
-                                amISectionAdmin: true
+                                memberRole: 4 // Constants.memberRole.admin
                                 description: "Where the cool guys hang out & Nothing to write home about"
                                 color: "green"
                                 image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
@@ -200,7 +201,7 @@ SplitView {
                             }
                             ListElement {
                                 name: "Invisible community (should not display!)"
-                                amISectionAdmin: false
+                                memberRole: 1 // Constants.memberRole.owner
                                 description: "Get outta here"
                                 color: "red"
                                 image: ""
@@ -222,27 +223,27 @@ SplitView {
                                 ListElement {
                                     name: "My Status Account"
                                     address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7420"
-                                    color: "aliceblue"
+                                    colorId: "primary"
                                     emoji: "🇨🇿"
                                     walletType: ""
                                 }
                                 ListElement {
                                     name: "testing (no emoji, colored, saved, seed)"
                                     address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7000"
-                                    color: "olive"
+                                    colorId: "turquoise"
                                     walletType: "seed"
                                 }
                                 ListElement {
                                     name: "My Bro's Account"
                                     address: "0xcdc2ea3b6ba8fed3a3402f8db8b2fab53e7b7421"
-                                    color: "ghostwhite"
+                                    colorId: "sky"
                                     emoji: "🇸🇰"
                                     walletType: "watch"
                                 }
                                 ListElement {
                                     name: "Keycard"
                                     address: "0xdeadbeef"
-                                    color: "red"
+                                    colorId: "purple"
                                     emoji: ""
                                     walletType: "key"
                                 }
@@ -267,63 +268,61 @@ SplitView {
                                 }
                             }
 
-                            readonly property var currentAccount: QtObject {
-                                readonly property var assets: ListModel {
-                                    readonly property var data: [
-                                        {
-                                            symbol: "MANA",
-                                            enabledNetworkBalance: {
-                                                amount: 301,
-                                                symbol: "MANA"
-                                            },
-                                            changePct24hour: -2.1,
-                                            visibleForNetworkWithPositiveBalance: true
+                            readonly property var assets: ListModel {
+                                readonly property var data: [
+                                    {
+                                        symbol: "MANA",
+                                        enabledNetworkBalance: {
+                                            amount: 301,
+                                            symbol: "MANA"
                                         },
-                                        {
-                                            symbol: "AAVE",
-                                            enabledNetworkBalance: {
-                                                amount: 23.3,
-                                                symbol: "AAVE"
-                                            },
-                                            changePct24hour: 4.56,
-                                            visibleForNetworkWithPositiveBalance: true
+                                        changePct24hour: -2.1,
+                                        visibleForNetworkWithPositiveBalance: true
+                                    },
+                                    {
+                                        symbol: "AAVE",
+                                        enabledNetworkBalance: {
+                                            amount: 23.3,
+                                            symbol: "AAVE"
                                         },
-                                        {
-                                            symbol: "POLY",
-                                            enabledNetworkBalance: {
-                                                amount: 3590,
-                                                symbol: "POLY"
-                                            },
-                                            changePct24hour: -11.6789,
-                                            visibleForNetworkWithPositiveBalance: true
+                                        changePct24hour: 4.56,
+                                        visibleForNetworkWithPositiveBalance: true
+                                    },
+                                    {
+                                        symbol: "POLY",
+                                        enabledNetworkBalance: {
+                                            amount: 3590,
+                                            symbol: "POLY"
                                         },
-                                        {
-                                            symbol: "CDT",
-                                            enabledNetworkBalance: {
-                                                amount: 1000,
-                                                symbol: "CDT"
-                                            },
-                                            changePct24hour: 0,
-                                            visibleForNetworkWithPositiveBalance: true
+                                        changePct24hour: -11.6789,
+                                        visibleForNetworkWithPositiveBalance: true
+                                    },
+                                    {
+                                        symbol: "CDT",
+                                        enabledNetworkBalance: {
+                                            amount: 1000,
+                                            symbol: "CDT"
                                         },
-                                        {
-                                            symbol: "MKR",
-                                            enabledNetworkBalance: {
-                                                amount: 1.3,
-                                                symbol: "MKR"
-                                            },
-                                            //changePct24hour: undefined // NB 'undefined' on purpose
-                                            visibleForNetworkWithPositiveBalance: true
+                                        changePct24hour: 0,
+                                        visibleForNetworkWithPositiveBalance: true
+                                    },
+                                    {
+                                        symbol: "MKR",
+                                        enabledNetworkBalance: {
+                                            amount: 1.3,
+                                            symbol: "MKR"
                                         },
-                                        {
-                                            symbol: "InvisibleHere",
-                                            enabledNetworkBalance: {},
-                                            changePct24hour: 0,
-                                            visibleForNetworkWithPositiveBalance: false
-                                        }
-                                    ]
-                                    Component.onCompleted: append(data)
-                                }
+                                        //changePct24hour: undefined // NB 'undefined' on purpose
+                                        visibleForNetworkWithPositiveBalance: true
+                                    },
+                                    {
+                                        symbol: "InvisibleHere",
+                                        enabledNetworkBalance: {},
+                                        changePct24hour: 0,
+                                        visibleForNetworkWithPositiveBalance: false
+                                    }
+                                ]
+                                Component.onCompleted: append(data)
                             }
 
                             readonly property var flatCollectibles: ListModel {
