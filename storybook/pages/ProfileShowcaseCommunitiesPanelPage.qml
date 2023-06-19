@@ -31,7 +31,7 @@ SplitView {
                         id: "0x0001",
                         name: "Test community",
                         joined: true,
-                        amISectionAdmin: true,
+                        memberRole: Constants.memberRole.owner,
                         image: ModelsData.icons.dribble,
                         color: "yellow"
                     },
@@ -39,7 +39,7 @@ SplitView {
                         id: "0x0002",
                         name: "Test community 2",
                         joined: true,
-                        amISectionAdmin: false,
+                        memberRole: Constants.memberRole.none,
                         image: ModelsData.collectibles.custom,
                         color: "peach"
                     },
@@ -47,7 +47,7 @@ SplitView {
                         id: "0x0003",
                         name: "Test community invisible",
                         joined: false,
-                        amISectionAdmin: false,
+                        memberRole: Constants.memberRole.none,
                         image: "",
                         color: "red"
                     },
@@ -55,7 +55,7 @@ SplitView {
                         id: "0x0004",
                         name: "Test community 3",
                         joined: true,
-                        amISectionAdmin: false,
+                        memberRole: Constants.memberRole.none,
                         image: "",
                         color: "whitesmoke"
                     },
@@ -63,7 +63,7 @@ SplitView {
                         id: "0x0005",
                         name: "Test community 4",
                         joined: true,
-                        amISectionAdmin: true,
+                        memberRole: Constants.memberRole.admin,
                         image: ModelsData.icons.spotify,
                         color: "green"
                     },

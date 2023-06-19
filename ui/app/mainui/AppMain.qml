@@ -368,7 +368,7 @@ Item {
 
                         StatusAction {
                             id: leaveCommunityMenuItem
-                            enabled: !model.amISectionAdmin
+                            enabled: model.memberRole !== Constants.memberRole.owner
                             text: {
                                 if (model.spectated)
                                     return qsTr("Close Community")

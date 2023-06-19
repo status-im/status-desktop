@@ -49,7 +49,7 @@ StatusListView {
                 size: StatusBaseButton.Size.Small
                 type: StatusBaseButton.Type.Danger
                 borderColor: "transparent"
-                enabled: !model.amISectionAdmin
+                enabled: model.memberRole !== Constants.memberRole.owner
                 text: model.spectated ? qsTr("Close Community") : qsTr("Leave Community")
                 onClicked: model.spectated ? root.closeCommunityClicked(model.id) : root.leaveCommunityClicked(model.name, model.id, model.outroMessage)
             },
