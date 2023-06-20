@@ -64,14 +64,13 @@ ColumnLayout {
         text: qsTr("Activity for this account will appear here")
     }
 
-    // Tp-do make connections with nim once logic is ready
     ActivityFilterPanel {
         id: filterComponent
         visible: !d.isLoading && (transactionListRoot.count !== 0 || d.activityFiltersStore.filtersSet)
         Layout.fillWidth: true
-        Layout.preferredHeight: 50
         activityFilterStore: d.activityFiltersStore
         store: WalletStores.RootStore
+        isLoading: d.isLoading
     }
 
     Item {
