@@ -6,6 +6,7 @@ export wallet_account_item
 
 type
   Item* = ref object of WalletAccountItem
+    position: int
     createdAt: int
     assetsLoading: bool
     currencyBalance: CurrencyAmount
@@ -20,6 +21,7 @@ proc initItem*(
   emoji: string = "",
   keyUid: string = "",
   createdAt: int = 0,
+  position: int = 0,
   keycardAccount: bool = false,
   assetsLoading: bool  = true,
 ): Item =
@@ -33,6 +35,7 @@ proc initItem*(
     keyUid,
     keycardAccount)
   result.createdAt = createdAt
+  result.position = position
   result.assetsLoading = assetsLoading
   result.currencyBalance = currencyBalance
 
@@ -51,3 +54,6 @@ proc assetsLoading*(self: Item): bool =
 
 proc createdAt*(self: Item): int =
   return self.createdAt
+
+proc position*(self: Item): int =
+  return self.position

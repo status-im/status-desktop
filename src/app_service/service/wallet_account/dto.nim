@@ -108,6 +108,7 @@ type
     removed*: bool # needs for synchronization
     operable*: string
     createdAt*: int
+    position*: int
 
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result = WalletAccountDto()
@@ -126,6 +127,7 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("removed", result.removed)
   discard jsonObj.getProp("operable", result.operable)
   discard jsonObj.getProp("createdAt", result.createdAt)
+  discard jsonObj.getProp("position", result.position)
   result.assetsLoading = true
   result.hasBalanceCache = false
   result.hasMarketValuesCache = false

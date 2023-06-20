@@ -25,6 +25,9 @@ method refreshWalletAccounts*(self: AccessInterface) {.base.} =
 method updateAccount*(self: AccessInterface, address: string, accountName: string, colorId: string, emoji: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method updateAccountPosition*(self: AccessInterface, address: string, position: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.

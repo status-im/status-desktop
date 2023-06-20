@@ -18,6 +18,7 @@ Column {
     property WalletStore walletStore
 
     signal goToNetworksView()
+    signal goToAccountOrderView()
     signal goToAccountView(var account)
     signal goToDappPermissionsView()
 
@@ -53,6 +54,22 @@ Column {
         height: 64
         width: parent.width
         onClicked: goToNetworksView()
+        components: [
+            StatusIcon {
+                icon: "next"
+                color: Theme.palette.baseColor1
+            }
+        ]
+    }
+
+    Separator {}
+
+    StatusListItem {
+        objectName: "accountOrderItem"
+        title: qsTr("Account order")
+        height: 64
+        width: parent.width
+        onClicked: goToAccountOrderView()
         components: [
             StatusIcon {
                 icon: "next"

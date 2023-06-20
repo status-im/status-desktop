@@ -45,6 +45,9 @@ QtObject:
   proc updateAccount(self: View, address: string, accountName: string, colorId: string, emoji: string) {.slot.} =
     self.delegate.updateAccount(address, accountName, colorId, emoji)
 
+  proc updateAccountPosition(self: View, address: string, position: int) {.slot.} =
+    self.delegate.updateAccountPosition(address, position)
+
   proc onUpdatedAccount*(self: View, account: Item) =
     self.accounts.onUpdatedAccount(account)
     self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji)

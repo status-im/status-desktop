@@ -33,6 +33,7 @@ const SIGNAL_WALLET_ACCOUNT_TOKENS_BEING_FETCHED* = "walletAccount/tokenFetching
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED* = "walletAccount/derivedAddressesFetched"
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED* = "walletAccount/derivedAddressesFromMnemonicFetched"
 const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* = "walletAccount/addressDetailsFetched"
+const SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED* = "walletAccount/positionUpdated"
 
 const SIGNAL_KEYCARDS_SYNCHRONIZED* = "keycardsSynchronized"
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
@@ -549,7 +550,14 @@ QtObject:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
     return false
 
-  proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string, paths: seq[string], hashPassword: bool)=
+  proc updateWalletAccountPosition*(self: Service, address: string, position: int) =
+    discard backend.updateAccountPosition(address, position)
+    for account in self.getAccounts():
+      self.walletAccounts[account.address].position = account.position
+    
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
+    
+  proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string, paths: seq[string], hashPassword: bool) =
     let arg = FetchDerivedAddressesTaskArg(
       password: if hashPassword: utils.hashPassword(password) else: password,
       derivedFrom: derivedFrom,
