@@ -32,7 +32,6 @@ QtObject:
       multi_transaction: MultiTransactionDto
       transaction: ref Item
       isPending: bool
-      activityType: backend.ActivityType
 
       metadata: backend.ActivityEntry
       extradata: ExtraData
@@ -59,12 +58,6 @@ QtObject:
     result.isPending = metadata.payloadType == backend.PayloadType.PendingTransaction
     result.metadata = metadata
     result.extradata = extradata
-    result.activityType = backend.ActivityType.Send
-    if tr != nil:
-      for address in fromAddresses:
-        if (cmpIgnoreCase(address, tr[].getTo()) == 0):
-          result.activityType = backend.ActivityType.Receive
-          break
     result.setup()
 
   proc isMultiTransaction*(self: ActivityEntry): bool {.slot.} =
@@ -214,7 +207,7 @@ QtObject:
     read = getInput
 
   proc getTxType*(self: ActivityEntry): int {.slot.} =
-    return self.activityType.int
+    return self.metadata.activityType.int
 
   QtProperty[int] txType:
     read = getTxType
@@ -270,7 +263,7 @@ QtObject:
       error "getSymbol: ActivityEntry is not an transaction.Item"
       return ""
 
-    if self.activityType == backend.ActivityType.Receive:
+    if self.metadata.activityType == backend.ActivityType.Receive:
       return self.getInSymbol()
 
     return self.getOutSymbol()
@@ -301,14 +294,10 @@ QtObject:
       error "getToAmount: ActivityEntry is a MultiTransaction"
       return 0.0
 
-    if self.activityType == backend.ActivityType.Receive:
+    if self.metadata.activityType == backend.ActivityType.Receive:
       return self.getInAmount()
 
-    # For some reason status-go is categorizing every activity as Receive,
-    # inverting the In/Out fields for Send operations. Revert this when
-    # that gets fixed.
-    #return self.getOutAmount()
-    return self.getInAmount()
+    return self.getOutAmount()
 
   QtProperty[float] value:
     read = getValue
