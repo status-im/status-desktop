@@ -241,11 +241,16 @@ Item {
                 Layout.fillWidth: true
                 visible: !!d.activeChatContentModule
 
-                enabled: !!d.activeChatContentModule
-                         && !d.activeChatContentModule.chatDetails.blocked
-                         && root.rootStore.sectionDetails.joined
-                         && !root.rootStore.sectionDetails.amIBanned
-                         && root.rootStore.isUserAllowedToSendMessage
+                // When `enabled` is switched true->false, `textInput.text` is cleared before d.activeChatContentModule updates.
+                // We delay the binding so that the `inputAreaModule.preservedProperties.text` doesn't get overriden with empty value.
+                Binding on enabled {
+                    delayed: true
+                    value: !!d.activeChatContentModule
+                             && !d.activeChatContentModule.chatDetails.blocked
+                             && root.rootStore.sectionDetails.joined
+                             && !root.rootStore.sectionDetails.amIBanned
+                             && root.rootStore.isUserAllowedToSendMessage
+                }
 
                 store: root.rootStore
                 usersStore: d.activeUsersStore

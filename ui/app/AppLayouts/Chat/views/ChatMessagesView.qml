@@ -371,7 +371,7 @@ Item {
         id: sendContactRequestComponent
 
         StatusButton {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
             text: qsTr("Send Contact Request")
             onClicked: {
                 Global.openContactRequestPopup(root.chatId, null)
@@ -383,7 +383,7 @@ Item {
         id: acceptOrDeclineContactRequestComponent
 
         RowLayout {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
 
             StatusButton {
                 text: qsTr("Reject Contact Request")
@@ -406,7 +406,7 @@ Item {
         id: pendingContactRequestComponent
 
         StatusButton {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
             enabled: false
             text: qsTr("Contact Request Pending...")
         }
