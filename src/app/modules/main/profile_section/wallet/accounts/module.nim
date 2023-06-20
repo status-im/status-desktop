@@ -104,6 +104,9 @@ method load*(self: Module) =
       return
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
+    self.refreshWalletAccounts()
+
   self.controller.init()
   self.view.load()
 
@@ -117,6 +120,9 @@ method viewDidLoad*(self: Module) =
 
 method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
   self.controller.updateAccount(address, accountName, colorId, emoji)
+
+method updateAccountPosition*(self: Module, address: string, position: int) =
+  self.controller.updateAccountPosition(address, position)
 
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)

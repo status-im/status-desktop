@@ -34,6 +34,10 @@ QtObject {
         return accountsModule.updateAccount(address, accountName, colorId, emoji)
     }
 
+    function updateAccountPosition(address, position) {
+        return accountsModule.updateAccountPosition(address, position)
+    }
+
     property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
 
     function disconnect(dappName) {

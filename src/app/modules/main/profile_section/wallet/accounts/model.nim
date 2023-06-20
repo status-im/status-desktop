@@ -11,6 +11,7 @@ type
     Emoji,
     RelatedAccounts,
     KeyUid,
+    Position,
 
 QtObject:
   type
@@ -54,6 +55,7 @@ QtObject:
       ModelRole.Emoji.int: "emoji",
       ModelRole.RelatedAccounts.int: "relatedAccounts",
       ModelRole.KeyUid.int: "keyUid",
+      ModelRole.Position.int: "position",
     }.toTable
 
 
@@ -104,3 +106,5 @@ QtObject:
       result = newQVariant(item.relatedAccounts())
     of ModelRole.KeyUid:
       result = newQVariant(item.keyUid())
+    of ModelRole.Position:
+      result = newQVariant(item.position())

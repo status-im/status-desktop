@@ -25,8 +25,9 @@ SettingsContentBase {
 
     readonly property int mainViewIndex: 0;
     readonly property int networksViewIndex: 1;
-    readonly property int accountViewIndex: 2;
-    readonly property int dappPermissionViewIndex: 3;
+    readonly property int accountOrderViewIndex: 2;
+    readonly property int accountViewIndex: 3;
+    readonly property int dappPermissionViewIndex: 4;
 
     function resetStack() {
         stackContainer.currentIndex = mainViewIndex;
@@ -57,6 +58,10 @@ SettingsContentBase {
                 root.rootStore.backButtonName = qsTr("Wallet")
                 root.sectionTitle = qsTr("DApp Permissions")
             }
+            else if(currentIndex == root.accountOrderViewIndex) {
+                root.rootStore.backButtonName = qsTr("Wallet")
+                root.sectionTitle = qsTr("Edit account order")
+            }
         }
 
         MainView {
@@ -75,6 +80,10 @@ SettingsContentBase {
                 stackContainer.currentIndex = accountViewIndex
             }
 
+            onGoToAccountOrderView: {
+                stackContainer.currentIndex = accountOrderViewIndex
+            }
+
             onGoToDappPermissionsView: {
                 stackContainer.currentIndex = dappPermissionViewIndex
             }
@@ -83,6 +92,13 @@ SettingsContentBase {
         NetworksView {
             walletStore: root.walletStore
 
+            onGoBack: {
+                stackContainer.currentIndex = mainViewIndex
+            }
+        }
+
+        AccountOrderView {
+            walletStore: root.walletStore
             onGoBack: {
                 stackContainer.currentIndex = mainViewIndex
             }

@@ -200,6 +200,8 @@ method load*(self: Module) =
     if not args.success:
       return
     self.notifyFilterChanged()
+  self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
+    self.notifyFilterChanged()
 
   self.controller.init()
   self.view.load()

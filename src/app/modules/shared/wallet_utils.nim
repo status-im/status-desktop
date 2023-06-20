@@ -50,7 +50,8 @@ proc walletAccountToWalletSettingsAccountsItem*(w: WalletAccountDto, keycardAcco
     w.emoji,
     relatedAccounts,
     w.keyUid,
-    keycardAccount
+    keycardAccount,
+    w.position,
   )
 
 proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool, enabledChainIds: seq[int], currency: string,
@@ -65,6 +66,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
     w.emoji,
     w.keyUid,
     w.createdAt,
+    w.position,
     keycardAccount,
     w.assetsLoading,
   )

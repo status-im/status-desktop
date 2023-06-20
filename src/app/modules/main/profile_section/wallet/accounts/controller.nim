@@ -28,6 +28,9 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 proc updateAccount*(self: Controller, address: string, accountName: string, colorId: string, emoji: string) =
   discard self.walletAccountService.updateWalletAccount(address, accountName, colorId, emoji)
 
+proc updateAccountPosition*(self: Controller, address: string, position: int) =
+  self.walletAccountService.updateWalletAccountPosition(address, position)
+
 proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
 

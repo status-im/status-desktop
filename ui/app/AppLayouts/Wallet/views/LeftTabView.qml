@@ -426,7 +426,7 @@ Rectangle {
             model: SortFilterProxyModel {
                 sourceModel: RootStore.accounts
 
-                sorters: RoleSorter { roleName: "createdAt"; sortOrder: Qt.AscendingOrder }
+                sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
             }
             
         }

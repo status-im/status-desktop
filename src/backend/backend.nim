@@ -258,6 +258,10 @@ rpc(updateKeycardUID, "accounts"):
 rpc(deleteKeycard, "accounts"):
   keycardUid: string
 
+rpc(updateAccountPosition, "accounts"):
+  address: string
+  position: int
+
 rpc(getHourlyMarketValues, "wallet"):
   symbol: string
   currency: string
