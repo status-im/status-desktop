@@ -76,6 +76,12 @@ StatusMenu {
                 exclusive: false
             }
 
+            StatusBaseText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("No Assets")
+                visible: root.tokensList.count === 0
+            }
+
             SearchBox {
                 id: tokensSearchBox
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -84,32 +90,31 @@ StatusMenu {
                 placeholderText: qsTr("Search asset name")
             }
 
-            ColumnLayout {
+            StatusListView {
                 width: parent.width
+                height: root.height - tabBar.height - tokensSearchBox.height - 12
                 spacing: 0
-                Repeater {
-                    model: SortFilterProxyModel {
-                        sourceModel: root.tokensList
-                        filters: ExpressionFilter {
-                            enabled: root.tokensList.count > 0
-                            expression: {
-                                var tokenSymbolByAddress = root.searchTokenSymbolByAddressFn(tokensSearchBox.text)
-                                return symbol.startsWith(tokensSearchBox.text.toUpperCase()) || name.toUpperCase().startsWith(tokensSearchBox.text.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
-                            }
+                model: SortFilterProxyModel {
+                    sourceModel: root.tokensList
+                    filters: ExpressionFilter {
+                        enabled: root.tokensList.count > 0
+                        expression: {
+                            var tokenSymbolByAddress = root.searchTokenSymbolByAddressFn(tokensSearchBox.text)
+                            return symbol.startsWith(tokensSearchBox.text.toUpperCase()) || name.toUpperCase().startsWith(tokensSearchBox.text.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
                         }
                     }
-                    delegate: ActivityTypeCheckBox {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 44
-                        title: model.name
-                        titleAsideText: model.symbol
-                        assetSettings.name: model.symbol ? Constants.tokenIcon(symbol) : ""
-                        assetSettings.isImage: true
-                        buttonGroup: tokenButtonGroup
-                        allChecked: root.allTokensChecked
-                        checked: root.allTokensChecked || root.tokensFilter.includes(model.symbol)
-                        onActionTriggered: root.tokenToggled(model.symbol)
-                    }
+                }
+                delegate: ActivityTypeCheckBox {
+                    width: ListView.view.width
+                    height: 44
+                    title: model.name
+                    titleAsideText: model.symbol
+                    assetSettings.name: model.symbol ? Constants.tokenIcon(symbol) : ""
+                    assetSettings.isImage: true
+                    buttonGroup: tokenButtonGroup
+                    allChecked: root.allTokensChecked
+                    checked: root.allTokensChecked || root.tokensFilter.includes(model.symbol)
+                    onActionTriggered: root.tokenToggled(model.symbol)
                 }
             }
         }
@@ -123,6 +128,12 @@ StatusMenu {
                 exclusive: false
             }
 
+            StatusBaseText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("No Collectibles")
+                visible: root.collectiblesList.count === 0
+            }
+
             SearchBox {
                 id: collectiblesSearchBox
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -131,35 +142,34 @@ StatusMenu {
                 placeholderText: qsTr("Search collectible name")
             }
 
-            ColumnLayout {
+            StatusListView {
                 width: parent.width
+                height: root.height - tabBar.height - tokensSearchBox.height - 12
                 spacing: 0
-                Repeater {
-                    model: SortFilterProxyModel {
-                        sourceModel: root.collectiblesList
-                        filters: ExpressionFilter {
-                            enabled: root.collectiblesList.count > 0 && !!collectiblesSearchBox.text
-                            expression: {
-                                let searchText = collectiblesSearchBox.text.toUpperCase()
-                                return name.toUpperCase().startsWith(searchText)
-                            }
+                model: SortFilterProxyModel {
+                    sourceModel: root.collectiblesList
+                    filters: ExpressionFilter {
+                        enabled: root.collectiblesList.count > 0 && !!collectiblesSearchBox.text
+                        expression: {
+                            let searchText = collectiblesSearchBox.text.toUpperCase()
+                            return name.toUpperCase().startsWith(searchText)
                         }
                     }
-                    delegate: ActivityTypeCheckBox {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 44
-                        title: model.name
-                        assetSettings.name: model.imageUrl
-                        assetSettings.isImage: true
-                        assetSettings.bgWidth: 32
-                        assetSettings.bgHeight: 32
-                        assetSettings.bgRadius: assetSettings.bgHeight/2
-                        buttonGroup: collectibleButtonGroup
-                        allChecked: root.allCollectiblesChecked
-                        checked: root.allCollectiblesChecked || root.collectiblesFilter.includes(model.id)
-                        onActionTriggered: root.collectibleToggled(model.id)
-                        loading: d.isFetching
-                    }
+                }
+                delegate: ActivityTypeCheckBox {
+                    width: ListView.view.width
+                    height: 44
+                    title: model.name
+                    assetSettings.name: model.imageUrl
+                    assetSettings.isImage: true
+                    assetSettings.bgWidth: 32
+                    assetSettings.bgHeight: 32
+                    assetSettings.bgRadius: assetSettings.bgHeight/2
+                    buttonGroup: collectibleButtonGroup
+                    allChecked: root.allCollectiblesChecked
+                    checked: root.allCollectiblesChecked || root.collectiblesFilter.includes(model.id)
+                    onActionTriggered: root.collectibleToggled(model.id)
+                    loading: d.isFetching
                 }
             }
         }

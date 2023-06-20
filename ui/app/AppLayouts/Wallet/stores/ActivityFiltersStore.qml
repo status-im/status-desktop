@@ -7,8 +7,10 @@ import utils 1.0
 QtObject {
     id: root
 
+    property var transactionsList: walletSection.activityController.model
+
     property var activityController: walletSection.activityController
-    property bool filtersSet: fromTimestamp !== 0 || toTimestamp !== 0 ||
+    property bool filtersSet: selectedTime !== Constants.TransactionTimePeriod.All ||
                                 typeFilters.length !== 0 ||
                                 statusFilters.length !== 0 ||
                                 tokensFilter.length !== 0 ||
@@ -22,40 +24,58 @@ QtObject {
     property double toTimestamp: new Date().valueOf()
     function setSelectedTimestamp(selcTime) {
         selectedTime = selcTime
-        var currDate = new Date() // current date
         switch(selectedTime) {
         case Constants.TransactionTimePeriod.All:
             fromTimestamp = 0
             toTimestamp = 0
             break
         case Constants.TransactionTimePeriod.Today:
-            fromTimestamp = currDate.valueOf() // Today
-            toTimestamp = fromTimestamp
+            let dt = new Date()
+            fromTimestamp = dt.setHours(0,0,0,0).valueOf() // Today
+            dt.setDate(dt.getDate() + 1) // next day...
+            dt.setHours(0, 0, 0, -1) // ... but just 1ms before midnight -> whole day included
+            toTimestamp = dt.valueOf()
             break
         case Constants.TransactionTimePeriod.Yesterday:
-            fromTimestamp = new Date().setDate(currDate.getDate() - 1).valueOf() // Yesterday
-            toTimestamp = fromTimestamp
+            let dt1 = new Date()
+            dt1.setDate(dt1.getDate() - 1)
+            dt1.setHours(0, 0, 0, 0)
+            fromTimestamp = dt1.valueOf() // Yesterday
+            dt1.setDate(dt1.getDate() + 1)
+            dt1.setHours(0, 0, 0, -1)
+            toTimestamp = dt1.valueOf()
             break
         case Constants.TransactionTimePeriod.ThisWeek:
-            var firstDayOfCurrentWeek = currDate.getDate() - currDate.getDay()
-            fromTimestamp = new Date().setDate(firstDayOfCurrentWeek).valueOf() // This week
-            toTimestamp = currDate.valueOf()
+            let dt2 = new Date()
+            let firstDayOfCurrentWeek = dt2.getDate() - dt2.getDay()
+            dt2.setDate(firstDayOfCurrentWeek)
+            dt2.setHours(0, 0, 0, 0)
+            fromTimestamp = dt2.valueOf() // This week
+            toTimestamp = new Date().valueOf()
             break
         case Constants.TransactionTimePeriod.LastWeek:
-            fromTimestamp = new Date().setDate(currDate.getDate() - 7).valueOf() // Last week
-            toTimestamp = currDate.valueOf()
+            let dt3 = new Date()
+            dt3.setDate(dt3.getDate() - 7)
+            dt3.setHours(0, 0, 0, 0)
+            fromTimestamp = dt3.valueOf() // Last week
+            toTimestamp = new Date().valueOf()
             break
         case Constants.TransactionTimePeriod.ThisMonth:
-            fromTimestamp = new Date().setDate(1).valueOf() // This month
-            toTimestamp = currDate.valueOf()
+            let dt4 = new Date()
+            dt4.setDate(1)
+            dt4.setHours(0, 0, 0, 0)
+            fromTimestamp = dt4.valueOf() // This month
+            toTimestamp = new Date().valueOf()
             break
         case Constants.TransactionTimePeriod.LastMonth:
-            let x = new Date()
-            x.setDate(1)
-            x.setMonth(x.getMonth()-1)
-            fromTimestamp = x.valueOf() // Last month
-            x.setDate(new Date(x.getFullYear(), x.getMonth(), 0).getDate() + 1)
-            toTimestamp = x.valueOf()
+            let dt5 = new Date()
+            dt5.setDate(1)
+            dt5.setMonth(dt5.getMonth()-1)
+            dt5.setHours(0, 0, 0, 0)
+            fromTimestamp = dt5.valueOf() // Last month
+            dt5.setDate(new Date(dt5.getFullYear(), dt5.getMonth(), 0).getDate() + 2)
+            dt5.setHours(0, 0, 0, -1)
+            toTimestamp = dt5.valueOf()
             break
         default:
             return ""
@@ -115,13 +135,14 @@ QtObject {
     }
 
 
-    // To-do get correct model unaffected by filters from go side
-    property var recentsList: []
+    property var recentsList: activityController.recipientsModel
     property var recentsFilters: []
+    function updateRecipientsModel() {
+        activityController.updateRecipientsModel()
+    }
     function toggleRecents(address) {
         // update filters
         recentsFilters = toggleFilterState(recentsFilters, address, recentsList.count)
-        // Set backend values
         activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
         activityController.updateFilter()
     }
@@ -175,5 +196,30 @@ QtObject {
 
     function updateFilterBase() {
         activityController.updateFilterBase()
+    }
+
+    function resetAllFilters() {
+        selectedTime = Constants.TransactionTimePeriod.All
+        fromTimestamp = activityController.startTimestamp * 1000
+        toTimestamp = new Date().valueOf()
+        activityController.setFilterTime(fromTimestamp/1000, toTimestamp/1000)
+
+        typeFilters = []
+        activityController.setFilterType(JSON.stringify(typeFilters))
+
+        statusFilters = []
+        activityController.setFilterStatus(JSON.stringify(statusFilters))
+
+        tokensFilter = []
+        activityController.setFilterAssets(JSON.stringify(tokensFilter), false)
+
+        collectiblesFilter = []
+        // To-do call update filter for collectibles
+
+        recentsFilters = []
+        savedAddressFilters = []
+        activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
+
+        activityController.updateFilter()
     }
 }

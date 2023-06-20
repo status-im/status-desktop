@@ -370,8 +370,9 @@ QtObject:
       error "error fetching recipients: ", response.error
       return
 
-    let result = json.to(response.result, backend_activity.GetAllRecipientsResponse)
-    self.recipientsModel.addAddresses(result.addresses, 0, result.hasMore)
+    if response.result["addresses"] != newJNull():
+      let result = json.to(response.result, backend_activity.GetAllRecipientsResponse)
+      self.recipientsModel.addAddresses(deduplicate(result.addresses), 0, result.hasMore)
 
   proc loadMoreRecipients(self: Controller) {.slot.} =
     let response = backend_activity.getAllRecipients(self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
@@ -379,8 +380,9 @@ QtObject:
       error "error fetching more recipient entries: ", response.error
       return
 
-    let result = json.to(response.result, backend_activity.GetAllRecipientsResponse)
-    self.recipientsModel.addAddresses(result.addresses, self.recipientsModel.getCount(), result.hasMore)
+    if response.result["addresses"] != newJNull():
+      let result = json.to(response.result, backend_activity.GetAllRecipientsResponse)
+      self.recipientsModel.addAddresses(deduplicate(result.addresses), self.recipientsModel.getCount(), result.hasMore)
 
   proc getStartTimestamp*(self: Controller): int {.slot.} =
     return  if self.startTimestamp > 0:

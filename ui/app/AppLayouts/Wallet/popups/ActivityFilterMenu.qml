@@ -41,6 +41,7 @@ StatusMenu {
     property var recentsFilters
     readonly property bool allRecentsChecked: counterPartyMenu.allRecentsChecked
     signal updateRecentsFilter(string address)
+    signal updateRecipientsModel()
 
     // Collectibles filter
     property var savedAddressList
@@ -103,6 +104,7 @@ StatusMenu {
             savedAddressFilters: root.savedAddressFilters
             onSavedAddressToggled: root.updateSavedAddressFilter(address)
             onRecentsToggled: root.updateRecentsFilter(address)
+            onUpdateRecipientsModel: root.updateRecipientsModel()
             closePolicy: root.closePolicy
         }
     }

@@ -33,8 +33,11 @@ StatusMenu {
     signal back()
     signal savedAddressToggled(string address)
     signal recentsToggled(string address)
+    signal updateRecipientsModel()
 
     implicitWidth: 289
+
+    Component.onCompleted: root.updateRecipientsModel()
 
     MenuBackButton {
         id: backButton
@@ -74,28 +77,25 @@ StatusMenu {
                 id: recentsButtonGroup
                 exclusive: false
             }
-            Repeater {
+            StatusBaseText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("No Recents")
+                visible: root.recentsList.count === 0
+            }
+            StatusListView {
+                width: parent.width
+                height: root.height - tabBar.height - 12
                 model: root.recentsList
                 delegate: ActivityTypeCheckBox {
-                    readonly property int transactionType: model.activityEntry.recipient.toLowerCase() === store.overview.mixedcaseAddress.toLowerCase() ? Constants.TransactionType.Receive : Constants.TransactionType.Send
-                    readonly property string fromName: store.getNameForAddress(model.activityEntry.sender)
-                    readonly property string toName: store.getNameForAddress(model.activityEntry.recipient)
-                    width: parent.width
+                    readonly property string name: store.getNameForAddress(model.address)
+                    width: ListView.view.width
                     height: 44
-                    title: transactionType === Constants.TransactionType.Receive ?
-                               fromName || StatusQUtils.Utils.elideText(model.activityEntry.sender,6,4) :
-                               toName || StatusQUtils.Utils.elideText(model.activityEntry.recipient,6,4)
-                    subTitle: {
-                        if (transactionType === Constants.TransactionType.Receive) {
-                            return fromName ? StatusQUtils.Utils.elideText(model.activityEntry.sender,6,4) : ""
-                        } else {
-                            return toName ? StatusQUtils.Utils.elideText(model.activityEntry.recipient,6,4): ""
-                        }
-                    }
+                    title: name || StatusQUtils.Utils.elideText(model.address,6,4)
+                    subTitle: name ? StatusQUtils.Utils.elideText(model.address,6,4): ""
                     statusListItemSubTitle.elide: Text.ElideMiddle
                     statusListItemSubTitle.wrapMode: Text.NoWrap
-                    assetSettings.name: (transactionType === Constants.TransactionType.Receive ? fromName : toName) || "address"
-                    assetSettings.isLetterIdenticon: transactionType === Constants.TransactionType.Receive ? !!fromName  : !!toName
+                    assetSettings.name: name || "address"
+                    assetSettings.isLetterIdenticon: !!name
                     assetSettings.bgHeight: 32
                     assetSettings.bgWidth: 32
                     assetSettings.bgRadius: assetSettings.bgHeight/2
@@ -103,8 +103,8 @@ StatusMenu {
                     assetSettings.height: 16
                     buttonGroup: recentsButtonGroup
                     allChecked: root.allRecentsChecked
-                    checked: root.allRecentsChecked ? true : root.recentsFilters.includes(transactionType === Constants.TransactionType.Receive ? model.activityEntry.sender: model.activityEntry.recipient)
-                    onActionTriggered: root.recentsToggled(transactionType === Constants.TransactionType.Receive ? model.activityEntry.sender: model.activityEntry.recipient)
+                    checked: root.allRecentsChecked ? true : root.recentsFilters.includes(model.address)
+                    onActionTriggered: root.recentsToggled(model.address)
                 }
             }
         }
@@ -117,10 +117,17 @@ StatusMenu {
                 id: savedButtonGroup
                 exclusive: false
             }
-            Repeater {
+            StatusBaseText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("No Saved Address")
+                visible: root.savedAddressList.count === 0
+            }
+            StatusListView {
+                width: parent.width
+                height: root.height - tabBar.height - 12
                 model: root.savedAddressList
                 delegate: ActivityTypeCheckBox {
-                    width: parent.width
+                    width: ListView.view.width
                     height: 44
                     title: model.name ?? ""
                     subTitle:  {
