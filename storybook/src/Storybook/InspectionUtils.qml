@@ -10,6 +10,7 @@ QtObject {
                 || item instanceof Image
                 || item instanceof TextEdit
                 || item instanceof TextInput
+                || item instanceof SpriteSequence
     }
 
     function baseName(item) {
@@ -38,6 +39,8 @@ QtObject {
             return "TextEdit"
         if (item instanceof TextInput)
             return "TextInput"
+        if (item instanceof SpriteSequence)
+            return "SpriteSequence"
 
         const name = baseName(item)
 
