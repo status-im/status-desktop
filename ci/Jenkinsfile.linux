@@ -8,7 +8,7 @@ pipeline {
     /* Necessary image with Ubuntu 18.04 for older Glibc. */
     docker {
       label 'linux'
-      image 'statusteam/nim-status-client-build:1.3.0-qt5.15.2'
+      image 'statusteam/nim-status-client-build:1.2.2-qt5.15.2'
       /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
       args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
     }
