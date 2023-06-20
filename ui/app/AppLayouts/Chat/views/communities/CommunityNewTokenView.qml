@@ -59,6 +59,8 @@ StatusScrollView {
     }
 
     padding: 0
+    contentWidth: mainLayout.width
+    contentHeight: mainLayout.height
 
     Component.onCompleted: {
         if(root.isAssetView)
