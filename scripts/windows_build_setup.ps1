@@ -51,7 +51,8 @@ function Install-VC-BuildTools {
         "--add", "Microsoft.VisualStudio.Component.Windows10SDK.10240",
         "--add", "Microsoft.VisualStudio.Component.Windows10SDK.14393",
         "--add", "Microsoft.VisualStudio.Component.Windows81SDK",
-        "--add", "Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Win81"
+        "--add", "Microsoft.VisualStudio.ComponentGroup.NativeDesktop.Win81",
+        "--add", "Microsoft.VisualStudio.ComponentGroup.UWP.VC.v141.BuildTools"
     )
     Start-Process -Wait -PassThru -FilePath $VCBuildToolsExe -ArgumentList $VCBuildToolsArgs
 }
