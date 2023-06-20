@@ -62,13 +62,16 @@ Item {
             const isRoot = parentIndex === -1
 
             const parent = isRoot ? root : placeholders[parentIndex]
-            const visualParent = isRoot ? root : (parent.isVisual ? parent : parent.visualParent)
+            const visualParent = isRoot ? root
+                                        : (parent.isVisual
+                                           ? (parent.background || parent)
+                                           : parent.visualParent)
 
             const x = isRoot ? 0 : item.x
             const y = isRoot ? 0 : item.y
 
             const name = InspectionUtils.simpleName(item)
-            const visual = InspectionUtils.isVisual(item)
+            const visual = InspectionUtils.isVisual(item) || !!item.background
             const clip = item.clip
 
             const props = {
