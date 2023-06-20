@@ -67,6 +67,15 @@ type
     chainId*: int
     success*: bool
 
+proc `$`*(self: TransactionMinedArgs): string =
+  result = fmt"""TransactionMinedArgs(
+    transactionHash: {$self.transactionHash},
+    chainId: {$self.chainId},
+    success: {$self.success},
+    data: {self.data},
+    ]"""
+
+
 type
   HistoryArgs* = ref object of Args
     addresses*: seq[string]
