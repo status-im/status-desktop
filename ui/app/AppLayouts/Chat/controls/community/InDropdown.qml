@@ -151,7 +151,7 @@ StatusDropdown {
         StatusScrollView {
             id: scrollView
             Layout.fillWidth: true
-            Layout.minimumHeight: Math.min(d.maxHeightCountNo, topRepeater.count) * d.itemStandardHeight
+            Layout.minimumHeight: Math.min(d.maxHeightCountNo * d.itemStandardHeight, contentHeight)
             Layout.maximumHeight: Layout.minimumHeight
             contentWidth: availableWidth
             Layout.bottomMargin: d.defaultVMargin
@@ -389,33 +389,29 @@ StatusDropdown {
                         }
                     }
                 }
-            }
 
-            StatusBaseText {
-                id: noContactsText
+                StatusBaseText {
+                    id: noContactsText
 
-                parent: scrollView
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
 
-                anchors.centerIn: parent
+                    visible: {
+                        for (let i = 0; i < topRepeater.count; i++) {
+                            const item = topRepeater.itemAt(i)
+                            if (item && item.visible)
+                                return false
+                        }
 
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-
-                visible: {
-                    for (let i = 0; i < topRepeater.count; i++) {
-                        const item = topRepeater.itemAt(i)
-                        if (item && item.visible)
-                            return false
+                        return true
                     }
 
-                    return true
+                    text: qsTr("No channels found")
+                    color: Theme.palette.baseColor1
+                    font.pixelSize: Theme.tertiaryTextFontSize
+                    elide: Text.ElideRight
+                    lineHeight: 1.2
                 }
-
-                text: qsTr("No channels found")
-                color: Theme.palette.baseColor1
-                font.pixelSize: Theme.tertiaryTextFontSize
-                elide: Text.ElideRight
-                lineHeight: 1.2
             }
         }
 
