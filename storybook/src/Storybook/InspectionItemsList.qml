@@ -9,9 +9,9 @@ ListView {
     readonly property color nonVisualItemColor: "black"
     readonly property color selectionColor: "red"
 
-    delegate: Text {
+    delegate: Label {
         width: ListView.view.width
-        height: 30
+        height: implicitHeight * 1.5
 
         text: " ".repeat(model.level * 4) + " " + model.name
 
