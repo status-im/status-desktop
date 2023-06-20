@@ -39,7 +39,7 @@ StatusScrollView {
     property var enabledNetworks
     property var allNetworks
 
-    // Account expected roles: address, name, color, emoji
+    // Account expected roles: address, name, color, emoji, walletType
     property var accounts
 
     signal chooseArtWork
@@ -225,6 +225,11 @@ StatusScrollView {
                         expression: { return getColor(model.colorId) }
                     }
                 ]
+                filters: ValueFilter {
+                        roleName: "walletType"
+                        value: Constants.watchWalletType
+                        inverted: true
+                    }
             }
             type: StatusComboBox.Type.Secondary
             size: StatusComboBox.Size.Small

@@ -26,7 +26,7 @@ SettingsPageLayout {
 
     // Models:
     property var tokensModel
-    property var accounts // Expected roles: address, name, color, emoji
+    property var accounts // Expected roles: address, name, color, emoji, walletType
 
     // Transaction related properties:
     property string feeText
