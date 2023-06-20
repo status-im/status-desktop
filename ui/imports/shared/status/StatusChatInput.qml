@@ -22,6 +22,7 @@ import StatusQ.Controls 0.1 as StatusQ
 
 Rectangle {
     id: control
+    objectName: "statusChatInput"
 
     signal sendTransactionCommandButtonClicked()
     signal receiveTransactionCommandButtonClicked()
@@ -65,7 +66,6 @@ Rectangle {
         Bottom
     }
 
-    objectName: "statusChatInput"
     function parseMessage(message) {
         let mentionsMap = new Map()
         let index = 0
@@ -883,9 +883,8 @@ Rectangle {
     }
 
     function resetReplyArea() {
-        isReply = false;
-        replyArea.userName = ""
-        replyArea.message = ""
+        isReply = false
+        replyArea.messageId = ""
     }
 
     function hideExtendedArea() {
