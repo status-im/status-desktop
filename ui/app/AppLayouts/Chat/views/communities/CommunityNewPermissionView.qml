@@ -174,7 +174,9 @@ StatusScrollView {
     }
 
     onPermissionTypeChanged: Qt.callLater(() => d.loadInitValues())
-
+    contentWidth: mainLayout.width
+    contentHeight: mainLayout.height
+    
     SequenceColumnLayout {
         id: mainLayout
 

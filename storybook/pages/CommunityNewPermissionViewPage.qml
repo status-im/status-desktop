@@ -24,7 +24,6 @@ SplitView {
 
             isEditState: isEditStateCheckBox.checked
             isPrivate: isPrivateCheckBox.checked
-            isOwner: isOwnerCheckBox.checked
             permissionDuplicated: isPermissionDuplicatedCheckBox.checked
             permissionTypeLimitReached: isLimitReachedCheckBox.checked
 
@@ -38,6 +37,7 @@ SplitView {
                 readonly property string name: "Socks"
                 readonly property string image: ModelsData.icons.socks
                 readonly property string color: "red"
+                readonly property string owner: isOwnerCheckBox.checked
             }
 
             onCreatePermissionClicked: {
