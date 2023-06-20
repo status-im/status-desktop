@@ -66,6 +66,7 @@ Item {
 
             const x = isRoot ? 0 : item.x
             const y = isRoot ? 0 : item.y
+
             const name = InspectionUtils.simpleName(item)
             const visual = InspectionUtils.isVisual(item)
             const clip = item.clip
@@ -77,6 +78,7 @@ Item {
                 z: item.z,
                 isVisual: visual,
                 visualParent,
+                visualRoot: root,
                 clip: Qt.binding(() => root.propagateClipping && item.clip),
                 showNonVisual: Qt.binding(() => root.showNonVisualItems)
             }
