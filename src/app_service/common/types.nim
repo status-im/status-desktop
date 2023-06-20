@@ -19,7 +19,9 @@ type
     ContactIdentityVerification = 13
     # Local only
     SystemMessagePinnedMessage = 14
-    SystemMessageMutualStateUpdate = 15
+    SystemMessageMutualEventSent = 15
+    SystemMessageMutualEventAccepted = 16
+    SystemMessageMutualEventRemoved = 17
 
 proc toContentType*(value: int): ContentType =
   try:

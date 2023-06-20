@@ -23,7 +23,9 @@ Control {
         Invitation = 7,
         DiscordMessage = 8,
         SystemMessagePinnedMessage = 14,
-        SystemMessageMutualStateUpdate = 15
+        SystemMessageMutualEventSent = 15,
+        SystemMessageMutualEventAccepted = 16,
+        SystemMessageMutualEventRemoved = 17
     }
 
     property list<Item> quickActions
@@ -191,7 +193,9 @@ Control {
                 Layout.fillWidth: true
                 active: isAReply &&
                     root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessagePinnedMessage &&
-                    root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessageMutualStateUpdate
+                    root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessageMutualEventSent &&
+                    root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessageMutualEventAccepted &&
+                    root.messageDetails.contentType !== StatusMessage.ContentType.SystemMessageMutualEventRemoved
 
                 visible: active
                 sourceComponent: StatusMessageReply {

@@ -430,7 +430,9 @@ QtObject {
         readonly property int contactRequestType: 11
         readonly property int discordMessageType: 12
         readonly property int systemMessagePinnedMessage: 14
-        readonly property int systemMessageMutualStateUpdate: 15
+        readonly property int systemMessageMutualEventSent: 15
+        readonly property int systemMessageMutualEventAccepted: 16
+        readonly property int systemMessageMutualEventRemoved: 17
     }
 
     readonly property QtObject messageModelRoles: QtObject {

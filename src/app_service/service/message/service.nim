@@ -265,11 +265,8 @@ QtObject:
       error "error: received `chats` array for handling messages update is empty"
       return
 
-    # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-    # blocking contact deletes the chat on the `status-go` side, after unblocking it, `active` prop is still false
-    # that's the reason why the following check is commented out here.
-    # if (not chats[0].active):
-    #   return
+    if (not chats[0].active):
+      return
 
     self.bulkReplacePubKeysWithDisplayNames(messages)
 
@@ -383,6 +380,10 @@ QtObject:
       let data = EnvelopeExpiredArgs(messagesIds: receivedData.messageIds)
       self.events.emit(SIGNAL_ENVELOPE_EXPIRED, data)
 
+    self.events.on(SIGNAL_RELOAD_ONE_TO_ONE_CHAT) do(e: Args):
+      let args = ReloadOneToOneArgs(e)
+      self.resetMessageCursor(args.sectionId)
+      self.asyncLoadMoreMessagesForChat(args.sectionId)
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
