@@ -119,11 +119,12 @@ StackLayout {
 
                 StatusIcon {
                     icon: "info"
+                    color: Theme.palette.directColor1
                 }
 
                 StatusBaseText {
                     Layout.fillWidth: true
-                    text: qsTr("This node is the Community Owner Node. For your Community to function correctly try to keep this computer with Status running and onlinie as much as possible.")
+                    text: qsTr("This node is the Community Owner Node. For your Community to function correctly try to keep this computer with Status running and online as much as possible.")
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                     wrapMode: Text.WordWrap
