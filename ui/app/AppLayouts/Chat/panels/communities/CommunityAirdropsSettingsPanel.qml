@@ -81,7 +81,10 @@ SettingsPageLayout {
         }
     ]
 
-    onPrimaryHeaderButtonClicked: stackManager.push(d.newAirdropViewState, newAirdropView, null, StackView.Immediate)
+    onPrimaryHeaderButtonClicked: {
+        if(root.state !== d.newAirdropViewState)
+            stackManager.push(d.newAirdropViewState, newAirdropView, null, StackView.Immediate)
+    }
 
     StackViewStates {
         id: stackManager

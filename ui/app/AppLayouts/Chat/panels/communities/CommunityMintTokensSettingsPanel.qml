@@ -54,7 +54,7 @@ SettingsPageLayout {
 
     signal burnToken(string tokenKey, int amount)
 
-    signal airdropToken(string tokenKey)
+    signal airdropToken(string tokenKey, int type, var addresses)
 
     signal deleteToken(string tokenKey)
 
