@@ -94,7 +94,7 @@ SettingsPageLayout {
         property var tokenOwnersModel
         property var remotelyDestructTokensList
         property bool remotelyDestruct
-        property bool burnVisible
+        property bool infiniteSupply
         property string tokenKey
         property int burnAmount
         property int remainingTokens
@@ -413,7 +413,7 @@ SettingsPageLayout {
         MintTokensFooterPanel {
             id: footerPanel
 
-            readonly property bool deployStateFailed : (!!d.currentToken) ? d.currentToken.deployState === Constants.ContractTransactionStatus.Failed : false
+            readonly property bool deployStateCompleted : (!!d.currentToken) ? d.currentToken.deployState === Constants.ContractTransactionStatus.Completed : false
 
             function closePopups() {
                 remotelyDestructPopup.close()
@@ -422,12 +422,12 @@ SettingsPageLayout {
                 burnTokensPopup.close()
             }
 
-            airdropEnabled: !deployStateFailed
-            remotelyDestructEnabled: !deployStateFailed
-            burnEnabled: !deployStateFailed
+            airdropEnabled: deployStateCompleted && (d.infiniteSupply || d.remainingTokens != 0)
+            remotelyDestructEnabled: deployStateCompleted && (d.tokenOwnersModel && d.tokenOwnersModel.count > 0)
+            burnEnabled: deployStateCompleted
 
             remotelyDestructVisible: d.remotelyDestruct
-            burnVisible: d.burnVisible
+            burnVisible: !d.infiniteSupply
 
             onAirdropClicked: d.airdropClicked()
             onRemotelyDestructClicked: remotelyDestructPopup.open()
@@ -610,8 +610,8 @@ SettingsPageLayout {
 
             Binding {
                 target: d
-                property: "burnVisible"
-                value: !view.infiniteSupply
+                property: "infiniteSupply"
+                value: view.infiniteSupply
                 restoreMode: Binding.RestoreBindingOrValue
             }
 
