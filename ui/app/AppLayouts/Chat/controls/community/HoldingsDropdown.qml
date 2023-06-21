@@ -14,6 +14,7 @@ import utils 1.0
 StatusDropdown {
     id: root
 
+    property string communityId
     property var assetsModel
     property var collectiblesModel
     property bool isENSTab: true
@@ -265,6 +266,7 @@ StatusDropdown {
         ExtendedDropdownContent {
             id: listPanel
 
+            communityId: root.communityId
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
             noDataText: root.noDataText

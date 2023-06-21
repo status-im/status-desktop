@@ -116,6 +116,10 @@ proc init*(self: Controller) =
     let args = CommunitiesArgs(e)
     self.delegate.curatedCommunitiesLoaded(args.communities)
 
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED) do(e: Args):
+    let args = CommunityTokenMetadataArgs(e)
+    self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
+
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
 

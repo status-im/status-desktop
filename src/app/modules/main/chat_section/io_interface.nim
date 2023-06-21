@@ -367,9 +367,6 @@ method onCommunityTokenPermissionDeleted*(self: AccessInterface, communityId: st
 method onCommunityTokenPermissionDeletionFailed*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenMetadataAdded*(self: AccessInterface, communityId: string, tokenMetadata: CommunityTokensMetadataDto) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onWalletAccountTokensRebuilt*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
