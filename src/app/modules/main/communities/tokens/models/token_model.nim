@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat, sequtils
+import NimQml, Tables, strformat, sequtils, stint
 import token_item
 import token_owners_item
 import token_owners_model
@@ -52,7 +52,7 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.DeployState.int])
         return
 
-  proc updateSupply*(self: TokenModel, chainId: int, contractAddress: string, supply: int) =
+  proc updateSupply*(self: TokenModel, chainId: int, contractAddress: string, supply: Uint256) =
     for i in 0 ..< self.items.len:
       if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
         if self.items[i].tokenDto.supply != supply:
@@ -62,7 +62,7 @@ QtObject:
           self.dataChanged(index, index, @[ModelRole.Supply.int])
         return
 
-  proc updateRemainingSupply*(self: TokenModel, chainId: int, contractAddress: string, remainingSupply: int) =
+  proc updateRemainingSupply*(self: TokenModel, chainId: int, contractAddress: string, remainingSupply: Uint256) =
     for i in 0 ..< self.items.len:
       if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
         if self.items[i].remainingSupply != remainingSupply:
@@ -155,7 +155,7 @@ QtObject:
       of ModelRole.Description:
         result = newQVariant(item.tokenDto.description)
       of ModelRole.Supply:
-        result = newQVariant(item.tokenDto.supply)
+        result = newQVariant(supplyByType(item.tokenDto.supply, item.tokenDto.tokenType))
       of ModelRole.InfiniteSupply:
         result = newQVariant(item.tokenDto.infiniteSupply)
       of ModelRole.Transferable:
@@ -177,7 +177,7 @@ QtObject:
       of ModelRole.AccountName:
         result = newQVariant(item.accountName)
       of ModelRole.RemainingSupply:
-        result = newQVariant(item.remainingSupply)
+        result = newQVariant(supplyByType(item.remainingSupply, item.tokenDto.tokenType))
       of ModelRole.Decimals:
         result = newQVariant(item.tokenDto.decimals)
 

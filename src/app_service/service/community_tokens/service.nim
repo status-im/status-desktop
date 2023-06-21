@@ -33,7 +33,7 @@ const ethSymbol = "ETH"
 type
   CommunityTokenAndAmount* = object
     communityToken*: CommunityTokenDto
-    amount*: int
+    amount*: Uint256 # for assets the value is converted to wei
 
 type
   ContractTuple* = tuple
@@ -317,7 +317,7 @@ QtObject:
       communityToken.name = deploymentParams.name
       communityToken.symbol = deploymentParams.symbol
       communityToken.description = tokenMetadata.description
-      communityToken.supply = deploymentParams.supply
+      communityToken.supply = stint.parse($deploymentParams.supply, Uint256)
       communityToken.infiniteSupply = deploymentParams.infiniteSupply
       communityToken.transferable = deploymentParams.transferable
       communityToken.remoteSelfDestruct = deploymentParams.remoteSelfDestruct
@@ -346,7 +346,7 @@ QtObject:
       )
 
     except RpcException:
-      error "Error deploying collectibles", message = getCurrentExceptionMsg()
+      error "Error deploying contract", message = getCurrentExceptionMsg()
 
   proc getCommunityTokens*(self: Service, communityId: string): seq[CommunityTokenDto] =
     try:
@@ -382,22 +382,22 @@ QtObject:
     except RpcException:
       error "Error getting contract owner name", message = getCurrentExceptionMsg()
 
-  proc getRemainingSupply*(self: Service, chainId: int, contractAddress: string): int =
+  proc getRemainingSupply*(self: Service, chainId: int, contractAddress: string): Uint256 =
     try:
       let response = tokens_backend.remainingSupply(chainId, contractAddress)
-      return response.result.getInt()
+      return stint.parse(response.result.getStr(), Uint256)
     except RpcException:
       error "Error getting remaining supply", message = getCurrentExceptionMsg()
 
-  proc airdropCollectibles*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+  proc airdropTokens*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
     try:
       for collectibleAndAmount in collectiblesAndAmounts:
         let addressFrom = self.contractOwner(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
         let txData = self.buildTransactionDataDto(addressFrom, collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
         if txData.source == parseAddress(ZERO_ADDRESS):
           return
-        debug "Airdrop collectibles ", chainId=collectibleAndAmount.communityToken.chainId, address=collectibleAndAmount.communityToken.address, amount=collectibleAndAmount.amount
-        let response = tokens_backend.mintTo(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, password, walletAddresses, collectibleAndAmount.amount)
+        debug "Airdrop tokens ", chainId=collectibleAndAmount.communityToken.chainId, address=collectibleAndAmount.communityToken.address, amount=collectibleAndAmount.amount
+        let response = tokens_backend.mintTokens(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address, %txData, password, walletAddresses, collectibleAndAmount.amount)
         let transactionHash = response.result.getStr()
         debug "Airdrop transaction hash ", transactionHash=transactionHash
 
@@ -414,9 +414,9 @@ QtObject:
           collectibleAndAmount.communityToken.chainId,
         )
     except RpcException:
-      error "Error airdropping collectibles", message = getCurrentExceptionMsg()
+      error "Error airdropping tokens", message = getCurrentExceptionMsg()
 
-  proc computeAirdropCollectiblesFee*(self: Service, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+  proc computeAirdropFee*(self: Service, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
     try:
       self.tempTokensAndAmounts = collectiblesAndAmounts
       let arg = AsyncGetMintFees(
@@ -553,12 +553,12 @@ QtObject:
       errorCode = ComputeFeeErrorCode.Infura
     return errorCode
 
-  proc burnCollectibles*(self: Service, communityId: string, password: string, contractUniqueKey: string, amount: int) =
+  proc burnTokens*(self: Service, communityId: string, password: string, contractUniqueKey: string, amount: Uint256) =
     try:
       var contract = self.findContractByUniqueId(contractUniqueKey)
       let addressFrom = self.contractOwner(contract.chainId, contract.address)
       let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
-      debug "Burn collectibles ", chainId=contract.chainId, address=contract.address, amount=amount
+      debug "Burn tokens ", chainId=contract.chainId, address=contract.address, amount=amount
       let response = tokens_backend.burn(contract.chainId, contract.address, %txData, password, amount)
       let transactionHash = response.result.getStr()
       debug "Burn transaction hash ", transactionHash=transactionHash
@@ -579,7 +579,7 @@ QtObject:
     except Exception as e:
       error "Burn error", msg = e.msg
 
-  proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: int) =
+  proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: Uint256) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
       self.tempAccountAddress = self.contractOwner(contract.chainId, contract.address)
@@ -594,7 +594,7 @@ QtObject:
       )
       self.threadpool.start(arg)
     except Exception as e:
-      error "Error loading fees", msg = e.msg
+      error "Error loading burn fees", msg = e.msg
 
   proc createComputeFeeArgsWithError(self:Service, errorMessage: string): ComputeFeeArgs =
     let errorCode = self.getErrorCodeFromMessage(errorMessage)

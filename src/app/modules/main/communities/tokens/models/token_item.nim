@@ -1,4 +1,4 @@
-import strformat, sequtils
+import strformat, sequtils, stint
 import ../../../../../../app_service/service/community_tokens/dto/community_token
 import ../../../../../../app_service/service/collectible/dto
 import ../../../../../../app_service/service/network/dto
@@ -14,7 +14,7 @@ type
     chainName*: string
     chainIcon*: string
     accountName*: string
-    remainingSupply*: int
+    remainingSupply*: Uint256
     tokenOwnersModel*: token_owners_model.TokenOwnersModel
 
 proc initTokenItem*(
@@ -22,7 +22,7 @@ proc initTokenItem*(
   network: NetworkDto,
   tokenOwners: seq[CollectibleOwner],
   accountName: string,
-  remainingSupply: int
+  remainingSupply: Uint256
 ): TokenItem =
   result.tokenDto = tokenDto
   if network != nil:

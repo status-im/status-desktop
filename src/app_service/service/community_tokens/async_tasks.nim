@@ -70,7 +70,7 @@ type
   AsyncGetBurnFees = ref object of QObjectTaskArg
     chainId: int
     contractAddress: string
-    amount: int
+    amount: Uint256
 
 const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetBurnFees](argEncoded)
@@ -108,7 +108,7 @@ const asyncGetMintFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
         feeTable[chainId] = feesResponse.toSuggestedFeesDto()
 
       # get gas for smart contract
-      let gas = community_tokens.estimateMintTo(chainId,
+      let gas = community_tokens.estimateMintTokens(chainId,
         collectibleAndAmount.communityToken.address,
         arg.walletAddresses, collectibleAndAmount.amount).result.getInt
       gasTable[(chainId, collectibleAndAmount.communityToken.address)] = gas
