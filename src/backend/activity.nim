@@ -314,3 +314,6 @@ type GetAllRecipientsResponse* = object
 rpc(getAllRecipients, "wallet"):
   offset: int
   limit: int
+
+rpc(getOldestActivityTimestamp, "wallet"):
+  addresses: seq[string]
