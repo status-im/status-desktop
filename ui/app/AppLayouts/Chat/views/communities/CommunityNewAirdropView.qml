@@ -79,6 +79,8 @@ StatusScrollView {
     signal navigateToMintTokenSettings(bool isAssetType)
 
     function selectToken(key, amount, type) {
+        if(selectedHoldingsModel)
+            selectedHoldingsModel.clear()
         var tokenModel = null
         if(type === Constants.TokenType.ERC20)
             tokenModel = root.assetsModel
