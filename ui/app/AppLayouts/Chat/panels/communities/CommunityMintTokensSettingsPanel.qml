@@ -44,11 +44,11 @@ SettingsPageLayout {
     signal mintAsset(var assetItem)
     signal signMintTransactionOpened(int chainId, string accountAddress)
 
-    signal signRemoteDestructTransactionOpened(var selfDestructTokensList, // [key , amount]
-                                             string tokenKey)
+    signal signRemoteDestructTransactionOpened(var remotelyDestructTokensList, // [key , amount]
+                                               string tokenKey)
 
-    signal remotelyDestructCollectibles(var selfDestructTokensList, // [key , amount]
-                                          string tokenKey)
+    signal remotelyDestructCollectibles(var remotelyDestructTokensList, // [key , amount]
+                                        string tokenKey)
 
     signal signBurnTransactionOpened(string tokenKey, int amount)
 
