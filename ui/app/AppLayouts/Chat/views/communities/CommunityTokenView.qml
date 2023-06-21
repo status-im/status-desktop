@@ -243,7 +243,7 @@ StatusScrollView {
 
             CustomPreviewBox {
                 visible: !root.isAssetView
-                label: qsTr("Remotely destructible")
+                label: qsTr("Destructible")
                 value: collectible.remotelyDestruct ? qsTr("Yes") : qsTr("No")
             }
 
