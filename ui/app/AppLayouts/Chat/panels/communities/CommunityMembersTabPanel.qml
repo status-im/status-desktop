@@ -165,7 +165,7 @@ Item {
         ProfileContextMenu {
             id: memberContextMenuView
             store: root.rootStore
-            myPublicKey: root.rootStore.myPublicKey()
+            myPublicKey: userProfile.pubKey
 
             onOpenProfileClicked: {
                 Global.openProfilePopup(publicKey, null)

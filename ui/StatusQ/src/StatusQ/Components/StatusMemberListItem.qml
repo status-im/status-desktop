@@ -143,11 +143,13 @@ StatusListItem {
     statusListItemIcon.badge.implicitHeight: 12 // 8 px + 2 px * 2 borders
     statusListItemIcon.badge.implicitWidth: 12 // 8 px + 2 px * 2 borders
     components: [
-        StatusIcon {
-            anchors.verticalCenter: parent.verticalCenter
-            visible: root.isAdmin
-            icon: "crown"
-            color: Theme.palette.directColor1
+        Loader {
+            active: root.isAdmin
+            sourceComponent: StatusIcon {
+                anchors.verticalCenter: parent.verticalCenter
+                icon: "crown"
+                color: Theme.palette.directColor1
+            }
         }
     ]
 }

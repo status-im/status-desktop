@@ -108,11 +108,10 @@ SettingsPageLayout {
                 model: root.membersModel
                 rootStore: root.rootStore
                 placeholderText: {
-                    if (root.membersModel.count === 0) {
+                    if (root.membersModel.count === 0)
                         return qsTr("No members to search")
-                    } else {
-                        return qsTr("Search %1's %n member(s)", "", root.membersModel ? root.membersModel.count : 0).arg(root.communityName)
-                    }
+
+                    return qsTr("Search %1's %n member(s)", "", root.membersModel ? root.membersModel.count : 0).arg(root.communityName)
                 }
                 panelType: CommunityMembersTabPanel.TabType.AllMembers
 
@@ -136,13 +135,10 @@ SettingsPageLayout {
                 model: root.pendingMemberRequestsModel
                 rootStore: root.rootStore
                 placeholderText: {
-                    if (root.pendingMemberRequestsModel.count === 0) {
+                    if (root.pendingMemberRequestsModel.count === 0)
                         return qsTr("No pending requests to search")
-                    } else {
-                        return qsTr("Search %1's %2 pending request%3").arg(root.communityName)
-                                                              .arg(root.pendingMemberRequestsModel.count)
-                                                              .arg(root.pendingMemberRequestsModel.count > 1 ? "s" : "")
-                    }
+
+                    return qsTr("Search %1's %n pending request(s)", "", root.pendingMemberRequestsModel.count).arg(root.communityName)
                 }
                 panelType: CommunityMembersTabPanel.TabType.PendingRequests
 
@@ -157,13 +153,10 @@ SettingsPageLayout {
                 model: root.declinedMemberRequestsModel
                 rootStore: root.rootStore
                 placeholderText: {
-                    if (root.declinedMemberRequestsModel.count === 0) {
+                    if (root.declinedMemberRequestsModel.count === 0)
                         return qsTr("No rejected members to search")
-                    } else {
-                        return qsTr("Search %1's %2 rejected member%3").arg(root.communityName)
-                                                              .arg(root.declinedMemberRequestsModel.count)
-                                                              .arg(root.declinedMemberRequestsModel.count > 1 ? "s" : "")
-                    }
+
+                    return qsTr("Search %1's %n rejected member(s)", "", root.declinedMemberRequestsModel.count).arg(root.communityName)
                 }
                 panelType: CommunityMembersTabPanel.TabType.DeclinedRequests
 
@@ -177,13 +170,10 @@ SettingsPageLayout {
                 model: root.bannedMembersModel
                 rootStore: root.rootStore
                 placeholderText: {
-                    if (root.bannedMembersModel.count === 0) {
+                    if (root.bannedMembersModel.count === 0)
                         return qsTr("No banned members to search")
-                    } else {
-                        return qsTr("Search %1's %2 banned member%3").arg(root.communityName)
-                                                              .arg(root.bannedMembersModel.count)
-                                                              .arg(root.bannedMembersModel.count > 1 ? "s" : "")
-                    }
+
+                    return qsTr("Search %1's %n banned member(s)", "", root.bannedMembersModel.count).arg(root.communityName)
                 }
                 panelType: CommunityMembersTabPanel.TabType.BannedMembers
 

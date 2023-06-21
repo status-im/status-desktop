@@ -70,6 +70,10 @@ ListModel {
         section: "Views"
     }
     ListElement {
+        title: "CommunitiesView"
+        section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }

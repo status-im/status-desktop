@@ -14,7 +14,7 @@ StatusMenu {
 
     title: isCommunityChat ? qsTr("Mute Channel") : qsTr("Mute Chat")
 
-    assetSettings.name: "notification"
+    assetSettings.name: "notification-muted"
 
     StatusAction {
         text: qsTr("For 15 mins")
@@ -37,7 +37,7 @@ StatusMenu {
     }
 
     StatusAction {
-        text: qsTr("Until you turn it back on")
+        text: qsTr("Until I turn it back on")
         onTriggered: muteTriggered(Constants.MutingVariations.TillUnmuted)
     }
 }
