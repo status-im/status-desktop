@@ -85,7 +85,7 @@ Control {
             minimumHeight: 36 // by design
             maximumHeight: minimumHeight
 
-            placeholderText: qsTr("Search hodlers")
+            placeholderText: qsTr("Search holders")
         }
 
         StatusBaseText {
@@ -99,7 +99,7 @@ Control {
             visible: searcher.text.length > 0
 
             text: (searcher.text.length > 0 && proxyModel.count > 0)
-                  ? qsTr("Search results") : qsTr("No hodlers found")
+                  ? qsTr("Search results") : qsTr("No holders found")
         }
 
         NoHoldersPanel {

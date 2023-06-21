@@ -142,7 +142,7 @@ StatusListView {
                 }
 
                 ColumnHeader {
-                    text: qsTr("Hodling")
+                    text: qsTr("Holding")
 
                     onClicked: {
                         if (sorting !== StatusSortableColumnHeader.Sorting.NoSorting)
