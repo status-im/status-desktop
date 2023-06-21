@@ -62,7 +62,6 @@ QtObject:
     self.model.editItem(item)
     if (self.activeSection.getId() == item.id):
       self.activeSection.setActiveSectionData(item)
-      self.activeSectionChanged()
 
   proc model*(self: View): SectionModel =
     return self.model
