@@ -18,6 +18,10 @@ Flow {
 
     spacing: 8
 
+    Component.onCompleted: {
+        activityFilterStore.updateFilterBase()
+    }
+
     StatusRoundButton {
         id: filterButton
         width: 32

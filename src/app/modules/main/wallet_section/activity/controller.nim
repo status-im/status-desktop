@@ -1,4 +1,4 @@
-import NimQml, logging, std/json, sequtils, sugar, options, strutils
+import NimQml, logging, std/json, sequtils, sugar, options, strutils, times
 import tables, stint, sets
 
 import model
@@ -51,6 +51,8 @@ QtObject:
       addresses: seq[string]
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
+
+      startTimestamp: int
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -224,6 +226,22 @@ QtObject:
 
     self.currentActivityFilter.types = types
 
+  proc startTimestampChanged*(self: Controller) {.signal.}
+
+  proc getOldestActivityTimestamp(self: Controller): int {.slot.} =
+    let resJson = backend_activity.getOldestActivityTimestamp(self.addresses)
+    if resJson.error != nil or resJson.result.kind != JInt:
+      error "error fetching oldest activity timestamp: ", resJson.error, ", ", resJson.result.kind
+      return
+
+    return resJson.result.getInt()
+
+  # Call this method on every data update (ideally only if updates are before the last timestamp retrieved)
+  # This depends on self.addresses being set, call on every address change
+  proc updateStartTimestamp*(self: Controller) {.slot.} =
+    self.startTimestamp = self.getOldestActivityTimestamp()
+    self.startTimestampChanged()
+
   proc newController*(transactionsModule: transactions_module.AccessInterface,
                       currencyService: currency_service.Service,
                       tokenService: token_service.Service,
@@ -322,6 +340,7 @@ QtObject:
 
   proc setFilterAddresses*(self: Controller, addresses: seq[string]) =
     self.addresses = addresses
+    self.updateStartTimestamp()
 
   proc setFilterToAddresses*(self: Controller, addresses: seq[string]) =
     self.currentActivityFilter.counterpartyAddresses = addresses
@@ -362,3 +381,16 @@ QtObject:
 
     let result = json.to(response.result, backend_activity.GetAllRecipientsResponse)
     self.recipientsModel.addAddresses(result.addresses, self.recipientsModel.getCount(), result.hasMore)
+
+  proc getStartTimestamp*(self: Controller): int {.slot.} =
+    return  if self.startTimestamp > 0:
+              self.startTimestamp
+            else:
+              int(times.parse("2000-01-01", "yyyy-MM-dd").toTime().toUnix())
+
+  QtProperty[int] startTimestamp:
+    read = getStartTimestamp
+    notify = startTimestampChanged
+
+  proc updateFilterBase(self: Controller) {.slot.} =
+    self.updateStartTimestamp()

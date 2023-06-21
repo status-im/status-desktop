@@ -241,7 +241,6 @@ QtObject {
 
     property bool marketHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.marketHistoryIsLoading : false
 
-    // TODO: range until we optimize to cache the data and abuse the requests
     function fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum) {
         if (Global.appIsReady)
             walletSectionAllTokens.fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum)

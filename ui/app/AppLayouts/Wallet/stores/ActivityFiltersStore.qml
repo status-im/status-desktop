@@ -18,8 +18,7 @@ QtObject {
 
     // Time filters
     property int selectedTime: Constants.TransactionTimePeriod.All
-    // To-do get this from the backend once oldest Tx timestamp is available
-    property double fromTimestamp
+    property double fromTimestamp: activityController.startTimestamp * 1000
     property double toTimestamp: new Date().valueOf()
     function setSelectedTimestamp(selcTime) {
         selectedTime = selcTime
@@ -172,5 +171,9 @@ QtObject {
             }
         }
         return tempFilters
+    }
+
+    function updateFilterBase() {
+        activityController.updateFilterBase()
     }
 }
