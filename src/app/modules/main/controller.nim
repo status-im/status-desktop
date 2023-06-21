@@ -1,4 +1,4 @@
-import chronicles
+import chronicles, stint
 import ../../global/app_sections_config as conf
 import ../../global/global_singleton
 import ../../global/app_signals
@@ -57,7 +57,7 @@ type
 
 # Forward declaration
 proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
-proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): int
+proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): Uint256
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -491,7 +491,7 @@ proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: in
 proc getCommunityTokenOwnerName*(self: Controller, chainId: int, contractAddress: string): string =
   return self.communityTokensService.contractOwnerName(chainId, contractAddress)
 
-proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): int =
+proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): Uint256 =
   return self.communityTokensService.getRemainingSupply(chainId, contractAddress)
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =

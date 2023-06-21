@@ -1,4 +1,4 @@
-import NimQml, tables, json, sugar, sequtils, strformat, marshal, times, chronicles
+import NimQml, tables, json, sugar, sequtils, strformat, marshal, times, chronicles, stint
 
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
@@ -238,7 +238,7 @@ proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : TokenIte
   let network = self.controller.getNetwork(tokenDto.chainId)
   let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
   let ownerAddressName = self.controller.getCommunityTokenOwnerName(tokenDto.chainId, tokenDto.address)
-  let remainingSupply = if tokenDto.infiniteSupply: 0 else: self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
+  let remainingSupply = if tokenDto.infiniteSupply: stint.parse("0", Uint256) else: self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
   result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName, remainingSupply)
 
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
@@ -1009,7 +1009,7 @@ method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: stri
   if item.id != "":
     item.updateCommunityTokenDeployState(chainId, contractAddress, deployState)
 
-method onCommunityTokenSupplyChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, supply: int, remainingSupply: int) =
+method onCommunityTokenSupplyChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateCommunityTokenSupply(chainId, contractAddress, supply)

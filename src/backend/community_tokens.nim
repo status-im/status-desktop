@@ -32,17 +32,17 @@ proc updateCommunityTokenState*(chainId: int, contractAddress: string, deploySta
   let payload = %* [chainId, contractAddress, deployState.int]
   return core.callPrivateRPC("wakuext_updateCommunityTokenState", payload)
 
-proc updateCommunityTokenSupply*(chainId: int, contractAddress: string, supply: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, contractAddress, supply]
+proc updateCommunityTokenSupply*(chainId: int, contractAddress: string, supply: Uint256): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, supply.toString(10)]
   return core.callPrivateRPC("wakuext_updateCommunityTokenSupply", payload)
 
-proc mintTo*(chainId: int, contractAddress: string, txData: JsonNode, password: string, walletAddresses: seq[string], amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), walletAddresses, amount]
-  return core.callPrivateRPC("collectibles_mintTo", payload)
+proc mintTokens*(chainId: int, contractAddress: string, txData: JsonNode, password: string, walletAddresses: seq[string], amount: Uint256): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), walletAddresses, amount.toString(10)]
+  return core.callPrivateRPC("collectibles_mintTokens", payload)
 
-proc estimateMintTo*(chainId: int, contractAddress: string, walletAddresses: seq[string], amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, contractAddress, walletAddresses, amount]
-  return core.callPrivateRPC("collectibles_estimateMintTo", payload)
+proc estimateMintTokens*(chainId: int, contractAddress: string, walletAddresses: seq[string], amount: Uint256): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, walletAddresses, amount.toString(10)]
+  return core.callPrivateRPC("collectibles_estimateMintTokens", payload)
 
 proc remoteBurn*(chainId: int, contractAddress: string, txData: JsonNode, password: string, tokenIds: seq[UInt256]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), tokenIds.map(x => x.toString(10))]
@@ -52,12 +52,12 @@ proc estimateRemoteBurn*(chainId: int, contractAddress: string, tokenIds: seq[UI
   let payload = %* [chainId, contractAddress, tokenIds.map(x => x.toString(10))]
   return core.callPrivateRPC("collectibles_estimateRemoteBurn", payload)
 
-proc burn*(chainId: int, contractAddress: string, txData: JsonNode, password: string, amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), stint.parse($amount, Uint256).toString(10)]
+proc burn*(chainId: int, contractAddress: string, txData: JsonNode, password: string, amount: Uint256): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, txData, utils.hashPassword(password), amount.toString(10)]
   return core.callPrivateRPC("collectibles_burn", payload)
 
-proc estimateBurn*(chainId: int, contractAddress: string, amount: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, contractAddress, stint.parse($amount, Uint256).toString(10)]
+proc estimateBurn*(chainId: int, contractAddress: string, amount: Uint256): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, contractAddress, amount.toString(10)]
   return core.callPrivateRPC("collectibles_estimateBurn", payload)
 
 proc contractOwner*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =

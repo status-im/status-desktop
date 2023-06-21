@@ -1,4 +1,4 @@
-import json, sequtils
+import json, sequtils, stint, strutils, chronicles
 import ../../../../backend/response_type
 include ../../../common/json_utils
 import ../../../common/conversion
@@ -18,7 +18,7 @@ type
     name*: string
     symbol*: string
     description*: string
-    supply*: int
+    supply*: Uint256
     infiniteSupply*: bool
     transferable*: bool
     remoteSelfDestruct*: bool
@@ -36,7 +36,7 @@ proc toJsonNode*(self: CommunityTokenDto): JsonNode =
     "name": self.name,
     "symbol": self.symbol,
     "description": self.description,
-    "supply": self.supply,
+    "supply": self.supply.toString(10),
     "infiniteSupply": self.infiniteSupply,
     "transferable": self.transferable,
     "remoteSelfDestruct": self.remoteSelfDestruct,
@@ -57,7 +57,9 @@ proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("description", result.description)
-  discard jsonObj.getProp("supply", result.supply)
+  var supplyStr: string
+  discard jsonObj.getProp("supply", supplyStr)
+  result.supply = stint.parse(supplyStr, Uint256)
   discard jsonObj.getProp("infiniteSupply", result.infiniteSupply)
   discard jsonObj.getProp("transferable", result.transferable)
   discard jsonObj.getProp("remoteSelfDestruct", result.remoteSelfDestruct)
@@ -72,3 +74,14 @@ proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
 proc parseCommunityTokens*(response: RpcResponse[JsonNode]): seq[CommunityTokenDto] =
   result = map(response.result.getElems(),
     proc(x: JsonNode): CommunityTokenDto = x.toCommunityTokenDto())
+
+proc supplyByType*(supply: Uint256, tokenType: TokenType): float64 =
+  try:
+    var eths: string
+    if tokenType == TokenType.ERC20:
+      eths = wei2Eth(supply, 18)
+    else:
+      eths = supply.toString(10)
+    return parseFloat(eths)
+  except Exception as e:
+    error "Error parsing supply by type ", msg=e.msg, supply=supply, tokenType=tokenType

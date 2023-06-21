@@ -1,4 +1,4 @@
-import strformat
+import strformat, stint
 import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
 import ../main/communities/tokens/models/token_model as community_tokens_model
@@ -328,10 +328,10 @@ proc appendCommunityToken*(self: SectionItem, item: TokenItem) {.inline.} =
 proc updateCommunityTokenDeployState*(self: SectionItem, chainId: int, contractAddress: string, deployState: DeployState) {.inline.} =
   self.communityTokensModel.updateDeployState(chainId, contractAddress, deployState)
 
-proc updateCommunityTokenSupply*(self: SectionItem, chainId: int, contractAddress: string, supply: int) {.inline.} =
+proc updateCommunityTokenSupply*(self: SectionItem, chainId: int, contractAddress: string, supply: Uint256) {.inline.} =
   self.communityTokensModel.updateSupply(chainId, contractAddress, supply)
 
-proc updateCommunityRemainingSupply*(self: SectionItem, chainId: int, contractAddress: string, remainingSupply: int) {.inline.} =
+proc updateCommunityRemainingSupply*(self: SectionItem, chainId: int, contractAddress: string, remainingSupply: Uint256) {.inline.} =
   self.communityTokensModel.updateRemainingSupply(chainId, contractAddress, remainingSupply)
 
 proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.inline.} =

@@ -5,6 +5,7 @@ import ../../../../../app_service/service/transaction/service as transaction_ser
 import ../../../../../app_service/service/network/service as networks_service
 import ../../../../../app_service/service/community/dto/community
 import ../../../../../app_service/service/accounts/utils as utl
+import ../../../../../app_service/common/conversion
 import ../../../../core/eventemitter
 import ../../../../global/global_singleton
 import ../../../shared_models/currency_amount
@@ -39,7 +40,7 @@ type
     tempWalletAddresses: seq[string]
     tempContractAction: ContractAction
     tempContractUniqueKey: string
-    tempAmount: int
+    tempAmount: Uint256
 
 proc newCommunityTokensModule*(
     parent: parent_interface.AccessInterface,
@@ -84,22 +85,34 @@ proc authenticate(self: Module) =
   else:
     self.controller.authenticateUser()
 
-proc getTokenAndAmountList(self: Module, communityId: string, collectiblesJsonString: string): seq[CommunityTokenAndAmount] =
+# for collectibles conversion is: "1" -> Uint256(1)
+# for assets amount is converted to basic units (wei-like): "1.5" -> Uint256(1500000000000000000)
+proc convertAmountByTokenType(self: Module, tokenType: TokenType, amount: float64): Uint256 =
+  const decimals = 18
+  case tokenType
+    of TokenType.ERC721:
+      return stint.parse($amount.int, Uint256)
+    of TokenType.ERC20:
+      return conversion.eth2Wei(amount, decimals)
+    else:
+      error "Converting amount - unknown token type", tokenType=tokenType
+
+proc getTokenAndAmountList(self: Module, communityId: string, tokensJsonString: string): seq[CommunityTokenAndAmount] =
   try:
-    let collectiblesJson = collectiblesJsonString.parseJson
-    for collectible in collectiblesJson:
-      let contractUniqueKey = collectible["contractUniqueKey"].getStr
-      let amount = collectible["amount"].getInt
+    let tokensJson = tokensJsonString.parseJson
+    for token in tokensJson:
+      let contractUniqueKey = token["contractUniqueKey"].getStr
       let tokenDto = self.controller.findContractByUniqueId(contractUniqueKey)
+      let amountStr = token["amount"].getFloat
       if tokenDto.tokenType == TokenType.Unknown:
         error "Can't find token for community", contractUniqueKey=contractUniqueKey
         return @[]
-      result.add(CommunityTokenAndAmount(communityToken: tokenDto, amount: amount))
+      result.add(CommunityTokenAndAmount(communityToken: tokenDto, amount: self.convertAmountByTokenType(tokenDto.tokenType, amountStr)))
   except Exception as e:
     error "Error getTokenAndAmountList", msg = e.msg
 
-method airdropCollectibles*(self: Module, communityId: string, collectiblesJsonString: string, walletsJsonString: string) =
-  self.tempTokenAndAmountList = self.getTokenAndAmountList(communityId, collectiblesJsonString)
+method airdropTokens*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string) =
+  self.tempTokenAndAmountList = self.getTokenAndAmountList(communityId, tokensJsonString)
   if len(self.tempTokenAndAmountList) == 0:
     return
   self.tempWalletAddresses = walletsJsonString.parseJson.to(seq[string])
@@ -107,9 +120,11 @@ method airdropCollectibles*(self: Module, communityId: string, collectiblesJsonS
   self.tempContractAction = ContractAction.Airdrop
   self.authenticate()
 
-method computeAirdropCollectiblesFee*(self: Module, communityId: string, collectiblesJsonString: string, walletsJsonString: string) =
-  let tokenAndAmountList = self.getTokenAndAmountList(communityId, collectiblesJsonString)
-  self.controller.computeAirdropCollectiblesFee(tokenAndAmountList, walletsJsonString.parseJson.to(seq[string]))
+method computeAirdropFee*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string) =
+  let tokenAndAmountList = self.getTokenAndAmountList(communityId, tokensJsonString)
+  if len(tokenAndAmountList) == 0:
+    return
+  self.controller.computeAirdropFee(tokenAndAmountList, walletsJsonString.parseJson.to(seq[string]))
 
 proc getWalletAndAmountListFromJson(self: Module, collectiblesToBurnJsonString: string): seq[WalletAndAmount] =
   let collectiblesToBurnJson = collectiblesToBurnJsonString.parseJson
@@ -125,21 +140,22 @@ method selfDestructCollectibles*(self: Module, communityId: string, collectibles
   self.tempContractAction = ContractAction.SelfDestruct
   self.authenticate()
 
-method burnCollectibles*(self: Module, communityId: string, contractUniqueKey: string, amount: int) =
+method burnTokens*(self: Module, communityId: string, contractUniqueKey: string, amount: float64) =
+  let tokenDto = self.controller.findContractByUniqueId(contractUniqueKey)
   self.tempCommunityId = communityId
   self.tempContractUniqueKey = contractUniqueKey
-  self.tempAmount = amount
+  self.tempAmount = self.convertAmountByTokenType(tokenDto.tokenType, amount)
   self.tempContractAction = ContractAction.Burn
   self.authenticate()
 
 method deployCollectibles*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
-                           supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) =
+                           supply: float64, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) =
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId
   self.tempDeploymentParams.name = name
   self.tempDeploymentParams.symbol = symbol
-  self.tempDeploymentParams.supply = supply
+  self.tempDeploymentParams.supply = self.convertAmountByTokenType(TokenType.ERC721, supply)
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
   self.tempDeploymentParams.transferable = transferable
   self.tempDeploymentParams.remoteSelfDestruct = selfDestruct
@@ -150,14 +166,14 @@ method deployCollectibles*(self: Module, communityId: string, fromAddress: strin
   self.tempContractAction = ContractAction.Deploy
   self.authenticate()
 
-method deployAssets*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, decimals: int,
+method deployAssets*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: float64, infiniteSupply: bool, decimals: int,
                      chainId: int, imageCropInfoJson: string) =
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId
   self.tempDeploymentParams.name = name
   self.tempDeploymentParams.symbol = symbol
-  self.tempDeploymentParams.supply = supply
+  self.tempDeploymentParams.supply = self.convertAmountByTokenType(TokenType.ERC20, supply)
   self.tempDeploymentParams.infiniteSupply = infiniteSupply
   self.tempDeploymentParams.decimals = decimals
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
@@ -176,11 +192,11 @@ method onUserAuthenticated*(self: Module, password: string) =
     if self.tempContractAction == ContractAction.Deploy:
       self.controller.deployContract(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempTokenImageCropInfoJson, self.tempChainId)
     elif self.tempContractAction == ContractAction.Airdrop:
-      self.controller.airdropCollectibles(self.tempCommunityId, password, self.tempTokenAndAmountList, self.tempWalletAddresses)
+      self.controller.airdropTokens(self.tempCommunityId, password, self.tempTokenAndAmountList, self.tempWalletAddresses)
     elif self.tempContractAction == ContractAction.SelfDestruct:
       self.controller.selfDestructCollectibles(self.tempCommunityId, password, self.tempWalletAndAmountList, self.tempContractUniqueKey)
     elif self.tempContractAction == ContractAction.Burn:
-      self.controller.burnCollectibles(self.tempCommunityId, password, self.tempContractUniqueKey, self.tempAmount)
+      self.controller.burnTokens(self.tempCommunityId, password, self.tempContractUniqueKey, self.tempAmount)
 
 method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
   self.view.updateDeployFee(ethCurrency, fiatCurrency, errorCode.int)
@@ -201,8 +217,9 @@ method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: strin
   let walletAndAmountList = self.getWalletAndAmountListFromJson(collectiblesToBurnJsonString)
   self.controller.computeSelfDestructFee(walletAndAmountList, contractUniqueKey)
 
-method computeBurnFee*(self: Module, contractUniqueKey: string, amount: int) =
-  self.controller.computeBurnFee(contractUniqueKey, amount)
+method computeBurnFee*(self: Module, contractUniqueKey: string, amount: float64) =
+  let tokenDto = self.controller.findContractByUniqueId(contractUniqueKey)
+  self.controller.computeBurnFee(contractUniqueKey, self.convertAmountByTokenType(tokenDto.tokenType, amount))
 
 proc createUrl(self: Module, chainId: int, transactionHash: string): string =
   let network = self.controller.getNetwork(chainId)

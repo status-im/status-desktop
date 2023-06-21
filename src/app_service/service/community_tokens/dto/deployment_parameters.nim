@@ -1,10 +1,10 @@
-import json
+import json, stint
 
 type
   DeploymentParameters* = object
     name*: string
     symbol*: string
-    supply*: int
+    supply*: Uint256
     infiniteSupply*: bool
     transferable*: bool
     remoteSelfDestruct*: bool
@@ -15,7 +15,7 @@ proc `%`*(x: DeploymentParameters): JsonNode =
   result = newJobject()
   result["name"] = %x.name
   result["symbol"] = %x.symbol
-  result["supply"] = %x.supply
+  result["supply"] = %x.supply.toString(10)
   result["infiniteSupply"] = %x.infiniteSupply
   result["transferable"] = %x.transferable
   result["remoteSelfDestruct"] = %x.remoteSelfDestruct

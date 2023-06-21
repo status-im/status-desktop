@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, stint
 
 import ../../../app_service/service/settings/service as settings_service
 import ../../../app_service/service/node_configuration/service as node_configuration_service
@@ -300,7 +300,7 @@ method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenSupplyChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, supply: int, remainingSupply: int) {.base.} =
+method onCommunityTokenSupplyChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onAcceptRequestToJoinFailed*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =

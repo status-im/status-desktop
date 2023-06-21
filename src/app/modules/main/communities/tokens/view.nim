@@ -21,23 +21,23 @@ QtObject:
     result.QObject.setup
     result.communityTokensModule = communityTokensModule
 
-  proc deployCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) {.slot.} =
+  proc deployCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: float, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) {.slot.} =
     self.communityTokensModule.deployCollectibles(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, transferable, selfDestruct, chainId, imageCropInfoJson)
 
-  proc deployAssets*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, decimals: int, chainId: int, imageCropInfoJson: string) {.slot.} =
+  proc deployAssets*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: float, infiniteSupply: bool, decimals: int, chainId: int, imageCropInfoJson: string) {.slot.} =
     self.communityTokensModule.deployAssets(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, decimals, chainId, imageCropInfoJson)
 
-  proc airdropCollectibles*(self: View, communityId: string, collectiblesJsonString: string, walletsJsonString: string) {.slot.} =
-    self.communityTokensModule.airdropCollectibles(communityId, collectiblesJsonString, walletsJsonString)
+  proc airdropTokens*(self: View, communityId: string, tokensJsonString: string, walletsJsonString: string) {.slot.} =
+    self.communityTokensModule.airdropTokens(communityId, tokensJsonString, walletsJsonString)
 
-  proc computeAirdropCollectiblesFee*(self: View, communityId: string, collectiblesJsonString: string, walletsJsonString: string) {.slot.} =
-    self.communityTokensModule.computeAirdropCollectiblesFee(communityId, collectiblesJsonString, walletsJsonString)
+  proc computeAirdropFee*(self: View, communityId: string, tokensJsonString: string, walletsJsonString: string) {.slot.} =
+    self.communityTokensModule.computeAirdropFee(communityId, tokensJsonString, walletsJsonString)
 
   proc selfDestructCollectibles*(self: View, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.selfDestructCollectibles(communityId, collectiblesToBurnJsonString, contractUniqueKey)
 
-  proc burnCollectibles*(self: View, communityId: string, contractUniqueKey: string, amount: int) {.slot.} =
-    self.communityTokensModule.burnCollectibles(communityId, contractUniqueKey, amount)
+  proc burnTokens*(self: View, communityId: string, contractUniqueKey: string, amount: float) {.slot.} =
+    self.communityTokensModule.burnTokens(communityId, contractUniqueKey, amount)
 
   proc deployFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
   proc selfDestructFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
@@ -50,7 +50,7 @@ QtObject:
   proc computeSelfDestructFee*(self: View, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.computeSelfDestructFee(collectiblesToBurnJsonString, contractUniqueKey)
 
-  proc computeBurnFee*(self: View, contractUniqueKey: string, amount: int) {.slot.} =
+  proc computeBurnFee*(self: View, contractUniqueKey: string, amount: float) {.slot.} =
     self.communityTokensModule.computeBurnFee(contractUniqueKey, amount)
 
   proc updateDeployFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =

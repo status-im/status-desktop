@@ -1,3 +1,4 @@
+import stint
 import ./io_interface as community_tokens_module_interface
 
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
@@ -73,17 +74,17 @@ proc init*(self: Controller) =
 proc deployContract*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, tokenImageCropInfoJson: string, chainId: int) =
   self.communityTokensService.deployContract(communityId, addressFrom, password, deploymentParams, tokenMetadata, tokenImageCropInfoJson, chainId)
 
-proc airdropCollectibles*(self: Controller, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
-  self.communityTokensService.airdropCollectibles(communityId, password, collectiblesAndAmounts, walletAddresses)
+proc airdropTokens*(self: Controller, communityId: string, password: string, tokensAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+  self.communityTokensService.airdropTokens(communityId, password, tokensAndAmounts, walletAddresses)
 
-proc computeAirdropCollectiblesFee*(self: Controller, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
-  self.communityTokensService.computeAirdropCollectiblesFee(collectiblesAndAmounts, walletAddresses)
+proc computeAirdropFee*(self: Controller, tokensAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+  self.communityTokensService.computeAirdropFee(tokensAndAmounts, walletAddresses)
 
 proc selfDestructCollectibles*(self: Controller, communityId: string, password: string, walletAndAmounts: seq[WalletAndAmount], contractUniqueKey: string) =
   self.communityTokensService.selfDestructCollectibles(communityId, password, walletAndAmounts, contractUniqueKey)
 
-proc burnCollectibles*(self: Controller, communityId: string, password: string, contractUniqueKey: string, amount: int) =
-  self.communityTokensService.burnCollectibles(communityId, password, contractUniqueKey, amount)
+proc burnTokens*(self: Controller, communityId: string, password: string, contractUniqueKey: string, amount: Uint256) =
+  self.communityTokensService.burnTokens(communityId, password, contractUniqueKey, amount)
 
 proc authenticateUser*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_DEPLOY_COLLECTIBLES_COMMUNITY_TOKENS_MODULE_IDENTIFIER, keyUid: keyUid)
@@ -101,7 +102,7 @@ proc computeSelfDestructFee*(self: Controller, walletAndAmountList: seq[WalletAn
 proc findContractByUniqueId*(self: Controller, contractUniqueKey: string): CommunityTokenDto =
   return self.communityTokensService.findContractByUniqueId(contractUniqueKey)
 
-proc computeBurnFee*(self: Controller, contractUniqueKey: string, amount: int) =
+proc computeBurnFee*(self: Controller, contractUniqueKey: string, amount: Uint256) =
   self.communityTokensService.computeBurnFee(contractUniqueKey, amount)
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =

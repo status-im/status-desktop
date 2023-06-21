@@ -26,7 +26,6 @@ QtObject {
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
     {        
-        // TODO: Backend needs to create new role `accountName` and update this call accordingly
         // TODO: Backend will need to check if the collectibleItem has a valid tokenKey, so it means a deployment retry,
         // otherwise, it is a new deployment.
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(collectibleItem.artworkSource, collectibleItem.artworkCropRect)
@@ -38,7 +37,6 @@ QtObject {
 
     function deployAsset(communityId, assetItem)
     {
-        // TODO: Backend needs to create new role `accountName` and update this call accordingly
         // TODO: Backend will need to check if the collectibleItem has a valid tokenKey, so it means a deployment retry,
         // otherwise, it is a new deployment.
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(assetItem.artworkSource, assetItem.artworkCropRect)
@@ -105,16 +103,16 @@ QtObject {
     }
 
     function burnToken(communityId, tokenKey, burnAmount) {
-        communityTokensModuleInst.burnCollectibles(communityId, tokenKey, burnAmount)
+        communityTokensModuleInst.burnTokens(communityId, tokenKey, burnAmount)
     }
 
     // Airdrop tokens:
     function airdrop(communityId, airdropTokens, addresses) {
-        communityTokensModuleInst.airdropCollectibles(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses))
+        communityTokensModuleInst.airdropTokens(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses))
     }
 
     function computeAirdropFee(communityId, contractKeysAndAmounts, addresses) {
-        communityTokensModuleInst.computeAirdropCollectiblesFee(
+        communityTokensModuleInst.computeAirdropFee(
                     communityId, JSON.stringify(contractKeysAndAmounts),
                     JSON.stringify(addresses))
     }
