@@ -13,6 +13,7 @@ type
     color*: string
     image*: string
     category*: int
+    communityId*: string
 
 proc initTokenListItem*(
   key: string,
@@ -20,7 +21,8 @@ proc initTokenListItem*(
   symbol: string,
   color: string,
   image: string,
-  category: int
+  category: int,
+  communityId: string = ""
 ): TokenListItem =
   result.key = key
   result.symbol = symbol
@@ -28,13 +30,16 @@ proc initTokenListItem*(
   result.color = color
   result.image = image
   result.category = category
+  result.communityId = communityId
 
 proc `$`*(self: TokenListItem): string =
   result = fmt"""TokenListItem(
     key: {self.key},
     name: {self.name},
     color: {self.color},
-    symbol: {self.symbol}
+    symbol: {self.symbol},
+    category: {self.category},
+    communityId: {self.communityId},
     ]"""
 
 proc getKey*(self: TokenListItem): string =
@@ -54,3 +59,6 @@ proc getImage*(self: TokenListItem): string =
 
 proc getCategory*(self: TokenListItem): int =
   return self.category
+
+proc getCommunityId*(self: TokenListItem): string =
+  return self.communityId

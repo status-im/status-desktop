@@ -16,7 +16,7 @@ SettingsPageLayout {
     required property var collectiblesModel
     required property var channelsModel
 
-    // name, image, color, owner properties expected
+    // id, name, image, color, owner properties expected
     required property var communityDetails
 
     property int viewWidth: 560 // by design

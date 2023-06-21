@@ -33,7 +33,7 @@ QtObject {
     property var communityItemsModel: chatCommunitySectionModule.model
 
     property var assetsModel: SortFilterProxyModel {
-        sourceModel: chatCommunitySectionModule.tokenList
+        sourceModel: communitiesModuleInst.tokenList
 
         proxyRoles: ExpressionRole {
             function tokenIcon(symbol) {
@@ -45,7 +45,7 @@ QtObject {
     }
 
     property var collectiblesModel: SortFilterProxyModel {
-        sourceModel: chatCommunitySectionModule.collectiblesModel
+        sourceModel: communitiesModuleInst.collectiblesModel
 
         proxyRoles: ExpressionRole {
             function icon(icon) {

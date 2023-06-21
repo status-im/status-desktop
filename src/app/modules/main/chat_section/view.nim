@@ -3,8 +3,6 @@ import model as chats_model
 import item, active_item
 import ../../shared_models/user_model as user_model
 import ../../shared_models/token_permissions_model
-import ../../shared_models/token_list_model
-import ../../shared_models/token_list_item
 import io_interface
 
 QtObject:
@@ -25,10 +23,6 @@ QtObject:
       loadingHistoryMessagesInProgress: bool 
       tokenPermissionsModel: TokenPermissionsModel
       tokenPermissionsVariant: QVariant
-      tokenListModel: TokenListModel
-      tokenListModelVariant: QVariant
-      collectiblesListModel: TokenListModel
-      collectiblesListModelVariant: QVariant
       allTokenRequirementsMet: bool
       requiresTokenPermissionToJoin: bool
       amIMember: bool
@@ -47,10 +41,6 @@ QtObject:
     self.editCategoryChannelsVariant.delete
     self.tokenPermissionsModel.delete
     self.tokenPermissionsVariant.delete
-    self.tokenListModel.delete
-    self.tokenListModelVariant.delete
-    self.collectiblesListModel.delete
-    self.collectiblesListModelVariant.delete
 
     self.QObject.delete
 
@@ -71,10 +61,6 @@ QtObject:
     result.loadingHistoryMessagesInProgress = false
     result.tokenPermissionsModel = newTokenPermissionsModel()
     result.tokenPermissionsVariant = newQVariant(result.tokenPermissionsModel)
-    result.tokenListModel = newTokenListModel()
-    result.tokenListModelVariant = newQVariant(result.tokenListModel)
-    result.collectiblesListModel = newTokenListModel()
-    result.collectiblesListModelVariant = newQVariant(result.collectiblesListModel)
     result.amIMember = false
     result.requiresTokenPermissionToJoin = false
     result.chatsLoaded = false
@@ -367,30 +353,6 @@ QtObject:
 
   proc downloadMessages*(self: View, chatId: string, filePath: string) {.slot.} =
     self.delegate.downloadMessages(chatId, filePath)
-
-  proc tokenListModel*(self: View): TokenListModel =
-    result = self.tokenListModel
-
-  proc getTokenListModel(self: View): QVariant{.slot.} =
-    return self.tokenListModelVariant
-
-  QtProperty[QVariant] tokenList:
-    read = getTokenListModel
-
-  proc setTokenListItems*(self: View, tokenListItems: seq[TokenListItem]) =
-    self.tokenListModel.setItems(tokenListItems)
-
-  proc collectiblesListModel*(self: View): TokenListModel =
-    result = self.collectiblesListModel
-
-  proc getCollectiblesListModel(self: View): QVariant{.slot.} =
-    return self.collectiblesListModelVariant
-
-  QtProperty[QVariant] collectiblesModel:
-    read = getCollectiblesListModel
-
-  proc setCollectiblesListItems*(self: View, tokenListItems: seq[TokenListItem]) =
-    self.collectiblesListModel.setItems(tokenListItems)
 
   proc tokenPermissionsModel*(self: View): TokenPermissionsModel =
     result = self.tokenPermissionsModel

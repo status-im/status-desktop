@@ -251,12 +251,7 @@ StatusSectionLayout {
                 collectiblesModel: rootStore.collectiblesModel
                 channelsModel: rootStore.chatCommunitySectionModule.model
 
-                communityDetails: QtObject {
-                    readonly property string name: root.community.name
-                    readonly property string image: root.community.image
-                    readonly property string color: root.community.color
-                    readonly property bool owner: root.community.memberRole === Constants.memberRole.owner
-                }
+                communityDetails: d.communityDetails
 
                 onCreatePermissionRequested:
                     permissionsStore.createPermission(holdings, permissionType,
@@ -480,6 +475,7 @@ StatusSectionLayout {
             CommunityAirdropsSettingsPanel {
                 id: airdropPanel
 
+                communityDetails: d.communityDetails
                 readonly property CommunityTokensStore communityTokensStore:
                     rootStore.communityTokensStore                
 
@@ -500,7 +496,7 @@ StatusSectionLayout {
                             ExpressionRole {
                                 name: "category"
 
-                                // Singleton cannot be used directly in the epression
+                                // Singleton cannot be used directly in the expression
                                 readonly property int category: TokenCategories.Category.Own
                                 expression: category
                             },
@@ -603,6 +599,14 @@ StatusSectionLayout {
         readonly property var currentItem: centerPanelContentLoader.item && centerPanelContentLoader.item.children[d.currentIndex]
                                     ? centerPanelContentLoader.item.children[d.currentIndex]
                                     : null
+
+        readonly property QtObject communityDetails: QtObject {
+            readonly property string id: root.community.id
+            readonly property string name: root.community.name
+            readonly property string image: root.community.image
+            readonly property string color: root.community.color
+            readonly property bool owner: root.community.memberRole === Constants.memberRole.owner
+        }
 
         function goTo(section: int, subSection: int) {
             //find and enable section

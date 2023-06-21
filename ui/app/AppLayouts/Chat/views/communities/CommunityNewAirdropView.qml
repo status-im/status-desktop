@@ -22,6 +22,9 @@ import SortFilterProxyModel 0.2
 StatusScrollView {
     id: root
 
+    // id, name, image, color, owner properties expected
+    required property var communityDetails
+
     // Token models:
     required property var assetsModel
     required property var collectiblesModel
@@ -315,6 +318,7 @@ StatusScrollView {
             HoldingsDropdown {
                 id: dropdown
 
+                communityId: communityDetails.id
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
                 isENSTab: false

@@ -10,6 +10,7 @@ type
     Color
     Image
     Category
+    CommunityId
 
 QtObject:
   type TokenListModel* = ref object of QAbstractListModel
@@ -74,6 +75,7 @@ QtObject:
       ModelRole.Color.int:"color",
       ModelRole.Image.int:"icon",
       ModelRole.Category.int:"category",
+      ModelRole.CommunityId.int:"communityId",
     }.toTable
 
   method rowCount(self: TokenlistModel, index: QModelIndex = nil): int =
@@ -101,3 +103,5 @@ QtObject:
         result = newQVariant(item.getImage())
       of ModelRole.Category:
         result = newQVariant(item.getCategory())
+      of ModelRole.CommunityId:
+        result = newQVariant(item.getCommunityId())

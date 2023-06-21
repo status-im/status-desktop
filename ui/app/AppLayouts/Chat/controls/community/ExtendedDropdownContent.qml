@@ -18,6 +18,7 @@ import SortFilterProxyModel 0.2
 Item {
     id: root
 
+    property string communityId
     property var assetsModel
     property var collectiblesModel
 
@@ -132,6 +133,18 @@ Item {
                         ValueFilter {
                             roleName: "category"
                             value: TokenCategories.Category.General
+                        }
+                    },
+                    AnyOf {
+                        // We accept tokens from this community or general (empty community ID)
+                        ValueFilter {
+                            roleName: "communityId"
+                            value: ""
+                        }
+
+                        ValueFilter {
+                            roleName: "communityId"
+                            value: root.communityId
                         }
                     },
                     ExpressionFilter {

@@ -13,6 +13,9 @@ import utils 1.0
 SettingsPageLayout {
     id: root
 
+    // id, name, image, color, owner properties expected
+    required property var communityDetails
+
     // Token models:
     required property var assetsModel
     required property var collectiblesModel
@@ -115,6 +118,7 @@ SettingsPageLayout {
         CommunityNewAirdropView {
             id: view
 
+            communityDetails: root.communityDetails
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
             membersModel: root.membersModel

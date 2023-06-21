@@ -90,8 +90,6 @@ proc addOrUpdateChat(self: Module,
     insertIntoModel: bool = true,
   ): Item
 
-proc buildTokenList*(self: Module)
-
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
@@ -279,8 +277,6 @@ proc initContactRequestsModel(self: Module) =
   self.view.contactRequestsModel().addItems(contactsWhoAddedMe)
 
 proc rebuildCommunityTokenPermissionsModel(self: Module) =
-  self.buildTokenList()
-
   let community = self.controller.getMyCommunity()
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
@@ -307,39 +303,6 @@ proc reevaluateRequiresTokenPermissionToJoin(self: Module) =
 
 proc initCommunityTokenPermissionsModel(self: Module, channelGroup: ChannelGroupDto) =
   self.rebuildCommunityTokenPermissionsModel()
-
-proc buildTokenList(self: Module) =
-  var tokenListItems: seq[TokenListItem]
-  var collectiblesListItems: seq[TokenListItem]
-
-  let community = self.controller.getMyCommunity()
-  let erc20Tokens = self.controller.getTokenList()
-
-  for token in erc20Tokens:
-    let tokenListItem = initTokenListItem(
-      key = token.symbol,
-      name = token.name,
-      symbol = token.symbol,
-      color = token.color,
-      image = "",
-      category = ord(TokenListItemCategory.General)
-    )
-
-    tokenListItems.add(tokenListItem)
-
-  for token in community.communityTokensMetadata:
-    let tokenListItem = initTokenListItem(
-      key = token.symbol,
-      name = token.name,
-      symbol = token.symbol,
-      color = "", # community tokens don't have `color`
-      image = token.image,
-      category = ord(TokenListItemCategory.Community)
-    )
-    collectiblesListItems.add(tokenListItem)
-
-  self.view.setTokenListItems(tokenListItems)
-  self.view.setCollectiblesListItems(collectiblesListItems)
 
 method onWalletAccountTokensRebuilt*(self: Module) =
   self.rebuildCommunityTokenPermissionsModel()
@@ -933,23 +896,6 @@ method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, checkAllCha
 
   for chatId, permissionResult in checkAllChannelsPermissionsResponse.channels:
     self.updateChannelPermissionViewData(chatId, permissionResult.viewOnlyPermissions, permissionResult.viewAndPostPermissions, community)
-
-method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) = 
-  let tokenListItem = initTokenListItem(
-    key = tokenMetadata.symbol,
-    name = tokenMetadata.name,
-    symbol = tokenMetadata.symbol,
-    color = "", # tokenMetadata doesn't provide a color
-    image = tokenMetadata.image,
-    category = ord(TokenListItemCategory.Community)
-  )
-
-  if tokenMetadata.tokenType == community_dto.TokenType.ERC721 and not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol):
-    self.view.collectiblesListModel.addItems(@[tokenListItem])
-    return
-
-  if tokenMetadata.tokenType == community_dto.TokenType.ERC20 and not self.view.tokenListModel().hasItem(tokenMetadata.symbol):
-    self.view.tokenListModel.addItems(@[tokenListItem])
 
 method onKickedFromCommunity*(self: Module) =
   self.view.setAmIMember(false)

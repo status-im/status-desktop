@@ -13,7 +13,7 @@ import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
 import ../../shared_models/[member_item, section_model, section_item, token_permissions_model, token_permission_item,
-  token_list_item, token_criteria_item]
+  token_list_item, token_list_model, token_criteria_item]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/common/types
@@ -416,9 +416,30 @@ proc buildTokenList(self: Module) =
         symbol = token.symbol,
         color = "", # community tokens don't have `color`
         image = token.image,
-        category = ord(TokenListItemCategory.Community)
+        category = ord(TokenListItemCategory.Community),
+        communityId = community.id,
       )
       collectiblesListItems.add(tokenListItem)
 
   self.view.setTokenListItems(tokenListItems)
   self.view.setCollectiblesListItems(collectiblesListItems)
+
+method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) =
+  let tokenListItem = initTokenListItem(
+    key = tokenMetadata.symbol,
+    name = tokenMetadata.name,
+    symbol = tokenMetadata.symbol,
+    color = "", # tokenMetadata doesn't provide a color
+    image = tokenMetadata.image,
+    category = ord(TokenListItemCategory.Community),
+    communityId,
+  )
+
+  if tokenMetadata.tokenType == community_dto.TokenType.ERC721 and
+      not self.view.collectiblesListModel().hasItem(tokenMetadata.symbol):
+    self.view.collectiblesListModel.addItems(@[tokenListItem])
+    return
+
+  if tokenMetadata.tokenType == community_dto.TokenType.ERC20 and
+      not self.view.tokenListModel().hasItem(tokenMetadata.symbol):
+    self.view.tokenListModel.addItems(@[tokenListItem])
