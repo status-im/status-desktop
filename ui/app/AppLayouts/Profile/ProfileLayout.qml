@@ -300,7 +300,6 @@ StatusSectionLayout {
 
                 profileSectionStore: root.store
                 rootStore: root.globalStore
-                contactStore: root.store.contactsStore
                 sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
             }

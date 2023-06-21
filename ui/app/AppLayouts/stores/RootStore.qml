@@ -93,6 +93,14 @@ QtObject {
         return communitiesModuleInst.isMemberOfCommunity(communityId, pubKey)
     }
 
+    function isCommunityRequestPending(id: string) {
+        return communitiesModuleInst.isCommunityRequestPending(id)
+    }
+
+    function cancelPendingRequest(id: string) {
+        communitiesModuleInst.cancelRequestToJoinCommunity(id)
+    }
+
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
     }

@@ -54,9 +54,11 @@ QtObject {
 
     signal openSendModal(string address)
     signal switchToCommunity(string communityId)
+    signal switchToCommunitySettings(string communityId)
     signal createCommunityPopupRequested(bool isDiscordImport)
     signal importCommunityPopupRequested()
     signal leaveCommunityRequested(string community, string communityId, string outroMessage)
+    signal openEditSharedAddressesFlow(string communityId)
 
     signal playSendMessageSound()
     signal playNotificationSound()

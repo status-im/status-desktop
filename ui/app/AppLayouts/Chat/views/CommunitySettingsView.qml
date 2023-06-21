@@ -632,6 +632,7 @@ StatusSectionLayout {
         TransferOwnershipPopup {
             anchors.centerIn: parent
             store: root.rootStore
+            onClosed: destroy()
         }
     }
 

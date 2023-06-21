@@ -549,8 +549,8 @@ QtObject {
                         type: StatusBaseButton.Type.Danger
                         text: qsTr("Leave %1").arg(leavePopup.community)
                         onClicked: {
-                            root.rootStore.profileSectionStore.communitiesProfileModule.leaveCommunity(leavePopup.communityId)
                             leavePopup.close()
+                            root.rootStore.profileSectionStore.communitiesProfileModule.leaveCommunity(leavePopup.communityId)
                         }
                     }
                 ]

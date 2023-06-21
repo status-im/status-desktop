@@ -369,7 +369,7 @@ Item {
                         StatusAction {
                             enabled: model.muted
                             text: qsTr("Unmute Community")
-                            icon.name: "notification-muted"
+                            icon.name: "notification"
                             onTriggered: {
                                 communityContextMenu.chatCommunitySectionModule.setCommunityMuted(Constants.MutingVariations.Unmuted)
                             }
@@ -1094,6 +1094,15 @@ Item {
                                     value: chatLayoutComponent.currentIndex === 0 // Meaning: Chats / channels view
                                     when: visible
                                     restoreMode: Binding.RestoreBindingOrValue
+                                }
+
+                                Connections {
+                                    target: Global
+                                    function onSwitchToCommunitySettings(communityId: string) {
+                                        if (communityId !== model.id)
+                                            return
+                                        chatLayoutComponent.currentIndex = 1 // Settings
+                                    }
                                 }
 
                                 emojiPopup: statusEmojiPopup.item
