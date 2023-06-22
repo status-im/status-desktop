@@ -19,22 +19,30 @@ StatusScrollView {
 
     property int viewWidth: 560 // by design
     property bool preview: false
-    property bool isAssetView: false
 
-    property CollectibleObject collectible
-    property AssetObject asset
+    // https://bugreports.qt.io/browse/QTBUG-84269
+    /* readonly */ property TokenObject token
 
-    readonly property string name: root.isAssetView ? asset.name : collectible.name
-    readonly property string symbol: root.isAssetView ? asset.symbol : collectible.symbol
-    readonly property url artworkSource: root.isAssetView ? asset.artworkSource : collectible.artworkSource
-    readonly property bool infiniteSupply: root.isAssetView ? asset.infiniteSupply : collectible.infiniteSupply
-    readonly property int supply: root.isAssetView ? asset.supply : collectible.supply
-    readonly property int remainingTokens: root.preview ? root.supply : (root.isAssetView ? asset.remainingTokens : collectible.remainingTokens)
-    readonly property int deployState: root.isAssetView ? asset.deployState : collectible.deployState
-    readonly property string accountName: root.isAssetView ? asset.accountName : collectible.accountName
-    readonly property string chainName: root.isAssetView ? asset.chainName : collectible.chainName
-    readonly property string chainId: root.isAssetView ? asset.chainId : collectible.chainId
-    readonly property string accountAddress: root.isAssetView ? asset.accountAddress : collectible.accountAddress
+    readonly property bool isAssetView: token.type === TokenObject.Type.Asset
+
+    readonly property string name: token.name
+    readonly property string description: token.description
+    readonly property string symbol: token.symbol
+    readonly property int supply: token.supply
+    readonly property url artworkSource: token.artworkSource
+    readonly property rect artworkCropRect: token.artworkCropRect
+    readonly property bool infiniteSupply: token.infiniteSupply
+    readonly property int remainingTokens: root.preview ? root.supply : token.remainingTokens
+    readonly property int deployState: token.deployState
+    readonly property string accountName: token.accountName
+    readonly property string chainName: token.chainName
+    readonly property string chainId: token.chainId
+    readonly property string accountAddress: token.accountAddress
+    readonly property bool remotelyDestruct: token.remotelyDestruct
+    readonly property int remotelyDestructState: token.remotelyDestructState
+    readonly property bool transferable: token.transferable
+    readonly property string chainIcon: token.chainIcon
+    readonly property int decimals: token.decimals
 
     // Models:
     property var tokenOwnersModel
@@ -52,7 +60,7 @@ StatusScrollView {
         readonly property int imageSelectorRectSize: root.isAssetView ? 104 : 280
         readonly property int iconSize: 20
         readonly property string infiniteSymbol: "∞"
-        readonly property int burnState: root.isAssetView ? asset.burnState : collectible.burnState        
+        readonly property int burnState: root.token.burnState
 
         function startAnimation(isBurn) {
             totalbox.highlighted = true
@@ -110,7 +118,7 @@ StatusScrollView {
             Image {
                 id: image
 
-                property rect imageCropRect: root.isAssetView ? asset.artworkCropRect : collectible.artworkCropRect
+                readonly property rect imageCropRect: root.artworkCropRect
 
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectFit
@@ -218,7 +226,7 @@ StatusScrollView {
                 label: qsTr("Total")
                 value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.supply)
                 isLoading: !root.infiniteSupply &&
-                           ((!root.isAssetView && collectible.remotelyDestructState === Constants.ContractTransactionStatus.InProgress) ||
+                           ((!root.isAssetView && root.remotelyDestructState === Constants.ContractTransactionStatus.InProgress) ||
                             (d.burnState === Constants.ContractTransactionStatus.InProgress))
             }
 
@@ -233,19 +241,20 @@ StatusScrollView {
             CustomPreviewBox {
                 visible: root.isAssetView
                 label: qsTr("DP")
-                value: asset.decimals
+                value: root.decimals
             }
 
             CustomPreviewBox {
                 visible: !root.isAssetView
                 label: qsTr("Transferable")
-                value: collectible.transferable ? qsTr("Yes") : qsTr("No")
+                value: root.transferable ? qsTr("Yes") : qsTr("No")
             }
 
             CustomPreviewBox {
                 visible: !root.isAssetView
+
                 label: qsTr("Destructible")
-                value: collectible.remotelyDestruct ? qsTr("Yes") : qsTr("No")
+                value: root.remotelyDestruct ? qsTr("Yes") : qsTr("No")
             }
 
             CustomPreviewBox {
@@ -272,7 +281,7 @@ StatusScrollView {
 
                         height: 24
                         width: height
-                        source: Style.svg(root.isAssetView ? asset.chainIcon : collectible.chainIcon)
+                        source: Style.svg(root.chainIcon)
                     }
 
                     StatusBaseText {
@@ -290,7 +299,7 @@ StatusScrollView {
         StatusBaseText {
             Layout.fillWidth: true
 
-            text: root.isAssetView ? asset.description : collectible.description
+            text: root.description
             wrapMode: TextEdit.WordWrap
             font.pixelSize: Theme.primaryTextFontSize
             lineHeight: 1.2
@@ -333,7 +342,7 @@ StatusScrollView {
 
             model: root.tokenOwnersModel
             tokenName: root.name
-            showRemotelyDestructMenuItem: !root.isAssetView && collectible.remotelyDestruct
+            showRemotelyDestructMenuItem: !root.isAssetView && root.remotelyDestruct
 
             Layout.topMargin: Style.current.padding
             Layout.fillWidth: true
@@ -345,10 +354,10 @@ StatusScrollView {
     }
 
     Connections {
-        target: collectible
+        target: root.token
 
         function onRemotelyDestructStateChanged() {
-            if(collectible.remotelyDestructState === Constants.ContractTransactionStatus.Completed) d.startAnimation(false)
+            if(root.remotelyDestructState === Constants.ContractTransactionStatus.Completed) d.startAnimation(false)
         }
     }
 }
