@@ -259,7 +259,7 @@ QtObject:
     let allTxLoaded = historyData["allTxLoaded"].getBool
     var transactions: seq[TransactionDto] = @[]
     var collectibles: seq[CollectibleDto] = @[]
-     
+
     for tx in historyData["history"].getElems():
       let dto = tx.toTransactionDto()
       self.allTransactions.mgetOrPut(address, initTable[string, TransactionDto]())[dto.txHash] = dto

@@ -38,6 +38,7 @@ StatusMenu {
 
     // Recents filter
     property var recentsList
+    property bool loadingRecipients: false
     property var recentsFilters
     readonly property bool allRecentsChecked: counterPartyMenu.allRecentsChecked
     signal updateRecentsFilter(string address)
@@ -99,6 +100,7 @@ StatusMenu {
             onBack: root.open()
             store: root.store
             recentsList: root.recentsList
+            loadingRecipients: root.loadingRecipients
             recentsFilters: root.recentsFilters
             savedAddressList: root.savedAddressList
             savedAddressFilters: root.savedAddressFilters

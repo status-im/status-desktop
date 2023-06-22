@@ -137,6 +137,7 @@ QtObject {
 
 
     property var recentsList: activityController.recipientsModel
+    property bool loadingRecipients: activityController.loadingRecipients
     property var recentsFilters: []
     function updateRecipientsModel() {
         activityController.updateRecipientsModel()

@@ -23,6 +23,7 @@ StatusMenu {
     property var store
 
     property var recentsList
+    property bool loadingRecipients: false
     property var recentsFilters
     readonly property bool allRecentsChecked: recentsFilters.length === 0
 
@@ -80,9 +81,15 @@ StatusMenu {
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("No Recents")
-                visible: root.recentsList.count === 0
+                visible: root.recentsList.count === 0 && !root.loadingRecipients
+            }
+            StatusBaseText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Loading Recents")
+                visible: root.loadingRecipients
             }
             StatusListView {
+                visible: !root.loadingRecipients
                 width: parent.width
                 height: root.height - tabBar.height - 12
                 model: root.recentsList
