@@ -59,7 +59,12 @@ QtObject:
         n.layer,
         n.chainName,
         n.iconUrl,
+        n.shortName,
+        n.chainColor
       ))
 
     self.networks.setItems(items)
     self.delegate.viewDidLoad()
+
+  proc getAllNetworksSupportedPrefix*(self: View): string {.slot.} =
+    return self.networks.getAllNetworksSupportedPrefix()

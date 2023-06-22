@@ -385,4 +385,8 @@ ListModel {
         title: "ActivityFilterMenu"
         section: "Wallet"
     }
+    ListElement {
+        title: "ProfileAccounts"
+        section: "Wallet"
+    }
 }

@@ -39,3 +39,9 @@ proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
 
 proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
+
+proc getKeypairs*(self: Controller): seq[KeypairDto] =
+  return self.walletAccountService.getKeypairs()
+
+proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
+  return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()

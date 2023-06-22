@@ -74,7 +74,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], allMigratedKeypairs: seq[Keyc
         locked = false,
         name = kp.name,
         image = "",
-        icon = if keyPairMigrated(kp.keyUid): "keycard" else: "key_pair_private_key",
+        icon = if keyPairMigrated(kp.keyUid): "keycard" else: "objects",
         pairType = KeyPairType.PrivateKeyImport,
         derivedFrom = kp.derivedFrom,
         lastUsedDerivationIndex = kp.lastUsedDerivationIndex,

@@ -4,3 +4,4 @@ AccountShowcaseDelegate 1.0 AccountShowcaseDelegate.qml
 AssetShowcaseDelegate 1.0 AssetShowcaseDelegate.qml
 WalletAccountDelegate 1.0 WalletAccountDelegate.qml
 StaticSocialLinkInput 1.0 StaticSocialLinkInput.qml
+WalletKeyPairDelegate 1.0 WalletKeyPairDelegate.qml

@@ -9,6 +9,7 @@ type
     Profile
     SeedImport
     PrivateKeyImport
+    WatchOnly
 
 QtObject:
   type KeyPairItem* = ref object of QObject

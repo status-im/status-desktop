@@ -3,6 +3,7 @@ import NimQml, sequtils, strutils, sugar
 import ./model
 import ./item
 import ./io_interface
+import ../../../../shared_models/[keypair_model, keypair_item]
 
 QtObject:
   type
@@ -10,10 +11,12 @@ QtObject:
       delegate: io_interface.AccessInterface
       accounts: Model
       accountsVariant: QVariant
+      keyPairModel: KeyPairModel
 
   proc delete*(self: View) =
     self.accounts.delete
     self.accountsVariant.delete
+    self.keyPairModel.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -22,6 +25,7 @@ QtObject:
     result.delegate = delegate
     result.accounts = newModel()
     result.accountsVariant = newQVariant(result.accounts)
+    result.keyPairModel = newKeyPairModel()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -43,6 +47,18 @@ QtObject:
 
   proc onUpdatedAccount*(self: View, account: Item) =
     self.accounts.onUpdatedAccount(account)
+    self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji)
     
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)
+  
+  proc keyPairModelChanged*(self: View) {.signal.}
+  proc getKeyPairModel(self: View): QVariant {.slot.} =
+    return newQVariant(self.keyPairModel)
+  QtProperty[QVariant] keyPairModel:
+    read = getKeyPairModel
+    notify = keyPairModelChanged
+
+  proc setKeyPairModelItems*(self: View, items: seq[KeyPairItem]) =
+    self.keyPairModel.setItems(items)
+    self.keyPairModelChanged()

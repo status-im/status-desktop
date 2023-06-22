@@ -168,7 +168,7 @@ class SettingsScreen:
             raise Exception("Account not found")
 
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
-        click_obj(accounts.itemAtIndex(index))
+        click_obj(accounts.itemAt(index))
         click_obj_by_name(WalletSettingsScreen.DELETE_ACCOUNT.value)
         click_obj_by_name(WalletSettingsScreen.DELETE_ACCOUNT_CONFIRM.value)
 
@@ -180,7 +180,7 @@ class SettingsScreen:
 
     def verify_address(self, address: str):
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
-        verify_text_matching_insensitive(accounts.itemAtIndex(0).statusListItemSubTitle, address)
+        verify_text_matching_insensitive(accounts.itemAt(0).statusListItemSubTitle, address)
 
     # Post condition: Messaging Settings is visible (@see StatusMainScreen.open_settings)
     def open_messaging_settings(self):
@@ -245,7 +245,7 @@ class SettingsScreen:
     def _find_account_index(self, account_name: str) -> int:
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         for index in range(accounts.count):
-            if (accounts.itemAtIndex(index).objectName == account_name):
+            if (accounts.itemAt(index).objectName == account_name):
                 return index
         return -1
 
@@ -254,7 +254,7 @@ class SettingsScreen:
 
     def select_default_account(self):
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
-        click_obj(accounts.itemAtIndex(0))
+        click_obj(accounts.itemAt(0))
         click_obj_by_name(WalletSettingsScreen.EDIT_ACCOUNT_BUTTON.value)
 
     def edit_account(self, account_name: str, account_color: str):

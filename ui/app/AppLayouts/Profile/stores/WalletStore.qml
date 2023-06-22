@@ -22,6 +22,9 @@ QtObject {
     property var flatCollectibles: Global.appIsReady ? walletSectionCollectibles.model : null
     property var assets: walletSectionAssets.assets
     property var accounts: Global.appIsReady? accountsModule.accounts : null
+    property var originModel: accountsModule.keyPairModel
+
+    property string userProfilePublicKey: userProfile.pubKey
     
     function deleteAccount(address) {
         return accountsModule.deleteAccount(address)
@@ -47,5 +50,9 @@ QtObject {
 
     function loadDapps() {
         dappPermissionsModule.loadDapps()
+    }
+
+    function getAllNetworksSupportedPrefix() {
+        return networksModule.getAllNetworksSupportedPrefix()
     }
 }
