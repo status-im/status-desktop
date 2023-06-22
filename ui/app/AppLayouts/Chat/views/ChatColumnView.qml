@@ -358,7 +358,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: (2*Style.current.bigPadding)
                     visible: (!!root.viewAndPostHoldingsModel && (root.viewAndPostHoldingsModel.count > 0)
-                              && !root.amISectionAdmin)
+                              && !root.amISectionAdmin && !root.viewAndPostPermissionsSatisfied)
                     assetsModel: root.rootStore.assetsModel
                     collectiblesModel: root.rootStore.collectiblesModel
                     holdingsModel: root.viewAndPostHoldingsModel
