@@ -467,9 +467,6 @@ QtObject:
   proc cancelRequestToJoinCommunity*(self: View, communityId: string) {.slot.} =
     self.delegate.cancelRequestToJoinCommunity(communityId)
 
-  proc requestToJoinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
-    self.delegate.requestToJoinCommunity(communityId, ensName)
-
   proc requestCommunityInfo*(self: View, communityId: string, importing: bool) {.slot.} =
     self.delegate.requestCommunityInfo(communityId, importing)
 

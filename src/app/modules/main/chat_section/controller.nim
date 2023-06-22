@@ -44,8 +44,9 @@ type
     tokenService: token_service.Service
     collectibleService: collectible_service.Service
     communityTokensService: community_tokens_service.Service
-    tmpRequestToJoinCommunityId: string
+    tmpAuthenticationForJoinInProgress: bool
     tmpRequestToJoinEnsName: string
+    tmpRequestToJoinAddressesToShare: seq[string]
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service, 
@@ -74,8 +75,9 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.tokenService = tokenService
   result.collectibleService = collectibleService
   result.communityTokensService = communityTokensService
-  result.tmpRequestToJoinCommunityId = ""
+  result.tmpAuthenticationForJoinInProgress = false
   result.tmpRequestToJoinEnsName = ""
+  result.tmpRequestToJoinAddressesToShare = @[]
 
 proc delete*(self: Controller) =
   self.events.disconnect()
@@ -90,21 +92,21 @@ proc setIsCurrentSectionActive*(self: Controller, active: bool) =
   self.isCurrentSectionActive = active
 
 proc requestToJoinCommunityAuthenticated*(self: Controller, password: string) =
-  self.communityService.asyncRequestToJoinCommunity(self.tmpRequestToJoinCommunityId, self.tmpRequestToJoinEnsName, password)
-  self.tmpRequestToJoinCommunityId = ""
+  self.communityService.asyncRequestToJoinCommunity(self.sectionId, self.tmpRequestToJoinEnsName,
+    password, self.tmpRequestToJoinAddressesToShare)
+  self.tmpAuthenticationForJoinInProgress = false
   self.tmpRequestToJoinEnsName = ""
-
-proc requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
-  self.communityService.asyncRequestToJoinCommunity(communityId, ensName, "")
+  self.tmpRequestToJoinAddressesToShare = @[]
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_MAIN_MODULE_AUTH_IDENTIFIER,
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc authenticateToRequestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
-  self.tmpRequestToJoinCommunityId = communityId
+proc authenticateToRequestToJoinCommunity*(self: Controller, ensName: string, addressesToShare: seq[string]) =
+  self.tmpAuthenticationForJoinInProgress = true
   self.tmpRequestToJoinEnsName = ensName
+  self.tmpRequestToJoinAddressesToShare = addressesToShare
   self.authenticate()
 
 proc getMySectionId*(self: Controller): string =
@@ -192,7 +194,7 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_AUTH_IDENTIFIER:
       return
-    if self.tmpRequestToJoinCommunityId == self.sectionId:
+    if self.tmpAuthenticationForJoinInProgress:
       self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
 
   if (self.isCommunitySection):

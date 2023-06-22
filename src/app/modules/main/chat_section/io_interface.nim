@@ -379,13 +379,10 @@ method onAcceptRequestToJoinFailedNoPermission*(self: AccessInterface, community
 method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensName: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onDeactivateChatLoader*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestToJoinCommunityWithAuthentication*(self: AccessInterface, communityId: string, ensName: string) {.base.} =
+method requestToJoinCommunityWithAuthentication*(self: AccessInterface, ensName: string, addressesToShare: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =

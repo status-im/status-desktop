@@ -177,7 +177,7 @@ StackLayout {
             property string communityId
 
             onJoined: {
-                root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name)
+                root.rootStore.requestToJoinCommunityWithAuthentication(root.rootStore.userProfileInst.name)
             }
 
             onCancelMembershipRequest: {

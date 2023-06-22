@@ -376,12 +376,8 @@ QtObject {
         return communitiesModuleInst.spectateCommunity(id, ensName)
     }
 
-    function requestToJoinCommunity(id, ensName) {
-        chatCommunitySectionModule.requestToJoinCommunity(id, ensName)
-    }
-
-    function requestToJoinCommunityWithAuthentication(id, ensName) {
-        chatCommunitySectionModule.requestToJoinCommunityWithAuthentication(id, ensName)
+    function requestToJoinCommunityWithAuthentication(ensName) {
+        chatCommunitySectionModule.requestToJoinCommunityWithAuthentication(ensName)
     }
 
     function userCanJoin(id) {
@@ -477,7 +473,7 @@ QtObject {
             const userCanJoin = userCanJoin(result.communityId)
             // TODO find what to do when you can't join
             if (userCanJoin) {
-                requestToJoinCommunity(result.communityId, userProfileInst.preferredName)
+                requestToJoinCommunityWithAuthentication(userProfileInst.preferredName)
             }
         }
         return result

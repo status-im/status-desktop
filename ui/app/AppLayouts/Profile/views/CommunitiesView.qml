@@ -215,7 +215,7 @@ SettingsContentBase {
             }
 
             onJoined: {
-                chatCommunitySectionModule.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name)
+                chatCommunitySectionModule.requestToJoinCommunityWithAuthentication(root.rootStore.userProfileInst.name)
             }
 
             onCancelMembershipRequest: {

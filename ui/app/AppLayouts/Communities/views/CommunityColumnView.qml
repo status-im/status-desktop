@@ -107,7 +107,7 @@ Item {
 
                 onJoined: {
                     joinCommunityButton.loading = true
-                    root.store.requestToJoinCommunityWithAuthentication(communityData.id, root.store.userProfileInst.name)
+                    root.store.requestToJoinCommunityWithAuthentication(root.store.userProfileInst.name)
                 }
                 onCancelMembershipRequest: {
                     root.store.cancelPendingRequest(communityData.id)
