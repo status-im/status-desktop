@@ -156,13 +156,6 @@ StatusScrollView {
             minLengthValidator.errorMessage: qsTr("Please enter a token description")
             regexValidator.regularExpression: Constants.regularExpressions.ascii
             regexValidator.errorMessage: qsTr("Only A-Z, 0-9 and standard punctuation allowed")
-
-            onTextChanged: {
-                if(root.isAssetView)
-                    asset.description = text
-                else
-                    collectible.description = text
-            }
         }
 
         CustomStatusInput {
@@ -348,7 +341,14 @@ StatusScrollView {
             text: qsTr("Preview")
             enabled: d.isFullyFilled
 
-            onClicked: root.previewClicked()
+            onClicked: {
+                var trimmedText = Utils.sanitizeText(descriptionInput.text);
+                if (root.isAssetView)
+                    asset.description = trimmedText;
+                else
+                    collectible.description = trimmedText;
+                root.previewClicked();
+            }
         }
     }
 
