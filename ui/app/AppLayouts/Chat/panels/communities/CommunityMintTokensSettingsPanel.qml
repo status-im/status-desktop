@@ -1,10 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import QtQml 2.15
 
-import StatusQ.Core 0.1
-import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
@@ -100,7 +98,8 @@ SettingsPageLayout {
         property int remainingTokens
         property url artworkSource
         property bool isAssetView: false
-        property var currentToken // CollectibleObject or AssetObject type
+
+        property TokenObject currentToken
 
         readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
 
@@ -123,8 +122,7 @@ SettingsPageLayout {
     QtObject {
         id: temp_
 
-        readonly property CollectibleObject collectible: CollectibleObject{}
-        readonly property AssetObject asset: AssetObject{}
+        readonly property TokenObject token: TokenObject {}
     }
 
     secondaryHeaderButton.type: StatusBaseButton.Type.Danger
@@ -172,60 +170,41 @@ SettingsPageLayout {
     onPrimaryHeaderButtonClicked: {
         if(root.state == d.initialViewState) {
             // Then move on to the new token view, with the specific tab selected:
-            stackManager.push(d.newTokenViewState,
-                              newTokenView,
-                              {
-                                  isAssetView: d.isAssetView
-                              },
+            const properties = {
+                isAssetView: d.isAssetView
+            }
+
+            stackManager.push(d.newTokenViewState, newTokenView, properties,
                               StackView.Immediate)
         }
 
         if(root.state == d.tokenViewState) {
-            if(d.currentToken) {
-                if(d.isAssetView) {
-                    // Copy current data:
-                    temp_.asset.copyAsset(d.currentToken)
+            if (!d.currentToken) {
+                console.warn("Mint Token Settings - Trying to retry undefined token object.")
+                return
+            }
 
-                    // Update to point to new instance
-                    d.currentToken = temp_.asset
+            // Copy current data:
+            temp_.token.copyToken(d.currentToken)
 
-                    // Reset the stack:
-                    root.resetNavigation(true)
+            // Update to point to new instance
+            d.currentToken = temp_.token
 
-                    // Then move on to the new token view, but asset pre-filled:
-                    stackManager.push(d.newTokenViewState,
-                                      newTokenView,
-                                      {
-                                          isAssetView: d.isAssetView,
-                                          referenceName: d.currentToken.name,
-                                          referenceSymbol: d.currentToken.symbol,
-                                          validationMode: StatusInput.ValidationMode.Always,
-                                          asset: d.currentToken
-                                      },
-                                      StackView.Immediate)
-                } else {
-                    // Copy current data:
-                    temp_.collectible.copyCollectible(d.currentToken)
+            // Reset the stack:
+            root.resetNavigation(true)
 
-                    // Update to point to new instance
-                    d.currentToken = temp_.collectible
+            // Then move on to the new token view, but asset pre-filled:
+            const properties = {
+                isAssetView: d.currentToken.type === TokenObject.Type.Asset,
+                referenceName: d.currentToken.name,
+                referenceSymbol: d.currentToken.symbol,
+                validationMode: StatusInput.ValidationMode.Always,
+                asset: d.currentToken,
+                collectible: d.currentToken
+            }
 
-                    // Reset the stack:
-                    root.resetNavigation(false)
-
-                    // Then move on to the new token view, but collectible pre-filled:
-                    stackManager.push(d.newTokenViewState,
-                                      newTokenView,
-                                      {
-                                          isAssetView: d.isAssetView,
-                                          referenceName: d.currentToken.name,
-                                          referenceSymbol: d.currentToken.symbol,
-                                          validationMode: StatusInput.ValidationMode.Always,
-                                          collectible: d.currentToken
-                                      },
-                                      StackView.Immediate)
-                }
-            } else console.warn("Mint Token Settings - Trying to retry undefined token object.")
+            stackManager.push(d.newTokenViewState, newTokenView, properties,
+                              StackView.Immediate)
         }
     }
 
@@ -263,8 +242,14 @@ SettingsPageLayout {
         ColumnLayout {
             id: colLayout
 
-            property CollectibleObject collectible: CollectibleObject{}
-            property AssetObject asset: AssetObject{}
+            property TokenObject asset: TokenObject{
+                type: TokenObject.Type.Asset
+            }
+
+            property TokenObject collectible: TokenObject {
+                type: TokenObject.Type.Collectible
+            }
+
             property bool isAssetView: false
             property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
             property string referenceName: ""
@@ -302,7 +287,9 @@ SettingsPageLayout {
                     id: newCollectibleView
 
                     isAssetView: false
-                    validationMode: !colLayout.isAssetView ? colLayout.validationMode : StatusInput.ValidationMode.OnlyWhenDirty
+                    validationMode: !colLayout.isAssetView
+                                    ? colLayout.validationMode
+                                    : StatusInput.ValidationMode.OnlyWhenDirty
                     collectible: colLayout.collectible
                     referenceName: colLayout.referenceName
                     referenceSymbol: colLayout.referenceSymbol
@@ -312,14 +299,15 @@ SettingsPageLayout {
                     id: newAssetView
 
                     isAssetView: true
-                    validationMode: colLayout.isAssetView ? colLayout.validationMode : StatusInput.ValidationMode.OnlyWhenDirty
+                    validationMode: colLayout.isAssetView
+                                    ? colLayout.validationMode
+                                    : StatusInput.ValidationMode.OnlyWhenDirty
                     asset: colLayout.asset
                     referenceName: colLayout.referenceName
                     referenceSymbol: colLayout.referenceSymbol
                 }
 
                 component CustomCommunityNewTokenView: CommunityNewTokenView {
-                    isAssetView: false
                     viewWidth: root.viewWidth
                     layer1Networks: root.layer1Networks
                     layer2Networks: root.layer2Networks
@@ -330,14 +318,13 @@ SettingsPageLayout {
                     tokensModel: root.tokensModel
 
                     onPreviewClicked: {
+                        const properties = {
+                            preview: true,
+                            token: isAssetView ? asset : collectible
+                        }
+
                         stackManager.push(d.previewTokenViewState,
-                                          previewTokenView,
-                                          {
-                                              preview: true,
-                                              isAssetView,
-                                              asset,
-                                              collectible
-                                          },
+                                          previewTokenView, properties,
                                           StackView.Immediate)
                     }
                 }
@@ -346,7 +333,8 @@ SettingsPageLayout {
             Binding {
                 target: root
                 property: "title"
-                value: optionsTab.currentItem == collectiblesTab ? d.newCollectiblePageTitle : d.newAssetPageTitle
+                value: optionsTab.currentItem == collectiblesTab
+                       ? d.newCollectiblePageTitle : d.newAssetPageTitle
                 restoreMode: Binding.RestoreBindingOrValue
             }
         }
@@ -413,7 +401,9 @@ SettingsPageLayout {
         MintTokensFooterPanel {
             id: footerPanel
 
-            readonly property bool deployStateCompleted : (!!d.currentToken) ? d.currentToken.deployState === Constants.ContractTransactionStatus.Completed : false
+            readonly property bool deployStateCompleted: !!d.currentToken
+                                                         ? d.currentToken.deployState === Constants.ContractTransactionStatus.Completed
+                                                         : false
 
             function closePopups() {
                 remotelyDestructPopup.close()
@@ -480,8 +470,9 @@ SettingsPageLayout {
                     footerPanel.closePopups()
                 }
 
-                title: signTransactionPopup.isRemotelyDestructTransaction ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title) :
-                                                                            qsTr("Sign transaction - Burn %1 tokens").arg(root.title)
+                title: signTransactionPopup.isRemotelyDestructTransaction
+                       ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title)
+                       : qsTr("Sign transaction - Burn %1 tokens").arg(root.title)
                 tokenName: root.title
                 accountName: d.accountName
                 networkName: d.chainName
@@ -491,8 +482,9 @@ SettingsPageLayout {
 
                 onOpened: {
                     root.setFeeLoading()
-                    signTransactionPopup.isRemotelyDestructTransaction ? root.signRemoteDestructTransactionOpened(d.remotelyDestructTokensList, d.tokenKey) :
-                                                                         root.signBurnTransactionOpened(d.tokenKey, d.burnAmount)
+                    signTransactionPopup.isRemotelyDestructTransaction
+                            ? root.signRemoteDestructTransactionOpened(d.remotelyDestructTokensList, d.tokenKey)
+                            : root.signBurnTransactionOpened(d.tokenKey, d.burnAmount)
                 }
                 onCancelClicked: close()
                 onSignTransactionClicked: signTransaction()
@@ -556,8 +548,8 @@ SettingsPageLayout {
             property int tokenType
 
             viewWidth: root.viewWidth
-            collectible: CollectibleObject{}
-            asset: AssetObject{}
+
+            token: TokenObject {}
 
             Binding {
                 target: root
@@ -605,7 +597,7 @@ SettingsPageLayout {
             Binding {
                 target: d
                 property: "remotelyDestruct"
-                value: view.collectible.remotelyDestruct
+                value: view.token.remotelyDestruct
             }
 
             Binding {
@@ -630,13 +622,13 @@ SettingsPageLayout {
             Binding {
                 target: d
                 property: "isAssetView"
-                value: view.tokenType === Constants.TokenType.ERC20
+                value: view.isAssetView
             }
 
             Binding {
                 target: d
                 property: "currentToken"
-                value: view.isAssetView ? view.asset : view.collectible
+                value: view.token
             }
 
             Instantiator {
@@ -652,52 +644,34 @@ SettingsPageLayout {
                 delegate: QtObject {
                     component Bind: Binding { target: view }
                     readonly property list<Binding> bindings: [
-                        Bind { property: "isAssetView"; value: model.tokenType === Constants.TokenType.ERC20 },
                         Bind { property: "tokenOwnersModel"; value: model.tokenOwnersModel },
                         Bind { property: "tokenType"; value: model.tokenType },
                         Bind { property: "airdropKey"; value: model.symbol } // TO BE REMOVED: When airdrop backend is ready to use token key instead of symbol
                     ]
 
-                    component BindCollectible: Binding { target: view.collectible }
+                    component BindToken: Binding { target: view.token }
                     readonly property list<Binding> collectibleBindings: [
-                        BindCollectible { property: "key"; value: model.contractUniqueKey },
-                        BindCollectible { property: "deployState"; value: model.deployState },
-                        BindCollectible { property: "burnState"; value: model.burnState },
-                        BindCollectible { property: "name"; value: model.name },
-                        BindCollectible { property: "artworkSource"; value: model.image },
-                        BindCollectible { property: "symbol"; value: model.symbol },
-                        BindCollectible { property: "description"; value: model.description },
-                        BindCollectible { property: "supply"; value: model.supply },
-                        BindCollectible { property: "infiniteSupply"; value: model.infiniteSupply },
-                        BindCollectible { property: "remainingTokens"; value: model.remainingSupply },
-                        BindCollectible { property: "chainId"; value: model.chainId },
-                        BindCollectible { property: "chainName"; value: model.chainName },
-                        BindCollectible { property: "chainIcon"; value: model.chainIcon },
-                        BindCollectible { property: "accountName"; value: model.accountName },
-                        BindCollectible { property: "accountAddress"; value: model.accountAddress }, // TODO: Backend
-                        BindCollectible { property: "transferable"; value: model.transferable },
-                        BindCollectible { property: "remotelyDestructState"; value: model.remotelyDestructState },
-                        BindCollectible { property: "remotelyDestruct"; value: model.remoteSelfDestruct }
-                    ]
-
-                    component BindAsset: Binding { target: view.asset }
-                    readonly property list<Binding> assetBindings: [
-                        BindAsset { property: "key"; value: model.contractUniqueKey },
-                        BindAsset { property: "deployState"; value: model.deployState },
-                        BindAsset { property: "burnState"; value: model.burnState },
-                        BindAsset { property: "name"; value: model.name },
-                        BindAsset { property: "artworkSource"; value: model.image },
-                        BindAsset { property: "symbol"; value: model.symbol },
-                        BindAsset { property: "description"; value: model.description },
-                        BindAsset { property: "supply"; value: model.supply },
-                        BindAsset { property: "infiniteSupply"; value: model.infiniteSupply },
-                        BindAsset { property: "remainingTokens"; value: model.remainingSupply },
-                        BindAsset { property: "chainId"; value: model.chainId },
-                        BindAsset { property: "chainName"; value: model.chainName },
-                        BindAsset { property: "chainIcon"; value: model.chainIcon },
-                        BindAsset { property: "accountName"; value: model.accountName },
-                        BindCollectible { property: "accountAddress"; value: model.accountAddress }, // TODO: Backend
-                        BindAsset { property: "decimals"; value: model.decimals }
+                        BindToken { property: "type"; value: model.tokenType === Constants.TokenType.ERC20
+                                                             ? TokenObject.Type.Asset : TokenObject.Type.Collectible},
+                        BindToken { property: "key"; value: model.contractUniqueKey },
+                        BindToken { property: "deployState"; value: model.deployState },
+                        BindToken { property: "burnState"; value: model.burnState },
+                        BindToken { property: "name"; value: model.name },
+                        BindToken { property: "artworkSource"; value: model.image },
+                        BindToken { property: "symbol"; value: model.symbol },
+                        BindToken { property: "description"; value: model.description },
+                        BindToken { property: "supply"; value: model.supply },
+                        BindToken { property: "infiniteSupply"; value: model.infiniteSupply },
+                        BindToken { property: "remainingTokens"; value: model.remainingSupply },
+                        BindToken { property: "chainId"; value: model.chainId },
+                        BindToken { property: "chainName"; value: model.chainName },
+                        BindToken { property: "chainIcon"; value: model.chainIcon },
+                        BindToken { property: "accountName"; value: model.accountName },
+                        BindToken { property: "accountAddress"; value: model.accountAddress }, // TODO: Backend
+                        BindToken { property: "transferable"; value: model.transferable },
+                        BindToken { property: "remotelyDestructState"; value: model.remotelyDestructState },
+                        BindToken { property: "remotelyDestruct"; value: model.remoteSelfDestruct },
+                        BindToken { property: "decimals"; value: model.decimals }
                     ]
                 }
             }

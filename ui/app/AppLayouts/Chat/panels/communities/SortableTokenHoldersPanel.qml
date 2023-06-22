@@ -44,7 +44,7 @@ Control {
     TokenHoldersProxyModel {
         id: proxyModel
 
-        sourceModel: root.model
+        sourceModel: root.model || null
         searchText: searcher.text
 
         sortBy: holdersList.sortBy

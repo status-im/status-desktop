@@ -1,11 +1,9 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import AppLayouts.Chat.views.communities 1.0
 import AppLayouts.Chat.helpers 1.0
-
-import StatusQ.Core 0.1
 
 import Storybook 1.0
 import Models 1.0
@@ -13,7 +11,6 @@ import Models 1.0
 import utils 1.0
 
 SplitView {
-
     Logs { id: logs }
 
     SplitView {
@@ -24,42 +21,36 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            CollectibleObject {
-                id: collectibleObj
+            TokenObject {
+                id: tokenObject
 
-                artworkSource: ModelsData.icons.superRare
-                remotelyDestructState: remotelyDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
-                burnState: burnDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
+                type: tokenTypeButtonGroup.checkedButton.type
+
+                artworkSource: artworkButtonGroup.checkedButton.source
+                burnState: burnDestructStateBox.checked
+                           ? Constants.ContractTransactionStatus.InProgress
+                           : Constants.ContractTransactionStatus.Completed
                 name: nameText.text
+                deployState: mintingStateButtonGroup.checkedButton.mintingState
                 symbol: symbolText.text
                 description: descriptionText.text
                 supply: parseInt(supplyText.text)
                 infiniteSupply: unlimitedSupplyChecker.checked
                 remainingTokens: parseInt(remainingText.text)
+                chainId: networksGroup.checkedButton.chainId
+                chainName: networksGroup.checkedButton.text
+                chainIcon: networksGroup.checkedButton.chainIcon
+                accountName: "helloworld"
+
+                // collectible-specific properties
+                remotelyDestructState: remotelyDestructStateBox.checked
+                                       ? Constants.ContractTransactionStatus.InProgress
+                                       : Constants.ContractTransactionStatus.Completed
                 transferable: transferibleChecker.checked
                 remotelyDestruct: selfdestructChecker.checked
-                chainId: 1
-                chainName: "Ethereum Mainnet"
-                chainIcon: ModelsData.networks.ethereum
-                accountName: "helloworld"
-            }
 
-            AssetObject {
-                id: assetObj
-
-                artworkSource: ModelsData.icons.superRare
-                burnState: burnDestructStateBox.checked ? 1 /*In progress*/ : 2 /*Completed*/
-                name: nameText.text
-                symbol: symbolText.text
-                description: descriptionText.text
-                supply: parseInt(supplyText.text)
-                infiniteSupply: unlimitedSupplyChecker.checked
+                // asset-specific properties
                 decimals: parseInt(decimalText.text)
-                remainingTokens: parseInt(remainingText.text)
-                chainId: 1
-                chainName: "Ethereum Mainnet"
-                chainIcon: ModelsData.networks.ethereum
-                accountName: "helloworld"
             }
 
             CommunityTokenView {
@@ -68,15 +59,14 @@ SplitView {
                 anchors.fill: parent
                 anchors.margins: 50
                 preview: previewBox.checked
-                isAssetView: isAssetBox.checked
-                collectible: collectibleObj
-                asset: assetObj
+
+                token: tokenObject
                 tokenOwnersModel: TokenHoldersModel {}
                 
                 onMintClicked: logs.logEvent("CommunityTokenView::onMintClicked")
+            }
         }
 
-        }
         LogsAndControlsPanel {
             id: logsAndControlsPanel
 
@@ -91,257 +81,311 @@ SplitView {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        StatusScrollView {
+        ScrollView {
             width: parent.width
             height: parent.height
-            contentHeight: _column.implicitHeight
-            contentWidth: _column.implicitWidth
+            contentHeight: column.implicitHeight
+            contentWidth: width
 
             ColumnLayout {
-                id: _column
+                id: column
 
-                CheckBox {
-                    id: previewBox
-                    text: "Is preview view?"
-                    checked: true
-                }
+                width: parent.width
 
-                CheckBox {
-                    id: isAssetBox
-                    text: "Is Assets View?"
-                    checked: false
-                }
+                GroupBox {
+                    Layout.fillWidth: true
 
-                ColumnLayout {
-                    Label {
-                        text: "Minting state:"
+                    title: "Token type"
+
+                    ButtonGroup {
+                        id: tokenTypeButtonGroup
+
+                        buttons: tokenTypeColumn.children
                     }
 
-                    RadioButton {
-                        id: mintingInProgress
-                        text: "In progress"
-                        onCheckedChanged: {
-                            if(view.isAssetView) assetObj.deployState = Constants.ContractTransactionStatus.InProgress
-                            else collectibleObj.deployState = Constants.ContractTransactionStatus.InProgress
+
+                    ColumnLayout {
+                        id: tokenTypeColumn
+
+                        RadioButton {
+                            id: isAssetRadioButton
+
+                            readonly property int type:
+                                TokenObject.Type.Asset
+
+                            text: "Asset"
+                        }
+
+                        RadioButton {
+                            readonly property int type:
+                                TokenObject.Type.Collectible
+
+                            checked: true
+                            text: "Collectible"
                         }
                     }
+                }
 
-                    RadioButton {
-                        id: mintingFailed
-                        text: "Failed"
-                        onCheckedChanged: {
-                            if(view.isAssetView) assetObj.deployState = Constants.ContractTransactionStatus.Failed
-                            else collectibleObj.deployState = Constants.ContractTransactionStatus.Failed
-                        }
-                    }
+                GroupBox {
+                    Layout.fillWidth: true
 
-                    RadioButton {
-                        id: mintingCompleted
-                        text: "Completed"
+                    CheckBox {
+                        id: previewBox
+                        text: "Preview"
                         checked: true
-                        onCheckedChanged: {
-                            if(view.isAssetView) assetObj.deployState = Constants.ContractTransactionStatus.Completed
-                            else collectibleObj.deployState = Constants.ContractTransactionStatus.Completed
+                    }
+                }
+
+                GroupBox {
+                    Layout.fillWidth: true
+
+                    title: "Minting state"
+
+                    ButtonGroup {
+                        id: mintingStateButtonGroup
+
+                        buttons: mintingStateColumn.children
+                    }
+
+                    ColumnLayout {
+                        id: mintingStateColumn
+
+                        RadioButton {
+                            readonly property int mintingState:
+                                Constants.ContractTransactionStatus.InProgress
+
+                            text: "In progress"
+                        }
+
+                        RadioButton {
+                            readonly property int mintingState:
+                                Constants.ContractTransactionStatus.Failed
+
+                            text: "Failed"
+                        }
+
+                        RadioButton {
+                            readonly property int mintingState:
+                                Constants.ContractTransactionStatus.Completed
+
+                            text: "Completed"
+                            checked: true
                         }
                     }
                 }
 
-                CheckBox {
-                    id: remotelyDestructStateBox
-                    visible: !isAssetBox.checked
-                    text: "Remotely destruct in progress"
-                    checked: false
-                }
-
-                CheckBox {
-                    id: burnDestructStateBox
-                    text: "Burn in progress"
-                    checked: false
-                }
-
-                Label {
-                    Layout.topMargin: 10
+                GroupBox {
                     Layout.fillWidth: true
-                    text: "Artwork"
-                }
 
-                RadioButton {
-                    text: "Small"
-                    checked: true
-                    onCheckedChanged: {
-                        if(view.isAssetView) assetObj.artworkSource = ModelsData.icons.superRare
-                        else collectibleObj.artworkSource = ModelsData.icons.superRare
-                    }
-                }
+                    ColumnLayout {
+                        CheckBox {
+                            id: remotelyDestructStateBox
 
-                RadioButton {
-                    text: "Medium"
-                    onCheckedChanged: {
-                        if(view.isAssetView) assetObj.artworkSource = ModelsData.collectibles.kitty2Big
-                        else collectibleObj.artworkSource = ModelsData.collectibles.kitty2Big
-                    }
-                }
+                            visible: !isAssetRadioButton.checked
+                            text: "Remotely destruct in progress"
+                            checked: false
+                        }
 
-                RadioButton {
-                    text: "Large"
-                    onCheckedChanged: {
-                        if(view.isAssetView) assetObj.artworkSource = ModelsData.banners.superRare
-                        else collectibleObj.artworkSource = ModelsData.banners.superRare
-                    }
-                }
+                        CheckBox {
+                            id: burnDestructStateBox
 
-                Label {
-                    Layout.topMargin: 10
-                    Layout.fillWidth: true
-                    text: "Name"
-                }
-
-                TextField {
-                    id: nameText
-                    background: Rectangle { border.color: 'lightgrey' }
-                    Layout.preferredWidth: 200
-                    text: "Art work"
-                }
-
-                Label {
-                    Layout.topMargin: 10
-                    Layout.fillWidth: true
-                    text: "Description"
-                }
-
-                TextField {
-                    id: descriptionText
-                    background: Rectangle { border.color: 'lightgrey' }
-                    Layout.preferredWidth: 200
-                    text: "Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description Long art work description"
-                }
-
-                Label {
-                    Layout.topMargin: 10
-                    Layout.fillWidth: true
-                    text: "Symbol"
-                }
-
-                TextField {
-                    id: symbolText
-                    background: Rectangle { border.color: 'lightgrey' }
-                    Layout.preferredWidth: 200
-                    text: "ABC"
-                }
-
-                CheckBox {
-                    id: unlimitedSupplyChecker
-                    Layout.topMargin: 10
-                    text: "Unlimited supply"
-                    checked: true
-                }
-
-                Label {
-                    visible: !unlimitedSupplyChecker.checked
-                    Layout.fillWidth: true
-                    text: "Supply"
-                }
-
-                TextField {
-                    id: supplyText
-                    visible: !unlimitedSupplyChecker.checked
-                    background: Rectangle { border.color: 'lightgrey' }
-                    Layout.preferredWidth: 200
-                    text: "123"
-                }
-
-                TextField {
-                    id: remainingText
-                    visible: !unlimitedSupplyChecker.checked
-                    background: Rectangle { border.color: 'lightgrey' }
-                    Layout.preferredWidth: 200
-                    text: "123"
-                }
-
-                Label {
-                    Layout.topMargin: 10
-                    Layout.fillWidth: true
-                    visible: isAssetBox.checked
-                    text: "Decimal"
-                }
-
-                TextField {
-                    id: decimalText
-                    Layout.preferredWidth: 200
-                    background: Rectangle { border.color: 'lightgrey' }
-                    visible: isAssetBox.checked
-                    text: "2"
-                }
-
-                CheckBox {
-                    id: transferibleChecker
-                    Layout.topMargin: 10
-                    visible: !isAssetBox.checked
-                    text: "Tranferible"
-                    checked: true
-                }
-
-                CheckBox {
-                    id: selfdestructChecker
-                    visible: !isAssetBox.checked
-                    text: "Remote self-desctruct"
-                    checked: true
-                }
-
-                Label {
-                    Layout.topMargin: 10
-                    Layout.fillWidth: true
-                    text: "Network"
-                }
-
-                RadioButton {
-                    id: eth
-                    text: "Ethereum Mainnet"
-                    checked: true
-                    onCheckedChanged:  {
-                        if(view.isAssetView) {
-                            assetObj.chainName = text
-                            assetObj.chainIcon = ModelsData.networks.ethereum
-                            assetObj.chainId = 1
-                        } else {
-                            collectibleObj.chainName = text
-                            collectibleObj.chainIcon = ModelsData.networks.ethereum
-                            collectibleObj.chainId = 1
+                            text: "Burn in progress"
+                            checked: false
                         }
                     }
                 }
 
-                RadioButton {
-                    id: opt
-                    text: "Optimism"
-                    onCheckedChanged:  {
-                        if(view.isAssetView) {
-                            assetObj.chainName = text
-                            assetObj.chainIcon = ModelsData.networks.optimism
-                            assetObj.chainId = 2
-                        } else {
-                            collectibleObj.chainName = text
-                            collectibleObj.chainIcon = ModelsData.networks.optimism
-                            collectibleObj.chainId = 2
+                GroupBox {
+                    Layout.fillWidth: true
+
+                    title: "Artwork"
+
+                    ButtonGroup {
+                        id: artworkButtonGroup
+
+                        buttons: artworkColumn.children
+                    }
+
+                    ColumnLayout {
+                        id: artworkColumn
+
+                        RadioButton {
+                            readonly property string source:
+                                ModelsData.icons.superRare
+
+                            text: "Small"
+                            checked: true
+                        }
+
+                        RadioButton {
+                            readonly property string source:
+                                ModelsData.collectibles.kitty2Big
+
+                            text: "Medium"
+                        }
+
+                        RadioButton {
+                            readonly property string source:
+                                ModelsData.banners.superRare
+
+                            text: "Large"
                         }
                     }
                 }
 
-                RadioButton {
-                    id: arb
-                    text: "Arbitrum"
-                    onCheckedChanged:  {
-                        if(view.isAssetView) {
-                            assetObj.chainName = text
-                            assetObj.chainIcon = ModelsData.networks.arbitrum
-                            assetObj.chainId = 3
-                        } else {
-                            collectibleObj.chainName = text
-                            collectibleObj.chainIcon = ModelsData.networks.arbitrum
-                            collectibleObj.chainId = 3
+                GroupBox {
+                    Layout.fillWidth: true
+
+                    ColumnLayout {
+                        width: parent.width
+
+                        Label {
+                            text: "Name"
+                        }
+
+                        TextField {
+                            id: nameText
+
+                            Layout.fillWidth: true
+
+                            text: "Art work"
+                        }
+
+                        Label {
+                            text: "Description"
+                        }
+
+                        TextField {
+                            id: descriptionText
+
+                            Layout.fillWidth: true
+
+                            text: ModelsData.descriptions.medium
+                        }
+
+                        Label {
+                            text: "Symbol"
+                        }
+
+                        TextField {
+                            id: symbolText
+
+                            Layout.fillWidth: true
+
+                            text: "ABC"
                         }
                     }
                 }
+
+                GroupBox {
+                    Layout.fillWidth: true
+
+                    ColumnLayout {
+
+                        CheckBox {
+                            id: unlimitedSupplyChecker
+
+                            text: "Unlimited supply"
+                            checked: true
+                        }
+
+                        Label {
+                            visible: !unlimitedSupplyChecker.checked
+                            text: "Supply"
+                        }
+
+                        TextField {
+                            id: supplyText
+
+                            visible: !unlimitedSupplyChecker.checked
+                            text: "123"
+                        }
+
+                        TextField {
+                            id: remainingText
+
+                            visible: !unlimitedSupplyChecker.checked
+                            text: "123"
+                        }
+
+                        Label {
+                            visible: isAssetRadioButton.checked
+                            text: "Decimal"
+                        }
+
+                        TextField {
+                            id: decimalText
+
+                            visible: isAssetRadioButton.checked
+                            text: "2"
+                        }
+                    }
+                }
+
+                GroupBox {
+                    Layout.fillWidth: true
+
+                    visible: !isAssetRadioButton.checked
+
+                    ColumnLayout {
+                        CheckBox {
+                            id: transferibleChecker
+
+                            text: "Tranferible"
+                            checked: true
+                        }
+
+                        CheckBox {
+                            id: selfdestructChecker
+
+                            text: "Remote self-desctruct"
+                            checked: true
+                        }
+                    }
+                }
+
+                GroupBox {
+                    Layout.fillWidth: true
+
+                    title: "Network"
+
+                    ButtonGroup {
+                        id: networksGroup
+
+                        buttons: networksColumn.children
+                    }
+
+                    ColumnLayout {
+                        id: networksColumn
+
+                        RadioButton {
+                            text: "Ethereum Mainnet"
+                            checked: true
+
+                            readonly property string chainIcon:
+                                ModelsData.networks.ethereum
+                            readonly property int chainId: 1
+                        }
+
+                        RadioButton {
+                            text: "Optimism"
+
+                            readonly property string chainIcon:
+                                ModelsData.networks.optimism
+                            readonly property int chainId: 2
+                        }
+
+                        RadioButton {
+                            text: "Arbitrum"
+
+                            readonly property string chainIcon:
+                                ModelsData.networks.arbitrum
+                            readonly property int chainId: 3
+                        }
+                    }
+                }
+
+                Component.onCompleted: spacing *= 2
             }
         }
     }

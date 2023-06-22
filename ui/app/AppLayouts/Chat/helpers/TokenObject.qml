@@ -8,6 +8,12 @@ import utils 1.0
     \brief Token object properties definition.
 */
 QtObject {
+    enum Type {
+        Asset, Collectible
+    }
+
+    property int type: TokenObject.Type.Asset
+
     // Unique identifier:
     property string key
 
@@ -36,7 +42,16 @@ QtObject {
     property int deployState: Constants.ContractTransactionStatus.None
     property int burnState: Constants.ContractTransactionStatus.None
 
+    // Collectible-specific properties:
+    property bool transferable: false
+    property bool remotelyDestruct: true
+    property int remotelyDestructState: Constants.ContractTransactionStatus.None
+
+    // Asset-specific properties:
+    property int decimals: 2 // Default value
+
     function copyToken(tokenObject) {
+        type = tokenObject.type
         key = tokenObject.key
         name = tokenObject.name
         symbol = tokenObject.symbol
@@ -53,5 +68,9 @@ QtObject {
         accountName = tokenObject.accountName
         deployState = tokenObject.deployState
         burnState = tokenObject.burnState
+        transferable = tokenObject.transferable
+        remotelyDestruct = tokenObject.remotelyDestruct
+        remotelyDestructState = tokenObject.remotelyDestructState
+        decimals = tokenObject.decimals
     }
 }

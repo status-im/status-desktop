@@ -25,8 +25,14 @@ StatusScrollView {
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
     property var tokensModel
 
-    property CollectibleObject collectible: CollectibleObject{}
-    property AssetObject asset: AssetObject{}
+
+    property TokenObject collectible: TokenObject {
+        type: TokenObject.Type.Collectible
+    }
+
+    property TokenObject asset: TokenObject{
+        type: TokenObject.Type.Asset
+    }
 
     // Used for reference validation when editing a failed deployment
     property string referenceName: ""
