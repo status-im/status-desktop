@@ -10,6 +10,8 @@ type
     Layer
     ChainName
     IconUrl
+    ShortName
+    ChainColor
 
 QtObject:
   type
@@ -49,6 +51,8 @@ QtObject:
       ModelRole.Layer.int:"layer",
       ModelRole.ChainName.int:"chainName",
       ModelRole.IconUrl.int:"iconUrl",
+      ModelRole.ShortName.int:"shortName",
+      ModelRole.ChainColor.int:"chainColor",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -70,6 +74,10 @@ QtObject:
       result = newQVariant(item.getChainName())
     of ModelRole.IconUrl:
       result = newQVariant(item.getIconURL())
+    of ModelRole.ShortName:
+      result = newQVariant(item.getShortName())
+    of ModelRole.ChainColor:
+      result = newQVariant(item.getChainColor())
 
   proc rowData*(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -80,9 +88,17 @@ QtObject:
       of "layer": result = $item.getLayer()
       of "chainName": result = $item.getChainName()
       of "iconUrl": result = $item.getIconURL()
+      of "shortName": result = $item.getShortName()
+      of "chainColor": result = $item.getChainColor()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc getAllNetworksSupportedPrefix*(self: Model): string =
+    var networkString = ""
+    for item in self.items:
+      networkString = networkString & item.getShortName() & ':'
+    return networkString

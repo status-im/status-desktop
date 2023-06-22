@@ -14,3 +14,4 @@ singleton ModelsData 1.0 ModelsData.qml
 singleton NetworksModel 1.0 NetworksModel.qml
 singleton PermissionsModel 1.0 PermissionsModel.qml
 RecipientModel 1.0 RecipientModel.qml
+WalletKeyPairModel 1.0 WalletKeyPairModel.qml

@@ -545,6 +545,8 @@ QtObject {
             readonly property int oneToOneChat: 1
             readonly property int groupChat: 2
         }
+
+        property string dotSepString: '<font size="3">  &#x2022; </font>'
     }
 
     readonly property QtObject ephemeralNotificationType: QtObject {
@@ -601,6 +603,7 @@ QtObject {
             readonly property int profile: 0
             readonly property int seedImport: 1
             readonly property int privateKeyImport: 2
+            readonly property int watchOnly: 3
         }
 
         readonly property QtObject shared: QtObject {

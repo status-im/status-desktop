@@ -27,9 +27,9 @@ Column {
         root.walletStore.loadDapps()
     }
 
-    Separator {
-        height: 17
-    }
+    spacing: 8
+
+    Separator {}
 
     StatusListItem {
         title: qsTr("DApp Permissions")
@@ -45,9 +45,7 @@ Column {
         ]
     }
 
-    Separator {
-        height: 17
-    }
+    Separator {}
 
     StatusListItem {
         objectName: "networksItem"
@@ -63,105 +61,25 @@ Column {
         ]
     }
 
-    Separator {
-        height: 17
-    }
+    Separator {}
 
-    StatusDescriptionListItem {
-        height: 64
-        subTitle: qsTr("Accounts")
-    }
-
-    StatusSectionHeadline {
-        text: qsTr("Generated from Your Seed Phrase")
-        leftPadding: Style.current.padding
-        topPadding: Style.current.halfPadding
-        bottomPadding: Style.current.halfPadding/2
-    }
-
-    ListView {
-        width: parent.width
-        height: childrenRect.height
-        objectName: "generatedAccounts"
-        model: SortFilterProxyModel {
-            sourceModel: walletStore.accounts
-            filters: ExpressionFilter {
-                expression: {
-                    return model.walletType === "generated" || model.walletType === ""
-                }
-            }
-        }
-        delegate: WalletAccountDelegate {
-            width: ListView.view.width
-            account: model
-            onGoToAccountView: {
-                root.goToAccountView(model)
-            }
-        }
-    }
-
-    SortFilterProxyModel {
-        id: importedAccounts
-        sourceModel: walletStore.accounts
-        filters: ExpressionFilter {
-            expression: {
-                return model.walletType !== "generated" && model.walletType !== "watch" && model.walletType !== ""
-            }
-        }
-    }
-
-    StatusSectionHeadline {
-        text: qsTr("Imported")
-        leftPadding: Style.current.padding
-        topPadding: Style.current.halfPadding
-        bottomPadding: Style.current.halfPadding/2
-        visible: importedAccounts.count > 0
-    }
-
-    Repeater {
-        width: parent.width
-        model: importedAccounts
-        delegate: WalletAccountDelegate {
-            width: parent.width
-            account: model
-            onGoToAccountView: {
-                root.goToAccountView(model)
-            }
-        }
-    }
-
-    SortFilterProxyModel {
-        id: watchOnlyAccounts
-        sourceModel: walletStore.accounts
-        filters: ValueFilter {
-            roleName: "walletType"
-            value: "watch"
-        }
-    }
-
-    StatusSectionHeadline {
-        text: qsTr("Watch-Only")
-        leftPadding: Style.current.padding
-        topPadding: Style.current.halfPadding
-        bottomPadding: Style.current.halfPadding/2
-        visible: watchOnlyAccounts.count > 0
-    }
-
-    Repeater {
-        width: parent.width
-        model: watchOnlyAccounts
-        delegate: WalletAccountDelegate {
-            width: parent.width
-            account: model
-            onGoToAccountView: {
-                root.goToAccountView(model)
-            }
-        }
-    }
-
-    // Adding padding to the end so that when the view is scrolled to the end there is some gap left
     Item {
-        height: Style.current.bigPadding
         width: parent.width
+        height: 8
+    }
+
+    Column {
+        width: parent.width
+        spacing: 24
+        Repeater {
+            objectName: "generatedAccounts"
+            model: walletStore.originModel
+            delegate: WalletKeyPairDelegate {
+                width: parent.width
+                chainShortNames: walletStore.getAllNetworksSupportedPrefix()
+                userProfilePublicKey: walletStore.userProfilePublicKey
+                onGoToAccountView: root.goToAccountView(account)
+            }
+        }
     }
 }

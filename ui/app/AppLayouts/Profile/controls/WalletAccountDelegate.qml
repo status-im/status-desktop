@@ -1,6 +1,11 @@
+import QtQuick 2.14
+
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
+import AppLayouts.Wallet 1.0
 
 import utils 1.0
 
@@ -8,14 +13,18 @@ StatusListItem {
     id: root
     
     property var account
-    property bool showShevronIcon: true
+    property string chainShortNames
+    property int totalCount: 0
 
     signal goToAccountView()
-    
-    title: account.name
-    subTitle: account.address
+
     objectName: account.name
-    asset.color: Utils.getColorForId(account.colorId)
+    title: account.name
+    subTitle: {
+        const elidedAddress = StatusQUtils.Utils.elideText(account.address,6,4)
+        return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(chainShortNames) + Utils.richColorText(elidedAddress, Theme.palette.directColor1) : elidedAddress
+    }
+    asset.color: !!account.colorId ? Utils.getColorForId(account.colorId): ""
     asset.emoji: account.emoji
     asset.name: !account.emoji ? "filled-account": ""
     asset.letterSize: 14
@@ -24,16 +33,22 @@ StatusListItem {
     asset.width: 40
     asset.height: 40
     
-    components: !showShevronIcon ? [] : [ shevronIcon ]
-
-    onClicked: {
-        goToAccountView()
-    }
-
-    StatusIcon {
-        id: shevronIcon
-        visible: root.showShevronIcon
+    components: StatusIcon {
         icon: "next"
         color: Theme.palette.baseColor1
+    }
+
+    onClicked: goToAccountView()
+
+    // This is used to give the first and last delgate rounded corners
+    Rectangle {
+        visible: totalCount > 1
+        readonly property bool isLastOrFirstItem: index === 0 || index === (totalCount-1)
+        width: parent.width
+        height: isLastOrFirstItem? parent.height/2 : parent.height
+        anchors.top: !isLastOrFirstItem || index === (totalCount-1) ? parent.top: undefined
+        anchors.bottom: index === 0 ? parent.bottom: undefined
+        color: parent.color
+        z: parent.z - 10
     }
 }

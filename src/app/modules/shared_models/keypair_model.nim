@@ -74,3 +74,9 @@ QtObject:
       if(self.items[i].getKeyUid() == keyUid):
         return self.items[i]
     return nil
+
+  proc onUpdatedAccount*(self: KeyPairModel, keyUid, address, name, colorId, emoji: string) =
+    for item in self.items:
+      if keyUid == item.getKeyUid():
+        item.getAccountsModel().updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
+        break
