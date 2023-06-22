@@ -299,9 +299,6 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
 method cancelRequestToJoinCommunity*(self: Module, communityId: string) =
   self.controller.cancelRequestToJoinCommunity(communityId)
 
-method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
-  self.controller.requestToJoinCommunity(communityId, ensName)
-
 method requestCommunityInfo*(self: Module, communityId: string, importing: bool) =
   self.controller.requestCommunityInfo(communityId, importing)
 

@@ -31,12 +31,18 @@ proc getAllCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc spectateCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("spectateCommunity".prefix, %*[communityId])
 
-proc requestToJoinCommunity*(communityId: string, ensName: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc requestToJoinCommunity*(
+    communityId: string,
+    ensName: string,
+    password: string,
+    addressesToShare: seq[string],
+  ): RpcResponse[JsonNode] {.raises: [Exception].} =
   var passwordToSend = password
   result = callPrivateRPC("requestToJoinCommunity".prefix, %*[{
     "communityId": communityId,
     "ensName": ensName,
-    "password": if passwordToSend != "": utils.hashPassword(password) else: ""
+    "password": if passwordToSend != "": utils.hashPassword(password) else: "",
+    "addressesToShare": addressesToShare,
   }])
 
 proc checkPermissionsToJoinCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =

@@ -1397,7 +1397,8 @@ QtObject:
       let errMsg = e.msg
       error "error checking permissions to join: ", errMsg
 
-  proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string) =
+  proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string,
+      addressesToShare: seq[string]) =
     try:
       let arg = AsyncRequestToJoinCommunityTaskArg(
         tptr: cast[ByteAddress](asyncRequestToJoinCommunityTask),
@@ -1405,7 +1406,8 @@ QtObject:
         slot: "onAsyncRequestToJoinCommunityDone",
         communityId: communityId,
         ensName: ensName,
-        password: password
+        password: password,
+        addressesToShare: addressesToShare,
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -1419,7 +1421,6 @@ QtObject:
         error "Error requesting community info", msg = error.message
         return
 
-      let communityId = rpcResponseObj{"communityId"}.getStr()
       let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
       self.activityCenterService.parseActivityCenterResponse(rpcResponse)
       
