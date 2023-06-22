@@ -231,6 +231,7 @@ Column {
 
         store: root.store
         recentsList: activityFilterStore.recentsList
+        loadingRecipients: activityFilterStore.loadingRecipients
         recentsFilters: activityFilterStore.recentsFilters
         savedAddressList: activityFilterStore.savedAddressList
         savedAddressFilters: activityFilterStore.savedAddressFilters

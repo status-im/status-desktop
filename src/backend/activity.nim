@@ -16,6 +16,8 @@ const noLimitTimestampForPeriod = 0
 
 # Declared in services/wallet/activity/service.go
 const eventActivityFilteringDone*: string = "wallet-activity-filtering-done"
+const eventActivityGetRecipientsDone*: string = "wallet-activity-get-recipients-result"
+const eventActivityGetOldestTimestampDone*: string = "wallet-activity-get-oldest-timestamp-result"
 
 type
   Period* = object
@@ -225,8 +227,8 @@ type
   # Mirrors services/wallet/activity/service.go ErrorCode
   ErrorCode* = enum
     ErrorCodeSuccess = 1,
-    ErrorCodeFilterCanceled,
-    ErrorCodeFilterFailed
+    ErrorCodeTaskCanceled,
+    ErrorCodeFailed
 
   # Mirrors services/wallet/activity/service.go FilterResponse
   FilterResponse* = object
@@ -306,14 +308,43 @@ rpc(filterActivityAsync, "wallet"):
   offset: int
   limit: int
 
-# see services/wallet/api.go GetAllRecipientsResponse
-type GetAllRecipientsResponse* = object
+# see services/wallet/activity/service.go GetRecipientsResponse
+type GetRecipientsResponse* = object
   addresses*: seq[string]
+  offset*: int
   hasMore*: bool
+  errorCode*: ErrorCode
 
-rpc(getAllRecipients, "wallet"):
+proc fromJson*(e: JsonNode, T: typedesc[GetRecipientsResponse]): GetRecipientsResponse {.inline.} =
+  const addressesField = "addresses"
+
+  var addresses: seq[string]
+  if e.hasKey(addressesField) and e[addressesField].kind != JNull and e[addressesField].kind == JArray:
+    addresses = newSeq[string](e[addressesField].len)
+    for i in 0 ..< e[addressesField].len:
+      addresses[i] = e[addressesField][i].getStr()
+
+  result = T(
+    addresses: addresses,
+    offset: e["offset"].getInt(),
+    hasMore: if e.hasKey("hasMore"): e["hasMore"].getBool() else: false,
+    errorCode: ErrorCode(e["errorCode"].getInt())
+  )
+
+rpc(getRecipientsAsync, "wallet"):
   offset: int
   limit: int
 
-rpc(getOldestActivityTimestamp, "wallet"):
+# see services/wallet/activity/service.go GetOldestTimestampResponse
+type GetOldestTimestampResponse* = object
+  timestamp*: int
+  errorCode*: ErrorCode
+
+proc fromJson*(e: JsonNode, T: typedesc[GetOldestTimestampResponse]): GetOldestTimestampResponse {.inline.} =
+  result = T(
+    timestamp: e["timestamp"].getInt(),
+    errorCode: ErrorCode(e["errorCode"].getInt())
+  )
+
+rpc(getOldestActivityTimestampAsync, "wallet"):
   addresses: seq[string]
