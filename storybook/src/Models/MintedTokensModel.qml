@@ -28,6 +28,8 @@ QtObject {
         }
     }
 
+    readonly property ListModel tokenOwnersModel: TokenHoldersModel {}
+
     readonly property ListModel mintedCollectiblesModel: ListModel {
         id: collectiblesModel
 
@@ -41,7 +43,7 @@ QtObject {
                                               symbol: "SRW",
                                               description: "Desc",
                                               supply: 1,
-                                              remainingTokens: 1,
+                                              remainingSupply: 1,
                                               infiniteSupply: true,
                                               transferable: false,
                                               remoteSelfDestruct: true,
@@ -59,7 +61,7 @@ QtObject {
                                               symbol: "KAT",
                                               description: "Desc",
                                               supply: 10,
-                                              remainingTokens: 5,
+                                              remainingSupply: 5,
                                               infiniteSupply: false,
                                               transferable: false,
                                               remoteSelfDestruct: true,
@@ -77,7 +79,7 @@ QtObject {
                                               symbol: "MMM",
                                               description: "Desc",
                                               supply: 1,
-                                              remainingTokens: 0,
+                                              remainingSupply: 0,
                                               infiniteSupply: true,
                                               transferable: false,
                                               remoteSelfDestruct: true,
@@ -94,15 +96,16 @@ QtObject {
                                               deployState: 2,
                                               symbol: "CPA",
                                               description: "Desc",
-                                              supply: 5000,
-                                              remainingTokens: 1500,
+                                              supply: 5,
+                                              remainingSupply: 0,
                                               infiniteSupply: false,
                                               transferable: false,
-                                              remoteSelfDestruct: false,
+                                              remoteSelfDestruct: true,
                                               chainId: 1,
                                               chainName: "Hermez",
                                               chainIcon: ModelsData.networks.hermez,
-                                              accountName: "Account"
+                                              accountName: "Account",
+                                              tokenOwnersModel: root.tokenOwnersModel
                                           }
                                       ])
     }
@@ -120,7 +123,7 @@ QtObject {
                                               symbol: "SOCKS",
                                               description: "Socks description",
                                               supply: 14,
-                                              remainingTokens: 2,
+                                              remainingSupply: 2,
                                               infiniteSupply: false,
                                               decimals: 2,
                                               chainId: 2,
@@ -137,7 +140,7 @@ QtObject {
                                               symbol: "DAI",
                                               description: "Desc",
                                               supply: 1,
-                                              remainingTokens: 1,
+                                              remainingSupply: 1,
                                               infiniteSupply: true,
                                               decimals: 1,
                                               chainId: 1,
