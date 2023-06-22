@@ -28,7 +28,7 @@ StatusScrollView {
 
         readonly property int delegateAssetsHeight: 64
 
-        function getSubtitle(deployState, remainingTokens, supply, isCollectible) {
+        function getSubtitle(deployState, remainingSupply, supply, isCollectible, isInfiniteSupply) {
             if(deployState === Constants.ContractTransactionStatus.Failed) {
                 return qsTr("Minting failed")
             }
@@ -37,12 +37,10 @@ StatusScrollView {
                 return qsTr("Minting...")
             }
 
-            // TO REMOVE: Just added bc backend still doesn't have `availableTokens` property in model. Once it is added, the following 2 lines can be removed.
-            if(!remainingTokens)
-                remainingTokens = 0
-            if(supply === 0)
-                supply = "∞"
-            return isCollectible ? qsTr("%1 / %2 remaining").arg(remainingTokens).arg(supply) :  ""
+            if(isInfiniteSupply) {
+                return isCollectible ? qsTr("∞ remaining") : ""
+            }
+            return isCollectible ? qsTr("%1 / %2 remaining").arg(remainingSupply).arg(supply) : ""
         }
     }
 
@@ -86,7 +84,7 @@ StatusScrollView {
                 components: [
                     StatusBaseText {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: d.getSubtitle(model.deployState, model.remainingSupply, model.supply, false)
+                        text: d.getSubtitle(model.deployState, model.remainingSupply, model.supply, false, model.infiniteSupply)
                         color: (model.deployState === Constants.ContractTransactionStatus.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                         font.pixelSize: 13
                     },
@@ -139,7 +137,7 @@ StatusScrollView {
                 height: collectiblesGrid.cellHeight
                 width: collectiblesGrid.cellWidth
                 title: model.name ? model.name : "..."
-                subTitle: d.getSubtitle(model.deployState, model.remainingSupply, model.supply, true)
+                subTitle: d.getSubtitle(model.deployState, model.remainingSupply, model.supply, true, model.infiniteSupply)
                 subTitleColor: (model.deployState === Constants.ContractTransactionStatus.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                 fallbackImageUrl: model.image ? model.image : ""
                 backgroundColor: "transparent"
