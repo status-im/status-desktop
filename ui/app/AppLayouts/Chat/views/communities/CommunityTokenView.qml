@@ -28,7 +28,8 @@ StatusScrollView {
     readonly property string symbol: root.isAssetView ? asset.symbol : collectible.symbol
     readonly property url artworkSource: root.isAssetView ? asset.artworkSource : collectible.artworkSource
     readonly property bool infiniteSupply: root.isAssetView ? asset.infiniteSupply : collectible.infiniteSupply
-    readonly property int remainingTokens: root.isAssetView ? asset.remainingTokens : collectible.remainingTokens
+    readonly property int supply: root.isAssetView ? asset.supply : collectible.supply
+    readonly property int remainingTokens: root.preview ? root.supply : (root.isAssetView ? asset.remainingTokens : collectible.remainingTokens)
     readonly property int deployState: root.isAssetView ? asset.deployState : collectible.deployState
     readonly property string accountName: root.isAssetView ? asset.accountName : collectible.accountName
     readonly property string chainName: root.isAssetView ? asset.chainName : collectible.chainName
@@ -212,12 +213,10 @@ StatusScrollView {
             }
 
             CustomPreviewBox {
-                id: totalbox
-
-                property int supply: root.isAssetView ? asset.supply : collectible.supply
+                id: totalbox                
 
                 label: qsTr("Total")
-                value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(supply)
+                value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.supply)
                 isLoading: !root.infiniteSupply &&
                            ((!root.isAssetView && collectible.remotelyDestructState === Constants.ContractTransactionStatus.InProgress) ||
                             (d.burnState === Constants.ContractTransactionStatus.InProgress))
