@@ -286,8 +286,8 @@ StatusScrollView {
             minLengthValidator.errorMessage: qsTr("Please enter a total finite supply")
             regexValidator.errorMessage: qsTr("Your total finite supply contains invalid characters (use 0-9 only)")
             regexValidator.regularExpression: Constants.regularExpressions.numerical
-            extraValidator.validate: function (value) { return  parseInt(value) > 0 && parseInt(value) <= 999999999 }
-            extraValidator.errorMessage: qsTr("Enter a number between 0 and 999,999,999")
+            extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 999999999 }
+            extraValidator.errorMessage: qsTr("Enter a number between 1 and 999,999,999")
 
             onTextChanged: {
                 if(root.isAssetView)
