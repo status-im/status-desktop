@@ -114,10 +114,10 @@ proc asyncCheckPermissionsToJoin*(self: Controller) =
   self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId())
 
 proc asyncCheckAllChannelsPermissions*(self: Controller) =
-  self.communityService.asyncCheckAllChannelsPermissions(self.getMySectionId())
+  self.chatService.asyncCheckAllChannelsPermissions(self.getMySectionId())
 
 proc asyncCheckChannelPermissions*(self: Controller, communityId: string, chatId: string) =
-  self.communityService.asyncCheckChannelPermissions(communityId, chatId)
+  self.chatService.asyncCheckChannelPermissions(communityId, chatId)
 
 proc asyncCheckPermissions*(self: Controller) =
   self.asyncCheckPermissionsToJoin()
@@ -699,4 +699,3 @@ proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int,
 
 proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(self.getMySectionId())
-
