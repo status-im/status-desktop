@@ -290,10 +290,14 @@ StatusScrollView {
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 999,999,999")
 
             onTextChanged: {
+                const amount = parseInt(text)
+                if (Number.isNaN(amount) || !!errors)
+                    return
+
                 if(root.isAssetView)
-                    asset.supply = parseInt(text)
+                    asset.supply = amount
                 else
-                    collectible.supply = parseInt(text)
+                    collectible.supply = amount
             }
         }
 
