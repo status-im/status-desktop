@@ -1,6 +1,6 @@
 {.used.}
 
-import json, strformat, strutils
+import json, strformat, strutils, tables
 import ../../community/dto/community
 
 include ../../../common/json_utils
@@ -39,6 +39,20 @@ type ChatMember* = object
   id*: string
   joined*: bool
   role*: MemberRole
+
+type CheckPermissionsResultDto* = object
+  criteria*: seq[bool]
+
+type ViewOnlyOrViewAndPostPermissionsResponseDto* = object
+  satisfied*: bool
+  permissions*: Table[string, CheckPermissionsResultDto]
+
+type CheckChannelPermissionsResponseDto* = object
+  viewOnlyPermissions*: ViewOnlyOrViewAndPostPermissionsResponseDto
+  viewAndPostPermissions*: ViewOnlyOrViewAndPostPermissionsResponseDto
+
+type CheckAllChannelsPermissionsResponseDto* = object
+  channels*: Table[string, CheckChannelPermissionsResponseDto]
 
 type ChatDto* = object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status,
@@ -98,6 +112,7 @@ type ChannelGroupDto* = object
   encrypted*: bool
   unviewedMessagesCount*: int
   unviewedMentionsCount*: int
+  channelPermissions*: CheckAllChannelsPermissionsResponseDto
 
 type ClearedHistoryDto* = object
   chatId*: string
@@ -133,6 +148,34 @@ proc `$`*(self: ChatDto): string =
     position: {self.position},
     highlight: {self.highlight}
     )"""
+
+proc toCheckPermissionsResultDto*(jsonObj: JsonNode): CheckPermissionsResultDto =
+  result = CheckPermissionsResultDto()
+  var criteriaObj: JsonNode
+  if(jsonObj.getProp("criteria", criteriaObj) and criteriaObj.kind == JArray):
+    for c in criteriaObj:
+      result.criteria.add(c.getBool)
+
+proc toViewOnlyOrViewAndPostPermissionsResponseDto*(jsonObj: JsonNode): ViewOnlyOrViewAndPostPermissionsResponseDto =
+  result = ViewOnlyOrViewAndPostPermissionsResponseDto()
+  discard jsonObj.getProp("satisfied", result.satisfied)
+
+  var permissionsObj: JsonNode
+  if(jsonObj.getProp("permissions", permissionsObj) and permissionsObj.kind == JObject):
+    result.permissions = initTable[string, CheckPermissionsResultDto]()
+    for permissionId, permission in permissionsObj:
+      result.permissions[permissionId] = permission.toCheckPermissionsResultDto
+
+proc toCheckChannelPermissionsResponseDto*(jsonObj: JsonNode): CheckChannelPermissionsResponseDto =
+  result = CheckChannelPermissionsResponseDto()
+
+  var viewOnlyPermissionsObj: JsonNode
+  if(jsonObj.getProp("viewOnlyPermissions", viewOnlyPermissionsObj) and viewOnlyPermissionsObj.kind == JObject):
+    result.viewOnlyPermissions = viewOnlyPermissionsObj.toViewOnlyOrViewAndPostPermissionsResponseDto()
+
+  var viewAndPostPermissionsObj: JsonNode
+  if(jsonObj.getProp("viewAndPostPermissions", viewAndPostPermissionsObj) and viewAndPostPermissionsObj.kind == JObject):
+    result.viewAndPostPermissions = viewAndPostPermissionsObj.toViewOnlyOrViewAndPostPermissionsResponseDto()
 
 proc toClearedHistoryDto*(jsonObj: JsonNode): ClearedHistoryDto =
   result = ClearedHistoryDto()
@@ -319,6 +362,15 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   discard jsonObj.getProp("canManageUsers", result.canManageUsers)
   discard jsonObj.getProp("color", result.color)
   discard jsonObj.getProp("muted", result.muted)
+
+  var responseDto = CheckAllChannelsPermissionsResponseDto()
+  responseDto.channels = initTable[string, CheckChannelPermissionsResponseDto]()
+  result.channelPermissions = responseDto
+  var checkChannelPermissionResponsesObj: JsonNode
+  if(jsonObj.getProp("checkChannelPermissionResponses", checkChannelPermissionResponsesObj) and checkChannelPermissionResponsesObj.kind == JObject):
+
+    for channelId, permissionResponse in checkChannelPermissionResponsesObj:
+      result.channelPermissions.channels[channelId] = permissionResponse.toCheckChannelPermissionsResponseDto()
 
 # To parse Community chats to ChatDto, we need to add the commuity ID and type
 proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =

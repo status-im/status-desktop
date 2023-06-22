@@ -403,6 +403,7 @@ method onChatsLoaded*(
     let community = self.controller.getMyCommunity()
     self.view.setAmIMember(community.joined)
     self.initCommunityTokenPermissionsModel(channelGroup)
+    self.onCommunityCheckAllChannelsPermissionsResponse(channelGroup.channelPermissions)
     self.controller.asyncCheckPermissionsToJoin()
 
   let activeChatId = self.controller.getActiveChatId()
@@ -895,8 +896,9 @@ proc updateChannelPermissionViewData*(self: Module, chatId: string, viewOnlyPerm
   self.updateTokenPermissionModel(viewAndPostPermissions.permissions, community)
   self.updateChatRequiresPermissions(chatId)
   self.updateChatLocked(chatId)
-  self.chatContentModules[chatId].onUpdateViewOnlyPermissionsSatisfied(viewOnlyPermissions.satisfied)
-  self.chatContentModules[chatId].onUpdateViewAndPostPermissionsSatisfied(viewAndPostPermissions.satisfied)
+  if self.chatContentModules.hasKey(chatId):
+    self.chatContentModules[chatId].onUpdateViewOnlyPermissionsSatisfied(viewOnlyPermissions.satisfied)
+    self.chatContentModules[chatId].onUpdateViewAndPostPermissionsSatisfied(viewAndPostPermissions.satisfied)
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   let community = self.controller.getMyCommunity()
@@ -921,10 +923,14 @@ method onCommunityTokenPermissionDeletionFailed*(self: Module, communityId: stri
 
 method onCommunityCheckChannelPermissionsResponse*(self: Module, chatId: string, checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto) =
   let community = self.controller.getMyCommunity()
-  self.updateChannelPermissionViewData(chatId, checkChannelPermissionsResponse.viewOnlyPermissions, checkChannelPermissionsResponse.viewAndPostPermissions, community)
+  if community.id != "":
+    self.updateChannelPermissionViewData(chatId, checkChannelPermissionsResponse.viewOnlyPermissions, checkChannelPermissionsResponse.viewAndPostPermissions, community)
 
 method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
   let community = self.controller.getMyCommunity()
+  if community.id == "":
+    return
+
   for chatId, permissionResult in checkAllChannelsPermissionsResponse.channels:
     self.updateChannelPermissionViewData(chatId, permissionResult.viewOnlyPermissions, permissionResult.viewAndPostPermissions, community)
 

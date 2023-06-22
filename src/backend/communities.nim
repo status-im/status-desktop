@@ -395,3 +395,5 @@ proc getCommunitiesSettings*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc requestExtractDiscordChannelsAndCategories*(filesToImport: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("requestExtractDiscordChannelsAndCategories".prefix, %*[filesToImport])
 
+proc getCheckChannelPermissionResponses*(communityId: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("getCheckChannelPermissionResponses".prefix, %*[communityId])
