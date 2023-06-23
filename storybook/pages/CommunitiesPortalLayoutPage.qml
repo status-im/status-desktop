@@ -1,8 +1,8 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
-import AppLayouts.CommunitiesPortal 1.0
-import AppLayouts.CommunitiesPortal.stores 1.0
+import AppLayouts.Communities 1.0
+import AppLayouts.Communities.stores 1.0
 
 import SortFilterProxyModel 0.2
 

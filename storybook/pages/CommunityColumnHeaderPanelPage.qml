@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.14
 
 import Storybook 1.0
 
-import AppLayouts.Chat.panels.communities 1.0
+import AppLayouts.Communities.panels 1.0
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0

@@ -6,7 +6,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
-import AppLayouts.Chat.views.communities 1.0
+import AppLayouts.Communities.views 1.0
 
 import Storybook 1.0
 import Models 1.0

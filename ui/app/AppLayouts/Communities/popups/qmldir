@@ -1,0 +1,13 @@
+AlertPopup 1.0 AlertPopup.qml
+BurnTokensPopup 1.0 BurnTokensPopup.qml
+CommunityProfilePopup 1.0 CommunityProfilePopup.qml
+CommunityTokenPermissionsPopup 1.0 CommunityTokenPermissionsPopup.qml
+CreateCategoryPopup 1.0 CreateCategoryPopup.qml
+CreateChannelPopup 1.0 CreateChannelPopup.qml
+CreateCommunityPopup 1.0 CreateCommunityPopup.qml
+DiscordImportProgressDialog 1.0 DiscordImportProgressDialog.qml
+InviteFriendsToCommunityPopup 1.0 InviteFriendsToCommunityPopup.qml
+RemotelyDestructPopup 1.0 RemotelyDestructPopup.qml
+SignMultiTokenTransactionsPopup 1.0 SignMultiTokenTransactionsPopup.qml
+SignTokenTransactionsPopup 1.0 SignTokenTransactionsPopup.qml
+TransferOwnershipPopup 1.0 TransferOwnershipPopup.qml

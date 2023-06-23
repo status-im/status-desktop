@@ -2,7 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
-import AppLayouts.Chat.controls.community 1.0
+import AppLayouts.Communities.controls 1.0
 
 ColumnLayout {
     id: root

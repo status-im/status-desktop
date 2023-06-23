@@ -16,7 +16,8 @@ import shared.popups 1.0
 import SortFilterProxyModel 0.2
 
 import "../panels"
-import "../../Chat/popups/community"
+import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.panels 1.0
 
 SettingsContentBase {
     id: root

@@ -6,9 +6,9 @@ import utils 1.0
 import shared.popups 1.0
 
 import "views"
-import "views/communities"
+import AppLayouts.Communities.views 1.0
 import "stores"
-import "popups/community"
+import AppLayouts.Communities.popups 1.0
 
 import AppLayouts.Chat.stores 1.0
 

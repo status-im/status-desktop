@@ -11,7 +11,7 @@ import StatusQ.Popups 0.1
 
 import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile.popups 1.0
-import AppLayouts.CommunitiesPortal.popups 1.0
+import AppLayouts.Communities.popups 1.0
 
 import shared.popups 1.0
 import shared.status 1.0

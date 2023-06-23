@@ -1,7 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 
-import AppLayouts.Chat.panels.communities 1.0
+import AppLayouts.Communities.panels 1.0
 import utils 1.0
 
 Item {

@@ -3,8 +3,8 @@ import QtQuick.Controls 2.15
 
 import StatusQ.Core.Theme 0.1
 
-import AppLayouts.Chat.panels.communities 1.0
-import AppLayouts.Chat.controls.community 1.0
+import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.controls 1.0
 import utils 1.0
 
 import SortFilterProxyModel 0.2

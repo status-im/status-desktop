@@ -4,8 +4,6 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Core.Utils 0.1
 
-import AppLayouts.Chat.controls.community 1.0
-
 Flickable {
     id: root
 
