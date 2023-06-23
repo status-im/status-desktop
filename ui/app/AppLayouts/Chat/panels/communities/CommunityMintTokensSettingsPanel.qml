@@ -119,12 +119,6 @@ SettingsPageLayout {
         onInitialItemChanged: updateInitialStackView()
     }
 
-    QtObject {
-        id: temp_
-
-        readonly property TokenObject token: TokenObject {}
-    }
-
     secondaryHeaderButton.type: StatusBaseButton.Type.Danger
 
     content: StackView {
@@ -167,6 +161,12 @@ SettingsPageLayout {
         }
     ]
 
+    Component {
+        id: tokenObjectComponent
+
+        TokenObject {}
+    }
+
     onPrimaryHeaderButtonClicked: {
         if(root.state == d.initialViewState) {
             // Then move on to the new token view, with the specific tab selected:
@@ -183,28 +183,30 @@ SettingsPageLayout {
                 console.warn("Mint Token Settings - Trying to retry undefined token object.")
                 return
             }
+            const isAssetView = d.currentToken.type === TokenObject.Type.Asset
 
-            // Copy current data:
-            temp_.token.copyToken(d.currentToken)
-
-            // Update to point to new instance
-            d.currentToken = temp_.token
+            // copy TokenObject
+            const tokenObject = tokenObjectComponent.createObject(
+                                  null, d.currentToken)
 
             // Reset the stack:
-            root.resetNavigation(true)
+            root.resetNavigation(isAssetView)
 
-            // Then move on to the new token view, but asset pre-filled:
+            // Then move on to the new token view, but token pre-filled:
             const properties = {
-                isAssetView: d.currentToken.type === TokenObject.Type.Asset,
-                referenceName: d.currentToken.name,
-                referenceSymbol: d.currentToken.symbol,
+                isAssetView,
+                referenceName: tokenObject.name,
+                referenceSymbol: tokenObject.symbol,
                 validationMode: StatusInput.ValidationMode.Always,
-                asset: d.currentToken,
-                collectible: d.currentToken
+                [isAssetView ? "asset" : "collectible"]: tokenObject
             }
 
-            stackManager.push(d.newTokenViewState, newTokenView, properties,
-                              StackView.Immediate)
+            const tokenView = stackManager.push(d.newTokenViewState,
+                                                newTokenView, properties,
+                                                StackView.Immediate)
+
+            // cleanup dynamically created TokenObject
+            tokenView.Component.destruction.connect(() => tokenObject.destroy())
         }
     }
 
