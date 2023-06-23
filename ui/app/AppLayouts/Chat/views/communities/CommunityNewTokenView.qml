@@ -335,7 +335,8 @@ StatusScrollView {
             minLengthValidator.errorMessage: qsTr("Please enter how many decimals your token should have")
             regexValidator.errorMessage: qsTr("Your decimal amount contains invalid characters (use 0-9 only)")
             regexValidator.regularExpression: Constants.regularExpressions.numerical
-
+            extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 10 }
+            extraValidator.errorMessage: qsTr("Enter a number between 1 and 10")
             onTextChanged: asset.decimals = parseInt(text)
         }
 
