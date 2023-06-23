@@ -12,7 +12,7 @@ import AppLayouts.Browser 1.0
 import AppLayouts.Chat 1.0
 import AppLayouts.Chat.views 1.0
 import AppLayouts.Profile 1.0
-import AppLayouts.CommunitiesPortal 1.0
+import AppLayouts.Communities 1.0
 
 import utils 1.0
 import shared 1.0
@@ -35,7 +35,7 @@ import StatusQ.Core 0.1
 import AppLayouts.Browser.stores 1.0 as BrowserStores
 import AppLayouts.stores 1.0
 import AppLayouts.Chat.stores 1.0 as ChatStores
-import AppLayouts.CommunitiesPortal.stores 1.0
+import AppLayouts.Communities.stores 1.0
 
 import mainui.activitycenter.stores 1.0
 import mainui.activitycenter.popups 1.0

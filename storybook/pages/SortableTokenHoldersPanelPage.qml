@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import AppLayouts.Chat.panels.communities 1.0
+import AppLayouts.Communities.panels 1.0
 
 import Storybook 1.0
 import Models 1.0

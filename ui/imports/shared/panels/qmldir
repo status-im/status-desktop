@@ -2,7 +2,7 @@ AcceptRejectOptionsButtonsPanel 1.0 AcceptRejectOptionsButtonsPanel.qml
 Address 1.0 Address.qml
 AddressRequiredValidator 1.0 AddressRequiredValidator.qml
 BalanceValidator 1.0 BalanceValidator.qml
-CommunityBanner 1.0 CommunityBanner.qml
+ChatsLoadingPanel 1.0 ChatsLoadingPanel.qml
 ConnectionWarnings 1.0 ConnectionWarnings.qml
 DidYouKnowSplashScreen 1.0 DidYouKnowSplashScreen.qml
 EditCroppedImagePanel 1.0 EditCroppedImagePanel.qml

@@ -5,7 +5,7 @@ import StatusQ.Core 0.1
 
 import mainui 1.0
 
-import AppLayouts.Chat.panels.communities 1.0
+import AppLayouts.Communities.panels 1.0
 
 import Storybook 1.0
 import Models 1.0

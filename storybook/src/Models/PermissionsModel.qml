@@ -4,7 +4,7 @@ import QtQuick 2.14
 
 import Models 1.0
 import StatusQ.Core.Utils 0.1
-import AppLayouts.Chat.controls.community 1.0
+import AppLayouts.Communities.controls 1.0
 
 QtObject {
     id: root

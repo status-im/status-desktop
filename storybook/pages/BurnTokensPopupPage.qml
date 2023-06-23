@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.14
 import Storybook 1.0
 import Models 1.0
 
-import AppLayouts.Chat.popups.community 1.0
+import AppLayouts.Communities.popups 1.0
 
 SplitView {
     Logs { id: logs }

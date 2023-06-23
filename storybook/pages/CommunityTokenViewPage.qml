@@ -2,8 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import AppLayouts.Chat.views.communities 1.0
-import AppLayouts.Chat.helpers 1.0
+import AppLayouts.Communities.views 1.0
+import AppLayouts.Communities.helpers 1.0
 
 import Storybook 1.0
 import Models 1.0

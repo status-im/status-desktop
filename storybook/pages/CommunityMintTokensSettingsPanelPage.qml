@@ -2,7 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
-import AppLayouts.Chat.panels.communities 1.0
+import AppLayouts.Communities.panels 1.0
 import AppLayouts.Chat.stores 1.0
 import StatusQ.Core.Theme 0.1
 

@@ -15,7 +15,8 @@ import StatusQ.Controls 0.1
 
 import "."
 import "../panels"
-import "../panels/communities"
+import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.views 1.0
 import "../popups"
 import "../helpers"
 import "../controls"

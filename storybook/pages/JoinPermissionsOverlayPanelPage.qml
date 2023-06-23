@@ -8,8 +8,7 @@ import StatusQ.Core 0.1
 import Storybook 1.0
 import Models 1.0
 
-import AppLayouts.Chat.panels.communities 1.0
-
+import AppLayouts.Communities.panels 1.0
 
 import utils 1.0
 

@@ -26,5 +26,6 @@ AccountsModalHeader 1.0 AccountsModalHeader.qml
 GetSyncCodeInstructionsPopup 1.0 GetSyncCodeInstructionsPopup.qml
 NoPermissionsToJoinPopup 1.0 NoPermissionsToJoinPopup.qml
 RemoveAccountConfirmationPopup 1.0 RemoveAccountConfirmationPopup.qml
+RenameGroupPopup 1.0 RenameGroupPopup.qml
 DeleteMessageConfirmationPopup 1.0 DeleteMessageConfirmationPopup.qml
 UserAgreementPopup 1.0 UserAgreementPopup.qml

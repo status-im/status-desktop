@@ -5,7 +5,7 @@ import QtQuick.Layouts 1.14
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
-import AppLayouts.Chat.views.communities 1.0
+import AppLayouts.Communities.views 1.0
 
 import Storybook 1.0
 import Models 1.0
@@ -152,8 +152,6 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                     openJoinCommunityDialog()
                 }
                 onInvitationPendingClicked: logs.logEvent("JoinCommunityView::onInvitationPendingClicked()")
-                onJoined: logs.logEvent("JoinCommunityView::onJoined()")
-                onCancelMembershipRequest: logs.logEvent("JoinCommunityView::onCancelMembershipRequest()")
             }
         }
 

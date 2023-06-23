@@ -9,6 +9,8 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
+import shared.views.chat 1.0
+
 import "../panels"
 import "../stores"
 

@@ -1,6 +1,6 @@
 import QtQuick 2.15
 
-import AppLayouts.Chat.controls.community 1.0
+import AppLayouts.Communities.controls 1.0
 
 ListModel {
     readonly property var data: [

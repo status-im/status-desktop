@@ -16,7 +16,7 @@ import shared.controls 1.0
 import shared.views.chat 1.0
 import SortFilterProxyModel 0.2
 
-import AppLayouts.Chat.popups.community 1.0
+import AppLayouts.Communities.popups 1.0
 
 import "../helpers"
 import "../controls"
@@ -24,7 +24,7 @@ import "../popups"
 import "../panels"
 import "../../Wallet"
 import "../stores"
-import "../panels/communities"
+import AppLayouts.Communities.panels 1.0
 
 Item {
     id: root
