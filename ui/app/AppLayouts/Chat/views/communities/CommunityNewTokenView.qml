@@ -171,7 +171,7 @@ StatusScrollView {
             label: qsTr("Symbol")
             text: root.isAssetView ? asset.symbol : collectible.symbol
             charLimit: 6
-            placeholderText: qsTr("e.g. DOODLE")
+            placeholderText: root.isAssetView ? qsTr("e.g. ETH"): qsTr("e.g. DOODLE")
             validationMode: root.validationMode
             minLengthValidator.errorMessage: qsTr("Please enter your token symbol (use A-Z only)")
             regexValidator.errorMessage: qsTr("Your token symbol contains invalid characters (use A-Z only)")
