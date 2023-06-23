@@ -23,7 +23,7 @@ QtObject {
         statesStack.push(state)
 
         // Stack view related operations:
-        stackView.push(item, properties, operation)
+        return stackView.push(item, properties, operation)
     }
 
     function pop(operation) {
@@ -31,7 +31,7 @@ QtObject {
         statesStack.pop()
 
         // Stack view related operations:
-        stackView.pop(operation)
+        return stackView.pop(operation)
     }
 
     function clear(initialState, operation) {
@@ -40,6 +40,6 @@ QtObject {
         statesStack.push(initialState)
 
         // Stack view related operations:
-        stackView.pop(null, operation) // Resetting to the initial stack state
+        return stackView.pop(null, operation) // Resetting to the initial stack state
     }
 }
