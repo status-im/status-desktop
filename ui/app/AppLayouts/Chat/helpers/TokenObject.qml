@@ -48,29 +48,5 @@ QtObject {
     property int remotelyDestructState: Constants.ContractTransactionStatus.None
 
     // Asset-specific properties:
-    property int decimals: 2 // Default value
-
-    function copyToken(tokenObject) {
-        type = tokenObject.type
-        key = tokenObject.key
-        name = tokenObject.name
-        symbol = tokenObject.symbol
-        description = tokenObject.description
-        infiniteSupply = tokenObject.infiniteSupply
-        supply = tokenObject.supply
-        remainingTokens = tokenObject.remainingTokens
-        artworkSource = tokenObject.artworkSource
-        artworkCropRect = tokenObject.artworkCropRect
-        chainId = tokenObject.chainId
-        chainName = tokenObject.chainName
-        chainIcon = tokenObject.chainIcon
-        accountAddress = tokenObject.accountAddress
-        accountName = tokenObject.accountName
-        deployState = tokenObject.deployState
-        burnState = tokenObject.burnState
-        transferable = tokenObject.transferable
-        remotelyDestruct = tokenObject.remotelyDestruct
-        remotelyDestructState = tokenObject.remotelyDestructState
-        decimals = tokenObject.decimals
-    }
+    property int decimals: 2
 }
