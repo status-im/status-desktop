@@ -38,7 +38,7 @@ SplitView {
                 anchors.centerIn: parent
                 color: Theme.palette.baseColor4
 
-                CommunityColumnHeaderPanel {
+                ColumnHeaderPanel {
                     id: communityColumnHeader
 
                     width: widthSlider.value
@@ -49,9 +49,9 @@ SplitView {
                     color: d.color
                     amISectionAdmin: d.amISectionAdmin
                     openCreateChat: false
-                    onInfoButtonClicked: logs.logEvent("CommunityColumnHeaderPanel::onInfoButtonClicked()")
+                    onInfoButtonClicked: logs.logEvent("ColumnHeaderPanel::onInfoButtonClicked()")
                     onAdHocChatButtonClicked: {
-                        logs.logEvent("CommunityColumnHeaderPanel::onAdHocChatButtonClicked(): " + openCreateChat.toString())
+                        logs.logEvent("ColumnHeaderPanel::onAdHocChatButtonClicked(): " + openCreateChat.toString())
                         openCreateChat = !openCreateChat
                     }
                 }

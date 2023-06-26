@@ -93,7 +93,7 @@ StatusStackModal {
         Item {
             implicitHeight: d.popupContentHeight
 
-            CommunityProfilePopupInviteFriendsPanel {
+            ProfilePopupInviteFriendsPanel {
                 anchors.fill: parent
                 anchors.topMargin: 16
                 anchors.bottomMargin: 16
@@ -106,7 +106,7 @@ StatusStackModal {
         },
 
         Item {
-            CommunityProfilePopupInviteMessagePanel {
+            ProfilePopupInviteMessagePanel {
                 anchors.fill: parent
                 anchors.topMargin: 16
 

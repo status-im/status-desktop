@@ -11,17 +11,17 @@ import StatusQ.Controls 0.1
 import AppLayouts.Communities.views 1.0
 
 /*!
-   \qmltype CommunityPermissionsRow
+   \qmltype PermissionsRow
    \inherits Control
    \inqmlmodule AppLayouts.Communities.controls 1.0
    \brief It is a permissions row control that provides information about community tokens permissions. Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-controls2-control.html}{Control}.
 
-   The \c CommunityPermissionsRow is the token permissions representation row component.
+   The \c PermissionsRow is the token permissions representation row component.
    It has different ui abreviations / permutations depending on the tokens and permissons the permissions model provides.
 
    Example of how to use it:
    \qml
-        CommunityPermissionsRow {
+        PermissionsRow {
             model: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
@@ -38,61 +38,61 @@ Control {
     id: root
 
     /*!
-       \qmlproperty var CommunityPermissionsRow::model
+       \qmlproperty var PermissionsRow::model
        This property holds the permissions model with expected roles: [ holdingsModel [ roles: key] ].
     */
     property var model
 
     /*!
-       \qmlproperty var CommunityPermissionsRow::assetsModel
+       \qmlproperty var PermissionsRow::assetsModel
        This property holds the global assets model.
     */
     property var assetsModel
 
     /*!
-       \qmlproperty var CommunityPermissionsRow::collectiblesModel
+       \qmlproperty var PermissionsRow::collectiblesModel
        This property holds the global collectibles model.
     */
     property var collectiblesModel
 
     /*!
-       \qmlproperty bool CommunityPermissionsRow::requirementsMet
+       \qmlproperty bool PermissionsRow::requirementsMet
        This property holds if the token requirements are met in case the community requires permissions.
     */
     property bool requirementsMet: false
 
     /*!
-       \qmlproperty int CommunityPermissionsRow::overlapping
+       \qmlproperty int PermissionsRow::overlapping
        This property allows customizing the overlapping distance between elements.
     */
     property int overlapping: 8
 
     /*!
-       \qmlproperty int CommunityPermissionsRow::overlappingBorder
+       \qmlproperty int PermissionsRow::overlappingBorder
        This property allows customizing the overlapping border between elements.
     */
     property int overlappingBorder: 1
 
     /*!
-       \qmlproperty color CommunityPermissionsRow::backgroundColor
+       \qmlproperty color PermissionsRow::backgroundColor
        This property holds the control background color, including border color of overlapped elements.
     */
     property color backgroundColor: Theme.palette.baseColor4
 
     /*!
-       \qmlproperty int CommunityPermissionsRow::backgroundRadius
+       \qmlproperty int PermissionsRow::backgroundRadius
        This property holds the background radius.
     */
     property int backgroundRadius: 8
 
     /*!
-       \qmlproperty int CommunityPermissionsRow::dotsIconSize
+       \qmlproperty int PermissionsRow::dotsIconSize
        This property holds the dots icon size.
     */
     property int dotsIconSize: 8
 
     /*!
-       \qmlproperty int CommunityPermissionsRow::pixelSize
+       \qmlproperty int PermissionsRow::pixelSize
        This property holds the font pixel size of all elements that contain text,
        like the text `or` between elements or the `+2` and `+3` element's text.
     */

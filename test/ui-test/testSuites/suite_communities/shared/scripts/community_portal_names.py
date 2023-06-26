@@ -7,7 +7,7 @@ communitiesPortalLayoutContainer_createCommunityButton_StatusButton = {"containe
 navBarListView_All_Community_Buttons = {"checkable": True, "container": mainWindow_communityNavBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton"}
 
 # Create community intermediate popup:
-createCommunity_banner = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityBanner", "type": "CommunityBanner", "visible": True}
+createCommunity_banner = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityBanner", "type": "BannerPanel", "visible": True}
 createCommunity_bannerButton = {"container": createCommunity_banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
 
 # Create community popup:

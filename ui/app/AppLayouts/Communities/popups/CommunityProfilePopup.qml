@@ -44,7 +44,7 @@ StatusModal {
 
         Component {
             id: profileOverview
-            CommunityProfilePopupOverviewPanel {
+            ProfilePopupOverviewPanel {
                 width: stack.width
 
                 headerTitle: root.community.name

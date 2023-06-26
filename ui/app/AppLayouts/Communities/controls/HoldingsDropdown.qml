@@ -333,8 +333,8 @@ StatusDropdown {
             Component.onCompleted: {
                 if(d.extendedDeepNavigation)
                     listPanel.goForward(d.currentItemKey,
-                                        CommunityPermissionsHelpers.getTokenNameByKey(root.collectiblesModel, d.currentItemKey),
-                                        CommunityPermissionsHelpers.getTokenIconByKey(root.collectiblesModel, d.currentItemKey),
+                                        PermissionsHelpers.getTokenNameByKey(root.collectiblesModel, d.currentItemKey),
+                                        PermissionsHelpers.getTokenIconByKey(root.collectiblesModel, d.currentItemKey),
                                         d.currentSubItems)
             }
 
@@ -367,9 +367,9 @@ StatusDropdown {
 
             readonly property real effectiveAmount: amountValid ? amount : 0
 
-            tokenName: CommunityPermissionsHelpers.getTokenNameByKey(root.assetsModel, root.assetKey)
-            tokenShortName: CommunityPermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
-            tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(root.assetsModel, root.assetKey)
+            tokenName: PermissionsHelpers.getTokenNameByKey(root.assetsModel, root.assetKey)
+            tokenShortName: PermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
+            tokenImage: PermissionsHelpers.getTokenIconByKey(root.assetsModel, root.assetKey)
             amountText: d.assetAmountText
             tokenCategoryText: qsTr("Asset")
             addOrUpdateButtonEnabled: d.assetsReady
@@ -377,7 +377,7 @@ StatusDropdown {
 
             ListModel {
                 Component.onCompleted: {
-                    const asset = CommunityPermissionsHelpers.getTokenByKey(
+                    const asset = PermissionsHelpers.getTokenByKey(
                                     root.assetsModel,
                                     root.assetKey)
 
@@ -429,10 +429,10 @@ StatusDropdown {
 
             readonly property real effectiveAmount: amountValid ? amount : 0
 
-            tokenName: CommunityPermissionsHelpers.getTokenNameByKey(root.collectiblesModel, root.collectibleKey)
+            tokenName: PermissionsHelpers.getTokenNameByKey(root.collectiblesModel, root.collectibleKey)
             tokenShortName: ""
-            tokenImage: CommunityPermissionsHelpers.getTokenIconByKey(root.collectiblesModel, root.collectibleKey)
-            tokenAmount: CommunityPermissionsHelpers.getTokenAmountByKey(root.collectiblesModel, root.collectibleKey)
+            tokenImage: PermissionsHelpers.getTokenIconByKey(root.collectiblesModel, root.collectibleKey)
+            tokenAmount: PermissionsHelpers.getTokenAmountByKey(root.collectiblesModel, root.collectibleKey)
             amountText: d.collectibleAmountText
             tokenCategoryText: qsTr("Collectible")
             addOrUpdateButtonEnabled: d.collectiblesReady
@@ -441,7 +441,7 @@ StatusDropdown {
 
             ListModel {
                 Component.onCompleted: {
-                    const collectible = CommunityPermissionsHelpers.getTokenByKey(
+                    const collectible = PermissionsHelpers.getTokenByKey(
                                           root.collectiblesModel,
                                           root.collectibleKey)
 

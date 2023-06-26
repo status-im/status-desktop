@@ -1,2 +1,2 @@
-singleton CommunityPermissionsHelpers 1.0 CommunityPermissionsHelpers.qml
+singleton PermissionsHelpers 1.0 PermissionsHelpers.qml
 TokenObject 1.0 TokenObject.qml

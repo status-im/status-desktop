@@ -90,7 +90,7 @@ StatusScrollView {
         else if (type === Constants.TokenType.ERC721)
             tokenModel = root.collectiblesModel
 
-        const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+        const modelItem = PermissionsHelpers.getTokenByKey(
                             tokenModel, key)
 
         const entry = d.prepareEntry(key, amount, type)
@@ -187,7 +187,7 @@ StatusScrollView {
             else if (type === Constants.TokenType.ERC721)
                 tokenModel = root.collectiblesModel
 
-            const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+            const modelItem = PermissionsHelpers.getTokenByKey(
                                 tokenModel, key)
 
             return {

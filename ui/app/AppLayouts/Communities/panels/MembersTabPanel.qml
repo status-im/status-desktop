@@ -35,7 +35,7 @@ Item {
         DeclinedRequests
     }
 
-    property int panelType: CommunityMembersTabPanel.TabType.AllMembers
+    property int panelType: MembersTabPanel.TabType.AllMembers
 
     ColumnLayout {
         anchors.fill: parent
@@ -81,7 +81,7 @@ Item {
                 components: [
                     StatusButton {
                         objectName: "MemberListIten_KickButton"
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
+                        visible: (root.panelType === MembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
                         text: qsTr("Kick")
                         type: StatusBaseButton.Type.Danger
                         size: StatusBaseButton.Size.Small
@@ -89,7 +89,7 @@ Item {
                     },
 
                     StatusButton {
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
+                        visible: (root.panelType === MembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
                         text: qsTr("Ban")
                         type: StatusBaseButton.Type.Danger
                         size: StatusBaseButton.Size.Small
@@ -97,13 +97,13 @@ Item {
                     },
 
                     StatusButton {
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.BannedMembers) && isHovered && canBeBanned
+                        visible: (root.panelType === MembersTabPanel.TabType.BannedMembers) && isHovered && canBeBanned
                         text: qsTr("Unban")
                         onClicked: root.unbanUserClicked(model.pubKey)
                     },
 
                     StatusButton {
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.PendingRequests) && isHovered
+                        visible: (root.panelType === MembersTabPanel.TabType.PendingRequests) && isHovered
                         text: qsTr("Reject")
                         type: StatusBaseButton.Type.Danger
                         icon.name: "close-circle"
@@ -112,8 +112,8 @@ Item {
                     },
 
                     StatusButton {
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.PendingRequests ||
-                                  root.panelType === CommunityMembersTabPanel.TabType.DeclinedRequests) && isHovered
+                        visible: (root.panelType === MembersTabPanel.TabType.PendingRequests ||
+                                  root.panelType === MembersTabPanel.TabType.DeclinedRequests) && isHovered
                         text: qsTr("Accept")
                         icon.name: "checkmark-circle"
                         icon.color: Theme.palette.successColor1
@@ -142,7 +142,7 @@ Item {
                 asset.width: 40
                 asset.height: 40
                 ringSettings.ringSpecModel: model.colorHash
-                statusListItemIcon.badge.visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers)
+                statusListItemIcon.badge.visible: (root.panelType === MembersTabPanel.TabType.AllMembers)
 
                 onClicked: {
                     if(mouse.button === Qt.RightButton) {

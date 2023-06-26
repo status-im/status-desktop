@@ -22,7 +22,7 @@ SplitView {
             SplitView.fillHeight: true
             color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
-            CommunityPermissionsView {
+            PermissionsView {
                 anchors {
                     fill: parent
                     margins: 50
@@ -53,7 +53,7 @@ SplitView {
                 }
 
                 function log(method, index) {
-                    logs.logEvent(`CommunityPermissionsView::${method} - index: ${index}`)
+                    logs.logEvent(`PermissionsView::${method} - index: ${index}`)
                 }
 
                 onEditPermissionRequested: log("editPermissionRequested", index)

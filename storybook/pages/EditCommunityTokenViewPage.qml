@@ -24,7 +24,7 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            CommunityNewTokenView {
+            EditCommunityTokenView {
                 anchors.fill: parent
                 anchors.margins: 50
                 isAssetView: isAssetBox.checked
@@ -36,7 +36,7 @@ SplitView {
                 accounts: WalletAccountsModel {}
                 tokensModel: isAssetBox.checked ? MintedTokensModel.mintedAssetsModel :  MintedTokensModel.mintedCollectiblesModel
 
-                onPreviewClicked: logs.logEvent("CommunityNewTokenView::previewClicked")
+                onPreviewClicked: logs.logEvent("EditCommunityTokenView::previewClicked")
             }
         }
 

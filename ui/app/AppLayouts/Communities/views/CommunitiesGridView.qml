@@ -86,7 +86,7 @@ StatusScrollView {
 
 
             // Community restrictions
-            rigthHeaderComponent: CommunityPermissionsRow {
+            rigthHeaderComponent: PermissionsRow {
                 visible: !!card.permissionsList && card.permissionsList.count > 0
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel

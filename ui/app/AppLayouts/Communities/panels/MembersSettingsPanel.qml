@@ -104,7 +104,7 @@ SettingsPageLayout {
             Layout.fillHeight: true
             currentIndex: membersTabBar.currentIndex
 
-            CommunityMembersTabPanel {
+            MembersTabPanel {
                 model: root.membersModel
                 rootStore: root.rootStore
                 placeholderText: {
@@ -113,7 +113,7 @@ SettingsPageLayout {
 
                     return qsTr("Search %1's %n member(s)", "", root.membersModel ? root.membersModel.count : 0).arg(root.communityName)
                 }
-                panelType: CommunityMembersTabPanel.TabType.AllMembers
+                panelType: MembersTabPanel.TabType.AllMembers
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -131,7 +131,7 @@ SettingsPageLayout {
                 }
             }
 
-            CommunityMembersTabPanel {
+            MembersTabPanel {
                 model: root.pendingMemberRequestsModel
                 rootStore: root.rootStore
                 placeholderText: {
@@ -140,7 +140,7 @@ SettingsPageLayout {
 
                     return qsTr("Search %1's %n pending request(s)", "", root.pendingMemberRequestsModel.count).arg(root.communityName)
                 }
-                panelType: CommunityMembersTabPanel.TabType.PendingRequests
+                panelType: MembersTabPanel.TabType.PendingRequests
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -149,7 +149,7 @@ SettingsPageLayout {
                 onDeclineRequestToJoin: root.declineRequestToJoin(id)
             }
 
-            CommunityMembersTabPanel {
+            MembersTabPanel {
                 model: root.declinedMemberRequestsModel
                 rootStore: root.rootStore
                 placeholderText: {
@@ -158,7 +158,7 @@ SettingsPageLayout {
 
                     return qsTr("Search %1's %n rejected member(s)", "", root.declinedMemberRequestsModel.count).arg(root.communityName)
                 }
-                panelType: CommunityMembersTabPanel.TabType.DeclinedRequests
+                panelType: MembersTabPanel.TabType.DeclinedRequests
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -166,7 +166,7 @@ SettingsPageLayout {
                 onAcceptRequestToJoin: root.acceptRequestToJoin(id)
             }
 
-            CommunityMembersTabPanel {
+            MembersTabPanel {
                 model: root.bannedMembersModel
                 rootStore: root.rootStore
                 placeholderText: {
@@ -175,7 +175,7 @@ SettingsPageLayout {
 
                     return qsTr("Search %1's %n banned member(s)", "", root.bannedMembersModel.count).arg(root.communityName)
                 }
-                panelType: CommunityMembersTabPanel.TabType.BannedMembers
+                panelType: MembersTabPanel.TabType.BannedMembers
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true

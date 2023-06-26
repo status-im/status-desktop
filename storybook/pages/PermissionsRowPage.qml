@@ -27,7 +27,7 @@ SplitView {
                 text: "1 permission:"
             }
 
-            CommunityPermissionsRow {
+            PermissionsRow {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.bottomMargin: spacing
 
@@ -43,7 +43,7 @@ SplitView {
                 text: "2 short permissions:"
             }
 
-            CommunityPermissionsRow {
+            PermissionsRow {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.bottomMargin: spacing
 
@@ -59,7 +59,7 @@ SplitView {
                 text: "2 long permissions:"
             }
 
-            CommunityPermissionsRow {
+            PermissionsRow {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.bottomMargin: spacing
 
@@ -75,7 +75,7 @@ SplitView {
                 text: "Three short permissions:"
             }
 
-            CommunityPermissionsRow {
+            PermissionsRow {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.bottomMargin: spacing
 
@@ -91,7 +91,7 @@ SplitView {
                 text: "More than 2 permissions with short 1st and 2nd ones:"
             }
 
-            CommunityPermissionsRow {
+            PermissionsRow {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.bottomMargin: spacing
 
@@ -107,7 +107,7 @@ SplitView {
                 text: "5 permissions - long ones"
             }
 
-            CommunityPermissionsRow {
+            PermissionsRow {
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
                 Layout.preferredHeight: heighSliderEditor.value
                 Layout.bottomMargin: spacing

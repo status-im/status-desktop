@@ -50,7 +50,7 @@ Control {
         readonly property string memberchipRequestRejectedText: qsTr("Membership Request Rejected")
 
         function holdingsTextFormat(name, amount) {
-            return CommunityPermissionsHelpers.setHoldingsTextFormat(HoldingTypes.Type.Asset, name, amount)
+            return PermissionsHelpers.setHoldingsTextFormat(HoldingTypes.Type.Asset, name, amount)
         }
 
         function getInvitationPendingText() {

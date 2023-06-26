@@ -45,7 +45,7 @@ Item {
     signal infoButtonClicked
     signal manageButtonClicked
 
-    CommunityColumnHeaderPanel {
+    ColumnHeaderPanel {
         id: communityHeader
 
         anchors.top: parent.top
@@ -391,7 +391,7 @@ Item {
                 width: parent.width
                 height: item.height
                 sourceComponent: Component {
-                    CommunityWelcomeBannerPanel {
+                    WelcomeBannerPanel {
                         activeCommunity: communityData
                         store: root.store
                         hasAddedContacts: root.hasAddedContacts
@@ -408,7 +408,7 @@ Item {
                 width: parent.width
                 height: item.height
                 sourceComponent: Component {
-                        CommunityChannelsAndCategoriesBannerPanel {
+                        ChannelsAndCategoriesBannerPanel {
                             id: channelsAndCategoriesBanner
                             communityId: communityData.id
                             onAddMembersClicked: {

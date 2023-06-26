@@ -51,32 +51,32 @@ StatusScrollView {
         width: 608
         spacing: 12
 
-        CommunityNameInput {
+        NameInput {
             id: nameInput
             input.edit.objectName: "editCommunityNameInput"
             Layout.fillWidth: true
             Component.onCompleted: nameInput.input.forceActiveFocus(Qt.MouseFocusReason)
         }
 
-        CommunityDescriptionInput {
+        DescriptionInput {
             id: descriptionTextInput
             input.edit.objectName: "editCommunityDescriptionInput"
             Layout.fillWidth: true
         }
 
-        CommunityLogoPicker {
+        LogoPicker {
             id: logoPicker
             objectName: "editCommunityLogoPicker"
             Layout.fillWidth: true
         }
 
-        CommunityBannerPicker {
+        BannerPicker {
             id: bannerPicker
             objectName: "editCommunityBannerPicker"
             Layout.fillWidth: true
         }
 
-        CommunityColorPicker {
+        ColorPicker {
             id: colorPicker
             objectName: "editCommunityColorPicker"
             onPick: Global.openPopup(pickColorComponent)
@@ -89,7 +89,7 @@ StatusScrollView {
                     width: 640
                     anchors.centerIn: parent
                     leftButtons: []
-                    replaceItem: CommunityColorPanel {
+                    replaceItem: ColorPanel {
                         clip: true
                         Component.onCompleted: color = colorPicker.color
                         onAccepted: {
@@ -102,7 +102,7 @@ StatusScrollView {
             }
         }
 
-        CommunityTagsPicker {
+        TagsPicker {
             id: tagsPicker
             objectName: "editCommunityTagsPicker"
             onPick: Global.openPopup(pickTagsComponent)
@@ -115,7 +115,7 @@ StatusScrollView {
                     anchors.centerIn: parent
                     leftButtons: []
                     width: 640
-                    replaceItem: CommunityTagsPanel {
+                    replaceItem: TagsPanel {
                         Component.onCompleted: {
                             tags = tagsPicker.tags;
                             selectedTags = tagsPicker.selectedTags;
@@ -135,7 +135,7 @@ StatusScrollView {
             Layout.bottomMargin: -layout.spacing
         }
 
-        CommunityOptions {
+        Options {
             id: options
             Layout.fillWidth: true
         }
@@ -146,7 +146,7 @@ StatusScrollView {
             Layout.bottomMargin: 8
         }
 
-        CommunityIntroMessageInput {
+        IntroMessageInput {
             id: introMessageTextInput
             input.edit.objectName: "editCommunityIntroInput"
             Layout.fillWidth: true
@@ -154,7 +154,7 @@ StatusScrollView {
             maximumHeight: 108
         }
 
-        CommunityOutroMessageInput {
+        OutroMessageInput {
             id: outroMessageTextInput
             input.edit.objectName: "editCommunityOutroInput"
             Layout.fillWidth: true

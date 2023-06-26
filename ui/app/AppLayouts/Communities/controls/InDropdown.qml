@@ -293,7 +293,7 @@ StatusDropdown {
                             Component {
                                 id: communityCategoryDelegate
 
-                                CommunityCategoryListItem {
+                                CategoryListItem {
                                     title: model.name
 
                                     checkState: {

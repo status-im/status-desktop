@@ -149,8 +149,8 @@ SplitView {
             anchors.fill: parent
             active: globalUtilsReady && mainModuleReady
 
-            sourceComponent: CommunityNewAirdropView {
-                id: communityNewAirdropView
+            sourceComponent: EditAirdropView {
+                id: editAirdropView
 
                 CollectiblesModel {
                     id: collectiblesModel
@@ -198,7 +198,7 @@ SplitView {
                     }
 
                     Component.onCompleted: {
-                        Qt.callLater(() => communityNewAirdropView.collectiblesModel = this)
+                        Qt.callLater(() => editAirdropView.collectiblesModel = this)
                     }
                 }
 
@@ -241,22 +241,29 @@ SplitView {
 
 
                     Component.onCompleted: {
-                        Qt.callLater(() => communityNewAirdropView.assetsModel = this)
+                        Qt.callLater(() => editAirdropView.assetsModel = this)
                     }
                 }
 
-                assetsModel: ListModel {}
-                collectiblesModel: ListModel {}
+                assetsModel: AssetsModel {}
+                collectiblesModel: CollectiblesModel {}
                 membersModel: members
+                communityDetails: QtObject {
+                    readonly property string name: "Socks"
+                    readonly property string id: "SOCKS"
+                    readonly property string image: ModelsData.icons.socks
+                    readonly property string color: "red"
+                    readonly property bool owner: true
+                }
 
                 onAirdropClicked: {
-                    logs.logEvent("CommunityNewAirdropView::airdropClicked",
+                    logs.logEvent("EditAirdropView::airdropClicked",
                                   ["airdropTokens", "addresses", "membersPubKeys"],
                                   arguments)
                 }
 
                 onAirdropFeesRequested: {
-                    logs.logEvent("CommunityNewAirdropView::airdropFeesRequested",
+                    logs.logEvent("EditAirdropView::airdropFeesRequested",
                                   ["contractKeysAndAmounts", "addresses"],
                                   arguments)
 

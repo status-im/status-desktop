@@ -29,7 +29,7 @@ Control {
         readonly property int defaultHoldingsSpacing: 8
 
         function holdingsTextFormat(name, amount) {
-            return CommunityPermissionsHelpers.setHoldingsTextFormat(HoldingTypes.Type.Asset, name, amount)
+            return PermissionsHelpers.setHoldingsTextFormat(HoldingTypes.Type.Asset, name, amount)
         }
     }
 

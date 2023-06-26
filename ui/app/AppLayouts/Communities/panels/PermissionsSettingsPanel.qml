@@ -142,7 +142,7 @@ SettingsPageLayout {
     Component {
         id: welcomeView
 
-        CommunityWelcomeSettingsView {
+        WelcomeSettingsView {
             viewWidth: root.viewWidth
             image: Style.png("community/permissions2_3")
             title: qsTr("Permissions")
@@ -158,8 +158,8 @@ SettingsPageLayout {
     Component {
         id: newPermissionView
 
-        CommunityNewPermissionView {
-            id: communityNewPermissionView
+        EditPermissionView {
+            id: editPermissionView
 
             viewWidth: root.viewWidth
 
@@ -182,8 +182,8 @@ SettingsPageLayout {
                 // dependencies
                 holdingsTracker.revision
                 channelsTracker.revision
-                communityNewPermissionView.dirtyValues.permissionType
-                communityNewPermissionView.dirtyValues.isPrivate
+                editPermissionView.dirtyValues.permissionType
+                editPermissionView.dirtyValues.isPrivate
                 const model = root.permissionsModel
                 const count = model.rowCount()
 
@@ -287,21 +287,21 @@ SettingsPageLayout {
             ModelChangeTracker {
                 id: holdingsTracker
 
-                model: communityNewPermissionView.dirtyValues.selectedHoldingsModel
+                model: editPermissionView.dirtyValues.selectedHoldingsModel
             }
 
             ModelChangeTracker {
                 id: channelsTracker
 
-                model: communityNewPermissionView.dirtyValues.selectedChannelsModel
+                model: editPermissionView.dirtyValues.selectedChannelsModel
             }
 
             Binding {
                 target: root
                 property: "saveChangesButtonEnabled"
-                value: !communityNewPermissionView.permissionDuplicated
-                       && !communityNewPermissionView.permissionTypeLimitReached
-                       && communityNewPermissionView.isFullyFilled
+                value: !editPermissionView.permissionDuplicated
+                       && !editPermissionView.permissionTypeLimitReached
+                       && editPermissionView.isFullyFilled
             }
         }
     }
@@ -309,7 +309,7 @@ SettingsPageLayout {
     Component {
         id: permissionsView
 
-        CommunityPermissionsView {
+        PermissionsView {
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel

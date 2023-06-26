@@ -60,7 +60,7 @@ Item {
 
             anchors.fill: parent
 
-            sourceComponent: CommunityProfilePopupInviteMessagePanel {
+            sourceComponent: ProfilePopupInviteMessagePanel {
                 id: panel
 
                 contactsStore: QtObject {
