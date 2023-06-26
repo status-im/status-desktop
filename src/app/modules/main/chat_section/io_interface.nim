@@ -367,9 +367,6 @@ method onCommunityTokenPermissionDeleted*(self: AccessInterface, communityId: st
 method onCommunityTokenPermissionDeletionFailed*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onWalletAccountTokensRebuilt*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onKickedFromCommunity*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -389,9 +386,6 @@ method onDeactivateChatLoader*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method requestToJoinCommunityWithAuthentication*(self: AccessInterface, communityId: string, ensName: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onOwnedcollectiblesUpdated*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =

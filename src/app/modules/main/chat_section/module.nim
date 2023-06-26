@@ -304,12 +304,6 @@ proc reevaluateRequiresTokenPermissionToJoin(self: Module) =
 proc initCommunityTokenPermissionsModel(self: Module, channelGroup: ChannelGroupDto) =
   self.rebuildCommunityTokenPermissionsModel()
 
-method onWalletAccountTokensRebuilt*(self: Module) =
-  self.rebuildCommunityTokenPermissionsModel()
-
-method onOwnedcollectiblesUpdated*(self: Module) =
-  self.rebuildCommunityTokenPermissionsModel()
-
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
   return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
 

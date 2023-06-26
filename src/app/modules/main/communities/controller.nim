@@ -1,4 +1,4 @@
-import Tables, stint
+import stint
 import ./io_interface
 
 import ../../../core/signals/types
@@ -8,8 +8,8 @@ import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/token/service as token_service
-
-import ../../shared_models/token_permissions_model
+import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/collectible/service as collectible_service
 
 type
   Controller* = ref object of RootObj
@@ -119,6 +119,12 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_TOKEN_METADATA_ADDED) do(e: Args):
     let args = CommunityTokenMetadataArgs(e)
     self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
+
+  self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e: Args):
+    self.delegate.onOwnedCollectiblesUpdated()
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
+    self.delegate.onWalletAccountTokensRebuilt()
 
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
