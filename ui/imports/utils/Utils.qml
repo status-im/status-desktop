@@ -605,7 +605,7 @@ QtObject {
         case Constants.appSection.node:
             return qsTr("Node Management")
         case Constants.appSection.communitiesPortal:
-            return qsTr("Communities Portal")
+            return qsTr("Discover Communities")
         default:
             return fallback
         }
