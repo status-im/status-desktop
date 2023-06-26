@@ -23,6 +23,7 @@ StatusStackModal {
 
     property var store
     property bool isDiscordImport // creating new or importing from discord?
+    property bool isDevBuild
 
     stackTitle: isDiscordImport ? qsTr("Import a community from Discord into Status") :
                                   qsTr("Create New Community")
@@ -367,7 +368,7 @@ StatusStackModal {
         StatusScrollView {
             id: generalView
             contentWidth: availableWidth
-            readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
+            readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid && (root.isDevBuild || (logoPicker.hasSelectedImage && bannerPicker.hasSelectedImage))
 
             padding: 0
             clip: false
