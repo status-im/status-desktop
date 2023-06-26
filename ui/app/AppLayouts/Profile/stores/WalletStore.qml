@@ -23,6 +23,11 @@ QtObject {
     property var assets: walletSectionAssets.assets
     property var accounts: Global.appIsReady? accountsModule.accounts : null
     property var originModel: accountsModule.keyPairModel
+    property bool includeWatchOnlyAccount: accountsModule.includeWatchOnlyAccount
+
+    function toggleIncludeWatchOnlyAccount() {
+       accountsModule.toggleIncludeWatchOnlyAccount()
+    }
 
     property string userProfilePublicKey: userProfile.pubKey
     

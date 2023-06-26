@@ -48,3 +48,9 @@ proc getKeypairs*(self: Controller): seq[KeypairDto] =
 
 proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
   return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
+
+proc toggleIncludeWatchOnlyAccount*(self: Controller) =
+  self.walletAccountService.toggleIncludeWatchOnlyAccount()
+
+proc isIncludeWatchOnlyAccount*(self: Controller): bool =
+  return self.walletAccountService.isIncludeWatchOnlyAccount()

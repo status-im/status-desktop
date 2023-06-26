@@ -8,7 +8,6 @@ type Filter* = ref object
   activityController: activityc.Controller
   addresses*: seq[string]
   chainIds*: seq[int]
-  excludeWatchOnly*: bool
   allAddresses*: bool
 
 proc initFilter*(
@@ -20,7 +19,6 @@ proc initFilter*(
   result.activityController = activityController
   result.addresses = @[]
   result.chainIds = @[]
-  result.excludeWatchOnly = false
   result.allAddresses = false
 
 proc `$`*(self: Filter): string =
@@ -29,7 +27,6 @@ proc `$`*(self: Filter): string =
     chainIds: {self.chainIds},
     )"""
 
-
 proc setFillterAllAddresses*(self: Filter) = 
   self.allAddresses = true
   self.addresses = self.controller.getWalletAccounts().map(a => a.address)
@@ -37,16 +34,19 @@ proc setFillterAllAddresses*(self: Filter) =
   self.activityController.updateFilter()
 
 proc toggleWatchOnlyAccounts*(self: Filter) =
-  self.excludeWatchOnly = not self.excludeWatchOnly
-  if self.excludeWatchOnly:
+  self.controller.toggleIncludeWatchOnlyAccount()
+
+proc includeWatchOnlyToggled*(self: Filter) =
+  let includeWatchOnly = self.controller.isIncludeWatchOnlyAccount()
+  if includeWatchOnly:
+    self.setFillterAllAddresses()
+  else:
     self.addresses = self.controller.getWalletAccounts().filter(a => a.walletType != "watch").map(a => a.address)
     self.activityController.setFilterAddresses(self.addresses)
     self.activityController.updateFilter()
-  else:
-    self.setFillterAllAddresses()
 
 proc load*(self: Filter) =
-  self.setFillterAllAddresses()
+  self.includeWatchOnlyToggled()
   self.chainIds = self.controller.getEnabledChainIds()
   self.activityController.setFilterChains(self.chainIds)
   self.activityController.updateFilter()

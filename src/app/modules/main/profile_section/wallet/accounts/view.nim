@@ -12,6 +12,7 @@ QtObject:
       accounts: Model
       accountsVariant: QVariant
       keyPairModel: KeyPairModel
+      includeWatchOnlyAccount: bool
 
   proc delete*(self: View) =
     self.accounts.delete
@@ -65,3 +66,17 @@ QtObject:
   proc setKeyPairModelItems*(self: View, items: seq[KeyPairItem]) =
     self.keyPairModel.setItems(items)
     self.keyPairModelChanged()
+
+  proc includeWatchOnlyAccountChanged*(self: View) {.signal.}
+  proc getIncludeWatchOnlyAccount(self: View): bool {.slot.} =
+    return self.includeWatchOnlyAccount
+  QtProperty[bool] includeWatchOnlyAccount:
+    read = getIncludeWatchOnlyAccount
+    notify = includeWatchOnlyAccountChanged
+
+  proc toggleIncludeWatchOnlyAccount*(self: View) {.slot.} =
+    self.delegate.toggleIncludeWatchOnlyAccount()
+
+  proc setIncludeWatchOnlyAccount*(self: View, includeWatchOnlyAccount: bool) =
+    self.includeWatchOnlyAccount = includeWatchOnlyAccount
+    self.includeWatchOnlyAccountChanged()

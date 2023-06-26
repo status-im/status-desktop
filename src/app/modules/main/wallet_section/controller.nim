@@ -65,3 +65,9 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 
 proc getEnabledChainIds*(self: Controller): seq[int] = 
   return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
+
+proc toggleIncludeWatchOnlyAccount*(self: Controller) =
+  self.walletAccountService.toggleIncludeWatchOnlyAccount()
+
+proc isIncludeWatchOnlyAccount*(self: Controller): bool =
+  return self.walletAccountService.isIncludeWatchOnlyAccount()

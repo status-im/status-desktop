@@ -36,3 +36,6 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method toggleIncludeWatchOnlyAccount*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -48,7 +48,7 @@ SplitView {
                                                               displayDecimals: 4,
                                                               stripTrailingZeroes: false}),
                                         isAllAccounts: false,
-                                        hideWatchAccounts: false
+                                        includeWatchOnly: false
 
                                     })
 

@@ -965,3 +965,9 @@ QtObject:
             totalTokenBalance += token.getTotalBalanceOfSupportedChains()
 
     return totalTokenBalance
+
+  proc isIncludeWatchOnlyAccount*(self: Service): bool =
+    return self.settingsService.isIncludeWatchOnlyAccount()
+
+  proc toggleIncludeWatchOnlyAccount*(self: Service) =
+    self.settingsService.toggleIncludeWatchOnlyAccount()

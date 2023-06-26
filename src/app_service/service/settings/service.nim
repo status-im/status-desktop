@@ -27,6 +27,7 @@ const SIGNAL_BIO_UPDATED* = "bioUpdated"
 const SIGNAL_MNEMONIC_REMOVED* = "mnemonicRemoved"
 const SIGNAL_SOCIAL_LINKS_UPDATED* = "socialLinksUpdated"
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
+const SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED* = "includeWatchOnlyAccounts"
 
 logScope:
   topics = "settings-service"
@@ -109,6 +110,9 @@ QtObject:
           if settingsField.name == KEY_MNEMONIC:
             self.settings.mnemonic = ""
             self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
+          if settingsField.name == INCLUDE_WATCH_ONLY_ACCOUNT:
+            self.settings.includeWatchOnlyAccount = parseBool(settingsField.value)
+            self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, Args())
 
       if receivedData.socialLinksInfo.links.len > 0 or
         receivedData.socialLinksInfo.removed:
@@ -966,3 +970,12 @@ QtObject:
       data.error = e.msg
       error "error saving social links", errDescription=data.error
     self.storeSocialLinksAndNotify(data)
+
+  proc isIncludeWatchOnlyAccount*(self: Service): bool =
+    return self.settings.includeWatchOnlyAccount
+
+  proc toggleIncludeWatchOnlyAccount*(self: Service) =
+    let newValue = not self.settings.includeWatchOnlyAccount
+    if(self.saveSetting(INCLUDE_WATCH_ONLY_ACCOUNT, newValue)):
+      self.settings.includeWatchOnlyAccount = newValue
+      self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, Args())

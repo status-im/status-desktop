@@ -10,6 +10,7 @@ import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/keycard/service as keycard_service
 import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../../app_service/service/network/service as network_service
+import ../../../../../../app_service/service/settings/service
 
 export io_interface
 
@@ -107,8 +108,12 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED) do(e: Args):
+    self.view.setIncludeWatchOnlyAccount(self.controller.isIncludeWatchOnlyAccount())
+
   self.controller.init()
   self.view.load()
+  self.view.setIncludeWatchOnlyAccount(self.controller.isIncludeWatchOnlyAccount())
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -126,3 +131,6 @@ method updateAccountPosition*(self: Module, address: string, position: int) =
 
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)
+
+method toggleIncludeWatchOnlyAccount*(self: Module) =
+  self.controller.toggleIncludeWatchOnlyAccount()

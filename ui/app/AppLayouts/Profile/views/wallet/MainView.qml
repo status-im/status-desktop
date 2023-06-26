@@ -95,7 +95,9 @@ Column {
                 width: parent.width
                 chainShortNames: walletStore.getAllNetworksSupportedPrefix()
                 userProfilePublicKey: walletStore.userProfilePublicKey
+                includeWatchOnlyAccount: walletStore.includeWatchOnlyAccount
                 onGoToAccountView: root.goToAccountView(account)
+                onToggleIncludeWatchOnlyAccount: walletStore.toggleIncludeWatchOnlyAccount()
             }
         }
     }
