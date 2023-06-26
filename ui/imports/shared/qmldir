@@ -3,4 +3,3 @@ module shared
 DelegateModelGeneralized 1.0 DelegateModelGeneralized.qml
 LoadingAnimation 1.0 LoadingAnimation.qml
 MacTrafficLights 1.0 MacTrafficLights.qml
-NumberPolyFill 1.0 PolyfillNumberToLocaleString.js
