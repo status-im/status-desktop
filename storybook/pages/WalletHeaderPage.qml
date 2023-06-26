@@ -56,7 +56,7 @@ SplitView {
                                                        displayDecimals: 4,
                                                        stripTrailingZeroes: false}),
                                  isAllAccounts: false,
-                                 hideWatchAccounts: false
+                                 includeWatchOnly: false
                              })
         }
 
@@ -73,7 +73,7 @@ SplitView {
                                                                          displayDecimals: 4,
                                                                          stripTrailingZeroes: false}),
                                                    isAllAccounts: true,
-                                                   hideWatchAccounts: true,
+                                                   includeWatchOnly: true,
                                                    colorIds: "purple;pink;magenta"
                                                })
 

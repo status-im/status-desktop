@@ -44,6 +44,7 @@ const KEY_GIF_API_KEY* = "gifs/api-key"
 const KEY_DISPLAY_NAME* = "display-name"
 const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
+const INCLUDE_WATCH_ONLY_ACCOUNT* = "include-watch-only-account?"
 
 # Notifications Settings Values
 const VALUE_NOTIF_SEND_ALERTS* = "SendAlerts"
@@ -136,6 +137,7 @@ type
     notificationsSoundsEnabled*: bool
     notificationsVolume*: int
     notificationsMessagePreview*: int
+    includeWatchOnlyAccount*: bool
 
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
@@ -192,6 +194,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_GIF_RECENTS, result.gifRecents)
   discard jsonObj.getProp(KEY_GIF_FAVORITES, result.gifFavorites)
   discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
+  discard jsonObj.getProp(INCLUDE_WATCH_ONLY_ACCOUNT, result.includeWatchOnlyAccount)
 
   var pinnedMailserverObj: JsonNode
   if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserverObj)):

@@ -125,7 +125,7 @@ Rectangle {
         function onDestroyAddAccountPopup() {
             addAccount.active = false
         }
-        function onFilterChanged(address, excludeWatchOnly, allAddresses) {
+        function onFilterChanged(address, includeWatchOnly, allAddresses) {
             root.currentAddress = allAddresses ? "" : address
             root.showAllAccounts = allAddresses
         }

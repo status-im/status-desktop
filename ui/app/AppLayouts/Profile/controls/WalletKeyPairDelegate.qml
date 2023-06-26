@@ -13,8 +13,10 @@ Rectangle {
 
     property string chainShortNames
     property string userProfilePublicKey
+    property bool includeWatchOnlyAccount
 
     signal goToAccountView(var account)
+    signal toggleIncludeWatchOnlyAccount()
 
     QtObject {
         id: d
@@ -68,9 +70,8 @@ Rectangle {
                 },
                 StatusSwitch {
                     visible: d.isWatchOnly
-                    // To-do connect in different task
-//                    checked: false
-//                    onCheckedChanged: {}
+                    checked: root.includeWatchOnlyAccount
+                    onClicked: root.toggleIncludeWatchOnlyAccount()
                 }
             ]
         }

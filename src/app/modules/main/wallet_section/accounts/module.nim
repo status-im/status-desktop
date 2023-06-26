@@ -42,11 +42,11 @@ method delete*(self: Module) =
   self.view.delete
   self.controller.delete
 
-method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int], excludeWatchOnly: bool) =
+method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let walletAccounts = self.controller.getWalletAccounts()
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
-  let items = walletAccounts.filter(w => not excludeWatchOnly or w.walletType != "watch").map(w => (block:
+  let items = walletAccounts.map(w => (block:
     let keycardAccount = self.controller.isKeycardAccount(w)
     walletAccountToWalletAccountsItem(
       w,
