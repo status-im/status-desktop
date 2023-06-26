@@ -39,8 +39,8 @@ StatusSectionLayout {
         {id: Constants.CommunitySettingsSections.Members, name: qsTr("Members"), icon: "group-chat", enabled: true, },
 
         {id: Constants.CommunitySettingsSections.Permissions, name: qsTr("Permissions"), icon: "objects", enabled: true},
-        {id: Constants.CommunitySettingsSections.MintTokens, name: qsTr("Mint Tokens"), icon: "token", enabled: root.community.memberRole === Constants.memberRole.owner},
-        {id: Constants.CommunitySettingsSections.Airdrops, name: qsTr("Airdrops"), icon: "airdrop", enabled: root.community.memberRole === Constants.memberRole.owner}]
+        {id: Constants.CommunitySettingsSections.MintTokens, name: qsTr("Mint Tokens"), icon: "token", enabled: root.isOwner},
+        {id: Constants.CommunitySettingsSections.Airdrops, name: qsTr("Airdrops"), icon: "airdrop", enabled: root.isOwner}]
 
     // TODO: Next community settings options:
     //                        {name: qsTr("Token sales"), icon: "token-sale"},
@@ -51,8 +51,8 @@ StatusSectionLayout {
     property bool hasAddedContacts: false
     property var transactionStore: TransactionStore {}
 
-    property bool isAdmin: community.memberRole === Constants.memberRole.owner ||
-                           community.memberRole === Constants.memberRole.admin
+    readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
+    readonly property bool isAdmin: isOwner || community.memberRole === Constants.memberRole.admin
 
     readonly property string filteredSelectedTags: {
         var tagsArray = []
