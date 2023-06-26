@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import xml.etree.ElementTree as ET
 import subprocess
 import os
