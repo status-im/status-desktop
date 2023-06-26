@@ -99,10 +99,6 @@ type
     suggestedRoutes*: string
 
 type
-  PendingTxCompletedArgs* = ref object of Args
-    txHash*: string
-
-type
   CryptoServicesArgs* = ref object of Args
     data*: seq[CryptoRampDto]
 type
@@ -186,11 +182,6 @@ QtObject:
       let address = watchTxResult["address"].getStr
       let transactionReceipt = transactions.getTransactionReceipt(chainId, hash).result
       if transactionReceipt != nil and transactionReceipt.kind != JNull:
-        # Delete pending transaction. Deleting it in status-go didn't work for all the cases
-        # TODO: make delete pending and save transaction atomc in status-go after fixing the crash
-        discard transactions.deletePendingTransaction(chainId, hash)
-
-        echo watchTxResult["data"].getStr
         let ev = TransactionMinedArgs(
           data: watchTxResult["data"].getStr,
           transactionHash: hash,
@@ -203,13 +194,6 @@ QtObject:
   proc watchTransaction*(
     self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, data: string, chainId: int, track: bool = true
   ) =
-    if track:
-      try:
-        discard transactions.trackPendingTransaction(hash, fromAddress, toAddress, trxType, data, chainId)
-      except Exception as e:
-        let errDescription = e.msg
-        error "error: ", errDescription
-
     let arg = WatchTransactionTaskArg(
       chainId: chainId,
       hash: hash,

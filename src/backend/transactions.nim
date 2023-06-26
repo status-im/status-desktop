@@ -54,29 +54,8 @@ proc getTransfersByAddress*(chainId: int, address: string, toBlock: Uint256, lim
 
   core.callPrivateRPC("wallet_getTransfersByAddressAndChainID", %* [chainId, address, toBlockParsed, limitAsHexWithoutLeadingZeros, loadMore])
 
-proc trackPendingTransaction*(hash: string, fromAddress: string, toAddress: string, trxType: string, data: string, chainId: int):
-  RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [{
-    "hash": hash,
-    "from": fromAddress,
-    "to": toAddress,
-    "type": trxType,
-    "additionalData": data,
-    "data": "",
-    "value": 0,
-    "timestamp": 0,
-    "gasPrice": 0,
-    "gasLimit": 0,
-    "network_id": chainId
-  }]
-  core.callPrivateRPC("wallet_storePendingTransaction", payload)
-
 proc getTransactionReceipt*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   core.callPrivateRPCWithChainId("eth_getTransactionReceipt", chainId, %* [transactionHash])
-
-proc deletePendingTransaction*(chainId: int, transactionHash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [chainId, transactionHash]
-  result = core.callPrivateRPC("wallet_deletePendingTransactionByChainID", payload)
 
 proc fetchCryptoServices*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
