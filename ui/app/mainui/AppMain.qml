@@ -119,6 +119,7 @@ Item {
         popupParent: appMain
         rootStore: appMain.rootStore
         communitiesStore: appMain.communitiesStore
+        isDevBuild: !production
     }
 
     Connections {

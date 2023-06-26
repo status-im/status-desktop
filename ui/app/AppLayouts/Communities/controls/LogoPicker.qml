@@ -23,6 +23,8 @@ Item {
     property alias cropRect: editor.cropRect
     property alias imageData: editor.dataImage
 
+    readonly property bool hasSelectedImage: localAppSettings.testEnvironment ? true : editor.userSelectedImage
+
     implicitHeight: layout.childrenRect.height
 
     ColumnLayout {

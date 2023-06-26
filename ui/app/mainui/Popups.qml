@@ -24,6 +24,7 @@ QtObject {
     required property var popupParent
     required property var rootStore
     property var communitiesStore
+    property bool isDevBuild
 
     property var activePopupComponents: []
 
@@ -467,6 +468,7 @@ QtObject {
             id: createCommunitiesPopupComponent
             CreateCommunityPopup {
                 store: root.communitiesStore
+                isDevBuild: root.isDevBuild
                 onClosed: {
                     destroy()
                 }
