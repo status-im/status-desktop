@@ -54,7 +54,6 @@ ColumnLayout {
 
     function checkPasswordMatches(onlyIfConfirmPasswordHasFocus = true) {
         if (confirmPswInput.text.length === 0) {
-            errorTxt.text = ""
             return
         }
 
@@ -63,7 +62,6 @@ ColumnLayout {
         }
 
         if(newPswInput.text.length >= Constants.minPasswordLength) {
-            errorTxt.text = ""
             if(confirmPswInput.text !== newPswInput.text) {
                 errorTxt.text = qsTr("Passwords don't match")
             }
@@ -78,7 +76,8 @@ ColumnLayout {
         property bool containsNumbers: false
         property bool containsSymbols: false
 
-        readonly property var validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
+        readonly property var validatorRegexp: /^[!-~]{0,64}$/
+        readonly property string validatorErrMessage: qsTr("Only letters, numbers, underscores and hyphens allowed")
 
         // Password strength categorization / validation
         function lowerCaseValidator(text) { return (/[a-z]/.test(text)) }
@@ -86,6 +85,15 @@ ColumnLayout {
         function numbersValidator(text) { return (/\d/.test(text)) }
         // That incudes NOT extended ASCII printable symbols less space:
         function symbolsValidator(text) { return (/[!-\/:-@[-`{-~]/.test(text)) }
+
+        function validateCharacterSet(text) {
+            if(!(d.validatorRegexp).test(text)) {
+                errorTxt.text = d.validatorErrMessage
+                return false
+            }
+
+            return true
+        }
 
         // Used to convert strength from a given score to a specific category
         function convertStrength(score) {
@@ -104,8 +112,6 @@ ColumnLayout {
 
         // Password validation / error message selection:
         function passwordValidation() {
-            errorTxt.text = ""
-
             // 3 rules to validate:
             // * Password is in pwnd passwords database
             if(isInPwndDatabase())
@@ -168,7 +174,6 @@ ColumnLayout {
         Layout.fillWidth: true
         placeholderText: qsTr("Current password")
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
-        validator: d.validator
         rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
         onAccepted: root.returnPressed()
 
@@ -201,18 +206,21 @@ ColumnLayout {
             Layout.fillWidth: true
             placeholderText: qsTr("New password")
             echoMode: showPassword ? TextInput.Normal : TextInput.Password
-            validator: d.validator
             rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Style.current.padding / 2
 
             onTextChanged: {
                 // Update password checkers
+                errorTxt.text = ""
+                // Update strength indicator:
+                strengthInditactor.strength = d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
+
+                if(!d.validateCharacterSet(text)) return
+
                 d.containsLower = d.lowerCaseValidator(text)
                 d.containsUpper = d.upperCaseValidator(text)
                 d.containsNumbers = d.numbersValidator(text)
                 d.containsSymbols = d.symbolsValidator(text)
 
-                // Update strength indicator:
-                strengthInditactor.strength = d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
                 if (text.length === confirmPswInput.text.length) {
                     root.checkPasswordMatches(false)
                 }
@@ -302,10 +310,13 @@ ColumnLayout {
         Layout.fillWidth: true
         placeholderText: qsTr("Confirm password")
         echoMode: showPassword ? TextInput.Normal : TextInput.Password
-        validator: d.validator
         rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
 
         onTextChanged: {
+            errorTxt.text = ""
+
+            if(!d.validateCharacterSet(newPswInput.text)) return
+
             d.passwordValidation();
             if(text.length === newPswInput.text.length) {
                 root.checkPasswordMatches()
