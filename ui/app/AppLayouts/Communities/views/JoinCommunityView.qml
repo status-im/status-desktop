@@ -78,7 +78,7 @@ StatusSectionLayout {
     leftPanel: ColumnLayout {
         anchors.fill: parent
 
-        CommunityColumnHeaderPanel {
+        ColumnHeaderPanel {
             Layout.fillWidth: true
             name: root.name
             membersCount: root.membersCount

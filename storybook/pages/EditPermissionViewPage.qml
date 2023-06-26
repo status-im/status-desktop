@@ -17,8 +17,8 @@ SplitView {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
 
-        CommunityNewPermissionView {
-            id: communityNewPermissionView
+        EditPermissionView {
+            id: editPermissionView
 
             anchors.fill: parent
 
@@ -39,7 +39,7 @@ SplitView {
             }
 
             onCreatePermissionClicked: {
-                logs.logEvent("CommunityNewPermissionView::onCreatePermissionClicked")
+                logs.logEvent("EditPermissionView::onCreatePermissionClicked")
             }
         }
     }
@@ -94,11 +94,11 @@ SplitView {
             Button {
                 text: "Reset changes"
 
-                onClicked: communityNewPermissionView.resetChanges()
+                onClicked: editPermissionView.resetChanges()
             }
 
             Label {
-                text: "Is dirty: " + communityNewPermissionView.dirty
+                text: "Is dirty: " + editPermissionView.dirty
             }
         }
     }

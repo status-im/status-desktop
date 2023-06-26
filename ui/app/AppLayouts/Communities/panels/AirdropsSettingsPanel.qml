@@ -24,7 +24,7 @@ SettingsPageLayout {
 
     // JS object specifing fees for the airdrop operation, should be set to
     // provide response to airdropFeesRequested signal.
-    // Refer CommunityNewAirdropView::airdropFees for details.
+    // Refer EditAirdropView::airdropFees for details.
     property var airdropFees: null
 
     property int viewWidth: 560 // by design
@@ -99,7 +99,7 @@ SettingsPageLayout {
     Component {
         id: welcomeView
 
-        CommunityWelcomeSettingsView {
+        WelcomeSettingsView {
             viewWidth: root.viewWidth
             image: Style.png("community/airdrops8_1")
             title: qsTr("Airdrop community tokens")
@@ -115,7 +115,7 @@ SettingsPageLayout {
     Component {
         id: newAirdropView
 
-        CommunityNewAirdropView {
+        EditAirdropView {
             id: view
 
             communityDetails: root.communityDetails

@@ -31,7 +31,7 @@ SortFilterProxyModel {
                 const model = type === HoldingTypes.Type.Asset
                             ? assetsModel
                             : collectiblesModel
-                const item = CommunityPermissionsHelpers.getTokenByKey(model, key)
+                const item = PermissionsHelpers.getTokenByKey(model, key)
 
                 return item ? item.shortName || item.name : ""
             }
@@ -39,7 +39,7 @@ SortFilterProxyModel {
             function getText(type, key, amount) {
                 const name = getName(type, key)
 
-                return CommunityPermissionsHelpers.setHoldingsTextFormat(
+                return PermissionsHelpers.setHoldingsTextFormat(
                             type, name, amount)
             }
 
@@ -61,7 +61,7 @@ SortFilterProxyModel {
                 const model = type === HoldingTypes.Type.Asset
                             ? assetsModel : collectiblesModel
 
-                return CommunityPermissionsHelpers.getTokenIconByKey(model, key)
+                return PermissionsHelpers.getTokenIconByKey(model, key)
             }
 
             expression: {

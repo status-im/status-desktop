@@ -16,9 +16,7 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
 import AppLayouts.Communities.controls 1.0
-
-import "../controls"
-import "../panels"
+import AppLayouts.Communities.panels 1.0
 
 StatusStackModal {
     id: root
@@ -387,31 +385,31 @@ StatusStackModal {
                 width: generalView.availableWidth
                 spacing: 16
 
-                CommunityNameInput {
+                NameInput {
                     id: nameInput
                     input.edit.objectName: "createCommunityNameInput"
                     Layout.fillWidth: true
                     input.tabNavItem: descriptionTextInput.input.edit
                 }
 
-                CommunityDescriptionInput {
+                DescriptionInput {
                     id: descriptionTextInput
                     input.edit.objectName: "createCommunityDescriptionInput"
                     Layout.fillWidth: true
                     input.tabNavItem: nameInput.input.edit
                 }
 
-                CommunityLogoPicker {
+                LogoPicker {
                     id: logoPicker
                     Layout.fillWidth: true
                 }
 
-                CommunityBannerPicker {
+                BannerPicker {
                     id: bannerPicker
                     Layout.fillWidth: true
                 }
 
-                CommunityColorPicker {
+                ColorPicker {
                     id: colorPicker
                     onPick: root.replace(colorPanel)
                     Layout.fillWidth: true
@@ -419,7 +417,7 @@ StatusStackModal {
                     Component {
                         id: colorPanel
 
-                        CommunityColorPanel {
+                        ColorPanel {
                             Component.onCompleted: color = colorPicker.color
                             onAccepted: {
                                 colorPicker.color = color;
@@ -429,7 +427,7 @@ StatusStackModal {
                     }
                 }
 
-                CommunityTagsPicker {
+                TagsPicker {
                     id: communityTagsPicker
                     tags: root.store.communityTags
                     onPick: root.replace(tagsPanel)
@@ -438,7 +436,7 @@ StatusStackModal {
                     Component {
                         id: tagsPanel
 
-                        CommunityTagsPanel {
+                        TagsPanel {
                             Component.onCompleted: {
                                 tags = communityTagsPicker.tags;
                                 selectedTags = communityTagsPicker.selectedTags;
@@ -455,7 +453,7 @@ StatusStackModal {
                     Layout.fillWidth: true
                 }
 
-                CommunityOptions {
+                Options {
                     id: options
                     Layout.fillWidth: true
                 }
@@ -471,7 +469,7 @@ StatusStackModal {
             spacing: 11
             readonly property bool canGoNext: introMessageInput.valid && outroMessageInput.valid
 
-            CommunityIntroMessageInput {
+            IntroMessageInput {
                 id: introMessageInput
                 input.edit.objectName: "createCommunityIntroMessageInput"
                 input.tabNavItem: outroMessageInput.input.edit
@@ -483,7 +481,7 @@ StatusStackModal {
                 maximumHeight: (height - Style.current.xlPadding)
             }
 
-            CommunityOutroMessageInput {
+            OutroMessageInput {
                 id: outroMessageInput
                 input.edit.objectName: "createCommunityOutroMessageInput"
                 input.tabNavItem: introMessageInput.input.edit

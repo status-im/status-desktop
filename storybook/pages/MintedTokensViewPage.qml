@@ -24,11 +24,11 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
-            CommunityMintedTokensView {               
+            MintedTokensView {
                 anchors.fill: parent
                 anchors.margins: 50
                 model: MintedTokensModel.mintedTokensModel
-                onItemClicked: logs.logEvent("CommunityMintedTokensView::itemClicked --> " + tokenKey)
+                onItemClicked: logs.logEvent("MintedTokensView::itemClicked --> " + tokenKey)
             }
         }
 

@@ -167,7 +167,7 @@ StatusSectionLayout {
             id: stackLayout
             currentIndex: d.currentIndex
 
-            CommunityOverviewSettingsPanel {
+            OverviewSettingsPanel {
                 communityId: root.community.id
                 name: root.community.name
                 description: root.community.description
@@ -219,7 +219,7 @@ StatusSectionLayout {
                 onPreviousPageNameChanged: root.backButtonName = previousPageName
             }
 
-            CommunityMembersSettingsPanel {
+            MembersSettingsPanel {
                 rootStore: root.rootStore
                 membersModel: root.community.members
                 bannedMembersModel: root.community.bannedMembers
@@ -235,7 +235,7 @@ StatusSectionLayout {
                 onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id, root.community.id)
             }
 
-            CommunityPermissionsSettingsPanel {
+            PermissionsSettingsPanel {
                 readonly property PermissionsStore permissionsStore:
                     rootStore.permissionsStore
 
@@ -268,7 +268,7 @@ StatusSectionLayout {
                 onNavigateToMintTokenSettings: root.goTo(Constants.CommunitySettingsSections.MintTokens)
             }
 
-            CommunityMintTokensSettingsPanel {
+            MintTokensSettingsPanel {
                 id: mintPanel
 
                 readonly property CommunityTokensStore communityTokensStore:
@@ -471,7 +471,7 @@ StatusSectionLayout {
                 }
             }
 
-            CommunityAirdropsSettingsPanel {
+            AirdropsSettingsPanel {
                 id: airdropPanel
 
                 communityDetails: d.communityDetails

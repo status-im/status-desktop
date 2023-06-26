@@ -66,7 +66,7 @@ SplitView {
         SplitView.fillHeight: true
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
-        CommunityPermissionsSettingsPanel {
+        PermissionsSettingsPanel {
             id: communityPermissionsSettingsPanel
 
             anchors.fill: parent

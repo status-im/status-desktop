@@ -29,7 +29,7 @@ SplitView {
         SplitView.fillHeight: true
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor        
 
-        CommunityMintTokensSettingsPanel {
+        MintTokensSettingsPanel {
             id: panel
 
             anchors.fill: parent

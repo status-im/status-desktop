@@ -70,8 +70,8 @@ SplitView {
             anchors.fill: parent
             active: globalUtilsReady && mainModuleReady
 
-            sourceComponent: CommunityAirdropsSettingsPanel {
-                id: communityAirdropsSettingsPanel
+            sourceComponent: AirdropsSettingsPanel {
+                id: airdropsSettingsPanel
                 anchors.fill: parent
                 anchors.topMargin: 50
                 assetsModel: AssetsModel {}
@@ -115,7 +115,7 @@ SplitView {
                     }
 
                     Component.onCompleted: {
-                        Qt.callLater(() => communityAirdropsSettingsPanel.collectiblesModel = this)
+                        Qt.callLater(() => airdropsSettingsPanel.collectiblesModel = this)
                     }
                 }
 
@@ -158,13 +158,21 @@ SplitView {
 
 
                     Component.onCompleted: {
-                        Qt.callLater(() => communityAirdropsSettingsPanel.assetsModel = this)
+                        Qt.callLater(() => airdropsSettingsPanel.assetsModel = this)
                     }
                 }
 
                 membersModel: UsersModel {}
 
-                onAirdropClicked: logs.logEvent("CommunityAirdropsSettingsPanel::onAirdropClicked")
+                communityDetails: QtObject {
+                    readonly property string name: "Socks"
+                    readonly property string id: "SOCKS"
+                    readonly property string image: ModelsData.icons.socks
+                    readonly property string color: "red"
+                    readonly property bool owner: true
+                }
+
+                onAirdropClicked: logs.logEvent("AirdropsSettingsPanel::onAirdropClicked")
             }
         }
     }

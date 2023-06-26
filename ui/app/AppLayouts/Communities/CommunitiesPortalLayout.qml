@@ -142,7 +142,7 @@ StatusSectionLayout {
                 }
             }
 
-            CommunityTagsRow {
+            TagsRow {
                 id: communityTags
                 Layout.fillWidth: true
 
@@ -201,7 +201,7 @@ StatusSectionLayout {
 
             contentItem: RowLayout {
                 spacing: 20
-                CommunityBanner {
+                BannerPanel {
                     objectName: "createCommunityBanner"
                     text: qsTr("Create a new Status community")
                     buttonText: qsTr("Create new")
@@ -211,7 +211,7 @@ StatusSectionLayout {
                         Global.createCommunityPopupRequested(false /*isDiscordImport*/)
                     }
                 }
-                CommunityBanner {
+                BannerPanel {
                     readonly property bool importInProgress: root.communitiesStore.discordImportInProgress && !root.communitiesStore.discordImportCancelled
                     text: importInProgress ?
                         qsTr("'%1' import in progress...").arg(root.communitiesStore.discordImportCommunityName) :

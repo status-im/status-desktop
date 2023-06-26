@@ -136,7 +136,7 @@ StackLayout {
             }
 
             RowLayout {
-                CommunityBanner {
+                BannerPanel {
                     objectName: "invitePeopleBanner"
                     text: qsTr("Welcome to your community!")
                     buttonText: qsTr("Invite new people")
@@ -146,7 +146,7 @@ StackLayout {
                 Item {
                    Layout.fillWidth: true
                 }
-                CommunityBanner {
+                BannerPanel {
                     objectName: "airdropBanner"
                     visible: root.owned
                     text: qsTr("Try an airdrop to reward your community for engagement!")
@@ -159,7 +159,7 @@ StackLayout {
                    Layout.fillWidth: true
                 }
 
-                CommunityBanner {
+                BannerPanel {
                     objectName: "backUpBanner"
                     visible: root.owned
                     text: qsTr("Back up community key")
@@ -177,7 +177,7 @@ StackLayout {
         title: qsTr("Edit Community")
         editable: true
 
-        content: CommunityEditSettingsPanel {
+        content: EditSettingsPanel {
             name: root.name
             anchors.fill: parent
             description: root.description

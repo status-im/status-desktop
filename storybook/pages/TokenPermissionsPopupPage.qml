@@ -27,7 +27,7 @@ SplitView {
                 onClicked: dialog.open()
             }
 
-            CommunityTokenPermissionsPopup {
+            TokenPermissionsPopup {
                 id: dialog
 
                 anchors.centerIn: parent

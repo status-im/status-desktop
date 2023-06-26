@@ -79,16 +79,16 @@ communitySettings_Community_LetterIdenticon = {"container": communitySettings_Co
 communitySettings_EditCommunity_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "communityEditPanelScrollView", "type": "StatusScrollView", "visible": True}
 communitySettings_EditCommunity_Name_Input = {"container": communitySettings_EditCommunity_ScrollView, "objectName": "editCommunityNameInput", "type": "TextEdit",  "visible": True}
 communitySettings_EditCommunity_Description_Input = {"container": communitySettings_EditCommunity_ScrollView, "objectName": "editCommunityDescriptionInput", "type": "TextEdit",  "visible": True}
-communitySettings_EditCommunity_ColorPicker_Button = {"container": communitySettings_EditCommunity_ScrollView, "objectName": "editCommunityColorPicker", "type": "CommunityColorPicker", "visible": True}
+communitySettings_EditCommunity_ColorPicker_Button = {"container": communitySettings_EditCommunity_ScrollView, "objectName": "editCommunityColorPicker", "type": "ColorPicker", "visible": True}
 
 # Community color popup:
 communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelHexInput", "type": "TextEdit",  "visible": True}
 communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelSelectColorButton", "type": "StatusButton", "visible": True}
 
 # Community Overview
-communityOverview_Back_up_Banner = {"container": statusDesktop_mainWindow, "objectName": "backUpBanner", "type": "CommunityBanner", "visible": True}
+communityOverview_Back_up_Banner = {"container": statusDesktop_mainWindow, "objectName": "backUpBanner", "type": "BannerPanel", "visible": True}
 communityOverview_Back_up_StatusButton = {"container": communityOverview_Back_up_Banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
-communityOverview_Airdrop_Tokens_Banner = {"container": statusDesktop_mainWindow, "objectName": "airdropBanner", "type": "CommunityBanner", "visible": True}
+communityOverview_Airdrop_Tokens_Banner = {"container": statusDesktop_mainWindow, "objectName": "airdropBanner", "type": "BannerPanel", "visible": True}
 communityOverview_Airdrop_Tokens_StatusButton = {"container": communityOverview_Airdrop_Tokens_Banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
 transferOwnerShipTextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
 

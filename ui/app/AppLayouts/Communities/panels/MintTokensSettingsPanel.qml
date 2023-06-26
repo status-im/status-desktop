@@ -225,7 +225,7 @@ SettingsPageLayout {
     Component {
         id: welcomeView
 
-        CommunityWelcomeSettingsView {
+        WelcomeSettingsView {
             viewWidth: root.viewWidth
             image: Style.png("community/mint2_1")
             title: qsTr("Community tokens")
@@ -285,7 +285,7 @@ SettingsPageLayout {
 
                 currentIndex: optionsTab.currentItem == collectiblesTab ? 0 : 1
 
-                CustomCommunityNewTokenView {
+                CustomEditCommunityTokenView {
                     id: newCollectibleView
 
                     isAssetView: false
@@ -297,7 +297,7 @@ SettingsPageLayout {
                     referenceSymbol: colLayout.referenceSymbol
                 }
 
-                CustomCommunityNewTokenView {
+                CustomEditCommunityTokenView {
                     id: newAssetView
 
                     isAssetView: true
@@ -309,7 +309,7 @@ SettingsPageLayout {
                     referenceSymbol: colLayout.referenceSymbol
                 }
 
-                component CustomCommunityNewTokenView: CommunityNewTokenView {
+                component CustomEditCommunityTokenView: EditCommunityTokenView {
                     viewWidth: root.viewWidth
                     layer1Networks: root.layer1Networks
                     layer2Networks: root.layer2Networks
@@ -521,7 +521,7 @@ SettingsPageLayout {
     Component {
         id: mintedTokensView
 
-        CommunityMintedTokensView {
+        MintedTokensView {
             viewWidth: root.viewWidth
             model: root.tokensModel
             onItemClicked: {

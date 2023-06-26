@@ -266,14 +266,14 @@ StatusScrollView {
                 }
 
                 onAddAsset: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                    const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.assetsModel, key)
                     addItem(HoldingTypes.Type.Asset, modelItem, amount)
                     dropdown.close()
                 }
 
                 onAddCollectible: {
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                    const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.collectiblesModel, key)
                     addItem(HoldingTypes.Type.Collectible, modelItem, amount)
                     dropdown.close()
@@ -287,7 +287,7 @@ StatusScrollView {
 
                 onUpdateAsset: {
                     const itemIndex = prepareUpdateIndex(key)
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(root.assetsModel, key)
+                    const modelItem = PermissionsHelpers.getTokenByKey(root.assetsModel, key)
 
                     d.dirtyValues.selectedHoldingsModel.set(
                                 itemIndex, { type: HoldingTypes.Type.Asset, key, amount })
@@ -296,7 +296,7 @@ StatusScrollView {
 
                 onUpdateCollectible: {
                     const itemIndex = prepareUpdateIndex(key)
-                    const modelItem = CommunityPermissionsHelpers.getTokenByKey(
+                    const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.collectiblesModel, key)
 
                     d.dirtyValues.selectedHoldingsModel.set(

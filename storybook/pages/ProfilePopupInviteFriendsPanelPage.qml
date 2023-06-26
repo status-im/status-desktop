@@ -51,7 +51,7 @@ Item {
 
         Loader {
             active: globalUtilsReady && mainModuleReady
-            sourceComponent: CommunityProfilePopupInviteFriendsPanel {
+            sourceComponent: ProfilePopupInviteFriendsPanel {
                 id: panel
 
                 community: ({ id: "communityId" })
