@@ -875,7 +875,6 @@ void dos_qvariant_setArray(::DosQVariant *vptr, int size, ::DosQVariant **array)
 void dos_qobject_delete(::DosQObject *vptr)
 {
     auto qobject = static_cast<QObject *>(vptr);
-    qobject->disconnect();
     delete qobject;
 }
 
