@@ -9,7 +9,7 @@ Rectangle {
 
     property string title: titleText.text
 
-    signal close();
+    signal closed();
     signal minimised();
     signal maximized();
 
