@@ -318,11 +318,9 @@ proc init*(self: Controller) =
         self.delegate.onCommunityCheckAllChannelsPermissionsResponse(args.checkAllChannelsPermissionsResponse)
 
     self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e: Args):
-      self.delegate.onOwnedCollectiblesUpdated()
       self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
-      self.delegate.onWalletAccountTokensRebuilt()
       self.asyncCheckPermissions()
 
     self.events.on(SIGNAL_COMMUNITY_KICKED) do (e: Args):

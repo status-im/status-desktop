@@ -424,6 +424,12 @@ proc buildTokenList(self: Module) =
   self.view.setTokenListItems(tokenListItems)
   self.view.setCollectiblesListItems(collectiblesListItems)
 
+method onWalletAccountTokensRebuilt*(self: Module) =
+  self.buildTokenList()
+
+method onOwnedCollectiblesUpdated*(self: Module) =
+  self.buildTokenList()
+
 method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) =
   let tokenListItem = initTokenListItem(
     key = tokenMetadata.symbol,
