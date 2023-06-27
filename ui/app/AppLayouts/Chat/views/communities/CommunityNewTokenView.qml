@@ -183,10 +183,10 @@ StatusScrollView {
             regexValidator.errorMessage: qsTr("Your token symbol contains invalid characters (use A-Z only)")
             regexValidator.regularExpression: Constants.regularExpressions.capitalOnly
             extraValidator.validate: function (value) {
-                // If minted failed, we can retry same deployment, so same symbol allowed
-                var allowRepeatedName = (root.isAssetView ? asset.deployState : collectible.deployState) === Constants.ContractTransactionStatus.Failed
+                // If minting failed, we can retry same deployment, so same symbol allowed
+                const allowRepeatedName = (root.isAssetView ? asset.deployState : collectible.deployState) === Constants.ContractTransactionStatus.Failed
                 if(allowRepeatedName)
-                    if(symbolInput.text === root.referenceSymbol)
+                    if(symbolInput.text.toUpperCase() === root.referenceSymbol.toUpperCase())
                         return true
 
                 // Otherwise, no repeated names allowed:
@@ -195,10 +195,14 @@ StatusScrollView {
             extraValidator.errorMessage: qsTr("You have used this token symbol before")
 
             onTextChanged: {
+                const cursorPos = input.edit.cursorPosition
+                const upperSymbol = text.toUpperCase()
                 if(root.isAssetView)
-                    asset.symbol = text
+                    asset.symbol = upperSymbol
                 else
-                    collectible.symbol = text
+                    collectible.symbol = upperSymbol
+                text = upperSymbol // breaking the binding on purpose but so does validate() and onTextChanged() internal handler
+                input.edit.cursorPosition = cursorPos
             }
         }
 
