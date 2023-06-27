@@ -34,7 +34,7 @@ SplitView {
                 enabledNetworks: NetworksModel.enabledNetworks
                 allNetworks: enabledNetworks
                 accounts: WalletAccountsModel {}
-                tokensModel: MintedTokensModel.mintedTokensModel
+                tokensModel: isAssetBox.checked ? MintedTokensModel.mintedAssetsModel :  MintedTokensModel.mintedCollectiblesModel
 
                 onPreviewClicked: logs.logEvent("CommunityNewTokenView::previewClicked")
             }

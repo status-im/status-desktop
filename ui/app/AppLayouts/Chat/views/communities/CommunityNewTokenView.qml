@@ -127,14 +127,14 @@ StatusScrollView {
             minLengthValidator.errorMessage: qsTr("Please name your token name (use A-Z and 0-9, hyphens and underscores only)")
             regexValidator.errorMessage: qsTr("Your token name contains invalid characters (use A-Z and 0-9, hyphens and underscores only)")
             extraValidator.validate: function (value) {
-                // If minted failed, we can retry same deployment, so same name allowed
-                var allowRepeatedName = (root.isAssetView ? asset.deployState : collectible.deployState) === Constants.ContractTransactionStatus.Failed
+                // If minting failed, we can retry same deployment, so same name allowed
+                const allowRepeatedName = (root.isAssetView ? asset.deployState : collectible.deployState) === Constants.ContractTransactionStatus.Failed
                 if(allowRepeatedName)
                     if(nameInput.text === root.referenceName)
                         return true
 
                 // Otherwise, no repeated names allowed:
-                return !SQUtils.ModelUtils.contains(root.tokensModel, "name", nameInput.text)
+                return !SQUtils.ModelUtils.contains(root.tokensModel, "name", nameInput.text, Qt.CaseInsensitive)
             }
             extraValidator.errorMessage: qsTr("You have used this token name before")
 
