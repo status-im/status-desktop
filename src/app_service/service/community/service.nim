@@ -1353,7 +1353,7 @@ QtObject:
 
   proc asyncCommunityInfoLoaded*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = communityIdAndRpcResponse.parseJson
-    if (rpcResponseObj{"error"}.kind != JNull):
+    if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
       error "Error requesting community info", msg = rpcResponseObj{"error"}
       return
 
@@ -1387,7 +1387,7 @@ QtObject:
       let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
         let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "Error requesting community info", msg = error.message
+        error "Error checking permissions to join", msg = error.message
         return
 
       let communityId = rpcResponseObj{"communityId"}.getStr()
@@ -1418,7 +1418,7 @@ QtObject:
       let rpcResponseObj = communityIdAndRpcResponse.parseJson
       if (rpcResponseObj{"response"}{"error"}.kind != JNull):
         let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
-        error "Error requesting community info", msg = error.message
+        error "Error requesting to join community", msg = error.message
         return
 
       let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
@@ -1497,7 +1497,7 @@ QtObject:
     try:
       let rpcResponseObj = response.parseJson
       if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
-        error "Error requesting community info", msg = rpcResponseObj{"error"}.getStr
+        error "Error loading curated communities", msg = rpcResponseObj{"error"}.getStr
         self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
         return
       let curatedCommunities = parseCuratedCommunities(rpcResponseObj["response"]["result"])
