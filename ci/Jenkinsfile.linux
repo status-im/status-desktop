@@ -82,7 +82,7 @@ pipeline {
       steps { script {
         /* Temporary hack-fix for failing Linux builds:
          * https://github.com/status-im/infra-ci/issues/88 */
-        timeout(10) { retry(10) {
+        timeout(10) { retry(20) {
           sh 'make nim_status_client'
         } }
       } }
