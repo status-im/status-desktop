@@ -27,7 +27,10 @@ SettingsContentBase {
     readonly property int networksViewIndex: 1;
     readonly property int accountOrderViewIndex: 2;
     readonly property int accountViewIndex: 3;
-    readonly property int dappPermissionViewIndex: 4;
+
+    Component.onCompleted: {
+        root.titleRowComponentLoader.sourceComponent = addNewAccountButtonComponent
+    }
 
     function resetStack() {
         stackContainer.currentIndex = mainViewIndex;
@@ -44,6 +47,10 @@ SettingsContentBase {
             root.sectionTitle = qsTr("Wallet")
             root.titleRowComponentLoader.sourceComponent = undefined
 
+            if (currentIndex == root.mainViewIndex) {
+                root.titleRowComponentLoader.sourceComponent = addNewAccountButtonComponent
+            }
+
             if(currentIndex == root.networksViewIndex) {
                 root.rootStore.backButtonName = qsTr("Wallet")
                 root.sectionTitle = qsTr("Networks")
@@ -53,10 +60,6 @@ SettingsContentBase {
             else if(currentIndex == root.accountViewIndex) {
                 root.rootStore.backButtonName = qsTr("Wallet")
                 root.sectionTitle = ""
-            }
-            else if(currentIndex == root.dappPermissionViewIndex) {
-                root.rootStore.backButtonName = qsTr("Wallet")
-                root.sectionTitle = qsTr("DApp Permissions")
             }
             else if(currentIndex == root.accountOrderViewIndex) {
                 root.rootStore.backButtonName = qsTr("Wallet")
@@ -70,6 +73,7 @@ SettingsContentBase {
             Layout.fillWidth: true
 
             walletStore: root.walletStore
+            emojiPopup: root.emojiPopup
 
             onGoToNetworksView: {
                 stackContainer.currentIndex = networksViewIndex
@@ -82,10 +86,6 @@ SettingsContentBase {
 
             onGoToAccountOrderView: {
                 stackContainer.currentIndex = accountOrderViewIndex
-            }
-
-            onGoToDappPermissionsView: {
-                stackContainer.currentIndex = dappPermissionViewIndex
             }
         }
 
@@ -125,6 +125,14 @@ SettingsContentBase {
                 text: qsTr("Testnet Mode")
                 checked: walletStore.areTestNetworksEnabled
                 onClicked: walletStore.toggleTestNetworksEnabled()
+            }
+        }
+
+        Component {
+            id: addNewAccountButtonComponent
+            StatusButton {
+                text: qsTr("Add new account")
+                onClicked: root.walletStore.runAddAccountPopup()
             }
         }
     }

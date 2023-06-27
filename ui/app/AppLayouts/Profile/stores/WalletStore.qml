@@ -43,25 +43,11 @@ QtObject {
         return accountsModule.updateAccountPosition(address, position)
     }
 
-    property var dappList: Global.appIsReady? dappPermissionsModule.dapps : null
-
-    function disconnect(dappName) {
-        dappPermissionsModule.disconnect(dappName)
-    }
-
-    function accountsForDapp(dappName) {
-        return dappPermissionsModule.accountsForDapp(dappName)   
-    }
-
-    function disconnectAddress(dappName, address) {
-        return dappPermissionsModule.disconnectAddress(dappName, address)
-    }
-
-    function loadDapps() {
-        dappPermissionsModule.loadDapps()
-    }
-
     function getAllNetworksSupportedPrefix() {
         return networksModule.getAllNetworksSupportedPrefix()
+    }
+
+    function runAddAccountPopup() {
+        walletSection.runAddAccountPopup(false)
     }
 }

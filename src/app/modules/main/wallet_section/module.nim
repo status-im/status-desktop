@@ -11,10 +11,10 @@ import ./assets/module as assets_module
 import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
-import ./add_account/module as add_account_module
 import ./networks/module as networks_module
 import ./overview/module as overview_module
 import ./send/module as send_module
+import ../../shared_modules/add_account/module as add_account_module
 
 import ./activity/controller as activityc
 

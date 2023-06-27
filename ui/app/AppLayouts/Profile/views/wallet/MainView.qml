@@ -7,6 +7,7 @@ import shared.panels 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
+import shared.popups.addaccount 1.0
 
 import "../../stores"
 import "../../controls"
@@ -16,34 +17,40 @@ Column {
     id: root
 
     property WalletStore walletStore
+    property var emojiPopup
 
     signal goToNetworksView()
     signal goToAccountOrderView()
     signal goToAccountView(var account)
     signal goToDappPermissionsView()
 
-    Component.onCompleted: {
-        // TODO remove this call and handle it from the backend
-        //   once the profile is refactored and the navigation is driven from the backend
-        root.walletStore.loadDapps()
-    }
-
     spacing: 8
 
-    Separator {}
+    Connections {
+        target: walletSection
 
-    StatusListItem {
-        title: qsTr("DApp Permissions")
-        height: 64
-        width: parent.width
-        onClicked: goToDappPermissionsView()
-        label: qsTr("%n DApp(s) connected", "", root.walletStore.dappList.count)
-        components: [
-            StatusIcon {
-                icon: "next"
-                color: Theme.palette.baseColor1
-            }
-        ]
+        function onDisplayAddAccountPopup() {
+            addAccount.active = true
+        }
+        function onDestroyAddAccountPopup() {
+            addAccount.active = false
+        }
+    }
+
+
+    Loader {
+        id: addAccount
+        active: false
+        asynchronous: true
+
+        sourceComponent: AddAccountPopup {
+            store.emojiPopup: root.emojiPopup
+            store.addAccountModule: walletSection.addAccountModule
+        }
+
+        onLoaded: {
+            addAccount.item.open()
+        }
     }
 
     Separator {}
