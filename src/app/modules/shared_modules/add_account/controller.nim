@@ -2,13 +2,13 @@ import times, os, chronicles
 import uuids
 import io_interface
 
-import ../../../../../app_service/service/accounts/service as accounts_service
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/keycard/service as keycard_service
+import ../../../../app_service/service/accounts/service as accounts_service
+import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/keycard/service as keycard_service
 
-import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+import ../keycard_popup/io_interface as keycard_shared_module
 
-import ../../../../core/eventemitter
+import ../../../core/eventemitter
 
 logScope:
   topics = "wallet-add-account-controller"

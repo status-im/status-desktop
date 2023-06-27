@@ -2,7 +2,7 @@ import NimQml
 import io_interface
 import derived_address_model
 import internal/[state, state_wrapper]
-import ../../../shared_models/[keypair_model, keypair_item]
+import ../../shared_models/[keypair_model, keypair_item]
 
 QtObject:
   type

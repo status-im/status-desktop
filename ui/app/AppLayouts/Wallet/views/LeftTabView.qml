@@ -16,12 +16,12 @@ import shared.panels 1.0
 import shared.controls 1.0
 import shared.popups 1.0
 import shared.popups.keycard 1.0
+import shared.popups.addaccount 1.0
 import shared.stores 1.0
 
 import "../controls"
 import "../popups"
 import "../stores"
-import "../addaccount"
 
 Rectangle {
     id: root

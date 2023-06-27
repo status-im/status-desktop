@@ -1,8 +1,8 @@
 import Tables, NimQml
 
-import ../../../../../app_service/service/accounts/dto/generated_accounts
-import ../../../../../app_service/service/wallet_account/derived_address
-from ../../../../../app_service/service/keycard/service import KeycardEvent
+import ../../../../app_service/service/accounts/dto/generated_accounts
+import ../../../../app_service/service/wallet_account/derived_address
+from ../../../../app_service/service/keycard/service import KeycardEvent
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
