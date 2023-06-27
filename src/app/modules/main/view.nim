@@ -267,3 +267,6 @@ QtObject:
 
   proc windowDeactivated*(self: View) {.slot.} = 
     self.delegate.windowDeactivated()
+
+  proc setCommunityIdToSpectate*(self: View, communityId: string) {.slot.} = 
+    self.delegate.setCommunityIdToSpectate(communityId)
