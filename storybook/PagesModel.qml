@@ -350,6 +350,10 @@ ListModel {
          section: "Components"
     }
     ListElement {
+         title: "SettingsPageHeader"
+         section: "Components"
+    }
+    ListElement {
          title: "BrowserSettings"
          section: "Settings"
     }
