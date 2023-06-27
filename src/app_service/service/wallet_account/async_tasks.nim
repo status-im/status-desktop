@@ -13,7 +13,7 @@ type
 const fetchDerivedAddressesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDerivedAddressesTaskArg](argEncoded)
   var output = %*{
-    "derivedAddress": "",
+    "derivedAddresses": "",
     "error": ""
   }
   try:
@@ -30,7 +30,7 @@ type
 const fetchDerivedAddressesForMnemonicTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FetchDerivedAddressesForMnemonicTaskArg](argEncoded)
   var output = %*{
-    "derivedAddress": "",
+    "derivedAddresses": "",
     "error": ""
   }
   try:
