@@ -5,13 +5,13 @@ BannerModel 1.0 BannerModel.qml
 ChannelsModel 1.0 ChannelsModel.qml
 CollectiblesModel 1.0 CollectiblesModel.qml
 IconModel 1.0 IconModel.qml
+MintedTokensModel 1.0 MintedTokensModel.qml
+RecipientModel 1.0 RecipientModel.qml
 TokenHoldersModel 1.0 TokenHoldersModel.qml
 UsersModel 1.0 UsersModel.qml
 WalletAccountsModel 1.0 WalletAccountsModel.qml
 WalletAssetsModel 1.0 WalletAssetsModel.qml
-singleton MintedTokensModel 1.0 MintedTokensModel.qml
+WalletKeyPairModel 1.0 WalletKeyPairModel.qml
 singleton ModelsData 1.0 ModelsData.qml
 singleton NetworksModel 1.0 NetworksModel.qml
 singleton PermissionsModel 1.0 PermissionsModel.qml
-RecipientModel 1.0 RecipientModel.qml
-WalletKeyPairModel 1.0 WalletKeyPairModel.qml

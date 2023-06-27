@@ -32,9 +32,13 @@ SplitView {
         MintTokensSettingsPanel {
             id: panel
 
+            MintedTokensModel {
+                id: mintedTokensModel
+            }
+
             anchors.fill: parent
             anchors.topMargin: 50
-            tokensModel: editorModelChecked.checked ? emptyModel : MintedTokensModel.mintedTokensModel
+            tokensModel: editorModelChecked.checked ? emptyModel : mintedTokensModel
             layer1Networks: NetworksModel.layer1Networks
             layer2Networks: NetworksModel.layer2Networks
             testNetworks: NetworksModel.testNetworks
@@ -79,9 +83,9 @@ SplitView {
                     checked: true
                     onCheckedChanged:{
                         if(checked)
-                            MintedTokensModel.changeAllMintingStates(1/*In progress*/)
+                            mintedTokensModel.changeAllMintingStates(1/*In progress*/)
                         else
-                            MintedTokensModel.changeAllMintingStates(2/*Deployed*/)
+                            mintedTokensModel.changeAllMintingStates(2/*Deployed*/)
                     }
 
                 }
