@@ -1,20 +1,43 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
-
-import StatusQ.Core.Theme 0.1
-import StatusQ.Components 0.1
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import AppLayouts.Communities.views 1.0
 
 import Storybook 1.0
 import Models 1.0
 
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 
 SplitView {
-
     Logs { id: logs }
+
+    MintedTokensModel {
+        id: allTokensModel
+    }
+
+    SortFilterProxyModel {
+        id: filteredTokensModel
+
+        sourceModel: allTokensModel
+
+        filters: [
+            ValueFilter {
+                enabled: !allTokensRadioButton.checked
+                roleName: "tokenType"
+                value: onlyAssetsRadioButton.checked ? Constants.TokenType.ERC20
+                                                     : Constants.TokenType.ERC721
+            },
+            IndexFilter {
+                enabled: nothingRadioButton.checked
+                minimumIndex: -1
+                maximumIndex: 0
+            }
+
+        ]
+    }
 
     SplitView {
         orientation: Qt.Vertical
@@ -27,8 +50,9 @@ SplitView {
             MintedTokensView {
                 anchors.fill: parent
                 anchors.margins: 50
-                model: MintedTokensModel.mintedTokensModel
-                onItemClicked: logs.logEvent("MintedTokensView::itemClicked --> " + tokenKey)
+                model: filteredTokensModel
+                onItemClicked: logs.logEvent("MintedTokensView::itemClicked",
+                                             ["tokenKey"], [tokenKey])
             }
         }
 
@@ -42,22 +66,28 @@ SplitView {
 
             RowLayout {
                 RadioButton {
-                   text: "Assets and collectibles"
-                   checked: true
-                   onCheckedChanged: if(checked) MintedTokensModel.buildMintedTokensModel(true, true)
+                    id: allTokensRadioButton
+
+                    text: "Assets and collectibles"
+                    checked: true
                 }
 
                 RadioButton {
-                   text: "Only assets"
-                   onCheckedChanged: if(checked) MintedTokensModel.buildMintedTokensModel(true, false)
+                    id: onlyAssetsRadioButton
+
+                    text: "Only assets"
                 }
 
                 RadioButton {
-                   text: "Only collectibles"
-                   onCheckedChanged: if(checked) MintedTokensModel.buildMintedTokensModel(false, true)
+                    text: "Only collectibles"
+                }
+
+                RadioButton {
+                    id: nothingRadioButton
+
+                    text: "Nothing"
                 }
             }
         }
     }
-
 }

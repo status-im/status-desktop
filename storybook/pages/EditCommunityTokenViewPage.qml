@@ -34,8 +34,7 @@ SplitView {
                 enabledNetworks: NetworksModel.enabledNetworks
                 allNetworks: enabledNetworks
                 accounts: WalletAccountsModel {}
-                tokensModel: isAssetBox.checked ? MintedTokensModel.mintedAssetsModel :  MintedTokensModel.mintedCollectiblesModel
-
+                tokensModel: MintedTokensModel {}
                 onPreviewClicked: logs.logEvent("EditCommunityTokenView::previewClicked")
             }
         }
@@ -48,17 +47,12 @@ SplitView {
             SplitView.preferredHeight: 150
 
             logsView.logText: logs.logText
-        }
-    }
 
-    Pane {
-        SplitView.minimumWidth: 300
-        SplitView.preferredWidth: 300
-
-        CheckBox {
-            id: isAssetBox
-            text: "Is Assets View?"
-            checked: false
+            CheckBox {
+                id: isAssetBox
+                text: "Is Assets View?"
+                checked: false
+            }
         }
     }
 }
