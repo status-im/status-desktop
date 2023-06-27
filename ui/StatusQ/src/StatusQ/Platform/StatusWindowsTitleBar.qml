@@ -9,7 +9,7 @@ Rectangle {
 
     property string title: titleText.text
 
-    signal closed();
+    signal close();
     signal minimised();
     signal maximized();
 
@@ -111,7 +111,7 @@ Rectangle {
                 id: closeSensor
                 anchors.fill: parent
                 hoverEnabled: true
-                onClicked: windowsTitleBar.closed()
+                onClicked: windowsTitleBar.close()
             }
         }
     }
