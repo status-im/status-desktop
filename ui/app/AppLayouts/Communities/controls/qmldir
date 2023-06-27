@@ -4,15 +4,15 @@ AirdropRecipientsSelector 1.0 AirdropRecipientsSelector.qml
 AirdropTokensSelector 1.0 AirdropTokensSelector.qml
 BannerPicker 1.0 BannerPicker.qml
 CategoryListItem 1.0 CategoryListItem.qml
-CommunityListItem 1.0 CommunityListItem.qml
 ColorPicker 1.0 ColorPicker.qml
+CommunityListItem 1.0 CommunityListItem.qml
 DescriptionInput 1.0 DescriptionInput.qml
 EnsPanel 1.0 EnsPanel.qml
 ExtendedDropdownContent 1.0 ExtendedDropdownContent.qml
 HoldingTypes 1.0 HoldingTypes.qml
-IssuePill 1.0 IssuePill.qml
 InlineNetworksComboBox 1.0 InlineNetworksComboBox.qml
 IntroMessageInput 1.0 IntroMessageInput.qml
+IssuePill 1.0 IssuePill.qml
 ListDropdownContent 1.0 ListDropdownContent.qml
 LogoPicker 1.0 LogoPicker.qml
 MembersSelectorPanel 1.0 MembersSelectorPanel.qml
@@ -22,10 +22,11 @@ OutroMessageInput 1.0 OutroMessageInput.qml
 PermissionItem 1.0 PermissionItem.qml
 PermissionListItem 1.0 PermissionListItem.qml
 PermissionsRow 1.0 PermissionsRow.qml
+SettingsPageHeader 1.0 SettingsPageHeader.qml
 TagsPicker 1.0 TagsPicker.qml
 TagsRow 1.0 TagsRow.qml
+ThumbnailsDropdownContent 1.0 ThumbnailsDropdownContent.qml
 TokenItem 1.0 TokenItem.qml
 TokenPanel 1.0 TokenPanel.qml
-ThumbnailsDropdownContent 1.0 ThumbnailsDropdownContent.qml
 singleton PermissionTypes 1.0 PermissionTypes.qml
 singleton TokenCategories 1.0 TokenCategories.qml
