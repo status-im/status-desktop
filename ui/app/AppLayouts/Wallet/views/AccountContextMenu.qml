@@ -2,9 +2,6 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Popups 0.1
-import StatusQ.Core.Theme 0.1
-
-import utils 1.0
 
 import "../stores"
 
@@ -21,44 +18,15 @@ StatusMenu {
 
     width: 204
 
-    onAboutToShow: {
-        d.resetCopyAddressAction()
-    }
-
-    QtObject {
-        id: d
-
-        function resetCopyAddressAction() {
-            copyAddressAction.action.text = qsTr("Copy address")
-            copyAddressAction.action.type = StatusAction.Type.Normal
-            copyAddressAction.action.icon.name = "copy"
-            copyAddressAction.action.icon.color = Theme.palette.primaryColor1
-        }
-    }
-
-    StatusMenuItem {
+    StatusSuccessAction {
         id: copyAddressAction
         objectName: "AccountMenu-CopyAddressAction-%1".arg(root.uniqueIdentifier)
-        enabled: !!root.account
+        successText: qsTr("Address copied")
         text: qsTr("Copy address")
-        action: StatusAction {}
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-            onClicked: {
-                RootStore.copyToClipboard(root.account.address?? "")
-                copyAddressAction.action.text = qsTr("Address copied")
-                copyAddressAction.action.type = StatusAction.Type.Success
-                copyAddressAction.action.icon.name = "tiny/checkmark"
-                copyAddressAction.action.icon.color = Theme.palette.successColor1
-
-                Backpressure.debounce(root, 1500, function () {
-                    d.resetCopyAddressAction()
-                    root.dismiss()
-                })()
-            }
-        }
+        icon.name: "copy"
+        timeout: 1500
+        enabled: !!root.account
+        onTriggered: RootStore.copyToClipboard(root.account.address?? "")
     }
 
     StatusMenuSeparator {

@@ -59,6 +59,9 @@ StatusMenuItem {
     /*! \internal Overriden signal to not close menu on click */
     signal triggered()
 
+    // Hide disabled item when hiding is enabled
+    visible: !root.menu.hideDisabledItems || enabled
+    height: visible || enabled ? implicitHeight : 0
     onVisibleChanged: {
         if (!visible)
             success = false
