@@ -74,12 +74,12 @@ SettingsPageLayout {
     QtObject {
         id: d
 
-        readonly property string initialViewState: "WELCOME_OR_LIST_TOKENS"
+        readonly property string initialViewState: "TOKENS_LIST"
         readonly property string newTokenViewState: "NEW_TOKEN"
         readonly property string previewTokenViewState: "PREVIEW_TOKEN"
         readonly property string tokenViewState: "VIEW_TOKEN"
 
-        readonly property string welcomePageTitle: qsTr("Tokens")
+        readonly property string tokensListPageTitle: qsTr("Tokens")
         readonly property string newCollectiblePageTitle: qsTr("Mint collectible")
         readonly property string newAssetPageTitle: qsTr("Mint asset")
         readonly property string newTokenButtonText: qsTr("Mint token")
@@ -101,29 +101,16 @@ SettingsPageLayout {
 
         property TokenObject currentToken
 
-        readonly property var initialItem: (root.tokensModel && root.tokensModel.count > 0) ? mintedTokensView : welcomeView
-
         signal airdropClicked()
         signal remoteDestructAddressClicked(string address)
         signal retryMintClicked()
-
-        function updateInitialStackView() {
-            if(stackManager.stackView) {
-                if(initialItem === welcomeView)
-                    stackManager.stackView.replace(mintedTokensView, welcomeView, StackView.Immediate)
-                if(initialItem === mintedTokensView)
-                    stackManager.stackView.replace(welcomeView, mintedTokensView, StackView.Immediate)
-            }
-        }
-
-        onInitialItemChanged: updateInitialStackView()
     }
 
     secondaryHeaderButton.type: StatusBaseButton.Type.Danger
 
     content: StackView {
         anchors.fill: parent
-        initialItem: d.initialItem
+        initialItem: mintedTokensView
 
         Component.onCompleted: stackManager.pushInitialState(d.initialViewState)
     }
@@ -132,26 +119,21 @@ SettingsPageLayout {
     states: [
         State {
             name: d.initialViewState
-            PropertyChanges {target: root; title: d.welcomePageTitle}
+            PropertyChanges {target: root; title: d.tokensListPageTitle}
             PropertyChanges {target: root; subTitle: ""}
             PropertyChanges {target: root; previousPageName: ""}
             PropertyChanges {target: root; primaryHeaderButton.visible: true}
             PropertyChanges {target: root; primaryHeaderButton.text: d.newTokenButtonText}
-            PropertyChanges {target: root; secondaryHeaderButton.visible: false}
         },
         State {
             name: d.newTokenViewState
             PropertyChanges {target: root; title: d.isAssetView ? d.newAssetPageTitle : d.newCollectiblePageTitle }
             PropertyChanges {target: root; subTitle: ""}
             PropertyChanges {target: root; previousPageName: d.backButtonText}
-            PropertyChanges {target: root; primaryHeaderButton.visible: false}
-            PropertyChanges {target: root; secondaryHeaderButton.visible: false}
         },
         State {
             name: d.previewTokenViewState
             PropertyChanges {target: root; previousPageName: d.backButtonText}
-            PropertyChanges {target: root; primaryHeaderButton.visible: false}
-            PropertyChanges {target: root; secondaryHeaderButton.visible: false}
         },
         State {
             name: d.tokenViewState
@@ -222,22 +204,6 @@ SettingsPageLayout {
     }
 
     // Mint tokens possible view contents:
-    Component {
-        id: welcomeView
-
-        WelcomeSettingsView {
-            viewWidth: root.viewWidth
-            image: Style.png("community/mint2_1")
-            title: qsTr("Community tokens")
-            subtitle: qsTr("You can mint custom tokens and import tokens for your community")
-            checkersModel: [
-                qsTr("Create remotely destructible soulbound tokens for admin permissions"),
-                qsTr("Reward individual members with custom tokens for their contribution"),
-                qsTr("Mint tokens for use with community and channel permissions")
-            ]
-        }
-    }
-
     Component {
         id: newTokenView
 
