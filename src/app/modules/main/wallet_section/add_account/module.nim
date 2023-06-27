@@ -474,7 +474,11 @@ proc setDerivedAddresses[T](self: Module[T], derivedAddresses: seq[DerivedAddres
 method onDerivedAddressesFetched*[T](self: Module[T], derivedAddresses: seq[DerivedAddressDto], error: string) =
   if error.len > 0:
     error "fetching derived addresses error", err=error
+    self.fetchingAddressesIsInProgress = false
+    if self.authenticationReason == AuthenticationReason.AddingAccount:
+      self.view.setDisablePopup(false)
     return
+
   let selectedOrigin = self.view.getSelectedOrigin()
   if selectedOrigin.getPairType() != KeyPairType.Profile.int and
     selectedOrigin.getPairType() != KeyPairType.SeedImport.int:
