@@ -28,19 +28,20 @@ StatusScrollView {
 
         readonly property int delegateAssetsHeight: 64
 
-        function getSubtitle(deployState, remainingSupply, supply, isCollectible, isInfiniteSupply) {
-            if(deployState === Constants.ContractTransactionStatus.Failed) {
+        function getSubtitle(deployState, remainingSupply, supply,
+                             isCollectible, isInfiniteSupply) {
+            if(deployState === Constants.ContractTransactionStatus.Failed)
                 return qsTr("Minting failed")
-            }
 
-            if(deployState === Constants.ContractTransactionStatus.InProgress) {
+            if(deployState === Constants.ContractTransactionStatus.InProgress)
                 return qsTr("Minting...")
-            }
 
-            if(isInfiniteSupply) {
+            if(isInfiniteSupply)
                 return isCollectible ? qsTr("∞ remaining") : ""
-            }
-            return isCollectible ? qsTr("%1 / %2 remaining").arg(remainingSupply).arg(supply) : ""
+
+            return isCollectible
+                    ? qsTr("%1 / %2 remaining").arg(remainingSupply).arg(supply)
+                    : ""
         }
     }
 
@@ -84,8 +85,12 @@ StatusScrollView {
                 components: [
                     StatusBaseText {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: d.getSubtitle(model.deployState, model.remainingSupply, model.supply, false, model.infiniteSupply)
-                        color: (model.deployState === Constants.ContractTransactionStatus.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
+                        text: d.getSubtitle(model.deployState,
+                                            model.remainingSupply,
+                                            model.supply, false,
+                                            model.infiniteSupply)
+                        color: model.deployState === Constants.ContractTransactionStatus.Failed
+                               ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                         font.pixelSize: 13
                     },
                     StatusIcon {
@@ -94,7 +99,9 @@ StatusScrollView {
                         color: Theme.palette.baseColor1
                     }
                 ]
-                onClicked: root.itemClicked(model.contractUniqueKey, model.chainId, model.chainName, model.accountName, model.address)
+                onClicked: root.itemClicked(model.contractUniqueKey,
+                                            model.chainId, model.chainName,
+                                            model.accountName, model.address)
             }
         }
 
@@ -137,14 +144,20 @@ StatusScrollView {
                 height: collectiblesGrid.cellHeight
                 width: collectiblesGrid.cellWidth
                 title: model.name ? model.name : "..."
-                subTitle: d.getSubtitle(model.deployState, model.remainingSupply, model.supply, true, model.infiniteSupply)
-                subTitleColor: (model.deployState === Constants.ContractTransactionStatus.Failed) ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
+                subTitle: d.getSubtitle(model.deployState,
+                                        model.remainingSupply,
+                                        model.supply, true,
+                                        model.infiniteSupply)
+                subTitleColor: model.deployState === Constants.ContractTransactionStatus.Failed
+                               ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                 fallbackImageUrl: model.image ? model.image : ""
                 backgroundColor: "transparent"
                 isLoading: false
                 navigationIconVisible: true
 
-                onClicked: root.itemClicked(model.contractUniqueKey, model.chainId, model.chainName, model.accountName, model.address)
+                onClicked: root.itemClicked(model.contractUniqueKey,
+                                            model.chainId, model.chainName,
+                                            model.accountName, model.address)
             }
         }
 
