@@ -29,3 +29,4 @@ RemoveAccountConfirmationPopup 1.0 RemoveAccountConfirmationPopup.qml
 RenameGroupPopup 1.0 RenameGroupPopup.qml
 DeleteMessageConfirmationPopup 1.0 DeleteMessageConfirmationPopup.qml
 UserAgreementPopup 1.0 UserAgreementPopup.qml
+AlertPopup 1.0 AlertPopup.qml

@@ -168,10 +168,10 @@ mainWallet_Saved_Addreses_Popup_Address_Add_Button = {"container": statusDesktop
 mainWallet_Saved_Addreses_Popup_Add_Network_Selector = {"container": statusDesktop_mainWindow, "objectName": "addSavedAddressNetworkSelector", "type": "StatusNetworkSelector", "visible": True}
 mainWallet_Saved_Addreses_Popup_Add_Network_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "addNetworkTagItemButton", "type": "StatusRoundButton", "visible": True}
 mainWallet_Saved_Addreses_Popup_Add_Network_Selector_Tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectorTag", "type": "StatusNetworkListItemTag"}
-mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Mainnet_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Ethereum Mainnet", "type": "StatusCheckBox", "visible": True}
+mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Mainnet_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Mainnet", "type": "StatusCheckBox", "visible": True}
 mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Optimism_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Optimism", "type": "StatusCheckBox", "visible": True}
 mainWallet_Saved_Addresses_Popup_Add_Network_Selector_Arbitrum_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkSelectionCheckbox_Arbitrum", "type": "StatusCheckBox", "visible": True}
-mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_Ethereum Mainnet", "type": "Rectangle", "visible": True}
+mainWallet_Saved_Addresses_Popup_Network_Selector_Mainnet_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_Mainnet", "type": "Rectangle", "visible": True}
 mainWallet_Saved_Addresses_Popup_Network_Selector_Optimism_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_Optimism", "type": "Rectangle", "visible": True}
 mainWallet_Saved_Addresses_Popup_Network_Selector_Arbitrum_network_tag = {"container": statusDesktop_mainWindow_overlay, "objectName": "networkTagRectangle_Arbitrum", "type": "Rectangle", "visible": True}
 # Collectibles view

@@ -18,6 +18,11 @@ type NetworkDto* = ref object
   enabled* {.serializedFieldName("enabled").}: bool
   chainColor* {.serializedFieldName("chainColor").}: string
   shortName* {.serializedFieldName("shortName").}: string
+  relatedChainId* {.serializedFieldName("relatedChainId").}: int
+
+type CombinedNetworkDto* = ref object
+  prod* {.serializedFieldName("Prod").}: NetworkDto
+  test* {.serializedFieldName("Test").}: NetworkDto
 
 proc `$`*(self: NetworkDto): string =
   return fmt"""Network(
@@ -34,7 +39,8 @@ proc `$`*(self: NetworkDto): string =
     nativeCurrencySymbol:{self.nativeCurrencySymbol},
     isTest:{self.isTest}, enabled:{self.enabled},
     chainColor:{self.chainColor},
-    shortName:{self.shortName}
+    shortName:{self.shortName},
+    relatedChainId:{self.relatedChainId}
   )"""
 
 proc hash*(self: NetworkDto): Hash =

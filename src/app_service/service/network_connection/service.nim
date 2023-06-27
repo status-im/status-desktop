@@ -120,19 +120,15 @@ QtObject:
     var allDown: bool = true
     var chaindIdsDown: seq[int] = @[]
 
-    # checking all down we check all networks and for chainIds to be displayed as down
-    # we only check for networks currently active (for test net only testnet networks etc...)
-    let currentChainIds = self.networkService.getNetworks().map(a => a.chainId)
-    let allChainIds = self.networkService.fetchNetworks().map(a => a.chainId)
+    let allChainIds = self.networkService.getNetworks().map(a => a.chainId)
     if chainStatusTable.kind != JNull:
       for id in allChainIds:
         if chainStatusTable[$id].kind != JNull:
           let isDown = self.getIsDown(chainStatusTable[$id].getStr)
-          if not isDown:
+          if isDown:
+            chaindIdsDown.add(id)
+          else:
             allDown = false
-          if currentChainIds.contains(id):
-            if isDown:
-              chaindIdsDown.add(id)
     return (allDown, chaindIdsDown)
 
   proc getFormattedStringForChainIds(self: Service, chainIds: seq[int]): string =

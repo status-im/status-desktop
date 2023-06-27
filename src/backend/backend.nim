@@ -49,6 +49,7 @@ type
     enabled* {.serializedFieldName("enabled").}: bool
     chainColor* {.serializedFieldName("chainColor").}: string
     shortName* {.serializedFieldName("shortName").}: string
+    relatedChainID* {.serializedFieldName("relatedChainID").}: int
 
   ActivityCenterNotificationsRequest* = ref object of RootObj
     cursor* {.serializedFieldName("cursor").}: string
@@ -64,7 +65,7 @@ rpc(clientVersion, "web3"):
   discard
 
 rpc(getEthereumChains, "wallet"):
-  onlyEnabled: bool
+  discard
 
 rpc(addEthereumChain, "wallet"):
   network: Network

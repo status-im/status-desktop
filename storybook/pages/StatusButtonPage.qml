@@ -238,7 +238,7 @@ SplitView {
                     Label { text: "Type:" }
                     ComboBox {
                         id: ctrlType
-                        model: ["Normal", "Danger", "Primary"] // enum StatusBaseButton.Type.xxx
+                        model: ["Normal", "Danger", "Primary", "Warning"] // enum StatusBaseButton.Type.xxx
                     }
                 }
                 RowLayout {

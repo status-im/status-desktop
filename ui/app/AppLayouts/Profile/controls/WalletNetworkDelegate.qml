@@ -6,6 +6,7 @@ import StatusQ.Core.Theme 0.1
 
 StatusListItem {
     property var network
+    property bool areTestNetworksEnabled
     title: network.chainName
     asset.name: Style.svg(network.iconUrl)
     asset.isImage: true
@@ -13,6 +14,12 @@ StatusListItem {
     leftPadding: Style.current.padding
     rightPadding: Style.current.padding
     components: [
+        StatusBaseText {
+            text: qsTr("Goerli testnet active")
+            font.pixelSize: 15
+            color: Theme.palette.baseColor1
+            visible: areTestNetworksEnabled
+        },
         StatusIcon {
             icon: "next"
             color: Theme.palette.baseColor1

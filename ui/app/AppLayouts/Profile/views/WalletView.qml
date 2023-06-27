@@ -54,8 +54,6 @@ SettingsContentBase {
             if(currentIndex == root.networksViewIndex) {
                 root.rootStore.backButtonName = qsTr("Wallet")
                 root.sectionTitle = qsTr("Networks")
-
-                root.titleRowComponentLoader.sourceComponent = testnetModeSwitchComponent
             }
             else if(currentIndex == root.accountViewIndex) {
                 root.rootStore.backButtonName = qsTr("Wallet")
@@ -116,16 +114,6 @@ SettingsContentBase {
 
         DappPermissionsView {
             walletStore: root.walletStore
-        }
-
-        Component {
-            id: testnetModeSwitchComponent
-            StatusSwitch {
-                objectName: "testnetModeSwitch"
-                text: qsTr("Testnet Mode")
-                checked: walletStore.areTestNetworksEnabled
-                onClicked: walletStore.toggleTestNetworksEnabled()
-            }
         }
 
         Component {
