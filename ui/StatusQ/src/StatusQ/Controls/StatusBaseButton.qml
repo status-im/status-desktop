@@ -19,7 +19,8 @@ Button {
     enum Type {
         Normal,
         Danger,
-        Primary
+        Primary,
+        Warning
     }
 
     enum TextPosition {

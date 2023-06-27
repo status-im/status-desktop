@@ -14,7 +14,7 @@ logScope:
 type 
   Service* = ref object of RootObj
     events: EventEmitter
-    networks: seq[NetworkDto]
+    networks: seq[CombinedNetworkDto]
     networksInited: bool
     dirty: Atomic[bool]
     settingsService: settings_service.Service
@@ -31,16 +31,16 @@ proc newService*(events: EventEmitter, settingsService: settings_service.Service
 proc init*(self: Service) =
   discard
 
-proc fetchNetworks*(self: Service, useCached: bool = true): seq[NetworkDto] =
+proc fetchNetworks*(self: Service, useCached: bool = true): seq[CombinedNetworkDto] =
   let cacheIsDirty = not self.networksInited or self.dirty.load
   if useCached and not cacheIsDirty:
     result = self.networks
   else:
-    let response = backend.getEthereumChains(false)
+    let response = backend.getEthereumChains()
     if not response.error.isNil:
       raise newException(Exception, "Error getting networks: " & response.error.message)
     result = if response.result.isNil or response.result.kind == JNull: @[]
-              else: Json.decode($response.result, seq[NetworkDto], allowUnknownFields = true)
+              else: Json.decode($response.result, seq[CombinedNetworkDto], allowUnknownFields = true)
     self.dirty.store(false)
     self.networks = result
     self.networksInited = true
@@ -49,11 +49,10 @@ proc getNetworks*(self: Service): seq[NetworkDto] =
   let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
     
   for network in self.fetchNetworks():
-    if testNetworksEnabled and network.isTest:
-      result.add(network)
-      
-    if not testNetworksEnabled and not network.isTest:
-      result.add(network)
+    if testNetworksEnabled:
+      result.add(network.test)
+    else:
+      result.add(network.prod)
 
 proc upsertNetwork*(self: Service, network: NetworkDto) =
   discard backend.addEthereumChain(backend.Network(
@@ -71,6 +70,7 @@ proc upsertNetwork*(self: Service, network: NetworkDto) =
     enabled: network.enabled,
     chainColor: network.chainColor,
     shortName: network.shortName,
+    relatedChainID: network.relatedChainID,
   ))
   self.dirty.store(true)
 
@@ -79,14 +79,20 @@ proc deleteNetwork*(self: Service, network: NetworkDto) =
   self.dirty.store(true)
 
 proc getNetwork*(self: Service, chainId: int): NetworkDto =
+  let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
   for network in self.fetchNetworks():
-    if chainId == network.chainId:
-      return network
+    let net = if testNetworksEnabled: network.test
+              else: network.prod
+    if chainId == net.chainId:
+        return net
 
 proc getNetwork*(self: Service, networkType: NetworkType): NetworkDto =
+  let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
   for network in self.fetchNetworks():
-    if networkType.toChainId() == network.chainId:
-      return network
+    let net = if testNetworksEnabled: network.test
+              else: network.prod
+    if networkType.toChainId() == net.chainId:
+      return net
 
   # Will be removed, this is used in case of legacy chain Id
   return NetworkDto(chainId: networkType.toChainId())

@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 
 import utils 1.0
 
@@ -23,6 +24,7 @@ Item {
     property string text: ""
     property alias buttonText: button.text
     property alias closeBtnVisible: closeImg.visible
+    property string iconName
 
     signal clicked()
     signal closeClicked()
@@ -128,6 +130,16 @@ Item {
 
             spacing: 12
             anchors.centerIn: parent
+
+            StatusRoundIcon {
+                Layout.preferredHeight: 16
+                Layout.preferredWidth: 16
+                Layout.rightMargin: -8
+                visible: !!root.iconName
+                asset.name: root.iconName
+                asset.bgColor: Theme.palette.indirectColor1
+                asset.color: content.baseColor
+            }
 
             StatusBaseText {
                 text: root.text

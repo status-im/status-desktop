@@ -535,45 +535,14 @@ Item {
                     id: testnetBanner
                     objectName: "testnetBanner"
                     Layout.fillWidth: true
-                    text: qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
+                    text: qsTr("Testnet mode enabled. All balances, transactions and dApp interactions will be on testnets.")
                     buttonText: qsTr("Turn off")
-                    type: ModuleWarning.Danger
+                    type: ModuleWarning.Warning
+                    iconName: "warning"
                     active: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
 
-                    onClicked: {
-                        testnetBannerDialog.open()
-                    }
-
-                    onCloseClicked: {
-                        testnetBannerDialog.open()
-                    }
-
-                    StatusDialog {
-                        id: testnetBannerDialog
-
-                        width: 400
-                        title: qsTr("Turn off Testnet mode")
-
-                        StatusBaseText {
-                            anchors.fill: parent
-                            text: qsTr("Closing this banner will turn off Testnet mode.\nAll future transactions will be on mainnet or other active networks.")
-                            font.pixelSize: 15
-                            wrapMode: Text.WordWrap
-                        }
-
-                        footer: StatusDialogFooter {
-                            rightButtons: ObjectModel {
-                                StatusButton {
-                                    type: StatusButton.Danger
-                                    text: qsTr("Turn off Testnet")
-                                    onClicked: {
-                                        appMain.rootStore.profileSectionStore.walletStore.toggleTestNetworksEnabled()
-                                        testnetBannerDialog.close()
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    onClicked: Global.openTestnetPopup()
+                    onCloseClicked: Global.openTestnetPopup()
                 }
 
                 ModuleWarning {

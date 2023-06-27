@@ -64,6 +64,8 @@ QtObject {
     signal playNotificationSound()
     signal playErrorSound()
 
+    signal openTestnetPopup()
+
     function openProfilePopup(publicKey, parentPopup, cb) {
         root.openProfilePopupRequested(publicKey, parentPopup, cb)
     }
