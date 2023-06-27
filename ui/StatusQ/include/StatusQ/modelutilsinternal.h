@@ -24,6 +24,8 @@ public:
     Q_INVOKABLE QVariant get(QAbstractItemModel *model, int row,
                              const QString &roleName) const;
 
+    Q_INVOKABLE bool contains(QAbstractItemModel *model, const QString &roleName, const QVariant &value, int mode = Qt::CaseSensitive) const;
+
     static QObject* qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine)
     {
         Q_UNUSED(engine);

@@ -12,15 +12,8 @@ QStringList ModelUtilsInternal::roleNames(QAbstractItemModel *model) const
     if (model == nullptr)
         return {};
 
-    QHash<int, QByteArray> roles = model->roleNames();
-
-    QStringList strings;
-    strings.reserve(roles.size());
-
-    for (auto it = roles.begin(); it != roles.end(); ++it)
-        strings << QString::fromUtf8(it.value());
-
-    return strings;
+    const auto roles = model->roleNames();
+    return {roles.cbegin(), roles.cend()};
 }
 
 
@@ -40,8 +33,8 @@ QVariantMap ModelUtilsInternal::get(QAbstractItemModel *model, int row) const
     if (model == nullptr)
         return map;
 
-    QModelIndex modelIndex = model->index(row, 0);
-    QHash<int, QByteArray> roles = model->roleNames();
+    const auto modelIndex = model->index(row, 0);
+    const auto roles = model->roleNames();
 
     for (auto it = roles.begin(); it != roles.end(); ++it)
         map.insert(it.value(), model->data(modelIndex, it.key()));
@@ -53,4 +46,17 @@ QVariant ModelUtilsInternal::get(QAbstractItemModel *model,
                                  int row, const QString &roleName) const
 {
     return model->data(model->index(row, 0), roleByName(model, roleName));
+}
+
+bool ModelUtilsInternal::contains(QAbstractItemModel* model,
+                                  const QString& roleName,
+                                  const QVariant& value,
+                                  int mode) const
+{
+    if(!model) return false;
+
+    Qt::MatchFlags flags = Qt::MatchFixedString; // Qt::CaseInsensitive by default
+    if(mode == Qt::CaseSensitive) flags |= Qt::MatchCaseSensitive;
+    const auto indexes = model->match(model->index(0, 0), roleByName(model, roleName), value, 1, flags);
+    return !indexes.isEmpty();
 }

@@ -55,8 +55,8 @@ QtObject {
         return -1
     }
 
-    function contains(model, role, key) {
-        return indexOf(model, role, key) !== -1
+    function contains(model, roleName, value, mode = Qt.CaseSensitive) {
+        return Internal.ModelUtils.contains(model, roleName, value, mode)
     }
 
     function checkItemsEquality(itemA, itemB, roles) {
