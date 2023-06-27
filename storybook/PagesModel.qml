@@ -366,6 +366,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "IntroPanel"
+        section: "Panels"
+    }
+    ListElement {
         title: "PopupSizing"
         section: "Research / Examples"
     }

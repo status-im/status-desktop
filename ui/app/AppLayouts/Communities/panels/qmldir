@@ -7,6 +7,7 @@ ColorPanel 1.0 ColorPanel.qml
 ColumnHeaderPanel 1.0 ColumnHeaderPanel.qml
 FeesPanel 1.0 FeesPanel.qml
 HidePermissionPanel 1.0 HidePermissionPanel.qml
+IntroPanel 1.0 IntroPanel.qml
 JoinCommunityCenterPanel 1.0 JoinCommunityCenterPanel.qml
 JoinCommunityHeaderPanel 1.0 JoinCommunityHeaderPanel.qml
 JoinPermissionsOverlayPanel 1.0 JoinPermissionsOverlayPanel.qml
@@ -17,9 +18,9 @@ OverviewSettingsPanel 1.0 OverviewSettingsPanel.qml
 PermissionConflictWarningPanel 1.0 PermissionConflictWarningPanel.qml
 PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml
 PermissionsSettingsPanel 1.0 PermissionsSettingsPanel.qml
-ProfilePopupOverviewPanel 1.0 ProfilePopupOverviewPanel.qml
 ProfilePopupInviteFriendsPanel 1.0 ProfilePopupInviteFriendsPanel.qml
 ProfilePopupInviteMessagePanel 1.0 ProfilePopupInviteMessagePanel.qml
+ProfilePopupOverviewPanel 1.0 ProfilePopupOverviewPanel.qml
 SortableTokenHoldersList 1.0 SortableTokenHoldersList.qml
 SortableTokenHoldersPanel 1.0 SortableTokenHoldersPanel.qml
 TagsPanel 1.0 TagsPanel.qml
