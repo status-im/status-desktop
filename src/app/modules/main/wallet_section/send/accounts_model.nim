@@ -12,6 +12,7 @@ type
     Emoji,
     Assets,
     CurrencyBalance,
+    Position,
 
 QtObject:
   type
@@ -54,6 +55,7 @@ QtObject:
       ModelRole.Emoji.int: "emoji",
       ModelRole.Assets.int: "assets",
       ModelRole.CurrencyBalance.int: "currencyBalance",
+      ModelRole.Position.int: "position",
     }.toTable
 
   proc setItems*(self: AccountsModel, items: seq[AccountItem]) =
@@ -83,6 +85,8 @@ QtObject:
       result = newQVariant(item.walletType())
     of ModelRole.Emoji:
       result = newQVariant(item.emoji())
+    of ModelRole.Position:
+      result = newQVariant(item.position())
     of ModelRole.Assets:
       result = newQVariant(item.getAssetsAsQVariant())
     of ModelRole.CurrencyBalance:
