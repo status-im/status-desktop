@@ -17,7 +17,7 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | name           | new_name         | new_color | new_emoji  | new_emoji_unicode |
             | Status account | MyPrimaryAccount | 216266    | sunglasses | 1f60e             |
 
-        Scenario Outline: The user manages a watch only account
+    Scenario Outline: The user manages a watch only account
         When the user adds a watch only account "<address>" with "<name>" color "#<color>" and emoji "<emoji>" via "<add_via_context_menu>"
         Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
         When the user edits an account with "<name>" to "<new_name>" with color "#<new_color>" and emoji "<new_emoji>"
@@ -28,9 +28,10 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | address                                    | name      | color  | emoji      | emoji_unicode | add_via_context_menu | new_name        | new_color | new_emoji | new_emoji_unicode |
             | 0xea123F7beFF45E3C9fdF54B324c29DBdA14a639A | AccWatch1 | 2a4af5 | sunglasses | 1f60e         | yes                  | AccWatch1edited | 216266    | thumbsup  | 1f44d             |
             | 0xea123F7beFF45E3C9fdF54B324c29DBdA14a639B | AccWatch2 | 7140fd | sunglasses | 1f60e         | no                   | AccWatch2edited | 2a799b    | thumbsup  | 1f44d             |
-    
-    @mayfail # Test should be changed to reflect balance change instead of accounts list, will be done after it is changed in the app
-     Scenario Outline: The user can hide and show watch only account by clicking Hide / Show button
+
+    # Test should be changed to reflect balance change instead of accounts list, will be done after it is changed in the app
+	@mayfail
+ 	Scenario Outline: The user can hide and show watch only account by clicking Hide / Show button
         When the user adds a watch only account "<address>" with "<name>" color "#<color>" and emoji "<emoji>" via "<add_via_context_menu>"
         Then the account is correctly displayed with "<name>" and "#<color>" and emoji unicode "<emoji_unicode>" in accounts list
         When the user opens All accounts view
@@ -144,6 +145,7 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | keypair_name | name  | color  | emoji      | emoji_unicode | new_name     | new_color | new_emoji | new_emoji_unicode |
             | SPKeyPair    | SPAcc | 2a4af5 | sunglasses | 1f60e         | SPAcc_edited | 216266    | thumbsup  | 1f44d             |
 
+		@mayfail
         Scenario Outline: The user manages an account created from the generated seed phrase
         When the user adds a generated seed phrase account with "SPKeyPair" color "#<color>" emoji "<emoji>" and keypair "<keypair_name>"
         Then the account with "SPKeyPair" is displayed
