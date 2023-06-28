@@ -464,9 +464,7 @@ StatusSectionLayout {
                     target: airdropPanel
 
                     function onNavigateToMintTokenSettings(isAssetType) {
-                        // Here it is forced a navigation to the new airdrop form, like if it was clicked the header button
-                        mintPanel.resetNavigation(isAssetType)
-                        mintPanel.primaryHeaderButtonClicked()
+                        mintPanel.openNewTokenForm(isAssetType)
                     }
                 }
             }

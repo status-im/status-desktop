@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
@@ -25,9 +25,8 @@ Control {
 
     height: 61 // by design
     spacing: Style.current.padding
-    contentItem: Item {
-        anchors.fill: parent
 
+    contentItem: Item {
         StatusModalDivider {
             width: parent.width
             anchors.top: parent.top

@@ -24,6 +24,18 @@ SplitView {
         text: "Back"
         onClicked: panel.navigateBack()
     }
+
+    Timer {
+        id: feesTimer
+
+        interval: 1000
+
+        onTriggered: {
+            panel.isFeeLoading = false
+            panel.feeText = "0,0002 ETH (123,15 USD)"
+        }
+    }
+
     Rectangle {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
@@ -49,6 +61,8 @@ SplitView {
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
             onMintAsset: logs.logEvent("CommunityMintTokensSettingsPanel::mintAssets")
             onDeleteToken: logs.logEvent("CommunityMintTokensSettingsPanel::deleteToken: " + tokenKey)
+
+            onSignMintTransactionOpened: feesTimer.restart()
         }
     }
 
@@ -60,34 +74,29 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        RowLayout {
-            ColumnLayout {
-                Label {
-                    Layout.fillWidth: true
-                    text: "Is empty model?"
-                }
+        ColumnLayout {
+            CheckBox {
+                id: editorModelChecked
+                checked: true
 
-                CheckBox {
-                    id: editorModelChecked
-                    checked: true
-                }
+                text: "Empty model"
             }
-            ColumnLayout {
-                Label {
-                    Layout.fillWidth: true
-                    text: "Is minting in progress?"
+
+            RowLayout {
+                Button {
+                    text: "Set all to 'In progress'"
+
+                    onClicked: mintedTokensModel.changeAllMintingStates(1)
                 }
+                Button {
+                    text: "Set all to 'Deployed'"
 
-                CheckBox {
-                    id: editorMintingChecked
-                    checked: true
-                    onCheckedChanged:{
-                        if(checked)
-                            mintedTokensModel.changeAllMintingStates(1/*In progress*/)
-                        else
-                            mintedTokensModel.changeAllMintingStates(2/*Deployed*/)
-                    }
+                    onClicked: mintedTokensModel.changeAllMintingStates(2)
+                }
+                Button {
+                    text: "Set all to 'Error'"
 
+                    onClicked: mintedTokensModel.changeAllMintingStates(0)
                 }
             }
         }
