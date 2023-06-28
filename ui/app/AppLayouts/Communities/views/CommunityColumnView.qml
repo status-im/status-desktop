@@ -95,6 +95,14 @@ Item {
                 }
             }
         }
+
+        Connections {
+            target: communitySectionModule
+            function onUserAuthenticationCanceled() {
+                joinCommunityButton.invitationPending = false
+                joinCommunityButton.loading = false
+            }
+        }
         Component {
             id: communityIntroDialog
             CommunityIntroDialog {

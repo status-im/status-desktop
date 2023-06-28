@@ -420,3 +420,5 @@ QtObject:
   QtProperty[bool] allTokenRequirementsMet:
     read = getAllTokenRequirementsMet
     notify = allTokenRequirementsMetChanged
+
+  proc userAuthenticationCanceled*(self: View) {.signal.}
