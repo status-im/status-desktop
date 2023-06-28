@@ -898,6 +898,11 @@ method onJoinedCommunity*(self: Module) =
   self.view.setAmIMember(true)
 
 method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+  if password == "" and pin == "":
+    self.view.userAuthenticationCanceled()
+    self.controller.userAuthenticationCanceled()
+    return
+
   self.controller.requestToJoinCommunityAuthenticated(password)
 
 method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =

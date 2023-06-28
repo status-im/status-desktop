@@ -91,6 +91,11 @@ proc getIsCurrentSectionActive*(self: Controller): bool =
 proc setIsCurrentSectionActive*(self: Controller, active: bool) =
   self.isCurrentSectionActive = active
 
+proc userAuthenticationCanceled*(self: Controller) =
+  self.tmpAuthenticationForJoinInProgress = false
+  self.tmpRequestToJoinEnsName = ""
+  self.tmpRequestToJoinAddressesToShare = @[]
+
 proc requestToJoinCommunityAuthenticated*(self: Controller, password: string) =
   self.communityService.asyncRequestToJoinCommunity(self.sectionId, self.tmpRequestToJoinEnsName,
     password, self.tmpRequestToJoinAddressesToShare)
