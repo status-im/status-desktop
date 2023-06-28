@@ -351,9 +351,9 @@ SettingsPageLayout {
             function signMintTransaction() {
                 root.setFeeLoading()
                 if(preview.isAssetView)
-                    root.mintAsset(asset)
+                    root.mintAsset(token)
                 else
-                    root.mintCollectible(collectible)
+                    root.mintCollectible(token)
 
                 root.resetNavigation()
             }
