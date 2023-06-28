@@ -8,6 +8,7 @@ import StatusQ.Controls 0.1
 
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.helpers 1.0
+import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.views 1.0
 
@@ -73,28 +74,6 @@ StackView {
     }
 
     property string previousPageName: depth > 1 ? qsTr("Back") : ""
-
-    component SettingsPage: Page {
-        id: page
-
-        leftPadding: 64
-        topPadding: 16
-
-        // refactor to aliasses, why it doesn't work??
-        property list<StatusButton> buttons//: pageHeader.buttons
-        property string pageTitle//: pageHeader.title
-        property string pageSubtitle//: pageHeader.subtitle
-
-        header: SettingsPageHeader {
-            height: 44
-            leftPadding: 64
-            rightPadding: width - 560 - leftPadding
-
-            title: page.pageTitle
-            subtitle: page.pageSubtitle
-            buttons: page.buttons
-        }
-    }
 
     initialItem: SettingsPage {
         implicitWidth: 0
