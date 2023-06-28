@@ -7,6 +7,7 @@ export wallet_account_item
 
 QtObject:
   type AccountItem* = ref object of WalletAccountItem
+    position: int
     assets: token_model.Model
     currencyBalance: CurrencyAmount
 
@@ -17,8 +18,9 @@ QtObject:
     emoji: string,
     walletType: string,
     assets: token_model.Model,
-    currencyBalance: CurrencyAmount
-    ) =
+    currencyBalance: CurrencyAmount,
+    position: int,
+  ) =
     self.QObject.setup
     self.WalletAccountItem.setup(name,
       address,
@@ -29,6 +31,7 @@ QtObject:
       keyUid = "",
       keycardAccount = false)
     self.assets = assets
+    self.position = position
     self.currencyBalance = currencyBalance
 
   proc delete*(self: AccountItem) =
@@ -42,9 +45,10 @@ QtObject:
     walletType: string = "",
     assets: token_model.Model = nil,
     currencyBalance: CurrencyAmount = nil,
+    position: int = 0,
     ): AccountItem =
       new(result, delete)
-      result.setup(name, address, colorId, emoji, walletType, assets, currencyBalance)
+      result.setup(name, address, colorId, emoji, walletType, assets, currencyBalance, position)
 
   proc `$`*(self: AccountItem): string =
     result = "WalletSection-Send-Item("
@@ -70,3 +74,6 @@ QtObject:
   QtProperty[QVariant] currencyBalance:
     read = getCurrencyBalanceAsQVariant
     notify = currencyBalanceChanged
+
+  proc position*(self: AccountItem): int =
+    return self.position

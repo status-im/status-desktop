@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.0
+import SortFilterProxyModel 0.2
 
 import utils 1.0
 import shared.stores 1.0
@@ -150,7 +151,11 @@ StatusDialog {
     header: AccountsModalHeader {
         anchors.top: parent.top
         anchors.topMargin: -height - 18
-        model: popup.store.senderAccounts
+        model: SortFilterProxyModel {
+            sourceModel: popup.store.senderAccounts
+
+            sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
+        }
         selectedAccount: !!popup.selectedAccount ? popup.selectedAccount: {}
         chainShortNames: store.getAllNetworksSupportedPrefix()
         onSelectedIndexChanged: store.switchSenderAccount(selectedIndex)

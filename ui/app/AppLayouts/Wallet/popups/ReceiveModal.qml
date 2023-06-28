@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 import QtQuick.Controls 2.14
+import SortFilterProxyModel 0.2
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -42,7 +43,12 @@ StatusModal {
 
     hasFloatingButtons: true
     advancedHeaderComponent: AccountsModalHeader {
-        model: RootStore.receiveAccounts
+        model: SortFilterProxyModel {
+            sourceModel: RootStore.receiveAccounts
+
+            sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
+        }
+        
         selectedAccount: RootStore.selectedReceiveAccount
         onSelectedIndexChanged: RootStore.switchReceiveAccount(selectedIndex)
     }
