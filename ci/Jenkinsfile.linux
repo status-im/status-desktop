@@ -35,7 +35,7 @@ pipeline {
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 20, unit: 'MINUTES')
+    timeout(time: 25, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -82,7 +82,7 @@ pipeline {
       steps { script {
         /* Temporary hack-fix for failing Linux builds:
          * https://github.com/status-im/infra-ci/issues/88 */
-        timeout(10) { retry(20) {
+        timeout(10) { retry(10) {
           sh 'make nim_status_client'
         } }
       } }
