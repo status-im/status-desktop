@@ -135,7 +135,6 @@ SplitView {
 
             const view = loader.item
             view.airdropFees = response
-
         }
     }
 
@@ -183,7 +182,6 @@ SplitView {
                             expression: model.index ? "Optimism" : "Arbitrum"
                         },
                         ExpressionRole {
-
                             readonly property string icon1: "network/Network=Optimism"
                             readonly property string icon2: "network/Network=Arbitrum"
 
@@ -221,11 +219,18 @@ SplitView {
                             expression: !(model.index % 4)
                         },
                         ExpressionRole {
+                            name: "accountName"
+                            expression: "StatusAccount"
+                        },
+                        ExpressionRole {
+                            name: "contractUniqueKey"
+                            expression: "contractUniqueKey_" + model.index
+                        },
+                        ExpressionRole {
                             name: "chainName"
                             expression: model.index ? "Ethereum Mainnet" : "Goerli"
                         },
                         ExpressionRole {
-
                             readonly property string icon1: "network/Network=Ethereum"
                             readonly property string icon2: "network/Network=Testnet"
 
@@ -238,7 +243,6 @@ SplitView {
                         roleName: "category"
                         value: TokenCategories.Category.Community
                     }
-
 
                     Component.onCompleted: {
                         Qt.callLater(() => editAirdropView.assetsModel = this)

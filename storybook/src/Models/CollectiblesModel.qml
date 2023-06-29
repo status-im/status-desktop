@@ -8,22 +8,27 @@ ListModel {
             key: "Anniversary",
             iconSource: ModelsData.collectibles.anniversary,
             name: "Anniversary",
+            symbol: "Anniversary",
             category: TokenCategories.Category.Community,
             imageUrl: ModelsData.collectibles.anniversary,
-            id: 1767698
+            id: 1767698,
+            communityId: ""
         },
         {
             key: "Anniversary2",
             iconSource: ModelsData.collectibles.anniversary,
             name: "Anniversary2",
+            symbol: "Anniversary2",
             category: TokenCategories.Category.Community,
             imageUrl: ModelsData.collectibles.anniversary,
-            id: 1767699
+            id: 1767699,
+            communityId: ""
         },
         {
             key: "CryptoKitties",
             iconSource: ModelsData.collectibles.cryptoKitties,
             name: "CryptoKitties",
+            symbol: "CryptoKitties",
             category: TokenCategories.Category.Own,
             subItems: [
                 {
@@ -70,23 +75,28 @@ ListModel {
                 }
             ],
             imageUrl: ModelsData.collectibles.cryptoKitties,
-            id: 1767700
+            id: 1767700,
+            communityId: ""
         },
         {
             key: "SuperRare",
             iconSource: ModelsData.collectibles.superRare,
             name: "SuperRare",
+            symbol: "SuperRare",
             category: TokenCategories.Category.Own,
             imageUrl: ModelsData.collectibles.superRare,
-            id: 1767701
+            id: 1767701,
+            communityId: ""
         },
         {
             key: "Custom",
             iconSource: ModelsData.collectibles.custom,
             name: "Custom Collectible",
+            symbol: "Custom",
             category: TokenCategories.Category.General,
             imageUrl: ModelsData.collectibles.custom,
-            id: 1767764
+            id: 1767764,
+            communityId: ""
         }
     ]
 

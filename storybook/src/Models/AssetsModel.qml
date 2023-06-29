@@ -9,49 +9,63 @@ ListModel {
             iconSource: ModelsData.assets.socks,
             name: "Unisocks",
             shortName: "SOCKS",
-            category: TokenCategories.Category.Community
+            symbol: "SOCKS",
+            category: TokenCategories.Category.Community,
+            communityId: ""
         },
         {
             key: "zrx",
             iconSource: ModelsData.assets.zrx,
             name: "Ox",
             shortName: "ZRX",
-            category: TokenCategories.Category.Community
+            symbol: "ZRX",
+            category: TokenCategories.Category.Community,
+            communityId: ""
         },
         {
             key: "1inch",
             iconSource: ModelsData.assets.inch,
             name: "1inch",
             shortName: "1INCH",
-            category: TokenCategories.Category.Own
+            symbol: "1INCH",
+            category: TokenCategories.Category.Own,
+            communityId: ""
         },
         {
             key: "Aave",
             iconSource: ModelsData.assets.aave,
             name: "Aave",
             shortName: "AAVE",
-            category: TokenCategories.Category.Own
+            symbol: "AAVE",
+            category: TokenCategories.Category.Own,
+            communityId: ""
         },
         {
             key: "Amp",
             iconSource: ModelsData.assets.amp,
             name: "Amp",
             shortName: "AMP",
-            category: TokenCategories.Category.Own
+            symbol: "AMP",
+            category: TokenCategories.Category.Own,
+            communityId: ""
         },
         {
             key: "Dai",
             iconSource: ModelsData.assets.dai,
             name: "Dai",
             shortName: "DAI",
-            category: TokenCategories.Category.General
+            symbol: "DAI",
+            category: TokenCategories.Category.General,
+            communityId: ""
         },
         {
             key: "snt",
             iconSource: ModelsData.assets.snt,
             name: "snt",
             shortName: "snt",
-            category: TokenCategories.Category.General
+            symbol: "snt",
+            category: TokenCategories.Category.General,
+            communityId: ""
         }
     ]
 

@@ -17,6 +17,7 @@ Control {
     horizontalPadding: 56
 
     background: Rectangle {
+        color: Theme.palette.statusListItem.backgroundColor
         radius: Style.current.radius
         border.color: Theme.palette.baseColor2
     }
