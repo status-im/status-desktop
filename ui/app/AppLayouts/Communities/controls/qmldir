@@ -8,6 +8,7 @@ ColorPicker 1.0 ColorPicker.qml
 CommunityListItem 1.0 CommunityListItem.qml
 DescriptionInput 1.0 DescriptionInput.qml
 EnsPanel 1.0 EnsPanel.qml
+EditCommunitySettingsForm 1.0 EditCommunitySettingsForm.qml
 ExtendedDropdownContent 1.0 ExtendedDropdownContent.qml
 HoldingTypes 1.0 HoldingTypes.qml
 InlineNetworksComboBox 1.0 InlineNetworksComboBox.qml

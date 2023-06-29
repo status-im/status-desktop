@@ -10,7 +10,7 @@ import StatusQ.Controls.Validators 0.1
 StatusInput {
     id: root
 
-    label: qsTr("Community introduction and rules")
+    label: qsTr("Dialog for new members")
     charLimit: 1400
 
     multiline: true

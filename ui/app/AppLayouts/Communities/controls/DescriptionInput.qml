@@ -10,13 +10,13 @@ import StatusQ.Controls.Validators 0.1
 StatusInput {
     id: root
 
-    label: qsTr("Give it a short description")
+    label: qsTr("Description")
     charLimit: 140
 
     placeholderText: qsTr("What your community is about")
     input.multiline: true
-    minimumHeight: 88
-    maximumHeight: 88
+    maximumHeight: 108
+    minimumHeight: 108
 
     input.verticalAlignment: Qt.AlignTop
     input.placeholder.verticalAlignment: Qt.AlignTop

@@ -32,12 +32,12 @@ Item {
 
         anchors.fill: parent
 
-        spacing: 8
+        spacing: 19
 
         StatusBaseText {
             text: qsTr("Community banner")
 
-            font.pixelSize: 15
+            font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -53,13 +53,18 @@ Item {
             acceptButtonText: qsTr("Make this my Community banner")
 
             roundedImage: false
-            aspectRatio: 375/184
+            aspectRatio: 475/184
 
             NoImageUploadedPanel {
                 anchors.centerIn: parent
 
                 visible: !editor.userSelectedImage && !root.imageData
                 showAdditionalInfo: true
+                contentSpacing: 2
+                iconWidth: 24
+                iconHeight: 24
+                additionalText: qsTr("Optimal aspect ratio 16:9")
+                additionalTextPixelSize: Theme.tertiaryTextFontSize
             }
         }
     }

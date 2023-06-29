@@ -11,8 +11,8 @@ createCommunity_banner = {"container": statusDesktop_mainWindow_overlay, "object
 createCommunity_bannerButton = {"container": createCommunity_banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
 
 # Create community popup:
-createCommunityNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityNameInput", "type": "TextEdit", "visible": True}
-createCommunityDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityDescriptionInput", "type": "TextEdit", "visible": True}
+createCommunityNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityNameInput", "type": "TextEdit", "visible": True}
+createCommunityDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityDescriptionInput", "type": "TextEdit", "visible": True}
 createCommunityIntroMessageInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityIntroMessageInput", "type": "TextEdit", "visible": True}
 createCommunityOutroMessageInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityOutroMessageInput", "type": "TextEdit", "visible": True}
 createCommunityNextBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityNextBtn", "type": "StatusButton", "visible": True}

@@ -178,6 +178,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "EditSettingsPanel"
+        section: "Panels"
+    }
+    ListElement {
          title: "BurnTokensPopup"
          section: "Popups"
     }
