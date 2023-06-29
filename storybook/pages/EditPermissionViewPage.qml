@@ -32,7 +32,7 @@ SplitView {
             channelsModel: ChannelsModel {}
 
             communityDetails: QtObject {
-                readonly property string id: "sox"
+                readonly property string id: "id_sox"
                 readonly property string name: "Socks"
                 readonly property string image: ModelsData.icons.socks
                 readonly property string color: "red"

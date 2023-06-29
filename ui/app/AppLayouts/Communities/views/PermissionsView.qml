@@ -29,6 +29,9 @@ StatusScrollView {
 
     readonly property alias count: repeater.count
 
+    padding: 0
+    topPadding: count ? 16 : 0
+
     QtObject {
         id: d
 
@@ -53,8 +56,9 @@ StatusScrollView {
         }
 
         IntroPanel {
+            Layout.fillWidth: true
+
             visible: root.count === 0
-            width: root.viewWidth
 
             image: Style.png("community/permissions2_3")
             title: qsTr("Permissions")
