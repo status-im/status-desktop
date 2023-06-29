@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
@@ -28,11 +29,17 @@ SplitView {
                     margins: 50
                 }
 
-                permissionsModel: ListModel {
+                ListModel {
                     id: permissionsModel
 
                     Component.onCompleted: append(PermissionsModel.permissionsModelData)
                 }
+
+                ListModel {
+                    id: emptyModel
+                }
+
+                permissionsModel: emptyModelCheckBox.checked ? emptyModel : permissionsModel
 
                 assetsModel: AssetsModel {
                     id: assetsModel
@@ -78,18 +85,35 @@ SplitView {
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
 
-        CommunityPermissionsSettingsPanelEditor {
+        ColumnLayout {
             anchors.fill: parent
-            model: permissionsModel
 
-            assetKeys: assetsModel.data.map(asset => asset.key)
-            collectibleKeys: collectiblesModel.data.map(collectible => collectible.key)
-            channelKeys: {
-                const array = ModelUtils.modelToArray(channelsModel,
-                                                      ["itemId", "isCategory"])
-                const channelsOnly = array.filter(channel => !channel.isCategory)
+            CheckBox {
+                id: emptyModelCheckBox
 
-                return channelsOnly.map(channel => channel.itemId)
+                Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+
+                text: "Empty model"
+            }
+
+            CommunityPermissionsSettingsPanelEditor {
+                clip: true
+                visible: !emptyModelCheckBox.checked
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                model: permissionsModel
+
+                assetKeys: assetsModel.data.map(asset => asset.key)
+                collectibleKeys: collectiblesModel.data.map(collectible => collectible.key)
+                channelKeys: {
+                    const array = ModelUtils.modelToArray(channelsModel,
+                                                          ["itemId", "isCategory"])
+                    const channelsOnly = array.filter(channel => !channel.isCategory)
+
+                    return channelsOnly.map(channel => channel.itemId)
+                }
             }
         }
     }
