@@ -605,6 +605,7 @@ StatusSectionLayout {
             readonly property string image: root.community.image
             readonly property string color: root.community.color
             readonly property bool owner: root.community.memberRole === Constants.memberRole.owner
+            readonly property bool admin: root.community.memberRole === Constants.memberRole.admin
         }
 
         function goTo(section: int, subSection: int) {

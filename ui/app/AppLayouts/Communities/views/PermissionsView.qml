@@ -16,7 +16,7 @@ StatusScrollView {
     required property var collectiblesModel
     required property var channelsModel
 
-    // id, name, image, color, owner properties expected
+    // id, name, image, color, owner, admin properties expected
     required property var communityDetails
 
     property int viewWidth: 560 // by design
@@ -73,7 +73,7 @@ StatusScrollView {
                                    ? channelsSelectionModel : communityItemModel
                 isPrivate: model.isPrivate
 
-                showButtons: root.communityDetails.owner
+                showButtons: root.communityDetails.owner || (root.communityDetails.admin && model.permissionType !== PermissionTypes.Type.Admin)
 
                 onEditClicked: root.editPermissionRequested(model.index)
                 onDuplicateClicked: root.duplicatePermissionRequested(model.index)
