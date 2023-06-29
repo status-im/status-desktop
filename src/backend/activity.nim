@@ -358,6 +358,7 @@ proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inlin
   )
 
 rpc(filterActivityAsync, "wallet"):
+  requestId: int32
   addresses: seq[string]
   chainIds: seq[ChainId]
   filter: ActivityFilter
@@ -388,6 +389,7 @@ proc fromJson*(e: JsonNode, T: typedesc[GetRecipientsResponse]): GetRecipientsRe
   )
 
 rpc(getRecipientsAsync, "wallet"):
+  requestId: int32
   offset: int
   limit: int
 
@@ -403,4 +405,5 @@ proc fromJson*(e: JsonNode, T: typedesc[GetOldestTimestampResponse]): GetOldestT
   )
 
 rpc(getOldestActivityTimestampAsync, "wallet"):
+  requestId: int32
   addresses: seq[string]

@@ -46,8 +46,8 @@ Loader {
                 break
             }
             case TabAddressSelectorView.Type.RecentsAddress: {
-                let isIncoming = root.selectedRecipient.to === root.selectedRecipient.address
-                root.addressText = isIncoming ? root.selectedRecipient.from : root.selectedRecipient.to
+                let isIncoming = root.selectedRecipient.txType === Constants.TransactionType.Receive
+                root.addressText = isIncoming ? root.selectedRecipient.sender : root.selectedRecipient.recipient
                 root.item.input.text = root.addressText
                 return
             }

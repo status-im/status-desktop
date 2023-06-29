@@ -384,6 +384,14 @@ QtObject {
         communitiesModuleInst.requestToJoinCommunityWithAuthenticationWithSharedAddresses(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress)
     }
 
+    function getChainIdForChat() {
+        return walletSection.getChainIdForChat()
+    }
+
+    function getLatestBlockNumber(chainId) {
+        return walletSection.getChainIdForSend(chainId)
+    }
+
     function userCanJoin(id) {
         return communitiesModuleInst.userCanJoin(id)
     }

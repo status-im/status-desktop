@@ -2,10 +2,7 @@ import NimQml, Tables, strutils, strformat, sequtils, logging
 
 import ./entry
 
-# TODO - DEV: remove these imports and associated code after all the metadata is returned by the filter API
-import app_service/service/transaction/dto
 import app/modules/shared_models/currency_amount
-import ../transactions/item as transaction
 
 type
   ModelRole {.pure.} = enum

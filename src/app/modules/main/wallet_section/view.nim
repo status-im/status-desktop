@@ -16,8 +16,10 @@ QtObject:
       tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       activityController: activityc.Controller
+      tmpActivityController: activityc.Controller
       collectiblesController: collectiblesc.Controller
       collectibleDetailsController: collectible_detailsc.Controller
+      isNonArchivalNode: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -25,10 +27,11 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, collectiblesController: collectiblesc.Controller, collectibleDetailsController: collectible_detailsc.Controller): View =
+  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, tmpActivityController: activityc.Controller, collectiblesController: collectiblesc.Controller, collectibleDetailsController: collectible_detailsc.Controller): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
+    result.tmpActivityController = tmpActivityController
     result.collectiblesController = collectiblesController
     result.collectibleDetailsController = collectibleDetailsController
     result.setup()
@@ -135,3 +138,32 @@ QtObject:
     return newQVariant(self.collectibleDetailsController)
   QtProperty[QVariant] collectibleDetailsController:
     read = getCollectibleDetailsController
+
+  proc getTmpActivityController(self: View): QVariant {.slot.} =
+    return newQVariant(self.tmpActivityController)
+  QtProperty[QVariant] tmpActivityController:
+    read = getTmpActivityController
+
+  proc getChainIdForChat*(self: View): int {.slot.} =
+    return self.delegate.getChainIdForChat()
+
+  proc getLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
+    return self.delegate.getLatestBlockNumber(chainId)
+
+  proc fetchDecodedTxData*(self: View, txHash: string, data: string)   =
+    self.delegate.fetchDecodedTxData(txHash, data)
+
+  proc getIsNonArchivalNode(self: View): bool {.slot.} =
+    return self.isNonArchivalNode
+
+  proc isNonArchivalNodeChanged(self: View) {.signal.}
+
+  proc setIsNonArchivalNode*(self: View, isNonArchivalNode: bool) =
+    self.isNonArchivalNode = isNonArchivalNode
+    self.isNonArchivalNodeChanged()
+
+  QtProperty[bool] isNonArchivalNode:
+    read = getIsNonArchivalNode
+    notify = isNonArchivalNodeChanged
+
+  proc txDecoded*(self: View, txHash: string, dataDecoded: string) {.signal.}

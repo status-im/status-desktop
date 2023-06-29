@@ -38,7 +38,6 @@ SplitView {
         RootStore.getGasEthValue = (gasAmount, gasPrice) => { return (gasAmount * Math.pow(10, -9)).toPrecision(5) }
         RootStore.getNetworkLayer = (chainId) => { return 1 }
         RootStore.currentCurrency = "USD"
-        RootStore.history = historyMockup
 
         root.rootStoreReady = true
     }

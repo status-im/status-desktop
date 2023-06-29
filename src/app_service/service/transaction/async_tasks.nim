@@ -13,51 +13,6 @@ proc sortAsc[T](t1, t2: T): int =
   else: return 0
 
 type
-  LoadTransactionsTaskArg* = ref object of QObjectTaskArg
-    chainId: int
-    address: string
-    toBlock: Uint256
-    limit: int
-    collectiblesLimit: int
-    loadMore: bool
-    allTxLoaded: bool
-
-const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[LoadTransactionsTaskArg](argEncoded)
-  let output = %* {
-    "address": arg.address,
-    "chainId": arg.chainId,
-    "history": "",
-    "collectibles": "",
-    "loadMore": arg.loadMore,
-    "allTxLoaded": ""
-  }
-  try:
-    let limitAsHex = "0x" & eth_utils.stripLeadingZeros(arg.limit.toHex)
-    let response = transactions.getTransfersByAddress(arg.chainId, arg.address, arg.toBlock, limitAsHex, arg.loadMore).result
-    output["history"] = response
-    output["allTxLoaded"] = %(response.getElems().len < arg.limit)
-
-    # Fetch collectibles for transactions
-    var uniqueIds: seq[collectibles.CollectibleUniqueID] = @[]
-    for txJson in response.getElems():
-      let tx = txJson.toTransactionDto()
-      if tx.typeValue == ERC721_TRANSACTION_TYPE:
-        let nftId = collectibles.CollectibleUniqueID(
-          chainID: arg.chainId,
-          contractAddress: tx.contract,
-          tokenID: tx.tokenId
-        )
-        if not uniqueIds.any(x => (x == nftId)):
-          uniqueIds.add(nftId)
-  except Exception as e:
-    let errDesription = e.msg
-    error "error loadTransactionsTask: ", errDesription
-
-  arg.finish(output)
-
-
-type
   GetSuggestedRoutesTaskArg* = ref object of QObjectTaskArg
     account: string
     amount: Uint256

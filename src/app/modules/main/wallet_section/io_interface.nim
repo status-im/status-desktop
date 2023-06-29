@@ -90,3 +90,12 @@ method destroyAddAccountPopup*(self: AccessInterface) {.base.} =
 
 method getNetworkLayer*(self: AccessInterface, chainId: int): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getChainIdForChat*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getLatestBlockNumber*(self: AccessInterface, chainId: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method fetchDecodedTxData*(self: AccessInterface, txHash: string, data: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

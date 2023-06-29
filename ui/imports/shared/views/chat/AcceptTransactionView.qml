@@ -13,7 +13,7 @@ Item {
     width: parent.width
     height: childrenRect.height
 
-    property var store
+    property var store              // Expected ui/app/AppLayouts/Chat/stores/RootStore.qml
     property var contactsStore
 
     property var token

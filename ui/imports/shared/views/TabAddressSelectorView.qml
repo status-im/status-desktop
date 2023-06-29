@@ -15,6 +15,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
+import utils 1.0
+
 import "../panels"
 import "../controls"
 import "../views"
@@ -118,7 +120,7 @@ Item {
         Rectangle {
             id: myAccountsRect
             Layout.maximumWidth: parent.width
-            Layout.maximumHeight : myAccounts.height
+            Layout.maximumHeight: myAccounts.height
             color: Theme.palette.indirectColor1
             radius: 8
 
@@ -147,10 +149,33 @@ Item {
         }
 
         Rectangle {
+            id: recentsRect
             Layout.maximumWidth: parent.width
             Layout.maximumHeight : recents.height
             color: Theme.palette.indirectColor1
             radius: 8
+
+            onVisibleChanged: {
+                if (visible) {
+                    updateRecentsActivity()
+                }
+            }
+
+            Connections {
+                target: root
+                function onSelectedAccountChanged() {
+                    if (visible) {
+                        recentsRect.updateRecentsActivity()
+                    }
+                }
+            }
+
+            function updateRecentsActivity() {
+                if(root.selectedAccount) {
+                    root.store.tmpActivityController.setFilterAddressesJson(JSON.stringify([root.selectedAccount.address]))
+                }
+                root.store.tmpActivityController.updateFilter()
+            }
 
             StatusListView {
                 id: recents
@@ -172,44 +197,38 @@ Item {
 
                 delegate: StatusListItem {
                     id: listItem
-                    property bool isIncoming: root.selectedAccount ? to === root.selectedAccount.address : false
+
+                    property var entry: activityEntry
+                    property bool isIncoming: entry.txType === Constants.TransactionType.Receive
+
                     implicitWidth: ListView.view.width
                     height: visible ? 64 : 0
-                    title: loading ? Constants.dummyText : isIncoming ? StatusQUtils.Utils.elideText(from,6,4) : StatusQUtils.Utils.elideText(to,6,4)
-                    subTitle: LocaleUtils.getTimeDifference(new Date(parseInt(timestamp) * 1000), new Date())
+                    title: isIncoming ? StatusQUtils.Utils.elideText(entry.sender,6,4) : StatusQUtils.Utils.elideText(entry.recipient,6,4)
+                    subTitle: LocaleUtils.getTimeDifference(new Date(parseInt(entry.timestamp) * 1000), new Date())
                     statusListItemTitle.elide: Text.ElideMiddle
                     statusListItemTitle.wrapMode: Text.NoWrap
                     radius: 0
                     color: sensor.containsMouse || highlighted ? Theme.palette.baseColor2 : "transparent"
                     statusListItemComponentsSlot.spacing: 5
-                    loading: loadingTransaction
                     components: [
                         StatusIcon {
                             id: transferIcon
                             height: 15
                             width: 15
-                            color: isIncoming ? Style.current.success : Style.current.danger
-                            icon: isIncoming ? "arrow-down" : "arrow-up"
+                            color: listItem.isIncoming ? Style.current.success : Style.current.danger
+                            icon: listItem.isIncoming ? "arrow-down" : "arrow-up"
                             rotation: 45
-                            visible: !listItem.loading
                         },
                         StatusTextWithLoadingState {
-                            id: contactsLabel
-                            loading: listItem.loading
                             font.pixelSize: 15
                             customColor: Theme.palette.directColor1
-                            text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(value)
+                            text: LocaleUtils.currencyAmountToLocaleString(entry.amountCurrency)
                         }
                     ]
-                    onClicked: recipientSelected(model, TabAddressSelectorView.Type.RecentsAddress)
+                    onClicked: recipientSelected(entry, TabAddressSelectorView.Type.RecentsAddress)
                 }
 
-                model: {
-                    if(root.selectedAccount) {
-                        root.store.prepareTransactionsForAddress(root.selectedAccount.address)
-                        return root.store.getTransactions()
-                    }
-                }
+                model: root.store.tmpActivityController.model
             }
         }
     }

@@ -7,7 +7,6 @@ import ../io_interface as delegate_interface
 import ./accounts/module as accounts_module
 import ./all_tokens/module as all_tokens_module
 import ./assets/module as assets_module
-import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
 import ./buy_sell_crypto/module as buy_sell_crypto_module
 import ./networks/module as networks_module
@@ -39,6 +38,10 @@ logScope:
 export io_interface
 
 type
+  ActivityID = enum
+    History
+    Temporary
+
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
@@ -51,13 +54,13 @@ type
     allTokensModule: all_tokens_module.AccessInterface
     assetsModule: assets_module.AccessInterface
     sendModule: send_module.AccessInterface
-    transactionsModule: transactions_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
     addAccountModule: add_account_module.AccessInterface
     overviewModule: overview_module.AccessInterface
     networksModule: networks_module.AccessInterface
     networksService: network_service.Service
+    transactionService: transaction_service.Service
     keycardService: keycard_service.Service
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
@@ -65,6 +68,8 @@ type
     activityController: activityc.Controller
     collectiblesController: collectiblesc.Controller
     collectibleDetailsController: collectible_detailsc.Controller
+    # instance to be used in temporary, short-lived, workflows (e.g. send popup)
+    tmpActivityController: activityc.Controller
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -93,32 +98,33 @@ proc newModule*(
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)
-  result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService, currencyService)
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService, transactionService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
   result.overviewModule = overview_module.newModule(result, events, walletAccountService, currencyService)
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
   result.networksService = networkService
-  result.activityController = activityc.newController(result.transactionsModule, currencyService, tokenService, events)
+
+  result.transactionService = transactionService
+  result.activityController = activityc.newController(int32(ActivityID.History), currencyService, tokenService, events)
+  result.tmpActivityController = activityc.newController(int32(ActivityID.Temporary), currencyService, tokenService, events)
   result.collectiblesController = collectiblesc.newController(events)
   result.collectibleDetailsController = collectible_detailsc.newController(networkService, events)
   result.filter = initFilter(result.controller)
 
-  result.view = newView(result, result.activityController, result.collectiblesController, result.collectibleDetailsController)
-
+  result.view = newView(result, result.activityController, result.tmpActivityController, result.collectiblesController, result.collectibleDetailsController)
 
 method delete*(self: Module) =
   self.accountsModule.delete
   self.allTokensModule.delete
   self.assetsModule.delete
-  self.transactionsModule.delete
   self.savedAddressesModule.delete
   self.buySellCryptoModule.delete
   self.sendModule.delete
   self.controller.delete
   self.view.delete
   self.activityController.delete
+  self.tmpActivityController.delete
   self.collectiblesController.delete
   self.collectibleDetailsController.delete
 
@@ -145,7 +151,6 @@ method notifyFilterChanged(self: Module) =
   let includeWatchOnly = self.controller.isIncludeWatchOnlyAccount()
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, includeWatchOnly, self.filter.allAddresses)
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
-  self.transactionsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
@@ -211,13 +216,17 @@ method load*(self: Module) =
     self.filter.includeWatchOnlyToggled()
     self.notifyFilterChanged()
     self.setTotalCurrencyBalance()
+  self.events.on(SIGNAL_HISTORY_NON_ARCHIVAL_NODE) do (e:Args):
+    self.view.setIsNonArchivalNode(true)
+  self.events.on(SIGNAL_TRANSACTION_DECODED) do(e: Args):
+    let args = TransactionDecodedArgs(e)
+    self.view.txDecoded(args.txHash, args.dataDecoded)
 
   self.controller.init()
   self.view.load()
   self.accountsModule.load()
   self.allTokensModule.load()
   self.assetsModule.load()
-  self.transactionsModule.load()
   self.savedAddressesModule.load()
   self.buySellCryptoModule.load()
   self.overviewModule.load()
@@ -235,9 +244,6 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.assetsModule.isLoaded()):
-    return
-
-  if(not self.transactionsModule.isLoaded()):
     return
 
   if(not self.savedAddressesModule.isLoaded()):
@@ -327,3 +333,12 @@ method onAddAccountModuleLoaded*(self: Module) =
 
 method getNetworkLayer*(self: Module, chainId: int): string =
   return self.networksModule.getNetworkLayer(chainId)
+
+method getChainIdForChat*(self: Module): int =
+  return self.networksService.getNetworkForChat().chainId
+
+method getLatestBlockNumber*(self: Module, chainId: int): string =
+  return self.transactionService.getLatestBlockNumber(chainId)
+
+method fetchDecodedTxData*(self: Module, txHash: string, data: string) =
+  self.transactionService.fetchDecodedTxData(txHash, data)
