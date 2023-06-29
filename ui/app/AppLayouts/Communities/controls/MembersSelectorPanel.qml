@@ -61,7 +61,7 @@ Control {
                              d.delegateHeight * root.count)
 
             radius: Style.current.radius
-            color: Theme.palette.indirectColor1
+            color: Theme.palette.statusListItem.backgroundColor
 
             StatusListView {
                 id: listView

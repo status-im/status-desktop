@@ -21,6 +21,7 @@ SplitView {
         Rectangle {
             anchors.fill: holdersPanel
 
+            color: "transparent"
             border.color: "lightgray"
             anchors.margins: -1
         }

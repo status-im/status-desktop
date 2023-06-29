@@ -603,7 +603,7 @@ StatusScrollView {
 
                 background: Rectangle {
                     radius: Style.current.radius
-                    color: Theme.palette.indirectColor1
+                    color: Theme.palette.statusListItem.backgroundColor
                 }
 
                 contentItem: Loader {

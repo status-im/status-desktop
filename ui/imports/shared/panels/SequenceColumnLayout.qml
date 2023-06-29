@@ -26,7 +26,7 @@ ColumnLayout {
         Layout.leftMargin: parent.lineMargin
         Layout.preferredWidth: parent.lineWidth
         Layout.preferredHeight: parent.lineHeight
-        color: Style.current.separator
+        color: Theme.palette.baseColor4
     }
 
     RowLayout {
@@ -50,7 +50,7 @@ ColumnLayout {
 
                 color: "transparent"
                 border.width: root.lineWidth
-                border.color: Style.current.separator
+                border.color: Theme.palette.baseColor4
             }
         }
 

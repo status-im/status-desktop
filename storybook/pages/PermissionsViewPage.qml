@@ -47,9 +47,11 @@ SplitView {
                 }
 
                 communityDetails: QtObject {
+                    readonly property string id: "sox"
                     readonly property string name: "Socks"
                     readonly property string image: ModelsData.icons.socks
                     readonly property string color: "red"
+                    readonly property bool owner: true
                 }
 
                 function log(method, index) {

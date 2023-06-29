@@ -84,7 +84,7 @@ QtObject {
                                               transferable: false,
                                               remoteSelfDestruct: true,
                                               chainId: 5,
-                                              chainName: "Curstom",
+                                              chainName: "Custom",
                                               chainIcon: ModelsData.networks.custom,
                                               accountName: "Other Account"
                                           },

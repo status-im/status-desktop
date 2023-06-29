@@ -66,12 +66,8 @@ SplitView {
                     error: failureCheckBox.checked
                     isLayer1: mainnetCheckbox.checked
                     confirmations: confirmationsSlider.value
-                    duration: durationSlider.to
-                    progress: durationSlider.value
                     chainName: isLayer1 ? "Mainnet" :"Optimism"
-                    confirmationTimeStamp: 1670419848
-                    finalisationTimeStamp: 1670419848
-                    failedTimeStamp: 1670419848
+                    timeStamp: 1670419848
                 }
             }
         }
