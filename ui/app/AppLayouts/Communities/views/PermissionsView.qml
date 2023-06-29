@@ -5,8 +5,10 @@ import StatusQ.Core 0.1
 
 import SortFilterProxyModel 0.2
 import shared.popups 1.0
+import utils 1.0
 
 import AppLayouts.Communities.controls 1.0
+import AppLayouts.Communities.panels 1.0
 
 StatusScrollView {
     id: root
@@ -24,6 +26,8 @@ StatusScrollView {
     signal editPermissionRequested(int index)
     signal duplicatePermissionRequested(int index)
     signal removePermissionRequested(int index)
+
+    readonly property alias count: repeater.count
 
     QtObject {
         id: d
@@ -48,7 +52,23 @@ StatusScrollView {
             }
         }
 
+        IntroPanel {
+            visible: root.count === 0
+            width: root.viewWidth
+
+            image: Style.png("community/permissions2_3")
+            title: qsTr("Permissions")
+            subtitle: qsTr("You can manage your community by creating and issuing membership and access permissions")
+            checkersModel: [
+                qsTr("Give individual members access to private channels"),
+                qsTr("Monetise your community with subscriptions and fees"),
+                qsTr("Require holding a token or NFT to obtain exclusive membership rights")
+            ]
+        }
+
         Repeater {
+            id: repeater
+
             model: root.permissionsModel
 
             delegate: PermissionItem {

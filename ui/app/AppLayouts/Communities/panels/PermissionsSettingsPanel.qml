@@ -1,4 +1,4 @@
-import QtQuick 2.14
+import QtQuick 2.15
 
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.layouts 1.0
@@ -48,11 +48,9 @@ SettingsPageLayout {
     QtObject {
         id: d
 
-        readonly property string welcomeViewState: "WELCOME"
         readonly property string newPermissionViewState: "NEW_PERMISSION"
         readonly property string permissionsViewState: "PERMISSIONS"
         readonly property string editPermissionViewState: "EDIT_PERMISSION"
-        readonly property bool permissionsExist: root.permissionsModel.count > 0
 
         signal saveChanges
         signal resetChanges
@@ -64,14 +62,7 @@ SettingsPageLayout {
         property var channelsToEditModel
         property bool isPrivateToEditValue: false
 
-        onPermissionsExistChanged: {
-            // Navigate back to welcome permissions view if all existing permissions are removed.
-            if(root.state === d.permissionsViewState && !permissionsExist) {
-                root.state = d.welcomeViewState;
-            }
-        }
-
-        readonly property string initialState: d.permissionsExist ? d.permissionsViewState : d.welcomeViewState
+        readonly property string initialState: d.permissionsViewState
 
         function initializeData() {
             holdingsToEditModel = emptyModel
@@ -86,14 +77,6 @@ SettingsPageLayout {
     cancelChangesText: qsTr("Revert changes")
     state: d.initialState
     states: [
-        State {
-            name: d.welcomeViewState
-            PropertyChanges {target: root; title: qsTr("Permissions")}
-            PropertyChanges {target: root; previousPageName: ""}
-            PropertyChanges {target: root; content: welcomeView}
-            PropertyChanges {target: root; primaryHeaderButton.visible: true}
-            PropertyChanges {target: root; primaryHeaderButton.text: qsTr("Add new permission")}
-        },
         State {
             name: d.newPermissionViewState
             PropertyChanges {target: root; title: qsTr("New permission")}
@@ -119,7 +102,7 @@ SettingsPageLayout {
     ]
 
     onPrimaryHeaderButtonClicked: {
-        if(root.state === d.welcomeViewState || root.state === d.permissionsViewState) {
+        if(root.state === d.permissionsViewState) {
             d.initializeData()
             root.state = d.newPermissionViewState
         }
@@ -139,22 +122,6 @@ SettingsPageLayout {
     }
 
     // Community Permissions possible view contents:
-    Component {
-        id: welcomeView
-
-        WelcomeSettingsView {
-            viewWidth: root.viewWidth
-            image: Style.png("community/permissions2_3")
-            title: qsTr("Permissions")
-            subtitle: qsTr("You can manage your community by creating and issuing membership and access permissions")
-            checkersModel: [
-                qsTr("Give individual members access to private channels"),
-                qsTr("Monetise your community with subscriptions and fees"),
-                qsTr("Require holding a token or NFT to obtain exclusive membership rights")
-            ]
-        }
-    }
-
     Component {
         id: newPermissionView
 
