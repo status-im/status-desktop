@@ -139,9 +139,8 @@ SettingsContentBase {
 
             Panel {
                 id: panelPendingRequests
-                filters: ValueFilter {
-                    roleName: "spectated"
-                    value: true
+                filters: ExpressionFilter {
+                    expression: model.spectated && !model.joined
                 }
             }
         }
