@@ -16,40 +16,58 @@ Control {
     id: root
 
     /*!
-       \qmlproperty alias StatusImageSelector::uploadText.
+       \qmlproperty alias NoImageUploadedPanel::uploadText.
        This property holds the main image upload text value.
     */
     property alias uploadText: uploadText.text
 
     /*!
-       \qmlproperty alias StatusImageSelector::additionalText.
+       \qmlproperty alias NoImageUploadedPanel::additionalText.
        This property holds an additional text value.
     */
     property alias additionalText: additionalText.text
 
     /*!
-       \qmlproperty alias StatusImageSelector::showAdditionalInfo.
+       \qmlproperty alias NoImageUploadedPanel::showAdditionalInfo.
        This property holds if the additional text is shown or not.
     */
     property alias showAdditionalInfo: additionalText.visible
 
     /*!
-       \qmlproperty alias StatusImageSelector::additionalTextPixelSize.
+       \qmlproperty alias NoImageUploadedPanel::additionalTextPixelSize.
        This property holds the additional text font pixel size value.
     */
     property alias additionalTextPixelSize: additionalText.font.pixelSize
 
     /*!
-       \qmlproperty color StatusImageSelector::uploadTextColor.
+       \qmlproperty color NoImageUploadedPanel::uploadTextColor.
        This property sets the upload text color.
     */
     property color uploadTextColor: Theme.palette.baseColor1
 
     /*!
-       \qmlproperty color StatusImageSelector::imgColor.
+       \qmlproperty color NoImageUploadedPanel::imgColor.
        This property sets the image color.
     */
     property color imgColor: Theme.palette.baseColor1
+
+    /*!
+       \qmlproperty alias NoImageUploadedPanel::contentSpacing.
+        This property sets the content spacing.
+    */
+    property alias contentSpacing: content.spacing
+    
+    /*!
+       \qmlproperty alias NoImageUploadedPanel::iconWidth.
+        This property sets the content icon width.
+    */
+    property alias iconWidth: imageImg.width
+
+    /*!
+       \qmlproperty alias NoImageUploadedPanel::iconHeight.
+        This property sets the content icon height.
+    */
+    property alias iconHeight: imageImg.height
 
     QtObject {
         id: d
@@ -58,7 +76,7 @@ Control {
     }
 
     contentItem: ColumnLayout {
-
+        id: content
         Image {
             id: imageImg
             source: Style.svg("images_icon")
@@ -79,13 +97,13 @@ Control {
 
             text: qsTr("Upload")
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
-            Layout.topMargin: 5
             Layout.preferredWidth: root.width - 2 * d.imageSelectorPadding
             font.pixelSize: Theme.primaryTextFontSize
             color: root.uploadTextColor
             wrapMode: Text.WordWrap
             lineHeight: 1.2
             horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         StatusBaseText {
@@ -94,7 +112,6 @@ Control {
             text: qsTr("Wide aspect ratio is optimal")
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
             visible: false
-            Layout.topMargin: 5
             font.pixelSize: Theme.primaryTextFontSize
             color: Theme.palette.baseColor1
         }

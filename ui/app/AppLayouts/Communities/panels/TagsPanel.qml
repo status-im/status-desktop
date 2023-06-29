@@ -16,7 +16,7 @@ StatusScrollView {
 
     property string tags
     property string selectedTags
-    property int maxSelectedTags: 4
+    property int maxSelectedTags: 3
 
     property string title: qsTr("Community Tags")
 

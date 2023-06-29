@@ -29,6 +29,7 @@ Column {
         StatusBaseText {
             Layout.fillWidth: true
             text: qsTr("Community history service")
+            font.pixelSize: Theme.primaryTextFontSize
             TapHandler {
                 onTapped: archiveSupportToggle.toggle()
             }
@@ -47,6 +48,7 @@ Column {
         StatusBaseText {
             Layout.fillWidth: true
             text: qsTr("Request to join required")
+            font.pixelSize: Theme.primaryTextFontSize
             TapHandler {
                 onTapped: requestToJoinToggle.toggle()
             }
@@ -64,6 +66,7 @@ Column {
         StatusBaseText {
             Layout.fillWidth: true
             text: qsTr("Any member can pin a message")
+            font.pixelSize: Theme.primaryTextFontSize
             TapHandler {
                 onTapped: pinMessagesToggle.toggle()
             }

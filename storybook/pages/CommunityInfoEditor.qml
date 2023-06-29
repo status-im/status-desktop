@@ -7,12 +7,16 @@ import utils 1.0
 ColumnLayout {
     id: root
 
-    property string name: "Uniswap"
+    property string name: "Socks"
+    property string description: "We like the sock! A community of Unisocks wearers we like the sock a community of Unisocks we like the sock a community of Unisocks wearers we like the sock."
+
     property int membersCount: 184
-    property bool amISectionAdmin: false
+    property bool amISectionAdmin: true
+    property bool isCommunityEditable: true
     property color color: "orchid"
     property url image: Style.png("tokens/UNI")
     property bool colorVisible: false
+    property url banner: Style.png("settings/communities@2x")
 
     spacing: 24
 
@@ -26,6 +30,21 @@ ColumnLayout {
             Layout.preferredWidth: 200
             text: root.name
             onTextChanged: root.name = text
+        }
+    }
+
+    ColumnLayout {
+        Label {
+            Layout.fillWidth: true
+            text: "Description"
+        }
+        TextArea {
+            background: Rectangle { border.color: 'lightgrey' }
+            Layout.preferredWidth: 200
+            Layout.preferredHeight: implicitHeight
+            text: root.description
+            onTextChanged: root.description = text
+            wrapMode: TextEdit.Wrap
         }
     }
 
@@ -94,6 +113,31 @@ ColumnLayout {
         CheckBox {
             checked: root.amISectionAdmin
             onCheckedChanged: root.amISectionAdmin = checked
+        }
+    }
+    RowLayout {
+        Label {
+            text: "Is community editable:"
+        }
+
+        CheckBox {
+            checked: root.isCommunityEditable
+            onCheckedChanged: root.isCommunityEditable = checked
+        }
+    }
+    ColumnLayout {
+        Label {
+            text: "Banner"
+        }
+
+        RadioButton {
+            checked: true
+            text: "No banner"
+            onCheckedChanged: if(checked) root.banner = ""
+        }
+        RadioButton {
+            text: "Communities"
+            onCheckedChanged: if(checked) root.banner = Style.png("settings/communities@2x")
         }
     }
 }

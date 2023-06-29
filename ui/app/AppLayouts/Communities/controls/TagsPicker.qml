@@ -17,25 +17,27 @@ ColumnLayout {
 
     signal pick()
 
-    onSelectedTagsChanged: {
-        const obj = JSON.parse(tags);
-        const array = selectedTags.length ? JSON.parse(selectedTags) : [];
-
-        d.tagsModel.clear();
-        for (const key of Object.keys(obj)) {
-            if (array.indexOf(key) != -1) {
-                d.tagsModel.append({ name: key, emoji: obj[key], selected: false });
-            }
-        }
-    }
-
     implicitHeight: childrenRect.height
-    spacing: 8
+    spacing: 14
+
+    onSelectedTagsChanged: d.handleSelectedTags()
+    Component.onCompleted: d.handleSelectedTags()
 
     QtObject {
         id: d
 
         property ListModel tagsModel: ListModel {}
+        function handleSelectedTags() {
+            const obj = JSON.parse(tags);
+            const array = selectedTags.length ? JSON.parse(selectedTags) : [];
+
+            d.tagsModel.clear();
+            for (const key of Object.keys(obj)) {
+                if (array.indexOf(key) != -1) {
+                    d.tagsModel.append({ name: key, emoji: obj[key], selected: false });
+                }
+            }
+        }
     }
 
     StatusBaseText {
@@ -45,16 +47,17 @@ ColumnLayout {
     }
 
     StatusPickerButton {
-        bgColor: root.selectedTags == "" ? Theme.palette.baseColor2 : "transparent"
-        text: root.selectedTags == "" ? qsTr("Choose tags describing the community") : ""
+        bgColor: d.tagsModel.count === 0 ? Theme.palette.baseColor2 : "transparent"
+        text: d.tagsModel.count === 0 ? qsTr("Choose tags describing the community") : ""
         onClicked: root.pick()
         Layout.fillWidth: true
 
         StatusCommunityTags {
-            anchors.centerIn: parent
+            anchors.verticalCenter: parent.verticalCenter
             model: d.tagsModel
             active: false
             width: parent.width
+            contentWidth: width
         }
     }
 }

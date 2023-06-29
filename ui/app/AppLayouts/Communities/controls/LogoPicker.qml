@@ -30,13 +30,16 @@ Item {
     ColumnLayout {
         id: layout
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 8
+        anchors.fill: parent
+        spacing: 16
 
         StatusBaseText {
+            id: label
+            Layout.fillWidth: true
             text: qsTr("Community logo")
             font.pixelSize: 15
             color: Theme.palette.directColor1
+            horizontalAlignment: Qt.AlignLeft
         }
 
         EditCroppedImagePanel {

@@ -71,7 +71,6 @@ StatusStackModal {
     rightButtons: [clearFilesButton, nextButton, finishButton]
 
     onAboutToShow: {
-        nameInput.input.edit.forceActiveFocus()
         if (root.isDiscordImport) {
             if (!root.store.discordImportInProgress) {
                 root.store.clearFileList()
@@ -368,7 +367,7 @@ StatusStackModal {
         StatusScrollView {
             id: generalView
             contentWidth: availableWidth
-            readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid && (root.isDevBuild || (logoPicker.hasSelectedImage && bannerPicker.hasSelectedImage))
+            readonly property bool canGoNext: generalViewLayout.isNameValid && generalViewLayout.isDescriptionValid && (root.isDevBuild || (generalViewLayout.isLogoSelected && generalViewLayout.isBannerSelected))
 
             padding: 0
             clip: false
@@ -381,87 +380,14 @@ StatusStackModal {
                 anchors.leftMargin: 1
             }
 
-            ColumnLayout {
+            EditCommunitySettingsForm {
                 id: generalViewLayout
                 width: generalView.availableWidth
-                spacing: 16
 
-                NameInput {
-                    id: nameInput
-                    input.edit.objectName: "createCommunityNameInput"
-                    Layout.fillWidth: true
-                    input.tabNavItem: descriptionTextInput.input.edit
-                }
+                nameLabel: qsTr("Name your community")
+                descriptionLabel: qsTr("Give it a short description")
 
-                DescriptionInput {
-                    id: descriptionTextInput
-                    input.edit.objectName: "createCommunityDescriptionInput"
-                    Layout.fillWidth: true
-                    input.tabNavItem: nameInput.input.edit
-                }
-
-                LogoPicker {
-                    id: logoPicker
-                    Layout.fillWidth: true
-                }
-
-                BannerPicker {
-                    id: bannerPicker
-                    Layout.fillWidth: true
-                }
-
-                ColorPicker {
-                    id: colorPicker
-                    onPick: root.replace(colorPanel)
-                    Layout.fillWidth: true
-
-                    Component {
-                        id: colorPanel
-
-                        ColorPanel {
-                            Component.onCompleted: color = colorPicker.color
-                            onAccepted: {
-                                colorPicker.color = color;
-                                root.replace(null);
-                            }
-                        }
-                    }
-                }
-
-                TagsPicker {
-                    id: communityTagsPicker
-                    tags: root.store.communityTags
-                    onPick: root.replace(tagsPanel)
-                    Layout.fillWidth: true
-
-                    Component {
-                        id: tagsPanel
-
-                        TagsPanel {
-                            Component.onCompleted: {
-                                tags = communityTagsPicker.tags;
-                                selectedTags = communityTagsPicker.selectedTags;
-                            }
-                            onAccepted: {
-                                communityTagsPicker.selectedTags = selectedTags;
-                                root.replace(null);
-                            }
-                        }
-                    }
-                }
-
-                StatusModalDivider {
-                    Layout.fillWidth: true
-                }
-
-                Options {
-                    id: options
-                    Layout.fillWidth: true
-                }
-
-                Item {
-                    Layout.fillHeight: true
-                }
+                tags: root.store.communityTags
             }
         },
 
@@ -480,6 +406,8 @@ StatusStackModal {
 
                 minimumHeight: height
                 maximumHeight: (height - Style.current.xlPadding)
+
+                label: qsTr("Community introduction and rules")
             }
 
             OutroMessageInput {
@@ -497,25 +425,25 @@ StatusStackModal {
 
         function _getCommunityConfig() {
             return {
-                name: StatusQUtils.Utils.filterXSS(nameInput.input.text),
-                description: StatusQUtils.Utils.filterXSS(descriptionTextInput.input.text),
+                name: StatusQUtils.Utils.filterXSS(generalViewLayout.name),
+                description: StatusQUtils.Utils.filterXSS(generalViewLayout.description),
                 introMessage: StatusQUtils.Utils.filterXSS(introMessageInput.input.text),
                 outroMessage: StatusQUtils.Utils.filterXSS(outroMessageInput.input.text),
-                color: colorPicker.color.toString().toUpperCase(),
-                tags: communityTagsPicker.selectedTags,
+                color: generalViewLayout.color.toString().toUpperCase(),
+                tags: generalViewLayout.selectedTags,
                 image: {
-                    src: logoPicker.source,
-                    AX: logoPicker.cropRect.x,
-                    AY: logoPicker.cropRect.y,
-                    BX: logoPicker.cropRect.x + logoPicker.cropRect.width,
-                    BY: logoPicker.cropRect.y + logoPicker.cropRect.height,
+                    src: generalViewLayout.logoImagePath,
+                    AX: generalViewLayout.logoCropRect.x,
+                    AY: generalViewLayout.logoCropRect.y,
+                    BX: generalViewLayout.logoCropRect.x + generalViewLayout.logoCropRect.width,
+                    BY: generalViewLayout.logoCropRect.y + generalViewLayout.logoCropRect.height,
                 },
                 options: {
-                    historyArchiveSupportEnabled: options.archiveSupportEnabled,
-                    checkedMembership: options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
-                    pinMessagesAllowedForMembers: options.pinMessagesEnabled,
+                    historyArchiveSupportEnabled: generalViewLayout.options.archiveSupportEnabled,
+                    checkedMembership: generalViewLayout.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
+                    pinMessagesAllowedForMembers: generalViewLayout.options.pinMessagesEnabled,
                 },
-                bannerJsonStr: JSON.stringify({imagePath: String(bannerPicker.source).replace("file://", ""), cropRect: bannerPicker.cropRect})
+                bannerJsonStr: JSON.stringify({imagePath: String(generalViewLayout.bannerPath).replace("file://", ""), cropRect: generalViewLayout.bannerCropRect})
             }
         }
 
