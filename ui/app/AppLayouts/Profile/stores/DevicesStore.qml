@@ -37,8 +37,8 @@ QtObject {
         root.devicesModule.enableDevice(installationId, enable)
     }
 
-    function authenticateLoggedInUser() {
-        root.devicesModule.authenticateLoggedInUser()
+    function generateConnectionStringAndRunSetupSyncingPopup() {
+        root.devicesModule.generateConnectionStringAndRunSetupSyncingPopup()
     }
 
     function validateConnectionString(connectionString) {
