@@ -583,7 +583,8 @@ StatusSectionLayout {
                 }
             }
 
-            onCurrentIndexChanged: root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName
+            onCurrentIndexChanged:
+                root.backButtonName = centerPanelContentLoader.item.children[d.currentIndex].previousPageName || ""
         }
     }
 
