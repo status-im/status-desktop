@@ -54,7 +54,7 @@ SettingsContentBase {
             }
 
             function setupSyncing() {
-                root.devicesStore.authenticateLoggedInUser()
+                root.devicesStore.generateConnectionStringAndRunSetupSyncingPopup()
             }
         }
 
@@ -133,7 +133,7 @@ SettingsContentBase {
                     if (deviceEnabled)
                         d.personalizeDevice(model)
                     else
-                        d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
+                        d.setupSyncing()
                 }
             }
         }

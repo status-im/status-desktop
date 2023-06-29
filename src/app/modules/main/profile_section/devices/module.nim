@@ -100,7 +100,7 @@ method updateOrAddDevice*(self: Module, installation: InstallationDto) =
 method updateInstallationName*(self: Module, installationId: string, name: string) =
   self.view.model().updateItemName(installationId, name)
 
-method authenticateLoggedInUser*(self: Module) =
+method generateConnectionStringAndRunSetupSyncingPopup*(self: Module) =
   var additionalBip44Paths: seq[string]
   if singletonInstance.userProfile.getIsKeycardUser():
     additionalBip44Paths.add(account_constants.PATH_WHISPER)
