@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -13,7 +13,7 @@ import shared.controls.chat 1.0
 
 import AppLayouts.Communities.layouts 1.0
 
-SettingsPageLayout {
+SettingsPage {
     id: root
 
     property var rootStore
@@ -38,9 +38,9 @@ SettingsPageLayout {
         }
     }
 
-    title: qsTr("Members")
+    pageTitle: qsTr("Members")
 
-    content: ColumnLayout {
+    contentItem: ColumnLayout {
 
         function goTo(tab: int) {
             let tabButton = membersTabBar.currentItem
