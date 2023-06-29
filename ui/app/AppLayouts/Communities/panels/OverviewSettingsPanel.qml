@@ -10,6 +10,8 @@ import StatusQ.Components 0.1
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.panels 1.0
 
+import shared.popups 1.0
+
 import utils 1.0
 
 StackLayout {
@@ -35,11 +37,10 @@ StackLayout {
     property bool owned: false
 
     function navigateBack() {
-        if (editCommunityPage.dirty) {
-            editCommunityPage.notifyDirty();
-        } else {
-            root.currentIndex = 0;
-        }
+        if (editSettingsPanelLoader.item.dirty)
+            settingsDirtyToastMessage.notifyDirty()
+        else
+            root.currentIndex = 0
     }
 
     signal edited(Item item) // item containing edited fields (name, description, logoImagePath, color, options, etc..)
@@ -50,10 +51,13 @@ StackLayout {
 
     clip: true
 
-    SettingsPageLayout {
-        title: qsTr("Overview")
+    SettingsPage {
+        pageTitle: qsTr("Overview")
 
-        content: ColumnLayout {
+        rightPadding: 64
+        bottomPadding: 64
+
+        contentItem: ColumnLayout {
             spacing: 16
 
             RowLayout {
@@ -171,61 +175,98 @@ StackLayout {
         }
     }
 
-    SettingsPageLayout {
+    SettingsPage {
         id: editCommunityPage
 
-        title: qsTr("Edit Community")
-        editable: true
+        pageTitle: qsTr("Edit Community")
 
-        content: EditSettingsPanel {
-            name: root.name
-            anchors.fill: parent
-            description: root.description
-            introMessage: root.introMessage
-            outroMessage: root.outroMessage
-            tags: root.tags
-            selectedTags: root.selectedTags
-            color: root.color
-            logoImageData: root.logoImageData
-            bannerImageData: root.bannerImageData
-            options {
-                archiveSupportEnabled: root.archiveSupportEnabled
-                requestToJoinEnabled: root.requestToJoinEnabled
-                pinMessagesEnabled: root.pinMessagesEnabled
+        contentItem: Loader {
+            id: editSettingsPanelLoader
+
+            function reloadContent() {
+                active = false
+                active = true
             }
 
-            bottomReservedSpace: editCommunityPage.settingsDirtyToastMessageImplicitSize
-            bottomReservedSpaceActive: editCommunityPage.dirty
+            sourceComponent: EditSettingsPanel {
+                id: editSettingsPanel
 
-            Component.onCompleted: {
-                editCommunityPage.dirty =
-                        Qt.binding(() => {
-                                       return root.name != name ||
-                                              root.description != description ||
-                                              root.introMessage != introMessage ||
-                                              root.outroMessage != outroMessage ||
-                                              root.archiveSupportEnabled != options.archiveSupportEnabled ||
-                                              root.requestToJoinEnabled != options.requestToJoinEnabled ||
-                                              root.pinMessagesEnabled != options.pinMessagesEnabled ||
-                                              root.color != color ||
-                                              root.selectedTags != selectedTags ||
-                                              root.logoImageData != logoImageData ||
-                                              logoImagePath.length > 0 ||
-                                              isValidRect(logoCropRect) ||
-                                              root.bannerImageData != bannerImageData ||
-                                              bannerPath.length > 0 ||
-                                              isValidRect(bannerCropRect)
-                                   })
-                function isValidRect(r /*rect*/) { return r.width !== 0 && r.height !== 0 }
+                function isValidRect(r /*rect*/) {
+                    return r.width !== 0 && r.height !== 0
+                }
+
+                readonly property bool dirty:
+                    root.name != name ||
+                    root.description != description ||
+                    root.introMessage != introMessage ||
+                    root.outroMessage != outroMessage ||
+                    root.archiveSupportEnabled != options.archiveSupportEnabled ||
+                    root.requestToJoinEnabled != options.requestToJoinEnabled ||
+                    root.pinMessagesEnabled != options.pinMessagesEnabled ||
+                    root.color != color ||
+                    root.selectedTags != selectedTags ||
+                    root.logoImageData != logoImageData ||
+                    logoImagePath.length > 0 ||
+                    isValidRect(logoCropRect) ||
+                    root.bannerImageData != bannerImageData ||
+                    bannerPath.length > 0 ||
+                    isValidRect(bannerCropRect)
+
+                name: root.name
+                description: root.description
+                introMessage: root.introMessage
+                outroMessage: root.outroMessage
+                tags: root.tags
+                selectedTags: root.selectedTags
+                color: root.color
+                logoImageData: root.logoImageData
+                bannerImageData: root.bannerImageData
+
+                options {
+                    archiveSupportEnabled: root.archiveSupportEnabled
+                    requestToJoinEnabled: root.requestToJoinEnabled
+                    pinMessagesEnabled: root.pinMessagesEnabled
+                }
+
+                bottomReservedSpace:
+                    Qt.size(settingsDirtyToastMessage.implicitWidth,
+                            settingsDirtyToastMessage.implicitHeight +
+                            settingsDirtyToastMessage.anchors.bottomMargin)
+
+                bottomReservedSpaceActive: dirty
+
+                Binding {
+                    target: editSettingsPanel.flickable
+                    property: "bottomMargin"
+                    value: 24
+                }
             }
         }
 
-        onSaveChangesClicked: {
-            root.currentIndex = 0
-            root.edited(contentItem)
-            reloadContent()
-        }
+        SettingsDirtyToastMessage {
+            id: settingsDirtyToastMessage
 
-        onResetChangesClicked: reloadContent()
+            z: 1
+            anchors {
+                bottom: parent.bottom
+                horizontalCenter: parent.horizontalCenter
+                bottomMargin: 16
+            }
+
+            active: !!editSettingsPanelLoader.item &&
+                    editSettingsPanelLoader.item.dirty
+
+            saveChangesButtonEnabled:
+                !!editSettingsPanelLoader.item &&
+                editSettingsPanelLoader.item.saveChangesButtonEnabled
+
+            onResetChangesClicked: editSettingsPanelLoader.reloadContent()
+
+            onSaveChangesClicked: {
+                root.currentIndex = 0
+                root.edited(editSettingsPanelLoader.item)
+                editSettingsPanelLoader.reloadContent()
+            }
+        }
     }
 }
