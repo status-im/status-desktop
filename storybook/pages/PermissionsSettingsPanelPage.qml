@@ -61,6 +61,11 @@ SplitView {
         }
     }
 
+    Button {
+        text: "Back"
+        onClicked: communityPermissionsSettingsPanel.navigateBack()
+    }
+
     Rectangle {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
@@ -90,9 +95,11 @@ SplitView {
                 permissionsStoreMock.removePermission(key)
 
             communityDetails: QtObject {
+                readonly property string id: "community_id"
                 readonly property string name: "Socks"
                 readonly property string image: ModelsData.icons.socks
                 readonly property string color: "red"
+                readonly property bool owner: isOwnerCheckBox.checked
             }
         }
     }
@@ -101,7 +108,7 @@ SplitView {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 150
+        SplitView.preferredHeight: 100
 
         logsView.logText: logs.logText
 
@@ -114,10 +121,6 @@ SplitView {
                 id: isOwnerCheckBox
 
                 text: "Is owner"
-            }
-
-            Label {
-                text: "Is dirty: " + communityPermissionsSettingsPanel.dirty
             }
         }
     }

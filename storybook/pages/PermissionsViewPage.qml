@@ -58,7 +58,7 @@ SplitView {
                     readonly property string name: "Socks"
                     readonly property string image: ModelsData.icons.socks
                     readonly property string color: "red"
-                    readonly property bool owner: true
+                    readonly property bool owner: isOwnerCheckBox.checked
                 }
 
                 function log(method, index) {
@@ -89,11 +89,21 @@ SplitView {
             anchors.fill: parent
 
             CheckBox {
+                id: isOwnerCheckBox
+
+                text: "Is owner"
+            }
+
+            CheckBox {
                 id: emptyModelCheckBox
 
-                Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-
                 text: "Empty model"
+            }
+
+            Item {
+                visible: emptyModelCheckBox.checked
+
+                Layout.fillHeight: true
             }
 
             CommunityPermissionsSettingsPanelEditor {

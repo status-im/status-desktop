@@ -1,14 +1,16 @@
 import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.layouts 1.0
-import AppLayouts.Chat.stores 1.0
 import AppLayouts.Communities.views 1.0
 
+import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
-import utils 1.0
 
-SettingsPageLayout {
+import shared.popups 1.0
+
+StackView {
     id: root
 
     required property var permissionsModel
@@ -20,212 +22,184 @@ SettingsPageLayout {
     required property var communityDetails
 
     property int viewWidth: 560 // by design
+    property string previousPageName: depth > 1 ? qsTr("Permissions") : ""
 
-    signal createPermissionRequested(
-        int permissionType, var holdings, var channels, bool isPrivate)
-
-    signal updatePermissionRequested(
-        string key, int permissionType, var holdings, var channels, bool isPrivate)
-
+    signal createPermissionRequested(int permissionType, var holdings,
+                                     var channels, bool isPrivate)
+    signal updatePermissionRequested(string key, int permissionType,
+                                     var holdings, var channels, bool isPrivate)
     signal removePermissionRequested(string key)
-
     signal navigateToMintTokenSettings
 
     function navigateBack() {
-        if (root.state === d.newPermissionViewState) {
-            root.state = d.initialState
-        } else if (root.state === d.permissionsViewState) {
-            root.state = d.newPermissionViewState
-        } else if (root.state === d.editPermissionViewState) {
-            if (root.dirty) {
-                root.notifyDirty()
-            } else {
-                root.state = d.initialState
-            }
-        }
-    }
-
-    QtObject {
-        id: d
-
-        readonly property string newPermissionViewState: "NEW_PERMISSION"
-        readonly property string permissionsViewState: "PERMISSIONS"
-        readonly property string editPermissionViewState: "EDIT_PERMISSION"
-
-        signal saveChanges
-        signal resetChanges
-
-        property string permissionKeyToEdit
-
-        property var holdingsToEditModel
-        property int permissionTypeToEdit: PermissionTypes.Type.None
-        property var channelsToEditModel
-        property bool isPrivateToEditValue: false
-
-        readonly property string initialState: d.permissionsViewState
-
-        function initializeData() {
-            holdingsToEditModel = emptyModel
-            channelsToEditModel = emptyModel
-            permissionTypeToEdit = PermissionTypes.Type.None
-            isPrivateToEditValue = false
-        }
-    }
-
-    saveChangesButtonEnabled: true
-    saveChangesText: qsTr("Update permission")
-    cancelChangesText: qsTr("Revert changes")
-    state: d.initialState
-    states: [
-        State {
-            name: d.newPermissionViewState
-            PropertyChanges {target: root; title: qsTr("New permission")}
-            PropertyChanges {target: root; previousPageName: qsTr("Permissions")}
-            PropertyChanges {target: root; content: newPermissionView}
-            PropertyChanges {target: root; primaryHeaderButton.visible: false}
-        },
-        State {
-            name: d.permissionsViewState
-            PropertyChanges {target: root; title: qsTr("Permissions")}
-            PropertyChanges {target: root; previousPageName: ""}
-            PropertyChanges {target: root; content: permissionsView}
-            PropertyChanges {target: root; primaryHeaderButton.visible: true}
-            PropertyChanges {target: root; primaryHeaderButton.text: qsTr("Add new permission")}
-        },
-        State {
-            name: d.editPermissionViewState
-            PropertyChanges {target: root; title: qsTr("Edit permission")}
-            PropertyChanges {target: root; previousPageName: qsTr("Permissions")}
-            PropertyChanges {target: root; content: newPermissionView}
-            PropertyChanges {target: root; primaryHeaderButton.visible: false}
-        }
-    ]
-
-    onPrimaryHeaderButtonClicked: {
-        if(root.state === d.permissionsViewState) {
-            d.initializeData()
-            root.state = d.newPermissionViewState
-        }
-    }
-
-    onSaveChangesClicked: {
-        d.saveChanges()
-        d.resetChanges()
-
-        root.navigateBack()
-    }
-
-    onResetChangesClicked: {
-        d.resetChanges()
-
-        root.navigateBack()
+        if (depth === 2 && currentItem.toast.active)
+            currentItem.toast.notifyDirty()
+        else
+            pop(StackView.Immediate)
     }
 
     // Community Permissions possible view contents:
-    Component {
-        id: newPermissionView
+    initialItem: SettingsPage {
+        implicitWidth: 0
+        pageTitle: qsTr("Permissions")
 
-        EditPermissionView {
-            id: editPermissionView
+        buttons: StatusButton {
+            text: qsTr("Add new permission")
 
-            viewWidth: root.viewWidth
+            onClicked: root.push(newPermissionView, StackView.Immediate)
+        }
 
+        contentItem: PermissionsView {
+            permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
             channelsModel: root.channelsModel
             communityDetails: root.communityDetails
 
-            isEditState: root.state === d.editPermissionViewState
+            viewWidth: root.viewWidth
 
-            selectedHoldingsModel: d.holdingsToEditModel
-            selectedChannelsModel: d.channelsToEditModel
+            onEditPermissionRequested: {
+                const item = ModelUtils.get(root.permissionsModel, index)
 
-            permissionType: d.permissionTypeToEdit
-            isPrivate: d.isPrivateToEditValue
-            holdingsRequired: selectedHoldingsModel ? selectedHoldingsModel.count > 0
-                                                    : false
-
-            permissionDuplicated: {
-                // dependencies
-                holdingsTracker.revision
-                channelsTracker.revision
-                editPermissionView.dirtyValues.permissionType
-                editPermissionView.dirtyValues.isPrivate
-                const model = root.permissionsModel
-                const count = model.rowCount()
-
-                for (let i = 0; i < count; i++) {
-                    const item = ModelUtils.get(model, i)
-
-                    if (root.state === d.editPermissionViewState
-                            && d.permissionKeyToEdit === item.key)
-                        continue
-
-                    const holdings = item.holdingsListModel
-                    const channels = item.channelsListModel
-                    const permissionType = item.permissionType
-
-                    const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
-
-                    if (holdings.rowCount() === 0)
-                        if (dirtyValues.holdingsRequired)
-                            continue
-                        else
-                            return true
-
-                    if (holdings.rowCount() !== 0 && !dirtyValues.holdingsRequired)
-                        continue
-
-                    if (same(dirtyValues.selectedHoldingsModel, holdings)
-                            && same(dirtyValues.selectedChannelsModel, channels)
-                            && dirtyValues.permissionType === permissionType)
-                        return true
+                const properties = {
+                    permissionKeyToEdit: item.key,
+                    holdingsToEditModel: item.holdingsListModel,
+                    channelsToEditModel: item.channelsListModel,
+                    permissionTypeToEdit: item.permissionType,
+                    isPrivateToEditValue: item.isPrivate
                 }
 
-                return false
+                root.push(newPermissionView, properties, StackView.Immediate)
             }
 
-            permissionTypeLimitReached: {
-                const type = dirtyValues.permissionType
-                const limit = PermissionTypes.getPermissionsCountLimit(type)
+            onDuplicatePermissionRequested: {
+                const item = ModelUtils.get(root.permissionsModel, index)
 
-                if (limit === -1)
+                const properties = {
+                    holdingsToEditModel: item.holdingsListModel,
+                    channelsToEditModel: item.channelsListModel,
+                    permissionTypeToEdit: item.permissionType,
+                    isPrivateToEditValue: item.isPrivate
+                }
+
+                root.push(newPermissionView, properties, StackView.Immediate)
+            }
+
+            onRemovePermissionRequested: {
+                const key = ModelUtils.get(root.permissionsModel, index, "key")
+                root.removePermissionRequested(key)
+            }
+        }
+    }
+
+    Component {
+        id: newPermissionView
+
+        SettingsPage {
+            id: newPermissionViewPage
+
+            implicitWidth: 0
+            pageTitle: isEditState ? qsTr("Edit permission") : qsTr("New permission")
+
+            property alias holdingsToEditModel: editPermissionView.selectedHoldingsModel
+            property alias channelsToEditModel: editPermissionView.selectedChannelsModel
+            property alias permissionTypeToEdit: editPermissionView.permissionType
+            property alias isPrivateToEditValue: editPermissionView.isPrivate
+
+            property string permissionKeyToEdit
+            readonly property bool isEditState: !!permissionKeyToEdit
+            readonly property alias toast: settingsDirtyToastMessage
+
+            contentItem: EditPermissionView {
+                id: editPermissionView
+
+                viewWidth: root.viewWidth
+
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
+                channelsModel: root.channelsModel
+                communityDetails: root.communityDetails
+
+                isEditState: newPermissionViewPage.isEditState
+                holdingsRequired: selectedHoldingsModel
+                                  ? selectedHoldingsModel.count > 0 : false
+
+                permissionDuplicated: {
+                    // dependencies
+                    holdingsTracker.revision
+                    channelsTracker.revision
+                    editPermissionView.dirtyValues.permissionType
+                    editPermissionView.dirtyValues.isPrivate
+                    const model = root.permissionsModel
+                    const count = model.rowCount()
+
+                    for (let i = 0; i < count; i++) {
+                        const item = ModelUtils.get(model, i)
+
+                        if (newPermissionViewPage.permissionKeyToEdit === item.key)
+                            continue
+
+                        const holdings = item.holdingsListModel
+                        const channels = item.channelsListModel
+                        const permissionType = item.permissionType
+
+                        const same = (a, b) => ModelUtils.checkEqualitySet(a, b, ["key"])
+
+                        if (holdings.rowCount() === 0)
+                            if (dirtyValues.holdingsRequired)
+                                continue
+                            else
+                                return true
+
+                        if (holdings.rowCount() !== 0 && !dirtyValues.holdingsRequired)
+                            continue
+
+                        if (same(dirtyValues.selectedHoldingsModel, holdings)
+                                && same(dirtyValues.selectedChannelsModel, channels)
+                                && dirtyValues.permissionType === permissionType)
+                            return true
+                    }
+
                     return false
+                }
 
-                const model = root.permissionsModel
-                const count = model.rowCount()
-                let sameTypeCount = 0
+                permissionTypeLimitReached: {
+                    const type = dirtyValues.permissionType
+                    const limit = PermissionTypes.getPermissionsCountLimit(type)
 
-                for (let i = 0; i < count; i++)
-                    if (type === ModelUtils.get(model, i, "permissionType"))
-                        sameTypeCount++
+                    if (limit === -1)
+                        return false
 
-                return limit <= sameTypeCount
-            }
+                    const model = root.permissionsModel
+                    const count = model.rowCount()
+                    let sameTypeCount = 0
 
-            onCreatePermissionClicked: {
-                const holdings = dirtyValues.holdingsRequired ?
-                                   ModelUtils.modelToArray(
-                                       dirtyValues.selectedHoldingsModel,
-                                       ["key", "type", "amount"])
-                                 : []
+                    for (let i = 0; i < count; i++)
+                        if (type === ModelUtils.get(model, i, "permissionType"))
+                            sameTypeCount++
 
-                const channels = ModelUtils.modelToArray(
-                                   dirtyValues.selectedChannelsModel, ["key"])
+                    return limit <= sameTypeCount
+                }
 
-                root.createPermissionRequested(
-                            dirtyValues.permissionType, holdings, channels,
-                            dirtyValues.isPrivate)
+                onCreatePermissionClicked: {
+                    const holdings = dirtyValues.holdingsRequired ?
+                                       ModelUtils.modelToArray(
+                                           dirtyValues.selectedHoldingsModel,
+                                           ["key", "type", "amount"]) : []
 
-                root.state = d.permissionsViewState
-            }
+                    const channels = ModelUtils.modelToArray(
+                                       dirtyValues.selectedChannelsModel, ["key"])
 
-            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
+                    root.createPermissionRequested(
+                                dirtyValues.permissionType, holdings, channels,
+                                dirtyValues.isPrivate)
 
-            Connections {
-                target: d
+                    root.pop(StackView.Immediate)
+                }
 
-                function onSaveChanges() {
+                onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
+
+                function saveChanges() {
                     const holdings = dirtyValues.holdingsRequired ?
                                        ModelUtils.modelToArray(
                                            dirtyValues.selectedHoldingsModel,
@@ -236,84 +210,56 @@ SettingsPageLayout {
                                        dirtyValues.selectedChannelsModel, ["key"])
 
                     root.updatePermissionRequested(
-                                d.permissionKeyToEdit, dirtyValues.permissionType,
-                                holdings, channels, dirtyValues.isPrivate)
+                                newPermissionViewPage.permissionKeyToEdit,
+                                dirtyValues.permissionType, holdings, channels,
+                                dirtyValues.isPrivate)
                 }
 
-                function onResetChanges() {
-                    resetChanges()
+                ModelChangeTracker {
+                    id: holdingsTracker
+
+                    model: editPermissionView.dirtyValues.selectedHoldingsModel
+                }
+
+                ModelChangeTracker {
+                    id: channelsTracker
+
+                    model: editPermissionView.dirtyValues.selectedChannelsModel
                 }
             }
 
-            Binding {
-                target: root
-                property: "dirty"
-                value: isEditState && dirty
-            }
+            SettingsDirtyToastMessage {
+                id: settingsDirtyToastMessage
 
-            ModelChangeTracker {
-                id: holdingsTracker
+                z: 1
+                anchors {
+                    bottom: parent.bottom
+                    horizontalCenter: parent.horizontalCenter
+                    bottomMargin: 16
+                }
 
-                model: editPermissionView.dirtyValues.selectedHoldingsModel
-            }
+                saveChangesText: qsTr("Update permission")
+                cancelChangesText: qsTr("Revert changes")
 
-            ModelChangeTracker {
-                id: channelsTracker
+                saveChangesButtonEnabled:
+                    !editPermissionView.permissionDuplicated
+                    && !editPermissionView.permissionTypeLimitReached
+                    && editPermissionView.isFullyFilled
 
-                model: editPermissionView.dirtyValues.selectedChannelsModel
-            }
+                onSaveChangesClicked: {
+                    editPermissionView.saveChanges()
+                    root.pop(StackView.Immediate)
+                }
 
-            Binding {
-                target: root
-                property: "saveChangesButtonEnabled"
-                value: !editPermissionView.permissionDuplicated
-                       && !editPermissionView.permissionTypeLimitReached
-                       && editPermissionView.isFullyFilled
-            }
-        }
-    }
+                onResetChangesClicked: editPermissionView.resetChanges()
 
-    Component {
-        id: permissionsView
-
-        PermissionsView {
-            permissionsModel: root.permissionsModel
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
-            channelsModel: root.channelsModel
-            communityDetails: root.communityDetails
-
-            viewWidth: root.viewWidth
-
-            function setInitialValuesFromIndex(index) {
-                const item = ModelUtils.get(root.permissionsModel, index)
-
-                d.holdingsToEditModel = item.holdingsListModel
-                d.channelsToEditModel = item.channelsListModel
-                d.permissionTypeToEdit = item.permissionType
-                d.isPrivateToEditValue = item.isPrivate
-            }
-
-            onEditPermissionRequested: {
-                setInitialValuesFromIndex(index)
-                d.permissionKeyToEdit = ModelUtils.get(
-                            root.permissionsModel, index, "key")
-                root.state = d.editPermissionViewState
-            }
-
-            onDuplicatePermissionRequested: {
-                setInitialValuesFromIndex(index)
-                root.state = d.newPermissionViewState
-            }
-
-            onRemovePermissionRequested: {
-                const key = ModelUtils.get(root.permissionsModel, index, "key")
-                root.removePermissionRequested(key)
+                Component.onCompleted: {
+                    // delay to avoid toast blinking on entry
+                    settingsDirtyToastMessage.active = Qt.binding(
+                                     () => editPermissionView.isEditState &&
+                                           editPermissionView.dirty)
+                }
             }
         }
-    }
-
-    ListModel {
-        id: emptyModel
     }
 }
