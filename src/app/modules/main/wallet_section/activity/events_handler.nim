@@ -1,11 +1,7 @@
-import NimQml, logging, std/json, sequtils, strutils
+import NimQml, logging, std/json, sequtils, strutils, options
 import tables, stint, sets
 
-import model
 import entry
-import recipients_model
-
-import web3/conversions
 
 import app/core/eventemitter
 import app/core/signals/types
@@ -30,6 +26,8 @@ QtObject:
       subscribedChainIDs: HashSet[int]
       newDataAvailableFn: proc()
 
+      requestId: int
+
   proc setup(self: EventsHandler) =
     self.QObject.setup
 
@@ -51,6 +49,9 @@ QtObject:
   proc handleApiEvents(self: EventsHandler, e: Args) =
     var data = WalletSignal(e)
 
+    if data.requestId.isSome and data.requestId.get() != self.requestId:
+      return
+
     if self.walletEventHandlers.hasKey(data.eventType):
       let callback = self.walletEventHandlers[data.eventType]
       callback(data)
@@ -63,8 +64,6 @@ QtObject:
         return
       let callback = self.eventHandlers[data.eventType]
       callback(responseJson)
-    else:
-      discard
 
   proc setupWalletEventHandlers(self: EventsHandler) =
     let newDataAvailableCallback = proc (data: WalletSignal) =
@@ -100,13 +99,16 @@ QtObject:
     self.walletEventHandlers[EventPendingTransactionUpdate] = newDataAvailableCallback
     self.walletEventHandlers[EventMTTransactionUpdate] = newDataAvailableCallback
 
-  proc newEventsHandler*(events: EventEmitter): EventsHandler =
+  proc newEventsHandler*(requestId: int, events: EventEmitter): EventsHandler =
     new(result, delete)
+
     result.events = events
     result.eventHandlers = initTable[string, EventCallbackProc]()
 
     result.subscribedAddresses = initHashSet[string]()
     result.subscribedChainIDs = initHashSet[int]()
+
+    result.requestId = requestId
 
     result.setup()
 

@@ -5,10 +5,6 @@ import utils 1.0
 
 QtObject {
     id: root
-//    property var utilsModelInst: !!utilsModel ? utilsModel :  null
-//    property var chatsModelInst: !!chatsModel ?chatsModel : null
-//    property var walletModelInst: !!walletModel ? walletModel : null
-//    property var profileModelInst: !!profileModel ? profileModel : null
 
     property var profileSectionModuleInst: profileSectionModule
     property var privacyModule: profileSectionModuleInst.privacyModule
@@ -25,29 +21,20 @@ QtObject {
     property bool isTenorWarningAccepted: !!accountSensitiveSettings ? accountSensitiveSettings.isTenorWarningAccepted : false
     property bool displayChatImages: !!accountSensitiveSettings ? accountSensitiveSettings.displayChatImages : false
 
-//    property string signingPhrase: !!walletModelInst ? walletModelInst.utilsView.signingPhrase : ""
-//    property string gasPrice: !!walletModelInst ? walletModelInst.gasView.gasPrice : "0"
-//    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
-
     property CurrenciesStore currencyStore: CurrenciesStore {}
-    property string currentCurrency: Global.appIsReady? walletSection.currentCurrency : ""
-//    property string defaultCurrency: !!walletModelInst ? walletModelInst.balanceView.defaultCurrency : "0"
-//    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"
-//    property string cryptoValue: !!walletModelInst ? walletModelInst.balanceView.getCryptoValue : "0"
+    property string currentCurrency: Global.appIsReady? walletSectionInst.currentCurrency : ""
 
-    property var history: typeof walletSectionTransactions !== "undefined" ? walletSectionTransactions
-                                                                          : null
-    property var historyTransactions: Global.appIsReady? walletSection.activityController.model : null
-    readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSection.activityController.status.loadingData
-    readonly property bool newDataAvailable: Global.appIsReady && walletSection.activityController.status.newDataAvailable
-    readonly property var transactionActivityStatus: Global.appIsReady ? walletSection.activityController.status : null
+    readonly property var transactionActivityStatus: Global.appIsReady ? walletSectionInst.activityController.status : null
 
-    property bool isNonArchivalNode: history ? history.isNonArchivalNode
-                                             : false
+    property var historyTransactions: Global.appIsReady? walletSectionInst.activityController.model : null
+    readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSectionInst.activityController.status.loadingData
+    readonly property bool newDataAvailable: Global.appIsReady && walletSectionInst.activityController.status.newDataAvailable
+    property bool isNonArchivalNode: Global.appIsReady && walletSectionInst.isNonArchivalNode
+
     property var marketValueStore: TokenMarketValuesStore{}
 
     function resetFilter() {
-        walletSection.activityController.updateFilter()
+        walletSectionInst.activityController.updateFilter()
     }
 
     function getNetworkColor(chainId) {
@@ -185,12 +172,12 @@ QtObject {
                 || !RootStore.historyTransactions.hasMore
                 || loadingHistoryTransactions)
             return
-        walletSection.activityController.loadMoreItems()
+        walletSectionInst.activityController.loadMoreItems()
     }
 
     function updateTransactionFilter() {
         if (transactionActivityStatus.isFilterDirty)
-            walletSection.activityController.updateFilter()
+            walletSectionInst.activityController.updateFilter()
     }
 
     function hex2Eth(value) {

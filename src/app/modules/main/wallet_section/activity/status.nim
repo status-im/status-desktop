@@ -1,7 +1,5 @@
 import NimQml, std/json, sequtils, strutils, times
-import tables, stint, sets, atomics
-
-import web3/conversions
+import stint, atomics
 
 import app/core/signals/types
 
@@ -119,6 +117,9 @@ QtObject:
   proc isFilterDirtyChanged*(self: Status) {.signal.}
 
   proc setIsFilterDirty*(self: Status, value: bool) =
+    if self.isFilterDirty == value:
+      return
+
     self.isFilterDirty = value
     self.isFilterDirtyChanged()
 

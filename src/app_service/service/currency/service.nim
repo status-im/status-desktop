@@ -49,7 +49,7 @@ QtObject:
     result.threadpool = threadpool
     result.tokenService = tokenService
     result.settingsService = settingsService
-  
+
   proc init*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)

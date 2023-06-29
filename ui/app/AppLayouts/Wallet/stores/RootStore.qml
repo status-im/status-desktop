@@ -26,6 +26,7 @@ QtObject {
     property var walletSectionInst: walletSection
     property var totalCurrencyBalance: walletSection.totalCurrencyBalance
     property var activityController: walletSection.activityController
+    property var tmpActivityController: walletSection.tmpActivityController
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
@@ -143,7 +144,7 @@ QtObject {
     }
 
     function getLatestBlockNumber(chainId) {
-        return walletSectionTransactions.getLatestBlockNumber(chainId)
+        return walletSection.getLatestBlockNumber(chainId)
     }
 
     function setFilterAddress(address) {

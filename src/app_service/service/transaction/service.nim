@@ -37,13 +37,8 @@ include ../../common/json_utils
 const collectiblesLimit = 200 
 
 # Signals which may be emitted by this service:
-const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 const SIGNAL_SUGGESTED_ROUTES_READY* = "suggestedRoutesReady"
-const SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS* = "transactionsLoadingCompleteForAllNetworks"
-# TODO: soon to be removed with old transactions module
-const SIGNAL_HISTORY_FETCHING* = "historyFetching"
-const SIGNAL_HISTORY_READY* = "historyReady"
 const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
 const SIGNAL_HISTORY_ERROR* = "historyError"
 const SIGNAL_CRYPTO_SERVICES_READY* = "cryptoServicesReady"
@@ -75,20 +70,6 @@ proc `$`*(self: TransactionMinedArgs): string =
     data: {self.data},
     ]"""
 
-
-type
-  HistoryArgs* = ref object of Args
-    addresses*: seq[string]
-
-type
-  TransactionsLoadedArgs* = ref object of Args
-    transactions*: seq[TransactionDto]
-    collectibles*: seq[CollectibleDto]
-    address*: string
-    wasFetchMore*: bool
-    allTxLoaded*: bool
-    tempLoadingTx*: int
-
 type
   TransactionSentArgs* = ref object of Args
     result*: string
@@ -112,12 +93,6 @@ QtObject:
     networkService: network_service.Service
     settingsService: settings_service.Service
     tokenService: token_service.Service
-    txCounter: Table[string, seq[int]]
-    allTxLoaded: Table[string, bool]
-    allTransactions: Table[string, Table[string, TransactionDto]]
-
-  # Forward declaration
-  proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -136,18 +111,11 @@ QtObject:
     result.networkService = networkService
     result.settingsService = settingsService
     result.tokenService = tokenService
-    result.txCounter = initTable[string, seq[int]]()
-    result.allTxLoaded = initTable[string, bool]()
-    result.allTransactions = initTable[string, Table[string, TransactionDto]]()
 
   proc init*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       case data.eventType:
-        of transactions.EventRecentHistoryReady:
-          for account in data.accounts:
-            self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
-          self.events.emit(SIGNAL_HISTORY_READY, HistoryArgs(addresses: data.accounts))
         of transactions.EventNonArchivalNodeDetected:
           self.events.emit(SIGNAL_HISTORY_NON_ARCHIVAL_NODE, Args())
         of transactions.EventFetchingHistoryError:
@@ -169,12 +137,6 @@ QtObject:
   proc getPendingTransactionsForType*(self: Service, transactionType: PendingTransactionTypeDto): seq[TransactionDto] =
     let allPendingTransactions = self.getPendingTransactions()
     return allPendingTransactions.filter(x => x.typeValue == $transactionType)
-
-  proc getAllTransactions*(self: Service, address: string): seq[TransactionDto] =
-    if not self.allTransactions.hasKey(address):
-      return @[]
-
-    return toSeq(self.allTransactions[address].values)
 
   proc watchTransactionResult*(self: Service, watchTxResult: string) {.slot.} =
     let watchTxResult = parseJson(watchTxResult)
@@ -236,65 +198,6 @@ QtObject:
     for tx in pendingTransactions:
       self.watchTransaction(tx.txHash, tx.fromAddress, tx.to, tx.typeValue, tx.input, tx.chainId, track = false)
     return pendingTransactions
-
-  proc onTransactionsLoaded*(self: Service, historyJSON: string) {.slot.} =
-    let historyData = parseJson(historyJSON)
-    let address = historyData["address"].getStr
-    let chainID = historyData["chainId"].getInt
-    let wasFetchMore = historyData["loadMore"].getBool
-    let allTxLoaded = historyData["allTxLoaded"].getBool
-    var transactions: seq[TransactionDto] = @[]
-    var collectibles: seq[CollectibleDto] = @[]
-
-    for tx in historyData["history"].getElems():
-      let dto = tx.toTransactionDto()
-      self.allTransactions.mgetOrPut(address, initTable[string, TransactionDto]())[dto.txHash] = dto
-      transactions.add(dto)
-
-    if self.allTxLoaded.hasKey(address):
-      self.allTxLoaded[address] = self.allTxLoaded[address] and allTxLoaded
-    else:
-      self.allTxLoaded[address] = allTxLoaded
-
-    # emit event
-    self.events.emit(SIGNAL_TRANSACTIONS_LOADED, TransactionsLoadedArgs(
-      transactions: transactions,
-      collectibles: collectibles,
-      address: address,
-      wasFetchMore: wasFetchMore
-    ))
-
-    # when requests for all networks are completed then set loading state as completed
-    if self.txCounter.hasKey(address) and self.allTxLoaded.hasKey(address) :
-      var chainIDs = self.txCounter[address]
-      chainIDs.del(chainIDs.find(chainID))
-      self.txCounter[address] = chainIDs
-      if self.txCounter[address].len == 0:
-        self.txCounter.del(address)
-        self.events.emit(SIGNAL_TRANSACTION_LOADING_COMPLETED_FOR_ALL_NETWORKS, TransactionsLoadedArgs(address: address, allTxLoaded: self.allTxLoaded[address]))
-
-  proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
-    let networks = self.networkService.getNetworks()
-    self.allTxLoaded.del(address)
-
-    if not self.txCounter.hasKey(address):
-      var networkChains: seq[int] = @[]
-      self.txCounter[address] = networkChains
-      for network in networks:
-        networkChains.add(network.chainId)
-        let arg = LoadTransactionsTaskArg(
-          address: address,
-          tptr: cast[ByteAddress](loadTransactionsTask),
-          vptr: cast[ByteAddress](self.vptr),
-          slot: "onTransactionsLoaded",
-          toBlock: toBlock,
-          limit: limit,
-          collectiblesLimit: collectiblesLimit,
-          loadMore: loadMore,
-          chainId: network.chainId,
-        )
-        self.txCounter[address] = networkChains
-        self.threadpool.start(arg)
 
   proc createApprovalPath*(self: Service, route: TransactionPathDto, from_addr: string, toAddress: Address, gasFees: string): TransactionBridgeDto =
     var txData = TransactionDataDto()

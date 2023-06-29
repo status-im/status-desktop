@@ -33,10 +33,10 @@ Item {
 
     onTransactionChanged: {
         d.decodedInputData = ""
-        if (!transaction || !transaction.input || !RootStore.history)
+        if (!transaction || !transaction.input)
             return
         d.loadingInputDate = true
-        RootStore.history.fetchDecodedTxData(transaction.txHash, transaction.input)
+        walletSection.fetchDecodedTxData(transaction.txHash, transaction.input)
     }
 
     QtObject {
@@ -92,7 +92,7 @@ Item {
     }
 
     Connections {
-        target: RootStore.history
+        target: RootStore.walletSectionInst
         function onTxDecoded(txHash: string, dataDecoded: string) {
             if (!root.isTransactionValid || txHash !== root.transaction.txHash)
                 return

@@ -1,10 +1,14 @@
-import NimQml, json, strformat, sequtils, strutils, logging, stint, options
+import NimQml, json, strformat, sequtils, strutils, logging, stint
 
-import ../transactions/view
-import ../transactions/item
-import ./backend/transactions
+import backend/transactions
 import backend/activity as backend
-import ../../../shared_models/currency_amount
+import app/modules/shared_models/currency_amount
+
+import app/global/global_singleton
+
+import app_service/service/transaction/dto
+import app_service/service/currency/dto as currency
+import app_service/service/currency/service
 
 import web3/ethtypes as eth
 
@@ -15,13 +19,16 @@ type
   ExtraData* = object
     inAmount*: float64
     outAmount*: float64
-    # TODO: Fields below should come from the metadata
+    # TODO: Fields below should come from the metadata. see #11597
     inSymbol*: string
     outSymbol*: string
+
+  AmountToCurrencyConvertor* = proc (amount: UInt256, symbol: string): CurrencyAmount
 
 # It is used to display an activity history entry in the QML UI
 #
 # TODO remove this legacy after the NFT is served async; see #11598
+# TODO add all required metadata from filtering; see #11597
 #
 # Looking into going away from carying the whole detailed data and just keep the required data for the UI
 # and request the detailed data on demand
@@ -30,13 +37,19 @@ type
 QtObject:
   type
     ActivityEntry* = ref object of QObject
-      # TODO: these should be removed
+      # TODO: these should be removed; see #11598
       multi_transaction: MultiTransactionDto
-      transaction: ref Item
+      transaction: ref TransactionDto
       isPending: bool
 
+      valueConvertor: AmountToCurrencyConvertor
       metadata: backend.ActivityEntry
       extradata: ExtraData
+
+      totalFees: CurrencyAmount
+      maxTotalFees: CurrencyAmount
+      amountCurrency: CurrencyAmount
+      noAmount: CurrencyAmount
 
   proc setup(self: ActivityEntry) =
     self.QObject.setup
@@ -44,22 +57,39 @@ QtObject:
   proc delete*(self: ActivityEntry) =
     self.QObject.delete
 
-  proc newMultiTransactionActivityEntry*(mt: MultiTransactionDto, metadata: backend.ActivityEntry, extradata: ExtraData): ActivityEntry =
+
+  proc newMultiTransactionActivityEntry*(mt: MultiTransactionDto, metadata: backend.ActivityEntry, extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
     new(result, delete)
     result.multi_transaction = mt
     result.transaction = nil
     result.isPending = false
+    result.valueConvertor = valueConvertor
     result.metadata = metadata
     result.extradata = extradata
+    result.noAmount = newCurrencyAmount()
+    result.amountCurrency = valueConvertor(
+      if metadata.activityType == backend.ActivityType.Receive: metadata.amountIn else: metadata.amountOut,
+      if metadata.activityType == backend.ActivityType.Receive: mt.toAsset else: mt.fromAsset,
+    )
     result.setup()
 
-  proc newTransactionActivityEntry*(tr: ref Item, metadata: backend.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData): ActivityEntry =
+  proc newTransactionActivityEntry*(tr: ref TransactionDto, metadata: backend.ActivityEntry, fromAddresses: seq[string], extradata: ExtraData, valueConvertor: AmountToCurrencyConvertor): ActivityEntry =
     new(result, delete)
     result.multi_transaction = nil
     result.transaction = tr
     result.isPending = metadata.payloadType == backend.PayloadType.PendingTransaction
+    result.valueConvertor = valueConvertor
     result.metadata = metadata
     result.extradata = extradata
+
+    result.totalFees = valueConvertor(stint.fromHex(UInt256, tr.totalFees), "Gwei")
+    result.maxTotalFees = valueConvertor(stint.fromHex(UInt256, tr.maxTotalFees), "Gwei")
+    result.amountCurrency = valueConvertor(
+      if metadata.activityType == backend.ActivityType.Receive: metadata.amountIn else: metadata.amountOut,
+      tr.symbol
+    )
+    result.noAmount = newCurrencyAmount()
+
     result.setup()
 
   proc isMultiTransaction*(self: ActivityEntry): bool {.slot.} =
@@ -88,11 +118,6 @@ QtObject:
     if not self.isMultiTransaction():
       raise newException(Defect, "ActivityEntry is not a MultiTransaction")
     return self.multi_transaction
-
-  proc getTransaction*(self: ActivityEntry, pending: bool): ref Item =
-    if self.isMultiTransaction() or self.isPending != pending:
-      raise newException(Defect, "ActivityEntry is not a " & (if pending: "pending" else: "") & " Transaction")
-    return self.transaction
 
   proc getSender*(self: ActivityEntry): string {.slot.} =
     return if self.metadata.sender.isSome(): "0x" & self.metadata.sender.unsafeGet().toHex() else: ""
@@ -153,24 +178,20 @@ QtObject:
   proc getIsNFT*(self: ActivityEntry): bool {.slot.} =
     return self.metadata.transferType.isSome() and self.metadata.transferType.unsafeGet() == TransferType.Erc721
 
-  QtProperty[int] isNFT:
+  QtProperty[bool] isNFT:
     read = getIsNFT
 
   proc getNFTName*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getNFTName: ActivityEntry is not an transaction.Item"
-      return ""
-    return self.transaction[].getNFTName()
+    # TODO: complete this async #11597
+    return ""
 
   # TODO: lazy load this in activity history service. See #11597
   QtProperty[string] nftName:
     read = getNFTName
 
   proc getNFTImageURL*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getNFTImageURL: ActivityEntry is not an transaction.Item"
-      return ""
-    return self.transaction[].getNFTImageURL()
+    # TODO: complete this async #11597
+    return ""
 
   # TODO: lazy load this in activity history service. See #11597
   QtProperty[string] nftImageURL:
@@ -178,9 +199,9 @@ QtObject:
 
   proc getTotalFees*(self: ActivityEntry): QVariant {.slot.} =
     if self.transaction == nil:
-      error "getTotalFees: ActivityEntry is not an transaction.Item"
-      return newQVariant(newCurrencyAmount())
-    return newQVariant(self.transaction[].getTotalFees())
+      error "getTotalFees: ActivityEntry is not an transaction entry"
+      return newQVariant(self.noAmount)
+    return newQVariant(self.totalFees)
 
   # TODO: lazy load this in activity history service. See #11597
   QtProperty[QVariant] totalFees:
@@ -188,9 +209,9 @@ QtObject:
 
   proc getMaxTotalFees*(self: ActivityEntry): QVariant {.slot.} =
     if self.transaction == nil:
-      error "getMaxTotalFees: ActivityEntry is not an transaction.Item"
-      return newQVariant(newCurrencyAmount())
-    return newQVariant(self.transaction[].getMaxTotalFees())
+      error "getMaxTotalFees: ActivityEntry is not an transaction entry"
+      return newQVariant(self.noAmount)
+    return newQVariant(self.maxTotalFees)
 
   # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[QVariant] maxTotalFees:
@@ -198,9 +219,9 @@ QtObject:
 
   proc getInput*(self: ActivityEntry): string {.slot.} =
     if self.transaction == nil:
-      error "getInput: ActivityEntry is not an transaction.Item"
+      error "getInput: ActivityEntry is not an transactio entry"
       return ""
-    return self.transaction[].getInput()
+    return self.transaction[].input
 
   # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] input:
@@ -214,9 +235,9 @@ QtObject:
 
   proc getType*(self: ActivityEntry): string {.slot.} =
     if self.transaction == nil:
-      error "getType: ActivityEntry is not an transaction.Item"
+      error "getType: ActivityEntry is not an transaction entry"
       return ""
-    return self.transaction[].getType()
+    return self.transaction[].typeValue
 
   # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] type:
@@ -230,9 +251,9 @@ QtObject:
 
   proc getTxHash*(self: ActivityEntry): string {.slot.} =
     if self.transaction == nil:
-      error "getTxHash: ActivityEntry is not an transaction.Item"
+      error "getTxHash: ActivityEntry is not an transaction entry"
       return ""
-    return self.transaction[].getTxHash()
+    return self.transaction[].txHash
 
   # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] txHash:
@@ -253,18 +274,18 @@ QtObject:
   # TODO: used only in details, move it to a entry_details.nim. See #11598
   proc getNonce*(self: ActivityEntry): string {.slot.} =
     if self.transaction == nil:
-      error "getNonce: ActivityEntry is not an transaction.Item"
+      error "getNonce: ActivityEntry is not an transaction entry"
       return ""
-    return $self.transaction[].getNonce()
+    return $self.transaction[].nonce
 
   QtProperty[string] nonce:
     read = getNonce
 
   proc getBlockNumber*(self: ActivityEntry): string {.slot.} =
     if self.transaction == nil:
-      error "getBlockNumber: ActivityEntry is not an transaction.Item"
+      error "getBlockNumber: ActivityEntry is not an transaction entry"
       return ""
-    return $self.transaction[].getBlockNumber()
+    return $self.transaction[].blockNumber
 
  # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] blockNumber:
@@ -289,3 +310,9 @@ QtObject:
 
   QtProperty[float] amount:
     read = getAmount
+
+  proc getAmountCurrency*(self: ActivityEntry): QVariant {.slot.} =
+    return newQVariant(self.amountCurrency)
+
+  QtProperty[QVariant] amountCurrency:
+    read = getAmountCurrency

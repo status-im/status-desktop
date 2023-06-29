@@ -16,7 +16,7 @@ Item {
     width: rectangleBubble.width
     height: rectangleBubble.height
 
-    property var store
+    property var store              // expected ui/app/AppLayouts/Chat/stores/RootStore.qml
     property var contactsStore
 
     property var transactionParams

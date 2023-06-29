@@ -14,16 +14,18 @@ QtObject {
     property var contactStore: profileSectionStore.contactsStore
 
     property var mainModuleInst: mainModule
-    property var walletSectionTransactionsInst: walletSectionTransactions
     property var walletSectionSendInst: walletSectionSend
+    property var walletSectionInst: walletSection
 
-    property string currentCurrency: walletSection.currentCurrency
+    property var tmpActivityController: walletSectionInst.tmpActivityController
+
+    property string currentCurrency: walletSectionInst.currentCurrency
     property var allNetworks: networksModule.all
     property var overview: walletSectionOverview
     property var accounts: walletSectionSendInst.accounts
     property var senderAccounts: walletSectionSendInst.senderAccounts
     property var selectedSenderAccount: walletSectionSendInst.selectedSenderAccount
-    property string signingPhrase: walletSection.signingPhrase
+    property string signingPhrase: walletSectionInst.signingPhrase
     property var savedAddressesModel: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model
         filters: [
@@ -84,14 +86,6 @@ QtObject {
 
     function getEstimatedTime(chainId, maxFeePerGas) {
        return walletSectionSendInst.getEstimatedTime(chainId, maxFeePerGas)
-    }
-
-    function getChainIdForChat() {
-        return walletSectionTransactions.getChainIdForChat()
-    }
-
-    function getChainIdForBrowser() {
-        return walletSectionTransactions.getChainIdForBrowser()
     }
 
     function suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIds, sendType, lockedInAmounts) {
@@ -286,14 +280,6 @@ QtObject {
                 }
         }
         return {}
-    }
-
-    function prepareTransactionsForAddress(address) {
-        walletSectionTransactions.prepareTransactionsForAddress(address)
-    }
-
-    function getTransactions() {
-        return walletSectionTransactions.getTransactions()
     }
 
     function getAllNetworksSupportedPrefix() {

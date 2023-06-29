@@ -10,9 +10,7 @@ import status
 import web3/conversions
 
 import app/core/eventemitter
-
-import ../transactions/item
-import ../transactions/module as transactions_module
+import app/core/signals/types
 
 import backend/activity as backend_activity
 import backend/backend as backend
@@ -21,6 +19,11 @@ import backend/transactions
 import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/token/service as token_service
+
+import app/modules/shared/wallet_utils
+import app/modules/shared_models/currency_amount
+
+import app_service/service/transaction/dto
 
 proc toRef*[T](obj: T): ref T =
   new(result)
@@ -35,7 +38,6 @@ QtObject:
     Controller* = ref object of QObject
       model: Model
       recipientsModel: RecipientsModel
-      transactionsModule: transactions_module.AccessInterface
       currentActivityFilter: backend_activity.ActivityFilter
       currencyService: currency_service.Service
       tokenService: token_service.Service
@@ -49,6 +51,8 @@ QtObject:
       addresses: seq[string]
       # call updateAssetsIdentities after updating chainIds
       chainIds: seq[int]
+
+      requestId: int32
 
   proc setup(self: Controller) =
     self.QObject.setup
@@ -75,12 +79,22 @@ QtObject:
     result.outSymbol = item.fromAsset
     result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
 
-  proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: ref Item): ExtraData =
+  proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: ref TransactionDto): ExtraData =
     # TODO: Use symbols from backendEntry when they're available
-    result.inSymbol = item[].getSymbol()
+    result.inSymbol = item[].symbol
     result.inAmount = self.currencyService.parseCurrencyValue(result.inSymbol, metadata.amountIn)
-    result.outSymbol = item[].getSymbol()
+    result.outSymbol = item[].symbol
     result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
+
+  proc getResolvedSymbol(self: Controller, transaction: TransactionDto): string =
+    if transaction.symbol != "":
+      result = transaction.symbol
+    else:
+      let contractSymbol = self.tokenService.findTokenSymbolByAddress(transaction.contract)
+      if contractSymbol != "":
+        result = contractSymbol
+      else:
+        result = "ETH"
 
   proc backendToPresentation(self: Controller, backendEntities: seq[backend_activity.ActivityEntry]): seq[entry.ActivityEntry] =
     var multiTransactionsIds: seq[int] = @[]
@@ -88,7 +102,7 @@ QtObject:
     var pendingTransactionIdentities: seq[backend.TransactionIdentity] = @[]
 
     # Extract metadata required to fetch details
-    # TODO: temporary here to show the working API. Details for each entry will be done as required
+    # TODO: see #11598. Temporary here to show the working API. Details for each entry will be done as required
     # on a detail request from UI after metadata is extended to include the required info
     for backendEntry in backendEntities:
       case backendEntry.payloadType:
@@ -105,7 +119,7 @@ QtObject:
       for mt in mts:
         multiTransactions[mt.id] = mt
 
-    var transactions = initTable[TransactionIdentity, ref Item]()
+    var transactions = initTable[TransactionIdentity, ref TransactionDto]()
     if len(transactionIdentities) > 0:
       let response = backend.getTransfersForIdentities(transactionIdentities)
       let res = response.result
@@ -113,11 +127,10 @@ QtObject:
         error "failed fetching transaction details; err: ", response.error, ", kind: ", res.kind, ", res.len: ", res.len
 
       let transactionsDtos = res.getElems().map(x => x.toTransactionDto())
-      let trItems = self.transactionsModule.transactionsToItems(transactionsDtos, @[])
-      for item in trItems:
-        transactions[TransactionIdentity(chainId: item.getChainId(), hash: item.getId(), address: item.getAddress())] = toRef(item)
+      for dto in transactionsDtos:
+        transactions[TransactionIdentity(chainId: dto.chainId, hash: dto.id, address: dto.address)] = toRef(dto)
 
-    var pendingTransactions = initTable[TransactionIdentity, ref Item]()
+    var pendingTransactions = initTable[TransactionIdentity, ref TransactionDto]()
     if len(pendingTransactionIdentities) > 0:
       let response = backend.getPendingTransactionsForIdentities(pendingTransactionIdentities)
       let res = response.result
@@ -125,12 +138,16 @@ QtObject:
         error "failed fetching pending transactions details; err: ", response.error, ", kind: ", res.kind, ", res.len: ", res.len
 
       let pendingTransactionsDtos = res.getElems().map(x => x.toPendingTransactionDto())
-      let trItems = self.transactionsModule.transactionsToItems(pendingTransactionsDtos, @[])
-      for item in trItems:
-        pendingTransactions[TransactionIdentity(chainId: item.getChainId(), hash: item.getId(), address: item.getAddress())] = toRef(item)
+      for dto in pendingTransactionsDtos:
+        pendingTransactions[TransactionIdentity(chainId: dto.chainId, hash: dto.id, address: dto.address)] = toRef(dto)
 
     # Merge detailed transaction info in order
     result = newSeqOfCap[entry.ActivityEntry](multiTransactions.len + transactions.len + pendingTransactions.len)
+
+    let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =
+      return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
+                                  self.currencyService.getCurrencyFormat(symbol))
+
     var mtIndex = 0
     var tIndex = 0
     var ptIndex = 0
@@ -141,7 +158,7 @@ QtObject:
           if multiTransactions.hasKey(id):
             let mt = multiTransactions[id]
             let extraData = self.buildMultiTransactionExtraData(backendEntry, mt)
-            result.add(entry.newMultiTransactionActivityEntry(mt, backendEntry, extraData))
+            result.add(entry.newMultiTransactionActivityEntry(mt, backendEntry, extraData, amountToCurrencyConvertor))
           else:
             error "failed to find multi transaction with id: ", id
           mtIndex += 1
@@ -149,8 +166,9 @@ QtObject:
           let identity = transactionIdentities[tIndex]
           if transactions.hasKey(identity):
             let tr = transactions[identity]
+            tr.symbol = self.getResolvedSymbol(tr[])
             let extraData = self.buildTransactionExtraData(backendEntry, tr)
-            result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData))
+            result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData, amountToCurrencyConvertor))
           else:
             error "failed to find transaction with identity: ", identity
           tIndex += 1
@@ -158,8 +176,9 @@ QtObject:
           let identity = pendingTransactionIdentities[ptIndex]
           if pendingTransactions.hasKey(identity):
             let tr = pendingTransactions[identity]
+            tr.symbol = self.getResolvedSymbol(tr[])
             let extraData = self.buildTransactionExtraData(backendEntry, tr)
-            result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData))
+            result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData, amountToCurrencyConvertor))
           else:
             error "failed to find pending transaction with identity: ", identity
           ptIndex += 1
@@ -189,7 +208,7 @@ QtObject:
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
     self.status.setNewDataAvailable(false)
 
-    let response = backend_activity.filterActivityAsync(self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       error "error fetching activity entries: ", response.error
       self.status.setLoadingData(false)
@@ -198,7 +217,7 @@ QtObject:
   proc loadMoreItems(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
 
-    let response = backend_activity.filterActivityAsync(self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
       error "error fetching activity entries: ", response.error
@@ -224,7 +243,7 @@ QtObject:
   proc updateStartTimestamp*(self: Controller) {.slot.} =
     self.status.setLoadingStartTimestamp(true)
 
-    let resJson = backend_activity.getOldestActivityTimestampAsync(self.addresses)
+    let resJson = backend_activity.getOldestActivityTimestampAsync(self.requestId, self.addresses)
     if resJson.error != nil:
       self.status.setLoadingStartTimestamp(false)
       error "error requesting oldest activity timestamp: ", resJson.error
@@ -261,19 +280,19 @@ QtObject:
       self.status.setNewDataAvailable(true)
     )
 
-  proc newController*(transactionsModule: transactions_module.AccessInterface,
+  proc newController*(requestId: int32,
                       currencyService: currency_service.Service,
                       tokenService: token_service.Service,
                       events: EventEmitter): Controller =
     new(result, delete)
 
+    result.requestId = requestId
     result.model = newModel()
     result.recipientsModel = newRecipientsModel()
-    result.transactionsModule = transactionsModule
     result.tokenService = tokenService
     result.currentActivityFilter = backend_activity.getIncludeAllActivityFilter()
 
-    result.eventsHandler = newEventsHandler(events)
+    result.eventsHandler = newEventsHandler(result.requestId, events)
     result.status = newStatus()
 
     result.currencyService = currencyService
@@ -345,20 +364,37 @@ QtObject:
 
   proc setFilterAddresses*(self: Controller, addresses: seq[string]) =
     self.addresses = addresses
+    self.status.setIsFilterDirty(true)
 
     self.updateStartTimestamp()
+
+  proc setFilterAddressesJson*(self: Controller, jsonArray: string) {.slot.}  =
+    let addressesJson = parseJson(jsonArray)
+    if addressesJson.kind != JArray:
+      error "invalid array of json strings"
+      return
+
+    var addresses = newSeq[string]()
+    for i in 0 ..< addressesJson.len:
+      if addressesJson[i].kind != JString:
+        error "not string entry in the json adday for index ", i
+        return
+      addresses.add(addressesJson[i].getStr())
+
+    self.setFilterAddresses(addresses)
 
   proc setFilterToAddresses*(self: Controller, addresses: seq[string]) =
     self.currentActivityFilter.counterpartyAddresses = addresses
 
   proc setFilterChains*(self: Controller, chainIds: seq[int]) =
     self.chainIds = chainIds
+    self.status.setIsFilterDirty(true)
 
     self.updateAssetsIdentities()
 
   proc updateRecipientsModel*(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
-    let res = backend_activity.getRecipientsAsync(0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
+    let res = backend_activity.getRecipientsAsync(self.requestId, 0, FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil or res.result.kind != JBool:
       self.status.setLoadingRecipients(false)
       error "error fetching recipients: ", res.error, "; kind ", res.result.kind
@@ -370,7 +406,7 @@ QtObject:
 
   proc loadMoreRecipients(self: Controller) {.slot.} =
     self.status.setLoadingRecipients(true)
-    let res = backend_activity.getRecipientsAsync(self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
+    let res = backend_activity.getRecipientsAsync(self.requestId, self.recipientsModel.getCount(), FETCH_RECIPIENTS_BATCH_COUNT_DEFAULT)
     if res.error != nil:
       self.status.setLoadingRecipients(false)
       error "error fetching more recipient entries: ", res.error
@@ -394,4 +430,3 @@ QtObject:
       return
     self.setFilterAddresses(addresses)
     self.setFilterChains(chainIds)
-    self.status.setIsFilterDirty(true)

@@ -24,11 +24,6 @@ type
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self
 
-# Deprecated type, to be removed along with transaction service/module
-type
-  CollectibleDto* = ref object of RootObj
-    dummy: string
-
 type
   TransactionDto* = ref object of RootObj
     id*: string

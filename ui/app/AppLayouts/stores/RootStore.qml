@@ -169,14 +169,6 @@ QtObject {
        return walletSectionSendInst.getEstimatedTime(chainId, maxFeePerGas)
     }
 
-    function getChainIdForChat() {
-        return walletSectionTransactions.getChainIdForChat()
-    }
-
-    function getChainIdForBrowser() {
-        return walletSectionTransactions.getChainIdForBrowser()
-    }
-
     function hex2Eth(value) {
         return globalUtils.hex2Eth(value)
     }
