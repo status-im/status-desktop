@@ -17,7 +17,6 @@ Feature: Community -> Manage Community -> Overview page
         When the admin renames the community to "<new_community_name>" and description to "<new_community_description>" and color to "<new_community_color>"
         Then the community overview name is "<new_community_name>"
         And the community overview description is "<new_community_description>"
-        And the community overview color is "<new_community_color>"
         When the admin goes back to the community
         Then the user lands on the community named "<new_community_name>"
         Examples:

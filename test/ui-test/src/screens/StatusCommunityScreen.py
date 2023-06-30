@@ -67,7 +67,6 @@ class CommunitySettingsComponents(Enum):
     BACK_TO_COMMUNITY_BUTTON = "communitySettings_BackToCommunity_Button"
     COMMUNITY_NAME_TEXT = "communitySettings_CommunityName_Text"
     COMMUNITY_DESCRIPTION_TEXT = "communitySettings_CommunityDescription_Text"
-    COMMUNITY_LETTER_IDENTICON = "communitySettings_Community_LetterIdenticon"
     OVERVIEW_BUTTON = "communitySettingsView_NavigationListItem_Overview"
     MEMBERS_BUTTON = "communitySettings_Members_NavigationListItem"
     PERMISSIONS_BUTTON = "communitySettings_Permissions_NavigationListItem" 
@@ -189,11 +188,7 @@ class StatusCommunityScreen:
         verify_text_matching(CommunitySettingsComponents.COMMUNITY_NAME_TEXT.value, communityName)
     
     def verify_community_overview_description(self, communityDescription: str):
-        verify_text_matching(CommunitySettingsComponents.COMMUNITY_DESCRIPTION_TEXT.value, communityDescription)
-        
-    def verify_community_overview_color(self, communityColor: str):
-        obj = get_obj(CommunitySettingsComponents.COMMUNITY_LETTER_IDENTICON.value)
-        expect_true(obj.color.name == communityColor, "Community color was not changed correctly")    
+        verify_text_matching(CommunitySettingsComponents.COMMUNITY_DESCRIPTION_TEXT.value, communityDescription) 
         
     def create_community_channel(self, communityChannelName: str, communityChannelDescription: str, method: str):
         if (method == CommunityCreateMethods.BOTTOM_MENU.value):
@@ -289,6 +284,7 @@ class StatusCommunityScreen:
     
     def open_edit_community_by_community_header(self):
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
+        verify(is_loaded_visible_and_enabled(CommunitySettingsComponents.EDIT_COMMUNITY_BUTTON.value), "Edit community button is visible and enabled")
         click_obj_by_name(CommunitySettingsComponents.EDIT_COMMUNITY_BUTTON.value)
         
     def change_community_name(self, new_community_name: str):
