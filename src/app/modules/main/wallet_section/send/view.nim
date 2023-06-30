@@ -160,9 +160,21 @@ QtObject:
     self.delegate.setSelectedReceiveAccountIndex(index)
 
   proc switchSenderAccount*(self: View, index: int) {.slot.} =
-    self.setSelectedSenderAccount(self.senderAccounts.getItemByIndex(index))
-    self.delegate.setSelectedSenderAccountIndex(index)
+    var account = self.senderAccounts.getItemByIndex(index)
+    var idx = index
+    if account.isNil:
+      account = self.senderAccounts.getItemByIndex(0)
+      idx = 0
+
+    self.setSelectedSenderAccount(account)
+    self.delegate.setSelectedSenderAccountIndex(idx)
 
   proc switchReceiveAccount*(self: View, index: int) {.slot.} =
-    self.setSelectetReceiveAccount(self.accounts.getItemByIndex(index))
-    self.delegate.setSelectedReceiveAccountIndex(index)
+    var account = self.accounts.getItemByIndex(index)
+    var idx = index
+    if account.isNil:
+      account = self.accounts.getItemByIndex(0)
+      idx = 0
+
+    self.setSelectetReceiveAccount(account)
+    self.delegate.setSelectedReceiveAccountIndex(idx)
