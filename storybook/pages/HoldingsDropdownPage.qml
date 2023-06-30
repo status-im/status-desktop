@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.14
 import Storybook 1.0
 import Models 1.0
 
+import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.controls 1.0
 
 import SortFilterProxyModel 0.2

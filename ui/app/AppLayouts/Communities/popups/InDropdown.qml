@@ -10,6 +10,8 @@ import StatusQ.Popups 0.1
 import shared.controls 1.0
 import SortFilterProxyModel 0.2
 
+import AppLayouts.Communities.controls 1.0
+
 StatusDropdown {
     id: root
 

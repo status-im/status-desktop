@@ -8,6 +8,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Utils 0.1
 
+import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.helpers 1.0
 import utils 1.0
 
