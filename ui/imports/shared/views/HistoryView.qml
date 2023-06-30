@@ -256,19 +256,11 @@ ColumnLayout {
     Component {
         id: transactionDelegate
         TransactionDelegate {
+            required property var model
+            required property int index
             width: ListView.view.width
             modelData: model.activityEntry
-            currentCurrency: RootStore.currentCurrency
-            cryptoValue: isModelDataValid ? modelData.value : 0.0
-            fiatValue: isModelDataValid ? RootStore.getFiatValue(cryptoValue, symbol, currentCurrency): 0.0
-            networkIcon: isModelDataValid ? RootStore.getNetworkIcon(modelData.chainId) : ""
-            networkColor: isModelDataValid ? RootStore.getNetworkColor(modelData.chainId) : ""
-            networkName: isModelDataValid ? RootStore.getNetworkFullName(modelData.chainId) : ""
-            symbol: isModelDataValid && !!modelData.symbol ? modelData.symbol : ""
-            transactionStatus: isModelDataValid ? modelData.status : 0
             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
-            addressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.recipient) : ""
-            addressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.sender) : ""
             rootStore: RootStore
             walletRootStore: WalletStores.RootStore
             onClicked: {
@@ -309,6 +301,8 @@ ColumnLayout {
                 model: RootStore.historyTransactions.hasMore || d.isInitialLoading ? 10 : 0
                 TransactionDelegate {
                     Layout.fillWidth: true
+                    rootStore: RootStore
+                    walletRootStore: WalletStores.RootStore
                     loading: true
                 }
             }

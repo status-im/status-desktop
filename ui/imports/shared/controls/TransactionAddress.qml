@@ -64,7 +64,7 @@ Item {
         charactersLen: 2
     }
 
-    implicitHeight: Math.max(identicon.height, contentColumn.height) + 12
+    implicitHeight: Math.max(44, contentColumn.height) + 12
 
     QtObject {
         id: d

@@ -93,37 +93,26 @@ QtObject:
     return self.transaction
 
   proc getSender*(self: ActivityEntry): string {.slot.} =
-    # TODO: lookup sender's name
     if self.isMultiTransaction():
       return self.multi_transaction.fromAddress
-
+    if self.transaction == nil:
+      error "getSender: ActivityEntry is not an transaction.Item"
+      return ""
     return self.transaction[].getfrom()
 
   QtProperty[string] sender:
     read = getSender
 
   proc getRecipient*(self: ActivityEntry): string {.slot.} =
-    # TODO: lookup recipient name
     if self.isMultiTransaction():
       return self.multi_transaction.toAddress
-
+    if self.transaction == nil:
+      error "getRecipient: ActivityEntry is not an transaction.Item"
+      return ""
     return self.transaction[].getTo()
 
   QtProperty[string] recipient:
     read = getRecipient
-
-  proc getInAmount*(self: ActivityEntry): float {.slot.} =
-    return float(self.extradata.inAmount)
-
-  QtProperty[float] inAmount:
-    read = getInAmount
-
-  proc getOutAmount*(self: ActivityEntry): float {.slot.} =
-    return float(self.extradata.outAmount)
-
-  QtProperty[float] outAmount:
-    read = getOutAmount
-
 
   proc getInSymbol*(self: ActivityEntry): string {.slot.} =
     return self.extradata.inSymbol
@@ -137,9 +126,20 @@ QtObject:
   QtProperty[string] outSymbol:
     read = getOutSymbol
 
+  proc getSymbol*(self: ActivityEntry): string {.slot.} =
+    if self.metadata.activityType == backend.ActivityType.Receive:
+      return self.getInSymbol()
+    return self.getOutSymbol()
+
+  QtProperty[string] symbol:
+    read = getSymbol
+
   proc getTimestamp*(self: ActivityEntry): int {.slot.} =
     if self.isMultiTransaction():
       return self.multi_transaction.timestamp
+    if self.transaction == nil:
+      error "getTimestamp: ActivityEntry is not an transaction.Item"
+      return 0
     # TODO: should we account for self.transaction[].isTimeStamp?
     return self.transaction[].getTimestamp()
 
@@ -191,7 +191,7 @@ QtObject:
   proc getTotalFees*(self: ActivityEntry): QVariant {.slot.} =
     if self.transaction == nil:
       error "getTotalFees: ActivityEntry is not an transaction.Item"
-      return newQVariant(0)
+      return newQVariant(newCurrencyAmount())
     return newQVariant(self.transaction[].getTotalFees())
 
   QtProperty[QVariant] totalFees:
@@ -257,47 +257,31 @@ QtObject:
   QtProperty[string] nonce:
     read = getNonce
 
-# TODO: Replaced usage of these for in/out versions in the QML modules
-  proc getSymbol*(self: ActivityEntry): string {.slot.} =
+  proc getBlockNumber*(self: ActivityEntry): string {.slot.} =
     if self.transaction == nil:
-      error "getSymbol: ActivityEntry is not an transaction.Item"
+      error "getBlockNumber: ActivityEntry is not an transaction.Item"
       return ""
+    return $self.transaction[].getBlockNumber()
 
-    if self.metadata.activityType == backend.ActivityType.Receive:
-      return self.getInSymbol()
+  QtProperty[string] blockNumber:
+    read = getBlockNumber
 
-    return self.getOutSymbol()
+  proc getOutAmount*(self: ActivityEntry): float {.slot.} =
+    return float(self.extradata.outAmount)
 
-  QtProperty[string] symbol:
-    read = getSymbol
+  QtProperty[float] outAmount:
+    read = getOutAmount
 
-  proc getFromAmount*(self: ActivityEntry): float {.slot.} =
-    if self.isMultiTransaction():
-      return self.getOutAmount()
-    error "getFromAmount: ActivityEntry is not a MultiTransaction"
-    return 0.0
+  proc getInAmount*(self: ActivityEntry): float {.slot.} =
+    return float(self.extradata.inAmount)
 
-  QtProperty[float] fromAmount:
-    read = getFromAmount
+  QtProperty[float] inAmount:
+    read = getInAmount
 
-  proc getToAmount*(self: ActivityEntry): float {.slot.} =
-    if self.isMultiTransaction():
-      return self.getInAmount()
-    error "getToAmount: ActivityEntry is not a MultiTransaction"
-    return 0.0
-
-  QtProperty[float] toAmount:
-    read = getToAmount
-
-  proc getValue*(self: ActivityEntry): float {.slot.} =
-    if self.isMultiTransaction():
-      error "getToAmount: ActivityEntry is a MultiTransaction"
-      return 0.0
-
+  proc getAmount*(self: ActivityEntry): float {.slot.} =
     if self.metadata.activityType == backend.ActivityType.Receive:
       return self.getInAmount()
-
     return self.getOutAmount()
 
-  QtProperty[float] value:
-    read = getValue
+  QtProperty[float] amount:
+    read = getAmount

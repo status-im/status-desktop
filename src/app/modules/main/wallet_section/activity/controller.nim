@@ -21,7 +21,6 @@ import app_service/service/currency/service as currency_service
 import app_service/service/transaction/service as transaction_service
 import app_service/service/token/service as token_service
 
-
 proc toRef*[T](obj: T): ref T =
   new(result)
   result[] = obj

@@ -62,7 +62,7 @@ StatusListItem {
     height: visible ? implicitHeight + bottomPadding : 0
     radius: 0
     sensor.cursorShape: Qt.ArrowCursor
-    color: sensor.containsMouse ? Theme.palette.baseColor5 : Style.current.transparent
+    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor5 : Style.current.transparent
 
     // Title
     statusListItemTitle.customColor: Theme.palette.directColor5
