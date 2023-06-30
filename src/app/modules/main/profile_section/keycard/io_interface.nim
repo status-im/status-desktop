@@ -1,6 +1,5 @@
 import NimQml
-from ../../../../../app_service/service/wallet_account/service import KeycardDto
-from ../../../../../app_service/service/wallet_account/service import WalletAccountDto
+import app_service/service/wallet_account/keypair_dto
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -23,7 +22,7 @@ method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
 
 method onDisplayKeycardSharedModuleFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-  
+
 method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -66,7 +65,7 @@ method runCreateNewPairingCodePopup*(self: AccessInterface, keyUid: string) {.ba
 method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method rebuildKeycardsList*(self: AccessInterface) {.base.} =
+method resolveRelatedKeycardsForKeypair*(self: AccessInterface, keypair: KeypairDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onNewKeycardSet*(self: AccessInterface, keyPair: KeycardDto) {.base.} =

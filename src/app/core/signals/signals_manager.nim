@@ -55,12 +55,11 @@ QtObject:
     if(signal.signalType == SignalType.NodeCrashed):
         error "node.crashed", error=statusSignal
 
-    if self.ignoreBackedUpData and 
+    if self.ignoreBackedUpData and
       (signal.signalType == SignalType.WakuFetchingBackupProgress or
       signal.signalType == SignalType.WakuBackedUpProfile or
       signal.signalType == SignalType.WakuBackedUpSettings or
       signal.signalType == SignalType.WakuBackedUpKeypair or
-      signal.signalType == SignalType.WakuBackedUpKeycards or
       signal.signalType == SignalType.WakuBackedUpWatchOnlyAccount):
         return
 
@@ -119,7 +118,6 @@ QtObject:
       of SignalType.WakuBackedUpProfile: WakuBackedUpProfileSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpSettings: WakuBackedUpSettingsSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpKeypair: WakuBackedUpKeypairSignal.fromEvent(jsonSignal)
-      of SignalType.WakuBackedUpKeycards: WakuBackedUpKeycardsSignal.fromEvent(jsonSignal)
       of SignalType.WakuBackedUpWatchOnlyAccount: WakuBackedUpWatchOnlyAccountSignal.fromEvent(jsonSignal)
       # pairing
       of SignalType.LocalPairing: LocalPairingSignal.fromEvent(jsonSignal)

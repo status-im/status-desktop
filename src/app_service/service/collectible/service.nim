@@ -47,7 +47,7 @@ type
 
 proc `$`*(self: OwnedCollectible): string =
   return fmt"""OwnedCollectible(
-    id:{self.id}, 
+    id:{self.id},
     isFromWatchedContract:{self.isFromWatchedContract}
   )"""
 
@@ -71,7 +71,7 @@ type
     lastRefetchTimestamp*: DateTime
     collectibles*: seq[OwnedCollectible]
     collectiblesFromWatchedContracts: seq[OwnedCollectible]
-  
+
 proc newCollectiblesData(): CollectiblesData =
   new(result)
   result.state = State.Init
@@ -108,13 +108,13 @@ proc allLoaded*(self: CollectiblesData): bool =
 
 proc `$`*(self: CollectiblesData): string =
   return fmt"""CollectiblesData(
-    state:{self.state}, 
-    lastLoadCount:{self.lastLoadCount}, 
-    previousCursor:{self.previousCursor}, 
-    nextCursor:{self.nextCursor}, 
-    isRefetching:{self.isRefetching}, 
-    lastRefetchTimestamp:{self.lastRefetchTimestamp}, 
-    collectibles:{self.collectibles}, 
+    state:{self.state},
+    lastLoadCount:{self.lastLoadCount},
+    previousCursor:{self.previousCursor},
+    nextCursor:{self.nextCursor},
+    isRefetching:{self.isRefetching},
+    lastRefetchTimestamp:{self.lastRefetchTimestamp},
+    collectibles:{self.collectibles},
     collectiblesFromWatchedContracts:{self.collectiblesFromWatchedContracts}
   )"""
 
@@ -190,7 +190,7 @@ QtObject:
           self.refetchAllOwnedCollectibles()
 
     self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
-      self.removeAddress(AccountDeleted(e).address)
+      self.removeAddress(AccountArgs(e).account.address)
 
   # needs to be re-written once cache for colletibles works
   proc areCollectionsLoaded*(self: Service, address: string): bool =
@@ -280,10 +280,10 @@ QtObject:
   proc updateCollectiblesCache*(self: Service, chainId: int, collectibles: seq[CollectibleDto], collections: seq[CollectionDto]) =
     if not self.collectibles.hasKey(chainId):
       self.collectibles[chainId] = newTable[UniqueID, CollectibleDto]()
-    
+
     if not self.collections.hasKey(chainId):
       self.collections[chainId] = newTable[string, CollectionDto]()
-  
+
     var data = CollectiblesUpdateArgs()
     data.chainId = chainId
 
@@ -298,7 +298,7 @@ QtObject:
       )
       self.collectibles[chainId][id] = collectible
       data.ids.add(id)
-    
+
     self.events.emit(SIGNAL_COLLECTIBLES_UPDATED, data)
 
   proc setWatchedContracts*(self: Service, chainId: int, address: string, contractAddresses: seq[string]) =
@@ -391,7 +391,7 @@ QtObject:
       return
 
     let collectiblesData = self.accountsOwnershipData[chainId][address].data
-    
+
     let errorStr = responseObj["error"].getStr()
     if errorStr != "":
       self.processOwnedCollectiblesError(chainId, address)

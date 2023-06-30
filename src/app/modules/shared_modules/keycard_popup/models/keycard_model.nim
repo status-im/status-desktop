@@ -6,7 +6,7 @@ export keycard_item
 type
   ModelRole {.pure.} = enum
     Keycard = UserRole + 1
-    
+
 QtObject:
   type
     KeycardModel* = ref object of QAbstractListModel
@@ -53,6 +53,11 @@ QtObject:
     self.countChanged()
     self.lockedItemsCountChanged()
 
+  proc replaceItemWithKeyUid*(self: KeycardModel, item: KeycardItem) =
+    for i in 0 ..< self.items.len:
+      if self.items[i].getKeyUid() == item.getKeyUid():
+        self.items[i].setItem(item)
+
   proc removeItem*(self: KeycardModel, index: int) =
     if (index < 0 or index >= self.items.len):
       return
@@ -62,6 +67,11 @@ QtObject:
     self.items.delete(index)
     self.endRemoveRows()
     self.countChanged()
+
+  proc removeItemWithKeyUid*(self: KeycardModel, keyUid: string) =
+    for i in 0 ..< self.items.len:
+      if self.items[i].getKeyUid() == keyUid:
+        self.removeItem(i)
 
   proc `$`*(self: KeycardModel): string =
     for i in 0 ..< self.items.len:
@@ -134,7 +144,7 @@ QtObject:
       if(self.items[i].getKeycardUid() == keycardUid):
         self.items[i].setKeycardUid(keycardNewUid)
 
-  proc removeAccountsFromKeycardWithKeycardUid*(self: KeycardModel, keycardUid: string, accountsToRemove: seq[string], 
+  proc removeAccountsFromKeycardWithKeycardUid*(self: KeycardModel, keycardUid: string, accountsToRemove: seq[string],
     removeKeycardItemIfHasNoAccounts: bool) =
     for i in 0 ..< self.items.len:
       if(self.items[i].getKeycardUid() == keycardUid):
@@ -142,7 +152,7 @@ QtObject:
           self.items[i].removeAccountByAddress(acc)
         if removeKeycardItemIfHasNoAccounts and self.items[i].getAccountsModel().getCount() == 0:
           self.removeItem(i)
-  
+
   proc removeAccountsFromKeycardsWithKeyUid*(self: KeycardModel, keyUid: string, accountsToRemove: seq[string],
     removeKeycardItemIfHasNoAccounts: bool) =
     for i in 0 ..< self.items.len:

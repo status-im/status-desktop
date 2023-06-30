@@ -27,7 +27,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.delegate = delegate
   result.events = events
   result.walletAccountService = walletAccountService
-  
+
 proc delete*(self: Controller) =
   discard
 
@@ -53,11 +53,9 @@ proc init*(self: Controller) =
       return
     self.delegate.onNewKeycardSet(args.keycard)
 
-  self.events.on(SIGNAL_KEYCARDS_SYNCHRONIZED) do(e: Args):
-    let args = KeycardActivityArgs(e)
-    if not args.success:
-      return
-    self.delegate.rebuildKeycardsList()
+  self.events.on(SIGNAL_KEYPAIR_CHANGED) do(e: Args):
+    let args = KeypairArgs(e)
+    self.delegate.resolveRelatedKeycardsForKeypair(args.keypair)
 
   self.events.on(SIGNAL_KEYCARD_LOCKED) do(e: Args):
     let args = KeycardActivityArgs(e)
@@ -82,14 +80,16 @@ proc init*(self: Controller) =
     self.delegate.onKeycardAccountsRemoved(args.keycard.keyUid, args.keycard.keycardUid, args.keycard.accountsAddresses)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e: Args):
-    let args = WalletAccountUpdated(e)
+    let args = AccountArgs(e)
     self.delegate.onWalletAccountUpdated(args.account)
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
-    self.delegate.rebuildKeycardsList()
+  ## TODO: will be removed in the second part of synchronization improvements
+  # self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
+  #   self.delegate.rebuildKeycardsList()
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
-    self.delegate.rebuildKeycardsList()
+  ## TODO: will be removed in the second part of synchronization improvements
+  # self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
+  #   self.delegate.rebuildKeycardsList()
 
 proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
   return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
@@ -97,5 +97,9 @@ proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
 proc getAllKnownKeycards*(self: Controller): seq[KeycardDto] =
   return self.walletAccountService.getAllKnownKeycards()
 
-proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
-  return self.walletAccountService.getKeypairs()
+## TODO: will be removed in the second part of synchronization improvements
+# proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
+#   return self.walletAccountService.getKeypairs()
+
+proc getKeypairByKeyUid*(self: Controller, keyUid: string): wallet_account_service.KeypairDto =
+  return self.walletAccountService.getKeypairByKeyUid(keyUid)

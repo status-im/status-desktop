@@ -106,8 +106,8 @@ proc createSharedKeycardModule(self: Module) =
     info "keycard shared module is still running"
     self.view.emitSharedModuleBusy()
     return
-  self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER, 
-    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService, 
+  self.keycardSharedModule = keycard_shared_module.newModule[Module](self, UNIQUE_SETTING_KEYCARD_MODULE_IDENTIFIER,
+    self.events, self.keycardService, self.settingsService, self.networkService, self.privacyService, self.accountsService,
     self.walletAccountService, self.keychainService)
 
 method onSharedKeycarModuleFlowTerminated*(self: Module, lastStepInTheCurrentFlow: bool) =
@@ -136,7 +136,7 @@ method runImportOrRestoreViaSeedPhrasePopup*(self: Module) =
   if self.keycardSharedModule.isNil:
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.SetupNewKeycardOldSeedPhrase)
-  
+
 method runImportFromKeycardToAppPopup*(self: Module) =
   self.createSharedKeycardModule()
   if self.keycardSharedModule.isNil:
@@ -191,14 +191,13 @@ method runCreateNewPairingCodePopup*(self: Module, keyUid: string) =
     return
   self.keycardSharedModule.runFlow(keycard_shared_module.FlowType.ChangePairingCode, keyUid)
 
-proc findAccountByAccountAddress(keypairs: seq[KeypairDto], address: string): WalletAccountDto =
-  for kp in keypairs:
-    for acc in kp.accounts:
-      if cmpIgnoreCase(acc.address, address) == 0:
-        return acc
+proc findAccountByAccountAddress(accounts: seq[WalletAccountDto], address: string): WalletAccountDto =
+  for acc in accounts:
+    if cmpIgnoreCase(acc.address, address) == 0:
+      return acc
   return nil
 
-proc buildKeycardItem(self: Module, keypairs: seq[KeypairDto], keycard: KeycardDto, reason: BuildItemReason): 
+proc buildKeycardItem(self: Module, keypair: KeypairDto, keycard: KeycardDto, reason: BuildItemReason):
   KeycardItem =
   let isAccountInKnownAccounts = proc(knownAccounts: seq[WalletAccountDto], address: string): bool =
     for i in 0 ..< knownAccounts.len:
@@ -206,20 +205,23 @@ proc buildKeycardItem(self: Module, keypairs: seq[KeypairDto], keycard: KeycardD
         return true
     return false
 
+  if keypair.isNil:
+    return
   var knownAccounts: seq[WalletAccountDto]
   var unknownAccountsAddresses: seq[string]
   for accAddr in keycard.accountsAddresses:
-    let account = findAccountByAccountAddress(keypairs, accAddr)
+    let account = findAccountByAccountAddress(keypair.accounts, accAddr)
     if account.isNil:
-      ## We are here if the keycard is not sync yet with the app's state. That may happen if there are more copies of the 
+      ## We are here if the keycard is not sync yet with the app's state. That may happen if there are more copies of the
       ## same keycard, then deleting an account for a keypair syncs the inserted keycard, but other copies of the card
       ## remain with that account till the moment they are synced.
       unknownAccountsAddresses.add(accAddr)
       continue
-    if reason == BuildItemReason.MainView and 
-      (isAccountInKnownAccounts(knownAccounts, accAddr) or
-      not self.view.keycardModel().getItemForKeyUid(account.keyUid).isNil):
+    if reason == BuildItemReason.MainView and
+      isAccountInKnownAccounts(knownAccounts, accAddr):
         # if there are more then one keycard for a single keypair we don't want to add the same keypair more than once
+        # that's why caller of this proc should set `upgradeItem` to true, if item with the same `keyUid` was already added
+        # to a model for the `MainView`
         continue
     knownAccounts.add(account)
   var item = initKeycardItem(keycardUid = keycard.keycardUid,
@@ -233,10 +235,7 @@ proc buildKeycardItem(self: Module, keypairs: seq[KeypairDto], keycard: KeycardD
     item.setPairType(KeyPairType.SeedImport.int)
     item.setIcon("keycard")
   else:
-    for kp in keypairs:
-      if kp.keyUid == keycard.keyUid:
-        item.setDerivedFrom(kp.derivedFrom)
-        break
+    item.setDerivedFrom(keypair.derivedFrom)
 
   for ka in knownAccounts:
     var icon = ""
@@ -268,11 +267,11 @@ proc areAllKnownKeycardsLockedForKeypair(self: Module, keyUid: string): bool =
   return keyUidRelatedKeycards.all(kp => kp.keycardLocked)
 
 proc buildKeycardList(self: Module) =
-  let keypairs = self.controller.getKeypairs()
   var items: seq[KeycardItem]
   let migratedKeyPairs = self.controller.getAllKnownKeycardsGroupedByKeyUid()
   for kp in migratedKeyPairs:
-    let item = self.buildKeycardItem(keypairs, kp, BuildItemReason.MainView)
+    let keypair = self.controller.getKeypairByKeyUid(kp.keyUid)
+    let item = self.buildKeycardItem(keypair, kp, BuildItemReason.MainView)
     if item.isNil:
       continue
     ## If all created keycards for certain keypair are locked, then we need to display that item as locked.
@@ -287,90 +286,157 @@ method onLoggedInUserImageChanged*(self: Module) =
     return
   self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
-method rebuildKeycardsList*(self: Module) =
-  self.view.setKeycardItems(@[])
-  self.buildKeycardList()
+method resolveRelatedKeycardsForKeypair*(self: Module, keypair: KeypairDto) =
+  if keypair.keyUid.len == 0:
+    error "cannot rebuild keycards for a keypair with empty keyUid"
+    return
+  var
+    mainViewItem: KeycardItem
+    detailsViewItems: seq[KeycardItem]
+  let
+    appHasDisplayedKeycards = not self.view.keycardModel().getItemForKeyUid(keypair.keyUid).isNil
+    detailsViewCurrentlyDisplayed = not self.view.keycardDetailsModel().isNil
+
+  # prepare main view item and if needed details view item
+  for kc in keypair.keycards:
+    # create main view item
+    if mainViewItem.isNil:
+      mainViewItem = self.buildKeycardItem(keypair, kc, BuildItemReason.MainView)
+    else:
+      for accAddr in kc.accountsAddresses:
+        if mainViewItem.containsAccountAddress(accAddr):
+          continue
+        let account = findAccountByAccountAddress(keypair.accounts, accAddr)
+        if account.isNil:
+          ## we should never be here cause all accounts are firstly added to wallet
+          continue
+        mainViewItem.addAccount(newKeyPairAccountItem(account.name, account.path, account.address, account.publicKey,
+          account.emoji, account.colorId, icon = "", balance = 0.0))
+
+    # create details view item if model is not nil (means the details view is currently active)
+    if detailsViewCurrentlyDisplayed:
+      let item = self.buildKeycardItem(keypair, kc, BuildItemReason.DetailsView)
+      if not item.isNil:
+        detailsViewItems.add(item)
+
+  if appHasDisplayedKeycards:
+    if keypair.keycards.len == 0:
+      # remove all related keycards from the app
+      self.view.keycardModel().removeItemWithKeyUid(keypair.keyUid)
+      if not detailsViewCurrentlyDisplayed:
+        return
+      self.view.keycardDetailsModel().removeItemWithKeyUid(keypair.keyUid)
+      return
+    if keypair.keycards.len > 0:
+      # replace displayed keycards
+      if not mainViewItem.isNil:
+        self.view.keycardModel().replaceItemWithKeyUid(mainViewItem)
+      if not detailsViewCurrentlyDisplayed:
+        return
+      self.view.keycardDetailsModel().setItems(detailsViewItems)
+      return
+    return
+  # display new keycards
+  if not mainViewItem.isNil:
+    self.view.keycardModel().addItem(mainViewItem)
+  if not detailsViewCurrentlyDisplayed:
+    return
+  self.view.keycardDetailsModel().setItems(detailsViewItems)
 
 method onNewKeycardSet*(self: Module, keyPair: KeycardDto) =
-  let keypairs = self.controller.getKeypairs()
-  var mainViewItem = self.view.keycardModel().getItemForKeyUid(keyPair.keyUid)
-  if mainViewItem.isNil:
-    mainViewItem = self.buildKeycardItem(keypairs, keyPair, BuildItemReason.MainView)
-    if not mainViewItem.isNil:
-      self.view.keycardModel().addItem(mainViewItem)
-  else:
-    for accAddr in keyPair.accountsAddresses:
-      if mainViewItem.containsAccountAddress(accAddr):
-        continue
-      let account = findAccountByAccountAddress(keypairs, accAddr)
-      if account.isNil:
-        ## we should never be here cause all keypairs are firstly added to wallet
-        continue
-      mainViewItem.addAccount(newKeyPairAccountItem(account.name, account.path, account.address, account.publicKey, 
-        account.emoji, account.colorId, icon = "", balance = 0.0))
-  if self.view.keycardDetailsModel().isNil:
-    return
-  var detailsViewItem = self.view.keycardDetailsModel().getItemForKeycardUid(keyPair.keycardUid)
-  if detailsViewItem.isNil:
-    detailsViewItem = self.buildKeycardItem(keypairs, keyPair, BuildItemReason.DetailsView)
-    if not detailsViewItem.isNil:
-      self.view.keycardDetailsModel().addItem(detailsViewItem)
-  else:
-    for accAddr in keyPair.accountsAddresses:
-      if detailsViewItem.containsAccountAddress(accAddr):
-        continue
-      let account = findAccountByAccountAddress(keypairs, accAddr)
-      if account.isNil:
-        ## we should never be here cause all keypairs are firstly added to wallet
-        continue
-      detailsViewItem.addAccount(newKeyPairAccountItem(account.name, account.path, account.address, account.publicKey, 
-        account.emoji, account.colorId, icon = "", balance = 0.0))
+  ## TODO: will be removed in the second part of synchronization improvements
+  discard
+  # let keypairs = self.controller.getKeypairs()
+  # var mainViewItem = self.view.keycardModel().getItemForKeyUid(keyPair.keyUid)
+  # if mainViewItem.isNil:
+  #   mainViewItem = self.buildKeycardItem(keypairs, keyPair, BuildItemReason.MainView)
+  #   if not mainViewItem.isNil:
+  #     self.view.keycardModel().addItem(mainViewItem)
+  # else:
+  #   for accAddr in keyPair.accountsAddresses:
+  #     if mainViewItem.containsAccountAddress(accAddr):
+  #       continue
+  #     let account = findAccountByAccountAddress(keypairs, accAddr)
+  #     if account.isNil:
+  #       ## we should never be here cause all keypairs are firstly added to wallet
+  #       continue
+  #     mainViewItem.addAccount(newKeyPairAccountItem(account.name, account.path, account.address, account.publicKey,
+  #       account.emoji, account.colorId, icon = "", balance = 0.0))
+  # if self.view.keycardDetailsModel().isNil:
+  #   return
+  # var detailsViewItem = self.view.keycardDetailsModel().getItemForKeycardUid(keyPair.keycardUid)
+  # if detailsViewItem.isNil:
+  #   detailsViewItem = self.buildKeycardItem(keypairs, keyPair, BuildItemReason.DetailsView)
+  #   if not detailsViewItem.isNil:
+  #     self.view.keycardDetailsModel().addItem(detailsViewItem)
+  # else:
+  #   for accAddr in keyPair.accountsAddresses:
+  #     if detailsViewItem.containsAccountAddress(accAddr):
+  #       continue
+  #     let account = findAccountByAccountAddress(keypairs, accAddr)
+  #     if account.isNil:
+  #       ## we should never be here cause all keypairs are firstly added to wallet
+  #       continue
+  #     detailsViewItem.addAccount(newKeyPairAccountItem(account.name, account.path, account.address, account.publicKey,
+  #       account.emoji, account.colorId, icon = "", balance = 0.0))
 
 method onKeycardLocked*(self: Module, keyUid: string, keycardUid: string) =
-  self.view.keycardModel().setLockedForKeycardsWithKeyUid(keyUid, true)
-  if self.view.keycardDetailsModel().isNil:
-    return
-  self.view.keycardDetailsModel().setLockedForKeycardWithKeycardUid(keycardUid, true)
+  ## TODO: will be removed in the second part of synchronization improvements
+  discard
+  # self.view.keycardModel().setLockedForKeycardsWithKeyUid(keyUid, true)
+  # if self.view.keycardDetailsModel().isNil:
+  #   return
+  # self.view.keycardDetailsModel().setLockedForKeycardWithKeycardUid(keycardUid, true)
 
 method onKeycardUnlocked*(self: Module, keyUid: string, keycardUid: string) =
-  self.view.keycardModel().setLockedForKeycardsWithKeyUid(keyUid, false)
-  if self.view.keycardDetailsModel().isNil:
-    return
-  self.view.keycardDetailsModel().setLockedForKeycardWithKeycardUid(keycardUid, false)
+  ## TODO: will be removed in the second part of synchronization improvements
+  discard
+  # self.view.keycardModel().setLockedForKeycardsWithKeyUid(keyUid, false)
+  # if self.view.keycardDetailsModel().isNil:
+  #   return
+  # self.view.keycardDetailsModel().setLockedForKeycardWithKeycardUid(keycardUid, false)
 
 method onKeycardNameChanged*(self: Module, keycardUid: string, keycardNewName: string) =
-  self.view.keycardModel().setNameForKeycardWithKeycardUid(keycardUid, keycardNewName)
-  if self.view.keycardDetailsModel().isNil:
-    return
-  self.view.keycardDetailsModel().setNameForKeycardWithKeycardUid(keycardUid, keycardNewName)
+  ## TODO: will be removed in the second part of synchronization improvements
+  discard
+  # self.view.keycardModel().setNameForKeycardWithKeycardUid(keycardUid, keycardNewName)
+  # if self.view.keycardDetailsModel().isNil:
+  #   return
+  # self.view.keycardDetailsModel().setNameForKeycardWithKeycardUid(keycardUid, keycardNewName)
 
-method onKeycardUidUpdated*(self: Module, keycardUid: string, keycardNewUid: string) = 
-  if self.view.keycardDetailsModel().isNil:
-    return
-  self.view.keycardDetailsModel().setKeycardUid(keycardUid, keycardNewUid)
+method onKeycardUidUpdated*(self: Module, keycardUid: string, keycardNewUid: string) =
+  ## TODO: will be removed in the second part of synchronization improvements
+  discard
+  # if self.view.keycardDetailsModel().isNil:
+  #   return
+  # self.view.keycardDetailsModel().setKeycardUid(keycardUid, keycardNewUid)
 
-method onKeycardAccountsRemoved*(self: Module, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) = 
-  self.view.keycardModel().removeAccountsFromKeycardsWithKeyUid(keyUid, accountsToRemove, removeKeycardItemIfHasNoAccounts = true)
-  if self.view.keycardDetailsModel().isNil:
-    return
-  self.view.keycardDetailsModel().removeAccountsFromKeycardWithKeycardUid(keycardUid, accountsToRemove, removeKeycardItemIfHasNoAccounts = true)
+method onKeycardAccountsRemoved*(self: Module, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
+  ## TODO: will be removed in the second part of synchronization improvements
+  discard
+  # self.view.keycardModel().removeAccountsFromKeycardsWithKeyUid(keyUid, accountsToRemove, removeKeycardItemIfHasNoAccounts = true)
+  # if self.view.keycardDetailsModel().isNil:
+  #   return
+  # self.view.keycardDetailsModel().removeAccountsFromKeycardWithKeycardUid(keycardUid, accountsToRemove, removeKeycardItemIfHasNoAccounts = true)
 
-method onWalletAccountUpdated*(self: Module, account: WalletAccountDto) = 
-  self.view.keycardModel().updateDetailsForAddressForKeyPairsWithKeyUid(account.keyUid, account.address, account.name, 
-    account.colorId, account.emoji)
-  if self.view.keycardDetailsModel().isNil:
-    return
-  self.view.keycardDetailsModel().updateDetailsForAddressForKeyPairsWithKeyUid(account.keyUid, account.address, account.name, 
-    account.colorId, account.emoji)
+method onWalletAccountUpdated*(self: Module, account: WalletAccountDto) =
+  ## TODO: will be removed in the second part of synchronization improvements
+  discard
+  # self.view.keycardModel().updateDetailsForAddressForKeyPairsWithKeyUid(account.keyUid, account.address, account.name,
+  #   account.colorId, account.emoji)
+  # if self.view.keycardDetailsModel().isNil:
+  #   return
+  # self.view.keycardDetailsModel().updateDetailsForAddressForKeyPairsWithKeyUid(account.keyUid, account.address, account.name,
+  #   account.colorId, account.emoji)
 
 method prepareKeycardDetailsModel*(self: Module, keyUid: string) =
-  let keypairs = self.controller.getKeypairs()
+  let keypair = self.controller.getKeypairByKeyUid(keyUid)
   var items: seq[KeycardItem]
   let allKnownKeycards = self.controller.getAllKnownKeycards()
   for kp in allKnownKeycards:
     if kp.keyUid != keyUid:
       continue
-    let item = self.buildKeycardItem(keypairs, kp, BuildItemReason.DetailsView)
+    let item = self.buildKeycardItem(keypair, kp, BuildItemReason.DetailsView)
     if item.isNil:
       continue
     items.add(item)

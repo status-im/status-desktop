@@ -50,7 +50,6 @@ type SignalType* {.pure.} = enum
   WakuBackedUpProfile = "waku.backedup.profile"
   WakuBackedUpSettings = "waku.backedup.settings"
   WakuBackedUpKeypair = "waku.backedup.keypair"
-  WakuBackedUpKeycards = "waku.backedup.keycards"
   WakuBackedUpWatchOnlyAccount = "waku.backedup.watch-only-account"
   LocalPairing = "localPairing"
   DBReEncryptionStarted = "db.reEncryption.started"

@@ -12,7 +12,7 @@ import ../../../../app_service/service/contacts/dto/[contacts, status_update]
 import ../../../../app_service/service/devices/dto/[installation]
 import ../../../../app_service/service/settings/dto/[settings]
 import ../../../../app_service/service/saved_address/dto as saved_address_dto
-import ../../../../app_service/service/wallet_account/[keypair_dto, keycard_dto]
+import ../../../../app_service/service/wallet_account/[keypair_dto]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
@@ -36,9 +36,8 @@ type MessageSignal* = ref object of Signal
   verificationRequests*: seq[VerificationRequest]
   savedAddresses*: seq[SavedAddressDto]
   keypairs*: seq[KeypairDto]
-  keycards*: seq[KeycardDto]
-  keycardActions*: seq[KeycardActionDto]
-  walletAccounts*: seq[WalletAccountDto]
+  # keycardActions*: seq[KeycardActionDto] //TODO: will be removed in the second part of synchronization improvements
+  watchOnlyAccounts*: seq[WalletAccountDto]
 
 type MessageDeliveredSignal* = ref object of Signal
   chatId*: string
@@ -149,17 +148,14 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
     for jsonKc in e["keypairs"]:
       signal.keypairs.add(jsonKc.toKeypairDto())
 
-  if e.contains("keycards"):
-    for jsonKc in e["keycards"]:
-      signal.keycards.add(jsonKc.toKeycardDto())
+  ## TODO: will be removed in the second part of synchronization improvements
+  # if e.contains("keycardActions"):
+  #   for jsonKc in e["keycardActions"]:
+  #     signal.keycardActions.add(jsonKc.toKeycardActionDto())
 
-  if e.contains("keycardActions"):
-    for jsonKc in e["keycardActions"]:
-      signal.keycardActions.add(jsonKc.toKeycardActionDto())
-
-  if e.contains("accounts"):
-    for jsonAcc in e["accounts"]:
-      signal.walletAccounts.add(jsonAcc.toWalletAccountDto())
+  if e.contains("watchOnlyAccounts"):
+    for jsonAcc in e["watchOnlyAccounts"]:
+      signal.watchOnlyAccounts.add(jsonAcc.toWalletAccountDto())
 
   result = signal
 
