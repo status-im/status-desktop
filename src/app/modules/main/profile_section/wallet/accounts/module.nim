@@ -89,17 +89,11 @@ method load*(self: Module) =
     self.refreshWalletAccounts()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
-    let args = WalletAccountUpdated(e)
+    let args = AccountArgs(e)
     let keycardAccount = self.controller.isKeycardAccount(args.account)
     self.view.onUpdatedAccount(walletAccountToWalletSettingsAccountsItem(args.account, keycardAccount))
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-    let args = KeycardActivityArgs(e)
-    if not args.success:
-      return
-    self.refreshWalletAccounts()
-
-  self.events.on(SIGNAL_KEYCARDS_SYNCHRONIZED) do(e: Args):
     let args = KeycardActivityArgs(e)
     if not args.success:
       return

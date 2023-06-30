@@ -109,12 +109,6 @@ method load*(self: Module) =
       return
     self.refreshWalletAccounts()
 
-  self.events.on(SIGNAL_KEYCARDS_SYNCHRONIZED) do(e: Args):
-    let args = KeycardActivityArgs(e)
-    if not args.success:
-      return
-    self.refreshWalletAccounts()
-
   self.controller.init()
   self.view.load()
 

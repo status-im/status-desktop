@@ -52,3 +52,7 @@ QtObject:
     read = getKeycardUid
     write = setKeycardUid
     notify = keycardUidChanged
+
+  proc setItem*(self: KeycardItem, item: KeycardItem) =
+    self.setKeycardUid(item.getKeycardUid())
+    self.KeyPairItem.setItem(KeyPairItem(item))

@@ -34,8 +34,11 @@ const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED* = "walletAccount/derivedA
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED* = "walletAccount/derivedAddressesFromMnemonicFetched"
 const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* = "walletAccount/addressDetailsFetched"
 const SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED* = "walletAccount/positionUpdated"
+const SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED* = "walletAccount/operabilityUpdated"
 
-const SIGNAL_KEYCARDS_SYNCHRONIZED* = "keycardsSynchronized"
+const SIGNAL_KEYPAIR_CHANGED* = "keypairChanged"
+const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
+const SIGNAL_KEYPAIR_DELETED* = "keypairDeleted"
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
 const SIGNAL_KEYCARD_DELETED* = "keycardDeleted"
 const SIGNAL_KEYCARD_ACCOUNTS_REMOVED* = "keycardAccountsRemoved"
@@ -70,18 +73,11 @@ proc hex2Balance*(input: string, decimals: int): string =
   result = $i
   if(r > 0): result = fmt"{result}.{d}"
 
-type AccountSaved* = ref object of Args
+type AccountArgs* = ref object of Args
   account*: WalletAccountDto
 
-type AccountDeleted* = ref object of Args
-  address*: string
-
-type CurrencyUpdated = ref object of Args
-
-type NetwordkEnabledToggled = ref object of Args
-
-type WalletAccountUpdated* = ref object of Args
-  account*: WalletAccountDto
+type KeypairArgs* = ref object of Args
+  keypair*: KeypairDto
 
 type DerivedAddressesArgs* = ref object of Args
   uniqueId*: string
@@ -129,7 +125,7 @@ QtObject:
   proc startWallet(self: Service)
   proc handleWalletAccount(self: Service, account: WalletAccountDto)
   proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto])
-  proc handleKeycardsState(self: Service, keycardsState: seq[KeycardDto])
+  proc handleKeypair(self: Service, keypair: KeypairDto)
   proc getAllKnownKeycards*(self: Service): seq[KeycardDto]
   proc removeMigratedAccountsForKeycard*(self: Service, keyUid: string, keycardUid: string, accountsToRemove: seq[string])
 
@@ -311,6 +307,9 @@ QtObject:
   proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
     result = toSeq(self.walletAccounts.values)
 
+  proc getWalletAccountsForKeypair*(self: Service, keyUid: string): seq[WalletAccountDto] =
+    return self.getWalletAccounts().filter(kp => kp.keyUid == keyUid)
+
   proc getAddresses*(self: Service): seq[string] =
     result = toSeq(self.walletAccounts.keys())
 
@@ -333,11 +332,14 @@ QtObject:
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
-      if receivedData.walletAccounts.len > 0:
-        for acc in receivedData.walletAccounts:
+      if receivedData.watchOnlyAccounts.len > 0:
+        for acc in receivedData.watchOnlyAccounts:
           self.handleWalletAccount(acc)
-      self.handleKeycardsState(receivedData.keycards)
-      self.handleKeycardActions(receivedData.keycardActions)
+      if receivedData.keypairs.len > 0:
+        for kp in receivedData.keypairs:
+          self.handleKeypair(kp)
+      ## TODO: will be removed in the second part of synchronization improvements
+      # self.handleKeycardActions(receivedData.keycardActions)
 
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
@@ -404,7 +406,7 @@ QtObject:
     self.storeAccount(newAccount)
 
     self.buildAllTokens(@[newAccount.address], store = true)
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: newAccount))
 
   proc removeAccountFromLocalStoreAndNotify(self: Service, address: string) =
     if not self.walletAccountsContainsAddress(address):
@@ -413,17 +415,29 @@ QtObject:
     self.walletAccounts.del(address)
     # updating related accounts for other accounts
     self.setRelatedAccountsForAllAccounts(removedAcc.keyUid)
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(address: address))
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountArgs(account: removedAcc))
 
-  proc updateAccountFromLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string) =
+  proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string, position: int = -1, accOperability: string = "") =
     if not self.walletAccountsContainsAddress(address):
       return
     var account = self.getAccountByAddress(address)
-    account.name = name
-    account.colorId = colorId
-    account.emoji = emoji
-    self.storeAccount(account, updateRelatedAccounts = false)
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
+    if name.len > 0 or colorId.len > 0 or emoji.len > 0:
+      if name.len > 0 and name != account.name:
+        account.name = name
+      if colorId.len > 0 and colorId != account.colorId:
+        account.colorId = colorId
+      if emoji.len > 0 and emoji != account.emoji:
+        account.emoji = emoji
+      self.storeAccount(account, updateRelatedAccounts = false)
+      self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
+    if position > -1 and position != account.position:
+      account.position = position
+      self.storeAccount(account, updateRelatedAccounts = false)
+      self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, AccountArgs(account: account))
+    if accOperability.len > 0 and account.operable != accOperability:
+      account.operable = accOperability
+      self.storeAccount(account, updateRelatedAccounts = false)
+      self.events.emit(SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED, AccountArgs(account: account))
 
   ## if password is not provided local keystore file won't be created
   proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
@@ -524,14 +538,14 @@ QtObject:
 
   proc setNetworksState*(self: Service, chainIds: seq[int], enabled: bool) =
     self.networkService.setNetworksState(chainIds, enabled)
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
   proc toggleTestNetworksEnabled*(self: Service) =
     discard self.settingsService.toggleTestNetworksEnabled()
     self.buildAllTokens(self.getAddresses(), store = true)
     self.tokenService.loadData()
     self.checkRecentHistory()
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, Args())
 
   proc updateWalletAccount*(self: Service, address: string, accountName: string, colorId: string, emoji: string): bool =
     if not self.walletAccountsContainsAddress(address):
@@ -544,19 +558,25 @@ QtObject:
       if not response.error.isNil:
         error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
         return false
-      self.updateAccountFromLocalStoreAndNotify(address, accountName, colorId, emoji)
+      self.updateAccountInLocalStoreAndNotify(address, accountName, colorId, emoji)
       return true
     except Exception as e:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
     return false
 
   proc updateWalletAccountPosition*(self: Service, address: string, position: int) =
-    discard backend.updateAccountPosition(address, position)
-    for account in self.getAccounts():
-      self.walletAccounts[account.address].position = account.position
-    
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
-    
+    if not self.walletAccountsContainsAddress(address):
+      error "account's address is not among known addresses: ", address=address
+      return
+    try:
+      let response = backend.updateAccountPosition(address, position)
+      if not response.error.isNil:
+        error "status-go error", procName="updateAccountPosition", errCode=response.error.code, errDesription=response.error.message
+        return
+      self.updateAccountInLocalStoreAndNotify(address, name = "", colorId = "", emoji = "", position)
+    except Exception as e:
+      error "error: ", procName="updateAccountPosition", errName=e.name, errDesription=e.msg
+
   proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string, paths: seq[string], hashPassword: bool) =
     let arg = FetchDerivedAddressesTaskArg(
       password: if hashPassword: utils.hashPassword(password) else: password,
@@ -921,7 +941,7 @@ QtObject:
       self.removeAccountFromLocalStoreAndNotify(account.address)
     else:
       if self.walletAccountsContainsAddress(account.address):
-        self.updateAccountFromLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji)
+        self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji, account.position)
       else:
         self.addNewAccountToLocalStoreAndNotify()
 
@@ -950,11 +970,30 @@ QtObject:
       else:
         error "unsupported action received", action=kcAction.action
 
-  proc handleKeycardsState(self: Service, keycardsState: seq[KeycardDto]) =
-    if keycardsState.len == 0:
-      return
-    let data = KeycardActivityArgs(success: true)
-    self.events.emit(SIGNAL_KEYCARDS_SYNCHRONIZED, data)
+  proc handleKeypair(self: Service, keypair: KeypairDto) =
+    ## In some point in future instead `self.walletAccounts` table we should switch to maintaining local state in the
+    ## form of keypairs + another list just for watch only accounts. We will benefint from that in terms of maintaining.
+    ## Keycards detaiils will be in that case tracked easier and stored locally as well. Also at that point we can check
+    ## if the local keypair name is different than one received here and emit signal only in that case, till then,
+    ## we emit it always.
+    self.events.emit(SIGNAL_KEYPAIR_NAME_CHANGED, KeypairArgs(keypair: KeypairDto(name: keypair.name)))
+
+    # handle keypair related accounts
+    # - first remove removed accounts from the UI
+    let localKeypairRelatedAccounts = self.getWalletAccountsForKeypair(keypair.keyUid)
+    for localAcc in localKeypairRelatedAccounts:
+      let accAddress = localAcc.address
+      if keypair.accounts.filter(a => cmpIgnoreCase(a.address, accAddress) == 0).len == 0:
+        self.handleWalletAccount(WalletAccountDto(address: accAddress, removed: true))
+    # - second add/update new/existing accounts
+    for acc in keypair.accounts:
+      self.handleWalletAccount(acc)
+
+    if keypair.removed:
+      self.events.emit(SIGNAL_KEYPAIR_DELETED, KeypairArgs(keypair: keypair))
+    else:
+      # notify all interested parts about the keypair change
+      self.events.emit(SIGNAL_KEYPAIR_CHANGED, KeypairArgs(keypair: keypair))
 
   proc allAccountsTokenBalance*(self: Service, symbol: string): float64 =
     var totalTokenBalance = 0.0
