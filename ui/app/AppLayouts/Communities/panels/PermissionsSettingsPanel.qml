@@ -41,7 +41,8 @@ StackView {
     // Community Permissions possible view contents:
     initialItem: SettingsPage {
         implicitWidth: 0
-        pageTitle: qsTr("Permissions")
+
+        title: qsTr("Permissions")
 
         buttons: StatusButton {
             objectName: "addNewItemButton"
@@ -101,7 +102,8 @@ StackView {
             id: newPermissionViewPage
 
             implicitWidth: 0
-            pageTitle: isEditState ? qsTr("Edit permission") : qsTr("New permission")
+
+            title: isEditState ? qsTr("Edit permission") : qsTr("New permission")
 
             property alias holdingsToEditModel: editPermissionView.selectedHoldingsModel
             property alias channelsToEditModel: editPermissionView.selectedChannelsModel

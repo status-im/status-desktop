@@ -57,7 +57,7 @@ StackView {
 
     initialItem: SettingsPage {
         implicitWidth: 0
-        pageTitle: qsTr("Airdrops")
+        title: qsTr("Airdrops")
 
         buttons: StatusButton {
             objectName: "addNewItemButton"
@@ -84,7 +84,7 @@ StackView {
         id: newAirdropView
 
         SettingsPage {
-            pageTitle: qsTr("New airdrop")
+            title: qsTr("New airdrop")
 
             contentItem: EditAirdropView {
                 id: view

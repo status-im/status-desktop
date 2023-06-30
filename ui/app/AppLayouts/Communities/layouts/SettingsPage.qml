@@ -10,8 +10,7 @@ Page {
     topPadding: 16
 
     property alias buttons: pageHeader.buttons
-    property alias pageTitle: pageHeader.title
-    property alias pageSubtitle: pageHeader.subtitle
+    property alias subtitle: pageHeader.subtitle
 
     background: null
 
@@ -21,5 +20,7 @@ Page {
         height: 44
         leftPadding: 64
         rightPadding: width - 560 - leftPadding
+
+        title: root.title
     }
 }

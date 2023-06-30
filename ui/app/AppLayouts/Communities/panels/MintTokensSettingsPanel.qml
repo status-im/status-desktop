@@ -77,7 +77,7 @@ StackView {
 
     initialItem: SettingsPage {
         implicitWidth: 0
-        pageTitle: qsTr("Tokens")
+        title: qsTr("Tokens")
 
         buttons: StatusButton {
             objectName: "addNewItemButton"
@@ -123,8 +123,8 @@ StackView {
             property string referenceName: ""
             property string referenceSymbol: ""
 
-            pageTitle: optionsTab.currentItem == assetsTab
-                       ? qsTr("Mint asset") : qsTr("Mint collectible")
+            title: optionsTab.currentItem == assetsTab
+                   ? qsTr("Mint asset") : qsTr("Mint collectible")
 
             contentItem: ColumnLayout {
                 width: root.viewWidth
@@ -210,8 +210,8 @@ StackView {
 
             property alias token: preview.token
 
-            pageTitle: token.name
-            pageSubtitle: token.symbol
+            title: token.name
+            subtitle: token.symbol
 
             contentItem: CommunityTokenView {
                 id: preview
@@ -265,8 +265,8 @@ StackView {
 
             property string tokenKey
 
-            pageTitle: view.name
-            pageSubtitle: view.symbol
+            title: view.name
+            subtitle: view.symbol
 
             buttons: [
                 StatusButton {

@@ -52,7 +52,7 @@ StackLayout {
     clip: true
 
     SettingsPage {
-        pageTitle: qsTr("Overview")
+        title: qsTr("Overview")
 
         rightPadding: 64
         bottomPadding: 64
@@ -178,7 +178,7 @@ StackLayout {
     SettingsPage {
         id: editCommunityPage
 
-        pageTitle: qsTr("Edit Community")
+        title: qsTr("Edit Community")
 
         contentItem: Loader {
             id: editSettingsPanelLoader
