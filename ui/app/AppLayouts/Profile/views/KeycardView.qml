@@ -94,21 +94,26 @@ SettingsContentBase {
             target: root.keycardStore.keycardModule
 
             function onDisplayKeycardSharedModuleFlow() {
-                Global.openPopup(keycardPopup);
+                keycardPopup.active = true
             }
             function onDestroyKeycardSharedModuleFlow() {
-                Global.closePopup();
+                keycardPopup.active = false
             }
             function onSharedModuleBusy() {
                 Global.openPopup(sharedModuleBusyPopupComponent)
             }
         }
 
-        Component {
+        Loader {
             id: keycardPopup
-            KeycardPopup {
+            active: false
+            sourceComponent: KeycardPopup {
                 sharedKeycardModule: root.keycardStore.keycardModule.keycardSharedModule
                 emojiPopup: root.emojiPopup
+            }
+
+            onLoaded: {
+                keycardPopup.item.open()
             }
         }
     }
