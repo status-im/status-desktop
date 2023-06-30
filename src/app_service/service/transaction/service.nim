@@ -46,7 +46,6 @@ const SIGNAL_HISTORY_FETCHING* = "historyFetching"
 const SIGNAL_HISTORY_READY* = "historyReady"
 const SIGNAL_HISTORY_NON_ARCHIVAL_NODE* = "historyNonArchivalNode"
 const SIGNAL_HISTORY_ERROR* = "historyError"
-const SIGNAL_NEW_TRANSFERS* = "newTransfers"
 const SIGNAL_CRYPTO_SERVICES_READY* = "cryptoServicesReady"
 const SIGNAL_TRANSACTION_DECODED* = "transactionDecoded"
 
@@ -159,16 +158,6 @@ QtObject:
           self.events.emit(SIGNAL_HISTORY_NON_ARCHIVAL_NODE, Args())
         of "fetching-history-error":
           self.events.emit(SIGNAL_HISTORY_ERROR, Args())
-        of "new-transfers":
-          # TODO delete this, once activity filter is integrated
-          # with scheduler (Reactor) in status-go.
-          # It should handle proper updates of activity list. Proper
-          # handling of new and old transfers with current implementation
-          # requires lots of refactoring.
-          for account in data.accounts:
-            self.loadTransactions(account, stint.fromHex(Uint256, "0x0"))
-
-          self.events.emit(SIGNAL_NEW_TRANSFERS, HistoryArgs(addresses: data.accounts))
 
   proc getPendingTransactions*(self: Service): seq[TransactionDto] =
     try:
