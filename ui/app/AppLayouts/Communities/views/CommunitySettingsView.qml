@@ -563,9 +563,6 @@ StatusSectionLayout {
                     target: mintPanel
 
                     function onAirdropToken(tokenKey, type, addresses) {
-                        // Here it is forced a navigation to the new airdrop form, like if it was clicked the header button
-                        airdropPanel.primaryHeaderButtonClicked()
-
                         // Force a token selection to be airdroped with default amount 1
                         airdropPanel.selectToken(tokenKey, 1, type)
                         

@@ -1,16 +1,14 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
-import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.views 1.0
 
 import utils 1.0
 
-SettingsPageLayout {
+StackView {
     id: root
 
     // id, name, image, color, owner properties expected
@@ -28,18 +26,21 @@ SettingsPageLayout {
     property var airdropFees: null
 
     property int viewWidth: 560 // by design
+    property string previousPageName: depth > 1 ? qsTr("Airdrops") : ""
 
     signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys)
-
     signal airdropFeesRequested(var contractKeysAndAmounts, var addresses)
-
     signal navigateToMintTokenSettings(bool isAssetType)
 
     function navigateBack() {
-        stackManager.pop(StackView.Immediate)
+        pop(StackView.Immediate)
     }
 
     function selectToken(key, amount, type) {
+        if (depth > 1)
+            pop(StackView.Immediate)
+
+        root.push(newAirdropView, StackView.Immediate)
         d.selectToken(key, amount, type)
     }
 
@@ -50,56 +51,21 @@ SettingsPageLayout {
     QtObject {
         id: d
 
-        readonly property string welcomeViewState: "WELCOME"
-        readonly property string newAirdropViewState: "NEW_AIRDROP"
-
-        readonly property string welcomePageTitle: qsTr("Airdrops")
-        readonly property string newAirdropViewPageTitle: qsTr("New airdrop")
-
         signal selectToken(string key, int amount, int type)
         signal addAddresses(var addresses)
     }
 
-    content: StackView {
-        anchors.fill: parent
-        initialItem: welcomeView
+    initialItem: SettingsPage {
+        implicitWidth: 0
+        pageTitle: qsTr("Airdrops")
 
-        Component.onCompleted: stackManager.pushInitialState(d.welcomeViewState)
-    }
+        buttons: StatusButton {
+            text: qsTr("New Airdrop")
 
-    state:  stackManager.currentState
-    states: [
-        State {
-            name: d.welcomeViewState
-            PropertyChanges {target: root; title: d.welcomePageTitle}
-            PropertyChanges {target: root; previousPageName: ""}
-            PropertyChanges {target: root; primaryHeaderButton.visible: true}
-            PropertyChanges {target: root; primaryHeaderButton.text: qsTr("New Airdrop")}
-        },
-        State {
-            name: d.newAirdropViewState
-            PropertyChanges {target: root; title: d.newAirdropViewPageTitle}
-            PropertyChanges {target: root; previousPageName: d.welcomePageTitle}
-            PropertyChanges {target: root; primaryHeaderButton.visible: false}
+            onClicked: root.push(newAirdropView, StackView.Immediate)
         }
-    ]
 
-    onPrimaryHeaderButtonClicked: {
-        if(root.state !== d.newAirdropViewState)
-            stackManager.push(d.newAirdropViewState, newAirdropView, null, StackView.Immediate)
-    }
-
-    StackViewStates {
-        id: stackManager
-
-        stackView: root.contentItem
-    }
-
-    // Mint tokens possible view contents:
-    Component {
-        id: welcomeView
-
-        WelcomeSettingsView {
+        contentItem: WelcomeSettingsView {
             viewWidth: root.viewWidth
             image: Style.png("community/airdrops8_1")
             title: qsTr("Airdrop community tokens")
@@ -115,28 +81,35 @@ SettingsPageLayout {
     Component {
         id: newAirdropView
 
-        EditAirdropView {
-            id: view
+        SettingsPage {
+            pageTitle: qsTr("New airdrop")
 
-            communityDetails: root.communityDetails
-            assetsModel: root.assetsModel
-            collectiblesModel: root.collectiblesModel
-            membersModel: root.membersModel
+            contentItem: EditAirdropView {
+                id: view
 
-            Binding on airdropFees {
-                value: root.airdropFees
-            }
+                padding: 0
 
-            onAirdropClicked: {
-                root.airdropClicked(airdropTokens, addresses, membersPubKeys)
-                stackManager.clear(d.welcomeViewState, StackView.Immediate)
-            }
-            onNavigateToMintTokenSettings: root.navigateToMintTokenSettings(isAssetType)
+                communityDetails: root.communityDetails
+                assetsModel: root.assetsModel
+                collectiblesModel: root.collectiblesModel
+                membersModel: root.membersModel
 
-            Component.onCompleted: {
-                d.selectToken.connect(view.selectToken)
-                d.addAddresses.connect(view.addAddresses)
-                airdropFeesRequested.connect(root.airdropFeesRequested)
+                Binding on airdropFees {
+                    value: root.airdropFees
+                }
+
+                onAirdropClicked: {
+                    root.airdropClicked(airdropTokens, addresses, membersPubKeys)
+                    root.pop(StackView.Immediate)
+                }
+
+                onNavigateToMintTokenSettings: root.navigateToMintTokenSettings(isAssetType)
+
+                Component.onCompleted: {
+                    d.selectToken.connect(view.selectToken)
+                    d.addAddresses.connect(view.addAddresses)
+                    airdropFeesRequested.connect(root.airdropFeesRequested)
+                }
             }
         }
     }
