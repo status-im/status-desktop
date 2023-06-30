@@ -32,17 +32,9 @@ ColumnLayout {
 
     QtObject {
         id: d
-        property bool isLoading: false
+        readonly property bool isInitialLoading: RootStore.loadingHistoryTransactions && transactionListRoot.count === 0
         property var activityFiltersStore: WalletStores.ActivityFiltersStore{}
-    }
-
-    Connections {
-        target: RootStore.history
-        function onLoadingTrxHistoryChanged(isLoading: bool, address: string) {
-            if (root.overview.mixedcaseAddress.toLowerCase() === address.toLowerCase()) {
-                d.isLoading = isLoading
-            }
-        }
+        readonly property int loadingSectionWidth: 56
     }
 
     StyledText {
@@ -59,18 +51,18 @@ ColumnLayout {
         id: noTxs
         Layout.fillWidth: true
         Layout.preferredHeight: 42
-        visible: !d.isLoading && transactionListRoot.count === 0 && !d.activityFiltersStore.filtersSet
+        visible: !d.isInitialLoading && !d.activityFiltersStore.filtersSet && transactionListRoot.count === 0
         font.pixelSize: Style.current.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
     }
 
     ActivityFilterPanel {
         id: filterComponent
-        visible: !d.isLoading && (transactionListRoot.count !== 0 || d.activityFiltersStore.filtersSet)
+        visible: !noTxs.visible && (!d.isInitialLoading || d.activityFiltersStore.filtersSet)
         Layout.fillWidth: true
         activityFilterStore: d.activityFiltersStore
         store: WalletStores.RootStore
-        isLoading: d.isLoading
+        isLoading: d.isInitialLoading
     }
 
     Item {
@@ -92,8 +84,6 @@ ColumnLayout {
             id: transactionListRoot
             objectName: "walletAccountTransactionList"
             anchors.fill: parent
-
-            property string firstSection
 
             model: SortFilterProxyModel {
                 id: txModel
@@ -136,57 +126,15 @@ ColumnLayout {
 
             footer: footerComp
 
-            displaced: Transition { // TODO Remove animation when ordered fetching of transactions is implemented
-                NumberAnimation { properties: "y"; duration: 250; easing.type: Easing.Linear; alwaysRunToEnd: true }
-            }
-
-            readonly property point lastVisibleItemPos: Qt.point(0, contentY + height - 1)
-            property int lastVisibleIndex: indexAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
-
-            onCountChanged: {
-                // Preserve last visible item in view when more items added at the end or
-                // inbetween
-                // TODO Remove this logic, when new activity design is implemented
-                // and items are loaded in order
-                const lastVisibleItem = itemAtIndex(lastVisibleIndex)
-                const newItem = itemAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
-                const lastVisibleItemY = lastVisibleItem ? lastVisibleItem.y : -1
-                if (newItem) {
-                    if (newItem.y < lastVisibleItemY) { // item inserted higher than last visible
-                        lastVisibleIndex = indexAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
-                    }
-                }
-            }
-            currentIndex: 0
-
-            property bool userScrolled: false
-
-            // TODO Remove this logic, when new activity design is implemented
-            // and items are loaded in order
-            onMovingVerticallyChanged: {
-                if (!userScrolled) {
-                    userScrolled = true
-                    currentIndex = Qt.binding(() => lastVisibleIndex >= 0 ? lastVisibleIndex : (count - 1))
-                }
-
-                lastVisibleIndex = indexAt(lastVisibleItemPos.x, lastVisibleItemPos.y)
-            }
-
             ScrollBar.vertical: StatusScrollBar {}
 
             section.property: "date"
-            topMargin: -20 // Top margin for first section. Section cannot have different sizes
+            topMargin: d.isInitialLoading ? 0 : -20 // Top margin for first section. Section cannot have different sizes
             section.delegate: ColumnLayout {
                 id: sectionDelegate
 
-                readonly property bool isFirstSection: ListView.view.firstSection === section
-
                 width: ListView.view.width
-                // display always first section. Other sections when more items are being fetched must not be visible
-                // 1 because we don't use empty for loading state
-                // Additionaly height must be defined so all sections use same height to to glitch sections when updating model
-                height: isFirstSection || section.length > 1 ? 58 : 0
-                visible: height > 0 // display always first section. Other sections when more items are being fetched must not be visible
+                height: 58
                 spacing: 0
 
                 required property string section
@@ -197,32 +145,47 @@ ColumnLayout {
                     implicitHeight: 1
                 }
 
-                StatusTextWithLoadingState {
+                StatusBaseText {
                     id: sectionText
                     Layout.alignment: Qt.AlignBottom
-                    leftPadding: 16
-                    bottomPadding: 8
-                    text: loading ? "dummy" : parent.section // dummy text because loading component height depends on text height, and not visible with height == 0
-                    Binding on width {
-                        when: sectionText.loading
-                        value: 56
-                        restoreMode: Binding.RestoreBindingOrValue
-                    }
-                    customColor: Theme.palette.baseColor1
+                    leftPadding: Style.current.padding
+                    bottomPadding: Style.current.halfPadding
+                    text: parent.section
                     font.pixelSize: 13
                     verticalAlignment: Qt.AlignBottom
-                    loading: { // First section must be loading when first item in the list is loading. Other sections are never visible until have date value
-                        if (parent.ListView.view.count > 0) {
-                            const firstItem = parent.ListView.view.itemAtIndex(0)
-                            if (sectionDelegate.isFirstSection && firstItem && firstItem.loading) {
-                                return true
-                            }
-                        }
-                        return false
-                    }
                 }
             }
-            onAtYEndChanged: if(atYEnd) RootStore.fetchMoreTransactions()
+
+            visibleArea.onYPositionChanged: tryFetchMoreTransactions()
+
+            Connections {
+                target: RootStore
+                function onLoadingHistoryTransactionsChanged() {
+                    // Calling timer instead directly to not cause binding loop
+                    if (!RootStore.loadingHistoryTransactions)
+                        fetchMoreTimer.start()
+                }
+            }
+
+            function tryFetchMoreTransactions() {
+                if (!footerItem || !RootStore.historyTransactions.hasMore)
+                    return
+                const footerYPosition = footerItem.height / contentHeight
+                if (footerYPosition >= 1.0) {
+                    return
+                }
+
+                // On startup, first loaded ListView will have heightRatio equal 0
+                if (footerYPosition + visibleArea.yPosition + visibleArea.heightRatio > 1.0) {
+                    RootStore.fetchMoreTransactions()
+                }
+            }
+
+            Timer {
+                id: fetchMoreTimer
+                interval: 1
+                onTriggered: transactionListRoot.tryFetchMoreTransactions()
+            }
         }
 
         Separator {
@@ -315,25 +278,45 @@ ColumnLayout {
                     launchTransactionDetail(modelData)
                 }
             }
-            loading: false // TODO handle loading state
-
-            Component.onCompleted: {
-                if (index == 0)
-                    ListView.view.firstSection = date
-            }
         }
     }
 
     Component {
         id: footerComp
         ColumnLayout {
+            id: footerColumn
+            readonly property bool allActivityLoaded: !RootStore.historyTransactions.hasMore && transactionListRoot.count !== 0
             width: root.width
-            visible: !RootStore.historyTransactions.hasMore && transactionListRoot.count !== 0
             spacing: 12
+
+            Separator {
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.halfPadding
+                visible: d.isInitialLoading
+            }
+
+            StatusTextWithLoadingState {
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: Style.current.padding
+                text: "01.01.2000"
+                width: d.loadingSectionWidth
+                font.pixelSize: 15
+                loading: visible
+                visible: d.isInitialLoading
+            }
+
+            Repeater {
+                model: RootStore.historyTransactions.hasMore || d.isInitialLoading ? 10 : 0
+                TransactionDelegate {
+                    Layout.fillWidth: true
+                    loading: true
+                }
+            }
+
             Separator {
                 Layout.topMargin: Style.current.bigPadding
                 Layout.fillWidth: true
-                visible: !RootStore.historyTransactions.hasMore
+                visible: footerColumn.allActivityLoaded
             }
             StatusBaseText {
                 Layout.fillWidth: true
@@ -341,13 +324,13 @@ ColumnLayout {
                 text: qsTr("You have reached the beginning of the activity for this account")
                 font.pixelSize: 13
                 color: Theme.palette.baseColor1
-                visible: !RootStore.historyTransactions.hasMore
+                visible: footerColumn.allActivityLoaded
                 horizontalAlignment: Text.AlignHCenter
             }
             StatusButton {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Back to most recent transaction")
-                visible: !RootStore.historyTransactions.hasMore && transactionListRoot.contentHeight > transactionListRoot.height
+                visible: footerColumn.allActivityLoaded && transactionListRoot.contentHeight > transactionListRoot.height
                 onClicked: transactionListRoot.positionViewAtBeginning()
             }
         }
