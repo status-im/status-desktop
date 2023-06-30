@@ -1,6 +1,7 @@
 import QtQuick 2.13
 
 import SortFilterProxyModel 0.2
+import StatusQ.Core 0.1
 
 import utils 1.0
 
@@ -46,19 +47,19 @@ QtObject {
             toTimestamp = dt1.valueOf()
             break
         case Constants.TransactionTimePeriod.ThisWeek:
-            let dt2 = new Date()
-            let firstDayOfCurrentWeek = dt2.getDate() - dt2.getDay()
-            dt2.setDate(firstDayOfCurrentWeek)
+            let dt2 = LocaleUtils.getFirstDayOfTheCurrentWeek()
             dt2.setHours(0, 0, 0, 0)
-            fromTimestamp = dt2.valueOf() // This week
-            toTimestamp = new Date().valueOf()
+            fromTimestamp = dt2.valueOf() // First day of this week
+            toTimestamp = new Date().valueOf() // Today
             break
         case Constants.TransactionTimePeriod.LastWeek:
-            let dt3 = new Date()
+            let dt3 = LocaleUtils.getFirstDayOfTheCurrentWeek()
             dt3.setDate(dt3.getDate() - 7)
             dt3.setHours(0, 0, 0, 0)
-            fromTimestamp = dt3.valueOf() // Last week
-            toTimestamp = new Date().valueOf()
+            fromTimestamp = dt3.valueOf() // First day of last week
+            dt3.setDate(dt3.getDate() + 6)
+            dt3.setHours(23, 59, 59, 0)
+            toTimestamp = dt3.valueOf() // Last day of last week
             break
         case Constants.TransactionTimePeriod.ThisMonth:
             let dt4 = new Date()
