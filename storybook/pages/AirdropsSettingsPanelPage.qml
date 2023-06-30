@@ -61,17 +61,25 @@ SplitView {
         }
     }
 
+    Button {
+        text: "Back"
+        onClicked: loader.item.navigateBack()
+    }
+
     Rectangle {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
         Loader {
+            id: loader
+
             anchors.fill: parent
             active: globalUtilsReady && mainModuleReady
 
             sourceComponent: AirdropsSettingsPanel {
                 id: airdropsSettingsPanel
+
                 anchors.fill: parent
                 anchors.topMargin: 50
                 assetsModel: AssetsModel {}
