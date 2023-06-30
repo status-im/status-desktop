@@ -44,6 +44,8 @@ StackView {
         pageTitle: qsTr("Permissions")
 
         buttons: StatusButton {
+            objectName: "addNewItemButton"
+
             text: qsTr("Add new permission")
 
             onClicked: root.push(newPermissionView, StackView.Immediate)

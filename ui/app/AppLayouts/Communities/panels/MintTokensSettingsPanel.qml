@@ -80,6 +80,8 @@ StackView {
         pageTitle: qsTr("Tokens")
 
         buttons: StatusButton {
+            objectName: "addNewItemButton"
+
             text: qsTr("Mint token")
 
             onClicked: root.push(newTokenView, StackView.Immediate)

@@ -60,6 +60,8 @@ StackView {
         pageTitle: qsTr("Airdrops")
 
         buttons: StatusButton {
+            objectName: "addNewItemButton"
+
             text: qsTr("New Airdrop")
 
             onClicked: root.push(newAirdropView, StackView.Immediate)
