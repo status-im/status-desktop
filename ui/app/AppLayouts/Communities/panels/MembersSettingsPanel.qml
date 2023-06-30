@@ -38,7 +38,7 @@ SettingsPage {
         }
     }
 
-    pageTitle: qsTr("Members")
+    title: qsTr("Members")
 
     contentItem: ColumnLayout {
 
