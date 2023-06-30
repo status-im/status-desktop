@@ -82,8 +82,6 @@ Feature: Status Desktop community
         And the admin changes the community description to "<new_community_description>"
         Then the community overview description is "<new_community_description>"
         When the admin goes back to the community
-        And the admin changes the community color to "<new_community_color>"
-        Then the community overview color is "<new_community_color>"
         Examples:
             | new_community_name       | new_community_description  | new_community_color |
             | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |

@@ -178,6 +178,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "OverviewSettingsPanel"
+        section: "Panels"
+    }
+    ListElement {
         title: "EditSettingsPanel"
         section: "Panels"
     }
@@ -372,10 +376,6 @@ ListModel {
     ListElement {
         title: "LanguageCurrencySettings"
         section: "Settings"
-    }
-    ListElement {
-        title: "ProfileSocialLinksPanel"
-        section: "Panels"
     }
     ListElement {
         title: "IntroPanel"

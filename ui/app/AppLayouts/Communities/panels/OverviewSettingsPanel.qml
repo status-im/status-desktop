@@ -53,38 +53,29 @@ StackLayout {
     clip: true
 
     SettingsPage {
-        title: qsTr("Overview")
 
         rightPadding: 64
         bottomPadding: 64
-
+        topPadding: 0
+        header: null
         contentItem: ColumnLayout {
             spacing: 16
-
             RowLayout {
                 Layout.fillWidth: true
 
                 spacing: 16
 
-                StatusSmartIdenticon {
-                    objectName: "communityOverviewSettingsPanelIdenticon"
-                    name: root.name
-                    asset.width: 80
-                    asset.height: 80
-                    asset.color: root.color
-                    asset.letterSize: width / 2.4
-                    asset.name: root.logoImageData
-                    asset.isImage: true
-                }
-
                 ColumnLayout {
                     Layout.fillWidth: true
+                    Layout.maximumWidth: 747
 
                     StatusBaseText {
                         id: nameText
                         objectName: "communityOverviewSettingsCommunityName"
                         Layout.fillWidth: true
-                        font.pixelSize: 24
+                        font.pixelSize: 28
+                        font.bold: true
+                        font.letterSpacing: -0.4
                         color: Theme.palette.directColor1
                         wrapMode: Text.WordWrap
                         text: root.name
@@ -101,11 +92,16 @@ StackLayout {
                     }
                 }
 
+                Item { Layout.fillWidth: true }
+
                 StatusButton {
+                    Layout.preferredHeight: 38
+                    Layout.alignment: Qt.AlignTop
                     objectName: "communityOverviewSettingsEditCommunityButton"
                     visible: root.editable
                     text: qsTr("Edit Community")
                     onClicked: root.currentIndex = 1
+                    size: StatusBaseButton.Size.Small
                 }
             }
 
