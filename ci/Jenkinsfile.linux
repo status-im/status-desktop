@@ -28,14 +28,14 @@ pipeline {
     string(
       name: 'NIMFLAGS',
       description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
-      defaultValue: '--colors:off'
+      defaultValue: '--colors:off --debuginfo:on --stackTrace:on --lineTrace:on --stackTraceMsgs:on --excessiveStackTrace:on --verbosity:3 --passL:"-v" --passC:"-v" --parallelBuild:1 --listCmd --panics:on'
     )
   }
 
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 25, unit: 'MINUTES')
+    timeout(time: 35, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -84,7 +84,7 @@ pipeline {
       steps { script {
         /* Temporary hack-fix for failing Linux builds:
          * https://github.com/status-im/infra-ci/issues/88 */
-        timeout(10) { retry(20) {
+        timeout(20) { retry(20) {
           sh 'make nim_status_client'
         } }
       } }
