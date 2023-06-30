@@ -33,6 +33,8 @@ communitySettingsView_NavigationListItem_Overview = {"container": statusDesktop_
 communitySettings_MembersTab_Members_ListView = {"container": statusDesktop_mainWindow, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
 communitySettings_MembersTab_Member_Kick_Button = {"container": communitySettings_MembersTab_Members_ListView, "objectName": "MemberListIten_KickButton", "type": "StatusButton", "visible": True}
 communitySettings_KickModal_Kick_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
+create_new_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
+
 
 # Chat components
 chatView_TogglePinMessageButton = {"container": chatView_log, "objectName": "MessageView_toggleMessagePin", "type": "StatusFlatRoundButton", "visible": True}
@@ -102,4 +104,17 @@ community_welcome_screen_subtitle = {"container": statusDesktop_mainWindow, "obj
 community_welcome_screen_checkList_element1 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_0", "type": "StatusBaseText", "visible": True}
 community_welcome_screen_checkList_element2 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_1", "type": "StatusBaseText", "visible": True}
 community_welcome_screen_checkList_element3 = {"container": statusDesktop_mainWindow, "objectName": "checkListText_2", "type": "StatusBaseText", "visible": True}
-community_welcome_screen_add_new_item = {"container": statusDesktop_mainWindow, "objectName": "addNewItemButton", "type": "StatusButton", "visible": True}
+community_welcome_screen_add_new_item = {"container": statusDesktop_mainWindow, "objectName": "primaryHeaderButton", "type": "StatusButton", "visible": True}
+
+# Channel View
+mainWindow_imageBtn_StatusFlatRoundButton = {"container": statusDesktop_mainWindow, "id": "imageBtn", "type": "StatusFlatRoundButton", "unnamed": 1, "visible": True}
+message_TextEdit = {"container": mainWindow_ScrollView_2, "type": "PlaceholderText", "unnamed": 1, "visible": True}
+
+# Select Image Dialog
+please_choose_an_image_QQuickWindow = {"title": "Please choose an image", "type": "QQuickWindow", "unnamed": 1, "visible": True}
+please_choose_an_image_Open_Button = {"container": please_choose_an_image_QQuickWindow, "id": "okButton", "type": "Button", "unnamed": 1, "visible": True}
+please_choose_an_image_titleBar_ToolBar = {"container": please_choose_an_image_QQuickWindow, "id": "titleBar", "type": "ToolBar", "unnamed": 1, "visible": True}
+titleBar_textInput_TextInputWithHandles = {"backgroundcolor": "#efefef", "container": please_choose_an_image_titleBar_ToolBar, "echoMode": 0, "id": "textInput", "type": "TextInputWithHandles", "unnamed": 1, "visible": True}
+view_listView_ListView = {"container": please_choose_an_image_QQuickWindow, "id": "listView", "type": "ListView", "unnamed": 1, "visible": True}
+rowitem_Text = {"container": view_listView_ListView, "type": "Text", "unnamed": 1, "visible": True}
+

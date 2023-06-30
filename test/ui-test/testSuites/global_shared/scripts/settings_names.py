@@ -129,7 +129,9 @@ ProfilePopup_SayWhoYouAre_TextEdit = {"container": statusDesktop_mainWindow_over
 ProfilePopup_SendContactRequest_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "ProfileSendContactRequestModal_sendContactRequestButton", "type": "StatusButton"}
 
 # Communities Settings:
-settings_Communities_CommunitiesListPanel = { "container": statusDesktop_mainWindow, "objectName": "CommunitiesView_communitiesListPanel", "type": "StatusListView" }
+settingsContentBaseScrollView_panelOwners_Panel={"container": settingsContentBase_ScrollView, "id": "panelOwners", "type": "Panel", "unnamed": 1, "visible": True}
+settings_Communities_CommunitiesListPanel = {"container": settingsContentBase_ScrollView, "type": "Item", "unnamed": 1, "visible": True}
+
 settings_Communities_MainView_LeaveCommunityButtons = { "container": statusDesktop_mainWindow, "objectName": "CommunitiesListPanel_leaveCommunityPopupButton", "type": "StatusBaseButton", "visible": True }
 settings_Communities_MainView_LeavePopup_LeaveCommunityButton = {"container": statusDesktop_mainWindow, "objectName":"CommunitiesListPanel_leaveCommunityButtonInPopup", "type": "StatusBaseButton", "visible": True}
 

@@ -182,6 +182,10 @@ def step(context, chatName: str):
 ### VERIFICATIONS region:
 #########################
 
+@Then("the the user waits for last chat message contains \"|any|\"")
+def step(context, message):
+    _statusChat.wait_for_message(message)
+
 @Then("the last chat message contains \"|any|\"")
 def step(context, message):
     _statusChat.verify_last_message_sent(message)

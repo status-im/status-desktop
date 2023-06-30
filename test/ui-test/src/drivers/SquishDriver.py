@@ -500,3 +500,7 @@ def wait_until_hidden(object_name: str, timeout_msec: int = _MAX_WAIT_OBJ_TIMEOU
 
 def get_real_name(obj):
     return objectMap.realName(obj)
+
+
+def get_object_type(obj):
+    return squish.className(obj)

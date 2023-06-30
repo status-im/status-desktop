@@ -390,6 +390,9 @@ class StatusChatScreen:
         last_message_obj = self.get_message_at_index(0)
         return last_message_obj.messageText
 
+    def wait_for_message(self, message: str):
+        wait_for(str(self.get_last_message_text()), str(message), configs.squish.UI_LOAD_TIMEOUT_MSEC)
+
     def verify_last_message_sent(self, message: str):
         verify_text_contains(str(self.get_last_message_text()), str(message))
 

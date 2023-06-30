@@ -7,12 +7,11 @@
 # * \date    July 2022
 # * \brief   Community Screen.
 # *****************************************************************************/
-
-
+import typing
 from enum import Enum
 import time
 from unittest import TestSuite
-
+import configs
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from drivers.SDKeyboardCommands import *
@@ -21,10 +20,60 @@ from utils.FileManager import *
 from screens.StatusChatScreen import MessageContentType
 from screens.components.community_back_up_private_key_popup import BackUpCommunityPrivateKeyPopup
 from utils.ObjectAccess import *
+from screens.components.native_dialogs import SelectDialog
+from utils.ObjectAccess import walk_children
+
+
+class Message:
+
+    def __init__(self, obj):
+        self.object = obj
+
+    @property
+    def text(self) -> str:
+        return str(getattr(self.object, 'messageText'))
+
+    @property
+    def attach(self):
+        attachable_types = ['StatusImageMessage']
+        items = []
+        for item in walk_children(self.object):
+            for object_type in attachable_types:
+                if object_type in get_object_type(item):
+                    items.append(item)
+        return items
+
+    @property
+    def is_pinned(self) -> bool:
+        for item in walk_children(self.object):
+            if 'StatusMessage' in get_object_type(item):
+                return item.isPinned
+        raise LookupError('StatusMessage object not found')
+
+
+class ChatLog(BaseElement):
+
+    def __init__(self):
+        super(ChatLog, self).__init__('chatLogView_Item')
+        self._message_template = BaseElement('chatLogView_chatMessageViewDelegate_MessageView')
+
+    @property
+    def messages(self) -> typing.List[Message]:
+        return [Message(item) for item in get_objects(self._message_template.symbolic_name)]
+    
+    @property
+    def pinned_messages(self) -> typing.List[Message]:
+        messages = []
+        for message in self.messages:
+            if message.is_pinned:
+                messages.append(message)
+        return messages
+
 
 class CommunityCreateMethods(Enum):
     BOTTOM_MENU = "bottom_menu"
     RIGHT_CLICK_MENU = "right_click_menu"
+
 
 class CommunityScreenComponents(Enum):
     CHAT_LOG = "chatView_log"  
@@ -120,11 +169,15 @@ class CommunityOverviewScreenComponents(Enum):
     COMMUNITY_OVERVIEW_BACK_UP_BUTTON ="communityOverview_Back_up_StatusButton"
     COMMUNITY_OVERVIEW_AIRDROP_TOKENS_BUTTON="communityOverview_Airdrop_Tokens_StatusButton"           
 
+
 class StatusCommunityScreen:
 
     def __init__(self):
         self._retry_number = 0
         verify_screen(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
+        self.chat_log = ChatLog()
+        self.send_image_button = Button('mainWindow_imageBtn_StatusFlatRoundButton')
+        self._message_text_edit = TextEdit('message_TextEdit')
 
     def _find_channel_in_category_popup(self, community_channel_name: str):
         listView = get_obj(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_LIST.value)
@@ -375,29 +428,32 @@ class StatusCommunityScreen:
         verify_values_equal(str(image_obj.messageContentType), str(MessageContentType.IMAGE.value), "The last message is not an image.")
 
     def send_test_image(self, fixtures_root: str, multiple_images: bool, message: str):
-        chat_input = wait_and_get_obj(CommunityScreenComponents.CHAT_INPUT_ROOT.value)
+        self.send_image_button.click()
+        select_dialog = SelectDialog()
         
-        chat_input.selectImageString(fixtures_root + "images/ui-test-image0.jpg")
-        
+        attach = [fixtures_root + "images/ui-test-image0.jpg"]
         if (multiple_images):
-            #self._select_test_image(fixtures_root, 1)
-            chat_input.selectImageString(fixtures_root + "images/ui-test-image1.jpg")
-        
-        if (message != ""):
+            attach.append(fixtures_root + "images/ui-test-image1.jpg")
+        select_dialog.select(attach)
+        if message:
             # Type the message in the input (focus should be on the chat input)
-            native_type(message)
-                
-        # Send the image (and message if present)
-        native_type("<Return>")
-    
+            self._message_text_edit.type_text(message)
+            native_type("<Return>")
+        else:
+            self._message_text_edit.type_text("<Return>")
+
     def verify_sent_test_image(self, multiple_images: bool, has_message: bool):
-        image_index = 1 if has_message else 0
-        self._verify_image_sent(image_index)
-        
+        messages = self.chat_log.messages
         if (multiple_images):
-            # Verify second image
-            image_index = 2 if has_message else 1
-            self._verify_image_sent(image_index)
+            assert len(messages[-1].attach) > 1, 'The message contains less attached images then expected'
+        else:
+            assert len(messages[-1].attach) == 1, 'The message contains less attached images then expected'
+        
+        if has_message:
+            assert messages[-1].text, 'The message is empty'
+        else:
+            assert not messages[-1].text, f'The message contains text: {messages[-1].text}'
+             
 
     def _do_wait_for_msg_action_button(self, message_index: int, btn_name: str):
         if (self._retry_number > 3):
@@ -422,8 +478,7 @@ class StatusCommunityScreen:
         self._click_msg_action_button(message_index, CommunityScreenComponents.TOGGLE_PIN_MESSAGE_BUTTON.value)
 
     def check_pin_count(self, wanted_pin_count: int):
-        pin_text_obj = wait_and_get_obj(CommunityScreenComponents.PIN_TEXT.value)
-        verify_equals(str(pin_text_obj.text), str(wanted_pin_count))
+        assert wait_for(len(self.chat_log.pinned_messages) == wanted_pin_count, configs.squish.UI_LOAD_TIMEOUT_MSEC), 'Unexpected attached images count'
 
     def invite_user_to_community(self, user_name: str, message: str):
         click_obj_by_name(CommunityScreenComponents.WELCOME_ADD_MEMBERS_BUTTON.value)

@@ -24,31 +24,21 @@ Feature: Status Desktop community messages
         And the user creates a community named "test_community", with description "Community description", intro "community intro" and outro "commmunity outro"
         Then the user lands on the community named "test_community"
 
-	@mayfail
-	# TODO: Verification is broken.
     Scenario: The user sends a test image
         When the user sends a test image in the current channel
         Then the last chat message contains the test image
 
-	@mayfail
-	# TODO: Verification is broken.
     Scenario: The user sends a test image with a message
         When the user sends a test image in the current channel with message "Message" with an image
         Then the test image is displayed just before the last message
         And the last chat message contains "Message"
 
-	@mayfail
-	# TODO: Verification is broken.
     Scenario: The user sends multiple test images with a message
         When the user sends multiple test images in the current channel with message "Message" with an image again
         Then the test images are displayed just before the last message
         And the last chat message contains "Message"
 
-	@mayfail
-	# TODO: It is unstable. Needs to be checked.
     Scenario: The user pins and unpins messages
-        # This one wont work until #6554 is fixed
-        # And the amount of pinned messages is 0
 		Given the user sends a chat message "Message 1"
         When the user pins the message at index 0
         Then the amount of pinned messages is 1
@@ -68,7 +58,6 @@ Feature: Status Desktop community messages
         | message                | reply           |
         | Community chat message | This is a reply |
 
-	@mayfail
     Scenario Outline: The user can edit a message
         Given the user sends a chat message "Edit me"
         # Checking that message can be edited several times
@@ -88,7 +77,6 @@ Feature: Status Desktop community messages
              | message             |
              | random chat message |
 
-	@mayfail
     Scenario: The user can clear chat history
         Given the user sends a chat message "Hi hi"
         And the user sends a chat message "testing chat"

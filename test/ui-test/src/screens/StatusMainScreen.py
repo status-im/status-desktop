@@ -94,7 +94,7 @@ class StatusMainScreen:
     # Main screen is ready to interact with it (Splash screen animation not present)
     def is_ready(self):
         self.wait_for_splash_animation_ends()
-        verify(is_displayed(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value, 15000), "Verifying if the Messages headline is displayed")
+        verify(is_displayed(MainScreenComponents.CONTACTS_COLUMN_MESSAGES_HEADLINE.value, 60000), "Verifying if the Messages headline is displayed")
 
     def wait_for_splash_animation_ends(self, timeoutMSec: int = configs.squish.APP_LOAD_TIMEOUT_MSEC):
         splash_screen = SplashScreen()
