@@ -8,6 +8,8 @@ import StatusQ.Controls 0.1
 
 import shared.panels 1.0
 
+import AppLayouts.Communities.controls 1.0
+
 
 StatusDropdown {
     id: root
