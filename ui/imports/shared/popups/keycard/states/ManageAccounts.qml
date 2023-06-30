@@ -124,6 +124,7 @@ Item {
             id: accountDetails
             Layout.preferredWidth: Constants.keycard.general.keycardNameInputWidth
             Layout.alignment: Qt.AlignCenter
+            visible: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard
             height: Style.current.xlPadding * 2
             color: "transparent"
             border.color: Theme.palette.baseColor2
@@ -146,7 +147,8 @@ Item {
                     }
 
                     StatusBaseText {
-                        text: root.sharedKeycardModule.keyPairHelper.observedAccount.path
+                        text: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
+                                  root.sharedKeycardModule.keyPairHelper.observedAccount.path : ""
                         wrapMode: Text.WordWrap
                         font.pixelSize: Constants.keycard.general.fontSize2
                         color: Theme.palette.baseColor1
@@ -161,10 +163,14 @@ Item {
                 ColumnLayout {
                     StatusBaseText {
                         text: {
-                            return qsTr("Balance: %1").arg(LocaleUtils.currencyAmountToLocaleString({
-                                        amount: parseFloat(root.sharedKeycardModule.keyPairHelper.observedAccount.balance),
-                                        symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
-                                        displayDecimals: 2}))
+                            return qsTr("Balance: %1").arg(LocaleUtils.currencyAmountToLocaleString(
+                                                               {
+                                                                   amount: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
+                                                                               parseFloat(root.sharedKeycardModule.keyPairHelper.observedAccount.balance) :
+                                                                               0,
+                                                                   symbol: SharedStore.RootStore.currencyStore.currentCurrencySymbol,
+                                                                   displayDecimals: 2
+                                                               }))
                         }
                         wrapMode: Text.WordWrap
                         font.pixelSize: Constants.keycard.general.fontSize2
@@ -274,6 +280,10 @@ Item {
             onRemoveAccount: {
                 if (root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard)
                     return
+                if (name.trim().length == 0) {
+                    root.sharedKeycardModule.keyPairForProcessing.removeAccountAtIndex(index)
+                    return
+                }
                 d.accountIndexToBeRemoved = index
                 d.accountNameToBeRemoved = name
                 confirmationPopup.open()
@@ -296,7 +306,8 @@ Item {
                 target: stepper
                 visible: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard &&
                          root.sharedKeycardModule.keyPairHelper.accounts.count > 1
-                totalSteps: root.sharedKeycardModule.keyPairHelper.accounts.count
+                totalSteps: root.sharedKeycardModule.currentState.flowType === Constants.keycardSharedFlow.importFromKeycard?
+                                root.sharedKeycardModule.keyPairHelper.accounts.count : 0
                 completedSteps: root.sharedKeycardModule.keyPairForProcessing.accounts.count
                 title: qsTr("Account %1 of %2").arg(completedSteps).arg(totalSteps)
             }

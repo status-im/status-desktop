@@ -785,10 +785,9 @@ QtObject {
                 return Theme.palette.customisationColors.yinYang
             case  Constants.walletAccountColors.undefinedAccount.toUpperCase():
                 return Theme.palette.baseColor1
-            default:
-                return Theme.palette.customisationColors.blue
             }
         }
+        return Theme.palette.customisationColors.blue
     }
 
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
