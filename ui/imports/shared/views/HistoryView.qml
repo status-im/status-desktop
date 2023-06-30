@@ -101,11 +101,33 @@ ColumnLayout {
                 sourceModel: RootStore.historyTransactions
 
                 // LocaleUtils is not accessable from inside expression, but local function works
-                property var formatDate: (ms) => LocaleUtils.formatDate(ms, Locale.ShortFormat)
+                property var daysTo: (d1, d2) => LocaleUtils.daysTo(d1, d2)
+                property var daysBetween: (d1, d2) => LocaleUtils.daysBetween(d1, d2)
+                property var getFirstDayOfTheCurrentWeek: () => LocaleUtils.getFirstDayOfTheCurrentWeek()
                 proxyRoles: ExpressionRole {
                     name: "date"
                     expression: {
-                        return model.activityEntry.timestamp > 0 ? txModel.formatDate(model.activityEntry.timestamp * 1000) : (d.isLoading ? " " : "") //  not empty, because section will not be displayed when loading if empty
+                        if (model.activityEntry.timestamp === 0)
+                            return ""
+                        const currDate = new Date()
+                        const timestampDate = new Date(model.activityEntry.timestamp * 1000)
+                        const daysDiff = txModel.daysBetween(currDate, timestampDate)
+                        const daysToBeginingOfThisWeek = txModel.daysTo(timestampDate, txModel.getFirstDayOfTheCurrentWeek())
+
+                        if (daysDiff < 1) {
+                            return qsTr("Today")
+                        } else if (daysDiff < 2) {
+                            return qsTr("Yesterday")
+                        } else if (daysToBeginingOfThisWeek >= 0) {
+                            return qsTr("Earlier this week")
+                        } else if (daysToBeginingOfThisWeek > -7) {
+                            return qsTr("Last week")
+                        } else if (currDate.getMonth() === timestampDate.getMonth()) {
+                            return qsTr("Earlier this month")
+                        } else if ((new Date(new Date().setDate(0))).getMonth() === timestampDate.getMonth()) {
+                            return qsTr("Last month")
+                        }
+                        return timestampDate.toLocaleDateString(Qt.locale(), "MMM yyyy")
                     }
                 }
             }
@@ -281,7 +303,7 @@ ColumnLayout {
             networkName: isModelDataValid ? RootStore.getNetworkFullName(modelData.chainId) : ""
             symbol: isModelDataValid && !!modelData.symbol ? modelData.symbol : ""
             transactionStatus: isModelDataValid ? modelData.status : 0
-            timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
+            timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
             addressNameTo: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.recipient) : ""
             addressNameFrom: isModelDataValid ? WalletStores.RootStore.getNameForAddress(modelData.sender) : ""
             rootStore: RootStore
