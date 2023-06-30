@@ -72,11 +72,11 @@ Item {
         }
 
         function onDisplayKeycardSharedModuleFlow() {
-            Global.openPopup(keycardPopup);
+            keycardPopup.active = true
         }
 
         function onDestroyKeycardSharedModuleFlow() {
-            Global.closePopup();
+            keycardPopup.active = false
         }
 
         function onMailserverWorking() {
@@ -1427,11 +1427,15 @@ Item {
         Global.settingsLoaded()
     }
 
-    Component {
+    Loader {
         id: keycardPopup
-        KeycardPopup {
-            anchors.centerIn: parent
+        active: false
+        sourceComponent: KeycardPopup {
             sharedKeycardModule: appMain.rootStore.mainModuleInst.keycardSharedModule
+        }
+
+        onLoaded: {
+            keycardPopup.item.open()
         }
     }
 
