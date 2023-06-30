@@ -236,9 +236,16 @@ QtObject {
 
     // return full days between 2 dates
     function daysBetween(firstDate, secondDate) {
-        firstDate.setHours(0, 0, 0) // discard time
-        secondDate.setHours(0, 0, 0)
-        return Math.round(Math.abs((firstDate - secondDate) / d.msInADay)) // Math.round: not all days are 24 hours long!
+        return Math.abs(daysTo(firstDate, secondDate))
+    }
+
+    // return full days from first to second date
+    function daysTo(firstDate, secondDate) {
+        const d1 = new Date(firstDate)
+        const d2 = new Date(secondDate)
+        d1.setHours(0, 0, 0) // discard time
+        d2.setHours(0, 0, 0)
+        return Math.round((d1 - d2) / d.msInADay) // Math.round: not all days are 24 hours long!
     }
 
     /**
@@ -288,13 +295,27 @@ QtObject {
         return value.toLocaleString(loc, formatString)
     }
 
+    /**
+      Returns the Date of the first day of the current week.
+    */
+    function getFirstDayOfTheCurrentWeek() {
+        const loc = Qt.locale()
+        let firstDayOfWeek = new Date()
+        // NOTE returned value is always Sunday, so day must be adjusted by locale first day of week
+        let result = new Date(firstDayOfWeek.setDate(firstDayOfWeek.getDate() - firstDayOfWeek.getDay() + loc.firstDayOfWeek))
+        if (result > new Date()) {
+            result.setDate(firstDayOfWeek.getDate() - 7)
+        }
+        return result
+    }
+
     // TODO use JS Intl.RelativeTimeFormat in Qt 6?
-    function formatRelativeTimestamp(timestamp) {
+    function formatRelativeTimestamp(timestamp, weekFromBeginning=false) {
         const now = new Date()
         const value = d.readDate(timestamp)
         const loc = Qt.locale()
         const formatString = d.fixupTimeFormatString(loc.timeFormat(Locale.ShortFormat)) // format string for the time part
-        const dayDifference = daysBetween(d.readDate(timestamp), now)
+        const dayDifference = daysBetween(value, now)
 
         // within last day, 2 or 7 days
         if (dayDifference < 1) // today -> "Today 14:23"
@@ -303,8 +324,17 @@ QtObject {
         if (dayDifference < 2) // yesterday -> "Yesterday 14:23"
             return qsTr("Yesterday %1").arg(value.toLocaleTimeString(loc, formatString))
 
-        if (dayDifference < 7) // last 7 days -> "Mon 14:23"
+        let isLastWeek = false
+        if (weekFromBeginning) { // Use only for date from beggining of the week
+            const daysToBeginingOfThisWeek = daysTo(value, getFirstDayOfTheCurrentWeek())
+            isLastWeek = daysToBeginingOfThisWeek >= 0
+        } else {
+            isLastWeek = dayDifference < 7
+        }
+
+        if (isLastWeek) { // last 7 days -> "Mon 14:23"
             return qsTr("%1 %2").arg(loc.standaloneDayName(value.getDay(), Locale.ShortFormat)).arg(value.toLocaleTimeString(loc, formatString))
+        }
 
         // otherwise
         var fullFormatString = d.fixupTimeFormatString(loc.dateTimeFormat(Locale.ShortFormat))
