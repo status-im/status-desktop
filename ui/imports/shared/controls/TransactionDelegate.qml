@@ -523,6 +523,10 @@ StatusListItem {
 
     // subtitle
     subTitle: {
+        if (root.loading) {
+            return "dummy text dummy text dummy text dummy text dummy text dummy text"
+        }
+
         if (!root.isModelDataValid) {
             return ""
         }
@@ -542,7 +546,7 @@ StatusListItem {
             return qsTr("%1 to %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
         }
     }
-    statusListItemSubTitle.maximumLoadingStateWidth: 300
+    statusListItemSubTitle.maximumLoadingStateWidth: 400
     statusListItemSubTitle.customColor: Theme.palette.directColor1
     statusListItemSubTitle.font.pixelSize: root.loading ? d.loadingPixelSize : d.subtitlePixelSize
     statusListItemTagsRowLayout.anchors.topMargin: 4 // Spacing between title row nad subtitle row

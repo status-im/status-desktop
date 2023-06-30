@@ -71,11 +71,14 @@ QtObject:
     self.hasMore = hasMore
     self.hasMoreChanged()
 
+  proc resetModel*(self: Model, newEntries: seq[ActivityEntry]) =
+    self.beginResetModel()
+    self.entries = newEntries
+    self.endResetModel()
+
   proc setEntries*(self: Model, newEntries: seq[ActivityEntry], offset: int, hasMore: bool) =
     if offset == 0:
-      self.beginResetModel()
-      self.entries = newEntries
-      self.endResetModel()
+      self.resetModel(newEntries)
     else:
       let parentModelIndex = newQModelIndex()
       defer: parentModelIndex.delete

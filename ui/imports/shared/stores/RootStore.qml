@@ -38,6 +38,7 @@ QtObject {
     property var history: typeof walletSectionTransactions !== "undefined" ? walletSectionTransactions
                                                                           : null
     property var historyTransactions: Global.appIsReady? walletSection.activityController.model : null
+    readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSection.activityController.loadingData
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
     property var marketValueStore: TokenMarketValuesStore{}
@@ -175,7 +176,7 @@ QtObject {
     function fetchMoreTransactions() {
         if (RootStore.historyTransactions.count === 0
                 || !RootStore.historyTransactions.hasMore
-                || walletSection.activityController.loadingData)
+                || loadingHistoryTransactions)
             return
         walletSection.activityController.loadMoreItems()
     }

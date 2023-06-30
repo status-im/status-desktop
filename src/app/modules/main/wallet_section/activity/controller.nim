@@ -181,21 +181,26 @@ QtObject:
     self.errorCodeChanged()
 
   proc processResponse(self: Controller, response: JsonNode) =
-    defer: self.setLoadingData(false)
-
     let res = fromJson(response, backend_activity.FilterResponse)
 
     defer: self.setErrorCode(res.errorCode.int)
 
-    if res.errorCode != ErrorCodeSuccess:
-      error "error fetching activity entries: ", res.errorCode
+    if res.errorCode == ErrorCodeFilterCanceled and self.model.getCount() == 0:
+      # Only successful initial response can change loading flag
       return
 
+    if res.errorCode != ErrorCodeSuccess:
+      self.setLoadingData(false)
+      error "error fetching activity entries: ", res.errorCode
+      return
+    
     let entries = self.backendToPresentation(res.activities)
     self.model.setEntries(entries, res.offset, res.hasMore)
+    self.setLoadingData(false)
 
   proc updateFilter*(self: Controller) {.slot.} =
     self.setLoadingData(true)
+    self.model.resetModel(@[])
 
     let response = backend_activity.filterActivityAsync(self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
