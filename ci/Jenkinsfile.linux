@@ -84,9 +84,7 @@ pipeline {
       steps { script {
         /* Temporary hack-fix for failing Linux builds:
          * https://github.com/status-im/infra-ci/issues/88 */
-        timeout(20) { retry(20) {
-          sh 'make nim_status_client'
-        } }
+        sh 'make nim_status_client'
       } }
       post {
         failure {
@@ -94,28 +92,6 @@ pipeline {
           archiveArtifacts('core.*')
           archiveArtifacts('coredump.*')
           archiveArtifacts('/var/lib/systemd/coredump/*')
-        }
-      }
-    }
-
-    stage('Package') {
-      steps { script {
-        linux.bundle('tgz-linux')
-      } }
-    }
-
-    stage('Parallel Upload') {
-      parallel {
-        stage('Upload') {
-          steps { script {
-            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
-            jenkins.setBuildDesc(AppImage: env.PKG_URL)
-          } }
-        }
-        stage('Archive') {
-          steps { script {
-            archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
-          } }
         }
       }
     }
