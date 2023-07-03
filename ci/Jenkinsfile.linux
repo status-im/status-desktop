@@ -82,13 +82,11 @@ pipeline {
 
     stage('Client') {
       steps { script {
-        /* Temporary hack-fix for failing Linux builds:
-         * https://github.com/status-im/infra-ci/issues/88 */
-        sh 'make nim_status_client'
+        sh 'strace -I 1 -s 128 -v -ff -o strace.log make nim_status_client'
       } }
       post {
         failure {
-          archiveArtifacts('strace.log')
+          archiveArtifacts('strace.log.*')
           archiveArtifacts('core.*')
           archiveArtifacts('coredump.*')
           archiveArtifacts('/var/lib/systemd/coredump/*')
@@ -99,7 +97,7 @@ pipeline {
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
-    //cleanup { sh './scripts/clean-git.sh' }
+    cleanup { sh './scripts/clean-git.sh' }
   }
 }
 
