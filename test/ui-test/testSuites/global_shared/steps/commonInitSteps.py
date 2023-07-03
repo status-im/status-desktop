@@ -135,10 +135,7 @@ def the_user_lands_on_the_community_portal_section():
 
 
 def the_user_creates_a_community(name: str, description: str, intro: str, outro: str):
-    if name not in StatusMainScreen().navigation_panel.communities:
-        StatusCommunityPortalScreen().create(name, description, intro, outro)
-    else:
-        StatusMainScreen().navigation_panel.open_community(name)
+    StatusCommunityPortalScreen().create(name, description, intro, outro)
 
 
 def the_user_lands_on_the_community(name: str):

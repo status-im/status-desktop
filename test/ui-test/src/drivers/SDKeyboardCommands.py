@@ -13,6 +13,6 @@ def press_escape(objName: str):
 def press_select_all(objName: str):
     click_obj_by_name(objName)
     if sys.platform == "darwin":
-        native_type("<Command+a>");
+        native_type("<Command+a>")
     else:
-        native_type("<Ctrl+a>");
+        native_type("<Ctrl+a>")

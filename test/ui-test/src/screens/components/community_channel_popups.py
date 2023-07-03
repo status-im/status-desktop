@@ -4,10 +4,10 @@ from drivers.SquishDriver import *
 from .base_popup import BasePopup
 
 
-class NewChannelPopup(BasePopup):
+class ChannelPopup(BasePopup):
 
     def __init__(self):
-        super(NewChannelPopup, self).__init__()
+        super(ChannelPopup, self).__init__()
         self._name_text_edit = TextEdit('createOrEditCommunityChannelNameInput_TextEdit')
         self._description_text_sdit = TextEdit('createOrEditCommunityChannelDescriptionInput_TextEdit')
         self._save_create_button = Button('createOrEditCommunityChannelBtn_StatusButton')
@@ -17,8 +17,21 @@ class NewChannelPopup(BasePopup):
         self._name_text_edit.wait_until_appears(timeout_msec)
         return self
 
+
+class NewChannelPopup(ChannelPopup):
+
     def create(self, name: str, description: str):
         self._name_text_edit.text = name
         self._description_text_sdit.text = description
+        self._save_create_button.click()
+        self.wait_until_hidden()
+
+
+class EditChannelPopup(ChannelPopup):
+
+    def edit(self, name: str, description: str = None):
+        self._name_text_edit.text = name
+        if description  is not None:
+            self._description_text_sdit.text = description
         self._save_create_button.click()
         self.wait_until_hidden()

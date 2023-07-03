@@ -68,6 +68,7 @@ createOrEditCommunityCategoryNameInput_TextEdit = {"container": statusDesktop_ma
 createOrEditCommunityCategoryChannelList_ListView = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityCategoryChannelList", "type": "StatusListView", "visible": True}
 createOrEditCommunityCategoryChannelList_ListItem_Placeholder = {"container": createOrEditCommunityCategoryChannelList_ListView, "objectName": "%NAME%", "type": "StatusListItem", "visible": True}
 createOrEditCommunityCategoryBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityCategoryBtn", "type": "StatusButton", "visible": True}
+category_item_channel_StatusListItem = {"container": createOrEditCommunityCategoryChannelList_ListView, "objectName": RegularExpression("category_item_name_*"), "type": "StatusListItem", "visible": True}
 
 # Community settings
 communitySettings_EditCommunity_Button = {"container": statusDesktop_mainWindow, "objectName": "communityOverviewSettingsEditCommunityButton", "type": "StatusButton", "visible": True}
@@ -88,6 +89,7 @@ communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWi
 communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelSelectColorButton", "type": "StatusButton", "visible": True}
 
 # Community Overview
+mainWindow_StatusSectionLayout_ContentItem = {"container": statusDesktop_mainWindow, "objectName": "StatusSectionLayout", "type": "ContentItem", "visible": True}
 communityOverview_Back_up_Banner = {"container": statusDesktop_mainWindow, "objectName": "backUpBanner", "type": "BannerPanel", "visible": True}
 communityOverview_Back_up_StatusButton = {"container": communityOverview_Back_up_Banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
 communityOverview_Airdrop_Tokens_Banner = {"container": statusDesktop_mainWindow, "objectName": "airdropBanner", "type": "BannerPanel", "visible": True}

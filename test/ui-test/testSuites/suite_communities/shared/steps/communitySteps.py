@@ -103,7 +103,7 @@ def step(context, community_channel_name, community_channel_description, method)
 
 @When("the admin edits the current community channel to the name \"|any|\"")
 def step(context, new_community_channel_name):
-    _statusCommunityScreen.edit_community_channel(new_community_channel_name)        
+    _statusCommunityScreen.top_panel.open_edit_channel_popup().edit(new_community_channel_name)        
 
 @When("the admin creates a community category named \"|any|\", with channels \"|any|\" and with the method \"|any|\"")
 def step(context, category_name, channel_names, method):
@@ -111,11 +111,14 @@ def step(context, category_name, channel_names, method):
 
 @When("the admin renames the category \"|any|\" to \"|any|\" and toggles the channels \"|any|\"")
 def step(context, community_category_name, new_community_category_name, community_channel_names):
-    _statusCommunityScreen.edit_community_category(community_category_name, new_community_category_name, community_channel_names)    
+    edit_ctegory_popap = _statusCommunityScreen.left_panel.open_edit_category_popup(community_category_name)
+    edit_ctegory_popap.edit(new_community_category_name, [name.strip() for name in community_channel_names.split(',')])
+
 
 @When("the admin deletes category named \"|any|\"")
 def step(context, community_category_name):
-    _statusCommunityScreen.delete_community_category(community_category_name) 
+    _statusCommunityScreen.left_panel.delete_category(community_category_name)
+
     
 @When("the admin renames the community to \"|any|\" and description to \"|any|\" and color to \"|any|\"")
 def step(context, new_community_name, new_community_description, new_community_color):
@@ -123,16 +126,16 @@ def step(context, new_community_name, new_community_description, new_community_c
 
 @When("the admin changes the community name to \"|any|\"")
 def step(context, new_community_name):
-    _statusCommunityScreen.open_edit_community_by_community_header()
-    _statusCommunityScreen.change_community_name(new_community_name)
-    _statusCommunityScreen.save_community_changes()
+    community_settings = _statusCommunityScreen.left_panel.open_community_settings()
+    edit_community_view = community_settings.left_panel.open_overview().open_edit_community_view()
+    edit_community_view.edit(name=new_community_name)
 
 @When("the admin changes the community description to \"|any|\"") 
 def step(context, new_community_description):
-    _statusCommunityScreen.open_edit_community_by_community_header()
-    _statusCommunityScreen.change_community_description(new_community_description)
-    _statusCommunityScreen.save_community_changes()
-
+    community_settings = _statusCommunityScreen.left_panel.open_community_settings()
+    edit_community_view = community_settings.left_panel.open_overview().open_edit_community_view()
+    edit_community_view.edit(description=new_community_description)
+    
 @When("the admin changes the community color to \"|any|\"")
 def step(context, new_community_color):
     _statusCommunityScreen.open_edit_community_by_community_header()
@@ -149,7 +152,7 @@ def step(context, emoji_description: str):
 
 @When("the admin deletes current channel")
 def step(context):
-    _statusCommunityScreen.delete_current_community_channel()
+    _statusCommunityScreen.top_panel.delete_channel()
 
 @When("the admin invites the user named |any| to the community with message |any|")
 def step(context, user_name, message):
@@ -304,7 +307,15 @@ def the_channel_count_is(community_channel_count: int):
     )
     
 def the_admin_creates_a_community_category(name: str, channels: str, method: str):
-    _statusCommunityScreen.create_community_category(name, channels, method)
+    if method == 'bottom_menu':
+        create_category_popup = _statusCommunityScreen.left_panel.open_new_category_popup()
+    else:
+        create_category_popup = _statusCommunityScreen.left_panel.open_new_category_popup_by_context_menu()
+    create_category_popup.create(name, channels.split(','))
+    
     
 def the_category_contains_channels(category_name: str, channels: str):
-    _statusCommunityScreen.verify_category_contains_channels(category_name, channels)
+    category = _statusCommunityScreen.left_panel.get_category(category_name)
+    for channel_name in channels.split(','):
+        channel = _statusCommunityScreen.left_panel.get_channel(channel_name)
+        assert channel.category_id == category.id
