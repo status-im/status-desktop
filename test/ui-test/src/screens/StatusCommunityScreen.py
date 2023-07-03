@@ -494,9 +494,21 @@ class StatusCommunityScreen:
         verify_values_equal(str(image_obj.messageContentType), str(MessageContentType.IMAGE.value), "The last message is not an image.")
 
     def send_test_image(self, fixtures_root: str, multiple_images: bool, message: str):
+
+        chat_input = wait_and_get_obj(CommunityScreenComponents.CHAT_INPUT_ROOT.value)
+        chat_input.selectImageString(fixtures_root + "images/ui-test-image0.jpg")
+        if (multiple_images):
+            # self._select_test_image(fixtures_root, 1)
+            chat_input.selectImageString(fixtures_root + "images/ui-test-image1.jpg")
+        if (message != ""):
+            # Type the message in the input (focus should be on the chat input)
+            native_type(message)
+        # Send the image (and message if present)
+        native_type("<Return>")
+
+    def semd_image_via_dialog(self, fixtures_root: str, multiple_images: bool, message: str):
         self.send_image_button.click()
         select_dialog = SelectDialog()
-        
         attach = [fixtures_root + "images/ui-test-image0.jpg"]
         if (multiple_images):
             attach.append(fixtures_root + "images/ui-test-image1.jpg")
