@@ -38,7 +38,7 @@ QtObject {
     property var history: typeof walletSectionTransactions !== "undefined" ? walletSectionTransactions
                                                                           : null
     property var historyTransactions: Global.appIsReady? walletSection.activityController.model : null
-    readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSection.activityController.loadingData
+    readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSection.activityController.status.loadingData
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
     property var marketValueStore: TokenMarketValuesStore{}

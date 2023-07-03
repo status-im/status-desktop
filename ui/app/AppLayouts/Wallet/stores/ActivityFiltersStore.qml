@@ -21,7 +21,7 @@ QtObject {
 
     // Time filters
     property int selectedTime: Constants.TransactionTimePeriod.All
-    property double fromTimestamp: activityController.startTimestamp * 1000
+    property double fromTimestamp: activityController.status.startTimestamp * 1000
     property double toTimestamp: new Date().valueOf()
     function setSelectedTimestamp(selcTime) {
         selectedTime = selcTime
@@ -137,7 +137,7 @@ QtObject {
 
 
     property var recentsList: activityController.recipientsModel
-    property bool loadingRecipients: activityController.loadingRecipients
+    property bool loadingRecipients: activityController.status.loadingRecipients
     property var recentsFilters: []
     function updateRecipientsModel() {
         activityController.updateRecipientsModel()
@@ -202,7 +202,7 @@ QtObject {
 
     function resetAllFilters() {
         selectedTime = Constants.TransactionTimePeriod.All
-        fromTimestamp = activityController.startTimestamp * 1000
+        fromTimestamp = activityController.status.startTimestamp * 1000
         toTimestamp = new Date().valueOf()
         activityController.setFilterTime(fromTimestamp/1000, toTimestamp/1000)
 
