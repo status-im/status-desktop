@@ -24,6 +24,7 @@ StatusListItem {
     property string ens
     property string chainShortNames
     property bool favourite: false
+    property bool areTestNetworksEnabled: false
     property var saveAddress: function (name, address, favourite, chainShortNames, ens) {}
     property var deleteSavedAddress: function (address, ens) {}
 
@@ -163,20 +164,30 @@ StatusListItem {
             }
         }
         StatusMenuSeparator { }
+
         StatusAction {
             text: qsTr("View on Etherscan")
             objectName: "viewOnEtherscanAction"
             assetSettings.name: "external"
             onTriggered: {
-                Global.openLink("https://etherscan.io/address/%1".arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                var baseUrl = Constants.networkExplorerLinks.etherscan
+                if (root.areTestNetworksEnabled) {
+                    baseUrl = Constants.networkExplorerLinks.goerliEtherscan
+                }
+                Global.openLink("%1/address/%2".arg(baseUrl).arg(d.visibleAddress ? d.visibleAddress : root.ens))
             }
         }
+
         StatusAction {
             text: qsTr("View on Arbiscan")
             objectName: "viewOnArbiscanAction"
             assetSettings.name: "external"
             onTriggered: {
-                Global.openLink("https://arbiscan.io/address/%1".arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                var baseUrl = Constants.networkExplorerLinks.arbiscan
+                if (root.areTestNetworksEnabled) {
+                    baseUrl = Constants.networkExplorerLinks.goerliArbiscan
+                }
+                Global.openLink("%1/address/%2".arg(baseUrl).arg(d.visibleAddress ? d.visibleAddress : root.ens))
             }
         }
         StatusAction {
@@ -184,7 +195,11 @@ StatusListItem {
             objectName: "viewOnOptimismExplorerAction"
             assetSettings.name: "external"
             onTriggered: {
-                Global.openLink("https://optimistic.etherscan.io/address/%1".arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                var baseUrl = Constants.networkExplorerLinks.optimistic
+                if (root.areTestNetworksEnabled) {
+                    baseUrl = Constants.networkExplorerLinks.goerliOptimistic
+                }
+                Global.openLink("%1/address/%2".arg(baseUrl).arg(d.visibleAddress ? d.visibleAddress : root.ens))
             }
         }
         StatusMenuSeparator { }

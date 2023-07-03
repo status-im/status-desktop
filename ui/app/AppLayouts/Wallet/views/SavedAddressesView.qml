@@ -122,6 +122,7 @@ Item {
             favourite: model.favourite
             store: RootStore
             contactsStore: root.contactsStore
+            areTestNetworksEnabled: RootStore.areTestNetworksEnabled
             onOpenSendModal: root.sendModal.open(recipient);
             saveAddress: function(name, address, favourite, chainShortNames, ens) {
                 _internal.saveAddress(name, address, favourite, chainShortNames, ens)
