@@ -8,11 +8,7 @@ import utils 1.0
     \brief Token object properties definition.
 */
 QtObject {
-    enum Type {
-        Asset, Collectible
-    }
-
-    property int type: TokenObject.Type.Asset
+    property int type: Constants.TokenType.ERC20
 
     // Unique identifier:
     property string key

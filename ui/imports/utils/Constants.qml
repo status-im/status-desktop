@@ -948,8 +948,8 @@ QtObject {
 
     enum TokenType {
         Unknown = 0,
-        ERC20 = 1,
-        ERC721 = 2
+        ERC20 = 1, // Asset
+        ERC721 = 2 // Collectible
     }
 
     // Mirrors src/backend/activity.nim ActivityStatus

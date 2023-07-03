@@ -70,7 +70,7 @@ StackView {
         resetNavigation()
 
         const properties = { isAssetView }
-        root.push(newTokenView, properties, StackView.Immediate)
+        root.push(newTokenViewComponent, properties, StackView.Immediate)
     }
 
     property string previousPageName: depth > 1 ? qsTr("Back") : ""
@@ -84,15 +84,14 @@ StackView {
 
             text: qsTr("Mint token")
 
-            onClicked: root.push(newTokenView, StackView.Immediate)
+            onClicked: root.push(newTokenViewComponent, StackView.Immediate)
         }
 
         contentItem: MintedTokensView {
             model: root.tokensModel
 
             onItemClicked: {
-                const properties = { preview: false, tokenKey }
-                root.push(tokenView, properties, StackView.Immediate)
+                root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
             }
         }
     }
@@ -105,17 +104,17 @@ StackView {
 
     // Mint tokens possible view contents:
     Component {
-        id: newTokenView
+        id: newTokenViewComponent
 
         SettingsPage {
             id: newTokenPage
 
             property TokenObject asset: TokenObject{
-                type: TokenObject.Type.Asset
+                type: Constants.TokenType.ERC20
             }
 
             property TokenObject collectible: TokenObject {
-                type: TokenObject.Type.Collectible
+                type: Constants.TokenType.ERC721
             }
 
             property bool isAssetView: false
@@ -193,7 +192,7 @@ StackView {
                                 token: isAssetView ? asset : collectible
                             }
 
-                            root.push(previewTokenView, properties,
+                            root.push(previewTokenViewComponent, properties,
                                       StackView.Immediate)
                         }
                     }
@@ -203,7 +202,7 @@ StackView {
     }
 
     Component {
-        id: previewTokenView
+        id: previewTokenViewComponent
 
         SettingsPage {
             id: tokenPreviewPage
@@ -236,7 +235,8 @@ StackView {
                     id: signMintPopup
 
                     anchors.centerIn: Overlay.overlay
-                    title: qsTr("Sign transaction - Mint %1 token").arg(signMintPopup.tokenName)
+                    title: qsTr("Sign transaction - Mint %1 token").arg(
+                               signMintPopup.tokenName)
                     tokenName: preview.name
                     accountName: preview.accountName
                     networkName: preview.chainName
@@ -246,9 +246,10 @@ StackView {
 
                     onOpened: {
                         root.setFeeLoading()
-                        root.signMintTransactionOpened(preview.chainId, preview.accountAddress,
-                                                       preview.isAssetView ? Constants.TokenType.ERC20
-                                                                           : Constants.TokenType.ERC721)
+                        root.signMintTransactionOpened(
+                                    preview.chainId, preview.accountAddress,
+                                    preview.isAssetView ? Constants.TokenType.ERC20
+                                                        : Constants.TokenType.ERC721)
                     }
                     onCancelClicked: close()
                     onSignTransactionClicked: preview.signMintTransaction()
@@ -257,265 +258,274 @@ StackView {
         }
     }
 
-    Component {
-        id: tokenView
+    component TokenViewPage: SettingsPage {
+        id: tokenViewPage
 
-        SettingsPage {
-            id: tokenViewPage
+        readonly property alias token: view.token
 
-            property string tokenKey
+        property alias tokenOwnersModel: view.tokenOwnersModel
+        property alias airdropKey: view.airdropKey
 
-            title: view.name
-            subtitle: view.symbol
+        title: view.name
+        subtitle: view.symbol
 
-            buttons: [
-                StatusButton {
-                    text: qsTr("Delete")
-                    type: StatusBaseButton.Type.Danger
+        buttons: [
+            StatusButton {
+                text: qsTr("Delete")
+                type: StatusBaseButton.Type.Danger
 
-                    visible: view.deployState === Constants.ContractTransactionStatus.Failed
+                visible: view.deployState === Constants.ContractTransactionStatus.Failed
 
-                    onClicked: deleteTokenAlertPopup.open()
-                },
-                StatusButton {
-                    text: qsTr("Retry mint")
+                onClicked: deleteTokenAlertPopup.open()
+            },
+            StatusButton {
+                text: qsTr("Retry mint")
 
-                    visible: view.deployState === Constants.ContractTransactionStatus.Failed
+                visible: view.deployState === Constants.ContractTransactionStatus.Failed
 
-                    onClicked: {
-                        const isAssetView = view.isAssetView
+                onClicked: {
+                    // https://bugreports.qt.io/browse/QTBUG-91917
+                    var isAssetView = tokenViewPage.token.type === Constants.TokenType.ERC20
 
-                        // copy TokenObject
-                        const tokenObject = tokenObjectComponent.createObject(
-                                              null, view.token)
+                    // copy TokenObject
+                    var tokenObject = tokenObjectComponent.createObject(
+                                          null, view.token)
 
-                        // Then move on to the new token view, but token pre-filled:
-                        const properties = {
-                            isAssetView,
-                            referenceName: tokenObject.name,
-                            referenceSymbol: tokenObject.symbol,
-                            validationMode: StatusInput.ValidationMode.Always,
-                            [isAssetView ? "asset" : "collectible"]: tokenObject
-                        }
-
-                        const tokenView = root.push(newTokenView, properties,
-                                                    StackView.Immediate)
-
-                        // cleanup dynamically created TokenObject
-                        tokenView.Component.destruction.connect(() => tokenObject.destroy())
+                    // Then move on to the new token view, but token pre-filled:
+                    var properties = {
+                        isAssetView,
+                        referenceName: tokenObject.name,
+                        referenceSymbol: tokenObject.symbol,
+                        validationMode: StatusInput.ValidationMode.Always,
+                        [isAssetView ? "asset" : "collectible"]: tokenObject
                     }
-                }
-            ]
 
-            Instantiator {
-                id: instantiator
+                    var tokenView = root.push(newTokenViewComponent, properties,
+                                                StackView.Immediate)
 
-                model: SortFilterProxyModel {
-                    sourceModel: root.tokensModel
-                    filters: ValueFilter {
-                        roleName: "contractUniqueKey"
-                        value: tokenViewPage.tokenKey
-                    }
-                }
-
-                delegate: QtObject {
-                    component Bind: Binding { target: view }
-                    readonly property list<Binding> bindings: [
-                        Bind { property: "tokenOwnersModel"; value: model.tokenOwnersModel },
-                        Bind { property: "tokenType"; value: model.tokenType },
-                        Bind { property: "airdropKey"; value: model.symbol } // TO BE REMOVED: When airdrop backend is ready to use token key instead of symbol
-                    ]
-
-                    component BindToken: Binding { target: view.token }
-                    readonly property list<Binding> tokenBindings: [
-                        BindToken { property: "type"; value: model.tokenType === Constants.TokenType.ERC20
-                                                             ? TokenObject.Type.Asset : TokenObject.Type.Collectible},
-                        BindToken { property: "key"; value: model.contractUniqueKey },
-                        BindToken { property: "deployState"; value: model.deployState },
-                        BindToken { property: "burnState"; value: model.burnState },
-                        BindToken { property: "name"; value: model.name },
-                        BindToken { property: "artworkSource"; value: model.image },
-                        BindToken { property: "symbol"; value: model.symbol },
-                        BindToken { property: "description"; value: model.description },
-                        BindToken { property: "supply"; value: model.supply },
-                        BindToken { property: "infiniteSupply"; value: model.infiniteSupply },
-                        BindToken { property: "remainingTokens"; value: model.remainingSupply },
-                        BindToken { property: "chainId"; value: model.chainId },
-                        BindToken { property: "chainName"; value: model.chainName },
-                        BindToken { property: "chainIcon"; value: model.chainIcon },
-                        BindToken { property: "accountName"; value: model.accountName },
-                        BindToken { property: "accountAddress"; value: model.accountAddress }, // TODO: Backend
-                        BindToken { property: "transferable"; value: model.transferable },
-                        BindToken { property: "remotelyDestructState"; value: model.remotelyDestructState },
-                        BindToken { property: "remotelyDestruct"; value: model.remoteSelfDestruct },
-                        BindToken { property: "decimals"; value: model.decimals }
-                    ]
+                    // cleanup dynamically created TokenObject
+                    tokenView.Component.destruction.connect(() => tokenObject.destroy())
                 }
             }
+        ]
 
-            contentItem: CommunityTokenView {
-                id: view
+        contentItem: CommunityTokenView {
+            id: view
 
-                property string airdropKey // TO REMOVE: Temporal property until airdrop backend is not ready to use token key instead of symbol
-                property int tokenType
+            property string airdropKey // TO REMOVE: Temporal property until airdrop backend is not ready to use token key instead of symbol
 
-                viewWidth: root.viewWidth
+            viewWidth: root.viewWidth
 
-                token: TokenObject {}
+            token: TokenObject {}
 
-                onGeneralAirdropRequested: {
-                    root.airdropToken(view.airdropKey, view.tokenType, []) // tokenKey instead when backend airdrop ready to use key instead of symbol
-                }
-
-                onAirdropRequested: {
-                    root.airdropToken(view.airdropKey, view.tokenType, [address]) // tokenKey instead when backend airdrop ready to use key instead of symbol
-                }
-
-                onRemoteDestructRequested: {
-                    remotelyDestructPopup.open()
-                    // TODO: set the address selected in the popup's list
-                }
+            onGeneralAirdropRequested: {
+                root.airdropToken(view.airdropKey, view.token.type, []) // tokenKey instead when backend airdrop ready to use key instead of symbol
             }
 
-            footer: MintTokensFooterPanel {
-                id: footer
+            onAirdropRequested: {
+                root.airdropToken(view.airdropKey, view.token.type, [address]) // tokenKey instead when backend airdrop ready to use key instead of symbol
+            }
 
-                readonly property TokenObject token: view.token
+            onRemoteDestructRequested: {
+                remotelyDestructPopup.open()
+                // TODO: set the address selected in the popup's list
+            }
+        }
 
-                readonly property bool deployStateCompleted:
-                    token.deployState === Constants.ContractTransactionStatus.Completed
+        footer: MintTokensFooterPanel {
+            id: footer
 
-                function closePopups() {
-                    remotelyDestructPopup.close()
-                    alertPopup.close()
-                    signTransactionPopup.close()
-                    burnTokensPopup.close()
-                }
+            readonly property TokenObject token: view.token
 
-                airdropEnabled: deployStateCompleted &&
-                                (token.infiniteSupply ||
-                                 token.remainingTokens !== 0)
+            readonly property bool deployStateCompleted:
+                token.deployState === Constants.ContractTransactionStatus.Completed
 
-                remotelyDestructEnabled: deployStateCompleted &&
-                                         !!view.tokenOwnersModel &&
-                                         view.tokenOwnersModel.count > 0
+            function closePopups() {
+                remotelyDestructPopup.close()
+                alertPopup.close()
+                signTransactionPopup.close()
+                burnTokensPopup.close()
+            }
 
-                burnEnabled: deployStateCompleted
+            airdropEnabled: deployStateCompleted &&
+                            (token.infiniteSupply ||
+                             token.remainingTokens !== 0)
 
-                remotelyDestructVisible: token.remotelyDestruct
-                burnVisible: !token.infiniteSupply
+            remotelyDestructEnabled: deployStateCompleted &&
+                                     !!view.tokenOwnersModel &&
+                                     view.tokenOwnersModel.count > 0
 
-                onAirdropClicked:root.airdropToken(view.airdropKey, // tokenKey instead when backend airdrop ready to use key instead of symbol
-                                      view.tokenType, [])
+            burnEnabled: deployStateCompleted
 
-                onRemotelyDestructClicked: remotelyDestructPopup.open()
-                onBurnClicked: burnTokensPopup.open()
+            remotelyDestructVisible: token.remotelyDestruct
+            burnVisible: !token.infiniteSupply
 
-                // helper properties to pass data through popups
-                property var remotelyDestructTokensList
-                property int burnAmount
+            onAirdropClicked:root.airdropToken(view.airdropKey, // tokenKey instead when backend airdrop ready to use key instead of symbol
+                                  view.token.type, [])
 
-                RemotelyDestructPopup {
-                    id: remotelyDestructPopup
+            onRemotelyDestructClicked: remotelyDestructPopup.open()
+            onBurnClicked: burnTokensPopup.open()
 
-                    collectibleName: view.token.name
-                    model: view.tokenOwnersModel || null
-                    destroyOnClose: false
+            // helper properties to pass data through popups
+            property var remotelyDestructTokensList
+            property int burnAmount
 
-                    onRemotelyDestructClicked: {
-                        footer.remotelyDestructTokensList = remotelyDestructTokensList
-                        alertPopup.tokenCount = tokenCount
-                        alertPopup.open()
-                    }
-                }
+            RemotelyDestructPopup {
+                id: remotelyDestructPopup
 
-                AlertPopup {
-                    id: alertPopup
+                collectibleName: view.token.name
+                model: view.tokenOwnersModel || null
+                destroyOnClose: false
 
-                    property int tokenCount
-
-                    destroyOnClose: false
-
-                    title: qsTr("Remotely destruct %n token(s)", "", tokenCount)
-                    acceptBtnText: qsTr("Remotely destruct")
-                    alertText: qsTr("Continuing will destroy tokens held by members and revoke any permissions they are given. To undo you will have to issue them new tokens.")
-
-                    onAcceptClicked: {
-                        signTransactionPopup.isRemotelyDestructTransaction = true
-                        signTransactionPopup.open()
-                    }
-                }
-
-                SignTokenTransactionsPopup {
-                    id: signTransactionPopup
-
-                    property bool isRemotelyDestructTransaction
-                    readonly property alias tokenKey: tokenViewPage.tokenKey
-
-                    function signTransaction() {
-                        root.setFeeLoading()
-
-                        if(signTransactionPopup.isRemotelyDestructTransaction)
-                            root.remotelyDestructCollectibles(
-                                        footer.remotelyDestructTokensList, tokenKey)
-                        else
-                            root.burnToken(tokenKey, footer.burnAmount)
-
-                        footerPanel.closePopups()
-                    }
-
-                    title: signTransactionPopup.isRemotelyDestructTransaction
-                           ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title)
-                           : qsTr("Sign transaction - Burn %1 tokens").arg(root.title)
-
-                    tokenName: footer.token.name
-                    accountName: footer.token.accountName
-                    networkName: footer.token.chainName
-                    feeText: root.feeText
-                    isFeeLoading: root.isFeeLoading
-                    errorText: root.errorText
-
-                    onOpened: {
-                        root.setFeeLoading()
-                        signTransactionPopup.isRemotelyDestructTransaction
-                                ? root.signRemoteDestructTransactionOpened(footer.remotelyDestructTokensList, tokenKey)
-                                : root.signBurnTransactionOpened(tokenKey, footer.burnAmount)
-                    }
-                    onCancelClicked: close()
-                    onSignTransactionClicked: signTransaction()
-                }
-
-                BurnTokensPopup {
-                    id: burnTokensPopup
-
-                    communityName: root.communityName
-                    tokenName: footer.token.name
-                    remainingTokens: footer.token.remainingTokens
-                    tokenSource: footer.token.artworkSource
-
-                    onBurnClicked: {
-                        footer.burnAmount = burnAmount
-                        signTransactionPopup.isRemotelyDestructTransaction = false
-                        signTransactionPopup.open()
-                    }
+                onRemotelyDestructClicked: {
+                    footer.remotelyDestructTokensList = remotelyDestructTokensList
+                    alertPopup.tokenCount = tokenCount
+                    alertPopup.open()
                 }
             }
 
             AlertPopup {
-                id: deleteTokenAlertPopup
+                id: alertPopup
 
-                readonly property alias tokenName: view.token.name
+                property int tokenCount
 
-                width: 521
-                title: qsTr("Delete %1").arg(tokenName)
-                acceptBtnText: qsTr("Delete %1 token").arg(tokenName)
-                alertText: qsTr("%1 is not yet minted, are you sure you want to delete it? All data associated with this token including its icon and description will be permanently deleted.").arg(tokenName)
+                destroyOnClose: false
+
+                title: qsTr("Remotely destruct %n token(s)", "", tokenCount)
+                acceptBtnText: qsTr("Remotely destruct")
+                alertText: qsTr("Continuing will destroy tokens held by members and revoke any permissions they are given. To undo you will have to issue them new tokens.")
 
                 onAcceptClicked: {
-                    root.deleteToken(tokenViewPage.tokenKey)
-                    root.navigateBack()
+                    signTransactionPopup.isRemotelyDestructTransaction = true
+                    signTransactionPopup.open()
+                }
+            }
+
+            SignTokenTransactionsPopup {
+                id: signTransactionPopup
+
+                property bool isRemotelyDestructTransaction
+                readonly property string tokenKey: tokenViewPage.token.key
+
+                function signTransaction() {
+                    root.setFeeLoading()
+
+                    if(signTransactionPopup.isRemotelyDestructTransaction)
+                        root.remotelyDestructCollectibles(
+                                    footer.remotelyDestructTokensList, tokenKey)
+                    else
+                        root.burnToken(tokenKey, footer.burnAmount)
+
+                    footerPanel.closePopups()
+                }
+
+                title: signTransactionPopup.isRemotelyDestructTransaction
+                       ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title)
+                       : qsTr("Sign transaction - Burn %1 tokens").arg(root.title)
+
+                tokenName: footer.token.name
+                accountName: footer.token.accountName
+                networkName: footer.token.chainName
+                feeText: root.feeText
+                isFeeLoading: root.isFeeLoading
+                errorText: root.errorText
+
+                onOpened: {
+                    root.setFeeLoading()
+                    signTransactionPopup.isRemotelyDestructTransaction
+                            ? root.signRemoteDestructTransactionOpened(footer.remotelyDestructTokensList, tokenKey)
+                            : root.signBurnTransactionOpened(tokenKey, footer.burnAmount)
                 }
                 onCancelClicked: close()
+                onSignTransactionClicked: signTransaction()
+            }
+
+            BurnTokensPopup {
+                id: burnTokensPopup
+
+                communityName: root.communityName
+                tokenName: footer.token.name
+                remainingTokens: footer.token.remainingTokens
+                tokenSource: footer.token.artworkSource
+
+                onBurnClicked: {
+                    footer.burnAmount = burnAmount
+                    signTransactionPopup.isRemotelyDestructTransaction = false
+                    signTransactionPopup.open()
+                }
+            }
+        }
+
+        AlertPopup {
+            id: deleteTokenAlertPopup
+
+            readonly property alias tokenName: view.token.name
+
+            width: 521
+            title: qsTr("Delete %1").arg(tokenName)
+            acceptBtnText: qsTr("Delete %1 token").arg(tokenName)
+            alertText: qsTr("%1 is not yet minted, are you sure you want to delete it? All data associated with this token including its icon and description will be permanently deleted.").arg(tokenName)
+
+            onAcceptClicked: {
+                root.deleteToken(tokenViewPage.token.key)
+                root.navigateBack()
+            }
+            onCancelClicked: close()
+        }
+    }
+
+    Component {
+        id: tokenViewComponent
+
+        Item {
+            id: tokenViewPageWrapper
+
+            property string tokenKey
+
+            Repeater {
+                model: SortFilterProxyModel {
+                    sourceModel: root.tokensModel
+                    filters: ValueFilter {
+                        roleName: "contractUniqueKey"
+                        value: tokenViewPageWrapper.tokenKey
+                    }
+                }
+
+                delegate: TokenViewPage {
+                    implicitWidth: 0
+                    anchors.fill: parent
+
+                    tokenOwnersModel: model.tokenOwnersModel
+                    airdropKey: model.symbol // TO BE REMOVED: When airdrop backend is ready to use token key instead of symbol
+
+                    token.accountName: model.accountName
+                    token.artworkSource: model.image
+                    token.chainIcon: model.chainIcon
+                    token.chainId: model.chainId
+                    token.chainName: model.chainName
+                    token.decimals: model.decimals
+                    token.deployState: model.deployState
+                    token.description: model.description
+                    token.infiniteSupply: model.infiniteSupply
+                    token.key: model.contractUniqueKey
+                    token.name: model.name
+                    token.remainingTokens: model.remainingSupply
+                    token.remotelyDestruct: model.remoteSelfDestruct
+                    token.supply: model.supply
+                    token.symbol: model.symbol
+                    token.transferable: model.transferable
+                    token.type: model.tokenType
+
+                    // TODO: Backend
+                    //token.accountAddress: model.accountAddress
+                    //token.burnState: model.burnState
+                    //token.remotelyDestructState: model.remotelyDestructState
+                }
+
+                onCountChanged: {
+                    if (count === 0)
+                        root.navigateBack()
+                }
             }
         }
     }

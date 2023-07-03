@@ -23,7 +23,7 @@ StatusScrollView {
     // https://bugreports.qt.io/browse/QTBUG-84269
     /* readonly */ property TokenObject token
 
-    readonly property bool isAssetView: token.type === TokenObject.Type.Asset
+    readonly property bool isAssetView: token.type === Constants.TokenType.ERC20
 
     readonly property string name: token.name
     readonly property string description: token.description
