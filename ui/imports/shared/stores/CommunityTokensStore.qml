@@ -29,12 +29,11 @@ QtObject {
         // TODO: Backend needs to create new role `accountName` and update this call accordingly
         // TODO: Backend will need to check if the collectibleItem has a valid tokenKey, so it means a deployment retry,
         // otherwise, it is a new deployment.
-        // TODO: Backend needs to modify the call to expect an image JSON file with cropped artwork information:
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(collectibleItem.artworkSource, collectibleItem.artworkCropRect)
         communityTokensModuleInst.deployCollectible(communityId, collectibleItem.accountAddress, collectibleItem.name,
                                                     collectibleItem.symbol, collectibleItem.description, collectibleItem.supply,
                                                     collectibleItem.infiniteSupply, collectibleItem.transferable, collectibleItem.remotelyDestruct,
-                                                    collectibleItem.chainId, collectibleItem.artworkSource/*instead: jsonArtworkFile*/)
+                                                    collectibleItem.chainId, jsonArtworkFile)
     }
 
     function deployAsset(communityId, assetItem)
@@ -42,11 +41,10 @@ QtObject {
         // TODO: Backend needs to create new role `accountName` and update this call accordingly
         // TODO: Backend will need to check if the collectibleItem has a valid tokenKey, so it means a deployment retry,
         // otherwise, it is a new deployment.
-        // TODO: Backend needs to modify the call to expect an image JSON file with cropped artwork information:
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(assetItem.artworkSource, assetItem.artworkCropRect)
         communityTokensModuleInst.deployAssets(communityId, assetItem.accountAddress, assetItem.name,
                                                assetItem.symbol, assetItem.description, assetItem.supply,
-                                               assetItem.infiniteSupply, assetItem.decimals, assetItem.chainId, assetItem.artworkSource/*instead: jsonArtworkFile*/)
+                                               assetItem.infiniteSupply, assetItem.decimals, assetItem.chainId, jsonArtworkFile)
     }
 
     function deleteToken(communityId, contractUniqueKey) {

@@ -1,4 +1,5 @@
 import NimQml, Tables, chronicles, json, stint, strutils, sugar, sequtils
+import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/modules/shared_models/currency_amount
@@ -288,7 +289,7 @@ QtObject:
       if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
       if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
 
-  proc deployContract*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, chainId: int) =
+  proc deployContract*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, croppedImageJson: string, chainId: int) =
     try:
       let txData = self.buildTransactionDataDto(addressFrom, chainId, "")
       if txData.source == parseAddress(ZERO_ADDRESS):
@@ -323,11 +324,13 @@ QtObject:
       communityToken.tokenUri = deploymentParams.tokenUri
       communityToken.chainId = chainId
       communityToken.deployState = DeployState.InProgress
-      communityToken.image = tokenMetadata.image
       communityToken.decimals = deploymentParams.decimals
 
+      var croppedImage = croppedImageJson.parseJson
+      croppedImage{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr))
+
       # save token to db
-      let communityTokenJson = tokens_backend.addCommunityToken(communityToken)
+      let communityTokenJson = tokens_backend.addCommunityToken(communityToken, $croppedImage)
       communityToken = communityTokenJson.result.toCommunityTokenDto()
       let data = CommunityTokenDeployedArgs(communityToken: communityToken, transactionHash: transactionHash)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYED, data)

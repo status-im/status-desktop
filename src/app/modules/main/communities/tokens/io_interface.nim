@@ -24,11 +24,11 @@ method burnCollectibles*(self: AccessInterface, communityId: string, contractUni
   raise newException(ValueError, "No implementation available")
 
 method deployCollectibles*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, transferable: bool,
-                      selfDestruct: bool, chainId: int, image: string) {.base.} =
+                           selfDestruct: bool, chainId: int, imageCropInfoJson: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deployAssets*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: int, infiniteSupply: bool, decimals: int,
-                      chainId: int, image: string) {.base.} =
+                     chainId: int, imageCropInfoJson: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
