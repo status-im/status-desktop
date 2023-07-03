@@ -32,6 +32,8 @@ QtObject {
     property var flatCollectibles: walletSectionCollectibles.model
     property var currentCollectible: walletSectionCurrentCollectible
 
+    property var areTestNetworksEnabled: networksModule.areTestNetworksEnabled
+
     property var savedAddresses: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model
         filters: [
