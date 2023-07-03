@@ -1,7 +1,7 @@
 ARG QT_VERSION=5.15.2
 
 # QT Installation Image --------------------------------------------------------
-FROM ubuntu:18.04 AS qt-install
+FROM ubuntu:20.04 AS qt-install
 
 ARG QT_VERSION
 
@@ -17,7 +17,7 @@ RUN python3 -m pip install setuptools \
  && python3 -m aqt install --output /opt/qt ${QT_VERSION} linux desktop -m qtwebengine
 
 # Build Image ------------------------------------------------------------------
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ARG LINUXDEPLOYQT_VERSION=continuous
 ARG QT_VERSION
@@ -41,7 +41,7 @@ RUN apt update -yq && apt install -yq software-properties-common \
  && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
  && apt update -yq && apt full-upgrade -yq && apt install -yq --no-install-recommends --fix-missing  \
     gnupg2 openssh-client ca-certificates locales sudo jq curl wget fuse s3cmd file llvm tk-dev xz-utils \
-    git make build-essential pkg-config cmake extra-cmake-modules gcc-9 g++-9 \
+    git make build-essential pkg-config extra-cmake-modules gcc-9 g++-9 \
     libgl1-mesa-dev libsm6 libice6 libfontconfig1 libdbus-1-3 libssl-dev libz-dev \
     zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev unixodbc-dev libpq-dev \
     libncurses5-dev libncursesw5-dev libpcsclite-dev  libpcre3-dev libnss3 \

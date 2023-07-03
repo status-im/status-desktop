@@ -7,7 +7,7 @@ https://ci.status.im/job/nim-status-client/
 
 ## Linux
 
-In order to build the Linux version of the application we use the ubuntu:18.04 Docker image where we install the Qt 5.15.2 provided by [aqt](https://github.com/miurahr/aqtinstall), linuxdeployqt provided by https://github.com/probonopd/linuxdeployqt and other dependencies (go, cmake, gcc etc.). We're using Ubuntu 18.04 to ensure glibc compatibility with the oldest still-supported LTS release and to comply with linuxdeployqt requirements.
+In order to build the Linux version of the application we use the `ubuntu:20.04` Docker image where we install the Qt 5.15.2 provided by [aqt](https://github.com/miurahr/aqtinstall), linuxdeployqt provided by https://github.com/probonopd/linuxdeployqt and other dependencies (go, cmake, gcc etc.). We're using Ubuntu 20.04 to ensure glibc compatibility with the oldest still-supported LTS release and to comply with linuxdeployqt requirements.
 
 The image is built with [`Dockerfile`](./Dockerfile) using:
 ```
