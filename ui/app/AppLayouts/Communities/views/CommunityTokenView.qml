@@ -21,7 +21,7 @@ StatusScrollView {
     property bool preview: false
 
     // https://bugreports.qt.io/browse/QTBUG-84269
-    /* readonly */ property TokenObject token
+    /* required */ property TokenObject token
 
     readonly property bool isAssetView: token.type === Constants.TokenType.ERC20
 
@@ -43,6 +43,9 @@ StatusScrollView {
     readonly property bool transferable: token.transferable
     readonly property string chainIcon: token.chainIcon
     readonly property int decimals: token.decimals
+
+    readonly property bool deploymentCompleted:
+        deployState === Constants.ContractTransactionStatus.Completed
 
     // Models:
     property var tokenOwnersModel
@@ -83,8 +86,7 @@ StatusScrollView {
         spacing: Style.current.padding
 
         RowLayout {
-            visible: !root.preview && ((root.deployState === Constants.ContractTransactionStatus.InProgress) ||
-                                       (root.deployState === Constants.ContractTransactionStatus.Failed))
+            visible: !root.preview && !root.deploymentCompleted
             spacing: Style.current.halfPadding
 
             StatusDotsLoadingIndicator { visible: (root.deployState === Constants.ContractTransactionStatus.InProgress) }
@@ -338,7 +340,7 @@ StatusScrollView {
         }
 
         SortableTokenHoldersPanel {
-            visible: !root.preview
+            visible: !root.preview && root.deploymentCompleted
 
             model: root.tokenOwnersModel
             tokenName: root.name
