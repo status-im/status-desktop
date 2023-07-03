@@ -1,22 +1,18 @@
 """It defines starting-up or driving-the-app-into-an-idle-state static methods outside bdd context that can be reused in different `hooks` as well as in specific bdd steps files."""
 
 import os
-from datetime import datetime
 
-import constants
-import configs
-import utils.FileManager as filesMngr
 import common.Common as common
 import configs
 import drivers.SquishDriver as driver
-
-from screens.StatusWelcomeScreen import StatusWelcomeScreen
-from screens.StatusMainScreen import StatusMainScreen
+import utils.FileManager as filesMngr
+from screens.SettingsScreen import SettingsScreen
 from screens.StatusChatScreen import StatusChatScreen
 from screens.StatusCommunityPortalScreen import StatusCommunityPortalScreen
 from screens.StatusCommunityScreen import StatusCommunityScreen
 from screens.StatusLoginScreen import StatusLoginScreen
-from screens.SettingsScreen import SettingsScreen
+from screens.StatusMainScreen import StatusMainScreen
+from screens.StatusWelcomeScreen import StatusWelcomeScreen
 
 # Project settings properties:
 _status_desktop_app_name = "nim_status_client"
@@ -24,7 +20,7 @@ _status_data_folder_path = "../../../../../Status/data"
 _status_fixtures_folder_path = "../../../fixtures/"
 _status_shared_images_path = "../shared/searchImages/"
 _status_qt_path = "../../../../../Status/qt"
-_app_closure_timeout = 2 #[seconds]
+_app_closure_timeout = 2  # [seconds]
 
 # Test context properties names:
 _aut_name = "aut_name"
@@ -124,32 +120,44 @@ def signs_up_with_seed_phrase_process_steps(context, seed_phrase: str, user: str
     the_user_signs_up(user, password)
     the_user_lands_on_the_signed_in_app()
 
+
 def the_user_opens_the_chat_section():
     main_screen = StatusMainScreen()
     main_screen.open_chat_section()
 
+
 def the_user_opens_the_community_portal_section():
-    main_screen = StatusMainScreen()
-    main_screen.open_community_portal()
+    StatusMainScreen().navigation_panel.open_community_portal()
+
 
 def the_user_lands_on_the_community_portal_section():
-    StatusCommunityPortalScreen()
+    StatusCommunityPortalScreen().wait_until_appears()
+
 
 def the_user_creates_a_community(name: str, description: str, intro: str, outro: str):
-    communitity_portal_screen = StatusCommunityPortalScreen()
-    communitity_portal_screen.create_community(name, description, intro, outro)
+    if name not in StatusMainScreen().navigation_panel.communities:
+        StatusCommunityPortalScreen().create(name, description, intro, outro)
+    else:
+        StatusMainScreen().navigation_panel.open_community(name)
+
 
 def the_user_lands_on_the_community(name: str):
-    community_screen = StatusCommunityScreen()
-    community_screen.verify_community_name(name)
+    assert driver.wait_for(StatusMainScreen().navigation_panel.is_community_selected(name),
+                           configs.squish.UI_LOAD_TIMEOUT_MSEC)
+
 
 def the_admin_creates_a_community_channel(name: str, description: str, method: str):
-    community_screen = StatusCommunityScreen()
-    community_screen.create_community_channel(name, description, method)
+    if method == 'bottom_menu':
+        create_channel_popup = StatusCommunityScreen().left_panel.open_new_channel_popup()
+    else:
+        create_channel_popup = StatusCommunityScreen().left_panel.open_new_channel_popup_by_context_menu()
+    create_channel_popup.create(name, description)
+
 
 def the_channel_is_open(name: str):
     chat_screen = StatusChatScreen()
     chat_screen.verify_chat_title(name)
+
 
 def the_user_logs_in(username: str, password: str):
     loginScreen = StatusLoginScreen()

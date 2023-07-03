@@ -40,8 +40,8 @@ Feature: Status Desktop community messages
 
     Scenario: The user pins and unpins messages
 		Given the user sends a chat message "Message 1"
-        When the user pins the message at index 0
-        Then the amount of pinned messages is 1
+      When the user pins the message at index 0
+      Then the amount of pinned messages is 1
 
         Given the user sends a chat message "Message 2"
         When the user pins the message at index 0

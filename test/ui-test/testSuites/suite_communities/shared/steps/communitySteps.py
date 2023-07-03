@@ -1,11 +1,13 @@
 import steps.commonInitSteps as init_steps
-from screens.StatusMainScreen import StatusMainScreen
+from drivers.SquishDriver import *
 from screens.StatusCommunityPortalScreen import StatusCommunityPortalScreen
 from screens.StatusCommunityScreen import StatusCommunityScreen
+from screens.StatusMainScreen import StatusMainScreen
 
 _statusCommunityScreen = StatusCommunityScreen()
 _statusCommunitityPortal = StatusCommunityPortalScreen()
 _statusMainScreen = StatusMainScreen()
+
 
 #########################
 ### PRECONDITIONS region:
@@ -33,7 +35,7 @@ def step(context: any, community_name: str):
 @Given("the channel named \"|any|\" is open")
 def step(context, community_channel_name): 
     the_channel_is_open(community_channel_name)
-    
+
 @Given("the channel count is |integer|")
 def step(context, community_channel_count: int):
     the_channel_count_is(community_channel_count)
@@ -247,10 +249,12 @@ def step(context, option):
 @Then("\"|any|\" should be an available option in Community->Manage->left navigation")
 def step(context, list):
     _statusCommunityScreen.verify_option_exists(list)
-    
+
+
 @Then("\"|any|\" should be in the list of uncategorized channels")
-def step(context, chat_name:str):
-    _statusCommunityScreen.check_channel_is_uncategorized(chat_name)
+def step(context, chat_name: str):
+    channels = _statusCommunityScreen.left_panel.channels
+    assert chat_name not in [channel.name for channel in channels if channel.category_id]
 
 @Then("the welcome \"|any|\" title is present") 
 def step(context, option:str):
@@ -291,9 +295,13 @@ def the_admin_creates_a_community_channel(name: str, description: str, method: s
 
 def the_channel_is_open(name: str):
     init_steps.the_channel_is_open(name)
-    
+
+
 def the_channel_count_is(community_channel_count: int):
-    _statusCommunityScreen.check_channel_count(community_channel_count)
+    assert wait_for(
+        len([channel for channel in _statusCommunityScreen.left_panel.channels if
+             not channel.category_id]) == community_channel_count
+    )
     
 def the_admin_creates_a_community_category(name: str, channels: str, method: str):
     _statusCommunityScreen.create_community_category(name, channels, method)

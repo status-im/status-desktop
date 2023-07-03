@@ -10,12 +10,12 @@ import steps.commonInitSteps as init_steps
 _user = "tester123"
 _password = "TesTEr16843/!@00"
 
-@OnFeatureStart
+@OnScenarioStart
 def hook(context):
     init_steps.context_init(context, testSettings)  
     init_steps.signs_up_process_steps(context, _user, _password)
 
-@OnFeatureEnd
+@OnScenarioEnd
 def hook(context):
     init_steps.driver.detach()
     

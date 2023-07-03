@@ -17,7 +17,7 @@ Background:
     And the welcome "Permissions" title is present
     And the welcome "Permissions" subtitle is present
     And the welcome "Permissions" settings "<user onboarding checklist>" is present
-   	| Give individual members access to private channels |
-    | Monetise your community with subscriptions and fees |
-    | Require holding a token or NFT to obtain exclusive membership rights |
-    And "Add new permission" button is present
+      | Give individual members access to private channels                   |
+      | Monetise your community with subscriptions and fees                  |
+      | Require holding a token or NFT to obtain exclusive membership rights |
+   And "Add new permission" button is present

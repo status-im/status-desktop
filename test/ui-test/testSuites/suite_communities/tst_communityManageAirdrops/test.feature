@@ -17,7 +17,7 @@ Background:
     And the welcome "Airdrops" title is present
   	And the welcome "Airdrops" subtitle is present
     And the welcome "Airdrops" settings "<user onboarding checklist>" is present
-    | Reward individual members with custom tokens for their contribution |
-    | Incentivise joining, retention, moderation and desired behaviour |
-    | Require holding a token or NFT to obtain exclusive membership rights |
-    And "New Airdrop" button is present
+      | Reward individual members with custom tokens for their contribution  |
+      | Incentivise joining, retention, moderation and desired behaviour     |
+      | Require holding a token or NFT to obtain exclusive membership rights |
+   And "New Airdrop" button is present

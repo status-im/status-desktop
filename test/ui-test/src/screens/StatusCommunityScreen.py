@@ -7,20 +7,20 @@
 # * \date    July 2022
 # * \brief   Community Screen.
 # *****************************************************************************/
+import time
 import typing
 from enum import Enum
-import time
-from unittest import TestSuite
+
 import configs
+from drivers.SDKeyboardCommands import *
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
-from drivers.SDKeyboardCommands import *
-from .StatusMainScreen import StatusMainScreen
-from utils.FileManager import *
 from screens.StatusChatScreen import MessageContentType
 from screens.components.community_back_up_private_key_popup import BackUpCommunityPrivateKeyPopup
-from utils.ObjectAccess import *
 from screens.components.native_dialogs import SelectDialog
+from screens.components.new_channel_popup import NewChannelPopup
+from utils.FileManager import *
+from utils.ObjectAccess import *
 from utils.ObjectAccess import walk_children
 
 
@@ -60,7 +60,7 @@ class ChatLog(BaseElement):
     @property
     def messages(self) -> typing.List[Message]:
         return [Message(item) for item in get_objects(self._message_template.symbolic_name)]
-    
+
     @property
     def pinned_messages(self) -> typing.List[Message]:
         messages = []
@@ -70,15 +70,66 @@ class ChatLog(BaseElement):
         return messages
 
 
+class Channel:
+
+    def __init__(self, obj):
+        self.object = obj
+
+    @property
+    def name(self) -> str:
+        return str(self.object.object_name)
+
+    @property
+    def category_id(self) -> str:
+        return getattr(self.object, 'categoryId', '')
+
+
+class LeftPanel(BaseElement):
+
+    def __init__(self):
+        super(LeftPanel, self).__init__('mainWindow_communityColumnView_CommunityColumnView')
+        self._create_channel_or_category_button = Button('mainWindow_createChannelOrCategoryBtn_StatusBaseText')
+        self._create_channel_menu_item = BaseElement('create_channel_StatusMenuItem')
+        self._create_category_menu_item = BaseElement('create_category_StatusMenuItem')
+        self._community_list_item = BaseElement('community_list_item')
+
+    def _get_community_items(self) -> list:
+        items = []
+        for obj in walk_children(self.object):
+            if getattr(obj, 'id', '') == 'chatListDelegate':
+                items.append(obj)
+        return items
+
+    @property
+    def categories(self) -> typing.List[str]:
+        return [obj.object_name for obj in self._get_community_items() if obj.isCategory]
+
+    @property
+    def channels(self) -> typing.List[Channel]:
+        return [Channel(obj) for obj in self._get_community_items() if not obj.isCategory]
+
+    def _context_menu_open_new_channel_popup(self):
+        self._create_channel_menu_item.click()
+        return NewChannelPopup().wait_until_appears()
+
+    def open_new_channel_popup(self):
+        self._create_channel_or_category_button.click()
+        return self._context_menu_open_new_channel_popup()
+
+    def open_new_channel_popup_by_context_menu(self):
+        self.open_context_menu()
+        return self._context_menu_open_new_channel_popup()
+
+
 class CommunityCreateMethods(Enum):
     BOTTOM_MENU = "bottom_menu"
     RIGHT_CLICK_MENU = "right_click_menu"
 
 
 class CommunityScreenComponents(Enum):
-    CHAT_LOG = "chatView_log"  
+    CHAT_LOG = "chatView_log"
     COMMUNITY_HEADER_BUTTON = "mainWindow_communityHeader_StatusChatInfoButton"
-    COMMUNITY_HEADER_NAME_TEXT= "community_ChatInfo_Name_Text"
+    COMMUNITY_HEADER_NAME_TEXT = "community_ChatInfo_Name_Text"
     COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON = "mainWindow_createChannelOrCategoryBtn_StatusBaseText"
     COMMUNITY_CREATE_CHANNEL_MENU_ITEM = "create_channel_StatusMenuItem"
     COMMUNITY_CREATE_CATEGORY_MENU_ITEM = "create_category_StatusMenuItem"
@@ -173,8 +224,7 @@ class CommunityOverviewScreenComponents(Enum):
 class StatusCommunityScreen:
 
     def __init__(self):
-        self._retry_number = 0
-        verify_screen(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
+        self.left_panel = LeftPanel()
         self.chat_log = ChatLog()
         self.send_image_button = Button('mainWindow_imageBtn_StatusFlatRoundButton')
         self._message_text_edit = TextEdit('message_TextEdit')
@@ -243,6 +293,7 @@ class StatusCommunityScreen:
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_EDIT_CATEGORY_MENU_ITEM.value)
 
     def verify_community_name(self, communityName: str):
+        #         squish.mouseMove(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value)
         verify_text_matching(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value, communityName)   
         
     def verify_community_overview_name(self, communityName: str):
@@ -253,24 +304,7 @@ class StatusCommunityScreen:
         
     def verify_community_overview_color(self, communityColor: str):
         obj = get_obj(CommunitySettingsComponents.COMMUNITY_LETTER_IDENTICON.value)
-        expect_true(obj.color.name == communityColor, "Community color was not changed correctly")    
-        
-    def create_community_channel(self, communityChannelName: str, communityChannelDescription: str, method: str):
-        if (method == CommunityCreateMethods.BOTTOM_MENU.value):
-            click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON.value)
-        elif (method == CommunityCreateMethods.RIGHT_CLICK_MENU.value):
-            right_click_obj_by_name(CommunityScreenComponents.COMMUNITY_COLUMN_VIEW.value)
-        else:
-            print("Unknown method to create a channel: ", method)
-        # Without that sleep, the click sometimes lands next to the context menu, closing it and making the rest of the test fail
-        # The sleep seems to help wait for the context menu to be loaded completely
-        sleep_test(0.1)
-        click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_MENU_ITEM.value)
-
-        wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, communityChannelName)
-        type_text(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_DESCRIPTION_INPUT.value, communityChannelDescription)
-
-        click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
+        expect_true(obj.color.name == communityColor, "Community color was not changed correctly")
 
     def edit_community_channel(self, new_community_channel_name: str):
         self._open_edit_channel_popup()
@@ -394,18 +428,6 @@ class StatusCommunityScreen:
                 delete_current_community_channel(attempt-1)
             else:
                 raise
-
-    def check_channel_count(self, count_to_check: int):
-        chatListObj = get_obj(CommunityScreenComponents.NOT_CATEGORIZED_CHAT_LIST.value)
-        verify_equals(chatListObj.statusChatListItems.count, int(count_to_check))
-
-    def check_channel_is_uncategorized(self, channel_name: str):
-        chatListObj = get_obj(CommunityScreenComponents.NOT_CATEGORIZED_CHAT_LIST.value)
-        for i in range(chatListObj.statusChatListItems.count):
-            channelObj = chatListObj.statusChatListItems.itemAtIndex(i)
-            if channelObj.objectName == channel_name:
-                return
-        verify_failure("No channel matches " + channel_name)
 
     def search_and_change_community_channel_emoji(self, emoji_description: str):
         self._open_edit_channel_popup()

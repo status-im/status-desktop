@@ -34,7 +34,7 @@ communitySettings_MembersTab_Members_ListView = {"container": statusDesktop_main
 communitySettings_MembersTab_Member_Kick_Button = {"container": communitySettings_MembersTab_Members_ListView, "objectName": "MemberListIten_KickButton", "type": "StatusButton", "visible": True}
 communitySettings_KickModal_Kick_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
 create_new_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
-
+community_list_item = {"container": mainWindow_communityColumnView_CommunityColumnView, "id": "chatListDelegate", "visible": True}
 
 # Chat components
 chatView_TogglePinMessageButton = {"container": chatView_log, "objectName": "MessageView_toggleMessagePin", "type": "StatusFlatRoundButton", "visible": True}

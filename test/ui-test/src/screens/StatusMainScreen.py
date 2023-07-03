@@ -10,14 +10,16 @@
 
 
 import time
+import typing
 from enum import Enum
 
+import configs
 from drivers.SDKeyboardCommands import *
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from utils.ObjectAccess import *
-import configs
 
+from .StatusCommunityPortalScreen import StatusCommunityPortalScreen
 from .components.splash_screen import SplashScreen
 from .components.user_canvas import UserCanvas
 
@@ -66,10 +68,17 @@ class NavigationPanel(BaseElement):
     def __init__(self):
         super(NavigationPanel, self).__init__('mainWindow_StatusAppNavBar')
         self._profile_button = Button('mainWindow_ProfileNavBarButton')
+        self._community_portal_button = Button('navBarListView_Communities_Portal_navbar_StatusNavBarTabButton')
+        self._community_template_button = Button('navBarListView_All_Community_Buttons')
 
     @property
     def user_badge_color(self) -> str:
         return str(self._profile_button.object.badge.color.name)
+
+    @property
+    def communities(self) -> typing.List[str]:
+        self._community_template_button.reset_real_name('name')
+        return [str(item.name) for item in get_objects(self._community_template_button.symbolic_name)]
 
     def open_user_canvas(self) -> UserCanvas:
         self._profile_button.click()
@@ -83,6 +92,19 @@ class NavigationPanel(BaseElement):
 
     def user_is_set_to_automatic(self):
         return self.user_badge_color == '#4ebc60'
+
+    def open_community_portal(self) -> StatusCommunityPortalScreen:
+        self._community_portal_button.click()
+        return StatusCommunityPortalScreen().wait_until_appears()
+
+    def open_community(self, name: str):
+        self._community_template_button.object_name['name'] = name
+        self._community_template_button.click()
+        assert wait_for(self.is_community_selected(name), configs.squish.UI_LOAD_TIMEOUT_MSEC)
+
+    def is_community_selected(self, name: str) -> bool:
+        self._community_template_button.object_name['name'] = name
+        return self._community_template_button.is_checked
 
 
 class StatusMainScreen:
@@ -108,9 +130,6 @@ class StatusMainScreen:
 
     def open_chat_section(self):
         click_obj_by_name(MainScreenComponents.CHAT_NAVBAR_ICON.value)
-
-    def open_community_portal(self):
-        click_obj_by_name(MainScreenComponents.COMMUNITY_PORTAL_BUTTON.value)
 
     def open_settings(self):
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)

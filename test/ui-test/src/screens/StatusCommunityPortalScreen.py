@@ -20,7 +20,6 @@ class StatusCommunityPortalScreen(BaseElement):
     def open_create_community_form_popup(self) -> NewCommunityFormPopup:
         return NewCommunityPopup().open_new_community_form()
 
-    def create_community(self, communityName: str, communityDescription: str, introMessage: str, outroMessage: str):
+    def create(self, name: str, description: str, intro: str, outro: str):
         self.open_create_community_popup()
-        self.open_create_community_form_popup().fill_form(
-            communityName, communityDescription, introMessage, outroMessage)
+        self.open_create_community_form_popup().create(name, description, intro, outro)

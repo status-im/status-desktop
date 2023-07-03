@@ -1,6 +1,8 @@
 import configs
 from drivers.SquishDriver import *
+
 from .base_popup import BasePopup
+
 
 class NewCommunityPopup(BasePopup):
 
@@ -32,7 +34,7 @@ class NewCommunityFormPopup(BasePopup):
         self._name_text_edit.wait_until_appears(timeout_msec)
         return self
 
-    def fill_form(self, name: str, description: str, intro: str, outro: str):
+    def create(self, name: str, description: str, intro: str, outro: str):
         self._name_text_edit.text = name
         self._description_text_edit.text = description
         self._next_button.click()

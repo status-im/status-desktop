@@ -13,8 +13,8 @@ Background:
  Scenario: Manage community has Overview, Members, Permissions, Mint Tokens and Airdrops options
    When "Manage Community" is clicked in the community sidebar
    Then "<settings section>" should be an available option in Community->Manage->left navigation
-   	| Overview   |
-   	| Members    |
-   	| Permissions|
-   	| Mint Tokens|
-   	| Airdrops   |
+   	| Overview    |
+	| Members     |
+	| Permissions |
+	| Mint Tokens |
+	| Airdrops    |

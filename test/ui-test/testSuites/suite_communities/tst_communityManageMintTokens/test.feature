@@ -17,7 +17,7 @@ Background:
     And the welcome "Tokens" title is present
   	And the welcome "Tokens" subtitle is present
     And the welcome "Tokens" settings "<user onboarding checklist>" is present
-    | Create remotely destructible soulbound tokens for admin permissions |
-    | Reward individual members with custom tokens for their contribution |
-    | Mint tokens for use with community and channel permissions |
-    And "Mint token" button is present
+      | Create remotely destructible soulbound tokens for admin permissions |
+      | Reward individual members with custom tokens for their contribution |
+      | Mint tokens for use with community and channel permissions          |
+   And "Mint token" button is present

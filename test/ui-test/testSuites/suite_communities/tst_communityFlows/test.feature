@@ -15,10 +15,8 @@ Feature: Status Desktop community
 
     The following scenarios cover basic flows of a community
 
- 	The feature start sequence is the following (setup on its own `bdd_hooks`):
-    ** given A first time user lands on the status desktop and generates new key
-    ** when user signs up with username "tester123" and password "TesTEr16843/!@00"
-    ** and the user lands on the signed in app
+    The feature start sequence is the following (setup on its own `bdd_hooks`):
+
 
     Background:
         Given the user opens the community portal section
@@ -31,9 +29,9 @@ Feature: Status Desktop community
         Then "<community_channel_name>" should be in the list of uncategorized channels
         And the channel named "<community_channel_name>" is open
         Examples:
-            | community_channel_name    | community_channel_description     | method           |
-            | test-channel    | Community channel description tested 1      | bottom_menu      |
-            | test-channel2   | Community channel description tested 2      | right_click_menu |
+            | community_channel_name | community_channel_description          | method           |
+            | test-channel           | Community channel description tested 1 | bottom_menu      |
+            | test-channel2          | Community channel description tested 2 | right_click_menu |
 
     Scenario Outline: The admin edits a community channel
         Given the admin creates a community channel named "<community_channel_name>", with description "<community_channel_description>", with the method "bottom_menu"
@@ -85,8 +83,8 @@ Feature: Status Desktop community
         And the admin changes the community color to "<new_community_color>"
         Then the community overview color is "<new_community_color>"
         Examples:
-            | new_community_name       | new_community_description  | new_community_color |
-            | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
+            | new_community_name      | new_community_description | new_community_color |
+            | myCommunityNamedChanged | Cool new description 123  | #ff0000             |
 
     Scenario Outline: The admin changes the emoji of a channel
         When the admin changes the current community channel emoji to "<new_emoji_description>"
@@ -95,11 +93,11 @@ Feature: Status Desktop community
             | new_emoji_description | new_emoji |
             | thumbs up             | 👍        |
 
-    # TODO: This scenario must be in a different feature since it does not accomplishe the start/en sequence and / or background
-    # Add new test case that contains scenarios related to create/delete and navigate throw communities and usage of navbar.
-    #@merge
-    #Scenario: User leaves community
-    #    When the user opens app settings screen
-    #    And the user opens the communities settings
-    #    And the user leaves the community
-    #    Then the count of communities in navbar is 0
+        # TODO: This scenario must be in a different feature since it does not accomplishe the start/en sequence and / or background
+        # Add new test case that contains scenarios related to create/delete and navigate throw communities and usage of navbar.
+        #@merge
+        #Scenario: User leaves community
+        #    When the user opens app settings screen
+        #    And the user opens the communities settings
+        #    And the user leaves the community
+        #    Then the count of communities in navbar is 0

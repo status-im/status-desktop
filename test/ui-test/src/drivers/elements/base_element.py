@@ -17,6 +17,10 @@ class BaseElement:
     def __str__(self):
         return f'{type(self).__qualname__}({self.symbolic_name})'
 
+    def reset_real_name(self, property_name: str):
+        if property_name in self.object_name:
+            del self.object_name[property_name]
+
     @property
     def object(self):
         return squish.waitForObject(self.object_name, configs.squish.UI_LOAD_TIMEOUT_MSEC)
