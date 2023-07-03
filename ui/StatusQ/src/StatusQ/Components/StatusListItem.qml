@@ -86,6 +86,8 @@ Rectangle {
     property alias errorIcon: errorIcon
     property alias statusListItemTagsRowLayout: statusListItemSubtitleTagsRow
 
+    property int subTitleBadgeLoaderAlignment: Qt.AlignVCenter
+
     signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)
     signal iconClicked(var mouse)
@@ -279,7 +281,7 @@ Rectangle {
 
                 Loader {
                     id: subTitleBadgeLoader
-                    Layout.alignment: Qt.AlignVCenter
+                    Layout.alignment: root.subTitleBadgeLoaderAlignment
                     visible: sourceComponent
                 }
 

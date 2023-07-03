@@ -146,9 +146,11 @@ QML_DEBUG ?= false
 QML_DEBUG_PORT ?= 49152
 
 ifneq ($(QML_DEBUG), false)
+ STATUSQ_BUILD_TYPE=Debug
  DOTHERSIDE_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Debug -DQML_DEBUG_PORT=$(QML_DEBUG_PORT)
  DOTHERSIDE_BUILD_CMD := cmake --build . --config Debug
 else
+ STATUSQ_BUILD_TYPE=Release
  DOTHERSIDE_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release
  DOTHERSIDE_BUILD_CMD := cmake --build . --config Release
 endif
@@ -259,7 +261,7 @@ STATUSQ_CMAKE_CACHE := $(STATUSQ_BUILD_PATH)/CMakeCache.txt
 $(STATUSQ_CMAKE_CACHE): | deps
 	echo -e "\033[92mConfiguring:\033[39m StatusQ"
 	cmake -DCMAKE_INSTALL_PREFIX=$(STATUSQ_INSTALL_PATH) \
-		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_BUILD_TYPE=$(STATUSQ_BUILD_TYPE) \
 		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 		-DSTATUSQ_BUILD_TESTS=OFF \
@@ -275,7 +277,7 @@ statusq-build: | statusq-configure
 	echo -e "\033[92mBuilding:\033[39m StatusQ"
 	cmake --build $(STATUSQ_BUILD_PATH) \
 		--target StatusQ \
-		--config Release \
+		--config $(STATUSQ_BUILD_TYPE) \
 		$(HANDLE_OUTPUT)
 
 statusq-install: | statusq-build

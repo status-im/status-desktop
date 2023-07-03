@@ -34,6 +34,7 @@ Item {
         d.decodedInputData = ""
         if (!transaction || !transaction.input || !RootStore.history)
             return
+        d.loadingInputDate = true
         RootStore.history.fetchDecodedTxData(transaction.txHash, transaction.input)
     }
 
@@ -60,6 +61,7 @@ Item {
         readonly property string toNetworkName: "" // TODO fill network name for bridge
 
         property string decodedInputData: ""
+        property bool loadingInputDate: false
 
         function getNameForSavedWalletAddress(address) {
             return RootStore.getNameForSavedWalletAddress(address)
@@ -73,8 +75,13 @@ Item {
     Connections {
         target: RootStore.history
         function onTxDecoded(txHash: string, dataDecoded: string) {
-            if (!root.isTransactionValid || txHash !== root.transaction.txHash || !dataDecoded)
+            if (!root.isTransactionValid || txHash !== root.transaction.txHash)
                 return
+            if (!dataDecoded) {
+                d.loadingInputDate = false
+                return
+            }
+
             try {
                 const decodedObject = JSON.parse(dataDecoded)
                 let text = qsTr("Function: %1").arg(decodedObject.signature)
@@ -86,6 +93,7 @@ Item {
             } catch(e) {
                 console.error("Failed to parse decoded tx data. Data:", dataDecoded)
             }
+            d.loadingInputDate = false
         }
     }
 
@@ -339,7 +347,7 @@ Item {
                     width: progressBlock.width
                     RowLayout {
                         width: parent.width
-                        height: Math.max(implicitHeight, 85)
+                        height: networkNameTile.statusListItemSubTitle.lineCount > 1 ? 85 : 70
                         spacing: 0
                         TransactionDataTile {
                             id: multichainNetworksTile
@@ -370,11 +378,13 @@ Item {
                             }
                         }
                         TransactionDataTile {
+                            id: networkNameTile
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             title: qsTr("Network")
                             subTitle: transactionHeader.networkName
-                            asset.name: !!d.networkIcon ? Style.svg("%1".arg(d.networkIcon)) : ""
+                            asset.name: !!d.networkIcon ? Style.svg(d.networkIcon) : ""
+                            subTitleBadgeLoaderAlignment: Qt.AlignTop
                             smallIcon: true
                             visible: d.transactionType !== Constants.TransactionType.Bridge
                         }
@@ -394,23 +404,24 @@ Item {
                         }
                     }
                     TransactionDataTile {
-                        id: inputDataTile
                         width: parent.width
-                        height: Math.min(implicitHeight + bottomPadding, 112)
+                        height: d.loadingInputDate ? 112 : Math.min(implicitHeight + bottomPadding, 112)
                         title: qsTr("Input data")
+                        // Input string can be really long. Getting substring just for 3+ lines to speedup formatting.
                         subTitle: {
-                            if (!!d.decodedInputData) {
-                                return d.decodedInputData
+                            if (d.loadingInputDate) {
+                                return ""
+                            } else if (!!d.decodedInputData) {
+                                return d.decodedInputData.substring(0, 100)
                             } else if (root.isTransactionValid) {
-                                return root.transaction.input
+                                return String(root.transaction.input).substring(0, 100)
                             }
                             return ""
                         }
-                        visible: !!subTitle
-                        buttonIconName: "more"
+                        visible: !!subTitle || d.loadingInputDate
+                        buttonIconName: d.loadingInputDate ? "" : "more"
                         statusListItemSubTitle.maximumLineCount: 4
                         statusListItemSubTitle.lineHeight: 1.21
-                        onButtonClicked: addressMenu.openInputDataMenu(this, subTitle)
                         statusListItemSubTitle.layer.enabled: statusListItemSubTitle.lineCount > 3
                         statusListItemSubTitle.layer.effect: OpacityMask {
                             maskSource: Rectangle {
@@ -420,6 +431,35 @@ Item {
                                     GradientStop { position: 0.0; color: "#f00" }
                                     GradientStop { position: 0.4; color: "#a0ff0000" }
                                     GradientStop { position: 0.75; color: "#00ff0000" }
+                                }
+                            }
+                        }
+                        tertiaryTitle: !d.loadingInputDate && !d.decodedInputData ? qsTr("Data could not be decoded") : ""
+                        statusListItemTertiaryTitle.anchors.baseline: statusListItemTitle.baseline
+                        statusListItemTertiaryTitle.font: statusListItemTitle.font
+                        onButtonClicked: addressMenu.openInputDataMenu(this, !!d.decodedInputData ? d.decodedInputData : root.transaction.input)
+
+                        Loader {
+                            anchors {
+                                left: parent.left
+                                bottom: parent.bottom
+                                right: parent.right
+                                margins: 12
+                            }
+                            active: d.loadingInputDate
+                            sourceComponent: Column {
+                                spacing: 10
+                                Repeater {
+                                    model: 3
+                                    LoadingComponent {
+                                        anchors {
+                                            left: parent.left
+                                            right: index === 2 ? parent.horizontalCenter : parent.right
+                                        }
+                                        height: 11
+                                        radius: 4
+                                        enabled: false
+                                    }
                                 }
                             }
                         }
