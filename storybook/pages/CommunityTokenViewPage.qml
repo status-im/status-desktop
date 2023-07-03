@@ -111,14 +111,14 @@ SplitView {
                             id: isAssetRadioButton
 
                             readonly property int type:
-                                TokenObject.Type.Asset
+                                Constants.TokenType.ERC20
 
                             text: "Asset"
                         }
 
                         RadioButton {
                             readonly property int type:
-                                TokenObject.Type.Collectible
+                                Constants.TokenType.ERC721
 
                             checked: true
                             text: "Collectible"

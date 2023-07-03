@@ -27,11 +27,11 @@ StatusScrollView {
 
 
     property TokenObject collectible: TokenObject {
-        type: TokenObject.Type.Collectible
+        type: Constants.TokenType.ERC721
     }
 
     property TokenObject asset: TokenObject{
-        type: TokenObject.Type.Asset
+        type: Constants.TokenType.ERC20
     }
 
     // Used for reference validation when editing a failed deployment
