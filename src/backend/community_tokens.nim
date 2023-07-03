@@ -5,6 +5,7 @@ import ./eth
 import ../app_service/common/utils
 import ./core, ./response_type
 import ../app_service/service/community_tokens/dto/community_token
+import interpret/cropped_image
 
 proc deployCollectibles*(chainId: int, deploymentParams: JsonNode, txData: JsonNode, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId, deploymentParams, txData, utils.hashPassword(password)]
@@ -22,8 +23,9 @@ proc getAllCommunityTokens*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   return core.callPrivateRPC("wakuext_getAllCommunityTokens", payload)
 
-proc addCommunityToken*(token: CommunityTokenDto): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [token.toJsonNode()]
+proc addCommunityToken*(token: CommunityTokenDto, croppedImageJson: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let croppedImage = newCroppedImage(croppedImageJson)
+  let payload = %* [token.toJsonNode(), croppedImage]
   return core.callPrivateRPC("wakuext_addCommunityToken", payload)
 
 proc updateCommunityTokenState*(chainId: int, contractAddress: string, deployState: DeployState): RpcResponse[JsonNode] {.raises: [Exception].} =
