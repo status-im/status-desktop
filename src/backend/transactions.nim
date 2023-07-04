@@ -7,7 +7,9 @@ import ../app_service/common/utils
 # mirrors the MultiTransactionType from status-go, services/wallet/transfer/transaction.go
 type
   MultiTransactionType* = enum
-    MultiTransactionSend = 0, MultiTransactionSwap = 1, MultiTransactionBridge = 2
+    MultiTransactionSend = 0,
+    MultiTransactionSwap = 1,
+    MultiTransactionBridge = 2
 
   MultiTransactionCommandDto* = ref object of RootObj
     fromAddress* {.serializedFieldName("fromAddress").}: string
@@ -27,6 +29,13 @@ type
     fromAmount* {.serializedFieldName("fromAmount").}: string
     toAmount* {.serializedFieldName("toAmount").}: string
     multiTxType* {.serializedFieldName("type").}: MultiTransactionType
+
+# Mirrors the transfer events from status-go, services/wallet/transfer/commands.go
+const EventNewTransfers*: string = "new-transfers"
+const EventFetchingRecentHistory*: string = "recent-history-fetching"
+const EventRecentHistoryReady*: string = "recent-history-ready"
+const EventFetchingHistoryError*: string = "fetching-history-error"
+const EventNonArchivalNodeDetected*: string = "non-archival-node-detected"
 
 proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   core.callPrivateRPCWithChainId("eth_getTransactionByHash", chainId, %* [hash])
