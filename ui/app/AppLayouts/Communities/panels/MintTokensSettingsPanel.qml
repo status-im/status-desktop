@@ -560,10 +560,9 @@ StackView {
                     token.symbol: model.symbol
                     token.transferable: model.transferable
                     token.type: model.tokenType
-
+                    token.burnState: model.burnState
                     // TODO: Backend
                     //token.accountAddress: model.accountAddress
-                    //token.burnState: model.burnState
                     //token.remotelyDestructState: model.remotelyDestructState
                 }
 

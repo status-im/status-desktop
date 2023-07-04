@@ -334,6 +334,9 @@ proc updateCommunityTokenSupply*(self: SectionItem, chainId: int, contractAddres
 proc updateCommunityRemainingSupply*(self: SectionItem, chainId: int, contractAddress: string, remainingSupply: Uint256) {.inline.} =
   self.communityTokensModel.updateRemainingSupply(chainId, contractAddress, remainingSupply)
 
+proc updateBurnState*(self: SectionItem, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) {.inline.} =
+  self.communityTokensModel.updateBurnState(chainId, contractAddress, burnState)
+
 proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.inline.} =
   self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners)
 

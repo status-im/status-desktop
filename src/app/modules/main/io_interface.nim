@@ -13,7 +13,7 @@ import ../../../app_service/service/wallet_account/service as wallet_account_ser
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/community_tokens/service as community_tokens_service
-from ../../../app_service/common/types import StatusType
+from ../../../app_service/common/types import StatusType, ContractTransactionStatus
 
 import ../../global/app_signals
 import ../../core/eventemitter
@@ -301,6 +301,9 @@ method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: s
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenSupplyChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onBurnStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onAcceptRequestToJoinFailed*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =

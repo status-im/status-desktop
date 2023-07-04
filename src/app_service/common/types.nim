@@ -53,3 +53,9 @@ type MemberRole* {.pure} = enum
   ManageUsers
   ModerateContent
   Admin
+
+type
+  ContractTransactionStatus* {.pure.} = enum
+    Failed,
+    InProgress,
+    Completed

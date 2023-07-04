@@ -167,6 +167,10 @@ QtObject:
       error "error: ", errDescription
       return
 
+  proc getPendingTransactionsForType*(self: Service, transactionType: PendingTransactionTypeDto): seq[TransactionDto] =
+    let allPendingTransactions = self.getPendingTransactions()
+    return allPendingTransactions.filter(x => x.typeValue == $transactionType)
+
   proc getAllTransactions*(self: Service, address: string): seq[TransactionDto] =
     if not self.allTransactions.hasKey(address):
       return @[]

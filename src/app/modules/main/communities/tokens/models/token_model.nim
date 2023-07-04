@@ -5,6 +5,7 @@ import token_owners_model
 import ../../../../../../app_service/service/community_tokens/dto/community_token
 import ../../../../../../app_service/service/collectible/dto
 import ../../../../../../app_service/common/utils
+import ../../../../../../app_service/common/types
 
 type
   ModelRole {.pure.} = enum
@@ -27,6 +28,7 @@ type
     AccountName
     RemainingSupply
     Decimals
+    BurnState
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -50,6 +52,15 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.dataChanged(index, index, @[ModelRole.DeployState.int])
+        return
+
+  proc updateBurnState*(self: TokenModel, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) =
+    for i in 0 ..< self.items.len:
+      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
+        self.items[i].burnState = burnState
+        let index = self.createIndex(i, 0, nil)
+        defer: index.delete
+        self.dataChanged(index, index, @[ModelRole.BurnState.int])
         return
 
   proc updateSupply*(self: TokenModel, chainId: int, contractAddress: string, supply: Uint256) =
@@ -132,6 +143,7 @@ QtObject:
       ModelRole.AccountName.int:"accountName",
       ModelRole.RemainingSupply.int:"remainingSupply",
       ModelRole.Decimals.int:"decimals",
+      ModelRole.BurnState.int:"burnState",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -180,6 +192,8 @@ QtObject:
         result = newQVariant(supplyByType(item.remainingSupply, item.tokenDto.tokenType))
       of ModelRole.Decimals:
         result = newQVariant(item.tokenDto.decimals)
+      of ModelRole.BurnState:
+        result = newQVariant(item.burnState.int)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:

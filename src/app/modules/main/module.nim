@@ -239,7 +239,8 @@ proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : TokenIte
   let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
   let ownerAddressName = self.controller.getCommunityTokenOwnerName(tokenDto.chainId, tokenDto.address)
   let remainingSupply = if tokenDto.infiniteSupply: stint.parse("0", Uint256) else: self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
-  result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName, remainingSupply)
+  let burnState = self.controller.getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
+  result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName, burnState, remainingSupply)
 
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
@@ -1024,6 +1025,11 @@ method onCommunityTokenSupplyChanged*[T](self: Module[T], communityId: string, c
   if item.id != "":
     item.updateCommunityTokenSupply(chainId, contractAddress, supply)
     item.updateCommunityRemainingSupply(chainId, contractAddress, remainingSupply)
+
+method onBurnStateChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updateBurnState(chainId, contractAddress, burnState)
 
 method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, memberKey: string) =
   let item = self.view.model().getItemById(communityId)

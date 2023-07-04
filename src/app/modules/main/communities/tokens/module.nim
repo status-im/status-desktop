@@ -6,6 +6,7 @@ import ../../../../../app_service/service/network/service as networks_service
 import ../../../../../app_service/service/community/dto/community
 import ../../../../../app_service/service/accounts/utils as utl
 import ../../../../../app_service/common/conversion
+import ../../../../../app_service/common/types
 import ../../../../core/eventemitter
 import ../../../../global/global_singleton
 import ../../../shared_models/currency_amount
