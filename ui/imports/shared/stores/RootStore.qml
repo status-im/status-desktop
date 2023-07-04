@@ -39,9 +39,14 @@ QtObject {
                                                                           : null
     property var historyTransactions: Global.appIsReady? walletSection.activityController.model : null
     readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSection.activityController.status.loadingData
+    readonly property bool newDataAvailable: Global.appIsReady && walletSection.activityController.status.newDataAvailable
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
     property var marketValueStore: TokenMarketValuesStore{}
+
+    function resetFilter() {
+        walletSection.activityController.updateFilter()
+    }
 
     function getNetworkColor(chainId) {
         return networksModule.all.getChainColor(chainId)

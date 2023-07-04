@@ -181,6 +181,8 @@ QtObject:
   proc updateFilter*(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
     self.model.resetModel(@[])
+    self.eventsHandler.updateSubscribedAddresses(self.addresses)
+    self.status.setNewDataAvailable(false)
 
     let response = backend_activity.filterActivityAsync(self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
@@ -248,6 +250,10 @@ QtObject:
         return
 
       self.status.setStartTimestamp(res.timestamp)
+    )
+
+    self.eventsHandler.onNewDataAvailable(proc () =
+      self.status.setNewDataAvailable(true)
     )
 
   proc newController*(transactionsModule: transactions_module.AccessInterface,

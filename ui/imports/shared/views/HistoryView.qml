@@ -35,6 +35,7 @@ ColumnLayout {
         readonly property bool isInitialLoading: RootStore.loadingHistoryTransactions && transactionListRoot.count === 0
         property var activityFiltersStore: WalletStores.ActivityFiltersStore{}
         readonly property int loadingSectionWidth: 56
+        readonly property int topSectionMargin: 20
     }
 
     StyledText {
@@ -124,12 +125,16 @@ ColumnLayout {
 
             delegate: transactionDelegate
 
+            headerPositioning: ListView.OverlayHeader
+            header: headerComp
             footer: footerComp
 
             ScrollBar.vertical: StatusScrollBar {}
 
             section.property: "date"
-            topMargin: d.isInitialLoading ? 0 : -20 // Top margin for first section. Section cannot have different sizes
+            // Adding some magic number to align the top headerComp with the top of the list.
+            // TODO: have to be fixed properly and match the design
+            topMargin: d.isInitialLoading ? 0 : -(2 * d.topSectionMargin + 9) // Top margin for first section. Section cannot have different sizes
             section.delegate: ColumnLayout {
                 id: sectionDelegate
 
@@ -141,7 +146,7 @@ ColumnLayout {
 
                 Separator {
                     Layout.fillWidth: true
-                    Layout.topMargin: 20
+                    Layout.topMargin: d.topSectionMargin
                     implicitHeight: 1
                 }
 
@@ -327,6 +332,36 @@ ColumnLayout {
                 visible: footerColumn.allActivityLoaded && transactionListRoot.contentHeight > transactionListRoot.height
                 onClicked: transactionListRoot.positionViewAtBeginning()
             }
+        }
+    }
+
+    Component {
+        id: headerComp
+
+        Item {
+            width: root.width
+            height: dataUpdatedButton.implicitHeight
+
+            StatusButton {
+                id: dataUpdatedButton
+
+                anchors.centerIn: parent
+
+                text: qsTr("New transactions")
+
+                visible: RootStore.newDataAvailable
+                onClicked: RootStore.resetFilter()
+
+                icon.name: "arrow-up"
+
+                radius: 36
+                textColor: Theme.palette.indirectColor1
+                normalColor: Theme.palette.primaryColor1
+                hoverColor: Theme.palette.miscColor1
+
+                size: StatusBaseButton.Size.Tiny
+            }
+            z: 3
         }
     }
 }

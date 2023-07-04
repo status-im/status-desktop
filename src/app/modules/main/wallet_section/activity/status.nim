@@ -19,6 +19,8 @@ QtObject:
 
       startTimestamp: int
 
+      newDataAvailable: bool
+
   proc setup(self: Status) =
     self.QObject.setup
 
@@ -97,3 +99,16 @@ QtObject:
   QtProperty[int] startTimestamp:
     read = getStartTimestamp
     notify = startTimestampChanged
+
+  proc newDataAvailableChanged*(self: Status) {.signal.}
+
+  proc setNewDataAvailable*(self: Status, newDataAvailable: bool) =
+    self.newDataAvailable = newDataAvailable
+    self.newDataAvailableChanged()
+
+  proc getNewDataAvailable*(self: Status): bool {.slot.} =
+    return self.newDataAvailable
+
+  QtProperty[bool] newDataAvailable:
+    read = getNewDataAvailable
+    notify = newDataAvailableChanged
