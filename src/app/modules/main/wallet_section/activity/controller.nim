@@ -208,9 +208,12 @@ QtObject:
     if res.errorCode != ErrorCodeSuccess:
       error "error fetching activity entries: ", res.errorCode
       return
-
-    let entries = self.backendToPresentation(res.activities)
-    self.model.setEntries(entries, res.offset, res.hasMore)
+    
+    try: 
+      let entries = self.backendToPresentation(res.activities)
+      self.model.setEntries(entries, res.offset, res.hasMore)
+    except Exception as e:
+      error "Error converting activity entries: ", e.msg
 
   proc updateFilter*(self: Controller) {.slot.} =
     self.setLoadingData(true)

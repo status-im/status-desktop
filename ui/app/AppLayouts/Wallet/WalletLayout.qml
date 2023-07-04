@@ -23,10 +23,17 @@ Item {
     property var sendModalPopup
     property var networkConnectionStore
 
+    onVisibleChanged: resetView()
+
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
             signPhrasePopup.open();
         }
+    }
+
+    function resetView() {
+        if (!!rightPanelStackView.currentItem.resetView)
+            rightPanelStackView.currentItem.resetView()
     }
 
     SignPhraseModal {
@@ -89,13 +96,11 @@ Item {
             anchors.fill: parent
             changeSelectedAccount: function(address) {
                 RootStore.setFilterAddress(address)
-                if (!!rightPanelStackView.currentItem.resetView)
-                    rightPanelStackView.currentItem.resetView()
+                root.resetView()
             }
             selectAllAccounts: function() {
                 RootStore.setFillterAllAddresses()
-                if (!!rightPanelStackView.currentItem.resetView)
-                    rightPanelStackView.currentItem.resetView()
+                root.resetView()
             }
             onShowSavedAddressesChanged: {
                 if(showSavedAddresses)
