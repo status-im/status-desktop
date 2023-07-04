@@ -24,6 +24,7 @@ StatusScrollView {
     property bool isAssetView: false
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
     property var tokensModel
+    property var tokensModelWallet
 
 
     property TokenObject collectible: TokenObject {
@@ -197,9 +198,11 @@ StatusScrollView {
                         return true
 
                 // Otherwise, no repeated names allowed:
-                return !SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text)
+                return (!SQUtils.ModelUtils.contains(root.tokensModel, "symbol", symbolInput.text) &&
+                       !SQUtils.ModelUtils.contains(root.tokensModelWallet, "symbol", symbolInput.text))
             }
-            extraValidator.errorMessage: qsTr("You have used this token symbol before")
+            extraValidator.errorMessage: SQUtils.ModelUtils.contains(root.tokensModelWallet, "symbol", symbolInput.text) ?
+                qsTr("This token symbol is already in use") : qsTr("You have used this token symbol before")
 
             onTextChanged: {
                 const cursorPos = input.edit.cursorPosition
@@ -395,6 +398,9 @@ StatusScrollView {
             },
             StatusValidator {
                 id: extraValidatorItem
+                onErrorMessageChanged: {
+                    customInput.validate();
+                }
             }
         ]
     }

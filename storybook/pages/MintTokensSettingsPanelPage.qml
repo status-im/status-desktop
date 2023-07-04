@@ -57,7 +57,11 @@ SplitView {
             enabledNetworks: NetworksModel.enabledNetworks
             allNetworks: enabledNetworks
             accounts: WalletAccountsModel {}
-
+            tokensModelWallet: ListModel {
+                ListElement {
+                    symbol: "MAI"
+                }
+            }
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
             onMintAsset: logs.logEvent("CommunityMintTokensSettingsPanel::mintAssets")
             onDeleteToken: logs.logEvent("CommunityMintTokensSettingsPanel::deleteToken: " + tokenKey)

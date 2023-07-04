@@ -295,13 +295,13 @@ StatusSectionLayout {
                     mintPanel.isFeeLoading = true
                     return
                 }
-
                 mintPanel.errorText = qsTr("Unknown error")
                 mintPanel.isFeeLoading = true
             }
 
             communityName: root.community.name
             tokensModel: root.community.communityTokens
+            tokensModelWallet: root.rootStore.tokensModelWallet
             layer1Networks: communityTokensStore.layer1Networks
             layer2Networks: communityTokensStore.layer2Networks
             testNetworks: communityTokensStore.testNetworks
