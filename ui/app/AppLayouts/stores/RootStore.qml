@@ -54,6 +54,7 @@ QtObject {
     property var accounts: walletSectionSendInst.accounts
     // Not Refactored Yet
 //    property var profileModelInst: profileModel
+    property var tokensModelWallet//TODO this is not available yet
 
     property var contactStore: profileSectionStore.contactsStore
     property var privacyStore: profileSectionStore.privacyStore

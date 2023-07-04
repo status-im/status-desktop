@@ -35,6 +35,11 @@ SplitView {
                 allNetworks: enabledNetworks
                 accounts: WalletAccountsModel {}
                 tokensModel: MintedTokensModel {}
+                tokensModelWallet: ListModel {
+                    ListElement {
+                        symbol: "MAI"
+                    }
+                }
                 onPreviewClicked: logs.logEvent("EditCommunityTokenView::previewClicked")
             }
         }

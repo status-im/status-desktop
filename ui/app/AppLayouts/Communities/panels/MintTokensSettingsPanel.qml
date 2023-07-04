@@ -24,6 +24,7 @@ StackView {
 
     // Models:
     property var tokensModel
+    property var tokensModelWallet
     property var accounts // Expected roles: address, name, color, emoji, walletType
 
     // Transaction related properties:
@@ -183,6 +184,7 @@ StackView {
                         allNetworks: root.allNetworks
                         accounts: root.accounts
                         tokensModel: root.tokensModel
+                        tokensModelWallet: root.tokensModelWallet
 
                         referenceName: newTokenPage.referenceName
                         referenceSymbol: newTokenPage.referenceSymbol
