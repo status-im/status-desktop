@@ -1,5 +1,6 @@
 import ../../../../../app_service/service/community_tokens/service
 import ../../../../../app_service/service/community/dto/community
+import ../../../../../app_service/common/types
 import ../../../shared_models/currency_amount
 
 type

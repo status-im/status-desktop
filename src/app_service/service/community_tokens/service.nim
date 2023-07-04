@@ -78,12 +78,6 @@ type
     transactionHash*: string
 
 type
-  ContractTransactionStatus* {.pure.} = enum
-    Failed,
-    InProgress,
-    Completed
-
-type
   RemoteDestructArgs* = ref object of Args
     communityToken*: CommunityTokenDto
     transactionHash*: string
@@ -370,6 +364,17 @@ QtObject:
     for token in communityTokens:
       if token.symbol == symbol:
         return token
+
+  proc getCommunityTokenBurnState*(self: Service, chainId: int, contractAddress: string): ContractTransactionStatus =
+    let burnTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.BurnCommunityToken)
+    for transaction in burnTransactions:
+      try:
+        let communityToken = toCommunityTokenDto(parseJson(transaction.additionalData))
+        if communityToken.chainId == chainId and communityToken.address == contractAddress:
+          return ContractTransactionStatus.InProgress
+      except Exception:
+        discard
+    return ContractTransactionStatus.Completed
 
   proc contractOwner*(self: Service, chainId: int, contractAddress: string): string =
     try:

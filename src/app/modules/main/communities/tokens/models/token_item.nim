@@ -2,6 +2,7 @@ import strformat, sequtils, stint
 import ../../../../../../app_service/service/community_tokens/dto/community_token
 import ../../../../../../app_service/service/collectible/dto
 import ../../../../../../app_service/service/network/dto
+import ../../../../../../app_service/common/types
 
 import token_owners_model
 import token_owners_item
@@ -15,6 +16,7 @@ type
     chainIcon*: string
     accountName*: string
     remainingSupply*: Uint256
+    burnState*: ContractTransactionStatus
     tokenOwnersModel*: token_owners_model.TokenOwnersModel
 
 proc initTokenItem*(
@@ -22,6 +24,7 @@ proc initTokenItem*(
   network: NetworkDto,
   tokenOwners: seq[CollectibleOwner],
   accountName: string,
+  burnState: ContractTransactionStatus,
   remainingSupply: Uint256
 ): TokenItem =
   result.tokenDto = tokenDto
@@ -30,6 +33,7 @@ proc initTokenItem*(
     result.chainIcon = network.iconURL
   result.accountName = accountName
   result.remainingSupply = remainingSupply
+  result.burnState = burnState
   result.tokenOwnersModel = newTokenOwnersModel()
   result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
           # TODO find member with the address - later when airdrop to member will be added
@@ -42,6 +46,7 @@ proc `$`*(self: TokenItem): string =
     chainName: {self.chainName},
     chainIcon: {self.chainIcon},
     remainingSupply: {self.remainingSupply},
+    burnState: {self.burnState},
     tokenOwnersModel: {self.tokenOwnersModel}
     ]"""
 
