@@ -45,7 +45,7 @@ StatusMenu {
 
     StatusAction {
         objectName: "AccountMenu-DeleteAction-%1".arg(root.uniqueIdentifier)
-        enabled: !!root.account && root.account.walletType !== ""
+        enabled: !!root.account && !root.account.isWallet
         text: qsTr("Delete")
         icon.name: "info"
         type: StatusAction.Type.Danger

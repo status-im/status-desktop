@@ -18,6 +18,7 @@ type
     Position,
     KeycardAccount,
     AssetsLoading,
+    IsWallet,
 
 QtObject:
   type
@@ -66,6 +67,7 @@ QtObject:
       ModelRole.Position.int: "position",
       ModelRole.KeycardAccount.int: "keycardAccount",
       ModelRole.AssetsLoading.int: "assetsLoading",
+      ModelRole.IsWallet.int: "isWallet",
     }.toTable
 
 
@@ -113,6 +115,8 @@ QtObject:
       result = newQVariant(item.keycardAccount())
     of ModelRole.AssetsLoading:
       result = newQVariant(item.assetsLoading())
+    of ModelRole.IsWallet:
+      result = newQVariant(item.isWallet())
 
   proc getNameByAddress*(self: Model, address: string): string =
     for item in self.items:
