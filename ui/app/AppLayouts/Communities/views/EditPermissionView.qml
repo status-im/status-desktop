@@ -79,7 +79,7 @@ StatusScrollView {
         modelA: root.dirtyValues.selectedChannelsModel
         modelB: root.selectedChannelsModel
 
-        roles: ["itemId"]
+        roles: ["key"]
         mode: ModelsComparator.CompareMode.Set
     }
 
