@@ -100,7 +100,7 @@ SplitView {
 
             Label {
                 Layout.fillWidth: true
-                text: "Network name"
+                text: "Network fee"
             }
 
             TextField {

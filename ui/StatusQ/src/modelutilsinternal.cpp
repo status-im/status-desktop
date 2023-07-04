@@ -1,6 +1,7 @@
 #include "StatusQ/modelutilsinternal.h"
 
 #include <QAbstractItemModel>
+#include <QDebug>
 
 ModelUtilsInternal::ModelUtilsInternal(QObject* parent)
     : QObject(parent)
@@ -15,7 +16,6 @@ QStringList ModelUtilsInternal::roleNames(QAbstractItemModel *model) const
     const auto roles = model->roleNames();
     return {roles.cbegin(), roles.cend()};
 }
-
 
 int ModelUtilsInternal::roleByName(QAbstractItemModel* model,
                                    const QString &roleName) const

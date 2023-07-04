@@ -65,6 +65,7 @@ QtObject {
         return num.toString().split('.')[1].length
     }
 
+
     function stripTrailingZeroes(numStr, locale) {
         let regEx = locale.decimalPoint == "." ? /(\.[0-9]*[1-9])0+$|\.0*$/ : /(\,[0-9]*[1-9])0+$|\,0*$/
         return numStr.replace(regEx, '$1')
@@ -101,8 +102,6 @@ QtObject {
     }
 
     function currencyAmountToLocaleString(currencyAmount, options = null, locale = null) {
-        locale = locale || Qt.locale()
-
         if (!currencyAmount) {
             return qsTr("N/A")
         }
@@ -113,6 +112,8 @@ QtObject {
         }
         if (typeof currencyAmount.amount === "undefined")
             return qsTr("N/A")
+
+        locale = locale || Qt.locale()
 
         // Parse options
         var optNoSymbol = false
@@ -141,7 +142,7 @@ QtObject {
         if (currencyAmount.amount > 0 && currencyAmount.amount < minAmount && !optRawAmount)
         {
             // Handle amounts smaller than resolution
-            amountStr = "<%1".arg(numberToLocaleString(minAmount, displayDecimals, locale))
+            amountStr = "<%1".arg(numberToLocaleString(minAmount, optDisplayDecimals, locale))
         } else {
             var amount
             var displayDecimals
@@ -158,11 +159,10 @@ QtObject {
                 // For normal numbers, we show the whole integral part and as many decimal places not
                 // not to exceed the maximum
                 amount = currencyAmount.amount
-		 // For numbers over 1M , dont show decimal places
+                // For numbers over 1M , dont show decimal places
                 if(numIntegerDigits > maxDigitsToShowDecimal) {
                     displayDecimals = 0
-                }
-                else {
+                } else {
                     displayDecimals = Math.min(optDisplayDecimals, Math.max(0, maxDigits - numIntegerDigits))
                 }
             }

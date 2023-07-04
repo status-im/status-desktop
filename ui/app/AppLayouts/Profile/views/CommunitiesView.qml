@@ -18,6 +18,8 @@ import SortFilterProxyModel 0.2
 import "../panels"
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Chat.stores 1.0 as ChatStore
 
 SettingsContentBase {
     id: root
@@ -208,22 +210,23 @@ SettingsContentBase {
 
             property string communityId
 
-            readonly property var chatCommunitySectionModule: {
-                root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityIntroDialog.communityId)
-                return root.rootStore.mainModuleInst.getCommunitySectionModule()
+            readonly property var chatStore: ChatStore.RootStore {
+                chatCommunitySectionModule: {
+                    root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(communityIntroDialog.communityId)
+                    return root.rootStore.mainModuleInst.getCommunitySectionModule()
+                }
             }
 
-            onJoined: {
-                chatCommunitySectionModule.requestToJoinCommunityWithAuthentication(root.rootStore.userProfileInst.name)
-            }
+            loginType: chatStore.loginType
+            walletAccountsModel: WalletStore.RootStore.receiveAccounts
+            permissionsModel: chatStore.permissionsStore.permissionsModel
+            assetsModel: chatStore.assetsModel
+            collectiblesModel: chatStore.collectiblesModel
 
-            onCancelMembershipRequest: {
-                root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
-            }
+            onJoined: chatStore.requestToJoinCommunityWithAuthentication(root.rootStore.userProfileInst.name, JSON.stringify(sharedAddresses), airdropAddress)
+            onCancelMembershipRequest: root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
 
-            onClosed: {
-                destroy()
-            }
+            onClosed: destroy()
         }
     }
 }

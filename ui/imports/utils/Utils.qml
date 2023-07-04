@@ -24,7 +24,7 @@ QtObject {
     }
 
     function startsWith0x(value) {
-        return value.startsWith('0x')
+        return !!value && value.startsWith('0x')
     }
 
     function isChatKey(value) {
@@ -248,8 +248,8 @@ QtObject {
      * Returns text in the format "✓ 12 words" for seed phrases input boxes
      */
     function seedPhraseWordCountText(text) {
-        let wordCount = countWords(text);
-        return getTick(wordCount) + wordCount.toString() + " " + qsTr("words")
+        const wordCount = countWords(text);
+        return getTick(wordCount) + qsTr("%n word(s)", "", wordCount)
     }
 
     function uuid() {
@@ -288,7 +288,7 @@ QtObject {
                 } else if (!/^\d+$/.test(firstPINField.pinInput)) {
                     return [false, qsTr("The PIN must contain only digits")];
                 } else if (firstPINField.pinInput.length != Constants.keycard.general.keycardPinLength) {
-                    return [false, qsTr("The PIN must be exactly %1 digits").arg(Constants.keycard.general.keycardPinLength)];
+                    return [false, qsTr("The PIN must be exactly %n digit(s)", "", Constants.keycard.general.keycardPinLength)];
                 }
                 return [true, ""];
 
@@ -296,7 +296,7 @@ QtObject {
                 if (repeatPINField.pinInput === "") {
                     return [false, qsTr("You need to repeat your PIN")];
                 } else if (repeatPINField.pinInput !== firstPINField.pinInput) {
-                    return [false, qsTr("PIN don't match")];
+                    return [false, qsTr("PINs don't match")];
                 }
                 return [true, ""];
 
@@ -373,7 +373,7 @@ QtObject {
         }
 
         if(validation & Utils.Validate.TextLength && str.length > limit) {
-            errMsg = qsTr("The %1 cannot exceed %2 characters").arg(fieldName, limit)
+            errMsg = qsTr("The %1 cannot exceed %n character(s)", "", limit).arg(fieldName)
         }
 
         if(validation & Utils.Validate.TextHexColor && !isHexColor(str)) {
@@ -392,7 +392,7 @@ QtObject {
             if (errors.minLength) {
                 return errors.minLength.min === 1 ?
                     qsTr("You need to enter a %1").arg(fieldName) :
-                    qsTr("Value has to be at least %1 characters long").arg(errors.minLength.min)
+                    qsTr("Value has to be at least %n character(s) long", "", errors.minLength.min)
             }
         }
         return ""
@@ -657,7 +657,7 @@ QtObject {
         // special handling because on an index attached to the constant
         if (key.startsWith(Constants.appTranslatableConstants.keycardAccountNameOfUnknownWalletAccount)) {
             let num = key.substring(Constants.appTranslatableConstants.keycardAccountNameOfUnknownWalletAccount.length)
-            return "%1%2".arg(qsTr("acc")).arg(num) //short name of an unknown (removed) wallet account
+            return "%1%2".arg(qsTr("acc", "short for account")).arg(num) //short name of an unknown (removed) wallet account
         }
 
         return key

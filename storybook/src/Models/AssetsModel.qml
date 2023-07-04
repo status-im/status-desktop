@@ -63,7 +63,7 @@ ListModel {
             iconSource: ModelsData.assets.snt,
             name: "snt",
             shortName: "snt",
-            symbol: "snt",
+            symbol: "SNT",
             category: TokenCategories.Category.General,
             communityId: ""
         }

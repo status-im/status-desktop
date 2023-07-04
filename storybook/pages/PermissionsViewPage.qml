@@ -59,6 +59,7 @@ SplitView {
                     readonly property string image: ModelsData.icons.socks
                     readonly property string color: "red"
                     readonly property bool owner: isOwnerCheckBox.checked
+                    readonly property bool admin: isAdminCheckBox.checked
                 }
 
                 function log(method, index) {
@@ -92,6 +93,12 @@ SplitView {
                 id: isOwnerCheckBox
 
                 text: "Is owner"
+            }
+
+            CheckBox {
+                id: isAdminCheckBox
+
+                text: "Is admin"
             }
 
             CheckBox {

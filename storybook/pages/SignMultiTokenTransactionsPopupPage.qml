@@ -65,8 +65,8 @@ SplitView {
                 errorText: errorTextField.text
                 totalFeeText: "0.01 ETH ($265.43)"
 
-                onSignTransactionClicked: logs.logEvent("SignTokenTransactionsPopup::onSignTransactionClicked")
-                onCancelClicked: logs.logEvent("SignTokenTransactionsPopup::onCancelClicked")
+                onSignTransactionClicked: logs.logEvent("SignMultiTokenTransactionsPopup::onSignTransactionClicked")
+                onCancelClicked: logs.logEvent("SignMultiTokenTransactionsPopup::onCancelClicked")
             }
         }
 

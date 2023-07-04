@@ -44,10 +44,16 @@ SplitView {
 5. 🚗 consectetur adipiscing elit
 
 Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.".arg(dialog.name)
+                loginType: ctrlLoginType.currentIndex
 
-                onJoined: logs.logEvent("CommunityIntroDialog::onJoined()")
+                walletAccountsModel: WalletAccountsModel {}
+                permissionsModel: dialog.accessType === Constants.communityChatOnRequestAccess ? PermissionsModel.complexPermissionsModel
+                                                                                               : null
+                assetsModel: AssetsModel {}
+                collectiblesModel: CollectiblesModel {}
+
+                onJoined: logs.logEvent("CommunityIntroDialog::onJoined", ["airdropAddress", "sharedAddresses"], arguments)
                 onCancelMembershipRequest: logs.logEvent("CommunityIntroDialog::onCancelMembershipRequest()")
-
             }
         }
 
@@ -143,6 +149,20 @@ Nemo enim 😋 ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                 RadioButton {
                     text: qsTr("On request")
                     onCheckedChanged: dialog.accessType = Constants.communityChatOnRequestAccess
+                }
+            }
+
+            ColumnLayout {
+                visible: dialog.accessType == Constants.communityChatOnRequestAccess && !dialog.isInvitationPending
+                Label {
+                    Layout.fillWidth: true
+                    text: "Login type"
+                }
+
+                ComboBox {
+                    id: ctrlLoginType
+                    Layout.fillWidth: true
+                    model: ["Password","Biometrics","Keycard"]
                 }
             }
 

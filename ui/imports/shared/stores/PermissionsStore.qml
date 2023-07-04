@@ -54,7 +54,6 @@ QtObject {
             return (modelData.permissionType == Constants.permissionType.viewAndPost) && 
                 root.permissionsModel.belongsToChat(modelData.id, root.activeChannelId) &&
                 (modelData.tokenCriteriaMet || !modelData.isPrivate)
-
         }
         filters: [
             ExpressionFilter {
