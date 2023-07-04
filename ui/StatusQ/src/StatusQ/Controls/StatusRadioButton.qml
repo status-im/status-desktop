@@ -21,6 +21,7 @@ RadioButton {
         Large
     }
 
+    opacity: enabled ? 1.0 : 0.3
     font.family: Theme.palette.baseFont.name
 
     indicator: Rectangle {
@@ -47,5 +48,6 @@ RadioButton {
         verticalAlignment: Text.AlignVCenter
         leftPadding: root.indicator && !root.mirrored ? root.indicator.width + root.spacing : 0
         rightPadding: root.indicator && root.mirrored ? root.indicator.width + root.spacing : 0
+        visible: !!text
     }
 }

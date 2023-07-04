@@ -92,15 +92,23 @@ Control {
             ]
         }
 
+        readonly property var moderatePermissionsModel: SortFilterProxyModel {
+            sourceModel: root.moderateHoldingsModel
+            filters: [
+                ExpressionFilter {
+                    expression: d.filterPermissions(model)
+                }
+            ]
+        }
     }
 
     padding: 35 // default by design
     spacing: 32 // default by design
+
     contentItem: ColumnLayout {
         id: column
 
         spacing: root.spacing
-
         component CustomHoldingsListPanel: HoldingsListPanel {
             Layout.fillWidth: true
 
@@ -123,25 +131,23 @@ Control {
         CustomHoldingsListPanel {
             visible: !root.joinCommunity && d.viewOnlyPermissionsModel.count > 0
             introText: root.requiresRequest ? 
-                qsTr("To view the #<b>%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
-                qsTr("To view the #<b>%1</b> channel you need to hold").arg(root.channelName)
+                qsTr("To view the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
+                qsTr("To view the <b>#%1</b> channel you need to hold").arg(root.channelName)
             model: d.viewOnlyPermissionsModel
         }
 
         CustomHoldingsListPanel {
             visible: !root.joinCommunity && d.viewAndPostPermissionsModel.count > 0
             introText: root.requiresRequest ? 
-                qsTr("To view and post in the #<b>%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
-                qsTr("To view and post in the #<b>%1</b> channel you need to hold").arg(root.channelName)
+                qsTr("To view and post in the <b>#%1</b> channel you need to join <b>%2</b> and prove that you hold").arg(root.channelName).arg(root.communityName) :
+                qsTr("To view and post in the <b>#%1</b> channel you need to hold").arg(root.channelName)
             model: d.viewAndPostPermissionsModel
         }
 
-        HoldingsListPanel {
-            Layout.fillWidth: true
-            spacing: root.spacing
-            visible: !root.joinCommunity && !!d.moderateHoldings
-            introText: qsTr("To moderate in the <b>%1</b> channel you need to hold").arg(root.channelName)
-            model: d.moderateHoldingsModel
+        CustomHoldingsListPanel {
+            visible: !root.joinCommunity && d.moderatePermissionsModel.count > 0
+            introText: qsTr("To moderate in the <b>#%1</b> channel you need to hold").arg(root.channelName)
+            model: d.moderatePermissionsModel
         }
 
         StatusButton {
@@ -150,7 +156,7 @@ Control {
             text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
             icon.name: root.isInvitationPending ? "" : Constants.authenticationIconByType[root.loginType]
             font.pixelSize: 13
-            enabled: root.requirementsMet || d.communityPermissionsModel.count == 0
+            enabled: root.requirementsMet || d.communityPermissionsModel.count === 0
             onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.revealAddressClicked()
         }
 
@@ -163,4 +169,3 @@ Control {
         }
     }
 }
-

@@ -57,7 +57,6 @@ QtObject:
     let enumRole = role.ModelRole
     case enumRole:
       of ModelRole.Key:
-
         if item.getType() == ord(TokenType.ENS):
           result = newQVariant(item.getEnsPattern())
         else:
@@ -69,7 +68,7 @@ QtObject:
       of ModelRole.ShortName:
         result = newQVariant(item.getSymbol())
       of ModelRole.Name:
-        result = newQVariant(item.getSymbol())
+        result = newQVariant(item.getName())
       of ModelRole.Amount:
         result = newQVariant(item.getAmount())
       of ModelRole.CriteriaMet:

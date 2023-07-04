@@ -162,7 +162,7 @@ QtObject:
       of "description": result = $item.getDescription()
       of "assetWebsiteUrl": result = $item.getAssetWebsiteUrl()
       of "builtOn": result = $item.getBuiltOn()
-      of "Address": result = $item.getAddress()
+      of "address": result = $item.getAddress()
       of "marketCap": result = $item.getMarketCap()
       of "highDay": result = $item.getHighDay()
       of "lowDay": result = $item.getLowDay()

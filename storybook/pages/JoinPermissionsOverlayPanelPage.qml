@@ -18,7 +18,7 @@ SplitView {
         id: d
 
         property string name: "Uniswap"
-        property string channelName: "#vip"
+        property string channelName: "vip"
         property bool joinCommunity: true // Otherwise, enter channel
         property bool requirementsMet: true
         property bool isInvitationPending: false
@@ -39,8 +39,6 @@ SplitView {
     SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
-
-
 
         Item {
             SplitView.fillWidth: true

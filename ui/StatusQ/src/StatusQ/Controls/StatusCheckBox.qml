@@ -79,6 +79,7 @@ CheckBox {
                                  : root.indicator.width) : 0
         rightPadding: !root.leftSide? (!!root.text ? root.indicator.width + root.spacing
                                  : root.indicator.width) : 0
+        visible: !!text
     }
 
     HoverHandler {

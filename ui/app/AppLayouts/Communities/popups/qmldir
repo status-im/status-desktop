@@ -16,3 +16,4 @@ RemotelyDestructPopup 1.0 RemotelyDestructPopup.qml
 SignMultiTokenTransactionsPopup 1.0 SignMultiTokenTransactionsPopup.qml
 SignTokenTransactionsPopup 1.0 SignTokenTransactionsPopup.qml
 TransferOwnershipPopup 1.0 TransferOwnershipPopup.qml
+SharedAddressesPopup 1.0 SharedAddressesPopup.qml

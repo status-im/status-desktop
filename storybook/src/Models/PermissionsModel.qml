@@ -14,13 +14,15 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            isPrivate: true
+            isPrivate: true,
+            tokenCriteriaMet: false
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
-            isPrivate: false
+            isPrivate: false,
+            tokenCriteriaMet: true
         }
     ]
 
@@ -29,7 +31,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel4(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
-            isPrivate: true,
+            isPrivate: true
         }
     ]
 
@@ -138,6 +140,124 @@ QtObject {
         }
     ]
 
+    readonly property var complexPermissionsModelData: [
+        {
+            id: "admin1",
+            holdingsListModel: root.createHoldingsModel2b(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: false,
+            tokenCriteriaMet: true
+        },
+        {
+            id: "admin2",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "member1",
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false,
+            tokenCriteriaMet: true
+        },
+        {
+            id: "member2",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        }
+    ]
+
+    readonly property var channelsOnlyPermissionsModelData: [
+        {
+            id: "read1a",
+            holdingsListModel: root.createHoldingsModel1b(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: true
+        },
+        {
+            id: "read1b",
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "read1c",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "read2a",
+            holdingsListModel: root.createHoldingsModel2(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: true
+        },
+        {
+            id: "read2b",
+            holdingsListModel: root.createHoldingsModel5(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "viewAndPost1a",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "viewAndPost1b",
+            holdingsListModel: root.createHoldingsModel2b(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: true
+        },
+        {
+            id: "viewAndPost2a",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "viewAndPost2b",
+            holdingsListModel: root.createHoldingsModel5(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "viewAndPost2c",
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        }
+    ]
+
     readonly property ListModel permissionsModel: ListModel {
         readonly property ModelChangeGuard guard: ModelChangeGuard {
             model: root.permissionsModel
@@ -215,6 +335,29 @@ QtObject {
         }
     }
 
+    readonly property var complexPermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.complexPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(complexPermissionsModelData)
+            append(channelsOnlyPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property var channelsOnlyPermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.channelsOnlyPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(channelsOnlyPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
     function createHoldingsModel1() {
         return [
                     {
@@ -230,7 +373,7 @@ QtObject {
         return [
                     {
                         type: HoldingTypes.Type.Ens,
-                        key: "Ens",
+                        key: "*.eth",
                         amount: 1,
                         available: true
                     }
@@ -249,7 +392,24 @@ QtObject {
                         type: HoldingTypes.Type.Asset,
                         key: "Dai",
                         amount: 11,
-                        available: false
+                        available: true
+                    }
+                ]
+    }
+
+    function createHoldingsModel2b() {
+        return [
+                    {
+                        type: HoldingTypes.Type.Collectible,
+                        key: "Anniversary2",
+                        amount: 1,
+                        available: true
+                    },
+                    {
+                        type: HoldingTypes.Type.Asset,
+                        key: "snt",
+                        amount: 666,
+                        available: true
                     }
                 ]
     }
@@ -293,7 +453,7 @@ QtObject {
                     },
                     {
                         type: HoldingTypes.Type.Ens,
-                        key: "ENS",
+                        key: "foo.bar.eth",
                         amount: 1,
                         available: false
                     },
@@ -317,7 +477,7 @@ QtObject {
                     {
                         type: HoldingTypes.Type.Asset,
                         key: "zrx",
-                        amount: 1,
+                        amount: 10,
                         available: false
                     },
                     {
@@ -354,5 +514,9 @@ QtObject {
 
     function createChannelsModel2() {
         return []
+    }
+
+    function createChannelsModel3() {
+        return [{ key: "_vip" } ]
     }
 }

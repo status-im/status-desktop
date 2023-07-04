@@ -16,9 +16,8 @@ Image {
         if(icon.startsWith("data:image/") || icon.startsWith("https://") || icon.startsWith("qrc:/") || icon.startsWith("file:/")) {
             //raw image data
             source = icon
-            objectName = "custom-icon"    
-        }
-        else if (icon !== "") {
+            objectName = "custom-icon"
+        } else if (icon !== "") {
             source = "../../assets/img/icons/" + icon+ ".svg";
             objectName = icon + "-icon"
         }

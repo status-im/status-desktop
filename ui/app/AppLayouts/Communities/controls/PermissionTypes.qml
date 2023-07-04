@@ -6,7 +6,7 @@ import StatusQ.Core.Theme 0.1
 
 QtObject {
     enum Type {
-        None, Admin, Member, Read, ViewAndPost
+        None, Admin, Member, Read, ViewAndPost, Moderator
     }
 
     function getName(type) {
@@ -15,12 +15,12 @@ QtObject {
                 return qsTr("Become admin")
             case PermissionTypes.Type.Member:
                 return qsTr("Become member")
-            case PermissionTypes.Type.Moderator:
-                return qsTr("Moderate")
-            case PermissionTypes.Type.ViewAndPost:
-                return qsTr("View and post")
             case PermissionTypes.Type.Read:
                 return qsTr("View only")
+            case PermissionTypes.Type.ViewAndPost:
+                return qsTr("View and post")
+            case PermissionTypes.Type.Moderator:
+                return qsTr("Moderate")
         }
 
         return ""
@@ -32,12 +32,12 @@ QtObject {
                 return "admin"
             case PermissionTypes.Type.Member:
                 return "in-contacts"
-            case PermissionTypes.Type.Moderator:
-                return "arbitrator"
             case PermissionTypes.Type.ViewAndPost:
                 return "edit"
             case PermissionTypes.Type.Read:
                 return "show"
+            case PermissionTypes.Type.Moderator:
+                return "arbitrator"
         }
 
         return ""

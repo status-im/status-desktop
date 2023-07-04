@@ -45,6 +45,10 @@ QtObject {
         return array
     }
 
+    function modelToFlatArray(model, role) {
+        return modelToArray(model, [role]).map(entry => entry[role])
+    }
+
     function indexOf(model, role, key) {
         const count = model.rowCount()
 

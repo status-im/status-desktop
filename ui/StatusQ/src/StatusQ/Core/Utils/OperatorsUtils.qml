@@ -32,7 +32,6 @@ QtObject {
             case OperatorsUtils.Operators.None:
             default:
                 return ""
-
         }
     }
 }

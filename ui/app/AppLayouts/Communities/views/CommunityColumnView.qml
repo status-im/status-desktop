@@ -20,6 +20,7 @@ import shared.views.chat 1.0
 
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 // FIXME: Rework me to use ColumnLayout instead of anchors!!
 Item {
@@ -126,10 +127,15 @@ Item {
                 introMessage: communityData.introMessage
                 imageSrc: communityData.image
                 accessType: communityData.access
+                loginType: root.store.loginType
+                walletAccountsModel: WalletStore.RootStore.receiveAccounts
+                permissionsModel: root.store.permissionsStore.permissionsModel
+                assetsModel: root.store.assetsModel
+                collectiblesModel: root.store.collectiblesModel
 
                 onJoined: {
                     joinCommunityButton.loading = true
-                    root.store.requestToJoinCommunityWithAuthentication(root.store.userProfileInst.name)
+                    root.store.requestToJoinCommunityWithAuthentication(root.store.userProfileInst.name, sharedAddresses, airdropAddress)
                 }
                 onCancelMembershipRequest: {
                     root.store.cancelPendingRequest(communityData.id)

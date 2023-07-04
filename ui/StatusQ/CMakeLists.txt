@@ -91,11 +91,13 @@ add_library(StatusQ SHARED
         src/plugin.cpp
         include/StatusQ/QClipboardProxy.h
         include/StatusQ/modelutilsinternal.h
+        include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rxvalidator.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
         src/QClipboardProxy.cpp
         src/modelutilsinternal.cpp
+        src/permissionutilsinternal.cpp
         src/rxvalidator.cpp
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp

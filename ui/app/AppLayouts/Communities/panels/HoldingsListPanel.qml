@@ -27,10 +27,6 @@ Control {
 
         // By design values:
         readonly property int defaultHoldingsSpacing: 8
-
-        function holdingsTextFormat(name, amount) {
-            return PermissionsHelpers.setHoldingsTextFormat(HoldingTypes.Type.Asset, name, amount)
-        }
     }
 
     contentItem: ColumnLayout {
@@ -83,7 +79,7 @@ Control {
                                 asset.color: asset.isImage ? "transparent" : titleText.color
                                 closeButtonVisible: false
                                 titleText.color: model.available ? Theme.palette.primaryColor1 : Theme.palette.dangerColor1
-                                bgColor: model.available ? Theme.palette.primaryColor2 :Theme.palette.dangerColor2
+                                bgColor: model.available ? Theme.palette.primaryColor2 : Theme.palette.dangerColor2
                                 titleText.font.pixelSize: 15
                             }
                         }

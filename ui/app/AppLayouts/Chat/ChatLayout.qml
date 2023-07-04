@@ -11,6 +11,7 @@ import "stores"
 import AppLayouts.Communities.popups 1.0
 
 import AppLayouts.Chat.stores 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 StackLayout {
     id: root
@@ -176,8 +177,14 @@ StackLayout {
 
             property string communityId
 
+            loginType: root.rootStore.loginType
+            walletAccountsModel: WalletStore.RootStore.receiveAccounts
+            permissionsModel: root.permissionsStore.permissionsModel
+            assetsModel: root.rootStore.assetsModel
+            collectiblesModel: root.rootStore.collectiblesModel
+
             onJoined: {
-                root.rootStore.requestToJoinCommunityWithAuthentication(root.rootStore.userProfileInst.name)
+                root.rootStore.requestToJoinCommunityWithAuthentication(root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress)
             }
 
             onCancelMembershipRequest: {

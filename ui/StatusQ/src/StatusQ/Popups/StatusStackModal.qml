@@ -23,7 +23,7 @@ StatusModal {
         visible: replaceItem || stackLayout.currentIndex > 0
         onClicked: {
             if (replaceItem) {
-                replaceItem = null;
+                replaceItem = undefined; // unload the replaceItem
             } else {
                 let prevAction = stackLayout.currentItem.prevAction
                 stackLayout.currentIndex--;

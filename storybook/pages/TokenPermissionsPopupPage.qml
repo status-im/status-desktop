@@ -50,7 +50,7 @@ SplitView {
             id: editor
 
             isOnlyChannelPanelEditor: true
-            channelName: "#vip"
+            channelName: "vip"
             joinCommunity: false
         }
     }

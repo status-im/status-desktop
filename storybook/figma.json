@@ -242,6 +242,13 @@
     ],
     "EditOwnerTokenView": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=34794-590207&mode=design&t=ZnwK9yenS5oSgwws-0"
-
+    ],
+    "CommunityIntroDialog": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A563897&mode=dev"
+    ],
+    "SharedAddressesPopup": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A564367&mode=dev",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A563905&mode=dev",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A579875&mode=dev"
     ]
 }

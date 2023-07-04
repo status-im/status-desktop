@@ -89,7 +89,7 @@ proc buildTokenPermissionItem*(tokenPermission: CommunityTokenPermissionDto): To
       tokenCriteriaItems,
       tokenPermissionChatListItems,
       tokenPermission.isPrivate,
-      false # allTokenCriteriaMet will be update by a call to checkPermissinosToJoin
+      false # allTokenCriteriaMet will be updated by a call to checkPermissionsToJoin
   )
 
   return tokenPermissionItem

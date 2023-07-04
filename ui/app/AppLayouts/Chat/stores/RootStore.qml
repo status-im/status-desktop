@@ -378,8 +378,8 @@ QtObject {
         return communitiesModuleInst.spectateCommunity(id, ensName)
     }
 
-    function requestToJoinCommunityWithAuthentication(ensName) {
-        chatCommunitySectionModule.requestToJoinCommunityWithAuthentication(ensName)
+    function requestToJoinCommunityWithAuthentication(ensName, addressesToShare = [], airdropAddress = "") {
+        chatCommunitySectionModule.requestToJoinCommunityWithAuthenticationWithSharedAddresses(ensName, JSON.stringify(addressesToShare), airdropAddress)
     }
 
     function userCanJoin(id) {
@@ -475,7 +475,7 @@ QtObject {
             const userCanJoin = userCanJoin(result.communityId)
             // TODO find what to do when you can't join
             if (userCanJoin) {
-                requestToJoinCommunityWithAuthentication(userProfileInst.preferredName)
+                requestToJoinCommunityWithAuthentication(userProfileInst.preferredName) // FIXME what addresses to share?
             }
         }
         return result
@@ -608,9 +608,9 @@ QtObject {
 
         if(userProfileInst.usingBiometricLogin)
             return Constants.LoginType.Biometrics
-        else if(userProfileInst.isKeycardUser)
+        if(userProfileInst.isKeycardUser)
             return Constants.LoginType.Keycard
-        else return Constants.LoginType.Password
+        return Constants.LoginType.Password
     }
 
     readonly property Connections communitiesModuleConnections: Connections {

@@ -4,6 +4,7 @@ import QtQml 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Internal 0.1 as Internal
 
 import AppLayouts.Communities.controls 1.0
 
@@ -61,6 +62,15 @@ QtObject {
             return item.supply ?? ""
         }
         return ""
+    }
+
+    function getUniquePermissionTokenKeys(model) {
+        return Internal.PermissionUtils.getUniquePermissionTokenKeys(model)
+    }
+
+    function getUniquePermissionChannels(model, permissionsTypesArray = []) {
+        // TODO return a QVariantMap (https://github.com/status-im/status-desktop/issues/11481)
+        return Internal.PermissionUtils.getUniquePermissionChannels(model, permissionsTypesArray)
     }
 
     function setHoldingsTextFormat(type, name, amount) {

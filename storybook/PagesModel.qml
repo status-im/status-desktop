@@ -254,6 +254,10 @@ ListModel {
          section: "Popups"
     }
     ListElement {
+         title: "SharedAddressesPopup"
+         section: "Popups"
+    }
+    ListElement {
          title: "AlertPopup"
          section: "Popups"
     }

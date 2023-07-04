@@ -26,7 +26,7 @@ StatusSectionLayout {
     id: root
 
     property var contactsStore
-    property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
+    property bool hasAddedContacts: contactsStore.myContactsModel.count > 0
 
     property RootStore rootStore
     property var createChatPropertiesStore
@@ -36,7 +36,7 @@ StatusSectionLayout {
     property var stickersPopup
     property bool stickersLoaded: false
 
-    readonly property var chatContentModule: root.rootStore.currentChatContentModule() || null
+    readonly property var chatContentModule: rootStore.currentChatContentModule() || null
     readonly property bool viewOnlyPermissionsSatisfied: chatContentModule.viewOnlyPermissionsSatisfied
     readonly property bool viewAndPostPermissionsSatisfied: chatContentModule.viewAndPostPermissionsSatisfied
     property bool hasViewOnlyPermissions: false

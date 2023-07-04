@@ -5,6 +5,7 @@
 
 #include "StatusQ/QClipboardProxy.h"
 #include "StatusQ/modelutilsinternal.h"
+#include "StatusQ/permissionutilsinternal.h"
 #include "StatusQ/rxvalidator.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
@@ -25,6 +26,10 @@ public:
 
         qmlRegisterSingletonType<ModelUtilsInternal>(
             "StatusQ.Internal", 0, 1, "ModelUtils", &ModelUtilsInternal::qmlInstance);
+
+        qmlRegisterSingletonType<PermissionUtilsInternal>("StatusQ.Internal", 0, 1, "PermissionUtils", [](QQmlEngine *, QJSEngine *) {
+            return new PermissionUtilsInternal;
+        });
 
         QZXing::registerQMLTypes();
         qqsfpm::registerTypes();
