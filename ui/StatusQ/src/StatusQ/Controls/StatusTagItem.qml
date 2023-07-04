@@ -36,7 +36,7 @@ Control {
 */
     property bool isReadonly
     /*!
-    \qmlproperty string StatusTagItem::name
+    \qmlproperty string StatusTagItem::text
     This property sets the tag text to display.
 */
     property string text
@@ -69,6 +69,8 @@ Control {
 
     implicitHeight: 30
     horizontalPadding: d.tagMargins
+    font.pixelSize: 15
+    font.family: Theme.palette.baseFont.name
 
     background: Rectangle {
         color: d.getTagColor(root.isReadonly)
@@ -88,7 +90,7 @@ Control {
         }
         StatusBaseText {
             color: Theme.palette.indirectColor1
-            font.pixelSize: 15
+            font: root.font
             text: root.text
         }
         StatusIcon {
