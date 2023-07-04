@@ -10,6 +10,7 @@ type
     createdAt: int
     assetsLoading: bool
     currencyBalance: CurrencyAmount
+    isWallet: bool
 
 proc initItem*(
   name: string = "",
@@ -23,7 +24,8 @@ proc initItem*(
   createdAt: int = 0,
   position: int = 0,
   keycardAccount: bool = false,
-  assetsLoading: bool  = true,
+  assetsLoading: bool = true,
+  isWallet: bool = false,
 ): Item =
   result = Item()
   result.WalletAccountItem.setup(name,
@@ -38,6 +40,7 @@ proc initItem*(
   result.position = position
   result.assetsLoading = assetsLoading
   result.currencyBalance = currencyBalance
+  result.isWallet = isWallet
 
 proc `$`*(self: Item): string =
   result = "WalletSection-Accounts-Item("
@@ -57,3 +60,6 @@ proc createdAt*(self: Item): int =
 
 proc position*(self: Item): int =
   return self.position
+
+proc isWallet*(self: Item): bool =
+  return self.isWallet

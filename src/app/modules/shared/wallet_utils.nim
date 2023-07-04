@@ -69,6 +69,7 @@ proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: boo
     w.position,
     keycardAccount,
     w.assetsLoading,
+    w.isWallet
   )
 
 proc walletAccountToWalletAssetsItem*(w: WalletAccountDto): wallet_assets_item.Item =
