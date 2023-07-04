@@ -174,6 +174,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "PrivilegedTokenArtworkPanel"
+        section: "Panels"
+    }
+    ListElement {
          title: "BurnTokensPopup"
          section: "Popups"
     }

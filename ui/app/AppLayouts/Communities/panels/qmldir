@@ -18,6 +18,7 @@ OverviewSettingsPanel 1.0 OverviewSettingsPanel.qml
 PermissionConflictWarningPanel 1.0 PermissionConflictWarningPanel.qml
 PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml
 PermissionsSettingsPanel 1.0 PermissionsSettingsPanel.qml
+PrivilegedTokenArtworkPanel 1.0 PrivilegedTokenArtworkPanel.qml
 ProfilePopupInviteFriendsPanel 1.0 ProfilePopupInviteFriendsPanel.qml
 ProfilePopupInviteMessagePanel 1.0 ProfilePopupInviteMessagePanel.qml
 ProfilePopupOverviewPanel 1.0 ProfilePopupOverviewPanel.qml
