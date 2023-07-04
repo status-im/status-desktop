@@ -62,6 +62,10 @@ StatusScrollView {
                                               && (!root.isAssetView  || (root.isAssetView && assetDecimalsInput.valid))
 
         readonly property int imageSelectorRectWidth: root.isAssetView ? 128 : 290
+
+        function hasEmoji(text) {
+            return SQUtils.Emoji.hasEmoji(SQUtils.Emoji.parse(text));
+        }
     }
 
     padding: 0
@@ -125,7 +129,9 @@ StatusScrollView {
             placeholderText: qsTr("Name")
             validationMode: root.validationMode
             minLengthValidator.errorMessage: qsTr("Please name your token name (use A-Z and 0-9, hyphens and underscores only)")
-            regexValidator.errorMessage: qsTr("Your token name contains invalid characters (use A-Z and 0-9, hyphens and underscores only)")
+            regexValidator.errorMessage: d.hasEmoji(text) ?
+                                         qsTr("Your token name is too cool (use A-Z and 0-9, hyphens and underscores only)") :
+                                         qsTr("Your token name contains invalid characters (use A-Z and 0-9, hyphens and underscores only)")
             extraValidator.validate: function (value) {
                 // If minting failed, we can retry same deployment, so same name allowed
                 const allowRepeatedName = (root.isAssetView ? asset.deployState : collectible.deployState) === Constants.ContractTransactionStatus.Failed
@@ -180,7 +186,8 @@ StatusScrollView {
             placeholderText: root.isAssetView ? qsTr("e.g. ETH"): qsTr("e.g. DOODLE")
             validationMode: root.validationMode
             minLengthValidator.errorMessage: qsTr("Please enter your token symbol (use A-Z only)")
-            regexValidator.errorMessage: qsTr("Your token symbol contains invalid characters (use A-Z only)")
+            regexValidator.errorMessage: d.hasEmoji(text) ? qsTr("Your token symbol is too cool (use A-Z only)") :
+                qsTr("Your token symbol contains invalid characters (use A-Z only)")
             regexValidator.regularExpression: Constants.regularExpressions.capitalOnly
             extraValidator.validate: function (value) {
                 // If minting failed, we can retry same deployment, so same symbol allowed
@@ -294,7 +301,8 @@ StatusScrollView {
             text: root.isAssetView ? asset.supply : collectible.supply
             placeholderText: qsTr("e.g. 300")
             minLengthValidator.errorMessage: qsTr("Please enter a total finite supply")
-            regexValidator.errorMessage: qsTr("Your total finite supply contains invalid characters (use 0-9 only)")
+            regexValidator.errorMessage: d.hasEmoji(text) ? qsTr("Your total finite supply is too cool (use 0-9 only)") :
+                qsTr("Your total finite supply contains invalid characters (use 0-9 only)")
             regexValidator.regularExpression: Constants.regularExpressions.numerical
             extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 999999999 }
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 999,999,999")
@@ -343,7 +351,8 @@ StatusScrollView {
             text: !!asset ? asset.decimals : ""
             validationMode: StatusInput.ValidationMode.Always
             minLengthValidator.errorMessage: qsTr("Please enter how many decimals your token should have")
-            regexValidator.errorMessage: qsTr("Your decimal amount contains invalid characters (use 0-9 only)")
+            regexValidator.errorMessage: d.hasEmoji(text) ? qsTr("Your decimal amount is too cool (use 0-9 only)") :
+                qsTr("Your decimal amount contains invalid characters (use 0-9 only)")
             regexValidator.regularExpression: Constants.regularExpressions.numerical
             extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 10 }
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 10")
@@ -380,6 +389,9 @@ StatusScrollView {
             StatusRegularExpressionValidator {
                 id: regexValidatorItem
                 regularExpression: Constants.regularExpressions.alphanumericalExpanded
+                onErrorMessageChanged: {
+                    customInput.validate();
+                }
             },
             StatusValidator {
                 id: extraValidatorItem
