@@ -20,10 +20,10 @@ SplitView {
     Item {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-
         TokenHoldersPanel {
-            anchors.centerIn: parent
             width: 568
+            height: 364
+            anchors.centerIn: parent
             tokenName: "Aniversary"
             model: TokenHoldersModel {}
             isSelectorMode: editorSelectorMode.checked

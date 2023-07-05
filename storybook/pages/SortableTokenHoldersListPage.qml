@@ -34,8 +34,7 @@ SplitView {
                 sourceModel: tokenHoldersModel
 
                 sortBy: holdersList.sortBy
-                sortOrder: holdersList.sorting === SortableTokenHoldersList.Sorting.Descending
-                           ? Qt.DescendingOrder : Qt.AscendingOrder
+                sortOrder: holdersList.sortOrder ? Qt.DescendingOrder : Qt.AscendingOrder
             }
 
             onClicked: logs.logEvent("holdersList.clicked: " + index)

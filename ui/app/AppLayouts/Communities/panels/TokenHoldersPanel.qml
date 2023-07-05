@@ -1,165 +1,97 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
-
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
+import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-
-import SortFilterProxyModel 0.2
+import StatusQ.Core.Utils 0.1
+import StatusQ.Popups 0.1
 
 import utils 1.0
 import shared.controls 1.0
 
 Control {
     id: root
-
-    // Expected roles: name, walletAddress, imageSource, amount
     property var model
-
     property string tokenName
     property bool isSelectorMode: false
 
     signal selfDestructAmountChanged(string walletAddress, int amount)
     signal selfDestructRemoved(string walletAddress)
+    bottomPadding: 16
 
-    QtObject {
-        id: d
+    TokenHoldersProxyModel {
+        id: filteredModel
+        sourceModel: root.model
+        searchText: searcher.text
 
-        readonly property int red2Color: 4
+        sortBy: holdersList.sortBy
+        sortOrder: holdersList.sortOrder ? Qt.DescendingOrder : Qt.AscendingOrder
     }
 
     contentItem: ColumnLayout {
-        spacing: Style.current.padding
+        id: column
+        anchors.fill: parent
+        anchors.topMargin: Style.current.padding
+        spacing: 0
+        StatusBaseText {
+            id: txtLabel
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            wrapMode: Text.Wrap
+            font.pixelSize: Style.current.primaryTextFontSize
+            color: Theme.palette.baseColor1
 
-        SortFilterProxyModel {
-            id: filteredModel
-
-            sourceModel: root.model
-            filters: ExpressionFilter {
-                enabled: searcher.enabled
-                expression: {
-                    searcher.text
-                    return model.name.toLowerCase().includes(searcher.text.toLowerCase()) ||
-                            model.walletAddress.toLowerCase().includes(searcher.text.toLowerCase())
-                }
-            }
+            text: qsTr("%1 token holders").arg(root.tokenName)
         }
 
         SearchBox {
             id: searcher
-
             Layout.fillWidth: true
-
+            Layout.topMargin: 12
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            visible: !root.empty
             topPadding: 0
             bottomPadding: 0
             minimumHeight: 36 // by design
             maximumHeight: minimumHeight
-            enabled: root.model && root.model.count > 0
-            placeholderText: enabled ? qsTr("Search") : qsTr("No placeholders to search")
+            placeholderText: qsTr("Search hodlers")
         }
-
         StatusBaseText {
+            id: anotherLabel
             Layout.fillWidth: true
+            Layout.topMargin: 12
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
 
-            visible: !root.preview
             wrapMode: Text.Wrap
             font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.baseColor1
-            text: searcher.text.length > 0 ? qsTr("Search results") : qsTr("All %1 token holders").arg(root.tokenName)
+            visible: (searcher.text.length > 0 && filteredModel.count === 0)
+            text: visible ? qsTr("No hodlers found") : ""
         }
-
-        Item {
-            id: scrollViewWrapper
+        TokenHoldersList {
+            id: holdersList
             Layout.fillWidth: true
             Layout.fillHeight: true
-            implicitWidth: scrollView.implicitWidth
-            implicitHeight: scrollView.implicitHeight
-
-            StatusListView {
-                id: scrollView
-
-                anchors.fill: parent
-                implicitHeight: contentHeight
-
-                model: filteredModel
-
-                ScrollBar.vertical: StatusScrollBar {
-                    parent: scrollViewWrapper
-                    anchors.top: scrollView.top
-                    anchors.bottom: scrollView.bottom
-                    anchors.left: scrollView.right
-                    anchors.leftMargin: 1
-                }
-
-                delegate: RowLayout {
-                    width: ListView.view.width
-                    spacing: Style.current.padding
-
-                    StatusListItem {
-                        readonly property bool unknownHolder: model.name === ""
-                        readonly property string formattedTitle: unknownHolder ? "?" : model.name
-
-                        Layout.fillWidth: true
-
-                        leftPadding: 0
-                        rightPadding: 0
-                        sensor.enabled: false
-                        title: formattedTitle
-                        statusListItemTitle.visible: !unknownHolder
-                        subTitle: model.walletAddress
-                        asset.name: model.imageSource
-                        asset.isImage: true
-                        asset.isLetterIdenticon: unknownHolder
-                        asset.color: Theme.palette.userCustomizationColors[d.red2Color]
-                    }
-
-                    StatusComboBox {
-                        id: combo
-                        Layout.preferredWidth: 88
-                        Layout.preferredHeight: 44
-                        visible: root.isSelectorMode && amount > 1
-                        control.spacing: Style.current.halfPadding / 2
-                        model: amount
-                        size: StatusComboBox.Size.Small
-                        type: StatusComboBox.Type.Secondary
-                        delegate: StatusItemDelegate {
-                            width: combo.control.width
-                            centerTextHorizontally: true
-                            highlighted: combo.control.highlightedIndex === index
-                            font: combo.control.font
-                            text: Number(modelData) + 1
-                        }
-                        contentItem: StatusBaseText {
-                            font: combo.control.font
-                            verticalAlignment: Text.AlignVCenter
-                            elide: Text.ElideRight
-                            text: Number(combo.control.displayText) + 1
-                            color: Theme.palette.baseColor1
-                        }
-
-                        control.onDisplayTextChanged: {
-                            if(checkBox.checked)
-                                root.selfDestructAmountChanged(walletAddress, Number(combo.currentIndex) + 1)
-                        }
-                    }
-
-                    StatusCheckBox {
-                        id: checkBox
-
-                        Layout.leftMargin: Style.current.padding
-                        visible: root.isSelectorMode
-                        padding: 0
-                        onCheckStateChanged: {
-                            if(checked)
-                                root.selfDestructAmountChanged(model.walletAddress, Number(combo.currentIndex) + 1)
-                            else
-                                root.selfDestructRemoved(model.walletAddress)
-                        }
-                    }
-                }
+            Layout.topMargin: 12
+            isSelectorMode: root.isSelectorMode
+            model: filteredModel
+            onSelfDestructRemoved: {
+                root.selfDestructRemoved(walletAddress);
             }
+            onSelfDestructAmountChanged: {
+                root.selfDestructAmountChanged(walletAddress, amount);
+            }
+        }
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 4
+            Layout.alignment: Qt.AlignBottom
+            color: Theme.palette.baseColor2
+            opacity: holdersList.bottomSeparatorVisible ? 1.0 : 0.0
         }
     }
 }
