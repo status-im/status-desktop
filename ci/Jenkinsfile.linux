@@ -79,6 +79,11 @@ pipeline {
     }
 
     stage('Client') {
+      environment {
+        /* Hack-fix for wrong config path location causing:
+         * Error: unhandled exception: Read-only file system */
+        RESOURCES_LAYOUT = '-d:production'
+      }
       steps { script {
         /* Temporary hack-fix for failing Linux builds:
          * https://github.com/status-im/infra-ci/issues/88 */
