@@ -41,31 +41,13 @@ SplitView {
                 border.color: "black"
                 border.width: 1
 
-                Flickable {
-                    id: scrolView0
-                    anchors.fill: parent
-                    anchors.margins: 1
-                    contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
-                    contentHeight: heightFillCheckBox.checked ? availableHeight : heightSpinBox.value
-                    clip: true
-//                    interactive: true
-
-                    visible: twichingCheckBox.checked
-
-                    Image {
-                        width: widthFillCheckBox.checked ? scrollView3.availableWidth : widthSpinBox.value
-                        height: heightFillCheckBox.checked ? scrollView3.availableHeight : heightSpinBox.value
-                        source: "https://placekitten.com/900/900"
-                    }
-                }
-
                 StatusScrollView {
                     id: scrolView1
                     anchors.fill: parent
                     anchors.margins: 1
                     contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
 
-                    visible: d.isRectangle && !twichingCheckBox.checked
+                    visible: d.isRectangle
 
                     Rectangle {
                         gradient: Gradient.NightFade
@@ -80,7 +62,7 @@ SplitView {
                     anchors.margins: 1
                     contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
 
-                    visible: d.isImage && !twichingCheckBox.checked
+                    visible: d.isImage
 
                     Image {
                         width: widthFillCheckBox.checked ? scrollView3.availableWidth : widthSpinBox.value
@@ -94,7 +76,7 @@ SplitView {
                     anchors.margins: 1
                     contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
 
-                    visible: d.isText && !twichingCheckBox.checked
+                    visible: d.isText
 
                     Text {
                         width: widthFillCheckBox.checked ? scrollView2.availableWidth : widthSpinBox.value
@@ -190,23 +172,47 @@ SplitView {
 
             logsView.logText: logs.logText
 
-            RowLayout {
-                anchors.centerIn: parent
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
-                Button {
-                    Layout.fillHeight: true
-                    text: "StatusModal"
-                    onClicked: {
-                        modal.open()
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Button {
+                        Layout.fillHeight: true
+                        text: "StatusModal"
+                        onClicked: {
+                            modal.open()
+                        }
+                    }
+                    Button {
+                        Layout.fillHeight: true
+                        text: "StatusModal\n(detached bar)"
+                        onClicked: {
+                            modal2.open()
+                        }
                     }
                 }
-                Button {
-                    Layout.fillHeight: true
-                    text: "StatusModal\n(detached bar)"
-                    onClicked: {
-                        modal2.open()
+
+                Label {
+                    id: slidesLabel
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.MarkdownText
+                    text: "Please, read our [contributing guide](https://github.com/status-im/status-desktop/blob/master/ui/StatusQ/src/contributing.md#StatusScrollView) (or checkout a [presenation](https://docs.google.com/presentation/d/1ZZeg9j2fZMV-iHreu_Wsl1u6D9POH7SlUO78ZXNj-AI)) about using `StatusScrollView`"
+                    onLinkActivated: (link) => {
+                        Qt.openUrlExternally(link)
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        visible: !!slidesLabel.hoveredLink
+                        acceptedButtons: Qt.NoButton
                     }
                 }
+
             }
         }
     }
@@ -222,20 +228,12 @@ SplitView {
                 columns: 2
                 columnSpacing: 10
 
-                Label {
-                    text: "Twitching demo"
-                }
-                CheckBox {
-                    id: twichingCheckBox
-                }
-
                 ComboBox {
                     id: contentComboBox
                     Layout.columnSpan: 2
                     Layout.fillWidth: true
                     Layout.bottomMargin: 20
                     model: ["image", "rectangle", "text"]
-                    enabled: !twichingCheckBox.checked
                 }
 
                 Label {
