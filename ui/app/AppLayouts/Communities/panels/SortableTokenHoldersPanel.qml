@@ -23,7 +23,7 @@ Control {
     property alias isAirdropEnabled: infoBoxPanel.buttonEnabled
 
     readonly property alias sortBy: holdersList.sortBy
-    readonly property alias sorting: holdersList.sorting
+    readonly property alias sorting: holdersList.sortOrder
 
     readonly property bool empty: countCheckHelper.count === 0
 
@@ -50,8 +50,7 @@ Control {
         searchText: searcher.text
 
         sortBy: holdersList.sortBy
-        sortOrder: holdersList.sorting === SortableTokenHoldersList.Sorting.Descending
-                   ? Qt.DescendingOrder : Qt.AscendingOrder
+        sortOrder: holdersList.sortOrder ? Qt.DescendingOrder : Qt.AscendingOrder
     }
 
     QtObject {

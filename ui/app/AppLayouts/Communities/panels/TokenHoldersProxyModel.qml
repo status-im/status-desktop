@@ -6,8 +6,12 @@ SortFilterProxyModel {
     property string searchText
     readonly property string searchTextLowerCase: searchText.toLowerCase()
 
-    property int sortBy: SortableTokenHoldersList.SortBy.Username
+    property int sortBy: TokenHoldersProxyModel.SortBy.Username
     property int sortOrder: Qt.AscendingOrder
+
+    enum SortBy {
+        None, Username, NoOfMessages, Holding
+    }
 
     filters: ExpressionFilter {
         expression: {
@@ -23,7 +27,7 @@ SortFilterProxyModel {
 
     sorters: [
         FilterSorter {
-            enabled: root.sortBy === SortableTokenHoldersList.SortBy.Username
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
 
             ValueFilter {
                 roleName: "name"
@@ -35,27 +39,27 @@ SortFilterProxyModel {
         },
 
         RoleSorter {
-            enabled: root.sortBy === SortableTokenHoldersList.SortBy.Username
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
             roleName: "name"
             sortOrder: root.sortOrder
             priority: 2
         },
 
         RoleSorter {
-            enabled: root.sortBy === SortableTokenHoldersList.SortBy.Username
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Username
             roleName: "walletAddress"
             sortOrder: root.sortOrder
             priority: 1
         },
 
         RoleSorter {
-            enabled: root.sortBy === SortableTokenHoldersList.SortBy.NoOfMessages
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.NoOfMessages
             roleName: "noOfMessages"
             sortOrder: root.sortOrder
         },
 
         RoleSorter {
-            enabled: root.sortBy === SortableTokenHoldersList.SortBy.Holding
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.Holding
             roleName: "amount"
             sortOrder: root.sortOrder
         }

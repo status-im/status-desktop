@@ -20,16 +20,8 @@ import utils 1.0
 StatusListView {
     id: root
 
-    enum SortBy {
-        None, Username, NoOfMessages, Holding
-    }
-
-    enum Sorting {
-        Descending, Ascending
-    }
-
     readonly property alias sortBy: d.sortBy
-    readonly property alias sorting: d.sorting
+    readonly property alias sortOrder: d.sorting
 
     signal clicked(int index, var parent, var mouse)
 
@@ -55,9 +47,9 @@ StatusListView {
             d.resetOtherHeaders(this)
 
             if (sorting === StatusSortableColumnHeader.Sorting.Ascending)
-                d.sorting = SortableTokenHoldersList.Sorting.Ascending
+                d.sorting = Qt.AscendingOrder
             else if (sorting === StatusSortableColumnHeader.Sorting.Descending)
-                d.sorting = SortableTokenHoldersList.Sorting.Descending
+                d.sorting = Qt.DescendingOrder
         }
     }
 
@@ -75,8 +67,8 @@ StatusListView {
     QtObject {
         id: d
 
-        property int sortBy: SortableTokenHoldersList.SortBy.None
-        property int sorting: SortableTokenHoldersList.Sorting.Descending
+        property int sortBy: TokenHoldersProxyModel.SortBy.None
+        property int sorting: Qt.DescendingOrder
 
         readonly property int red2Color: 4
 
@@ -113,9 +105,9 @@ StatusListView {
 
                     onClicked: {
                         if (sorting !== StatusSortableColumnHeader.Sorting.NoSorting)
-                            d.sortBy = SortableTokenHoldersList.SortBy.Username
+                            d.sortBy = TokenHoldersProxyModel.SortBy.Username
                         else
-                            d.sortBy = SortableTokenHoldersList.SortBy.None
+                            d.sortBy = TokenHoldersProxyModel.SortBy.None
                     }
                 }
 
@@ -131,9 +123,9 @@ StatusListView {
 
                 onClicked: {
                     if (sorting !== StatusSortableColumnHeader.Sorting.NoSorting)
-                        d.sortBy = SortableTokenHoldersList.SortBy.NoOfMessages
+                        d.sortBy = TokenHoldersProxyModel.SortBy.NoOfMessages
                     else
-                        d.sortBy = SortableTokenHoldersList.SortBy.None
+                        d.sortBy = TokenHoldersProxyModel.SortBy.None
                 }
             }
 
@@ -149,9 +141,9 @@ StatusListView {
 
                     onClicked: {
                         if (sorting !== StatusSortableColumnHeader.Sorting.NoSorting)
-                            d.sortBy = SortableTokenHoldersList.SortBy.Holding
+                            d.sortBy = TokenHoldersProxyModel.SortBy.Holding
                         else
-                            d.sortBy = SortableTokenHoldersList.SortBy.None
+                            d.sortBy = TokenHoldersProxyModel.SortBy.None
                     }
                 }
             }
@@ -185,7 +177,7 @@ StatusListView {
         }
 
         readonly property bool showSeparator: isFirstRowAddress
-            && root.sortBy === SortableTokenHoldersList.SortBy.Username
+            && root.sortBy === TokenHoldersProxyModel.SortBy.Username
 
         width: ListView.view.width
 

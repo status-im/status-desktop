@@ -33,7 +33,7 @@ ListModel {
         },
         {
             name: "",
-            walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579268",
+            walletAddress: "0xb794f5ea0ba394782634hhh3fffba74279579264",
             imageSource: "",
             amount: 1,
             noOfMessages: 0,
@@ -41,7 +41,7 @@ ListModel {
         },
         {
             name: "",
-            walletAddress: "0xc794f5ea0ba39494ce839613fffba74279579268",
+            walletAddress: "0xc794f577990jjjjjewaofherfffba74279579265",
             imageSource: "",
             amount: 11,
             noOfMessages: 0,
@@ -49,7 +49,7 @@ ListModel {
         },
         {
             name: "",
-            walletAddress: "0xd794f5ea0ba39494ce839613fffba74279579268",
+            walletAddress: "0xd794f5ea009fnrsehggwe7777ffba74279579266",
             imageSource: "",
             amount: 14,
             noOfMessages: 0,

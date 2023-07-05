@@ -63,14 +63,10 @@ StatusDialog {
     implicitWidth: 600 // by design
     padding: 0
 
-    TokenHoldersPanel {
+    contentItem: TokenHoldersPanel {
         id: tokenHoldersPanel
-
-        anchors.fill: parent
-        padding: 16
         tokenName: root.collectibleName
         isSelectorMode: true
-
         onSelfDestructAmountChanged: d.updateTokensToDestruct(walletAddress, amount)
         onSelfDestructRemoved: d.clearTokensToDesctruct(walletAddress)
     }
@@ -78,6 +74,12 @@ StatusDialog {
     footer: StatusDialogFooter {
         spacing: Style.current.padding
         rightButtons: ObjectModel {
+            StatusFlatButton {
+                text: qsTr("Cancel")
+                onClicked: {
+                    root.close()
+                }
+            }
             StatusButton {
                 enabled: d.tokenCount > 0
                 text: qsTr("Remotely destruct %n token(s)", "", d.tokenCount)
