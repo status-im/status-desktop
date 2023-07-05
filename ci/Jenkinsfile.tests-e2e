@@ -96,6 +96,9 @@ pipeline {
     stage('Client') {
       environment {
         GANACHE_NETWORK_RPC_URL = "http://localhost:${env.GANACHE_RPC_PORT}"
+        /* Hack-fix for wrong config path location causing:
+         * Error: unhandled exception: Read-only file system */
+        RESOURCES_LAYOUT = '-d:production'
       }
       steps { script {
         /* Temporary hack-fix for failing Linux builds:

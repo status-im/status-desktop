@@ -444,7 +444,7 @@ endif
 
 NIM_PARAMS += -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=dynamic
 
-RESOURCES_LAYOUT := -d:development
+RESOURCES_LAYOUT ?= -d:development
 
 # When modifying files that are not tracked in NIM_SOURCES (see below),
 # e.g. vendor/*.nim, REBUILD_NIM=true can be supplied to `make` to ensure a
