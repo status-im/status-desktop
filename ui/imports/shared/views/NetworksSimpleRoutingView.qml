@@ -82,6 +82,7 @@ RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.smallPadding
+            Layout.rightMargin: Style.current.padding
             amountToSend: root.amountToSend
             errorType: root.errorType
             isLoading: root.isLoading && !root.isBridgeTx
