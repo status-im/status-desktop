@@ -57,7 +57,7 @@ StatusScrollView {
     property bool permissionTypeLimitReached: false
 
     signal createPermissionClicked
-    signal navigateToMintTokenSettings
+    signal navigateToMintTokenSettings(bool isAssetType)
 
     function resetChanges() {
         d.loadInitValues()
@@ -319,7 +319,7 @@ StatusScrollView {
                 }
 
                 onNavigateToMintTokenSettings: {
-                    root.navigateToMintTokenSettings()
+                    root.navigateToMintTokenSettings(isAssetType)
                     close()
                 }
             }

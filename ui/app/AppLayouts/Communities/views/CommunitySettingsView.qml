@@ -261,7 +261,7 @@ StatusSectionLayout {
 
             onNavigateToMintTokenSettings: {
                 root.goTo(Constants.CommunitySettingsSections.MintTokens)
-                mintPanel.openNewTokenForm(false)
+                mintPanel.openNewTokenForm(isAssetType)
             }
         }
 

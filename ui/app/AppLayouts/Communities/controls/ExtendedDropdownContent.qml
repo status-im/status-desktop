@@ -453,7 +453,7 @@ Item {
             availableData: d.availableData
             noDataText: root.noDataText
             areHeaderButtonsVisible: root.state === d.depth1_ListState
-                                     && !root.showAllTokensMode
+
             headerModel: ListModel {
                ListElement {
                    key: "MINT"

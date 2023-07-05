@@ -29,7 +29,7 @@ StackView {
     signal updatePermissionRequested(string key, int permissionType,
                                      var holdings, var channels, bool isPrivate)
     signal removePermissionRequested(string key)
-    signal navigateToMintTokenSettings
+    signal navigateToMintTokenSettings(bool isAssetType)
 
     function navigateBack() {
         if (depth === 2 && currentItem.toast.active)
@@ -201,7 +201,7 @@ StackView {
                     root.pop(StackView.Immediate)
                 }
 
-                onNavigateToMintTokenSettings: root.navigateToMintTokenSettings()
+                onNavigateToMintTokenSettings: root.navigateToMintTokenSettings(isAssetType)
 
                 function saveChanges() {
                     const holdings = dirtyValues.holdingsRequired ?
