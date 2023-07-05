@@ -16,5 +16,5 @@ Background:
    	| Overview   |
    	| Members    |
    	| Permissions|
-   	| Mint Tokens|
+   	| Tokens|
    	| Airdrops   |
