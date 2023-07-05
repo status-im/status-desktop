@@ -43,6 +43,7 @@ Loader {
                     d.isPending = true
                     return  store.resolveENS(root.selectedRecipient.ens)
                 }
+                break
             }
             case TabAddressSelectorView.Type.RecentsAddress: {
                 let isIncoming = root.selectedRecipient.to === root.selectedRecipient.address
@@ -52,6 +53,7 @@ Loader {
             }
             case TabAddressSelectorView.Type.Address: {
                 root.item.input.text = root.selectedRecipient.address
+                break
             }
             }
             root.addressText = root.selectedRecipient.address

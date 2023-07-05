@@ -99,7 +99,7 @@ StatusDialog {
 
     width: 556
     topMargin: 64 + header.height
-    bottomPadding: footer.visible ? 0 : 32
+    bottomPadding: footer.visible ? footer.height : 32
 
     padding: 0
     background: StatusDialogBackground {
@@ -398,7 +398,6 @@ StatusDialog {
 
                     TabAddressSelectorView {
                         id: addressSelector
-                        width: parent.width
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
@@ -414,7 +413,6 @@ StatusDialog {
 
                     NetworkSelector {
                         id: networkSelector
-                        width: parent.width
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding
@@ -438,7 +436,6 @@ StatusDialog {
 
                     FeesView {
                         id: fees
-                        width: parent.width
                         anchors.left: parent.left
                         anchors.right: parent.right
                         anchors.leftMargin: Style.current.bigPadding

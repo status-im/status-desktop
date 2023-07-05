@@ -35,6 +35,7 @@ ColumnLayout {
     signal reCalculateSuggestedRoute()
 
     RowLayout {
+        Layout.fillWidth: true
         spacing: 10
 
         StatusRoundIcon {
@@ -47,9 +48,9 @@ ColumnLayout {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             RowLayout {
-                Layout.maximumWidth: 410
+                Layout.fillWidth: true
                 StatusBaseText {
-                    Layout.maximumWidth: 410
+                    Layout.fillWidth: true
                     font.pixelSize: 15
                     font.weight: Font.Medium
                     color: Theme.palette.directColor1
@@ -72,7 +73,7 @@ ColumnLayout {
                 }
             }
             StatusBaseText {
-                Layout.maximumWidth: 410
+                Layout.fillWidth: true
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
                 text: qsTr("The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.")
@@ -80,6 +81,8 @@ ColumnLayout {
             }
             Loader {
                 id: networksLoader
+                Layout.fillWidth: true
+                Layout.preferredHeight: item.height
                 Layout.topMargin: Style.current.padding
                 visible: active
                 sourceComponent: NetworkCardsComponent {

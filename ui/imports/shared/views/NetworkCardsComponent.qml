@@ -71,7 +71,6 @@ Item {
     onBestRoutesChanged: d.draw()
     onErrorModeChanged: if(errorMode) d.draw()
 
-    width: 410
     height: visible ? networkCardsLayout.height : 0
 
     RowLayout {

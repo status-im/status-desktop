@@ -46,10 +46,21 @@ SplitView {
                             for (let i = 0; i < 10; i++)
                                 append({
                                     name: "some saved addr name " + i,
-                                    ens: []
+                                    ens: [],
+                                    address: "0x2B748A02e06B159C7C3E98F5064577B96E55A7b4",
+                                    chainShortNames: "eth:arb"
                                 })
                         }
                     }
+
+                    function splitAndFormatAddressPrefix(textAddrss, isBridgeTx, showUnpreferredNetworks) {
+                        return textAddrss
+                    }
+
+                    function resolveENS() {
+                        return ""
+                    }
+
 
                     readonly property string currentCurrency: "USD"
 

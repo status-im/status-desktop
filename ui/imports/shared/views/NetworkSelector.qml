@@ -108,6 +108,7 @@ Item {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.margins: Style.current.padding
+                width: stackLayout.width - Style.current.xlPadding
                 store: root.store
                 customMode: tabBar.currentIndex === 2
                 selectedAccount: root.selectedAccount
