@@ -34,8 +34,6 @@ pipeline {
 
   options {
     timestamps()
-    /* Prevent Jenkins jobs from running forever */
-    timeout(time: 35, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -65,33 +63,27 @@ pipeline {
   }
 
   stages {
-    stage('Deps') {
+    stage('Prep') {
       steps {
-        sh 'cat /proc/sys/kernel/core_pattern'
-        sh 'ulimit -c'
-        sh 'make update'
-        sh 'make deps'
+        sh "cp scripts/build.sh ${env.WORKSPACE_TMP}/"
+        sh "ls -l ${env.WORKSPACE_TMP}/build.sh"
+        sh "chmod +x ${env.WORKSPACE_TMP}/build.sh"
+        sh "ls -l ${env.WORKSPACE_TMP}/build.sh"
       }
     }
 
-    stage('status-go') {
-      steps {
-        sh 'make status-go'
-      }
-    }
-
-    stage('Client') {
+    stage('Bisect') {
       steps { script {
-        sh 'strace -I 1 -s 128 -v -ff -o strace.log make nim_status_client'
+        sh 'git bisect start'
+        sh 'git bisect good "96a2310df09fa28866ce8573314c76c0cf7baf32"'
+        sh 'git bisect bad  "2d21ff6c386f047ba574a9f196a630a058a7fdeb"'
+        sh "git bisect run bash -c '${env.WORKSPACE_TMP}/build.sh'"
       } }
-      post {
-        failure {
-          archiveArtifacts('strace.log.*')
-          archiveArtifacts('core.*')
-          archiveArtifacts('coredump.*')
-          archiveArtifacts('/var/lib/systemd/coredump/*')
-        }
-      }
+      post { always {
+        sh 'git bisect log'
+        sh 'git bisect visualize --stat'
+        sh 'git bisect reset'
+      } }
     }
   }
   post {

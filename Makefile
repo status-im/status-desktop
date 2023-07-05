@@ -468,8 +468,9 @@ else
  NIM_STATUS_CLIENT := bin/nim_status_client
 endif
 
+#$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | statusq check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | statusq check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
+$(NIM_STATUS_CLIENT):
 	echo -e $(BUILD_MSG) "$@"
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
