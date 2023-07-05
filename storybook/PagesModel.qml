@@ -190,6 +190,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "StatusInfoBoxPanel"
+        section: "Panels"
+    }
+    ListElement {
          title: "BurnTokensPopup"
          section: "Popups"
     }
