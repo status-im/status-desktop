@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
@@ -102,13 +103,16 @@ Control {
                   ? qsTr("Search results") : qsTr("No hodlers found")
         }
 
-        NoHoldersPanel {
+        StatusInfoBoxPanel {
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
 
             visible: root.empty
+            title: qsTr("No hodlers just yet")
+            text: qsTr("You can Airdrop tokens to deserving Community members or to give individuals token-based permissions.")
+            buttonText: qsTr("Airdrop")
 
-            onAirdropRequested: root.generalAirdropRequested()
+            onClicked: root.generalAirdropRequested()
         }
 
         SortableTokenHoldersList {
