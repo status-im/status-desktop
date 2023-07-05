@@ -48,11 +48,11 @@ QtObject {
         sourceModel: communitiesModuleInst.collectiblesModel
 
         proxyRoles: ExpressionRole {
-            function icon(icon) {
+            function collectibleIcon(icon) {
                 return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
             }
             name: "iconSource"
-            expression: icon(model.icon)
+            expression: collectibleIcon(model.icon)
         }
     }
 
