@@ -1,4 +1,4 @@
-import times, strformat, options
+import times, strformat, options, logging
 import json, json_serialization
 import core, response_type
 import stint
@@ -289,9 +289,12 @@ proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inlin
   var backendEntities: seq[ActivityEntry]
   if e.hasKey("activities"):
     let jsonEntries = e["activities"]
-    backendEntities = newSeq[ActivityEntry](jsonEntries.len)
-    for i in 0 ..< jsonEntries.len:
-      backendEntities[i] = fromJson(jsonEntries[i], ActivityEntry)
+    if jsonEntries.kind == JArray:
+      backendEntities = newSeq[ActivityEntry](jsonEntries.len)
+      for i in 0 ..< jsonEntries.len:
+        backendEntities[i] = fromJson(jsonEntries[i], ActivityEntry)
+    elif jsonEntries.kind != JNull:
+      error "Invalid activities field in FilterResponse; kind: ", jsonEntries.kind
 
   result = T(
     activities: backendEntities,

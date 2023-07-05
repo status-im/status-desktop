@@ -37,6 +37,9 @@ const EventRecentHistoryReady*: string = "recent-history-ready"
 const EventFetchingHistoryError*: string = "fetching-history-error"
 const EventNonArchivalNodeDetected*: string = "non-archival-node-detected"
 
+# Mirrors the pending transfer event from status-go, status-go/services/wallet/transfer/transaction.go
+const EventPendingTransactionUpdate*: string = "pending-transaction-update"
+
 proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   core.callPrivateRPCWithChainId("eth_getTransactionByHash", chainId, %* [hash])
 
