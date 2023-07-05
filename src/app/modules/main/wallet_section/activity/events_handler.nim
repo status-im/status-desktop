@@ -24,6 +24,8 @@ QtObject:
       eventHandlers: Table[string, EventCallbackProc]
       walletEventHandlers: Table[string, WalletEventCallbackProc]
 
+      # Ignore events older than this relevantTimestamp
+      relevantTimestamp: int
       subscribedAddresses: HashSet[string]
       newDataAvailableFn: proc()
 
@@ -64,11 +66,15 @@ QtObject:
       discard
 
   proc setupWalletEventHandlers(self: EventsHandler) =
-    self.walletEventHandlers[EventNewTransfers] = proc (data: WalletSignal) =
+    let newDataAvailableCallback = proc (data: WalletSignal) =
       if self.newDataAvailableFn == nil:
         return
 
-      var contains = false
+      if data.at > 0 and self.relevantTimestamp > 0 and data.at < self.relevantTimestamp:
+        return
+
+      # Check addresses if any was reported
+      var contains = data.accounts.len == 0
       for address in data.accounts:
         if address in self.subscribedAddresses:
           contains = true
@@ -76,8 +82,10 @@ QtObject:
 
       if contains:
         # TODO: throttle down the number of events to one per 1 seconds until the backend supports subscription
-
         self.newDataAvailableFn()
+
+    self.walletEventHandlers[EventNewTransfers] = newDataAvailableCallback
+    self.walletEventHandlers[EventPendingTransactionUpdate] = newDataAvailableCallback
 
   proc newEventsHandler*(events: EventEmitter): EventsHandler =
     new(result, delete)
@@ -95,6 +103,9 @@ QtObject:
     result.events.on(SignalType.Wallet.event, proc(e: Args) =
         eventsHandler.handleApiEvents(e)
     )
+
+  proc updateRelevantTimestamp*(self: EventsHandler, timestamp: int) =
+    self.relevantTimestamp = timestamp
 
   proc updateSubscribedAddresses*(self: EventsHandler, addresses: seq[string]) =
     self.subscribedAddresses.clear()
