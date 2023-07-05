@@ -132,20 +132,10 @@ Item {
                 font.pixelSize: 28
                 font.bold: true
                 customColor: Theme.palette.directColor1
-                text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(root.overview.currencyBalance, {noSymbol: true})
+                text: loading ? Constants.dummyText : LocaleUtils.currencyAmountToLocaleString(root.overview.currencyBalance)
                 loading: root.overview.balanceLoading
                 lineHeightMode: Text.FixedHeight
                 lineHeight: 38
-            }
-            StatusTextWithLoadingState {
-                Layout.alignment: Qt.AlignBottom
-                font.pixelSize: 15
-                font.bold: true
-                customColor: Theme.palette.directColor1
-                text: loading ? Constants.dummyText : root.overview.currencyBalance.symbol
-                loading: root.overview.balanceLoading
-                lineHeightMode: Text.FixedHeight
-                lineHeight: 25
             }
         }
     }
