@@ -102,7 +102,7 @@ proc newModule*(
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
   result.networksService = networkService
   result.activityController = activityc.newController(result.transactionsModule, currencyService, tokenService, events)
-  result.filter = initFilter(result.controller, result.activityController)
+  result.filter = initFilter(result.controller)
 
   result.view = newView(result, result.activityController)
 
@@ -147,6 +147,7 @@ method notifyFilterChanged(self: Module) =
   self.transactionsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
+  self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
   if self.filter.addresses.len > 0:
     self.view.filterChanged(self.filter.addresses[0], includeWatchOnly, self.filter.allAddresses)
 

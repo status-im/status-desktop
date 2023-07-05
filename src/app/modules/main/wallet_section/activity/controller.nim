@@ -383,3 +383,8 @@ QtObject:
 
   QtProperty[QVariant] status:
     read = getStatus
+
+  proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
+    self.setFilterAddresses(addresses)
+    self.setFilterChains(chainIds)
+    self.updateFilter()
