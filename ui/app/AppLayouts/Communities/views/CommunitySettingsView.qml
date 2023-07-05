@@ -667,7 +667,7 @@ StatusSectionLayout {
                 return
             }
 
-            Global.displayToastMessage(title, qsTr("View on etherscan"), "",
+            Global.displayToastMessage(title, url === "" ? qsTr("Something went wrong") : qsTr("View on etherscan"), "",
                                        loading, type, url)
         }
     }

@@ -345,8 +345,11 @@ QtObject:
         chainId,
       )
 
-    except RpcException:
+    except RpcException as e:
       error "Error deploying contract", message = getCurrentExceptionMsg()
+      let data = CommunityTokenDeployedStatusArgs(communityId: communityId, 
+                                                  deployState: DeployState.Failed)
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
   proc getCommunityTokens*(self: Service, communityId: string): seq[CommunityTokenDto] =
     try:
