@@ -270,7 +270,7 @@ StatusSectionLayout {
             id: mintPanel
 
             readonly property int sectionKey: Constants.CommunitySettingsSections.MintTokens
-            readonly property string sectionName: qsTr("Mint Tokens")
+            readonly property string sectionName: qsTr("Tokens")
             readonly property string sectionIcon: "token"
             readonly property bool sectionEnabled: root.isOwner
 

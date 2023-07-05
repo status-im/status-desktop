@@ -12,7 +12,7 @@ Background:
 
  Scenario: Mint Tokens welcome screen content validation
     When "Manage Community" is clicked in the community sidebar
-    And "Mint Tokens" section is selected
+    And "Tokens" section is selected
     Then the welcome "Tokens" image is present
     And the welcome "Tokens" title is present
   	And the welcome "Tokens" subtitle is present

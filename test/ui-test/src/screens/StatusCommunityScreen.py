@@ -79,7 +79,7 @@ class CommunitySettingsComponents(Enum):
 class CommunityWelcomeScreenComponents(Enum):
     # Constants definitions:
     PERMISSIONS_OPTION = "Permissions"
-    TOKENS_OPTION = "Mint Tokens"
+    TOKENS_OPTION = "Tokens"
     AIRDROPS_OPTION = "Airdrops"
     WELCOME_SCREEN_TITLE_OPTION_AIRDROPS = "Airdrop community tokens"
     WELCOME_SCREEN_TITLE_OPTION_PERMISSIONS = "Permissions"
