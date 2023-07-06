@@ -35,6 +35,7 @@ StackLayout {
 
     property bool editable: false
     property bool owned: false
+    property int loginType: Constants.LoginType.Password
 
     function navigateBack() {
         if (editSettingsPanelLoader.item.dirty)
@@ -138,40 +139,19 @@ StackLayout {
             Item {
                 Layout.fillHeight: true
             }
+        }
 
-            RowLayout {
-                BannerPanel {
-                    objectName: "invitePeopleBanner"
-                    text: qsTr("Welcome to your community!")
-                    buttonText: qsTr("Invite new people")
-                    icon.name: "invite-users"
-                    onButtonClicked: root.inviteNewPeopleClicked()
-                }
-                Item {
-                   Layout.fillWidth: true
-                }
-                BannerPanel {
-                    objectName: "airdropBanner"
-                    visible: root.owned
-                    text: qsTr("Try an airdrop to reward your community for engagement!")
-                    buttonText: qsTr("Airdrop Tokens")
-                    icon.name: "airdrop"
-                    onButtonClicked: root.airdropTokensClicked()
-                }
-
-                Item {
-                   Layout.fillWidth: true
-                }
-
-                BannerPanel {
-                    objectName: "backUpBanner"
-                    visible: root.owned
-                    text: qsTr("Back up community key")
-                    buttonText: qsTr("Back up")
-                    icon.name: "objects"
-                    onButtonClicked: root.backUpClicked()
-                }
-            }
+        footer: OverviewSettingsFooter {
+            rightPadding: 64
+            leftPadding: 64
+            bottomPadding: 50
+            loginType: root.loginType
+            communityName: root.name
+            //TODO connect to backend
+            isControlNode: root.owned
+            onPrimaryButtonClicked: isControlNode = !isControlNode
+            //TODO update once the domain changes
+            onSecondaryButtonClicked: Global.openLink(Constants.statusHelpLinkPrefix + "en/status-communities/about-the-control-node-in-status-communities")
         }
     }
 

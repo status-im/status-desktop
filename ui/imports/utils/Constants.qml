@@ -848,6 +848,7 @@ QtObject {
     readonly property string communityLinkPrefix: externalStatusLinkWithHttps + '/c/'
     readonly property string userLinkPrefix: externalStatusLinkWithHttps + '/u/'
     readonly property string statusLinkPrefix: 'https://status.im/'
+    readonly property string statusHelpLinkPrefix: `https://help.status.im/`
 
     readonly property int maxUploadFiles: 5
     readonly property double maxUploadFilesizeMB: 10
@@ -914,6 +915,12 @@ QtObject {
         Biometrics,
         Keycard
     }
+    // Needs to match the enum above
+    readonly property var authenticationIconByType: [
+        "password",
+        "touch-id",
+        "keycard",
+    ]
 
     enum ComputeFeeErrorCode {
         Success,

@@ -61,11 +61,6 @@ Control {
             return root.joinCommunity ? (root.requiresRequest ? d.communityRevealAddressWithRequestText : d.communityRevealAddressText) : d.channelRevealAddressText
         }
 
-        function getRevealAddressIcon() {
-            if(root.loginType == Constants.LoginType.Password) return "password"
-            return root.loginType == Constants.LoginType.Biometrics ? "touch-id" : "keycard"
-        }
-
         function filterPermissions(model) {
             return !!model && (model.tokenCriteriaMet || !model.isPrivate)
         }
@@ -153,7 +148,7 @@ Control {
             Layout.alignment: Qt.AlignHCenter
             visible: !root.showOnlyPanels && !root.isJoinRequestRejected && root.requiresRequest
             text: root.isInvitationPending ? d.getInvitationPendingText() : d.getRevealAddressText()
-            icon.name: root.isInvitationPending ? "" : d.getRevealAddressIcon()
+            icon.name: root.isInvitationPending ? "" : Constants.authenticationIconByType[root.loginType]
             font.pixelSize: 13
             enabled: root.requirementsMet || d.communityPermissionsModel.count == 0
             onClicked: root.isInvitationPending ? root.invitationPendingClicked() : root.revealAddressClicked()

@@ -85,13 +85,6 @@ communitySettings_EditCommunity_ColorPicker_Button = {"container": communitySett
 communitySettings_ColorPanel_HexColor_Input = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelHexInput", "type": "TextEdit",  "visible": True}
 communitySettings_SaveColor_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "communityColorPanelSelectColorButton", "type": "StatusButton", "visible": True}
 
-# Community Overview
-communityOverview_Back_up_Banner = {"container": statusDesktop_mainWindow, "objectName": "backUpBanner", "type": "BannerPanel", "visible": True}
-communityOverview_Back_up_StatusButton = {"container": communityOverview_Back_up_Banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
-communityOverview_Airdrop_Tokens_Banner = {"container": statusDesktop_mainWindow, "objectName": "airdropBanner", "type": "BannerPanel", "visible": True}
-communityOverview_Airdrop_Tokens_StatusButton = {"container": communityOverview_Airdrop_Tokens_Banner, "objectName": "communityBannerButton", "type": "StatusButton", "visible": True}
-transferOwnerShipTextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
-
 # Community transfer ownership
 copyCommunityPrivateKeyButton = {"container": statusDesktop_mainWindow, "objectName": "copyCommunityPrivateKeyButton", "type": "StatusButton", "visible": True}
 

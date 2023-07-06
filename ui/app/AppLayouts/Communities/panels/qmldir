@@ -14,6 +14,7 @@ JoinPermissionsOverlayPanel 1.0 JoinPermissionsOverlayPanel.qml
 MembersSettingsPanel 1.0 MembersSettingsPanel.qml
 MintTokensFooterPanel 1.0 MintTokensFooterPanel.qml
 MintTokensSettingsPanel 1.0 MintTokensSettingsPanel.qml
+OverviewSettingsFooter 1.0 OverviewSettingsFooter.qml
 OverviewSettingsPanel 1.0 OverviewSettingsPanel.qml
 PermissionConflictWarningPanel 1.0 PermissionConflictWarningPanel.qml
 PermissionQualificationPanel 1.0 PermissionQualificationPanel.qml
