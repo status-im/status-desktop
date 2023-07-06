@@ -15,6 +15,8 @@ import AppLayouts.Communities.panels 1.0
 StatusScrollView {
     id: root
 
+    required property bool isOwner
+
     property int viewWidth: 560 // by design
     property var model
 
@@ -25,6 +27,8 @@ StatusScrollView {
                        string chainName,
                        string accountName,
                        string accountAddress)
+
+    signal mintOwnerTokenClicked
 
     padding: 0
 
@@ -77,17 +81,36 @@ StatusScrollView {
     Component {
         id: introComponent
 
-        IntroPanel {
-            width: root.viewWidth
+        ColumnLayout {
+             width: root.viewWidth
+             spacing: 20
 
-            image: Style.png("community/mint2_1")
-            title: qsTr("Community tokens")
-            subtitle: qsTr("You can mint custom tokens and import tokens for your community")
-            checkersModel: [
-                qsTr("Create remotely destructible soulbound tokens for admin permissions"),
-                qsTr("Reward individual members with custom tokens for their contribution"),
-                qsTr("Mint tokens for use with community and channel permissions")
-            ]
+            IntroPanel {
+                Layout.fillWidth: true
+
+                image: Style.png("community/mint2_1")
+                title: qsTr("Community tokens")
+                subtitle: qsTr("You can mint custom tokens and import tokens for your community")
+                checkersModel: [
+                    qsTr("Create remotely destructible soulbound tokens for admin permissions"),
+                    qsTr("Reward individual members with custom tokens for their contribution"),
+                    qsTr("Mint tokens for use with community and channel permissions")
+                ]
+            }
+
+            StatusInfoBoxPanel {
+                Layout.fillWidth: true
+                Layout.bottomMargin: 20
+
+                visible: root.isOwner
+                title: qsTr("Get started")
+                text: qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
+                buttonText: qsTr("Mint Owner token")
+                horizontalPadding: 16
+                verticalPadding: 20
+
+                onClicked: root.mintOwnerTokenClicked()
+            }
         }
     }
 

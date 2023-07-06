@@ -12,7 +12,7 @@ Control {
     property alias title: titleText.text
     property alias subtitle: subtitleText.text
 
-    property list<StatusButton> buttons
+    property list<Item> buttons
 
     contentItem: RowLayout {
         spacing: 9

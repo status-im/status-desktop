@@ -12,6 +12,8 @@ import AppLayouts.Communities.layouts 1.0
 import AppLayouts.Communities.popups 1.0
 import AppLayouts.Communities.views 1.0
 
+import shared.controls 1.0
+
 import utils 1.0
 import SortFilterProxyModel 0.2
 
@@ -19,7 +21,9 @@ StackView {
     id: root
 
     // General properties:
-    property string communityName
+    required property bool isOwner
+    required property bool isAdmin
+    required property string communityName
     property int viewWidth: 560 // by design
 
     // Models:
@@ -80,20 +84,25 @@ StackView {
         implicitWidth: 0
         title: qsTr("Tokens")
 
-        buttons: StatusButton {
-            objectName: "addNewItemButton"
+        buttons: DisabledTooltipButton {
+            readonly property bool onlyAdmin: root.isAdmin && !root.isOwner
+            readonly property bool buttonEnabled: root.isOwner && root.tokensModel.count > 0 /*TODO: Replace last comparison to checker to ensure owner token is deployed*/
 
+            buttonType: DisabledTooltipButton.Normal
+            aliasedObjectName: "addNewItemButton"
             text: qsTr("Mint token")
-
+            enabled: onlyAdmin || buttonEnabled
+            interactive: buttonEnabled
             onClicked: root.push(newTokenViewComponent, StackView.Immediate)
+            tooltipText: qsTr("In order to mint, you must Hodl the TokenMaster token for %1").arg(root.communityName)
         }
 
         contentItem: MintedTokensView {
             model: root.tokensModel
+            isOwner: root.isOwner
 
-            onItemClicked: {
-                root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
-            }
+            onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
+            onMintOwnerTokenClicked: root.push(newTokenViewComponent, StackView.Immediate) // TEMP: It will navigate to new token owner flow. Now, to current minting flow.
         }
     }
 

@@ -301,6 +301,8 @@ StatusSectionLayout {
             }
 
             communityName: root.community.name
+            isOwner: root.isOwner
+            isAdmin: root.isAdmin
             tokensModel: root.community.communityTokens
             tokensModelWallet: root.rootStore.tokensModelWallet
             layer1Networks: communityTokensStore.layer1Networks
@@ -358,6 +360,9 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: root.isOwner
 
             communityDetails: d.communityDetails
+            isOwner: root.isOwner
+            tokensModel: root.community.communityTokens
+
             readonly property CommunityTokensStore communityTokensStore:
                 rootStore.communityTokensStore
 

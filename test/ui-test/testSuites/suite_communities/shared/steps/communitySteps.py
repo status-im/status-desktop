@@ -266,7 +266,19 @@ def step(context, option:str, list):
 
 @Then("\"|any|\" button is present")
 def step (context, action_button_name):
-    _statusCommunityScreen.verify_action_button_enabled(action_button_name)
+    _statusCommunityScreen.verify_action_button_present(action_button_name, True)
+    
+@Then("\"|any|\" button is disabled")
+def step (context, action_button_name):
+    _statusCommunityScreen.verify_action_button_present(action_button_name, False)
+      
+@Then("the user is able to open Back up modal and copy private key")
+def step(context):
+    _statusCommunityScreen.verify_community_private_key() 
+
+@Then("the user is able to click Airdrop Tokens button and navigate to Airdrops screen")
+def step(context):
+    _statusCommunityScreen.open_airdrops_from_overview()
     
 ###########################################################################
 ### COMMON methods used in different steps given/when/then region:
