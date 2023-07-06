@@ -309,7 +309,7 @@ StatusScrollView {
 
             onTextChanged: {
                 const amount = parseInt(text)
-                if (Number.isNaN(amount) || !!errors)
+                if (Number.isNaN(amount) || Object.values(errors).length)
                     return
 
                 if(root.isAssetView)
