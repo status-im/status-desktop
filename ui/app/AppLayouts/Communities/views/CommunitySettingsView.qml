@@ -388,6 +388,10 @@ StatusSectionLayout {
                         ExpressionRole {
                             name: "key"
                             expression: model.symbol
+                        },
+                        ExpressionRole {
+                            name: "communityId"
+                            expression: ""
                         }
                     ]
                 }
@@ -419,6 +423,10 @@ StatusSectionLayout {
                         ExpressionRole {
                             name: "key"
                             expression: model.symbol
+                        },
+                        ExpressionRole {
+                            name: "communityId"
+                            expression: ""
                         }
                     ]
                 }
