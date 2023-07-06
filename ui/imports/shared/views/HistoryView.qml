@@ -30,6 +30,20 @@ ColumnLayout {
 
     signal launchTransactionDetail(var transaction)
 
+    onVisibleChanged: {
+        if (visible) {
+            RootStore.updateTransactionFilter()
+        }
+    }
+
+    Connections {
+        target: RootStore
+        enabled: root.visible
+        function onIsTransactionFilterDirtyChanged() {
+            RootStore.updateTransactionFilter()
+        }
+    }
+
     QtObject {
         id: d
         readonly property bool isInitialLoading: RootStore.loadingHistoryTransactions && transactionListRoot.count === 0
@@ -303,7 +317,7 @@ ColumnLayout {
             }
 
             Repeater {
-                model: RootStore.historyTransactions.hasMore || d.isInitialLoading ? 10 : 0
+                model: !noTxs.visible && (RootStore.historyTransactions.hasMore || d.isInitialLoading) ? 10 : 0
                 TransactionDelegate {
                     Layout.fillWidth: true
                     rootStore: RootStore

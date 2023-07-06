@@ -183,6 +183,7 @@ QtObject:
 
   proc updateFilter*(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
+    self.status.setIsFilterDirty(false)
     self.model.resetModel(@[])
     self.eventsHandler.updateSubscribedAddresses(self.addresses)
     self.status.setNewDataAvailable(false)
@@ -387,7 +388,8 @@ QtObject:
   QtProperty[QVariant] status:
     read = getStatus
 
+
   proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
     self.setFilterAddresses(addresses)
     self.setFilterChains(chainIds)
-    self.updateFilter()
+    self.status.setIsFilterDirty(true)
