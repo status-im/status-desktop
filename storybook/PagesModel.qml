@@ -182,6 +182,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "OverviewSettingsFooter"
+        section: "Panels"
+    }
+    ListElement {
          title: "BurnTokensPopup"
          section: "Popups"
     }

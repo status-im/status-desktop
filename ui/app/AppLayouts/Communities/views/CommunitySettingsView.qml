@@ -169,6 +169,7 @@ StatusSectionLayout {
             pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
             editable: true
             owned: root.community.memberRole === Constants.memberRole.owner
+            loginType: root.rootStore.loginType
 
             onEdited: {
                 const error = root.chatCommunitySectionModule.editCommunity(
