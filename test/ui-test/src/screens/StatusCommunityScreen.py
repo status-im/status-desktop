@@ -560,8 +560,12 @@ class StatusCommunityScreen:
                 return False
             
     
-    def verify_action_button_enabled(self, option:str):
-        assert BaseElement(str(CommunityWelcomeScreenComponents.ADD_NEW_ITEM_BUTTON.value)).is_enabled
+    def verify_action_button_present(self, option:str, enabled: bool): 
+        button = BaseElement(str(CommunityWelcomeScreenComponents.ADD_NEW_ITEM_BUTTON.value))
+        if enabled:
+            assert button.is_enabled
+        else:
+            assert button.is_disabled
         button_title = get_obj(CommunityWelcomeScreenComponents.ADD_NEW_ITEM_BUTTON.value).text
         verify_equals(option, str(button_title))
                 

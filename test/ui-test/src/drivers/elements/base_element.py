@@ -92,6 +92,15 @@ class BaseElement:
     @property
     def is_enabled(self) -> bool:
         return self.object.enabled
+    
+    @property
+    def is_disabled(self) -> bool:
+        try:
+            if self.object.enabled:
+                return false
+        except LookupError as e:
+            errMessage = "not ready: Quick item is disabled"
+            return errMessage in e.args[0]
 
     def wait_until_appears(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
         assert squish.waitFor(lambda: self.is_visible, timeout_msec), f'Object {self} is not visible'

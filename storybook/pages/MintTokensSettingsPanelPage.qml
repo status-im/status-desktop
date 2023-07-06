@@ -51,6 +51,9 @@ SplitView {
             anchors.fill: parent
             anchors.topMargin: 50
             tokensModel: editorModelChecked.checked ? emptyModel : mintedTokensModel
+            isAdmin: adminChecked.checked
+            isOwner: ownerChecked.checked
+            communityName: communityNameText.text
             layer1Networks: NetworksModel.layer1Networks
             layer2Networks: NetworksModel.layer2Networks
             testNetworks: NetworksModel.testNetworks
@@ -74,11 +77,38 @@ SplitView {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 150
+        SplitView.preferredHeight: 200
 
         logsView.logText: logs.logText
 
         ColumnLayout {
+
+            Row {
+                Label {
+                    text: "Community name: "
+                }
+
+                TextEdit {
+                    id: communityNameText
+
+                    text: "TEST COMMUNITY"
+                }
+            }
+
+            CheckBox {
+                id: ownerChecked
+                checked: true
+
+                text: "Is owner?"
+            }
+
+            CheckBox {
+                id: adminChecked
+                checked: true
+
+                text: "Is admin?"
+            }
+
             CheckBox {
                 id: editorModelChecked
                 checked: true

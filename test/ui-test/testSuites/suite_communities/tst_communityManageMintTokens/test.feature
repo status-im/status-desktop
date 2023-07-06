@@ -20,4 +20,4 @@ Background:
     | Create remotely destructible soulbound tokens for admin permissions |
     | Reward individual members with custom tokens for their contribution |
     | Mint tokens for use with community and channel permissions |
-    And "Mint token" button is present
+    And "Mint token" button is disabled

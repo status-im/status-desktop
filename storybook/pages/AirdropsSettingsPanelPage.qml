@@ -61,6 +61,14 @@ SplitView {
         }
     }
 
+    MintedTokensModel {
+        id: mintedTokensModel
+    }
+
+    ListModel {
+        id: emptyModel
+    }
+
     Button {
         text: "Back"
         onClicked: loader.item.navigateBack()
@@ -82,6 +90,8 @@ SplitView {
 
                 anchors.fill: parent
                 anchors.topMargin: 50
+                isOwner: ownerChecked.checked
+                tokensModel: editorModelChecked.checked ? emptyModel : mintedTokensModel
                 assetsModel: AssetsModel {}
                 collectiblesModel: ListModel {}
 
@@ -192,5 +202,21 @@ SplitView {
         SplitView.preferredHeight: 150
 
         logsView.logText: logs.logText
+
+        Column {
+            CheckBox {
+                id: ownerChecked
+                checked: true
+
+                text: "Is owner?"
+            }
+
+            CheckBox {
+                id: editorModelChecked
+                checked: true
+
+                text: "Empty model"
+            }
+        }
     }
 }

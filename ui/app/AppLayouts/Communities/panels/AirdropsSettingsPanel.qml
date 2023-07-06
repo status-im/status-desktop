@@ -13,10 +13,12 @@ StackView {
 
     // id, name, image, color, owner properties expected
     required property var communityDetails
+    required property bool isOwner
 
     // Token models:
     required property var assetsModel
     required property var collectiblesModel
+    required property var tokensModel // Community minted tokens model
 
     required property var membersModel
 
@@ -63,6 +65,7 @@ StackView {
             objectName: "addNewItemButton"
 
             text: qsTr("New Airdrop")
+            enabled: root.tokensModel.count > 0 // TODO: Replace to checker to ensure owner token is deployed
 
             onClicked: root.push(newAirdropView, StackView.Immediate)
         }
@@ -77,6 +80,11 @@ StackView {
                 qsTr("Incentivise joining, retention, moderation and desired behaviour"),
                 qsTr("Require holding a token or NFT to obtain exclusive membership rights")
             ]
+            infoBoxVisible: root.isOwner && root.tokensModel.count === 0 // TODO: Replace to checker to ensure owner token is NOT deployed yet
+            infoBoxTitle: qsTr("Get started")
+            infoBoxText: qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
+            buttonText: qsTr("Mint Owner token")
+            onClicked: root.navigateToMintTokenSettings(false) // TEMP: Replace to mint owner token page
         }
     }
 
