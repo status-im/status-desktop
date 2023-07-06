@@ -36,8 +36,9 @@ Control {
     property alias bannerPath: bannerPicker.source
     property alias bannerCropRect: bannerPicker.cropRect
     
-    contentItem: ColumnLayout {
-        implicitWidth: 608
+    implicitWidth: 608
+
+    contentItem: ColumnLayout {    
         spacing: 16
 
         NameInput {
