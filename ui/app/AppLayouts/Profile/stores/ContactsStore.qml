@@ -126,4 +126,8 @@ QtObject {
     function getContactPublicKeyByAddress(address) {
         return "" // TODO retrive contact public key from address
     }
+
+    function getLinkToProfile(publicKey) {
+        return root.contactsModule.shareUserUrlWithData(publicKey)
+    }
 }

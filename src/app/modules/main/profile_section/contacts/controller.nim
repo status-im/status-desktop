@@ -164,3 +164,12 @@ proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpda
 
 proc requestContactInfo*(self: Controller, publicKey: string) =
   self.contactsService.requestContactInfo(publicKey)
+
+proc shareUserUrlWithData*(self: Controller, pubkey: string): string =
+  self.contactsService.shareUserUrlWithData(pubkey)
+
+proc shareUserUrlWithChatKey*(self: Controller, pubkey: string): string =
+  self.contactsService.shareUserUrlWithChatKey(pubkey)
+
+proc shareUserUrlWithENS*(self: Controller, pubkey: string): string =
+  self.contactsService.shareUserUrlWithENS(pubkey)

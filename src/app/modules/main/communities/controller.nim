@@ -260,3 +260,15 @@ proc getNetwork*(self:Controller, chainId: int): NetworkDto =
 
 proc getTokenList*(self: Controller): seq[TokenDto] =
   return self.tokenService.getTokenList()
+
+proc shareCommunityUrlWithChatKey*(self: Controller, communityId: string): string =
+  return self.communityService.shareCommunityUrlWithChatKey(communityId)
+
+proc shareCommunityUrlWithData*(self: Controller, communityId: string): string =
+  return self.communityService.shareCommunityUrlWithData(communityId)
+
+proc shareCommunityChannelUrlWithChatKey*(self: Controller, communityId: string, chatId: string): string =
+  return self.communityService.shareCommunityChannelUrlWithChatKey(communityId, chatId)
+
+proc shareCommunityChannelUrlWithData*(self: Controller, communityId: string, chatId: string): string =
+  return self.communityService.shareCommunityChannelUrlWithData(communityId, chatId)

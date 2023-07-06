@@ -280,3 +280,12 @@ method requestContactInfo*(self: Module, publicKey: string) =
 
 method onContactInfoRequestFinished*(self: Module, publicKey: string, ok: bool) =
   self.view.onContactInfoRequestFinished(publicKey, ok)
+
+method shareUserUrlWithData*(self: Module, pubkey: string): string =
+  return self.controller.shareUserUrlWithData(pubkey)
+
+method shareUserUrlWithChatKey*(self: Module, pubkey: string): string =
+  return self.controller.shareUserUrlWithChatKey(pubkey)
+
+method shareUserUrlWithENS*(self: Module, pubkey: string): string =
+  return self.controller.shareUserUrlWithENS(pubkey)

@@ -82,16 +82,7 @@ Pane {
                                           incomingVerificationStatus === Constants.verificationStatus.trusted
         readonly property bool isVerified: outgoingVerificationStatus === Constants.verificationStatus.verified
 
-        readonly property string linkToProfile: {
-            let user = ""
-            if (d.isCurrentUser)
-                user = root.profileStore.preferredName
-            else
-                user = contactDetails.name
-            if (!user)
-                user = Utils.getCompressedPk(root.publicKey)
-            return Constants.userLinkPrefix + user
-        }
+        readonly property string linkToProfile: root.contactsStore.getLinkToProfile(root.publicKey)
 
         readonly property var conns: Connections {
             target: root.contactsStore.myContactsModel ?? null

@@ -127,3 +127,12 @@ proc retractContactRequest*(pubkey: string): RpcResponse[JsonNode] {.raises: [Ex
 
 proc requestContactInfo*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestContactInfoFromMailserver".prefix, %*[pubkey])
+
+proc shareUserUrlWithData*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("shareUserURLWithData".prefix, %*[pubkey])
+
+proc shareUserUrlWithChatKey*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("shareUserURLWithChatKey".prefix, %*[pubkey])
+
+proc shareUserUrlWithENS*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("shareUserURLWithENS".prefix, %*[pubkey])
