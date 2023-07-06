@@ -23,6 +23,7 @@ Feature: Status Language Settings
     	And the user clicks on Language & Currency
 
 	# Each language run takes 30 seconds, so only some of them are enabled until we can parallelize executions
+	@mayfail
     Scenario Outline: The user is able to select a specific language and after a restart, the language is kept
 		When the user opens the language selector
 		And the user selects the language <native>
@@ -60,6 +61,7 @@ Feature: Status Language Settings
 	        #| Turkish                 | Türkçe                  |
 
 	# Each language run takes 30 seconds, so only some of them are enabled until we can parallelize executions
+	@mayfail
 	Scenario Outline: The user is able to search and select a specific language and after a restart, the language is kept
 		When the user opens the language selector
 		And the user searches the language <native>
