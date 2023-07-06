@@ -397,6 +397,24 @@ proc shareCommunityToUsers*(communityId: string, pubKeys: seq[string], inviteMes
     "inviteMessage": inviteMessage
   }])
 
+proc shareCommunityUrlWithChatKey*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("shareCommunityURLWithChatKey".prefix, %*[communityId])
+
+proc shareCommunityUrlWithData*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("shareCommunityURLWithData".prefix, %*[communityId])
+
+proc shareCommunityChannelUrlWithChatKey*(communityId: string, channelId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("shareCommunityChannelURLWithChatKey".prefix, %*[{
+    "communityId": communityId,
+    "channelId": channelId
+  }])
+
+proc shareCommunityChannelUrlWithData*(communityId: string, channelId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("shareCommunityChannelURLWithData".prefix, %*[{
+    "communityId": communityId,
+    "channelId": channelId
+  }])
+
 proc getCommunitiesSettings*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("getCommunitiesSettings".prefix, %*[])
 

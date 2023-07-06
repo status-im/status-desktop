@@ -816,3 +816,24 @@ QtObject:
       self.threadpool.start(arg)
     except Exception as e:
       error "Error requesting contact info", msg = e.msg, pubkey
+  
+  proc shareUserUrlWithData*(self: Service, pubkey: string): string =
+    try:
+      let response = status_contacts.shareUserUrlWithData(pubkey)
+      return response.result.getStr
+    except Exception as e:
+      error "Error getting user url with data", msg = e.msg, pubkey
+
+  proc shareUserUrlWithChatKey*(self: Service, pubkey: string): string =
+    try:
+      let response = status_contacts.shareUserUrlWithChatKey(pubkey)
+      return response.result.getStr
+    except Exception as e:
+      error "Error getting user url with chat key", msg = e.msg, pubkey
+
+  proc shareUserUrlWithENS*(self: Service, pubkey: string): string =
+    try:
+      let response = status_contacts.shareUserUrlWithENS(pubkey)
+      return response.result.getStr
+    except Exception as e:
+      error "Error getting user url with ens name", msg = e.msg, pubkey

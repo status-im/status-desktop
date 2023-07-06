@@ -159,3 +159,15 @@ method onOwnedCollectiblesUpdated*(self: AccessInterface) {.base.} =
 
 method onWalletAccountTokensRebuilt*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method shareCommunityUrlWithChatKey*(self: AccessInterface, communityId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method shareCommunityUrlWithData*(self: AccessInterface, communityId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method shareCommunityChannelUrlWithChatKey*(self: AccessInterface, communityId: string, chatId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method shareCommunityChannelUrlWithData*(self: AccessInterface, communityId: string, chatId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

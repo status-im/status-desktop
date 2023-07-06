@@ -179,6 +179,15 @@ QtObject:
   proc verifiedUntrustworthy*(self: View, publicKey: string) {.slot.} =
     self.delegate.verifiedUntrustworthy(publicKey)
 
+  proc shareUserUrlWithData*(self: View, pubkey: string): string {.slot.} =
+    return self.delegate.shareUserUrlWithData(pubkey)
+
+  proc shareUserUrlWithChatKey*(self: View, pubkey: string): string {.slot.} =
+    return self.delegate.shareUserUrlWithChatKey(pubkey)
+
+  proc shareUserUrlWithENS*(self: View, pubkey: string): string {.slot.} =
+    return self.delegate.shareUserUrlWithENS(pubkey)
+
   proc declineVerificationRequest*(self: View, publicKey: string) {.slot.} =
     self.delegate.declineVerificationRequest(publicKey)
 

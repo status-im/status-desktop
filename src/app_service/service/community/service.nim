@@ -1865,3 +1865,30 @@ QtObject:
     let community = self.getCommunityById(communityId)
     return community.channelPermissions.channels.hasKey(chatId) and not community.channelPermissions.channels[chatId].viewAndPostPermissions.satisfied
 
+  proc shareCommunityUrlWithChatKey*(self: Service, communityId: string): string =
+    try:
+      let response = status_go.shareCommunityUrlWithChatKey(communityId)
+      return response.result.getStr
+    except Exception as e:
+        error "error while getting community url with chat key", msg = e.msg
+
+  proc shareCommunityUrlWithData*(self: Service, communityId: string): string =
+    try:
+      let response = status_go.shareCommunityUrlWithData(communityId)
+      return response.result.getStr
+    except Exception as e:
+        error "error while getting community url with data", msg = e.msg
+
+  proc shareCommunityChannelUrlWithChatKey*(self: Service, communityId: string, chatId: string): string =
+    try:
+      let response = status_go.shareCommunityChannelUrlWithChatKey(communityId, chatId)
+      return response.result.getStr
+    except Exception as e:
+        error "error while getting community channel url with chat key ", msg = e.msg
+
+  proc shareCommunityChannelUrlWithData*(self: Service, communityId: string, chatId: string): string =
+    try:
+      let response = status_go.shareCommunityChannelUrlWithData(communityId, chatId)
+      return response.result.getStr
+    except Exception as e:
+        error "error while getting community channel url with data ", msg = e.msg

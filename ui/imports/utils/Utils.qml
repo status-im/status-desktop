@@ -11,6 +11,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 QtObject {
     property var mainModuleInst: typeof mainModule !== "undefined" ? mainModule : null
     property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
+    property var communitiesModuleInst: typeof communitiesModule !== "undefined" ? communitiesModule : null
 
     readonly property int maxImgSizeBytes: Constants.maxUploadFilesizeMB * 1048576 /* 1 MB in bytes */
 
@@ -485,17 +486,12 @@ QtObject {
         return colorForColorId(pubKeyColorId)
     }
 
-    function getCommunityShareLink(communityId, elided = false) {
+    function getCommunityShareLink(communityId) {
         if (communityId === "") {
             return ""
         }
 
-        let compressedPk = communityId
-        if (!globalUtilsInst.isCompressedPubKey(compressedPk)) {
-            compressedPk = globalUtilsInst.changeCommunityKeyCompression(compressedPk)
-        }
-        return Constants.communityLinkPrefix +
-                (elided ? StatusQUtils.Utils.elideText(compressedPk, 4, 2) : compressedPk)
+        return communitiesModuleInst.shareCommunityUrlWithData(communityId)
     }
 
     function getChatKeyFromShareLink(link) {
