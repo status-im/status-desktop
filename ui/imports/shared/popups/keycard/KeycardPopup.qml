@@ -12,6 +12,7 @@ StatusModal {
     property var sharedKeycardModule
     property var emojiPopup
 
+    width: Constants.keycard.general.popupWidth
     closePolicy: d.disableActionPopupButtons || d.disableCloseButton? Popup.NoAutoClose : Popup.CloseOnEscape | Popup.CloseOnPressOutside
     hasCloseButton: !d.disableActionPopupButtons && !d.disableCloseButton
 
