@@ -56,6 +56,8 @@ proc getResolvedSymbol*(self: Module, transaction: TransactionDto): string =
     let contractSymbol = self.controller.findTokenSymbolByAddress(transaction.contract)
     if contractSymbol != "":
       result = contractSymbol
+    elif transaction.typeValue == "erc20":
+      result = ""
     else:
       result = "ETH"
 

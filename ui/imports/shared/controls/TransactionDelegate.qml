@@ -68,7 +68,10 @@ StatusListItem {
             return qsTr("N/A")
         } else if (root.isNFT) {
             return modelData.nftName ? modelData.nftName : "#" + modelData.tokenID
+        } else if (!modelData.symbol) {
+            return "%1 (%2)".arg(root.rootStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.contract, 4))
         }
+
         return root.rootStore.formatCurrencyAmount(cryptoValue, modelData.symbol)
     }
 
@@ -273,7 +276,8 @@ StatusListItem {
             details += protocolFromContractAddress + endl2
         }
         if (!!modelData.contract) {
-            details += qsTr("%1 %2 contract address").arg(root.networkName).arg(modelData.symbol) + endl
+            let symbol = !!modelData.symbol || !modelData.contract ? modelData.symbol : "(%1)".arg(Utils.compactAddress(modelData.contract, 4))
+            details += qsTr("%1 %2 contract address").arg(root.networkName).arg(symbol) + endl
             details += modelData.contract + endl2
         }
         const protocolToContractAddress = "" // TODO fill protocol contract address for 'to' network for Bridge
@@ -376,8 +380,8 @@ StatusListItem {
             details += valuesString + endl2
         }
 
-        // Remove locale specific number separator
-        details = details.replace(/\ /, ' ')
+        // Remove unicode characters
+        details = details.replace(/[^\x00-\x7F]/g, " ");
         // Remove empty new lines at the end
         return details.replace(/[\r\n\s]*$/, '')
     }
@@ -602,7 +606,7 @@ StatusListItem {
                     text: {
                         if (root.loading) {
                             return "dummy text"
-                        } else if (!root.isModelDataValid || root.isNFT) {
+                        } else if (!root.isModelDataValid || root.isNFT || !modelData.symbol) {
                             return ""
                         }
 

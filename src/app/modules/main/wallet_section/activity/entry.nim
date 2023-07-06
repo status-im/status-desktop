@@ -197,6 +197,15 @@ QtObject:
   QtProperty[QVariant] totalFees:
     read = getTotalFees
 
+  proc getMaxTotalFees*(self: ActivityEntry): QVariant {.slot.} =
+    if self.transaction == nil:
+      error "getMaxTotalFees: ActivityEntry is not an transaction.Item"
+      return newQVariant(newCurrencyAmount())
+    return newQVariant(self.transaction[].getMaxTotalFees())
+
+  QtProperty[QVariant] maxTotalFees:
+    read = getMaxTotalFees
+
   proc getInput*(self: ActivityEntry): string {.slot.} =
     if self.transaction == nil:
       error "getInput: ActivityEntry is not an transaction.Item"
