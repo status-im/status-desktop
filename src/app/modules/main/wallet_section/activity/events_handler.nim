@@ -27,6 +27,7 @@ QtObject:
       # Ignore events older than this relevantTimestamp
       relevantTimestamp: int
       subscribedAddresses: HashSet[string]
+      subscribedChainIDs: HashSet[int]
       newDataAvailableFn: proc()
 
   proc setup(self: EventsHandler) =
@@ -73,19 +74,31 @@ QtObject:
       if data.at > 0 and self.relevantTimestamp > 0 and data.at < self.relevantTimestamp:
         return
 
-      # Check addresses if any was reported
+      # Check chain, if any was reported
+      if len(self.subscribedChainIDs) > 0 and data.chainID > 0:
+        var contains = false
+        for chainID in self.subscribedChainIDs:
+          if data.chainID == chainID:
+            contains = true
+            break
+        if not contains:
+          return
+
       var contains = data.accounts.len == 0
+      # Check addresses if any was reported
       for address in data.accounts:
         if address in self.subscribedAddresses:
           contains = true
           break
 
-      if contains:
-        # TODO: throttle down the number of events to one per 1 seconds until the backend supports subscription
-        self.newDataAvailableFn()
+      if not contains:
+        return
+
+      self.newDataAvailableFn()
 
     self.walletEventHandlers[EventNewTransfers] = newDataAvailableCallback
     self.walletEventHandlers[EventPendingTransactionUpdate] = newDataAvailableCallback
+    self.walletEventHandlers[EventMTTransactionUpdate] = newDataAvailableCallback
 
   proc newEventsHandler*(events: EventEmitter): EventsHandler =
     new(result, delete)
@@ -93,6 +106,7 @@ QtObject:
     result.eventHandlers = initTable[string, EventCallbackProc]()
 
     result.subscribedAddresses = initHashSet[string]()
+    result.subscribedChainIDs = initHashSet[int]()
 
     result.setup()
 
@@ -111,3 +125,8 @@ QtObject:
     self.subscribedAddresses.clear()
     for address in addresses:
       self.subscribedAddresses.incl(address)
+
+  proc updateSubscribedChainIDs*(self: EventsHandler, chainIDs: seq[int]) =
+    self.subscribedChainIDs.clear()
+    for chainID in chainIDs:
+      self.subscribedChainIDs.incl(chainID)

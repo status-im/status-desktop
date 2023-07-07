@@ -50,6 +50,15 @@ ColumnLayout {
         property var activityFiltersStore: WalletStores.ActivityFiltersStore{}
         readonly property int loadingSectionWidth: 56
         readonly property int topSectionMargin: 20
+
+        property bool showRefreshButton: false
+        property double lastRefreshTime
+        readonly property int maxSecondsBetweenRefresh: 3
+        function refreshData() {
+            RootStore.resetFilter()
+            d.lastRefreshTime = Date.now()
+            d.showRefreshButton = false
+        }
     }
 
     StyledText {
@@ -363,8 +372,8 @@ ColumnLayout {
 
                 text: qsTr("New transactions")
 
-                visible: RootStore.newDataAvailable
-                onClicked: RootStore.resetFilter()
+                visible: d.showRefreshButton
+                onClicked: d.refreshData()
 
                 icon.name: "arrow-up"
 
@@ -377,5 +386,34 @@ ColumnLayout {
             }
             z: 3
         }
+    }
+
+    Connections {
+        target: RootStore
+
+        function onNewDataAvailableChanged() {
+            if (!d.lastRefreshTime || ((Date.now() - d.lastRefreshTime) > (1000 * d.maxSecondsBetweenRefresh))) {
+                d.showRefreshButton = RootStore.newDataAvailable
+                return
+            }
+
+            if (showRefreshButtonTimer.running) {
+                if (!RootStore.newDataAvailable) {
+                    showRefreshButtonTimer.stop()
+                    d.showRefreshButton = false
+                }
+            } else if(RootStore.newDataAvailable) {
+                showRefreshButtonTimer.start()
+            }
+        }
+    }
+
+    Timer {
+        id: showRefreshButtonTimer
+
+        interval: 2000
+        running: false
+        repeat: false
+        onTriggered: d.showRefreshButton = RootStore.newDataAvailable
     }
 }
