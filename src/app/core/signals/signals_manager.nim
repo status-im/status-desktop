@@ -49,8 +49,8 @@ QtObject:
       return
 
     if(signal.signalType == SignalType.NodeLogin):
-      if(NodeSignal(signal).event.error != ""):
-        error "node.login", error=NodeSignal(signal).event.error
+      if NodeSignal(signal).error != "":
+        error "node.login", error=NodeSignal(signal).error
 
     if(signal.signalType == SignalType.NodeCrashed):
         error "node.crashed", error=statusSignal
@@ -83,7 +83,12 @@ QtObject:
       of SignalType.EnvelopeExpired: EnvelopeExpiredSignal.fromEvent(jsonSignal)
       of SignalType.WhisperFilterAdded: WhisperFilterSignal.fromEvent(jsonSignal)
       of SignalType.Wallet: WalletSignal.fromEvent(jsonSignal)
-      of SignalType.NodeLogin: Json.decode($jsonSignal, NodeSignal)
+      of SignalType.NodeReady,
+        SignalType.NodeCrashed,
+        SignalType.NodeStarted,
+        SignalType.NodeStopped,
+        SignalType.NodeLogin:
+          NodeSignal.fromEvent(jsonSignal)
       of SignalType.PeerStats: PeerStatsSignal.fromEvent(jsonSignal)
       of SignalType.DiscoverySummary: DiscoverySummarySignal.fromEvent(jsonSignal)
       of SignalType.MailserverRequestCompleted: MailserverRequestCompletedSignal.fromEvent(jsonSignal)

@@ -133,7 +133,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   var handlerId = self.events.onWithUUID(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
-    self.delegate.onNodeLogin(signal.event.error)
+    self.delegate.onNodeLogin(signal.error)
     self.cleanTmpData()
   self.connectionIds.add(handlerId)
 
