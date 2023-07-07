@@ -68,8 +68,8 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-  proc removeItemWithKeyUid*(self: KeycardModel, keyUid: string) =
-    for i in 0 ..< self.items.len:
+  proc removeItemsWithKeyUid*(self: KeycardModel, keyUid: string) =
+    for i in countdown(self.items.len-1, 0):
       if self.items[i].getKeyUid() == keyUid:
         self.removeItem(i)
 

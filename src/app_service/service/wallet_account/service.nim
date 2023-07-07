@@ -1,4 +1,5 @@
-import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils, os, times, algorithm
+import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient
+import net, strutils, os, times, algorithm, options
 import web3/ethtypes
 
 import ../settings/service as settings_service
@@ -34,11 +35,10 @@ const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED* = "walletAccount/derivedA
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED* = "walletAccount/derivedAddressesFromMnemonicFetched"
 const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* = "walletAccount/addressDetailsFetched"
 const SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED* = "walletAccount/positionUpdated"
-const SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED* = "walletAccount/operabilityUpdated"
+const SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED* = "walletAccount/operabilityUpdated" # TODO: will be used later, when we deal with account operability
 
-const SIGNAL_KEYPAIR_CHANGED* = "keypairChanged"
+const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
 const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
-const SIGNAL_KEYPAIR_DELETED* = "keypairDeleted"
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
 const SIGNAL_KEYCARD_DELETED* = "keycardDeleted"
 const SIGNAL_KEYCARD_ACCOUNTS_REMOVED* = "keycardAccountsRemoved"
@@ -79,6 +79,11 @@ type AccountArgs* = ref object of Args
 type KeypairArgs* = ref object of Args
   keypair*: KeypairDto
 
+type KeycardArgs* = ref object of Args
+  success*: bool
+  oldKeycardUid*: string
+  keycard*: KeycardDto
+
 type DerivedAddressesArgs* = ref object of Args
   uniqueId*: string
   derivedAddresses*: seq[DerivedAddressDto]
@@ -88,11 +93,6 @@ type TokensPerAccountArgs* = ref object of Args
   accountsTokens*: OrderedTable[string, seq[WalletTokenDto]] # [wallet address, list of tokens]
   hasBalanceCache*: bool
   hasMarketValuesCache*: bool
-
-type KeycardActivityArgs* = ref object of Args
-  success*: bool
-  oldKeycardUid*: string
-  keycard*: KeycardDto
 
 proc responseHasNoErrors(procName: string, response: RpcResponse[JsonNode]): bool =
   var errMsg = ""
@@ -123,8 +123,7 @@ QtObject:
   proc buildAllTokens(self: Service, accounts: seq[string], store: bool)
   proc checkRecentHistory*(self: Service)
   proc startWallet(self: Service)
-  proc handleWalletAccount(self: Service, account: WalletAccountDto)
-  proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto])
+  proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc getAllKnownKeycards*(self: Service): seq[KeycardDto]
   proc removeMigratedAccountsForKeycard*(self: Service, keyUid: string, keycardUid: string, accountsToRemove: seq[string])
@@ -338,8 +337,6 @@ QtObject:
       if receivedData.keypairs.len > 0:
         for kp in receivedData.keypairs:
           self.handleKeypair(kp)
-      ## TODO: will be removed in the second part of synchronization improvements
-      # self.handleKeycardActions(receivedData.keycardActions)
 
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
@@ -386,7 +383,7 @@ QtObject:
       error "error: ", errDescription
       return
 
-  proc addNewAccountToLocalStoreAndNotify(self: Service) =
+  proc addNewAccountToLocalStoreAndNotify(self: Service, notify: bool = true) =
     let accounts = self.getAccounts()
     var newAccount: WalletAccountDto
     var found = false
@@ -406,18 +403,21 @@ QtObject:
     self.storeAccount(newAccount)
 
     self.buildAllTokens(@[newAccount.address], store = true)
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: newAccount))
+    if notify:
+      self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: newAccount))
 
-  proc removeAccountFromLocalStoreAndNotify(self: Service, address: string) =
+  proc removeAccountFromLocalStoreAndNotify(self: Service, address: string, notify: bool = true) =
     if not self.walletAccountsContainsAddress(address):
       return
     let removedAcc = self.walletAccounts[address]
     self.walletAccounts.del(address)
     # updating related accounts for other accounts
     self.setRelatedAccountsForAllAccounts(removedAcc.keyUid)
-    self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountArgs(account: removedAcc))
+    if notify:
+      self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountArgs(account: removedAcc))
 
-  proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string, position: int = -1, accOperability: string = "") =
+  proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string,
+    position: Option[int] = none(int), notify: bool = true) =
     if not self.walletAccountsContainsAddress(address):
       return
     var account = self.getAccountByAddress(address)
@@ -429,15 +429,13 @@ QtObject:
       if emoji.len > 0 and emoji != account.emoji:
         account.emoji = emoji
       self.storeAccount(account, updateRelatedAccounts = false)
-      self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
-    if position > -1 and position != account.position:
-      account.position = position
+      if notify:
+        self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
+    if position.isSome and position.get != account.position:
+      account.position = position.get
       self.storeAccount(account, updateRelatedAccounts = false)
-      self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, AccountArgs(account: account))
-    if accOperability.len > 0 and account.operable != accOperability:
-      account.operable = accOperability
-      self.storeAccount(account, updateRelatedAccounts = false)
-      self.events.emit(SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED, AccountArgs(account: account))
+      if notify:
+        self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, AccountArgs(account: account))
 
   ## if password is not provided local keystore file won't be created
   proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
@@ -573,7 +571,7 @@ QtObject:
       if not response.error.isNil:
         error "status-go error", procName="updateAccountPosition", errCode=response.error.code, errDesription=response.error.message
         return
-      self.updateAccountInLocalStoreAndNotify(address, name = "", colorId = "", emoji = "", position)
+      self.updateAccountInLocalStoreAndNotify(address, name = "", colorId = "", emoji = "", some(position))
     except Exception as e:
       error "error: ", procName="updateAccountPosition", errName=e.name, errDesription=e.msg
 
@@ -749,8 +747,8 @@ QtObject:
     return 0.0
 
   proc addKeycardOrAccountsAsync*(self: Service, keycard: KeycardDto, accountsComingFromKeycard: bool = false) =
-    let arg = AddKeycardOrAddAccountsIfKeycardIsAddedTaskArg(
-      tptr: cast[ByteAddress](addKeycardOrAddAccountsIfKeycardIsAddedTask),
+    let arg = SaveOrUpdateKeycardTaskArg(
+      tptr: cast[ByteAddress](saveOrUpdateKeycardTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onKeycardAdded",
       keycard: keycard,
@@ -759,73 +757,67 @@ QtObject:
     self.threadpool.start(arg)
 
   proc emitAddKeycardAddAccountsChange(self: Service, success: bool, keycard: KeycardDto) =
-    let data = KeycardActivityArgs(
+    let data = KeycardArgs(
       success: success,
       keycard: keycard
     )
     self.events.emit(SIGNAL_NEW_KEYCARD_SET, data)
 
   proc onKeycardAdded*(self: Service, response: string) {.slot.} =
+    var keycard = KeycardDto()
+    var success = false
     try:
       let responseObj = response.parseJson
-      var keycard: KeycardDto
-      var success = false
       discard responseObj.getProp("success", success)
-      if success:
-        var kpJson: JsonNode
-        if responseObj.getProp("keycard", kpJson):
-          keycard = kpJson.toKeycardDto()
-      self.emitAddKeycardAddAccountsChange(success, keycard)
+      var kpJson: JsonNode
+      if responseObj.getProp("keycard", kpJson):
+        keycard = kpJson.toKeycardDto()
     except Exception as e:
       error "error handilng migrated keycard response", errDesription=e.msg
-      self.emitAddKeycardAddAccountsChange(success = false, KeycardDto())
+    self.emitAddKeycardAddAccountsChange(success, keycard)
 
   proc addKeycardOrAccounts*(self: Service, keycard: KeycardDto, accountsComingFromKeycard: bool = false): bool =
+    var success = false
     try:
-      let response = backend.addKeycardOrAddAccountsIfKeycardIsAdded(
-        keycard.keycardUid,
-        keycard.keycardName,
-        keycard.keyUid,
-        keycard.accountsAddresses,
+      let response = backend.saveOrUpdateKeycard(
+        %* {
+          "keycard-uid": keycard.keycardUid,
+          "keycard-name": keycard.keycardName,
+          # "keycard-locked" - no need to set it here, cause it will be set to false by the status-go
+          "key-uid": keycard.keyUid,
+          "accounts-addresses": keycard.accountsAddresses,
+          # "position": - no need to set it here, cause it is fully maintained by the status-go
+        },
         accountsComingFromKeycard
         )
-      result = responseHasNoErrors("addKeycardOrAccounts", response)
-      if result:
-        self.emitAddKeycardAddAccountsChange(success = true, keycard)
+      success = responseHasNoErrors("addKeycardOrAccounts", response)
     except Exception as e:
       error "error: ", procName="addKeycardOrAccounts", errName = e.name, errDesription = e.msg
+    self.emitAddKeycardAddAccountsChange(success = success, keycard)
+    return success
 
   proc removeMigratedAccountsForKeycard*(self: Service, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) =
-    let arg = RemoveMigratedAccountsForKeycardTaskArg(
-      tptr: cast[ByteAddress](removeMigratedAccountsForKeycardTask),
+    let arg = DeleteKeycardAccountsTaskArg(
+      tptr: cast[ByteAddress](deleteKeycardAccountsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onMigratedAccountsForKeycardRemoved",
       keycard: KeycardDto(keyUid: keyUid, keycardUid: keycardUid, accountsAddresses: accountsToRemove)
     )
     self.threadpool.start(arg)
 
-  proc emitKeycardRemovedAccountsChange(self: Service, success: bool, keyUid: string, keycardUid: string,
-    removedAccounts: seq[string]) =
-    let data = KeycardActivityArgs(
-      success: success,
-      keycard: KeycardDto(keyUid: keyUid, keycardUid: keycardUid, accountsAddresses: removedAccounts)
-    )
-    self.events.emit(SIGNAL_KEYCARD_ACCOUNTS_REMOVED, data)
-
   proc onMigratedAccountsForKeycardRemoved*(self: Service, response: string) {.slot.} =
+    var data = KeycardArgs(
+      success: false,
+    )
     try:
       let responseObj = response.parseJson
-      var keycard: KeycardDto
-      var success = false
-      discard responseObj.getProp("success", success)
-      if success:
-        var kpJson: JsonNode
-        if responseObj.getProp("keycard", kpJson):
-          keycard = kpJson.toKeycardDto()
-      self.emitKeycardRemovedAccountsChange(success, keycard.keyUid, keycard.keycardUid, keycard.accountsAddresses)
+      discard responseObj.getProp("success", data.success)
+      var kpJson: JsonNode
+      if responseObj.getProp("keycard", kpJson):
+        data.keycard = kpJson.toKeycardDto()
     except Exception as e:
       error "error handilng migrated keycard response", errDesription=e.msg
-      self.emitKeycardRemovedAccountsChange(success = false, keyUid = "", keycardUid = "", removedAccounts = @[])
+    self.events.emit(SIGNAL_KEYCARD_ACCOUNTS_REMOVED, data)
 
   proc getAllKnownKeycards*(self: Service): seq[KeycardDto] =
     try:
@@ -835,31 +827,21 @@ QtObject:
     except Exception as e:
       error "error: ", procName="getAllKnownKeycards", errName = e.name, errDesription = e.msg
 
-  proc getKeycardWithKeycardUid*(self: Service, keycardUid: string): KeycardDto =
-    let allKnownKeycards = self.getAllKnownKeycards()
-    let keycardsWithKeycardUid = allKnownKeycards.filter(kp => kp.keycardUid == keycardUid)
-    if keycardsWithKeycardUid.len == 0:
-      return
-    if keycardsWithKeycardUid.len > 1:
-      error "there are more than one keycard with the same uid", keycardUid=keycardUid
-      return
-    return keycardsWithKeycardUid[0]
-
-  proc getAllKnownKeycardsGroupedByKeyUid*(self: Service): seq[KeycardDto] =
+  proc getKeycardByKeycardUid*(self: Service, keycardUid: string): KeycardDto =
     try:
-      let response = backend.getAllKnownKeycardsGroupedByKeyUid()
-      if responseHasNoErrors("getAllKnownKeycardsGroupedByKeyUid", response):
+      let response = backend.getKeycardByKeycardUID(keycardUid)
+      if responseHasNoErrors("getKeycardByKeycardUid", response):
+        return response.result.toKeycardDto()
+    except Exception as e:
+      error "error: ", procName="getKeycardByKeycardUid", errName = e.name, errDesription = e.msg
+
+  proc getKeycardsWithSameKeyUid*(self: Service, keyUid: string): seq[KeycardDto] =
+    try:
+      let response = backend.getKeycardsWithSameKeyUID(keyUid)
+      if responseHasNoErrors("getKeycardsWithSameKeyUid", response):
         return map(response.result.getElems(), proc(x: JsonNode): KeycardDto = toKeycardDto(x))
     except Exception as e:
-      error "error: ", procName="getAllKnownKeycardsGroupedByKeyUid", errName = e.name, errDesription = e.msg
-
-  proc getKeycardByKeyUid*(self: Service, keyUid: string): seq[KeycardDto] =
-    try:
-      let response = backend.getKeycardByKeyUid(keyUid)
-      if responseHasNoErrors("getKeycardByKeyUid", response):
-        return map(response.result.getElems(), proc(x: JsonNode): KeycardDto = toKeycardDto(x))
-    except Exception as e:
-      error "error: ", procName="getKeycardByKeyUid", errName = e.name, errDesription = e.msg
+      error "error: ", procName="getKeycardsWithSameKeyUid", errName = e.name, errDesription = e.msg
 
   proc isKeycardAccount*(self: Service, account: WalletAccountDto): bool =
     if account.isNil or
@@ -867,108 +849,84 @@ QtObject:
       account.path.len == 0 or
       utils.isPathOutOfTheDefaultStatusDerivationTree(account.path):
         return false
-    let keycards = self.getKeycardByKeyUid(account.keyUid)
+    let keycards = self.getKeycardsWithSameKeyUid(account.keyUid)
     return keycards.len > 0
 
-  proc emitKeycardNameChange(self: Service, keycardUid: string, name: string) =
-    let data = KeycardActivityArgs(success: true, keycard: KeycardDto(keycardUid: keycardUid, keycardName: name))
-    self.events.emit(SIGNAL_KEYCARD_NAME_CHANGED, data)
-
   proc updateKeycardName*(self: Service, keycardUid: string, name: string): bool =
+    var data = KeycardArgs(
+      success: false,
+      keycard: KeycardDto(keycardUid: keycardUid, keycardName: name)
+    )
     try:
       let response = backend.setKeycardName(keycardUid, name)
-      result = responseHasNoErrors("updateKeycardName", response)
-      if result:
-        self.emitKeycardNameChange(keycardUid, name)
+      data.success = responseHasNoErrors("updateKeycardName", response)
     except Exception as e:
       error "error: ", procName="updateKeycardName", errName = e.name, errDesription = e.msg
-
-  proc emitKeycardLockedChange(self: Service, keyUid: string, keycardUid: string) =
-    let data = KeycardActivityArgs(success: true, keycard: KeycardDto(keyUid: keyUid, keycardUid: keycardUid))
-    self.events.emit(SIGNAL_KEYCARD_LOCKED, data)
+    self.events.emit(SIGNAL_KEYCARD_NAME_CHANGED, data)
+    return data.success
 
   proc setKeycardLocked*(self: Service, keyUid: string, keycardUid: string): bool =
+    var data = KeycardArgs(
+      success: false,
+      keycard: KeycardDto(keyUid: keyUid, keycardUid: keycardUid)
+    )
     try:
       let response = backend.keycardLocked(keycardUid)
-      result = responseHasNoErrors("setKeycardLocked", response)
-      if result:
-        self.emitKeycardLockedChange(keyUid, keycardUid)
+      data.success = responseHasNoErrors("setKeycardLocked", response)
     except Exception as e:
       error "error: ", procName="setKeycardLocked", errName = e.name, errDesription = e.msg
-
-  proc emitKeycardUnlockedChange(self: Service, keyUid: string, keycardUid: string) =
-    let data = KeycardActivityArgs(success: true, keycard: KeycardDto(keyUid: keyUid, keycardUid: keycardUid))
-    self.events.emit(SIGNAL_KEYCARD_UNLOCKED, data)
+    self.events.emit(SIGNAL_KEYCARD_LOCKED, data)
+    return data.success
 
   proc setKeycardUnlocked*(self: Service, keyUid: string, keycardUid: string): bool =
+    var data = KeycardArgs(
+      success: false,
+      keycard: KeycardDto(keyUid: keyUid, keycardUid: keycardUid)
+    )
     try:
       let response = backend.keycardUnlocked(keycardUid)
-      result = responseHasNoErrors("setKeycardUnlocked", response)
-      if result:
-        self.emitKeycardUnlockedChange(keyUid, keycardUid)
+      data.success = responseHasNoErrors("setKeycardUnlocked", response)
     except Exception as e:
       error "error: ", procName="setKeycardUnlocked", errName = e.name, errDesription = e.msg
-
-  proc emitUpdateKeycardUidChange(self: Service, oldKeycardUid: string, newKeycardUid: string) =
-    let data = KeycardActivityArgs(success: true, oldKeycardUid: oldKeycardUid, keycard: KeycardDto(keycardUid: newKeycardUid))
-    self.events.emit(SIGNAL_KEYCARD_UID_UPDATED, data)
+    self.events.emit(SIGNAL_KEYCARD_UNLOCKED, data)
+    return data.success
 
   proc updateKeycardUid*(self: Service, oldKeycardUid: string, newKeycardUid: string): bool =
+    var data = KeycardArgs(
+      success: false,
+      oldKeycardUid: oldKeycardUid,
+      keycard: KeycardDto(keycardUid: newKeycardUid)
+    )
     try:
       let response = backend.updateKeycardUID(oldKeycardUid, newKeycardUid)
-      result = responseHasNoErrors("updateKeycardUid", response)
-      if result:
-        self.emitUpdateKeycardUidChange(oldKeycardUid, newKeycardUid)
+      data.success = responseHasNoErrors("updateKeycardUid", response)
     except Exception as e:
       error "error: ", procName="updateKeycardUid", errName = e.name, errDesription = e.msg
-
-  proc emitDeleteKeycardChange(self: Service, keycardUid: string) =
-    let data = KeycardActivityArgs(success: true, keycard: KeycardDto(keycardUid: keycardUid))
-    self.events.emit(SIGNAL_KEYCARD_DELETED, data)
+    self.events.emit(SIGNAL_KEYCARD_UID_UPDATED, data)
+    return data.success
 
   proc deleteKeycard*(self: Service, keycardUid: string): bool =
+    var data = KeycardArgs(
+      success: false,
+      keycard: KeycardDto(keycardUid: keycardUid)
+    )
     try:
       let response = backend.deleteKeycard(keycardUid)
-      result = responseHasNoErrors("deleteKeycard", response)
-      if result:
-        self.emitDeleteKeycardChange(keycardUid)
+      data.success = responseHasNoErrors("deleteKeycard", response)
     except Exception as e:
       error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
-    return false
+    self.events.emit(SIGNAL_KEYCARD_DELETED, data)
+    return data.success
 
-  proc handleWalletAccount(self: Service, account: WalletAccountDto) =
+  proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true) =
     if account.removed:
-      self.removeAccountFromLocalStoreAndNotify(account.address)
+      self.removeAccountFromLocalStoreAndNotify(account.address, notify)
     else:
       if self.walletAccountsContainsAddress(account.address):
-        self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji, account.position)
+        self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji,
+          some(account.position), notify)
       else:
-        self.addNewAccountToLocalStoreAndNotify()
-
-  proc handleKeycardActions(self: Service, keycardActions: seq[KeycardActionDto]) =
-    if keycardActions.len == 0:
-      return
-    for kcAction in keycardActions:
-      if kcAction.action == KeycardActionKeycardAdded or
-        kcAction.action == KeycardActionAccountsAdded:
-          self.emitAddKeycardAddAccountsChange(success = true, kcAction.keycard)
-      elif kcAction.action == KeycardActionKeycardDeleted:
-        self.emitDeleteKeycardChange(kcAction.keycard.keycardUid)
-      elif kcAction.action == KeycardActionAccountsRemoved:
-        let keycard = self.getKeycardWithKeycardUid(kcAction.keycard.keycardUid)
-        self.emitKeycardRemovedAccountsChange(success = true, keycard.keyUid, kcAction.keycard.keycardUid, kcAction.keycard.accountsAddresses)
-      elif kcAction.action == KeycardActionLocked:
-        let keycard = self.getKeycardWithKeycardUid(kcAction.keycard.keycardUid)
-        self.emitKeycardLockedChange(keycard.keyUid, kcAction.keycard.keycardUid)
-      elif kcAction.action == KeycardActionUnlocked:
-        let keycard = self.getKeycardWithKeycardUid(kcAction.keycard.keycardUid)
-        self.emitKeycardUnlockedChange(keycard.keyUid, kcAction.keycard.keycardUid)
-      elif kcAction.action == KeycardActionUidUpdated:
-        self.emitUpdateKeycardUidChange(kcAction.oldKeycardUid, kcAction.keycard.keycardUid)
-      elif kcAction.action == KeycardActionNameChanged:
-        self.emitKeycardNameChange(kcAction.keycard.keycardUid, kcAction.keycard.keycardName)
-      else:
-        error "unsupported action received", action=kcAction.action
+        self.addNewAccountToLocalStoreAndNotify(notify)
 
   proc handleKeypair(self: Service, keypair: KeypairDto) =
     ## In some point in future instead `self.walletAccounts` table we should switch to maintaining local state in the
@@ -984,16 +942,13 @@ QtObject:
     for localAcc in localKeypairRelatedAccounts:
       let accAddress = localAcc.address
       if keypair.accounts.filter(a => cmpIgnoreCase(a.address, accAddress) == 0).len == 0:
-        self.handleWalletAccount(WalletAccountDto(address: accAddress, removed: true))
+        self.handleWalletAccount(WalletAccountDto(address: accAddress, removed: true), notify = false)
     # - second add/update new/existing accounts
     for acc in keypair.accounts:
-      self.handleWalletAccount(acc)
+      self.handleWalletAccount(acc, notify = false)
 
-    if keypair.removed:
-      self.events.emit(SIGNAL_KEYPAIR_DELETED, KeypairArgs(keypair: keypair))
-    else:
-      # notify all interested parts about the keypair change
-      self.events.emit(SIGNAL_KEYPAIR_CHANGED, KeypairArgs(keypair: keypair))
+    # notify all interested parts about the keypair change
+    self.events.emit(SIGNAL_KEYPAIR_SYNCED, KeypairArgs(keypair: keypair))
 
   proc allAccountsTokenBalance*(self: Service, symbol: string): float64 =
     var totalTokenBalance = 0.0

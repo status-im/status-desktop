@@ -85,6 +85,9 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionSend", newQVariant(self.view))
 
   # these connections should be part of the controller's init method
+  self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
+    self.refreshWalletAccounts()
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
     self.refreshWalletAccounts()
 
@@ -104,7 +107,7 @@ method load*(self: Module) =
     self.refreshWalletAccounts()
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
     if not args.success:
       return
     self.refreshWalletAccounts()
@@ -152,7 +155,7 @@ method authenticateAndTransfer*(
   ## if acc.isNil:
   ##   echo "error: selected account to send a transaction from is not known"
   ##   return
-  ## let keyPair = self.controller.getKeycardByKeyUid(acc.keyUid)
+  ## let keyPair = self.controller.getKeycardsWithSameKeyUid(acc.keyUid)
   ## if keyPair.len == 0:
   ##   self.controller.authenticateUser()
   ## else:

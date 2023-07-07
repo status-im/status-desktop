@@ -1,4 +1,4 @@
-import NimQml, Tables, sequtils, sugar
+import NimQml, Tables, sequtils, strutils, sugar
 
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
@@ -82,6 +82,18 @@ proc switchAccount*(self: Module, accountIndex: int) =
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("browserSectionCurrentAccount", newQVariant(self.view))
+
+  self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
+    let args = KeypairArgs(e)
+    let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
+    if walletAccount.isNil:
+      self.switchAccount(0)
+      return
+    for acc in args.keypair.accounts:
+      if cmpIgnoreCase(acc.address, walletAccount.address) == 0:
+        return
+    self.switchAccount(0)
+    self.view.connectedAccountDeleted()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     if(self.view.isAddressCurrentAccount(AccountArgs(e).account.address)):

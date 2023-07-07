@@ -60,8 +60,8 @@ method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: Wallet
     balanceFetched = false)
 
 method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto]): seq[KeyPairItem] =
-  var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
-    excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
+  var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
+  excludePrivateKeyKeypairs = false)
 
   var item = newKeyPairItem()
   item.setIcon("show")
@@ -82,6 +82,9 @@ method refreshWalletAccounts*(self: Module) =
   self.view.setItems(items)
 
 method load*(self: Module) =
+  self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
+    self.refreshWalletAccounts()
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
     self.refreshWalletAccounts()
 
@@ -94,7 +97,7 @@ method load*(self: Module) =
     self.view.onUpdatedAccount(walletAccountToWalletSettingsAccountsItem(args.account, keycardAccount))
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
     if not args.success:
       return
     self.refreshWalletAccounts()

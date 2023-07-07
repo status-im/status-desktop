@@ -65,10 +65,13 @@ method runCreateNewPairingCodePopup*(self: AccessInterface, keyUid: string) {.ba
 method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resolveRelatedKeycardsForKeypair*(self: AccessInterface, keypair: KeypairDto) {.base.} =
+method onKeypairSynced*(self: AccessInterface, keypair: KeypairDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onNewKeycardSet*(self: AccessInterface, keyPair: KeycardDto) {.base.} =
+method onKeycardChange*(self: AccessInterface, keycard: KeycardDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onWalletAccountChange*(self: AccessInterface, account: WalletAccountDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onKeycardLocked*(self: AccessInterface, keyUid: string, keycardUid: string) {.base.} =
@@ -81,12 +84,6 @@ method onKeycardNameChanged*(self: AccessInterface, keycardUid: string, keycardN
   raise newException(ValueError, "No implementation available")
 
 method onKeycardUidUpdated*(self: AccessInterface, keycardUid: string, keycardNewUid: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onKeycardAccountsRemoved*(self: AccessInterface, keyUid: string, keycardUid: string, accountsToRemove: seq[string]) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onWalletAccountUpdated*(self: AccessInterface, account: WalletAccountDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method prepareKeycardDetailsModel*(self: AccessInterface, keyUid: string) {.base.} =

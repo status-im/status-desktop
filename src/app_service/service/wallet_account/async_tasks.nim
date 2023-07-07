@@ -103,51 +103,55 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 #################################################
 
 type
-  AddKeycardOrAddAccountsIfKeycardIsAddedTaskArg* = ref object of QObjectTaskArg
+  SaveOrUpdateKeycardTaskArg* = ref object of QObjectTaskArg
     keycard: KeycardDto
     accountsComingFromKeycard: bool
 
-const addKeycardOrAddAccountsIfKeycardIsAddedTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[AddKeycardOrAddAccountsIfKeycardIsAddedTaskArg](argEncoded)
+const saveOrUpdateKeycardTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[SaveOrUpdateKeycardTaskArg](argEncoded)
+  var responseJson = %*{
+    "success": false,
+    "keycard": arg.keycard.toJsonNode()
+  }
   try:
-    let response = backend.addKeycardOrAddAccountsIfKeycardIsAdded(
-      arg.keycard.keycardUid,
-      arg.keycard.keycardName,
-      arg.keycard.keyUid,
-      arg.keycard.accountsAddresses,
+    let response = backend.saveOrUpdateKeycard(
+      %* {
+        "keycard-uid": arg.keycard.keycardUid,
+        "keycard-name": arg.keycard.keycardName,
+        # "keycard-locked" - no need to set it here, cause it will be set to false by the status-go
+        "key-uid": arg.keycard.keyUid,
+        "accounts-addresses": arg.keycard.accountsAddresses,
+        # "position": - no need to set it here, cause it is fully maintained by the status-go
+      },
       arg.accountsComingFromKeycard
       )
-    let success = responseHasNoErrors("addKeycardOrAddAccountsIfKeycardIsAdded", response)
-    let responseJson = %*{
-      "success": success,
-      "keycard": arg.keycard.toJsonNode()
-    }
-    arg.finish(responseJson)
+    let success = responseHasNoErrors("saveOrUpdateKeycard", response)
+    responseJson["success"] = %* success
   except Exception as e:
     error "error adding new keycard: ", message = e.msg
-    arg.finish("")
+  arg.finish(responseJson)
 
 #################################################
 # Async remove migrated accounts for keycard
 #################################################
 
 type
-  RemoveMigratedAccountsForKeycardTaskArg* = ref object of QObjectTaskArg
+  DeleteKeycardAccountsTaskArg* = ref object of QObjectTaskArg
     keycard: KeycardDto
 
-const removeMigratedAccountsForKeycardTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[RemoveMigratedAccountsForKeycardTaskArg](argEncoded)
+const deleteKeycardAccountsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[DeleteKeycardAccountsTaskArg](argEncoded)
+  var responseJson = %*{
+    "success": false,
+    "keycard": arg.keycard.toJsonNode()
+  }
   try:
-    let response = backend.removeMigratedAccountsForKeycard(
+    let response = backend.deleteKeycardAccounts(
       arg.keycard.keycardUid,
       arg.keycard.accountsAddresses
       )
-    let success = responseHasNoErrors("removeMigratedAccountsForKeycard", response)
-    let responseJson = %*{
-      "success": success,
-      "keycard": arg.keycard.toJsonNode()
-    }
-    arg.finish(responseJson)
+    let success = responseHasNoErrors("deleteKeycardAccounts", response)
+    responseJson["success"] = %* success
   except Exception as e:
     error "error remove accounts from keycard: ", message = e.msg
-    arg.finish("")
+  arg.finish(responseJson)

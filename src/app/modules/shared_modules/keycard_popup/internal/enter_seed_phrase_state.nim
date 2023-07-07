@@ -28,7 +28,7 @@ method executePrePrimaryStateCommand*(self: EnterSeedPhraseState, controller: Co
     if self.verifiedSeedPhrase:
       ## should always be true, since it's not possible to do primary command otherwise (button is disabled on the UI)
       let keyUid = controller.getKeyUidForSeedPhrase(sp)
-      self.keyPairAlreadyMigrated = controller.getKeycardByKeyUid(keyUid).len > 0
+      self.keyPairAlreadyMigrated = controller.getKeycardsWithSameKeyUid(keyUid).len > 0
       if self.keyPairAlreadyMigrated:
         controller.prepareKeyPairForProcessing(keyUid)
         return
@@ -78,22 +78,22 @@ method executeCancelCommand*(self: EnterSeedPhraseState, controller: Controller)
     self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method resolveKeycardNextState*(self: EnterSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: EnterSeedPhraseState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.SetupNewKeycard:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.keyUid.len > 0:
         return createState(StateType.MigratingKeyPair, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
-    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
+    if keycardFlowType == ResponseTypeValueEnterNewPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorRequireInit:
         return createState(StateType.CreatePin, self.flowType, nil)
   if self.flowType == FlowType.CreateCopyOfAKeycard:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.keyUid.len > 0:
         controller.setDestinationKeycardUid(keycardEvent.instanceUID)
         return createState(StateType.CopyingKeycard, self.flowType, nil)

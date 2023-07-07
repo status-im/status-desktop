@@ -168,6 +168,13 @@ method setFillterAllAddresses*(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
 
+  self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
+    let args = KeypairArgs(e)
+    self.setTotalCurrencyBalance()
+    for acc in args.keypair.accounts:
+      if acc.removed:
+        self.filter.removeAddress(acc.address)
+    self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
@@ -192,7 +199,7 @@ method load*(self: Module) =
     self.setTotalCurrencyBalance()
     self.notifyFilterChanged()
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
     if not args.success:
       return
     self.notifyFilterChanged()

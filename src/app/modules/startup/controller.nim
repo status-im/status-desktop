@@ -149,7 +149,7 @@ proc init*(self: Controller) =
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
-    let args = KeycardArgs(e)
+    let args = KeycardLibArgs(e)
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
   self.connectionIds.add(handlerId)
 

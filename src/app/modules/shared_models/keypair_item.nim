@@ -14,7 +14,7 @@ type
 QtObject:
   type KeyPairItem* = ref object of QObject
     keyUid: string
-    pubKey: string    
+    pubKey: string
     locked: bool
     name: string
     image: string

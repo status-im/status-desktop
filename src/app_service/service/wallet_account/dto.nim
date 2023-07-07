@@ -2,8 +2,7 @@ import tables, json, strformat, sequtils, sugar, strutils
 
 include  ../../common/json_utils
 
-const WalletTypeDefaultStatusAccount* = ""
-const WalletTypeGenerated* = "generated"
+const WalletTypeGenerated* = "generated" # refers to accounts generated from the profile keypair
 const WalletTypeSeed* = "seed"
 const WalletTypeWatch* = "watch"
 const WalletTypeKey* = "key"
@@ -193,7 +192,7 @@ proc getBalance*(self: WalletTokenDto, chainIds: seq[int]): float64 =
   for chainId in chainIds:
     if self.balancesPerChain.hasKey(chainId):
       sum += self.balancesPerChain[chainId].balance
-  
+
   return sum
 
 proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int], currency: string): float64 =
@@ -202,14 +201,14 @@ proc getCurrencyBalance*(self: WalletTokenDto, chainIds: seq[int], currency: str
   for chainId in chainIds:
     if self.balancesPerChain.hasKey(chainId):
       sum += self.balancesPerChain[chainId].getCurrencyBalance(price)
-  
+
   return sum
 
 proc getVisibleForNetwork*(self: WalletTokenDto, chainIds: seq[int]): bool =
   for chainId in chainIds:
     if self.balancesPerChain.hasKey(chainId):
       return true
-  
+
   return false
 
 proc getVisibleForNetworkWithPositiveBalance*(self: WalletTokenDto, chainIds: seq[int]): bool =
@@ -219,7 +218,7 @@ proc getVisibleForNetworkWithPositiveBalance*(self: WalletTokenDto, chainIds: se
 
     if self.balancesPerChain.hasKey(chainId) and self.balancesPerChain[chainId].balance > 0:
       return true
-  
+
   return false
 
 proc getCurrencyBalance*(self: WalletAccountDto, chainIds: seq[int], currency: string): float64 =

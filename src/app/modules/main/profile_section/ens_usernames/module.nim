@@ -73,7 +73,7 @@ method load*(self: Module) =
   let signingPhrase = self.controller.getSigningPhrase()
   let link = self.controller.getNetwork().blockExplorerUrl & "/tx/"
   self.view.load(link, signingPhrase)
-  
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.view.emitChainIdChanged()
     self.controller.fixPreferredName(true)
@@ -85,15 +85,15 @@ method viewDidLoad*(self: Module) =
   # add registered ens usernames
   let registeredEnsUsernames = self.controller.getAllMyEnsUsernames(includePendingEnsUsernames = false)
   for dto in registeredEnsUsernames:
-    let item = Item(chainId: dto.chainId, 
-                    ensUsername: dto.username, 
+    let item = Item(chainId: dto.chainId,
+                    ensUsername: dto.username,
                     isPending: false)
     self.view.model().addItem(item)
   # add pending ens usernames
   let pendingEnsUsernames = self.controller.getMyPendingEnsUsernames()
   for dto in pendingEnsUsernames:
-    let item = Item(chainId: dto.chainId, 
-                    ensUsername: dto.username, 
+    let item = Item(chainId: dto.chainId,
+                    ensUsername: dto.username,
                     isPending: true)
     self.view.model().addItem(item)
 
@@ -167,11 +167,11 @@ proc setPubKey*(self: Module, password: string) =
   var success: bool
   if(not responseObj.getProp("success", success)):
     info "remote call is not executed with success", methodName="setPubKey"
-  
+
   var respResult: string
   if(responseObj.getProp("result", respResult)):
-    let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId, 
-                    ensUsername: self.tmpSendEnsTransactionDetails.ensUsername, 
+    let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId,
+                    ensUsername: self.tmpSendEnsTransactionDetails.ensUsername,
                     isPending: true)
     self.view.model().addItem(item)
     self.view.emitTransactionWasSentSignal(response)
@@ -205,7 +205,7 @@ proc onEnsUsernameRemoved(self: Module, chainId: int, ensUsername: string) =
     self.controller.fixPreferredName(true)
   self.view.model().removeItemByEnsUsername(chainId, ensUsername)
 
-method removeEnsUsername*(self: Module, chainId: int, ensUsername: string): bool = 
+method removeEnsUsername*(self: Module, chainId: int, ensUsername: string): bool =
   if (not self.controller.removeEnsUsername(chainId, ensUsername)):
     info "an error occurred removing ens username", methodName="removeEnsUsername", ensUsername, chainId
     return false
@@ -313,7 +313,7 @@ method authenticateAndRegisterEns*(self: Module, chainId: int, ensUsername: stri
   ## if acc.isNil:
   ##   echo "error: selected account to send a transaction from is not known"
   ##   return
-  ## let keyPair = self.controller.getKeycardByKeyUid(acc.keyUid)
+  ## let keyPair = self.controller.getKeycardsWithSameKeyUid(acc.keyUid)
   ## if keyPair.len == 0:
   ##   self.controller.authenticateUser()
   ## else:
@@ -356,7 +356,7 @@ method getWalletDefaultAddress*(self: Module): string =
 method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =  
+method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =
   var floatCryptoBalance: float = 0
   try:
     floatCryptoBalance = parseFloat(cryptoBalance)

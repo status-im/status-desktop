@@ -99,19 +99,19 @@ QtObject:
       if receivedData.settings.len > 0:
         for settingsField in receivedData.settings:
           if settingsField.name == KEY_CURRENCY:
-            self.settings.currency = settingsField.value
-            self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: settingsField.value))
+            self.settings.currency = settingsField.value.getStr
+            self.events.emit(SIGNAL_CURRENCY_UPDATED, SettingsTextValueArgs(value: self.settings.currency))
           if settingsField.name == KEY_DISPLAY_NAME:
-            self.settings.displayName = settingsField.value
-            self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: settingsField.value))
+            self.settings.displayName = settingsField.value.getStr
+            self.events.emit(SIGNAL_DISPLAY_NAME_UPDATED, SettingsTextValueArgs(value: self.settings.displayName))
           if settingsField.name == KEY_BIO:
-            self.settings.bio = settingsField.value
-            self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: settingsField.value))
+            self.settings.bio = settingsField.value.getStr
+            self.events.emit(SIGNAL_BIO_UPDATED, SettingsTextValueArgs(value: self.settings.bio))
           if settingsField.name == KEY_MNEMONIC:
             self.settings.mnemonic = ""
             self.events.emit(SIGNAL_MNEMONIC_REMOVED, Args())
           if settingsField.name == INCLUDE_WATCH_ONLY_ACCOUNT:
-            self.settings.includeWatchOnlyAccount = parseBool(settingsField.value)
+            self.settings.includeWatchOnlyAccount = settingsField.value.getBool
             self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, Args())
 
       if receivedData.socialLinksInfo.links.len > 0 or

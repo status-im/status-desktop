@@ -44,62 +44,70 @@ proc init*(self: Controller) =
       return
     self.delegate.onDisplayKeycardSharedModuleFlow()
 
+  self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
+    let args = KeypairArgs(e)
+    self.delegate.onKeypairSynced(args.keypair)
+
   self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
     self.delegate.onLoggedInUserImageChanged()
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
     if not args.success:
       return
-    self.delegate.onNewKeycardSet(args.keycard)
-
-  self.events.on(SIGNAL_KEYPAIR_CHANGED) do(e: Args):
-    let args = KeypairArgs(e)
-    self.delegate.resolveRelatedKeycardsForKeypair(args.keypair)
+    self.delegate.onKeycardChange(args.keycard)
 
   self.events.on(SIGNAL_KEYCARD_LOCKED) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
+    if not args.success:
+      return
     self.delegate.onKeycardLocked(args.keycard.keyUid, args.keycard.keycardUid)
 
   self.events.on(SIGNAL_KEYCARD_UNLOCKED) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
+    if not args.success:
+      return
     self.delegate.onKeycardUnlocked(args.keycard.keyUid, args.keycard.keycardUid)
 
   self.events.on(SIGNAL_KEYCARD_NAME_CHANGED) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
+    if not args.success:
+      return
     self.delegate.onKeycardNameChanged(args.keycard.keycardUid, args.keycard.keycardName)
 
   self.events.on(SIGNAL_KEYCARD_UID_UPDATED) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
+    if not args.success:
+      return
     self.delegate.onKeycardUidUpdated(args.oldKeycardUid, args.keycard.keycardUid)
 
   self.events.on(SIGNAL_KEYCARD_ACCOUNTS_REMOVED) do(e: Args):
-    let args = KeycardActivityArgs(e)
+    let args = KeycardArgs(e)
     if not args.success:
       return
-    self.delegate.onKeycardAccountsRemoved(args.keycard.keyUid, args.keycard.keycardUid, args.keycard.accountsAddresses)
+    self.delegate.onKeycardChange(args.keycard)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e: Args):
     let args = AccountArgs(e)
-    self.delegate.onWalletAccountUpdated(args.account)
+    self.delegate.onWalletAccountChange(args.account)
 
-  ## TODO: will be removed in the second part of synchronization improvements
-  # self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
-  #   self.delegate.rebuildKeycardsList()
+  self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e: Args):
+    let args = AccountArgs(e)
+    self.delegate.onWalletAccountChange(args.account)
 
-  ## TODO: will be removed in the second part of synchronization improvements
-  # self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
-  #   self.delegate.rebuildKeycardsList()
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
+    let args = AccountArgs(e)
+    self.delegate.onWalletAccountChange(args.account)
 
-proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
-  return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e: Args):
+    let args = AccountArgs(e)
+    self.delegate.onWalletAccountChange(args.account)
 
-proc getAllKnownKeycards*(self: Controller): seq[KeycardDto] =
-  return self.walletAccountService.getAllKnownKeycards()
+proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
+  return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)
 
-## TODO: will be removed in the second part of synchronization improvements
-# proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
-#   return self.walletAccountService.getKeypairs()
+proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
+  return self.walletAccountService.getKeypairs()
 
 proc getKeypairByKeyUid*(self: Controller, keyUid: string): wallet_account_service.KeypairDto =
   return self.walletAccountService.getKeypairByKeyUid(keyUid)

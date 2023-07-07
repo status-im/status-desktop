@@ -36,7 +36,6 @@ type MessageSignal* = ref object of Signal
   verificationRequests*: seq[VerificationRequest]
   savedAddresses*: seq[SavedAddressDto]
   keypairs*: seq[KeypairDto]
-  # keycardActions*: seq[KeycardActionDto] //TODO: will be removed in the second part of synchronization improvements
   watchOnlyAccounts*: seq[WalletAccountDto]
 
 type MessageDeliveredSignal* = ref object of Signal
@@ -147,11 +146,6 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if e.contains("keypairs"):
     for jsonKc in e["keypairs"]:
       signal.keypairs.add(jsonKc.toKeypairDto())
-
-  ## TODO: will be removed in the second part of synchronization improvements
-  # if e.contains("keycardActions"):
-  #   for jsonKc in e["keycardActions"]:
-  #     signal.keycardActions.add(jsonKc.toKeycardActionDto())
 
   if e.contains("watchOnlyAccounts"):
     for jsonAcc in e["watchOnlyAccounts"]:

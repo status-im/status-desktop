@@ -394,8 +394,8 @@ method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEv
 
 proc prepareKeyPairItemForAuthentication[T](self: Module[T], keyUid: string) =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
-    excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
+  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
+    excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
       item = it
@@ -416,8 +416,8 @@ method setKeyPairForProcessing*[T](self: Module[T], item: KeyPairItem) =
 
 method prepareKeyPairForProcessing*[T](self: Module[T], keyUid: string, keycardUid = "") =
   var item = newKeyPairItem()
-  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
-    excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
+  let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
+    excludePrivateKeyKeypairs = false)
   for it in items:
     if it.getKeyUid() == keyUid:
       item = it
@@ -447,8 +447,8 @@ method runFlow*[T](self: Module[T], flowToRun: FlowType, keyUid = "", bip44Paths
     self.controller.runGetMetadataFlow(resolveAddress = true)
     return
   if flowToRun == FlowType.SetupNewKeycard:
-    let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(),
-      excludeAlreadyMigratedPairs = true, excludePrivateKeyKeypairs = false)
+    let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = true,
+      excludePrivateKeyKeypairs = false)
     self.view.createKeyPairModel(items)
     self.view.setCurrentState(newSelectExistingKeyPairState(flowToRun, nil))
     self.controller.readyToDisplayPopup()
@@ -535,19 +535,6 @@ method setSelectedKeyPair*[T](self: Module[T], item: KeyPairItem) =
     paths, keycardDto)
   self.setKeyPairForProcessing(item)
 
-proc updateKeyPairItemIfDataAreKnown[T](self: Module[T], address: string, item: var KeyPairItem): bool =
-  let accounts = self.controller.getWalletAccounts()
-  for a in accounts:
-    if a.isChat or a.walletType == WalletTypeWatch or cmpIgnoreCase(a.address, address) != 0:
-      continue
-    var icon = ""
-    if a.walletType == WalletTypeDefaultStatusAccount:
-      icon = "wallet"
-    item.setKeyUid(a.keyUid)
-    item.addAccount(newKeyPairAccountItem(a.name, a.path, a.address, a.publicKey, a.emoji, a.colorId, icon, balance = 0.0, balanceFetched = true))
-    return true
-  return false
-
 method onTokensRebuilt*[T](self: Module[T], accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
   if self.getKeyPairForProcessing().isNil:
     return
@@ -570,16 +557,32 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
     result.item.setKeyUid(currKp.getKeyUid())
     result.item.setPubKey(currKp.getPubKey())
   result.knownKeyPair = true
-  var unknonwAccountNumber = 0
-  for wa in cardMetadata.walletAccounts:
-    if self.updateKeyPairItemIfDataAreKnown(wa.address, result.item):
-      continue
-    let (balance, balanceFetched) = self.controller.getOrFetchBalanceForAddressInPreferredCurrency(wa.address)
-    result.knownKeyPair = false
-    unknonwAccountNumber.inc
-    let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknonwAccountNumber
-    result.item.addAccount(newKeyPairAccountItem(name, wa.path, wa.address, pubKey = wa.publicKey, emoji = "",
-      colorId = "", icon = "undefined", balance, balanceFetched))
+  # resolve known accounts first
+  let accounts = self.controller.getWalletAccounts()
+  for acc in accounts:
+    for cardAcc in cardMetadata.walletAccounts:
+      if acc.isChat or acc.walletType == WalletTypeWatch or cmpIgnoreCase(acc.address, cardAcc.address) != 0:
+        continue
+      var icon = ""
+      if acc.emoji.len == 0:
+        icon = "wallet"
+      result.item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId, icon,
+        balance = 0.0, balanceFetched = true))
+  # handle unknown accounts
+  var unknownAccountNumber = 0
+  for cardAcc in cardMetadata.walletAccounts:
+    var found = false
+    for acc in accounts:
+      if cmpIgnoreCase(acc.address, cardAcc.address) == 0:
+        found = true
+        break
+    if not found:
+      let (balance, balanceFetched) = self.controller.getOrFetchBalanceForAddressInPreferredCurrency(cardAcc.address)
+      result.knownKeyPair = false
+      unknownAccountNumber.inc
+      let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknownAccountNumber
+      result.item.addAccount(newKeyPairAccountItem(name, cardAcc.path, cardAcc.address, pubKey = cardAcc.publicKey,
+        emoji = "", colorId = "undefined", icon = "wallet", balance, balanceFetched))
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
   let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)
