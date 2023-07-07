@@ -186,6 +186,7 @@ QtObject:
     self.status.setIsFilterDirty(false)
     self.model.resetModel(@[])
     self.eventsHandler.updateSubscribedAddresses(self.addresses)
+    self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
     self.status.setNewDataAvailable(false)
 
     let response = backend_activity.filterActivityAsync(self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, 0, FETCH_BATCH_COUNT_DEFAULT)
