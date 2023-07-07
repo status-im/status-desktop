@@ -9,7 +9,7 @@ type Filter* = ref object
   allAddresses*: bool
 
 proc initFilter*(
-  controller: controller.Controller,
+  controller: controller.Controller
 ): Filter =
   result = Filter()
   result.controller = controller
@@ -55,7 +55,6 @@ proc removeAddress*(self: Filter, address: string) =
   let ind = self.addresses.find(address)
   if ind > -1:
     self.addresses.delete(ind)
-
   
 proc updateNetworks*(self: Filter) =
   self.chainIds = self.controller.getEnabledChainIds()

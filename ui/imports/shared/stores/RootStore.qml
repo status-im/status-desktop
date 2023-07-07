@@ -40,6 +40,7 @@ QtObject {
     property var historyTransactions: Global.appIsReady? walletSection.activityController.model : null
     readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSection.activityController.status.loadingData
     readonly property bool newDataAvailable: Global.appIsReady && walletSection.activityController.status.newDataAvailable
+    readonly property bool isTransactionFilterDirty: Global.appIsReady && walletSection.activityController.status.isFilterDirty
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
     property var marketValueStore: TokenMarketValuesStore{}
@@ -184,6 +185,11 @@ QtObject {
                 || loadingHistoryTransactions)
             return
         walletSection.activityController.loadMoreItems()
+    }
+
+    function updateTransactionFilter() {
+        if (isTransactionFilterDirty)
+            walletSection.activityController.updateFilter()
     }
 
     function hex2Eth(value) {

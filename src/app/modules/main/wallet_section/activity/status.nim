@@ -21,6 +21,8 @@ QtObject:
 
       newDataAvailable: bool
 
+      isFilterDirty: bool
+
   proc setup(self: Status) =
     self.QObject.setup
 
@@ -55,6 +57,7 @@ QtObject:
     new(result, delete)
 
     result.errorCode = backend_activity.ErrorCode.ErrorCodeSuccess
+    result.isFilterDirty = false
 
     result.setup()
 
@@ -112,3 +115,16 @@ QtObject:
   QtProperty[bool] newDataAvailable:
     read = getNewDataAvailable
     notify = newDataAvailableChanged
+
+  proc isFilterDirtyChanged*(self: Status) {.signal.}
+
+  proc setIsFilterDirty*(self: Status, value: bool) =
+    self.isFilterDirty = value
+    self.isFilterDirtyChanged()
+
+  proc getIsFilterDirty*(self: Status): bool {.slot.} =
+    return self.isFilterDirty
+
+  QtProperty[bool] isFilterDirty:
+    read = getIsFilterDirty
+    notify = isFilterDirtyChanged
