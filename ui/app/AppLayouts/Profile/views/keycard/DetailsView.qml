@@ -19,12 +19,22 @@ ColumnLayout {
     property string keyUid: ""
 
     signal changeSectionTitle(string title)
+    signal detailsModelIsEmpty()
 
     spacing: Constants.settingsSection.itemSpacing
 
     QtObject {
         id: d
         property bool collapsed: true
+        readonly property int numOfKeycards: root.keycardStore.keycardModule.keycardDetailsModel?
+                                               root.keycardStore.keycardModule.keycardDetailsModel.count
+                                             : 0
+
+        onNumOfKeycardsChanged: {
+            if (!!root.keycardStore.keycardModule.keycardDetailsModel && numOfKeycards === 0) {
+                root.detailsModelIsEmpty()
+            }
+        }
 
         function checkAndCheckTitleIfNeeded(newKeycardName) {
             // We change title if there is only a single keycard for a keypair in keycard details view

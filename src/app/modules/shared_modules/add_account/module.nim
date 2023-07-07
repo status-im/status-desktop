@@ -65,11 +65,11 @@ proc newModule*[T](delegate: T,
   result.events = events
   result.walletAccountService = walletAccountService
   result.view = newView(result)
-  result.viewVariant = newQVariant(result.view)  
+  result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, accountsService, walletAccountService, keycardService)
   result.authenticationReason = AuthenticationReason.AddingAccount
   result.fetchingAddressesIsInProgress = false
-  
+
 method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
@@ -80,8 +80,8 @@ method loadForAddingAccount*[T](self: Module[T], addingWatchOnlyAccount: bool) =
   self.view.setEditMode(false)
   self.view.setCurrentState(newMainState(nil))
 
-  var items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
-    excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = true)
+  var items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
+    excludePrivateKeyKeypairs = true)
   if items.len == 0:
     error "list of identified keypairs is empty, but it must have at least a profile keypair"
     return
@@ -112,10 +112,10 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
   self.view.setCurrentState(newMainState(nil))
 
   let accountDto = self.controller.getWalletAccount(address)
-  var addressDetailsItem = newDerivedAddressItem(order = 0, 
-    address = accountDto.address, 
+  var addressDetailsItem = newDerivedAddressItem(order = 0,
+    address = accountDto.address,
     publicKey = accountDto.publicKey,
-    path = accountDto.path, 
+    path = accountDto.path,
     alreadyCreated = true,
     hasActivity = false,
     loaded = true)
@@ -124,7 +124,7 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
   self.view.setStoredAccountName(accountDto.name)
   self.view.setStoredSelectedColorId(accountDto.colorId)
   self.view.setStoredSelectedEmoji(accountDto.emoji)
-  self.view.setAccountName(accountDto.name) 
+  self.view.setAccountName(accountDto.name)
   self.view.setSelectedColorId(accountDto.colorId)
   self.view.setSelectedEmoji(accountDto.emoji)
 
@@ -135,8 +135,8 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
     self.view.setSelectedOrigin(item)
     self.view.setWatchOnlyAccAddress(addressDetailsItem)
   else:
-    var items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), self.controller.getAllKnownKeycardsGroupedByKeyUid(), 
-      excludeAlreadyMigratedPairs = false, excludePrivateKeyKeypairs = false)
+    var items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
+      excludePrivateKeyKeypairs = false)
     if items.len == 0:
       error "list of identified keypairs is empty, but it must have at least a profile keypair"
       return
@@ -146,7 +146,7 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
       if item.containsAccountAddress(address):
         selectedOrigin = item
         break
-    
+
     if selectedOrigin.isNil or selectedOrigin.getKeyUid().len == 0:
       error "selected address for editing is not known among identified keypairs", address=address
       return
@@ -161,13 +161,13 @@ method loadForEditingAccount*[T](self: Module[T], address: string) =
     self.view.setDerivationPath(accountDto.path)
     self.view.setSelectedOrigin(selectedOrigin)
 
-  self.delegate.onAddAccountModuleLoaded()  
+  self.delegate.onAddAccountModuleLoaded()
 
-proc tryKeycardSync[T](self: Module[T]) = 
+proc tryKeycardSync[T](self: Module[T]) =
   if self.controller.getPin().len == 0:
     return
   let dataForKeycardToSync = SharedKeycarModuleArgs(
-    pin: self.controller.getPin(), 
+    pin: self.controller.getPin(),
     keyUid: self.controller.getAuthenticatedKeyUid()
   )
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC, dataForKeycardToSync)
@@ -203,7 +203,7 @@ method onCancelActionClicked*[T](self: Module[T]) =
     return
   debug "waa_cancel_action", currState=currStateObj.stateType()
   currStateObj.executeCancelCommand(self.controller)
-    
+
 method onPrimaryActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:
@@ -365,7 +365,7 @@ proc resolveSuggestedPathForSelectedOrigin[T](self: Module[T]): tuple[suggestedP
     return (suggestedPath, nextIndex)
   nextIndex = selectedOrigin.getLastUsedDerivationIndex() + 1
   for i in nextIndex ..< self.getNumOfAddressesToGenerate():
-    let suggestedPath = account_constants.PATH_WALLET_ROOT & "/" & $i 
+    let suggestedPath = account_constants.PATH_WALLET_ROOT & "/" & $i
     if keypair.accounts.filter(x => x.path == suggestedPath).len == 0:
       return (suggestedPath, i)
   error "we couldn't find available path for new account"
@@ -449,7 +449,7 @@ method validSeedPhrase*[T](self: Module[T], seedPhrase: string): bool =
 
 proc setDerivedAddresses[T](self: Module[T], derivedAddresses: seq[DerivedAddressDto]) =
   defer: self.fetchingAddressesIsInProgress = false
-  
+
   var items: seq[DerivedAddressItem]
   let derivationPath = self.view.getDerivationPath()
   if derivationPath.endsWith("/"):
@@ -468,7 +468,7 @@ proc setDerivedAddresses[T](self: Module[T], derivedAddresses: seq[DerivedAddres
     self.view.derivedAddressModel().setItems(items)
     if items.len == 0:
       info "couldn't resolve an address for the set path"
-      return      
+      return
     self.changeSelectedDerivedAddress(items[0].getAddress())
 
 method onDerivedAddressesFetched*[T](self: Module[T], derivedAddresses: seq[DerivedAddressDto], error: string) =
@@ -543,13 +543,13 @@ method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[Derive
   if currStateObj.isNil:
     error "waa_cannot resolve current state"
     return
-  
+
   # we always receive responses one by one
   if derivedAddresses.len == 1:
-    var addressDetailsItem = newDerivedAddressItem(order = 0, 
-      address = derivedAddresses[0].address, 
-      publicKey = derivedAddresses[0].publicKey, 
-      path = derivedAddresses[0].path, 
+    var addressDetailsItem = newDerivedAddressItem(order = 0,
+      address = derivedAddresses[0].address,
+      publicKey = derivedAddresses[0].publicKey,
+      path = derivedAddresses[0].path,
       alreadyCreated = derivedAddresses[0].alreadyCreated,
       hasActivity = derivedAddresses[0].hasActivity,
       loaded = true)
@@ -585,7 +585,7 @@ method authenticateForEditingDerivationPath*[T](self: Module[T]) =
 
 proc doAddAccount[T](self: Module[T]) =
   self.view.setDisablePopup(true)
-  let 
+  let
     selectedOrigin = self.view.getSelectedOrigin()
     selectedAddrItem = self.view.getSelectedDerivedAddress()
   var
@@ -631,17 +631,17 @@ proc doAddAccount[T](self: Module[T]) =
       success = self.controller.addNewPrivateKeyKeypair(
         privateKey = self.controller.getGeneratedAccount().privateKey,
         doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser(),
-        keyUid = keyUid, 
-        keypairName = keypairName, 
+        keyUid = keyUid,
+        keypairName = keypairName,
         rootWalletMasterKey = rootWalletMasterKey,
         account = WalletAccountDto(
             address: address,
             keyUid: keyUid,
             publicKey: publicKey,
-            walletType: accountType, 
-            path: path, 
+            walletType: accountType,
+            path: path,
             name: self.view.getAccountName(),
-            colorId: self.view.getSelectedColorId(), 
+            colorId: self.view.getSelectedColorId(),
             emoji: self.view.getSelectedEmoji()
           )
         )
@@ -651,17 +651,17 @@ proc doAddAccount[T](self: Module[T]) =
       success = self.controller.addNewSeedPhraseKeypair(
         seedPhrase = self.controller.getSeedPhrase(),
         doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser(),
-        keyUid = keyUid, 
-        keypairName = keypairName, 
+        keyUid = keyUid,
+        keypairName = keypairName,
         rootWalletMasterKey = rootWalletMasterKey,
         accounts = @[WalletAccountDto(
             address: address,
             keyUid: keyUid,
             publicKey: publicKey,
-            walletType: accountType, 
-            path: path, 
+            walletType: accountType,
+            path: path,
             name: self.view.getAccountName(),
-            colorId: self.view.getSelectedColorId(), 
+            colorId: self.view.getSelectedColorId(),
             emoji: self.view.getSelectedEmoji()
           )]
         )
@@ -671,23 +671,23 @@ proc doAddAccount[T](self: Module[T]) =
     success = self.controller.addWalletAccount(
       createKeystoreFile = createKeystoreFile,
       doPasswordHashing = doPasswordHashing,
-      name = self.view.getAccountName(), 
-      address = address, 
+      name = self.view.getAccountName(),
+      address = address,
       path = path,
-      publicKey = publicKey, 
-      keyUid = keyUid, 
-      accountType = accountType, 
+      publicKey = publicKey,
+      keyUid = keyUid,
+      accountType = accountType,
       colorId = self.view.getSelectedColorId(),
       emoji = self.view.getSelectedEmoji())
     if not success:
       error "failed to store account", address=selectedAddrItem.getAddress()
-  
+
   self.closeAddAccountPopup()
 
 proc doEditAccount[T](self: Module[T]) =
   self.view.setDisablePopup(true)
   let selectedOrigin = self.view.getSelectedOrigin()
-  
+
   var address = self.view.getWatchOnlyAccAddress().getAddress()
   if selectedOrigin.getPairType() == KeyPairType.Profile.int or
     selectedOrigin.getPairType() == KeyPairType.SeedImport.int:
@@ -696,7 +696,7 @@ proc doEditAccount[T](self: Module[T]) =
   elif selectedOrigin.getPairType() == KeyPairType.PrivateKeyImport.int:
       let selectedAddrItem = self.view.getPrivateKeyAccAddress()
       address = selectedAddrItem.getAddress()
-  
+
   if self.controller.updateAccount(
     address = address,
     accountName = self.view.getAccountName(),

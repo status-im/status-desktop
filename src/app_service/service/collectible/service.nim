@@ -189,6 +189,12 @@ QtObject:
         of "wallet-tick-reload":
           self.refetchAllOwnedCollectibles()
 
+    self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):
+      let args = KeypairArgs(e)
+      for acc in args.keypair.accounts:
+        if acc.removed:
+          self.removeAddress(acc.address)
+
     self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
       self.removeAddress(AccountArgs(e).account.address)
 

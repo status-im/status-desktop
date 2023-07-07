@@ -50,8 +50,8 @@ proc getCurrentCurrency*(self: Controller): string =
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
 
-proc getKeycardByKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
-  return self.walletAccountService.getKeycardByKeyUid(keyUid)
+proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
+  return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)
 
 proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)

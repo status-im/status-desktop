@@ -65,7 +65,7 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
-  proc onUpdatedAccount*(self: Model, account: Item) = 
+  proc onUpdatedAccount*(self: Model, account: Item) =
     var i = 0
     for item in self.items.mitems:
       if account.address == item.address:

@@ -123,9 +123,6 @@ proc getKeypairs*(self: Controller): seq[KeypairDto] =
 proc getKeypairByKeyUid*(self: Controller, keyUid: string): KeypairDto =
   return self.walletAccountService.getKeypairByKeyUid(keyUid)
 
-proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
-  return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
-
 proc finalizeAction*(self: Controller) =
   self.delegate.finalizeAction()
 
@@ -147,7 +144,7 @@ proc fetchDetailsForAddresses*(self: Controller, addresses: seq[string]) =
   self.uniqueFetchingDetailsId = $now().toTime().toUnix()
   self.walletAccountService.fetchDetailsForAddresses(self.uniqueFetchingDetailsId, addresses)
 
-proc addWalletAccount*(self: Controller, createKeystoreFile, doPasswordHashing: bool, name, address, path, publicKey, 
+proc addWalletAccount*(self: Controller, createKeystoreFile, doPasswordHashing: bool, name, address, path, publicKey,
   keyUid, accountType, colorId, emoji: string): bool =
   var password: string
   if createKeystoreFile:
@@ -155,33 +152,33 @@ proc addWalletAccount*(self: Controller, createKeystoreFile, doPasswordHashing: 
     if password.len == 0:
       info "cannot create keystore file if provided password is empty", name=name, address=address
       return false
-  let err = self.walletAccountService.addWalletAccount(password, doPasswordHashing, name, address, path, publicKey, 
+  let err = self.walletAccountService.addWalletAccount(password, doPasswordHashing, name, address, path, publicKey,
     keyUid, accountType, colorId, emoji)
   if err.len > 0:
     info "adding wallet account failed", name=name, address=address
     return false
   return true
 
-proc addNewPrivateKeyKeypair*(self: Controller, privateKey: string, doPasswordHashing: bool, keyUid, keypairName, 
+proc addNewPrivateKeyKeypair*(self: Controller, privateKey: string, doPasswordHashing: bool, keyUid, keypairName,
   rootWalletMasterKey: string, account: WalletAccountDto): bool =
   let password = self.getPassword() # password must not be empty in this context
   if password.len == 0:
     info "cannot create keystore file if provided password is empty", keypairName=keypairName, keyUid=keyUid
     return false
-  let err = self.walletAccountService.addNewPrivateKeyKeypair(privateKey, password, doPasswordHashing, keyUid, 
+  let err = self.walletAccountService.addNewPrivateKeyKeypair(privateKey, password, doPasswordHashing, keyUid,
     keyPairName, rootWalletMasterKey, account)
   if err.len > 0:
     info "adding new keypair from private key failed", keypairName=keypairName, keyUid=keyUid
     return false
   return true
 
-proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase: string, doPasswordHashing: bool, keyUid, keypairName, 
+proc addNewSeedPhraseKeypair*(self: Controller, seedPhrase: string, doPasswordHashing: bool, keyUid, keypairName,
   rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): bool =
   let password = self.getPassword() # password must not be empty in this context
   if password.len == 0:
     info "cannot create keystore file if provided password is empty", keypairName=keypairName, keyUid=keyUid
     return false
-  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password, doPasswordHashing, keyUid, 
+  let err = self.walletAccountService.addNewSeedPhraseKeypair(seedPhrase, password, doPasswordHashing, keyUid,
     keypairName, rootWalletMasterKey, accounts)
   if err.len > 0:
     info "adding new keypair from seed phrase failed", keypairName=keypairName, keyUid=keyUid
@@ -221,14 +218,14 @@ proc disconnectKeycardReponseSignal(self: Controller) =
 
 proc connectKeycardReponseSignal(self: Controller) =
   self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
-    let args = KeycardArgs(e)
+    let args = KeycardLibArgs(e)
     self.disconnectKeycardReponseSignal()
     self.delegate.onDerivedAddressesFromKeycardFetched(args.flowType, args.flowEvent, self.tmpPaths)
 
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
-  # in most cases we're running another flow after canceling the current one, 
-  # this way we're giving to the keycard some time to cancel the current flow 
+  # in most cases we're running another flow after canceling the current one,
+  # this way we're giving to the keycard some time to cancel the current flow
   sleep(200)
 
 proc fetchAddressesFromKeycard*(self: Controller, bip44Paths: seq[string]) =

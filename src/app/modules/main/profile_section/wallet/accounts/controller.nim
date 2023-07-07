@@ -34,8 +34,8 @@ proc updateAccountPosition*(self: Controller, address: string, position: int) =
 proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
 
-proc getKeycardByKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
-  return self.walletAccountService.getKeycardByKeyUid(keyUid)
+proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
+  return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)
 
 proc isKeycardAccount*(self: Controller, account: WalletAccountDto): bool =
   return self.walletAccountService.isKeycardAccount(account)
@@ -45,9 +45,6 @@ proc getWalletAccount*(self: Controller, address: string): WalletAccountDto =
 
 proc getKeypairs*(self: Controller): seq[KeypairDto] =
   return self.walletAccountService.getKeypairs()
-
-proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
-  return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
 
 proc toggleIncludeWatchOnlyAccount*(self: Controller) =
   self.walletAccountService.toggleIncludeWatchOnlyAccount()

@@ -58,10 +58,10 @@ proc init*(self: Controller) =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
-proc getChainIds*(self: Controller): seq[int] = 
+proc getChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().map(n => n.chainId)
 
-proc getEnabledChainIds*(self: Controller): seq[int] = 
+proc getEnabledChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =
@@ -70,8 +70,8 @@ proc getCurrentCurrency*(self: Controller): string =
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
 
-proc getKeycardByKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
-  return self.walletAccountService.getKeycardByKeyUid(keyUid)
+proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
+  return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)
 
 proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
   return self.walletAccountService.getAccountByAddress(address)
@@ -87,7 +87,7 @@ proc authenticateUser*(self: Controller, keyUid = "") =
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc getEstimatedTime*(self: Controller, chainId: int, maxFeePerGas: string): EstimatedTime = 
+proc getEstimatedTime*(self: Controller, chainId: int, maxFeePerGas: string): EstimatedTime =
   return self.transactionService.getEstimatedTime(chainId, maxFeePerGas)
 
 proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
@@ -98,6 +98,6 @@ proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol
     value: string, uuid: string, selectedRoutes: string, password: string) =
   self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
 
-proc suggestedFees*(self: Controller, chainId: int): string = 
+proc suggestedFees*(self: Controller, chainId: int): string =
   let suggestedFees = self.transactionService.suggestedFees(chainId)
   return suggestedFees.toJson()

@@ -88,6 +88,11 @@ SettingsContentBase {
             onChangeSectionTitle: {
                 root.sectionTitle = title
             }
+
+            onDetailsModelIsEmpty: {
+                // if keypair is removed while user is in the details keycard view mode we need to go back to main keycard view
+                root.handleBackAction()
+            }
         }
 
         Connections {

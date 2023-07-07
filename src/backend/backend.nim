@@ -221,25 +221,22 @@ rpc(fetchMarketValues, "wallet"):
 rpc(fetchTokenDetails, "wallet"):
   symbols: seq[string]
 
-rpc(addKeycardOrAddAccountsIfKeycardIsAdded, "accounts"):
-  keycardUid: string
-  keyPairName: string
-  keyUid: string
-  accountAddresses: seq[string]
+rpc(saveOrUpdateKeycard, "accounts"):
+  keycard: JsonNode
   accountsComingFromKeycard: bool
 
-rpc(removeMigratedAccountsForKeycard, "accounts"):
+rpc(deleteKeycardAccounts, "accounts"):
   keycardUid: string
   accountsToRemove: seq[string]
 
 rpc(getAllKnownKeycards, "accounts"):
   discard
 
-rpc(getAllKnownKeycardsGroupedByKeyUID, "accounts"):
-  discard
-
-rpc(getKeycardByKeyUID, "accounts"):
+rpc(getKeycardsWithSameKeyUID, "accounts"):
   keyUid: string
+
+rpc(getKeycardByKeycardUID, "accounts"):
+  keycardUid: string
 
 rpc(setKeycardName, "accounts"):
   keycardUid: string

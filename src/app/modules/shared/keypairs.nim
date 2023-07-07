@@ -10,14 +10,8 @@ export keypair_item
 logScope:
   topics = "shared-keypairs"
 
-proc buildKeyPairsList*(keypairs: seq[KeypairDto], allMigratedKeypairs: seq[KeycardDto], 
-  excludeAlreadyMigratedPairs: bool, excludePrivateKeyKeypairs: bool): seq[KeyPairItem] =
-  let keyPairMigrated = proc(keyUid: string): bool =
-    result = false
-    for kp in allMigratedKeypairs:
-      if kp.keyUid == keyUid:
-        return true
-
+proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: bool,
+  excludePrivateKeyKeypairs: bool): seq[KeyPairItem] =
   var items: seq[KeyPairItem]
   for kp in keypairs:
     if kp.accounts.len == 0:
@@ -25,7 +19,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], allMigratedKeypairs: seq[Keyc
       error "there must not be any keypair without accounts", keyUid=kp.keyUid
       return
     let publicKey = kp.accounts[0].publicKey # in case of other but the profile keypair we take public key of first account as keypair's public key
-    let kpMigrated = keyPairMigrated(kp.keyUid)
+    let kpMigrated = kp.keycards.len > 0
     if excludeAlreadyMigratedPairs and kpMigrated:
       continue
     if kp.keypairType == KeypairTypeProfile:
@@ -54,7 +48,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], allMigratedKeypairs: seq[Keyc
         locked = false,
         name = kp.name,
         image = "",
-        icon = if keyPairMigrated(kp.keyUid): "keycard" else: "key_pair_seed_phrase",
+        icon = if kpMigrated: "keycard" else: "key_pair_seed_phrase",
         pairType = KeyPairType.SeedImport,
         derivedFrom = kp.derivedFrom,
         lastUsedDerivationIndex = kp.lastUsedDerivationIndex,
@@ -74,7 +68,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], allMigratedKeypairs: seq[Keyc
         locked = false,
         name = kp.name,
         image = "",
-        icon = if keyPairMigrated(kp.keyUid): "keycard" else: "objects",
+        icon = if kpMigrated: "keycard" else: "objects",
         pairType = KeyPairType.PrivateKeyImport,
         derivedFrom = kp.derivedFrom,
         lastUsedDerivationIndex = kp.lastUsedDerivationIndex,

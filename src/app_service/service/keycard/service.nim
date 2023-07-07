@@ -49,7 +49,7 @@ include internal
 include ../../common/async_tasks
 
 type
-  KeycardArgs* = ref object of Args
+  KeycardLibArgs* = ref object of Args
     flowType*: string
     flowEvent*: KeycardEvent
 
@@ -97,14 +97,14 @@ QtObject:
       debug "keycard_signal", response=signal
 
     var typeObj, eventObj: JsonNode
-    if(not jsonSignal.getProp(ResponseKeyType, typeObj) or 
+    if(not jsonSignal.getProp(ResponseKeyType, typeObj) or
       not jsonSignal.getProp(ResponseKeyEvent, eventObj)):
       return
-    
+
     let flowType = typeObj.getStr
     let flowEvent = toKeycardEvent(eventObj)
     self.lastReceivedKeycardData = (flowType: flowType, flowEvent: flowEvent)
-    self.events.emit(SIGNAL_KEYCARD_RESPONSE, KeycardArgs(flowType: flowType, flowEvent: flowEvent))
+    self.events.emit(SIGNAL_KEYCARD_RESPONSE, KeycardLibArgs(flowType: flowType, flowEvent: flowEvent))
 
   proc receiveKeycardSignal(self: Service, signal: string) {.slot.} =
     self.processSignal(signal)
@@ -172,7 +172,7 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-  proc startLoadAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, pin: string, puk: string, 
+  proc startLoadAccountFlow*(self: Service, seedPhraseLength: int, seedPhrase: string, pin: string, puk: string,
     factoryReset: bool) =
     var payload = %* { }
     if seedPhrase.len > 0 and seedPhraseLength > 0:
@@ -196,7 +196,7 @@ QtObject:
     self.startFlow(payload)
 
   proc startLoginFlowAutomatically*(self: Service, pin: string) =
-    let payload = %* { 
+    let payload = %* {
       RequestParamPIN: pin
     }
     self.currentFlow = KCSFlowType.Login
@@ -213,7 +213,7 @@ QtObject:
     if factoryReset:
       payload[RequestParamFactoryReset] = %* factoryReset
     self.currentFlow = KCSFlowType.RecoverAccount
-    self.startFlow(payload)    
+    self.startFlow(payload)
 
   proc startGetAppInfoFlow*(self: Service, factoryReset: bool) =
     var payload = %* { }
@@ -255,7 +255,7 @@ QtObject:
       error "in order to export private address path must not be outside of eip1581 tree"
       return
 
-    var payload = %* { 
+    var payload = %* {
       RequestParamBIP44Path: DefaultBIP44Path,
       RequestParamExportMasterAddress: exportMasterAddr,
       RequestParamExportPrivate: exportPrivateAddr
@@ -277,7 +277,7 @@ QtObject:
           error "one of paths in the list refers to a private address path which is not in eip1581 tree"
           return
 
-    var payload = %* { 
+    var payload = %* {
       RequestParamBIP44Path: DefaultBIP44Path,
       RequestParamExportMasterAddress: exportMasterAddr,
       RequestParamExportPrivate: exportPrivateAddr
@@ -293,7 +293,7 @@ QtObject:
     var name = cardName
     if cardName.len > CardNameLength:
       name = cardName[0 .. CardNameLength - 1]
-    let payload = %* { 
+    let payload = %* {
       RequestParamPIN: pin,
       RequestParamCardName: name,
       RequestParamWalletPaths: walletPaths
@@ -302,7 +302,7 @@ QtObject:
     self.startFlow(payload)
 
   proc startSignFlow*(self: Service, bip44Path: string, txHash: string) =
-    var payload = %* { 
+    var payload = %* {
       RequestParamTXHash: EmptyTxHash,
       RequestParamBIP44Path: DefaultBIP44Path
     }

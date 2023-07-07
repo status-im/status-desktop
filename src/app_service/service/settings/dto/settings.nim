@@ -86,7 +86,7 @@ type CurrentUserStatus* = object
 type
   SettingsFieldDto* = object
     name*: string
-    value*: string
+    value*: JsonNode
 
 type
   SettingsDto* = object # There is no point to keep all these info as settings, but we must follow status-go response
@@ -156,10 +156,8 @@ proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
   discard jsonObj.getProp("text", result.text)
 
 proc toSettingsFieldDto*(jsonObj: JsonNode): SettingsFieldDto =
-  var field = SettingsFieldDto()
-  field.name = jsonObj["name"].getStr()
-  field.value = jsonObj["value"].getStr()
-  result = field
+  discard jsonObj.getProp("name", result.name)
+  discard jsonObj.getProp("value", result.value)
 
 proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_ADDRESS, result.address)

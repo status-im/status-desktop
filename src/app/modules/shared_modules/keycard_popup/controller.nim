@@ -130,7 +130,7 @@ proc disconnectKeycardReponseSignal(self: Controller) =
 
 proc connectKeycardReponseSignal(self: Controller) =
   self.connectionKeycardResponse = self.events.onWithUUID(SIGNAL_KEYCARD_RESPONSE) do(e: Args):
-    let args = KeycardArgs(e)
+    let args = KeycardLibArgs(e)
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
 
 proc disconnectKeycardSyncSignal(self: Controller) =
@@ -179,7 +179,7 @@ proc init*(self: Controller, fullConnect = true) =
 
   if fullConnect:
     handlerId = self.events.onWithUUID(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
-      let args = KeycardActivityArgs(e)
+      let args = KeycardArgs(e)
       self.tmpAddingMigratedKeypairSuccess = args.success
       self.delegate.onSecondaryActionClicked()
     self.connectionIds.add(handlerId)
@@ -662,15 +662,10 @@ proc removeMigratedAccountsForKeycard*(self: Controller, keyUid: string, keycard
 proc getAddingMigratedKeypairSuccess*(self: Controller): bool =
   return self.tmpAddingMigratedKeypairSuccess
 
-proc getKeycardByKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
+proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.getKeycardByKeyUid(keyUid)
-
-proc getAllKnownKeycardsGroupedByKeyUid*(self: Controller): seq[KeycardDto] =
-  if not serviceApplicable(self.walletAccountService):
-    return
-  return self.walletAccountService.getAllKnownKeycardsGroupedByKeyUid()
+  return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)
 
 proc getAllKnownKeycards*(self: Controller): seq[KeycardDto] =
   if not serviceApplicable(self.walletAccountService):
