@@ -247,27 +247,30 @@ Item {
             }
         }
 
-        StatusListView {
-            Layout.fillWidth: true
-            Layout.maximumHeight: 200
-            Layout.margins: Style.current.smallPadding
+        // This is a non-designed preview of unfurled urls.
+        // Should be replaced with a proper UI when it's ready.
+        //
+        // StatusListView {
+        //     Layout.fillWidth: true
+        //     Layout.maximumHeight: 200
+        //     Layout.margins: Style.current.smallPadding
 
-            // For a vertical list bind the imlicitHeight to contentHeight
-            implicitHeight: contentHeight
-            spacing: 10
+        //     // For a vertical list bind the imlicitHeight to contentHeight
+        //     implicitHeight: contentHeight
+        //     spacing: 10
 
-            model: d.activeChatContentModule.inputAreaModule.linkPreviewModel
+        //     model: d.activeChatContentModule.inputAreaModule.linkPreviewModel
 
-            delegate: StatusBaseText {
-                width: ListView.view.width
-                wrapMode: Text.WordWrap
-                text: {
-                    const icon = unfurled ? (hostname !== "" ? '✅' : '❌') : '👀'
-                    const thumbnailInfo = `thumbnail: (${thumbnailWidth}*${thumbnailHeight}, url: ${thumbnailUrl.length} symbols, data: ${thumbnailDataUri.length} symbols)`
-                    return `${icon} ${url} (hostname: ${hostname}): ${title}\ndescription: ${description}\n${thumbnailInfo}`
-                }
-            }
-        }
+        //     delegate: StatusBaseText {
+        //         width: ListView.view.width
+        //         wrapMode: Text.WordWrap
+        //         text: {
+        //             const icon = unfurled ? (hostname !== "" ? '✅' : '❌') : '👀'
+        //             const thumbnailInfo = `thumbnail: (${thumbnailWidth}*${thumbnailHeight}, url: ${thumbnailUrl.length} symbols, data: ${thumbnailDataUri.length} symbols)`
+        //             return `${icon} ${url} (hostname: ${hostname}): ${title}\ndescription: ${description}\n${thumbnailInfo}`
+        //         }
+        //     }
+        // }
 
         RowLayout {
             Layout.fillWidth: true
