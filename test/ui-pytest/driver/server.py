@@ -34,4 +34,4 @@ class SquishServer:
         return self.configuring('addAUT', [aut_id, f'"{app_dir}"'])
 
     def add_attachable_aut(self, aut_id: str, port: int):
-        return self.configuring('addAttachableAUT', [aut_id, f'localhost: {port}'])
+        return self.configuring('addAttachableAUT', [aut_id, f'localhost:{port}'])

@@ -12,3 +12,6 @@ class SystemPath(pathlib.Path):
 
     def rmtree(self, ignore_errors=False):
         shutil.rmtree(self, ignore_errors=ignore_errors)
+
+    def copy_to(self, destination: 'SystemPath'):
+        shutil.copytree(self, destination, dirs_exist_ok=True)

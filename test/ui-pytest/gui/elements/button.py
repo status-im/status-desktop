@@ -1,10 +1,10 @@
 import typing
 
 import driver
-from gui.elements.base_element import BaseElement
+from gui.elements.base_object import QObject
 
 
-class Button(BaseElement):
+class Button(QObject):
 
     def click(
             self,
@@ -13,6 +13,6 @@ class Button(BaseElement):
             button: driver.MouseButton = None
     ):
         if None not in (x, y, button):
-            getattr(self._object, 'clicked')()
+            getattr(self.object, 'clicked')()
         else:
-            self._click(x, y, button)
+            self.click(x, y, button)

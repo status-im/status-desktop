@@ -1,11 +1,12 @@
+import configs
 import driver
-from gui.elements.base_element import BaseElement
+from gui.elements.base_object import QObject
 
 
-class CheckBox(BaseElement):
+class CheckBox(QObject):
 
     def set(self, value: bool, x: int = None, y: int = None):
-        if self._is_checked is not value:
-            self._click(x, y)
+        if self.is_checked is not value:
+            self.click(x, y)
             assert driver.waitFor(
-                lambda: self._is_checked is value, driver.settings.UI_LOAD_TIMEOUT_MSEC), 'Value not changed'
+                lambda: self.is_checked is value, configs.timeouts.UI_LOAD_TIMEOUT_MSEC), 'Value not changed'
