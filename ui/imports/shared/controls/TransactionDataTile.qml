@@ -89,6 +89,7 @@ StatusListItem {
     statusListItemTagsRowLayout.spacing: 8
     subTitleBadgeComponent: !!asset.name ? iconComponent : null
     statusListItemIcon.asset: StatusAssetSettings {}
+    statusListItemIcon.name: ""
 
     Component {
         id: iconComponent
