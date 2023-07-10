@@ -101,3 +101,7 @@ build/
 *.out
 *.app
 nimbus-build-system.paths
+
+# ui-tests
+/test/ui-pytest/configs/_local.py
+*.pyc
