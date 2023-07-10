@@ -53,7 +53,10 @@ SplitView {
             tokensModel: editorModelChecked.checked ? emptyModel : mintedTokensModel
             isAdmin: adminChecked.checked
             isOwner: ownerChecked.checked
+            communityLogo: ModelsData.collectibles.doodles
+            communityColor: "#FFC4E9"
             communityName: communityNameText.text
+            isTokenMasterOwner: masterTokenOwnerChecked.checked
             layer1Networks: NetworksModel.layer1Networks
             layer2Networks: NetworksModel.layer2Networks
             testNetworks: NetworksModel.testNetworks
@@ -100,6 +103,13 @@ SplitView {
                 checked: true
 
                 text: "Is owner?"
+            }
+
+            CheckBox {
+                id: masterTokenOwnerChecked
+                checked: true
+
+                text: "Is TMaster token owner?"
             }
 
             CheckBox {

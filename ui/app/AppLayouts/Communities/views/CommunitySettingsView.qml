@@ -301,8 +301,11 @@ StatusSectionLayout {
             }
 
             communityName: root.community.name
+            communityLogo: root.community.image
+            communityColor: root.community.color
             isOwner: root.isOwner
             isAdmin: root.isAdmin
+            isTokenMasterOwner: false // TODO: Backend
             tokensModel: root.community.communityTokens
             tokensModelWallet: root.rootStore.tokensModelWallet
             layer1Networks: communityTokensStore.layer1Networks

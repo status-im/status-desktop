@@ -78,6 +78,10 @@ ListModel {
         section: "Views"
     }
     ListElement {
+        title: "OwnerTokenWelcomeView"
+        section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }

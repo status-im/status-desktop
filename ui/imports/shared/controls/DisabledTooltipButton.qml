@@ -17,8 +17,8 @@ Item {
         Flat // 1
     }
 
-    implicitWidth: buttonLoader.item.width
-    implicitHeight: buttonLoader.item.height
+    implicitWidth: !!buttonLoader.item ? buttonLoader.item.width : 0
+    implicitHeight: !!buttonLoader.item ? buttonLoader.item.height : 0
 
     Loader {
         id: buttonLoader

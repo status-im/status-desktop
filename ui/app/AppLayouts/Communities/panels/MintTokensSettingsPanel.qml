@@ -22,8 +22,12 @@ StackView {
 
     // General properties:
     required property bool isOwner
+    required property bool isTokenMasterOwner
     required property bool isAdmin
     required property string communityName
+    required property string communityLogo
+    required property color communityColor
+
     property int viewWidth: 560 // by design
 
     // Models:
@@ -74,19 +78,29 @@ StackView {
     function openNewTokenForm(isAssetView) {
         resetNavigation()
 
-        const properties = { isAssetView }
-        root.push(newTokenViewComponent, properties, StackView.Immediate)
+        if(d.isTokenOwnerDeployed) {
+            const properties = { isAssetView }
+            root.push(newTokenViewComponent, properties, StackView.Immediate)
+        } else {
+            root.push(ownerTokenViewComponent, StackView.Immediate)
+        }
     }
 
     property string previousPageName: depth > 1 ? qsTr("Back") : ""
+
+    QtObject {
+        id: d
+
+        readonly property bool isTokenOwnerDeployed: root.tokensModel.count > 0 // TODO: Checker to ensure owner token is deployed
+    }
 
     initialItem: SettingsPage {
         implicitWidth: 0
         title: qsTr("Tokens")
 
         buttons: DisabledTooltipButton {
-            readonly property bool onlyAdmin: root.isAdmin && !root.isOwner
-            readonly property bool buttonEnabled: root.isOwner && root.tokensModel.count > 0 /*TODO: Replace last comparison to checker to ensure owner token is deployed*/
+            property bool onlyAdmin: root.isAdmin && !root.isOwner
+            property bool buttonEnabled: (root.isOwner || root.isTokenMasterOwner) && d.isTokenOwnerDeployed
 
             buttonType: DisabledTooltipButton.Normal
             aliasedObjectName: "addNewItemButton"
@@ -94,7 +108,7 @@ StackView {
             enabled: onlyAdmin || buttonEnabled
             interactive: buttonEnabled
             onClicked: root.push(newTokenViewComponent, StackView.Immediate)
-            tooltipText: qsTr("In order to mint, you must Hodl the TokenMaster token for %1").arg(root.communityName)
+            tooltipText: qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName)
         }
 
         contentItem: MintedTokensView {
@@ -102,7 +116,7 @@ StackView {
             isOwner: root.isOwner
 
             onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
-            onMintOwnerTokenClicked: root.push(newTokenViewComponent, StackView.Immediate) // TEMP: It will navigate to new token owner flow. Now, to current minting flow.
+            onMintOwnerTokenClicked: root.push(ownerTokenViewComponent, StackView.Immediate)
         }
     }
 
@@ -113,6 +127,24 @@ StackView {
     }
 
     // Mint tokens possible view contents:
+    Component {
+        id: ownerTokenViewComponent
+
+        SettingsPage {
+            id: ownerTokenPage
+
+            title: qsTr("Mint Owner token")
+
+            contentItem: OwnerTokenWelcomeView {
+                communityLogo: root.communityLogo
+                communityColor: root.communityColor
+                communityName: root.communityName
+
+                onNextClicked: root.push(newTokenViewComponent, StackView.Immediate) // TEMP: It will navigate to new token owner flow. Now, to current minting flow.
+            }
+        }
+    }
+
     Component {
         id: newTokenViewComponent
 
