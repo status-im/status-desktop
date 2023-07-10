@@ -58,9 +58,3 @@ proc `$`*(self: LinkPreview): string =
     description: {self.description},
     thumbnail: {self.thumbnail}
   )"""
-
-# proc `$`*(self: Table[string, LinkPreview]): string =
-#   result = "LinkPreviewsTable("
-#   for url in self.keys():
-#     result &= $self[url] & ", "
-#   result &= ")"

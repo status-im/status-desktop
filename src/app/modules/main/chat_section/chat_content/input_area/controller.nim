@@ -171,5 +171,4 @@ proc clearLinkPreviewCache*(self: Controller) =
 
 proc onUrlsUnfurled(self: Controller, args: LinkPreviewV2DataArgs) =
   let urls = self.linkPreviewCache.add(args.linkPreviews)
-  self.delegate.onUrlsUnfurled(urls)
-  # TODO: Inform view about urls that failed to unfurl?
+  self.delegate.updateLinkPreviewsFromCache(urls)

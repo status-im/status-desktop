@@ -201,14 +201,13 @@ QtObject:
   proc setText*(self: View, text: string) {.slot.} =
     self.delegate.setText(text)
 
-  proc setUrls*(self: View, urls: seq[string]) =
+  proc updateLinkPreviewsFromCache*(self: View, urls: seq[string]) =
     let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
-    self.linkPreviewModel.setUrls(urls)
-    self.linkPreviewModel.updateLinkPrevews(linkPreviews)
+    self.linkPreviewModel.updateLinkPreviews(linkPreviews)
 
-  proc onUrlsUnfurled*(self: View, urls: seq[string]) =
-    let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
-    self.linkPreviewModel.updateLinkPrevews(linkPreviews)
+  proc setUrls*(self: View, urls: seq[string]) =
+    self.linkPreviewModel.setUrls(urls)
+    self.updateLinkPreviewsFromCache(urls)
 
   proc clearLinkPreviewCache*(self: View) {.slot.} =
     self.delegate.clearLinkPreviewCache()

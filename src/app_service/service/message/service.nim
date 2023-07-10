@@ -124,8 +124,7 @@ type
     uuid*: string
 
   LinkPreviewV2DataArgs* = ref object of Args
-    requestedUrls*: seq[string]
-    linkPreviews*: seq[LinkPreview]
+    linkPreviews*: Table[string, LinkPreview]
 
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
@@ -798,6 +797,7 @@ QtObject:
       error "getTextUrls failed", errName = e.name, errDesription = e.msg
 
   proc onAsyncUnfurlUrlsFinished*(self: Service, response: string) {.slot.}=
+
     let responseObj = response.parseJson
     if responseObj.kind != JObject:
       warn "expected response is not a json object", methodName = "onAsyncUnfurlUrlsFinished"
@@ -808,18 +808,23 @@ QtObject:
       error "asyncUnfurlUrls failed", errMessage
       return
 
-    var urlsArr: JsonNode
-    var urls: seq[string]
-    if responseObj.getProp("requestedUrls", urlsArr):
-      urls = map(urlsArr.getElems(), proc(x: JsonNode): string = x.getStr)
+    var requestedUrlsArr: JsonNode
+    var requestedUrls: seq[string]
+    if responseObj.getProp("requestedUrls", requestedUrlsArr):
+      requestedUrls = map(requestedUrlsArr.getElems(), proc(x: JsonNode): string = x.getStr)
 
     var linkPreviewsArr: JsonNode
-    var linkPreviews: seq[LinkPreview]
+    var linkPreviews: Table[string, LinkPreview]
     if responseObj.getProp("response", linkPreviewsArr):
-      linkPreviews = map(linkPreviewsArr.getElems(), proc(x: JsonNode): LinkPreview = x.toLinkPreview())
+      for element in linkPreviewsArr.getElems():
+        let linkPreview = element.toLinkPreview()
+        linkPreviews[linkPreview.url] = linkPreview
+
+    for url in requestedUrls:
+      if not linkPreviews.hasKey(url):
+        linkPreviews[url] = initLinkPreview(url)
 
     let args = LinkPreviewV2DataArgs(
-      requestedUrls: urls,
       linkPreviews: linkPreviews
     )
     self.events.emit(SIGNAL_URLS_UNFURLED, args)

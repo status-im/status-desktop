@@ -157,8 +157,8 @@ method setText*(self: Module, text: string) =
 method clearLinkPreviewCache*(self: Module) {.slot.} =
   self.controller.clearLinkPreviewCache()
 
-method onUrlsUnfurled*(self: Module, urls: seq[string]) =
-  self.view.onUrlsUnfurled(urls)
+method updateLinkPreviewsFromCache*(self: Module, urls: seq[string]) =
+  self.view.updateLinkPreviewsFromCache(urls)
 
 method setUrls*(self: Module, urls: seq[string]) =
   self.view.setUrls(urls)

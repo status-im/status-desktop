@@ -261,7 +261,11 @@ Item {
             delegate: StatusBaseText {
                 width: ListView.view.width
                 wrapMode: Text.WordWrap
-                text: `${unfurled ? '✅' : '👀'} ${url} (hostname: ${hostname}): ${title}\ndescription: ${description}\nthumbnail: (${thumbnailWidth}*${thumbnailHeight}, url: ${thumbnailUrl.length} symbols, data: ${thumbnailDataUri.length} symbols)`
+                text: {
+                    const icon = unfurled ? (hostname !== "" ? '✅' : '❌') : '👀'
+                    const thumbnailInfo = `thumbnail: (${thumbnailWidth}*${thumbnailHeight}, url: ${thumbnailUrl.length} symbols, data: ${thumbnailDataUri.length} symbols)`
+                    return `${icon} ${url} (hostname: ${hostname}): ${title}\ndescription: ${description}\n${thumbnailInfo}`
+                }
             }
         }
 

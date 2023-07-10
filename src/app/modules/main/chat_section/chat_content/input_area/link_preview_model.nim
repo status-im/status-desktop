@@ -116,8 +116,6 @@ QtObject:
     self.countChanged()
 
   proc setUrls*(self: Model, urls: seq[string]) =
-    # TODO: The logic of update here is quite stupid. 
-    #       Could be improved when UI for this model is implemented.
     var items: seq[Item]
     for url in urls:
       let linkPreview = initLinkPreview(url)
@@ -131,7 +129,7 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
-  proc updateLinkPrevews*(self: Model, linkPreviews: Table[string, LinkPreview]) =
+  proc updateLinkPreviews*(self: Model, linkPreviews: Table[string, LinkPreview]) =
     for row, item in self.items:
       if not linkPreviews.hasKey(item.linkPreview.url):
         continue

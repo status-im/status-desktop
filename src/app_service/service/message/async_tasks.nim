@@ -301,7 +301,7 @@ const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     let output = %*{
       "error": (if response.error != nil: response.error.message else: ""),
       "response": response.result,
-      "requestedUrls": %*[arg.urls]
+      "requestedUrls": %*arg.urls
     }
     arg.finish(output)
   except Exception as e:
@@ -309,6 +309,6 @@ const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     let output = %*{
       "error": e.msg,
       "response": "",
-      "requestedUrls": %*[arg.urls]
+      "requestedUrls": %*arg.urls
     }
     arg.finish(output)
