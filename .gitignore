@@ -105,3 +105,5 @@ nimbus-build-system.paths
 # ui-tests
 /test/ui-pytest/configs/_local.py
 *.pyc
+
+test/ui-pytest/squish_server.ini

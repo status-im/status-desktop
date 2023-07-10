@@ -1,9 +1,12 @@
 import squishtest  # noqa
 
 import configs
+from . import objects_access
+from . import toplevel_window
 
 imports = {module.__name__: module for module in [
-    # import any modules from driver folder
+    objects_access,
+    toplevel_window
 ]}
 
 
