@@ -18,6 +18,11 @@ proc linkPreviews*(self: LinkPreviewCache, urls: seq[string]): Table[string, Lin
     if self.cache.hasKey(url):
       result[url] = self.cache[url]
 
+proc linkPreviewsSeq*(self: LinkPreviewCache, urls: seq[string]): seq[LinkPreview] =
+  for url in urls:
+    if self.cache.hasKey(url):
+      result.add(self.cache[url])
+
 # Adds all given link previews to cache.
 # Returns list of urls found in `linkPreviews`
 # If a url is already found in cache, correcponding link preview is updated.

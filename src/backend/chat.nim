@@ -2,6 +2,7 @@ import json, sequtils, sugar, strutils
 import core, ../app_service/common/utils
 import response_type
 import interpret/cropped_image
+import ../app_service/service/message/dto/link_preview
 
 export response_type
 
@@ -60,6 +61,7 @@ proc sendChatMessage*(
     replyTo: string,
     contentType: int,
     preferredUsername: string = "",
+    linkPreviews: seq[LinkPreview],
     communityId: string = "",
     stickerHash: string = "",
     stickerPack: string = "0",
@@ -75,7 +77,8 @@ proc sendChatMessage*(
         "pack": parseInt(stickerPack)
       },
       "contentType": contentType,
-      "communityId": communityId
+      "communityId": communityId,
+      "linkPreviews": linkPreviews
     }
   ])
 

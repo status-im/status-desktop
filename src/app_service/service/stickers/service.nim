@@ -435,7 +435,8 @@ QtObject:
         replyTo,
         ContentType.Sticker.int,
         preferredUsername,
-        communityId = "", # communityId is not ncessary when sending a sticker
+        linkPreviews = @[],
+        communityId = "", # communityId is not necessary when sending a sticker
         sticker.hash,
         sticker.packId)
     discard self.chatService.processMessageUpdateAfterSend(response)

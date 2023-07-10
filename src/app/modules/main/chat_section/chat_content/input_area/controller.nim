@@ -101,16 +101,15 @@ proc sendChatMessage*(
     preferredUsername: string = "") =
 
   let urls = self.messageService.getTextUrls(msg)
-  let linkPreviews = self.linkPreviewCache.linkPreviews(urls)
-
-  info "sending message", msg, urls = $urls
-
-  var lpString: string
-  for url in linkPreviews.keys():
-    info "linkPreview: ", linkPreview = $linkPreviews[url]
-
-  # TODO: Hydrate message with link previews from linkPreviewCache
-  self.chatService.sendChatMessage(self.chatId, msg, replyTo, contentType, preferredUsername)
+  let linkPreviews = self.linkPreviewCache.linkPreviewsSeq(urls)
+  
+  self.chatService.sendChatMessage(self.chatId, 
+    msg, 
+    replyTo, 
+    contentType, 
+    preferredUsername,
+    linkPreviews
+  )
 
 proc requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
   self.chatService.requestAddressForTransaction(self.chatId, fromAddress, amount, tokenAddress)

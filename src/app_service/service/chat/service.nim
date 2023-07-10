@@ -4,6 +4,7 @@ import std/[times, os]
 import ../../../app/core/tasks/[qt, threadpool]
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
+import ../message/dto/link_preview
 import ../activity_center/dto/notification as notification_dto
 import ../community/dto/community as community_dto
 import ../contacts/service as contact_service
@@ -508,6 +509,7 @@ QtObject:
     replyTo: string,
     contentType: int,
     preferredUsername: string = "",
+    linkPreviews: seq[LinkPreview] = @[],
     communityId: string = "") =
     try:
       let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
@@ -519,6 +521,7 @@ QtObject:
         replyTo,
         contentType,
         preferredUsername,
+        linkPreviews,
         communityId) # Only send a community ID for the community invites
 
       let (chats, messages) = self.processMessageUpdateAfterSend(response)
