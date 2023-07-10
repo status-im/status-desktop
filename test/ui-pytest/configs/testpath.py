@@ -12,4 +12,4 @@ RESULTS: SystemPath = TEMP / 'results'
 RUN: SystemPath = RESULTS / RUN_ID
 
 # Driver Directories
-SQUISH_DIR = os.getenv('RUN_DIR')
+SQUISH_DIR = SystemPath(os.getenv('SQUISH_DIR'))

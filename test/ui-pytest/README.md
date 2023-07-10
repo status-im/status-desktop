@@ -127,7 +127,7 @@ RESTART PC
 ## Linux or MAC:
 ### 8. Verify environment variables
 ```bash
-echo $USERNAME
+echo $SQUISH_DIR
 echo $PYTHONPATH
 echo $LD_LIBRARY_PATH
 ```
