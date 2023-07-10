@@ -1,0 +1,65 @@
+import squish
+
+import configs
+import driver
+from driver import context
+from driver.server import SquishServer
+from scripts.utils import system_path, local_system
+
+
+class AUT:
+
+    def __init__(
+            self,
+            app_path: system_path.SystemPath = configs.APP_DIR,
+            host: str = '127.0.0.1',
+            port: int = 61500
+    ):
+        super(AUT, self).__init__()
+        self.path = app_path
+        self.host = host
+        self.port = int(port)
+        self.ctx = None
+        driver.testSettings.setWrappersForApplication(self.path.stem, ['Qt'])
+
+    def __str__(self):
+        return type(self).__qualname__
+
+    def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC, attempt: int = 2):
+        if self.ctx is None:
+            self.ctx = context.attach(self.path.stem, timeout_sec)
+        try:
+            squish.setApplicationContext(self.ctx)
+        except TypeError as err:
+            if attempt:
+                return self.attach(timeout_sec, attempt - 1)
+            else:
+                raise err
+
+    def detach(self):
+        if self.ctx is not None:
+            squish.currentApplicationContext().detach()
+            assert squish.waitFor(lambda: not self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
+        self.ctx = None
+        return self
+
+    @staticmethod
+    def stop(verify: bool = True):
+        local_system.kill_process_by_name('nim_status_client', verify=verify)
+
+    def launch(self, *args) -> 'AUT':
+        if configs.ATTACH_MODE:
+            SquishServer().add_attachable_aut(self.path.stem, self.port)
+            command = [
+                       configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
+                       f'--port={self.port}',
+                       f'"{self.path}"'
+                   ] + list(args)
+            local_system.execute(command)
+        else:
+            command = [self.path.stem] + list(args)
+            self.ctx = squish.startApplication(
+                ' '.join(command), configs.timeouts.PROCESS_TIMEOUT_SEC)
+        self.attach()
+        assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
+        return self

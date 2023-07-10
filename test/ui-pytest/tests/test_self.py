@@ -14,5 +14,6 @@ def test_import_squish():
 
 
 @pytest.mark.self
-def test_squish_server(server):
+def test_start_aut(main_window):
+    driver.context.detach()
     pass

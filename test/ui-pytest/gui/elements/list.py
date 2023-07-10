@@ -1,22 +1,21 @@
 import time
 import typing
 
-import driver.settings
-
 import configs
-from gui.elements.base_element import BaseElement
+import driver
+from gui.elements.base_object import QObject
 
 
-class List(BaseElement):
+class List(QObject):
 
     @property
     def items(self):
-        return [self._object.itemAtIndex(index) for index in range(self._object.count)]
+        return [self.object.itemAtIndex(index) for index in range(self.object.count)]
 
     def get_values(self, attr_name: str) -> typing.List[str]:
         values = []
-        for index in range(self._object.count):
-            value = str(getattr(self._object.itemAtIndex(index), attr_name, ''))
+        for index in range(self.object.count):
+            value = str(getattr(self.object.itemAtIndex(index), attr_name, ''))
             if value:
                 values.append(value)
         return values
@@ -28,10 +27,10 @@ class List(BaseElement):
         started_at = time.monotonic()
         values = []
         while True:
-            for index in range(self._object.count):
-                cur_value = str(getattr(self._object.itemAtIndex(index), attr_name, ''))
+            for index in range(self.object.count):
+                cur_value = str(getattr(self.object.itemAtIndex(index), attr_name, ''))
                 if cur_value == value:
-                    return self._object.itemAtIndex(index)
+                    return self.object.itemAtIndex(index)
                 values.append(cur_value)
             time.sleep(1)
             if time.monotonic() - started_at > timeout_sec:
