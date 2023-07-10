@@ -239,6 +239,7 @@ SettingsContentBase {
 
         StatusButton {
             id: backupBtn
+            visible: !production
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Backup Data")
             onClicked : {
