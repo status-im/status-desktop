@@ -1,5 +1,6 @@
 import pytest
 
+import configs
 from driver.server import SquishServer
 
 
@@ -7,6 +8,7 @@ from driver.server import SquishServer
 def server():
     squish_server = SquishServer()
     squish_server.stop()
+    squish_server.add_executable_aut(configs.APP_DIR.stem, configs.APP_DIR.parent)
     attempt = 3
     while True:
         try:

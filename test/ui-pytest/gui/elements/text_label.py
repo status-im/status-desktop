@@ -1,8 +1,8 @@
-from gui.elements.base_element import BaseElement
+from gui.elements.base_object import QObject
 
 
-class TextLabel(BaseElement):
+class TextLabel(QObject):
 
     @property
     def text(self) -> str:
-        return str(self._object.text)
+        return str(self.object.text)
