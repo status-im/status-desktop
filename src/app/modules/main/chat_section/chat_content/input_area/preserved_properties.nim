@@ -16,7 +16,7 @@ QtObject:
 
   proc newPreservedProperties*(): PreservedProperties =
     new(result, delete)
-    result.QObject.setup
+    result.setup
 
   proc textChanged*(self: PreservedProperties) {.signal.}
   proc setText*(self: PreservedProperties, value: string) {.slot.} =
