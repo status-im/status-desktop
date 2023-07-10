@@ -1,0 +1,7 @@
+import os
+
+from scripts.utils.system_path import SystemPath
+
+LOCAL_RUN = False
+
+APP_DIR = SystemPath(os.getenv('APP_DIR')

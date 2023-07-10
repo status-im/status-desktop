@@ -1,0 +1,3 @@
+LOCAL_RUN = True
+
+APP_DIR = None
