@@ -2,6 +2,7 @@ import pytest
 
 pytest_plugins = [
     'tests.fixtures.path',
+    'tests.fixtures.squish',
 ]
 
 
