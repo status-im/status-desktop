@@ -325,7 +325,7 @@ QtObject {
     function createCommunityChannel(channelName, channelDescription, channelEmoji, channelColor,
             categoryId) {
         chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription,
-            channelEmoji, channelColor, categoryId);
+            channelEmoji.trim(), channelColor, categoryId);
     }
 
     function editCommunityChannel(chatId, newName, newDescription, newEmoji, newColor,
