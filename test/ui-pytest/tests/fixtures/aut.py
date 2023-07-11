@@ -4,6 +4,7 @@ import pytest
 
 import configs
 from driver.aut import AUT
+from gui.main_window import MainWindow
 from scripts.utils import system_path
 
 
@@ -39,5 +40,5 @@ def user_data_two(request, user_data) -> system_path.SystemPath:
 @pytest.fixture
 def main_window(aut: AUT, user_data: system_path.SystemPath):
     aut.launch(f'-d={user_data.parent}')
-    yield
+    yield MainWindow().wait_until_appears().prepare()
     aut.detach().stop()

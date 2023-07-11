@@ -1,9 +1,11 @@
 import logging
 
+from gui.elements.window import Window
+
 _logger = logging.getLogger(__name__)
 
 
-class MainWindow:
+class MainWindow(Window):
 
     def __init__(self):
-        pass
+        super(MainWindow, self).__init__('statusDesktop_mainWindow')
