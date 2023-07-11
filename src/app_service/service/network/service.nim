@@ -45,6 +45,9 @@ proc fetchNetworks*(self: Service, useCached: bool = true): seq[CombinedNetworkD
     self.networks = result
     self.networksInited = true
 
+proc getCombinedNetworks*(self: Service): seq[CombinedNetworkDto] =
+  return self.fetchNetworks()
+
 proc getNetworks*(self: Service): seq[NetworkDto] = 
   let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
     
@@ -136,3 +139,18 @@ proc getNetworkForCollectibles*(self: Service): NetworkDto =
     return self.getNetwork(Goerli)
 
   return self.getNetwork(Mainnet)
+
+proc updateNetworkEndPointValues*(self: Service, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
+  let network = self.getNetwork(chainId)
+
+  if network.rpcURL == newMainRpcInput and network.fallbackURL == newFailoverRpcUrl:
+    return
+
+  if network.rpcURL != newMainRpcInput:
+    network.rpcURL = newMainRpcInput
+
+  if network.fallbackURL != newFailoverRpcUrl:
+    network.fallbackURL = newFailoverRpcUrl
+
+  self.upsertNetwork(network)
+

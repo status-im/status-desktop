@@ -62,3 +62,6 @@ method areTestNetworksEnabled*(self: Module): bool =
 method toggleTestNetworksEnabled*(self: Module) = 
   self.controller.toggleTestNetworksEnabled()
   self.refreshNetworks()
+
+method updateNetworkEndPointValues*(self: Module, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
+  self.controller.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)

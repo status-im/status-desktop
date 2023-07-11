@@ -22,7 +22,7 @@ StatusListItem {
     title: account.name
     subTitle: {
         const elidedAddress = StatusQUtils.Utils.elideText(account.address,6,4)
-        return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(chainShortNames) + Utils.richColorText(elidedAddress, Theme.palette.directColor1) : elidedAddress
+        return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(chainShortNames) + Utils.richColorText(elidedAddress, Theme.palette.directColor1) : chainShortNames + elidedAddress
     }
     asset.color: !!account.colorId ? Utils.getColorForId(account.colorId): ""
     asset.emoji: account.emoji

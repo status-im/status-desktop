@@ -1,5 +1,4 @@
 import QtQuick 2.13
-import SortFilterProxyModel 0.2
 
 import shared.status 1.0
 import shared.popups 1.0
@@ -12,6 +11,8 @@ import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
 import utils 1.0
 
+import SortFilterProxyModel 0.2
+
 import "../../stores"
 import "../../controls"
 
@@ -20,6 +21,7 @@ Item {
     signal goBack
 
     property WalletStore walletStore
+    signal editNetwork(var network)
 
     Column {
         id: column
@@ -31,15 +33,16 @@ Item {
         Repeater {
             id: layer1List
             model: SortFilterProxyModel {
-                sourceModel: walletStore.networks
+                sourceModel: walletStore.combinedNetworks
                 filters: ValueFilter {
                     roleName: "layer"
                     value: 1
                 }
             }
             delegate: WalletNetworkDelegate {
-                network: model
+                network: areTestNetworksEnabled ? model.test: model.prod
                 areTestNetworksEnabled: walletStore.areTestNetworksEnabled
+                onClicked: editNetwork(model)
             }
         }
 
@@ -58,15 +61,16 @@ Item {
         Repeater {
             id: layer2List
             model: SortFilterProxyModel {
-                sourceModel: walletStore.networks
+                sourceModel: walletStore.combinedNetworks
                 filters: ValueFilter {
                     roleName: "layer"
                     value: 2
                 }
             }
             delegate: WalletNetworkDelegate {
-                network: model
+                network: areTestNetworksEnabled ? model.test: model.prod
                 areTestNetworksEnabled: walletStore.areTestNetworksEnabled
+                onClicked: editNetwork(model)
             }
         }
 

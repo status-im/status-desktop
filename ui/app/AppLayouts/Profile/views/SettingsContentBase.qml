@@ -16,10 +16,12 @@ Item {
     property int contentWidth
     readonly property int contentHeight: root.height - titleRow.height - Style.current.padding
 
+    property alias titleRowLeftComponentLoader: leftLoader
     property alias titleRowComponentLoader: loader
     property list<Item> headerComponents
     property alias bottomHeaderComponents: secondHeaderRow.contentItem
     default property Item content
+    property alias titleLayout: titleLayout
 
     property bool dirty: false
     property bool saveChangesButtonEnabled: false
@@ -59,10 +61,15 @@ Item {
         spacing: 0
 
         RowLayout {
+            id: titleLayout
             Layout.preferredWidth: (parent.width - Style.current.padding)
             Layout.preferredHeight: visible ? d.titleRowHeight : 0
             Layout.leftMargin: Style.current.padding
             visible: (root.sectionTitle !== "")
+
+            Loader {
+                id: leftLoader
+            }
 
             StatusBaseText {
                 Layout.fillWidth: true

@@ -28,11 +28,7 @@ StatusListView {
         font.pixelSize: Style.current.primaryTextFontSize
         bottomPadding: Style.current.padding
     }
-    anchors.top: parent.top
-    anchors.left: parent.left
-    width: parent.width
-    anchors.leftMargin: Style.current.padding
-    anchors.rightMargin: Style.current.padding
+
     model: SortFilterProxyModel {
         sourceModel: walletStore.accounts
         sorters: [
@@ -86,7 +82,6 @@ StatusListView {
             visualIndex: delegateRoot.visualIndex
             draggable: accountsView.count > 1
             title: {
-                console.log(model.name, model.position)
                 return model.name
             }
             secondaryTitle: model.address
