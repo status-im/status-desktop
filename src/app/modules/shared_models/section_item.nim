@@ -338,6 +338,9 @@ proc removeCommunityToken*(self: SectionItem, chainId: int, contractAddress: str
 proc updateCommunityTokenDeployState*(self: SectionItem, chainId: int, contractAddress: string, deployState: DeployState) {.inline.} =
   self.communityTokensModel.updateDeployState(chainId, contractAddress, deployState)
 
+proc updateCommunityTokenAddress*(self: SectionItem, chainId: int, oldContractAddress: string, newContractAddress: string) {.inline.} =
+  self.communityTokensModel.updateAddress(chainId, oldContractAddress, newContractAddress)
+
 proc updateCommunityTokenSupply*(self: SectionItem, chainId: int, contractAddress: string, supply: Uint256, destructedAmount: Uint256) {.inline.} =
   self.communityTokensModel.updateSupply(chainId, contractAddress, supply, destructedAmount)
 

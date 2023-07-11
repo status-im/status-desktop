@@ -291,10 +291,16 @@ method onSharedKeycarModuleKeycardSyncPurposeTerminated*(self: AccessInterface, 
 method onCommunityTokenDeploymentStarted*(self: AccessInterface, communityToken: CommunityTokenDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onOwnerTokensDeploymentStarted*(self: AccessInterface, ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, deployState: DeployState) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onOwnerTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, ownerContractAddress: string, masterContractAddress: string, deployState: DeployState) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenSupplyChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256, destructedAmount: Uint256) {.base.} =

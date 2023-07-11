@@ -360,7 +360,7 @@ StatusSectionLayout {
                 isFeeLoading = true
 
                 communityTokensStore.computeDeployFee(
-                    chainId, accountAddress, tokenType)
+                    chainId, accountAddress, tokenType, !(mintPanel.isOwnerTokenDeployed && mintPanel.isTMasterTokenDeployed))
             }
 
             onBurnFeesRequested: {
@@ -613,22 +613,24 @@ StatusSectionLayout {
                   StatusQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.tMasterTokenNameTag + root.communityName)
         }
 
-        function reviewTokenDeployState(tagType, isOwner, deployState) {
-            const index = StatusQUtils.ModelUtils.indexOf(model, "name", tagType + root.communityName)
+        function reviewTokenDeployState(isOwner, deployState) {
+            const privileges = isOwner ? Constants.TokenPrivilegesLevel.Owner : Constants.TokenPrivilegesLevel.TMaster
+            const index = StatusQUtils.ModelUtils.indexOf(model, "privilegesLevel", privileges)
             if(index === -1)
                 return false
 
             const token = StatusQUtils.ModelUtils.get(model, index)
-
             // Some assertions:
-            if(!token.isPrivilegedToken)
+            if(isOwner && token.privilegesLevel !== Constants.TokenPrivilegesLevel.Owner)
+                return false
+            if(!isOwner && token.privilegesLevel !== Constants.TokenPrivilegesLevel.TMaster)
                 return false
 
             if(token.isOwner !== isOwner)
                 return false
 
             // Deploy state check:
-            return token.deployState !== deployState
+            return token.deployState === deployState
         }
 
         model: root.community.communityTokens
@@ -821,6 +823,39 @@ StatusSectionLayout {
 
             Global.displayToastMessage(title, url === "" ? qsTr("Something went wrong") : qsTr("View on etherscan"), "",
                                        loading, type, url)
+        }
+
+        function onOwnerTokenDeploymentStateChanged(communityId, status, url) {
+            if (root.community.id !== communityId)
+                return
+
+            if (status === Constants.ContractTransactionStatus.Completed)
+            {
+                let title1 = qsTr("%1 Owner and TokenMaster tokens minting complete").arg(community.name)
+                let title2 = qsTr("%1 Owner token airdropped to you").arg(community.name)
+                let title3 = qsTr("%1 Owner and TokenMaster permissions created").arg(community.name)
+                let type = Constants.ephemeralNotificationType.normal
+
+                Global.displayToastMessage(title1, url, "", true, type, url)
+                Global.displayToastMessage(title2, url, "", true, type, url)
+                Global.displayToastMessage(title3, url, "", true, type, url)
+            } else if (status === Constants.ContractTransactionStatus.Failed) {
+                let title = qsTr("%1 Owner and TokenMaster tokens minting failed").arg(community.name)
+                let type = Constants.ephemeralNotificationType.normal
+                Global.displayToastMessage(title, url, "", true, type, url)
+            }
+        }
+
+        function onOwnerTokenDeploymentStarted(communityId, url) {
+            if (root.community.id !== communityId)
+                return
+
+            let title1 = qsTr("%1 Owner and TokenMaster tokens are being minted...").arg(community.name)
+            let title2 = qsTr("Airdropping %1 Owner token to you...").arg(community.name)
+            let type = Constants.ephemeralNotificationType.normal
+
+            Global.displayToastMessage(title1, url, "", true, type, url)
+            Global.displayToastMessage(title2, url, "", true, type, url)
         }
     }
 

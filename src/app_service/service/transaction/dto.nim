@@ -20,6 +20,7 @@ type
     AirdropCommunityToken = "AirdropCommunityToken"
     RemoteDestructCollectible = "RemoteDestructCollectible"
     BurnCommunityToken = "BurnCommunityToken"
+    DeployOwnerToken = "DeployOwnerToken"
 
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self

@@ -26,10 +26,12 @@ type
     ChainIcon
     TokenOwnersModel
     AccountName
+    AccountAddress
     RemainingSupply
     Decimals
     BurnState
     RemotelyDestructState
+    PrivilegesLevel
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -53,6 +55,15 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
         self.dataChanged(index, index, @[ModelRole.DeployState.int])
+        return
+
+  proc updateAddress*(self: TokenModel, chainId: int, oldContractAddress: string, newContractAddress: string) =
+    for i in 0 ..< self.items.len:
+      if((self.items[i].tokenDto.address == oldContractAddress) and (self.items[i].tokenDto.chainId == chainId)):
+        self.items[i].tokenDto.address = newContractAddress
+        let index = self.createIndex(i, 0, nil)
+        defer: index.delete
+        self.dataChanged(index, index, @[ModelRole.TokenAddress.int])
         return
 
   proc updateBurnState*(self: TokenModel, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) =
@@ -166,10 +177,12 @@ QtObject:
       ModelRole.ChainIcon.int:"chainIcon",
       ModelRole.TokenOwnersModel.int:"tokenOwnersModel",
       ModelRole.AccountName.int:"accountName",
+      ModelRole.AccountAddress.int:"accountAddress",
       ModelRole.RemainingSupply.int:"remainingSupply",
       ModelRole.Decimals.int:"decimals",
       ModelRole.BurnState.int:"burnState",
       ModelRole.RemotelyDestructState.int:"remotelyDestructState",
+      ModelRole.PrivilegesLevel.int:"privilegesLevel"
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -215,6 +228,8 @@ QtObject:
         result = newQVariant(item.tokenOwnersModel)
       of ModelRole.AccountName:
         result = newQVariant(item.accountName)
+      of ModelRole.AccountAddress:
+        result = newQVariant(item.tokenDto.deployer)
       of ModelRole.RemainingSupply:
         result = newQVariant(supplyByType(item.remainingSupply, item.tokenDto.tokenType))
       of ModelRole.Decimals:
@@ -224,6 +239,8 @@ QtObject:
       of ModelRole.RemotelyDestructState:
         let destructStatus = if len(item.remoteDestructedAddresses) > 0: ContractTransactionStatus.InProgress.int else: ContractTransactionStatus.Completed.int
         result = newQVariant(destructStatus)
+      of ModelRole.PrivilegesLevel:
+        result = newQVariant(item.tokenDto.privilegesLevel.int)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:

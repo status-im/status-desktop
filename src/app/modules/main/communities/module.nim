@@ -76,7 +76,7 @@ proc newModule*(
     tokensService,
     chatService,
   )
-  result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService, transactionService, networksService)
+  result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService, transactionService, networksService, communityService)
   result.moduleLoaded = false
   result.curatedCommunitiesLoaded = false
 

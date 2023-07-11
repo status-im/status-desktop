@@ -73,8 +73,23 @@ type
     deployState*: DeployState
 
 type
+  OwnerTokenDeployedStatusArgs* = ref object of Args
+    communityId*: string
+    chainId*: int
+    ownerContractAddress*: string
+    masterContractAddress*: string
+    transactionHash*: string
+    deployState*: DeployState
+
+type
   CommunityTokenDeploymentArgs* = ref object of Args
     communityToken*: CommunityTokenDto
+    transactionHash*: string
+
+type
+  OwnerTokenDeploymentArgs* = ref object of Args
+    ownerToken*: CommunityTokenDto
+    masterToken*: CommunityTokenDto
     transactionHash*: string
 
 type
@@ -108,6 +123,28 @@ proc `%`*(self: RemoteDestroyTransactionDetails): JsonNode =
     "chainId": self.chainId,
     "addresses": self.addresses
   }
+
+type
+  OwnerTokenDeploymentTransactionDetails* = object
+    ownerToken*: ContractTuple
+    masterToken*: ContractTuple
+    communityId*: string
+
+proc `%`*(self: OwnerTokenDeploymentTransactionDetails): JsonNode =
+  result = %* {
+    "ownerToken": %self.ownerToken,
+    "masterToken": %self.masterToken,
+    "communityId": self.communityId
+  }
+
+proc toOwnerTokenDeploymentTransactionDetails*(jsonObj: JsonNode): OwnerTokenDeploymentTransactionDetails =
+  result = OwnerTokenDeploymentTransactionDetails()
+  try:
+    result.ownerToken = (jsonObj["ownerToken"]["chainId"].getInt, jsonObj["ownerToken"]["address"].getStr)
+    result.masterToken = (jsonObj["masterToken"]["chainId"].getInt, jsonObj["masterToken"]["address"].getStr)
+    result.communityId = jsonObj["communityId"].getStr
+  except Exception as e:
+    error "Error parsing OwnerTokenDeploymentTransactionDetails json", msg=e.msg
 
 proc toRemoteDestroyTransactionDetails*(json: JsonNode): RemoteDestroyTransactionDetails =
   return RemoteDestroyTransactionDetails(chainId: json["chainId"].getInt, contractAddress: json["contractAddress"].getStr, addresses: to(json["addresses"], seq[string]))
@@ -175,7 +212,10 @@ const SIGNAL_BURN_STATUS* = "communityTokenBurnStatus"
 const SIGNAL_AIRDROP_STATUS* = "airdropStatus"
 const SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED* = "removeCommunityTokenFailed"
 const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokenRemoved"
+const SIGNAL_OWNER_TOKEN_DEPLOY_STATUS* = "ownerTokenDeployStatus"
+const SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED* = "ownerTokenDeploymentStarted"
 
+const SIGNAL_DEPLOY_OWNER_TOKEN* = "deployOwnerToken"
 
 QtObject:
   type
@@ -196,6 +236,12 @@ QtObject:
       tempFeeTable: Table[int, SuggestedFeesDto] # fees per chain, filled during gas computation, used during operation (deployment, mint, burn)
       tempGasTable: Table[ContractTuple, int] # gas per contract, filled during gas computation, used during operation (deployment, mint, burn)
       tempTokensAndAmounts: seq[CommunityTokenAndAmount]
+
+      tempDeploymentChainId: int
+      tempDeploymentCommunityId: string
+      tempDeploymentParams: DeploymentParameters
+      tempDeploymentCroppedImageJson: string
+      tempDeploymentAddressFrom: string
 
   # Forward declaration
   proc fetchAllTokenOwners*(self: Service)
@@ -258,6 +304,50 @@ QtObject:
       except Exception as e:
         error "Error processing Collectible deployment pending transaction event", msg=e.msg, receivedData
 
+    self.events.on(PendingTransactionTypeDto.DeployOwnerToken.event) do(e: Args):
+      var receivedData = TransactionMinedArgs(e)
+      try:
+        let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
+        let ownerTransactionDetails = toOwnerTokenDeploymentTransactionDetails(parseJson(receivedData.data))
+        if not receivedData.success:
+          error "Owner contracts not deployed", chainId=ownerTransactionDetails.ownerToken.chainId, address=ownerTransactionDetails.ownerToken.address
+        var masterContractAddress = ownerTransactionDetails.masterToken.address
+
+        try:
+          # get master token address from transaction logs
+          if receivedData.success:
+            let response = tokens_backend.getMasterTokenContractAddressFromHash(ownerTransactionDetails.masterToken.chainId, receivedData.transactionHash)
+            masterContractAddress = response.result.getStr()
+            if masterContractAddress == "":
+              raise newException(RpcException, "master contract address is empty")
+
+          # update master token address
+          discard updateCommunityTokenAddress(ownerTransactionDetails.masterToken.chainId, ownerTransactionDetails.masterToken.address, masterContractAddress)
+          #update db state for owner and master token
+          discard updateCommunityTokenState(ownerTransactionDetails.ownerToken.chainId, ownerTransactionDetails.ownerToken.address, deployState)
+          discard updateCommunityTokenState(ownerTransactionDetails.masterToken.chainId, masterContractAddress, deployState)
+          # now add owner token to community and publish update
+          var response = tokens_backend.addCommunityToken(ownerTransactionDetails.communityId, ownerTransactionDetails.ownerToken.chainId, ownerTransactionDetails.ownerToken.address)
+          if response.error != nil:
+            let error = Json.decode($response.error, RpcError)
+            raise newException(RpcException, "error adding owner token: " & error.message)
+
+          # now add master token to community and publish update
+          response = tokens_backend.addCommunityToken(ownerTransactionDetails.communityId, ownerTransactionDetails.masterToken.chainId, masterContractAddress)
+          if response.error != nil:
+            let error = Json.decode($response.error, RpcError)
+            raise newException(RpcException, "error adding master token: " & error.message)
+        except RpcException:
+          error "Error updating owner contracts state", message = getCurrentExceptionMsg()
+
+        let data = OwnerTokenDeployedStatusArgs(communityId: ownerTransactionDetails.communityId, chainId: ownerTransactionDetails.ownerToken.chainId,
+                                                ownerContractAddress: ownerTransactionDetails.ownerToken.address,
+                                                masterContractAddress: masterContractAddress,
+                                                deployState: deployState,
+                                                transactionHash: receivedData.transactionHash)
+        self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS, data)
+      except Exception as e:
+        error "Error processing Collectible deployment pending transaction event", msg=e.msg, receivedData
 
     self.events.on(PendingTransactionTypeDto.AirdropCommunityToken.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
@@ -316,6 +406,98 @@ QtObject:
       if suggestedFees.eip1559Enabled: $suggestedFees.maxPriorityFeePerGas else: "",
       if suggestedFees.eip1559Enabled: $suggestedFees.maxFeePerGasM else: "")
 
+  proc createCommunityToken(self: Service, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto,
+    chainId: int, contractAddress: string, communityId: string, addressFrom: string, privilegesLevel: PrivilegesLevel): CommunityTokenDto =
+      result.tokenType = tokenMetadata.tokenType
+      result.communityId = communityId
+      result.address = contractAddress
+      result.name = deploymentParams.name
+      result.symbol = deploymentParams.symbol
+      result.description = tokenMetadata.description
+      result.supply = stint.parse($deploymentParams.supply, Uint256)
+      result.infiniteSupply = deploymentParams.infiniteSupply
+      result.transferable = deploymentParams.transferable
+      result.remoteSelfDestruct = deploymentParams.remoteSelfDestruct
+      result.tokenUri = deploymentParams.tokenUri
+      result.chainId = chainId
+      result.deployState = DeployState.InProgress
+      result.decimals = deploymentParams.decimals
+      result.deployer = addressFrom
+      result.privilegesLevel = privilegesLevel
+
+  proc saveTokenToDbAndWatchTransaction*(self:Service, communityToken: CommunityTokenDto, croppedImageJson: string,
+    transactionHash: string, addressFrom: string, watchTransaction: bool) =
+    var croppedImage = croppedImageJson.parseJson
+    croppedImage{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr))
+
+    # save token to db
+    let communityTokenJson = tokens_backend.saveCommunityToken(communityToken, $croppedImage)
+    let addedCommunityToken = communityTokenJson.result.toCommunityTokenDto()
+    let data = CommunityTokenDeploymentArgs(communityToken: addedCommunityToken, transactionHash: transactionHash)
+    self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED, data)
+
+    if watchTransaction:
+      # observe transaction state
+      self.transactionService.watchTransaction(
+        transactionHash,
+        addressFrom,
+        addedCommunityToken.address,
+        $PendingTransactionTypeDto.DeployCommunityToken,
+        $addedCommunityToken.toJsonNode(),
+        addedCommunityToken.chainId,
+      )
+
+  proc temporaryMasterContractAddress*(ownerContractAddress: string): string =
+    return ownerContractAddress & "-master"
+
+  proc deployOwnerContracts*(self: Service, communityId: string, addressFrom: string, password: string,
+      ownerDeploymentParams: DeploymentParameters, ownerTokenMetadata: CommunityTokensMetadataDto,
+      masterDeploymentParams: DeploymentParameters, masterTokenMetadata: CommunityTokensMetadataDto,
+      croppedImageJson: string, chainId: int) =
+    try:
+      let txData = self.buildTransactionDataDto(addressFrom, chainId, "")
+      if txData.source == parseAddress(ZERO_ADDRESS):
+        return
+
+      let response = tokens_backend.deployOwnerToken(chainId, %ownerDeploymentParams, %masterDeploymentParams, %txData, password)
+      let ownerContractAddress = response.result["contractAddress"].getStr()
+      let transactionHash = response.result["transactionHash"].getStr()
+      debug "Deployed owner contract address ", ownerContractAddress=ownerContractAddress
+      debug "Deployment transaction hash ", transactionHash=transactionHash
+
+      var ownerToken = self.createCommunityToken(ownerDeploymentParams, ownerTokenMetadata, chainId, ownerContractAddress, communityId, addressFrom, PrivilegesLevel.Owner)
+      var masterToken = self.createCommunityToken(masterDeploymentParams, masterTokenMetadata, chainId, temporaryMasterContractAddress(ownerContractAddress), communityId, addressFrom, PrivilegesLevel.Master)
+
+      var croppedImage = croppedImageJson.parseJson
+      ownerToken.image = croppedImage{"imagePath"}.getStr
+      masterToken.image = croppedImage{"imagePath"}.getStr
+
+      let ownerTokenJson = tokens_backend.saveCommunityToken(ownerToken, "")
+      let addedOwnerToken = ownerTokenJson.result.toCommunityTokenDto()
+
+      let masterTokenJson = tokens_backend.saveCommunityToken(masterToken, "")
+      let addedMasterToken = masterTokenJson.result.toCommunityTokenDto()
+
+      let data = OwnerTokenDeploymentArgs(ownerToken: addedOwnerToken, masterToken: addedMasterToken, transactionHash: transactionHash)
+      self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED, data)
+
+      let transactionDetails = OwnerTokenDeploymentTransactionDetails(ownerToken: (chainId, addedOwnerToken.address),
+        masterToken: (chainId, addedMasterToken.address), communityId: addedOwnerToken.communityId)
+
+      self.transactionService.watchTransaction(
+          transactionHash,
+          addressFrom,
+          addedOwnerToken.address,
+          $PendingTransactionTypeDto.DeployOwnerToken,
+          $(%transactionDetails),
+          chainId,
+        )
+    except RpcException:
+      error "Error deploying owner contract", message = getCurrentExceptionMsg()
+      let data = OwnerTokenDeployedStatusArgs(communityId: communityId,
+                                              deployState: DeployState.Failed)
+      self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS, data)
+
   proc deployContract*(self: Service, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, croppedImageJson: string, chainId: int) =
     try:
       let txData = self.buildTransactionDataDto(addressFrom, chainId, "")
@@ -337,42 +519,11 @@ QtObject:
       debug "Deployed contract address ", contractAddress=contractAddress
       debug "Deployment transaction hash ", transactionHash=transactionHash
 
-      var communityToken: CommunityTokenDto
-      communityToken.tokenType = tokenMetadata.tokenType
-      communityToken.communityId = communityId
-      communityToken.address = contractAddress
-      communityToken.name = deploymentParams.name
-      communityToken.symbol = deploymentParams.symbol
-      communityToken.description = tokenMetadata.description
-      communityToken.supply = stint.parse($deploymentParams.supply, Uint256)
-      communityToken.infiniteSupply = deploymentParams.infiniteSupply
-      communityToken.transferable = deploymentParams.transferable
-      communityToken.remoteSelfDestruct = deploymentParams.remoteSelfDestruct
-      communityToken.tokenUri = deploymentParams.tokenUri
-      communityToken.chainId = chainId
-      communityToken.deployState = DeployState.InProgress
-      communityToken.decimals = deploymentParams.decimals
+      var communityToken = self.createCommunityToken(deploymentParams, tokenMetadata, chainId, contractAddress, communityId, addressFrom, PrivilegesLevel.Community)
 
-      var croppedImage = croppedImageJson.parseJson
-      croppedImage{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr))
+      self.saveTokenToDbAndWatchTransaction(communityToken, croppedImageJson, transactionHash, addressFrom, true)
 
-      # save token to db
-      let communityTokenJson = tokens_backend.saveCommunityToken(communityToken, $croppedImage)
-      communityToken = communityTokenJson.result.toCommunityTokenDto()
-      let data = CommunityTokenDeploymentArgs(communityToken: communityToken, transactionHash: transactionHash)
-      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED, data)
-
-      # observe transaction state
-      self.transactionService.watchTransaction(
-        transactionHash,
-        addressFrom,
-        contractAddress,
-        $PendingTransactionTypeDto.DeployCommunityToken,
-        $communityToken.toJsonNode(),
-        chainId,
-      )
-
-    except RpcException as e:
+    except RpcException:
       error "Error deploying contract", message = getCurrentExceptionMsg()
       let data = CommunityTokenDeployedStatusArgs(communityId: communityId,
                                                   deployState: DeployState.Failed)
@@ -437,17 +588,9 @@ QtObject:
     except Exception:
       error "Error getting contract owner", message = getCurrentExceptionMsg()
 
-  proc contractOwner*(self: Service, chainId: int, contractAddress: string): string =
+  proc contractOwnerName*(self: Service, contractOwnerAddress: string): string =
     try:
-      let response = tokens_backend.contractOwner(chainId, contractAddress)
-      return response.result.getStr()
-    except RpcException:
-      error "Error getting contract owner", message = getCurrentExceptionMsg()
-
-  proc contractOwnerName*(self: Service, chainId: int, contractAddress: string): string =
-    try:
-      let response = tokens_backend.contractOwner(chainId, contractAddress)
-      return self.walletAccountService.getAccountByAddress(response.result.getStr().toLower()).name
+      return self.walletAccountService.getAccountByAddress(contractOwnerAddress).name
     except RpcException:
       error "Error getting contract owner name", message = getCurrentExceptionMsg()
 
@@ -457,6 +600,8 @@ QtObject:
       return stint.parse(response.result.getStr(), Uint256)
     except RpcException:
       error "Error getting remaining supply", message = getCurrentExceptionMsg()
+    # if there is an exception probably community token is not minted yet
+    return self.getCommunityToken(chainId, contractAddress).supply
 
   proc getRemoteDestructedAmount*(self: Service, chainId: int, contractAddress: string): Uint256 =
     try:
@@ -471,7 +616,7 @@ QtObject:
   proc airdropTokens*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
     try:
       for collectibleAndAmount in collectiblesAndAmounts:
-        let addressFrom = self.contractOwner(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
+        let addressFrom = collectibleAndAmount.communityToken.deployer
         let txData = self.buildTransactionDataDto(addressFrom, collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
         if txData.source == parseAddress(ZERO_ADDRESS):
           return
@@ -534,6 +679,20 @@ QtObject:
     except Exception as e:
       error "Error loading fees", msg = e.msg
 
+  proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string) =
+    try:
+      self.tempAccountAddress = accountAddress
+      self.tempChainId = chainId
+      let arg = AsyncDeployOwnerContractsFeesArg(
+        tptr: cast[ByteAddress](asyncGetDeployOwnerContractsFeesTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "onDeployOwnerContractsFees",
+        chainId: chainId,
+      )
+      self.threadpool.start(arg)
+    except Exception as e:
+      error "Error loading fees", msg = e.msg
+
   proc findContractByUniqueId*(self: Service, contractUniqueKey: string): CommunityTokenDto =
     let allTokens = self.getAllCommunityTokens()
     for token in allTokens:
@@ -573,7 +732,7 @@ QtObject:
       let tokenIds = self.getTokensToBurn(walletAndAmounts, contract)
       if len(tokenIds) == 0:
         return
-      let addressFrom = self.contractOwner(contract.chainId, contract.address)
+      let addressFrom = contract.deployer
       let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
       debug "Remote destruct collectibles ", chainId=contract.chainId, address=contract.address, tokens=tokenIds
       let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, password, tokenIds)
@@ -602,7 +761,7 @@ QtObject:
   proc computeSelfDestructFee*(self: Service, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
-      self.tempAccountAddress = self.contractOwner(contract.chainId, contract.address)
+      self.tempAccountAddress = contract.deployer
       self.tempChainId = contract.chainId
       let tokenIds = self.getTokensToBurn(walletAndAmountList, contract)
       if len(tokenIds) == 0:
@@ -614,7 +773,8 @@ QtObject:
         slot: "onSelfDestructFees",
         chainId: contract.chainId,
         contractAddress: contract.address,
-        tokenIds: tokenIds
+        tokenIds: tokenIds,
+        addressFrom: contract.deployer
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -639,7 +799,7 @@ QtObject:
   proc burnTokens*(self: Service, communityId: string, password: string, contractUniqueKey: string, amount: Uint256) =
     try:
       var contract = self.findContractByUniqueId(contractUniqueKey)
-      let addressFrom = self.contractOwner(contract.chainId, contract.address)
+      let addressFrom = contract.deployer
       let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
       debug "Burn tokens ", chainId=contract.chainId, address=contract.address, amount=amount
       let response = tokens_backend.burn(contract.chainId, contract.address, %txData, password, amount)
@@ -665,7 +825,7 @@ QtObject:
   proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: Uint256) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
-      self.tempAccountAddress = self.contractOwner(contract.chainId, contract.address)
+      self.tempAccountAddress = contract.deployer
       self.tempChainId = contract.chainId
       let arg = AsyncGetBurnFees(
         tptr: cast[ByteAddress](asyncGetBurnFeesTask),
@@ -673,7 +833,8 @@ QtObject:
         slot: "onBurnFees",
         chainId: contract.chainId,
         contractAddress: contract.address,
-        amount: amount
+        amount: amount,
+        addressFrom: contract.deployer
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -754,6 +915,9 @@ QtObject:
       let data = self.createComputeFeeArgsWithError(getCurrentExceptionMsg())
       self.events.emit(signalName, data)
 
+  proc onDeployOwnerContractsFees*(self:Service, response: string) {.slot.} =
+    self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_DEPLOY_FEE)
+
   proc onSelfDestructFees*(self:Service, response: string) {.slot.} =
     self.parseFeeResponseAndEmitSignal(response, SIGNAL_COMPUTE_SELF_DESTRUCT_FEE)
 
@@ -796,7 +960,7 @@ QtObject:
         let gasUnits = self.tempGasTable[(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)]
         let suggestedFees = self.tempFeeTable[collectibleAndAmount.communityToken.chainId]
         let ethValue = self.computeEthValue(gasUnits, suggestedFees)
-        let walletAddress = self.contractOwner(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
+        let walletAddress = collectibleAndAmount.communityToken.deployer
         wholeEthCostForChainWallet[(collectibleAndAmount.communityToken.chainId, walletAddress)] = wholeEthCostForChainWallet.getOrDefault((collectibleAndAmount.communityToken.chainId, walletAddress), 0.0) + ethValue
         ethValuesForContracts[(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)] = ethValue
 
@@ -807,7 +971,7 @@ QtObject:
         let contractTuple = (chainId: collectibleAndAmount.communityToken.chainId,
                                           address: collectibleAndAmount.communityToken.address)
         let ethValue = ethValuesForContracts[contractTuple]
-        let walletAddress = self.contractOwner(contractTuple.chainId, contractTuple.address)
+        let walletAddress = collectibleAndAmount.communityToken.deployer
         var balance = self.getWalletBalanceForChain(walletAddress, contractTuple.chainId)
         if balance < wholeEthCostForChainWallet[(contractTuple.chainId, walletAddress)]:
           # if wallet balance for this chain is less than the whole cost
@@ -877,3 +1041,15 @@ QtObject:
     let allTokens = self.getAllCommunityTokens()
     for token in allTokens:
       self.fetchCommunityOwners(token)
+
+  proc getOwnerToken*(self: Service, communityId: string): CommunityTokenDto =
+    let communityTokens = self.getCommunityTokens(communityId)
+    for token in communityTokens:
+      if token.privilegesLevel == PrivilegesLevel.Owner:
+        return token
+
+  proc getMasterToken*(self: Service, communityId: string): CommunityTokenDto =
+    let communityTokens = self.getCommunityTokens(communityId)
+    for token in communityTokens:
+      if token.privilegesLevel == PrivilegesLevel.Master:
+        return token

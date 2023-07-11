@@ -245,7 +245,7 @@ method delete*[T](self: Module[T]) =
 proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : TokenItem =
   let network = self.controller.getNetwork(tokenDto.chainId)
   let tokenOwners = self.controller.getCommunityTokenOwners(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
-  let ownerAddressName = self.controller.getCommunityTokenOwnerName(tokenDto.chainId, tokenDto.address)
+  let ownerAddressName = if len(tokenDto.deployer) > 0: self.controller.getCommunityTokenOwnerName(tokenDto.deployer) else: ""
   let remainingSupply = if tokenDto.infiniteSupply: stint.parse("0", Uint256) else: self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
   let burnState = self.controller.getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
   let remoteDestructedAddresses = self.controller.getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
@@ -1049,6 +1049,12 @@ method onCommunityTokenDeploymentStarted*[T](self: Module[T], communityToken: Co
   if item.id != "":
     item.appendCommunityToken(self.createTokenItem(communityToken))
 
+method onOwnerTokensDeploymentStarted*[T](self: Module[T], ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto) =
+  let item = self.view.model().getItemById(ownerToken.communityId)
+  if item.id != "":
+    item.appendCommunityToken(self.createTokenItem(ownerToken))
+    item.appendCommunityToken(self.createTokenItem(masterToken))
+
 method onCommunityTokenRemoved*[T](self: Module[T], communityId: string, chainId: int, address: string) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
@@ -1063,6 +1069,15 @@ method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: stri
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateCommunityTokenDeployState(chainId, contractAddress, deployState)
+
+method onOwnerTokenDeployStateChanged*[T](self: Module[T], communityId: string, chainId: int, ownerContractAddress: string, masterContractAddress: string, deployState: DeployState) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    # update temporary master contract address first
+    item.updateCommunityTokenAddress(chainId, temporaryMasterContractAddress(ownerContractAddress), masterContractAddress)
+    # then update states
+    item.updateCommunityTokenDeployState(chainId, ownerContractAddress, deployState)
+    item.updateCommunityTokenDeployState(chainId, masterContractAddress, deployState)
 
 method onCommunityTokenSupplyChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256, destructedAmount: Uint256) =
   let item = self.view.model().getItemById(communityId)

@@ -10,6 +10,13 @@ type
     InProgress,
     Deployed
 
+# determines what is the type of the token: owner, master or normal community contract
+type
+  PrivilegesLevel* {.pure.} = enum
+    Owner,
+    Master,
+    Community
+
 type
   CommunityTokenDto* = object
     tokenType*: TokenType
@@ -27,6 +34,8 @@ type
     deployState*: DeployState
     image*: string
     decimals*: int
+    deployer*: string
+    privilegesLevel*: PrivilegesLevel
 
 proc toJsonNode*(self: CommunityTokenDto): JsonNode =
   result = %* {
@@ -44,7 +53,9 @@ proc toJsonNode*(self: CommunityTokenDto): JsonNode =
     "chainId": self.chainId,
     "deployState": self.deployState.int,
     "image": self.image,
-    "decimals": self.decimals
+    "decimals": self.decimals,
+    "deployer": self.deployer,
+    "privilegesLevel": self.privilegesLevel.int,
   }
 
 proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
@@ -70,6 +81,10 @@ proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
   result.deployState = intToEnum(deployStateInt, DeployState.Failed)
   discard jsonObj.getProp("image", result.image)
   discard jsonObj.getProp("decimals", result.decimals)
+  discard jsonObj.getProp("deployer", result.deployer)
+  var privilegesLevelInt: int
+  discard jsonObj.getProp("privilegesLevel", privilegesLevelInt)
+  result.privilegesLevel = intToEnum(privilegesLevelInt, PrivilegesLevel.Community)
 
 proc parseCommunityTokens*(response: RpcResponse[JsonNode]): seq[CommunityTokenDto] =
   result = map(response.result.getElems(),

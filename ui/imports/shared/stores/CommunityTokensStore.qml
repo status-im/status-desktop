@@ -18,9 +18,11 @@ QtObject {
     signal burnFeeUpdated(var ethCurrency, var fiatCurrency, int error)
 
     signal deploymentStateChanged(string communityId, int status, string url)
+    signal ownerTokenDeploymentStateChanged(string communityId, int status, string url)
     signal remoteDestructStateChanged(string communityId, string tokenName, int status, string url)
     signal burnStateChanged(string communityId, string tokenName, int status, string url)
     signal airdropStateChanged(string communityId, string tokenName, string chainName, int status, string url)
+    signal ownerTokenDeploymentStarted(string communityId, string url)
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
@@ -48,11 +50,9 @@ QtObject {
 
     function deployOwnerToken(communityId, ownerToken, tMasterToken)
     {
-        // NOTE for backend team: `ownerToken` and `tMasterToken` can be used to do an assertion before the deployment process starts, since
-        // the objects have been created to display the token details to the user and must be the same than backend builds.
-        // TODO: Backend will need to check if the ownerToken or tMasterToken have a valid tokenKey, so it means a deployment retry,
-        // otherwise, it is a new deployment.
-        console.log("TODO: Backend Owner and Token Master token deployment!")
+        const jsonArtworkFile = Utils.getImageAndCropInfoJson(ownerToken.artworkSource, ownerToken.artworkCropRect)
+        communityTokensModuleInst.deployOwnerToken(communityId, ownerToken.accountAddress, ownerToken.name, ownerToken.symbol, ownerToken.description,
+                                                   tMasterToken.name, tMasterToken.symbol, tMasterToken.description, ownerToken.chainId, jsonArtworkFile)
     }
 
     function deleteToken(communityId, contractUniqueKey) {
@@ -79,6 +79,14 @@ QtObject {
             root.deploymentStateChanged(communityId, status, url)
         }
 
+        function onOwnerTokenDeploymentStateChanged(communityId, status, url) {
+            root.ownerTokenDeploymentStateChanged(communityId, status, url)
+        }
+
+        function onOwnerTokenDeploymentStarted(communityId, url) {
+            root.ownerTokenDeploymentStarted(communityId, url)
+        }
+
         function onRemoteDestructStateChanged(communityId, tokenName, status, url) {
             root.remoteDestructStateChanged(communityId, tokenName, status, url)
         }
@@ -96,8 +104,8 @@ QtObject {
         }
     }
 
-    function computeDeployFee(chainId, accountAddress, tokenType) {
-        communityTokensModuleInst.computeDeployFee(chainId, accountAddress, tokenType)
+    function computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment) {
+        communityTokensModuleInst.computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment)
     }
 
     function computeSelfDestructFee(selfDestructTokensList, tokenKey, accountAddress) {
