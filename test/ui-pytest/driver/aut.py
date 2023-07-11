@@ -53,10 +53,10 @@ class AUT:
         if configs.ATTACH_MODE:
             SquishServer().add_attachable_aut('AUT', self.port)
             command = [
-                       configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
-                       f'--port={self.port}',
-                       f'"{self.path}"'
-                   ] + list(args)
+                          configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
+                          f'--port={self.port}',
+                          f'"{self.path}"'
+                      ] + list(args)
             local_system.execute(command)
             try:
                 local_system.wait_for_started(self.process_name)

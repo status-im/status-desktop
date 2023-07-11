@@ -14,6 +14,7 @@ class QObject:
     def __init__(self, name: str):
         self.symbolic_name = name
         self.real_name = getattr(objects_map, name)
+        self._image = Image(self.real_name)
 
     def __str__(self):
         return f'{type(self).__qualname__}({self.symbolic_name})'
@@ -66,7 +67,9 @@ class QObject:
 
     @property
     def image(self):
-        return Image(self.real_name)
+        if self._image.view is None:
+            self._image.update_view()
+        return self._image
 
     def click(
             self,

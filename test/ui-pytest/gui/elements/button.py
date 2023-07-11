@@ -15,4 +15,4 @@ class Button(QObject):
         if None not in (x, y, button):
             getattr(self.object, 'clicked')()
         else:
-            self.click(x, y, button)
+            super(Button, self).click(x, y, button)

@@ -1,0 +1,201 @@
+import logging
+import time
+from abc import abstractmethod
+
+import configs
+import constants.tesseract
+import driver
+from gui.elements.base_object import QObject
+from gui.elements.button import Button
+from gui.elements.text_edit import TextEdit
+from gui.elements.text_label import TextLabel
+from scripts.tools.capture.image import Image
+
+_logger = logging.getLogger(__name__)
+
+
+class AllowNotificationsView(QObject):
+
+    def __init__(self):
+        super(AllowNotificationsView, self).__init__('mainWindow_AllowNotificationsView')
+        self._allow_button = Button('mainWindow_allowNotificationsOnboardingOkButton')
+
+    def allow(self):
+        self._allow_button.click()
+        self.wait_until_hidden()
+
+
+class WelcomeScreen(QObject):
+
+    def __init__(self):
+        super(WelcomeScreen, self).__init__('mainWindow_WelcomeView')
+        self._new_user_button = Button('mainWindow_I_am_new_to_Status_StatusBaseText')
+        self._existing_user_button = Button('mainWindow_I_already_use_Status_StatusBaseText')
+
+    def get_keys(self) -> 'KeysView':
+        self._new_user_button.click()
+        time.sleep(1)
+        return KeysView().wait_until_appears()
+
+
+class OnboardingScreen(QObject):
+
+    def __init__(self, object_name):
+        super(OnboardingScreen, self).__init__(object_name)
+        self._back_button = Button('mainWindow_onboardingBackButton_StatusRoundButton')
+
+    @abstractmethod
+    def back(self):
+        pass
+
+
+class KeysView(OnboardingScreen):
+
+    def __init__(self):
+        super(KeysView, self).__init__('mainWindow_KeysMainView')
+        self._generate_key_button = Button('mainWindow_Generate_new_keys_StatusButton')
+
+    def generate_new_keys(self) -> 'YourProfileView':
+        self._generate_key_button.click()
+        return YourProfileView().wait_until_appears()
+
+    def back(self) -> WelcomeScreen:
+        self._back_button.click()
+        return WelcomeScreen().wait_until_appears()
+
+
+class YourProfileView(OnboardingScreen):
+
+    def __init__(self):
+        super(YourProfileView, self).__init__('mainWindow_InsertDetailsView')
+        self._upload_picture_button = Button('updatePicButton_StatusRoundButton')
+        self._profile_image = QObject('mainWindow_CanvasItem')
+        self._display_name_text_field = TextEdit('mainWindow_statusBaseInput_StatusBaseInput')
+        self._erros_text_label = TextLabel('mainWindow_errorMessage_StatusBaseText')
+        self._next_button = Button('mainWindow_Next_StatusButton')
+
+    @property
+    def profile_image(self) -> Image:
+        return self._profile_image.image
+
+    @property
+    def is_upload_picture_button_visible(self) -> bool:
+        return self._upload_picture_button.is_visible
+
+    @property
+    def error_message(self) -> str:
+        return self._erros_text_label.text if self._erros_text_label.is_visible else ''
+
+    def set_display_name(self, value: str):
+        self._display_name_text_field.clear().text = value
+        return self
+
+    def next(self) -> 'EmojiAndIconView':
+        self._next_button.click()
+        time.sleep(1)
+        return EmojiAndIconView()
+
+    def back(self):
+        self._back_button.click()
+        return KeysView().wait_until_appears()
+
+
+class EmojiAndIconView(OnboardingScreen):
+
+    def __init__(self):
+        super(EmojiAndIconView, self).__init__('mainWindow_InsertDetailsView')
+        self._profile_image = QObject('mainWindow_welcomeScreenUserProfileImage_StatusSmartIdenticon')
+        self._chat_key_text_label = TextLabel('mainWindow_insertDetailsViewChatKeyTxt_StyledText')
+        self._next_button = Button('mainWindow_Next_StatusButton')
+        self._emoji_hash = QObject('mainWindow_EmojiHash')
+        self._identicon_ring = QObject('mainWindow_userImageCopy_StatusSmartIdenticon')
+
+    @property
+    def chat_key(self) -> str:
+        return self._chat_key_text_label.text.split(':')[1].strip()
+
+    @property
+    def emoji_hash(self) -> Image:
+        return self._emoji_hash.image
+
+    @property
+    def is_identicon_ring_visible(self):
+        return self._identicon_ring.is_visible
+
+    def next(self) -> 'CreatePasswordView':
+        self._next_button.click()
+        time.sleep(1)
+        return CreatePasswordView().wait_until_appears()
+
+    def back(self):
+        self._back_button.click()
+        return YourProfileView().wait_until_appears()
+
+    def is_user_image_contains(self, text: str):
+        # To remove all artifacts, the image cropped.
+        self._profile_image.image.crop(
+            driver.UiTypes.ScreenRectangle(
+                20, 20, self._profile_image.image.width-40, self._profile_image.image.height-40
+            ))
+        return self._profile_image.image.has_text(text, constants.tesseract.text_on_profile_image)
+
+    def is_user_image_background_white(self):
+        self._profile_image.image.update_view()
+        self._profile_image.image.crop(
+            driver.UiTypes.ScreenRectangle(
+                20, 20, self._profile_image.image.width-40, self._profile_image.image.height-40
+            ))
+        return self._profile_image.image.has_color(constants.Color.WHITE)
+
+
+class CreatePasswordView(OnboardingScreen):
+
+    def __init__(self):
+        super(CreatePasswordView, self).__init__('mainWindow_CreatePasswordView')
+        self._new_password_text_field = TextEdit('mainWindow_passwordViewNewPassword')
+        self._confirm_password_text_field = TextEdit('mainWindow_passwordViewNewPasswordConfirm')
+        self._create_button = Button('mainWindow_Create_password_StatusButton')
+
+    @property
+    def is_create_password_button_enabled(self) -> bool:
+        # Verification is_enable can not be used
+        # LookupError, because of "Enable: True" in object real name, if button disabled
+        return self._create_button.is_visible
+
+    def create_password(self, value: str) -> 'ConfirmPasswordView':
+        self._new_password_text_field.clear().text = value
+        self._confirm_password_text_field.clear().text = value
+        self._create_button.click()
+        time.sleep(1)
+        return ConfirmPasswordView().wait_until_appears()
+
+    def back(self):
+        self._back_button.click()
+        return EmojiAndIconView().wait_until_appears()
+
+
+class ConfirmPasswordView(OnboardingScreen):
+
+    def __init__(self):
+        super(ConfirmPasswordView, self).__init__('mainWindow_ConfirmPasswordView')
+        self._confirm_password_text_field = TextEdit('mainWindow_confirmAgainPasswordInput')
+        self._confirm_button = Button('mainWindow_Finalise_Status_Password_Creation_StatusButton')
+
+    def confirm_password(self, value: str):
+        self._confirm_password_text_field.text = value
+        self._confirm_button.click()
+
+    def back(self):
+        self._back_button.click()
+        return CreatePasswordView().wait_until_appears()
+
+
+class TouchIDAuthView(OnboardingScreen):
+
+    def __init__(self):
+        super(TouchIDAuthView, self).__init__('mainWindow_TouchIDAuthView')
+        self._prefer_password_button = Button('mainWindow_touchIdIPreferToUseMyPasswordText')
+
+    def prefer_password(self):
+        self._prefer_password_button.click()
+        self.wait_until_hidden()
