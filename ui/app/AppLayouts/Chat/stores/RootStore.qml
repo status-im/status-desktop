@@ -134,18 +134,20 @@ QtObject {
         return msg
     }
 
+    function cleanMessageText(formattedMessage) {
+        const text = globalUtilsInst.plainText(StatusQUtils.Emoji.deparse(formattedMessage))
+        return interpretMessage(text)
+    }
+
     function sendMessage(chatId, event, text, replyMessageId, fileUrlsAndSources) {
         chatCommunitySectionModule.prepareChatContentModuleForChatId(chatId)
         const chatContentModule = chatCommunitySectionModule.getChatContentModule()
         var result = false
 
-        let textMsg = globalUtilsInst.plainText(StatusQUtils.Emoji.deparse(text))
+        const textMsg = cleanMessageText(text)
         if (textMsg.trim() !== "") {
-            textMsg = interpretMessage(textMsg)
-
-            if (event) {
+            if (event)
                 event.accepted = true
-            }
         }
 
         if (fileUrlsAndSources.length > 0) {

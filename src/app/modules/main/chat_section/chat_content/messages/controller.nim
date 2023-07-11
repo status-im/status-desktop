@@ -281,7 +281,7 @@ proc editMessage*(self: Controller, messageId: string, contentType: int, updated
 
 proc getLinkPreviewData*(self: Controller, link: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string =
   self.messageService.asyncGetLinkPreviewData(link, uuid, whiteListedSites, whiteListedImgExtensions, unfurlImages)
-
+  
 proc getSearchedMessageId*(self: Controller): string =
   return self.searchedMessageId
 

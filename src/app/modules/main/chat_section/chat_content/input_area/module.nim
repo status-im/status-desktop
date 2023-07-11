@@ -1,10 +1,12 @@
-import NimQml
+import NimQml, tables
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 
+import ../../../../../../app_service/service/message/service as message_service
+import ../../../../../../app_service/service/message/dto/link_preview
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/gif/service as gif_service
@@ -29,13 +31,14 @@ proc newModule*(
     chatService: chat_service.Service,
     communityService: community_service.Service,
     gifService: gif_service.Service,
+    messageService: message_service.Service
     ):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService)
+  result.controller = controller.newController(result, events, sectionId, chatId, belongsToCommunity, chatService, communityService, gifService, messageService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -147,3 +150,18 @@ method addToRecentsGif*(self: Module, item: GifDto) =
 
 method isFavorite*(self: Module, item: GifDto): bool =
   return self.controller.isFavorite(item)
+
+method setText*(self: Module, text: string) =
+  self.controller.setText(text)
+
+method clearLinkPreviewCache*(self: Module) {.slot.} =
+  self.controller.clearLinkPreviewCache()
+
+method updateLinkPreviewsFromCache*(self: Module, urls: seq[string]) =
+  self.view.updateLinkPreviewsFromCache(urls)
+
+method setUrls*(self: Module, urls: seq[string]) =
+  self.view.setUrls(urls)
+
+method linkPreviewsFromCache*(self: Module, urls: seq[string]): Table[string, LinkPreview] =
+  return self.controller.linkPreviewsFromCache(urls)

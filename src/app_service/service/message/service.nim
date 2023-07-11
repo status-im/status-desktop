@@ -17,6 +17,7 @@ import ./dto/reaction as reaction_dto
 import ../chat/dto/chat as chat_dto
 import ./dto/pinned_message_update as pinned_msg_update_dto
 import ./dto/removed_message as removed_msg_dto
+import ./dto/link_preview
 import ./message_cursor
 
 import ../../common/message as message_common
@@ -58,6 +59,7 @@ const SIGNAL_ENVELOPE_SENT* = "envelopeSent"
 const SIGNAL_ENVELOPE_EXPIRED* = "envelopeExpired"
 const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
 const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
+const SIGNAL_URLS_UNFURLED* = "urlsUnfurled"
 
 include async_tasks
 
@@ -120,6 +122,9 @@ type
   LinkPreviewDataArgs* = ref object of Args
     response*: JsonNode
     uuid*: string
+
+  LinkPreviewV2DataArgs* = ref object of Args
+    linkPreviews*: Table[string, LinkPreview]
 
   ReloadMessagesArgs* = ref object of Args
     communityId*: string
@@ -777,9 +782,64 @@ QtObject:
       unfurlImages: unfurlImages,
       uuid: uuid
     )
-
     self.threadpool.start(arg)
     return $genOid()
+
+  proc getTextUrls*(self: Service, text: string): seq[string] =
+    try:
+      let response = status_go.getTextUrls(text)
+      if response.result.kind != JArray:
+        warn "expected response is not an array", methodName = "getTextUrls"
+        return
+      return map(response.result.getElems(), proc(x: JsonNode): string = x.getStr())
+
+    except Exception as e:
+      error "getTextUrls failed", errName = e.name, errDesription = e.msg
+
+  proc onAsyncUnfurlUrlsFinished*(self: Service, response: string) {.slot.}=
+
+    let responseObj = response.parseJson
+    if responseObj.kind != JObject:
+      warn "expected response is not a json object", methodName = "onAsyncUnfurlUrlsFinished"
+      return
+  
+    let errMessage = responseObj["error"].getStr
+    if errMessage != "":
+      error "asyncUnfurlUrls failed", errMessage
+      return
+
+    var requestedUrlsArr: JsonNode
+    var requestedUrls: seq[string]
+    if responseObj.getProp("requestedUrls", requestedUrlsArr):
+      requestedUrls = map(requestedUrlsArr.getElems(), proc(x: JsonNode): string = x.getStr)
+
+    var linkPreviewsArr: JsonNode
+    var linkPreviews: Table[string, LinkPreview]
+    if responseObj.getProp("response", linkPreviewsArr):
+      for element in linkPreviewsArr.getElems():
+        let linkPreview = element.toLinkPreview()
+        linkPreviews[linkPreview.url] = linkPreview
+
+    for url in requestedUrls:
+      if not linkPreviews.hasKey(url):
+        linkPreviews[url] = initLinkPreview(url)
+
+    let args = LinkPreviewV2DataArgs(
+      linkPreviews: linkPreviews
+    )
+    self.events.emit(SIGNAL_URLS_UNFURLED, args)
+
+
+  proc asyncUnfurlUrls*(self: Service, urls: seq[string]) =
+    if len(urls) == 0:
+      return
+    let arg = AsyncUnfurlUrlsTaskArg(
+      tptr: cast[ByteAddress](asyncUnfurlUrlsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncUnfurlUrlsFinished",
+      urls: urls
+    )
+    self.threadpool.start(arg)
 
 # See render-inline in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
 proc renderInline(self: Service, parsedText: ParsedText, communityChats: seq[ChatDto]): string =

@@ -1,6 +1,7 @@
-import NimQml
+import NimQml, tables
 
 import ../../../../../../app_service/service/gif/dto
+import ../../../../../../app_service/service/message/dto/link_preview
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -93,4 +94,19 @@ method isFavorite*(self: AccessInterface, item: GifDto): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setText*(self: AccessInterface, text: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setUrls*(self: AccessInterface, urls: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateLinkPreviewsFromCache*(self: AccessInterface, urls: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method clearLinkPreviewCache*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method linkPreviewsFromCache*(self: AccessInterface, urls: seq[string]): Table[string, LinkPreview] {.base.} =
   raise newException(ValueError, "No implementation available")

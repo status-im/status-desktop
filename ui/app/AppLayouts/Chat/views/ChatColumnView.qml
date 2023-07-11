@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQml 2.15
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -178,7 +179,15 @@ Item {
             d.restoreInputAttachments()
         }
 
+        readonly property var updateLinkPreviews: {
+            return Backpressure.debounce(this, 250, () => {
+                                             const messageText = root.rootStore.cleanMessageText(chatInput.textInput.text)
+                                             d.activeChatContentModule.inputAreaModule.setText(messageText)
+                                         })
+        }
+
         onActiveChatContentModuleChanged: {
+            d.activeChatContentModule.inputAreaModule.clearLinkPreviewCache()
             // Call later to make sure activeUsersStore and activeMessagesStore bindings are updated
             Qt.callLater(d.restoreInputState)
         }
@@ -238,6 +247,31 @@ Item {
             }
         }
 
+        // This is a non-designed preview of unfurled urls.
+        // Should be replaced with a proper UI when it's ready.
+        //
+        // StatusListView {
+        //     Layout.fillWidth: true
+        //     Layout.maximumHeight: 200
+        //     Layout.margins: Style.current.smallPadding
+
+        //     // For a vertical list bind the imlicitHeight to contentHeight
+        //     implicitHeight: contentHeight
+        //     spacing: 10
+
+        //     model: d.activeChatContentModule.inputAreaModule.linkPreviewModel
+
+        //     delegate: StatusBaseText {
+        //         width: ListView.view.width
+        //         wrapMode: Text.WordWrap
+        //         text: {
+        //             const icon = unfurled ? (hostname !== "" ? '✅' : '❌') : '👀'
+        //             const thumbnailInfo = `thumbnail: (${thumbnailWidth}*${thumbnailHeight}, url: ${thumbnailUrl.length} symbols, data: ${thumbnailDataUri.length} symbols)`
+        //             return `${icon} ${url} (hostname: ${hostname}): ${title}\ndescription: ${description}\n${thumbnailInfo}`
+        //         }
+        //     }
+        // }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.margins: Style.current.smallPadding
@@ -289,6 +323,7 @@ Item {
                     suggestions.suggestionFilter.addSystemSuggestions: chatType === Constants.chatType.communityChat
 
                     textInput.onTextChanged: {
+                        d.updateLinkPreviews()
                         if (!!d.activeChatContentModule)
                             d.activeChatContentModule.inputAreaModule.preservedProperties.text = textInput.text
                     }
@@ -334,19 +369,19 @@ Item {
                             return
                         }
 
-                        if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
-                                                       event,
-                                                       chatInput.getTextWithPublicKeys(),
-                                                       chatInput.isReply? chatInput.replyMessageId : "",
-                                                       chatInput.fileUrlsAndSources
-                                                       ))
-                        {
-                            Global.playSendMessageSound()
+                         if (root.rootStore.sendMessage(d.activeChatContentModule.getMyChatId(),
+                                                        event,
+                                                        chatInput.getTextWithPublicKeys(),
+                                                        chatInput.isReply? chatInput.replyMessageId : "",
+                                                        chatInput.fileUrlsAndSources
+                                                        ))
+                         {
+                             Global.playSendMessageSound()
 
-                            chatInput.textInput.clear();
-                            chatInput.textInput.textFormat = TextEdit.PlainText;
-                            chatInput.textInput.textFormat = TextEdit.RichText;
-                        }
+                             chatInput.textInput.clear();
+                             chatInput.textInput.textFormat = TextEdit.PlainText;
+                             chatInput.textInput.textFormat = TextEdit.RichText;
+                         }
                     }
 
                     onKeyUpPress: {

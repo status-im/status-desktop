@@ -2,6 +2,7 @@ import NimQml
 import ./io_interface
 import ./gif_column_model
 import ./preserved_properties
+import ./link_preview_model as link_preview_model
 import ../../../../../../app_service/service/gif/dto
 
 QtObject:
@@ -14,6 +15,8 @@ QtObject:
       gifLoading: bool
       preservedProperties: PreservedProperties
       preservedPropertiesVariant: QVariant
+      linkPreviewModel: link_preview_model.Model
+      linkPreviewModelVariant: QVariant
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -22,6 +25,8 @@ QtObject:
     self.gifColumnCModel.delete
     self.preservedProperties.delete
     self.preservedPropertiesVariant.delete
+    self.linkPreviewModel.delete
+    self.linkPreviewModelVariant.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
@@ -33,6 +38,8 @@ QtObject:
     result.gifLoading = false
     result.preservedProperties = newPreservedProperties()
     result.preservedPropertiesVariant = newQVariant(result.preservedProperties)
+    result.linkPreviewModel = newLinkPreviewModel()
+    result.linkPreviewModelVariant = newQVariant(result.linkPreviewModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -183,3 +190,25 @@ QtObject:
 
   QtProperty[QVariant] preservedProperties:
     read = getPreservedProperties
+
+  proc getLinkPreviewModel*(self: View): QVariant {.slot.} =
+    return self.linkPreviewModelVariant
+
+  QtProperty[QVariant] linkPreviewModel:
+    read = getLinkPreviewModel
+
+  # Currently used to fetch link previews, but could be used elsewhere
+  proc setText*(self: View, text: string) {.slot.} =
+    self.delegate.setText(text)
+
+  proc updateLinkPreviewsFromCache*(self: View, urls: seq[string]) =
+    let linkPreviews = self.delegate.linkPreviewsFromCache(urls)
+    self.linkPreviewModel.updateLinkPreviews(linkPreviews)
+
+  proc setUrls*(self: View, urls: seq[string]) =
+    self.linkPreviewModel.setUrls(urls)
+    self.updateLinkPreviewsFromCache(urls)
+
+  proc clearLinkPreviewCache*(self: View) {.slot.} =
+    self.delegate.clearLinkPreviewCache()
+  
