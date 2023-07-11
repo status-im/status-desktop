@@ -9,7 +9,7 @@ type NetworkDto* = ref object
   layer* {.serializedFieldName("layer").}: int
   chainName* {.serializedFieldName("chainName").}: string
   rpcURL* {.serializedFieldName("rpcUrl").}: string
-  fallbackURL* {.serializedFieldName("fallbackUrl").}: string
+  fallbackURL* {.serializedFieldName("fallbackURL").}: string
   blockExplorerURL* {.serializedFieldName("blockExplorerUrl").}: string
   iconURL* {.serializedFieldName("iconUrl").}: string
   nativeCurrencyName* {.serializedFieldName("nativeCurrencyName").}: string
@@ -19,10 +19,6 @@ type NetworkDto* = ref object
   chainColor* {.serializedFieldName("chainColor").}: string
   shortName* {.serializedFieldName("shortName").}: string
   relatedChainId* {.serializedFieldName("relatedChainId").}: int
-
-type CombinedNetworkDto* = ref object
-  prod* {.serializedFieldName("Prod").}: NetworkDto
-  test* {.serializedFieldName("Test").}: NetworkDto
 
 proc `$`*(self: NetworkDto): string =
   return fmt"""Network(
@@ -51,3 +47,14 @@ proc sntSymbol*(self: NetworkDto): string =
     return "SNT"
   else:
     return "STT"
+
+type CombinedNetworkDto* = ref object
+  prod* {.serializedFieldName("Prod").}: NetworkDto
+  test* {.serializedFieldName("Test").}: NetworkDto
+
+proc `$`*(self: CombinedNetworkDto): string =
+  return fmt"""CombinedNetworkDto(
+    prod:{$self.prod},
+    test:{$self.test},
+  )"""
+

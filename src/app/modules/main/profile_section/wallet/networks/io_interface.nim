@@ -27,3 +27,6 @@ method toggleTestNetworksEnabled*(self: AccessInterface) {.base.} =
 
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method updateNetworkEndPointValues*(self: AccessInterface, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

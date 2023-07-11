@@ -82,6 +82,10 @@ ListModel {
         section: "Views"
     }
     ListElement {
+         title: "EditNetworkView"
+         section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }

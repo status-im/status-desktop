@@ -1,6 +1,6 @@
 import Tables, NimQml
 import ../io_interface as delegate_interface
-import io_interface, view, controller
+import io_interface, view, controller, combined_item, item
 import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/network/service as network_service
 import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -39,10 +39,38 @@ method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
 method refreshNetworks*(self: Module) =
-  self.view.load(self.controller.getNetworks())
+  var combinedItems: seq[CombinedItem] = @[]
+  for n in self.controller.getNetworks():
+    var prod = newItem(
+        n.prod.chainId,
+        n.prod.layer,
+        n.prod.chainName,
+        n.prod.iconUrl,
+        n.prod.shortName,
+        n.prod.chainColor,
+        n.prod.rpcURL,
+        n.prod.fallbackURL,
+        n.prod.blockExplorerURL,
+        n.prod.nativeCurrencySymbol
+      )
+    var test = newItem(
+        n.test.chainId,
+        n.test.layer,
+        n.test.chainName,
+        n.test.iconUrl,
+        n.test.shortName,
+        n.test.chainColor,
+        n.test.rpcURL,
+        n.test.fallbackURL,
+        n.test.blockExplorerURL,
+        n.test.nativeCurrencySymbol
+      )
+    combinedItems.add(initCombinedItem(prod,test,n.prod.layer))
+  self.view.setItems(combinedItems)
 
 method load*(self: Module) =
   self.controller.init()
+  self.view.load()
   self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
   self.refreshNetworks()
 
@@ -62,3 +90,6 @@ method areTestNetworksEnabled*(self: Module): bool =
 method toggleTestNetworksEnabled*(self: Module) = 
   self.controller.toggleTestNetworksEnabled()
   self.refreshNetworks()
+
+method updateNetworkEndPointValues*(self: Module, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
+  self.controller.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
