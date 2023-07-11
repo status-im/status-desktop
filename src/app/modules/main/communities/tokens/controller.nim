@@ -4,6 +4,7 @@ import ./io_interface as community_tokens_module_interface
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/network/service as networks_service
+import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/community/dto/community
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
@@ -19,13 +20,15 @@ type
     communityTokensService: community_tokens_service.Service
     transactionService: transaction_service.Service
     networksService: networks_service.Service
+    communityService: community_service.Service
 
 proc newCommunityTokensController*(
     communityTokensModule: community_tokens_module_interface.AccessInterface,
     events: EventEmitter,
     communityTokensService: community_tokens_service.Service,
     transactionService: transaction_service.Service,
-    networksService: networks_service.Service
+    networksService: networks_service.Service,
+    communityService: community_service.Service
     ): Controller =
   result = Controller()
   result.communityTokensModule = communityTokensModule
@@ -33,6 +36,7 @@ proc newCommunityTokensController*(
   result.communityTokensService = communityTokensService
   result.transactionService = transactionService
   result.networksService = networksService
+  result.communityService = communityService
 
 proc delete*(self: Controller) =
   discard
@@ -59,8 +63,14 @@ proc init*(self: Controller) =
     let args = CommunityTokenDeploymentArgs(e)
     self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityToken.communityId, args.communityToken.chainId, args.transactionHash, args.communityToken.deployState)
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
-    let args = CommunityTokenDeployedStatusArgs(e)
+    let args = OwnerTokenDeployedStatusArgs(e)
     self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityId, args.chainId, args.transactionHash, args.deployState)
+  self.events.on(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED) do(e: Args):
+    let args = OwnerTokenDeploymentArgs(e)
+    self.communityTokensModule.onOwnerTokenDeployStarted(args.ownerToken.communityId, args.ownerToken.chainId, args.transactionHash)
+  self.events.on(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS) do(e: Args):
+    let args = OwnerTokenDeployedStatusArgs(e)
+    self.communityTokensModule.onOwnerTokenDeployStateChanged(args.communityId, args.chainId, args.transactionHash, args.deployState)
   self.events.on(SIGNAL_REMOTE_DESTRUCT_STATUS) do(e: Args):
     let args = RemoteDestructArgs(e)
     self.communityTokensModule.onRemoteDestructStateChanged(args.communityToken.communityId, args.communityToken.name, args.communityToken.chainId, args.transactionHash, args.status)
@@ -73,6 +83,13 @@ proc init*(self: Controller) =
 
 proc deployContract*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, tokenImageCropInfoJson: string, chainId: int) =
   self.communityTokensService.deployContract(communityId, addressFrom, password, deploymentParams, tokenMetadata, tokenImageCropInfoJson, chainId)
+
+proc deployOwnerContracts*(self: Controller, communityId: string, addressFrom: string, password: string,
+      ownerDeploymentParams: DeploymentParameters, ownerTokenMetadata: CommunityTokensMetadataDto,
+      masterDeploymentParams: DeploymentParameters, masterTokenMetadata: CommunityTokensMetadataDto,
+      tokenImageCropInfoJson: string, chainId: int) =
+  self.communityTokensService.deployOwnerContracts(communityId, addressFrom, password, ownerDeploymentParams, ownerTokenMetadata,
+      masterDeploymentParams, masterTokenMetadata, tokenImageCropInfoJson, chainId)
 
 proc removeCommunityToken*(self: Controller, communityId: string, chainId: int, address: string) =
   self.communityTokensService.removeCommunityToken(communityId, chainId, address)
@@ -99,6 +116,9 @@ proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTo
 proc computeDeployFee*(self: Controller, chainId: int, accountAddress: string, tokenType: TokenType) =
   self.communityTokensService.computeDeployFee(chainId, accountAddress, tokenType)
 
+proc computeDeployOwnerContractsFee*(self: Controller, chainId: int, accountAddress: string) =
+  self.communityTokensService.computeDeployOwnerContractsFee(chainId, accountAddress)
+
 proc computeSelfDestructFee*(self: Controller, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string) =
   self.communityTokensService.computeSelfDestructFee(walletAndAmountList, contractUniqueKey)
 
@@ -110,3 +130,12 @@ proc computeBurnFee*(self: Controller, contractUniqueKey: string, amount: Uint25
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)
+
+proc getOwnerToken*(self: Controller, communityId: string): CommunityTokenDto =
+  return self.communityTokensService.getOwnerToken(communityId)
+
+proc getMasterToken*(self: Controller, communityId: string): CommunityTokenDto =
+  return self.communityTokensService.getMasterToken(communityId)
+
+proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  return self.communityService.getCommunityById(communityId)

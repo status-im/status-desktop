@@ -32,13 +32,17 @@ method deployAssets*(self: AccessInterface, communityId: string, address: string
                      chainId: int, imageCropInfoJson: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method deployOwnerToken*(self: AccessInterface, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string,
+                        masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method resetTempValues*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string, tokenType: TokenType) {.base.} =
+method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method computeSelfDestructFee*(self: AccessInterface, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.base.} =
@@ -60,6 +64,12 @@ method onBurnFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fi
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onOwnerTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onOwnerTokenDeployStarted*(self: AccessInterface, communityId: string, chainId: int, transactionHash: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onRemoteDestructStateChanged*(self: AccessInterface, communityId: string, tokenName: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) {.base.} =

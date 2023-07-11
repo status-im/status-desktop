@@ -342,9 +342,17 @@ proc init*(self: Controller) =
     let args = CommunityTokenDeploymentArgs(e)
     self.delegate.onCommunityTokenDeploymentStarted(args.communityToken)
 
+  self.events.on(SIGNAL_OWNER_TOKEN_DEPLOYMENT_STARTED) do(e: Args):
+    let args = OwnerTokenDeploymentArgs(e)
+    self.delegate.onOwnerTokensDeploymentStarted(args.ownerToken, args.masterToken)
+
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
     let args = CommunityTokenDeployedStatusArgs(e)
     self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.chainId, args.contractAddress, args.deployState)
+
+  self.events.on(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS) do(e: Args):
+    let args = OwnerTokenDeployedStatusArgs(e)
+    self.delegate.onOwnerTokenDeployStateChanged(args.communityId, args.chainId, args.ownerContractAddress, args.masterContractAddress, args.deployState)
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_REMOVED) do(e: Args):
     let args = CommunityTokenRemovedArgs(e)
@@ -499,8 +507,8 @@ proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTo
 proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner] =
   return self.communityTokensService.getCommunityTokenOwners(communityId, chainId, contractAddress)
 
-proc getCommunityTokenOwnerName*(self: Controller, chainId: int, contractAddress: string): string =
-  return self.communityTokensService.contractOwnerName(chainId, contractAddress)
+proc getCommunityTokenOwnerName*(self: Controller, contractOwnerAddress: string): string =
+  return self.communityTokensService.contractOwnerName(contractOwnerAddress)
 
 proc getCommunityTokenBurnState*(self: Controller, chainId: int, contractAddress: string): ContractTransactionStatus =
   return self.communityTokensService.getCommunityTokenBurnState(chainId, contractAddress)

@@ -3,6 +3,7 @@ import NimQml, json, stint, strutils, chronicles
 import ../../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/network/service as networks_service
+import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/community/dto/community
 import ../../../../../app_service/service/accounts/utils as utl
 import ../../../../../app_service/common/conversion
@@ -22,6 +23,7 @@ type
     Airdrop = 2
     SelfDestruct = 3
     Burn = 4
+    DeployOwnerToken = 5
 
 type
   Module*  = ref object of io_interface.AccessInterface
@@ -42,18 +44,23 @@ type
     tempContractAction: ContractAction
     tempContractUniqueKey: string
     tempAmount: Uint256
+    tempOwnerDeploymentParams: DeploymentParameters
+    tempMasterDeploymentParams: DeploymentParameters
+    tempOwnerTokenMetadata: CommunityTokensMetadataDto
+    tempMasterTokenMetadata: CommunityTokensMetadataDto
 
 proc newCommunityTokensModule*(
     parent: parent_interface.AccessInterface,
     events: EventEmitter,
     communityTokensService: community_tokens_service.Service,
     transactionService: transaction_service.Service,
-    networksService: networks_service.Service): Module =
+    networksService: networks_service.Service,
+    communityService: community_service.Service): Module =
   result = Module()
   result.parent = parent
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newCommunityTokensController(result, events, communityTokensService, transactionService, networksService)
+  result.controller = controller.newCommunityTokensController(result, events, communityTokensService, transactionService, networksService, communityService)
 
 method delete*(self: Module) =
   self.view.delete
@@ -151,6 +158,13 @@ method burnTokens*(self: Module, communityId: string, contractUniqueKey: string,
 
 method deployCollectibles*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
                            supply: float64, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) =
+  let ownerToken = self.controller.getOwnerToken(communityId)
+  let masterToken = self.controller.getMasterToken(communityId)
+
+  if not (ownerToken.address != "" and ownerToken.deployState == DeployState.Deployed and masterToken.address != "" and masterToken.deployState == DeployState.Deployed):
+      error "Owner token and master token not deployed"
+      return
+
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId
@@ -161,10 +175,29 @@ method deployCollectibles*(self: Module, communityId: string, fromAddress: strin
   self.tempDeploymentParams.transferable = transferable
   self.tempDeploymentParams.remoteSelfDestruct = selfDestruct
   self.tempDeploymentParams.tokenUri = utl.changeCommunityKeyCompression(communityId) & "/"
+  self.tempDeploymentParams.ownerTokenAddress = ownerToken.address
+  self.tempDeploymentParams.masterTokenAddress = masterToken.address
   self.tempTokenMetadata.tokenType = TokenType.ERC721
   self.tempTokenMetadata.description = description
   self.tempTokenImageCropInfoJson = imageCropInfoJson
   self.tempContractAction = ContractAction.Deploy
+  self.authenticate()
+
+method deployOwnerToken*(self: Module, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string,
+                        masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) =
+  self.tempAddressFrom = fromAddress
+  self.tempCommunityId = communityId
+  self.tempChainId = chainId
+  let communityDto = self.controller.getCommunityById(communityId)
+  let commName = communityDto.name
+  self.tempOwnerDeploymentParams = DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commName[0 .. 2].toUpper, supply: stint.u256("1"), infiniteSupply: false, transferable: true, remoteSelfDestruct: false, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
+  self.tempMasterDeploymentParams = DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commName[0 .. 2].toUpper, infiniteSupply: true, transferable: false, remoteSelfDestruct: true, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
+  self.tempOwnerTokenMetadata.description = ownerDescription
+  self.tempOwnerTokenMetadata.tokenType = TokenType.ERC721
+  self.tempMasterTokenMetadata.description = masterDescription
+  self.tempMasterTokenMetadata.tokenType = TokenType.ERC721
+  self.tempTokenImageCropInfoJson = imageCropInfoJson
+  self.tempContractAction = ContractAction.DeployOwnerToken
   self.authenticate()
 
 method deployAssets*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: float64, infiniteSupply: bool, decimals: int,
@@ -201,6 +234,11 @@ method onUserAuthenticated*(self: Module, password: string) =
       self.controller.selfDestructCollectibles(self.tempCommunityId, password, self.tempWalletAndAmountList, self.tempContractUniqueKey)
     elif self.tempContractAction == ContractAction.Burn:
       self.controller.burnTokens(self.tempCommunityId, password, self.tempContractUniqueKey, self.tempAmount)
+    elif self.tempContractAction == ContractAction.DeployOwnerToken:
+      self.controller.deployOwnerContracts(self.tempCommunityId, self.tempAddressFrom, password,
+                self.tempOwnerDeploymentParams, self.tempOwnerTokenMetadata,
+                self.tempMasterDeploymentParams, self.tempMasterTokenMetadata,
+                self.tempTokenImageCropInfoJson, self.tempChainId)
 
 method onDeployFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
   self.view.updateDeployFee(ethCurrency, fiatCurrency, errorCode.int)
@@ -214,8 +252,11 @@ method onAirdropFeesComputed*(self: Module, args: AirdropFeesArgs) =
 method onBurnFeeComputed*(self: Module, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) =
   self.view.updateBurnFee(ethCurrency, fiatCurrency, errorCode.int)
 
-method computeDeployFee*(self: Module, chainId: int, accountAddress: string, tokenType: TokenType) =
-  self.controller.computeDeployFee(chainId, accountAddress, tokenType)
+method computeDeployFee*(self: Module, chainId: int, accountAddress: string, tokenType: TokenType, isOwnerDeployment: bool) =
+  if isOwnerDeployment:
+    self.controller.computeDeployOwnerContractsFee(chainId, accountAddress)
+  else:
+    self.controller.computeDeployFee(chainId, accountAddress, tokenType)
 
 method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: string, contractUniqueKey: string) =
   let walletAndAmountList = self.getWalletAndAmountListFromJson(collectiblesToBurnJsonString)
@@ -236,6 +277,14 @@ proc getChainName(self: Module, chainId: int): string =
 method onCommunityTokenDeployStateChanged*(self: Module, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) =
   let url = self.createUrl(chainId, transactionHash)
   self.view.emitDeploymentStateChanged(communityId, deployState.int, url)
+
+method onOwnerTokenDeployStateChanged*(self: Module, communityId: string, chainId: int, transactionHash: string, deployState: DeployState) =
+  let url = self.createUrl(chainId, transactionHash)
+  self.view.emitOwnerTokenDeploymentStateChanged(communityId, deployState.int, url)
+
+method onOwnerTokenDeployStarted*(self: Module, communityId: string, chainId: int, transactionHash: string) =
+  let url = self.createUrl(chainId, transactionHash)
+  self.view.emitOwnerTokenDeploymentStarted(communityId, url)
 
 method onRemoteDestructStateChanged*(self: Module, communityId: string, tokenName: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) =
   let url = self.createUrl(chainId, transactionHash)

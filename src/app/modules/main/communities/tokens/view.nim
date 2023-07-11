@@ -27,6 +27,9 @@ QtObject:
   proc deployAssets*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: float, infiniteSupply: bool, decimals: int, chainId: int, imageCropInfoJson: string) {.slot.} =
     self.communityTokensModule.deployAssets(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, decimals, chainId, imageCropInfoJson)
 
+  proc deployOwnerToken*(self:View, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string, masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) {.slot.} =
+    self.communityTokensModule.deployOwnerToken(communityId, fromAddress, ownerName, ownerSymbol, ownerDescription, masterName, masterSymbol, masterDescription, chainId, imageCropInfoJson)
+
   proc removeCommunityToken*(self: View, communityId: string, chainId: int, address: string) {.slot.} =
     self.communityTokensModule.removeCommunityToken(communityId, chainId, address)
 
@@ -47,8 +50,8 @@ QtObject:
   proc airdropFeesUpdated*(self: View, json: string) {.signal.}
   proc burnFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
 
-  proc computeDeployFee*(self: View, chainId: int, accountAddress: string, tokenType: int) {.slot.} =
-    self.communityTokensModule.computeDeployFee(chainId, accountAddress, intToEnum(tokenType, TokenType.Unknown))
+  proc computeDeployFee*(self: View, chainId: int, accountAddress: string, tokenType: int, isOwnerDeployment: bool) {.slot.} =
+    self.communityTokensModule.computeDeployFee(chainId, accountAddress, intToEnum(tokenType, TokenType.Unknown), isOwnerDeployment)
 
   proc computeSelfDestructFee*(self: View, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.computeSelfDestructFee(collectiblesToBurnJsonString, contractUniqueKey)
@@ -83,3 +86,11 @@ QtObject:
   proc airdropStateChanged*(self: View, communityId: string, tokenName: string, chainName: string, status: int, url: string) {.signal.}
   proc emitAirdropStateChanged*(self: View, communityId: string, tokenName: string, chainName: string, status: int, url: string) =
     self.airdropStateChanged(communityId, tokenName, chainName, status, url)
+
+  proc ownerTokenDeploymentStarted*(self: View, communityId: string, url: string) {.signal.}
+  proc emitOwnerTokenDeploymentStarted*(self: View, communityId: string, url: string) =
+    self.ownerTokenDeploymentStarted(communityId, url)
+
+  proc ownerTokenDeploymentStateChanged*(self: View, communityId: string, status: int, url: string) {.signal.}
+  proc emitOwnerTokenDeploymentStateChanged*(self: View, communityId: string, status: int, url: string) =
+    self.ownerTokenDeploymentStateChanged(communityId, status, url)

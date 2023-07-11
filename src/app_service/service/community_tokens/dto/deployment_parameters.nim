@@ -10,6 +10,8 @@ type
     remoteSelfDestruct*: bool
     tokenUri*: string
     decimals*: int
+    ownerTokenAddress*: string
+    masterTokenAddress*: string
 
 proc `%`*(x: DeploymentParameters): JsonNode =
   result = newJobject()
@@ -21,5 +23,5 @@ proc `%`*(x: DeploymentParameters): JsonNode =
   result["remoteSelfDestruct"] = %x.remoteSelfDestruct
   result["tokenUri"] = %x.tokenUri
   result["decimals"] = %x.decimals
-
-
+  result["ownerTokenAddress"] = %x.ownerTokenAddress
+  result["masterTokenAddress"] = %x.masterTokenAddress
