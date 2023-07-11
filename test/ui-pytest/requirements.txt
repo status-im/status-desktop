@@ -1,2 +1,3 @@
 pytest==7.4.0
 psutil==5.9.4
+pillow==8.4.0
