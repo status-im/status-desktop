@@ -11,6 +11,7 @@ from PIL import ImageGrab
 import configs
 import constants
 import driver
+from configs.system import IS_LIN
 from scripts.tools.capture.ocv import Ocv
 from scripts.utils.system_path import SystemPath
 
@@ -47,7 +48,10 @@ class Image:
     def update_view(self):
         _logger.info('Image view updated')
         rect = driver.object.globalBounds(driver.waitForObject(self.object_name))
-        img = ImageGrab.grab(bbox=(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height))
+        img = ImageGrab.grab(
+            bbox=(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height),
+            xdisplay=":0" if IS_LIN else None
+        )
         self._view = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2RGB)
 
     def save(self, path: SystemPath, force: bool = False):
@@ -55,11 +59,6 @@ class Image:
         if path.exists() and not force:
             raise FileExistsError(path)
         cv2.imwrite(str(path), self.view)
-
-    def show(self):
-        cv2.imshow('image', self.view)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
 
     def compare(
             self, expected: typing.Union[SystemPath, 'Image'], threshold: float = 0.99, verify=True) -> bool:

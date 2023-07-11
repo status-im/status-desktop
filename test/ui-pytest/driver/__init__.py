@@ -1,11 +1,17 @@
 import squishtest  # noqa
 
 import configs
+from . import aut
+from . import context
 from . import objects_access
+from . import server
 from . import toplevel_window
 
 imports = {module.__name__: module for module in [
+    aut,
+    context,
     objects_access,
+    server,
     toplevel_window
 ]}
 
