@@ -1,27 +1,29 @@
 import Tables, NimQml, sequtils, sugar
 
-import ../../../../../../app_service/service/network/dto
+#import ../../../../../../app_service/service/network/dto
 import ./io_interface
-import ./model
-import ./item
+#import ./item
+import ./combined_item
+import ./combined_model
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      networks: Model
+      combinedNetworks: CombinedModel
       areTestNetworksEnabled: bool
 
   proc setup(self: View) =
     self.QObject.setup
 
   proc delete*(self: View) =
+    self.combinedNetworks.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.delegate = delegate
-    result.networks = newModel()
+    result.combinedNetworks = newCombinedModel()
     result.setup()
 
   proc areTestNetworksEnabledChanged*(self: View) {.signal.}
@@ -42,29 +44,21 @@ QtObject:
     self.areTestNetworksEnabled = not self.areTestNetworksEnabled
     self.areTestNetworksEnabledChanged()
 
-  proc networksChanged*(self: View) {.signal.}
+  proc combinedNetworksChanged*(self: View) {.signal.}
+  proc getCombinedNetworks(self: View): QVariant {.slot.} =
+    return newQVariant(self.combinedNetworks)
+  QtProperty[QVariant] combinedNetworks:
+    read = getCombinedNetworks
+    notify = combinedNetworksChanged
 
-  proc getNetworks(self: View): QVariant {.slot.} =
-    return newQVariant(self.networks)
-
-  QtProperty[QVariant] networks:
-    read = getNetworks
-    notify = networksChanged
-
-  proc load*(self: View, networks: seq[NetworkDto]) =
-    var items: seq[Item] = @[]
-    for n in networks:
-      items.add(initItem(
-        n.chainId,
-        n.layer,
-        n.chainName,
-        n.iconUrl,
-        n.shortName,
-        n.chainColor
-      ))
-
-    self.networks.setItems(items)
+  proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc setItems*(self: View, combinedItems: seq[CombinedItem]) =
+    self.combinedNetworks.setItems(combinedItems)
+
   proc getAllNetworksSupportedPrefix*(self: View): string {.slot.} =
-    return self.networks.getAllNetworksSupportedPrefix()
+    return self.combinedNetworks.getAllNetworksSupportedPrefix(self.areTestNetworksEnabled)
+
+  proc updateNetworkEndPointValues*(self: View, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
+    self.delegate.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)

@@ -11,7 +11,7 @@ QtObject {
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
 
     readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
-    property var networks: networksModule.networks
+    readonly property var combinedNetworks: networksModule.combinedNetworks
 
     function toggleTestNetworksEnabled(){
         networksModule.toggleTestNetworksEnabled()
@@ -49,5 +49,13 @@ QtObject {
 
     function runAddAccountPopup() {
         walletSection.runAddAccountPopup(false)
+    }
+
+    function evaluateRpcEndPoint(url) {
+        // TODO: connect with nim api once its ready
+    }
+
+    function updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl) {
+        networksModule.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
     }
 }

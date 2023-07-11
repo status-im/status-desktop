@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 import utils 1.0
 import shared 1.0
@@ -25,15 +26,21 @@ SettingsContentBase {
 
     readonly property int mainViewIndex: 0;
     readonly property int networksViewIndex: 1;
-    readonly property int accountOrderViewIndex: 2;
-    readonly property int accountViewIndex: 3;
+    readonly property int editNetworksViewIndex: 2;
+    readonly property int accountOrderViewIndex: 3;
+    readonly property int accountViewIndex: 4;
 
     Component.onCompleted: {
         root.titleRowComponentLoader.sourceComponent = addNewAccountButtonComponent
     }
 
     function resetStack() {
-        stackContainer.currentIndex = mainViewIndex;
+        if(stackContainer.currentIndex === root.editNetworksViewIndex) {
+            stackContainer.currentIndex = root.networksViewIndex
+        }
+        else {
+            stackContainer.currentIndex = mainViewIndex;
+        }
     }
 
     StackLayout {
@@ -46,6 +53,9 @@ SettingsContentBase {
             root.rootStore.backButtonName = ""
             root.sectionTitle = qsTr("Wallet")
             root.titleRowComponentLoader.sourceComponent = undefined
+            root.titleRowLeftComponentLoader.sourceComponent = undefined
+            root.titleRowLeftComponentLoader.visible = false
+            root.titleLayout.spacing = 5
 
             if (currentIndex == root.mainViewIndex) {
                 root.titleRowComponentLoader.sourceComponent = addNewAccountButtonComponent
@@ -54,6 +64,13 @@ SettingsContentBase {
             if(currentIndex == root.networksViewIndex) {
                 root.rootStore.backButtonName = qsTr("Wallet")
                 root.sectionTitle = qsTr("Networks")
+            }
+            if(currentIndex == root.editNetworksViewIndex) {
+                root.rootStore.backButtonName = qsTr("Networks")
+                root.sectionTitle = qsTr("Edit %1").arg(!!editNetwork.combinedNetwork.prod && !!editNetwork.combinedNetwork.prod.chainName ? editNetwork.combinedNetwork.prod.chainName: "")
+                root.titleRowLeftComponentLoader.visible = true
+                root.titleRowLeftComponentLoader.sourceComponent = networkIcon
+                root.titleLayout.spacing = 12
             }
             else if(currentIndex == root.accountViewIndex) {
                 root.rootStore.backButtonName = qsTr("Wallet")
@@ -88,14 +105,33 @@ SettingsContentBase {
         }
 
         NetworksView {
+            Layout.fillWidth: true
+
             walletStore: root.walletStore
 
             onGoBack: {
                 stackContainer.currentIndex = mainViewIndex
             }
+
+            onEditNetwork: {
+                editNetwork.combinedNetwork = network
+                stackContainer.currentIndex = editNetworksViewIndex
+            }
+        }
+
+        EditNetworkView {
+            id: editNetwork
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            networksModule: root.walletStore.networksModule
+            onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url)
+            onUpdateNetworkValues: root.walletStore.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl)
         }
 
         AccountOrderView {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             walletStore: root.walletStore
             onGoBack: {
                 stackContainer.currentIndex = mainViewIndex
@@ -121,6 +157,16 @@ SettingsContentBase {
             StatusButton {
                 text: qsTr("Add new account")
                 onClicked: root.walletStore.runAddAccountPopup()
+            }
+        }
+
+        Component {
+            id: networkIcon
+            StatusRoundedImage {
+                width: 28
+                height: 28
+                image.source: Style.svg(!!editNetwork.combinedNetwork.prod && !!editNetwork.combinedNetwork.prod.iconUrl ? editNetwork.combinedNetwork.prod.iconUrl: "")
+                image.fillMode: Image.PreserveAspectCrop
             }
         }
     }
