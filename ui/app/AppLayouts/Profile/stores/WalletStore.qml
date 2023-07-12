@@ -52,7 +52,7 @@ QtObject {
     }
 
     function evaluateRpcEndPoint(url) {
-        // TODO: connect with nim api once its ready
+        return networksModule.fetchChainIdForUrl(url)
     }
 
     function updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl) {

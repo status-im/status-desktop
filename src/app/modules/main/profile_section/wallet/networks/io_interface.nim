@@ -30,3 +30,9 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 
 method updateNetworkEndPointValues*(self: AccessInterface, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method fetchChainIdForUrl*(self: AccessInterface, url: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method chainIdFetchedForUrl*(self: AccessInterface, url: string, chainId: int, success: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

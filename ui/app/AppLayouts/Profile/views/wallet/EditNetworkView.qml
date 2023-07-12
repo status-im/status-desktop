@@ -38,7 +38,7 @@ ColumnLayout {
             id: editLiveNetwork
             network: !!root.combinedNetwork ? root.combinedNetwork.prod: null
             networksModule: root.networksModule
-            onEvaluateEndPoint: root.evaluateRpcEndPoint(url)
+            onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url)
             onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl)
         }
 
@@ -46,7 +46,7 @@ ColumnLayout {
             id: editTestNetwork
             network: !!root.combinedNetwork ? root.combinedNetwork.test: null
             networksModule: root.networksModule
-            onEvaluateEndPoint: root.evaluateRpcEndPoint(url)
+            onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url)
             onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl)
         }
     }

@@ -62,3 +62,8 @@ QtObject:
 
   proc updateNetworkEndPointValues*(self: View, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
     self.delegate.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+
+  proc fetchChainIdForUrl*(self: View, url: string) {.slot.} = 
+    self.delegate.fetchChainIdForUrl(url)
+
+  proc chainIdFetchedForUrl*(self: View, url: string, chainId: int, success: bool) {.signal.}
