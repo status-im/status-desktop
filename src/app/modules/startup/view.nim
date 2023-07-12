@@ -104,7 +104,7 @@ QtObject:
 
   proc onSecondaryActionClicked*(self: View) {.slot.} =
     self.delegate.onSecondaryActionClicked()
-  
+
   proc onTertiaryActionClicked*(self: View) {.slot.} =
     self.delegate.onTertiaryActionClicked()
 
@@ -373,9 +373,3 @@ QtObject:
 
   proc validateLocalPairingConnectionString*(self: View, connectionString: string): string {.slot.} =
     return self.delegate.validateLocalPairingConnectionString(connectionString)
-
-  proc onReencryptionProcessStarted*(self: View) =
-    self.setAppState(AppState.AppEncryptionProcessState)
-
-  proc onReencryptionProcessFinished*(self: View) =
-    self.setAppState(AppState.AppLoadingState)

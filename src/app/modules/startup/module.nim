@@ -163,6 +163,9 @@ method moveToAppState*[T](self: Module[T]) =
 method moveToStartupState*[T](self: Module[T]) =
   self.view.setAppState(AppState.StartupState)
 
+proc moveToAppEncryptionProcessState[T](self: Module[T]) =
+  self.view.setAppState(AppState.AppEncryptionProcessState)
+
 method startUpUIRaised*[T](self: Module[T]) =
   self.view.startUpUIRaised()
 
@@ -412,7 +415,6 @@ method onNodeLogin*[T](self: Module[T], error: string) =
           return
         self.delegate.logout()
         self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
-        self.moveToStartupState()
     else:
       let err = self.delegate.userLoggedIn(recoverAccount = false)
       if err.len > 0:
@@ -533,7 +535,13 @@ method onLocalPairingStatusUpdate*[T](self: Module[T], status: LocalPairingStatu
   self.view.onLocalPairingStatusUpdate(status)
 
 method onReencryptionProcessStarted*[T](self: Module[T]) =
-  self.view.onReencryptionProcessStarted()
+  self.moveToAppEncryptionProcessState()
 
 method onReencryptionProcessFinished*[T](self: Module[T]) =
-  self.view.onReencryptionProcessFinished()
+  let currStateObj = self.view.currentStartupStateObj()
+  if not currStateObj.isNil and
+    currStateObj.flowType() == FlowType.LostKeycardConvertToRegularAccount and
+    currStateObj.stateType() == StateType.LoginKeycardConvertedToRegularAccount:
+      self.moveToStartupState()
+      return
+  self.moveToLoadingAppState()
