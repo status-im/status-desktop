@@ -2,6 +2,7 @@ import logging
 
 import pytest
 
+import configs
 import driver
 
 _logger = logging.getLogger(__name__)
