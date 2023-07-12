@@ -11,7 +11,7 @@ from scripts.utils import system_path
 @pytest.fixture()
 def aut() -> AUT:
     if not configs.APP_DIR.exists():
-        pytest.exit(f"Application not found: {AUT}")
+        pytest.exit(f"Application not found: {configs.APP_DIR}")
     _aut = AUT()
     yield _aut
 

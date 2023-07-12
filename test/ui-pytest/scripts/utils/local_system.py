@@ -75,18 +75,41 @@ def execute(
         shell=True,
         stderr=subprocess.PIPE,
         stdout=subprocess.PIPE,
-        timeout_sec=None,
+        check=False
+):
+    def _is_process_exists(_process) -> bool:
+        return _process.poll() is None
+
+    def _wait_for_execution(_process):
+        while _is_process_exists(_process):
+            time.sleep(1)
+
+    def _get_output(_process):
+        _wait_for_execution(_process)
+        return _process.communicate()
+
+    command = " ".join(str(atr) for atr in command)
+    _logger.info(f'Execute: {command}')
+    process = subprocess.Popen(command, shell=shell, stderr=stderr, stdout=stdout)
+    if check and process.returncode != 0:
+        stdout, stderr = _get_output(process)
+        raise RuntimeError(stderr)
+    return process.pid
+
+
+def run(
+        command: list,
+        shell=True,
+        stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        timeout_sec=configs.timeouts.PROCESS_TIMEOUT_SEC,
         check=True
 ):
     command = " ".join(str(atr) for atr in command)
     _logger.info(f'Execute: {command}')
-    run = subprocess.Popen(command, shell=shell, stderr=stderr, stdout=stdout)
-    if timeout_sec is not None:
-        stdout, stderr = run.communicate()
-        if check and run.returncode != 0:
-            raise subprocess.CalledProcessError(run.returncode, command, stdout, stderr)
-        return subprocess.CompletedProcess(command, run.returncode, stdout, stderr)
-    return run.pid
+    process = subprocess.run(command, shell=shell, stderr=stderr, stdout=stdout, timeout=timeout_sec)
+    if check and process.returncode != 0:
+        raise subprocess.CalledProcessError(process.returncode, command, process.stdout, process.stderr)
 
 
 def is_mac():
