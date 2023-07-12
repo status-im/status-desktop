@@ -1,4 +1,4 @@
-import NimQml, sequtils, chronicles, os, uuids
+import NimQml, sequtils, sugar, chronicles, os, uuids
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -50,6 +50,7 @@ type
   AppController* = ref object of RootObj
     storeDefaultKeyPair: bool
     syncKeycardBasedOnAppWalletState: bool
+    applyKeycardReplacement: bool
     changedKeycardUids: seq[tuple[oldKcUid: string, newKcUid: string]] # used in case user unlocked keycard during onboarding using seed phrase
     statusFoundation: StatusFoundation
     notificationsManager*: NotificationsManager
@@ -108,7 +109,7 @@ type
 proc load(self: AppController)
 proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController)
 proc buildAndRegisterUserProfile(self: AppController)
-proc tryKeycardSyncWithTheAppState(self: AppController)
+proc applyNecessaryActionsAfterLoggingIn(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
@@ -117,6 +118,7 @@ proc logout*(self: AppController)
 proc finishAppLoading*(self: AppController)
 proc storeDefaultKeyPairForNewKeycardUser*(self: AppController)
 proc syncKeycardBasedOnAppWalletStateAfterLogin*(self: AppController)
+proc applyKeycardReplacementAfterLogin*(self: AppController)
 proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AppController, oldKeycardUid: string, newKeycardUid: string)
 proc removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AppController)
 
@@ -142,8 +144,9 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
   result.storeDefaultKeyPair = false
   result.syncKeycardBasedOnAppWalletState = false
+  result.applyKeycardReplacement = false
   result.statusFoundation = statusFoundation
-  
+
   # Preparing settings service to be exposed later as global QObject
   result.settingsService = settings_service.newService(statusFoundation.events)
   result.appSettingsVariant = newQVariant(result.settingsService)
@@ -154,7 +157,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
   result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
   result.userProfileVariant = newQVariant(singletonInstance.userProfile)
-  result.globalUtilsVariant = newQVariant(singletonInstance.utils)  
+  result.globalUtilsVariant = newQVariant(singletonInstance.utils)
 
   # Services
   result.generalService = general_service.newService(statusFoundation.events, statusFoundation.threadpool)
@@ -163,11 +166,11 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService, statusFoundation.events)
   result.keychainService = keychain_service.newService(statusFoundation.events)
-  result.accountsService = accounts_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+  result.accountsService = accounts_service.newService(statusFoundation.events, statusFoundation.threadpool,
     statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, 
+    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService,
     result.activityCenterService
   )
   result.chatService = chat_service.newService(statusFoundation.events, statusFoundation.threadpool, result.contactsService)
@@ -386,7 +389,7 @@ proc startupDidLoad*(self: AppController) =
   self.startupModule.startUpUIRaised()
 
 proc mainDidLoad*(self: AppController) =
-  self.tryKeycardSyncWithTheAppState()
+  self.applyNecessaryActionsAfterLoggingIn()
   self.startupModule.moveToAppState()
   self.checkForStoringPasswordToKeychain()
 
@@ -509,15 +512,49 @@ proc buildAndRegisterUserProfile(self: AppController) =
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)
 
-proc tryKeycardSyncWithTheAppState(self: AppController) =
+proc doKeycardReplacement(self: AppController) =
+  let keyUid = singletonInstance.userProfile.getKeyUid()
+  let keypair = self.walletAccountService.getKeypairByKeyUid(keyUid)
+  if keypair.isNil:
+    error "cannot resolve appropriate keypair for logged in user"
+    return
+  let (_, flowEvent) = self.keycardService.getLastReceivedKeycardData()
+  let instanceUid = flowEvent.instanceUID
+  let pin = self.startupModule.getPin()
+  if instanceUid.len == 0 or
+    keyUid != flowEvent.keyUid or
+    pin.len != PINLengthForStatusApp:
+      info "keycard replacement process is not fully completed, try the same again"
+      return
+  # we have to delete all keycards with the same key uid to cover the case if user had more then a single keycard for the same keypair
+  discard self.walletAccountService.deleteAllKeycardsWithKeyUid(singletonInstance.userProfile.getKeyUid())
+  # store new keycard with accounts, in this context no need to check if accounts match the default Status derivation path,
+  # cause otherwise we wouldn't be here (cannot have keycard profile with any such path)
+  let accountsAddresses = keypair.accounts.filter(acc => not acc.isChat).map(acc => acc.address)
+  let keycard = KeycardDto(
+    keycardUid: instanceUid,
+    keycardName: keypair.name,
+    keyUid: keyUid,
+    accountsAddresses: accountsAddresses
+  )
+  discard self.walletAccountService.addKeycardOrAccounts(keycard, accountsComingFromKeycard = true)
+  # store metadata to a Keycard
+  let accountsPathsToStore = keypair.accounts.filter(acc => not acc.isChat).map(acc => acc.path)
+  self.keycardService.startStoreMetadataFlow(keypair.name, self.startupModule.getPin(), accountsPathsToStore)
+  info "keycard replacement fully done"
+
+proc applyNecessaryActionsAfterLoggingIn(self: AppController) =
+  if self.applyKeycardReplacement:
+    self.doKeycardReplacement()
+    return
   ##############################################################################                                             store def   kc sync with app    kc uid
   ## Onboarding flows sync keycard state after login                                                                          keypair  | (inc. kp store)  |  update
   ## `I’m new to Status` -> `Generate new keys`                                                                          ->     na     |       na         |    na
-  ## `I’m new to Status` -> `Generate keys for a new Keycard`                                                            ->    yes     |       no         |    no 
+  ## `I’m new to Status` -> `Generate keys for a new Keycard`                                                            ->    yes     |       no         |    no
   ## `I’m new to Status` -> `Import a seed phrase` -> `Import a seed phrase`                                             ->     na     |       na         |    na
-  ## `I’m new to Status` -> `Import a seed phrase` -> `Import a seed phrase into a new Keycard`                          ->    yes     |       no         |    no 
-  ## 
-  ## `I already use Status` -> `Scan sync code`                                                                          -> flow not developed yet 
+  ## `I’m new to Status` -> `Import a seed phrase` -> `Import a seed phrase into a new Keycard`                          ->    yes     |       no         |    no
+  ##
+  ## `I already use Status` -> `Scan sync code`                                                                          -> flow not developed yet
   ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (fetched)                             ->     no     |      yes         |    no
   ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (unlock via puk, fetched)             ->     no     |      yes         |    no
   ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (unlock via seed phrase, fetched)     ->     no     |      yes         |   yes (kc details should be fetched and set to db while recovering, that's the reason why)
@@ -525,16 +562,16 @@ proc tryKeycardSyncWithTheAppState(self: AppController) =
   ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (unlock via puk, not fetched)         ->     no     |      yes         |    no
   ## `I already use Status` -> `I don’t have other device` -> `Login with Keycard` (unlock via seed phrase, not fetched) ->     no     |      yes         |    no
   ## `I already use Status` -> `I don’t have other device` -> `Enter a seed phrase`                                      ->     na     |       na         |    na
-  ## 
+  ##
   ## `Login`                                                                                                             ->     na     |       na         |    na
   ## `Login` -> if card was unlocked via puk                                                                             ->     na     |       na         |    na
-  ## `Login` -> if card was unlocked via seed phrase                                                                     ->     no     |       no         |   yes  
+  ## `Login` -> if card was unlocked via seed phrase                                                                     ->     no     |       no         |   yes
   ## `Login` -> `Create replacement Keycard with seed phrase`                                                            ->     no     |      yes         |    no (we don't know which kc is replaced if user has more kc for the same kp)
   ##############################################################################
-  if singletonInstance.userProfile.getIsKeycardUser() or 
+  if singletonInstance.userProfile.getIsKeycardUser() or
     self.syncKeycardBasedOnAppWalletState:
       let data = SharedKeycarModuleArgs(
-        pin: self.startupModule.getPin(), 
+        pin: self.startupModule.getPin(),
         keyUid: singletonInstance.userProfile.getKeyUid()
       )
       self.statusFoundation.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_TRY_KEYCARD_SYNC, data)
@@ -545,14 +582,17 @@ proc tryKeycardSyncWithTheAppState(self: AppController) =
     discard self.walletAccountService.updateKeycardUid(oldUid, newUid)
     discard self.walletAccountService.setKeycardUnlocked(singletonInstance.userProfile.getKeyUid(), newUid)
 
-proc storeDefaultKeyPairForNewKeycardUser*(self: AppController) = 
+proc storeDefaultKeyPairForNewKeycardUser*(self: AppController) =
   self.storeDefaultKeyPair = true
 
-proc syncKeycardBasedOnAppWalletStateAfterLogin*(self: AppController) = 
+proc syncKeycardBasedOnAppWalletStateAfterLogin*(self: AppController) =
   self.syncKeycardBasedOnAppWalletState = true
 
-proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AppController, oldKeycardUid: string, newKeycardUid: string) = 
+proc applyKeycardReplacementAfterLogin*(self: AppController) =
+  self.applyKeycardReplacement = true
+
+proc addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AppController, oldKeycardUid: string, newKeycardUid: string) =
   self.changedKeycardUids.add((oldKcUid: oldKeycardUid, newKcUid: newKeycardUid))
 
-proc removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AppController) = 
+proc removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AppController) =
   self.changedKeycardUids = @[]

@@ -511,6 +511,9 @@ method storeDefaultKeyPairForNewKeycardUser*[T](self: Module[T]) =
 method syncKeycardBasedOnAppWalletStateAfterLogin*[T](self: Module[T]) =
   self.delegate.syncKeycardBasedOnAppWalletStateAfterLogin()
 
+method applyKeycardReplacementAfterLogin*[T](self: Module[T]) =
+  self.delegate.applyKeycardReplacementAfterLogin()
+
 method addToKeycardUidPairsToCheckForAChangeAfterLogin*[T](self: Module[T], oldKeycardUid: string, newKeycardUid: string) =
   self.delegate.addToKeycardUidPairsToCheckForAChangeAfterLogin(oldKeycardUid, newKeycardUid)
 

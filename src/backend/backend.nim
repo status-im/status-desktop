@@ -255,6 +255,9 @@ rpc(updateKeycardUID, "accounts"):
 rpc(deleteKeycard, "accounts"):
   keycardUid: string
 
+rpc(deleteAllKeycardsWithKeyUID, "accounts"):
+  keyUid: string
+
 rpc(updateAccountPosition, "accounts"):
   address: string
   position: int

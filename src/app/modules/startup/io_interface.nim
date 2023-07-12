@@ -42,7 +42,7 @@ method moveToStartupState*(self: AccessInterface) {.base.} =
 
 method onBackActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-    
+
 method onPrimaryActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -151,14 +151,17 @@ method storeDefaultKeyPairForNewKeycardUser*(self: AccessInterface) {.base.} =
 method syncKeycardBasedOnAppWalletStateAfterLogin*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AccessInterface, oldKeycardUid: string, 
+method applyKeycardReplacementAfterLogin*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addToKeycardUidPairsToCheckForAChangeAfterLogin*(self: AccessInterface, oldKeycardUid: string,
   newKeycardUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method removeAllKeycardUidPairsForCheckingForAChangeAfterLogin*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onFetchingFromWakuMessageReceived*(self: AccessInterface, backedUpMsgClock: uint64, section: string, 
+method onFetchingFromWakuMessageReceived*(self: AccessInterface, backedUpMsgClock: uint64, section: string,
   totalMessages: int, loadedMessages: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -197,5 +200,6 @@ type
     c.finishAppLoading()
     c.storeDefaultKeyPairForNewKeycardUser()
     c.syncKeycardBasedOnAppWalletStateAfterLogin()
+    c.applyKeycardReplacementAfterLogin()
     c.addToKeycardUidPairsToCheckForAChangeAfterLogin(string, string)
     c.removeAllKeycardUidPairsForCheckingForAChangeAfterLogin()
