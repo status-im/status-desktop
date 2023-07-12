@@ -195,8 +195,11 @@ Loader {
         case Constants.messageContentType.fetchMoreMessagesButton:
             return fetchMoreMessagesButtonComponent
         case Constants.messageContentType.systemMessagePrivateGroupType: // no break
-        case Constants.messageContentType.systemMessageMutualStateUpdate:
-            return systemMessageComponent
+            return systemMessageGroupComponent
+        case Constants.messageContentType.systemMessageMutualEventSent:
+        case Constants.messageContentType.systemMessageMutualEventAccepted:
+        case Constants.messageContentType.systemMessageMutualEventRemoved:
+            return systemMessageMutualEventComponent
         case Constants.messageContentType.systemMessagePinnedMessage:
             return systemMessagePinnedMessageComponent
         case Constants.messageContentType.gapType:
@@ -271,8 +274,12 @@ Loader {
                 return StatusMessage.ContentType.DiscordMessage;
             case Constants.messageContentType.systemMessagePinnedMessage:
                 return StatusMessage.ContentType.SystemMessagePinnedMessage;
-            case Constants.messageContentType.systemMessageMutualStateUpdate:
-                return StatusMessage.ContentType.SystemMessageMutualStateUpdate;
+            case Constants.messageContentType.systemMessageMutualEventSent:
+                return StatusMessage.ContentType.SystemMessageMutualEventSent;
+            case Constants.messageContentType.systemMessageMutualEventAccepted:
+                return StatusMessage.ContentType.SystemMessageMutualEventAccepted;
+            case Constants.messageContentType.systemMessageMutualEventRemoved:
+                return StatusMessage.ContentType.SystemMessageMutualEventRemoved;
             case Constants.messageContentType.fetchMoreMessagesButton:
             case Constants.messageContentType.chatIdentifier:
             case Constants.messageContentType.unknownContentType:
@@ -348,7 +355,7 @@ Loader {
     }
 
     Component {
-        id: systemMessageComponent
+        id: systemMessageGroupComponent
 
         StyledText {
             wrapMode: Text.Wrap
@@ -368,6 +375,39 @@ Loader {
                         `${systemMessageText}`+
                         `</body>`+
                         `</html>`;
+            }
+            font.pixelSize: 14
+            color: Style.current.secondaryText
+            width: parent.width - 120
+            horizontalAlignment: Text.AlignHCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            textFormat: Text.RichText
+            topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+        }
+    }
+
+    Component{
+        id: systemMessageMutualEventComponent
+
+        StyledText {
+            text: {
+                var displayName = root.amISender ? Utils.getContactDetailsAsJson(chatId, false).displayName : root.senderDisplayName
+                switch (root.messageContentType) {
+                    case Constants.messageContentType.systemMessageMutualEventSent:
+                        return root.amISender ?
+                            qsTr("You sent a contact request to %1").arg(displayName) :
+                            qsTr("%1 sent you a contact request").arg(displayName)
+                    case Constants.messageContentType.systemMessageMutualEventAccepted:
+                        return root.amISender ?
+                            qsTr("You accepted %1's contact request").arg(displayName) :
+                            qsTr("%1 accepted your contact request").arg(displayName)
+                    case Constants.messageContentType.systemMessageMutualEventRemoved:
+                        return root.amISender ?
+                            qsTr("You removed %1 as a contact").arg(displayName) :
+                            qsTr("%1 removed you as a contact").arg(displayName)
+                    default:
+                        return root.messageText
+                }
             }
             font.pixelSize: 14
             color: Style.current.secondaryText
@@ -481,7 +521,9 @@ Loader {
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessagePrivateGroupType ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessagePinnedMessage ||
-                            root.prevMessageContentType === Constants.messageContentType.systemMessageMutualStateUpdate ||
+                            root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventSent ||
+                            root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventAccepted ||
+                            root.prevMessageContentType === Constants.messageContentType.systemMessageMutualEventRemoved ||
                             root.senderId !== root.prevMessageSenderId
                 isActiveMessage: d.isMessageActive
                 topPadding: showHeader ? Style.current.halfPadding : 0

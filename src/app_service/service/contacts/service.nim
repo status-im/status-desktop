@@ -54,6 +54,9 @@ type
   RpcResponseArgs* = ref object of Args
     response*: RpcResponse[JsonNode]
 
+  ReloadOneToOneArgs* = ref object of Args
+    sectionId*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
 const SIGNAL_CONTACT_ADDED* = "contactAdded"
@@ -76,7 +79,7 @@ const SIGNAL_CONTACT_VERIFICATION_ACCEPTED* = "contactVerificationRequestAccepte
 const SIGNAL_CONTACT_VERIFICATION_ADDED* = "contactVerificationRequestAdded"
 const SIGNAL_CONTACT_VERIFICATION_UPDATED* = "contactVerificationRequestUpdated"
 const SIGNAL_CONTACT_INFO_REQUEST_FINISHED* = "contactInfoRequestFinished"
-const SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND* = "chatRequestUpdateAfterSend"
+const SIGNAL_RELOAD_ONE_TO_ONE_CHAT* = "reloadOneToOneChat"
 
 type
   ContactsGroup* {.pure.} = enum
@@ -469,7 +472,7 @@ QtObject:
 
       self.parseContactsResponse(response)
       self.activityCenterService.parseActivityCenterResponse(response)
-      self.events.emit(SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND, RpcResponseArgs(response: response))
+      self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
 
     except Exception as e:
       error "an error occurred while sending contact request", msg = e.msg
@@ -489,7 +492,7 @@ QtObject:
 
       self.parseContactsResponse(response)
       self.activityCenterService.parseActivityCenterResponse(response)
-      self.events.emit(SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND, RpcResponseArgs(response: response))
+      self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
 
     except Exception as e:
       error "an error occurred while accepting contact request", msg=e.msg
@@ -509,7 +512,6 @@ QtObject:
 
       self.parseContactsResponse(response)
       self.activityCenterService.parseActivityCenterResponse(response)
-      self.events.emit(SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND, RpcResponseArgs(response: response))
 
     except Exception as e:
       error "an error occurred while dismissing contact request", msg=e.msg
@@ -549,15 +551,15 @@ QtObject:
     self.parseContactsResponse(response)
     self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contactId: contact.id))
 
-  proc removeContact*(self: Service, publicKey: string): RpcResponse[JsonNode] =
+  proc removeContact*(self: Service, publicKey: string) =
     let response = status_contacts.retractContactRequest(publicKey)
     if not response.error.isNil:
       error "error removing contact ", msg = response.error.message
       return
 
+    self.events.emit(SIGNAL_RELOAD_ONE_TO_ONE_CHAT, ReloadOneToOneArgs(sectionId: publicKey))
     self.parseContactsResponse(response)
     self.activityCenterService.parseActivityCenterResponse(response)
-    return response
 
   proc ensResolved*(self: Service, jsonObj: string) {.slot.} =
     let jsonObj = jsonObj.parseJson()
