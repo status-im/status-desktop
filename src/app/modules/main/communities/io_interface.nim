@@ -118,6 +118,9 @@ method communityMuted*(self: AccessInterface, communityId: string, muted: bool) 
 method communityAccessRequested*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityAccessFailed*(self: AccessInterface, communityId: string, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method requestExtractDiscordChannelsAndCategories*(self: AccessInterface, filesToImport: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 

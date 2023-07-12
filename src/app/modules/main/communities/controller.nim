@@ -90,6 +90,10 @@ proc init*(self: Controller) =
     let args = CommunityRequestArgs(e)
     self.delegate.communityAccessRequested(args.communityRequest.communityId)
 
+  self.events.on(SIGNAL_COMMUNITY_MY_REQUEST_FAILED) do(e:Args):
+    let args = CommunityRequestFailedArgs(e)
+    self.delegate.communityAccessFailed(args.communityId, args.error)
+
   self.events.on(SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED) do(e:Args):
     let args = DiscordCategoriesAndChannelsArgs(e)
     self.delegate.discordCategoriesAndChannelsExtracted(args.categories, args.channels, args.oldestMessageTimestamp, args.errors, args.errorsCount)

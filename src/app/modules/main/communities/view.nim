@@ -109,6 +109,7 @@ QtObject:
   proc discordOldestMessageTimestampChanged*(self: View) {.signal.}
   proc discordImportErrorsCountChanged*(self: View) {.signal.}
   proc communityAccessRequested*(self: View, communityId: string) {.signal.}
+  proc communityAccessFailed*(self: View, communityId: string, error: string) {.signal.}
   proc communityInfoAlreadyRequested*(self: View) {.signal.}
 
   proc communityTagsChanged*(self: View) {.signal.}
