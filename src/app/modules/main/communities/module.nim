@@ -270,6 +270,9 @@ method communityMuted*(self: Module, communityId: string, muted: bool) =
 method communityAccessRequested*(self: Module, communityId: string) =
   self.view.communityAccessRequested(communityId)
 
+method communityAccessFailed*(self: Module, communityId, error: string) =
+  self.view.communityAccessFailed(communityId, error)
+
 method communityHistoryArchivesDownloadStarted*(self: Module, communityId: string) =
   self.view.setDownloadingCommunityHistoryArchives(true)
 

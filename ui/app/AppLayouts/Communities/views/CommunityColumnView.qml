@@ -87,6 +87,7 @@ Item {
         }
 
         Connections {
+            enabled: joinCommunityButton.loading
             target: root.store.communitiesModuleInst
             function onCommunityAccessRequested(communityId: string) {
                 if (communityId === communityData.id) {
@@ -94,9 +95,22 @@ Item {
                     joinCommunityButton.loading = false
                 }
             }
+            function onCommunityAccessFailed(communityId: string) {
+                if (communityId === communityData.id) {
+                    joinCommunityButton.invitationPending = false
+                    joinCommunityButton.loading = false
+                    Global.displayToastMessage(qsTr("Request to join failed"),
+                            qsTr("Please try again later"),
+                            "",
+                            false,
+                            Constants.ephemeralNotificationType.normal,
+                            "")
+                }
+            }
         }
 
         Connections {
+            enabled: joinCommunityButton.loading
             target: communitySectionModule
             function onUserAuthenticationCanceled() {
                 joinCommunityButton.invitationPending = false

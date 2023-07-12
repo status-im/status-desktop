@@ -46,6 +46,10 @@ type
   CommunityRequestArgs* = ref object of Args
     communityRequest*: CommunityMembershipRequestDto
 
+  CommunityRequestFailedArgs* = ref object of Args
+    communityId*: string
+    error*: string
+
   CommunityChatOrderArgs* = ref object of Args
     communityId*: string
     chat*: ChatDto
@@ -122,6 +126,7 @@ const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_SPECTATED* = "communitySpectated"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
+const SIGNAL_COMMUNITY_MY_REQUEST_FAILED* = "communityMyRequestFailed"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
 const SIGNAL_COMMUNITY_ADDED* = "communityAdded"
@@ -1415,21 +1420,23 @@ QtObject:
       error "Error request to join community", msg = e.msg 
     
   proc onAsyncRequestToJoinCommunityDone*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
+    let rpcResponseObj = communityIdAndRpcResponse.parseJson
     try:
-      let rpcResponseObj = communityIdAndRpcResponse.parseJson
-      if (rpcResponseObj{"response"}{"error"}.kind != JNull):
-        let error = Json.decode($rpcResponseObj["response"]["error"], RpcError)
-        error "Error requesting to join community", msg = error.message
-        return
+      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
 
       let rpcResponse = Json.decode($rpcResponseObj["response"], RpcResponse[JsonNode])
       self.activityCenterService.parseActivityCenterResponse(rpcResponse)
       
       if not self.processRequestsToJoinCommunity(rpcResponse.result):
-        error "error: ", procName="onAsyncRequestToJoinCommunityDone", errDesription = "no 'requestsToJoinCommunity' key in response"
+        raise newException(CatchableError, "no 'requestsToJoinCommunity' key in response")
 
     except Exception as e:
       error "Error requesting to join the community", msg = e.msg
+      self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_FAILED, CommunityRequestFailedArgs(
+        communityId: rpcResponseObj["communityId"].getStr,
+        error: e.msg
+      ))
 
   proc asyncAcceptRequestToJoinCommunity*(self: Service, communityId: string, requestId: string) =
     try:
