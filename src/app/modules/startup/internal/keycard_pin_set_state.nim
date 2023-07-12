@@ -51,16 +51,16 @@ method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) 
       return
     controller.startLoginFlowAutomatically(controller.getPin())
 
-method resolveKeycardNextState*(self: KeycardPinSetState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: KeycardPinSetState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   if self.flowType == FlowType.LostKeycardReplacement:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard(storeToKeychainValue = LS_VALUE_NOT_NOW, syncWalletAfterLogin = true)
+        controller.loginAccountKeycard(storeToKeychainValue = LS_VALUE_NOT_NOW, keycardReplacement = true)
   if self.flowType == FlowType.AppLogin:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
         # we are here in case of recover account from the login flow using seed phrase
         controller.setKeycardEvent(keycardEvent)
-        controller.loginAccountKeycard(storeToKeychainValue = LS_VALUE_NEVER, syncWalletAfterLogin = false)
+        controller.loginAccountKeycard(storeToKeychainValue = LS_VALUE_NEVER, keycardReplacement = false)

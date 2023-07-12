@@ -41,6 +41,7 @@ const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
 const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
 const SIGNAL_KEYCARD_DELETED* = "keycardDeleted"
+const SIGNAL_ALL_KEYCARDS_DELETED* = "allKeycardsDeleted"
 const SIGNAL_KEYCARD_ACCOUNTS_REMOVED* = "keycardAccountsRemoved"
 const SIGNAL_KEYCARD_LOCKED* = "keycardLocked"
 const SIGNAL_KEYCARD_UNLOCKED* = "keycardUnlocked"
@@ -916,6 +917,19 @@ QtObject:
     except Exception as e:
       error "error: ", procName="deleteKeycard", errName = e.name, errDesription = e.msg
     self.events.emit(SIGNAL_KEYCARD_DELETED, data)
+    return data.success
+
+  proc deleteAllKeycardsWithKeyUid*(self: Service, keyUid: string): bool =
+    var data = KeycardArgs(
+      success: false,
+      keycard: KeycardDto(keyUid: keyUid)
+    )
+    try:
+      let response = backend.deleteAllKeycardsWithKeyUID(keyUid)
+      data.success = responseHasNoErrors("deleteAllKeycardsWithKeyUid", response)
+    except Exception as e:
+      error "error: ", procName="deleteAllKeycardsWithKeyUid", errName = e.name, errDesription = e.msg
+    self.events.emit(SIGNAL_ALL_KEYCARDS_DELETED, data)
     return data.success
 
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true) =

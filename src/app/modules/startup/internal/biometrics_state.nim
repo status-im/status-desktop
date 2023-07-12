@@ -17,7 +17,7 @@ method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
     controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
-    ## This should not be the correct call for this flow, this is an issue, 
+    ## This should not be the correct call for this flow, this is an issue,
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
     controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
@@ -39,7 +39,7 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
     controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
-    ## This should not be the correct call for this flow, this is an issue, 
+    ## This should not be the correct call for this flow, this is an issue,
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
     controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
@@ -54,13 +54,13 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.LostKeycardConvertToRegularAccount:
     controller.loginAccountKeycardUsingSeedPhrase(storeToKeychain)
 
-method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: BiometricsState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   if self.flowType == FlowType.LostKeycardReplacement:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
         var storeToKeychainValue = LS_VALUE_NEVER
         if self.storeToKeychain:
           storeToKeychainValue = LS_VALUE_NOT_NOW
-        controller.loginAccountKeycard(storeToKeychainValue, syncWalletAfterLogin = true)
+        controller.loginAccountKeycard(storeToKeychainValue, keycardReplacement = true)

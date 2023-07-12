@@ -463,9 +463,9 @@ proc loginLocalPairingAccount*(self: Controller) =
     kcEvent.encryptionKey.publicKey = self.localPairingStatus.password
     discard self.accountsService.loginAccountKeycard(self.localPairingStatus.account, kcEvent)
 
-proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, syncWalletAfterLogin = false) =
-  if syncWalletAfterLogin:
-    self.syncKeycardBasedOnAppWalletStateAfterLogin()
+proc loginAccountKeycard*(self: Controller, storeToKeychainValue: string, keycardReplacement = false) =
+  if keycardReplacement:
+    self.delegate.applyKeycardReplacementAfterLogin()
   singletonInstance.localAccountSettings.setStoreToKeychainValue(storeToKeychainValue)
   self.delegate.moveToLoadingAppState()
   let selAcc = self.getSelectedLoginAccount()
