@@ -9,6 +9,7 @@ import ../shared_modules/keycard_popup/module as keycard_shared_module
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
+import ../../global/utils as utils
 import ../../../constants as main_constants
 
 import chat_section/model as chat_model
@@ -108,6 +109,7 @@ type
 
 # Forward declaration
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
+proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string)
 
 proc newModule*[T](
   delegate: T,
@@ -985,7 +987,7 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
     return
 
   if(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile):
-    self.view.emitDisplayUserProfileSignal(publicKey)
+    self.switchToContactOrDisplayUserProfile(publicKey)
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
 
@@ -1135,11 +1137,22 @@ proc getCommunityIdFromFullChatId(fullChatId: string): string =
   const communityIdLength = 68
   return fullChatId.substr(0, communityIdLength-1)
 
+proc switchToContactOrDisplayUserProfile[T](self: Module[T], publicKey: string) =
+  let contact = self.controller.getContact(publicKey)
+  if contact.isContact:
+    self.getChatSectionModule().switchToOrCreateOneToOneChat(publicKey)
+  else:
+    self.view.emitDisplayUserProfileSignal(publicKey)
+
 method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string,
   url: string, userId: string) =
 
   if(action == StatusUrlAction.DisplayUserProfile):
-    self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
+    if singletonInstance.utils().isCompressedPubKey(userId):
+      let contactPk = singletonInstance.utils().getDecompressedPk(userId)
+      self.switchToContactOrDisplayUserProfile(contactPk)
+    else:    
+      self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
 
   elif(action == StatusUrlAction.OpenCommunity):
     let item = self.view.model().getItemById(communityId)
