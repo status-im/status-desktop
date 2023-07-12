@@ -5,6 +5,7 @@ import driver
 from driver import context
 from driver.server import SquishServer
 from scripts.utils import system_path, local_system
+from scripts.utils.local_system import is_mac
 
 
 class AUT:
@@ -20,14 +21,15 @@ class AUT:
         self.host = host
         self.port = int(port)
         self.ctx = None
-        driver.testSettings.setWrappersForApplication(self.path.stem, ['Qt'])
+        self.aut_id = self.path.stem if is_mac() else self.path.name
+        driver.testSettings.setWrappersForApplication(self.aut_id, ['Qt'])
 
     def __str__(self):
         return type(self).__qualname__
 
     def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC, attempt: int = 2):
         if self.ctx is None:
-            self.ctx = context.attach(self.path.stem, timeout_sec)
+            self.ctx = context.attach(self.aut_id, timeout_sec)
         try:
             squish.setApplicationContext(self.ctx)
         except TypeError as err:
@@ -48,8 +50,9 @@ class AUT:
         local_system.kill_process_by_name('nim_status_client', verify=verify)
 
     def launch(self, *args) -> 'AUT':
+        SquishServer().set_aut_timeout()
         if configs.ATTACH_MODE:
-            SquishServer().add_attachable_aut(self.path.stem, self.port)
+            SquishServer().add_attachable_aut(self.aut_id, self.port)
             command = [
                        configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
                        f'--port={self.port}',
@@ -57,7 +60,8 @@ class AUT:
                    ] + list(args)
             local_system.execute(command)
         else:
-            command = [self.path.stem] + list(args)
+            SquishServer().add_executable_aut(self.aut_id, self.path.parent)
+            command = [self.aut_id] + list(args)
             self.ctx = squish.startApplication(
                 ' '.join(command), configs.timeouts.PROCESS_TIMEOUT_SEC)
         self.attach()
