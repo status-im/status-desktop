@@ -4,6 +4,7 @@ import time
 import configs
 import driver
 from gui import objects_map
+from scripts.tools.capture.image import Image
 
 _logger = logging.getLogger(__name__)
 
@@ -62,6 +63,10 @@ class QObject:
     @property
     def is_visible(self) -> bool:
         return getattr(self, 'visible')
+
+    @property
+    def image(self):
+        return Image(self.real_name)
 
     def click(
             self,

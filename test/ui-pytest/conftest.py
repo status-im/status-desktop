@@ -26,6 +26,13 @@ def setup_session_scope(
     yield
 
 
+@pytest.fixture(scope='function', autouse=True)
+def setup_function_scope(
+        generate_test_data,
+):
+    yield
+
+
 def pytest_exception_interact(node):
     test_path, test_name, test_params = generate_test_info(node)
     node_dir: SystemPath = configs.testpath.RUN / test_path / test_name / test_params
