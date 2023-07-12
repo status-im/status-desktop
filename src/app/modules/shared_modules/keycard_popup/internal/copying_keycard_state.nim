@@ -18,7 +18,7 @@ proc buildKeypairAndAddToMigratedKeypairs(self: CopyingKeycardState, controller:
     keycardLocked: false,
     keyUid: controller.getKeyPairForProcessing().getKeyUid(),
     accountsAddresses: addresses)
-  controller.addKeycardOrAccounts(keycardDto)
+  controller.addKeycardOrAccounts(keycardDto, accountsComingFromKeycard = true)
 
 proc runStoreMetadataFlow(self: CopyingKeycardState, controller: Controller) =
   let cardMetadata = controller.getMetadataForKeycardCopy()
@@ -32,7 +32,7 @@ method executePrePrimaryStateCommand*(self: CopyingKeycardState, controller: Con
     self.buildKeypairAndAddToMigratedKeypairs(controller)
 
 method executePreSecondaryStateCommand*(self: CopyingKeycardState, controller: Controller) =
-  ## Secondary action is called after each async action during migration process. 
+  ## Secondary action is called after each async action during migration process.
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     if controller.getAddingMigratedKeypairSuccess():
       self.runStoreMetadataFlow(controller)
@@ -42,12 +42,12 @@ method getNextSecondaryState*(self: CopyingKeycardState, controller: Controller)
     if not controller.getAddingMigratedKeypairSuccess():
       return createState(StateType.CopyingKeycardFailure, self.flowType, nil)
 
-method resolveKeycardNextState*(self: CopyingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: CopyingKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceAndResolveNextState(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.CreateCopyOfAKeycard:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.error.len == 0:
         return createState(StateType.CopyingKeycardSuccess, self.flowType, nil)

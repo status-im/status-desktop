@@ -269,7 +269,7 @@ proc handleKeycardSyncing[T](self: Module[T]) =
           if accountsToRemove.len > 0:
             self.controller.removeMigratedAccountsForKeycard(kpDto.keyUid, kpDto.keycardUid, accountsToRemove)
           if kpDto.accountsAddresses.len > 0:
-            self.controller.addKeycardOrAccounts(kpDto)
+            self.controller.addKeycardOrAccounts(kpDto, accountsComingFromKeycard = true)
           # if all accounts are removed from the app, there is no point in storing empty accounts list to a keycard, cause in that case
           # keypair which is on that keycard won't be known to the app, that means keypair was removed from the app
           if activeValidPathsToStoreToAKeycard.len > 0:

@@ -74,7 +74,8 @@ const FlowsWeShouldNotTryAKeycardSyncFor* = @[
   FlowType.SetupNewKeycardNewSeedPhrase,
   FlowType.SetupNewKeycardOldSeedPhrase,
   FlowType.ImportFromKeycard,
-  FlowType.Authentication
+  FlowType.Authentication,
+  FlowType.CreateCopyOfAKeycard
 ]
 
 type
