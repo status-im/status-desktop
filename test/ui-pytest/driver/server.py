@@ -19,19 +19,36 @@ class SquishServer:
         self.port = port
 
     def start(self):
-        local_system.execute([str(self.path), '--configfile', str(self.config), f'--port={self.port}'])
+        local_system.execute([
+            f'"{self.path}"',
+            '--configfile', str(self.config),
+            '--verbose',
+            f'--host={self.host}',
+            f'--port={self.port}',
+        ])
+        local_system.wait_for_started(_PROCESS_NAME)
 
     @classmethod
-    def stop(cls):
-        local_system.execute(['killall', _PROCESS_NAME], configs.timeouts.PROCESS_TIMEOUT_SEC)
+    def stop(cls, attempt: int = 2):
+        local_system.run(['killall', _PROCESS_NAME], check=False)
+        try:
+            local_system.wait_for_close(_PROCESS_NAME, 1)
+        except AssertionError as err:
+            if attempt:
+                cls.stop(attempt-1)
+            else:
+                raise err
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     def configuring(self, action: str, options: typing.Union[int, str, list]):
-        local_system.execute([str(self.path), '--configfile', str(self.config), '--config', action, ' '.join(options)],
-                             timeout_sec=configs.timeouts.PROCESS_TIMEOUT_SEC)
+        local_system.run(
+            [f'"{self.path}"', '--configfile', str(self.config), '--config', action, ' '.join(options)])
 
     def add_executable_aut(self, aut_id, app_dir):
         return self.configuring('addAUT', [aut_id, f'"{app_dir}"'])
 
     def add_attachable_aut(self, aut_id: str, port: int):
         return self.configuring('addAttachableAUT', [aut_id, f'localhost:{port}'])
+
+    def set_aut_timeout(self, value: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
+        self.configuring('setAUTTimeout', [str(value)])

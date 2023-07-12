@@ -22,10 +22,6 @@ class QObject:
         return driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
 
     @property
-    def entity(self):
-        return driver.waitForObjectExists(self.real_name)
-
-    @property
     def exists(self) -> bool:
         return driver.object.exists(self.real_name)
 
