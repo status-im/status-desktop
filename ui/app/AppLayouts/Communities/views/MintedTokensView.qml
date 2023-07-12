@@ -16,6 +16,7 @@ StatusScrollView {
     id: root
 
     required property bool isOwner
+    required property bool isAdmin
 
     property int viewWidth: 560 // by design
     property var model
@@ -99,13 +100,17 @@ StatusScrollView {
             }
 
             StatusInfoBoxPanel {
+
+                readonly property bool isAdminOnly: root.isAdmin && !root.isOwner
+
                 Layout.fillWidth: true
                 Layout.bottomMargin: 20
 
-                visible: root.isOwner
                 title: qsTr("Get started")
-                text: qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
+                text: isAdminOnly ? qsTr("Token minting can only be performed by admins that hodl the Community’s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you)."):
+                                    qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
                 buttonText: qsTr("Mint Owner token")
+                buttonVisible: root.isOwner
                 horizontalPadding: 16
                 verticalPadding: 20
 

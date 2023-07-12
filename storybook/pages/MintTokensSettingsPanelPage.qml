@@ -80,7 +80,7 @@ SplitView {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 200
+        SplitView.preferredHeight: 250
 
         logsView.logText: logs.logText
 
@@ -102,28 +102,28 @@ SplitView {
                 id: ownerChecked
                 checked: true
 
-                text: "Is owner?"
+                text: "Is Owner? [Owner will be able to create an OWNER and TOKEN MASTER token]"
             }
 
             CheckBox {
                 id: masterTokenOwnerChecked
                 checked: true
 
-                text: "Is TMaster token owner?"
+                text: "Is TMaster token owner? [TMaster token owner will be able to mint / airdrop tokens once the TMaster is already created]"
             }
 
             CheckBox {
                 id: adminChecked
                 checked: true
 
-                text: "Is admin?"
+                text: "Is admin? [Admis will be able to see token views, but NOT manage them, like creating new artwork or asset]"
             }
 
             CheckBox {
                 id: editorModelChecked
                 checked: true
 
-                text: "Empty model"
+                text: "No tokens minted yet"
             }
 
             RowLayout {

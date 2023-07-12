@@ -100,13 +100,13 @@ StackView {
         title: qsTr("Tokens")
 
         buttons: DisabledTooltipButton {
-            property bool onlyAdmin: root.isAdmin && !root.isOwner
-            property bool buttonEnabled: (root.isOwner || root.isTokenMasterOwner) && d.isTokenOwnerDeployed
+            readonly property bool isAdminOnly: root.isAdmin && !root.isOwner && !root.isTokenMasterOwner
+            readonly property bool buttonEnabled: (root.isOwner || root.isTokenMasterOwner) && d.isTokenOwnerDeployed
 
             buttonType: DisabledTooltipButton.Normal
             aliasedObjectName: "addNewItemButton"
             text: qsTr("Mint token")
-            enabled: onlyAdmin || buttonEnabled
+            enabled: isAdminOnly || buttonEnabled
             interactive: buttonEnabled
             onClicked: root.push(newTokenViewComponent, StackView.Immediate)
             tooltipText: qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName)
@@ -115,6 +115,7 @@ StackView {
         contentItem: MintedTokensView {
             model: root.tokensModel
             isOwner: root.isOwner
+            isAdmin: root.isAdmin
 
             onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
             onMintOwnerTokenClicked: root.push(ownerTokenViewComponent, StackView.Immediate)

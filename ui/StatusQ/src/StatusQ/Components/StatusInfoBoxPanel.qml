@@ -13,6 +13,7 @@ Control {
     property alias title: titleComponent.text
     property alias text: textComponent.text
     property alias buttonText: button.text
+    property alias buttonVisible: button.visible
 
     signal clicked
 
@@ -58,6 +59,8 @@ Control {
             id: button
 
             Layout.alignment: Qt.AlignHCenter
+
+            visible: true
 
             onClicked: root.clicked()
         }
