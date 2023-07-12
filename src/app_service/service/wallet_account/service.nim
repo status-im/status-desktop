@@ -35,7 +35,8 @@ const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FETCHED* = "walletAccount/derivedA
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESSES_FROM_MNEMONIC_FETCHED* = "walletAccount/derivedAddressesFromMnemonicFetched"
 const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* = "walletAccount/addressDetailsFetched"
 const SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED* = "walletAccount/positionUpdated"
-const SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED* = "walletAccount/operabilityUpdated" # TODO: will be used later, when we deal with account operability
+const SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED* = "walletAccount/operabilityUpdated"
+const SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED* = "walletAccount/chainIdForUrlFetched"
 
 const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
 const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
@@ -95,6 +96,16 @@ type TokensPerAccountArgs* = ref object of Args
   accountsTokens*: OrderedTable[string, seq[WalletTokenDto]] # [wallet address, list of tokens]
   hasBalanceCache*: bool
   hasMarketValuesCache*: bool
+
+type KeycardActivityArgs* = ref object of Args
+  success*: bool
+  oldKeycardUid*: string
+  keycard*: KeycardDto
+
+type ChainIdForUrlArgs* = ref object of Args
+  chainId*: int
+  success*: bool
+  url*: string
 
 proc responseHasNoErrors(procName: string, response: RpcResponse[JsonNode]): bool =
   var errMsg = ""
@@ -999,3 +1010,20 @@ QtObject:
 
   proc toggleIncludeWatchOnlyAccount*(self: Service) =
     self.settingsService.toggleIncludeWatchOnlyAccount()
+
+  proc onFetchChainIdForUrl*(self: Service, jsonString: string) {.slot.} =
+    let response = parseJson(jsonString)
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED, ChainIdForUrlArgs(
+      chainId: response{"chainId"}.getInt,
+      success: response{"success"}.getBool,
+      url: response{"url"}.getStr,
+    ))
+
+  proc fetchChainIdForUrl*(self: Service, url: string) = 
+    let arg = FetchChainIdForUrlTaskArg(
+      tptr: cast[ByteAddress](fetchChainIdForUrlTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onFetchChainIdForUrl",
+      url: url
+    )
+    self.threadpool.start(arg)

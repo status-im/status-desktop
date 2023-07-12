@@ -34,6 +34,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.refreshNetworks()
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED) do(e: Args):
+    let args = ChainIdForUrlArgs(e)
+    self.delegate.chainIdFetchedForUrl(args.url, args.chainId, args.success)
+
 proc getNetworks*(self: Controller): seq[CombinedNetworkDto] =
   return self.networkService.getCombinedNetworks()
 
@@ -42,6 +46,9 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 
 proc toggleTestNetworksEnabled*(self: Controller) =
   self.walletAccountService.toggleTestNetworksEnabled()
+
+proc fetchChainIdForUrl*(self: Controller, url: string) =
+  self.walletAccountService.fetchChainIdForUrl(url)
 
 proc updateNetworkEndPointValues*(self: Controller, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
   self.networkService.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)

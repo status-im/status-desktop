@@ -73,6 +73,9 @@ rpc(addEthereumChain, "wallet"):
 rpc(deleteEthereumChain, "wallet"):
   chainId: int
 
+rpc(fetchChainIDForURL, "wallet"):
+  url: string
+
 rpc(upsertSavedAddress, "wakuext"):
   savedAddress: SavedAddress
 
