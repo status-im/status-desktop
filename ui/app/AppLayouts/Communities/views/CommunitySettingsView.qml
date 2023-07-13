@@ -364,6 +364,8 @@ StatusSectionLayout {
 
             communityDetails: d.communityDetails
             isOwner: root.isOwner
+            isTokenMasterOwner: false // TODO: Backend
+            isAdmin: root.isAdmin
             tokensModel: root.community.communityTokens
 
             readonly property CommunityTokensStore communityTokensStore:

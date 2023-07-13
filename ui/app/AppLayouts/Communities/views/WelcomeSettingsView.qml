@@ -20,6 +20,7 @@ StatusScrollView {
     property alias infoBoxTitle: infoBox.title
     property alias infoBoxText: infoBox.text
     property alias buttonText: infoBox.buttonText
+    property alias buttonVisible: infoBox.buttonVisible
 
     signal clicked
 

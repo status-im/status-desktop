@@ -14,6 +14,8 @@ StackView {
     // id, name, image, color, owner properties expected
     required property var communityDetails
     required property bool isOwner
+    required property bool isTokenMasterOwner
+    required property bool isAdmin
 
     // Token models:
     required property var assetsModel
@@ -53,6 +55,8 @@ StackView {
     QtObject {
         id: d
 
+        readonly property bool isAdminOnly: root.isAdmin && !root.isOwner && !root.isTokenMasterOwner
+
         signal selectToken(string key, int amount, int type)
         signal addAddresses(var addresses)
     }
@@ -62,10 +66,11 @@ StackView {
         title: qsTr("Airdrops")
 
         buttons: StatusButton {
+
             objectName: "addNewItemButton"
 
             text: qsTr("New Airdrop")
-            enabled: root.tokensModel.count > 0 // TODO: Replace to checker to ensure owner token is deployed
+            enabled: !d.isAdminOnly && root.tokensModel.count > 0 // TODO: Replace to checker to ensure owner token is deployed
 
             onClicked: root.push(newAirdropView, StackView.Immediate)
         }
@@ -80,11 +85,13 @@ StackView {
                 qsTr("Incentivise joining, retention, moderation and desired behaviour"),
                 qsTr("Require holding a token or NFT to obtain exclusive membership rights")
             ]
-            infoBoxVisible: root.isOwner && root.tokensModel.count === 0 // TODO: Replace to checker to ensure owner token is NOT deployed yet
+            infoBoxVisible: d.isAdminOnly || ((root.isOwner || root.isTokenMasterOwner) && root.tokensModel.count === 0) // TODO: Replace to checker to ensure owner token is NOT deployed yet
             infoBoxTitle: qsTr("Get started")
-            infoBoxText: qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
+            infoBoxText: d.isAdminOnly ? qsTr("Token airdropping can only be performed by admins that hodl the Community’s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you)."):
+                                       qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
             buttonText: qsTr("Mint Owner token")
-            onClicked: root.navigateToMintTokenSettings(false) // TEMP: Replace to mint owner token page
+            buttonVisible: root.isOwner
+            onClicked: root.navigateToMintTokenSettings(false)
         }
     }
 
