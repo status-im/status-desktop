@@ -576,6 +576,24 @@ QtObject:
     except Exception as e:
       error "error: ", procName="updateAccountPosition", errName=e.name, errDesription=e.msg
 
+  proc updateKeypairName*(self: Service, keyUid: string, name: string) =
+    try:
+      let response = backend.updateKeypairName(keyUid, name)
+      if not response.error.isNil:
+        error "status-go error", procName="updateKeypairName", errCode=response.error.code, errDesription=response.error.message
+        return
+      # Once we start maintaining local store by keypairs we will need to update that store from here,
+      # till then we just emit signal from here.
+      self.events.emit(SIGNAL_KEYPAIR_NAME_CHANGED, KeypairArgs(
+        keypair: KeypairDto(
+          keyUid: keyUid,
+          name: name
+          )
+        )
+      )
+    except Exception as e:
+      error "error: ", procName="updateKeypairName", errName=e.name, errDesription=e.msg
+
   proc fetchDerivedAddresses*(self: Service, password: string, derivedFrom: string, paths: seq[string], hashPassword: bool) =
     let arg = FetchDerivedAddressesTaskArg(
       password: if hashPassword: utils.hashPassword(password) else: password,
@@ -945,10 +963,7 @@ QtObject:
   proc handleKeypair(self: Service, keypair: KeypairDto) =
     ## In some point in future instead `self.walletAccounts` table we should switch to maintaining local state in the
     ## form of keypairs + another list just for watch only accounts. We will benefint from that in terms of maintaining.
-    ## Keycards detaiils will be in that case tracked easier and stored locally as well. Also at that point we can check
-    ## if the local keypair name is different than one received here and emit signal only in that case, till then,
-    ## we emit it always.
-    self.events.emit(SIGNAL_KEYPAIR_NAME_CHANGED, KeypairArgs(keypair: KeypairDto(name: keypair.name)))
+    ## Keycards details will be in that case tracked easier and stored locally as well.
 
     # handle keypair related accounts
     # - first remove removed accounts from the UI

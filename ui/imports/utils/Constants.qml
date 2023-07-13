@@ -466,7 +466,28 @@ QtObject {
         readonly property int blockedContacts: 6
     }
 
+    readonly property QtObject keypair: QtObject {
+        readonly property int nameLengthMax: 20
+        readonly property int nameLengthMin: 5
+    }
+
     readonly property QtObject validators: QtObject {
+        readonly property list<StatusValidator> keypairName: [
+            StatusValidator {
+                name: "startsWithSpaceValidator"
+                validate: function (t) { return !t.startsWith(" ") }
+                errorMessage: qsTr("Keypair starting with whitespace are not allowed")
+            },
+            StatusRegularExpressionValidator {
+                regularExpression: /^[a-zA-Z0-9\-_ ]+$/
+                errorMessage: errorMessages.alphanumericalExpandedRegExp
+            },
+            StatusMinLengthValidator {
+                minLength: keypair.nameLengthMin
+                errorMessage: qsTr("Keypair must be at least %n character(s)", "", keypair.nameLengthMin)
+            }
+        ]
+
         readonly property list<StatusValidator> displayName: [
             StatusValidator {
                 name: "startsWithSpaceValidator"
@@ -475,11 +496,11 @@ QtObject {
             },
             StatusRegularExpressionValidator {
                 regularExpression: /^[a-zA-Z0-9\-_ ]+$/
-                errorMessage: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
+                errorMessage: errorMessages.alphanumericalExpandedRegExp
             },
             StatusMinLengthValidator {
-                minLength: 5
-                errorMessage: qsTr("Username must be at least 5 characters")
+                minLength: keypair.nameLengthMin
+                errorMessage: qsTr("Username must be at least %1 characters").arg(keypair.nameLengthMin)
             },
             StatusValidator {
                 name: "endsWithSpaceValidator"
@@ -489,8 +510,8 @@ QtObject {
             // TODO: Create `StatusMaxLengthValidator` in StatusQ
             StatusValidator {
                 name: "maxLengthValidator"
-                validate: function (t) { return t.length <= 24 }
-                errorMessage: qsTr("24 character username limit")
+                validate: function (t) { return t.length <= keypair.nameLengthMax }
+                errorMessage: qsTr("%n character(s) username limit", "", keypair.nameLengthMax)
             },
             StatusValidator {
                 name: "endsWith-ethValidator"
@@ -575,7 +596,7 @@ QtObject {
             readonly property int enterSeedPhraseWordsHeight: 60
             readonly property int keycardPinLength: 6
             readonly property int keycardPukLength: 12
-            readonly property int keycardNameLength: 20
+            readonly property int keycardNameLength: keypair.nameLengthMax
             readonly property int keycardNameInputWidth: 448
             readonly property int keycardPairingCodeInputWidth: 512
             readonly property int keycardPukAdditionalSpacingOnEvery4Items: 4

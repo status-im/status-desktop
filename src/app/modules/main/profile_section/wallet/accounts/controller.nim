@@ -1,7 +1,6 @@
 import io_interface
-import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
-
-import ../../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app_service/service/wallet_account/service as wallet_account_service
+import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 type
   Controller* = ref object of RootObj
@@ -30,6 +29,9 @@ proc updateAccount*(self: Controller, address: string, accountName: string, colo
 
 proc updateAccountPosition*(self: Controller, address: string, position: int) =
   self.walletAccountService.updateWalletAccountPosition(address, position)
+
+proc renameKeypair*(self: Controller, keyUid: string, name: string) =
+  self.walletAccountService.updateKeypairName(keyUid, name)
 
 proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
