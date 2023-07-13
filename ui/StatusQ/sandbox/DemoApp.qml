@@ -206,8 +206,8 @@ Rectangle {
     Component {
         id: statusAppCommunityView
         StatusAppCommunityView {
-            communityDetailModalTitle: demoCommunityDetailModal.header.title
-            communityDetailModalImage: demoCommunityDetailModal.header.asset.name
+            communityDetailModalTitle: demoCommunityDetailModal.headerSettings.title
+            communityDetailModalImage: demoCommunityDetailModal.headerSettings.asset.name
             onChatInfoButtonClicked: {
                 demoCommunityDetailModal.open();
             }

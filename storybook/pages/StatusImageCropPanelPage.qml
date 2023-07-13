@@ -169,7 +169,7 @@ SplitView {
                 StatusModal {
                     id: imageCropperModal
 
-                    header.title: workflowItem.title
+                    headerSettings.title: workflowItem.title
 
                     anchors.centerIn: Overlay.overlay
 
