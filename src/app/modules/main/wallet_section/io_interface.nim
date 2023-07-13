@@ -87,3 +87,6 @@ method onAddAccountModuleLoaded*(self: AccessInterface) {.base.} =
 
 method destroyAddAccountPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getNetworkLayer*(self: AccessInterface, chainId: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")

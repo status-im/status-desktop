@@ -24,3 +24,6 @@ method setNetworksState*(self: AccessInterface, chainIds: seq[int], enable: bool
 
 method refreshNetworks*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getNetworkLayer*(self: AccessInterface, chainId: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")
