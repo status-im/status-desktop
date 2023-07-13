@@ -241,13 +241,13 @@ QtObject:
     self.delegate.createGroupChat(communityID, groupName, pubKeys)
 
   proc requestToJoinCommunityWithAuthentication*(self: View, ensName: string) {.slot.} =
-    self.delegate.requestToJoinCommunityWithAuthentication(ensName, @[])
+    self.delegate.requestToJoinCommunityWithAuthentication(ensName, @[], "")
 
   proc requestToJoinCommunityWithAuthenticationWithSharedAddresses*(self: View, ensName: string,
-      addressesToShare: string) {.slot.} =
+      addressesToShare: string, airdropAddress: string) {.slot.} =
     try:
       let addressesArray = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
-      self.delegate.requestToJoinCommunityWithAuthentication(ensName, addressesArray)
+      self.delegate.requestToJoinCommunityWithAuthentication(ensName, addressesArray, airdropAddress)
     except Exception as e:
       echo "Error requesting to join community with authetication and shared addresses: ", e.msg
 

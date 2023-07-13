@@ -1398,7 +1398,7 @@ QtObject:
       error "error checking permissions to join: ", errMsg
 
   proc asyncRequestToJoinCommunity*(self: Service, communityId: string, ensName: string, password: string,
-      addressesToShare: seq[string]) =
+      addressesToShare: seq[string], airdropAddress: string) =
     try:
       let arg = AsyncRequestToJoinCommunityTaskArg(
         tptr: cast[ByteAddress](asyncRequestToJoinCommunityTask),
@@ -1408,6 +1408,7 @@ QtObject:
         ensName: ensName,
         password: password,
         addressesToShare: addressesToShare,
+        airdropAddress: airdropAddress,
       )
       self.threadpool.start(arg)
     except Exception as e:

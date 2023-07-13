@@ -1329,8 +1329,9 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =
   self.controller.deleteCommunityTokenPermission(communityId, permissionId)
 
-method requestToJoinCommunityWithAuthentication*(self: Module, ensName: string, addressesToShare: seq[string]) =
-  self.controller.authenticateToRequestToJoinCommunity(ensName, addressesToShare)
+method requestToJoinCommunityWithAuthentication*(self: Module, ensName: string, addressesToShare: seq[string],
+    airdropAddress: string) =
+  self.controller.authenticateToRequestToJoinCommunity(ensName, addressesToShare, airdropAddress)
 
 method onDeactivateChatLoader*(self: Module, chatId: string) =
   self.view.chatsModel().disableChatLoader(chatId)
