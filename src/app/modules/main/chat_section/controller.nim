@@ -47,6 +47,7 @@ type
     tmpAuthenticationForJoinInProgress: bool
     tmpRequestToJoinEnsName: string
     tmpRequestToJoinAddressesToShare: seq[string]
+    tmpRequestToJoinAirdropAddress: string
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service, 
@@ -77,6 +78,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.communityTokensService = communityTokensService
   result.tmpAuthenticationForJoinInProgress = false
   result.tmpRequestToJoinEnsName = ""
+  result.tmpRequestToJoinAirdropAddress = ""
   result.tmpRequestToJoinAddressesToShare = @[]
 
 proc delete*(self: Controller) =
@@ -94,13 +96,15 @@ proc setIsCurrentSectionActive*(self: Controller, active: bool) =
 proc userAuthenticationCanceled*(self: Controller) =
   self.tmpAuthenticationForJoinInProgress = false
   self.tmpRequestToJoinEnsName = ""
+  self.tmpRequestToJoinAirdropAddress = ""
   self.tmpRequestToJoinAddressesToShare = @[]
 
 proc requestToJoinCommunityAuthenticated*(self: Controller, password: string) =
   self.communityService.asyncRequestToJoinCommunity(self.sectionId, self.tmpRequestToJoinEnsName,
-    password, self.tmpRequestToJoinAddressesToShare)
+    password, self.tmpRequestToJoinAddressesToShare, self.tmpRequestToJoinAirdropAddress)
   self.tmpAuthenticationForJoinInProgress = false
   self.tmpRequestToJoinEnsName = ""
+  self.tmpRequestToJoinAirdropAddress = ""
   self.tmpRequestToJoinAddressesToShare = @[]
 
 proc authenticate*(self: Controller, keyUid = "") =
@@ -108,9 +112,10 @@ proc authenticate*(self: Controller, keyUid = "") =
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc authenticateToRequestToJoinCommunity*(self: Controller, ensName: string, addressesToShare: seq[string]) =
+proc authenticateToRequestToJoinCommunity*(self: Controller, ensName: string, addressesToShare: seq[string], airdropAddress: string) =
   self.tmpAuthenticationForJoinInProgress = true
   self.tmpRequestToJoinEnsName = ensName
+  self.tmpRequestToJoinAirdropAddress = airdropAddress
   self.tmpRequestToJoinAddressesToShare = addressesToShare
   self.authenticate()
 

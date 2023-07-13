@@ -382,7 +382,8 @@ method onUserAuthenticated*(self: AccessInterface, pin: string, password: string
 method onDeactivateChatLoader*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestToJoinCommunityWithAuthentication*(self: AccessInterface, ensName: string, addressesToShare: seq[string]) {.base.} =
+method requestToJoinCommunityWithAuthentication*(self: AccessInterface, ensName: string, addressesToShare: seq[string],
+    airdropAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =

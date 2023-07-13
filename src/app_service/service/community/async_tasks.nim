@@ -86,11 +86,13 @@ type
     ensName: string
     password: string
     addressesToShare: seq[string]
+    airdropAddress: string
 
 const asyncRequestToJoinCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncRequestToJoinCommunityTaskArg](argEncoded)
   try:
-    let response = status_go.requestToJoinCommunity(arg.communityId, arg.ensName, arg.password, arg.addressesToShare)
+    let response = status_go.requestToJoinCommunity(arg.communityId, arg.ensName, arg.password, arg.addressesToShare,
+      arg.airdropAddress)
     arg.finish(%* {
       "response": response,
       "communityId": arg.communityId,

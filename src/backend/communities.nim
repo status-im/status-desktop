@@ -36,6 +36,7 @@ proc requestToJoinCommunity*(
     ensName: string,
     password: string,
     addressesToShare: seq[string],
+    airdropAddress: string,
   ): RpcResponse[JsonNode] {.raises: [Exception].} =
   var passwordToSend = password
   result = callPrivateRPC("requestToJoinCommunity".prefix, %*[{
@@ -43,6 +44,7 @@ proc requestToJoinCommunity*(
     "ensName": ensName,
     "password": if passwordToSend != "": utils.hashPassword(password) else: "",
     "addressesToShare": addressesToShare,
+    "airdropAddress": airdropAddress,
   }])
 
 proc checkPermissionsToJoinCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
