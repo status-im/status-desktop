@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat
+import NimQml, Tables, strformat, sequtils, sugar
 import keypair_item
 
 export keypair_item
@@ -80,3 +80,12 @@ QtObject:
       if keyUid == item.getKeyUid():
         item.getAccountsModel().updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
         break
+
+  proc keypairNameExists*(self: KeyPairModel, name: string): bool =
+    return self.items.any(x => x.getName() == name)
+
+  proc updateKeypairName*(self: KeyPairModel, keyUid: string, name: string) =
+    let item = self.findItemByKeyUid(keyUid)
+    if item.isNil:
+      return
+    item.setName(name)

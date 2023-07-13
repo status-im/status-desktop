@@ -263,6 +263,10 @@ rpc(updateAccountPosition, "accounts"):
   address: string
   position: int
 
+rpc(updateKeypairName, "accounts"):
+  keyUid: string
+  name: string
+
 rpc(getHourlyMarketValues, "wallet"):
   symbol: string
   currency: string

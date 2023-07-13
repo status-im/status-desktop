@@ -2,15 +2,15 @@ import NimQml, sequtils, sugar, chronicles
 
 import ./io_interface, ./view, ./item, ./controller
 import ../io_interface as delegate_interface
-import ../../../../shared/wallet_utils
-import ../../../../shared/keypairs
-import ../../../../shared_models/keypair_item
-import ../../../../../global/global_singleton
-import ../../../../../core/eventemitter
-import ../../../../../../app_service/service/keycard/service as keycard_service
-import ../../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../../app_service/service/network/service as network_service
-import ../../../../../../app_service/service/settings/service
+import app/modules/shared/wallet_utils
+import app/modules/shared/keypairs
+import app/modules/shared_models/keypair_model
+import app/global/global_singleton
+import app/core/eventemitter
+import app_service/service/keycard/service as keycard_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
+import app_service/service/settings/service
 
 export io_interface
 
@@ -38,6 +38,9 @@ proc newModule*(
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, walletAccountService)
   result.moduleLoaded = false
+
+## Forward declarations
+proc onKeypairRenamed(self: Module, keyUid: string, name: string)
 
 method delete*(self: Module) =
   self.view.delete
@@ -102,6 +105,14 @@ method load*(self: Module) =
       return
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_KEYPAIR_NAME_CHANGED) do(e: Args):
+    let args = KeypairArgs(e)
+    self.onKeypairRenamed(args.keypair.keyUid, args.keypair.name)
+
+  self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e:Args):
+    let args = SettingsTextValueArgs(e)
+    self.onKeypairRenamed(singletonInstance.userProfile.getKeyUid(), args.value)
+
   self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
@@ -131,3 +142,9 @@ method deleteAccount*(self: Module, address: string) =
 
 method toggleIncludeWatchOnlyAccount*(self: Module) =
   self.controller.toggleIncludeWatchOnlyAccount()
+
+method renameKeypair*(self: Module, keyUid: string, name: string) =
+  self.controller.renameKeypair(keyUid, name)
+
+proc onKeypairRenamed(self: Module, keyUid: string, name: string) =
+  self.view.keyPairModel.updateKeypairName(keyUid, name)

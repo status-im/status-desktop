@@ -5,6 +5,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
 
 import utils 1.0
 
@@ -17,6 +18,7 @@ Rectangle {
 
     signal goToAccountView(var account)
     signal toggleIncludeWatchOnlyAccount()
+    signal runRenameKeypairFlow()
 
     QtObject {
         id: d
@@ -62,6 +64,69 @@ Rectangle {
                     icon.name: "more"
                     icon.color: Theme.palette.directColor1
                     visible: !d.isWatchOnly
+                    highlighted: menuLoader.item && menuLoader.item.opened
+                    onClicked: {
+                        menuLoader.active = true
+                        menuLoader.item.popup(0, height)
+                    }
+
+                    Loader {
+                        id: menuLoader
+                        active: false
+                        sourceComponent: StatusMenu {
+                            onClosed: {
+                                menuLoader.active = false
+                            }
+
+                            StatusAction {
+                                text: enabled? qsTr("Show encrypted QR of keys on device") : ""
+                                enabled: !d.isProfileKeypair
+                                icon.name: "qr"
+                                icon.color: Theme.palette.primaryColor1
+                                onTriggered: {
+                                    console.warn("TODO: show encrypted QR")
+                                }
+                            }
+
+
+                            StatusAction {
+                                text: model.keyPair.migratedToKeycard? qsTr("Stop using Keycard") : qsTr("Move keys to a Keycard")
+                                icon.name: model.keyPair.migratedToKeycard? "keycard-crossed" : "keycard"
+                                icon.color: Theme.palette.primaryColor1
+                                onTriggered: {
+                                    if (model.keyPair.migratedToKeycard)
+                                        console.warn("TODO: stop using Keycard")
+                                    else
+                                        console.warn("TODO: move keys to a Keycard")
+                                }
+                            }
+
+                            StatusAction {
+                                text: enabled? qsTr("Rename keypair") : ""
+                                enabled: !d.isProfileKeypair
+                                icon.name: "edit"
+                                icon.color: Theme.palette.primaryColor1
+                                onTriggered: {
+                                    root.runRenameKeypairFlow()
+                                }
+                            }
+
+                            StatusMenuSeparator {
+                                visible: !d.isProfileKeypair
+                            }
+
+                            StatusAction {
+                                text: enabled? qsTr("Remove master keys and associated accounts") : ""
+                                enabled: !d.isProfileKeypair
+                                type: StatusAction.Type.Danger
+                                icon.name: "delete"
+                                icon.color: Theme.palette.dangerColor1
+                                onTriggered: {
+                                    console.warn("TODO: remove master keys and associated accounts")
+                                }
+                            }
+                        }
+                    }
                 },
                 StatusBaseText {
                     anchors.verticalCenter: parent.verticalCenter

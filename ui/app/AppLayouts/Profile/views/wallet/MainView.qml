@@ -105,7 +105,37 @@ Column {
                 includeWatchOnlyAccount: walletStore.includeWatchOnlyAccount
                 onGoToAccountView: root.goToAccountView(account)
                 onToggleIncludeWatchOnlyAccount: walletStore.toggleIncludeWatchOnlyAccount()
+                onRunRenameKeypairFlow: {
+                    renameKeypairPopup.keyUid = model.keyPair.keyUid
+                    renameKeypairPopup.name = model.keyPair.name
+                    renameKeypairPopup.accounts = model.keyPair.accounts
+                    renameKeypairPopup.active = true
+                }
             }
+        }
+    }
+
+    Loader {
+        id: renameKeypairPopup
+        active: false
+
+        property string keyUid
+        property string name
+        property var accounts
+
+        sourceComponent: RenameKeypairPopup {
+            accountsModule: root.walletStore.accountsModule
+            keyUid: renameKeypairPopup.keyUid
+            name: renameKeypairPopup.name
+            accounts: renameKeypairPopup.accounts
+
+            onClosed: {
+                renameKeypairPopup.active = false
+            }
+        }
+
+        onLoaded: {
+            renameKeypairPopup.item.open()
         }
     }
 }

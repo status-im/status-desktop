@@ -1,9 +1,8 @@
 import NimQml, sequtils, strutils, sugar
 
-import ./model
-import ./item
 import ./io_interface
-import ../../../../shared_models/[keypair_model, keypair_item]
+import ./model
+import app/modules/shared_models/keypair_model
 
 QtObject:
   type
@@ -52,10 +51,13 @@ QtObject:
   proc onUpdatedAccount*(self: View, account: Item) =
     self.accounts.onUpdatedAccount(account)
     self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji)
-    
+
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)
-  
+
+  proc keyPairModel*(self: View): KeyPairModel =
+    return self.keyPairModel
+
   proc keyPairModelChanged*(self: View) {.signal.}
   proc getKeyPairModel(self: View): QVariant {.slot.} =
     return newQVariant(self.keyPairModel)
@@ -80,3 +82,9 @@ QtObject:
   proc setIncludeWatchOnlyAccount*(self: View, includeWatchOnlyAccount: bool) =
     self.includeWatchOnlyAccount = includeWatchOnlyAccount
     self.includeWatchOnlyAccountChanged()
+
+  proc keypairNameExists*(self: View, name: string): bool {.slot.} =
+    return self.keyPairModel.keypairNameExists(name)
+
+  proc renameKeypair*(self: View, keyUid: string, name: string) {.slot.} =
+    self.delegate.renameKeypair(keyUid, name)

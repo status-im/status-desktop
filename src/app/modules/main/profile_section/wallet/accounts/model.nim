@@ -1,6 +1,8 @@
 import NimQml, Tables, strutils, strformat
 import ./item
 
+export item
+
 type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
