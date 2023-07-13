@@ -45,7 +45,7 @@ Rectangle {
 
     component Modal: StatusModal {
         anchors.centerIn: parent
-        header.title: `Popup with fixed width ${width}px`
+        headerSettings.title: `Popup with fixed width ${width}px`
         rightButtons: [ StatusButton { text: "Button" } ]
     }
 
