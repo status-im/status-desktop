@@ -33,6 +33,14 @@ Item {
         stack.currentIndex = 0;
     }
 
+    Connections {
+        target: walletSection
+
+        function onFilterChanged() {
+            root.resetStack()
+        }
+    }
+
     QtObject {
         id: d
         function getBackButtonText(index) {
