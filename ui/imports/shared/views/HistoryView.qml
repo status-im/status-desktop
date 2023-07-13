@@ -31,8 +31,9 @@ ColumnLayout {
     signal launchTransactionDetail(var transaction)
 
     onVisibleChanged: {
-        if (visible) {
-            RootStore.updateTransactionFilter()
+        if (visible && RootStore.isTransactionFilterDirty) {
+            // TODO(#11412) restore filter for selected wallet account
+            d.activityFiltersStore.resetAllFilters()
         }
     }
 
@@ -51,13 +52,12 @@ ColumnLayout {
         readonly property int loadingSectionWidth: 56
         readonly property int topSectionMargin: 20
 
-        property bool showRefreshButton: false
         property double lastRefreshTime
         readonly property int maxSecondsBetweenRefresh: 3
         function refreshData() {
             RootStore.resetFilter()
             d.lastRefreshTime = Date.now()
-            d.showRefreshButton = false
+            newTransactions.visible = false
         }
     }
 
@@ -82,7 +82,7 @@ ColumnLayout {
 
     ActivityFilterPanel {
         id: filterComponent
-        visible: !noTxs.visible && (!d.isInitialLoading || d.activityFiltersStore.filtersSet)
+        visible: d.isInitialLoading || transactionListRoot.count > 0 || d.activityFiltersStore.filtersSet
         Layout.fillWidth: true
         activityFilterStore: d.activityFiltersStore
         store: WalletStores.RootStore
@@ -149,15 +149,12 @@ ColumnLayout {
             delegate: transactionDelegate
 
             headerPositioning: ListView.OverlayHeader
-            header: headerComp
             footer: footerComp
 
             ScrollBar.vertical: StatusScrollBar {}
 
             section.property: "date"
-            // Adding some magic number to align the top headerComp with the top of the list.
-            // TODO: have to be fixed properly and match the design
-            topMargin: d.isInitialLoading ? 0 : -(2 * d.topSectionMargin + 9) // Top margin for first section. Section cannot have different sizes
+            topMargin: d.isInitialLoading ? 0 : -d.topSectionMargin // Top margin for first section. Section cannot have different sizes
             section.delegate: ColumnLayout {
                 id: sectionDelegate
 
@@ -196,7 +193,7 @@ ColumnLayout {
             }
 
             function tryFetchMoreTransactions() {
-                if (!footerItem || !RootStore.historyTransactions.hasMore)
+                if (d.isInitialLoading || !footerItem || !RootStore.historyTransactions.hasMore)
                     return
                 const footerYPosition = footerItem.height / contentHeight
                 if (footerYPosition >= 1.0) {
@@ -216,10 +213,58 @@ ColumnLayout {
             }
         }
 
+        StatusButton {
+            id: newTransactions
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.halfPadding
+
+            text: qsTr("New transactions")
+
+            visible: false
+            onClicked: d.refreshData()
+
+            icon.name: "arrow-up"
+
+            radius: 36
+            type: StatusButton.Primary
+            size: StatusBaseButton.Size.Tiny
+        }
+
         Separator {
             id: topListSeparator
             width: parent.width
             visible: !transactionListRoot.atYBeginning
+        }
+
+
+        Connections {
+            target: RootStore
+
+            function onNewDataAvailableChanged() {
+                if (!d.lastRefreshTime || ((Date.now() - d.lastRefreshTime) > (1000 * d.maxSecondsBetweenRefresh))) {
+                    newTransactions.visible = RootStore.newDataAvailable
+                    return
+                }
+
+                if (showRefreshButtonTimer.running) {
+                    if (!RootStore.newDataAvailable) {
+                        showRefreshButtonTimer.stop()
+                        newTransactions.visible = false
+                    }
+                } else if(RootStore.newDataAvailable) {
+                    showRefreshButtonTimer.start()
+                }
+            }
+        }
+
+        Timer {
+            id: showRefreshButtonTimer
+
+            interval: 2000
+            running: false
+            repeat: false
+            onTriggered: newTransactions.visible = RootStore.newDataAvailable
         }
     }
 
@@ -307,7 +352,7 @@ ColumnLayout {
             id: footerColumn
             readonly property bool allActivityLoaded: !RootStore.historyTransactions.hasMore && transactionListRoot.count !== 0
             width: root.width
-            spacing: 12
+            spacing: d.isInitialLoading ? 6 : 12
 
             Separator {
                 Layout.fillWidth: true
@@ -326,7 +371,17 @@ ColumnLayout {
             }
 
             Repeater {
-                model: !noTxs.visible && (RootStore.historyTransactions.hasMore || d.isInitialLoading) ? 10 : 0
+                model: {
+                    if (!noTxs.visible) {
+                        const delegateHeight = 64 + footerColumn.spacing
+                        if (d.isInitialLoading) {
+                            return Math.floor(transactionListRoot.height / delegateHeight)
+                        } else if (RootStore.historyTransactions.hasMore) {
+                            return Math.max(3, Math.floor(transactionListRoot.height / delegateHeight) - 3)
+                        }
+                    }
+                    return 0
+                }
                 TransactionDelegate {
                     Layout.fillWidth: true
                     rootStore: RootStore
@@ -356,64 +411,5 @@ ColumnLayout {
                 onClicked: transactionListRoot.positionViewAtBeginning()
             }
         }
-    }
-
-    Component {
-        id: headerComp
-
-        Item {
-            width: root.width
-            height: dataUpdatedButton.implicitHeight
-
-            StatusButton {
-                id: dataUpdatedButton
-
-                anchors.centerIn: parent
-
-                text: qsTr("New transactions")
-
-                visible: d.showRefreshButton
-                onClicked: d.refreshData()
-
-                icon.name: "arrow-up"
-
-                radius: 36
-                textColor: Theme.palette.indirectColor1
-                normalColor: Theme.palette.primaryColor1
-                hoverColor: Theme.palette.miscColor1
-
-                size: StatusBaseButton.Size.Tiny
-            }
-            z: 3
-        }
-    }
-
-    Connections {
-        target: RootStore
-
-        function onNewDataAvailableChanged() {
-            if (!d.lastRefreshTime || ((Date.now() - d.lastRefreshTime) > (1000 * d.maxSecondsBetweenRefresh))) {
-                d.showRefreshButton = RootStore.newDataAvailable
-                return
-            }
-
-            if (showRefreshButtonTimer.running) {
-                if (!RootStore.newDataAvailable) {
-                    showRefreshButtonTimer.stop()
-                    d.showRefreshButton = false
-                }
-            } else if(RootStore.newDataAvailable) {
-                showRefreshButtonTimer.start()
-            }
-        }
-    }
-
-    Timer {
-        id: showRefreshButtonTimer
-
-        interval: 2000
-        running: false
-        repeat: false
-        onTriggered: d.showRefreshButton = RootStore.newDataAvailable
     }
 }

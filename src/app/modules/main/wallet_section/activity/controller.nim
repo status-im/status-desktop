@@ -389,8 +389,9 @@ QtObject:
   QtProperty[QVariant] status:
     read = getStatus
 
-
   proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
+    if (self.addresses == addresses and self.chainIds == chainIds):
+      return
     self.setFilterAddresses(addresses)
     self.setFilterChains(chainIds)
     self.status.setIsFilterDirty(true)
