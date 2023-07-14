@@ -17,6 +17,8 @@ import "../../popups"
 
 Item {
     id: root
+
+    implicitHeight: childrenRect.height
     signal goBack
 
     property WalletStore walletStore

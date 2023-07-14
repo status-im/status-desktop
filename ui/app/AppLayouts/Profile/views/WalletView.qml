@@ -47,6 +47,10 @@ SettingsContentBase {
         id: stackContainer
 
         width: root.contentWidth
+        height: stackContainer.currentIndex === root.mainViewIndex ? main.height:
+                stackContainer.currentIndex === root.networksViewIndex ? networksView.height:
+                stackContainer.currentIndex === root.editNetworksViewIndex ? editNetwork.height:
+                stackContainer.currentIndex === root.accountOrderViewIndex ? accountOrderView.height: accountView.height
         currentIndex: mainViewIndex
 
         onCurrentIndexChanged: {
@@ -86,6 +90,7 @@ SettingsContentBase {
             id: main
 
             Layout.fillWidth: true
+            Layout.fillHeight: false
 
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup
@@ -105,7 +110,9 @@ SettingsContentBase {
         }
 
         NetworksView {
+            id: networksView
             Layout.fillWidth: true
+            Layout.fillHeight: false
 
             walletStore: root.walletStore
 
@@ -129,6 +136,7 @@ SettingsContentBase {
         }
 
         AccountOrderView {
+            id: accountOrderView
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
@@ -140,6 +148,7 @@ SettingsContentBase {
 
         AccountView {
             id: accountView
+            Layout.fillHeight: false
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup
 
