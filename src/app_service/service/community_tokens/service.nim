@@ -88,12 +88,29 @@ type
     communityToken*: CommunityTokenDto
     transactionHash*: string
     status*: ContractTransactionStatus
+    remoteDestructAddresses*: seq[string]
 
 type
   AirdropArgs* = ref object of Args
     communityToken*: CommunityTokenDto
     transactionHash*: string
     status*: ContractTransactionStatus
+
+type
+  RemoteDestroyTransactionDetails* = object
+    chainId*: int
+    contractAddress*: string
+    addresses*: seq[string]
+
+proc `%`*(self: RemoteDestroyTransactionDetails): JsonNode =
+  result = %* {
+    "contractAddress": self.contractAddress,
+    "chainId": self.chainId,
+    "addresses": self.addresses
+  }
+
+proc toRemoteDestroyTransactionDetails*(json: JsonNode): RemoteDestroyTransactionDetails =
+  return RemoteDestroyTransactionDetails(chainId: json["chainId"].getInt, contractAddress: json["contractAddress"].getStr, addresses: to(json["addresses"], seq[string]))
 
 type
   ComputeFeeErrorCode* {.pure.} = enum
@@ -183,6 +200,7 @@ QtObject:
   # Forward declaration
   proc fetchAllTokenOwners*(self: Service)
   proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner]
+  proc getCommunityToken*(self: Service, chainId: int, address: string): CommunityTokenDto
 
   proc delete*(self: Service) =
       delete(self.tokenOwnersTimer)
@@ -259,9 +277,10 @@ QtObject:
     self.events.on(PendingTransactionTypeDto.RemoteDestructCollectible.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
       try:
-        let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
+        let remoteDestructTransactionDetails = toRemoteDestroyTransactionDetails(parseJson(receivedData.data))
+        let tokenDto = self.getCommunityToken(remoteDestructTransactionDetails.chainId, remoteDestructTransactionDetails.contractAddress)
         let transactionStatus = if receivedData.success: ContractTransactionStatus.Completed else: ContractTransactionStatus.Failed
-        let data = RemoteDestructArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus)
+        let data = RemoteDestructArgs(communityToken: tokenDto, transactionHash: receivedData.transactionHash, status: transactionStatus, remoteDestructAddresses: @[])
         self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
 
         # update owners list if burn was successfull
@@ -391,6 +410,12 @@ QtObject:
       if token.symbol == symbol:
         return token
 
+  proc getCommunityToken*(self: Service, chainId: int, address: string): CommunityTokenDto =
+    let communityTokens = self.getAllCommunityTokens()
+    for token in communityTokens:
+      if token.chainId == chainId and token.address == address:
+        return token
+
   proc getCommunityTokenBurnState*(self: Service, chainId: int, contractAddress: string): ContractTransactionStatus =
     let burnTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.BurnCommunityToken)
     for transaction in burnTransactions:
@@ -401,6 +426,16 @@ QtObject:
       except Exception:
         discard
     return ContractTransactionStatus.Completed
+
+  proc getRemoteDestructedAddresses*(self: Service, chainId: int, contractAddress: string): seq[string] =
+    try:
+      let burnTransactions = self.transactionService.getPendingTransactionsForType(PendingTransactionTypeDto.RemoteDestructCollectible)
+      for transaction in burnTransactions:
+        let remoteDestructTransactionDetails = toRemoteDestroyTransactionDetails(parseJson(transaction.additionalData))
+        if remoteDestructTransactionDetails.chainId == chainId and remoteDestructTransactionDetails.contractAddress == contractAddress:
+          return remoteDestructTransactionDetails.addresses
+    except Exception:
+      error "Error getting contract owner", message = getCurrentExceptionMsg()
 
   proc contractOwner*(self: Service, chainId: int, contractAddress: string): string =
     try:
@@ -422,6 +457,16 @@ QtObject:
       return stint.parse(response.result.getStr(), Uint256)
     except RpcException:
       error "Error getting remaining supply", message = getCurrentExceptionMsg()
+
+  proc getRemoteDestructedAmount*(self: Service, chainId: int, contractAddress: string): Uint256 =
+    try:
+      let tokenType = self.getCommunityToken(chainId, contractAddress).tokenType
+      if tokenType != TokenType.ERC721:
+        return stint.parse("0", Uint256)
+      let response = tokens_backend.remoteDestructedAmount(chainId, contractAddress)
+      return stint.parse(response.result.getStr(), Uint256)
+    except RpcException:
+      error "Error getting remote destructed amount", message = getCurrentExceptionMsg()
 
   proc airdropTokens*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
     try:
@@ -535,7 +580,11 @@ QtObject:
       let transactionHash = response.result.getStr()
       debug "Remote destruct transaction hash ", transactionHash=transactionHash
 
-      var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress)
+      var transactionDetails = RemoteDestroyTransactionDetails(chainId: contract.chainId, contractAddress: contract.address)
+      for walletAndAmount in walletAndAmounts:
+        transactionDetails.addresses.add(walletAndAmount.walletAddress)
+
+      var data = RemoteDestructArgs(communityToken: contract, transactionHash: transactionHash, status: ContractTransactionStatus.InProgress, remoteDestructAddresses: transactionDetails.addresses)
       self.events.emit(SIGNAL_REMOTE_DESTRUCT_STATUS, data)
 
       # observe transaction state
@@ -544,7 +593,7 @@ QtObject:
         addressFrom,
         contract.address,
         $PendingTransactionTypeDto.RemoteDestructCollectible,
-        $contract.toJsonNode(),
+        $(%transactionDetails),
         contract.chainId,
       )
     except Exception as e:

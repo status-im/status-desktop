@@ -16,7 +16,9 @@ type
     chainIcon*: string
     accountName*: string
     remainingSupply*: Uint256
+    destructedAmount*: Uint256
     burnState*: ContractTransactionStatus
+    remoteDestructedAddresses*: seq[string]
     tokenOwnersModel*: token_owners_model.TokenOwnersModel
 
 proc initTokenItem*(
@@ -25,7 +27,9 @@ proc initTokenItem*(
   tokenOwners: seq[CollectibleOwner],
   accountName: string,
   burnState: ContractTransactionStatus,
-  remainingSupply: Uint256
+  remoteDestructedAddresses: seq[string],
+  remainingSupply: Uint256,
+  destructedAmount: Uint256
 ): TokenItem =
   result.tokenDto = tokenDto
   if network != nil:
@@ -33,11 +37,13 @@ proc initTokenItem*(
     result.chainIcon = network.iconURL
   result.accountName = accountName
   result.remainingSupply = remainingSupply
+  result.destructedAmount = destructedAmount
   result.burnState = burnState
+  result.remoteDestructedAddresses = remoteDestructedAddresses
   result.tokenOwnersModel = newTokenOwnersModel()
   result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
           # TODO find member with the address - later when airdrop to member will be added
-          result = initTokenOwnersItem("", "", owner)
+          result = initTokenOwnersItem("", "", owner, remoteDestructedAddresses)
         ))
 
 proc `$`*(self: TokenItem): string =
@@ -46,7 +52,9 @@ proc `$`*(self: TokenItem): string =
     chainName: {self.chainName},
     chainIcon: {self.chainIcon},
     remainingSupply: {self.remainingSupply},
+    destructedAmount: {self.destructedAmount},
     burnState: {self.burnState},
-    tokenOwnersModel: {self.tokenOwnersModel}
+    tokenOwnersModel: {self.tokenOwnersModel},
+    remoteDestructedAddresses: {self.remoteDestructedAddresses}
     ]"""
 

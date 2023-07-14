@@ -29,6 +29,7 @@ type
     RemainingSupply
     Decimals
     BurnState
+    RemotelyDestructState
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -63,11 +64,23 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.BurnState.int])
         return
 
-  proc updateSupply*(self: TokenModel, chainId: int, contractAddress: string, supply: Uint256) =
+  proc updateRemoteDestructedAddresses*(self: TokenModel, chainId: int, contractAddress: string, remoteDestructedAddresses: seq[string]) =
     for i in 0 ..< self.items.len:
       if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        if self.items[i].tokenDto.supply != supply:
+        self.items[i].remoteDestructedAddresses = remoteDestructedAddresses
+        let index = self.createIndex(i, 0, nil)
+        defer: index.delete
+        self.dataChanged(index, index, @[ModelRole.RemotelyDestructState.int])
+        self.items[i].tokenOwnersModel.updateRemoteDestructState(remoteDestructedAddresses)
+        self.dataChanged(index, index, @[ModelRole.TokenOwnersModel.int])
+        return
+
+  proc updateSupply*(self: TokenModel, chainId: int, contractAddress: string, supply: Uint256, destructedAmount: Uint256) =
+    for i in 0 ..< self.items.len:
+      if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
+        if self.items[i].tokenDto.supply != supply or self.items[i].destructedAmount != destructedAmount:
           self.items[i].tokenDto.supply = supply
+          self.items[i].destructedAmount = destructedAmount
           let index = self.createIndex(i, 0, nil)
           defer: index.delete
           self.dataChanged(index, index, @[ModelRole.Supply.int])
@@ -88,7 +101,7 @@ QtObject:
       if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
         self.items[i].tokenOwnersModel.setItems(owners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
           # TODO find member with the address - later when airdrop to member will be added
-          result = initTokenOwnersItem("", "", owner)
+          result = initTokenOwnersItem("", "", owner, self.items[i].remoteDestructedAddresses)
         ))
         let index = self.createIndex(i, 0, nil)
         defer: index.delete
@@ -156,6 +169,7 @@ QtObject:
       ModelRole.RemainingSupply.int:"remainingSupply",
       ModelRole.Decimals.int:"decimals",
       ModelRole.BurnState.int:"burnState",
+      ModelRole.RemotelyDestructState.int:"remotelyDestructState",
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -179,7 +193,8 @@ QtObject:
       of ModelRole.Description:
         result = newQVariant(item.tokenDto.description)
       of ModelRole.Supply:
-        result = newQVariant(supplyByType(item.tokenDto.supply, item.tokenDto.tokenType))
+        # we need to present maxSupply - destructedAmount
+        result = newQVariant(supplyByType(item.tokenDto.supply - item.destructedAmount, item.tokenDto.tokenType))
       of ModelRole.InfiniteSupply:
         result = newQVariant(item.tokenDto.infiniteSupply)
       of ModelRole.Transferable:
@@ -206,6 +221,9 @@ QtObject:
         result = newQVariant(item.tokenDto.decimals)
       of ModelRole.BurnState:
         result = newQVariant(item.burnState.int)
+      of ModelRole.RemotelyDestructState:
+        let destructStatus = if len(item.remoteDestructedAddresses) > 0: ContractTransactionStatus.InProgress.int else: ContractTransactionStatus.Completed.int
+        result = newQVariant(destructStatus)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:

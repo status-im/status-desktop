@@ -247,7 +247,9 @@ proc createTokenItem[T](self: Module[T], tokenDto: CommunityTokenDto) : TokenIte
   let ownerAddressName = self.controller.getCommunityTokenOwnerName(tokenDto.chainId, tokenDto.address)
   let remainingSupply = if tokenDto.infiniteSupply: stint.parse("0", Uint256) else: self.controller.getRemainingSupply(tokenDto.chainId, tokenDto.address)
   let burnState = self.controller.getCommunityTokenBurnState(tokenDto.chainId, tokenDto.address)
-  result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName, burnState, remainingSupply)
+  let remoteDestructedAddresses = self.controller.getRemoteDestructedAddresses(tokenDto.chainId, tokenDto.address)
+  let destructedAmount = self.controller.getRemoteDestructedAmount(tokenDto.chainId, tokenDto.address)
+  result = initTokenItem(tokenDto, network, tokenOwners, ownerAddressName, burnState, remoteDestructedAddresses, remainingSupply, destructedAmount)
 
 proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): SectionItem =
   let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
@@ -1029,16 +1031,21 @@ method onCommunityTokenDeployStateChanged*[T](self: Module[T], communityId: stri
   if item.id != "":
     item.updateCommunityTokenDeployState(chainId, contractAddress, deployState)
 
-method onCommunityTokenSupplyChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256) =
+method onCommunityTokenSupplyChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256, destructedAmount: Uint256) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
-    item.updateCommunityTokenSupply(chainId, contractAddress, supply)
+    item.updateCommunityTokenSupply(chainId, contractAddress, supply, destructedAmount)
     item.updateCommunityRemainingSupply(chainId, contractAddress, remainingSupply)
 
 method onBurnStateChanged*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateBurnState(chainId, contractAddress, burnState)
+
+method onRemoteDestructed*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, addresses: seq[string]) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.updateRemoteDestructedAddresses(chainId, contractAddress, addresses)
 
 method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, memberKey: string) =
   let item = self.view.model().getItemById(communityId)
