@@ -68,6 +68,8 @@ Item {
             }
 
             onDropped: function(drop) {
+                statusChatListCategoryItem.highlighted = false;
+                statusChatListItem.highlighted = false;
                 const from = drop.source.visualIndex;
                 const to = chatListDelegate.visualIndex;
                 if (to === from)
