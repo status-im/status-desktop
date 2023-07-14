@@ -198,6 +198,10 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "OverviewSettingsChart"
+        section: "Panels"
+    }
+    ListElement {
          title: "BurnTokensPopup"
          section: "Popups"
     }

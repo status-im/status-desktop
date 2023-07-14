@@ -31,3 +31,4 @@ TokenHoldersProxyModel 1.0 TokenHoldersProxyModel.qml
 WarningPanel 1.0 WarningPanel.qml
 WelcomeBannerPanel 1.0 WelcomeBannerPanel.qml
 EditSettingsPanel 1.0 EditSettingsPanel.qml
+OverviewSettingsChart 1.0 OverviewSettingsChart.qml

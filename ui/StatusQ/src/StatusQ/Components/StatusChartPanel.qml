@@ -98,6 +98,18 @@ Page {
     property int defaultTimeRangeIndexShown: 0
 
     /*!
+        \qmlproperty int StatusChartPanel::headerLeftPadding
+        This property holds the left padding of the header.
+    */
+    property int headerLeftPadding: 46
+
+    /*!
+        \qmlproperty int StatusChartPanel::headerBottomPadding
+        This property holds the bottom padding of the header.
+    */
+    property int headerBottomPadding: 0
+
+    /*!
         \qmlsignal
         This signal is emitted when a header tab bar is clicked.
     */
@@ -141,10 +153,10 @@ Page {
 
     background: null
     header: Item {
-        height: childrenRect.height
+        height: childrenRect.height + root.headerBottomPadding
         RowLayout {
             anchors.left: parent.left
-            anchors.leftMargin: 46
+            anchors.leftMargin: root.headerLeftPadding
             anchors.right: parent.right
             StatusTabBar {
                 id: graphsTabBar

@@ -249,6 +249,101 @@ QtObject {
     }
 
     /**
+        *  Returns the timestamp of the last minute
+        *  - `before``: number of minutes before the reference minute
+        *  - `time``: timestamp to use as reference
+        *  - `rounding``: if true, rounds to the last minute
+    **/
+    function minutes(before = 0, time = Date.now(), rounding = true) {
+        let timestamp = rounding ? Math.floor(time / minutesToMs(5)) * minutesToMs(5)
+                                    : time
+        return timestamp - minutesToMs(before)
+    }
+
+    /**
+        *  Returns the timestamp of the last hour
+        *  - `before``: number of hours before the reference hour
+        *  - `time``: timestamp to use as reference
+        *  - `rounding``: if true, rounds to the last hour
+    **/
+    function hours(before = 0, time = Date.now(), rounding = true) {
+        let timestamp = rounding ? Math.floor(time / minutesToMs(30)) * minutesToMs(30)
+                                    : time
+        return timestamp - hoursToMs(before)
+    }
+
+    /**
+        *  Returns the timestamp of the last day
+        *  - `before``: number of days before the reference day
+        *  - `time``: timestamp to use as reference
+        *  - `rounding``: if true, rounds to the last day
+    **/
+    function days(before = 0, time = Date.now(), rounding = true) {
+        let date = new Date(time)
+        if(rounding) {
+            date = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+        }
+
+        date.setDate(date.getDate() - before)
+        return date.getTime()
+    }
+
+    /**
+        *  Returns the timestamp of the last week
+        *  - `before``: number of weeks before the reference week
+        *  - `time``: timestamp to use as reference
+        *  - `rounding``: if true, rounds to the last week
+    **/
+    function months(before = 0, time = Date.now(), rounding = true) {
+        let date = new Date(time)
+        if(rounding) {
+            date = new Date(date.getFullYear(), date.getMonth(), 1)
+        }
+        date.setMonth(date.getMonth() - before)
+
+        return date.getTime()
+    }
+
+    /**
+        *  Returns the timestamp of the last year
+        *  - `before``: number of years before the reference year
+        *  - `time``: timestamp to use as reference
+        *  - `rounding``: if true, rounds to the last year
+    **/
+    function years(before = 0, time = Date.now(), rounding = true) {
+        let date = new Date(time)
+        if(rounding) {
+            date = new Date(date.getFullYear(), 0, 1)
+        }
+        date.setFullYear(date.getFullYear() - before)
+        return date.getTime()
+    }
+
+    /**
+        *  Retuns the number of milliseconds in the given amount of minutes
+        *  - `count``: number of minutes
+    **/
+    function minutesToMs(count = 1) {
+        return count * 60 * 1000
+    }
+
+    /**
+        *  Retuns the number of milliseconds in the given amount of hours
+        *  - `count``: number of hours
+    **/
+    function hoursToMs(count = 1) {
+        return count * minutesToMs(60)
+    }
+
+    /**
+        *  Retuns the number of milliseconds in the given amount of days
+        *  - `count``: number of days
+    **/
+    function daysToMs(count = 1) {
+        return count * hoursToMs(24)
+    }
+
+    /**
       Converts the Date to a string containing the date suitable for the specified locale in the specified format.
 
       - 'value' can be either a Date object, or a string containing a number or ISO string timestamp, or empty for "now"
