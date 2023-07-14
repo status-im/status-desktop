@@ -83,3 +83,7 @@ proc deployCollectiblesEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].
 proc deployAssetsEstimate*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[]
   return core.callPrivateRPC("collectibles_deployAssetsEstimate", payload)
+
+proc remoteDestructedAmount*(chainId: int, contractAddress: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[chainId, contractAddress]
+  return core.callPrivateRPC("collectibles_remoteDestructedAmount", payload)

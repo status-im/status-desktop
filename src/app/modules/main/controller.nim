@@ -57,6 +57,7 @@ type
 # Forward declaration
 proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
 proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): Uint256
+proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress: string): Uint256
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -347,14 +348,27 @@ proc init*(self: Controller) =
     let args = RemoteDestructArgs(e)
     let communityToken = args.communityToken
     self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
-      communityToken.address, communityToken.supply, self.getRemainingSupply(communityToken.chainId, communityToken.address))
+      communityToken.address, communityToken.supply,
+      self.getRemainingSupply(communityToken.chainId, communityToken.address),
+      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
     self.delegate.onBurnStateChanged(communityToken.communityId, communityToken.chainId, communityToken.address, args.status)
+
+  self.events.on(SIGNAL_REMOTE_DESTRUCT_STATUS) do(e: Args):
+    let args = RemoteDestructArgs(e)
+    let communityToken = args.communityToken
+    self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
+      communityToken.address, communityToken.supply,
+      self.getRemainingSupply(communityToken.chainId, communityToken.address),
+      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
+    self.delegate.onRemoteDestructed(communityToken.communityId, communityToken.chainId, communityToken.address, args.remoteDestructAddresses)
 
   self.events.on(SIGNAL_AIRDROP_STATUS) do(e: Args):
     let args = AirdropArgs(e)
     let communityToken = args.communityToken
     self.delegate.onCommunityTokenSupplyChanged(communityToken.communityId, communityToken.chainId,
-      communityToken.address, communityToken.supply, self.getRemainingSupply(communityToken.chainId, communityToken.address))
+      communityToken.address, communityToken.supply,
+      self.getRemainingSupply(communityToken.chainId, communityToken.address),
+      self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED) do(e: Args):
     let args = CommunityTokenOwnersArgs(e)
@@ -494,8 +508,14 @@ proc getCommunityTokenOwnerName*(self: Controller, chainId: int, contractAddress
 proc getCommunityTokenBurnState*(self: Controller, chainId: int, contractAddress: string): ContractTransactionStatus =
   return self.communityTokensService.getCommunityTokenBurnState(chainId, contractAddress)
 
+proc getRemoteDestructedAddresses*(self: Controller, chainId: int, contractAddress: string): seq[string] =
+  return self.communityTokensService.getRemoteDestructedAddresses(chainId, contractAddress)
+
 proc getRemainingSupply*(self: Controller, chainId: int, contractAddress: string): Uint256 =
   return self.communityTokensService.getRemainingSupply(chainId, contractAddress)
+
+proc getRemoteDestructedAmount*(self: Controller, chainId: int, contractAddress: string): Uint256 =
+  return self.communityTokensService.getRemoteDestructedAmount(chainId, contractAddress)
 
 proc getNetwork*(self:Controller, chainId: int): NetworkDto =
   self.networksService.getNetwork(chainId)

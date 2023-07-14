@@ -7,6 +7,7 @@ type
     ImageSource
     WalletAddress
     Amount
+    RemotelyDestructState
 
 QtObject:
   type TokenOwnersModel* = ref object of QAbstractListModel
@@ -47,7 +48,17 @@ QtObject:
       ModelRole.ImageSource.int:"imageSource",
       ModelRole.WalletAddress.int:"walletAddress",
       ModelRole.Amount.int:"amount",
+      ModelRole.RemotelyDestructState.int:"remotelyDestructState"
     }.toTable
+
+  proc updateRemoteDestructState*(self: TokenOwnersModel, remoteDestructedAddresses: seq[string]) =
+    let indexBegin = self.createIndex(0, 0, nil)
+    let indexEnd = self.createIndex(self.items.len - 1, 0, nil)
+    defer: indexBegin.delete
+    defer: indexEnd.delete
+    for i in 0 ..< self.items.len:
+      self.items[0].remotelyDestructState = remoteDestructTransactionStatus(remoteDestructedAddresses, self.items[0].ownerDetails.address)
+    self.dataChanged(indexBegin, indexEnd, @[ModelRole.RemotelyDestructState.int])
 
   method data(self: TokenOwnersModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -65,6 +76,8 @@ QtObject:
         result = newQVariant(item.ownerDetails.address)
       of ModelRole.Amount:
         result = newQVariant(item.amount)
+      of ModelRole.RemotelyDestructState:
+        result = newQVariant(item.remotelyDestructState.int)
 
   proc `$`*(self: TokenOwnersModel): string =
       for i in 0 ..< self.items.len:

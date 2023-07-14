@@ -338,14 +338,17 @@ proc removeCommunityToken*(self: SectionItem, chainId: int, contractAddress: str
 proc updateCommunityTokenDeployState*(self: SectionItem, chainId: int, contractAddress: string, deployState: DeployState) {.inline.} =
   self.communityTokensModel.updateDeployState(chainId, contractAddress, deployState)
 
-proc updateCommunityTokenSupply*(self: SectionItem, chainId: int, contractAddress: string, supply: Uint256) {.inline.} =
-  self.communityTokensModel.updateSupply(chainId, contractAddress, supply)
+proc updateCommunityTokenSupply*(self: SectionItem, chainId: int, contractAddress: string, supply: Uint256, destructedAmount: Uint256) {.inline.} =
+  self.communityTokensModel.updateSupply(chainId, contractAddress, supply, destructedAmount)
 
 proc updateCommunityRemainingSupply*(self: SectionItem, chainId: int, contractAddress: string, remainingSupply: Uint256) {.inline.} =
   self.communityTokensModel.updateRemainingSupply(chainId, contractAddress, remainingSupply)
 
 proc updateBurnState*(self: SectionItem, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) {.inline.} =
   self.communityTokensModel.updateBurnState(chainId, contractAddress, burnState)
+
+proc updateRemoteDestructedAddresses*(self: SectionItem, chainId: int, contractAddress: string, addresess: seq[string]) {.inline.} =
+  self.communityTokensModel.updateRemoteDestructedAddresses(chainId, contractAddress, addresess)
 
 proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.inline.} =
   self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners)
