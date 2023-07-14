@@ -35,6 +35,7 @@ Shape {
 
     property int radius: Style.current.radius
     readonly property alias path: path
+    readonly property alias textItem: description
 
     asynchronous: true
 

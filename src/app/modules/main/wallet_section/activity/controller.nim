@@ -68,6 +68,10 @@ QtObject:
   QtProperty[QVariant] recipientsModel:
     read = getRecipientsModel
 
+  proc activityParseError(self: Controller) {.signal.}
+  proc emitActivityParseError(self: Controller) =
+    self.activityParseError()
+
   proc buildMultiTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: MultiTransactionDto): ExtraData =
     # TODO: Use symbols from backendEntry when they're available
     result.inSymbol = item.toAsset
@@ -76,7 +80,7 @@ QtObject:
     result.outAmount = self.currencyService.parseCurrencyValue(result.outSymbol, metadata.amountOut)
 
   proc buildTransactionExtraData(self: Controller, metadata: backend_activity.ActivityEntry, item: ref Item): ExtraData =
-    # TODO: Use symbols from backendEntry when they're available
+    # TODO: Use symbols from backendEntrrey when they're available
     result.inSymbol = item[].getSymbol()
     result.inAmount = self.currencyService.parseCurrencyValue(result.inSymbol, metadata.amountIn)
     result.outSymbol = item[].getSymbol()
@@ -111,6 +115,7 @@ QtObject:
       let res = response.result
       if response.error != nil or res.kind != JArray or res.len == 0:
         error "failed fetching transaction details; err: ", response.error, ", kind: ", res.kind, ", res.len: ", res.len
+        self.emitActivityParseError()
 
       let transactionsDtos = res.getElems().map(x => x.toTransactionDto())
       let trItems = self.transactionsModule.transactionsToItems(transactionsDtos, @[])
@@ -123,6 +128,7 @@ QtObject:
       let res = response.result
       if response.error != nil or res.kind != JArray or res.len == 0:
         error "failed fetching pending transactions details; err: ", response.error, ", kind: ", res.kind, ", res.len: ", res.len
+        self.emitActivityParseError()
 
       let pendingTransactionsDtos = res.getElems().map(x => x.toPendingTransactionDto())
       let trItems = self.transactionsModule.transactionsToItems(pendingTransactionsDtos, @[])
@@ -144,6 +150,7 @@ QtObject:
             result.add(entry.newMultiTransactionActivityEntry(mt, backendEntry, extraData))
           else:
             error "failed to find multi transaction with id: ", id
+            self.emitActivityParseError()
           mtIndex += 1
         of SimpleTransaction:
           let identity = transactionIdentities[tIndex]
@@ -153,6 +160,7 @@ QtObject:
             result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData))
           else:
             error "failed to find transaction with identity: ", identity
+            self.emitActivityParseError()
           tIndex += 1
         of PendingTransaction:
           let identity = pendingTransactionIdentities[ptIndex]
@@ -162,6 +170,7 @@ QtObject:
             result.add(entry.newTransactionActivityEntry(tr, backendEntry, self.addresses, extraData))
           else:
             error "failed to find pending transaction with identity: ", identity
+            self.emitActivityParseError()
           ptIndex += 1
 
   proc processResponse(self: Controller, response: JsonNode) =

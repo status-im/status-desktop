@@ -38,6 +38,7 @@ QtObject {
     property var history: typeof walletSectionTransactions !== "undefined" ? walletSectionTransactions
                                                                           : null
     property var historyTransactions: Global.appIsReady? walletSection.activityController.model : null
+    property var activityController: Global.appIsReady ? walletSection.activityController : null
     readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSection.activityController.status.loadingData
     readonly property bool newDataAvailable: Global.appIsReady && walletSection.activityController.status.newDataAvailable
     readonly property bool isTransactionFilterDirty: Global.appIsReady && walletSection.activityController.status.isFilterDirty

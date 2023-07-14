@@ -89,6 +89,36 @@ ColumnLayout {
         isLoading: d.isInitialLoading
     }
 
+    ShapeRectangle {
+        // TODO_ES show on signal
+        // TODO_ES "Activity could not be fetched" for total failure (instead of noTx)
+        // TODO_ES handle visiblity (hide when reloading starts)
+        id: failedToLoad
+        Layout.fillWidth: true
+        Layout.preferredHeight: 42
+        Layout.alignment: Qt.AlignHCenter
+        visible: true
+        font.pixelSize: Style.current.primaryTextFontSize
+        text: qsTr("Some activity could not be fetched")
+
+        textItem.anchors.horizontalCenterOffset: -(failRetryButton.width / 2 + Style.current.padding)
+
+        StatusButton {
+            id: failRetryButton
+            anchors.left: failedToLoad.textItem.right
+            anchors.leftMargin: Style.current.padding
+            anchors.verticalCenter: parent.verticalCenter
+            radius: height / 2
+            height: parent.height * 0.7
+            verticalPadding: 0
+            horizontalPadding: radius
+            text: qsTr("Retry")
+            size: StatusButton.Small
+            type: StatusButton.Primary
+            onClicked: d.refreshData()
+        }
+    }
+
     Item {
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: nonArchivalNodeError.visible || noTxs.visible ? Style.current.padding : 0
