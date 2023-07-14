@@ -10239,7 +10239,7 @@ helpers$1.extend(Chart.prototype, /** @lends Chart */ {
 
 		// Invoke onHover hook
 		// Need to call with native event here to not break backwards compatibility
-		helpers$1.callback(options.onHover || options.hover.onHover, [e.native, me.active], me);
+		helpers$1.callback(options.onHover || options.hover.onHover, [e.native, me.active, e], me);
 
 		if (e.type === 'mouseup' || e.type === 'click') {
 			if (options.onClick) {

@@ -55,7 +55,7 @@ StackLayout {
     SettingsPage {
 
         rightPadding: 64
-        bottomPadding: 64
+        bottomPadding: 50
         topPadding: 0
         header: null
         contentItem: ColumnLayout {
@@ -109,38 +109,28 @@ StackLayout {
                 Layout.fillWidth: true
 
                 implicitHeight: 1
-                visible: root.editable
                 color: Theme.palette.statusMenu.separatorColor
             }
 
-            RowLayout {
+            OverviewSettingsChart {
+                Layout.topMargin: 16
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.bottomMargin: 16
+            }
+            Rectangle {
                 Layout.fillWidth: true
 
-                visible: root.owned
-
-                StatusIcon {
-                    icon: "info"
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    text: qsTr("This node is the Community Owner Node. For your Community to function correctly try to keep this computer with Status running and online as much as possible.")
-                    font.pixelSize: 15
-                    color: Theme.palette.directColor1
-                    wrapMode: Text.WordWrap
-                }
-            }
-
-            Item {
-                Layout.fillHeight: true
+                implicitHeight: 1
+                color: Theme.palette.statusMenu.separatorColor
             }
         }
 
         footer: OverviewSettingsFooter {
             rightPadding: 64
             leftPadding: 64
-            bottomPadding: 50
+            bottomPadding: 64
+            topPadding: 0
             loginType: root.loginType
             communityName: root.name
             //TODO connect to backend
