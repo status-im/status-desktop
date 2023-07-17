@@ -45,9 +45,10 @@ type
     collectibleService: collectible_service.Service
     communityTokensService: community_tokens_service.Service
     tmpAuthenticationForJoinInProgress: bool
+    tmpAuthenticationForEditSharedAddresses: bool
     tmpRequestToJoinEnsName: string
-    tmpRequestToJoinAddressesToShare: seq[string]
-    tmpRequestToJoinAirdropAddress: string
+    tmpAddressesToShare: seq[string]
+    tmpAirdropAddress: string
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service, 
@@ -77,9 +78,10 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.collectibleService = collectibleService
   result.communityTokensService = communityTokensService
   result.tmpAuthenticationForJoinInProgress = false
+  result.tmpAuthenticationForEditSharedAddresses = false
   result.tmpRequestToJoinEnsName = ""
-  result.tmpRequestToJoinAirdropAddress = ""
-  result.tmpRequestToJoinAddressesToShare = @[]
+  result.tmpAirdropAddress = ""
+  result.tmpAddressesToShare = @[]
 
 proc delete*(self: Controller) =
   self.events.disconnect()
@@ -95,17 +97,35 @@ proc setIsCurrentSectionActive*(self: Controller, active: bool) =
 
 proc userAuthenticationCanceled*(self: Controller) =
   self.tmpAuthenticationForJoinInProgress = false
+  self.tmpAuthenticationForEditSharedAddresses = false
   self.tmpRequestToJoinEnsName = ""
-  self.tmpRequestToJoinAirdropAddress = ""
-  self.tmpRequestToJoinAddressesToShare = @[]
+  self.tmpAirdropAddress = ""
+  self.tmpAddressesToShare = @[]
 
 proc requestToJoinCommunityAuthenticated*(self: Controller, password: string) =
   self.communityService.asyncRequestToJoinCommunity(self.sectionId, self.tmpRequestToJoinEnsName,
-    password, self.tmpRequestToJoinAddressesToShare, self.tmpRequestToJoinAirdropAddress)
+    password, self.tmpAddressesToShare, self.tmpAirdropAddress)
   self.tmpAuthenticationForJoinInProgress = false
   self.tmpRequestToJoinEnsName = ""
-  self.tmpRequestToJoinAirdropAddress = ""
-  self.tmpRequestToJoinAddressesToShare = @[]
+  self.tmpAirdropAddress = ""
+  self.tmpAddressesToShare = @[]
+
+proc editSharedAddressesAuthenticated*(self: Controller, password: string) =
+  self.communityService.asyncEditSharedAddresses(
+    self.sectionId,
+    password,
+    self.tmpAddressesToShare,
+    self.tmpAirdropAddress,
+  )
+  self.tmpAuthenticationForEditSharedAddresses = false
+  self.tmpAirdropAddress = ""
+  self.tmpAddressesToShare = @[]
+
+proc userAuthenticated*(self: Controller, password: string) =
+  if self.tmpAuthenticationForJoinInProgress:
+    self.requestToJoinCommunityAuthenticated(password)
+  elif self.tmpAuthenticationForEditSharedAddresses:
+    self.editSharedAddressesAuthenticated(password)
 
 proc authenticate*(self: Controller, keyUid = "") =
   let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_MAIN_MODULE_AUTH_IDENTIFIER,
@@ -115,8 +135,14 @@ proc authenticate*(self: Controller, keyUid = "") =
 proc authenticateToRequestToJoinCommunity*(self: Controller, ensName: string, addressesToShare: seq[string], airdropAddress: string) =
   self.tmpAuthenticationForJoinInProgress = true
   self.tmpRequestToJoinEnsName = ensName
-  self.tmpRequestToJoinAirdropAddress = airdropAddress
-  self.tmpRequestToJoinAddressesToShare = addressesToShare
+  self.tmpAirdropAddress = airdropAddress
+  self.tmpAddressesToShare = addressesToShare
+  self.authenticate()
+
+proc authenticateToEditSharedAddresses*(self: Controller, addressesToShare: seq[string], airdropAddress: string) =
+  self.tmpAuthenticationForEditSharedAddresses = true
+  self.tmpAirdropAddress = airdropAddress
+  self.tmpAddressesToShare = addressesToShare
   self.authenticate()
 
 proc getMySectionId*(self: Controller): string =
@@ -204,7 +230,7 @@ proc init*(self: Controller) =
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_MAIN_MODULE_AUTH_IDENTIFIER:
       return
-    if self.tmpAuthenticationForJoinInProgress:
+    if self.tmpAuthenticationForJoinInProgress or self.tmpAuthenticationForEditSharedAddresses:
       self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
 
   if (self.isCommunitySection):

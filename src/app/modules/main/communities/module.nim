@@ -274,6 +274,12 @@ method communityAccessRequested*(self: Module, communityId: string) =
 method communityAccessFailed*(self: Module, communityId, error: string) =
   self.view.communityAccessFailed(communityId, error)
 
+method communityEditSharedAddressesSucceeded*(self: Module, communityId: string) =
+  self.view.communityEditSharedAddressesSucceeded(communityId)
+
+method communityEditSharedAddressesFailed*(self: Module, communityId, error: string) =
+  self.view.communityEditSharedAddressesFailed(communityId, error)
+
 method communityHistoryArchivesDownloadStarted*(self: Module, communityId: string) =
   self.view.setDownloadingCommunityHistoryArchives(true)
 

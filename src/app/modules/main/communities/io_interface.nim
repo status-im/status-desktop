@@ -121,6 +121,12 @@ method communityAccessRequested*(self: AccessInterface, communityId: string) {.b
 method communityAccessFailed*(self: AccessInterface, communityId: string, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityEditSharedAddressesSucceeded*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityEditSharedAddressesFailed*(self: AccessInterface, communityId: string, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method requestExtractDiscordChannelsAndCategories*(self: AccessInterface, filesToImport: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 

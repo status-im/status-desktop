@@ -127,6 +127,8 @@ const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_SPECTATED* = "communitySpectated"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
 const SIGNAL_COMMUNITY_MY_REQUEST_FAILED* = "communityMyRequestFailed"
+const SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_SUCCEEDED* = "communityEditSharedAddressesSucceded"
+const SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_FAILED* = "communityEditSharedAddressesFailed"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
 const SIGNAL_COMMUNITY_ADDED* = "communityAdded"
@@ -1434,6 +1436,36 @@ QtObject:
     except Exception as e:
       error "Error requesting to join the community", msg = e.msg
       self.events.emit(SIGNAL_COMMUNITY_MY_REQUEST_FAILED, CommunityRequestFailedArgs(
+        communityId: rpcResponseObj["communityId"].getStr,
+        error: e.msg
+      ))
+
+  proc asyncEditSharedAddresses*(self: Service, communityId: string, password: string, addressesToShare: seq[string],
+      airdropAddress: string) =
+    let arg = AsyncEditSharedAddressesTaskArg(
+      tptr: cast[ByteAddress](asyncEditSharedAddressesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncEditSharedAddressesDone",
+      communityId: communityId,
+      password: password,
+      addressesToShare: addressesToShare,
+      airdropAddress: airdropAddress,
+    )
+    self.threadpool.start(arg)
+    
+  proc onAsyncEditSharedAddressesDone*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
+    let rpcResponseObj = communityIdAndRpcResponse.parseJson
+    try:
+      if (rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != ""):
+        raise newException(CatchableError, rpcResponseObj{"error"}.getStr)
+
+      # If we need the returned shared addresses, use the value in members.revealed_accounts of the response
+      self.events.emit(SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_SUCCEEDED, CommunityIdArgs(
+        communityId: rpcResponseObj["communityId"].getStr,
+      ))
+    except Exception as e:
+      error "Error editing shared addresses", msg = e.msg
+      self.events.emit(SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_FAILED, CommunityRequestFailedArgs(
         communityId: rpcResponseObj["communityId"].getStr,
         error: e.msg
       ))

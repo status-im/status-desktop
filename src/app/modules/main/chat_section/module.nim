@@ -900,7 +900,7 @@ method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid:
     self.controller.userAuthenticationCanceled()
     return
 
-  self.controller.requestToJoinCommunityAuthenticated(password)
+  self.controller.userAuthenticated(password)
 
 method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
   self.updateBadgeNotifications(chat, hasUnreadMessages=false, unviewedMentionsCount=0)
@@ -1329,6 +1329,9 @@ method deleteCommunityTokenPermission*(self: Module, communityId: string, permis
 method requestToJoinCommunityWithAuthentication*(self: Module, ensName: string, addressesToShare: seq[string],
     airdropAddress: string) =
   self.controller.authenticateToRequestToJoinCommunity(ensName, addressesToShare, airdropAddress)
+
+method editSharedAddressesWithAuthentication*(self: Module, addressesToShare: seq[string], airdropAddress: string) =
+  self.controller.authenticateToEditSharedAddresses(addressesToShare, airdropAddress)
 
 method onDeactivateChatLoader*(self: Module, chatId: string) =
   self.view.chatsModel().disableChatLoader(chatId)
