@@ -469,6 +469,12 @@ QtObject {
     readonly property QtObject keypair: QtObject {
         readonly property int nameLengthMax: 20
         readonly property int nameLengthMin: 5
+
+        readonly property QtObject operability: QtObject {
+            readonly property string nonOperable: "no"        // an account is non operable it is not a keycard account and there is no keystore file for it and no keystore file for the address it is derived from
+            readonly property string partiallyOperable: "partially" // an account is partially operable if it is not a keycard account and there is created keystore file for the address it is derived from
+            readonly property string fullyOperable: "fully" // an account is fully operable if it is not a keycard account and there is a keystore file for it
+        }
     }
 
     readonly property QtObject validators: QtObject {

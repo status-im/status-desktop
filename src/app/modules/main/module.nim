@@ -372,6 +372,15 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     communityTokensItems,
   )
 
+proc connectForNotificationsOnly[T](self: Module[T]) =
+  self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
+    let args = AccountArgs(e)
+    self.view.showToastAccountAdded(args.account.name)
+
+  self.events.on(SIGNAL_KEYPAIR_NAME_CHANGED) do(e: Args):
+    let args = KeypairArgs(e)
+    self.view.showToastKeypairRenamed(args.oldKeypairName, args.keypair.name)
+
 method load*[T](
   self: Module[T],
   events: EventEmitter,
@@ -387,6 +396,7 @@ method load*[T](
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
   self.controller.init()
   self.view.load()
+  self.connectForNotificationsOnly()
 
   var activeSection: SectionItem
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()

@@ -101,7 +101,7 @@ QtObject:
     read = getEphemeralNotificationModel
     notify = ephemeralNotificationModelChanged
 
-  proc displayEphemeralNotification*(self: View, title: string, subTitle: string, icon: string, loading: bool, 
+  proc displayEphemeralNotification*(self: View, title: string, subTitle: string, icon: string, loading: bool,
     ephNotifType: int, url: string) {.slot.} =
     self.delegate.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url)
 
@@ -253,7 +253,7 @@ QtObject:
 
   proc activateStatusDeepLink*(self: View, statusDeepLink: string) {.slot.} =
     self.delegate.activateStatusDeepLink(statusDeepLink)
-    
+
   proc displayKeycardSharedModuleFlow*(self: View) {.signal.}
   proc emitDisplayKeycardSharedModuleFlow*(self: View) =
     self.displayKeycardSharedModuleFlow()
@@ -262,11 +262,15 @@ QtObject:
   proc emitDestroyKeycardSharedModuleFlow*(self: View) =
     self.destroyKeycardSharedModuleFlow()
 
-  proc windowActivated*(self: View) {.slot.} = 
+  proc windowActivated*(self: View) {.slot.} =
     self.delegate.windowActivated()
 
-  proc windowDeactivated*(self: View) {.slot.} = 
+  proc windowDeactivated*(self: View) {.slot.} =
     self.delegate.windowDeactivated()
 
-  proc setCommunityIdToSpectate*(self: View, communityId: string) {.slot.} = 
+  proc setCommunityIdToSpectate*(self: View, communityId: string) {.slot.} =
     self.delegate.setCommunityIdToSpectate(communityId)
+
+  ## Signals for in app (ephemeral) notifications
+  proc showToastAccountAdded*(self: View, name: string) {.signal.}
+  proc showToastKeypairRenamed*(self: View, oldName: string, newName: string) {.signal.}

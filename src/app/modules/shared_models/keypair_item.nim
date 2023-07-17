@@ -1,4 +1,4 @@
-import NimQml, strformat
+import NimQml, strformat, sequtils, sugar
 import keypair_account_model
 
 export keypair_account_model
@@ -23,6 +23,7 @@ QtObject:
     derivedFrom: string
     lastUsedDerivationIndex: int
     migratedToKeycard: bool
+    operability: string
     accounts: KeyPairAccountModel
     observedAccount: KeyPairAccountItem
 
@@ -79,6 +80,7 @@ QtObject:
       derivedFrom: {self.derivedFrom},
       lastUsedDerivationIndex: {self.lastUsedDerivationIndex},
       migratedToKeycard: {self.migratedToKeycard},
+      operability: {self.operability},
       accounts: {$self.accounts}
       ]"""
 
@@ -192,6 +194,19 @@ QtObject:
     write = setMigratedToKeycard
     notify = migratedToKeycardChanged
 
+  proc operabilityChanged*(self: KeyPairItem) {.signal.}
+  proc getOperability*(self: KeyPairItem): string {.slot.} =
+    let items = self.accounts.getItems()
+    if items.any(x => x.getOperability() == AccountNonOperable):
+      return AccountNonOperable
+    if items.any(x => x.getOperability() == AccountPartiallyOperable):
+      return AccountPartiallyOperable
+    return AccountFullyOperable
+
+  QtProperty[string] operability:
+    read = getOperability
+    notify = operabilityChanged
+
   proc observedAccountChanged*(self: KeyPairItem) {.signal.}
   proc getObservedAccountAsVariant*(self: KeyPairItem): QVariant {.slot.} =
     return newQVariant(self.observedAccount)
@@ -204,7 +219,6 @@ QtObject:
   proc setLastAccountAsObservedAccount(self: KeyPairItem) =
     let index = self.accounts.getCount() - 1
     self.setAccountAtIndexAsObservedAccount(index)
-
   proc getAccountsModel*(self: KeyPairItem): KeyPairAccountModel =
     return self.accounts
   proc getAccountsAsVariant*(self: KeyPairItem): QVariant {.slot.} =
@@ -214,15 +228,19 @@ QtObject:
   proc removeAccountAtIndex*(self: KeyPairItem, index: int) {.slot.} =
     self.accounts.removeItemAtIndex(index)
     self.setLastAccountAsObservedAccount()
+    self.operabilityChanged()
   proc removeAccountByAddress*(self: KeyPairItem, address: string) {.slot.} =
     self.accounts.removeItemByAddress(address)
     self.setLastAccountAsObservedAccount()
+    self.operabilityChanged()
   proc addAccount*(self: KeyPairItem, item: KeyPairAccountItem) =
     self.accounts.addItem(item)
     self.setLastAccountAsObservedAccount()
+    self.operabilityChanged()
   proc setAccounts*(self: KeyPairItem, items: seq[KeyPairAccountItem]) =
     self.accounts.setItems(items)
     self.setLastAccountAsObservedAccount()
+    self.operabilityChanged()
   proc containsAccountAddress*(self: KeyPairItem, address: string): bool =
     return self.accounts.containsAccountAddress(address)
   proc containsAccountPath*(self: KeyPairItem, path: string): bool =
@@ -233,6 +251,9 @@ QtObject:
     self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
   proc setBalanceForAddress*(self: KeyPairItem, address: string, balance: float) =
     self.accounts.setBalanceForAddress(address, balance)
+  proc updateOperabilityForAccountWithAddress*(self: KeyPairItem, address: string, operability: string) =
+    self.accounts.updateOperabilityForAddress(address, operability)
+    self.operabilityChanged()
 
   proc setItem*(self: KeyPairItem, item: KeyPairItem) =
     self.setKeyUid(item.getKeyUid())

@@ -34,7 +34,6 @@ proc walletAccountToRelatedAccountItem*(w: WalletAccountDto) : related_account_i
   )
 
 proc walletAccountToWalletSettingsAccountsItem*(w: WalletAccountDto, keycardAccount: bool): wallet_settings_accounts_item.Item =
-  discard
   let relatedAccounts = related_accounts_model.newModel()
   if w.isNil:
     return wallet_settings_accounts_item.initItem()
@@ -52,6 +51,7 @@ proc walletAccountToWalletSettingsAccountsItem*(w: WalletAccountDto, keycardAcco
     w.keyUid,
     keycardAccount,
     w.position,
+    w.operable
   )
 
 proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool, enabledChainIds: seq[int], currency: string,

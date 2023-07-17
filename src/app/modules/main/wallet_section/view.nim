@@ -30,8 +30,6 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc showToastAccountAdded*(self: View, name: string) {.signal.}
-
   proc updateCurrency*(self: View, currency: string) {.slot.} =
     self.delegate.updateCurrency(currency)
   proc getCurrentCurrency(self: View): string {.slot.} =

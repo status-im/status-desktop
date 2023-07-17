@@ -94,6 +94,28 @@ Item {
         function onOpenActivityCenter() {
             d.openActivityCenterPopup()
         }
+
+        function onShowToastAccountAdded(name: string) {
+            Global.displayToastMessage(
+                qsTr("\"%1\" successfuly added").arg(name),
+                "",
+                "check-circle",
+                false,
+                Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
+
+        function onShowToastKeypairRenamed(oldName: string, newName: string) {
+            Global.displayToastMessage(
+                qsTr("You successfully renamed your keypair\nfrom \"%1\" to \"%2\"").arg(oldName).arg(newName),
+                "",
+                "check-circle",
+                false,
+                Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
     }
 
     QtObject {
