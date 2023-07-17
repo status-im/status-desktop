@@ -39,24 +39,25 @@ const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
     output["allTxLoaded"] = %(response.getElems().len < arg.limit)
 
     # Fetch collectibles for transactions
-    var uniqueIds: seq[collectibles.NFTUniqueID] = @[]
+    var uniqueIds: seq[collectibles.CollectibleUniqueID] = @[]
     for txJson in response.getElems():
       let tx = txJson.toTransactionDto()
       if tx.typeValue == ERC721_TRANSACTION_TYPE:
-        let nftId = collectibles.NFTUniqueID(
+        let nftId = collectibles.CollectibleUniqueID(
+          chainID: arg.chainId,
           contractAddress: tx.contract,
-          tokenID: tx.tokenId.toString(10)
+          tokenID: tx.tokenId
         )
         if not uniqueIds.any(x => (x == nftId)):
           uniqueIds.add(nftId)
 
     if len(uniqueIds) > 0:
-      let collectiblesResponse = collectibles.getOpenseaAssetsByNFTUniqueID(arg.chainId, uniqueIds, arg.collectiblesLimit)
+      let collectiblesResponse = collectibles.getOpenseaAssetsByCollectibleUniqueID(uniqueIds)
 
       if not collectiblesResponse.error.isNil:
         # We don't want to prevent getting the list of transactions if we cannot get
         # NFT metadata. Just don't return the metadata.
-        let errDesription = "Error getOpenseaAssetsByNFTUniqueID" & collectiblesResponse.error.message
+        let errDesription = "Error getOpenseaAssetsByCollectibleUniqueID" & collectiblesResponse.error.message
         error "error loadTransactionsTask: ", errDesription
       else:
         output["collectibles"] = collectiblesResponse.result

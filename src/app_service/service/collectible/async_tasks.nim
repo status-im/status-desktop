@@ -64,31 +64,3 @@ const fetchOwnedCollectiblesFromContractAddressesTaskArg: Task = proc(argEncoded
       "error": e.msg
     }
     arg.finish(output)
-
-type
-  FetchCollectiblesTaskArg = ref object of QObjectTaskArg
-    chainId*: int
-    ids*: seq[collectibles.NFTUniqueID]
-    limit: int
-
-const fetchCollectiblesTaskArg: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[FetchCollectiblesTaskArg](argEncoded)
-  try:
-    let response = collectibles.getOpenseaAssetsByNFTUniqueID(arg.chainId, arg.ids, arg.limit)
-
-    if not response.error.isNil:
-      raise newException(ValueError, "Error getOpenseaAssetsByNFTUniqueID" & response.error.message)
-
-    let output = %* {
-      "chainId": arg.chainId,
-      "collectibles": response.result,
-      "error": ""
-    }
-    arg.finish(output)
-  except Exception as e:
-    let output = %* {
-      "chainId": arg.chainId,
-      "collectibles": "",
-      "error": e.msg
-    }
-    arg.finish(output)

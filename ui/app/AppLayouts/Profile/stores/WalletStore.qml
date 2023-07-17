@@ -20,8 +20,8 @@ QtObject {
 
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
-    property var flatCollectibles: Global.appIsReady ? walletSectionCollectibles.model : null
     property var assets: walletSectionAssets.assets
+    property var collectibles: Global.appIsReady ? walletSection.collectiblesController.model : null // To-do: Fetch profile collectibles separately
     property var accounts: Global.appIsReady? accountsModule.accounts : null
     property var originModel: accountsModule.keyPairModel
     property bool includeWatchOnlyAccount: accountsModule.includeWatchOnlyAccount

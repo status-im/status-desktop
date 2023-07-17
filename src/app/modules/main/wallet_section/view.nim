@@ -1,6 +1,8 @@
 import NimQml, json
 
 import ./activity/controller as activityc
+import ./collectibles/controller as collectiblesc
+import ./collectible_details/controller as collectible_detailsc
 import ./io_interface
 import ../../shared_models/currency_amount
 
@@ -14,6 +16,8 @@ QtObject:
       tmpAmount: float  # shouldn't be used anywhere except in prepare*/getPrepared* procs
       tmpSymbol: string # shouldn't be used anywhere except in prepare*/getPrepared* procs
       activityController: activityc.Controller
+      collectiblesController: collectiblesc.Controller
+      collectibleDetailsController: collectible_detailsc.Controller
 
   proc setup(self: View) =
     self.QObject.setup
@@ -21,10 +25,12 @@ QtObject:
   proc delete*(self: View) =
     self.QObject.delete
 
-  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller): View =
+  proc newView*(delegate: io_interface.AccessInterface, activityController: activityc.Controller, collectiblesController: collectiblesc.Controller, collectibleDetailsController: collectible_detailsc.Controller): View =
     new(result, delete)
     result.delegate = delegate
     result.activityController = activityController
+    result.collectiblesController = collectiblesController
+    result.collectibleDetailsController = collectibleDetailsController
     result.setup()
 
   proc load*(self: View) =
@@ -119,3 +125,13 @@ QtObject:
     return newQVariant(self.activityController)
   QtProperty[QVariant] activityController:
     read = getActivityController
+
+  proc getCollectiblesController(self: View): QVariant {.slot.} =
+    return newQVariant(self.collectiblesController)
+  QtProperty[QVariant] collectiblesController:
+    read = getCollectiblesController
+
+  proc getCollectibleDetailsController(self: View): QVariant {.slot.} =
+    return newQVariant(self.collectibleDetailsController)
+  QtProperty[QVariant] collectibleDetailsController:
+    read = getCollectibleDetailsController

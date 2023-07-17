@@ -29,8 +29,7 @@ QtObject {
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
-    property var flatCollectibles: walletSectionCollectibles.model
-    property var currentCollectible: walletSectionCurrentCollectible
+    property CollectiblesStore collectiblesStore: CollectiblesStore {}
 
     property var areTestNetworksEnabled: networksModule.areTestNetworksEnabled
 
@@ -173,19 +172,6 @@ QtObject {
 
     function hex2Dec(value) {
         return globalUtils.hex2Dec(value)
-    }
-
-    function getCollectionMaxValue(traitType, value, maxValue, collectionIndex) {
-        // Not Refactored Yet
-//        if(maxValue !== "")
-//            return parseInt(value) + qsTr(" of ") + maxValue;
-//        else
-//            return parseInt(value) + qsTr(" of ") +
-//            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
-    }
-
-    function selectCollectible(address, tokenId) {
-        walletSectionCurrentCollectible.update(address, tokenId)
     }
 
     function getNameForSavedWalletAddress(address) {

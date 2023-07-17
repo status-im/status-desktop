@@ -247,7 +247,8 @@ Control {
                 cellWidth: (width-rightMargin)/4
                 cellHeight: cellWidth
                 visible: count
-                model: root.isCurrentUser ? root.walletStore.flatCollectibles : null // TODO show other users too
+                // TODO Issue #11637: Dedicated controller for user's list of collectibles (no watch-only entries)
+                model: root.isCurrentUser ? root.walletStore.ownedCollectibles : null
                 ScrollBar.vertical: StatusScrollBar { }
                 delegate: StatusRoundedImage {
                     width: GridView.view.cellWidth - Style.current.smallPadding

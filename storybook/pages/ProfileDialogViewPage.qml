@@ -228,10 +228,6 @@ SplitView {
                                 logs.logEvent("walletStore::setFilterAddress", ["address"], arguments)
                             }
 
-                            function selectCollectible(slug, id) {
-                                logs.logEvent("walletStore::selectCollectible", ["slug", "id"], arguments)
-                            }
-
                             readonly property var accounts: ListModel {
                                 ListElement {
                                     name: "My Status Account"
@@ -338,7 +334,7 @@ SplitView {
                                 Component.onCompleted: append(data)
                             }
 
-                            readonly property var flatCollectibles: ListModel {
+                            readonly property var collectibles: ListModel {
                                 readonly property var data: [
                                     {
                                         //id: 123,

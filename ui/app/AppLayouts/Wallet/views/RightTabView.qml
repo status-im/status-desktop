@@ -115,9 +115,9 @@ Item {
                     }
                 }
                 CollectiblesView {
-                    collectiblesModel: RootStore.flatCollectibles
+                    collectiblesModel: RootStore.collectiblesStore.ownedCollectibles
                     onCollectibleClicked: {
-                        RootStore.selectCollectible(address, tokenId)
+                        RootStore.collectiblesStore.getDetailedCollectible(chainId, contractAddress, tokenId)
                         stack.currentIndex = 1
                     }
                 }
@@ -134,6 +134,8 @@ Item {
         CollectibleDetailView {
             Layout.fillWidth: true
             Layout.fillHeight: true
+            collectible: RootStore.collectiblesStore.detailedCollectible
+            isCollectibleLoading: RootStore.collectiblesStore.isDetailedCollectibleLoading
         }
         AssetsDetailView {
             id: assetDetailView

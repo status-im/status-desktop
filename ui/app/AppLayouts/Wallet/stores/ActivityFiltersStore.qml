@@ -156,7 +156,8 @@ QtObject {
     }
 
     // Collectibles Filters
-    property var collectiblesList: walletSectionCollectibles.model
+    // To-do: Get list of collectibles with activity from backend
+    property var collectiblesList: walletSection.collectiblesController.model
     property var collectiblesFilter: []
     function toggleCollectibles(id) {
         // update filters
