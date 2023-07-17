@@ -6,7 +6,6 @@ import ../io_interface as delegate_interface
 
 import ./accounts/module as accounts_module
 import ./all_tokens/module as all_tokens_module
-import ./collectibles/module as collectibles_module
 import ./assets/module as assets_module
 import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
@@ -17,6 +16,8 @@ import ./send/module as send_module
 import ../../shared_modules/add_account/module as add_account_module
 
 import ./activity/controller as activityc
+import ./collectibles/controller as collectiblesc
+import ./collectible_details/controller as collectible_detailsc
 
 import ../../../global/global_singleton
 import ../../../core/eventemitter
@@ -49,7 +50,6 @@ type
 
     accountsModule: accounts_module.AccessInterface
     allTokensModule: all_tokens_module.AccessInterface
-    collectiblesModule: collectibles_module.AccessInterface
     assetsModule: assets_module.AccessInterface
     sendModule: send_module.AccessInterface
     transactionsModule: transactions_module.AccessInterface
@@ -64,6 +64,8 @@ type
     walletAccountService: wallet_account_service.Service
 
     activityController: activityc.Controller
+    collectiblesController: collectiblesc.Controller
+    collectibleDetailsController: collectible_detailsc.Controller
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -92,7 +94,6 @@ proc newModule*(
 
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService, currencyService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
-  result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService, networkService, nodeService, networkConnectionService)
   result.assetsModule = assets_module.newModule(result, events, walletAccountService, networkService, tokenService, currencyService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService, currencyService)
   result.sendModule = send_module.newModule(result, events, walletAccountService, networkService, currencyService, transactionService)
@@ -102,15 +103,16 @@ proc newModule*(
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
   result.networksService = networkService
   result.activityController = activityc.newController(result.transactionsModule, currencyService, tokenService, events)
+  result.collectiblesController = collectiblesc.newController(events)
+  result.collectibleDetailsController = collectible_detailsc.newController(networkService, events)
   result.filter = initFilter(result.controller)
 
-  result.view = newView(result, result.activityController)
+  result.view = newView(result, result.activityController, result.collectiblesController, result.collectibleDetailsController)
 
 
 method delete*(self: Module) =
   self.accountsModule.delete
   self.allTokensModule.delete
-  self.collectiblesModule.delete
   self.assetsModule.delete
   self.transactionsModule.delete
   self.savedAddressesModule.delete
@@ -119,6 +121,8 @@ method delete*(self: Module) =
   self.controller.delete
   self.view.delete
   self.activityController.delete
+  self.collectiblesController.delete
+  self.collectibleDetailsController.delete
 
   if not self.addAccountModule.isNil:
     self.addAccountModule.delete
@@ -143,11 +147,11 @@ method notifyFilterChanged(self: Module) =
   let includeWatchOnly = self.controller.isIncludeWatchOnlyAccount()
   self.overviewModule.filterChanged(self.filter.addresses, self.filter.chainIds, includeWatchOnly, self.filter.allAddresses)
   self.assetsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
-  self.collectiblesModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.transactionsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.accountsModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.sendModule.filterChanged(self.filter.addresses, self.filter.chainIds)
   self.activityController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
+  self.collectiblesController.globalFilterChanged(self.filter.addresses, self.filter.chainIds)
   if self.filter.addresses.len > 0:
     self.view.filterChanged(self.filter.addresses[0], includeWatchOnly, self.filter.allAddresses)
 
@@ -214,7 +218,6 @@ method load*(self: Module) =
   self.view.load()
   self.accountsModule.load()
   self.allTokensModule.load()
-  self.collectiblesModule.load()
   self.assetsModule.load()
   self.transactionsModule.load()
   self.savedAddressesModule.load()
@@ -231,9 +234,6 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.allTokensModule.isLoaded()):
-    return
-
-  if(not self.collectiblesModule.isLoaded()):
     return
 
   if(not self.assetsModule.isLoaded()):

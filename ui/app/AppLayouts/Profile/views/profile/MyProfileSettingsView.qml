@@ -211,7 +211,7 @@ ColumnLayout {
         ProfileShowcaseCollectiblesPanel {
             Layout.minimumHeight: implicitHeight
             Layout.maximumHeight: implicitHeight
-            baseModel: root.walletStore.flatCollectibles
+            baseModel: root.walletStore.collectibles
         }
 
         ProfileShowcaseAssetsPanel {

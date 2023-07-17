@@ -16,7 +16,8 @@ import "../../controls"
 Item {
     id: root
 
-    property var currentCollectible: RootStore.currentCollectible
+    property var collectible
+    property bool isCollectibleLoading
     readonly property int isNarrowMode : width < 700
 
     CollectibleDetailsHeader {
@@ -24,14 +25,14 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        asset.name: currentCollectible.collectionImageUrl
+        asset.name: collectible.collectionImageUrl
         asset.isImage: true
-        primaryText: currentCollectible.collectionName
-        secondaryText: "#" + currentCollectible.tokenId
+        primaryText: collectible.collectionName
+        secondaryText: "#" + collectible.tokenId
         isNarrowMode: root.isNarrowMode
-        networkShortName: currentCollectible.networkShortName
-        networkColor: currentCollectible.networkColor
-        networkIconURL: currentCollectible.networkIconUrl
+        networkShortName: collectible.networkShortName
+        networkColor: collectible.networkColor
+        networkIconURL: collectible.networkIconUrl
     }
 
     ColumnLayout {
@@ -57,12 +58,12 @@ Item {
                 width: size
                 height: size
                 radius: 2
-                color: currentCollectible.backgroundColor
+                color: collectible.backgroundColor
                 border.color: Theme.palette.directColor8
                 border.width: 1
-                mediaUrl: currentCollectible.mediaUrl
-                mediaType: currentCollectible.mediaType
-                fallbackImageUrl: currentCollectible.imageUrl
+                mediaUrl: collectible.mediaUrl
+                mediaType: collectible.mediaType
+                fallbackImageUrl: collectible.imageUrl
             }
 
             Column {
@@ -76,7 +77,7 @@ Item {
                     width: parent.width
                     height: 24
 
-                    text: currentCollectible.name
+                    text: collectible.name
                     color: Theme.palette.directColor1
                     font.pixelSize: 17
                     lineHeight: 24
@@ -97,7 +98,7 @@ Item {
                         id: descriptionText
                         width: descriptionScrollView.availableWidth
 
-                        text: currentCollectible.description
+                        text: collectible.description
                         textFormat: Text.MarkdownText
                         color: Theme.palette.directColor4
                         font.pixelSize: 15
@@ -114,7 +115,7 @@ Item {
             id: collectiblesDetailsTab
             Layout.fillWidth: true
             Layout.topMargin: root.isNarrowMode ? 0 : Style.current.xlPadding
-            visible: currentCollectible.properties.count > 0
+            visible: collectible.traits.count > 0
 
             StatusTabButton {
                 leftPadding: 0
@@ -132,7 +133,7 @@ Item {
                 width: scrollView.availableWidth
                 spacing: 10
                 Repeater {
-                    model: currentCollectible.properties
+                    model: collectible.traits
                     InformationTile {
                         maxWidth: parent.width
                         primaryText: model.traitType

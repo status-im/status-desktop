@@ -16,7 +16,7 @@ Item {
     property var collectiblesModel
     width: parent.width
 
-    signal collectibleClicked(string address, string tokenId)
+    signal collectibleClicked(int chainId, string contractAddress, string tokenId)
 
     Loader {
         id: contentLoader
@@ -24,8 +24,10 @@ Item {
         height: parent.height
 
         sourceComponent: {
-            if (root.collectiblesModel.allCollectiblesLoaded && root.collectiblesModel.count === 0)
+            /* TODO: Issue #11635
+            if (!root.collectiblesModel.hasMore && root.collectiblesModel.count === 0)
                 return empty;
+            */
             return loaded;
         }
     }
@@ -62,7 +64,7 @@ Item {
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
                 isLoading: model.isLoading
 
-                onClicked: root.collectibleClicked(model.address, model.tokenId)
+                onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId)
             }
 
             ScrollBar.vertical: StatusScrollBar {}

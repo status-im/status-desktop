@@ -28,63 +28,52 @@ SplitView {
         id: collectiblesModel
         readonly property var data: [
             {
-                id: 123,
+                uid: "123",
                 name: "SNT",
-                description: "",
                 collectionName: "Super Nitro Toluen (with pink bg)",
                 backgroundColor: "pink",
                 imageUrl: ModelsData.collectibles.custom,
-                permalink: "green",
                 isLoading: false
             },
             {
-                id: 34545656768,
+                uid: "34545656768",
                 name: "Kitty 1",
-                description: "",
                 collectionName: "Kitties",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty1Big,
-                permalink: "",
                 isLoading: false
             },
             {
-                id: 123456,
+                uid: "123456",
                 name: "Kitty 2",
-                description: "",
                 collectionName: "",
                 backgroundColor: "",
                 imageUrl: ModelsData.collectibles.kitty2Big,
-                permalink: "",
                 isLoading: false
             },
             {
-                id: 12345645459537432,
+                uid: "12345645459537432",
                 name: "",
-                description: "Kitty 3 description",
                 collectionName: "Super Kitties",
                 backgroundColor: "oink",
                 imageUrl: ModelsData.collectibles.kitty3Big,
-                permalink: "",
                 isLoading: false
             },
             {
-                id: 691,
+                uid: "691",
                 name: "KILLABEAR",
-                description: "Please note that weapons are not yet reflected in the rarity stats.",
                 collectionName: "KILLABEARS",
                 backgroundColor: "#807c56",
                 imageUrl: "https://assets.killabears.com/content/killabears/img/691-e81f892696a8ae700e0dbc62eb072060679a2046d1ef5eb2671bdb1fad1f68e3.png",
-                permalink: "https://opensea.io/assets/ethereum/0xc99c679c50033bbc5321eb88752e89a93e9e83c5/691",
                 isLoading: true
             },
             {
-                id: 8876,
+                uid: "8876",
                 name: "AIORBIT",
                 description: "",
                 collectionName: "AIORBIT (Animated SVG)",
                 backgroundColor: "",
                 imageUrl: "https://dl.openseauserdata.com/cache/originImage/files/8b14ef530b28853445c27d6693c4e805.svg",
-                permalink: "https://opensea.io/assets/ethereum/0xba66a7c5e1f89a542e3108e3df155a9bf41ac824/8876",
                 isLoading: false
             }
         ]

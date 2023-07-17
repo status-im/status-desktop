@@ -355,36 +355,6 @@ QtObject:
             return
         result.success = true
 
-  proc onRxCollectibles(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    let chainIdJson = responseObj["chainId"]
-    let chainId = chainIdJson.getInt()
-
-    let errorStr = responseObj["error"].getStr()
-    if errorStr != "":
-      error "error onRxCollectibles: ", errorStr
-    else:
-      let (success, collectibles, collections, _, _) = processCollectiblesResult(responseObj)
-      if success:
-        self.updateCollectiblesCache(chainId, collectibles, collections)
-      else:
-        let errDesription = "Could not get data from response"
-        error "error onRxCollectibles: ", errDesription
-
-  proc fetchCollectibles*(self: Service, chainId: int, ids: seq[UniqueID]) =
-    let arg = FetchCollectiblesTaskArg(
-      tptr: cast[ByteAddress](fetchCollectiblesTaskArg),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onRxCollectibles",
-      chainId: chainId,
-      ids: ids.map(id => collectibles.NFTUniqueID(
-        contractAddress: id.contractAddress,
-        tokenID: id.tokenId.toString()
-      )),
-      limit: len(ids)
-    )
-    self.threadpool.start(arg)
-
   proc onRxOwnedCollectibles(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     let chainIdJson = responseObj["chainId"]
