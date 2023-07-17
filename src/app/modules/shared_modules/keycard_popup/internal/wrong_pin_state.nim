@@ -41,7 +41,7 @@ method executePreSecondaryStateCommand*(self: WrongPinState, controller: Control
     self.flowType == FlowType.ChangePairingCode or
     self.flowType == FlowType.CreateCopyOfAKeycard:
       if controller.getPin().len == PINLengthForStatusApp:
-        controller.enterKeycardPin(controller.getPin())  
+        controller.enterKeycardPin(controller.getPin())
   if self.flowType == FlowType.Authentication:
     controller.setUsePinFromBiometrics(false)
     controller.tryToObtainDataFromKeychain()
@@ -61,13 +61,13 @@ method executeCancelCommand*(self: WrongPinState, controller: Controller) =
     self.flowType == FlowType.CreateCopyOfAKeycard:
       controller.terminateCurrentFlow(lastStepInTheCurrentFlow = false)
 
-method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresence(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.FactoryReset:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -75,7 +75,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
@@ -84,7 +84,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycard:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -92,7 +92,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
@@ -101,7 +101,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycardNewSeedPhrase:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -109,7 +109,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
@@ -118,7 +118,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.SetupNewKeycardOldSeedPhrase:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -126,7 +126,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
@@ -135,7 +135,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.ImportFromKeycard:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -143,7 +143,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
@@ -160,22 +160,22 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       item.setName(keycardEvent.cardMetadata.name)
       item.setIcon("keycard")
       item.setPairType(KeyPairType.SeedImport.int)
-      item.addAccount(newKeyPairAccountItem(name = "", 
-        path = accountItem.getPath(), 
+      item.addAccount(newKeyPairAccountItem(name = "",
+        path = accountItem.getPath(),
         address = accountItem.getAddress(),
         pubKey = accountItem.getPubKey()
       )) # name and other params will be set by the user during the flow
-      controller.setKeyPairForProcessing(item)      
+      controller.setKeyPairForProcessing(item)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.Authentication:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
       controller.setRemainingAttempts(keycardEvent.pinRetries)
       if keycardEvent.pinRetries > 0:
         return self
       return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
@@ -184,7 +184,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
         controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
         return nil
   if self.flowType == FlowType.DisplayKeycardContent:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -192,7 +192,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
@@ -201,7 +201,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.RenameKeycard:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -209,7 +209,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
@@ -218,7 +218,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
       return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.ChangeKeycardPin:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -226,7 +226,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
@@ -235,7 +235,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       if keycardEvent.error == ErrorChangingCredentials:
         return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.ChangeKeycardPuk:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -243,7 +243,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
@@ -252,7 +252,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
       if keycardEvent.error == ErrorChangingCredentials:
         return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.ChangePairingCode:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorPIN:
         controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -260,7 +260,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
           return self
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
         return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
         if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.HideKeyPair, add = true))
@@ -270,7 +270,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
         return createState(StateType.PinVerified, self.flowType, nil)
   if self.flowType == FlowType.CreateCopyOfAKeycard:
     if isPredefinedKeycardDataFlagSet(controller.getKeycardData(), PredefinedKeycardData.CopyFromAKeycardPartDone):
-      if keycardFlowType == ResponseTypeValueEnterPIN and 
+      if keycardFlowType == ResponseTypeValueEnterPIN and
         keycardEvent.error.len > 0 and
         keycardEvent.error == ErrorPIN:
           controller.setRemainingAttempts(keycardEvent.pinRetries)
@@ -278,7 +278,7 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
             return self
           controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
           return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-      if keycardFlowType == ResponseTypeValueEnterPUK and 
+      if keycardFlowType == ResponseTypeValueEnterPUK and
         keycardEvent.error.len == 0:
           if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
             controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.DisableSeedPhraseForUnlock, add = true))
@@ -287,14 +287,14 @@ method resolveKeycardNextState*(self: WrongPinState, keycardFlowType: string, ke
         controller.setMetadataFromKeycard(keycardEvent.cardMetadata)
         return createState(StateType.PinVerified, self.flowType, nil)
     else:
-      if keycardFlowType == ResponseTypeValueEnterPIN and 
+      if keycardFlowType == ResponseTypeValueEnterPIN and
         keycardEvent.error.len > 0 and
         keycardEvent.error == ErrorPIN:
           controller.setRemainingAttempts(keycardEvent.pinRetries)
           if keycardEvent.pinRetries > 0:
             return self
           return createState(StateType.MaxPinRetriesReached, self.flowType, nil)
-      if keycardFlowType == ResponseTypeValueEnterPUK and 
+      if keycardFlowType == ResponseTypeValueEnterPUK and
         keycardEvent.error.len == 0:
           if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
             return createState(StateType.MaxPinRetriesReached, self.flowType, nil)

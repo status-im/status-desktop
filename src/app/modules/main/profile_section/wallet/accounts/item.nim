@@ -20,6 +20,7 @@ proc initItem*(
   keyUid: string = "",
   keycardAccount: bool = false,
   position: int = 0,
+  operability: string = ""
 ): Item =
   result = Item()
   result.WalletAccountItem.setup(name,
@@ -29,7 +30,8 @@ proc initItem*(
     walletType,
     path,
     keyUid,
-    keycardAccount)
+    keycardAccount,
+    operability)
   result.position = position
   result.relatedAccounts = relatedAccounts
 

@@ -39,7 +39,8 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         var icon = ""
         if acc.emoji.len == 0:
           icon = "wallet"
-        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId, icon, balance = 0.0))
+        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
+          icon, balance = 0.0, balanceFetched = true, operability = acc.operable))
       items.insert(item, 0) # Status Account must be at first place
       continue
     if kp.keypairType == KeypairTypeSeed:
@@ -57,7 +58,8 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         var icon = ""
         if acc.emoji.len == 0:
           icon = "wallet"
-        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId, icon, balance = 0.0))
+        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
+          icon, balance = 0.0, balanceFetched = true, operability = acc.operable))
       items.add(item)
       continue
     if kp.keypairType == KeypairTypeKey:
@@ -77,7 +79,8 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         var icon = ""
         if acc.emoji.len == 0:
           icon = "wallet"
-        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId, icon, balance = 0.0))
+        item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
+          icon, balance = 0.0, balanceFetched = true, operability = acc.operable))
       items.add(item)
       continue
   if items.len == 0:

@@ -79,6 +79,7 @@ type AccountArgs* = ref object of Args
 
 type KeypairArgs* = ref object of Args
   keypair*: KeypairDto
+  oldKeypairName*: string
 
 type KeycardArgs* = ref object of Args
   success*: bool
@@ -578,6 +579,9 @@ QtObject:
 
   proc updateKeypairName*(self: Service, keyUid: string, name: string) =
     try:
+      let keypair = self.getKeypairByKeyUid(keyUid)
+      if keypair.isNil:
+        return
       let response = backend.updateKeypairName(keyUid, name)
       if not response.error.isNil:
         error "status-go error", procName="updateKeypairName", errCode=response.error.code, errDesription=response.error.message
@@ -588,7 +592,8 @@ QtObject:
         keypair: KeypairDto(
           keyUid: keyUid,
           name: name
-          )
+          ),
+        oldKeypairName: keypair.name
         )
       )
     except Exception as e:

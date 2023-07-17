@@ -39,7 +39,7 @@ Rectangle {
         width: parent.width
         StatusListItem {
             Layout.fillWidth: true
-            title: d.isWatchOnly ? qsTr("Watch only") : model.keyPair.name
+            title: d.isWatchOnly ? qsTr("Watched addresses") : model.keyPair.name
             statusListItemSubTitle.textFormat: Qt.RichText
             titleTextIcon: model.keyPair.migratedToKeycard ? "keycard": ""
             subTitle: d.isWatchOnly ? "" : d.isProfileKeypair ?
@@ -79,8 +79,10 @@ Rectangle {
                             }
 
                             StatusAction {
-                                text: enabled? qsTr("Show encrypted QR of keys on device") : ""
-                                enabled: !d.isProfileKeypair
+                                text: enabled? qsTr("Show encrypted QR of keypairs on device") : ""
+                                enabled: !d.isProfileKeypair &&
+                                         !model.keyPair.migratedToKeycard &&
+                                         !model.keyPair.operability === Constants.keypair.operability.nonOperable
                                 icon.name: "qr"
                                 icon.color: Theme.palette.primaryColor1
                                 onTriggered: {
@@ -116,7 +118,7 @@ Rectangle {
                             }
 
                             StatusAction {
-                                text: enabled? qsTr("Remove master keys and associated accounts") : ""
+                                text: enabled? qsTr("Remove keypair and associated accounts") : ""
                                 enabled: !d.isProfileKeypair
                                 type: StatusAction.Type.Danger
                                 icon.name: "delete"

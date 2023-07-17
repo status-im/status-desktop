@@ -567,7 +567,7 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
       if acc.emoji.len == 0:
         icon = "wallet"
       result.item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId, icon,
-        balance = 0.0, balanceFetched = true))
+        balance = 0.0, balanceFetched = true, operability = acc.operable))
   # handle unknown accounts
   var unknownAccountNumber = 0
   for cardAcc in cardMetadata.walletAccounts:

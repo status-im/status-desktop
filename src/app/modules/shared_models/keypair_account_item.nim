@@ -1,4 +1,7 @@
 import NimQml, strformat
+import app_service/service/wallet_account/dto as wa_dto
+
+export wa_dto
 
 QtObject:
   type KeyPairAccountItem* = ref object of QObject
@@ -6,6 +9,7 @@ QtObject:
     path: string
     address: string
     pubKey: string
+    operability: string
     emoji: string
     colorId: string
     icon: string
@@ -16,7 +20,7 @@ QtObject:
     self.QObject.delete
 
   proc newKeyPairAccountItem*(name = "", path = "", address = "", pubKey = "", emoji = "", colorId = "", icon = "",
-    balance = 0.0, balanceFetched = true): KeyPairAccountItem =
+    balance = 0.0, balanceFetched = true, operability = wa_dto.AccountFullyOperable): KeyPairAccountItem =
     new(result, delete)
     result.QObject.setup
     result.name = name
@@ -28,6 +32,7 @@ QtObject:
     result.icon = icon
     result.balance = balance
     result.balanceFetched = balanceFetched
+    result.operability = operability
 
   proc `$`*(self: KeyPairAccountItem): string =
     result = fmt"""KeyPairAccountItem[
@@ -85,6 +90,17 @@ QtObject:
     read = getPubKey
     write = setPubKey
     notify = pubKeyChanged
+
+  proc operabilityChanged*(self: KeyPairAccountItem) {.signal.}
+  proc getOperability*(self: KeyPairAccountItem): string {.slot.} =
+    return self.operability
+  proc setOperability*(self: KeyPairAccountItem, value: string) {.slot.} =
+    self.operability = value
+    self.operabilityChanged()
+  QtProperty[string] operability:
+    read = getOperability
+    write = setOperability
+    notify = operabilityChanged
 
   proc emojiChanged*(self: KeyPairAccountItem) {.signal.}
   proc getEmoji*(self: KeyPairAccountItem): string {.slot.} =

@@ -1,4 +1,7 @@
 import NimQml, strformat
+import app_service/service/wallet_account/dto as wa_dto
+
+export wa_dto
 
 QtObject:
   type WalletAccountItem* = ref object of QObject
@@ -10,6 +13,7 @@ QtObject:
     path: string
     keyUid: string
     keycardAccount: bool
+    operability: string
 
   proc setup*(self: WalletAccountItem,
     name: string = "",
@@ -19,7 +23,8 @@ QtObject:
     walletType: string = "",
     path: string = "",
     keyUid: string = "",
-    keycardAccount: bool = false
+    keycardAccount: bool = false,
+    operability: string = wa_dto.AccountFullyOperable
     ) =
       self.QObject.setup
       self.name = name
@@ -115,3 +120,13 @@ QtObject:
     notify = keycardAccountChanged
 
 
+  proc operabilityChanged*(self: WalletAccountItem) {.signal.}
+  proc getOperability*(self: WalletAccountItem): string {.slot.} =
+    return self.operability
+  proc setOperability*(self: WalletAccountItem, value: string) {.slot.} =
+    self.operability = value
+    self.operabilityChanged()
+  QtProperty[string] operability:
+    read = getOperability
+    write = setOperability
+    notify = operabilityChanged

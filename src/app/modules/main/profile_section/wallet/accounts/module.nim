@@ -60,7 +60,8 @@ method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: Wallet
     colorId = account.colorId,
     icon = "",
     balance = 0,
-    balanceFetched = false)
+    balanceFetched = false,
+    operability = account.operable)
 
 method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto]): seq[KeyPairItem] =
   var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
