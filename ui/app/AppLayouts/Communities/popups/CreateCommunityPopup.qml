@@ -442,6 +442,7 @@ StatusStackModal {
                     historyArchiveSupportEnabled: generalViewLayout.options.archiveSupportEnabled,
                     checkedMembership: generalViewLayout.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
                     pinMessagesAllowedForMembers: generalViewLayout.options.pinMessagesEnabled,
+                    archiveSupporVisible: true
                 },
                 bannerJsonStr: JSON.stringify({imagePath: String(generalViewLayout.bannerPath).replace("file://", ""), cropRect: generalViewLayout.bannerCropRect})
             }

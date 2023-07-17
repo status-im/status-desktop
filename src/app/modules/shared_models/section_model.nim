@@ -13,6 +13,7 @@ type
     SectionType
     Name
     MemberRole
+    IsControlNode
     Description
     IntroMessage
     OutroMessage
@@ -85,6 +86,7 @@ QtObject:
       ModelRole.SectionType.int:"sectionType",
       ModelRole.Name.int:"name",
       ModelRole.MemberRole.int: "memberRole",
+      ModelRole.IsControlNode.int: "isControlNode",
       ModelRole.Description.int:"description",
       ModelRole.IntroMessage.int:"introMessage",
       ModelRole.OutroMessage.int:"outroMessage",
@@ -137,6 +139,8 @@ QtObject:
       result = newQVariant(item.name)
     of ModelRole.MemberRole:
       result = newQVariant(item.memberRole.int)
+    of ModelRole.IsControlNode:
+      result = newQVariant(item.isControlNode)
     of ModelRole.Description:
       result = newQVariant(item.description)
     of ModelRole.IntroMessage:
@@ -273,6 +277,7 @@ QtObject:
     self.dataChanged(dataIndex, dataIndex, @[
       ModelRole.Name.int,
       ModelRole.MemberRole.int,
+      ModelRole.IsControlNode.int,
       ModelRole.Description.int,
       ModelRole.IntroMessage.int,
       ModelRole.OutroMessage.int,
@@ -415,6 +420,7 @@ QtObject:
           "id": item.id,
           "name": item.name,
           "memberRole": item.memberRole.int,
+          "isControlNode": item.isControlNode,
           "description": item.description,
           "introMessage": item.introMessage,
           "outroMessage": item.outroMessage,

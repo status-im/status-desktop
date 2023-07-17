@@ -265,6 +265,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     if isCommunity: SectionType.Community else: SectionType.Chat,
     if isCommunity: channelGroup.name else: conf.CHAT_SECTION_NAME,
     channelGroup.memberRole,
+    if isCommunity: communityDetails.isControlNode else: false,
     channelGroup.description,
     channelGroup.introMessage,
     channelGroup.outroMessage,

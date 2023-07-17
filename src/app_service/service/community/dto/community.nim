@@ -91,6 +91,7 @@ type CheckPermissionsToJoinResponseDto* = object
 type CommunityDto* = object
   id*: string
   memberRole*: MemberRole
+  isControlNode*: bool
   verified*: bool
   joined*: bool
   spectated*: bool
@@ -304,6 +305,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("memberRole", result.memberRole)
+  discard jsonObj.getProp("isControlNode", result.isControlNode)
   discard jsonObj.getProp("verified", result.verified)
   discard jsonObj.getProp("joined", result.joined)
   discard jsonObj.getProp("spectated", result.spectated)

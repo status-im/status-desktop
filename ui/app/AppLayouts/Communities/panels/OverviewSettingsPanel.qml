@@ -33,6 +33,7 @@ StackLayout {
     property bool pinMessagesEnabled
     property string previousPageName: (currentIndex === 1) ? qsTr("Overview") : ""
 
+    property bool archiveSupporVisible: true
     property bool editable: false
     property bool owned: false
     property bool isControlNode: false
@@ -190,6 +191,7 @@ StackLayout {
 
                 options {
                     archiveSupportEnabled: root.archiveSupportEnabled
+                    archiveSupporVisible: root.archiveSupporVisible
                     requestToJoinEnabled: root.requestToJoinEnabled
                     pinMessagesEnabled: root.pinMessagesEnabled
                 }
