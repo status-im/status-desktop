@@ -23,7 +23,8 @@ StatusListView {
     property WalletStore walletStore
 
     header: StatusBaseText {
-        text: qsTr("Move your most freqently used accounts to the top of your wallet list")
+        text: accountsList.count > 1? qsTr("Move your most freqently used accounts to the top of your wallet list") :
+                                      qsTr("This account looks a little lonely. Add another account to enable re-ordering.")
         color: Theme.palette.baseColor1
         font.pixelSize: Style.current.primaryTextFontSize
         bottomPadding: Style.current.padding
