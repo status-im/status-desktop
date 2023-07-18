@@ -143,3 +143,6 @@ method fetchDecodedTxData*(self: Module, txHash: string, data: string) =
 
 method txDecoded*(self: Module, txHash: string, dataDecoded: string) =
   self.view.txDecoded(txHash, dataDecoded)
+
+method getNetworkLayer*(self: Module, chainId: int): string =
+  return self.delegate.getNetworkLayer(chainId)

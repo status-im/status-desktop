@@ -62,3 +62,6 @@ method viewDidLoad*(self: Module) =
 
 method setNetworksState*(self: Module, chainIds: seq[int], enabled: bool) =
   self.controller.setNetworksState(chainIds, enabled)
+
+method getNetworkLayer*(self: Module, chainId: int): string =
+  return self.view.getNetworkLayer(chainId)

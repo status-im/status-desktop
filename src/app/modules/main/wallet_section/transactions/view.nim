@@ -1,11 +1,19 @@
-import NimQml, tables, stint, json, strformat, sequtils, strutils, sugar
+import NimQml, tables, stint, json, strformat, sequtils, strutils, sugar, times, math
 
 import ./item
 import ./model
 import ./io_interface
 
+import ../../../../global/global_singleton
+
 import ../../../../../app_service/common/conversion as common_conversion
 import ../../../../../app_service/service/wallet_account/dto
+
+type
+  LatestBlockData* = ref object of RootObj
+    blockNumber*: int
+    datetime*: DateTime
+    isLayer1*: bool
 
 QtObject:
   type
@@ -18,6 +26,7 @@ QtObject:
       enabledChainIds: seq[int]
       isNonArchivalNode: bool
       tempAddress: string
+      latestBlockNumbers: Table[int, LatestBlockData]
 
   proc delete*(self: View) =
     self.model.delete
@@ -138,8 +147,33 @@ QtObject:
   proc getChainIdForBrowser*(self: View): int {.slot.} =
     return self.delegate.getChainIdForBrowser()
 
-  proc getLatestBlockNumber*(self: View, chainId: int): string {.slot.} =
-    return self.delegate.getLatestBlockNumber(chainId)
+  proc getLatestBlockNumber*(self: View, chainId: int): int {.slot.} =
+    if self.latestBlockNumbers.hasKey(chainId):
+      let blockData = self.latestBlockNumbers[chainId]
+      let timeDiff = (now() - blockData.datetime)
+      var multiplier = -1.0
+      if blockData.isLayer1:
+        multiplier = 0.083 # 1 every 12 seconds
+      else:
+        case chainId:
+          of 10: # Optimism
+            multiplier = 0.5 # 1 every 2 second
+          of 42161: # Arbitrum
+            multiplier = 3.96 # around 4 every 1 second
+          else:
+            multiplier = -1.0
+      if multiplier >= 0.0 and timeDiff < initDuration(minutes = 10):
+        let blockNumDiff = inSeconds(timeDiff).float64 * multiplier
+        return (blockData.blockNumber + (int)round(blockNumDiff))
+
+    let latestBlockNumber = self.delegate.getLatestBlockNumber(chainId)
+    let latestBlockNumberNumber = parseInt(singletonInstance.utils.hex2Dec(latestBlockNumber))
+    self.latestBlockNumbers[chainId] = LatestBlockData(
+        blockNumber: latestBlockNumberNumber,
+        datetime: now(),
+        isLayer1: self.delegate.getNetworkLayer(chainId) == "1"
+    )
+    return latestBlockNumberNumber
 
   proc setPendingTx*(self: View, pendingTx: seq[Item]) =
     for tx in pendingTx:

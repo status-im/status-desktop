@@ -71,3 +71,6 @@ method getLatestBlockNumber*(self: AccessInterface, chainId: int): string {.base
 
 method transactionsToItems*(self: AccessInterface, transactions: seq[TransactionDto], collectibles: seq[CollectibleDto]): seq[Item] {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getNetworkLayer*(self: AccessInterface, chainId: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")

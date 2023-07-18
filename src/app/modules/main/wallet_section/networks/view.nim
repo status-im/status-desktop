@@ -139,3 +139,6 @@ proc networkEnabledToUxEnabledState(enabled: bool, allEnabled: bool): UxEnabledS
 
 proc areAllEnabled(networks: seq[NetworkDto]): bool =
   return networks.allIt(it.enabled)
+
+proc getNetworkLayer*(self: View, chainId: int): string =
+  return self.all.getNetworkLayer(chainId)
