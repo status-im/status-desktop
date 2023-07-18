@@ -115,6 +115,11 @@ ItemDelegate {
        This property holds the secondary text (title), displayed below primary
     */
     property string secondaryTitle
+    /*!
+       \qmlproperty string StatusDraggableListItem::secondaryTitleIcon
+       This property holds the secondary title icon, displayed on the right of the secondary title
+    */
+    property string secondaryTitleIcon: ""
 
     /*!
        \qmlproperty list<Item> StatusDraggableListItem::actions
@@ -291,13 +296,24 @@ ItemDelegate {
                 font.weight: root.highlighted ? Font.Medium : Font.Normal
             }
 
-            StatusBaseText {
+            Row {
                 Layout.fillWidth: true
-                text: root.secondaryTitle
-                visible: text
-                color: Theme.palette.baseColor1
-                elide: Text.ElideRight
-                maximumLineCount: 1
+                visible: !!root.secondaryTitle
+                spacing: 8
+
+                StatusBaseText {
+                    text: root.secondaryTitle
+                    color: Theme.palette.baseColor1
+                    elide: Text.ElideRight
+                    maximumLineCount: 1
+                }
+
+                Loader {
+                    asynchronous: true
+                    active: !!root.secondaryTitleIcon
+                    visible: active
+                    sourceComponent: secondaryTitleIconComponent
+                }
             }
         }
 
@@ -316,6 +332,16 @@ ItemDelegate {
             icon: root.icon.name
             color: root.icon.color
             source: root.icon.source
+        }
+    }
+
+    Component {
+        id: secondaryTitleIconComponent
+        StatusIcon {
+            width: 16
+            height: 16
+            icon: root.secondaryTitleIcon
+            color: Theme.palette.baseColor1
         }
     }
 
