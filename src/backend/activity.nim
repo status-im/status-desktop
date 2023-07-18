@@ -205,7 +205,24 @@ proc `%`*(pt: PayloadType): JsonNode {.inline.} =
 proc fromJson*(jn: JsonNode, T: typedesc[PayloadType]): PayloadType {.inline.} =
   return cast[PayloadType](jn.getInt())
 
+# Mirrors status-go/services/wallet/activity/activity.go TransferType
+type
+  TransferType* {.pure.} = enum
+    Eth = 1
+    Erc20
+    Erc721
+    Erc1155
+
+# Define toJson proc for TransferType
+proc `%`*(pt: TransferType): JsonNode {.inline.} =
+  return newJInt(ord(pt))
+
+# Define fromJson proc for TransferType
+proc fromJson*(jn: JsonNode, T: typedesc[TransferType]): TransferType {.inline.} =
+  return cast[TransferType](jn.getInt())
+
 # TODO: hide internals behind safe interface
+# Mirrors status-go/services/wallet/activity/activity.go Entry
 type
   ActivityEntry* = object
     # Identification
@@ -223,6 +240,13 @@ type
 
     tokenOut*: Option[Token]
     tokenIn*: Option[Token]
+
+    sender*: Option[eth.Address]
+    recipient*: Option[eth.Address]
+    chainIdOut*: Option[ChainId]
+    chainIdIn*: Option[ChainId]
+    transferType*: Option[TransferType]
+    contractAddress*: Option[eth.Address]
 
   # Mirrors services/wallet/activity/service.go ErrorCode
   ErrorCode* = enum
@@ -245,6 +269,12 @@ proc toJson*(ae: ActivityEntry): JsonNode {.inline.} =
 proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.} =
   const tokenOutField = "tokenOut"
   const tokenInField = "tokenIn"
+  const senderField = "sender"
+  const recipientField = "recipient"
+  const chainIdOutField = "chainIdOut"
+  const chainIdInField = "chainIdIn"
+  const transferTypeField = "transferType"
+  const contractAddressField = "contractAddress"
   result = T(
     payloadType: fromJson(e["payloadType"], PayloadType),
     transaction:  if e.hasKey("transaction"):
@@ -266,8 +296,26 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     tokenIn:  if e.contains(tokenInField):
                 some(fromJson(e[tokenInField], Token))
               else:
-                none(Token)
+                none(Token),
   )
+  if e.hasKey(senderField) and e[senderField].kind != JNull:
+    var address: eth.Address
+    fromJson(e[senderField], senderField, address)
+    result.sender = some(address)
+  if e.hasKey(recipientField) and e[recipientField].kind != JNull:
+    var address: eth.Address
+    fromJson(e[recipientField], recipientField, address)
+    result.recipient = some(address)
+  if e.hasKey(chainIdOutField) and e[chainIdOutField].kind != JNull:
+    result.chainIdOut = some(fromJson(e[chainIdOutField], ChainId))
+  if e.hasKey(chainIdInField) and e[chainIdInField].kind != JNull:
+    result.chainIdIn = some(fromJson(e[chainIdInField], ChainId))
+  if e.hasKey(transferTypeField) and e[transferTypeField].kind != JNull:
+    result.transferType = some(fromJson(e[transferTypeField], TransferType))
+  if e.hasKey(contractAddressField) and e[contractAddressField].kind != JNull:
+    var address: eth.Address
+    fromJson(e[contractAddressField], contractAddressField, address)
+    result.contractAddress = some(address)
 
 proc `$`*(self: ActivityEntry): string =
   let transactionStr = if self.transaction.isSome: $self.transaction.get()
@@ -283,6 +331,11 @@ proc `$`*(self: ActivityEntry): string =
     amountIn* {$self.amountIn},
     tokenOut* {$self.tokenOut},
     tokenIn* {$self.tokenIn}
+    sender* {$self.sender}
+    recipient* {$self.recipient}
+    chainIdOut* {$self.chainIdOut}
+    chainIdIn* {$self.chainIdIn}
+    transferType* {$self.transferType}
   )"""
 
 proc fromJson*(e: JsonNode, T: typedesc[FilterResponse]): FilterResponse {.inline.} =

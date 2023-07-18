@@ -197,7 +197,7 @@ QtObject {
     }
 
     function getNameForAddress(address) {
-        let name = getNameForWalletAddress(address)
+        var name = getNameForWalletAddress(address)
         if (name.length === 0) {
             name = getNameForSavedWalletAddress(address)
         }
