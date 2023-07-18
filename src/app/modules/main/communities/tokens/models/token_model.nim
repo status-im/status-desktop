@@ -3,9 +3,9 @@ import token_item
 import token_owners_item
 import token_owners_model
 import ../../../../../../app_service/service/community_tokens/dto/community_token
-import ../../../../../../app_service/service/collectible/dto
 import ../../../../../../app_service/common/utils
 import ../../../../../../app_service/common/types
+from backend/collectibles_types import CollectibleOwner
 
 type
   ModelRole {.pure.} = enum

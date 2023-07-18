@@ -25,7 +25,6 @@ import ../../../../app_service/service/keycard/service as keycard_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/currency/service as currency_service
 import ../../../../app_service/service/transaction/service as transaction_service
-import ../../../../app_service/service/collectible/service as collectible_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/saved_address/service as saved_address_service
@@ -73,7 +72,6 @@ proc newModule*(
   tokenService: token_service.Service,
   currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
-  collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
   settingsService: settings_service.Service,
   savedAddressService: saved_address_service.Service,

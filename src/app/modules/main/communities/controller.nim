@@ -11,7 +11,7 @@ import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../app_service/service/collectible/service as collectible_service
+import backend/collectibles as backend_collectibles
 
 type
   Controller* = ref object of RootObj
@@ -142,8 +142,11 @@ proc init*(self: Controller) =
     let args = CommunityTokenMetadataArgs(e)
     self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
 
-  self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_FINISHED) do(e: Args):
-    self.delegate.onOwnedCollectiblesUpdated()
+  self.events.on(SignalType.Wallet.event, proc(e: Args) =
+    var data = WalletSignal(e)
+    if data.eventType == backend_collectibles.eventCollectiblesOwnershipUpdateFinished:
+      self.delegate.onOwnedCollectiblesUpdated()
+  )
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     self.delegate.onWalletAccountTokensRebuilt()

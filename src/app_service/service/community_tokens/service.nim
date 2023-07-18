@@ -11,7 +11,7 @@ import ../settings/service as settings_service
 import ../wallet_account/service as wallet_account_service
 import ../ens/utils as ens_utils
 import ../eth/dto/transaction
-import ../collectible/dto as collectibles_dto
+from backend/collectibles_types import CollectibleOwner
 
 import ../../../backend/response_type
 
@@ -813,7 +813,7 @@ QtObject:
     let contractAddress = responseJson["contractAddress"].getStr
     let communityId = responseJson["communityId"].getStr
     let resultJson = responseJson["result"]
-    var owners = collectibles_dto.toCollectibleOwnershipDto(resultJson).owners
+    var owners = fromJson(resultJson, CollectibleContractOwnership).owners
     owners = owners.filter(x => x.address != ZERO_ADDRESS)
     self.tokenOwnersCache[(chainId, contractAddress)] = owners
     let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: owners)

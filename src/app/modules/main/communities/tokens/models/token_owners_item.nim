@@ -1,5 +1,5 @@
 import strformat, stint
-import ../../../../../../app_service/service/collectible/dto
+import backend/collectibles_types
 
 type
   TokenOwnersItem* = object

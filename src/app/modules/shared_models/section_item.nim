@@ -3,7 +3,7 @@ import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
 import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../main/communities/tokens/models/token_item
-import ../../../app_service/service/collectible/dto
+from backend/collectibles_types import CollectibleOwner
 
 import ../../global/global_singleton
 
