@@ -20,6 +20,7 @@ import utils 1.0
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Communities.popups 1.0
+import AppLayouts.Communities.helpers 1.0
 
 StatusSectionLayout {
     id: root
@@ -315,12 +316,21 @@ StatusSectionLayout {
                 mintPanel.isFeeLoading = true
             }
 
+            // General community props
             communityName: root.community.name
             communityLogo: root.community.image
             communityColor: root.community.color
+
+            // User profile props
             isOwner: root.isOwner
             isAdmin: root.isAdmin
             isTokenMasterOwner: false // TODO: Backend
+
+            // Owner and TMaster properties
+            isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
+            isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
+
+            // Models
             tokensModel: root.community.communityTokens
             tokensModelWallet: root.rootStore.tokensModelWallet
             layer1Networks: communityTokensStore.layer1Networks
@@ -382,10 +392,15 @@ StatusSectionLayout {
             readonly property bool sectionEnabled: root.isOwner
 
             communityDetails: d.communityDetails
+
+            // Profile type
             isOwner: root.isOwner
             isTokenMasterOwner: false // TODO: Backend
             isAdmin: root.isAdmin
-            tokensModel: root.community.communityTokens
+
+            // Owner and TMaster properties
+            isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
+            isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
 
             readonly property CommunityTokensStore communityTokensStore:
                 rootStore.communityTokensStore
@@ -516,6 +531,64 @@ StatusSectionLayout {
                     break
                 }
             }
+        }
+    }
+
+    StatusQUtils.ModelChangeTracker {
+        id: tokensModelChangesTracker
+
+        // Owner and TMaster token deployment states
+        property bool isOwnerTokenDeployed: false
+        property bool isTMasterTokenDeployed: false
+
+        // It will monitorize if Owner and/or TMaster token items are included in the `model` despite the deployment state
+        property bool ownerOrTMasterTokenItemsExist: false
+
+        function checkIfPrivilegedTokenItemsExist() {
+           return SQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.ownerTokenNameTag + root.communityName) ||
+                  SQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.tMasterTokenNameTag + root.communityName)
+        }
+
+        function reviewTokenDeployState(tagType, isOwner) {
+            const index = SQUtils.ModelUtils.indexOf(model, "name", tagType + root.communityName)
+            if(index === -1)
+                return false
+
+            const token = SQUtils.ModelUtils.get(model, index)
+
+            // Some assertions:
+            if(!token.isPrivilegedToken)
+                return false
+
+            if(token.isOwner !== isOwner)
+                return false
+
+            // Deploy state check:
+            if(token.deployState !== Constants.ContractTransactionStatus.Completed)
+                return false
+
+            // Token deployed!!
+            return true
+        }
+
+        model: root.community.communityTokens
+
+        onRevisionChanged: {
+            // It will update property to know if Owner and TMaster token items have been added into the tokens list.
+            ownerOrTMasterTokenItemsExist = checkIfPrivilegedTokenItemsExist()
+            if(!ownerOrTMasterTokenItemsExist)
+                return
+
+            // It monitors the deployment:
+            if(!isOwnerTokenDeployed)
+                isOwnerTokenDeployed = reviewTokenDeployState(PermissionsHelpers.ownerTokenNameTag, true)
+
+            if(!isTMasterTokenDeployed)
+                isTMasterTokenDeployed = reviewTokenDeployState(PermissionsHelpers.tMasterTokenNameTag, false)
+
+            // Not necessary to track more changes since privileged tokens have been correctly deployed.
+            if(isOwnerTokenDeployed && isTMasterTokenDeployed)
+                tokensModelChangesTracker.enabled = false
         }
     }
 

@@ -134,7 +134,7 @@ StatusScrollView {
 
                                 Layout.alignment: Qt.AlignBottom
 
-                                text: PermissionsHelpers.autogenerateSymbol(panel.isOwner, root.communityName)
+                                text: PermissionsHelpers.communityNameToSymbol(panel.isOwner, root.communityName)
                                 font.pixelSize: Style.current.primaryTextFontSize
                                 color: Theme.palette.baseColor1
                             }

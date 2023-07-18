@@ -7,6 +7,48 @@ ListModel {
 
     readonly property var data: [
         {
+            isPrivilegedToken: true,
+            isOwner: true,
+            contractUniqueKey: "0x15a23414a3",
+            tokenType: 2,
+            name: "Owner-Doodles",
+            image: ModelsData.collectibles.doodles,
+            deployState: 0,
+            symbol: "OWNDOO",
+            description: "Owner doodles desc",
+            supply: 1,
+            remainingSupply: 1,
+            infiniteSupply: false,
+            transferable: true,
+            remoteSelfDestruct: false,
+            chainId: 2,
+            chainName: "Optimism",
+            chainIcon: ModelsData.networks.optimism,
+            accountName: "Another account - generated"
+        },
+        {
+            isPrivilegedToken: true,
+            isOwner: false,
+            contractUniqueKey: "0x23124443",
+            tokenType: 2,
+            name: "TMaster-Doodles",
+            image: ModelsData.collectibles.doodles,
+            deployState: 0,
+            symbol: "TMDOO",
+            description: "Doodles Token master token description",
+            supply: 1,
+            remainingSupply: 1,
+            infiniteSupply: true,
+            transferable: false,
+            remoteSelfDestruct: true,
+            chainId: 2,
+            chainName: "Optimism",
+            chainIcon: ModelsData.networks.optimism,
+            accountName: "Another account - generated"
+        },
+        {
+            isPrivilegedToken: false,
+            isOwner: false,
             contractUniqueKey: "0x1726362343",
             tokenType: 2,
             name: "SuperRare artwork",
@@ -25,6 +67,8 @@ ListModel {
             accountName: "Status Account"
         },
         {
+            isPrivilegedToken: false,
+            isOwner: false,
             contractUniqueKey: "0x847843",
             tokenType: 2,
             name: "Kitty artwork",
@@ -43,6 +87,8 @@ ListModel {
             accountName: "Status New Account"
         },
         {
+            isPrivilegedToken: false,
+            isOwner: false,
             contractUniqueKey: "0x1234525",
             tokenType: 2,
             name: "More artwork",
@@ -61,6 +107,8 @@ ListModel {
             accountName: "Other Account"
         },
         {
+            isPrivilegedToken: false,
+            isOwner: false,
             contractUniqueKey: "0x38576852",
             tokenType: 2,
             name: "Crypto Punks artwork",
@@ -80,6 +128,8 @@ ListModel {
             tokenOwnersModel: root.tokenOwnersModel
         },
         {
+            isPrivilegedToken: false,
+            isOwner: false,
             contractUniqueKey: "0x38745623865",
             tokenType: 1,
             name: "Unisocks",
@@ -97,6 +147,8 @@ ListModel {
             accountName: "Status SNT Account"
         },
         {
+            isPrivilegedToken: false,
+            isOwner: false,
             contractUniqueKey: "0x872364871623",
             tokenType: 1,
             name: "Dai",

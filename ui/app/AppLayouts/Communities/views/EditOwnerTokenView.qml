@@ -44,7 +44,7 @@ StatusScrollView {
         isOwner: true
         artworkSource: root.communityLogo
         color: root.communityColor
-        symbol: PermissionsHelpers.autogenerateSymbol(isOwner, root.communityName)
+        symbol: PermissionsHelpers.communityNameToSymbol(isOwner, root.communityName)
         transferable: true
         remotelyDestruct: false
         supply: 1
@@ -56,7 +56,7 @@ StatusScrollView {
         isPrivilegedToken: true
         artworkSource: root.communityLogo
         color: root.communityColor
-        symbol: PermissionsHelpers.autogenerateSymbol(isOwner, root.communityName)
+        symbol: PermissionsHelpers.communityNameToSymbol(isOwner, root.communityName)
         remotelyDestruct: true
         description: qsTr("This is the %1 TokenMaster token. The hodler of this collectible has full admin rights for the %1 Community in Status and can mint and airdrop %1 Community tokens.").arg(root.communityName)
     }
@@ -90,13 +90,15 @@ StatusScrollView {
             font.pixelSize: d.titleSize
             font.bold: true
 
-            text: qsTr("Owner-%1").arg(root.communityName)
+            text: PermissionsHelpers.ownerTokenNameTag + root.communityName
         }
 
         TokenInfoPanel {
             Layout.fillWidth: true
 
             token: root.ownerToken
+            accountBoxVisible: false
+            networkBoxVisible: false
         }
 
         StatusModalDivider {
@@ -114,13 +116,15 @@ StatusScrollView {
             font.pixelSize: d.titleSize
             font.bold: true
 
-            text: qsTr("TMaster-%1").arg(root.communityName)
+            text: PermissionsHelpers.tMasterTokenNameTag + root.communityName
         }
 
         TokenInfoPanel {
             Layout.fillWidth: true
 
             token: root.tMasterToken
+            accountBoxVisible: false
+            networkBoxVisible: false
         }
 
         StatusModalDivider {

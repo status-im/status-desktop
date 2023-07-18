@@ -19,6 +19,8 @@ Control {
 
     // Panel properties:
     property bool preview: false
+    property bool accountBoxVisible: true
+    property bool networkBoxVisible: true
 
     // Token object properties:
     /* required */ property TokenObject token // https://bugreports.qt.io/browse/QTBUG-84269
@@ -211,14 +213,14 @@ Control {
             }
 
             CustomPreviewBox {
-                visible: !token.isPrivilegedToken
+                visible: root.accountBoxVisible
 
                 label: qsTr("Account")
                 value: token.accountName
             }
 
             Rectangle {
-                visible: !token.isPrivilegedToken
+                visible: root.networkBoxVisible
                 height: symbolBox.height
                 width: rowChain.implicitWidth + 2 * Style.current.padding
                 border.width: 1

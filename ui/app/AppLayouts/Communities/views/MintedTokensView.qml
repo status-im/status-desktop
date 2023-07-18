@@ -11,16 +11,19 @@ import shared.controls 1.0
 
 import AppLayouts.Wallet.views.collectibles 1.0
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.helpers 1.0
 
 StatusScrollView {
     id: root
 
+    // User profile props
     required property bool isOwner
     required property bool isAdmin
 
+    // General props
     property int viewWidth: 560 // by design
     property var model
-
+    property string communityName
     readonly property int count: assetsModel.count + collectiblesModel.count
 
     signal itemClicked(string tokenKey,
@@ -38,20 +41,31 @@ StatusScrollView {
 
         readonly property int delegateAssetsHeight: 64
 
-        function getSubtitle(deployState, remainingSupply, supply,
-                             isCollectible, isInfiniteSupply) {
+        function getDeployStateInfo(deployState) {
             if(deployState === Constants.ContractTransactionStatus.Failed)
                 return qsTr("Minting failed")
 
             if(deployState === Constants.ContractTransactionStatus.InProgress)
                 return qsTr("Minting...")
 
-            if(isInfiniteSupply)
-                return isCollectible ? qsTr("∞ remaining") : ""
+            return ""
+        }
 
-            return isCollectible
-                    ? qsTr("%1 / %2 remaining").arg(remainingSupply).arg(supply)
-                    : ""
+        function getRemainingInfo(isOwnerToken, isPrivilegedToken,
+                                  remainingSupply, supply, isInfiniteSupply) {
+            // Owner token use case:
+            if(isOwnerToken)
+                return qsTr("1 of 1 (you hodl)")
+
+            // TMaster token use case:
+            if(isPrivilegedToken)
+                return "∞"
+
+            // Rest of collectible cases:
+            if(isInfiniteSupply)
+                return qsTr("∞ remaining")
+
+            return qsTr("%L1 / %L2 remaining").arg(remainingSupply).arg(supply)
         }
     }
 
@@ -155,10 +169,7 @@ StatusScrollView {
                     components: [
                         StatusBaseText {
                             anchors.verticalCenter: parent.verticalCenter
-                            text: d.getSubtitle(model.deployState,
-                                                model.remainingSupply,
-                                                model.supply, false,
-                                                model.infiniteSupply)
+                            text: d.getDeployStateInfo(model.deployState)
                             color: model.deployState === Constants.ContractTransactionStatus.Failed
                                    ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                             font.pixelSize: 13
@@ -214,16 +225,22 @@ StatusScrollView {
                     height: collectiblesGrid.cellHeight
                     width: collectiblesGrid.cellWidth
                     title: model.name ? model.name : "..."
-                    subTitle: d.getSubtitle(model.deployState,
-                                            model.remainingSupply,
-                                            model.supply, true,
-                                            model.infiniteSupply)
+                    subTitle: deployState === Constants.ContractTransactionStatus.Completed ?
+                                  d.getRemainingInfo(model.isOwner,
+                                                     model.isPrivilegedToken,
+                                                     model.remainingSupply,
+                                                     model.supply,
+                                                     model.infiniteSupply) :
+                                  d.getDeployStateInfo(model.deployState)
                     subTitleColor: model.deployState === Constants.ContractTransactionStatus.Failed
                                    ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
                     fallbackImageUrl: model.image ? model.image : ""
                     backgroundColor: "transparent"
                     isLoading: false
-                    navigationIconVisible: true
+                    navigationIconVisible: false
+                    isPrivilegedToken: model.isPrivilegedToken
+                    isOwner: model.isOwner
+                    ornamentColor: model.color
 
                     onClicked: root.itemClicked(model.contractUniqueKey,
                                                 model.chainId, model.chainName,
