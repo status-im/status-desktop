@@ -37,6 +37,7 @@ type MessageSignal* = ref object of Signal
   savedAddresses*: seq[SavedAddressDto]
   keypairs*: seq[KeypairDto]
   watchOnlyAccounts*: seq[WalletAccountDto]
+  accountsPositions*: seq[WalletAccountDto]
 
 type MessageDeliveredSignal* = ref object of Signal
   chatId*: string
@@ -150,6 +151,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if e.contains("watchOnlyAccounts"):
     for jsonAcc in e["watchOnlyAccounts"]:
       signal.watchOnlyAccounts.add(jsonAcc.toWalletAccountDto())
+
+  if e.contains("accountsPositions"):
+    for jsonAcc in e["accountsPositions"]:
+      signal.accountsPositions.add(jsonAcc.toWalletAccountDto())
 
   result = signal
 

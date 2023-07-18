@@ -262,9 +262,9 @@ rpc(deleteKeycard, "accounts"):
 rpc(deleteAllKeycardsWithKeyUID, "accounts"):
   keyUid: string
 
-rpc(updateAccountPosition, "accounts"):
-  address: string
-  position: int
+rpc(moveWalletAccount, "accounts"):
+  fromPosition: int
+  toPosition: int
 
 rpc(updateKeypairName, "accounts"):
   keyUid: string

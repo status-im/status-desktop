@@ -65,6 +65,9 @@ method runCreateNewPairingCodePopup*(self: AccessInterface, keyUid: string) {.ba
 method onLoggedInUserImageChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method rebuildAllKeycards*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onKeypairSynced*(self: AccessInterface, keypair: KeypairDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 

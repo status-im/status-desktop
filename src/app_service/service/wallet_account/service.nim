@@ -40,6 +40,7 @@ const SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED* = "walletAccount/chainIdFo
 
 const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
 const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
+
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
 const SIGNAL_KEYCARD_DELETED* = "keycardDeleted"
 const SIGNAL_ALL_KEYCARDS_DELETED* = "allKeycardsDeleted"
@@ -60,6 +61,9 @@ proc priorityTokenCmp(a, b: WalletTokenDto): int =
       return 1
 
   cmp(a.name, b.name)
+
+proc walletAccountsCmp(x, y: WalletAccountDto): int =
+  cmp(x.position, y.position)
 
 proc hex2Balance*(input: string, decimals: int): string =
   var value = fromHex(Stuint[256], input)
@@ -140,6 +144,7 @@ QtObject:
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc getAllKnownKeycards*(self: Service): seq[KeycardDto]
   proc removeMigratedAccountsForKeycard*(self: Service, keyUid: string, keycardUid: string, accountsToRemove: seq[string])
+  proc updateAccountsPositions(self: Service)
 
   proc delete*(self: Service) =
     self.closingApp = true
@@ -318,6 +323,7 @@ QtObject:
 
   proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
     result = toSeq(self.walletAccounts.values)
+    result.sort(walletAccountsCmp)
 
   proc getWalletAccountsForKeypair*(self: Service, keyUid: string): seq[WalletAccountDto] =
     return self.getWalletAccounts().filter(kp => kp.keyUid == keyUid)
@@ -350,6 +356,9 @@ QtObject:
       if receivedData.keypairs.len > 0:
         for kp in receivedData.keypairs:
           self.handleKeypair(kp)
+      if receivedData.accountsPositions.len > 0:
+        self.updateAccountsPositions()
+        self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
 
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
@@ -429,26 +438,41 @@ QtObject:
     if notify:
       self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountArgs(account: removedAcc))
 
+  proc updateAccountsPositions(self: Service) =
+    let dbAccounts = self.getAccounts()
+    for dbAcc in dbAccounts:
+      var localAcc = self.getAccountByAddress(dbAcc.address)
+      if localAcc.isNil:
+        continue
+      localAcc.position = dbAcc.position
+      self.storeAccount(localAcc, updateRelatedAccounts = false)
+
   proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string,
-    position: Option[int] = none(int), notify: bool = true) =
-    if not self.walletAccountsContainsAddress(address):
-      return
-    var account = self.getAccountByAddress(address)
-    if name.len > 0 or colorId.len > 0 or emoji.len > 0:
-      if name.len > 0 and name != account.name:
-        account.name = name
-      if colorId.len > 0 and colorId != account.colorId:
-        account.colorId = colorId
-      if emoji.len > 0 and emoji != account.emoji:
-        account.emoji = emoji
-      self.storeAccount(account, updateRelatedAccounts = false)
+    positionUpdated: Option[bool] = none(bool), notify: bool = true) =
+    if address.len > 0:
+      if not self.walletAccountsContainsAddress(address):
+        return
+      var account = self.getAccountByAddress(address)
+      if account.isNil:
+        return
+      if name.len > 0 or colorId.len > 0 or emoji.len > 0:
+        if name.len > 0 and name != account.name:
+          account.name = name
+        if colorId.len > 0 and colorId != account.colorId:
+          account.colorId = colorId
+        if emoji.len > 0 and emoji != account.emoji:
+          account.emoji = emoji
+        self.storeAccount(account, updateRelatedAccounts = false)
+        if notify:
+          self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
+    else:
+      if not positionUpdated.isSome:
+        return
+      if positionUpdated.get:
+        ## if reordering was successfully stored, we need to update local storage
+        self.updateAccountsPositions()
       if notify:
-        self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
-    if position.isSome and position.get != account.position:
-      account.position = position.get
-      self.storeAccount(account, updateRelatedAccounts = false)
-      if notify:
-        self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, AccountArgs(account: account))
+        self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
 
   ## if password is not provided local keystore file won't be created
   proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
@@ -575,18 +599,16 @@ QtObject:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
     return false
 
-  proc updateWalletAccountPosition*(self: Service, address: string, position: int) =
-    if not self.walletAccountsContainsAddress(address):
-      error "account's address is not among known addresses: ", address=address
-      return
+  proc moveAccountFinally*(self: Service, fromPosition: int, toPosition: int) =
+    var updated = false
     try:
-      let response = backend.updateAccountPosition(address, position)
+      let response = backend.moveWalletAccount(fromPosition, toPosition)
       if not response.error.isNil:
-        error "status-go error", procName="updateAccountPosition", errCode=response.error.code, errDesription=response.error.message
-        return
-      self.updateAccountInLocalStoreAndNotify(address, name = "", colorId = "", emoji = "", some(position))
+        error "status-go error", procName="moveAccountFinally", errCode=response.error.code, errDesription=response.error.message
+      updated = true
     except Exception as e:
-      error "error: ", procName="updateAccountPosition", errName=e.name, errDesription=e.msg
+      error "error: ", procName="moveAccountFinally", errName=e.name, errDesription=e.msg
+    self.updateAccountInLocalStoreAndNotify(address = "", name = "", colorId = "", emoji = "", some(updated))
 
   proc updateKeypairName*(self: Service, keyUid: string, name: string) =
     try:
@@ -968,11 +990,12 @@ QtObject:
 
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true) =
     if account.removed:
+      self.updateAccountsPositions()
       self.removeAccountFromLocalStoreAndNotify(account.address, notify)
     else:
       if self.walletAccountsContainsAddress(account.address):
         self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji,
-          some(account.position), notify)
+          none(bool), notify)
       else:
         self.addNewAccountToLocalStoreAndNotify(notify)
 
@@ -1019,7 +1042,7 @@ QtObject:
       url: response{"url"}.getStr,
     ))
 
-  proc fetchChainIdForUrl*(self: Service, url: string) = 
+  proc fetchChainIdForUrl*(self: Service, url: string) =
     let arg = FetchChainIdForUrlTaskArg(
       tptr: cast[ByteAddress](fetchChainIdForUrlTask),
       vptr: cast[ByteAddress](self.vptr),

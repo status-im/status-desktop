@@ -13,6 +13,7 @@ QtObject:
     path: string
     keyUid: string
     keycardAccount: bool
+    position: int
     operability: string
 
   proc setup*(self: WalletAccountItem,
@@ -24,6 +25,7 @@ QtObject:
     path: string = "",
     keyUid: string = "",
     keycardAccount: bool = false,
+    position: int = 0,
     operability: string = wa_dto.AccountFullyOperable
     ) =
       self.QObject.setup
@@ -35,6 +37,8 @@ QtObject:
       self.path = path
       self.keyUid = keyUid
       self.keycardAccount = keycardAccount
+      self.position = position
+      self.operability = operability
 
   proc delete*(self: WalletAccountItem) =
       self.QObject.delete
@@ -49,6 +53,8 @@ QtObject:
       path: {self.path},
       keyUid: {self.keyUid},
       keycardAccount: {self.keycardAccount},
+      position: {self.position},
+      operability: {self.operability},
       ]"""
 
   proc nameChanged*(self: WalletAccountItem) {.signal.}
@@ -119,6 +125,16 @@ QtObject:
     read = keycardAccount
     notify = keycardAccountChanged
 
+  proc positionChanged*(self: WalletAccountItem) {.signal.}
+  proc getPosition*(self: WalletAccountItem): int {.slot.} =
+    return self.position
+  proc setPosition*(self: WalletAccountItem, value: int) {.slot.} =
+    self.position = value
+    self.positionChanged()
+  QtProperty[int] position:
+    read = getPosition
+    write = setPosition
+    notify = positionChanged
 
   proc operabilityChanged*(self: WalletAccountItem) {.signal.}
   proc getOperability*(self: WalletAccountItem): string {.slot.} =

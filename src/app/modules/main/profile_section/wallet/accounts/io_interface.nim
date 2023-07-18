@@ -25,7 +25,7 @@ method refreshWalletAccounts*(self: AccessInterface) {.base.} =
 method updateAccount*(self: AccessInterface, address: string, accountName: string, colorId: string, emoji: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method updateAccountPosition*(self: AccessInterface, address: string, position: int) {.base.} =
+method moveAccountFinally*(self: AccessInterface, fromPosition: int, toPosition: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method renameKeypair*(self: AccessInterface, keyUid: string, name: string) {.base.} =

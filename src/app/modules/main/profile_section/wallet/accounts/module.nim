@@ -135,8 +135,8 @@ method viewDidLoad*(self: Module) =
 method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
   self.controller.updateAccount(address, accountName, colorId, emoji)
 
-method updateAccountPosition*(self: Module, address: string, position: int) =
-  self.controller.updateAccountPosition(address, position)
+method moveAccountFinally*(self: Module, fromPosition: int, toPosition: int) =
+  self.controller.moveAccountFinally(fromPosition, toPosition)
 
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)
