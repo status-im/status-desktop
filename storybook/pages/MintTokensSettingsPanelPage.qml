@@ -6,6 +6,8 @@ import AppLayouts.Communities.panels 1.0
 import AppLayouts.Chat.stores 1.0
 import StatusQ.Core.Theme 0.1
 
+import SortFilterProxyModel 0.2
+
 import Storybook 1.0
 import Models 1.0
 
@@ -48,15 +50,37 @@ SplitView {
                 id: mintedTokensModel
             }
 
+            SortFilterProxyModel {
+                id: privilegedTokensModel
+
+                sourceModel: mintedTokensModel
+
+                filters: ValueFilter {
+                    roleName: "isPrivilegedToken"
+                    value: true
+                }
+            }
+
             anchors.fill: parent
             anchors.topMargin: 50
-            tokensModel: editorModelChecked.checked ? emptyModel : mintedTokensModel
-            isAdmin: adminChecked.checked
-            isOwner: ownerChecked.checked
+
+            // General:
             communityLogo: ModelsData.collectibles.doodles
             communityColor: "#FFC4E9"
-            communityName: communityNameText.text
+            communityName: "Doodles" // It cannot be changed since owner token and tMaster token in tokenModel used are related to the `Doodles` community
+
+            // Profile type:
+            isAdmin: adminChecked.checked
+            isOwner: ownerChecked.checked
             isTokenMasterOwner: masterTokenOwnerChecked.checked
+
+            // Owner and TMaster related props:
+            isOwnerTokenDeployed: deployCheck.checked
+            isTMasterTokenDeployed: deployCheck.checked
+
+            // Models:
+            tokensModel: editorModelChecked.checked ? emptyModel :
+                                                      privilegedModelChecked.checked ? privilegedTokensModel : mintedTokensModel
             layer1Networks: NetworksModel.layer1Networks
             layer2Networks: NetworksModel.layer2Networks
             testNetworks: NetworksModel.testNetworks
@@ -68,10 +92,10 @@ SplitView {
                     symbol: "MAI"
                 }
             }
+
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
             onMintAsset: logs.logEvent("CommunityMintTokensSettingsPanel::mintAssets")
             onDeleteToken: logs.logEvent("CommunityMintTokensSettingsPanel::deleteToken: " + tokenKey)
-
             onSignMintTransactionOpened: feesTimer.restart()
         }
     }
@@ -80,24 +104,11 @@ SplitView {
         id: logsAndControlsPanel
 
         SplitView.minimumHeight: 100
-        SplitView.preferredHeight: 250
+        SplitView.preferredHeight: 300
 
         logsView.logText: logs.logText
 
         ColumnLayout {
-
-            Row {
-                Label {
-                    text: "Community name: "
-                }
-
-                TextEdit {
-                    id: communityNameText
-
-                    text: "TEST COMMUNITY"
-                }
-            }
-
             CheckBox {
                 id: ownerChecked
                 checked: true
@@ -119,28 +130,46 @@ SplitView {
                 text: "Is admin? [Admis will be able to see token views, but NOT manage them, like creating new artwork or asset]"
             }
 
-            CheckBox {
-                id: editorModelChecked
-                checked: true
+            RowLayout {
+                RadioButton {
+                    id: editorModelChecked
 
-                text: "No tokens minted yet"
+                    checked: true
+
+                    text: "No tokens minted yet"
+                }
+                RadioButton {
+                    id: privilegedModelChecked
+
+                    text: "Owner token and TMaster token only"
+                }
+                RadioButton {
+                    id: completeModelChecked
+
+                    text: "Minted tokens list"
+                }
             }
 
             RowLayout {
-                Button {
+
+                RadioButton {
                     text: "Set all to 'In progress'"
 
                     onClicked: mintedTokensModel.changeAllMintingStates(1)
                 }
-                Button {
-                    text: "Set all to 'Deployed'"
 
-                    onClicked: mintedTokensModel.changeAllMintingStates(2)
-                }
-                Button {
+                RadioButton {
                     text: "Set all to 'Error'"
 
                     onClicked: mintedTokensModel.changeAllMintingStates(0)
+                }
+
+                RadioButton {
+                    id: deployCheck
+
+                    text: "Set all to 'Deployed'"
+
+                    onClicked: mintedTokensModel.changeAllMintingStates(2)
                 }
             }
         }

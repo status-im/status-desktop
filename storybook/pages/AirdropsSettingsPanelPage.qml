@@ -90,10 +90,17 @@ SplitView {
 
                 anchors.fill: parent
                 anchors.topMargin: 50
+
+                // User profile
                 isOwner: ownerChecked.checked
                 isTokenMasterOwner: masterTokenOwnerChecked.checked
                 isAdmin: adminChecked.checked
-                tokensModel: editorModelChecked.checked ? emptyModel : mintedTokensModel
+
+                // Owner and TMaster related props:
+                isOwnerTokenDeployed: deployCheck.checked
+                isTMasterTokenDeployed: deployCheck.checked
+
+                // Models
                 assetsModel: AssetsModel {}
                 collectiblesModel: ListModel {}
 
@@ -228,10 +235,10 @@ SplitView {
             }
 
             CheckBox {
-                id: editorModelChecked
-                checked: true
+                id: deployCheck
+                checked: false
 
-                text: "No tokens minted yet"
+                text: "Owner and TMaster tokens deployed"
             }
         }
     }

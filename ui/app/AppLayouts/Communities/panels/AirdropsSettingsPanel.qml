@@ -13,14 +13,21 @@ StackView {
 
     // id, name, image, color, owner properties expected
     required property var communityDetails
+
+    // User profiles
     required property bool isOwner
     required property bool isTokenMasterOwner
     required property bool isAdmin
+    readonly property bool isPrivilegedTokenOwnerProfile: root.isOwner || root.isTokenMasterOwner
+
+    // Owner and TMaster token related properties:
+    readonly property bool arePrivilegedTokensDeployed: root.isOwnerTokenDeployed && root.isTMasterTokenDeployed
+    property bool isOwnerTokenDeployed: false
+    property bool isTMasterTokenDeployed: false
 
     // Token models:
     required property var assetsModel
     required property var collectiblesModel
-    required property var tokensModel // Community minted tokens model
 
     required property var membersModel
 
@@ -55,7 +62,7 @@ StackView {
     QtObject {
         id: d
 
-        readonly property bool isAdminOnly: root.isAdmin && !root.isOwner && !root.isTokenMasterOwner
+        readonly property bool isAdminOnly: root.isAdmin && !root.isPrivilegedTokenOwnerProfile
 
         signal selectToken(string key, int amount, int type)
         signal addAddresses(var addresses)
@@ -65,15 +72,33 @@ StackView {
         implicitWidth: 0
         title: qsTr("Airdrops")
 
-        buttons: StatusButton {
+        buttons: [
+            // TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the airdrop flow available somehow
+            StatusButton {
 
-            objectName: "addNewItemButton"
+                text: qsTr("TEMP Airdrop")
 
-            text: qsTr("New Airdrop")
-            enabled: !d.isAdminOnly && root.tokensModel.count > 0 // TODO: Replace to checker to ensure owner token is deployed
+                onClicked: root.push(newAirdropView, StackView.Immediate)
 
-            onClicked: root.push(newAirdropView, StackView.Immediate)
-        }
+                StatusToolTip {
+                    visible: parent.hovered
+                    text: "TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the airdrop flow available somehow"
+                    orientation: StatusToolTip.Orientation.Bottom
+                    y: parent.height + 12
+                    maxWidth: 300
+                }
+            },
+            StatusButton {
+
+                objectName: "addNewItemButton"
+
+                text: qsTr("New Airdrop")
+                enabled: !d.isAdminOnly && root.arePrivilegedTokensDeployed
+
+                onClicked: root.push(newAirdropView, StackView.Immediate)
+            }
+
+        ]
 
         contentItem: WelcomeSettingsView {
             viewWidth: root.viewWidth
@@ -85,10 +110,10 @@ StackView {
                 qsTr("Incentivise joining, retention, moderation and desired behaviour"),
                 qsTr("Require holding a token or NFT to obtain exclusive membership rights")
             ]
-            infoBoxVisible: d.isAdminOnly || ((root.isOwner || root.isTokenMasterOwner) && root.tokensModel.count === 0) // TODO: Replace to checker to ensure owner token is NOT deployed yet
+            infoBoxVisible: d.isAdminOnly || (root.isPrivilegedTokenOwnerProfile && !root.arePrivilegedTokensDeployed)
             infoBoxTitle: qsTr("Get started")
             infoBoxText: d.isAdminOnly ? qsTr("Token airdropping can only be performed by admins that hodl the Community’s TokenMaster token. If you would like this permission, contact the Community founder (they will need to mint the Community Owner token before they can airdrop this to you)."):
-                                       qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
+                                         qsTr("In order to Mint, Import and Airdrop community tokens, you first need to mint your Owner token which will give you permissions to access the token management features for your community.")
             buttonText: qsTr("Mint Owner token")
             buttonVisible: root.isOwner
             onClicked: root.navigateToMintTokenSettings(false)

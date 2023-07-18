@@ -49,6 +49,8 @@ QtObject {
     {
         // NOTE for backend team: `ownerToken` and `tMasterToken` can be used to do an assertion before the deployment process starts, since
         // the objects have been created to display the token details to the user and must be the same than backend builds.
+        // TODO: Backend will need to check if the ownerToken or tMasterToken have a valid tokenKey, so it means a deployment retry,
+        // otherwise, it is a new deployment.
         console.log("TODO: Backend Owner and Token Master token deployment!")
     }
 

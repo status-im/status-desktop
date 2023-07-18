@@ -5,6 +5,7 @@ import QtQml 2.15
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.helpers 1.0
@@ -22,14 +23,25 @@ StackView {
     id: root
 
     // General properties:
-    required property bool isOwner
-    required property bool isTokenMasterOwner
-    required property bool isAdmin
+    property int viewWidth: 560 // by design
     required property string communityName
     required property string communityLogo
     required property color communityColor
 
-    property int viewWidth: 560 // by design
+    // User profile props:
+    required property bool isOwner
+    required property bool isTokenMasterOwner
+    required property bool isAdmin
+    readonly property bool isAdminOnly: root.isAdmin && !root.isPrivilegedTokenOwnerProfile
+    readonly property bool isPrivilegedTokenOwnerProfile: root.isOwner || root.isTokenMasterOwner
+
+    // Owner and TMaster token related properties:
+    readonly property bool arePrivilegedTokensDeployed: root.isOwnerTokenDeployed && root.isTMasterTokenDeployed
+    property bool isOwnerTokenDeployed: false
+    property bool isTMasterTokenDeployed: false
+
+    // It will monitorize if Owner and/or TMaster token items are included in the `tokensModel` despite the deployment state
+    property bool ownerOrTMasterTokenItemsExist: false
 
     // Models:
     property var tokensModel
@@ -77,51 +89,42 @@ StackView {
         pop(initialItem, StackView.Immediate)
     }
 
+    // This method will be called from the outsite from a different section like Airdrop or Permissions
     function openNewTokenForm(isAssetView) {
         resetNavigation()
 
-        if(d.isTokenOwnerDeployed) {
+        if(root.isAdminOnly) {
+            // Admins can only see the initial tokens page. They cannot mint
+            root.push(mintedTokensViewComponent, StackView.Immediate)
+            return
+        }
+
+        if(root.arePrivilegedTokensInProgress || root.arePrivilegedTokensFailed) {
+            // If Owner and TMaster tokens deployment action has been started at least ones, but still without success
+            root.push(mintedTokensViewComponent, StackView.Immediate)
+            return
+        }
+
+        if(root.ownerOrTMasterTokenItemsExist) {
+            // Regular minting flow, selecting the specific tab
             const properties = { isAssetView }
             root.push(newTokenViewComponent, properties, StackView.Immediate)
-        } else {
-            root.push(ownerTokenViewComponent, StackView.Immediate)
+            return
         }
+
+        if(root.isOwner) {
+            // Owner and TMaster tokens to be deployed.
+            root.push(ownerTokenViewComponent, StackView.Immediate)
+            return
+        }
+
+        // Any other case, initial view
+        root.push(mintedTokensViewComponent, StackView.Immediate)
     }
 
     property string previousPageName: depth > 1 ? qsTr("Back") : ""
 
-    QtObject {
-        id: d
-
-        readonly property bool isTokenOwnerDeployed: root.tokensModel.count > 0 // TODO: Checker to ensure owner token is deployed
-    }
-
-    initialItem: SettingsPage {
-        implicitWidth: 0
-        title: qsTr("Tokens")
-
-        buttons: DisabledTooltipButton {
-            readonly property bool isAdminOnly: root.isAdmin && !root.isOwner && !root.isTokenMasterOwner
-            readonly property bool buttonEnabled: (root.isOwner || root.isTokenMasterOwner) && d.isTokenOwnerDeployed
-
-            buttonType: DisabledTooltipButton.Normal
-            aliasedObjectName: "addNewItemButton"
-            text: qsTr("Mint token")
-            enabled: isAdminOnly || buttonEnabled
-            interactive: buttonEnabled
-            onClicked: root.push(newTokenViewComponent, StackView.Immediate)
-            tooltipText: qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName)
-        }
-
-        contentItem: MintedTokensView {
-            model: root.tokensModel
-            isOwner: root.isOwner
-            isAdmin: root.isAdmin
-
-            onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
-            onMintOwnerTokenClicked: root.push(ownerTokenViewComponent, StackView.Immediate)
-        }
-    }
+    initialItem: mintedTokensViewComponent
 
     Component {
         id: tokenObjectComponent
@@ -130,6 +133,60 @@ StackView {
     }
 
     // Mint tokens possible view contents:
+    Component {
+        id: mintedTokensViewComponent
+
+        SettingsPage {
+            implicitWidth: 0
+            title: qsTr("Tokens")
+
+            buttons: [
+                // TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the minting flow available somehow
+                StatusButton {
+
+                    text: qsTr("TEMP Mint token")
+
+                    onClicked: root.push(newTokenViewComponent, StackView.Immediate)
+
+                    StatusToolTip {
+                        visible: parent.hovered
+                        text: "TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the airdrop flow available somehow"
+                        orientation: StatusToolTip.Orientation.Bottom
+                        y: parent.height + 12
+                        maxWidth: 300
+                    }
+                },
+                DisabledTooltipButton {
+                    readonly property bool buttonEnabled: root.isPrivilegedTokenOwnerProfile && root.arePrivilegedTokensDeployed
+
+                    buttonType: DisabledTooltipButton.Normal
+                    aliasedObjectName: "addNewItemButton"
+                    text: qsTr("Mint token")
+                    enabled: root.isAdminOnly || buttonEnabled
+                    interactive: buttonEnabled
+                    onClicked: root.push(newTokenViewComponent, StackView.Immediate)
+                    tooltipText: qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName)
+                }
+            ]
+
+            contentItem: MintedTokensView {
+                model: SortFilterProxyModel {
+                    sourceModel: root.tokensModel
+                    proxyRoles: ExpressionRole {
+                        name: "color"
+                        expression: root.communityColor
+                    }
+                }
+                isOwner: root.isOwner
+                isAdmin: root.isAdmin
+                communityName: root.communityName
+
+                onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
+                onMintOwnerTokenClicked: root.push(ownerTokenViewComponent, StackView.Immediate)
+            }
+        }
+    }
+
     Component {
         id: ownerTokenViewComponent
 
@@ -155,6 +212,10 @@ StackView {
         SettingsPage {
             id: ownerTokenPage
 
+            property int chainId
+            property string accountName
+            property string accountAddress
+
             title: qsTr("Mint Owner token")
 
             contentItem: EditOwnerTokenView {
@@ -166,9 +227,18 @@ StackView {
                 }
 
                 viewWidth: root.viewWidth
+
                 communityLogo: root.communityLogo
                 communityColor: root.communityColor
                 communityName: root.communityName
+
+                ownerToken.chainId: ownerTokenPage.chainId
+                ownerToken.accountName: ownerTokenPage.accountName
+                ownerToken.accountAddress: ownerTokenPage.accountAddress
+                tMasterToken.chainId: ownerTokenPage.chainId
+                tMasterToken.accountName: ownerTokenPage.accountName
+                tMasterToken.accountAddress: ownerTokenPage.accountAddress
+
                 layer1Networks: root.layer1Networks
                 layer2Networks: root.layer2Networks
                 testNetworks: root.testNetworks
@@ -222,7 +292,7 @@ StackView {
             property string referenceName: ""
             property string referenceSymbol: ""
 
-            title: optionsTab.currentItem == assetsTab
+            title: optionsTab.currentItem === assetsTab
                    ? qsTr("Mint asset") : qsTr("Mint collectible")
 
             contentItem: ColumnLayout {
@@ -252,7 +322,7 @@ StackView {
                     Layout.preferredWidth: root.viewWidth
                     Layout.fillHeight: true
 
-                    currentIndex: optionsTab.currentItem == collectiblesTab ? 0 : 1
+                    currentIndex: optionsTab.currentItem === collectiblesTab ? 0 : 1
 
                     CustomEditCommunityTokenView {
                         id: newCollectibleView
@@ -279,7 +349,7 @@ StackView {
                         layer1Networks: root.layer1Networks
                         layer2Networks: root.layer2Networks
                         testNetworks: root.testNetworks
-                        enabledNetworks: root.testNetworks
+                        enabledNetworks: root.enabledNetworks
                         allNetworks: root.allNetworks
                         accounts: root.accounts
                         tokensModel: root.tokensModel
@@ -363,9 +433,15 @@ StackView {
         id: tokenViewPage
 
         readonly property alias token: view.token
+        readonly property bool deploymentFailed: view.deployState === Constants.ContractTransactionStatus.Failed
 
         property alias tokenOwnersModel: view.tokenOwnersModel
         property alias airdropKey: view.airdropKey
+
+        // Owner and TMaster related props
+        readonly property bool isPrivilegedTokenItem: token.isPrivilegedToken
+        readonly property bool isOwnerTokenItem: token.isPrivilegedToken && token.isOwner
+        readonly property bool isTMasterTokenItem: token.isPrivilegedToken && !token.isOwner
 
         title: view.name
         subtitle: view.symbol
@@ -375,22 +451,17 @@ StackView {
                 text: qsTr("Delete")
                 type: StatusBaseButton.Type.Danger
 
-                visible: view.deployState === Constants.ContractTransactionStatus.Failed
+                visible: (!tokenViewPage.isPrivilegedTokenItem) && !root.isAdminOnly && tokenViewPage.deploymentFailed
 
                 onClicked: deleteTokenAlertPopup.open()
             },
             StatusButton {
-                text: qsTr("Retry mint")
-
-                visible: view.deployState === Constants.ContractTransactionStatus.Failed
-
-                onClicked: {
+                function retryAssetOrCollectible() {
                     // https://bugreports.qt.io/browse/QTBUG-91917
                     var isAssetView = tokenViewPage.token.type === Constants.TokenType.ERC20
 
-                    // copy TokenObject
-                    var tokenObject = tokenObjectComponent.createObject(
-                                          null, view.token)
+                    // Copy TokenObject
+                    var tokenObject = tokenObjectComponent.createObject(null, view.token)
 
                     // Then move on to the new token view, but token pre-filled:
                     var properties = {
@@ -402,10 +473,34 @@ StackView {
                     }
 
                     var tokenView = root.push(newTokenViewComponent, properties,
-                                                StackView.Immediate)
+                                              StackView.Immediate)
 
-                    // cleanup dynamically created TokenObject
+                    // Cleanup dynamically created TokenObject
                     tokenView.Component.destruction.connect(() => tokenObject.destroy())
+                }
+
+                // Owner or TMaster token
+                function retryPrivilegedToken() {
+                    var properties = {
+                        chainId: view.token.chainId,
+                        accountName: view.token.accountName,
+                        accountAddress: view.token.accountAddress,
+                    }
+
+                    root.push(ownerTokenEditViewComponent, properties,
+                              StackView.Immediate)
+                }
+
+                text: qsTr("Retry mint")
+
+                visible: (tokenViewPage.isPrivilegedTokenItem && root.isOwner && tokenViewPage.deploymentFailed) ||
+                         (!tokenViewPage.isPrivilegedTokenItem && !root.isAdminOnly && tokenViewPage.deploymentFailed)
+
+                onClicked: {
+                    if(tokenViewPage.isPrivilegedTokenItem)
+                        retryPrivilegedToken()
+                    else
+                        retryAssetOrCollectible()
                 }
             }
         ]
@@ -438,8 +533,7 @@ StackView {
 
             readonly property TokenObject token: view.token
 
-            readonly property bool deployStateCompleted:
-                token.deployState === Constants.ContractTransactionStatus.Completed
+            readonly property bool deployStateCompleted: token.deployState === Constants.ContractTransactionStatus.Completed
 
             function closePopups() {
                 remotelyDestructPopup.close()
@@ -448,6 +542,16 @@ StackView {
                 burnTokensPopup.close()
             }
 
+            visible: {
+                if(tokenViewPage.isOwnerTokenItem)
+                    // Always hidden
+                    return false
+                if(tokenViewPage.isTMasterTokenItem)
+                    // Only footer if owner profile
+                    return root.isOwner
+                // Always present
+                return true
+            }
             airdropEnabled: deployStateCompleted &&
                             (token.infiniteSupply ||
                              token.remainingTokens !== 0)
@@ -461,8 +565,8 @@ StackView {
             remotelyDestructVisible: token.remotelyDestruct
             burnVisible: !token.infiniteSupply
 
-            onAirdropClicked:root.airdropToken(view.airdropKey, // tokenKey instead when backend airdrop ready to use key instead of symbol
-                                  view.token.type, [])
+            onAirdropClicked: root.airdropToken(view.airdropKey, // tokenKey instead when backend airdrop ready to use key instead of symbol
+                                                view.token.type, [])
 
             onRemotelyDestructClicked: remotelyDestructPopup.open()
             onBurnClicked: burnTokensPopup.open()
@@ -599,6 +703,9 @@ StackView {
                     tokenOwnersModel: model.tokenOwnersModel
                     airdropKey: model.symbol // TO BE REMOVED: When airdrop backend is ready to use token key instead of symbol
 
+                    token.isPrivilegedToken: model.isPrivilegedToken
+                    token.isOwner: model.isOwner
+                    token.color: root.communityColor
                     token.accountName: model.accountName
                     token.artworkSource: model.image
                     token.chainIcon: model.chainIcon

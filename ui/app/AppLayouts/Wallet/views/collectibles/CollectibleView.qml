@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
+import AppLayouts.Communities.panels 1.0
+
 import utils 1.0
 
 Control {
@@ -21,6 +23,11 @@ Control {
     property url fallbackImageUrl : ""
     property bool isLoading: false
     property bool navigationIconVisible: false
+
+    // Special Owner and TMaster token properties
+    property bool isPrivilegedToken: false // Owner or TMaster tokens
+    property bool isOwner: false // Owner token
+    property color ornamentColor // Relevant color for these special tokens (community color)
 
     signal clicked
 
@@ -43,6 +50,8 @@ Control {
             Layout.margins: Style.current.halfPadding
             Layout.fillWidth: true
             Layout.preferredHeight: width
+
+            visible: !root.isPrivilegedToken
             radius: 8
             mediaUrl: root.mediaUrl
             mediaType: root.mediaType
@@ -51,6 +60,25 @@ Control {
             border.width: 1
             showLoadingIndicator: true
             color: root.isLoading ? "transparent": root.backgroundColor
+
+            Loader {
+                anchors.fill: parent
+                active: root.isLoading
+                sourceComponent: LoadingComponent {radius: image.radius}
+            }
+        }
+
+        PrivilegedTokenArtworkPanel {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.margins: Style.current.halfPadding
+            Layout.fillWidth: true
+            Layout.preferredHeight: width
+
+            visible: root.isPrivilegedToken
+            size: PrivilegedTokenArtworkPanel.Size.Medium
+            artwork: root.fallbackImageUrl
+            color: root.ornamentColor
+            isOwner: root.isOwner
 
             Loader {
                 anchors.fill: parent
@@ -90,6 +118,7 @@ Control {
             id: subTitleItem
 
             Layout.alignment: Qt.AlignLeft
+            Layout.topMargin: 3
             Layout.leftMargin: Style.current.halfPadding
             Layout.rightMargin: Layout.leftMargin
             Layout.fillWidth: !root.isLoading

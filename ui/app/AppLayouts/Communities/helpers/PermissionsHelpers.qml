@@ -83,13 +83,19 @@ QtObject {
         }
     }
 
+    // OWNER AND TMASTER TOKENS related helpers:
+    readonly property string ownerTokenNameTag: "Owner-"
+    readonly property string tMasterTokenNameTag: "TMaster-"
+    readonly property string ownerTokenSymbolTag: "OWN"
+    readonly property string tMasterTokenSymbolTag: "TM"
+
     // It generates a symbol from a given community name.
     // It will be used to autogenerate the Owner and Token Master token symbols.
-    function autogenerateSymbol(isOwner, communityName) {
+    function communityNameToSymbol(isOwner, communityName) {
         const shortName = communityName.substring(0, 3)
         if(isOwner)
-            return "OWN" + shortName.toUpperCase()
+            return ownerTokenSymbolTag + shortName.toUpperCase()
         else
-            return "TM" + shortName.toUpperCase()
+            return tMasterTokenSymbolTag + shortName.toUpperCase()
     }
 }
