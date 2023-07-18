@@ -32,7 +32,6 @@ import ../../../../app_service/service/mailservers/service as mailservers_servic
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/token/service as token_service
-import ../../../../app_service/service/collectible/service as collectible_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
 import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
@@ -102,13 +101,12 @@ proc newModule*(
     mailserversService: mailservers_service.Service,
     walletAccountService: wallet_account_service.Service,
     tokenService: token_service.Service,
-    collectibleService: collectible_service.Service,
     communityTokensService: community_tokens_service.Service,
   ): Module =
   result = Module()
   result.delegate = delegate
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, nodeConfigurationService,
-  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, collectibleService, communityTokensService)
+  contactService, chatService, communityService, messageService, gifService, mailserversService, walletAccountService, tokenService, communityTokensService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false

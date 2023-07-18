@@ -28,6 +28,7 @@ import network_connection/module as network_connection_module
 import shared_urls/module as shared_urls_module
 
 import ../../../app_service/service/contacts/dto/contacts
+from backend/collectibles_types import CollectibleOwner
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -36,7 +37,6 @@ import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/currency/service as currency_service
 import ../../../app_service/service/transaction/service as transaction_service
-import ../../../app_service/service/collectible/service as collectible_service
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/bookmarks/service as bookmark_service
 import ../../../app_service/service/dapp_permissions/service as dapp_permissions_service
@@ -127,7 +127,6 @@ proc newModule*[T](
   tokenService: token_service.Service,
   currencyService: currency_service.Service,
   transactionService: transaction_service.Service,
-  collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
   bookmarkService: bookmark_service.Service,
   profileService: profile_service.Service,
@@ -176,7 +175,6 @@ proc newModule*[T](
     walletAccountService,
     tokenService,
     networkService,
-    collectibleService
   )
   result.moduleLoaded = false
   result.chatsLoaded = false
@@ -196,7 +194,7 @@ proc newModule*[T](
   result.channelGroupModules = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule(
     result, events, tokenService, currencyService,
-    transactionService, collectible_service, walletAccountService,
+    transactionService, walletAccountService,
     settingsService, savedAddressService, networkService, accountsService,
     keycardService, nodeService, networkConnectionService
   )
@@ -567,7 +565,6 @@ method onChannelGroupsLoaded*[T](
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
-  collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service
 ) =
   self.chatsLoaded = true
@@ -594,7 +591,6 @@ method onChannelGroupsLoaded*[T](
       mailserversService,
       walletAccountService,
       tokenService,
-      collectibleService,
       communityTokensService
     )
     let channelGroupItem = self.createChannelGroupItem(channelGroup)
@@ -627,7 +623,6 @@ method onCommunityDataLoaded*[T](
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
-  collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service
 ) =
   self.communityDataLoaded = true
@@ -647,7 +642,6 @@ method onCommunityDataLoaded*[T](
     mailserversService,
     walletAccountService,
     tokenService,
-    collectibleService,
     communityTokensService
   )
 
@@ -869,7 +863,6 @@ method communityJoined*[T](
   mailserversService: mailservers_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
-  collectibleService: collectible_service.Service,
   communityTokensService: community_tokens_service.Service,
   setActive: bool = false,
 ) =
@@ -891,7 +884,6 @@ method communityJoined*[T](
       mailserversService,
       walletAccountService,
       tokenService,
-      collectibleService,
       communityTokensService
     )
   let channelGroup = community.toChannelGroupDto()

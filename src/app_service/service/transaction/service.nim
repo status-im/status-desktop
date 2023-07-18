@@ -16,7 +16,6 @@ import ../wallet_account/service as wallet_account_service
 import ../network/service as network_service
 import ../token/service as token_service
 import ../settings/service as settings_service
-import ../collectible/dto
 import ../eth/dto/transaction as transaction_data_dto
 import ../eth/dto/[coder, method_dto]
 import ./dto as transaction_dto
@@ -251,13 +250,6 @@ QtObject:
       let dto = tx.toTransactionDto()
       self.allTransactions.mgetOrPut(address, initTable[string, TransactionDto]())[dto.txHash] = dto
       transactions.add(dto)
-
-    let collectiblesContainerJson = historyData["collectibles"]
-    if collectiblesContainerJson.kind == JObject:
-      let collectiblesJson = collectiblesContainerJson["assets"]
-      if collectiblesJson.kind == JArray:
-        for c in collectiblesJson.getElems():
-          collectibles.add(c.toCollectibleDto())
 
     if self.allTxLoaded.hasKey(address):
       self.allTxLoaded[address] = self.allTxLoaded[address] and allTxLoaded

@@ -50,17 +50,6 @@ const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
         )
         if not uniqueIds.any(x => (x == nftId)):
           uniqueIds.add(nftId)
-
-    if len(uniqueIds) > 0:
-      let collectiblesResponse = collectibles.getOpenseaAssetsByCollectibleUniqueID(uniqueIds)
-
-      if not collectiblesResponse.error.isNil:
-        # We don't want to prevent getting the list of transactions if we cannot get
-        # NFT metadata. Just don't return the metadata.
-        let errDesription = "Error getOpenseaAssetsByCollectibleUniqueID" & collectiblesResponse.error.message
-        error "error loadTransactionsTask: ", errDesription
-      else:
-        output["collectibles"] = collectiblesResponse.result
   except Exception as e:
     let errDesription = e.msg
     error "error loadTransactionsTask: ", errDesription

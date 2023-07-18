@@ -7,7 +7,6 @@ import ../../../../../app_service/service/currency/service as currency_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/network_connection/service as network_connection
-import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../../../app_service/service/node/service as node_service
 import ../../../shared/wallet_utils
 import ../../../shared_models/currency_amount

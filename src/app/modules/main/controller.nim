@@ -21,7 +21,7 @@ import ../../../app_service/service/community_tokens/service as community_tokens
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/network/service as networks_service
-import ../../../app_service/service/collectible/service as collectible_service
+from backend/collectibles_types import CollectibleOwner
 
 import io_interface
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -53,7 +53,6 @@ type
     walletAccountService: wallet_account_service.Service
     tokenService: token_service.Service
     networksService: networks_service.Service
-    collectibleService: collectible_service.Service
 
 # Forward declaration
 proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings: bool = false)
@@ -75,8 +74,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   communityTokensService: community_tokens_service.Service,
   walletAccountService: wallet_account_service.Service,
   tokenService: token_service.Service,
-  networksService: networks_service.Service,
-  collectibleService: collectible_service.Service
+  networksService: networks_service.Service
 ):
   Controller =
   result = Controller()
@@ -97,7 +95,6 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.walletAccountService = walletAccountService
   result.tokenService = tokenService
   result.networksService = networksService
-  result.collectibleService = collectibleService
 
 proc delete*(self: Controller) =
   discard
@@ -118,7 +115,6 @@ proc init*(self: Controller) =
       self.mailserversService,
       self.walletAccountService,
       self.tokenService,
-      self.collectibleService,
       self.communityTokensService
     )
 
@@ -135,7 +131,6 @@ proc init*(self: Controller) =
       self.mailserversService,
       self.walletAccountService,
       self.tokenService,
-      self.collectibleService,
       self.communityTokensService
     )
 
@@ -171,7 +166,6 @@ proc init*(self: Controller) =
       self.mailserversService,
       self.walletAccountService,
       self.tokenService,
-      self.collectibleService,
       self.communityTokensService,
       setActive = args.fromUserAction
     )
@@ -191,7 +185,6 @@ proc init*(self: Controller) =
       self.mailserversService,
       self.walletAccountService,
       self.tokenService,
-      self.collectibleService,
       self.communityTokensService,
       setActive = args.fromUserAction
     )
@@ -215,7 +208,6 @@ proc init*(self: Controller) =
       self.mailserversService,
       self.walletAccountService,
       self.tokenService,
-      self.collectibleService,
       self.communityTokensService,
       setActive = true
     )
@@ -237,7 +229,6 @@ proc init*(self: Controller) =
       self.mailserversService,
       self.walletAccountService,
       self.tokenService,
-      self.collectibleService,
       self.communityTokensService,
       setActive = false
     )

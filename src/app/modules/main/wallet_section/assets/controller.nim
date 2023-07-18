@@ -4,7 +4,6 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/token/service as token_service
 import ../../../../../app_service/service/currency/service as currency_service
-import ../../../../../app_service/service/collectible/service as collectible_service
 
 type
   Controller* = ref object of RootObj

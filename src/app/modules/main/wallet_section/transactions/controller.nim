@@ -4,7 +4,6 @@ import ../../../../../app_service/service/transaction/service as transaction_ser
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/currency/service as currency_service
-import ../../../../../app_service/service/collectible/service as collectible_service
 import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 import ../../../../core/[main]
@@ -80,10 +79,6 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CURRENCY_FORMATS_UPDATED) do(e:Args):
     # TODO: Rebuild Transaction items
-    discard
-
-  self.events.on(SIGNAL_COLLECTIBLES_UPDATED) do(e:Args):
-    # TODO: Refresh collectible data in Transaction items
     discard
 
   self.events.on(SIGNAL_TRANSACTION_DECODED) do(e: Args):

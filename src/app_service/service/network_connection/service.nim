@@ -7,7 +7,6 @@ import ../../../app/core/signals/types
 import ../wallet_account/service as wallet_service
 import ../network/service as network_service
 import ../node/service as node_service
-import ../collectible/service as collectible_service
 
 logScope:
   topics = "network-connection-service"
@@ -106,11 +105,6 @@ QtObject:
       if self.connectionStatus.hasKey(BLOCKCHAINS):
         let connectionStatus = self.connectionStatus[BLOCKCHAINS]
         self.updateBlockchainsStatus(connectionStatus.completelyDown, connectionStatus.chainIds, connectionStatus.lastCheckedAt)
-
-    self.events.on(SIGNAL_OWNED_COLLECTIBLES_UPDATE_ERROR) do(e:Args):
-      if self.connectionStatus.hasKey(COLLECTIBLES):
-        let connectionStatus = self.connectionStatus[COLLECTIBLES]
-        self.updateMarketOrCollectibleStatus(COLLECTIBLES, connectionStatus.completelyDown, connectionStatus.lastCheckedAt)
 
   proc getIsDown(self: Service, message: string): bool =
     result = message == "down"

@@ -1,5 +1,4 @@
 import ../../../../../app_service/service/wallet_account/dto as WalletDto
-import ../../../../../app_service/service/collectible/dto as CollectibleDto
 import ../../../../../app_service/service/transaction/dto
 export TransactionDto, CollectibleDto
 

@@ -9,7 +9,6 @@ import ../../../../../app_service/service/transaction/service as transaction_ser
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/currency/service as currency_service
-import ../../../../../app_service/service/collectible/service as collectible_service
 
 export io_interface
 
@@ -66,13 +65,6 @@ method transactionsToItems*(self: Module, transactions: seq[TransactionDto], col
   let ethFormat = self.controller.getCurrencyFormat("ETH")
 
   transactions.map(t => (block:
-    if t.typeValue == ERC721_TRANSACTION_TYPE:
-      for c in collectibles:
-        if c.tokenId == t.tokenId and c.address == t.contract:
-          # Found matching collectible
-          return transactionToNFTItem(t, c, ethFormat, gweiFormat)
-      # Could not find matching collectible, use empty one
-      return transactionToNFTItem(t, newCollectibleDto(), ethFormat, gweiFormat)
     let resolvedSymbol = self.getResolvedSymbol(t)
     return transactionToItem(t, resolvedSymbol, self.controller.getCurrencyFormat(resolvedSymbol), ethFormat, gweiFormat)
   ))
