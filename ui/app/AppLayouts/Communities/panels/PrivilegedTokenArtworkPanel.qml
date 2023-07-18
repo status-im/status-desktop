@@ -11,7 +11,8 @@ import utils 1.0
 Control {
     id: root
 
-    required property bool isOwner
+    // https://bugreports.qt.io/browse/QTBUG-84269
+    /*required*/ property bool isOwner
 
     property bool showTag: false
     property int size: PrivilegedTokenArtworkPanel.Size.Small

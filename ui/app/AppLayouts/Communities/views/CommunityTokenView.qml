@@ -60,19 +60,7 @@ StatusScrollView {
     QtObject {
         id: d
 
-        readonly property int imageSelectorRectSize: root.isAssetView ? 104 : 280
         readonly property int iconSize: 20
-        readonly property string infiniteSymbol: "∞"
-        readonly property int burnState: root.token.burnState
-
-        function startAnimation(isBurn) {
-            totalbox.highlighted = true
-
-            if(isBurn)
-                remainingBox.highlighted = true
-        }
-
-        onBurnStateChanged: if(burnState === Constants.ContractTransactionStatus.Completed) d.startAnimation(true)
     }
 
     padding: 0
@@ -109,202 +97,10 @@ StatusScrollView {
             }
         }
 
-        Rectangle {
-            Layout.preferredHeight: d.imageSelectorRectSize
-            Layout.preferredWidth: Layout.preferredHeight
-
-            radius: root.isAssetView ? Layout.preferredWidth / 2 : 8
-            color:Theme.palette.baseColor2
-            clip: true
-
-            Image {
-                id: image
-
-                readonly property rect imageCropRect: root.artworkCropRect
-
-                anchors.fill: parent
-                fillMode: Image.PreserveAspectFit
-                visible: false
-                source: root.artworkSource
-                sourceClipRect: imageCropRect ? imageCropRect : undefined
-            }
-
-            OpacityMask {
-                anchors.fill: image
-                source: image
-                maskSource: parent
-            }
-        }
-
-        Flow {
-            spacing: Style.current.halfPadding
+        TokenInfoPanel {
             Layout.fillWidth: true
 
-            component CustomPreviewBox: Rectangle {
-                id: previewBox
-
-                property string label
-                property string value
-                property bool isLoading: false
-                property bool highlighted: false
-
-                radius: 8
-                border.color: Theme.palette.baseColor2
-                implicitWidth: Math.min(boxContent.implicitWidth + Style.current.padding, mainLayout.width)
-                implicitHeight: boxContent.implicitHeight + Style.current.padding
-                states: [
-                    State {
-                        when: !previewBox.highlighted
-                        PropertyChanges { target: previewBox; color: "transparent" }
-                    },
-                    State {
-                        when: previewBox.highlighted
-                        PropertyChanges { target: previewBox; color: Theme.palette.primaryColor3 }
-                    }
-                ]
-
-                onHighlightedChanged: if(highlighted) animation.start()
-
-                ColumnLayout {
-                    id: boxContent
-                    anchors.centerIn: parent
-                    spacing: 2
-
-                    StatusBaseText {
-                        Layout.fillWidth: true
-                        text: previewBox.label
-                        elide: Text.ElideRight
-                        font.pixelSize: 13
-                        color: Theme.palette.baseColor1
-                    }
-
-                    RowLayout {
-                        spacing: 3
-
-                        StatusBaseText {
-                            text: StatusQUtils.Emoji.fromCodePoint("1f525") // :fire: emoji
-                            font.pixelSize: Theme.tertiaryTextFontSize
-                            visible: previewBox.isLoading
-                            color: Theme.palette.directColor1
-                        }
-
-                        StatusBaseText {
-                            Layout.maximumWidth: mainLayout.width - Style.current.padding
-                            text: previewBox.value
-                            elide: Text.ElideRight
-                            font.pixelSize: Theme.primaryTextFontSize
-                            color: Theme.palette.directColor1
-                        }
-
-                        StatusLoadingIndicator {
-                            Layout.preferredHeight: Theme.primaryTextFontSize
-                            Layout.preferredWidth: Layout.preferredHeight
-                            Layout.leftMargin: 6
-                            Layout.rightMargin: 3
-                            visible: previewBox.isLoading
-                            color: Theme.palette.primaryColor1
-                        }
-                    }
-                }
-
-                Timer {
-                    id: animation
-
-                    interval: 1500
-                    onRunningChanged: if(!running) previewBox.highlighted = false
-                }
-            }
-
-            CustomPreviewBox {
-                id: symbolBox
-
-                label: qsTr("Symbol")
-                value: root.symbol
-            }
-
-            CustomPreviewBox {
-                id: totalbox                
-
-                label: qsTr("Total")
-                value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.supply)
-                isLoading: !root.infiniteSupply &&
-                           ((!root.isAssetView && root.remotelyDestructState === Constants.ContractTransactionStatus.InProgress) ||
-                            (d.burnState === Constants.ContractTransactionStatus.InProgress))
-            }
-
-            CustomPreviewBox {
-                id: remainingBox
-
-                label: qsTr("Remaining")
-                value: root.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(root.remainingTokens)
-                isLoading: !root.infiniteSupply && (d.burnState === Constants.ContractTransactionStatus.InProgress)
-            }
-
-            CustomPreviewBox {
-                visible: root.isAssetView
-                label: qsTr("DP")
-                value: root.decimals
-            }
-
-            CustomPreviewBox {
-                visible: !root.isAssetView
-                label: qsTr("Transferable")
-                value: root.transferable ? qsTr("Yes") : qsTr("No")
-            }
-
-            CustomPreviewBox {
-                visible: !root.isAssetView
-
-                label: qsTr("Destructible")
-                value: root.remotelyDestruct ? qsTr("Yes") : qsTr("No")
-            }
-
-            CustomPreviewBox {
-                label: qsTr("Account")
-                value: root.accountName
-            }
-
-            Rectangle {
-                height: symbolBox.height
-                width: rowChain.implicitWidth + 2 * Style.current.padding
-                border.width: 1
-                radius: 8
-                border.color: Theme.palette.baseColor2
-                color: "transparent"
-
-                RowLayout {
-                    id: rowChain
-
-                    anchors.centerIn: parent
-                    spacing: Style.current.padding
-
-                    SVGImage {
-                        Layout.alignment: Qt.AlignVCenter
-
-                        height: 24
-                        width: height
-                        source: Style.svg(root.chainIcon)
-                    }
-
-                    StatusBaseText {
-                        Layout.alignment: Qt.AlignVCenter
-
-                        text: root.chainName
-                        font.pixelSize: 13
-                        font.weight: Font.Medium
-                        color: Theme.palette.baseColor1
-                    }
-                }
-            }
-        }
-
-        StatusBaseText {
-            Layout.fillWidth: true
-
-            text: root.description
-            wrapMode: TextEdit.WordWrap
-            font.pixelSize: Theme.primaryTextFontSize
-            lineHeight: 1.2
+            token: root.token
         }
 
         RowLayout {
@@ -324,7 +120,7 @@ StatusScrollView {
                 wrapMode: Text.Wrap
                 font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.baseColor1
-                text: qsTr("Make sure you’re happy with your token before minting it as it can’t be edited later")
+                text: qsTr("Review token details before minting it as they can’t be edited later")
             }
         }
 
@@ -352,14 +148,6 @@ StatusScrollView {
             onAirdropRequested: root.airdropRequested(address)
             onGeneralAirdropRequested: root.generalAirdropRequested()
             onRemoteDestructRequested: root.remoteDestructRequested(address)
-        }
-    }
-
-    Connections {
-        target: root.token
-
-        function onRemotelyDestructStateChanged() {
-            if(root.remotelyDestructState === Constants.ContractTransactionStatus.Completed) d.startAnimation(false)
         }
     }
 }

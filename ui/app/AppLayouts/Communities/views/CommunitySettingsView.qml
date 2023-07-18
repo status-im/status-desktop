@@ -326,6 +326,10 @@ StatusSectionLayout {
             onMintAsset:
                 communityTokensStore.deployAsset(root.community.id, assetItem)
 
+            onMintOwnerToken:
+                communityTokensStore.deployOwnerToken(
+                    root.community.id, ownerToken, tMasterToken)
+
             onSignRemoteDestructTransactionOpened:
                 communityTokensStore.computeSelfDestructFee(
                     remotelyDestructTokensList, tokenKey)

@@ -6,6 +6,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.helpers 1.0
 
 import utils 1.0
 
@@ -23,19 +24,6 @@ StatusScrollView {
     padding: 0
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
-
-    QtObject {
-        id: d
-
-        function generateSymbol(isOwner) {
-            // TODO: Add a kind of verification for not repeating symbols
-            const shortName = root.communityName.substring(0, 3)
-            if(isOwner)
-                return "OWN" + shortName.toUpperCase()
-            else
-                return "TM" + shortName.toUpperCase()
-        }
-    }
 
     ColumnLayout {
         id: mainLayout
@@ -146,7 +134,7 @@ StatusScrollView {
 
                                 Layout.alignment: Qt.AlignBottom
 
-                                text: d.generateSymbol(panel.isOwner)
+                                text: PermissionsHelpers.autogenerateSymbol(panel.isOwner, root.communityName)
                                 font.pixelSize: Style.current.primaryTextFontSize
                                 color: Theme.palette.baseColor1
                             }

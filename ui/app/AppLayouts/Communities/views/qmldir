@@ -6,6 +6,7 @@ CommunityTokenView 1.0 CommunityTokenView.qml
 EditAirdropView 1.0 EditAirdropView.qml
 EditPermissionView 1.0 EditPermissionView.qml
 EditCommunityTokenView 1.0 EditCommunityTokenView.qml
+EditOwnerTokenView 1.0 EditOwnerTokenView.qml
 HoldingsSelectionModel 1.0 HoldingsSelectionModel.qml
 JoinCommunityView 1.0 JoinCommunityView.qml
 MintedTokensView 1.0 MintedTokensView.qml

@@ -86,6 +86,10 @@ ListModel {
          section: "Views"
     }
     ListElement {
+        title: "EditOwnerTokenView"
+        section: "Views"
+    }
+    ListElement {
          title: "StatusCommunityCard"
          section: "Panels"
     }
