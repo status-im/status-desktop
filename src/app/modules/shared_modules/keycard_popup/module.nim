@@ -3,8 +3,8 @@ import NimQml, tables, random, strutils, sequtils, sugar, chronicles
 import io_interface
 import view, controller
 import internal/[state, state_factory]
-import ../../shared/keypairs
-import ../../shared_models/[keypair_model, keypair_item]
+import ../../shared/[keypairs, wallet_utils]
+import ../../shared_models/[keypair_model, keypair_item, currency_amount]
 import ../../../global/app_translatable_constants as atc
 import ../../../global/global_singleton
 import ../../../core/eventemitter
@@ -540,8 +540,9 @@ method onTokensRebuilt*[T](self: Module[T], accountsTokens: OrderedTable[string,
     return
   let chainIds = self.controller.getChainIdsOfAllKnownNetworks()
   let currency = self.controller.getCurrency()
+  let currencyFormat = self.controller.getCurrencyFormat(currency)
   for address, tokens in accountsTokens.pairs:
-    let balance = tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
+    let balance = currencyAmountToItem(tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0), currencyFormat)
     self.getKeyPairForProcessing().setBalanceForAddress(address, balance)
 
 proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardMetadata):
@@ -567,7 +568,7 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
       if acc.emoji.len == 0:
         icon = "wallet"
       result.item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId, icon,
-        balance = 0.0, balanceFetched = true, operability = acc.operable))
+        balance = newCurrencyAmount(), balanceFetched = true, operability = acc.operable))
   # handle unknown accounts
   var unknownAccountNumber = 0
   for cardAcc in cardMetadata.walletAccounts:
@@ -580,9 +581,10 @@ proc buildKeyPairItemBasedOnCardMetadata[T](self: Module[T], cardMetadata: CardM
       let (balance, balanceFetched) = self.controller.getOrFetchBalanceForAddressInPreferredCurrency(cardAcc.address)
       result.knownKeyPair = false
       unknownAccountNumber.inc
+      let currencyFormat = self.controller.getCurrencyFormat(self.controller.getCurrency())
       let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $unknownAccountNumber
       result.item.addAccount(newKeyPairAccountItem(name, cardAcc.path, cardAcc.address, pubKey = cardAcc.publicKey,
-        emoji = "", colorId = "undefined", icon = "wallet", balance, balanceFetched))
+        emoji = "", colorId = "undefined", icon = "wallet", currencyAmountToItem(balance, currencyFormat), balanceFetched))
 
 method updateKeyPairForProcessing*[T](self: Module[T], cardMetadata: CardMetadata) =
   let(item, knownKeyPair) = self.buildKeyPairItemBasedOnCardMetadata(cardMetadata)

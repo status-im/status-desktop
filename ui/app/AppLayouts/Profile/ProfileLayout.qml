@@ -7,6 +7,8 @@ import shared 1.0
 import shared.panels 1.0
 import shared.stores 1.0 as SharedStores
 
+import AppLayouts.Wallet.controls 1.0
+
 import "stores"
 import "popups"
 import "views"
@@ -54,6 +56,12 @@ StatusSectionLayout {
         readonly property int leftMargin: 64
 
         readonly property int contentWidth: 560
+    }
+
+    headerBackground: AccountHeaderGradient {
+        width: parent.width
+        overview: root.store.walletStore.selectedAccount
+        visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet && !!root.store.walletStore.selectedAccount
     }
 
     leftPanel: LeftTabView {

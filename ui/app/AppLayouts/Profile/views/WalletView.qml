@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.13
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1
 
 import utils 1.0
 import shared 1.0
@@ -100,7 +101,8 @@ SettingsContentBase {
             }
 
             onGoToAccountView: {
-                accountView.account = account
+                root.walletStore.selectedAccount = account
+                accountView.keyPair = keypair
                 stackContainer.currentIndex = accountViewIndex
             }
 
@@ -148,13 +150,12 @@ SettingsContentBase {
 
         AccountView {
             id: accountView
-            Layout.fillHeight: false
+            account: root.walletStore.selectedAccount
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup
-
-            onGoBack: {
-                stackContainer.currentIndex = mainViewIndex
-            }
+            userProfilePublicKey: walletStore.userProfilePublicKey
+            onGoBack: stackContainer.currentIndex = mainViewIndex
+            onVisibleChanged: if(!visible) root.walletStore.selectedAccount = null
         }
 
         DappPermissionsView {

@@ -21,7 +21,7 @@ Column {
 
     signal goToNetworksView()
     signal goToAccountOrderView()
-    signal goToAccountView(var account)
+    signal goToAccountView(var account, var keypair)
     signal goToDappPermissionsView()
 
     spacing: 8
@@ -100,10 +100,11 @@ Column {
             model: walletStore.originModel
             delegate: WalletKeyPairDelegate {
                 width: parent.width
+                keyPair: model.keyPair
                 chainShortNames: walletStore.getAllNetworksSupportedPrefix()
                 userProfilePublicKey: walletStore.userProfilePublicKey
                 includeWatchOnlyAccount: walletStore.includeWatchOnlyAccount
-                onGoToAccountView: root.goToAccountView(account)
+                onGoToAccountView: root.goToAccountView(account, keyPair)
                 onToggleIncludeWatchOnlyAccount: walletStore.toggleIncludeWatchOnlyAccount()
                 onRunRenameKeypairFlow: {
                     renameKeypairPopup.keyUid = model.keyPair.keyUid

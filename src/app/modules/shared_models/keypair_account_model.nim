@@ -1,5 +1,6 @@
 import NimQml, Tables, strformat, strutils
 import keypair_account_item
+import ./currency_amount
 
 import ../../../app_service/common/utils
 
@@ -129,7 +130,7 @@ QtObject:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         self.items[i].setOperability(operability)
 
-  proc setBalanceForAddress*(self: KeyPairAccountModel, address: string, balance: float) =
+  proc setBalanceForAddress*(self: KeyPairAccountModel, address: string, balance: CurrencyAmount) =
     for i in 0 ..< self.items.len:
       if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
         self.items[i].setBalance(balance)

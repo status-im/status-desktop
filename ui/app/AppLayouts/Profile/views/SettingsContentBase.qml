@@ -95,7 +95,7 @@ Item {
         objectName: "settingsContentBaseScrollView"
         anchors.top: titleRow.bottom
         anchors.bottom: parent.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: titleLayout.visible ? Style.current.padding: 0
         padding: 0
         width: root.width
         contentWidth: root.contentWidth

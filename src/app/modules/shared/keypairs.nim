@@ -1,6 +1,6 @@
 import strutils, sequtils, sugar, chronicles
 
-import ../shared_models/[keypair_item]
+import ../shared_models/[keypair_item, currency_amount]
 import ../../global/global_singleton
 
 import ../../../app_service/service/wallet_account/[keypair_dto, keycard_dto]
@@ -40,7 +40,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         if acc.emoji.len == 0:
           icon = "wallet"
         item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-          icon, balance = 0.0, balanceFetched = true, operability = acc.operable))
+          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet))
       items.insert(item, 0) # Status Account must be at first place
       continue
     if kp.keypairType == KeypairTypeSeed:
@@ -59,7 +59,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         if acc.emoji.len == 0:
           icon = "wallet"
         item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-          icon, balance = 0.0, balanceFetched = true, operability = acc.operable))
+          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet))
       items.add(item)
       continue
     if kp.keypairType == KeypairTypeKey:
@@ -80,7 +80,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         if acc.emoji.len == 0:
           icon = "wallet"
         item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-          icon, balance = 0.0, balanceFetched = true, operability = acc.operable))
+          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet))
       items.add(item)
       continue
   if items.len == 0:

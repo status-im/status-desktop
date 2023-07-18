@@ -10,14 +10,14 @@ Loader {
 
     property var overview
 
-    sourceComponent: root.overview.isAllAccounts ? multipleAccountsGradient : singleAccountGradient
+    sourceComponent: root.overview && root.overview.isAllAccounts ? multipleAccountsGradient : singleAccountGradient
 
     Component {
         id: singleAccountGradient
         Rectangle {
             implicitHeight: 115
             gradient: Gradient {
-                GradientStop { position: 0.0; color:  Theme.palette.alphaColor(Utils.getColorForId(overview.colorId), 0.1) }
+                GradientStop { position: 0.0; color: overview && overview.colorId ? Theme.palette.alphaColor(Utils.getColorForId(overview.colorId), 0.1) : "" }
                 GradientStop { position: 1.0; color: "transparent" }
             }
         }

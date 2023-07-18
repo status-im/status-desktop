@@ -269,9 +269,8 @@ class SettingsScreen:
 
     def verify_editedAccount(self, new_name: str, new_color: str):
         accountName = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ACCOUNT_NAME.value)
-        iconSettings = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ICON_SETTINGS.value)
         verify_values_equal(str(accountName.text), str(new_name), "Edited account name not updated")
-        verify_values_equal(str(iconSettings.asset.color.name), str(new_color.lower()),
+        verify_values_equal(str(accountName.color.name), str(new_color.lower()),
                             "Edited account color not updated")
 
     def open_communities_section(self):

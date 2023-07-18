@@ -6,6 +6,7 @@ import ../settings/service as settings_service
 import ../accounts/service as accounts_service
 import ../token/service as token_service
 import ../network/service as network_service
+import ../currency/service as currency_service
 import ../../common/[utils]
 import ../../../app/global/global_singleton
 
@@ -130,6 +131,7 @@ QtObject:
     accountsService: accounts_service.Service
     tokenService: token_service.Service
     networkService: network_service.Service
+    currencyService: currency_service.Service
     walletAccounts: OrderedTable[string, WalletAccountDto]
 
   # Forward declaration
@@ -152,6 +154,7 @@ QtObject:
     accountsService: accounts_service.Service,
     tokenService: token_service.Service,
     networkService: network_service.Service,
+    currencyService: currency_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -162,6 +165,7 @@ QtObject:
     result.accountsService = accountsService
     result.tokenService = tokenService
     result.networkService = networkService
+    result.currencyService = currencyService
     result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
 
   proc getAccounts*(self: Service): seq[WalletAccountDto] =
@@ -1027,3 +1031,9 @@ QtObject:
       url: url
     )
     self.threadpool.start(arg)
+
+proc getEnabledChainIds*(self: Service): seq[int] =
+  return self.networkService.getNetworks().filter(n => n.enabled).map(n => n.chainId)
+
+proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
+  return self.currencyService.getCurrencyFormat(symbol)
