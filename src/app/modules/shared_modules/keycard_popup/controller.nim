@@ -17,6 +17,7 @@ import ../../../../app_service/service/privacy/service as privacy_service
 import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/keychain/service as keychain_service
+import ../../../../app_service/service/currency/dto
 
 import ../../shared_models/[keypair_item]
 
@@ -798,3 +799,6 @@ proc tryToStoreDataToKeychain*(self: Controller, password: string) =
     return
   let loggedInAccount = self.getLoggedInAccount()
   self.keychainService.storeData(loggedInAccount.keyUid, password)
+
+proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
+  return self.walletAccountService.getCurrencyFormat(symbol)

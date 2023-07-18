@@ -1,158 +1,210 @@
 import QtQuick 2.13
-
+import QtQuick.Layouts 1.13
 
 import StatusQ.Controls 0.1
-import StatusQ.Core 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import utils 1.0
-import shared.status 1.0
+import AppLayouts.Wallet 1.0
+
 import shared.popups 1.0
-import shared.controls 1.0
+import shared.panels 1.0
+import utils 1.0
 
-import "../../stores"
 import "../../popups"
+import "../../controls"
 
-Item {
+ColumnLayout {
     id: root
 
-    implicitHeight: childrenRect.height
     signal goBack
 
-    property WalletStore walletStore
-    property var emojiPopup
     property var account
+    property var keyPair
+    property var walletStore
+    property var emojiPopup
+    property string userProfilePublicKey
 
-    Column {
-        id: column
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
+    QtObject {
+        id: d
+        property bool watchOnlyAccount: keyPair && keyPair.pairType === Constants.keycard.keyPairType.watchOnly
+        property bool privateKeyAccount: keyPair && keyPair.pairType === Constants.keycard.keyPairType.privateKeyImport
+    }
 
-        spacing: Style.current.bigPadding
+    spacing: 0
 
-        Row {
-            id: header
+    RowLayout {
+        Layout.preferredWidth: parent.width
+        RowLayout {
+            Layout.fillWidth: true
             spacing: Style.current.smallPadding
-            StatusSmartIdenticon {
+            StatusBaseText {
+                id: accountName
+                objectName: "walletAccountViewAccountName"
+                Layout.alignment: Qt.AlignLeft
+                text: root.account ? root.account.name : ""
+                font.weight: Font.Bold
+                font.pixelSize: 28
+                color: root.account ? Utils.getColorForId(root.account.colorId) : Theme.palette.directColor1
+            }
+            StatusEmoji {
                 id: accountImage
                 objectName: "walletAccountViewAccountImage"
-                anchors.verticalCenter: parent.verticalCenter
-                asset: StatusAssetSettings {
-                    width: isLetterIdenticon ? 40 : 20
-                    height: isLetterIdenticon ? 40 : 20
-                    color: root.account ? Utils.getColorForId(root.account.colorId) : "#ffffff"
-                    emoji: root.account ? root.account.emoji : ""
-                    name: root.account && !root.account.emoji ? "filled-account": ""
-                    letterSize: 14
-                    isLetterIdenticon: !!root.account && !!root.account.emoji
-                    bgWidth: 40
-                    bgHeight: 40
-                    bgColor: Theme.palette.primaryColor3
-                }
-            }
-            Column {
-                spacing: Style.current.halfPadding
-                Row {
-                    spacing: Style.current.halfPadding
-                    StatusBaseText {
-                        objectName: "walletAccountViewAccountName"
-                        id: accountName
-                        text:root.account ? root.account.name : ""
-                        font.weight: Font.Bold
-                        font.pixelSize: 28
-                        color: Theme.palette.directColor1
-                    }
-                    StatusFlatRoundButton {
-                        objectName: "walletAccountViewEditAccountButton"
-                        width: 28
-                        height: 28
-                        anchors.verticalCenter: accountName.verticalCenter
-                        type: StatusFlatRoundButton.Type.Tertiary
-                        color: "transparent"
-                        icon.name: "pencil"
-                        onClicked: Global.openPopup(renameAccountModalComponent)
-                    }
-                }
-                StatusAddressPanel {
-                    value: root.account ? root.account.address : ""
-
-                    font.weight: Font.Normal
-
-                    showFrame: false
-
-                    onDoCopy: (address) => globalUtils.copyToClipboard(address)
-                }
+                Layout.preferredWidth: 28
+                Layout.preferredHeight: 28
+                emojiId: StatusQUtils.Emoji.iconId(root.account && root.account.emoji ? root.account.emoji : "", StatusQUtils.Emoji.size.big) || ""
             }
         }
-
-
-        Flow {
-            width: parent.width
-
-            spacing: Style.current.halfPadding
-
-            InformationTile {
-                id: typeRectangle
-                maxWidth: parent.width
-                primaryText: qsTr("Type")
-                secondaryText: {
-                    if (!root.account) {
-                        return ""
-                    }
-                    const walletType = root.account.walletType
-                    if (walletType === "watch") {
-                        return qsTr("Watch-Only Account")
-                    } else if (walletType === "generated" || walletType === "") {
-                        return qsTr("Generated by your Status seed phrase profile")
-                    } else {
-                        return qsTr("Imported Account")
-                    }
-                }
-            }
-
-            InformationTile {
-                maxWidth: parent.width
-                primaryText: qsTr("Storage")
-                secondaryText: qsTr("On Device")
-            }
-
-            InformationTile {
-                maxWidth: parent.width
-                primaryText: qsTr("Derivation Path")
-                secondaryText: root.account ? root.account.path : ""
-                visible: !!root.account && root.account.path
-            }
-
-            InformationTile {
-                maxWidth: parent.width
-                visible:root.account ? root.account.relatedAccounts.count > 0 : false
-                primaryText: qsTr("Related Accounts")
-                tagsModel: root.account ? root.account.relatedAccounts : []
-                tagsDelegate: StatusListItemTag {
-                    bgColor: Utils.getColorForId(model.colorId)
-                    bgRadius: 6
-                    height: 22
-                    closeButtonVisible: false
-                    asset.emoji: model.emoji
-                    asset.emojiSize: Emoji.size.verySmall
-                    asset.isLetterIdenticon: true
-                    title: model.name
-                    titleText.font.pixelSize: 12
-                    titleText.color: Theme.palette.indirectColor1
-                }
-            }
-        }
-
         StatusButton {
+            Layout.alignment: Qt.AlignRight
+            objectName: "walletAccountViewEditAccountButton"
+            text: qsTr("Edit account")
+            icon.name: "edit_pencil"
+            onClicked: Global.openPopup(renameAccountModalComponent)
+        }
+    }
+
+    StatusBaseText {
+        Layout.topMargin: Style.current.bigPadding
+        text: qsTr("Account details")
+        font.pixelSize: 15
+        color: Theme.palette.baseColor1
+    }
+
+    Rectangle {
+        Layout.topMargin: Style.current.halfPadding
+        Layout.fillWidth: true
+        Layout.preferredHeight: childrenRect.height
+        radius: Style.current.radius
+        border.width: 1
+        border.color: Theme.palette.directColor8
+        color: Theme.palette.transparent
+
+        ColumnLayout {
+            width: parent.width
+            spacing: 0
+            WalletAccountDetailsListItem {
+                Layout.fillWidth: true
+                title: qsTr("Balance")
+                subTitle: root.account && root.account.balance ? LocaleUtils.currencyAmountToLocaleString(root.account.balance): ""
+            }
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Theme.palette.baseColor2
+            }
+            WalletAccountDetailsListItem {
+                Layout.fillWidth: true
+                title: qsTr("Address")
+                subTitle: {
+                    let address = root.account && root.account.address ? root.account.address: ""
+                    d.watchOnlyAccount ? address : WalletUtils.colorizedChainPrefix(walletStore.getAllNetworksSupportedPrefix()) + address
+                }
+            }
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Theme.palette.baseColor2
+            }
+            StatusBaseText {
+                text: qsTr("Keypair")
+                Layout.leftMargin: 16
+                Layout.topMargin: 12
+                font.pixelSize: 13
+                color: Theme.palette.baseColor1
+                visible: !d.watchOnlyAccount
+            }
+            WalletAccountDetailsKeypairItem {
+                Layout.fillWidth: true
+                keyPair: root.keyPair
+                visible: !d.watchOnlyAccount
+            }
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Theme.palette.baseColor2
+                visible: !d.watchOnlyAccount
+            }
+            WalletAccountDetailsListItem {
+                Layout.fillWidth: true
+                title: qsTr("Origin")
+                subTitle: {
+                    if(keyPair) {
+                        switch(keyPair.pairType) {
+                        case Constants.keycard.keyPairType.profile:
+                            return qsTr("Derived from your default Status keypair")
+                        case Constants.keycard.keyPairType.seedImport:
+                            return qsTr("Imported from seed phrase")
+                        case Constants.keycard.keyPairType.privateKeyImport:
+                            return qsTr("Imported from private key")
+                        case Constants.keycard.keyPairType.watchOnly:
+                            return qsTr("Watched address")
+                        default:
+                            return ""
+                        }
+                    }
+                    return ""
+                }
+            }
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Theme.palette.baseColor2
+            }
+            WalletAccountDetailsListItem {
+                id: derivationPath
+                Layout.fillWidth: true
+                title: qsTr("Derivation Path")
+                subTitle: root.account ? Utils.getPathForDisplay(root.account.path) : ""
+                visible: !!subTitle && !d.privateKeyAccount
+            }
+            Separator {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Theme.palette.baseColor2
+                visible: derivationPath.visible
+            }
+            WalletAccountDetailsListItem {
+                Layout.fillWidth: true
+                title: qsTr("Stored")
+                subTitle: keyPair && keyPair.migratedToKeycard ? qsTr("On Keycard"): qsTr("On device")
+            }
+        }
+    }
+
+    Separator {
+        Layout.topMargin: 40
+        Layout.fillWidth: true
+        Layout.preferredHeight: 1
+        color: Theme.palette.baseColor2
+    }
+
+    RowLayout {
+        Layout.topMargin: 20
+        Layout.fillWidth: true
+        spacing: 8
+        StatusButton {
+            Layout.fillWidth: true
+            visible: !d.watchOnlyAccount && !d.privateKeyAccount
+            text: keyPair && keyPair.migratedToKeycard? qsTr("Stop using Keycard") : qsTr("Migrate to Keycard")
+            icon.name: "keycard"
+            onClicked: {
+                if (keyPair && keyPair.migratedToKeycard)
+                    console.warn("TODO: stop using Keycard")
+                else
+                    console.warn("TODO: move keys to a Keycard")
+            }
+        }
+        StatusButton {
+            Layout.fillWidth: true
             objectName: "deleteAccountButton"
-            visible: !!root.account && root.account.walletType !== "" 
-            text: qsTr("Remove from your profile")
+            visible: !!root.account && !root.account.isDefaultAccount
+            text: qsTr("Remove account")
+            icon.name: "delete"
             type: StatusBaseButton.Type.Danger
+            onClicked: confirmationPopup.open()
 
             ConfirmationDialog {
                 id: confirmationPopup
@@ -161,19 +213,13 @@ Item {
                 confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
                 confirmButtonLabel: qsTr("Remove Account")
                 onConfirmButtonClicked: {
-                    confirmationPopup.close();
-                    root.goBack();
                     root.walletStore.deleteAccount(root.account.address);
+                    confirmationPopup.close()
+                    root.goBack()
                 }
-
-            }
-
-            onClicked : {
-                confirmationPopup.open()
             }
         }
     }
-
     Component {
         id: renameAccountModalComponent
         RenameAccontModal {

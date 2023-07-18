@@ -1,5 +1,6 @@
 import NimQml, strformat, sequtils, sugar
 import keypair_account_model
+import ./currency_amount
 
 export keypair_account_model
 
@@ -249,7 +250,7 @@ QtObject:
     return self.accounts.containsPathOutOfTheDefaultStatusDerivationTree()
   proc updateDetailsForAccountWithAddressIfTheyAreSet*(self: KeyPairItem, address, name, colorId, emoji: string) =
     self.accounts.updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
-  proc setBalanceForAddress*(self: KeyPairItem, address: string, balance: float) =
+  proc setBalanceForAddress*(self: KeyPairItem, address: string, balance: CurrencyAmount) =
     self.accounts.setBalanceForAddress(address, balance)
   proc updateOperabilityForAccountWithAddress*(self: KeyPairItem, address: string, operability: string) =
     self.accounts.updateOperabilityForAddress(address, operability)

@@ -1,10 +1,10 @@
-import NimQml, sequtils, sugar, chronicles
+import NimQml, sequtils, sugar, chronicles, tables
 
 import ./io_interface, ./view, ./item, ./controller
 import ../io_interface as delegate_interface
 import app/modules/shared/wallet_utils
 import app/modules/shared/keypairs
-import app/modules/shared_models/keypair_model
+import app/modules/shared_models/[keypair_model, currency_amount]
 import app/global/global_singleton
 import app/core/eventemitter
 import app_service/service/keycard/service as keycard_service
@@ -59,11 +59,16 @@ method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: Wallet
     emoji = account.emoji,
     colorId = account.colorId,
     icon = "",
-    balance = 0,
+    balance = newCurrencyAmount(),
     balanceFetched = false,
-    operability = account.operable)
+    operability = account.operable,
+    isDefaultAccount = account.isWallet)
 
-method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto]): seq[KeyPairItem] =
+method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto], accountsTokens: OrderedTable[string, seq[WalletTokenDto]]): seq[KeyPairItem] =
+  let enabledChainIds = self.controller.getEnabledChainIds()
+  let currency = self.controller.getCurrentCurrency()
+  let currencyFormat = self.controller.getCurrencyFormat(currency)
+
   var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
   excludePrivateKeyKeypairs = false)
 
@@ -72,9 +77,15 @@ method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto]):
   item.setPairType(KeyPairType.WatchOnly.int)
   item.setAccounts(walletAccounts.filter(a => a.walletType == WalletTypeWatch).map(x => self.convertWalletAccountDtoToKeyPairAccountItem(x)))
   keyPairItems.add(item)
+
+  for address, tokens in accountsTokens.pairs:
+    let balance = currencyAmountToItem(tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0),currencyFormat)
+    for item in keyPairItems:
+      item.setBalanceForAddress(address, balance)
+
   return keyPairItems
 
-method refreshWalletAccounts*(self: Module) =
+method refreshWalletAccounts*(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]] = initOrderedTable[string, seq[WalletTokenDto]]()) =
   let walletAccounts = self.controller.getWalletAccounts()
 
   let items = walletAccounts.map(w => (block:
@@ -82,7 +93,7 @@ method refreshWalletAccounts*(self: Module) =
     walletAccountToWalletSettingsAccountsItem(w, keycardAccount)
   ))
 
-  self.view.setKeyPairModelItems(self.createKeypairItems(walletAccounts))
+  self.view.setKeyPairModelItems(self.createKeypairItems(walletAccounts, accountsTokens))
   self.view.setItems(items)
 
 method load*(self: Module) =
@@ -94,6 +105,10 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
     self.refreshWalletAccounts()
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+    let arg = TokensPerAccountArgs(e)
+    self.refreshWalletAccounts(arg.accountsTokens)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     let args = AccountArgs(e)

@@ -45,6 +45,7 @@ SplitView {
             model: WalletKeyPairModel {}
             delegate: WalletKeyPairDelegate {
                 width: parent.width
+                keyPair: model.keyPair
                 chainShortNames: d.walletStore.getAllNetworksSupportedString()
                 userProfilePublicKey: d.walletStore.userProfilePublicKey
                 onGoToAccountView: console.warn("onGoToAccountView ::")

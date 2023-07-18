@@ -1,5 +1,6 @@
 import io_interface
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/currency/dto
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 type
@@ -53,3 +54,12 @@ proc toggleIncludeWatchOnlyAccount*(self: Controller) =
 
 proc isIncludeWatchOnlyAccount*(self: Controller): bool =
   return self.walletAccountService.isIncludeWatchOnlyAccount()
+
+proc getEnabledChainIds*(self: Controller): seq[int] =
+  return self.walletAccountService.getEnabledChainIds()
+
+proc getCurrentCurrency*(self: Controller): string =
+  return self.walletAccountService.getCurrency()
+
+proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
+  return self.walletAccountService.getCurrencyFormat(symbol)

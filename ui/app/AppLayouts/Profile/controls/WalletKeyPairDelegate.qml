@@ -12,6 +12,7 @@ import utils 1.0
 Rectangle {
     id: root
 
+    property var keyPair
     property string chainShortNames
     property string userProfilePublicKey
     property bool includeWatchOnlyAccount
@@ -22,11 +23,11 @@ Rectangle {
 
     QtObject {
         id: d
-        readonly property var relatedAccounts: model.keyPair.accounts
-        readonly property bool isWatchOnly: model.keyPair.pairType === Constants.keycard.keyPairType.watchOnly
-        readonly property bool isPrivateKeyImport: model.keyPair.pairType === Constants.keycard.keyPairType.privateKeyImport
-        readonly property bool isProfileKeypair: model.keyPair.pairType === Constants.keycard.keyPairType.profile
-        readonly property string locationInfo: model.keyPair.migratedToKeycard ? qsTr("On Keycard"): qsTr("On device")
+        readonly property var relatedAccounts: keyPair.accounts
+        readonly property bool isWatchOnly: keyPair.pairType === Constants.keycard.keyPairType.watchOnly
+        readonly property bool isPrivateKeyImport: keyPair.pairType === Constants.keycard.keyPairType.privateKeyImport
+        readonly property bool isProfileKeypair: keyPair.pairType === Constants.keycard.keyPairType.profile
+        readonly property string locationInfo: keyPair.migratedToKeycard ? qsTr("On Keycard"): qsTr("On device")
     }
 
     implicitHeight: layout.height
@@ -39,25 +40,25 @@ Rectangle {
         width: parent.width
         StatusListItem {
             Layout.fillWidth: true
-            title: d.isWatchOnly ? qsTr("Watched addresses") : model.keyPair.name
+            title: d.isWatchOnly ? qsTr("Watched addresses") : keyPair.name
             statusListItemSubTitle.textFormat: Qt.RichText
-            titleTextIcon: model.keyPair.migratedToKeycard ? "keycard": ""
+            titleTextIcon: keyPair.migratedToKeycard ? "keycard": ""
             subTitle: d.isWatchOnly ? "" : d.isProfileKeypair ?
-                      Utils.getElidedCompressedPk(model.keyPair.pubKey) + Constants.settingsSection.dotSepString + d.locationInfo : d.locationInfo
+                      Utils.getElidedCompressedPk(keyPair.pubKey) + Constants.settingsSection.dotSepString + d.locationInfo : d.locationInfo
             color: Theme.palette.transparent
             ringSettings {
                 ringSpecModel: d.isProfileKeypair ? Utils.getColorHashAsJson(root.userProfilePublicKey) : []
                 ringPxSize: Math.max(asset.width / 24.0)
             }
             asset {
-                width: model.keyPair.icon ? 24 : 40
-                height: model.keyPair.icon ? 24 : 40
-                name: model.keyPair.image ? model.keyPair.image : model.keyPair.icon
-                isImage: !!model.keyPair.image
+                width: keyPair.icon ? Style.current.bigPadding : 40
+                height: keyPair.icon ? Style.current.bigPadding : 40
+                name: keyPair.image ? keyPair.image : keyPair.icon
+                isImage: !!keyPair.image
                 color: d.isProfileKeypair ? Utils.colorForPubkey(root.userProfilePublicKey) : Theme.palette.primaryColor1
                 letterSize: Math.max(4, asset.width / 2.4)
                 charactersLen: 2
-                isLetterIdenticon: !model.keyPair.icon && !asset.name.toString()
+                isLetterIdenticon: !keyPair.icon && !asset.name.toString()
             }
             components: [
                 StatusFlatRoundButton {

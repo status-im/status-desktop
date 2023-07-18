@@ -213,7 +213,7 @@ proc addAccountsToKeycardItem(self: Module, item: KeycardItem, accounts: seq[Wal
     if acc.emoji.len == 0:
       icon = "wallet"
     item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-      icon = icon, balance = 0.0))
+      icon = icon))
 
 proc buildMainViewKeycardItem(self: Module, keypair: KeypairDto): KeycardItem =
   if keypair.isNil or keypair.keycards.len == 0:
@@ -271,7 +271,7 @@ proc buildDetailsViewKeycardItem(self: Module, keycard: KeycardDto): KeycardItem
   for ua in unknownAccountsAddresses:
     i.inc
     let name = atc.KEYCARD_ACCOUNT_NAME_OF_UNKNOWN_WALLET_ACCOUNT & $i
-    item.addAccount(newKeyPairAccountItem(name, path = "", ua, pubKey = "", emoji = "", colorId = "undefined", icon = "wallet", balance = 0.0))
+    item.addAccount(newKeyPairAccountItem(name, path = "", ua, pubKey = "", emoji = "", colorId = "undefined", icon = "wallet"))
   return item
 
 proc buildKeycardList(self: Module) =

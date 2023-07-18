@@ -12,6 +12,7 @@ QtObject {
 
     readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     readonly property var combinedNetworks: networksModule.combinedNetworks
+    property var selectedAccount
 
     function toggleTestNetworksEnabled(){
         networksModule.toggleTestNetworksEnabled()
