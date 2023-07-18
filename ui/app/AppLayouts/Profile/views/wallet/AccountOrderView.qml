@@ -86,6 +86,8 @@ StatusListView {
                 return model.name
             }
             secondaryTitle: model.address
+            secondaryTitleIcon: model.walletType === Constants.watchWalletType? "show" :
+                                                                                model.keycardAccount ? "keycard" : ""
             hasEmoji: true
             icon.width: 40
             icon.height: 40
