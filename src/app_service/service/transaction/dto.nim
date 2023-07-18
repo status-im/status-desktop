@@ -16,10 +16,10 @@ type
     ReleaseENS = "ReleaseENS",
     BuyStickerPack = "BuyStickerPack"
     WalletTransfer = "WalletTransfer"
-    CollectibleDeployment = "CollectibleDeployment"
-    CollectibleAirdrop = "CollectibleAirdrop"
-    CollectibleRemoteSelfDestruct = "CollectibleRemoteSelfDestruct"
-    CollectibleBurn = "CollectibleBurn"
+    DeployCommunityToken = "DeployCommunityToken"
+    AirdropCommunityToken = "AirdropCommunityToken"
+    RemoteDestructCollectible = "RemoteDestructCollectible"
+    BurnCommunityToken = "BurnCommunityToken"
 
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self
