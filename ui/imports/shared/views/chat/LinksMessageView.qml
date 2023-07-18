@@ -18,6 +18,7 @@ Column {
 
     property var store
     property var messageStore
+    property var linkPreviewModel
 
     //receiving space separated url list
     property string links: ""
@@ -30,16 +31,56 @@ Column {
 
     spacing: 4
 
+    QtObject {
+        id: d
+        property int unfurledLinksCount: 0
+        property int unfurledImagesCount: 0
+//        readonly property string uuid: Utils.uuid()
+//        readonly property string whiteListedImgExtensions: Constants.acceptedImageExtensions.toString()
+//        readonly property string whiteListedUrls: JSON.stringify(localAccountSensitiveSettings.whitelistedUnfurlingSites)
+//        readonly property string getLinkPreviewDataId: messageStore.messageModule.getLinkPreviewData(root.links, d.uuid, whiteListedUrls, whiteListedImgExtensions, localAccountSensitiveSettings.displayChatImages)
+//        onGetLinkPreviewDataIdChanged: { linkFetchConnections.enabled = true }
+    }
+
+//    Connections {
+//        id: linkFetchConnections
+//        enabled: false
+//        target: root.messageStore.messageModule
+//        function onLinkPreviewDataWasReceived(previewData, uuid) {
+//            if(d.uuid != uuid) return
+//            linkFetchConnections.enabled = false
+//            try {  linksModel.rawData = JSON.parse(previewData) }
+//            catch(e) { console.warn("error parsing link preview data", previewData) }
+//        }
+//    }
+
+    ListModel {
+        id: linksModel
+        property var rawData
+        onRawDataChanged: {
+            linksModel.clear()
+            rawData.links.forEach((link) => {
+                linksModel.append(link)
+            })
+            root.linksLoaded()
+        }
+    }
+
+
     Repeater {
         id: linksRepeater
-        model: linksModel
+        model: root.linkPreviewModel
+
         delegate: Loader {
             id: linkMessageLoader
-            required property var result
-            required property string link
+
+            required property var result  // title, description, thumbnail (thumbnailWidth, thumbnailHeight, thumbnailUrl, thumbnailDataUri)
+            required property string link // url
+            // hostname
+            required property bool success  // unfurled && hostname !== ""
+            required property bool unfurl // unfurled
+
             required property int index
-            required property bool unfurl
-            required property bool success
             required property bool isStatusDeepLink
             readonly property bool isImage: result.contentType ? result.contentType.startsWith("image/") : false
             readonly property bool neverAskAboutUnfurlingAgain: RootStore.neverAskAboutUnfurlingAgain
@@ -78,42 +119,6 @@ Column {
                     }
                 ]
             }
-        }
-    }
-
-    QtObject {
-        id: d
-        property bool hasImageLink: false
-        property int unfurledLinksCount: 0
-        property int unfurledImagesCount: 0
-        readonly property string uuid: Utils.uuid()
-        readonly property string whiteListedImgExtensions: Constants.acceptedImageExtensions.toString()
-        readonly property string whiteListedUrls: JSON.stringify(localAccountSensitiveSettings.whitelistedUnfurlingSites)
-        readonly property string getLinkPreviewDataId: messageStore.messageModule.getLinkPreviewData(root.links, d.uuid, whiteListedUrls, whiteListedImgExtensions, localAccountSensitiveSettings.displayChatImages)
-        onGetLinkPreviewDataIdChanged: { linkFetchConnections.enabled = true }
-    }
-
-    Connections {
-        id: linkFetchConnections
-        enabled: false
-        target: root.messageStore.messageModule
-        function onLinkPreviewDataWasReceived(previewData, uuid) {
-            if(d.uuid != uuid) return
-            linkFetchConnections.enabled = false
-            try {  linksModel.rawData = JSON.parse(previewData) }
-            catch(e) { console.warn("error parsing link preview data", previewData) }
-        }
-    }
-
-    ListModel {
-        id: linksModel
-        property var rawData
-        onRawDataChanged: {
-            linksModel.clear()
-            rawData.links.forEach((link) => {
-                linksModel.append(link)
-            })
-            root.linksLoaded()
         }
     }
 
@@ -184,14 +189,19 @@ Column {
 
     Component {
         id: invitationBubble
+
         InvitationBubbleView {
             property var invitationData: root.store.getLinkDataForStatusLinks(link)
-            onInvitationDataChanged: { if(!invitationData) linksModel.remove(index) }
+
             store: root.store
             communityId: invitationData ? invitationData.communityId : ""
             anchors.left: parent.left
             visible: !!invitationData
             loading: invitationData.fetching
+            onInvitationDataChanged: {
+                if (!invitationData)
+                    linksModel.remove(index)
+            }
 
             Connections {
                 enabled: !!invitationData && invitationData.fetching
@@ -206,6 +216,7 @@ Column {
 
     Component {
         id: unfurledLinkComponent
+
         MessageBorder {
             id: unfurledLink
             width: linkImage.visible ? linkImage.width + 2 : 300
@@ -282,113 +293,113 @@ Column {
         }
     }
 
-    Component {
-        id: enableLinkComponent
-        Rectangle {
-            id: enableLinkRoot
-            width: 300
-            height: childrenRect.height + Style.current.smallPadding
-            radius: 16
-            border.width: 1
-            border.color: Style.current.border
-            color: Style.current.background
+//    Component {
+//        id: enableLinkComponent
+//        Rectangle {
+//            id: enableLinkRoot
+//            width: 300
+//            height: childrenRect.height + Style.current.smallPadding
+//            radius: 16
+//            border.width: 1
+//            border.color: Style.current.border
+//            color: Style.current.background
 
-            StatusFlatRoundButton {
-                anchors.top: parent.top
-                anchors.topMargin: Style.current.smallPadding
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.smallPadding
-                icon.width: 20
-                icon.height: 20
-                icon.name: "close-circle"
-                onClicked: linksModel.remove(index)
-            }
+//            StatusFlatRoundButton {
+//                anchors.top: parent.top
+//                anchors.topMargin: Style.current.smallPadding
+//                anchors.right: parent.right
+//                anchors.rightMargin: Style.current.smallPadding
+//                icon.width: 20
+//                icon.height: 20
+//                icon.name: "close-circle"
+//                onClicked: linksModel.remove(index)
+//            }
 
-            Image {
-                id: unfurlingImage
-                source: Style.png("unfurling-image")
-                width: 132
-                height: 94
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.topMargin: Style.current.smallPadding
-            }
+//            Image {
+//                id: unfurlingImage
+//                source: Style.png("unfurling-image")
+//                width: 132
+//                height: 94
+//                anchors.horizontalCenter: parent.horizontalCenter
+//                anchors.top: parent.top
+//                anchors.topMargin: Style.current.smallPadding
+//            }
 
-            StatusBaseText {
-                id: enableText
-                text: isImage ? qsTr("Enable automatic image unfurling") :
-                                    qsTr("Enable link previews in chat?")
-                horizontalAlignment: Text.AlignHCenter
-                width: parent.width
-                wrapMode: Text.WordWrap
-                anchors.top: unfurlingImage.bottom
-                anchors.topMargin: Style.current.halfPadding
-                color: Theme.palette.directColor1
-            }
+//            StatusBaseText {
+//                id: enableText
+//                text: isImage ? qsTr("Enable automatic image unfurling") :
+//                                    qsTr("Enable link previews in chat?")
+//                horizontalAlignment: Text.AlignHCenter
+//                width: parent.width
+//                wrapMode: Text.WordWrap
+//                anchors.top: unfurlingImage.bottom
+//                anchors.topMargin: Style.current.halfPadding
+//                color: Theme.palette.directColor1
+//            }
 
-            StatusBaseText {
-                id: infoText
-                text: qsTr("Once enabled, links posted in the chat may share your metadata with their owners")
-                horizontalAlignment: Text.AlignHCenter
-                width: parent.width
-                wrapMode: Text.WordWrap
-                anchors.top: enableText.bottom
-                font.pixelSize: 13
-                color: Theme.palette.baseColor1
-            }
+//            StatusBaseText {
+//                id: infoText
+//                text: qsTr("Once enabled, links posted in the chat may share your metadata with their owners")
+//                horizontalAlignment: Text.AlignHCenter
+//                width: parent.width
+//                wrapMode: Text.WordWrap
+//                anchors.top: enableText.bottom
+//                font.pixelSize: 13
+//                color: Theme.palette.baseColor1
+//            }
 
-            Separator {
-                id: sep1
-                anchors.top: infoText.bottom
-                anchors.topMargin: Style.current.smallPadding
-            }
+//            Separator {
+//                id: sep1
+//                anchors.top: infoText.bottom
+//                anchors.topMargin: Style.current.smallPadding
+//            }
 
-            StatusFlatButton {
-                id: enableBtn
-                objectName: "LinksMessageView_enableBtn"
-                text: qsTr("Enable in Settings")
-                onClicked: {
-                    Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging);
-                }
-                width: parent.width
-                anchors.top: sep1.bottom
-                Component.onCompleted: {
-                    background.radius = 0;
-                }
-            }
+//            StatusFlatButton {
+//                id: enableBtn
+//                objectName: "LinksMessageView_enableBtn"
+//                text: qsTr("Enable in Settings")
+//                onClicked: {
+//                    Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging);
+//                }
+//                width: parent.width
+//                anchors.top: sep1.bottom
+//                Component.onCompleted: {
+//                    background.radius = 0;
+//                }
+//            }
 
-            Separator {
-                id: sep2
-                anchors.top: enableBtn.bottom
-                anchors.topMargin: 0
-            }
+//            Separator {
+//                id: sep2
+//                anchors.top: enableBtn.bottom
+//                anchors.topMargin: 0
+//            }
 
-            Item {
-                width: parent.width
-                height: 44
-                anchors.top: sep2.bottom
-                clip: true
-                StatusFlatButton {
-                    id: dontAskBtn
-                    width: parent.width
-                    height: (parent.height+Style.current.padding)
-                    anchors.top: parent.top
-                    anchors.topMargin: -Style.current.padding
-                    contentItem: Item {
-                        StatusBaseText {
-                            anchors.centerIn: parent
-                            anchors.verticalCenterOffset: Style.current.halfPadding
-                            font: dontAskBtn.font
-                            color: dontAskBtn.enabled ? dontAskBtn.textColor : dontAskBtn.disabledTextColor
-                            text: qsTr("Don't ask me again")
-                        }
-                    }
-                    onClicked: RootStore.setNeverAskAboutUnfurlingAgain(true)
-                    Component.onCompleted: {
-                        background.radius = Style.current.padding;
-                    }
-                }
-            }
-        }
-    }
+//            Item {
+//                width: parent.width
+//                height: 44
+//                anchors.top: sep2.bottom
+//                clip: true
+//                StatusFlatButton {
+//                    id: dontAskBtn
+//                    width: parent.width
+//                    height: (parent.height+Style.current.padding)
+//                    anchors.top: parent.top
+//                    anchors.topMargin: -Style.current.padding
+//                    contentItem: Item {
+//                        StatusBaseText {
+//                            anchors.centerIn: parent
+//                            anchors.verticalCenterOffset: Style.current.halfPadding
+//                            font: dontAskBtn.font
+//                            color: dontAskBtn.enabled ? dontAskBtn.textColor : dontAskBtn.disabledTextColor
+//                            text: qsTr("Don't ask me again")
+//                        }
+//                    }
+//                    onClicked: RootStore.setNeverAskAboutUnfurlingAgain(true)
+//                    Component.onCompleted: {
+//                        background.radius = Style.current.padding;
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

@@ -770,7 +770,11 @@ QtObject:
       info "expected response is not a json object", methodName="onAsyncGetLinkPreviewData"
       return
 
-    self.events.emit(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED, LinkPreviewDataArgs(response: responseObj["previewData"], uuid: responseObj["uuid"].getStr()))
+    let args = LinkPreviewDataArgs(
+      response: responseObj["previewData"], 
+      uuid: responseObj["uuid"].getStr()
+    )
+    self.events.emit(SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED, args)
 
   proc asyncGetLinkPreviewData*(self: Service, links: string, uuid: string, whiteListedSites: string, whiteListedImgExtensions: string, unfurlImages: bool): string =
     let arg = AsyncGetLinkPreviewDataTaskArg(
