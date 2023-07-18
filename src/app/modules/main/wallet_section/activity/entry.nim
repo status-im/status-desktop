@@ -1,10 +1,12 @@
-import NimQml, json, strformat, sequtils, strutils, logging, stint, strutils
+import NimQml, json, strformat, sequtils, strutils, logging, stint, options
 
 import ../transactions/view
 import ../transactions/item
 import ./backend/transactions
 import backend/activity as backend
 import ../../../shared_models/currency_amount
+
+import web3/ethtypes as eth
 
 # Additional data needed to build an Entry, which is
 # not included in the metadata and needs to be
@@ -19,7 +21,7 @@ type
 
 # It is used to display an activity history entry in the QML UI
 #
-# TODO add all required metadata from filtering
+# TODO remove this legacy after the NFT is served async; see #11598
 #
 # Looking into going away from carying the whole detailed data and just keep the required data for the UI
 # and request the detailed data on demand
@@ -93,23 +95,13 @@ QtObject:
     return self.transaction
 
   proc getSender*(self: ActivityEntry): string {.slot.} =
-    if self.isMultiTransaction():
-      return self.multi_transaction.fromAddress
-    if self.transaction == nil:
-      error "getSender: ActivityEntry is not an transaction.Item"
-      return ""
-    return self.transaction[].getfrom()
+    return if self.metadata.sender.isSome(): "0x" & self.metadata.sender.unsafeGet().toHex() else: ""
 
   QtProperty[string] sender:
     read = getSender
 
   proc getRecipient*(self: ActivityEntry): string {.slot.} =
-    if self.isMultiTransaction():
-      return self.multi_transaction.toAddress
-    if self.transaction == nil:
-      error "getRecipient: ActivityEntry is not an transaction.Item"
-      return ""
-    return self.transaction[].getTo()
+    return if self.metadata.recipient.isSome(): "0x" & self.metadata.recipient.unsafeGet().toHex() else: ""
 
   QtProperty[string] recipient:
     read = getRecipient
@@ -135,13 +127,7 @@ QtObject:
     read = getSymbol
 
   proc getTimestamp*(self: ActivityEntry): int {.slot.} =
-    if self.isMultiTransaction():
-      return self.multi_transaction.timestamp
-    if self.transaction == nil:
-      error "getTimestamp: ActivityEntry is not an transaction.Item"
-      return 0
-    # TODO: should we account for self.transaction[].isTimeStamp?
-    return self.transaction[].getTimestamp()
+    return self.metadata.timestamp
 
   QtProperty[int] timestamp:
     read = getTimestamp
@@ -153,19 +139,19 @@ QtObject:
     read = getStatus
 
   proc getChainId*(self: ActivityEntry): int {.slot.} =
-    if self.transaction == nil:
-      error "getChainId: ActivityEntry is not an transaction.Item"
+    if self.metadata.payloadType == backend.PayloadType.MultiTransaction:
+      error "getChainId: ActivityEntry is not a transaction"
       return 0
-    return self.transaction[].getChainId()
+
+    if self.metadata.activityType == backend.ActivityType.Receive:
+      return self.metadata.chainIdIn.get(ChainId(0)).int
+    return self.metadata.chainIdOut.get(ChainId(0)).int
 
   QtProperty[int] chainId:
     read = getChainId
 
   proc getIsNFT*(self: ActivityEntry): bool {.slot.} =
-    if self.transaction == nil:
-      error "getIsNFT: ActivityEntry is not an transaction.Item"
-      return false
-    return self.transaction[].getIsNFT()
+    return self.metadata.transferType.isSome() and self.metadata.transferType.unsafeGet() == TransferType.Erc721
 
   QtProperty[int] isNFT:
     read = getIsNFT
@@ -176,6 +162,7 @@ QtObject:
       return ""
     return self.transaction[].getNFTName()
 
+  # TODO: lazy load this in activity history service. See #11597
   QtProperty[string] nftName:
     read = getNFTName
 
@@ -185,6 +172,7 @@ QtObject:
       return ""
     return self.transaction[].getNFTImageURL()
 
+  # TODO: lazy load this in activity history service. See #11597
   QtProperty[string] nftImageURL:
     read = getNFTImageURL
 
@@ -194,6 +182,7 @@ QtObject:
       return newQVariant(newCurrencyAmount())
     return newQVariant(self.transaction[].getTotalFees())
 
+  # TODO: lazy load this in activity history service. See #11597
   QtProperty[QVariant] totalFees:
     read = getTotalFees
 
@@ -203,6 +192,7 @@ QtObject:
       return newQVariant(newCurrencyAmount())
     return newQVariant(self.transaction[].getMaxTotalFees())
 
+  # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[QVariant] maxTotalFees:
     read = getMaxTotalFees
 
@@ -212,6 +202,7 @@ QtObject:
       return ""
     return self.transaction[].getInput()
 
+  # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] input:
     read = getInput
 
@@ -227,14 +218,12 @@ QtObject:
       return ""
     return self.transaction[].getType()
 
+  # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] type:
     read = getType
 
   proc getContract*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getContract: ActivityEntry is not an transaction.Item"
-      return ""
-    return self.transaction[].getContract()
+    return if self.metadata.contractAddress.isSome(): "0x" & self.metadata.contractAddress.unsafeGet().toHex() else: ""
 
   QtProperty[string] contract:
     read = getContract
@@ -245,18 +234,23 @@ QtObject:
       return ""
     return self.transaction[].getTxHash()
 
+  # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] txHash:
     read = getTxHash
 
   proc getTokenID*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getTokenID: ActivityEntry is not an transaction.Item"
+    if self.metadata.payloadType == backend.PayloadType.MultiTransaction:
+      error "getTokenID: ActivityEntry is not a transaction"
       return ""
-    return $self.transaction[].getTokenID()
+
+    if self.metadata.activityType == backend.ActivityType.Receive:
+      return if self.metadata.tokenIn.isSome(): $self.metadata.tokenIn.unsafeGet().tokenId else: ""
+    return if self.metadata.tokenOut.isSome(): $self.metadata.tokenOut.unsafeGet().tokenId else: ""
 
   QtProperty[string] tokenID:
     read = getTokenID
 
+  # TODO: used only in details, move it to a entry_details.nim. See #11598
   proc getNonce*(self: ActivityEntry): string {.slot.} =
     if self.transaction == nil:
       error "getNonce: ActivityEntry is not an transaction.Item"
@@ -272,6 +266,7 @@ QtObject:
       return ""
     return $self.transaction[].getBlockNumber()
 
+ # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] blockNumber:
     read = getBlockNumber
 
