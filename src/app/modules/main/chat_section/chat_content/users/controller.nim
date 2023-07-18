@@ -80,8 +80,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
     self.delegate.loggedInUserImageChanged()
 
-  let chat = self.getChat()
-
   # Events only for the user list, so not needed in one to one chats
   if(self.isUsersListAvailable):
     self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):

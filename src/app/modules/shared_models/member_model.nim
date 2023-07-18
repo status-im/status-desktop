@@ -29,6 +29,7 @@ type
     Joined
     RequestToJoinId
     RequestToJoinLoading
+    AirdropAddress
 
 QtObject:
   type
@@ -96,6 +97,7 @@ QtObject:
       ModelRole.Joined.int: "joined",
       ModelRole.RequestToJoinId.int: "requestToJoinId",
       ModelRole.RequestToJoinLoading.int: "requestToJoinLoading",
+      ModelRole.AirdropAddress.int: "airdropAddress",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -151,6 +153,8 @@ QtObject:
       result = newQVariant(item.requestToJoinId)
     of ModelRole.RequestToJoinLoading:
       result = newQVariant(item.requestToJoinLoading)
+    of ModelRole.AirdropAddress:
+      result = newQVariant(item.airdropAddress)
 
   proc addItem*(self: Model, item: MemberItem) =
     self.beginInsertRows(newQModelIndex(), self.items.len, self.items.len)

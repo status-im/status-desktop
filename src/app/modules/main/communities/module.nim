@@ -133,7 +133,8 @@ proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
     onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(memberId).statusType),
     isContact = contactDetails.dto.isContact,
     isVerified = contactDetails.dto.isContactVerified(),
-    requestToJoinId = requestId)
+    requestToJoinId = requestId,
+  )
 
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
   return initItem(

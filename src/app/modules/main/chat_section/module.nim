@@ -11,9 +11,6 @@ import ../../shared_models/token_permissions_model
 import ../../shared_models/token_permission_item
 import ../../shared_models/token_criteria_item
 import ../../shared_models/token_criteria_model
-import ../../shared_models/token_list_item
-import ../../shared_models/token_list_model
-import ../../shared_models/token_permission_chat_list_item
 import ../../shared_models/token_permission_chat_list_model
 
 import chat_content/module as chat_content_module
