@@ -82,4 +82,14 @@ QtObject {
                 return ""
         }
     }
+
+    // It generates a symbol from a given community name.
+    // It will be used to autogenerate the Owner and Token Master token symbols.
+    function autogenerateSymbol(isOwner, communityName) {
+        const shortName = communityName.substring(0, 3)
+        if(isOwner)
+            return "OWN" + shortName.toUpperCase()
+        else
+            return "TM" + shortName.toUpperCase()
+    }
 }

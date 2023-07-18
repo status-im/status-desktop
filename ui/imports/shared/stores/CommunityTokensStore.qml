@@ -45,6 +45,13 @@ QtObject {
                                                assetItem.infiniteSupply, assetItem.decimals, assetItem.chainId, jsonArtworkFile)
     }
 
+    function deployOwnerToken(communityId, ownerToken, tMasterToken)
+    {
+        // NOTE for backend team: `ownerToken` and `tMasterToken` can be used to do an assertion before the deployment process starts, since
+        // the objects have been created to display the token details to the user and must be the same than backend builds.
+        console.log("TODO: Backend Owner and Token Master token deployment!")
+    }
+
     function deleteToken(communityId, contractUniqueKey) {
         console.log("TODO: Delete token bakend!")
     }

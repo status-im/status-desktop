@@ -10,6 +10,11 @@ import utils 1.0
 QtObject {
     property int type: Constants.TokenType.ERC20
 
+    // Special token (Owner and TMaster tokens):
+    property bool isPrivilegedToken: false
+    property bool isOwner: false
+    property color color
+
     // Unique identifier:
     property string key
 
@@ -19,7 +24,7 @@ QtObject {
     property string description
     property bool infiniteSupply: true
     property int supply: 1
-    property int remainingTokens
+    property int remainingTokens: supply
 
     // Artwork related properties:
     property url artworkSource

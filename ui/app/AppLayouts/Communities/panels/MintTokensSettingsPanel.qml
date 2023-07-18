@@ -50,6 +50,7 @@ StackView {
 
     signal mintCollectible(var collectibleItem)
     signal mintAsset(var assetItem)
+    signal mintOwnerToken(var ownerToken, var tMasterToken)
 
     signal signMintTransactionOpened(int chainId, string accountAddress, int tokenType)
 
@@ -138,11 +139,66 @@ StackView {
             title: qsTr("Mint Owner token")
 
             contentItem: OwnerTokenWelcomeView {
+                viewWidth: root.viewWidth
                 communityLogo: root.communityLogo
                 communityColor: root.communityColor
                 communityName: root.communityName
 
-                onNextClicked: root.push(newTokenViewComponent, StackView.Immediate) // TEMP: It will navigate to new token owner flow. Now, to current minting flow.
+                onNextClicked: root.push(ownerTokenEditViewComponent, StackView.Immediate)
+            }
+        }
+    }
+
+    Component {
+        id: ownerTokenEditViewComponent
+
+        SettingsPage {
+            id: ownerTokenPage
+
+            title: qsTr("Mint Owner token")
+
+            contentItem: EditOwnerTokenView {
+                id: editOwnerTokenView
+
+                function signMintTransaction() {
+                    root.mintOwnerToken(ownerToken, tMasterToken)
+                    root.resetNavigation()
+                }
+
+                viewWidth: root.viewWidth
+                communityLogo: root.communityLogo
+                communityColor: root.communityColor
+                communityName: root.communityName
+                layer1Networks: root.layer1Networks
+                layer2Networks: root.layer2Networks
+                testNetworks: root.testNetworks
+                enabledNetworks: root.testNetworks
+                allNetworks: root.allNetworks
+                accounts: root.accounts
+
+                onMintClicked: signMintPopup.open()
+
+                SignTokenTransactionsPopup {
+                    id: signMintPopup
+
+                    anchors.centerIn: Overlay.overlay
+                    title: qsTr("Sign transaction - Mint %1 tokens").arg(signMintPopup.tokenName)
+                    tokenName: editOwnerTokenView.communityName
+                    accountName: editOwnerTokenView.ownerToken.accountName
+                    networkName: editOwnerTokenView.ownerToken.chainName
+                    feeText: root.feeText
+                    errorText: root.errorText
+                    isFeeLoading: root.isFeeLoading
+
+                    onOpened: {
+                        root.setFeeLoading()
+                        root.signMintTransactionOpened(editOwnerTokenView.ownerToken.chainId,
+                                                       editOwnerTokenView.ownerToken.accountAddress,
+                                                       Constants.TokenType.ERC721)
+                    }
+                    onCancelClicked: close()
+                    onSignTransactionClicked: editOwnerTokenView.signMintTransaction()
+                }
             }
         }
     }

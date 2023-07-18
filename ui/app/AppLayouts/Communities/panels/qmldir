@@ -28,6 +28,7 @@ SortableTokenHoldersPanel 1.0 SortableTokenHoldersPanel.qml
 TagsPanel 1.0 TagsPanel.qml
 TokenHoldersPanel 1.0 TokenHoldersPanel.qml
 TokenHoldersProxyModel 1.0 TokenHoldersProxyModel.qml
+TokenInfoPanel 1.0 TokenInfoPanel.qml
 WarningPanel 1.0 WarningPanel.qml
 WelcomeBannerPanel 1.0 WelcomeBannerPanel.qml
 EditSettingsPanel 1.0 EditSettingsPanel.qml
