@@ -214,7 +214,7 @@ QtObject:
     self.fetchAllTokenOwners()
     self.tokenOwnersTimer.start()
 
-    self.events.on(PendingTransactionTypeDto.CollectibleDeployment.event) do(e: Args):
+    self.events.on(PendingTransactionTypeDto.DeployCommunityToken.event) do(e: Args):
       var receivedData = TransactionMinedArgs(e)
       try:
         let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
@@ -233,7 +233,7 @@ QtObject:
         error "Error processing Collectible deployment pending transaction event", msg=e.msg, receivedData
      
 
-    self.events.on(PendingTransactionTypeDto.CollectibleAirdrop.event) do(e: Args):
+    self.events.on(PendingTransactionTypeDto.AirdropCommunityToken.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
       try:
         let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
@@ -248,7 +248,7 @@ QtObject:
       except Exception as e:
         error "Error processing Collectible airdrop pending transaction event", msg=e.msg, receivedData
 
-    self.events.on(PendingTransactionTypeDto.CollectibleRemoteSelfDestruct.event) do(e: Args):
+    self.events.on(PendingTransactionTypeDto.RemoteDestructCollectible.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
       try:
         let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
@@ -263,7 +263,7 @@ QtObject:
       except Exception as e:
         error "Error processing Collectible self destruct pending transaction event", msg=e.msg, receivedData
 
-    self.events.on(PendingTransactionTypeDto.CollectibleBurn.event) do(e: Args):
+    self.events.on(PendingTransactionTypeDto.BurnCommunityToken.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
       try:
         let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
@@ -340,7 +340,7 @@ QtObject:
         transactionHash,
         addressFrom,
         contractAddress,
-        $PendingTransactionTypeDto.CollectibleDeployment,
+        $PendingTransactionTypeDto.DeployCommunityToken,
         $communityToken.toJsonNode(),
         chainId,
       )
@@ -409,7 +409,7 @@ QtObject:
           transactionHash,
           addressFrom,
           collectibleAndAmount.communityToken.address,
-          $PendingTransactionTypeDto.CollectibleAirdrop,
+          $PendingTransactionTypeDto.AirdropCommunityToken,
           $collectibleAndAmount.communityToken.toJsonNode(),
           collectibleAndAmount.communityToken.chainId,
         )
@@ -509,7 +509,7 @@ QtObject:
         transactionHash,
         addressFrom,
         contract.address,
-        $PendingTransactionTypeDto.CollectibleRemoteSelfDestruct,
+        $PendingTransactionTypeDto.RemoteDestructCollectible,
         $contract.toJsonNode(),
         contract.chainId,
       )
@@ -572,7 +572,7 @@ QtObject:
         transactionHash,
         addressFrom,
         contract.address,
-        $PendingTransactionTypeDto.CollectibleBurn,
+        $PendingTransactionTypeDto.BurnCommunityToken,
         $contract.toJsonNode(),
         contract.chainId,
       )
@@ -631,6 +631,7 @@ QtObject:
   proc createComputeFeeArgs(self: Service, gasUnits: int, suggestedFees: SuggestedFeesDto, chainId: int, walletAddress: string): ComputeFeeArgs =
     let ethValue = self.computeEthValue(gasUnits, suggestedFees)
     let balance = self.getWalletBalanceForChain(walletAddress, chainId)
+    debug "computing fees", walletBalance=balance, ethValue=ethValue
     return self.createComputeFeeArgsFromEthAndBalance(ethValue, balance)
 
   # convert json returned from async task into gas table
