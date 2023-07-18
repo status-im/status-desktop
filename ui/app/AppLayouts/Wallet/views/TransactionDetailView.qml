@@ -51,12 +51,30 @@ Item {
         readonly property string inSymbol: isTransactionValid ? transaction.inSymbol : ""
         readonly property string outSymbol: isTransactionValid ? transaction.outSymbol : ""
         readonly property var multichainNetworks: [] // TODO fill icon for networks for multichain
-        readonly property string fiatValueFormatted: root.isTransactionValid && !transactionHeader.isMultiTransaction ? RootStore.formatCurrencyAmount(transactionHeader.fiatValue, RootStore.currentCurrency) : ""
-        readonly property string cryptoValueFormatted: root.isTransactionValid && !transactionHeader.isMultiTransaction ? RootStore.formatCurrencyAmount(transaction.amount, transaction.symbol) : ""
-        readonly property string outFiatValueFormatted: root.isTransactionValid && transactionHeader.isMultiTransaction ? RootStore.formatCurrencyAmount(transactionHeader.outFiatValue, RootStore.currentCurrency) : ""
-        readonly property string outCryptoValueFormatted: root.isTransactionValid && transactionHeader.isMultiTransaction ? RootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol) : ""
+        readonly property string fiatValueFormatted: {
+            if (!root.isTransactionValid || transactionHeader.isMultiTransaction || !symbol)
+                return ""
+            return RootStore.formatCurrencyAmount(transactionHeader.fiatValue, RootStore.currentCurrency)
+        }
+        readonly property string cryptoValueFormatted: {
+            if (!root.isTransactionValid || transactionHeader.isMultiTransaction)
+                return ""
+            const formatted = RootStore.formatCurrencyAmount(transaction.amount, transaction.symbol)
+            return symbol || !transaction.contract ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.contract, 4))
+        }
+        readonly property string outFiatValueFormatted: {
+            if (!root.isTransactionValid || !transactionHeader.isMultiTransaction || !outSymbol)
+                return ""
+            return RootStore.formatCurrencyAmount(transactionHeader.outFiatValue, RootStore.currentCurrency)
+        }
+        readonly property string outCryptoValueFormatted: {
+            if (!root.isTransactionValid || !transactionHeader.isMultiTransaction)
+                return ""
+            const formatted = RootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
+            return outSymbol || !transaction.contract ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.contract, 4))
+        }
         readonly property real feeEthValue: root.isTransactionValid ? RootStore.getGasEthValue(transaction.totalFees.amount, 1) : 0 // TODO use directly?
-        readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, "ETH", RootStore.currentCurrency) : 0 // TODO use directly?
+        readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0 // TODO use directly?
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
         readonly property string toNetworkName: "" // TODO fill network name for bridge
 
@@ -294,7 +312,11 @@ Item {
                     TransactionContractTile {
                         // Used to display contract address for any network
                         address: root.isTransactionValid ? transaction.contract : ""
-                        symbol: root.isTransactionValid ? d.symbol : ""
+                        symbol: {
+                            if (!root.isTransactionValid)
+                                return ""
+                            return d.symbol ? d.symbol : "(%1)".arg(Utils.compactAddress(transaction.contract, 4))
+                        }
                         networkName: transactionHeader.networkName
                         shortNetworkName: d.networkShortName
                     }
@@ -553,10 +575,15 @@ Item {
                     }
                     TransactionDataTile {
                         width: parent.width
-                        title: qsTr("Fees")
+                        title: d.symbol ? qsTr("Fees") : qsTr("Estimated max fee")
                         subTitle: {
                             if (!root.isTransactionValid || transactionHeader.isNFT)
                                 return ""
+                            if (!d.symbol) {
+                                const maxFeeEth = RootStore.getGasEthValue(transaction.maxTotalFees.amount, 1)
+                                return RootStore.formatCurrencyAmount(maxFeeEth, Constants.ethToken)
+                            }
+
                             switch(d.transactionType) {
                             case Constants.TransactionType.Send:
                             case Constants.TransactionType.Swap:
@@ -566,7 +593,18 @@ Item {
                                 return ""
                             }
                         }
-                        tertiaryTitle: !!subTitle ? RootStore.formatCurrencyAmount(d.feeFiatValue, RootStore.currentCurrency) : ""
+                        tertiaryTitle: {
+                            if (!subTitle)
+                                return ""
+                            let fiatValue
+                            if (!d.symbol) {
+                                const maxFeeEth = RootStore.getGasEthValue(transaction.maxTotalFees.amount, 1)
+                                fiatValue = RootStore.getFiatValue(maxFeeEth, Constants.ethToken, RootStore.currentCurrency)
+                            } else {
+                                fiatValue = d.feeFiatValue
+                            }
+                            return RootStore.formatCurrencyAmount(fiatValue, RootStore.currentCurrency)
+                        }
                         visible: !!subTitle
                     }
                     TransactionDataTile {
@@ -574,19 +612,19 @@ Item {
                         // Using fees in this tile because of same higlight and color settings as Total
                         title: d.transactionType === Constants.TransactionType.Destroy || transactionHeader.isNFT ? qsTr("Fees") : qsTr("Total")
                         subTitle: {
-                            if (transactionHeader.isNFT && d.isIncoming)
+                            if ((transactionHeader.isNFT && d.isIncoming) || !d.symbol)
                                 return ""
                             const type = d.transactionType
                             if (type === Constants.TransactionType.Destroy || transactionHeader.isNFT) {
-                                return RootStore.formatCurrencyAmount(d.feeEthValue, "ETH")
+                                return RootStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken)
                             } else if (type === Constants.TransactionType.Receive || (type === Constants.TransactionType.Buy && progressBlock.isLayer1)) {
                                 return d.cryptoValueFormatted
                             }
                             const cryptoValue = transactionHeader.isMultiTransaction ? d.outCryptoValueFormatted : d.cryptoValueFormatted
-                            return "%1 + %2".arg(cryptoValue).arg(RootStore.formatCurrencyAmount(d.feeEthValue, "ETH"))
+                            return "%1 + %2".arg(cryptoValue).arg(RootStore.formatCurrencyAmount(d.feeEthValue, Constants.ethToken))
                         }
                         tertiaryTitle: {
-                            if (transactionHeader.isNFT && d.isIncoming)
+                            if ((transactionHeader.isNFT && d.isIncoming) || !d.symbol)
                                 return ""
                             const type = d.transactionType
                             if (type === Constants.TransactionType.Destroy || transactionHeader.isNFT) {
