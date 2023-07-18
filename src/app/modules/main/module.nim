@@ -299,7 +299,8 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
         isContact = contactDetails.dto.isContact,
         isVerified = contactDetails.dto.isContactVerified(),
-        memberRole = member.role
+        memberRole = member.role,
+        airdropAddress = member.airdropAccount.address,
         )),
     # pendingRequestsToJoin
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -327,7 +328,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         colorHash = contactDetails.colorHash,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(bannedMemberId).statusType),
         isContact = contactDetails.dto.isContact,
-        isVerified = contactDetails.dto.isContactVerified()
+        isVerified = contactDetails.dto.isContactVerified(),
       )
     ),
     # pendingMemberRequests
@@ -346,7 +347,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
         isContact = contactDetails.dto.isContact,
         isVerified = contactDetails.dto.isContactVerified(),
-        requestToJoinId = requestDto.id
+        requestToJoinId = requestDto.id,
       )
     ) else: @[],
     # declinedMemberRequests
@@ -365,7 +366,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
         isContact = contactDetails.dto.isContact,
         isVerified = contactDetails.dto.isContactVerified(),
-        requestToJoinId = requestDto.id
+        requestToJoinId = requestDto.id,
       )
     ) else: @[],
     channelGroup.encrypted,

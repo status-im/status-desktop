@@ -11,6 +11,7 @@ type
     joined: bool
     requestToJoinId: string
     requestToJoinLoading*: bool
+    airdropAddress*: string
 
 # FIXME: remove defaults
 proc initMemberItem*(
@@ -34,13 +35,15 @@ proc initMemberItem*(
   memberRole: MemberRole = MemberRole.None,
   joined: bool = false,
   requestToJoinId: string = "",
-  requestToJoinLoading: bool = false
+  requestToJoinLoading: bool = false,
+  airdropAddress: string = "",
 ): MemberItem =
   result = MemberItem()
   result.memberRole = memberRole
   result.joined = joined
   result.requestToJoinId = requestToJoinId
   result.requestToJoinLoading = requestToJoinLoading
+  result.airdropAddress = airdropAddress
   result.UserItem.setup(
     pubKey = pubKey,
     displayName = displayName,
@@ -69,6 +72,7 @@ proc `$`*(self: MemberItem): string =
     isEnsVerified: {self.isEnsVerified},
     localNickname: {self.localNickname},
     alias: {self.alias},
+    airdropAddress: {self.airdropAddress},
     icon: {self.icon},
     colorId: {self.colorId},
     colorHash: {self.colorHash},
@@ -105,3 +109,6 @@ proc `requestToJoinId=`*(self: MemberItem, value: string) {.inline.} =
 
 proc requestToJoinLoading*(self: MemberItem): bool {.inline.} =
   self.requestToJoinLoading
+
+proc airdropAddress*(self: MemberItem): string {.inline.} =
+  self.airdropAddress

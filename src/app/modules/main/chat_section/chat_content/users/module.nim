@@ -132,7 +132,8 @@ proc addChatMember(self: Module,  member: ChatMember) =
     isVerified = contactDetails.dto.isContactVerified(),
     memberRole = member.role,
     joined = member.joined,
-    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy
+    isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
+    airdropAddress = member.airdropAccount.address,
     ))
 
 method onChatMembersAdded*(self: Module, ids: seq[string]) =
