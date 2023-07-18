@@ -29,6 +29,15 @@ ColumnLayout {
         property int evaluationStatus: EditNetworkForm.UnTouched
         property int evaluationStatusFallBackRpc: EditNetworkForm.UnTouched
         property var evaluateRpcEndPoint: Backpressure.debounce(root, 400, function (value) {
+            if(!Utils.isURL(value)) {
+                if(value === mainRpcInput.text) {
+                    d.evaluationStatus = EditNetworkForm.InvalidURL
+                }
+                else if(value === failoverRpcUrlInput.text) {
+                    d.evaluationStatusFallBackRpc = EditNetworkForm.InvalidURL
+                }
+                return
+            }
             root.evaluateRpcEndPoint(value)
         })
 
