@@ -27,8 +27,8 @@ proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAcco
 proc updateAccount*(self: Controller, address: string, accountName: string, colorId: string, emoji: string) =
   discard self.walletAccountService.updateWalletAccount(address, accountName, colorId, emoji)
 
-proc updateAccountPosition*(self: Controller, address: string, position: int) =
-  self.walletAccountService.updateWalletAccountPosition(address, position)
+proc moveAccountFinally*(self: Controller, fromPosition: int, toPosition: int) =
+  self.walletAccountService.moveAccountFinally(fromPosition, toPosition)
 
 proc renameKeypair*(self: Controller, keyUid: string, name: string) =
   self.walletAccountService.updateKeypairName(keyUid, name)

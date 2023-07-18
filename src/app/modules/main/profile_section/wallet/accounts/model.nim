@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, sequtils, strformat
 import ./item
 
 export item
@@ -14,6 +14,7 @@ type
     RelatedAccounts,
     KeyUid,
     Position,
+    KeycardAccount,
 
 QtObject:
   type
@@ -58,6 +59,7 @@ QtObject:
       ModelRole.RelatedAccounts.int: "relatedAccounts",
       ModelRole.KeyUid.int: "keyUid",
       ModelRole.Position.int: "position",
+      ModelRole.KeycardAccount.int: "keycardAccount",
     }.toTable
 
 
@@ -109,4 +111,26 @@ QtObject:
     of ModelRole.KeyUid:
       result = newQVariant(item.keyUid())
     of ModelRole.Position:
-      result = newQVariant(item.position())
+      result = newQVariant(item.getPosition())
+    of ModelRole.KeycardAccount:
+      result = newQVariant(item.keycardAccount())
+
+  proc moveItem*(self: Model, fromRow: int, toRow: int): bool =
+    if toRow < 0 or toRow > self.items.len - 1:
+      return false
+
+    let sourceIndex = newQModelIndex()
+    defer: sourceIndex.delete
+    let destIndex = newQModelIndex()
+    defer: destIndex.delete
+
+    var destRow = toRow
+    if toRow > fromRow:
+      inc(destRow)
+
+    let currentItem = self.items[fromRow]
+    self.beginMoveRows(sourceIndex, fromRow, fromRow, destIndex, destRow)
+    self.items.delete(fromRow)
+    self.items.insert(@[currentItem], toRow)
+    self.endMoveRows()
+    return true

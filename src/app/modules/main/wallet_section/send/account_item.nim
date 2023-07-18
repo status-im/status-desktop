@@ -7,7 +7,6 @@ export wallet_account_item
 
 QtObject:
   type AccountItem* = ref object of WalletAccountItem
-    position: int
     assets: token_model.Model
     currencyBalance: CurrencyAmount
 
@@ -29,9 +28,9 @@ QtObject:
       walletType,
       path = "",
       keyUid = "",
-      keycardAccount = false)
+      keycardAccount = false,
+      position)
     self.assets = assets
-    self.position = position
     self.currencyBalance = currencyBalance
 
   proc delete*(self: AccountItem) =
@@ -74,6 +73,3 @@ QtObject:
   QtProperty[QVariant] currencyBalance:
     read = getCurrencyBalanceAsQVariant
     notify = currencyBalanceChanged
-
-  proc position*(self: AccountItem): int =
-    return self.position

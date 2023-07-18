@@ -86,7 +86,7 @@ QtObject:
     of ModelRole.Emoji:
       result = newQVariant(item.emoji())
     of ModelRole.Position:
-      result = newQVariant(item.position())
+      result = newQVariant(item.getPosition())
     of ModelRole.Assets:
       result = newQVariant(item.getAssetsAsQVariant())
     of ModelRole.CurrencyBalance:
@@ -104,4 +104,4 @@ method getItemByAddress*(self: AccountsModel, address: string): tuple[account: A
   if self.items.len > 0:
     return (self.items[0], 0)
 
-    
+

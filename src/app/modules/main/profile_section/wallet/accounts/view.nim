@@ -45,9 +45,6 @@ QtObject:
   proc updateAccount(self: View, address: string, accountName: string, colorId: string, emoji: string) {.slot.} =
     self.delegate.updateAccount(address, accountName, colorId, emoji)
 
-  proc updateAccountPosition(self: View, address: string, position: int) {.slot.} =
-    self.delegate.updateAccountPosition(address, position)
-
   proc onUpdatedAccount*(self: View, account: Item) =
     self.accounts.onUpdatedAccount(account)
     self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji)
@@ -88,3 +85,9 @@ QtObject:
 
   proc renameKeypair*(self: View, keyUid: string, name: string) {.slot.} =
     self.delegate.renameKeypair(keyUid, name)
+
+  proc moveAccount(self: View, fromRow: int, toRow: int) {.slot.} =
+    discard self.accounts.moveItem(fromRow, toRow)
+
+  proc moveAccountFinally(self: View, fromRow: int, toRow: int) {.slot.} =
+    self.delegate.moveAccountFinally(fromRow, toRow)

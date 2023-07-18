@@ -110,7 +110,7 @@ QtObject:
     of ModelRole.CreatedAt:
       result = newQVariant(item.createdAt())
     of ModelRole.Position:
-      result = newQVariant(item.position())
+      result = newQVariant(item.getPosition())
     of ModelRole.KeycardAccount:
       result = newQVariant(item.keycardAccount())
     of ModelRole.AssetsLoading:

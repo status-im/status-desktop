@@ -92,8 +92,7 @@ proc init*(self: Controller) =
     self.delegate.onWalletAccountChange(args.account)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED) do(e: Args):
-    let args = AccountArgs(e)
-    self.delegate.onWalletAccountChange(args.account)
+    self.delegate.rebuildAllKeycards()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e: Args):
     let args = AccountArgs(e)

@@ -39,8 +39,12 @@ QtObject {
         return accountsModule.updateAccount(address, accountName, colorId, emoji)
     }
 
-    function updateAccountPosition(address, position) {
-        return accountsModule.updateAccountPosition(address, position)
+    function moveAccount(from, to) {
+        root.accountsModule.moveAccount(from, to)
+    }
+
+    function moveAccountFinally(from, to) {
+        root.accountsModule.moveAccountFinally(from, to)
     }
 
     function getAllNetworksSupportedPrefix() {

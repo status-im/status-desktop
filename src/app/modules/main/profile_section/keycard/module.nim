@@ -334,6 +334,11 @@ method resolveRelatedKeycardsForKeypair(self: Module, keypair: KeypairDto) =
     return
   self.view.keycardDetailsModel().setItems(detailsViewItems)
 
+method rebuildAllKeycards*(self: Module) =
+  # We don't need to take care about details model here, cause since this is called only when account
+  # reordering occurs it's impossible to have details keycard view displayed.
+  self.buildKeycardList()
+
 method onKeypairSynced*(self: Module, keypair: KeypairDto) =
   self.resolveRelatedKeycardsForKeypair(keypair)
 
