@@ -278,7 +278,8 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission)
+    let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
   let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
@@ -780,7 +781,8 @@ method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, per
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  let tokenPermissionItem = buildTokenPermissionItem(tokenPermission)
+  let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+  let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
 
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
@@ -860,7 +862,8 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissions
   self.updateTokenPermissionModel(checkPermissionsToJoinResponse.permissions, community)
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  let tokenPermissionItem = buildTokenPermissionItem(tokenPermission)
+  let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+  let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
   self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
 
@@ -1055,6 +1058,7 @@ method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: str
 
 method onChatRenamed*(self: Module, chatId: string, newName: string) =
   self.view.chatsModel().renameItemById(chatId, newName)
+  self.view.tokenPermissionsModel().renameChatById(chatId, newName)
 
 method onGroupChatDetailsUpdated*(self: Module, chatId, newName, newColor, newImage: string) =
   self.view.chatsModel().updateNameColorIconOnItemById(chatId, newName, newColor, newImage)

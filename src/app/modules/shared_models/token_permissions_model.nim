@@ -54,6 +54,11 @@ QtObject:
         return i
     return -1
 
+  proc renameChatById*(self: TokenPermissionsModel, chatId: string, newName: string) =
+    for i in 0 ..< self.items.len:
+      let item = self.items[i]
+      item.getChatList().renameChatById(chatId, newName)
+
   proc belongsToChat*(self: TokenPermissionsModel, permissionId: string, chatId: string): bool {.slot.} =
     let idx = self.findIndexById(permissionId)
     if(idx == -1):

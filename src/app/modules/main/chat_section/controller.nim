@@ -473,6 +473,9 @@ proc getChatDetails*(self: Controller, chatId: string): ChatDto =
 proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
   return self.chatService.getChatsOfChatTypes(types)
 
+proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] =
+  return self.chatService.getChatsByIds(chatIds)
+
 proc chatsWithCategoryHaveUnreadMessages*(self: Controller, communityId: string, categoryId: string): bool =
   return self.chatService.chatsWithCategoryHaveUnreadMessages(communityId, categoryId)
 

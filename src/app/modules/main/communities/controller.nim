@@ -3,8 +3,10 @@ import ./io_interface
 
 import ../../../core/signals/types
 import ../../../core/eventemitter
+import ../../../../app_service/service/chat/dto/chat
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
 import ../../../../app_service/service/token/service as token_service
@@ -20,6 +22,7 @@ type
     communityTokensService: community_tokens_service.Service
     networksService: networks_service.Service
     tokenService: token_service.Service
+    chatService: chat_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -29,6 +32,7 @@ proc newController*(
     communityTokensService: community_tokens_service.Service,
     networksService: networks_service.Service,
     tokenService: token_service.Service,
+    chatService: chat_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -38,6 +42,7 @@ proc newController*(
   result.communityTokensService = communityTokensService
   result.networksService = networksService
   result.tokenService = tokenService
+  result.chatService = chatService
 
 proc delete*(self: Controller) =
   discard
@@ -222,6 +227,9 @@ proc reorderCommunityChat*(
     categoryId,
     chatId,
     position)
+
+proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] =
+  return self.chatService.getChatsByIds(chatIds)
 
 proc requestCommunityInfo*(self: Controller, communityId: string, importing: bool) =
   self.communityService.requestCommunityInfo(communityId, importing)
