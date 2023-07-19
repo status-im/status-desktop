@@ -36,10 +36,6 @@ class MainWalletContextMenu(ContextMenu):
         self._add_watch_only_account_menu_item = BaseElement('mainWallet_AddWatchOnlyAccount_MenuItem')
         self._delete_menu_item = BaseElement('mainWallet_DeleteAccount_MenuItem')
 
-    def wait_until_appears(self, timeout_msec: int = configs.squish.UI_LOAD_TIMEOUT_MSEC):
-        self._add_new_account_menu_item.wait_until_appears(timeout_msec)
-        return self
-
     def select(self, menu_item: BaseElement):
         menu_item.wait_until_appears()
         menu_item.click()
