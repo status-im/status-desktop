@@ -19,6 +19,7 @@ import ../../../core/eventemitter
 import ../../../../app_service/common/types
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/network/service as networks_service
 import ../../../../app_service/service/transaction/service as transaction_service
 import ../../../../app_service/service/community_tokens/service as community_tokens_service
@@ -59,6 +60,7 @@ proc newModule*(
     networksService: networks_service.Service,
     transactionService: transaction_service.Service,
     tokensService: token_service.Service,
+    chatService: chat_service.Service,
     ): Module =
   result = Module()
   result.delegate = delegate
@@ -72,6 +74,7 @@ proc newModule*(
     communityTokensService,
     networksService,
     tokensService,
+    chatService,
   )
   result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService, transactionService, networksService)
   result.moduleLoaded = false
@@ -180,7 +183,8 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission)
+    let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
   return initCuratedCommunityItem(

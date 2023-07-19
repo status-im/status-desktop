@@ -4,6 +4,7 @@ import token_permission_chat_list_item
 type
   ModelRole {.pure.} = enum
     Key = UserRole + 1
+    ChannelName
 
 QtObject:
   type TokenPermissionChatListModel* = ref object of QAbstractListModel
@@ -23,6 +24,7 @@ QtObject:
   method roleNames(self: TokenPermissionChatListModel): Table[int, string] =
     {
       ModelRole.Key.int:"key",
+      ModelRole.ChannelName.int:"channelName",
     }.toTable
 
   proc countChanged(self: TokenPermissionChatListModel) {.signal.}
@@ -45,6 +47,8 @@ QtObject:
     case enumRole:
       of ModelRole.Key:
         result = newQVariant(item.getKey())
+      of ModelRole.ChannelName:
+        result = newQVariant(item.getChannelName())
 
   proc addItem*(self: TokenPermissionChatListModel, item: TokenPermissionChatListItem) =
     let parentModelIndex = newQModelIndex()
@@ -62,3 +66,11 @@ QtObject:
 
   proc getItems*(self: TokenPermissionChatListModel): seq[TokenPermissionChatListItem] =
     return self.items
+
+  proc renameChatById*(self: TokenPermissionChatListModel, chatId: string, newName: string) =
+    for i in 0 ..< self.items.len:
+      if self.items[i].getKey() == chatId:
+        self.items[i] = initTokenPermissionChatListItem(chatId, newName)
+        let index = self.createIndex(i, 0, nil)
+        self.dataChanged(index, index, @[ModelRole.ChannelName.int])
+        return

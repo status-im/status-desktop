@@ -414,6 +414,9 @@ QtObject:
 
     return self.chats[chatId]
 
+  proc getChatsByIds*(self: Service, chatIds: seq[string]): seq[ChatDto] = 
+    return self.getAllChats().filterIt(it.id in chatIds)
+
   proc getOneToOneChatNameAndImage*(self: Service, chatId: string):
       tuple[name: string, image: string, largeImage: string] =
     return self.contactService.getContactNameAndImage(chatId)
