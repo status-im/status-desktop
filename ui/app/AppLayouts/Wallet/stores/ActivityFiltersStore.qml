@@ -19,6 +19,37 @@ QtObject {
                                 recentsFilters.length !== 0 ||
                                 savedAddressFilters.length !== 0
 
+    readonly property QtObject _d: QtObject {
+        id: _d
+
+        function toggleFilterState(filters, attribute, allFiltersCount) {
+            let tempFilters = filters
+            // if all were selected then only select one of them
+            if(tempFilters.length === 0) {
+                tempFilters = [attribute]
+            }
+            else {
+                // if last one is being deselected, select all
+                if(tempFilters.length === 1 && tempFilters[0] === attribute) {
+                    tempFilters = []
+                }
+                else {
+                    let index = tempFilters.indexOf(attribute)
+                    if(index === -1) {
+                        if(allFiltersCount === tempFilters.length + 1)
+                            tempFilters = []
+                        else
+                            tempFilters.push(attribute)
+                    }
+                    else {
+                        tempFilters.splice(index, 1)
+                    }
+                }
+            }
+            return tempFilters
+        }
+    }
+
     // Time filters
     property int selectedTime: Constants.TransactionTimePeriod.All
     property double fromTimestamp: activityController.status.startTimestamp * 1000
@@ -97,7 +128,7 @@ QtObject {
     property var typeFilters: []
     function toggleType(type, allFiltersCount) {
         // update filters
-        typeFilters = toggleFilterState(typeFilters, type, allFiltersCount)
+        typeFilters = _d.toggleFilterState(typeFilters, type, allFiltersCount)
         // Set backend values
         activityController.setFilterType(JSON.stringify(typeFilters))
         activityController.updateFilter()
@@ -107,7 +138,7 @@ QtObject {
     property var statusFilters: []
     function toggleStatus(status, allFiltersCount) {
         // update filters
-        statusFilters = toggleFilterState(statusFilters, status, allFiltersCount)
+        statusFilters = _d.toggleFilterState(statusFilters, status, allFiltersCount)
         // Set backend values
         activityController.setFilterStatus(JSON.stringify(statusFilters))
         activityController.updateFilter()
@@ -118,7 +149,7 @@ QtObject {
     property var tokensFilter: []
     function toggleToken(symbol) {
         // update filters
-        tokensFilter = toggleFilterState(tokensFilter, symbol, tokensList.count)
+        tokensFilter = _d.toggleFilterState(tokensFilter, symbol, tokensList.count)
         // Set backend values
         activityController.setFilterAssets(JSON.stringify(tokensFilter), false)
         activityController.updateFilter()
@@ -129,10 +160,10 @@ QtObject {
     property var collectiblesFilter: []
     function toggleCollectibles(id) {
         // update filters
-        collectiblesFilter = toggleFilterState(collectiblesFilter, id, collectiblesList.count)
-        // To-do go side filtering is pending
-        //        activityController.setFilterCollectibles(JSON.stringify(collectiblesFilter))
-        //        activityController.updateFilter()
+        collectiblesFilter = _d.toggleFilterState(collectiblesFilter, id, collectiblesList.count)
+        // TODO go side filtering is pending
+        //      activityController.setFilterCollectibles(JSON.stringify(collectiblesFilter))
+        //      activityController.updateFilter()
     }
 
 
@@ -144,7 +175,7 @@ QtObject {
     }
     function toggleRecents(address) {
         // update filters
-        recentsFilters = toggleFilterState(recentsFilters, address, recentsList.count)
+        recentsFilters = _d.toggleFilterState(recentsFilters, address, recentsList.count)
         activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
         activityController.updateFilter()
     }
@@ -163,65 +194,39 @@ QtObject {
     property var savedAddressFilters: []
     function toggleSavedAddress(address) {
         // update filters
-        savedAddressFilters = toggleFilterState(savedAddressFilters, address, savedAddressList.count)
+        savedAddressFilters = _d.toggleFilterState(savedAddressFilters, address, savedAddressList.count)
         // Set backend values
         activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
         activityController.updateFilter()
-    }
-
-    function toggleFilterState(filters, attribute, allFiltersCount) {
-        let tempFilters = filters
-        // if all were selected then only select one of them
-        if(tempFilters.length === 0) {
-            tempFilters = [attribute]
-        }
-        else {
-            // if last one is being deselected, select all
-            if(tempFilters.length === 1 && tempFilters[0] === attribute) {
-                tempFilters = []
-            }
-            else {
-                let index = tempFilters.indexOf(attribute)
-                if(index === -1) {
-                    if(allFiltersCount === tempFilters.length + 1)
-                        tempFilters = []
-                    else
-                        tempFilters.push(attribute)
-                }
-                else {
-                    tempFilters.splice(index, 1)
-                }
-            }
-        }
-        return tempFilters
     }
 
     function updateFilterBase() {
         activityController.updateFilterBase()
     }
 
+    function applyAllFilters() {
+        activityController.setFilterTime(fromTimestamp/1000, toTimestamp/1000)
+        activityController.setFilterType(JSON.stringify(typeFilters))
+        activityController.setFilterStatus(JSON.stringify(statusFilters))
+        activityController.setFilterAssets(JSON.stringify(tokensFilter), false)
+        activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
+        // TODO call update filter for collectibles
+
+        activityController.updateFilter()
+    }
+
     function resetAllFilters() {
         selectedTime = Constants.TransactionTimePeriod.All
         fromTimestamp = activityController.status.startTimestamp * 1000
         toTimestamp = new Date().valueOf()
-        activityController.setFilterTime(fromTimestamp/1000, toTimestamp/1000)
-
         typeFilters = []
-        activityController.setFilterType(JSON.stringify(typeFilters))
-
         statusFilters = []
-        activityController.setFilterStatus(JSON.stringify(statusFilters))
-
         tokensFilter = []
-        activityController.setFilterAssets(JSON.stringify(tokensFilter), false)
-
         collectiblesFilter = []
-        // To-do call update filter for collectibles
-
         recentsFilters = []
         savedAddressFilters = []
-        activityController.setFilterToAddresses(JSON.stringify(recentsFilters.concat(savedAddressFilters)))
+        // TODO reset filter for collectibles
 
-        activityController.updateFilter()
+        applyAllFilters()
     }
 }

@@ -434,9 +434,9 @@ Item {
                             if (d.loadingInputDate) {
                                 return ""
                             } else if (!!d.decodedInputData) {
-                                return d.decodedInputData.substring(0, 100)
+                                return d.decodedInputData.substring(0, 200)
                             } else if (root.isTransactionValid) {
-                                return String(root.transaction.input).substring(0, 100)
+                                return String(root.transaction.input).substring(0, 200)
                             }
                             return ""
                         }

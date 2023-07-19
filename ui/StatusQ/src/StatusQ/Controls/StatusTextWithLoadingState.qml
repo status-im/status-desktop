@@ -52,6 +52,7 @@ StatusBaseText {
 
     Loader {
         anchors.left: parent.left
+        anchors.leftMargin: root.leftPadding
         anchors.verticalCenter: parent.verticalCenter
         active: root.loading
         sourceComponent: LoadingComponent {

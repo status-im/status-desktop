@@ -44,13 +44,40 @@ QtObject {
         ]
     }
 
+    readonly property var currentActivityFiltersStore: {
+        const address = root.overview.mixedcaseAddress
+        if (address in d.activityFiltersStoreDictionary) {
+            return d.activityFiltersStoreDictionary[address]
+        }
+        let store = d.activityFilterStoreComponent.createObject(root)
+        d.activityFiltersStoreDictionary[address] = store
+        return store
+    }
+
     property QtObject _d: QtObject {
         id: d
+
+        property var activityFiltersStoreDictionary: ({})
+        readonly property Component activityFilterStoreComponent: ActivityFiltersStore{}
+
         property var chainColors: ({})
 
         function initChainColors(model) {
             for (let i = 0; i < model.count; i++) {
                 chainColors[model.rowData(i, "shortName")] = model.rowData(i, "chainColor")
+            }
+        }
+
+        readonly property Connections walletSectionConnections: Connections {
+            target: root.walletSectionInst
+            function onWalletAccountRemoved(address) {
+                address = address.toLowerCase();
+                for (var addressKey in d.activityFiltersStoreDictionary){
+                    if (address === addressKey.toLowerCase()){
+                        delete d.activityFiltersStoreDictionary[addressKey]
+                        return
+                    }
+                }
             }
         }
     }
