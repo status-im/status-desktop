@@ -35,6 +35,7 @@ StackLayout {
 
     property bool editable: false
     property bool owned: false
+    property bool isControlNode: false
     property int loginType: Constants.LoginType.Password
 
     function navigateBack() {
@@ -48,7 +49,7 @@ StackLayout {
 
     signal inviteNewPeopleClicked
     signal airdropTokensClicked
-    signal backUpClicked
+    signal exportControlNodeClicked
 
     clip: true
 
@@ -133,11 +134,10 @@ StackLayout {
             topPadding: 0
             loginType: root.loginType
             communityName: root.name
-            //TODO connect to backend
-            isControlNode: root.owned
-            onPrimaryButtonClicked: isControlNode = !isControlNode
+            isControlNode: root.isControlNode
+            onExportControlNodeClicked: root.exportControlNodeClicked()
             //TODO update once the domain changes
-            onSecondaryButtonClicked: Global.openLink(Constants.statusHelpLinkPrefix + "en/status-communities/about-the-control-node-in-status-communities")
+            onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "en/status-communities/about-the-control-node-in-status-communities")
         }
     }
 

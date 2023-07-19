@@ -36,6 +36,8 @@ StatusSectionLayout {
 
     readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
     readonly property bool isAdmin: isOwner || community.memberRole === Constants.memberRole.admin
+    //TODO: get proper value from backend
+    readonly property bool isControlNode: isOwner
 
     readonly property string filteredSelectedTags: {
         let tagsArray = []
@@ -170,6 +172,7 @@ StatusSectionLayout {
             editable: true
             owned: root.community.memberRole === Constants.memberRole.owner
             loginType: root.rootStore.loginType
+            isControlNode: root.isControlNode
 
             onEdited: {
                 const error = root.chatCommunitySectionModule.editCommunity(
@@ -199,10 +202,22 @@ StatusSectionLayout {
             }
 
             onAirdropTokensClicked: root.goTo(Constants.CommunitySettingsSections.Airdrops)
-            onBackUpClicked: {
-                Global.openPopup(transferOwnershipPopup, {
-                                     privateKey: root.chatCommunitySectionModule.exportCommunity(root.community.id),
-                                 })
+            onExportControlNodeClicked: {
+                if(!root.isControlNode)
+                    return
+                    
+                root.rootStore.authenticateWithCallback((authenticated) => {
+                    if(!authenticated)
+                        return
+
+                    Global.openExportControlNodePopup(root.community.name, root.chatCommunitySectionModule.exportCommunity(root.community.id), (popup) => {
+                        //TODO: connect to backend
+                        // Delete private key and remove control node status
+                        popup.onDeletePrivateKey.connect(() => {
+                            console.log("Delete private key")
+                        })  
+                    })
+                })
             }
         }
 

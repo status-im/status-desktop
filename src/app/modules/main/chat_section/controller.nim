@@ -49,6 +49,7 @@ type
     tmpRequestToJoinEnsName: string
     tmpAddressesToShare: seq[string]
     tmpAirdropAddress: string
+    tmpAuthenticationWithCallbackInProgress: bool
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service, 
@@ -82,7 +83,8 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.tmpRequestToJoinEnsName = ""
   result.tmpAirdropAddress = ""
   result.tmpAddressesToShare = @[]
-
+  result.tmpAuthenticationWithCallbackInProgress = true
+  
 proc delete*(self: Controller) =
   self.events.disconnect()
 
@@ -232,6 +234,10 @@ proc init*(self: Controller) =
       return
     if self.tmpAuthenticationForJoinInProgress or self.tmpAuthenticationForEditSharedAddresses:
       self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
+    if self.tmpAuthenticationWithCallbackInProgress:
+      let authenticated = not (args.password == "" and args.pin == "")
+      self.delegate.callbackFromAuthentication(authenticated)
+      self.tmpAuthenticationWithCallbackInProgress = false
 
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
@@ -730,3 +736,7 @@ proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int,
 
 proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(self.getMySectionId())
+
+proc authenticateWithCallback*(self: Controller) =
+  self.tmpAuthenticationWithCallbackInProgress = true
+  self.authenticate()
