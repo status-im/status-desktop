@@ -429,3 +429,8 @@ QtObject:
     notify = allTokenRequirementsMetChanged
 
   proc userAuthenticationCanceled*(self: View) {.signal.}
+
+  proc authenticateWithCallback*(self: View) {.slot.} =
+    self.delegate.authenticateWithCallback()
+  
+  proc callbackFromAuthentication*(self: View, authenticated: bool) {.signal.}

@@ -16,8 +16,9 @@ Control {
     property int loginType: Constants.LoginType.Password
     property string communityName: ""
 
-    signal primaryButtonClicked
-    signal secondaryButtonClicked
+    signal exportControlNodeClicked
+    signal importControlNodeClicked
+    signal learnMoreClicked
 
     QtObject {
         id: d
@@ -33,6 +34,7 @@ Control {
         property string secondaryButtonIcon
         property string indicatorBgColor
         property string indicatorColor
+        property var primaryButtonAction: root.exportControlNodeClicked
     }
 
     contentItem: GridLayout {
@@ -91,14 +93,14 @@ Control {
                 size: StatusBaseButton.Size.Small
                 text: d.secondaryButtonText
                 icon.name: d.secondaryButtonIcon
-                onClicked: root.secondaryButtonClicked()
+                onClicked: root.learnMoreClicked()
             }
 
             StatusButton {
                 size: StatusBaseButton.Size.Small
                 text: d.primaryButtonText
                 icon.name: d.primaryButtonIcon
-                onClicked: root.primaryButtonClicked()
+                onClicked: d.primaryButtonAction()
             }
         }
     }
@@ -116,6 +118,7 @@ Control {
             PropertyChanges { target: d; primaryButtonIcon: Constants.authenticationIconByType[root.loginType] }
             PropertyChanges { target: d; secondaryButtonText: qsTr("Learn more") }
             PropertyChanges { target: d; secondaryButtonIcon: "external-link" }
+            PropertyChanges { target: d; primaryButtonAction: root.exportControlNodeClicked }
         },
         State {
             name: "isNotControlNode"
@@ -128,6 +131,7 @@ Control {
             PropertyChanges { target: d; primaryButtonIcon: "" }
             PropertyChanges { target: d; secondaryButtonText: qsTr("Learn more") }
             PropertyChanges { target: d; secondaryButtonIcon: "external-link" }
+            PropertyChanges { target: d; primaryButtonAction: root.importControlNodeClicked }
         }
     ]
 }

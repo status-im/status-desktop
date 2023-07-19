@@ -400,3 +400,9 @@ method onCommunityCheckChannelPermissionsResponse*(self: AccessInterface, chatId
 
 method onCommunityCheckAllChannelsPermissionsResponse*(self: AccessInterface, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method authenticateWithCallback*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method callbackFromAuthentication*(self: AccessInterface, authenticated: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -274,6 +274,10 @@ ListModel {
         section: "Popups"
     }
     ListElement {
+        title: "ExportControlNodePopup"
+        section: "Popups"
+    }
+    ListElement {
         title: "StatusButton"
         section: "Controls"
     }

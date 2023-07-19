@@ -40,6 +40,7 @@ ColumnLayout {
 
             Layout.fillWidth: true
             placeholderText: "search"
+            selectByMouse: true
 
             Keys.onEscapePressed: {
                 clear()

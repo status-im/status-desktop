@@ -1336,3 +1336,8 @@ method editSharedAddressesWithAuthentication*(self: Module, addressesToShare: se
 method onDeactivateChatLoader*(self: Module, chatId: string) =
   self.view.chatsModel().disableChatLoader(chatId)
 
+method authenticateWithCallback*(self: Module) =
+  self.controller.authenticateWithCallback()
+
+method callbackFromAuthentication*(self: Module, authenticated: bool) =
+  self.view.callbackFromAuthentication(authenticated)

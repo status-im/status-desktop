@@ -56,6 +56,7 @@ QtObject {
         Global.openDownloadImageDialog.connect(openDownloadImageDialog)
         Global.leaveCommunityRequested.connect(openLeaveCommunityPopup)
         Global.openTestnetPopup.connect(openTestnetPopup)
+        Global.openExportControlNodePopup.connect(openExportControlNodePopup)
     }
 
     property var currentPopup
@@ -246,6 +247,13 @@ QtObject {
 
     function openTestnetPopup() {
         openPopup(testnetModal)
+    }
+
+    function openExportControlNodePopup(communityName, privateKey, cb) {
+        openPopup(exportControlNodePopup, {
+            communityName: communityName,
+            privateKey: privateKey
+        }, cb)
     }
 
     readonly property list<Component> _components: [
@@ -587,6 +595,13 @@ QtObject {
                     Global.displayToastMessage(root.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled ? qsTr("Testnet mode turned on") : qsTr("Testnet mode turned off") , "", "checkmark-circle", false, Constants.ephemeralNotificationType.success, "")
                 }
                 onCancelClicked: close()
+            }
+        },
+
+        Component {
+            id: exportControlNodePopup
+            ExportControlNodePopup {
+                onClosed: destroy()
             }
         }
     ]

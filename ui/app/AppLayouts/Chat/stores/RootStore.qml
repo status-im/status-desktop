@@ -613,6 +613,11 @@ QtObject {
         return Constants.LoginType.Password
     }
 
+    function authenticateWithCallback(callback) {
+        _d.authenticationCallbacks.push(callback)
+        chatCommunitySectionModule.authenticateWithCallback()
+    }
+
     readonly property Connections communitiesModuleConnections: Connections {
       target: communitiesModuleInst
       function onImportingCommunityStateChanged(communityId, state, errorMsg) {
@@ -640,6 +645,19 @@ QtObject {
     }
 
     readonly property QtObject _d: QtObject {
+        property var authenticationCallbacks: []
+
+        readonly property Connections chatCommunitySectionModuleConnections: Connections {
+            target: chatCommunitySectionModule
+            function onCallbackFromAuthentication(authenticated: bool) {
+                _d.authenticationCallbacks.forEach((callback) => {
+                    if(!!callback)
+                        callback(authenticated)
+                })
+                _d.authenticationCallbacks = []
+            }
+        }
+
         readonly property var sectionDetailsInstantiator: Instantiator {
             model: SortFilterProxyModel {
                 sourceModel: mainModuleInst.sectionsModel
