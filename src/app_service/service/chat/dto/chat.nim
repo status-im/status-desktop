@@ -246,7 +246,7 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   var revealedAccountsObj: JsonNode
   if jsonObj.getProp("revealed_accounts", revealedAccountsObj):
     for revealedAccountObj in revealedAccountsObj:
-      if revealedAccountObj["isAirdropAddress"].getBool:
+      if revealedAccountObj{"isAirdropAddress"}.getBool:
         var chainIdsObj: JsonNode
         var chainIds: seq[int] = @[]
         if revealedAccountObj.getProp("chain_ids", chainIdsObj):
