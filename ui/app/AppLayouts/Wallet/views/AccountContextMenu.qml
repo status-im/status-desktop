@@ -8,7 +8,6 @@ import "../stores"
 StatusMenu {
     id: root
 
-    required property string uniqueIdentifier // unique idetifier added as postfix to options' objectName (used for ui tests)
     property var account
 
     signal editAccountClicked()
@@ -54,13 +53,10 @@ StatusMenu {
         }
     }
 
-    StatusMenuSeparator {
-        visible: !!root.account
-    }
-
     StatusAction {
         objectName: "AccountMenu-AddNewAccountAction-%1".arg(root.uniqueIdentifier)
         text: qsTr("Add new account")
+        enabled: !root.account
         icon.name: "add"
         onTriggered: {
             root.addNewAccountClicked()
@@ -70,6 +66,7 @@ StatusMenu {
     StatusAction {
         objectName: "AccountMenu-AddWatchOnlyAccountAction-%1".arg(root.uniqueIdentifier)
         text: qsTr("Add watch-only account")
+        enabled: !root.account
         icon.name: "show"
         onTriggered: {
             root.addWatchOnlyAccountClicked()
