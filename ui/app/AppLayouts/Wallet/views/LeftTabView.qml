@@ -66,13 +66,12 @@ Rectangle {
     }
 
     Loader {
-        id: walletBckgAccountContextMenu
+        id: walletAccountContextMenu
+        active: false
         sourceComponent: AccountContextMenu {
 
-            uniqueIdentifier: "wallet-background"
-
             onClosed: {
-                walletBckgAccountContextMenu.active = false
+                walletAccountContextMenu.active = false
             }
 
             onAddNewAccountClicked: {
@@ -81,6 +80,22 @@ Rectangle {
 
             onAddWatchOnlyAccountClicked: {
                 RootStore.runAddWatchOnlyAccountPopup()
+            }
+
+            onEditAccountClicked: {
+                if (!account)
+                    return
+                RootStore.runEditAccountPopup(account.address)
+            }
+
+            onDeleteAccountClicked: {
+                if (!account)
+                    return
+                removeAccountConfirmation.simple = account.walletType === Constants.watchWalletType || account.walletType === Constants.keyWalletType
+                removeAccountConfirmation.accountName = account.name
+                removeAccountConfirmation.accountAddress = account.address
+                removeAccountConfirmation.accountDerivationPath = account.path
+                removeAccountConfirmation.active = true
             }
         }
     }
@@ -137,8 +152,8 @@ Rectangle {
 
         onClicked: {
             if (mouse.button === Qt.RightButton) {
-                walletBckgAccountContextMenu.active = true
-                walletBckgAccountContextMenu.item.popup(mouse.x, mouse.y)
+                walletAccountContextMenu.active = true
+                walletAccountContextMenu.item.popup(mouse.x, mouse.y)
             }
         }
     }
@@ -221,8 +236,9 @@ Rectangle {
                 errorIcon.tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
                 onClicked: {
                     if (mouse.button === Qt.RightButton) {
-                        accountContextMenu.active = true
-                        accountContextMenu.item.popup(mouse.x, mouse.y)
+                        walletAccountContextMenu.active = true
+                        walletAccountContextMenu.item.account = model
+                        walletAccountContextMenu.item.popup(this, mouse.x, mouse.y)
                         return
                     }
                     root.showSavedAddresses = false
@@ -243,39 +259,6 @@ Rectangle {
                         icon: model.keycardAccount ? "keycard" : ""
                     }
                 ]
-
-                Loader {
-                    id: accountContextMenu
-                    sourceComponent: AccountContextMenu {
-
-                        uniqueIdentifier: model.name
-                        account: model
-
-                        onClosed: {
-                            accountContextMenu.active = false
-                        }
-
-                        onEditAccountClicked: {
-                            RootStore.runEditAccountPopup(model.address)
-                        }
-
-                        onDeleteAccountClicked: {
-                            removeAccountConfirmation.simple = model.walletType === Constants.watchWalletType || model.walletType === Constants.keyWalletType
-                            removeAccountConfirmation.accountName = model.name
-                            removeAccountConfirmation.accountAddress = model.address
-                            removeAccountConfirmation.accountDerivationPath = model.path
-                            removeAccountConfirmation.active = true
-                        }
-
-                        onAddNewAccountClicked: {
-                            RootStore.runAddAccountPopup()
-                        }
-
-                        onAddWatchOnlyAccountClicked: {
-                            RootStore.runAddWatchOnlyAccountPopup()
-                        }
-                    }
-                }
             }
 
             readonly property bool footerOverlayed: contentHeight > availableHeight
