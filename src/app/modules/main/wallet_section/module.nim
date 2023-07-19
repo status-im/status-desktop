@@ -186,6 +186,7 @@ method load*(self: Module) =
     let args = AccountArgs(e)
     self.setTotalCurrencyBalance()
     self.filter.removeAddress(args.account.address)
+    self.view.emitWalletAccountRemoved(args.account.address)
     self.notifyFilterChanged()
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
     self.filter.updateNetworks()

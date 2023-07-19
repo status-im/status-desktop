@@ -32,8 +32,7 @@ ColumnLayout {
 
     onVisibleChanged: {
         if (visible && RootStore.isTransactionFilterDirty) {
-            // TODO(#11412) restore filter for selected wallet account
-            d.activityFiltersStore.resetAllFilters()
+            WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
         }
     }
 
@@ -48,7 +47,7 @@ ColumnLayout {
     QtObject {
         id: d
         readonly property bool isInitialLoading: RootStore.loadingHistoryTransactions && transactionListRoot.count === 0
-        property var activityFiltersStore: WalletStores.ActivityFiltersStore{}
+
         readonly property int loadingSectionWidth: 56
         readonly property int topSectionMargin: 20
 
@@ -75,16 +74,16 @@ ColumnLayout {
         id: noTxs
         Layout.fillWidth: true
         Layout.preferredHeight: 42
-        visible: !d.isInitialLoading && !d.activityFiltersStore.filtersSet && transactionListRoot.count === 0
+        visible: !d.isInitialLoading && !WalletStores.RootStore.currentActivityFiltersStore.filtersSet && transactionListRoot.count === 0
         font.pixelSize: Style.current.primaryTextFontSize
         text: qsTr("Activity for this account will appear here")
     }
 
     ActivityFilterPanel {
         id: filterComponent
-        visible: d.isInitialLoading || transactionListRoot.count > 0 || d.activityFiltersStore.filtersSet
+        visible: d.isInitialLoading || transactionListRoot.count > 0 || WalletStores.RootStore.currentActivityFiltersStore.filtersSet
         Layout.fillWidth: true
-        activityFilterStore: d.activityFiltersStore
+        activityFilterStore: WalletStores.RootStore.currentActivityFiltersStore
         store: WalletStores.RootStore
         isLoading: d.isInitialLoading
     }

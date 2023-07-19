@@ -331,9 +331,7 @@ Rectangle {
                         id: walletAmountValue
                         objectName: "walletLeftListAmountValue"
                         customColor: Style.current.textColor
-                        text: {
-                            LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance)
-                        }
+                        text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance)
                         font.pixelSize: 22
                         loading: RootStore.assetsLoading
                         visible: !networkConnectionStore.accountBalanceNotAvailable
