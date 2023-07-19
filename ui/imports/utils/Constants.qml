@@ -402,6 +402,7 @@ QtObject {
         readonly property int manageUsers: 2
         readonly property int moderateContent: 3
         readonly property int admin: 4
+        readonly property int tokenMaster: 5 // TODO no real backend for this yet
     }
 
     readonly property QtObject permissionType: QtObject{

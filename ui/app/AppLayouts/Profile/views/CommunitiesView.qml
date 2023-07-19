@@ -107,6 +107,20 @@ SettingsContentBase {
             }
 
             Heading {
+                text: qsTr("TokenMaster")
+                visible: panelTokenMasters.count
+            }
+
+            Panel {
+                id: panelTokenMasters
+                filters: ValueFilter {
+                    readonly property int role: Constants.memberRole.tokenMaster
+                    roleName: "memberRole"
+                    value: role
+                }
+            }
+
+            Heading {
                 text: qsTr("Admin")
                 visible: panelAdmins.count
             }
@@ -130,7 +144,8 @@ SettingsContentBase {
                 filters: ExpressionFilter {
                     readonly property int ownerRole: Constants.memberRole.owner
                     readonly property int adminRole: Constants.memberRole.admin
-                    expression: model.joined && model.memberRole !== ownerRole && model.memberRole !== adminRole
+                    readonly property int tokenMasterRole: Constants.memberRole.tokenMaster
+                    expression: model.joined && model.memberRole !== ownerRole && model.memberRole !== adminRole && model.memberRole !== tokenMasterRole
                 }
             }
 

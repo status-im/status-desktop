@@ -50,6 +50,7 @@ StatusListView {
         readonly property bool isSpectator: model.spectated && !model.joined
         readonly property bool isOwner: model.memberRole === Constants.memberRole.owner
         readonly property bool isAdmin: model.memberRole === Constants.memberRole.admin
+        readonly property bool isTokenMaster: model.memberRole === Constants.memberRole.tokenMaster
         readonly property bool isInvitationPending: root.rootStore.isCommunityRequestPending(model.id)
 
         components: [
@@ -82,7 +83,7 @@ StatusListView {
                     StatusAction {
                         text: qsTr("Community Admin")
                         icon.name: "settings"
-                        enabled: listItem.isOwner || listItem.isAdmin
+                        enabled: listItem.isOwner || listItem.isAdmin || listItem.isTokenMaster
                         onTriggered: {
                             moreMenu.close()
                             Global.switchToCommunity(model.id)
@@ -115,7 +116,6 @@ StatusListView {
                         }
                     }
                     StatusAction {
-                        id: shareAddressesMenuItem
                         text: qsTr("Edit Shared Addresses")
                         icon.name: "wallet"
                         enabled: {
@@ -132,7 +132,7 @@ StatusListView {
                         }
                     }
                     StatusMenuSeparator {
-                        visible: shareAddressesMenuItem.enabled && leaveMenuItem.enabled
+                        visible: leaveMenuItem.enabled
                     }
                     StatusAction {
                         id: leaveMenuItem
