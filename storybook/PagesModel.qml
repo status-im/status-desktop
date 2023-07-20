@@ -186,6 +186,14 @@ ListModel {
         section: "Panels"
     }
     ListElement {
+        title: "FeeRow"
+        section: "Panels"
+    }
+    ListElement {
+        title: "FeesBox"
+        section: "Panels"
+    }
+    ListElement {
         title: "ChatPermissionQualificationPanel"
         section: "Panels"
     }

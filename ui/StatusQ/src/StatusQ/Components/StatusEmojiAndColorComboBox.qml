@@ -52,8 +52,8 @@ StatusComboBox {
     QtObject {
         id: d
 
-        readonly property string emoji: ModelUtils.get(root.model, currentIndex, "emoji")
-        readonly property string color: ModelUtils.get(root.model, currentIndex, "color")
+        readonly property string emoji: ModelUtils.get(root.model, currentIndex, "emoji") ?? ""
+        readonly property string color: ModelUtils.get(root.model, currentIndex, "color") ?? ""
     }
 
     control.textRole: "name"

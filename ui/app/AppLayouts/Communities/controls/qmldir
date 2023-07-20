@@ -1,3 +1,4 @@
+AccountSelector 1.0 AccountSelector.qml
 AddressesInputList 1.0 AddressesInputList.qml
 AddressesSelectorPanel 1.0 AddressesSelectorPanel.qml
 AirdropRecipientsSelector 1.0 AirdropRecipientsSelector.qml
@@ -7,9 +8,12 @@ CategoryListItem 1.0 CategoryListItem.qml
 ColorPicker 1.0 ColorPicker.qml
 CommunityListItem 1.0 CommunityListItem.qml
 DescriptionInput 1.0 DescriptionInput.qml
-EnsPanel 1.0 EnsPanel.qml
 EditCommunitySettingsForm 1.0 EditCommunitySettingsForm.qml
+EnsPanel 1.0 EnsPanel.qml
 ExtendedDropdownContent 1.0 ExtendedDropdownContent.qml
+FeeRow 1.0 FeeRow.qml
+FeesBoxFooter 1.0 FeesBoxFooter.qml
+FeesSummaryFooter 1.0 FeesSummaryFooter.qml
 HoldingTypes 1.0 HoldingTypes.qml
 InlineNetworksComboBox 1.0 InlineNetworksComboBox.qml
 IntroMessageInput 1.0 IntroMessageInput.qml

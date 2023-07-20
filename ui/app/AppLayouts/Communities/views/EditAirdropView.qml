@@ -171,14 +171,7 @@ StatusScrollView {
                                              + membersModelTracker.revision
                                              + (d.showFees ? 1 : 0)
 
-        onTotalRevisionChanged: {
-            Qt.callLater(() => {
-                if (!d.showFees)
-                    return
-
-                d.resetFees()
-            })
-        }
+        onTotalRevisionChanged: Qt.callLater(() => d.resetFees())
 
         function prepareEntry(key, amount, type) {
             let tokenModel = null
@@ -216,10 +209,10 @@ StatusScrollView {
             airdropTokens.forEach(entry => {
                 feesModel.append({
                     contractUniqueKey: entry.contractUniqueKey,
-                    amount: entry.amount * addresses.count,
-                    account: entry.accountName,
-                    symbol: entry.symbol,
-                    network: entry.networkText,
+                    title: qsTr("Airdropping %1 %2 on %3")
+                                     .arg(entry.amount * addresses.count)
+                                     .arg(entry.symbol)
+                                     .arg(entry.networkText),
                     feeText: ""
                 })
             })
@@ -244,6 +237,11 @@ StatusScrollView {
             root.airdropFees = null
             d.feesError = ""
             d.totalFee = ""
+
+            if (!d.showFees) {
+                feesModel.clear()
+                return
+            }
 
             d.rebuildFeesModel()
             d.requestFees()
@@ -584,61 +582,12 @@ StatusScrollView {
 
         SequenceColumnLayout.Separator {}
 
-        StatusGroupBox {
-            id: feesBox
-
+        FeesBox {
             Layout.fillWidth: true
-            implicitWidth: 0
 
-            title: qsTr("Fees")
-            icon: Style.svg("gas")
-
-            Control {
-                id: feesControl
-
-                width: feesBox.availableWidth
-
-                padding: Style.current.padding
-                verticalPadding: 18
-
-                background: Rectangle {
-                    radius: Style.current.radius
-                    color: Theme.palette.statusListItem.backgroundColor
-                }
-
-                contentItem: Loader {
-                    Component {
-                        id: feesPanelComponent
-
-                        FeesPanel {
-                            width: feesControl.availableWidth
-
-                            showAccounts: false
-                            totalFeeText: d.totalFee
-                            showSummary: count > 1
-                            isFeeLoading: d.isFeeLoading
-
-                            model: feesModel
-                        }
-                    }
-
-                    Component {
-                        id: placeholderComponent
-
-                        StatusBaseText {
-                            width: feesControl.availableWidth
-
-                            text: qsTr("Add valid “What” and “To” values to see fees")
-                            font.pixelSize: Style.current.primaryTextFontSize
-                            elide: Text.ElideRight
-                            color: Theme.palette.baseColor1
-                        }
-                    }
-
-                    sourceComponent: d.showFees ? feesPanelComponent
-                                                : placeholderComponent
-                }
-            }
+            model: feesModel
+            totalFeeText: d.totalFee
+            placeholderText: qsTr("Add valid “What” and “To” values to see fees")
         }
 
         WarningPanel {
@@ -681,8 +630,6 @@ StatusScrollView {
             destroyOnClose: false
 
             model: feesModel
-
-            isFeeLoading: d.isFeeLoading
 
             totalFeeText: d.totalFee
             errorText: d.feesError

@@ -4,6 +4,7 @@ AssetsModel 1.0 AssetsModel.qml
 BannerModel 1.0 BannerModel.qml
 ChannelsModel 1.0 ChannelsModel.qml
 CollectiblesModel 1.0 CollectiblesModel.qml
+FeesModel 1.0 FeesModel.qml
 IconModel 1.0 IconModel.qml
 MintedTokensModel 1.0 MintedTokensModel.qml
 RecipientModel 1.0 RecipientModel.qml

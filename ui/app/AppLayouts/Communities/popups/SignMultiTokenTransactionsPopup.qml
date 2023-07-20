@@ -6,18 +6,22 @@ import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 
+import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.panels 1.0
 
 StatusDialog {
     id: root
 
-    // account, amount, symbol, network, feeText
+    // expected roles:
+    //
+    // title (string)
+    // feeText (string)
+    // error (bool), optional
     property alias model: feesPanel.model
-    property alias showSummary: feesPanel.showSummary
-    property alias errorText: feesPanel.errorText
-    property alias totalFeeText: feesPanel.totalFeeText
 
-    property alias isFeeLoading: feesPanel.isFeeLoading
+    property alias errorText: footer.errorText
+    property alias totalFeeText: footer.totalFeeText
+    property alias accountName: footer.accountName
 
     signal signTransactionClicked()
     signal cancelClicked()
@@ -29,11 +33,13 @@ StatusDialog {
     }
 
     implicitWidth: 600 // by design
-    topPadding: 2 * Style.current.padding // by design
-    bottomPadding: Style.current.bigPadding
 
     contentItem: FeesPanel {
         id: feesPanel
+
+        footer: FeesSummaryFooter {
+            id: footer
+        }
     }
 
     footer: StatusDialogFooter {

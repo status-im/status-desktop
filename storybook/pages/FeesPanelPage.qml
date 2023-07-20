@@ -2,67 +2,57 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
-import Storybook 1.0
-
 import AppLayouts.Communities.panels 1.0
 
+import Storybook 1.0
+import Models 1.0
+
+
 SplitView {
-    Logs { id: logs }
+    FeesModel {
+        id: feesModel
+    }
 
-    SplitView {
-        orientation: Qt.Vertical
+    Pane {
         SplitView.fillWidth: true
+        SplitView.fillHeight: true
 
-        Pane {
-            SplitView.fillWidth: true
-            SplitView.fillHeight: true
-
-            Rectangle {
-                anchors.fill: feesPanel
-                anchors.margins: -15
-                border.color: "lightgray"
-            }
-
-            FeesPanel {
-                id: feesPanel
-
-                anchors.centerIn: parent
-
-                width: 500
-
-                model: ListModel {
-                    ListElement {
-                        account: "My Account 1"
-                        network: "Optimism"
-                        symbol: "TAT"
-                        amount: 2
-                        feeText: "0.0015 ($75.43)"
-                    }
-                    ListElement {
-                        account: "My Account 2"
-                        network: "Arbitrum"
-                        symbol: "SNT"
-                        amount: 34
-                        feeText: "0.0085 ETH ($175.43)"
-                    }
-                }
-
-                errorText: errorTextField.text
-                isFeeLoading: loadingSwitch.checked
-                showSummary: showSummarySwitch.checked
-                showAccounts: showAccountsSwitch.checked
-
-                totalFeeText: "0.01 ETH ($265.43)"
-            }
+        Rectangle {
+            anchors.fill: feesPanel
+            anchors.margins: -15
+            border.color: "lightgray"
+            color: "transparent"
         }
 
-        LogsAndControlsPanel {
-            id: logsAndControlsPanel
+        FeesPanel {
+            id: feesPanel
 
-            SplitView.minimumHeight: 100
-            SplitView.preferredHeight: 150
+            anchors.centerIn: parent
 
-            logsView.logText: logs.logText
+            width: 500
+
+            model: LimitProxyModel {
+                sourceModel: feesModel
+                limit: countSlider.value
+            }
+
+            placeholderText: placeholderTextField.text
+
+            footer: Rectangle {
+                id: footer
+
+                visible: showFooterSwitch.checked
+
+                height: 100
+
+                border.color: "lightgray"
+                color: "transparent"
+
+                Label {
+                    anchors.centerIn: parent
+                    text: "footer"
+                }
+            }
         }
     }
 
@@ -76,36 +66,44 @@ SplitView {
             Label {
                 Layout.fillWidth: true
 
-                text: "Error text"
+                text: "Placeholder text"
             }
 
             TextField {
-                id: errorTextField
+                id: placeholderTextField
 
                 Layout.fillWidth: true
-
-                text: ""
+                text: "Add valid “What” and “To” values to see fees"
             }
 
             Switch {
-                id: loadingSwitch
+                id: showFooterSwitch
 
-                text: "Is fee loading"
-                checked: false
-            }
-
-            Switch {
-                id: showSummarySwitch
-
-                text: "Show summary"
+                text: "Show footer"
                 checked: true
             }
 
-            Switch {
-                id: showAccountsSwitch
+            Label {
+                Layout.fillWidth: true
 
-                text: "Show account names"
-                checked: true
+                text: "Number of items in the model"
+            }
+
+            RowLayout {
+                Slider {
+                    id: countSlider
+
+                    from: 0
+                    to: feesModel.count
+                    value: to
+
+                    stepSize: 1
+                    snapMode: Slider.SnapAlways
+                }
+
+                Label {
+                    text: countSlider.value
+                }
             }
 
             Item {
