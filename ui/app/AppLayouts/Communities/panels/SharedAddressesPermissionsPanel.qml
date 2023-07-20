@@ -103,7 +103,7 @@ Rectangle {
             }
 
             Repeater { // channel repeater
-                model: d.uniquePermissionChannels // TODO get channelName in addition (https://github.com/status-im/status-desktop/issues/11481)
+                model: d.uniquePermissionChannels
                 delegate: ChannelPermissionPanel {}
             }
         }
@@ -144,7 +144,7 @@ Rectangle {
             case PermissionTypes.Type.Member:
                 return qsTr("Join %1").arg(root.communityName)
             default:
-                return modelData // TODO display channel name https://github.com/status-im/status-desktop/issues/11481
+                return d.uniquePermissionChannels[index][1]
             }
         }
     }
@@ -304,7 +304,7 @@ Rectangle {
         padding: d.absLeftMargin
         background: PanelBg {}
 
-        readonly property string channelKey: modelData
+        readonly property string channelKey: d.uniquePermissionChannels[index][0]
 
         contentItem: RowLayout {
             spacing: Style.current.padding
