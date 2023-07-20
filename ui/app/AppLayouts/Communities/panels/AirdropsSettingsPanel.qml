@@ -40,10 +40,8 @@ StackView {
     property int viewWidth: 560 // by design
     property string previousPageName: depth > 1 ? qsTr("Airdrops") : ""
 
-    signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys,
-                          string feeAccountAddress)
-    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses,
-                                string feeAccountAddress)
+    signal airdropClicked(var airdropTokens, var addresses, string feeAccountAddress)
+    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses, string feeAccountAddress)
     signal navigateToMintTokenSettings(bool isAssetType)
 
     function navigateBack() {
@@ -145,7 +143,7 @@ StackView {
                 }
 
                 onAirdropClicked: {
-                    root.airdropClicked(airdropTokens, addresses, membersPubKeys)
+                    root.airdropClicked(airdropTokens, addresses, feeAccountAddress)
                     root.pop(StackView.Immediate)
                 }
 
