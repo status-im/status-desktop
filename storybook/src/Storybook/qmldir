@@ -15,6 +15,7 @@ InspectionItem 1.0 InspectionItem.qml
 InspectionItemsList 1.0 InspectionItemsList.qml
 InspectionPanel 1.0 InspectionPanel.qml
 InspectionWindow 1.0 InspectionWindow.qml
+LimitProxyModel 1.0 LimitProxyModel.qml
 Logs 1.0 Logs.qml
 LogsAndControlsPanel 1.0 LogsAndControlsPanel.qml
 LogsView 1.0 LogsView.qml
