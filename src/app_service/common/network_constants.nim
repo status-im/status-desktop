@@ -411,14 +411,12 @@ var NODE_CONFIG* = %* {
     "InfuraAPIKeySecret": INFURA_TOKEN_SECRET_RESOLVED,
     "LoadAllTransfers": true,
   },
-  "EnsConfig": {
-    "Enabled": true
-  },
   "Networks": NETWORKS,
   "TorrentConfig": {
     "Enabled": true,
     "Port": TORRENT_CONFIG_PORT,
     "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
     "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR
-  }
+  },
+  "OutputMessageCSVEnabled": false
 }

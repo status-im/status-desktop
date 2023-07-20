@@ -384,9 +384,9 @@ proc login*(name, keyUid: string, kdfIterations: int, hashedPassword, thumbnail,
     error "error doing rpc request", methodName = "login", exception=e.msg
     raise newException(RpcException, e.msg)
 
-proc loginWithKeycard*(chatKey, password: string, account: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc loginWithKeycard*(chatKey, password: string, account, confNode: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
-    let response = status_go.loginWithKeycard($account, password, chatKey)
+    let response = status_go.loginWithKeycard($account, password, chatKey, $confNode)
     result.result = Json.decode(response, JsonNode)
   except RpcException as e:
     error "error doing rpc request", methodName = "loginWithKeycard", exception=e.msg

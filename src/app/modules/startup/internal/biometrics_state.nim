@@ -19,13 +19,13 @@ method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
     ## This should not be the correct call for this flow, this is an issue,
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
-    controller.storeImportedAccountAndLogin(storeToKeychain)
+    controller.storeImportedAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.setupKeycardAccount(storeToKeychain, newKeycard = false)
+    controller.setupKeycardAccount(storeToKeychain, newKeycard = false, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())
@@ -41,13 +41,13 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
     ## This should not be the correct call for this flow, this is an issue,
     ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
-    controller.storeImportedAccountAndLogin(storeToKeychain)
+    controller.storeImportedAccountAndLogin(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.setupKeycardAccount(storeToKeychain, newKeycard = false)
+    controller.setupKeycardAccount(storeToKeychain, newKeycard = false, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())

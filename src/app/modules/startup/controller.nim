@@ -372,9 +372,9 @@ proc setupKeychain(self: Controller, store: bool) =
   else:
     singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
 
-proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool) =
+proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool, recoverAccount: bool = false) =
   self.delegate.moveToLoadingAppState()
-  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName)
+  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName, recoverAccount)
   if error != "":
     self.delegate.emitStartupError(error, StartupErrorType.SetupAccError)
   else:
@@ -388,9 +388,9 @@ proc storeGeneratedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   let accountId = accounts[0].id
   self.setupAccount(accountId, storeToKeychain)
 
-proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
+proc storeImportedAccountAndLogin*(self: Controller, storeToKeychain: bool, recoverAccount: bool = false) =
   let accountId = self.getImportedAccount().id
-  self.setupAccount(accountId, storeToKeychain)
+  self.setupAccount(accountId, storeToKeychain, recoverAccount)
 
 proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
   if self.importMnemonic():
@@ -406,7 +406,7 @@ proc storeKeycardAccountAndLogin*(self: Controller, storeToKeychain: bool, newKe
   else:
     error "an error ocurred while importing mnemonic"
 
-proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, newKeycard: bool) =
+proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, newKeycard: bool, recoverAccount: bool = false) =
   if self.tmpSeedPhrase.len > 0:
     # if `tmpSeedPhrase` is not empty means user has recovered keycard via seed phrase
     self.storeKeycardAccountAndLogin(storeToKeychain, newKeycard)
@@ -420,7 +420,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool, newKeycard: b
       self.delegate.storeDefaultKeyPairForNewKeycardUser()
     else:
       self.syncKeycardBasedOnAppWalletStateAfterLogin()
-    self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, self.tmpDisplayName, useImportedAcc = false)
+    self.accountsService.setupAccountKeycard(self.tmpKeycardEvent, self.tmpDisplayName, useImportedAcc = false, recoverAccount)
     self.setupKeychain(storeToKeychain)
 
 proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
