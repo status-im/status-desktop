@@ -2,6 +2,8 @@ import json, strformat, strutils
 import ../../../app_service/common/types
 import ../../../app_service/service/contacts/dto/contact_details
 import ../../../app_service/service/message/dto/message
+import ../../../app_service/service/message/dto/link_preview
+import ./link_preview_model as link_preview_model
 
 export types.ContentType
 import message_reaction_model, message_reaction_item, message_transaction_parameters_item
@@ -41,6 +43,7 @@ type
     editMode: bool
     isEdited: bool
     links: seq[string]
+    linkPreviewModel: link_preview_model.Model
     transactionParameters: TransactionParametersItem
     mentionedUsersPks: seq[string]
     senderTrustStatus: TrustStatus
@@ -87,6 +90,7 @@ proc initItem*(
     sticker: string,
     stickerPack: int,
     links: seq[string],
+    linkPreviews: seq[LinkPreview],
     transactionParameters: TransactionParametersItem,
     mentionedUsersPks: seq[string],
     senderTrustStatus: TrustStatus,
@@ -136,6 +140,7 @@ proc initItem*(
   result.editMode = false
   result.isEdited = false
   result.links = links
+  result.linkPreviewModel = newLinkPreviewModel(linkPreviews)
   result.transactionParameters = transactionParameters
   result.mentionedUsersPks = mentionedUsersPks
   result.gapFrom = 0
@@ -212,6 +217,7 @@ proc initNewMessagesMarkerItem*(clock, timestamp: int64): Item =
     sticker = "",
     stickerPack = -1,
     links = @[],
+    linkPreviews = @[],
     transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
     mentionedUsersPks = @[],
     senderTrustStatus = TrustStatus.Unknown,
@@ -442,6 +448,9 @@ proc links*(self: Item): seq[string] {.inline.} =
 
 proc `links=`*(self: Item, links: seq[string]) {.inline.} =
   self.links = links
+
+proc linkPreviewModel*(self: Item): link_preview_model.Model {.inline.} =
+  return self.linkPreviewModel
 
 proc mentionedUsersPks*(self: Item): seq[string] {.inline.} =
   self.mentionedUsersPks

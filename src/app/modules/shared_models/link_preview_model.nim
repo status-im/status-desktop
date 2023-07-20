@@ -1,6 +1,6 @@
 import NimQml, strformat, tables
 import ./link_preview_item
-import ../../../../../../app_service/service/message/dto/link_preview
+import ../../../app_service/service/message/dto/link_preview
 
 type
   ModelRole {.pure.} = enum
@@ -13,6 +13,19 @@ type
     ThumbnailHeight
     ThumbnailUrl
     ThumbnailDataUri
+
+    #
+    # TODO: 
+    #
+    #   Consider adding a `LinkType` property, which would probably follow the way of unfurling:
+    #       - basic       (maybe divide OpenGraph/oEmbed/...)
+    #       - image       (contantType == "image/.*")
+    #       - status link (hostname == "status.app")
+    #
+    # In future, we can also unfurl other types, like PDF/audio/etc !
+    #
+    # This is needed on receiver side to know how to render the preview 
+    # and what to do on click.
 
 QtObject:
   type
@@ -28,9 +41,14 @@ QtObject:
   proc setup(self: Model) =
     self.QAbstractListModel.setup
 
-  proc newLinkPreviewModel*(): Model =
+  proc newLinkPreviewModel*(linkPreviews: seq[LinkPreview] = @[]): Model =
     new(result, delete)
     result.setup
+    for linkPreview in linkPreviews:
+      var item = Item()
+      item.unfurled = true
+      item.linkPreview = linkPreview
+      result.items.add(item)
 
   proc newModel*(): Model =
     new(result, delete)

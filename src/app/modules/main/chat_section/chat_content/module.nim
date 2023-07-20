@@ -198,6 +198,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     message.sticker.url,
     message.sticker.pack,
     message.links,
+    message.linkPreviews,
     newTransactionParametersItem(message.transactionParameters.id,
       message.transactionParameters.fromAddress,
       message.transactionParameters.address,

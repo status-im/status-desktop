@@ -53,7 +53,6 @@ Control {
     property string resendError: ""
     property double timestamp: 0
     property var reactionsModel: []
-    property bool hasLinks
 
     property bool showHeader: true
     property bool isActiveMessage: false
@@ -351,7 +350,8 @@ Control {
                     }
                     Loader {
                         id: linksLoader
-                        active: !root.editMode && root.hasLinks
+                        Layout.fillWidth: true
+                        active: !root.editMode && root.linkPreviewModel.count > 0
                         visible: active
                     }
                     Loader {

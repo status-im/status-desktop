@@ -2,6 +2,7 @@
 
 import json, strutils
 import ../../../common/types
+import link_preview
 
 include ../../../common/json_utils
 
@@ -112,6 +113,7 @@ type MessageDto* = object
   messageType*: int
   contactRequestState*: int
   links*: seq[string]
+  linkPreviews*: seq[LinkPreview]
   editedAt*: int
   deleted*: bool
   deletedForMe*: bool
@@ -258,6 +260,11 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
     for link in linksArr:
       result.links.add(link.getStr)
 
+  var linkPreviewsArr: JsonNode
+  if jsonObj.getProp("linkPreviews", linkPreviewsArr):
+    for element in linkPreviewsArr.getElems():
+      result.linkPreviews.add(element.toLinkPreview())
+      
   var parsedTextArr: JsonNode
   if(jsonObj.getProp("parsedText", parsedTextArr) and parsedTextArr.kind == JArray):
     for pTextObj in parsedTextArr:
