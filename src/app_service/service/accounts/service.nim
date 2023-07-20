@@ -27,7 +27,6 @@ logScope:
 
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET, PATH_ENCRYPTION]
 const ACCOUNT_ALREADY_EXISTS_ERROR* =  "account already exists"
-const output_csv {.booldefine.} = false
 const KDF_ITERATIONS* {.intdefine.} = 256_000
 const DEFAULT_COLORID_FOR_DEFAULT_WALLET_ACCOUNT = "primary" # to match `CustomizationColor` on the go side
 
@@ -68,7 +67,6 @@ QtObject:
     tmpHashedPassword: string
     tmpThumbnailImage: string
     tmpLargeImage: string
-    tmpNodeCfg: JsonNode
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -309,7 +307,7 @@ QtObject:
       if(self.importedAccount.id == accountId):
         return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName)
 
-  proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
+  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
     let fleet = Fleet.StatusProd
     let dnsDiscoveryURL = @["enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.nodes.status.im"]
 
@@ -340,8 +338,15 @@ QtObject:
       result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
       result["Rendezvous"] = newJBool(false)
 
+    # Source the connection port from the environment for debugging or if default port not accessible
+    if existsEnv("STATUS_PORT"):
+      let wV1Port = $getEnv("STATUS_PORT")
+      # Waku V1 config
+      result["ListenAddr"] = newJString("0.0.0.0:" & wV1Port)
+
     result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
     result["RootDataDir"] = newJString(main_constants.STATUSGODIR)
+    result["ProcessBackedupMessages"] = newJBool(recoverAccount)
 
   proc setLocalAccountSettingsFile(self: Service) =
     if(main_constants.IS_MACOS and self.getLoggedInAccount.isValid()):
@@ -361,14 +366,14 @@ QtObject:
       if not accountData.isNil:
         accountData["keycard-pairing"] = kcDataObj{"key"}
 
-  proc setupAccount*(self: Service, accountId, password, displayName: string): string =
+  proc setupAccount*(self: Service, accountId, password, displayName: string, recoverAccount: bool = false): string =
     try:
       let installationId = $genUUID()
       var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
       self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr) # must be called before `getDefaultNodeConfig`
       let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
       var settingsJson = self.getAccountSettings(accountId, installationId, displayName)
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId)
+      let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
 
       if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
         nodeConfigJson.isNil):
@@ -395,7 +400,8 @@ QtObject:
       error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
       return e.msg
 
-  proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool) =
+  proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent, displayName: string, useImportedAcc: bool,
+    recoverAccount: bool = false) =
     try:
       var keyUid = keycardData.keyUid
       var address = keycardData.masterKey.address
@@ -434,7 +440,7 @@ QtObject:
       }
 
       self.setKeyStoreDir(keyUid)
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId)
+      let nodeConfigJson = self.getDefaultNodeConfig(installationId, recoverAccount)
       let subaccountDataJson = %* [
         {
           "public-key": walletPublicKey,
@@ -606,9 +612,16 @@ QtObject:
     except Exception as e:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
-  proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string, nodeCfg: JsonNode) =
+  proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
+    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
     let response = status_account.login(
-      account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage, largeImage, $nodeCfg
+      account.name,
+      account.keyUid,
+      account.kdfIterations,
+      hashedPassword,
+      thumbnailImage,
+      largeImage,
+      $nodeConfigJson
     )
     if response.result{"error"}.getStr != "":
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: response.result{"error"}.getStr))
@@ -636,61 +649,6 @@ QtObject:
         }, hashedPassword, main_constants.ROOTKEYSTOREDIR, keyStoreDir)
 
       self.setKeyStoreDir(account.keyUid)
-      # This is moved from `status-lib` here
-      # TODO:
-      # If you added a new value in the nodeconfig in status-go, old accounts will not have this value, since the node config
-      # is stored in the database, and it's not easy to migrate using .sql
-      # While this is fixed, you can add here any missing attribute on the node config, and it will be merged with whatever
-      # the account has in the db
-      var nodeCfg = %* {
-        "KeyStoreDir": self.keyStoreDir.replace(main_constants.STATUSGODIR, ""),
-        "ShhextConfig": %* {
-          "BandwidthStatsEnabled": true
-        },
-        "Web3ProviderConfig": %* {
-          "Enabled": true
-        },
-        "EnsConfig": %* {
-          "Enabled": true
-        },
-        "WalletConfig": {
-          "Enabled": true,
-          "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED,
-          "AlchemyAPIKeys": %* {
-            "42161": ALCHEMY_ARBITRUM_MAINNET_TOKEN_RESOLVED,
-            "421613": ALCHEMY_ARBITRUM_GOERLI_TOKEN_RESOLVED,
-            "10": ALCHEMY_OPTIMISM_MAINNET_TOKEN_RESOLVED,
-            "420": ALCHEMY_OPTIMISM_GOERLI_TOKEN_RESOLVED
-          },
-          "InfuraAPIKey": INFURA_TOKEN_RESOLVED,
-          "InfuraAPIKeySecret": INFURA_TOKEN_SECRET_RESOLVED,
-          "LoadAllTransfers": true
-        },
-        "TorrentConfig": {
-          "Enabled": false,
-          "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
-          "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR,
-          "Port": TORRENT_CONFIG_PORT
-        },
-        "Networks": NETWORKS,
-        "OutputMessageCSVEnabled": output_csv
-      }
-
-      # Source the connection port from the environment for debugging or if default port not accessible
-      if existsEnv("STATUS_PORT"):
-        let wV1Port = $getEnv("STATUS_PORT")
-        # Waku V1 config
-        nodeCfg["ListenAddr"] = newJString("0.0.0.0:" & wV1Port)
-
-      if TEST_PEER_ENR != "":
-        nodeCfg["Rendezvous"] = newJBool(false)
-        nodeCfg["ClusterConfig"] = %* {
-          "BootNodes": @[TEST_PEER_ENR],
-          "TrustedMailServers": @[TEST_PEER_ENR],
-          "StaticNodes": @[TEST_PEER_ENR],
-          "RendezvousNodes": @[],
-          "DiscV5BootstrapNodes": @[]
-        }
 
       let isOldHashPassword = self.verifyDatabasePassword(account.keyUid, hashedPasswordToUpperCase(hashedPassword))
       if isOldHashPassword:
@@ -699,7 +657,6 @@ QtObject:
         self.tmpHashedPassword = hashedPassword
         self.tmpThumbnailImage = thumbnailImage
         self.tmpLargeImage = largeImage
-        self.tmpNodeCfg = nodeCfg
 
         # Start a 1 second timer for the loading screen to appear
         let arg = TimerTaskArg(
@@ -711,7 +668,7 @@ QtObject:
         self.threadpool.start(arg)
         return
 
-      self.doLogin(account, hashedPassword, thumbnailImage, largeImage, nodeCfg)
+      self.doLogin(account, hashedPassword, thumbnailImage, largeImage)
     except Exception as e:
       error "error: ", procName="login", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_LOGIN_ERROR, LoginErrorArgs(error: e.msg))
@@ -722,14 +679,13 @@ QtObject:
     discard status_privacy.changeDatabaseHashedPassword(self.tmpAccount.keyUid, oldHashedPassword, self.tmpHashedPassword)
 
     # Normal login after reencryption
-    self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage, self.tmpNodeCfg)
+    self.doLogin(self.tmpAccount, self.tmpHashedPassword, self.tmpThumbnailImage, self.tmpLargeImage)
 
     # Clear out the temp properties
     self.tmpAccount = AccountDto()
     self.tmpHashedPassword = ""
     self.tmpThumbnailImage = ""
     self.tmpLargeImage = ""
-    self.tmpNodeCfg = JsonNode()
 
   proc loginAccountKeycard*(self: Service, accToBeLoggedIn: AccountDto, keycardData: KeycardEvent): string =
     try:
@@ -739,9 +695,12 @@ QtObject:
         "key-uid": accToBeLoggedIn.keyUid,
       }
 
+      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
+
       let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey,
         keycardData.encryptionKey.publicKey,
-        accountDataJson)
+        accountDataJson,
+        nodeConfigJson)
 
       var error = "response doesn't contain \"error\""
       if(response.result.contains("error")):

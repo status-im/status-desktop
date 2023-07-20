@@ -215,7 +215,7 @@ QtObject:
 
   proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string): string =
     let installationId = $genUUID()
-    let nodeConfigJson = self.accountsService.getDefaultNodeConfig(installationId)
+    let nodeConfigJson = self.accountsService.getDefaultNodeConfig(installationId, recoverAccount = false)
     let configJSON = %* {
       "receiverConfig": %* {
         "keystorePath": main_constants.ROOTKEYSTOREDIR,
