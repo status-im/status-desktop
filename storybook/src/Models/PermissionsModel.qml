@@ -504,10 +504,12 @@ QtObject {
     function createChannelsModel1() {
         return [
                     {
-                        key: "_welcome"
+                        key: "_welcome",
+                        channelName: "Intro/welcome channel"
                     },
                     {
-                        key: "_general"
+                        key: "_general",
+                        channelName: "General"
                     }
                 ]
     }
@@ -517,6 +519,11 @@ QtObject {
     }
 
     function createChannelsModel3() {
-        return [{ key: "_vip" } ]
+        return [
+                    {
+                        key: "_vip",
+                        channelName: "Club VIP"
+                    }
+                ]
     }
 }

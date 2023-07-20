@@ -4,6 +4,8 @@
 #include <QDebug>
 
 #include <set>
+#include <vector>
+#include <algorithm>
 
 namespace {
 int roleByName(QAbstractItemModel* model, const QString &roleName)
@@ -61,8 +63,7 @@ QStringList PermissionUtilsInternal::getUniquePermissionTokenKeys(QAbstractItemM
     return {result.cbegin(), result.cend()};
 }
 
-// TODO return a QVariantMap (https://github.com/status-im/status-desktop/issues/11481) with key->channelName
-QStringList PermissionUtilsInternal::getUniquePermissionChannels(QAbstractItemModel* model, const QList<int> &permissionTypes) const
+QJsonArray PermissionUtilsInternal::getUniquePermissionChannels(QAbstractItemModel* model, const QList<int> &permissionTypes) const
 {
     if (!model)
         return {};
@@ -75,7 +76,7 @@ QStringList PermissionUtilsInternal::getUniquePermissionChannels(QAbstractItemMo
 
     const auto permissionTypeRole = roleByName(model, QStringLiteral("permissionType"));
 
-    std::set<QString> result; // unique, sorted by default
+    std::vector<std::pair<QString,QString>> tmpRes; // key,channelName
 
     const auto permissionsCount = model->rowCount();
     for (int i = 0; i < permissionsCount; i++) {
@@ -96,14 +97,30 @@ QStringList PermissionUtilsInternal::getUniquePermissionChannels(QAbstractItemMo
             const auto channelItemsCount = channelItems->rowCount();
             for (int j = 0; j < channelItemsCount; j++) {
                 const auto keyRole = roleByName(channelItems, QStringLiteral("key"));
+                const auto nameRole = roleByName(channelItems, QStringLiteral("channelName"));
                 if (keyRole == -1) {
                     qWarning() << Q_FUNC_INFO << "Requested roleName 'key' not found!";
                     continue;
                 }
-                result.insert(channelItems->data(channelItems->index(j, 0), keyRole).toString());
+                tmpRes.emplace_back(channelItems->data(channelItems->index(j, 0), keyRole).toString(),
+                                    channelItems->data(channelItems->index(j, 0), nameRole).toString());
             }
         }
     }
 
-    return {result.cbegin(), result.cend()};
+    // sort by value (channel name)
+    std::sort(tmpRes.begin(), tmpRes.end(), [](const auto& lhs, const auto& rhs) {
+        return lhs.second.localeAwareCompare(rhs.second) < 0;
+    });
+
+    // remove dupes
+    tmpRes.erase(std::unique(tmpRes.begin(), tmpRes.end()), tmpRes.end());
+
+    // construct the (sorted) result
+    QJsonArray result;
+    std::transform(tmpRes.cbegin(), tmpRes.cend(), std::back_inserter(result), [](const auto& channel) -> QJsonArray {
+        return {channel.first, channel.second};
+    });
+
+    return result;
 }
