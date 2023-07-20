@@ -3,6 +3,7 @@
 #include <QAbstractItemModel>
 #include <QDebug>
 
+
 ModelUtilsInternal::ModelUtilsInternal(QObject* parent)
     : QObject(parent)
 {
@@ -45,7 +46,10 @@ QVariantMap ModelUtilsInternal::get(QAbstractItemModel *model, int row) const
 QVariant ModelUtilsInternal::get(QAbstractItemModel *model,
                                  int row, const QString &roleName) const
 {
-    return model->data(model->index(row, 0), roleByName(model, roleName));
+    if (auto role = roleByName(model, roleName); role != -1)
+        return model->data(model->index(row, 0), roleByName(model, roleName));
+
+    return {};
 }
 
 bool ModelUtilsInternal::contains(QAbstractItemModel* model,
