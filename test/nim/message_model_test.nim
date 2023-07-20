@@ -35,6 +35,7 @@ proc createTestMessageItem(id: string, clock: int64): Item =
     sticker = "",
     stickerPack = -1,
     links = @[],
+    linkPreviews = @[],
     transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
     mentionedUsersPks = @[],
     senderTrustStatus = TrustStatus.Unknown,
