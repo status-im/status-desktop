@@ -678,6 +678,7 @@ Item {
     TransactionAddressMenu {
         id: addressMenu
 
+        areTestNetworksEnabled: WalletStores.RootStore.areTestNetworksEnabled
         contactsStore: root.contactsStore
         onOpenSendModal: (address) => root.sendModal.open(address)
     }

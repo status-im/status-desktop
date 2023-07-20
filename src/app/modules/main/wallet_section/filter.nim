@@ -46,7 +46,6 @@ proc setAddress*(self: Filter, address: string) =
   self.addresses = @[address]
 
 proc removeAddress*(self: Filter, address: string) =
-  self.allAddresses = false
   if len(self.addresses) == 1 and self.addresses[0] == address:
     let accounts = self.controller.getWalletAccounts()
     self.addresses = @[accounts[0].address]

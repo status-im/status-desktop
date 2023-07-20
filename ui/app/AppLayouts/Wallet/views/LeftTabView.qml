@@ -207,8 +207,10 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.topMargin: Style.current.halfPadding
-
-            // ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            currentIndex: -1
+            highlightRangeMode: ListView.ApplyRange
+            preferredHighlightBegin: 0
+            preferredHighlightEnd: height - (footerOverlayed ? footerItem.height : 0)
 
             readonly property Item firstItem: count > 0 ? itemAtIndex(0) : null
 
@@ -217,6 +219,10 @@ Rectangle {
                 readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
                 width: ListView.view.width - Style.current.padding * 2
                 highlighted: root.currentAddress.toLowerCase() === model.address.toLowerCase()
+                onHighlightedChanged: {
+                    if (highlighted)
+                        ListView.view.currentIndex = index
+                }
                 anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
                 title: model.name
                 subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
@@ -281,6 +287,7 @@ Rectangle {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             root.showSavedAddresses = false
+                            walletAccountsListView.currentIndex = -1
                             root.selectAllAccounts()
                         }
                         hoverEnabled: true
@@ -406,10 +413,8 @@ Rectangle {
 
             model: SortFilterProxyModel {
                 sourceModel: RootStore.accounts
-
                 sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
             }
-            
         }
     }
 }

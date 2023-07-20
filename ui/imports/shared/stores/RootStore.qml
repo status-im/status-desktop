@@ -40,7 +40,8 @@ QtObject {
     property var historyTransactions: Global.appIsReady? walletSection.activityController.model : null
     readonly property bool loadingHistoryTransactions: Global.appIsReady && walletSection.activityController.status.loadingData
     readonly property bool newDataAvailable: Global.appIsReady && walletSection.activityController.status.newDataAvailable
-    readonly property bool isTransactionFilterDirty: Global.appIsReady && walletSection.activityController.status.isFilterDirty
+    readonly property var transactionActivityStatus: Global.appIsReady ? walletSection.activityController.status : null
+
     property bool isNonArchivalNode: history ? history.isNonArchivalNode
                                              : false
     property var marketValueStore: TokenMarketValuesStore{}
@@ -188,7 +189,7 @@ QtObject {
     }
 
     function updateTransactionFilter() {
-        if (isTransactionFilterDirty)
+        if (transactionActivityStatus.isFilterDirty)
             walletSection.activityController.updateFilter()
     }
 

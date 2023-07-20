@@ -828,9 +828,6 @@ QtObject {
         readonly property string mainnet: "eth"
         readonly property string arbiscan: "arb"
         readonly property string optimism: "opt"
-        readonly property string goerliMainnet: "goEth"
-        readonly property string goerliArbiscan: "goArb"
-        readonly property string goerliOptimism: "goOpt"
     }
 
     readonly property QtObject networkExplorerLinks: QtObject {
@@ -840,6 +837,9 @@ QtObject {
         readonly property string goerliEtherscan: "https://goerli.etherscan.io"
         readonly property string goerliArbiscan: "https://goerli.arbiscan.io"
         readonly property string goerliOptimistic: "https://goerli-optimism.etherscan.io"
+
+        readonly property string addressPath: "address"
+        readonly property string txPath: "tx"
     }
 
     readonly property string api_request: "api-request"
