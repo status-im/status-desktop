@@ -3,11 +3,16 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import Storybook 1.0
+import Models 1.0
 
 import AppLayouts.Communities.popups 1.0
 
 SplitView {
     Logs { id: logs }
+
+    FeesModel {
+        id: feesModel
+    }
 
     SplitView {
         orientation: Qt.Vertical
@@ -18,6 +23,7 @@ SplitView {
 
             SplitView.fillWidth: true
             SplitView.fillHeight: true
+            padding: 0
 
             PopupBackground {
                 anchors.fill: parent
@@ -33,37 +39,25 @@ SplitView {
             SignMultiTokenTransactionsPopup {
                 id: dialog
 
-                model: ListModel {
-                    id: feesModel
+                model: LimitProxyModel {
+                    id: filteredModel
 
-                    ListElement {
-                        account: "My Account 1"
-                        network: "Optimism"
-                        symbol: "TAT"
-                        amount: 2
-                        feeText: "0.0015 ($75.43)"
-                    }
-                    ListElement {
-                        account: "My Account 2"
-                        network: "Arbitrum"
-                        symbol: "SNT"
-                        amount: 34
-                        feeText: "0.0085 ETH ($175.43)"
-                    }
+                    sourceModel: feesModel
+                    limit: countSlider.value
                 }
 
                 closePolicy: Popup.NoAutoClose
                 visible: true
                 modal: false
                 destroyOnClose: false
+                parent: pane
+                anchors.centerIn: parent
 
-                title: `Sign transaction - Airdrop ${model.count} token(s) to 32 recipients`
+                title: `Sign transaction`
 
-                isFeeLoading: loadingSwitch.checked
-                showSummary: showSummarySwitch.checked
-
+                accountName: accountTextField.text
                 errorText: errorTextField.text
-                totalFeeText: "0.01 ETH ($265.43)"
+                totalFeeText: totalCheckBox.checked ? totalFeeTextField.text : ""
 
                 onSignTransactionClicked: logs.logEvent("SignMultiTokenTransactionsPopup::onSignTransactionClicked")
                 onCancelClicked: logs.logEvent("SignMultiTokenTransactionsPopup::onCancelClicked")
@@ -101,25 +95,72 @@ SplitView {
                 text: ""
             }
 
-            SpinBox {
-                id: recipientsCountSpinBox
+            Label {
+                Layout.fillWidth: true
 
-                from: 1
-                to: 1000
+                wrapMode: Text.Wrap
+                text: "Account"
             }
 
-            Switch {
-                id: loadingSwitch
+            TextField {
+                id: accountTextField
 
-                text: "Is fee loading"
-                checked: false
+                Layout.fillWidth: true
+
+                text: "My Account"
             }
 
-            Switch {
-                id: showSummarySwitch
+            GroupBox {
+                Layout.fillWidth: true
 
-                text: "Is summary visible"
-                checked: true
+                ColumnLayout {
+                    anchors.fill: parent
+
+                    Label {
+                        Layout.fillWidth: true
+
+                        text: "Number of items in the model"
+                    }
+
+                    RowLayout {
+                        Slider {
+                            id: countSlider
+
+                            from: 1
+                            to: feesModel.count
+                            value: to
+                            stepSize: 1
+                            snapMode: Slider.SnapAlways
+                        }
+
+                        Label {
+                            text: countSlider.value
+                        }
+                    }
+                }
+            }
+
+            GroupBox {
+                Layout.fillWidth: true
+
+                ColumnLayout {
+                    anchors.fill: parent
+
+                    CheckBox {
+                        id: totalCheckBox
+
+                        checked: true
+                        text: "Total fee"
+                    }
+
+                    TextField {
+                        id: totalFeeTextField
+
+                        Layout.fillWidth: true
+
+                        text: "0.01 ETH ($265.43)"
+                    }
+                }
             }
 
             Item {
