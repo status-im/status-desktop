@@ -34,7 +34,7 @@ StatusDropdown {
         property var keys: []
 
         delegate: QtObject {
-            readonly property string key: model.pubKey
+            readonly property string key: model.airdropAddress
         }
 
         readonly property bool allSelected:
@@ -194,10 +194,10 @@ StatusDropdown {
                 onClicked: {
                     const selectedKeysCopy = new Set([...root.selectedKeys])
 
-                    if (root.selectedKeys.has(model.pubKey))
-                        selectedKeysCopy.delete(model.pubKey)
+                    if (root.selectedKeys.has(model.airdropAddress))
+                        selectedKeysCopy.delete(model.airdropAddress)
                     else
-                        selectedKeysCopy.add(model.pubKey)
+                        selectedKeysCopy.add(model.airdropAddress)
 
                     root.selectedKeys = selectedKeysCopy
                 }
@@ -207,7 +207,7 @@ StatusDropdown {
                         id: contactCheckbox
 
                         size: StatusCheckBox.Size.Small
-                        checked: root.selectedKeys.has(model.pubKey)
+                        checked: root.selectedKeys.has(model.airdropAddress)
 
                         MouseArea {
                             anchors.fill: parent

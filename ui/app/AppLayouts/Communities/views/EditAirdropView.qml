@@ -78,11 +78,9 @@ StatusScrollView {
                                           airdropRecipientsSelector.count > 0 &&
                                           airdropRecipientsSelector.valid
 
-    signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys,
-                          string feeAccountAddress)
+    signal airdropClicked(var airdropTokens, var addresses, string feeAccountAddress)
 
-    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses,
-                                string feeAccountAddress)
+    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses, string feeAccountAddress)
 
     signal navigateToMintTokenSettings(bool isAssetType)
 
@@ -234,11 +232,13 @@ StatusScrollView {
             }))
             const addressesArray = ModelUtils.modelToArray(
                                      addresses, ["address"]).map(e => e.address)
+            
+            const airdropAddresses = [...selectedKeysFilter.keys]
 
             const accountItem = ModelUtils.get(root.accountsModel,
                                                feesBox.accountIndex)
 
-            airdropFeesRequested(contractKeysAndAmounts, addressesArray,
+            airdropFeesRequested(contractKeysAndAmounts, addressesArray.concat(airdropAddresses),
                                  accountItem.address)
         }
 
@@ -466,14 +466,14 @@ StatusScrollView {
 
                     property var keys: new Set()
 
-                    expression: keys.has(model.pubKey)
+                    expression: keys.has(model.airdropAddress) && model.airdropAddress !== ""
                 }
             }
 
             onRemoveMemberRequested: {
-                const pubKey = ModelUtils.get(membersModel, index, "pubKey")
+                const airdropAddress = ModelUtils.get(membersModel, index, "airdropAddress")
 
-                selectedKeysFilter.keys.delete(pubKey)
+                selectedKeysFilter.keys.delete(airdropAddress)
                 selectedKeysFilter.keys = new Set([...selectedKeysFilter.keys])
             }
 
@@ -572,6 +572,9 @@ StatusScrollView {
                                          || model.localNickname.toLowerCase().includes(filter)
                                          || model.pubKey.toLowerCase().includes(filter)
                             }
+                        },
+                        ExpressionFilter {
+                            expression: !!model.airdropAddress
                         }
                     ]
                 }
@@ -667,9 +670,9 @@ StatusScrollView {
                 const addresses_ = ModelUtils.modelToArray(
                                     addresses, ["address"]).map(e => e.address)
 
-                const pubKeys = [...selectedKeysFilter.keys]
+                const airdropAddresses = [...selectedKeysFilter.keys]
 
-                root.airdropClicked(airdropTokens, addresses_, pubKeys,
+                root.airdropClicked(airdropTokens, addresses_.concat(airdropAddresses),
                                     accountAddress)
             }
         }
