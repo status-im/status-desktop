@@ -2,7 +2,7 @@ import NimQml
 import ./io_interface
 import ./gif_column_model
 import ./preserved_properties
-import ./link_preview_model as link_preview_model
+import ../../../../../../app/modules/shared_models/link_preview_model as link_preview_model
 import ../../../../../../app_service/service/gif/dto
 
 QtObject:

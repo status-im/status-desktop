@@ -2,7 +2,7 @@ import NimQml, Tables, json, sets, algorithm, sequtils, strutils, strformat, sug
 
 import message_item, message_reaction_item, message_transaction_parameters_item
 
-import ../../../app_service/service/message/dto/message# as message_dto
+import ../../../app_service/service/message/dto/message
 import ../../../app_service/service/contacts/dto/contact_details
 
 type
@@ -43,6 +43,7 @@ type
     EditMode
     IsEdited
     Links
+    LinkPreviewModel
     TransactionParameters
     MentionedUsersPks
     SenderTrustStatus
@@ -147,6 +148,7 @@ QtObject:
       ModelRole.EditMode.int: "editMode",
       ModelRole.IsEdited.int: "isEdited",
       ModelRole.Links.int: "links",
+      ModelRole.LinkPreviewModel.int: "linkPreviewModel",
       ModelRole.TransactionParameters.int: "transactionParameters",
       ModelRole.MentionedUsersPks.int: "mentionedUsersPks",
       ModelRole.SenderTrustStatus.int: "senderTrustStatus",
@@ -292,6 +294,8 @@ QtObject:
       result = newQVariant(item.isEdited)
     of ModelRole.Links:
       result = newQVariant(item.links.join(" "))
+    of ModelRole.LinkPreviewModel:
+      result = newQVariant(item.linkPreviewModel)
     of ModelRole.TransactionParameters:
       result = newQVariant($(%*{
         "id": item.transactionParameters.id,

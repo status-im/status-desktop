@@ -170,8 +170,11 @@ Item {
         }
 
         function onOpenLink(link: string) {
+            console.warn("opening external url without asking user")
+
             // Qt sometimes inserts random HTML tags; and this will break on invalid URL inside QDesktopServices::openUrl(link)
             link = appMain.rootStore.plainText(link)
+
             if (appMain.rootStore.showBrowserSelector) {
                 popups.openChooseBrowserPopup(link)
             } else {

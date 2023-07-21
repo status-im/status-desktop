@@ -61,6 +61,7 @@ Loader {
     property string messagePinnedBy: ""
     property var reactionsModel: []
     property string linkUrls: ""
+    property var linkPreviewModel
     property string messageAttachments: ""
     property var transactionParams
 
@@ -741,22 +742,15 @@ Loader {
                     }
                 }
 
-                hasLinks: !!root.linkUrls
                 linksComponent: Component {
                     LinksMessageView {
                         id: linksMessageView
-                        links: root.linkUrls
+                        linkPreviewModel: root.linkPreviewModel
                         messageStore: root.messageStore
                         store: root.rootStore
                         isCurrentUser: root.amISender
                         onImageClicked: (image, mouse, imageSource) => {
                             d.onImageClicked(image, mouse, imageSource)
-                        }
-                        onLinksLoaded: {
-                            // If there is only one image and no links, hide the message
-                            // Handled in linksLoaded signal to evaulate it only once
-                            d.hideMessage = linksMessageView.unfurledImagesCount === 1 && linksMessageView.unfurledLinksCount === 0 
-                                            && `<p>${root.linkUrls}</p>` === root.messageText
                         }
                     }
                 }

@@ -117,6 +117,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, communityId: st
     message.sticker.url,
     message.sticker.pack,
     message.links,
+    message.linkPreviews,
     newTransactionParametersItem("","","","","","",-1,""),
     message.mentionedUsersPks,
     contactDetails.dto.trustStatus,

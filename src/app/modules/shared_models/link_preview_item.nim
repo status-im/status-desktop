@@ -1,5 +1,5 @@
 import strformat
-import ../../../../../../app_service/service/message/dto/link_preview
+import ../../../app_service/service/message/dto/link_preview
 
 type
   Item* = ref object
