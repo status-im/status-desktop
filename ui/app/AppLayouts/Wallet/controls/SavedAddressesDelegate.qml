@@ -174,7 +174,7 @@ StatusListItem {
                 if (root.areTestNetworksEnabled) {
                     baseUrl = Constants.networkExplorerLinks.goerliEtherscan
                 }
-                Global.openLink("%1/address/%2".arg(baseUrl).arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                Global.openLink("%1/%2/%3".arg(baseUrl).arg(Constants.networkExplorerLinks.addressPath).arg(d.visibleAddress ? d.visibleAddress : root.ens))
             }
         }
 
@@ -187,7 +187,7 @@ StatusListItem {
                 if (root.areTestNetworksEnabled) {
                     baseUrl = Constants.networkExplorerLinks.goerliArbiscan
                 }
-                Global.openLink("%1/address/%2".arg(baseUrl).arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                Global.openLink("%1/%2/%3".arg(baseUrl).arg(Constants.networkExplorerLinks.addressPath).arg(d.visibleAddress ? d.visibleAddress : root.ens))
             }
         }
         StatusAction {
@@ -199,7 +199,7 @@ StatusListItem {
                 if (root.areTestNetworksEnabled) {
                     baseUrl = Constants.networkExplorerLinks.goerliOptimistic
                 }
-                Global.openLink("%1/address/%2".arg(baseUrl).arg(d.visibleAddress ? d.visibleAddress : root.ens))
+                Global.openLink("%1/%2/%3".arg(baseUrl).arg(Constants.networkExplorerLinks.addressPath).arg(d.visibleAddress ? d.visibleAddress : root.ens))
             }
         }
         StatusMenuSeparator { }

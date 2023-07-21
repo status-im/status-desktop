@@ -31,15 +31,15 @@ ColumnLayout {
     signal launchTransactionDetail(var transaction)
 
     onVisibleChanged: {
-        if (visible && RootStore.isTransactionFilterDirty) {
+        if (visible && RootStore.transactionActivityStatus.isFilterDirty) {
             WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
         }
     }
 
     Connections {
-        target: RootStore
+        target: RootStore.transactionActivityStatus
         enabled: root.visible
-        function onIsTransactionFilterDirtyChanged() {
+        function onIsFilterDirtyChanged() {
             RootStore.updateTransactionFilter()
         }
     }
