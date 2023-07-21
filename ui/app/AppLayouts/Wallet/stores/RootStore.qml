@@ -88,7 +88,6 @@ QtObject {
 
     property var layer1Networks: networksModule.layer1
     property var layer2Networks: networksModule.layer2
-    property var testNetworks: networksModule.test
     property var enabledNetworks: networksModule.enabled
     property var allNetworks: networksModule.all
     onAllNetworksChanged: {
@@ -233,5 +232,45 @@ QtObject {
 
     function toggleWatchOnlyAccounts() {
         walletSection.toggleWatchOnlyAccounts()
+    }
+
+    function getAllNetworksChainIds() {
+        return networksModule.getAllNetworksChainIds()
+    }
+
+    function getNetworkShortNames(chainIds) {
+       return networksModule.getNetworkShortNames(chainIds)
+    }
+
+    function updateWalletAccountPreferredChains(address, preferredChainIds) {
+        if(areTestNetworksEnabled) {
+            walletSectionAccounts.updateWalletAccountTestPreferredChains(address, preferredChainIds)
+        }
+        else {
+            walletSectionAccounts.updateWalletAccountProdPreferredChains(address, preferredChainIds)
+        }
+    }
+
+    function processPreferredSharingNetworkToggle(preferredSharingNetworks, toggledNetwork) {
+        let prefChains = preferredSharingNetworks
+        if(prefChains.length === allNetworks.count) {
+            prefChains = [toggledNetwork.chainId.toString()]
+        }
+        else if(!prefChains.includes(toggledNetwork.chainId.toString())) {
+            prefChains.push(toggledNetwork.chainId.toString())
+        }
+        else {
+            if(prefChains.length === 1) {
+                prefChains = getAllNetworksChainIds().split(":")
+            }
+            else {
+                for(var i = 0; i < prefChains.length;i++) {
+                    if(prefChains[i] === toggledNetwork.chainId.toString()) {
+                        prefChains.splice(i, 1)
+                    }
+                }
+            }
+        }
+        return prefChains
     }
 }

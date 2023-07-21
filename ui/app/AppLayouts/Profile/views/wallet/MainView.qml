@@ -101,7 +101,7 @@ Column {
             delegate: WalletKeyPairDelegate {
                 width: parent.width
                 keyPair: model.keyPair
-                chainShortNames: walletStore.getAllNetworksSupportedPrefix()
+                getNetworkShortNames: walletStore.getNetworkShortNames
                 userProfilePublicKey: walletStore.userProfilePublicKey
                 includeWatchOnlyAccount: walletStore.includeWatchOnlyAccount
                 onGoToAccountView: root.goToAccountView(account, keyPair)

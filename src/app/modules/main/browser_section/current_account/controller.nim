@@ -56,3 +56,6 @@ proc getCurrentCurrency*(self: Controller): string =
 
 proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
+
+proc areTestNetworksEnabled*(self: Controller): bool =
+  return self.walletAccountService.areTestNetworksEnabled()

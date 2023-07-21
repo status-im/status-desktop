@@ -75,10 +75,10 @@ QtObject:
         return self.items[i]
     return nil
 
-  proc onUpdatedAccount*(self: KeyPairModel, keyUid, address, name, colorId, emoji: string) =
+  proc onUpdatedAccount*(self: KeyPairModel, keyUid, address, name, colorId, emoji, prodPreferredChainIds, testPreferredChainIds: string) =
     for item in self.items:
       if keyUid == item.getKeyUid():
-        item.getAccountsModel().updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
+        item.getAccountsModel().updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji, prodPreferredChainIds, testPreferredChainIds)
         break
 
   proc keypairNameExists*(self: KeyPairModel, name: string): bool =

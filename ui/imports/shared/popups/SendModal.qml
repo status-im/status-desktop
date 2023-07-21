@@ -157,7 +157,7 @@ StatusDialog {
             sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
         }
         selectedAccount: !!popup.selectedAccount ? popup.selectedAccount: {}
-        chainShortNames: store.getAllNetworksSupportedPrefix()
+        getNetworkShortNames: function(chainIds) {return store.getNetworkShortNames(chainIds)}
         onSelectedIndexChanged: store.switchSenderAccount(selectedIndex)
     }
 

@@ -140,7 +140,6 @@ Loader {
         id: myAccountRecipient
         WalletAccountListItem {
             implicitWidth: parent.width
-            chainShortNames: store.getAllNetworksSupportedPrefix()
             modelData: root.selectedRecipient
             radius: 8
             clearVisible: true
@@ -149,6 +148,7 @@ Loader {
             subTitle: {
                 if(!!modelData) {
                     let elidedAddress = StatusQUtils.Utils.elideText(modelData.address,6,4)
+                    let chainShortNames = store.getNetworkShortNames(modelData.preferredSharingChainIds)
                     return WalletUtils.colorizedChainPrefix(chainShortNames) + StatusQUtils.Utils.elideText(elidedAddress,6,4)
                 }
                 return ""

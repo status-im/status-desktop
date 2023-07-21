@@ -14,7 +14,7 @@ StatusComboBox {
     id: root
 
     property var selectedAccount
-    property string chainShortNames
+    property var getNetworkShortNames: function(chainIds){}
     property int selectedIndex: -1
 
     control.padding: 0
@@ -67,7 +67,7 @@ StatusComboBox {
     delegate: WalletAccountListItem {
         width: ListView.view.width
         modelData: model
-        chainShortNames: root.chainShortNames
+        getNetworkShortNames: root.getNetworkShortNames
         color: sensor.containsMouse || highlighted ?
                    Theme.palette.baseColor2 :
                    selectedAccount.name === model.name ? Theme.palette.statusListItem.highlightColor : "transparent"

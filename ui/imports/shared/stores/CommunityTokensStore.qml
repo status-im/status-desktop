@@ -9,7 +9,6 @@ QtObject {
     // Network selection properties:
     property var layer1Networks: networksModule.layer1
     property var layer2Networks: networksModule.layer2
-    property var testNetworks: networksModule.test
     property var enabledNetworks: networksModule.enabled
     property var allNetworks: networksModule.all
 

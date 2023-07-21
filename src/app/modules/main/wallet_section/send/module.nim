@@ -62,6 +62,7 @@ method refreshWalletAccounts*(self: Module) =
   let enabledChainIds = self.controller.getEnabledChainIds()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
   let chainIds = self.controller.getChainIds()
+  let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
 
   let items = walletAccounts.map(w => (block:
     let tokenFormats = collect(initTable()):
@@ -74,6 +75,7 @@ method refreshWalletAccounts*(self: Module) =
       currency,
       currencyFormat,
       tokenFormats,
+      areTestNetworksEnabled,
     )
   ))
 

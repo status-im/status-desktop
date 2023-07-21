@@ -99,7 +99,6 @@ type
     isChat*: bool
     tokens*: seq[WalletTokenDto]
     emoji*: string
-    relatedAccounts*: seq[WalletAccountDto]
     ens*: string
     assetsLoading*: bool
     hasBalanceCache*: bool
@@ -108,6 +107,8 @@ type
     operable*: string
     createdAt*: int
     position*: int
+    prodPreferredChainIDs*: string
+    testPreferredChainIDs*: string
 
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result = WalletAccountDto()
@@ -127,6 +128,8 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("operable", result.operable)
   discard jsonObj.getProp("createdAt", result.createdAt)
   discard jsonObj.getProp("position", result.position)
+  discard jsonObj.getProp("prodPreferredChainIds", result.prodPreferredChainIds)
+  discard jsonObj.getProp("testPreferredChainIds", result.testPreferredChainIds)
   result.assetsLoading = true
   result.hasBalanceCache = false
   result.hasMarketValuesCache = false
@@ -147,6 +150,8 @@ proc `$`*(self: WalletAccountDto): string =
     hasMarketValuesCache: {self.hasMarketValuesCache},
     removed: {self.removed}
     operable: {self.operable}
+    prodPreferredChainIds: {self.prodPreferredChainIds}
+    testPreferredChainIds: {self.testPreferredChainIds}
     ]"""
 
 proc getCurrencyBalance*(self: BalanceDto, currencyPrice: float64): float64 =

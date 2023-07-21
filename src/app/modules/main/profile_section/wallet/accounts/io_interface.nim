@@ -42,3 +42,9 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 
 method toggleIncludeWatchOnlyAccount*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method updateWalletAccountProdPreferredChains*(self: AccessInterface, address, preferredChainIds: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateWalletAccountTestPreferredChains*(self: AccessInterface, address, preferredChainIds: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

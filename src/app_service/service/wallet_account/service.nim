@@ -227,21 +227,7 @@ QtObject:
       error "error: ", errDesription
       return
 
-  proc setRelatedAccountsToAccount(self: Service, account: WalletAccountDto) =
-    let keypair = self.getKeypairByKeyUid(account.keyUid)
-    if keypair.isNil:
-      return
-    account.relatedAccounts = keypair.accounts
-
-  proc setRelatedAccountsForAllAccounts(self: Service, keyUid: string) =
-    for wAcc in self.walletAccounts.mvalues:
-      if wAcc.keyUid == keyUid:
-        self.setRelatedAccountsToAccount(wAcc)
-
-  proc storeAccount(self: Service, account: WalletAccountDto, updateRelatedAccounts = true) =
-    if updateRelatedAccounts:
-      # updating related accounts for already added accounts
-      self.setRelatedAccountsForAllAccounts(account.keyUid)
+  proc storeAccount(self: Service, account: WalletAccountDto) =
     # add new account to store
     self.walletAccounts[account.address] = account
 
@@ -342,7 +328,6 @@ QtObject:
       for account in accounts:
         let account = account # TODO https://github.com/nim-lang/Nim/issues/16740
         self.setEnsName(account)
-        self.setRelatedAccountsToAccount(account)
         self.storeAccount(account)
 
       self.buildAllTokens(self.getAddresses(), store = true)
@@ -426,7 +411,6 @@ QtObject:
       return
 
     self.setEnsName(newAccount)
-    self.setRelatedAccountsToAccount(newAccount)
     self.storeAccount(newAccount)
 
     self.buildAllTokens(@[newAccount.address], store = true)
@@ -438,8 +422,6 @@ QtObject:
       return
     let removedAcc = self.walletAccounts[address]
     self.walletAccounts.del(address)
-    # updating related accounts for other accounts
-    self.setRelatedAccountsForAllAccounts(removedAcc.keyUid)
     if notify:
       self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountArgs(account: removedAcc))
 
@@ -450,24 +432,28 @@ QtObject:
       if localAcc.isNil:
         continue
       localAcc.position = dbAcc.position
-      self.storeAccount(localAcc, updateRelatedAccounts = false)
+      self.storeAccount(localAcc)
 
   proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string,
-    positionUpdated: Option[bool] = none(bool), notify: bool = true) =
+    positionUpdated: Option[bool] = none(bool), prodPreferredChains: string = "", testPreferredChains: string = "", notify: bool = true) =
     if address.len > 0:
       if not self.walletAccountsContainsAddress(address):
         return
       var account = self.getAccountByAddress(address)
       if account.isNil:
         return
-      if name.len > 0 or colorId.len > 0 or emoji.len > 0:
+      if name.len > 0 or colorId.len > 0 or emoji.len > 0 or prodPreferredChains.len > 0 or testPreferredChains.len > 0:
         if name.len > 0 and name != account.name:
           account.name = name
         if colorId.len > 0 and colorId != account.colorId:
           account.colorId = colorId
         if emoji.len > 0 and emoji != account.emoji:
           account.emoji = emoji
-        self.storeAccount(account, updateRelatedAccounts = false)
+        if testPreferredChains.len > 0 and testPreferredChains != account.testPreferredChainIds:
+          account.testPreferredChainIds = testPreferredChains
+        if prodPreferredChains.len > 0 and prodPreferredChains != account.prodPreferredChainIds:
+          account.prodPreferredChainIds = prodPreferredChains
+        self.storeAccount(account)
         if notify:
           self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
     else:
@@ -594,11 +580,45 @@ QtObject:
     try:
       var account = self.getAccountByAddress(address)
       let response = status_go_accounts.updateAccount(accountName, account.address, account.path, account.publicKey,
-        account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat)
+        account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, account.testPreferredChainIds)
       if not response.error.isNil:
         error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
         return false
       self.updateAccountInLocalStoreAndNotify(address, accountName, colorId, emoji)
+      return true
+    except Exception as e:
+      error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
+    return false
+
+  proc updateWalletAccountProdPreferredChains*(self: Service, address, preferredChainIds: string): bool =
+    if not self.walletAccountsContainsAddress(address):
+      error "account's address is not among known addresses: ", address=address
+      return false
+    try:
+      var account = self.getAccountByAddress(address)
+      let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
+        account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, preferredChainIds, account.testPreferredChainIds)
+      if not response.error.isNil:
+        error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
+        return false
+      self.updateAccountInLocalStoreAndNotify(address, name ="", colorId = "", emoji = "", positionUpdated = none(bool), prodPreferredChains = preferredChainIds, testPreferredChains = "")
+      return true
+    except Exception as e:
+      error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
+    return false
+
+  proc updateWalletAccountTestPreferredChains*(self: Service, address, preferredChainIds: string): bool =
+    if not self.walletAccountsContainsAddress(address):
+      error "account's address is not among known addresses: ", address=address
+      return false
+    try:
+      var account = self.getAccountByAddress(address)
+      let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
+        account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, preferredChainIds)
+      if not response.error.isNil:
+        error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
+        return false
+      self.updateAccountInLocalStoreAndNotify(address, name ="", colorId = "", emoji = "", positionUpdated = none(bool), prodPreferredChains = "", testPreferredChains = preferredChainIds)
       return true
     except Exception as e:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
@@ -1000,7 +1020,7 @@ QtObject:
     else:
       if self.walletAccountsContainsAddress(account.address):
         self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji,
-          none(bool), notify)
+          none(bool), account.prodPreferredChainIDs, account.testPreferredChainIDs, notify)
       else:
         self.addNewAccountToLocalStoreAndNotify(notify)
 
@@ -1061,3 +1081,6 @@ proc getEnabledChainIds*(self: Service): seq[int] =
 
 proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
   return self.currencyService.getCurrencyFormat(symbol)
+
+proc areTestNetworksEnabled*(self: Service): bool =
+  return self.settingsService.areTestNetworksEnabled()

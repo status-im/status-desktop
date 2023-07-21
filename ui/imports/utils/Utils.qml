@@ -819,8 +819,7 @@ QtObject {
     }
 
     function getPathForDisplay(path) {
-        let letters = path.split("/").join(" / ")
-        return letters
+        return path.split("/").join(" / ")
     }
 
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this

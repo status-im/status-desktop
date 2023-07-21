@@ -14,20 +14,10 @@ import "../views"
 StatusDialog {
     id: root
 
-    modal: false
-    standardButtons: Dialog.NoButton
-
-    anchors.centerIn: undefined
-
-    padding: 4
-    width: 360
-    implicitHeight: Math.min(432, scrollView.contentHeight + root.padding * 2)
-
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-
     required property var layer1Networks
     required property var layer2Networks
-    property var testNetworks: null
+    property var preferredSharingNetworks: []
+    property bool preferredNetworksMode: false
 
     /// Grouped properties for single selection state. \c singleSelection.enabled is \c false by default
     /// \see SingleSelectionInfo
@@ -46,6 +36,17 @@ StatusDialog {
 
         property SingleSelectionInfo singleSelection: SingleSelectionInfo {}
     }
+
+    modal: false
+    standardButtons: Dialog.NoButton
+
+    anchors.centerIn: undefined
+
+    padding: 4
+    width: 360
+    implicitHeight: Math.min(432, scrollView.contentHeight + root.padding * 2)
+
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     background: Rectangle {
         radius: Style.current.radius
@@ -67,7 +68,8 @@ StatusDialog {
         anchors.fill: parent
         layer1Networks: root.layer1Networks
         layer2Networks: root.layer2Networks
-        testNetworks: root.testNetworks
+        preferredNetworksMode: root.preferredNetworksMode
+        preferredSharingNetworks: root.preferredSharingNetworks
         useEnabledRole: root.useEnabledRole
         singleSelection: d.singleSelection
         onToggleNetwork: {

@@ -9,7 +9,7 @@ QtObject {
     readonly property int arbitrumNet: 3
     readonly property int hermezNet: 4
     readonly property int testnetNet: 5
-    readonly property int customNet: 6
+    readonly property int customNet: 6   
 
     readonly property var layer1Networks: ListModel {
         function rowData(index, propName) {
@@ -262,5 +262,43 @@ QtObject {
                 isEnabled: false,
             }]
         )
+    }
+
+    readonly property var mainNetworks: ListModel {
+        Component.onCompleted: append([
+                   {
+                       chainId: 1,
+                       chainName: "Ethereum Mainnet",
+                       iconUrl: ModelsData.networks.ethereum,
+                       isActive: true,
+                       isEnabled: true,
+                       shortName: "ETH",
+                       chainColor: "blue",
+                       layer: 1,
+                       isTest: false
+                   },
+                   {
+                       chainId: 10,
+                       chainName: "Optimism",
+                       iconUrl: ModelsData.networks.optimism,
+                       isActive: false,
+                       isEnabled: true,
+                       shortName: "OPT",
+                       chainColor: "red",
+                       layer: 2,
+                       isTest: false
+                   },
+                   {
+                       chainId: 42161,
+                       chainName: "Arbitrum",
+                       iconUrl: ModelsData.networks.arbitrum,
+                       isActive: false,
+                       isEnabled: true,
+                       shortName: "ARB",
+                       chainColor: "purple",
+                       layer: 2,
+                       isTest: false
+                   }
+               ])
     }
 }

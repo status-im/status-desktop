@@ -17,12 +17,16 @@ QtObject:
     balance: CurrencyAmount
     balanceFetched: bool
     isDefaultAccount: bool
+    areTestNetworksEnabled: bool
+    prodPreferredChainIds: string
+    testPreferredChainIds: string
 
   proc delete*(self: KeyPairAccountItem) =
     self.QObject.delete
 
   proc newKeyPairAccountItem*(name = "", path = "", address = "", pubKey = "", emoji = "", colorId = "", icon = "",
-    balance = newCurrencyAmount(), balanceFetched = true, operability = wa_dto.AccountFullyOperable, isDefaultAccount = false): KeyPairAccountItem =
+    balance = newCurrencyAmount(), balanceFetched = true, operability = wa_dto.AccountFullyOperable,
+    isDefaultAccount = false, areTestNetworksEnabled =false, prodPreferredChainIds = "", testPreferredChainIds = ""): KeyPairAccountItem =
     new(result, delete)
     result.QObject.setup
     result.name = name
@@ -36,6 +40,9 @@ QtObject:
     result.balanceFetched = balanceFetched
     result.operability = operability
     result.isDefaultAccount = isDefaultAccount
+    result.areTestNetworksEnabled = areTestNetworksEnabled
+    result.prodPreferredChainIds = prodPreferredChainIds
+    result.testPreferredChainIds = testPreferredChainIds
 
   proc `$`*(self: KeyPairAccountItem): string =
     result = fmt"""KeyPairAccountItem[
@@ -47,8 +54,11 @@ QtObject:
       colorId: {self.colorId},
       icon: {self.icon},
       balance: {self.balance},
-      balanceFetched: {self.balanceFetched}
-      isDefaultAccount = {self.isDefaultAccount}
+      balanceFetched: {self.balanceFetched},
+      isDefaultAccount: {self.isDefaultAccount},
+      areTestNetworksEnabled: {self.areTestNetworksEnabled},
+      prodPreferredChainIds: {self.prodPreferredChainIds},
+      testPreferredChainIds: {self.testPreferredChainIds}
       ]"""
 
   proc nameChanged*(self: KeyPairAccountItem) {.signal.}
@@ -164,3 +174,19 @@ QtObject:
   QtProperty[bool] isDefaultAccount:
     read = getIsDefaultAccount
     notify = isDefaultAccountChanged
+
+  proc preferredSharingChainIdsChanged*(self: KeyPairAccountItem) {.signal.}
+  proc preferredSharingChainIds*(self: KeyPairAccountItem): string {.slot.} =
+    if self.areTestNetworksEnabled:
+      return self.testPreferredChainIds
+    else :
+      return self.prodPreferredChainIds
+  proc setProdPreferredChainIds*(self: KeyPairAccountItem, value: string) =
+    self.prodPreferredChainIds = value
+    self.preferredSharingChainIdsChanged()
+  proc setTestPreferredChainIds*(self: KeyPairAccountItem, value: string) =
+    self.testPreferredChainIds = value
+    self.preferredSharingChainIdsChanged()
+  QtProperty[string] preferredSharingChainIds:
+    read = preferredSharingChainIds
+    notify = preferredSharingChainIdsChanged

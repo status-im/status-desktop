@@ -167,9 +167,3 @@ QtObject:
           self.items[i].removeAccountByAddress(acc)
         if removeKeycardItemIfHasNoAccounts and self.items[i].getAccountsModel().getCount() == 0:
           self.removeItem(i)
-
-  proc updateDetailsForAddressForKeyPairsWithKeyUid*(self: KeycardModel, keyUid: string, accAddress: string, accName: string,
-    accColor: string, accEmoji: string) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].getKeyUid() == keyUid):
-        self.items[i].updateDetailsForAccountWithAddressIfTheyAreSet(accAddress, accName, accColor, accEmoji)

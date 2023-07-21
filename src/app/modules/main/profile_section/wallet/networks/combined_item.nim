@@ -38,3 +38,9 @@ proc getShortName*(self: CombinedItem, areTestNetworksEnabled: bool): string =
     return self.test.shortName()
   else:
     return self.prod.shortName()
+
+proc getChainId*(self: CombinedItem, areTestNetworksEnabled: bool): int =
+  if areTestNetworksEnabled:
+    return self.test.chainId()
+  else:
+    return self.prod.chainId()

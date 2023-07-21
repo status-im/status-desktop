@@ -102,7 +102,7 @@ proc addAccountWithoutKeystoreFileCreation*(name, address, path, publicKey, keyU
 
 ## Updates either regular or keycard account, without interaction to a Keystore file and notifies paired devices
 proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType, colorId, emoji: string,
-  walletDefaultAccount: bool, chatDefaultAccount: bool):
+  walletDefaultAccount: bool, chatDefaultAccount: bool, prodPreferredChainIds, testPreferredChainIds: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [
     {
@@ -116,6 +116,8 @@ proc updateAccount*(name, address, path: string, publicKey, keyUid, accountType,
       "name": name,
       "emoji": emoji,
       "colorId": colorId,
+      "prodPreferredChainIds": prodPreferredChainIds,
+      "testPreferredChainIds": testPreferredChainIds
       #"hidden" present on the status-go side, but we don't use it
       #"clock" we leave this empty, set on the status-go side
       #"removed" present on the status-go side, used for synchronization, no need to set it here

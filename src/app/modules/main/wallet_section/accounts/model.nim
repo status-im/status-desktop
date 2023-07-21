@@ -19,6 +19,7 @@ type
     KeycardAccount,
     AssetsLoading,
     IsWallet,
+    PreferredSharingChainIds
 
 QtObject:
   type
@@ -68,6 +69,7 @@ QtObject:
       ModelRole.KeycardAccount.int: "keycardAccount",
       ModelRole.AssetsLoading.int: "assetsLoading",
       ModelRole.IsWallet.int: "isWallet",
+      ModelRole.PreferredSharingChainIds.int: "preferredSharingChainIds"
     }.toTable
 
 
@@ -117,6 +119,8 @@ QtObject:
       result = newQVariant(item.assetsLoading())
     of ModelRole.IsWallet:
       result = newQVariant(item.isWallet())
+    of ModelRole.PreferredSharingChainIds:
+      result = newQVariant(item.preferredSharingChainIds())
 
   proc getNameByAddress*(self: Model, address: string): string =
     for item in self.items:

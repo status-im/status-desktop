@@ -8,10 +8,13 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.Wallet 1.0
+import AppLayouts.Wallet.controls 1.0
 
 import shared.popups 1.0
 import shared.panels 1.0
 import utils 1.0
+
+import SortFilterProxyModel 0.2
 
 import "../../popups"
 import "../../controls"
@@ -29,8 +32,11 @@ ColumnLayout {
 
     QtObject {
         id: d
-        property bool watchOnlyAccount: keyPair && keyPair.pairType === Constants.keycard.keyPairType.watchOnly
-        property bool privateKeyAccount: keyPair && keyPair.pairType === Constants.keycard.keyPairType.privateKeyImport
+        readonly property bool watchOnlyAccount: keyPair && keyPair.pairType ? keyPair.pairType === Constants.keycard.keyPairType.watchOnly: false
+        readonly property bool privateKeyAccount: keyPair && keyPair.pairType ? keyPair.pairType === Constants.keycard.keyPairType.privateKeyImport: false
+        readonly property string preferredSharingNetworks: !!account ? account.preferredSharingChainIds: ""
+        property var preferredSharingNetworksArray: preferredSharingNetworks.split(":").filter(Boolean)
+        onPreferredSharingNetworksChanged: preferredSharingNetworksArray = preferredSharingNetworks.split(":").filter(Boolean)
     }
 
     spacing: 0
@@ -100,7 +106,7 @@ ColumnLayout {
                 title: qsTr("Address")
                 subTitle: {
                     let address = root.account && root.account.address ? root.account.address: ""
-                    d.watchOnlyAccount ? address : WalletUtils.colorizedChainPrefix(walletStore.getAllNetworksSupportedPrefix()) + address
+                    return WalletUtils.colorizedChainPrefix(walletStore.getNetworkShortNames(d.preferredSharingNetworks)) + address
                 }
             }
             Separator {
@@ -158,7 +164,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 title: qsTr("Derivation Path")
                 subTitle: root.account ? Utils.getPathForDisplay(root.account.path) : ""
-                visible: !!subTitle && !d.privateKeyAccount
+                visible: !!subTitle && !d.privateKeyAccount && !d.watchOnlyAccount
             }
             Separator {
                 Layout.fillWidth: true
@@ -181,45 +187,67 @@ ColumnLayout {
         color: Theme.palette.baseColor2
     }
 
-    RowLayout {
+    StatusListItem {
+        Layout.fillWidth: true
+        title: qsTr("Preferred networks when sharing this address")
+        color: Theme.palette.transparent
+        components: [
+            NetworkFilter {
+                layer1Networks: SortFilterProxyModel {
+                    sourceModel: root.walletStore.networks
+                    filters: ValueFilter { roleName: "layer"; value: 1; }
+                }
+                layer2Networks: SortFilterProxyModel {
+                    sourceModel: root.walletStore.networks
+                    filters: ValueFilter { roleName: "layer"; value: 2; }
+                }
+                allNetworks: root.walletStore.networks
+                enabledNetworks: SortFilterProxyModel {
+                    sourceModel: root.walletStore.networks
+                    filters:  ExpressionFilter {
+                        expression: d.preferredSharingNetworksArray.includes(model.chainId.toString())
+                    }
+                }
+                preferredNetworksMode: true
+                preferredSharingNetworks: d.preferredSharingNetworksArray
+                onToggleNetwork: (network) => {
+                                     d.preferredSharingNetworksArray = root.walletStore.processPreferredSharingNetworkToggle(d.preferredSharingNetworksArray, network)
+                                 }
+                control.popup.onClosed: root.walletStore.updateWalletAccountPreferredChains(root.account.address, d.preferredSharingNetworksArray.join(":"))
+            }
+        ]
+    }
+
+    Separator {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 1
+        color: Theme.palette.baseColor2
+    }
+
+    StatusButton {
         Layout.topMargin: 20
         Layout.fillWidth: true
-        spacing: 8
-        StatusButton {
-            Layout.fillWidth: true
-            visible: !d.watchOnlyAccount && !d.privateKeyAccount
-            text: keyPair && keyPair.migratedToKeycard? qsTr("Stop using Keycard") : qsTr("Migrate to Keycard")
-            icon.name: "keycard"
-            onClicked: {
-                if (keyPair && keyPair.migratedToKeycard)
-                    console.warn("TODO: stop using Keycard")
-                else
-                    console.warn("TODO: move keys to a Keycard")
-            }
-        }
-        StatusButton {
-            Layout.fillWidth: true
-            objectName: "deleteAccountButton"
-            visible: !!root.account && !root.account.isDefaultAccount
-            text: qsTr("Remove account")
-            icon.name: "delete"
-            type: StatusBaseButton.Type.Danger
-            onClicked: confirmationPopup.open()
+        objectName: "deleteAccountButton"
+        visible: !!root.account && !root.account.isDefaultAccount
+        text: qsTr("Remove account")
+        icon.name: "delete"
+        type: StatusBaseButton.Type.Danger
+        onClicked: confirmationPopup.open()
 
-            ConfirmationDialog {
-                id: confirmationPopup
-                confirmButtonObjectName: "confirmDeleteAccountButton"
-                headerSettings.title: qsTr("Confirm %1 Removal").arg(root.account ? root.account.name : "")
-                confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
-                confirmButtonLabel: qsTr("Remove Account")
-                onConfirmButtonClicked: {
-                    root.walletStore.deleteAccount(root.account.address);
-                    confirmationPopup.close()
-                    root.goBack()
-                }
+        ConfirmationDialog {
+            id: confirmationPopup
+            confirmButtonObjectName: "confirmDeleteAccountButton"
+            headerSettings.title: qsTr("Confirm %1 Removal").arg(root.account ? root.account.name : "")
+            confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
+            confirmButtonLabel: qsTr("Remove Account")
+            onConfirmButtonClicked: {
+                root.walletStore.deleteAccount(root.account.address);
+                confirmationPopup.close()
+                root.goBack()
             }
         }
     }
+
     Component {
         id: renameAccountModalComponent
         RenameAccontModal {

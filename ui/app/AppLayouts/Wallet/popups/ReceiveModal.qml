@@ -32,6 +32,7 @@ StatusModal {
     QtObject {
         id: d
         property string completeAddressWithNetworkPrefix
+        property var preferredSharingNetworksArray: !!RootStore.selectedReceiveAccount ? RootStore.selectedReceiveAccount.preferredSharingChainIds.split(":").filter(Boolean): []
     }
 
     headerSettings.title: qsTr("Receive")
@@ -48,8 +49,8 @@ StatusModal {
 
             sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
         }
-        
         selectedAccount: RootStore.selectedReceiveAccount
+        getNetworkShortNames: RootStore.getNetworkShortNames
         onSelectedIndexChanged: RootStore.switchReceiveAccount(selectedIndex)
     }
 
@@ -99,7 +100,7 @@ StatusModal {
                             tagPrimaryLabel.text: model.shortName
                             tagPrimaryLabel.color: model.chainColor
                             image.source: Style.svg("tiny/" + model.iconUrl)
-                            visible: model.isEnabled
+                            visible: d.preferredSharingNetworksArray.includes(model.chainId.toString())
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: root.readOnly ? Qt.ArrowCursor : Qt.PointingHandCursor
@@ -209,7 +210,7 @@ StatusModal {
                                 font.pixelSize: 15
                                 color: chainColor
                                 text: shortName + ":"
-                                visible: model.isEnabled
+                                visible: d.preferredSharingNetworksArray.includes(model.chainId.toString())
                                 onVisibleChanged: {
                                     if (root.readOnly)
                                         return
@@ -258,12 +259,18 @@ StatusModal {
 
             layer1Networks: layer1NetworksClone
             layer2Networks: layer2NetworksClone
+            preferredNetworksMode: true
+            preferredSharingNetworks: d.preferredSharingNetworksArray
+
+            useEnabledRole: false
 
             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
             onToggleNetwork: (network, networkModel, index) => {
-                network.isEnabled = !network.isEnabled
-            }
+                                 d.preferredSharingNetworksArray = RootStore.processPreferredSharingNetworkToggle( d.preferredSharingNetworksArray, network)
+                             }
+
+            onClosed: RootStore.updateWalletAccountPreferredChains(root.address, d.preferredSharingNetworksArray.join(":"))
 
             CloneModel {
                 id: layer1NetworksClone

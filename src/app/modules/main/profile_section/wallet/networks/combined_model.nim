@@ -71,8 +71,19 @@ QtObject:
     self.endResetModel()
     self.countChanged()
 
-  proc getAllNetworksSupportedPrefix*(self: CombinedModel, areTestNetworksEnabled: bool): string =
-    var networkString = ""
+  proc getAllNetworksChainIds*(self: CombinedModel, areTestNetworksEnabled: bool): string =
+    var networks: seq[int] = @[]
     for item in self.items:
-      networkString = networkString & item.getShortName(areTestNetworksEnabled) & ':'
+      networks.add(item.getChainId(areTestNetworksEnabled))
+    return networks.join(":")
+
+  proc getNetworkShortNames*(self: CombinedModel, preferredNetworks: string, areTestNetworksEnabled: bool): string =
+    var networkString = ""
+    let networks = preferredNetworks.split(":")
+    for nw in networks:
+      for item in self.items:
+        if $item.getChainId(areTestNetworksEnabled) == nw:
+          networkString = networkString & $item.getShortName(areTestNetworksEnabled) & ':'
+          break
     return networkString
+
