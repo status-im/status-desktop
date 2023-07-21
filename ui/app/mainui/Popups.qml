@@ -57,6 +57,7 @@ QtObject {
         Global.leaveCommunityRequested.connect(openLeaveCommunityPopup)
         Global.openTestnetPopup.connect(openTestnetPopup)
         Global.openExportControlNodePopup.connect(openExportControlNodePopup)
+        Global.openImportControlNodePopup.connect(openImportControlNodePopup)
     }
 
     property var currentPopup
@@ -254,6 +255,10 @@ QtObject {
             communityName: communityName,
             privateKey: privateKey
         }, cb)
+    }
+
+    function openImportControlNodePopup(community, cb) {
+        openPopup(importControlNodePopup, {community: community}, cb)
     }
 
     readonly property list<Component> _components: [
@@ -603,6 +608,14 @@ QtObject {
             ExportControlNodePopup {
                 onClosed: destroy()
             }
+        },
+
+        Component {
+            id: importControlNodePopup
+            ImportControlNodePopup {
+                onClosed: destroy()
+            }
         }
+
     ]
 }

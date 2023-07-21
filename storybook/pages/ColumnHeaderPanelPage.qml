@@ -42,7 +42,7 @@ SplitView {
                     id: communityColumnHeader
 
                     width: widthSlider.value
-                     anchors.centerIn: parent
+                    anchors.centerIn: parent
                     name: d.name
                     membersCount: d.membersCount
                     image: d.image

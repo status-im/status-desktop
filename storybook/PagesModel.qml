@@ -290,6 +290,10 @@ ListModel {
         section: "Popups"
     }
     ListElement {
+        title: "ImportControlNodePopup"
+        section: "Popups"
+    }
+    ListElement {
         title: "StatusButton"
         section: "Controls"
     }

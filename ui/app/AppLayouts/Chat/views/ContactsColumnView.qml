@@ -222,7 +222,6 @@ Item {
         target: root.store
 
         function onImportingCommunityStateChanged(communityId, state, errorMsg) {
-
             const community = root.store.getCommunityDetailsAsJson(communityId)
             let title = ""
             let subTitle = ""

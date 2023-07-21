@@ -52,6 +52,7 @@ StackLayout {
     signal inviteNewPeopleClicked
     signal airdropTokensClicked
     signal exportControlNodeClicked
+    signal importControlNodeClicked
 
     clip: true
 
@@ -137,6 +138,7 @@ StackLayout {
             communityName: root.name
             isControlNode: root.isControlNode
             onExportControlNodeClicked: root.exportControlNodeClicked()
+            onImportControlNodeClicked: root.importControlNodeClicked()
             //TODO update once the domain changes
             onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "status-communities/about-the-control-node-in-status-communities")
         }
