@@ -1,6 +1,6 @@
 import logging
 
-from gui.elements.window import Window
+from gui.elements.qt.window import Window
 
 _logger = logging.getLogger(__name__)
 

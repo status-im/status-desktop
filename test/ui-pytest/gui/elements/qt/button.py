@@ -1,7 +1,7 @@
 import typing
 
 import driver
-from gui.elements.base_object import QObject
+from gui.elements.qt.object import QObject
 
 
 class Button(QObject):
@@ -13,6 +13,6 @@ class Button(QObject):
             button: driver.MouseButton = None
     ):
         if None not in (x, y, button):
-            getattr(self.object, 'clicked')()
+            getattr(self, 'clicked')()
         else:
-            self.click(x, y, button)
+            super(Button, self).click(x, y, button)

@@ -1,7 +1,7 @@
 import logging
 
 from scripts.utils.system_path import SystemPath
-from . import testpath, timeouts
+from . import testpath, timeouts, system
 
 _logger = logging.getLogger(__name__)
 
@@ -16,4 +16,6 @@ except ImportError:
 
 if APP_DIR is None:
     exit('Please add "APP_DIR" in ./configs/_local.py')
+if system.IS_WIN and 'bin' not in APP_DIR:
+    exit('Please use launcher from "bin" folder in "APP_DIR"')
 APP_DIR = SystemPath(APP_DIR)

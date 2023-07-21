@@ -1,15 +1,14 @@
+import time
 from datetime import datetime
 
-import configs
 import squish
-import time
 import utils.FileManager as filesMngr
-from utils import local_system
 from drivers.elements.base_window import BaseWindow
 from screens.main_window import MainWindow
 from utils import local_system
 from utils.system_path import SystemPath
 
+import configs
 from . import context
 
 

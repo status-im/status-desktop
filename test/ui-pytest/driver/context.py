@@ -17,7 +17,7 @@ def attach(aut_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SE
             _logger.info(f'AUT: {aut_name} attached')
             return context
         except RuntimeError as err:
-            _logger.info(err)
+            _logger.debug(err)
             time.sleep(1)
         assert time.monotonic() - started_at < timeout_sec, f'Attach error: {aut_name}'
 
@@ -25,5 +25,5 @@ def attach(aut_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SE
 def detach():
     for ctx in squish.applicationContextList():
         ctx.detach()
-        assert squish.waitFor(lambda: not ctx.isRunning, configs.timeouts.APP_LOAD_TIMEOUT_MSEC)
+        assert squish.waitFor(lambda: not ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_MSEC)
     _logger.info(f'All AUTs detached')
