@@ -100,8 +100,45 @@ QtObject {
         const publicKey = Utils.isCompressedPubKey(communityKey)
                             ? Utils.changeCommunityKeyCompression(communityKey)
                             : communityKey
-        root.mainModuleInst.setCommunityIdToSpectate(publicKey)
+        if (importing)
+            root.mainModuleInst.setCommunityIdToSpectate(publicKey)
         root.communitiesModuleInst.requestCommunityInfo(publicKey, importing)
+    }
+
+    property var communitiesList: communitiesModuleInst.model
+
+    function spectateCommunity(publicKey) {
+        root.communitiesModuleInst.spectateCommunity(publicKey, "");
+    }
+
+    function getCommunityDetails(communityId, importing = false) {
+        const publicKey = Utils.isCompressedPubKey(communityId)
+                            ? Utils.changeCommunityKeyCompression(communityId)
+                            : communityId
+        try {
+            const communityJson = root.communitiesList.getSectionByIdJson(publicKey)
+
+            if (!communityJson) {
+                root.requestCommunityInfo(publicKey, importing)
+                return null
+            }
+
+            return JSON.parse(communityJson);
+        } catch (e) {
+            console.error("Error parsing community", e)
+        }
+        return null
+    }
+
+    function getCommunityDetailsAsJson(communityId) {
+        const jsonObj = root.communitiesModuleInst.getCommunityDetails(communityId)
+        try {
+            return JSON.parse(jsonObj)
+        }
+        catch (e) {
+            console.warn("error parsing community by id: ", communityId, " error: ", e.message)
+            return {}
+        }
     }
 
     function setActiveCommunity(communityId) {
@@ -145,17 +182,6 @@ QtObject {
 
     function resetDiscordImport() {
         root.communitiesModuleInst.resetDiscordImport(false)
-    }
-
-    function getCommunityDetailsAsJson(id) {
-        const jsonObj = communitiesModuleInst.getCommunityDetails(id)
-        try {
-            return JSON.parse(jsonObj)
-        }
-        catch (e) {
-            console.warn("error parsing community by id: ", id, " error: ", e.message)
-            return {}
-        }
     }
 
     function requestImportDiscordCommunity(args = {

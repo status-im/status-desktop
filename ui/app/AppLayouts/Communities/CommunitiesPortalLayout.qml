@@ -125,7 +125,7 @@ StatusSectionLayout {
                 StatusButton {
                     id: importBtn
                     Layout.preferredHeight: 38
-                    text: qsTr("Import using key")
+                    text: qsTr("Import community")
                     verticalPadding: 0
                     onClicked: Global.importCommunityPopupRequested()
                 }

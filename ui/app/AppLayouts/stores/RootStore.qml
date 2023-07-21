@@ -2,6 +2,9 @@ import QtQuick 2.13
 
 import utils 1.0
 
+import SortFilterProxyModel 0.2
+import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Chat.stores 1.0 as ChatStore
 import "../Profile/stores"
 
 QtObject {
@@ -10,10 +13,45 @@ QtObject {
     property var mainModuleInst: mainModule
     property var aboutModuleInst: aboutModule
     property var communitiesModuleInst: communitiesModule
-
     property bool newVersionAvailable: false
     property string latestVersion
     property string downloadURL
+
+    readonly property int loginType: getLoginType()
+    function getLoginType() {
+        if(!userProfileInst)
+            return Constants.LoginType.Password
+
+        if(userProfileInst.usingBiometricLogin)
+            return Constants.LoginType.Biometrics
+        if(userProfileInst.isKeycardUser)
+            return Constants.LoginType.Keycard
+        return Constants.LoginType.Password
+    }
+
+    //TODO see how these values can be retrieved from the community the user attempts to join
+    property var permissionsModel: ChatStore.RootStore.permissionsStore.permissionsModel
+    property var walletAccountsModel: WalletStore.RootStore.receiveAccounts
+    property var assetsModel: SortFilterProxyModel {
+        sourceModel: communitiesModuleInst.tokenList
+        proxyRoles: ExpressionRole {
+            function tokenIcon(symbol) {
+                return Constants.tokenIcon(symbol)
+            }
+            name: "iconSource"
+            expression: !!model.icon ? model.icon : tokenIcon(model.symbol)
+        }
+    }
+    property var collectiblesModel: SortFilterProxyModel {
+        sourceModel: communitiesModuleInst.collectiblesModel
+        proxyRoles: ExpressionRole {
+            function collectibleIcon(icon) {
+                return !!icon ? icon : Style.png("tokens/DEFAULT-TOKEN")
+            }
+            name: "iconSource"
+            expression: collectibleIcon(model.icon)
+        }
+    }
 
     function setLatestVersionInfo(newVersionAvailable, latestVersion, downloadURL) {
         root.newVersionAvailable = newVersionAvailable;
@@ -163,5 +201,9 @@ QtObject {
 
     function windowDeactivated() {
         mainModuleInst.windowDeactivated()
+    }
+
+    function requestToJoinCommunityWithAuthentication(communityId, ensName, addressesToShare = [], airdropAddress = "") {
+        communitiesModuleInst.requestToJoinCommunityWithAuthenticationWithSharedAddresses(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress)
     }
 }

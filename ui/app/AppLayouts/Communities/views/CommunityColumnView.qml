@@ -108,16 +108,12 @@ Item {
                             "")
                 }
             }
-        }
-
-        Connections {
-            enabled: joinCommunityButton.loading
-            target: communitySectionModule
             function onUserAuthenticationCanceled() {
                 joinCommunityButton.invitationPending = false
                 joinCommunityButton.loading = false
             }
         }
+
         Component {
             id: communityIntroDialog
             CommunityIntroDialog {
@@ -135,7 +131,7 @@ Item {
 
                 onJoined: {
                     joinCommunityButton.loading = true
-                    root.store.requestToJoinCommunityWithAuthentication(root.store.userProfileInst.name, sharedAddresses, airdropAddress)
+                    root.store.requestToJoinCommunityWithAuthentication(communityData.id, root.store.userProfileInst.name, sharedAddresses, airdropAddress)
                 }
                 onCancelMembershipRequest: {
                     root.store.cancelPendingRequest(communityData.id)

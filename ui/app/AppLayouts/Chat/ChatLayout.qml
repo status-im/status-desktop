@@ -187,7 +187,7 @@ StackLayout {
             collectiblesModel: root.rootStore.collectiblesModel
 
             onJoined: {
-                root.rootStore.requestToJoinCommunityWithAuthentication(root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress)
+                root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress)
             }
 
             onCancelMembershipRequest: {

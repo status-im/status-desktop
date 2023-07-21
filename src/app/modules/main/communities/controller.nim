@@ -12,6 +12,15 @@ import ../../../../app_service/service/community_tokens/service as community_tok
 import ../../../../app_service/service/token/service as token_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import backend/collectibles as backend_collectibles
+import ../../shared_modules/keycard_popup/io_interface as keycard_shared_module
+
+const UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER* = "CommunitiesModule-Action-Authentication"
+
+type
+  AuthenticationAction* {.pure.} = enum
+    None = 0,
+    CommunityJoin = 1,
+    CommunitySharedAddressesJoin = 2,
 
 type
   Controller* = ref object of RootObj
@@ -23,6 +32,12 @@ type
     networksService: networks_service.Service
     tokenService: token_service.Service
     chatService: chat_service.Service
+    tmpCommunityId: string
+    tmpAuthenticationAction: AuthenticationAction
+    tmpRequestToJoinEnsName: string
+    tmpAddressesToShare: seq[string]
+    tmpAirdropAddress: string
+    tmpAuthenticationWithCallbackInProgress: bool
 
 proc newController*(
     delegate: io_interface.AccessInterface,
@@ -43,6 +58,11 @@ proc newController*(
   result.networksService = networksService
   result.tokenService = tokenService
   result.chatService = chatService
+  result.tmpCommunityId = ""
+  result.tmpRequestToJoinEnsName = ""
+  result.tmpAirdropAddress = ""
+  result.tmpAddressesToShare = @[]
+  result.tmpAuthenticationWithCallbackInProgress = false
 
 proc delete*(self: Controller) =
   discard
@@ -150,6 +170,16 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e: Args):
     self.delegate.onWalletAccountTokensRebuilt()
+
+  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+    let args = SharedKeycarModuleArgs(e)
+    if args.uniqueIdentifier != UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER:
+      return
+    self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
+    if self.tmpAuthenticationWithCallbackInProgress:
+      let authenticated = not (args.password == "" and args.pin == "")
+      self.delegate.callbackFromAuthentication(authenticated)
+      self.tmpAuthenticationWithCallbackInProgress = false
 
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
@@ -299,3 +329,66 @@ proc shareCommunityChannelUrlWithChatKey*(self: Controller, communityId: string,
 
 proc shareCommunityChannelUrlWithData*(self: Controller, communityId: string, chatId: string): string =
   return self.communityService.shareCommunityChannelUrlWithData(communityId, chatId)
+
+proc userAuthenticationCanceled*(self: Controller) =
+  self.tmpAuthenticationAction = AuthenticationAction.None
+  self.tmpCommunityId = ""
+  self.tmpRequestToJoinEnsName = ""
+  self.tmpAirdropAddress = ""
+  self.tmpAddressesToShare = @[]
+
+proc requestToJoinCommunityAuthenticated*(self: Controller, password: string) =
+  self.communityService.asyncRequestToJoinCommunity(
+    self.tmpCommunityId,
+    self.tmpRequestToJoinEnsName,
+    password,
+    self.tmpAddressesToShare,
+    self.tmpAirdropAddress
+  )
+  self.tmpAuthenticationAction = AuthenticationAction.None
+  self.tmpCommunityId = ""
+  self.tmpRequestToJoinEnsName = ""
+  self.tmpAirdropAddress = ""
+  self.tmpAddressesToShare = @[]
+
+proc editSharedAddressesAuthenticated*(self: Controller, password: string) =
+  self.communityService.asyncEditSharedAddresses(
+    self.tmpCommunityId,
+    password,
+    self.tmpAddressesToShare,
+    self.tmpAirdropAddress,
+  )
+  self.tmpAuthenticationAction = AuthenticationAction.None
+  self.tmpCommunityId = ""
+  self.tmpAirdropAddress = ""
+  self.tmpAddressesToShare = @[]
+
+proc userAuthenticated*(self: Controller, password: string) =
+  if self.tmpAuthenticationAction == AuthenticationAction.CommunityJoin:
+    self.requestToJoinCommunityAuthenticated(password)
+  elif self.tmpAuthenticationAction == AuthenticationAction.CommunitySharedAddressesJoin:
+    self.editSharedAddressesAuthenticated(password)
+
+proc authenticate*(self: Controller, keyUid = "") =
+  let data = SharedKeycarModuleAuthenticationArgs(uniqueIdentifier: UNIQUE_COMMUNITIES_MODULE_AUTH_IDENTIFIER,
+    keyUid: keyUid)
+  self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
+
+proc authenticateToRequestToJoinCommunity*(self: Controller, communityId: string, ensName: string, addressesToShare: seq[string], airdropAddress: string) =
+  self.tmpCommunityId = communityId
+  self.tmpAuthenticationAction = AuthenticationAction.CommunityJoin
+  self.tmpRequestToJoinEnsName = ensName
+  self.tmpAirdropAddress = airdropAddress
+  self.tmpAddressesToShare = addressesToShare
+  self.authenticate()
+
+proc authenticateToEditSharedAddresses*(self: Controller, communityId: string, addressesToShare: seq[string], airdropAddress: string) =
+  self.tmpCommunityId = communityId
+  self.tmpAuthenticationAction = AuthenticationAction.CommunitySharedAddressesJoin
+  self.tmpAirdropAddress = airdropAddress
+  self.tmpAddressesToShare = addressesToShare
+  self.authenticate()
+
+proc authenticateWithCallback*(self: Controller) =
+  self.tmpAuthenticationWithCallbackInProgress = true
+  self.authenticate()

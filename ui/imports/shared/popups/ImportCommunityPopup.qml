@@ -19,36 +19,42 @@ StatusDialog {
     width: 640
     title: qsTr("Import Community")
 
+    signal joinCommunity(string communityId, var communityDetails)
     QtObject {
         id: d
         property string importErrorMessage
+        readonly property bool communityFound: (d.isPublicKey && !!d.communityDetails)
+        readonly property var communityDetails: {
+            return root.store.getCommunityDetails(Utils.getCompressedPk(publicKey));
+        }
         readonly property string inputErrorMessage: isInputValid ? "" : qsTr("Invalid key")
         readonly property string errorMessage: importErrorMessage || inputErrorMessage
         readonly property string inputKey: keyInput.text.trim()
-        readonly property bool isPrivateKey: Utils.isPrivateKey(inputKey)
-        readonly property bool isPublicKey: publicKey !== ""
+        readonly property bool isPrivateKey: (Utils.isPrivateKey(inputKey))
+        readonly property bool isPublicKey: (publicKey !== "")
         readonly property string publicKey: {
-            const key = Utils.dropCommunityLinkPrefix(inputKey)
-            if (!Utils.isCommunityPublicKey(key))
-                return ""
-            if (!Utils.isCompressedPubKey(key))
-                return key
-            return Utils.changeCommunityKeyCompression(key)
+            if (!Utils.isStatusDeepLink(inputKey)) {
+                const key = Utils.dropCommunityLinkPrefix(inputKey)
+                if (!Utils.isCommunityPublicKey(key))
+                    return ""
+                if (!Utils.isCompressedPubKey(key))
+                    return key
+                return Utils.changeCommunityKeyCompression(key)
+            } else {
+                return Utils.getCommunityDataFromSharedLink(inputKey).communityId;
+            }
         }
-
         readonly property bool isInputValid: isPrivateKey || isPublicKey
     }
 
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
-            StatusFlatButton {
-                text: qsTr("Cancel")
-                onClicked: root.reject()
-            }
             StatusButton {
                 id: importButton
                 enabled: d.isInputValid
-                text: d.isPrivateKey ? qsTr("Make this an Owner Node") : qsTr("Import")
+                loading: (d.isPublicKey && !d.communityFound)
+                text: d.isPrivateKey ? qsTr("Make this an Owner Node")
+                                     : qsTr("Import")
                 onClicked: {
                     if (d.isPrivateKey) {
                         const communityKey = d.inputKey
@@ -57,11 +63,8 @@ StatusDialog {
                         }
                         root.store.importCommunity(communityKey);
                         root.close();
-                    }
-                    if (d.isPublicKey) {
-                        importButton.loading = true
-                        root.store.requestCommunityInfo(d.publicKey, true)
-                        root.close();
+                    } else if (d.communityFound) {
+                        root.joinCommunity(d.publicKey, d.communityDetails);
                     }
                 }
             }
@@ -95,53 +98,39 @@ StatusDialog {
             placeholderText: "0x0..."
             wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
             onTextChanged: d.importErrorMessage = ""
-          }
-
-        StatusBaseText {
-            id: detectionLabel
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignRight
-            verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 13
-            visible: keyInput.text.trim() !== ""
-            text: {
-                if (d.errorMessage !== "") {
-                  return d.errorMessage
-                }
-                if (d.isPrivateKey) {
-                    return qsTr("Private key detected")
-                }
-                if (d.isPublicKey) {
-                    return qsTr("Public key detected")
-                }
-            }
-            color: d.errorMessage === "" ? Theme.palette.successColor1 : Theme.palette.dangerColor1
         }
-    }
-
-
-    Connections {
-      target: root.store
-      function onImportingCommunityStateChanged(communityId, state, errorMsg) {
-          let communityKey = keyInput.text.trim();
-          if (d.isPublicKey) {
-              let currentCommunityKey = Utils.isCompressedPubKey(communityKey) ?
-                  Utils.changeCommunityKeyCompression(communityKey) :
-                  communityKey
-
-              if (communityId == currentCommunityKey) {
-                  importButton.loading = false
-                  if (state === Constants.communityImported && root.opened) {
-                    root.close()
-                    return
-                  }
-              }
-
-              if (state === Constants.communityImportingError) {
-                d.importErrorMessage = errorMsg
-                importButton.loading = false
-              }
-          }
-      }
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            StatusChatInfoButton {
+                visible: (d.communityFound && d.isPublicKey)
+                title: !!d.communityDetails.name ? d.communityDetails.name : ""
+                subTitle: !!d.communityDetails.nbMembers ? qsTr("%n member(s)", "", d.communityDetails.nbMembers) : ""
+                asset.emoji: "1f918"
+                asset.emojiSize: "24x24"
+                asset.name: !!d.communityDetails.image ? d.communityDetails.image : ""
+                asset.isImage: (asset.name !== "")
+                asset.color: !!d.communityDetails.color ? d.communityDetails.color : ""
+            }
+            Item { Layout.fillWidth: true }
+            StatusBaseText {
+                id: detectionLabel
+                Layout.alignment: Qt.AlignRight
+                font.pixelSize: 13
+                visible: keyInput.text.trim() !== ""
+                text: {
+                    if (d.errorMessage !== "") {
+                        return d.errorMessage
+                    }
+                    if (d.isPrivateKey) {
+                        return qsTr("Private key detected")
+                    }
+                    if (d.isPublicKey) {
+                        return qsTr("Public key detected")
+                    }
+                }
+                color: d.errorMessage === "" ? Theme.palette.successColor1 : Theme.palette.dangerColor1
+            }
+        }
     }
 }
