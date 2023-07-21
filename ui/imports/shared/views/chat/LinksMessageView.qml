@@ -24,8 +24,6 @@ ColumnLayout {
 
     signal imageClicked(var image, var mouse, var imageSource)
 
-    spacing: 5
-
     Repeater {
         id: linksRepeater
         model: root.linkPreviewModel
