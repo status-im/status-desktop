@@ -86,7 +86,7 @@ QtObject {
     }
 
     function switchTo(notification) {
-        root.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.id)
+        root.activityCenterModuleInst.switchTo(notification.sectionId, notification.chatId, notification.message.id)
     }
 
     function setActiveNotificationGroup(group) {
