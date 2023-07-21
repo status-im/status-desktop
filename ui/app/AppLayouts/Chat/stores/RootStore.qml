@@ -77,6 +77,8 @@ QtObject {
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
+    signal communityAdded(string communityId)
+
     signal communityInfoAlreadyRequested()
 
     signal communityAccessRequested(string communityId)
@@ -630,6 +632,10 @@ QtObject {
 
       function onCommunityAccessRequested(communityId) {
           root.communityAccessRequested(communityId)
+      }
+
+      function onCommunityAdded(communityId) {
+          root.communityAdded(communityId)
       }
     }
 

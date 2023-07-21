@@ -37,8 +37,7 @@ StatusSectionLayout {
 
     readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
     readonly property bool isAdmin: isOwner || community.memberRole === Constants.memberRole.admin
-    //TODO: get proper value from backend
-    readonly property bool isControlNode: isOwner
+    readonly property bool isControlNode: community.isControlNode
 
     readonly property string filteredSelectedTags: {
         let tagsArray = []
@@ -222,6 +221,13 @@ StatusSectionLayout {
                         })
                     })
                 })
+            }
+
+            onImportControlNodeClicked: {
+                if(root.isControlNode)
+                    return
+
+                Global.openImportControlNodePopup(root.community, d.importControlNodePopupOpened)
             }
         }
 
@@ -534,6 +540,44 @@ StatusSectionLayout {
                     break
                 }
             }
+        }
+
+        function requestCommunityInfoWithCallback(privateKey, callback) {
+            if(!callback) return
+
+            //success
+            root.rootStore.communityAdded.connect(function communityAddedHandler(communityId) {
+                root.rootStore.communityAdded.disconnect(communityAddedHandler)
+                let community = null
+                try {
+                    const communityJson = root.rootStore.getSectionByIdJson(communityId)
+                    community = JSON.parse(communityJson)
+                } catch (e) {
+                    console.warn("Error parsing community json: ", communityJson, " error: ", e.message)
+                }
+
+                callback(community)
+            })
+
+            //error
+            root.rootStore.importingCommunityStateChanged.connect(function communityImportingStateChangedHandler(communityId, status) {
+                root.rootStore.importingCommunityStateChanged.disconnect(communityImportingStateChangedHandler)
+                if(status === Constants.communityImportingError) {
+                    callback(null)
+                }
+            })
+
+            root.rootStore.requestCommunityInfo(privateKey, false)
+        }
+
+        function importControlNodePopupOpened(popup) {
+            popup.requestCommunityInfo.connect((privateKey) => {
+                requestCommunityInfoWithCallback(privateKey, popup.setCommunityInfo)
+            })
+
+            popup.importControlNode.connect((privateKey) => {
+                root.rootStore.importCommunity(privateKey)
+            })
         }
     }
 

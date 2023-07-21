@@ -8,6 +8,7 @@ CreateCommunityPopup 1.0 CreateCommunityPopup.qml
 DiscordImportProgressDialog 1.0 DiscordImportProgressDialog.qml
 ExportControlNodePopup 1.0 ExportControlNodePopup.qml
 HoldingsDropdown 1.0 HoldingsDropdown.qml
+ImportControlNodePopup 1.0 ImportControlNodePopup.qml
 InDropdown 1.0 InDropdown.qml
 InviteFriendsToCommunityPopup 1.0 InviteFriendsToCommunityPopup.qml
 MembersDropdown 1.0 MembersDropdown.qml
