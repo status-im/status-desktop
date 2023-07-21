@@ -16,6 +16,12 @@ class BaseObject:
     def __str__(self):
         return f'{type(self).__qualname__}({self.symbolic_name})'
 
+    def __getattr__(self, attr: str):
+        try:
+            return getattr(driver.waitForObjectExists(self.real_name, 1000), attr, False)
+        except (AttributeError, LookupError, RuntimeError):
+            return False
+
     @property
     def object(self):
         raise NotImplementedError
