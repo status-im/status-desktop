@@ -17,6 +17,12 @@ class QObject:
     def __str__(self):
         return f'{type(self).__qualname__}({self.symbolic_name})'
 
+    def __getattr__(self, attr: str):
+        try:
+            return getattr(driver.waitForObjectExists(self.real_name, 1000), attr, False)
+        except (AttributeError, LookupError, RuntimeError):
+            return False
+
     @property
     def object(self):
         return driver.waitForObject(self.real_name, configs.timeouts.UI_LOAD_TIMEOUT_MSEC)
@@ -43,22 +49,19 @@ class QObject:
 
     @property
     def is_enabled(self) -> bool:
-        return self.object.enabled
+        return getattr(self, 'enabled')
 
     @property
     def is_selected(self) -> bool:
-        return self.object.selected
+        return getattr(self, 'selected')
 
     @property
     def is_checked(self) -> bool:
-        return self.object.checked
+        return getattr(self, 'checked')
 
     @property
     def is_visible(self) -> bool:
-        try:
-            return driver.waitForObject(self.real_name, 0).visible
-        except (AttributeError, LookupError, RuntimeError):
-            return False
+        return getattr(self, 'visible')
 
     def click(
             self,
@@ -77,7 +80,7 @@ class QObject:
         def _hover():
             try:
                 driver.mouseMove(self.object)
-                return getattr(self.object, 'hovered', True)
+                return getattr(self, 'hovered', True)
             except RuntimeError as err:
                 _logger.info(err)
                 time.sleep(1)

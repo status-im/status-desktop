@@ -36,4 +36,4 @@ def pytest_exception_interact(node):
         desktop_screenshot = node_dir / f'screenshot_{datetime.now():%H%M%S}.png'
     ImageGrab.grab().save(desktop_screenshot)
     _logger.info(f'Screenshot on fail: {desktop_screenshot.relative_to(configs.testpath.ROOT)}')
-    AUT.stop()
+    AUT().stop()
