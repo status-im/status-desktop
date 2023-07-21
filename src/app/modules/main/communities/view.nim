@@ -615,3 +615,28 @@ QtObject:
 
   proc shareCommunityChannelUrlWithData*(self: View, communityId: string, chatId: string): string {.slot.} =
     return self.delegate.shareCommunityChannelUrlWithData(communityId, chatId)
+
+  proc userAuthenticationCanceled*(self: View) {.signal.}
+
+  proc authenticateWithCallback*(self: View) {.slot.} =
+    self.delegate.authenticateWithCallback()
+  
+  proc callbackFromAuthentication*(self: View, authenticated: bool) {.signal.}
+
+  proc requestToJoinCommunityWithAuthentication*(self: View, communityId: string, ensName: string) {.slot.} =
+    self.delegate.requestToJoinCommunityWithAuthentication(communityId, ensName, @[], "")
+
+  proc requestToJoinCommunityWithAuthenticationWithSharedAddresses*(self: View, communityId: string, ensName: string,
+      addressesToShare: string, airdropAddress: string) {.slot.} =
+    try:
+      let addressesArray = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
+      self.delegate.requestToJoinCommunityWithAuthentication(communityId, ensName, addressesArray, airdropAddress)
+    except Exception as e:
+      echo "Error requesting to join community with authentication and shared addresses: ", e.msg
+
+  proc editSharedAddressesWithAuthentication*(self: View, communityId: string, addressesToShare: string, airdropAddress: string) {.slot.} =
+    try:
+      let addressesArray = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
+      self.delegate.editSharedAddressesWithAuthentication(communityId, addressesArray, airdropAddress)
+    except Exception as e:
+      echo "Error editing shared addresses with authentication: ", e.msg

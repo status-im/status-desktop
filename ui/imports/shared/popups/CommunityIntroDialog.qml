@@ -122,26 +122,24 @@ StatusStackModal {
 
     stackItems: [
         StatusScrollView {
-            id: scrollView
+           id: scrollView
             contentWidth: availableWidth
 
             ColumnLayout {
                 spacing: 24
-                width: scrollView.availableWidth
+                width: root.availableWidth
 
                 StatusRoundedImage {
-                    id: roundImage
-
-                    Layout.alignment: Qt.AlignCenter
-                    Layout.preferredHeight: 64
-                    Layout.preferredWidth: Layout.preferredHeight
-                    visible: image.status == Image.Loading || image.status == Image.Ready
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.preferredWidth: 64
+                    Layout.preferredHeight: Layout.preferredWidth
+                    visible: ((image.status == Image.Loading) ||
+                             (image.status == Image.Ready)) &&
+                             !image.isError
                     image.source: root.imageSrc
                 }
 
                 StatusBaseText {
-                    id: introText
-
                     Layout.fillWidth: true
                     text: root.introMessage || qsTr("Community <b>%1</b> has no intro message...").arg(root.name)
                     color: Theme.palette.directColor1

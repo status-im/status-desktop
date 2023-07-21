@@ -895,14 +895,6 @@ method onKickedFromCommunity*(self: Module) =
 method onJoinedCommunity*(self: Module) =
   self.view.setAmIMember(true)
 
-method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
-  if password == "" and pin == "":
-    self.view.userAuthenticationCanceled()
-    self.controller.userAuthenticationCanceled()
-    return
-
-  self.controller.userAuthenticated(password)
-
 method onMarkAllMessagesRead*(self: Module, chat: ChatDto) =
   self.updateBadgeNotifications(chat, hasUnreadMessages=false, unviewedMentionsCount=0)
 
@@ -1328,18 +1320,5 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
 method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =
   self.controller.deleteCommunityTokenPermission(communityId, permissionId)
 
-method requestToJoinCommunityWithAuthentication*(self: Module, ensName: string, addressesToShare: seq[string],
-    airdropAddress: string) =
-  self.controller.authenticateToRequestToJoinCommunity(ensName, addressesToShare, airdropAddress)
-
-method editSharedAddressesWithAuthentication*(self: Module, addressesToShare: seq[string], airdropAddress: string) =
-  self.controller.authenticateToEditSharedAddresses(addressesToShare, airdropAddress)
-
 method onDeactivateChatLoader*(self: Module, chatId: string) =
   self.view.chatsModel().disableChatLoader(chatId)
-
-method authenticateWithCallback*(self: Module) =
-  self.controller.authenticateWithCallback()
-
-method callbackFromAuthentication*(self: Module, authenticated: bool) =
-  self.view.callbackFromAuthentication(authenticated)

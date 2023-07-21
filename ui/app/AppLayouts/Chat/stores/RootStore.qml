@@ -380,8 +380,8 @@ QtObject {
         return communitiesModuleInst.spectateCommunity(id, ensName)
     }
 
-    function requestToJoinCommunityWithAuthentication(ensName, addressesToShare = [], airdropAddress = "") {
-        chatCommunitySectionModule.requestToJoinCommunityWithAuthenticationWithSharedAddresses(ensName, JSON.stringify(addressesToShare), airdropAddress)
+    function requestToJoinCommunityWithAuthentication(communityId, ensName, addressesToShare = [], airdropAddress = "") {
+        communitiesModuleInst.requestToJoinCommunityWithAuthenticationWithSharedAddresses(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress)
     }
 
     function userCanJoin(id) {
@@ -479,7 +479,7 @@ QtObject {
             const userCanJoin = userCanJoin(result.communityData.communityId)
             // TODO find what to do when you can't join
             if (userCanJoin) {
-                requestToJoinCommunityWithAuthentication(userProfileInst.preferredName) // FIXME what addresses to share?
+                requestToJoinCommunityWithAuthentication(result.communityData.communityId, userProfileInst.preferredName) // FIXME what addresses to share?
             }
         }
         return result
@@ -619,7 +619,7 @@ QtObject {
 
     function authenticateWithCallback(callback) {
         _d.authenticationCallbacks.push(callback)
-        chatCommunitySectionModule.authenticateWithCallback()
+        communitiesModuleInst.authenticateWithCallback()
     }
 
     function removePrivateKey(communityId) {

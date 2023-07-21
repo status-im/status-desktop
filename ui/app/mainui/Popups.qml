@@ -50,6 +50,7 @@ QtObject {
         Global.openCommunityProfilePopupRequested.connect(openCommunityProfilePopup)
         Global.createCommunityPopupRequested.connect(openCreateCommunityPopup)
         Global.importCommunityPopupRequested.connect(openImportCommunityPopup)
+        Global.communityIntroPopupRequested.connect(openCommunityIntroPopup)
         Global.removeContactRequested.connect(openRemoveContactConfirmationPopup)
         Global.openPopupRequested.connect(openPopup)
         Global.closePopupRequested.connect(closePopup)
@@ -224,6 +225,18 @@ QtObject {
 
     function openImportCommunityPopup() {
         openPopup(importCommunitiesPopupComponent)
+    }
+
+    function openCommunityIntroPopup(communityId, name, introMessage,
+                                     imageSrc, accessType, isInvitationPending) {
+        openPopup(communityIntroDialogPopup,
+                  {communityId: communityId,
+                   name: name,
+                   introMessage: introMessage,
+                   imageSrc: imageSrc,
+                   accessType: accessType,
+                   isInvitationPending: isInvitationPending
+                  });
     }
 
     function openDiscordImportProgressPopup() {
@@ -486,9 +499,48 @@ QtObject {
             id: importCommunitiesPopupComponent
             ImportCommunityPopup {
                 store: root.communitiesStore
-                onClosed: {
-                    destroy()
+                onJoinCommunity: {
+                    Global.communityIntroPopupRequested(
+                        communityId,
+                        communityDetails.name,
+                        communityDetails.introMessage,
+                        communityDetails.image,
+                        Constants.communityChatOnRequestAccess,
+                        root.rootStore.isCommunityRequestPending(communityId));
+                    close();
                 }
+                onClosed: {
+                    destroy();
+                }
+            }
+        },
+
+        Component {
+            id: communityIntroDialogPopup
+            CommunityIntroDialog {
+                id: communityIntroDialog
+                property string communityId
+                loginType: root.rootStore.loginType
+                walletAccountsModel: root.rootStore.receiveAccounts
+                permissionsModel: root.rootStore.permissionsModel
+                assetsModel: root.rootStore.assetsModel
+                collectiblesModel: root.rootStore.collectiblesModel
+                onJoined: root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, communityIntroDialog.name, JSON.stringify(sharedAddresses), airdropAddress)
+                onCancelMembershipRequest: root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
+                Connections {
+                    target: root.communitiesStore.communitiesModuleInst
+                    function onCommunityAccessRequested(communityId: string) {
+                        root.communitiesStore.spectateCommunity(communityId);
+                        communityIntroDialog.close();
+                    }
+                    function onCommunityAccessFailed(communityId: string) {
+                        communityIntroDialog.close();
+                    }
+                    function onUserAuthenticationCanceled() {
+                        communityIntroDialog.close();
+                    }
+                }
+                onClosed: { destroy(); }
             }
         },
 

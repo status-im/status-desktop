@@ -376,33 +376,14 @@ method onJoinedCommunity*(self: AccessInterface) {.base.} =
 method onAcceptRequestToJoinFailedNoPermission*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method onDeactivateChatLoader*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method requestToJoinCommunityWithAuthentication*(self: AccessInterface, ensName: string, addressesToShare: seq[string],
-    airdropAddress: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method editSharedAddressesWithAuthentication*(self: AccessInterface, addressesToShare: seq[string], airdropAddress: string)
-    {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-
 method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =
-
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCheckChannelPermissionsResponse*(self: AccessInterface, chatId: string, checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCheckAllChannelsPermissionsResponse*(self: AccessInterface, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method authenticateWithCallback*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method callbackFromAuthentication*(self: AccessInterface, authenticated: bool) {.base.} =
   raise newException(ValueError, "No implementation available")

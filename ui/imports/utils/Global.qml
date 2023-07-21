@@ -60,6 +60,8 @@ QtObject {
     signal switchToCommunitySettings(string communityId)
     signal createCommunityPopupRequested(bool isDiscordImport)
     signal importCommunityPopupRequested()
+    signal communityIntroPopupRequested(string communityId, string name, string introMessage,
+                                        string imageSrc, int accessType, bool isInvitationPending)
     signal leaveCommunityRequested(string community, string communityId, string outroMessage)
     signal openEditSharedAddressesFlow(string communityId)
 

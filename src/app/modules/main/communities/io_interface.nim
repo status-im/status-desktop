@@ -183,3 +183,20 @@ method shareCommunityChannelUrlWithChatKey*(self: AccessInterface, communityId: 
 
 method shareCommunityChannelUrlWithData*(self: AccessInterface, communityId: string, chatId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onUserAuthenticated*(self: AccessInterface, pin: string, password: string, keyUid: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestToJoinCommunityWithAuthentication*(self: AccessInterface, communityId, ensName: string, addressesToShare: seq[string],
+    airdropAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method editSharedAddressesWithAuthentication*(self: AccessInterface, communityId: string, addressesToShare: seq[string], airdropAddress: string)
+    {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method authenticateWithCallback*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method callbackFromAuthentication*(self: AccessInterface, authenticated: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

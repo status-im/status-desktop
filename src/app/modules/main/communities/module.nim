@@ -479,3 +479,24 @@ method shareCommunityChannelUrlWithChatKey*(self: Module, communityId: string, c
 
 method shareCommunityChannelUrlWithData*(self: Module, communityId: string, chatId: string): string =
   return self.controller.shareCommunityChannelUrlWithData(communityId, chatId)
+
+method onUserAuthenticated*(self: Module, pin: string, password: string, keyUid: string) =
+  if password == "" and pin == "":
+    self.view.userAuthenticationCanceled()
+    self.controller.userAuthenticationCanceled()
+    return
+
+  self.controller.userAuthenticated(password)
+
+method requestToJoinCommunityWithAuthentication*(self: Module, communityId, ensName: string, addressesToShare: seq[string],
+    airdropAddress: string) =
+  self.controller.authenticateToRequestToJoinCommunity(communityId, ensName, addressesToShare, airdropAddress)
+
+method editSharedAddressesWithAuthentication*(self: Module, communityId: string, addressesToShare: seq[string], airdropAddress: string) =
+  self.controller.authenticateToEditSharedAddresses(communityId, addressesToShare, airdropAddress)
+
+method authenticateWithCallback*(self: Module) =
+  self.controller.authenticateWithCallback()
+
+method callbackFromAuthentication*(self: Module, authenticated: bool) =
+  self.view.callbackFromAuthentication(authenticated)
