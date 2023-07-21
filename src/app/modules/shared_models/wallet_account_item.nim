@@ -15,6 +15,9 @@ QtObject:
     keycardAccount: bool
     position: int
     operability: string
+    areTestNetworksEnabled: bool
+    prodPreferredChainIds: string
+    testPreferredChainIds: string
 
   proc setup*(self: WalletAccountItem,
     name: string = "",
@@ -26,7 +29,10 @@ QtObject:
     keyUid: string = "",
     keycardAccount: bool = false,
     position: int = 0,
-    operability: string = wa_dto.AccountFullyOperable
+    operability: string = wa_dto.AccountFullyOperable,
+    areTestNetworksEnabled: bool = false,
+    prodPreferredChainIds: string = "",
+    testPreferredChainIds: string = ""
     ) =
       self.QObject.setup
       self.name = name
@@ -39,9 +45,42 @@ QtObject:
       self.keycardAccount = keycardAccount
       self.position = position
       self.operability = operability
+      self.areTestNetworksEnabled = areTestNetworksEnabled
+      self.prodPreferredChainIds = prodPreferredChainIds
+      self.testPreferredChainIds = testPreferredChainIds
 
   proc delete*(self: WalletAccountItem) =
       self.QObject.delete
+
+  proc newWalletAccountItem*(
+    name: string = "",
+    address: string = "",
+    colorId: string = "",
+    emoji: string = "",
+    walletType: string = "",
+    path: string = "",
+    keyUid: string = "",
+    keycardAccount: bool = false,
+    position: int = 0,
+    operability: string = wa_dto.AccountFullyOperable,
+    areTestNetworksEnabled: bool = false,
+    prodPreferredChainIds: string = "",
+    testPreferredChainIds: string = ""): WalletAccountItem =
+    new(result, delete)
+    result.QObject.setup
+    result.name = name
+    result.address = address
+    result.colorId = colorId
+    result.emoji = emoji
+    result.walletType = walletType
+    result.path = path
+    result.keyUid = keyUid
+    result.keycardAccount = keycardAccount
+    result.position = position
+    result.operability = operability
+    result.areTestNetworksEnabled = areTestNetworksEnabled
+    result.prodPreferredChainIds = prodPreferredChainIds
+    result.testPreferredChainIds = testPreferredChainIds
 
   proc `$`*(self: WalletAccountItem): string =
     result = fmt"""WalletAccountItem(
@@ -55,6 +94,9 @@ QtObject:
       keycardAccount: {self.keycardAccount},
       position: {self.position},
       operability: {self.operability},
+      areTestNetworksEnabled: {self.areTestNetworksEnabled},
+      prodPreferredChainIds: {self.prodPreferredChainIds},
+      testPreferredChainIds: {self.testPreferredChainIds},
       ]"""
 
   proc nameChanged*(self: WalletAccountItem) {.signal.}
@@ -146,3 +188,13 @@ QtObject:
     read = getOperability
     write = setOperability
     notify = operabilityChanged
+
+  proc preferredSharingChainIdsChanged*(self: WalletAccountItem) {.signal.}
+  proc preferredSharingChainIds*(self: WalletAccountItem): string {.slot.} =
+    if self.areTestNetworksEnabled:
+      return self.testPreferredChainIds
+    else :
+      return self.prodPreferredChainIds
+  QtProperty[string] preferredSharingChainIds:
+    read = preferredSharingChainIds
+    notify = preferredSharingChainIdsChanged

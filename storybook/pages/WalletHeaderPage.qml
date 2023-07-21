@@ -85,7 +85,6 @@ SplitView {
             property var allNetworks: enabledNetworks
             property var layer1Networks: NetworksModel.layer1Networks
             property var layer2Networks: NetworksModel.layer2Networks
-            property var testNetworks: NetworksModel.testNetworks
             property var enabledNetworks: NetworksModel.enabledNetworks
             function toggleNetwork(chainId) {
             }

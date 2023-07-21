@@ -39,6 +39,7 @@ method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
 method refreshNetworks*(self: Module) =
+  var items: seq[Item] = @[]
   var combinedItems: seq[CombinedItem] = @[]
   for n in self.controller.getNetworks():
     var prod = newItem(
@@ -65,8 +66,12 @@ method refreshNetworks*(self: Module) =
         n.test.blockExplorerURL,
         n.test.nativeCurrencySymbol
       )
+    if self.controller.areTestNetworksEnabled():
+      items.add(test)
+    else:
+      items.add(prod)
     combinedItems.add(initCombinedItem(prod,test,n.prod.layer))
-  self.view.setItems(combinedItems)
+  self.view.setItems(items, combinedItems)
 
 method load*(self: Module) =
   self.controller.init()

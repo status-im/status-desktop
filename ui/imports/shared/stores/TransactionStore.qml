@@ -26,12 +26,13 @@ QtObject {
     property var senderAccounts: walletSectionSendInst.senderAccounts
     property var selectedSenderAccount: walletSectionSendInst.selectedSenderAccount
     property string signingPhrase: walletSectionInst.signingPhrase
+    property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var savedAddressesModel: SortFilterProxyModel {
         sourceModel: walletSectionSavedAddresses.model
         filters: [
             ValueFilter {
                 roleName: "isTest"
-                value: networksModule.areTestNetworksEnabled
+                value: areTestNetworksEnabled
             }
         ]
     }
@@ -288,5 +289,9 @@ QtObject {
 
     function switchSenderAccount(index) {
         walletSectionSendInst.switchSenderAccount(index)
+    }
+
+    function getNetworkShortNames(chainIds) {
+       return networksModule.getNetworkShortNames(chainIds)
     }
 }

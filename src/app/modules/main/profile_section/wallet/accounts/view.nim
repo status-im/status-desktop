@@ -3,6 +3,7 @@ import NimQml, sequtils, strutils, sugar
 import ./io_interface
 import ./model
 import app/modules/shared_models/keypair_model
+import app/modules/shared_models/wallet_account_item
 
 QtObject:
   type
@@ -39,15 +40,15 @@ QtObject:
     read = getAccounts
     notify = accountsChanged
 
-  proc setItems*(self: View, items: seq[Item]) =
+  proc setItems*(self: View, items: seq[WalletAccountItem]) =
     self.accounts.setItems(items)
 
   proc updateAccount(self: View, address: string, accountName: string, colorId: string, emoji: string) {.slot.} =
     self.delegate.updateAccount(address, accountName, colorId, emoji)
 
-  proc onUpdatedAccount*(self: View, account: Item) =
+  proc onUpdatedAccount*(self: View, account: WalletAccountItem, prodPreferredChainIds: string, testPreferredChainIds: string) =
     self.accounts.onUpdatedAccount(account)
-    self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji)
+    self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji, prodPreferredChainIds, testPreferredChainIds)
 
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)
@@ -91,3 +92,9 @@ QtObject:
 
   proc moveAccountFinally(self: View, fromRow: int, toRow: int) {.slot.} =
     self.delegate.moveAccountFinally(fromRow, toRow)
+
+  proc updateWalletAccountProdPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
+    self.delegate.updateWalletAccountProdPreferredChains(address, preferredChainIds)
+
+  proc updateWalletAccountTestPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
+    self.delegate.updateWalletAccountTestPreferredChains(address, preferredChainIds)

@@ -135,13 +135,15 @@ Item {
                 delegate: WalletAccountListItem {
                     implicitWidth: ListView.view.width
                     modelData: model
-                    chainShortNames: root.store.getAllNetworksSupportedPrefix()
+                    getNetworkShortNames: root.store.getNetworkShortNames
                     onClicked: recipientSelected({name: modelData.name,
                                                      address: modelData.address,
                                                      color: modelData.color,
                                                      emoji: modelData.emoji,
                                                      walletType: modelData.walletType,
-                                                     currencyBalance: modelData.currencyBalance}, TabAddressSelectorView.Type.Account )
+                                                     currencyBalance: modelData.currencyBalance,
+                                                     preferredSharingChainIds: modelData.preferredSharingChainIds},
+                                                 TabAddressSelectorView.Type.Account)
                 }
 
                 model: root.store.accounts

@@ -51,11 +51,6 @@ SplitView {
                     filters: [ValueFilter { roleName: "layer"; value: 2; },
                               ValueFilter { roleName: "isTest"; value: false; }]
                 }
-                testNetworks: SortFilterProxyModel {
-                    sourceModel: simulatedNimModel
-                    filters: [ValueFilter { roleName: "layer"; value: 2; },
-                              ValueFilter { roleName: "isTest"; value: true; }]
-                }
                 enabledNetworks: SortFilterProxyModel {
                     sourceModel: simulatedNimModel
                     filters: ValueFilter { roleName: "isEnabled";  value: true; }
@@ -84,7 +79,6 @@ SplitView {
 
                     layer1Networks: networkFilter.layer1Networks
                     layer2Networks: networkFilter.layer2Networks
-                    testNetworks: networkFilter.testNetworks
 
                     useEnabledRole: false
 
@@ -129,7 +123,6 @@ SplitView {
                     sourceComponent: NetworkSelectPopup {
                         layer1Networks: networkFilter.layer1Networks
                         layer2Networks: networkFilter.layer2Networks
-                        testNetworks: networkFilter.testNetworks
 
                         singleSelection {
                             enabled: true

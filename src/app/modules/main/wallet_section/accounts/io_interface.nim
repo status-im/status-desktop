@@ -30,3 +30,9 @@ method updateAccount*(self: AccessInterface, address: string, accountName: strin
 # inheritance, which is not well supported in Nim.
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method updateWalletAccountProdPreferredChains*(self: AccessInterface, address, preferredChainIds: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateWalletAccountTestPreferredChains*(self: AccessInterface, address, preferredChainIds: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

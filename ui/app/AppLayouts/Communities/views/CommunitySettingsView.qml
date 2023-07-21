@@ -342,7 +342,6 @@ StatusSectionLayout {
             tokensModelWallet: root.rootStore.tokensModelWallet
             layer1Networks: communityTokensStore.layer1Networks
             layer2Networks: communityTokensStore.layer2Networks
-            testNetworks: communityTokensStore.testNetworks
             enabledNetworks: communityTokensStore.enabledNetworks
             allNetworks: communityTokensStore.allNetworks
             accounts: root.rootStore.accounts

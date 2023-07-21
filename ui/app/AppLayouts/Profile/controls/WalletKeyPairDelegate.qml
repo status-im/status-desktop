@@ -13,7 +13,7 @@ Rectangle {
     id: root
 
     property var keyPair
-    property string chainShortNames
+    property var getNetworkShortNames: function(chainIds){}
     property string userProfilePublicKey
     property bool includeWatchOnlyAccount
 
@@ -154,7 +154,7 @@ Rectangle {
                 width: ListView.view.width
                 account: model.account
                 totalCount: ListView.view.count
-                chainShortNames: root.chainShortNames
+                getNetworkShortNames: root.getNetworkShortNames
                 onGoToAccountView: root.goToAccountView(model.account)
             }
         }

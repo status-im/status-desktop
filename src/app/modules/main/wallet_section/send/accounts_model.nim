@@ -13,6 +13,7 @@ type
     Assets,
     CurrencyBalance,
     Position,
+    PreferredSharingChainIds
 
 QtObject:
   type
@@ -56,6 +57,7 @@ QtObject:
       ModelRole.Assets.int: "assets",
       ModelRole.CurrencyBalance.int: "currencyBalance",
       ModelRole.Position.int: "position",
+      ModelRole.PreferredSharingChainIds.int: "preferredSharingChainIds"
     }.toTable
 
   proc setItems*(self: AccountsModel, items: seq[AccountItem]) =
@@ -91,6 +93,8 @@ QtObject:
       result = newQVariant(item.getAssetsAsQVariant())
     of ModelRole.CurrencyBalance:
       result = newQVariant(item.getCurrencyBalanceAsQVariant())
+    of ModelRole.PreferredSharingChainIds:
+      result = newQVariant(item.preferredSharingChainIds())
 
   method getItemByIndex*(self: AccountsModel, index: int): AccountItem =
     if index < 0 or index >= self.items.len:

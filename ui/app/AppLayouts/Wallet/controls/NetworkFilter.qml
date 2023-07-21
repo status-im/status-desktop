@@ -17,9 +17,10 @@ StatusComboBox {
     required property var allNetworks
     required property var layer1Networks
     required property var layer2Networks
-    required property var testNetworks
     required property var enabledNetworks
     property bool multiSelection: true
+    property bool preferredNetworksMode: false
+    property var preferredSharingNetworks: []
 
     /// \c network is a network.model.nim entry
     /// It is called for every toggled network if \c multiSelection is \c true
@@ -36,9 +37,6 @@ StatusComboBox {
                     chainIdExists = true
                 } else if(!!root.layer2Networks && ModelUtils.contains(root.layer2Networks, "chainId", chainId)) {
                     d.currentModel = root.layer2Networks
-                    chainIdExists = true
-                } else if(!!root.testNetworks && ModelUtils.contains(root.testNetworks, "chainId", chainId)) {
-                    d.currentModel = root.testNetworks
                     chainIdExists = true
                 }
             }
@@ -65,6 +63,7 @@ StatusComboBox {
         readonly property string selectedIconUrl: ModelUtils.get(d.currentModel, d.currentIndex, "iconUrl") ?? ""
         readonly property bool allSelected: (!!root.enabledNetworks && !!root.allNetworks) ? root.enabledNetworks.count === root.allNetworks.count :
                                                                                              false
+        readonly property bool noneSelected: (!!root.enabledNetworks) ? root.enabledNetworks.count === 0 : false
 
         // Persist selection between selectPopupLoader reloads
         property var currentModel: layer1Networks
@@ -108,7 +107,7 @@ StatusComboBox {
             lineHeight: 24
             lineHeightMode: Text.FixedHeight
             verticalAlignment: Text.AlignVCenter
-            text: root.multiSelection ? (d.allSelected ? qsTr("All networks") : "") : d.selectedChainName
+            text: root.multiSelection ? (d.noneSelected ? qsTr("Select networks"): d.allSelected ? qsTr("All networks") : "") : d.selectedChainName
             color: Theme.palette.baseColor1
             visible: !!text
         }
@@ -132,7 +131,8 @@ StatusComboBox {
     control.popup.contentItem: NetworkSelectionView {
         layer1Networks: root.layer1Networks
         layer2Networks: root.layer2Networks
-        testNetworks: root.testNetworks
+        preferredSharingNetworks: root.preferredSharingNetworks
+        preferredNetworksMode: root.preferredNetworksMode
 
         implicitWidth: contentWidth
         implicitHeight: contentHeight

@@ -56,7 +56,6 @@ StackView {
     // Network related properties:
     property var layer1Networks
     property var layer2Networks
-    property var testNetworks
     property var enabledNetworks
     property var allNetworks
 
@@ -240,8 +239,7 @@ StackView {
 
                 layer1Networks: root.layer1Networks
                 layer2Networks: root.layer2Networks
-                testNetworks: root.testNetworks
-                enabledNetworks: root.testNetworks
+                enabledNetworks: root.enabledNetworks
                 allNetworks: root.allNetworks
                 accounts: root.accounts
 
@@ -353,7 +351,6 @@ StackView {
                         viewWidth: root.viewWidth
                         layer1Networks: root.layer1Networks
                         layer2Networks: root.layer2Networks
-                        testNetworks: root.testNetworks
                         enabledNetworks: root.enabledNetworks
                         allNetworks: root.allNetworks
                         accounts: root.accounts

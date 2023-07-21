@@ -1,6 +1,6 @@
 import NimQml, sequtils, sugar, chronicles, tables
 
-import ./io_interface, ./view, ./item, ./controller
+import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import app/modules/shared/wallet_utils
 import app/modules/shared/keypairs
@@ -62,7 +62,10 @@ method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: Wallet
     balance = newCurrencyAmount(),
     balanceFetched = false,
     operability = account.operable,
-    isDefaultAccount = account.isWallet)
+    isDefaultAccount = account.isWallet,
+    self.controller.areTestNetworksEnabled(),
+    prodPreferredChainIds = account.prodPreferredChainIds,
+    testPreferredChainIds = account.testPreferredChainIds)
 
 method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto], accountsTokens: OrderedTable[string, seq[WalletTokenDto]]): seq[KeyPairItem] =
   let enabledChainIds = self.controller.getEnabledChainIds()
@@ -70,7 +73,7 @@ method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto], 
   let currencyFormat = self.controller.getCurrencyFormat(currency)
 
   var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
-  excludePrivateKeyKeypairs = false)
+  excludePrivateKeyKeypairs = false, self.controller.areTestNetworksEnabled())
 
   var item = newKeyPairItem()
   item.setIcon("show")
@@ -90,7 +93,8 @@ method refreshWalletAccounts*(self: Module, accountsTokens: OrderedTable[string,
 
   let items = walletAccounts.map(w => (block:
     let keycardAccount = self.controller.isKeycardAccount(w)
-    walletAccountToWalletSettingsAccountsItem(w, keycardAccount)
+    let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
+    walletAccountToWalletAccountItem(w, keycardAccount, areTestNetworksEnabled)
   ))
 
   self.view.setKeyPairModelItems(self.createKeypairItems(walletAccounts, accountsTokens))
@@ -113,7 +117,8 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     let args = AccountArgs(e)
     let keycardAccount = self.controller.isKeycardAccount(args.account)
-    self.view.onUpdatedAccount(walletAccountToWalletSettingsAccountsItem(args.account, keycardAccount))
+    let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
+    self.view.onUpdatedAccount(walletAccountToWalletAccountItem(args.account, keycardAccount, areTestNetworksEnabled), args.account.prodPreferredChainIds, args.account.testPreferredChainIds)
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
     let args = KeycardArgs(e)
@@ -164,3 +169,9 @@ method renameKeypair*(self: Module, keyUid: string, name: string) =
 
 proc onKeypairRenamed(self: Module, keyUid: string, name: string) =
   self.view.keyPairModel.updateKeypairName(keyUid, name)
+
+method updateWalletAccountProdPreferredChains*(self: Module, address, preferredChainIds: string) =
+  self.controller.updateWalletAccountProdPreferredChains(address, preferredChainIds)
+
+method updateWalletAccountTestPreferredChains*(self: Module, address, preferredChainIds: string) =
+  self.controller.updateWalletAccountTestPreferredChains(address, preferredChainIds)

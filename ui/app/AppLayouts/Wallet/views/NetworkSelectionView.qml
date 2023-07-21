@@ -4,6 +4,8 @@ import QtQuick.Controls 2.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+import SortFilterProxyModel 0.2
+
 import utils 1.0
 
 import "../stores/NetworkSelectPopup"
@@ -12,11 +14,12 @@ import "../controls"
 StatusScrollView {
     id: root
 
-    property var testNetworks: null
     required property var layer1Networks
     required property var layer2Networks
     property bool useEnabledRole: true
     property SingleSelectionInfo singleSelection: SingleSelectionInfo {}
+    property var preferredSharingNetworks: []
+    property bool preferredNetworksMode: false
 
     signal toggleNetwork(var network, var model, int index)
 
@@ -48,6 +51,9 @@ StatusScrollView {
                 useEnabledRole: root.useEnabledRole
                 singleSelection: root.singleSelection
                 onToggleNetwork: root.toggleNetwork(network, model, index)
+                preferredNetworksMode: root.preferredNetworksMode
+                preferredSharingNetworks: root.preferredSharingNetworks
+                allChecked: root.preferredSharingNetworks.length === layer1Networks.count + layer2Networks.count
             }
         }
 
@@ -75,20 +81,9 @@ StatusScrollView {
                 useEnabledRole: root.useEnabledRole
                 singleSelection: root.singleSelection
                 onToggleNetwork: root.toggleNetwork(network, model, index)
-            }
-        }
-
-        Repeater {
-            id: chainRepeater3
-            model: root.testNetworks
-            delegate: NetworkSelectItemDelegate {
-                implicitHeight: 48
-                width: parent.width
-                radioButtonGroup: radioBtnGroup
-                networkModel: chainRepeater3.model
-                useEnabledRole: root.useEnabledRole
-                singleSelection: root.singleSelection
-                onToggleNetwork: root.toggleNetwork(network, model, index)
+                preferredNetworksMode: root.preferredNetworksMode
+                preferredSharingNetworks: root.preferredSharingNetworks
+                allChecked: root.preferredSharingNetworks.length === layer1Networks.count + layer2Networks.count
             }
         }
     }

@@ -13,7 +13,7 @@ StatusListItem {
     id: root
     
     property var account
-    property string chainShortNames
+    property var getNetworkShortNames: function(chainIds){}
     property int totalCount: 0
 
     signal goToAccountView()
@@ -22,6 +22,7 @@ StatusListItem {
     title: account.name
     subTitle: {
         const elidedAddress = StatusQUtils.Utils.elideText(account.address,6,4)
+        let chainShortNames = root.getNetworkShortNames(model.account.preferredSharingChainIds)
         return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(chainShortNames) + Utils.richColorText(elidedAddress, Theme.palette.directColor1) : chainShortNames + elidedAddress
     }
     asset.color: !!account.colorId ? Utils.getColorForId(account.colorId): ""

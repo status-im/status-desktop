@@ -46,6 +46,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   let walletAccounts = self.controller.getWalletAccounts()
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
+  let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
   let items = walletAccounts.map(w => (block:
     let keycardAccount = self.controller.isKeycardAccount(w)
     walletAccountToWalletAccountsItem(
@@ -54,6 +55,7 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
       chainIds,
       currency,
       currencyFormat,
+      areTestNetworksEnabled
     )
   ))
   self.view.setItems(items)  
@@ -75,3 +77,9 @@ method deleteAccount*(self: Module, address: string) =
 
 method updateAccount*(self: Module, address: string, accountName: string, colorId: string, emoji: string) =
   self.controller.updateAccount(address, accountName, colorId, emoji)
+
+method updateWalletAccountProdPreferredChains*(self: Module, address, preferredChainIds: string) =
+  self.controller.updateWalletAccountProdPreferredChains(address, preferredChainIds)
+
+method updateWalletAccountTestPreferredChains*(self: Module, address, preferredChainIds: string) =
+  self.controller.updateWalletAccountTestPreferredChains(address, preferredChainIds)

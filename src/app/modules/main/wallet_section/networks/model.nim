@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, sequtils
+import NimQml, Tables, strutils, strformat, sequtils, sugar
 
 import ./item
 
@@ -241,8 +241,15 @@ QtObject:
 
     return (chainIds, enable)
 
-  proc getAllNetworksSupportedPrefix*(self: Model): string =
+  proc getNetworkShortNames*(self: Model, preferredNetworks: string): string =
     var networkString = ""
-    for item in self.items:
-      networkString = networkString & item.getShortName() & ':'
+    let networks = preferredNetworks.split(":")
+    for nw in networks:
+      for item in self.items:
+        if $item.getChainId() == nw:
+          networkString = networkString & item.getShortName() & ':'
+          break
     return networkString
+
+  proc getAllNetworksChainIds*(self: Model): string =
+    return self.items.map(x => x.getChainId()).join(":")

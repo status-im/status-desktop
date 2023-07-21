@@ -1,8 +1,8 @@
 import Tables, NimQml, sequtils, sugar
 
-#import ../../../../../../app_service/service/network/dto
 import ./io_interface
-#import ./item
+import ./item
+import ./model
 import ./combined_item
 import ./combined_model
 
@@ -11,6 +11,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       combinedNetworks: CombinedModel
+      networks: Model
       areTestNetworksEnabled: bool
 
   proc setup(self: View) =
@@ -24,6 +25,7 @@ QtObject:
     new(result, delete)
     result.delegate = delegate
     result.combinedNetworks = newCombinedModel()
+    result.networks = newModel()
     result.setup()
 
   proc areTestNetworksEnabledChanged*(self: View) {.signal.}
@@ -44,6 +46,13 @@ QtObject:
     self.areTestNetworksEnabled = not self.areTestNetworksEnabled
     self.areTestNetworksEnabledChanged()
 
+  proc networksChanged*(self: View) {.signal.}
+  proc getNetworks(self: View): QVariant {.slot.} =
+    return newQVariant(self.networks)
+  QtProperty[QVariant] networks:
+    read = getNetworks
+    notify = networksChanged
+
   proc combinedNetworksChanged*(self: View) {.signal.}
   proc getCombinedNetworks(self: View): QVariant {.slot.} =
     return newQVariant(self.combinedNetworks)
@@ -54,11 +63,15 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc setItems*(self: View, combinedItems: seq[CombinedItem]) =
+  proc setItems*(self: View, items: seq[Item], combinedItems: seq[CombinedItem]) =
+    self.networks.setItems(items)
     self.combinedNetworks.setItems(combinedItems)
 
-  proc getAllNetworksSupportedPrefix*(self: View): string {.slot.} =
-    return self.combinedNetworks.getAllNetworksSupportedPrefix(self.areTestNetworksEnabled)
+  proc getAllNetworksChainIds*(self: View): string {.slot.} =
+    return self.combinedNetworks.getAllNetworksChainIds(self.areTestNetworksEnabled)
+
+  proc getNetworkShortNames*(self: View, preferredNetworks: string): string {.slot.} =
+    return self.combinedNetworks.getNetworkShortNames(preferredNetworks, self.areTestNetworksEnabled)
 
   proc updateNetworkEndPointValues*(self: View, chainId: int, newMainRpcInput, newFailoverRpcUrl: string) =
     self.delegate.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)

@@ -11,6 +11,7 @@ QtObject {
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
 
     readonly property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
+    readonly property var networks: networksModule.networks
     readonly property var combinedNetworks: networksModule.combinedNetworks
     property var selectedAccount
 
@@ -48,8 +49,8 @@ QtObject {
         root.accountsModule.moveAccountFinally(from, to)
     }
 
-    function getAllNetworksSupportedPrefix() {
-        return networksModule.getAllNetworksSupportedPrefix()
+    function getAllNetworksChainIds() {
+        return networksModule.getAllNetworksChainIds()
     }
 
     function runAddAccountPopup() {
@@ -62,5 +63,41 @@ QtObject {
 
     function updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl) {
         networksModule.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+    }
+
+    function updateWalletAccountPreferredChains(address, preferredChainIds) {
+        if(areTestNetworksEnabled) {
+            accountsModule.updateWalletAccountTestPreferredChains(address, preferredChainIds)
+        }
+        else {
+            accountsModule.updateWalletAccountProdPreferredChains(address, preferredChainIds)
+        }
+    }
+
+    function getNetworkShortNames(chainIds) {
+       return networksModule.getNetworkShortNames(chainIds)
+    }
+
+    function processPreferredSharingNetworkToggle(preferredSharingNetworks, toggledNetwork) {
+        let prefChains = preferredSharingNetworks
+        if(prefChains.length === networks.count) {
+            prefChains = [toggledNetwork.chainId.toString()]
+        }
+        else if(!prefChains.includes(toggledNetwork.chainId.toString())) {
+            prefChains.push(toggledNetwork.chainId.toString())
+        }
+        else {
+            if(prefChains.length === 1) {
+                prefChains = getAllNetworksChainIds().split(":")
+            }
+            else {
+                for(var i = 0; i < prefChains.length;i++) {
+                    if(prefChains[i] === toggledNetwork.chainId.toString()) {
+                        prefChains.splice(i, 1)
+                    }
+                }
+            }
+        }
+        return prefChains
     }
 }

@@ -40,7 +40,8 @@ SplitView {
                                                stripTrailingZeroes: false}),
                                  isAllAccounts: false,
                                  includeWatchOnly: false,
-                                 path: "m/44’/60’/0’/0’/34"
+                                 path: "m/44’/60’/0’/0’/34",
+                                 preferredSharingChainIds:  walletStore.areTestNetworksEnabled ? "5:420:421613": "1:10:42161"
                              })
         }
 
@@ -49,21 +50,27 @@ SplitView {
         }
 
         readonly property QtObject walletStore: QtObject {
-            property var allNetworks: enabledNetworks
-            property var layer1Networks: NetworksModel.layer1Networks
-            property var layer2Networks: NetworksModel.layer2Networks
-            property var testNetworks: NetworksModel.testNetworks
-            property var enabledNetworks: NetworksModel.enabledNetworks
+            property var networks: NetworksModel.mainNetworks
+            property bool areTestNetworksEnabled: areTestNetworksEnabledCheckbox.checked
             function toggleNetwork(chainId) {
             }
 
-            function getAllNetworksSupportedPrefix(hovered) {
-                return hovered ?  "<font color=\"" + "#627EEA" + "\">" + "eth:" + "</font>" +
-                                 "<font color=\"" + "#E90101" + "\">" + "opt:" + "</font>" +
-                                 "<font color=\"" + "#27A0EF" + "\">" + "arb:" + "</font>" : "eth:opt:arb:"
+            function getNetworkShortNames() {
+                return "eth:opt:arb:"
+            }
+
+            function getAllNetworksChainIds() {
+                return "1:10:42161"
+            }
+
+            function updateWalletAccountPreferredChains(address, preferredChainIds) {
+                console.warn("updateWalletAccountPreferredChains :: address ::", address, "preferredChainIds :: ", preferredChainIds)
+            }
+
+            function processPreferredSharingNetworkToggle(preferredSharingNetworksArray, network) {
+                console.warn("processPreferredSharingNetworkToggle :: preferredSharingNetworksArray ::", preferredSharingNetworksArray, "network :: ", network)
             }
         }
-
 
         property var keyPairModel: WalletKeyPairModel {}
     }
@@ -82,4 +89,17 @@ SplitView {
             keyPair: d.keyPairModel.data[0].keyPair
         }
     }  
+
+    LogsAndControlsPanel {
+        id: logsAndControlsPanel
+
+        SplitView.minimumHeight: 100
+        SplitView.preferredHeight: 200
+
+        CheckBox {
+            id: areTestNetworksEnabledCheckbox
+            text: "areTestNetworksEnabled"
+            checked: false
+        }
+    }
 }

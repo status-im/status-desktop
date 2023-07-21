@@ -25,6 +25,9 @@ proc initItem*(
   keycardAccount: bool = false,
   assetsLoading: bool = true,
   isWallet: bool = false,
+  areTestNetworksEnabled: bool = false,
+  prodPreferredChainIds: string = "",
+  testPreferredChainIds: string = ""
 ): Item =
   result = Item()
   result.WalletAccountItem.setup(name,
@@ -35,7 +38,11 @@ proc initItem*(
     path,
     keyUid,
     keycardAccount,
-    position)
+    position,
+    operability = wa_dto.AccountFullyOperable,
+    areTestNetworksEnabled,
+    prodPreferredChainIds,
+    testPreferredChainIds)
   result.createdAt = createdAt
   result.assetsLoading = assetsLoading
   result.currencyBalance = currencyBalance

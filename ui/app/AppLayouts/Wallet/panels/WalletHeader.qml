@@ -116,7 +116,6 @@ Item {
                 allNetworks: walletStore.allNetworks
                 layer1Networks: walletStore.layer1Networks
                 layer2Networks: walletStore.layer2Networks
-                testNetworks: walletStore.testNetworks
                 enabledNetworks: walletStore.enabledNetworks
 
                 onToggleNetwork: (network) => {

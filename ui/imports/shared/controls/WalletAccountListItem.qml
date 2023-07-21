@@ -14,7 +14,7 @@ StatusListItem {
     id: root
 
     property var modelData
-    property string chainShortNames
+    property var getNetworkShortNames: function(chainIds){}
     property bool clearVisible: false
     signal cleared()
 
@@ -25,6 +25,7 @@ StatusListItem {
     subTitle:{
         if(!!modelData) {
             let elidedAddress = StatusQUtils.Utils.elideText(modelData.address,6,4)
+            let chainShortNames = root.getNetworkShortNames(modelData.preferredSharingChainIds)
             return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(chainShortNames) ||  Utils.richColorText(elidedAddress, Theme.palette.directColor1) : elidedAddress
         }
         return ""

@@ -101,3 +101,6 @@ proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol
 proc suggestedFees*(self: Controller, chainId: int): string =
   let suggestedFees = self.transactionService.suggestedFees(chainId)
   return suggestedFees.toJson()
+
+proc areTestNetworksEnabled*(self: Controller): bool =
+  return self.walletAccountService.areTestNetworksEnabled()

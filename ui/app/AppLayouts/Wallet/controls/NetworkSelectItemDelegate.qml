@@ -16,6 +16,11 @@ StatusListItem {
     property var radioButtonGroup
     property bool useEnabledRole: true
 
+    // Needed for preferred sharing networks
+    property bool preferredNetworksMode: false
+    property var preferredSharingNetworks: []
+    property bool allChecked: true
+
     signal toggleNetwork(var network, var model, int index)
 
     /// Mirrors Nim's UxEnabledState enum from networks/item.nim
@@ -47,7 +52,10 @@ StatusListItem {
             visible: !root.singleSelection.enabled
 
             checkState: {
-                if(root.useEnabledRole) {
+                if(root.preferredNetworksMode) {
+                    return root.allChecked ? Qt.PartiallyChecked : preferredSharingNetworks.includes(model.chainId.toString()) ? Qt.Checked : Qt.Unchecked
+                }
+                else if(root.useEnabledRole) {
                     return model.isEnabled ? Qt.Checked : Qt.Unchecked
                 } else if(model.enabledState === NetworkSelectItemDelegate.Enabled) {
                     return Qt.Checked

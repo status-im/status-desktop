@@ -11,7 +11,7 @@ logScope:
   topics = "shared-keypairs"
 
 proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: bool,
-  excludePrivateKeyKeypairs: bool): seq[KeyPairItem] =
+  excludePrivateKeyKeypairs: bool, areTestNetworksEnabled: bool = false): seq[KeyPairItem] =
   var items: seq[KeyPairItem]
   for kp in keypairs:
     if kp.accounts.len == 0:
@@ -40,7 +40,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         if acc.emoji.len == 0:
           icon = "wallet"
         item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet))
+          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet, areTestNetworksEnabled, acc.prodPreferredChainIds, acc.testPreferredChainIds))
       items.insert(item, 0) # Status Account must be at first place
       continue
     if kp.keypairType == KeypairTypeSeed:
@@ -59,7 +59,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         if acc.emoji.len == 0:
           icon = "wallet"
         item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet))
+          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet, areTestNetworksEnabled, acc.prodPreferredChainIds, acc.testPreferredChainIds))
       items.add(item)
       continue
     if kp.keypairType == KeypairTypeKey:
@@ -80,7 +80,7 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         if acc.emoji.len == 0:
           icon = "wallet"
         item.addAccount(newKeyPairAccountItem(acc.name, acc.path, acc.address, acc.publicKey, acc.emoji, acc.colorId,
-          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet))
+          icon, newCurrencyAmount(), balanceFetched = true, operability = acc.operable, acc.isWallet, areTestNetworksEnabled, acc.prodPreferredChainIds, acc.testPreferredChainIds))
       items.add(item)
       continue
   if items.len == 0:

@@ -30,7 +30,6 @@ StatusScrollView {
     // Network related properties:
     property var layer1Networks
     property var layer2Networks
-    property var testNetworks
     property var enabledNetworks
     property var allNetworks
 
@@ -318,7 +317,6 @@ StatusScrollView {
             allNetworks: root.allNetworks
             layer1Networks: root.layer1Networks
             layer2Networks: root.layer2Networks
-            testNetworks: root.testNetworks
             enabledNetworks: root.enabledNetworks
 
             multiSelection: false
