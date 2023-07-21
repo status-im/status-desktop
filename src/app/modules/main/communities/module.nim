@@ -145,6 +145,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       SectionType.Community,
       c.name,
       c.memberRole,
+      c.isControlNode,
       c.description,
       c.introMessage,
       c.outroMessage,

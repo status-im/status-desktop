@@ -32,6 +32,7 @@ SplitView {
                         name: "Test community",
                         joined: true,
                         memberRole: Constants.memberRole.owner,
+                        isControlNode: true,
                         image: ModelsData.icons.dribble,
                         color: "yellow"
                     },
@@ -40,6 +41,7 @@ SplitView {
                         name: "Test community 2",
                         joined: true,
                         memberRole: Constants.memberRole.none,
+                        isControlNode: false,
                         image: ModelsData.collectibles.custom,
                         color: "peach"
                     },
@@ -48,6 +50,7 @@ SplitView {
                         name: "Test community invisible",
                         joined: false,
                         memberRole: Constants.memberRole.none,
+                        isControlNode: false,
                         image: "",
                         color: "red"
                     },
@@ -56,6 +59,7 @@ SplitView {
                         name: "Test community 3",
                         joined: true,
                         memberRole: Constants.memberRole.none,
+                        isControlNode: false,
                         image: "",
                         color: "whitesmoke"
                     },
@@ -64,6 +68,7 @@ SplitView {
                         name: "Test community 4",
                         joined: true,
                         memberRole: Constants.memberRole.admin,
+                        isControlNode: false,
                         image: ModelsData.icons.spotify,
                         color: "green"
                     },

@@ -13,6 +13,8 @@ Column {
     property alias requestToJoinEnabled: requestToJoinToggle.checked
     property alias pinMessagesEnabled: pinMessagesToggle.checked
 
+    property alias archiveSupporVisible: archiveSupport.visible
+
     spacing: 0
 
     QtObject {
@@ -24,7 +26,7 @@ Column {
         id: archiveSupport
 
         width: parent.width
-        height: d.optionHeight
+        height: visible ? d.optionHeight : 0
 
         StatusBaseText {
             Layout.fillWidth: true

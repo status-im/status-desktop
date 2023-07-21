@@ -168,6 +168,7 @@ StatusSectionLayout {
             tags: root.rootStore.communityTags
             selectedTags: root.filteredSelectedTags
             archiveSupportEnabled: root.community.historyArchiveSupportEnabled
+            archiveSupporVisible: root.community.isControlNode
             requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
             pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
             editable: true

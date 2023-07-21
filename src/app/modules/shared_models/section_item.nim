@@ -26,6 +26,7 @@ type
     id: string
     name: string
     memberRole: MemberRole
+    isControlNode: bool
     description: string
     introMessage: string
     outroMessage: string
@@ -62,6 +63,7 @@ proc initItem*(
     sectionType: SectionType,
     name: string,
     memberRole = MemberRole.None,
+    isControlNode = false,
     description = "",
     introMessage = "",
     outroMessage = "",
@@ -97,6 +99,7 @@ proc initItem*(
   result.sectionType = sectionType
   result.name = name
   result.memberRole = memberRole
+  result.isControlNode = isControlNode
   result.description = description
   result.introMessage = introMessage
   result.outroMessage = outroMessage
@@ -143,6 +146,7 @@ proc `$`*(self: SectionItem): string =
     sectionType: {self.sectionType.int},
     name: {self.name},
     memberRole: {self.memberRole},
+    isControlNode: {self.isControlNode},
     description: {self.description},
     introMessage: {self.introMessage},
     outroMessage: {self.outroMessage},
@@ -188,6 +192,9 @@ proc memberRole*(self: SectionItem): MemberRole {.inline.} =
 
 proc `memberRole=`*(self: var SectionItem, value: MemberRole) {.inline.} =
   self.memberRole = value
+
+proc isControlNode*(self: SectionItem): bool {.inline.} =
+  self.isControlNode
 
 proc description*(self: SectionItem): string {.inline.} =
   self.description
