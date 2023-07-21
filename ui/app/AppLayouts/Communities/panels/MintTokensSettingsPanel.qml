@@ -476,9 +476,9 @@ StackView {
 
                 collectibleName: view.token.name
                 model: view.tokenOwnersModel || null
-                destroyOnClose: false
 
                 onRemotelyDestructClicked: {
+                    remotelyDestructPopup.close()
                     footer.remotelyDestructTokensList = remotelyDestructTokensList
                     alertPopup.tokenCount = tokenCount
                     alertPopup.open()
@@ -489,8 +489,6 @@ StackView {
                 id: alertPopup
 
                 property int tokenCount
-
-                destroyOnClose: false
 
                 title: qsTr("Remotely destruct %n token(s)", "", tokenCount)
                 acceptBtnText: qsTr("Remotely destruct")
@@ -521,8 +519,8 @@ StackView {
                 }
 
                 title: signTransactionPopup.isRemotelyDestructTransaction
-                       ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(root.title)
-                       : qsTr("Sign transaction - Burn %1 tokens").arg(root.title)
+                       ? qsTr("Sign transaction - Self-destruct %1 tokens").arg(tokenName)
+                       : qsTr("Sign transaction - Burn %1 tokens").arg(tokenName)
 
                 tokenName: footer.token.name
                 accountName: footer.token.accountName
@@ -537,7 +535,6 @@ StackView {
                             ? root.signRemoteDestructTransactionOpened(footer.remotelyDestructTokensList, tokenKey)
                             : root.signBurnTransactionOpened(tokenKey, footer.burnAmount)
                 }
-                onCancelClicked: close()
                 onSignTransactionClicked: signTransaction()
             }
 
@@ -550,6 +547,7 @@ StackView {
                 tokenSource: footer.token.artworkSource
 
                 onBurnClicked: {
+                    burnTokensPopup.close()
                     footer.burnAmount = burnAmount
                     signTransactionPopup.isRemotelyDestructTransaction = false
                     signTransactionPopup.open()
@@ -571,7 +569,6 @@ StackView {
                 root.deleteToken(tokenViewPage.token.key)
                 root.navigateBack()
             }
-            onCancelClicked: close()
         }
     }
 
