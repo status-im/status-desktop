@@ -31,9 +31,3 @@ class Window(QObject):
 
     def close(self):
         driver.toplevel_window.close(self.real_name)
-
-    def close_existed(self) -> bool:
-        if self.exists:
-            self.close()
-            return True
-        return False

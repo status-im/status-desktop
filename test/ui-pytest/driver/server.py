@@ -19,25 +19,23 @@ class SquishServer:
         self.port = port
 
     def start(self):
-        local_system.execute([
+        cmd = [
             f'"{self.path}"',
             '--configfile', str(self.config),
             '--verbose',
             f'--host={self.host}',
             f'--port={self.port}',
-        ])
-        local_system.wait_for_started(_PROCESS_NAME)
+        ]
+        local_system.execute(cmd)
+        try:
+            local_system.wait_for_started(_PROCESS_NAME)
+        except AssertionError:
+            local_system.execute(cmd, check=True)
+
 
     @classmethod
     def stop(cls, attempt: int = 2):
-        local_system.run(['killall', _PROCESS_NAME], check=False)
-        try:
-            local_system.wait_for_close(_PROCESS_NAME, 1)
-        except AssertionError as err:
-            if attempt:
-                cls.stop(attempt-1)
-            else:
-                raise err
+        local_system.kill_process_by_name(_PROCESS_NAME, verify=False)
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     def configuring(self, action: str, options: typing.Union[int, str, list]):

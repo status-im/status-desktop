@@ -2,14 +2,13 @@ import squish
 
 import configs
 import driver
+from configs.system import IS_WIN, IS_LIN
 from driver import context
 from driver.server import SquishServer
 from scripts.utils import system_path, local_system
-from scripts.utils.local_system import is_mac
 
 
 class AUT:
-
     def __init__(
             self,
             app_path: system_path.SystemPath = configs.APP_DIR,
@@ -21,7 +20,8 @@ class AUT:
         self.host = host
         self.port = int(port)
         self.ctx = None
-        self.aut_id = self.path.stem if is_mac() else self.path.name
+        self.aut_id = self.path.name if IS_LIN else self.path.stem
+        self.process_name = 'Status' if IS_WIN else 'nim_status_client'
         driver.testSettings.setWrappersForApplication(self.aut_id, ['Qt'])
 
     def __str__(self):
@@ -29,7 +29,7 @@ class AUT:
 
     def attach(self, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC, attempt: int = 2):
         if self.ctx is None:
-            self.ctx = context.attach(self.aut_id, timeout_sec)
+            self.ctx = context.attach('AUT', timeout_sec)
         try:
             squish.setApplicationContext(self.ctx)
         except TypeError as err:
@@ -45,25 +45,29 @@ class AUT:
         self.ctx = None
         return self
 
-    @staticmethod
-    def stop(verify: bool = True):
-        local_system.kill_process_by_name('nim_status_client', verify=verify)
+    def stop(self, verify: bool = True):
+        local_system.kill_process_by_name(self.process_name, verify=verify)
 
     def launch(self, *args) -> 'AUT':
         SquishServer().set_aut_timeout()
         if configs.ATTACH_MODE:
-            SquishServer().add_attachable_aut(self.aut_id, self.port)
+            SquishServer().add_attachable_aut('AUT', self.port)
             command = [
                        configs.testpath.SQUISH_DIR / 'bin' / 'startaut',
                        f'--port={self.port}',
                        f'"{self.path}"'
                    ] + list(args)
             local_system.execute(command)
+            try:
+                local_system.wait_for_started(self.process_name)
+            except AssertionError:
+                local_system.execute(command, check=True)
         else:
             SquishServer().add_executable_aut(self.aut_id, self.path.parent)
             command = [self.aut_id] + list(args)
             self.ctx = squish.startApplication(
                 ' '.join(command), configs.timeouts.PROCESS_TIMEOUT_SEC)
+
         self.attach()
         assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
         return self

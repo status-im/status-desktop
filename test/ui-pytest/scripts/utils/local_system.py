@@ -1,6 +1,5 @@
 import logging
 import os
-import platform
 import signal
 import subprocess
 import time
@@ -10,6 +9,7 @@ from datetime import datetime
 import psutil
 
 import configs
+from configs.system import IS_WIN
 
 _logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ def find_process_by_name(process_name: str):
     processes = []
     for proc in psutil.process_iter():
         try:
-            if process_name.lower().split('.')[0] == proc.name().lower():
+            if process_name.lower().split('.')[0] == proc.name().lower().split('.')[0]:
                 processes.append(process_info(
                     proc.pid,
                     proc.name(),
@@ -28,11 +28,6 @@ def find_process_by_name(process_name: str):
                 )
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-    if processes:
-        _logger.info(
-            f'Process: {process_name} found in processes list, PID: {", ".join([str(proc.pid) for proc in processes])}')
-    else:
-        _logger.info(f'Process: {process_name} not found in processes list')
     return processes
 
 
@@ -41,7 +36,7 @@ def kill_process_by_name(process_name: str, verify: bool = True, timeout_sec: in
     processes = find_process_by_name(process_name)
     for process in processes:
         try:
-            os.kill(process.pid, signal.SIGKILL)
+            os.kill(process.pid, signal.SIGILL if IS_WIN else signal.SIGKILL)
         except PermissionError as err:
             _logger.info(f'Close "{process}" error: {err}')
     if verify and processes:
@@ -56,7 +51,7 @@ def wait_for_started(process_name: str, timeout_sec: int = configs.timeouts.PROC
             _logger.info(f'Process started: {process_name}, start time: {process[0].create_time}')
             return process[0]
         time.sleep(1)
-        _logger.info(f'Waiting time: {int(time.monotonic() - started_at)} seconds')
+        _logger.debug(f'Waiting time: {int(time.monotonic() - started_at)} seconds')
         assert time.monotonic() - started_at < timeout_sec, f'Start process error: {process_name}'
 
 
@@ -110,7 +105,3 @@ def run(
     process = subprocess.run(command, shell=shell, stderr=stderr, stdout=stdout, timeout=timeout_sec)
     if check and process.returncode != 0:
         raise subprocess.CalledProcessError(process.returncode, command, process.stdout, process.stderr)
-
-
-def is_mac():
-    return platform.system() == 'Darwin'
