@@ -35,6 +35,8 @@ SplitView {
                 Layout.preferredWidth: slider.value
 
                 title: "No hodlers just yet"
+                icon: "settings"
+                iconType: ctrlIconType.currentIndex
                 text: ModelsData.descriptions.airdropInfo
                 buttonText: "Airdrop"
 
@@ -51,19 +53,39 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        Row {
-            Label {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "Panel width:"
+        ColumnLayout {
+            Row {
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Panel width: "
+                }
+
+                Slider {
+                    id: slider
+                    value: 700
+                    from: 300
+                    to: 600
+                }
             }
 
-            Slider {
-                id: slider
-                value: 700
-                from: 300
-                to: 600
+            Row {
+                Label {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "Icon type: "
+                }
+
+                ComboBox {
+                    id: ctrlIconType
+                    textRole: "text"
+                    valueRole: "value"
+                    model: [
+                        { value: StatusInfoBoxPanel.Type.Info, text: "Info" },
+                        { value: StatusInfoBoxPanel.Type.Danger, text: "Danger" },
+                        { value: StatusInfoBoxPanel.Type.Success, text: "Success" },
+                        { value: StatusInfoBoxPanel.Type.Warning, text: "Warning" }
+                    ]
+                }
             }
         }
-
     }
 }
