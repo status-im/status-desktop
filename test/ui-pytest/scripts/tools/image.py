@@ -12,7 +12,7 @@ import configs
 import constants
 import driver
 from configs.system import IS_LIN
-from scripts.tools.capture.ocv import Ocv
+from scripts.tools.ocv import Ocv
 from scripts.utils.system_path import SystemPath
 
 _logger = logging.getLogger(__name__)

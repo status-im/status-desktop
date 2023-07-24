@@ -8,17 +8,17 @@ from gui.components.before_started_popup import BeforeStartedPopUp
 from gui.components.splash_screen import SplashScreen
 from gui.components.welcome_status_popup import WelcomeStatusPopup
 from gui.screens.onboarding import AllowNotificationsView, WelcomeScreen, TouchIDAuthView
-from scripts.utils import local_system
 
 _logger = logging.getLogger(__name__)
 
 
 # Test Case: https://ethstatus.testrail.net/index.php?/cases/view/703020
 @pytest.mark.case(703020)
-@pytest.mark.parametrize('user_name, password', [
-    pytest.param('Test-User _1', '*P@ssw0rd*', id='User name with letters, numbers, underscore, hyphen and space')
+@pytest.mark.parametrize('user_name, password, user_image', [
+    ('Test-User _1', '*P@ssw0rd*', None),
+    ('_1Test-User', '*P@ssw0rd*', configs.testpath.TEST_FILES / 'squish.jpeg'),
 ])
-def test_generate_new_keys(main_window, user_name, password):
+def test_generate_new_keys(main_window, user_name, password, user_image):
     if configs.system.IS_MAC:
         AllowNotificationsView().wait_until_appears().allow()
     BeforeStartedPopUp().get_started()
@@ -28,7 +28,8 @@ def test_generate_new_keys(main_window, user_name, password):
     # Profile view verification
     profile_view = keys_screen.generate_new_keys()
     profile_view.set_display_name(user_name)
-    assert profile_view.is_upload_picture_button_visible
+    if user_image is not None:
+        profile_view.set_user_image(user_image)
     assert not profile_view.error_message
 
     details_view = profile_view.next()

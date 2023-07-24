@@ -1,5 +1,5 @@
 import driver
-from gui.elements.base_object import QObject
+from gui.elements.qt.object import QObject
 
 
 class BasePopup(QObject):

@@ -2,14 +2,15 @@ import logging
 import time
 from abc import abstractmethod
 
-import configs
 import constants.tesseract
 import driver
-from gui.elements.base_object import QObject
-from gui.elements.button import Button
-from gui.elements.text_edit import TextEdit
-from gui.elements.text_label import TextLabel
-from scripts.tools.capture.image import Image
+from gui.components.os.open_file_dialogs import OpenFileDialog
+from gui.elements.qt.button import Button
+from gui.elements.qt.object import QObject
+from gui.elements.qt.text_edit import TextEdit
+from gui.elements.qt.text_label import TextLabel
+from scripts.tools.image import Image
+from scripts.utils.system_path import SystemPath
 
 _logger = logging.getLogger(__name__)
 
@@ -79,16 +80,18 @@ class YourProfileView(OnboardingScreen):
         return self._profile_image.image
 
     @property
-    def is_upload_picture_button_visible(self) -> bool:
-        return self._upload_picture_button.is_visible
-
-    @property
     def error_message(self) -> str:
         return self._erros_text_label.text if self._erros_text_label.is_visible else ''
 
     def set_display_name(self, value: str):
         self._display_name_text_field.clear().text = value
         return self
+
+    def set_user_image(self, fp: SystemPath):
+        self._upload_picture_button.hover()
+        self._upload_picture_button.click()
+        file_dialog = OpenFileDialog().wait_until_appears()
+        file_dialog.open_file(fp)
 
     def next(self) -> 'EmojiAndIconView':
         self._next_button.click()
@@ -135,7 +138,7 @@ class EmojiAndIconView(OnboardingScreen):
         # To remove all artifacts, the image cropped.
         self._profile_image.image.crop(
             driver.UiTypes.ScreenRectangle(
-                20, 20, self._profile_image.image.width-40, self._profile_image.image.height-40
+                20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
             ))
         return self._profile_image.image.has_text(text, constants.tesseract.text_on_profile_image)
 
@@ -143,7 +146,7 @@ class EmojiAndIconView(OnboardingScreen):
         self._profile_image.image.update_view()
         self._profile_image.image.crop(
             driver.UiTypes.ScreenRectangle(
-                20, 20, self._profile_image.image.width-40, self._profile_image.image.height-40
+                20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
             ))
         return self._profile_image.image.has_color(constants.Color.WHITE)
 

@@ -1,9 +1,9 @@
 import logging
 
 from gui.components.user_canvas import UserCanvas
-from gui.elements.base_object import QObject
-from gui.elements.button import Button
-from gui.elements.window import Window
+from gui.elements.qt.button import Button
+from gui.elements.qt.object import QObject
+from gui.elements.qt.window import Window
 
 _logger = logging.getLogger(__name__)
 
