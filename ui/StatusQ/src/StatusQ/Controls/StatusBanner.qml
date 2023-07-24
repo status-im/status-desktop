@@ -134,9 +134,9 @@ Column {
         },
         State {
             when: statusBanner.type === StatusBanner.Type.Warning
-            PropertyChanges { target: d; backgroundColor: Theme.palette.pinColor3}
-            PropertyChanges { target: d; bordersColor: Theme.palette.pinColor2}
-            PropertyChanges { target: d; fontColor: Theme.palette.pinColor1}
+            PropertyChanges { target: d; backgroundColor: Theme.palette.warningColor3}
+            PropertyChanges { target: d; bordersColor: Theme.palette.warningColor2}
+            PropertyChanges { target: d; fontColor: Theme.palette.warningColor1}
         }
     ]
 }
