@@ -138,7 +138,7 @@ StackLayout {
             isControlNode: root.isControlNode
             onExportControlNodeClicked: root.exportControlNodeClicked()
             //TODO update once the domain changes
-            onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "en/status-communities/about-the-control-node-in-status-communities")
+            onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "status-communities/about-the-control-node-in-status-communities")
         }
     }
 
