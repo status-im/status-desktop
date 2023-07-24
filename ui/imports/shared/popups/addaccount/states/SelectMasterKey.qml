@@ -15,6 +15,7 @@ Item {
     id: root
 
     property AddAccountStore store
+    signal continueOnKeycard()
 
     Column {
         anchors.left: parent.left
@@ -109,6 +110,7 @@ Item {
                     objectName: "AddAccountPopup-GoToKeycardSettings"
                     text: qsTr("Continue in Keycard settings")
                     onClicked: {
+                        root.continueOnKeycard()
                         Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.keycard)
                     }
                 }
