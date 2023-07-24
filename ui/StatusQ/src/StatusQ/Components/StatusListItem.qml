@@ -46,8 +46,16 @@ Rectangle {
         isLetterIdenticon: false
         letterSize: 21
         charactersLen: 1
-        color: isLetterIdenticon ? bgColor : type === StatusListItem.Type.Danger ?
-            Theme.palette.dangerColor1 : Theme.palette.primaryColor1
+        color: {
+            if (!root.enabled)
+                return Theme.palette.baseColor1
+            if (isLetterIdenticon)
+                return bgColor
+            if (type === StatusListItem.Type.Danger)
+                return Theme.palette.dangerColor1
+
+            return Theme.palette.primaryColor1
+        }
         bgWidth: 40
         bgHeight: 40
         bgRadius: bgWidth / 2
