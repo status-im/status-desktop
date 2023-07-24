@@ -214,11 +214,9 @@ StatusSectionLayout {
                         return
 
                     Global.openExportControlNodePopup(root.community.name, root.chatCommunitySectionModule.exportCommunity(root.community.id), (popup) => {
-                        //TODO: connect to backend
-                        // Delete private key and remove control node status
                         popup.onDeletePrivateKey.connect(() => {
-                            console.log("Delete private key")
-                        })
+                            root.rootStore.removePrivateKey(root.community.id)
+                        })  
                     })
                 })
             }
