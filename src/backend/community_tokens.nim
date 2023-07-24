@@ -15,6 +15,10 @@ proc deployAssets*(chainId: int, deploymentParams: JsonNode, txData: JsonNode, p
   let payload = %* [chainId, deploymentParams, txData, utils.hashPassword(password)]
   return core.callPrivateRPC("collectibles_deployAssets", payload)
 
+proc removeCommunityToken*(chainId: int, address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId, address]
+  return core.callPrivateRPC("wakuext_removeCommunityToken", payload)
+
 proc getCommunityTokens*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [communityId]
   return core.callPrivateRPC("wakuext_getCommunityTokens", payload)

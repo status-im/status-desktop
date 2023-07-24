@@ -74,6 +74,9 @@ proc init*(self: Controller) =
 proc deployContract*(self: Controller, communityId: string, addressFrom: string, password: string, deploymentParams: DeploymentParameters, tokenMetadata: CommunityTokensMetadataDto, tokenImageCropInfoJson: string, chainId: int) =
   self.communityTokensService.deployContract(communityId, addressFrom, password, deploymentParams, tokenMetadata, tokenImageCropInfoJson, chainId)
 
+proc removeCommunityToken*(self: Controller, communityId: string, chainId: int, address: string) =
+  self.communityTokensService.removeCommunityToken(communityId, chainId, address)
+
 proc airdropTokens*(self: Controller, communityId: string, password: string, tokensAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
   self.communityTokensService.airdropTokens(communityId, password, tokensAndAmounts, walletAddresses)
 

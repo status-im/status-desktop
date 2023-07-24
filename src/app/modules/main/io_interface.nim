@@ -303,6 +303,9 @@ method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: s
 method onCommunityTokenSupplyChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, supply: Uint256, remainingSupply: Uint256) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onCommunityTokenRemoved*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string) =
+  raise newException(ValueError, "No implementation available")
+
 method onBurnStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, burnState: ContractTransactionStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
 

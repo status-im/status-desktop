@@ -70,3 +70,6 @@ method onBurnStateChanged*(self: AccessInterface, communityId: string, tokenName
 
 method onAirdropStateChanged*(self: AccessInterface, communityId: string, tokenName: string, chainId: int, transactionHash: string, status: ContractTransactionStatus) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method removeCommunityToken*(self: AccessInterface, communityId: string, chainId: int, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

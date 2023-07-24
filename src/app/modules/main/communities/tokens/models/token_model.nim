@@ -112,6 +112,18 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
+  proc removeItemByChainIdAndAddress*(self: TokenModel, chainId: int, address: string) =
+    for i in 0 ..< self.items.len:
+      if((self.items[i].tokenDto.address == address) and (self.items[i].tokenDto.chainId == chainId)):
+        let parentModelIndex = newQModelIndex()
+        defer: parentModelIndex.delete
+
+        self.beginRemoveRows(parentModelIndex, i, i)
+        self.items.delete(i)
+        self.endRemoveRows()
+        self.countChanged()
+        return
+
   proc getCount*(self: TokenModel): int {.slot.} =
     self.items.len
 

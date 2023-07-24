@@ -1014,6 +1014,11 @@ method onCommunityTokenDeploymentStarted*[T](self: Module[T], communityToken: Co
   if item.id != "":
     item.appendCommunityToken(self.createTokenItem(communityToken))
 
+method onCommunityTokenRemoved*[T](self: Module[T], communityId: string, chainId: int, address: string) =
+  let item = self.view.model().getItemById(communityId)
+  if item.id != "":
+    item.removeCommunityToken(chainId, address)
+
 method onCommunityTokenOwnersFetched*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":

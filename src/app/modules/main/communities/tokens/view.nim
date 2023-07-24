@@ -27,6 +27,9 @@ QtObject:
   proc deployAssets*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: float, infiniteSupply: bool, decimals: int, chainId: int, imageCropInfoJson: string) {.slot.} =
     self.communityTokensModule.deployAssets(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, decimals, chainId, imageCropInfoJson)
 
+  proc removeCommunityToken*(self: View, communityId: string, chainId: int, address: string) {.slot.} =
+    self.communityTokensModule.removeCommunityToken(communityId, chainId, address)
+
   proc airdropTokens*(self: View, communityId: string, tokensJsonString: string, walletsJsonString: string) {.slot.} =
     self.communityTokensModule.airdropTokens(communityId, tokensJsonString, walletsJsonString)
 
