@@ -27,6 +27,7 @@ ColumnLayout {
     id: root
 
     property var overview
+    property bool showAllAccounts: false
 
     signal launchTransactionDetail(var transaction)
 
@@ -335,6 +336,7 @@ ColumnLayout {
             timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000, true) : ""
             rootStore: RootStore
             walletRootStore: WalletStores.RootStore
+            showAllAccounts: root.showAllAccounts
             onClicked: {
                 if (mouse.button === Qt.RightButton) {
                     delegateMenu.openMenu(this, mouse, modelData)

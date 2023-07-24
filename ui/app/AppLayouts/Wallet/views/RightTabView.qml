@@ -21,6 +21,7 @@ Item {
     property var contactsStore
     property var sendModal
     property var networkConnectionStore
+    property bool showAllAccounts: false
 
     signal launchShareAddressModal()
 
@@ -122,6 +123,7 @@ Item {
                 }
                 HistoryView {
                     overview: RootStore.overview
+                    showAllAccounts: root.showAllAccounts
                     onLaunchTransactionDetail: {
                         transactionDetailView.transaction = transaction
                         stack.currentIndex = 3
@@ -154,6 +156,7 @@ Item {
                 if (!visible)
                     transaction = null
             }
+            showAllAccounts: root.showAllAccounts
             sendModal: root.sendModal
             contactsStore: root.contactsStore
             visible: (stack.currentIndex === 3)
