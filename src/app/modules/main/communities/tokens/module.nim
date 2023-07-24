@@ -184,6 +184,9 @@ method deployAssets*(self: Module, communityId: string, fromAddress: string, nam
   self.tempContractAction = ContractAction.Deploy
   self.authenticate()
 
+method removeCommunityToken*(self: Module, communityId: string, chainId: int, address: string) =
+  self.controller.removeCommunityToken(communityId, chainId, address)
+
 method onUserAuthenticated*(self: Module, password: string) =
   defer: self.resetTempValues()
   if password.len == 0:

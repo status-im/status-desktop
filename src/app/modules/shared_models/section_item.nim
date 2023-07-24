@@ -332,6 +332,9 @@ proc encrypted*(self: SectionItem): bool {.inline.} =
 proc appendCommunityToken*(self: SectionItem, item: TokenItem) {.inline.} =
   self.communityTokensModel.appendItem(item)
 
+proc removeCommunityToken*(self: SectionItem, chainId: int, contractAddress: string) {.inline.} =
+  self.communityTokensModel.removeItemByChainIdAndAddress(chainId, contractAddress)
+
 proc updateCommunityTokenDeployState*(self: SectionItem, chainId: int, contractAddress: string, deployState: DeployState) {.inline.} =
   self.communityTokensModel.updateDeployState(chainId, contractAddress, deployState)
 

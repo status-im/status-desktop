@@ -55,7 +55,8 @@ QtObject {
     }
 
     function deleteToken(communityId, contractUniqueKey) {
-        console.log("TODO: Delete token bakend!")
+        let parts = contractUniqueKey.split("_");
+        communityTokensModuleInst.removeCommunityToken(communityId, parts[0], parts[1])
     }
 
     readonly property Connections connections: Connections {

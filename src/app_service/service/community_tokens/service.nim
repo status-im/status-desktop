@@ -78,6 +78,12 @@ type
     transactionHash*: string
 
 type
+  CommunityTokenRemovedArgs* = ref object of Args
+    communityId*: string
+    contractAddress*: string
+    chainId*: int
+
+type
   RemoteDestructArgs* = ref object of Args
     communityToken*: CommunityTokenDto
     transactionHash*: string
@@ -150,6 +156,9 @@ const SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED* = "communityTokenOwnersFetched"
 const SIGNAL_REMOTE_DESTRUCT_STATUS* = "communityTokenRemoteDestructStatus"
 const SIGNAL_BURN_STATUS* = "communityTokenBurnStatus"
 const SIGNAL_AIRDROP_STATUS* = "airdropStatus"
+const SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED* = "removeCommunityTokenFailed"
+const SIGNAL_COMMUNITY_TOKEN_REMOVED* = "communityTokenRemoved"
+
 
 QtObject:
   type
@@ -363,6 +372,19 @@ QtObject:
       return parseCommunityTokens(response)
     except RpcException:
         error "Error getting all community tokens", message = getCurrentExceptionMsg()
+
+  proc removeCommunityToken*(self: Service, communityId: string, chainId: int, address: string) =
+    try:
+      let response = tokens_backend.removeCommunityToken(chainId, address)
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "error removing community token: " & error.message)
+        return
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_REMOVED, CommunityTokenRemovedArgs(communityId: communityId, contractAddress: address, chainId: chainId))
+
+    except RpcException as e:
+      error "Error removing community token", message = getCurrentExceptionMsg()
+      self.events.emit(SIGNAL_REMOVE_COMMUNITY_TOKEN_FAILED, Args())
 
   proc getCommunityTokenBySymbol*(self: Service, communityId: string, symbol: string): CommunityTokenDto =
     let communityTokens = self.getCommunityTokens(communityId)

@@ -348,6 +348,10 @@ proc init*(self: Controller) =
     let args = CommunityTokenDeployedStatusArgs(e)
     self.delegate.onCommunityTokenDeployStateChanged(args.communityId, args.chainId, args.contractAddress, args.deployState)
 
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_REMOVED) do(e: Args):
+    let args = CommunityTokenRemovedArgs(e)
+    self.delegate.onCommunityTokenRemoved(args.communityId, args.chainId, args.contractAddress)
+
   self.events.on(SIGNAL_BURN_STATUS) do(e: Args):
     let args = RemoteDestructArgs(e)
     let communityToken = args.communityToken
