@@ -238,6 +238,9 @@ method navigateToCommunity*(self: Module, communityId: string) =
   else:
     self.delegate.setActiveSectionById(communityId)
 
+method communityPrivateKeyRemoved*(self: Module, communityId: string) =
+  self.view.communityPrivateKeyRemoved(communityId)
+
 method communityEdited*(self: Module, community: CommunityDto) =
   self.view.model().editItem(self.getCommunityItem(community))
   self.view.communityChanged(community.id)
@@ -332,6 +335,9 @@ method communityImported*(self: Module, community: CommunityDto) =
 
 method communityDataImported*(self: Module, community: CommunityDto) = 
   self.view.addItem(self.getCommunityItem(community))
+
+method removePrivateKey*(self: Module, communityId: string) =
+  self.controller.removePrivateKey(communityId)
 
 method importCommunity*(self: Module, communityId: string) =
   self.view.emitImportingCommunityStateChangedSignal(communityId, ImportCommunityState.ImportingInProgress.int, errorMsg = "")

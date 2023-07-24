@@ -254,6 +254,10 @@ proc init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.communityEdited(args.community)
 
+  self.events.on(SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.communityEdited(args.community)
+
   self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
     let args = CommunitiesArgs(e)
     for community in args.communities:
