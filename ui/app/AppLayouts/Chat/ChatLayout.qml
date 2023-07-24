@@ -23,6 +23,8 @@ StackLayout {
 
     property var sectionItemModel
 
+    property bool communitySettingsDisabled
+
     property var emojiPopup
     property var stickersPopup
     signal profileButtonClicked()
@@ -154,9 +156,10 @@ StackLayout {
             id: communitySettingsView
             rootStore: root.rootStore
 
-            hasAddedContacts: root.contactsStore.myContactsModel.count > 0
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: sectionItemModel
+            communitySettingsDisabled: root.communitySettingsDisabled
+            onCommunitySettingsDisabledChanged: if (communitySettingsDisabled) goTo(Constants.CommunitySettingsSections.Overview)
 
             onBackToCommunityClicked: root.currentIndex = 0
 

@@ -38,6 +38,7 @@ StackLayout {
     property bool owned: false
     property bool isControlNode: false
     property int loginType: Constants.LoginType.Password
+    property bool communitySettingsDisabled
 
     function navigateBack() {
         if (editSettingsPanelLoader.item.dirty)
@@ -54,13 +55,9 @@ StackLayout {
 
     clip: true
 
-    SettingsPage {
-
-        rightPadding: 64
-        bottomPadding: 50
-        topPadding: 0
-        header: null
-        contentItem: ColumnLayout {
+    Component {
+        id: mainSettingsPageComp
+        ColumnLayout {
             spacing: 16
             RowLayout {
                 Layout.fillWidth: true
@@ -127,8 +124,11 @@ StackLayout {
                 color: Theme.palette.statusMenu.separatorColor
             }
         }
+    }
 
-        footer: OverviewSettingsFooter {
+    Component {
+        id: overviewSettingsFooterComp
+        OverviewSettingsFooter {
             rightPadding: 64
             leftPadding: 64
             bottomPadding: 64
@@ -139,6 +139,36 @@ StackLayout {
             onExportControlNodeClicked: root.exportControlNodeClicked()
             //TODO update once the domain changes
             onLearnMoreClicked: Global.openLink(Constants.statusHelpLinkPrefix + "en/status-communities/about-the-control-node-in-status-communities")
+        }
+    }
+
+    Component {
+        id: disabledSettingsBannerComp
+        StatusInfoBoxPanel {
+            title: qsTr("Community administration is disabled when in testnet mode")
+            text: qsTr("To access your %1 community admin area, you need to turn off testnet mode.").arg(root.name)
+            icon: "settings"
+            iconType: StatusInfoBoxPanel.Type.Warning
+            buttonText: qsTr("Turn off testnet mode")
+            onClicked: Global.openTestnetPopup()
+        }
+    }
+
+    SettingsPage {
+        Layout.fillWidth: !root.communitySettingsDisabled
+        Layout.preferredWidth: root.communitySettingsDisabled ? 560 + leftPadding + rightPadding : -1
+        Layout.fillHeight: !root.communitySettingsDisabled
+        rightPadding: 64
+        bottomPadding: 50
+        topPadding: 0
+        header: null
+        contentItem: Loader {
+            sourceComponent: root.communitySettingsDisabled ? disabledSettingsBannerComp : mainSettingsPageComp
+        }
+
+        footer: Loader {
+            sourceComponent: overviewSettingsFooterComp
+            active: !root.communitySettingsDisabled
         }
     }
 

@@ -32,8 +32,8 @@ StatusSectionLayout {
     property var rootStore
     property var chatCommunitySectionModule
     property var community
-    property bool hasAddedContacts: false
     property var transactionStore: TransactionStore {}
+    property bool communitySettingsDisabled
 
     readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
     readonly property bool isAdmin: isOwner || community.memberRole === Constants.memberRole.admin
@@ -106,6 +106,7 @@ StatusSectionLayout {
                 Layout.rightMargin: Style.current.padding
                 model: stackLayout.children
                 spacing: 8
+                enabled: !root.communitySettingsDisabled
 
                 delegate: StatusNavigationListItem {
                     objectName: "CommunitySettingsView_NavigationListItem_" + model.sectionName
@@ -114,7 +115,7 @@ StatusSectionLayout {
                     asset.name: model.sectionIcon
                     asset.height: 24
                     asset.width: 24
-                    selected: d.currentIndex === index
+                    selected: d.currentIndex === index && !root.communitySettingsDisabled
                     onClicked: d.currentIndex = index
                     visible: model.sectionEnabled
                     height: visible ? implicitHeight : 0
@@ -175,6 +176,7 @@ StatusSectionLayout {
             owned: root.community.memberRole === Constants.memberRole.owner
             loginType: root.rootStore.loginType
             isControlNode: root.isControlNode
+            communitySettingsDisabled: root.communitySettingsDisabled
 
             onEdited: {
                 const error = root.chatCommunitySectionModule.editCommunity(
@@ -207,7 +209,7 @@ StatusSectionLayout {
             onExportControlNodeClicked: {
                 if(!root.isControlNode)
                     return
-                    
+
                 root.rootStore.authenticateWithCallback((authenticated) => {
                     if(!authenticated)
                         return
@@ -217,7 +219,7 @@ StatusSectionLayout {
                         // Delete private key and remove control node status
                         popup.onDeletePrivateKey.connect(() => {
                             console.log("Delete private key")
-                        })  
+                        })
                     })
                 })
             }
