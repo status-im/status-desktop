@@ -147,6 +147,9 @@ StatusModal {
                 SelectMasterKey {
                     height: Constants.addAccountPopup.contentHeight1
                     store: root.store
+                    onContinueOnKeycard: {
+                        root.close()
+                    }
                 }
             }
         }
