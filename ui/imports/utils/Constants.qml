@@ -1007,7 +1007,8 @@ QtObject {
         Buy,
         Swap,
         Bridge,
-        Sell, // TODO update value when added to backend
+        ContractDeployment,
+        Sell,
         Destroy // TODO update value when added to backend
     }
 
