@@ -880,7 +880,7 @@ QtObject {
     readonly property string communityLinkPrefix: externalStatusLinkWithHttps + '/c/'
     readonly property string userLinkPrefix: externalStatusLinkWithHttps + '/u/'
     readonly property string statusLinkPrefix: 'https://status.im/'
-    readonly property string statusHelpLinkPrefix: `https://help.status.im/`
+    readonly property string statusHelpLinkPrefix: `https://status.app/help/`
 
     readonly property int maxUploadFiles: 5
     readonly property double maxUploadFilesizeMB: 10
