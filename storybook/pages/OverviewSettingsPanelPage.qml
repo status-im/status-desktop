@@ -19,6 +19,7 @@ SplitView {
 
         editable: communityEditor.isCommunityEditable
         owned: communityEditor.amISectionAdmin
+        communitySettingsDisabled: !editable
     }
 
     Pane {

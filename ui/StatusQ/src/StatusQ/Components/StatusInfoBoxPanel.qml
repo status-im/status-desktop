@@ -6,8 +6,6 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-import utils 1.0
-
 Control {
     id: root
 
@@ -27,8 +25,8 @@ Control {
 
     signal clicked
 
-    verticalPadding: 40
-    horizontalPadding: 56
+    verticalPadding: 32
+    horizontalPadding: 16
 
     QtObject {
         id: d
@@ -57,12 +55,12 @@ Control {
 
     background: Rectangle {
         color: Theme.palette.statusListItem.backgroundColor
-        radius: 8
+        radius: 16
         border.color: Theme.palette.baseColor2
     }
 
     contentItem: ColumnLayout {
-        spacing: Style.current.padding
+        spacing: 16
 
         StatusRoundIcon {
             id: iconComponent

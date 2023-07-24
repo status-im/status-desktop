@@ -49,7 +49,7 @@ Item {
     }
 
     function close() {
-        closeButtonMouseArea.clicked(null)
+        root.closeClicked()
     }
 
     signal linkActivated(string link)

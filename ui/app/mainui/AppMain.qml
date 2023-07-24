@@ -1103,6 +1103,7 @@ Item {
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
+                                communitySettingsDisabled: production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
 
                                 rootStore: ChatStores.RootStore {
                                     contactsStore: appMain.rootStore.contactStore
