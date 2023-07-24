@@ -1,3 +1,4 @@
-from . colors import *
-from . user import *
-from . tesseract import *
+from . import commands
+from .colors import *
+from .tesseract import *
+from .user import *

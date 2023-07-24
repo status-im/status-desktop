@@ -1,6 +1,6 @@
 from gui.components.base_popup import BasePopup
-from gui.elements.button import Button
-from gui.elements.check_box import CheckBox
+from gui.elements.qt.button import Button
+from gui.elements.qt.check_box import CheckBox
 
 
 class BeforeStartedPopUp(BasePopup):
