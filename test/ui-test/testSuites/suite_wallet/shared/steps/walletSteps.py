@@ -36,24 +36,18 @@ def step(context, name):
     _walletScreen.left_panel.select_account(name)
 
 
-@When("the user adds a watch only account \"|any|\" with \"|any|\" color \"|any|\" and emoji \"|any|\" via \"|any|\"")
+@When("the user adds a watch only account \"|any|\" with \"|any|\" color \"|any|\" and emoji \"|any|\"")
 @verify_screenshot
-def step(context, address, name, color, emoji, via_right_click_menu):
-    if via_right_click_menu == VALUE_YES:
-        account_popup = _walletScreen.left_panel.open_add_watch_anly_account_popup()
-    else:
-        account_popup = _walletScreen.left_panel.open_add_account_popup()
+def step(context, address, name, color, emoji):
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
     account_popup.set_name(name).set_emoji(emoji).set_color(color).set_origin_eth_address(address).save()
     account_popup.wait_until_hidden()
 
 
-@When("the user adds a generated account with \"|any|\" color \"|any|\" and emoji \"|any|\" via \"|any|\"")
+@When("the user adds a generated account with \"|any|\" color \"|any|\" and emoji \"|any|\"")
 @verify_screenshot
-def step(context, name, color, emoji, via_right_click_menu):
-    if via_right_click_menu == VALUE_YES:
-        account_popup = _walletScreen.left_panel.open_add_new_account_popup()
-    else:
-        account_popup = _walletScreen.left_panel.open_add_account_popup()
+def step(context, name, color, emoji):
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
     account_popup.set_name(name).set_emoji(emoji).set_color(color).save()
     AuthenticatePopup().wait_until_appears().authenticate()
     account_popup.wait_until_hidden()
