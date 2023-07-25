@@ -187,6 +187,8 @@ const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
 
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinResponse"
 
+const SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED* = "communityPrivateKeyRemoved"
+
 QtObject:
   type
     Service* = ref object of QObject
@@ -1566,6 +1568,20 @@ QtObject:
       importing: importing
     )
     self.threadpool.start(arg)
+
+  proc removePrivateKey*(self: Service, communityId: string) =
+    try:
+      let response = status_go.removePrivateKey(communityId)
+      if (response.error != nil):
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, fmt"err: {error.message}")
+
+      var community = self.communities[communityId]
+      community.isControlNode = false
+      self.communities[communityId] = community
+      self.events.emit(SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED, CommunityArgs(community: community))
+    except Exception as e:
+      error "Error removing community private key: ", msg = e.msg
 
   proc importCommunity*(self: Service, communityKey: string) =
     try:
