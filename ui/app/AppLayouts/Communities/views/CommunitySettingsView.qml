@@ -491,8 +491,31 @@ StatusSectionLayout {
                 return chatContentModule.usersModule.model
             }
 
-            onAirdropClicked: communityTokensStore.airdrop(root.community.id,
-                                                           airdropTokens, addresses)
+            accountsModel: SortFilterProxyModel {
+                sourceModel: root.rootStore.accounts
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "color"
+
+                        function getColor(colorId) {
+                            return Utils.getColorForId(colorId)
+                        }
+
+                        // Direct call for singleton function is not handled properly by
+                        // SortFilterProxyModel that's why helper function is used instead.
+                        expression: { return getColor(model.colorId) }
+                    }
+                ]
+                filters: ValueFilter {
+                    roleName: "walletType"
+                    value: Constants.watchWalletType
+                    inverted: true
+                }
+            }
+
+            onAirdropClicked: communityTokensStore.airdrop(
+                                  root.community.id, airdropTokens, addresses,
+                                  feeAccountAddress)
 
             onNavigateToMintTokenSettings: {
                 root.goTo(Constants.CommunitySettingsSections.MintTokens)
@@ -501,7 +524,8 @@ StatusSectionLayout {
 
             onAirdropFeesRequested:
                 communityTokensStore.computeAirdropFee(
-                    root.community.id, contractKeysAndAmounts, addresses)
+                    root.community.id, contractKeysAndAmounts, addresses,
+                    feeAccountAddress)
         }
     }
 

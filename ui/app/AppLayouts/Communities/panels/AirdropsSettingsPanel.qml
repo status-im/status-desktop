@@ -30,6 +30,7 @@ StackView {
     required property var collectiblesModel
 
     required property var membersModel
+    required property var accountsModel
 
     // JS object specifing fees for the airdrop operation, should be set to
     // provide response to airdropFeesRequested signal.
@@ -39,8 +40,10 @@ StackView {
     property int viewWidth: 560 // by design
     property string previousPageName: depth > 1 ? qsTr("Airdrops") : ""
 
-    signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys)
-    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses)
+    signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys,
+                          string feeAccountAddress)
+    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses,
+                                string feeAccountAddress)
     signal navigateToMintTokenSettings(bool isAssetType)
 
     function navigateBack() {
@@ -135,6 +138,7 @@ StackView {
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
                 membersModel: root.membersModel
+                accountsModel: root.accountsModel
 
                 Binding on airdropFees {
                     value: root.airdropFees

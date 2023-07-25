@@ -116,11 +116,13 @@ QtObject {
     }
 
     // Airdrop tokens:
-    function airdrop(communityId, airdropTokens, addresses) {
+    function airdrop(communityId, airdropTokens, addresses, feeAccountAddress) {
+        // TODO: Take `feeAccountAddress` into account for the airdrop
         communityTokensModuleInst.airdropTokens(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses))
     }
 
-    function computeAirdropFee(communityId, contractKeysAndAmounts, addresses) {
+    function computeAirdropFee(communityId, contractKeysAndAmounts, addresses, feeAccountAddress) {
+        // TODO: Take `feeAccountAddress` into account when calculating fee
         communityTokensModuleInst.computeAirdropFee(
                     communityId, JSON.stringify(contractKeysAndAmounts),
                     JSON.stringify(addresses))
