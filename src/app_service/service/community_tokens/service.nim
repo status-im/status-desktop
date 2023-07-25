@@ -379,7 +379,6 @@ QtObject:
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "error removing community token: " & error.message)
-        return
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_REMOVED, CommunityTokenRemovedArgs(communityId: communityId, contractAddress: address, chainId: chainId))
 
     except RpcException as e:

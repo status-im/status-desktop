@@ -26,8 +26,9 @@ QtObject {
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
     {        
-        // TODO: Backend will need to check if the collectibleItem has a valid tokenKey, so it means a deployment retry,
-        // otherwise, it is a new deployment.
+        if (collectibleItem.key !== "") {
+            deleteToken(communityId, collectibleItem.key)
+        }
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(collectibleItem.artworkSource, collectibleItem.artworkCropRect)
         communityTokensModuleInst.deployCollectible(communityId, collectibleItem.accountAddress, collectibleItem.name,
                                                     collectibleItem.symbol, collectibleItem.description, collectibleItem.supply,
@@ -37,8 +38,9 @@ QtObject {
 
     function deployAsset(communityId, assetItem)
     {
-        // TODO: Backend will need to check if the collectibleItem has a valid tokenKey, so it means a deployment retry,
-        // otherwise, it is a new deployment.
+        if (assetItem.key !== "") {
+            deleteToken(communityId, assetItem.key)
+        }
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(assetItem.artworkSource, assetItem.artworkCropRect)
         communityTokensModuleInst.deployAssets(communityId, assetItem.accountAddress, assetItem.name,
                                                assetItem.symbol, assetItem.description, assetItem.supply,

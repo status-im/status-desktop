@@ -497,10 +497,11 @@ StackView {
                          (!tokenViewPage.isPrivilegedTokenItem && !root.isAdminOnly && tokenViewPage.deploymentFailed)
 
                 onClicked: {
-                    if(tokenViewPage.isPrivilegedTokenItem)
+                    if(tokenViewPage.isPrivilegedTokenItem) {
                         retryPrivilegedToken()
-                    else
+                    } else {
                         retryAssetOrCollectible()
+                    }
                 }
             }
         ]
