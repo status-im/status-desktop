@@ -327,6 +327,32 @@ Pane {
                     objectName: "ProfileDialog_userEmojiHash"
                     publicKey: root.publicKey
                 }
+                RowLayout {
+                    StatusBaseText {
+                        font.pixelSize: 12
+                        color: Theme.palette.baseColor1
+                        text: Utils.getElidedCompressedPk(root.publicKey)
+                    }
+                    StatusFlatButton {
+                        size: StatusFlatButton.Size.Tiny
+                        icon.name: "copy"
+                        enabled: !d.timer.running
+
+                        onClicked: {
+                            copyKeyTooltip.text = qsTr("Copied")
+                            root.profileStore.copyToClipboard(Utils.getCompressedPk(root.publicKey))
+                            d.timer.setTimeout(function() {
+                                copyKeyTooltip.text = qsTr("Copy Chat Key")
+                            }, 1500);
+                        }
+
+                        StatusToolTip {
+                            id: copyKeyTooltip
+                            text: qsTr("Copy Chat Key")
+                            visible: parent.hovered || d.timer.running
+                        }
+                    }
+                }
             }
 
             Loader {
