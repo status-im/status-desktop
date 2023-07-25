@@ -60,7 +60,6 @@ Loader {
     property bool pinnedMessage: false
     property string messagePinnedBy: ""
     property var reactionsModel: []
-    property string linkUrls: ""
     property var linkPreviewModel
     property string messageAttachments: ""
     property var transactionParams
@@ -518,6 +517,7 @@ Loader {
                 isSending: root.isSending
                 resendError: root.resendError
                 reactionsModel: root.reactionsModel
+                linkPreviewModel: root.linkPreviewModel
 
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessagePrivateGroupType ||
