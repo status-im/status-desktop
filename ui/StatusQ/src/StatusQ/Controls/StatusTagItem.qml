@@ -6,11 +6,11 @@ import StatusQ.Core.Theme 0.1
 
 /*!
      \qmltype StatusTagItem
-     \inherits Item
+     \inherits Control
      \inqmlmodule StatusQ.Controls
      \since StatusQ.Controls 0.1
-     \brief Reprsents a tag item.
-     Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-rectangle.html}{Item}.
+     \brief Represents a tag item.
+     Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-controls2-control.html}{Control}.
 
      The \c StatusTagItem represents a tag item where a name and icon can be displayed and can be clicked.
      Example:
@@ -54,16 +54,13 @@ Control {
 
     QtObject {
         id: d
-        property int tagMargins: 8
-        property int tagIconsSize: 20
+        readonly property int tagMargins: 8
+        readonly property int tagIconsSize: 20
 
         function getTagColor(isReadonly) {
-            if(isReadonly) {
+            if(isReadonly)
                 return Theme.palette.baseColor1
-            }
-            else {
-                return mouseArea.containsMouse ? Theme.palette.miscColor1 : Theme.palette.primaryColor1
-            }
+            return mouseArea.containsMouse ? Theme.palette.miscColor1 : Theme.palette.primaryColor1
         }
     }
 

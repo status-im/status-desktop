@@ -84,7 +84,7 @@ Item {
             isContact: model.isContact
             status: model.onlineStatus
             height: visible ? implicitHeight : 0
-            color: sensor.containsMouse ? Style.current.backgroundHover : Style.current.transparent
+            color: sensor.containsMouse ? Theme.palette.baseColor2 : "transparent"
             nickName: model.localNickname
             userName: ProfileUtils.displayName("", model.ensName, model.displayName, model.alias)
             asset.name: model.icon
