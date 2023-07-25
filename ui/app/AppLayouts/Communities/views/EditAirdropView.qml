@@ -32,6 +32,9 @@ StatusScrollView {
     // Community members model:
     required property var membersModel
 
+    // A model containing accounts from which the fee can be paid:
+    required property var accountsModel
+
     // JS object specifing fees for the airdrop operation, should be set to
     // provide response to airdropFeesRequested signal.
     //
@@ -75,9 +78,11 @@ StatusScrollView {
                                           airdropRecipientsSelector.count > 0 &&
                                           airdropRecipientsSelector.valid
 
-    signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys)
+    signal airdropClicked(var airdropTokens, var addresses, var membersPubKeys,
+                          string feeAccountAddress)
 
-    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses)
+    signal airdropFeesRequested(var contractKeysAndAmounts, var addresses,
+                                string feeAccountAddress)
 
     signal navigateToMintTokenSettings(bool isAssetType)
 
@@ -169,6 +174,7 @@ StatusScrollView {
         readonly property int totalRevision: holdingsModelTracker.revision
                                              + addressesModelTracker.revision
                                              + membersModelTracker.revision
+                                             + feesBox.accountsSelector.currentIndex
                                              + (d.showFees ? 1 : 0)
 
         onTotalRevisionChanged: Qt.callLater(() => d.resetFees())
@@ -209,8 +215,7 @@ StatusScrollView {
             airdropTokens.forEach(entry => {
                 feesModel.append({
                     contractUniqueKey: entry.contractUniqueKey,
-                    title: qsTr("Airdropping %1 %2 on %3")
-                                     .arg(entry.amount * addresses.count)
+                    title: qsTr("Airdrop %1 on %2")
                                      .arg(entry.symbol)
                                      .arg(entry.networkText),
                     feeText: ""
@@ -230,7 +235,11 @@ StatusScrollView {
             const addressesArray = ModelUtils.modelToArray(
                                      addresses, ["address"]).map(e => e.address)
 
-            airdropFeesRequested(contractKeysAndAmounts, addressesArray)
+            const accountItem = ModelUtils.get(root.accountsModel,
+                                               feesBox.accountIndex)
+
+            airdropFeesRequested(contractKeysAndAmounts, addressesArray,
+                                 accountItem.address)
         }
 
         function resetFees() {
@@ -583,11 +592,19 @@ StatusScrollView {
         SequenceColumnLayout.Separator {}
 
         FeesBox {
+            id: feesBox
+
+            readonly property int accountIndex: accountsSelector.currentIndex
+
             Layout.fillWidth: true
 
             model: feesModel
+            accountsSelector.model: root.accountsModel
+
             totalFeeText: d.totalFee
             placeholderText: qsTr("Add valid “What” and “To” values to see fees")
+
+            accountErrorText: d.feesError
         }
 
         WarningPanel {
@@ -602,15 +619,6 @@ StatusScrollView {
                      recipientsCountInstantiator.maximumRecipientsCount < airdropRecipientsSelector.count
         }
 
-        WarningPanel {
-            Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
-
-            text: d.feesError
-
-            visible: !notEnoughTokensWarning.visible && d.showFees && d.feesError
-        }
-
         StatusButton {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
@@ -620,12 +628,18 @@ StatusScrollView {
             enabled: root.isFullyFilled && !d.isFeeLoading && d.feesError === ""
 
             onClicked: {
+                const accountItem = ModelUtils.get(root.accountsModel,
+                                                   feesBox.accountIndex)
+                feesPopup.accountAddress = accountItem.address
+                feesPopup.accountName = accountItem.name
                 feesPopup.open()
             }
         }
 
         SignMultiTokenTransactionsPopup {
             id: feesPopup
+
+            property string accountAddress
 
             destroyOnClose: false
 
@@ -655,7 +669,8 @@ StatusScrollView {
 
                 const pubKeys = [...selectedKeysFilter.keys]
 
-                root.airdropClicked(airdropTokens, addresses_, pubKeys)
+                root.airdropClicked(airdropTokens, addresses_, pubKeys,
+                                    accountAddress)
             }
         }
     }

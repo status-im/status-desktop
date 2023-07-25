@@ -252,6 +252,23 @@ SplitView {
                 assetsModel: AssetsModel {}
                 collectiblesModel: CollectiblesModel {}
                 membersModel: members
+
+                accountsModel: ListModel {
+                    ListElement {
+                        name: "Test account"
+                        emoji: "😋"
+                        address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+                        color: "red"
+                    }
+
+                    ListElement {
+                        name: "Another account - generated"
+                        emoji: "🚗"
+                        address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8888"
+                        color: "blue"
+                    }
+                }
+
                 communityDetails: QtObject {
                     readonly property string name: "Socks"
                     readonly property string id: "SOCKS"
@@ -262,13 +279,15 @@ SplitView {
 
                 onAirdropClicked: {
                     logs.logEvent("EditAirdropView::airdropClicked",
-                                  ["airdropTokens", "addresses", "membersPubKeys"],
+                                  ["airdropTokens", "addresses",
+                                   "membersPubKeys", "feeAccountAddress"],
                                   arguments)
                 }
 
                 onAirdropFeesRequested: {
                     logs.logEvent("EditAirdropView::airdropFeesRequested",
-                                  ["contractKeysAndAmounts", "addresses"],
+                                  ["contractKeysAndAmounts", "addresses",
+                                   "feeAccountAddress"],
                                   arguments)
 
                     feesCalculationTimer.requestMockedFees(contractKeysAndAmounts)
