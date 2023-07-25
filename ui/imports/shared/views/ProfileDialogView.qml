@@ -516,7 +516,6 @@ Pane {
             Layout.fillHeight: true
             Layout.leftMargin: -column.anchors.leftMargin
             Layout.rightMargin: -column.anchors.rightMargin
-            Layout.topMargin: -column.spacing
             padding: 0
             contentWidth: availableWidth
 

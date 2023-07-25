@@ -99,7 +99,13 @@ SplitView {
 
     Popups {
         popupParent: root
-        rootStore: QtObject {}
+        rootStore: QtObject {
+            property var contactStore: QtObject {
+                function changeContactNickname(publicKey, newNickname) {
+                    logs.logEvent("rootStore::contactStore::changeContactNickname", ["publicKey", "newNickname"], arguments)
+                }
+            }
+        }
     }
 
     SplitView {
@@ -169,13 +175,17 @@ SplitView {
                             function verifiedUntrustworthy(publicKey) {
                                 logs.logEvent("contactsStore::verifiedUntrustworthy", ["publicKey"], arguments)
                             }
+
+                            function getLinkToProfile(publicKey) {
+                                return "https://status.app/u/" + publicKey
+                            }
                         }
 
                         communitiesModel: ListModel {
                             ListElement {
                                 name: "Not the cool gang"
                                 memberRole: 0 // Constants.memberRole.none
-                                isControlNode: false,
+                                isControlNode: false
                                 description: "Nothing to write home about"
                                 color: "indigo"
                                 image: ""
@@ -187,7 +197,7 @@ SplitView {
                             ListElement {
                                 name: "Awesome bunch"
                                 memberRole: 4 // Constants.memberRole.admin
-                                isControlNode: false,
+                                isControlNode: false
                                 description: "Where the cool guys hang out & Nothing to write home about"
                                 color: "green"
                                 image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
@@ -204,7 +214,7 @@ SplitView {
                             ListElement {
                                 name: "Invisible community (should not display!)"
                                 memberRole: 1 // Constants.memberRole.owner
-                                isControlNode: true,
+                                isControlNode: true
                                 description: "Get outta here"
                                 color: "red"
                                 image: ""

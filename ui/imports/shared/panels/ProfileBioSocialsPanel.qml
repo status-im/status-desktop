@@ -72,7 +72,6 @@ Control {
 
             visible: root.bio
             padding: 0
-            topPadding: Style.current.halfPadding
             rightPadding: ScrollBar.vertical.visible ? 16 : 0
 
             Layout.maximumHeight: 108
