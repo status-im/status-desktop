@@ -217,6 +217,11 @@ QtObject:
           error "Collectible contract not deployed", chainId=tokenDto.chainId, address=tokenDto.address
         try:
           discard updateCommunityTokenState(tokenDto.chainId, tokenDto.address, deployState) #update db state
+          # now add community token to community and publish update
+          let response = tokens_backend.addCommunityToken(tokenDto.communityId, tokenDto.chainId, tokenDto.address)
+          if response.error != nil:
+            let error = Json.decode($response.error, RpcError)
+            raise newException(RpcException, "error adding community token: " & error.message)
         except RpcException:
           error "Error updating collectibles contract state", message = getCurrentExceptionMsg()
         let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address,
@@ -324,7 +329,7 @@ QtObject:
       croppedImage{"imagePath"} = newJString(singletonInstance.utils.formatImagePath(croppedImage["imagePath"].getStr))
 
       # save token to db
-      let communityTokenJson = tokens_backend.addCommunityToken(communityToken, $croppedImage)
+      let communityTokenJson = tokens_backend.saveCommunityToken(communityToken, $croppedImage)
       communityToken = communityTokenJson.result.toCommunityTokenDto()
       let data = CommunityTokenDeployedArgs(communityToken: communityToken, transactionHash: transactionHash)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYED, data)

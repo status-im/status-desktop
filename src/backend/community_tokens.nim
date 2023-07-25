@@ -23,9 +23,13 @@ proc getAllCommunityTokens*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   return core.callPrivateRPC("wakuext_getAllCommunityTokens", payload)
 
-proc addCommunityToken*(token: CommunityTokenDto, croppedImageJson: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc saveCommunityToken*(token: CommunityTokenDto, croppedImageJson: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let croppedImage = newCroppedImage(croppedImageJson)
   let payload = %* [token.toJsonNode(), croppedImage]
+  return core.callPrivateRPC("wakuext_saveCommunityToken", payload)
+
+proc addCommunityToken*(communityId: string, chainId: int, address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [communityId, chainId, address]
   return core.callPrivateRPC("wakuext_addCommunityToken", payload)
 
 proc updateCommunityTokenState*(chainId: int, contractAddress: string, deployState: DeployState): RpcResponse[JsonNode] {.raises: [Exception].} =
