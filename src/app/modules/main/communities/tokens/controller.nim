@@ -55,8 +55,8 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMPUTE_AIRDROP_FEE) do(e:Args):
     let args = AirdropFeesArgs(e)
     self.communityTokensModule.onAirdropFeesComputed(args)
-  self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYED) do(e: Args):
-    let args = CommunityTokenDeployedArgs(e)
+  self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED) do(e: Args):
+    let args = CommunityTokenDeploymentArgs(e)
     self.communityTokensModule.onCommunityTokenDeployStateChanged(args.communityToken.communityId, args.communityToken.chainId, args.transactionHash, args.communityToken.deployState)
   self.events.on(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS) do(e: Args):
     let args = CommunityTokenDeployedStatusArgs(e)

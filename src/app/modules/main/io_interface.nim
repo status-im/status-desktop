@@ -291,7 +291,7 @@ method tryKeycardSync*(self: AccessInterface, keyUid: string, pin: string) {.bas
 method onSharedKeycarModuleKeycardSyncPurposeTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenDeployed*(self: AccessInterface, communityToken: CommunityTokenDto) {.base.} =
+method onCommunityTokenDeploymentStarted*(self: AccessInterface, communityToken: CommunityTokenDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.base.} =

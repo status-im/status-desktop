@@ -73,7 +73,7 @@ type
     deployState*: DeployState
 
 type
-  CommunityTokenDeployedArgs* = ref object of Args
+  CommunityTokenDeploymentArgs* = ref object of Args
     communityToken*: CommunityTokenDto
     transactionHash*: string
 
@@ -141,7 +141,7 @@ type
 
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
-const SIGNAL_COMMUNITY_TOKEN_DEPLOYED* = "communityTokenDeployed"
+const SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED* = "communityTokenDeploymentStarted"
 const SIGNAL_COMPUTE_DEPLOY_FEE* = "computeDeployFee"
 const SIGNAL_COMPUTE_SELF_DESTRUCT_FEE* = "computeSelfDestructFee"
 const SIGNAL_COMPUTE_BURN_FEE* = "computeBurnFee"
@@ -331,8 +331,8 @@ QtObject:
       # save token to db
       let communityTokenJson = tokens_backend.saveCommunityToken(communityToken, $croppedImage)
       communityToken = communityTokenJson.result.toCommunityTokenDto()
-      let data = CommunityTokenDeployedArgs(communityToken: communityToken, transactionHash: transactionHash)
-      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYED, data)
+      let data = CommunityTokenDeploymentArgs(communityToken: communityToken, transactionHash: transactionHash)
+      self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOYMENT_STARTED, data)
 
       # observe transaction state
       self.transactionService.watchTransaction(
