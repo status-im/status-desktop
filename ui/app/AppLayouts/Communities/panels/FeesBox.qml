@@ -32,7 +32,8 @@ StatusGroupBox {
 
         width: root.availableWidth
         padding: Style.current.padding
-        verticalPadding: 18
+
+        verticalPadding: 20
 
         background: Rectangle {
             radius: Style.current.radius

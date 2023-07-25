@@ -28,10 +28,6 @@ Control {
             id: titleText
 
             width: parent.halfWidth
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-
 
             text: root.title
             wrapMode: Text.Wrap
@@ -51,7 +47,6 @@ Control {
 
             width: parent.halfWidth
             anchors.right: parent.right
-            anchors.top: parent.top
 
             textFormat: Text.RichText
             text: `<span style="color:${baseColor};` +
