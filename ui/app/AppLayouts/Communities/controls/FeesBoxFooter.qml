@@ -16,7 +16,9 @@ Control {
     property bool showTotal: true
     property alias totalFeeText: feeTotalRow.feeText
 
-    property alias accountsModel: accountSelector.model
+    readonly property alias accountsSelector: accountSelector
+    property bool showAccountsSelector: true
+
     property alias accountErrorText: accountErrorText.text
 
     component Separator: Rectangle {
@@ -28,7 +30,6 @@ Control {
     }
 
     component ErrorText: StatusBaseText {
-
         Layout.fillWidth: true
         Layout.topMargin: Style.current.halfPadding
         horizontalAlignment: Text.AlignRight
@@ -85,7 +86,7 @@ Control {
             Layout.fillWidth: true
             Layout.topMargin: Style.current.halfPadding
 
-            visible: !!model
+            visible: root.showAccountsSelector
         }
 
         ErrorText {

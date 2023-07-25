@@ -53,7 +53,10 @@ SplitView {
             width: 600
 
             model: filteredModel
-            accountsModel: accountsSwitch.checked ? accountsModel : null
+
+            accountsSelector.model: accountsModel
+            showAccountsSelector: accountsSwitch.checked
+
             placeholderText: placeholderTextField.text
 
             totalFeeText: totalCheckBox.checked ?

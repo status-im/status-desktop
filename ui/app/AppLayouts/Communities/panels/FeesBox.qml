@@ -18,8 +18,11 @@ StatusGroupBox {
     // feeText (string)
     // error (bool), optional
     property alias model: feesBox.model
+    readonly property alias count: feesBox.count
 
-    property alias accountsModel: footer.accountsModel
+    readonly property alias accountsSelector: footer.accountsSelector
+    property alias showAccountsSelector: footer.showAccountsSelector
+
     property alias placeholderText: feesBox.placeholderText
 
     property alias totalFeeText: footer.totalFeeText
@@ -43,8 +46,8 @@ StatusGroupBox {
         footer: FeesBoxFooter {
             id: footer
 
-            visible: !!accountsModel || showTotal
-                     || root.generalErrorText || root.accountErrorText
+            visible: feesBox.count && (root.showAccountsSelector || showTotal
+                     || root.generalErrorText)
 
             showTotal: feesBox.count > 1
         }
