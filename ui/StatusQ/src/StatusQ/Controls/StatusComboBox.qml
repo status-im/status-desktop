@@ -12,6 +12,7 @@ Item {
 
     property alias control: comboBox
     property alias model: comboBox.model
+    property alias count: comboBox.count
     property alias delegate: comboBox.delegate
     property alias contentItem: comboBox.contentItem
 
@@ -20,6 +21,7 @@ Item {
 
     property alias label: labelItem.text
     property alias validationError: validationErrorItem.text
+    property bool forceError: false
 
     property string popupContentItemObjectName: ""
     property string indicatorIcon: "chevron-down"
@@ -74,9 +76,14 @@ Item {
             background: Rectangle {
                 color: root.type === StatusComboBox.Type.Secondary ? "transparent" : Theme.palette.baseColor2
                 radius: 8
-                border.width: (!!root.validationError || comboBox.hovered || comboBox.down || comboBox.visualFocus || root.type === StatusComboBox.Type.Secondary) ? 1 : 0
+                border.width: (!!root.validationError || root.forceError
+                               || comboBox.hovered || comboBox.down
+                               || comboBox.visualFocus
+                               || root.type === StatusComboBox.Type.Secondary)
+                              ? 1 : 0
+
                 border.color: {
-                    if (!!root.validationError)
+                    if (!!root.validationError || root.forceError)
                         return Theme.palette.dangerColor1
 
                     if (comboBox.visualFocus || comboBox.popup.opened)

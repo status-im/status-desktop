@@ -87,6 +87,7 @@ Control {
             Layout.topMargin: Style.current.halfPadding
 
             visible: root.showAccountsSelector
+            forceError: accountErrorText.visible
         }
 
         ErrorText {
