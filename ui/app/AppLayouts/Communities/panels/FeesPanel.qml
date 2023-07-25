@@ -42,7 +42,7 @@ Control {
     QtObject {
         id: d
 
-        readonly property int delegateHeight: 28
+        readonly property int placeholderHeight: 24
     }
 
     contentItem: ColumnLayout {
@@ -52,10 +52,10 @@ Control {
             id: placeholderText
 
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.max(implicitHeight, d.delegateHeight)
+            Layout.preferredHeight: Math.max(implicitHeight,
+                                             d.placeholderHeight)
 
             visible: repeater.count === 0
-
             font.pixelSize: Style.current.primaryTextFontSize
             wrapMode: Text.Wrap
             color: Theme.palette.baseColor1
@@ -67,8 +67,6 @@ Control {
 
             FeeRow {
                 Layout.fillWidth: true
-                Layout.preferredHeight: Math.max(implicitHeight,
-                                                 d.delegateHeight)
 
                 title: model.title
                 feeText: model.feeText
