@@ -74,7 +74,7 @@ Item {
                     icon: model.icon
                 }
 
-                Text {
+                StatusBaseText {
                     id: entity
                     anchors.left: icon.right
                     anchors.right: indicator.visible? indicator.left : loaded.left
@@ -107,7 +107,7 @@ Item {
                     visible: model.totalMessages === 0
                 }
 
-                Text {
+                StatusBaseText {
                     id: loaded
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -144,7 +144,6 @@ Item {
         StatusButton {
             id: button
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: root.startupStore.currentStartupState.stateType === Constants.startupState.profileFetching? 80 : -1
             focus: true
             enabled: root.startupStore.currentStartupState.stateType !== Constants.startupState.profileFetching
 

@@ -561,6 +561,7 @@ StatusScrollView {
         }
         Separator {
             Layout.topMargin: 24
+            color: Theme.palette.baseColor2
         }
 
         HidePermissionPanel {

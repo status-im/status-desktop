@@ -35,7 +35,7 @@ Control {
     background: Rectangle {
         color: "transparent"
         radius: 16
-        border.color: Theme.palette.baseColor5
+        border.color: Theme.palette.baseColor2
     }
 
     contentItem: ColumnLayout {

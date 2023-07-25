@@ -23,6 +23,7 @@ SplitView {
             anchors.fill: tokenPanel
             border.width: 1
             anchors.margins: -15
+            color: "transparent"
         }
 
         IntroPanel {

@@ -130,17 +130,17 @@ Rectangle {
 
     QtObject {
         id: d
-        property int cardWidth: 335
-        property int bannerHeigth: 64
-        property int cardHeigth: 190
-        property int totalHeigth: 230
-        property int margins: 12
-        property int bannerRadius: 20
-        property int cardRadius: 16
-        property color cardColor: Theme.palette.indirectColor1
-        property color fontColor: Theme.palette.directColor1
-        property color loadingColor1: Theme.palette.baseColor5
-        property color loadingColor2: Theme.palette.baseColor4
+        readonly property int cardWidth: 335
+        readonly property int bannerHeigth: 64
+        readonly property int cardHeigth: 190
+        readonly property int totalHeigth: 230
+        readonly property int margins: 12
+        readonly property int bannerRadius: 20
+        readonly property int cardRadius: 16
+        readonly property color cardColor: Theme.palette.name === "light" ? Theme.palette.indirectColor1 : Theme.palette.baseColor2
+        readonly property color fontColor: Theme.palette.directColor1
+        readonly property color loadingColor1: Theme.palette.baseColor5
+        readonly property color loadingColor2: Theme.palette.baseColor4
 
         function numberFormat(number) {
             var res = number
