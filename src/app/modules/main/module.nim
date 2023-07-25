@@ -1009,7 +1009,7 @@ method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdat
     let status = toOnlineStatus(s.statusType)
     self.view.activeSection().setOnlineStatusForMember(s.publicKey, status)
 
-method onCommunityTokenDeployed*[T](self: Module[T], communityToken: CommunityTokenDto) =
+method onCommunityTokenDeploymentStarted*[T](self: Module[T], communityToken: CommunityTokenDto) =
   let item = self.view.model().getItemById(communityToken.communityId)
   if item.id != "":
     item.appendCommunityToken(self.createTokenItem(communityToken))
