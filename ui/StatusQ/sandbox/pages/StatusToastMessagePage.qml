@@ -19,7 +19,8 @@ Item {
                 {"title":"Verification Request Sent", "subTitle":"", "icon":"checkmark-circle", "loading":false, "type":1,"url":"", "duration":4000},
                 {"title":"Collectible is being minted...", "subTitle":"View on Etherscan", "icon":"", "loading":true, "type":0,"url":"http://google.com", "duration":0},
                 {"title":"Contact request sent", "subTitle":"", "icon":"checkmark-circle", "loading":false, "type":1,"url":"", "duration":4000},
-                {"title":"Test User", "subTitle":"Hello message...", "icon":"", "loading":false, "type":0,"url":"", "duration":4000}
+                {"title":"Test User", "subTitle":"Hello message...", "icon":"", "loading":false, "type":0,"url":"", "duration":4000},
+                {"title":"This device is no longer the control node for the Socks Community", "subTitle":"", "icon":"info", "loading":false, "type":0,"url":"", "duration":0}
             ]
             delegate: StatusToastMessage {
                 primaryText: modelData.title

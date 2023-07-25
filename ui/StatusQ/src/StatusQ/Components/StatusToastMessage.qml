@@ -38,7 +38,7 @@ import StatusQ.Core.Theme 0.1
 Control {
     id: root
     width: 343
-    height: !!secondaryText ? 68 : 48
+    height: !!secondaryText || title.lineCount > 1 ? 68 : 48
     anchors.right: parent.right
 
     /*!
@@ -261,26 +261,32 @@ Control {
                     }
                 }
             }
-            Column {
+            ColumnLayout {
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter
+                Layout.fillHeight: true
                 StatusBaseText {
-                    width: parent.width
+                    id: title
+                    Layout.fillWidth: true
                     font.pixelSize: 13
                     color: Theme.palette.directColor1
                     elide: Text.ElideRight
+                    wrapMode: Text.Wrap
                     text: root.primaryText
+                    maximumLineCount: 2
                 }
                 StatusBaseText {
-                    width: parent.width
+                    Layout.fillWidth: true
                     visible: (!root.linkUrl && !!root.secondaryText)
                     height: visible ? contentHeight : 0
                     font.pixelSize: 13
                     color: Theme.palette.baseColor1
                     text: root.secondaryText
                     elide: Text.ElideRight
+                    wrapMode: Text.Wrap
+                    maximumLineCount: 2
                 }
                 StatusSelectableText {
+                    Layout.fillWidth: true
                     visible: (!!root.linkUrl)
                     height: visible ? implicitHeight : 0
                     font.pixelSize: 13
