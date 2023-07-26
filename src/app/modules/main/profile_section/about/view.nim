@@ -24,6 +24,9 @@ QtObject:
   proc nodeVersion*(self: View): string {.slot.} =
     return self.delegate.getNodeVersion()
 
+  proc getStatusGoVersion*(self: View): string {.slot.} =
+    return self.delegate.getStatusGoVersion()
+
   proc appVersionFetched*(self: View, available: bool, version: string, url: string) {.signal.}
 
   proc fetchingChanged(self: View) {.signal.}

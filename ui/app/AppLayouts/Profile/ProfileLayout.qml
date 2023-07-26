@@ -283,11 +283,15 @@ StatusSectionLayout {
                         return root.store.getCurrentVersion()
                     }
 
-                    function getReleaseNotes() {
-                        const link = isProduction ? "https://github.com/status-im/status-desktop/releases/%1".arg(getCurrentVersion()) :
-                                                    "https://github.com/status-im/status-desktop/"
+                    function getStatusGoVersion() {
+                        return root.store.getStatusGoVersion()
+                    }
 
-                        openLink(link)
+                    function getReleaseNotes() {
+                        const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1" :
+                                                    "https://github.com/status-im/status-desktop/commit/%1"
+
+                        openLink(link.arg(getCurrentVersion()))
                     }
 
                     function openLink(url) {

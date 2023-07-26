@@ -52,6 +52,9 @@ method getAppVersion*(self: Module): string =
 method getNodeVersion*(self: Module): string =
   return self.controller.getNodeVersion()
 
+method getStatusGoVersion*(self: Module): string =
+  self.controller.getStatusGoVersion()
+
 method checkForUpdates*(self: Module) =
   self.controller.checkForUpdates()
 

@@ -53,6 +53,9 @@ QtObject:
     except Exception as e:
       error "Error getting Node version"
 
+  proc getStatusGoVersion*(self: Service): string =
+    STATUSGO_VERSION
+
   proc checkForUpdates*(self: Service) =
     try:
       discard status_about.checkForUpdates(types.Mainnet, APP_UPDATES_ENS, self.getAppVersion())
