@@ -30,8 +30,8 @@ StatusStackModal {
         readonly property int footerButtonsHeight: 44
         readonly property int popupContentHeight: 551
 
-        function sendInvites(pubKeys, inviteMessage) {
-            const error = root.communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
+        function shareCommunity(pubKeys, inviteMessage) {
+            const error = root.communitySectionModule.shareCommunityToUsers(JSON.stringify(pubKeys), inviteMessage);
             d.processInviteResult(error);
         }
 
@@ -75,7 +75,7 @@ StatusStackModal {
         enabled: root.pubKeys.length > 0
         text: qsTr("Send %n invite(s)", "", root.pubKeys.length)
         onClicked: {
-            d.sendInvites(root.pubKeys, root.inviteMessage);
+            d.shareCommunity(root.pubKeys, root.inviteMessage);
             root.close();
         }
     }

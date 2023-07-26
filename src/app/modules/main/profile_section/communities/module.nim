@@ -42,8 +42,8 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method inviteUsersToCommunity*(self: Module, communityID: string, pubKeysJSON: string, inviteMessage: string): string =
-  result = self.controller.inviteUsersToCommunity(communityID, pubKeysJSON, inviteMessage)
+method shareCommunityToUsers*(self: Module, communityID: string, pubKeysJSON: string, inviteMessage: string): string =
+  result = self.controller.shareCommunityToUsers(communityID, pubKeysJSON, inviteMessage)
 
 method leaveCommunity*(self: Module, communityID: string) =
   self.controller.leaveCommunity(communityID)

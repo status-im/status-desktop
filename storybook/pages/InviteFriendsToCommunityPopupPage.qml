@@ -94,8 +94,8 @@ SplitView {
                 }
 
                 communitySectionModule: QtObject {
-                    function inviteUsersToCommunity(keys, message) {
-                        logs.logEvent("communitySectionModule::inviteUsersToCommunity",
+                    function shareCommunityToUsers(keys, message) {
+                        logs.logEvent("communitySectionModule::shareCommunityToUsers",
                                       ["keys", "message"], arguments)
                     }
                 }
