@@ -623,9 +623,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	# if MACOS_CODESIGN_IDENT is not set then the outer and inner .app
 	# bundles are not signed
 ifdef MACOS_CODESIGN_IDENT
-	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT)
-	scripts/sign-macos-pkg.sh $(MACOS_INNER_BUNDLE) $(MACOS_CODESIGN_IDENT) \
-		--entitlements Entitlements.plist
+	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT) --entitlements Entitlements.plist
 endif
 	echo -e $(BUILD_MSG) "dmg"
 	mkdir -p pkg
