@@ -163,8 +163,9 @@ QtObject:
           if (chatDto.active):
             chats.add(chatDto)
 
-            # Handling members update
-            if self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].members != chatDto.members:
+            # Handling members update for non-community chats
+            let isCommunityChat = chatDto.chatType == ChatType.CommunityChat
+            if not isCommunityChat and self.chats.hasKey(chatDto.id) and self.chats[chatDto.id].members != chatDto.members:
               self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chatDto.id, members: chatDto.members))
             self.updateOrAddChat(chatDto)
 
@@ -354,6 +355,15 @@ QtObject:
     self.channelGroups[channelGroup.id] = newChannelGroup
     for chat in newChannelGroup.chats:
       self.updateOrAddChat(chat)
+  
+  proc updateChannelMembers*(self: Service, channel: ChatDto) =
+    if not self.chats.hasKey(channel.id):
+      return
+
+    var chat = self.chats[channel.id]
+    chat.members = channel.members
+    self.updateOrAddChat(chat)
+    self.events.emit(SIGNAL_CHAT_MEMBERS_CHANGED, ChatMembersChangedArgs(chatId: chat.id, members: chat.members))
 
   proc getChannelGroupById*(self: Service, channelGroupId: string): ChannelGroupDto =
     if not self.channelGroups.contains(channelGroupId):
