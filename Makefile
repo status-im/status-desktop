@@ -625,7 +625,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 ifdef MACOS_CODESIGN_IDENT
 	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT)
 	scripts/sign-macos-pkg.sh $(MACOS_INNER_BUNDLE) $(MACOS_CODESIGN_IDENT) \
-		--entitlements QtWebEngineProcess.plist
+		--entitlements Entitlements.plist
 endif
 	echo -e $(BUILD_MSG) "dmg"
 	mkdir -p pkg
