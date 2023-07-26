@@ -134,13 +134,13 @@ proc init*(self: Controller) =
     if (self.belongsToCommunity):
       self.handleCommunityOnlyConnections()
 
+proc belongsToCommunity*(self: Controller): bool =
+  self.belongsToCommunity
+
 proc getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
 proc getChatMembers*(self: Controller): seq[ChatMember] =
-  if self.belongsToCommunity:
-    return self.communityService.getCommunityById(self.sectionId).members
-  
   return self.chatService.getChatById(self.chatId).members
 
 proc getContactNameAndImage*(self: Controller, contactId: string):

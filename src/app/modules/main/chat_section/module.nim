@@ -52,7 +52,6 @@ type
     chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
     chatsLoaded: bool
-    usersModule: users_module.AccessInterface
 
 # Forward declaration
 proc buildChatSectionUI(self: Module,
@@ -114,12 +113,6 @@ proc newModule*(
 
   result.chatContentModules = initOrderedTable[string, chat_content_module.AccessInterface]()
 
-  # Simple community channels uses comminity usersModule while chats uses their own usersModule
-  if isCommunity:
-    result.usersModule = users_module.newModule(
-      events, sectionId, chatId = "", belongsToCommunity = true, isUsersListAvailable = true,
-      contactService, chat_service, communityService, messageService)
-
 method delete*(self: Module) =
   self.controller.delete
   self.view.delete
@@ -127,8 +120,6 @@ method delete*(self: Module) =
   for cModule in self.chatContentModules.values:
     cModule.delete
   self.chatContentModules.clear
-  if self.usersModule != nil:
-    self.usersModule.delete
 
 method isCommunity*(self: Module): bool =
   return self.controller.isCommunity()
@@ -153,7 +144,7 @@ proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsers
   mailserversService: mailservers_service.Service) =
   self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
     belongToCommunity, isUsersListAvailable, settingsService, nodeConfigurationService, contactService, chatService, communityService,
-    messageService, gifService, mailserversService, self.usersModule)
+    messageService, gifService, mailserversService)
 
 proc removeSubmodule(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -352,7 +343,6 @@ method onChatsLoaded*(
     # we do this only in case of chat section (not in case of communities)
     self.initContactRequestsModel()
   else:
-    self.usersModule.load()
     let community = self.controller.getMyCommunity()
     self.view.setAmIMember(community.joined)
     self.initCommunityTokenPermissionsModel(channelGroup)
@@ -1278,10 +1268,6 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
   for s in statusUpdates:
     let status = toOnlineStatus(s.statusType)
     self.view.chatsModel().updateItemOnlineStatusById(s.publicKey, status)
-
-method joinSpectatedCommunity*(self: Module) =
-  if self.usersModule != nil:
-    self.usersModule.updateMembersList()
 
 method createOrEditCommunityTokenPermission*(self: Module, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) =
 

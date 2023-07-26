@@ -144,14 +144,7 @@ StatusSectionLayout {
             anchors.fill: parent
             store: root.rootStore
             label: qsTr("Members")
-            usersModel: {
-                let chatContentModule = root.rootStore.currentChatContentModule()
-                if (!chatContentModule || !chatContentModule.usersModule) {
-                    // New communities have no chats, so no chatContentModule
-                    return null
-                }
-                return chatContentModule.usersModule.model
-            }
+            usersModel: root.chatContentModule && root.chatContentModule.usersModule ? root.chatContentModule.usersModule.model : null
         }
     }
 

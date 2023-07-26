@@ -45,7 +45,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
   nodeConfigurationService: node_configuration_service.Service, contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.Service, messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service, communityUsersModule: users_module.AccessInterface):
+  mailserversService: mailservers_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
@@ -59,11 +59,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
     chatService, communityService, gifService, messageService)
   result.messagesModule = messages_module.newModule(result, events, sectionId, chatId, belongsToCommunity,
     contactService, communityService, chatService, messageService, mailserversService)
-  result.usersModule = 
-    if communityUsersModule == nil: 
-      users_module.newModule( events, sectionId, chatId, belongsToCommunity, 
-      isUsersListAvailable, contactService, chat_service, communityService, messageService)
-    else: communityUsersModule
+  result.usersModule = users_module.newModule(events, sectionId, chatId, belongsToCommunity,
+    isUsersListAvailable, contactService, chat_service, communityService, messageService)
 
 method delete*(self: Module) =
   self.controller.delete

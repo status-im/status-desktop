@@ -340,9 +340,6 @@ method contactsStatusUpdated*(self: AccessInterface, statusUpdates: seq[StatusUp
 method switchToChannel*(self: AccessInterface, channelName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method joinSpectatedCommunity*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method createOrEditCommunityTokenPermission*(self: AccessInterface, communityId: string, permissionId: string, permissionType: int, tokenCriteriaJson: string, channelIDs: seq[string], isPrivate: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 

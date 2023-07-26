@@ -362,6 +362,7 @@ QtObject:
     chatDto.position = chat.position
     chatDto.canPost = chat.canPost
     chatDto.categoryId = chat.categoryId
+    chatDto.members = chat.members
 
   proc findChatById(id: string, chats: seq[ChatDto]): ChatDto =
     for chat in chats:
@@ -557,6 +558,10 @@ QtObject:
 
             let data = CommunityChatArgs(chat: updatedChat)
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
+
+          # Handle channel members update
+          if chat.members != prev_chat.members:
+            self.chatService.updateChannelMembers(chat)
 
       # members list was changed
       if (community.isMember or community.tokenPermissions.len == 0) and community.members != prev_community.members:
