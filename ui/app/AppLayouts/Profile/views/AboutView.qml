@@ -32,23 +32,23 @@ SettingsContentBase {
 
         Column {
             Layout.fillWidth: true
-            Image {
+            StatusIcon {
                 id: statusIcon
                 width: 80
                 height: 80
-                fillMode: Image.PreserveAspectFit
-                source: Style.png("status-logo")
+                icon: root.store.isProduction ? Style.svg("status-logo-circle") : Style.svg("status-logo-dev-circle")
                 anchors.horizontalCenter: parent.horizontalCenter
-                cache: false
             }
 
             Item { width: 1; height: 8}
 
-            StatusBaseText {
+            StatusLinkText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.pixelSize: 22
                 font.bold: true
-                text: root.store.getCurrentVersion()
+                normalColor: Theme.palette.directColor1
+                text: (root.store.isProduction ? "" : "git:") + root.store.getCurrentVersion()
+                onClicked: root.store.getReleaseNotes()
             }
 
             StatusBaseText {
@@ -59,11 +59,29 @@ SettingsContentBase {
 
             Item { width: 1; height: 17}
 
+            StatusLinkText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: 17
+                font.bold: true
+                normalColor: Theme.palette.directColor1
+                text: root.store.getStatusGoVersion()
+                onClicked: root.store.openLink("https://github.com/status-im/status-go/tree/v%1".arg(root.store.getStatusGoVersion()))
+            }
+
+            StatusBaseText {
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: 13
+                text: qsTr("Status Go Version")
+            }
+
+            Item { width: 1; height: 17}
+
             StatusButton {
                 anchors.horizontalCenter: parent.horizontalCenter
                 size: StatusBaseButton.Size.Small
                 icon.name: "info"
                 text: qsTr("Release Notes")
+                visible: root.store.isProduction
                 onClicked: {
                     root.store.getReleaseNotes()
                 }

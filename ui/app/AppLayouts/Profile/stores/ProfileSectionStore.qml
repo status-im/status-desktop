@@ -157,6 +157,10 @@ QtObject {
         return aboutModuleInst.getCurrentVersion()
     }
 
+    function getStatusGoVersion() {
+        return aboutModuleInst.getStatusGoVersion()
+    }
+
     function nodeVersion() {
         return aboutModuleInst.nodeVersion()
     }

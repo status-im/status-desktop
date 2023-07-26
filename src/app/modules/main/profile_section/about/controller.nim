@@ -34,3 +34,6 @@ proc checkForUpdates*(self: Controller) =
 
 proc getNodeVersion*(self: Controller): string =
   return self.aboutService.getNodeVersion()
+
+proc getStatusGoVersion*(self: Controller): string =
+  self.aboutService.getStatusGoVersion()

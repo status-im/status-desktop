@@ -21,22 +21,33 @@ SplitView {
             contentWidth: parent.width
 
             store: QtObject {
-                readonly property bool isProduction: false
+                readonly property bool isProduction: ctrlProduction.checked
 
                 function checkForUpdates() {
                     logs.logEvent("store::checkForUpdates")
                 }
 
                 function getCurrentVersion() {
-                    return "storybook-version"
+                    logs.logEvent("store::getCurrentVersion")
+                    return isProduction ? "0.13.2" : "45784cf0c"
+                }
+
+                function getStatusGoVersion() {
+                    logs.logEvent("store::getStatusGoVersion")
+                    return "0.162.9"
                 }
 
                 function getReleaseNotes() {
                     logs.logEvent("store::getReleaseNotes")
+                    const link = isProduction ? "https://github.com/status-im/status-desktop/releases/tag/%1" :
+                                                "https://github.com/status-im/status-desktop/commit/%1"
+
+                    openLink(link.arg(getCurrentVersion()))
                 }
 
                 function openLink(url) {
                     logs.logEvent("store::openLink", ["url"], arguments)
+                    Qt.openUrlExternally(url)
                 }
             }
 
@@ -52,13 +63,12 @@ SplitView {
         }
     }
 
-    Control {
+    Switch {
+        id: ctrlProduction
         SplitView.minimumWidth: 300
         SplitView.preferredWidth: 300
-
-        font.pixelSize: 13
-
-        // model editor will go here
+        text: "Production"
+        checked: true
     }
 }
 

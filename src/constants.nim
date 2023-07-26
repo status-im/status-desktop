@@ -81,10 +81,11 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
 
 # This is changed during compilation by reading the VERSION file
 const DESKTOP_VERSION {.strdefine.} = "0.0.0"
+const STATUSGO_VERSION* {.strdefine.} = "0.0.0"
 # This is changed during compilation by executing git command
 const GIT_COMMIT* {.strdefine.} = ""
 
-const APP_VERSION* = if defined(production): DESKTOP_VERSION else: fmt("git master {GIT_COMMIT}")
+const APP_VERSION* = if defined(production): DESKTOP_VERSION else: fmt("{GIT_COMMIT}")
 
 # Name of the test environment var to check for
 const TEST_ENVIRONMENT_VAR* = "TEST_ENVIRONMENT"
