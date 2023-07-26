@@ -49,11 +49,24 @@ StatusComboBox {
     */
     property int delegateHeight: 44
 
+    ModelChangeTracker {
+        id: modelTracker
+
+        model: root.model
+    }
+
     QtObject {
         id: d
 
-        readonly property string emoji: ModelUtils.get(root.model, currentIndex, "emoji") ?? ""
-        readonly property string color: ModelUtils.get(root.model, currentIndex, "color") ?? ""
+        readonly property string emoji: {
+            modelTracker.revision
+            return ModelUtils.get(root.model, currentIndex, "emoji") ?? ""
+        }
+
+        readonly property string color: {
+            modelTracker.revision
+            return ModelUtils.get(root.model, currentIndex, "color") ?? ""
+        }
     }
 
     control.textRole: "name"
