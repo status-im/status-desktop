@@ -38,6 +38,6 @@
         <key>NSHighResolutionCapable</key>
         <string>True</string>
         <key>NSCameraUsageDescription</key>
-        <string>Scan QR codes</string>
+        <string>Status uses camera to scan QR codes</string>
     </dict>
 </plist>
