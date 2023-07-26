@@ -52,7 +52,7 @@ type
     tmpAuthenticationWithCallbackInProgress: bool
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
-  settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service, 
+  settingsService: settings_service.Service, nodeConfigurationService: node_configuration_service.Service,
   contactService: contact_service.Service, chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
@@ -84,7 +84,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.tmpAirdropAddress = ""
   result.tmpAddressesToShare = @[]
   result.tmpAuthenticationWithCallbackInProgress = true
-  
+
 proc delete*(self: Controller) =
   self.events.disconnect()
 
@@ -301,12 +301,12 @@ proc init*(self: Controller) =
       let args = ReloadMessagesArgs(e)
       if (args.communityId == self.sectionId):
         self.messageService.asyncLoadInitialMessagesForChat(self.getActiveChatId())
-    
+
     self.events.on(SIGNAL_CATEGORY_MUTED) do(e: Args):
       let args = CategoryArgs(e)
       if (args.communityId == self.sectionId):
         self.delegate.onCategoryMuted(args.categoryId)
-    
+
     self.events.on(SIGNAL_CATEGORY_UNMUTED) do(e: Args):
       let args = CategoryArgs(e)
       if (args.communityId == self.sectionId):
@@ -414,7 +414,7 @@ proc init*(self: Controller) =
     if (self.sectionId != args.sectionId):
       return
     self.delegate.makeChatWithIdActive(args.chatId)
-    
+
   if (not self.isCommunitySection):
     self.events.on(SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT) do(e:Args):
       let args = ChatExtArgs(e)
@@ -679,8 +679,8 @@ proc unmuteCategory*(self: Controller, categoryId: string) =
 proc setCommunityMuted*(self: Controller, mutedType: int) =
   self.communityService.setCommunityMuted(self.sectionId, mutedType)
 
-proc inviteUsersToCommunity*(self: Controller, pubKeys: string, inviteMessage: string): string =
-  result = self.communityService.inviteUsersToCommunityById(self.sectionId, pubKeys, inviteMessage)
+proc shareCommunityToUsers*(self: Controller, pubKeys: string, inviteMessage: string): string =
+  result = self.communityService.shareCommunityToUsers(self.sectionId, pubKeys, inviteMessage)
 
 proc reorderCommunityCategories*(self: Controller, categoryId: string, position: int) =
   self.communityService.reorderCommunityCategories(self.sectionId, categoryId, position)
@@ -717,7 +717,7 @@ proc ownsCollectible*(self: Controller, chainId: int, contractAddress: string, t
 
   for address in addresses:
     let data = self.collectibleService.getOwnedCollectibles(chainId, @[address])
-    
+
     for collectible in data[0].collectibles:
       if collectible.id.contractAddress == contractAddress.toLowerAscii:
         return true

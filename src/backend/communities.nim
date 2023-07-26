@@ -401,12 +401,6 @@ proc setCommunityMuted*(communityId: string, mutedType: int): RpcResponse[JsonNo
     "mutedType": mutedType 
   }])
 
-proc inviteUsersToCommunity*(communityId: string, pubKeys: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
-  return callPrivateRPC("inviteUsersToCommunity".prefix, %*[{
-    "communityId": communityId,
-    "users": pubKeys
-  }])
-
 proc shareCommunityToUsers*(communityId: string, pubKeys: seq[string], inviteMessage: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("shareCommunity".prefix, %*[{
     "communityId": communityId,

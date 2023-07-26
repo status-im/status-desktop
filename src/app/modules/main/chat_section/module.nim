@@ -282,10 +282,10 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
-  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
     tokenPermissionsItem.getType() == TokenPermissionType.BecomeMember.int)
-  
-  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+
+  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
     tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
 
   self.view.tokenPermissionsModel().setItems(tokenPermissionsItems)
@@ -442,13 +442,13 @@ method activeItemSet*(self: Module, itemId: string) =
 
   # save last open chat in settings for restore on the next app launch
   singletonInstance.localAccountSensitiveSettings.setSectionLastOpenChat(mySectionId, activeChatId)
-  
+
   let (deactivateSectionId, deactivateChatId) = singletonInstance.loaderDeactivator.addChatInMemory(mySectionId, activeChatId)
 
   # notify parent module about active chat/channel
   self.delegate.onActiveChatChange(mySectionId, activeChatId)
   self.delegate.onDeactivateChatLoader(deactivateSectionId, deactivateChatId)
-  
+
   if self.controller.isCommunity():
     self.controller.asyncCheckChannelPermissions(mySectionId, activeChatId)
 
@@ -571,7 +571,7 @@ method addNewChat*(
     chatImage = chatDto.icon
 
   var memberRole = self.getUserMemberRole(chatDto.members)
-  
+
   if memberRole == MemberRole.None and len(chatDto.communityId) != 0:
     memberRole = channelGroup.memberRole
   if chatDto.chatType != ChatType.PrivateGroupChat:
@@ -701,7 +701,7 @@ method setFirstChannelAsActive*(self: Module) =
   for chat_item in chat_items:
     if chat_item.`type` != CATEGORY_TYPE:
       self.setActiveItem(chat_item.id)
-      break    
+      break
 
 method onReorderChat*(self: Module, updatedChat: ChatDto) =
   self.view.chatsModel().reorderChats(@[updatedChat])
@@ -788,7 +788,7 @@ method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tok
   self.reevaluateRequiresTokenPermissionToJoin()
   singletonInstance.globalEvents.showCommunityTokenPermissionCreatedNotification(communityId, "Community permission created", "A token permission has been added")
 
-proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckPermissionsResultDto], community: CommunityDto) = 
+proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckPermissionsResultDto], community: CommunityDto) =
   for id, criteriaResult in permissions:
     if community.tokenPermissions.hasKey(id):
       let tokenPermissionItem = self.view.tokenPermissionsModel.getItemById(id)
@@ -815,7 +815,7 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
         updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
 
       let updatedTokenPermissionItem = initTokenPermissionItem(
-          tokenPermissionItem.id, 
+          tokenPermissionItem.id,
           tokenPermissionItem.`type`,
           updatedTokenCriteriaItems,
           tokenPermissionItem.getChatList().getItems(),
@@ -826,18 +826,18 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 
   let tokenPermissionsItems = self.view.tokenPermissionsModel().getItems()
 
-  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
     tokenPermissionsItem.getType() == TokenPermissionType.BecomeMember.int)
-  
-  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem => 
+
+  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
     tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
 
   # multiple permissions of the same type act as logical OR
   # so if at least one of them is fulfilled we can mark the view
   # as all lights green
-  let memberRequirementMet = memberPermissions.len() > 0 and any(memberPermissions, 
+  let memberRequirementMet = memberPermissions.len() > 0 and any(memberPermissions,
     proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
-  
+
   let adminRequirementMet = adminPermissions.len() > 0 and any(adminPermissions, proc (item: TokenPermissionItem): bool = item.tokenCriteriaMet)
 
   let requiresPermissionToJoin = (adminPermissions.len() > 0 and adminRequirementMet) or memberPermissions.len() > 0
@@ -845,7 +845,7 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
 
   self.view.setAllTokenRequirementsMet(tokenRequirementsMet)
   self.view.setRequiresTokenPermissionToJoin(requiresPermissionToJoin)
-      
+
 
 proc updateChannelPermissionViewData*(self: Module, chatId: string, viewOnlyPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto, viewAndPostPermissions: ViewOnlyOrViewAndPostPermissionsResponseDto, community: CommunityDto) =
   self.updateTokenPermissionModel(viewOnlyPermissions.permissions, community)
@@ -1119,8 +1119,8 @@ method exportCommunity*(self: Module): string =
 method setCommunityMuted*(self: Module, mutedType: int) =
   self.controller.setCommunityMuted(mutedType)
 
-method inviteUsersToCommunity*(self: Module, pubKeysJSON: string, inviteMessage: string): string =
-  result = self.controller.inviteUsersToCommunity(pubKeysJSON, inviteMessage)
+method shareCommunityToUsers*(self: Module, pubKeysJSON: string, inviteMessage: string): string =
+  result = self.controller.shareCommunityToUsers(pubKeysJSON, inviteMessage)
 
 method prepareEditCategoryModel*(self: Module, categoryId: string) =
   self.view.editCategoryChannelsModel().clearItems()
@@ -1317,14 +1317,14 @@ method createOrEditCommunityTokenPermission*(self: Module, communityId: string, 
     if contractAddresses.len == 0 and tokenCriteriaDto.`type` != community_dto.TokenType.ENS:
       if permissionId == "":
         self.onCommunityTokenPermissionCreationFailed(communityId)
-        return 
+        return
       self.onCommunityTokenPermissionUpdateFailed(communityId)
       return
 
     tokenCriteriaDto.amount = viewAmount.formatBiggestFloat(ffDecimal)
     tokenCriteriaDto.contractAddresses = contractAddresses
     tokenPermission.tokenCriteria.add(tokenCriteriaDto)
-  
+
   self.controller.createOrEditCommunityTokenPermission(communityId, tokenPermission)
 
 method deleteCommunityTokenPermission*(self: Module, communityId: string, permissionId: string) =

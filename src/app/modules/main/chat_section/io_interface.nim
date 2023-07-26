@@ -101,7 +101,7 @@ method addOrUpdateChat*(self: AccessInterface,
   ): Item {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onNewMessagesReceived*(self: AccessInterface, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string, 
+method onNewMessagesReceived*(self: AccessInterface, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string,
   chatTypeMsgBelongsTo: ChatType, lastMessageTimestamp: int, unviewedMessagesCount: int, unviewedMentionsCount: int, message: MessageDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -307,7 +307,7 @@ method exportCommunity*(self: AccessInterface): string {.base.} =
 method setCommunityMuted*(self: AccessInterface, mutedType: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method inviteUsersToCommunity*(self: AccessInterface, pubKeysJSON: string, inviteMessage: string): string {.base.} =
+method shareCommunityToUsers*(self: AccessInterface, pubKeysJSON: string, inviteMessage: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method createCommunityCategory*(self: AccessInterface, name: string, channels: seq[string]) {.base.} =
@@ -392,7 +392,7 @@ method editSharedAddressesWithAuthentication*(self: AccessInterface, addressesTo
 
 
 method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =
- 
+
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCheckChannelPermissionsResponse*(self: AccessInterface, chatId: string, checkChannelPermissionsResponse: CheckChannelPermissionsResponseDto) {.base.} =

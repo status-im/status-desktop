@@ -20,14 +20,14 @@ QtObject:
       listOfMyContactsVariant: QVariant
       editCategoryChannelsModel: chats_model.Model
       editCategoryChannelsVariant: QVariant
-      loadingHistoryMessagesInProgress: bool 
+      loadingHistoryMessagesInProgress: bool
       tokenPermissionsModel: TokenPermissionsModel
       tokenPermissionsVariant: QVariant
       allTokenRequirementsMet: bool
       requiresTokenPermissionToJoin: bool
       amIMember: bool
       chatsLoaded: bool
-      
+
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
@@ -303,7 +303,7 @@ QtObject:
 
   proc leaveCommunity*(self: View) {.slot.} =
     self.delegate.leaveCommunity()
-  
+
   proc removeUserFromCommunity*(self: View, pubKey: string) {.slot.} =
     self.delegate.removeUserFromCommunity(pubKey)
 
@@ -311,7 +311,7 @@ QtObject:
     self.delegate.banUserFromCommunity(pubKey)
 
   proc editCommunity*(self: View, name: string, description: string, introMessage: string, outroMessage: string, access: int,
-                      color: string, tags: string, logoJsonData: string, bannerJsonData: string, historyArchiveSupportEnabled: bool, 
+                      color: string, tags: string, logoJsonData: string, bannerJsonData: string, historyArchiveSupportEnabled: bool,
                       pinMessageAllMembersEnabled: bool) {.slot.} =
     self.delegate.editCommunity(name, description, introMessage, outroMessage, access, color, tags,
                                 logoJsonData, bannerJsonData, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
@@ -325,8 +325,8 @@ QtObject:
   proc setCommunityMuted*(self: View, mutedType: int) {.slot.} =
     self.delegate.setCommunityMuted(mutedType)
 
-  proc inviteUsersToCommunity*(self: View, pubKeysJSON: string, inviteMessage: string): string {.slot.} =
-    result = self.delegate.inviteUsersToCommunity(pubKeysJSON, inviteMessage)
+  proc shareCommunityToUsers*(self: View, pubKeysJSON: string, inviteMessage: string): string {.slot.} =
+    result = self.delegate.shareCommunityToUsers(pubKeysJSON, inviteMessage)
 
   proc createCommunityCategory*(self: View, name: string, channels: string) {.slot.} =
     let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())
@@ -347,12 +347,12 @@ QtObject:
 
   proc reorderCommunityChat*(self: View, categoryId: string, chatId: string, position: int) {.slot} =
     self.delegate.reorderCommunityChat(categoryId, chatId, position)
-    
+
   proc loadingHistoryMessagesInProgressChanged*(self: View) {.signal.}
 
   proc getLoadingHistoryMessagesInProgress*(self: View): bool {.slot.} =
     return self.loadingHistoryMessagesInProgress
-  
+
   QtProperty[bool] loadingHistoryMessagesInProgress:
     read = getLoadingHistoryMessagesInProgress
     notify = loadingHistoryMessagesInProgressChanged
@@ -408,7 +408,7 @@ QtObject:
       return
     self.amIMember = value
     self.amIMemberChanged()
-  
+
   QtProperty[bool] amIMember:
     read = getAmIMember
     notify = amIMemberChanged
@@ -423,7 +423,7 @@ QtObject:
       return
     self.allTokenRequirementsMet = value
     self.allTokenRequirementsMetChanged()
-  
+
   QtProperty[bool] allTokenRequirementsMet:
     read = getAllTokenRequirementsMet
     notify = allTokenRequirementsMetChanged
@@ -432,5 +432,5 @@ QtObject:
 
   proc authenticateWithCallback*(self: View) {.slot.} =
     self.delegate.authenticateWithCallback()
-  
+
   proc callbackFromAuthentication*(self: View, authenticated: bool) {.signal.}
