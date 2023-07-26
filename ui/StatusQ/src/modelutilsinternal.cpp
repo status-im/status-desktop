@@ -9,6 +9,14 @@ ModelUtilsInternal::ModelUtilsInternal(QObject* parent)
 {
 }
 
+bool ModelUtilsInternal::isModel(const QVariant &obj) const
+{
+    if (!obj.canConvert<QObject*>())
+        return false;
+
+    return qobject_cast<QAbstractItemModel*>(obj.value<QObject*>()) != nullptr;
+}
+
 QStringList ModelUtilsInternal::roleNames(QAbstractItemModel *model) const
 {
     if (model == nullptr)

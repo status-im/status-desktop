@@ -15,6 +15,8 @@ class ModelUtilsInternal : public QObject
 public:
     explicit ModelUtilsInternal(QObject* parent = nullptr);
 
+    Q_INVOKABLE bool isModel(const QVariant &obj) const;
+
     Q_INVOKABLE int roleByName(QAbstractItemModel *model,
                                const QString &roleName) const;
 
