@@ -99,6 +99,18 @@ def step(context: any):
 def step(context: any):
     the_user_opens_the_wallet_settings()
 
+@When("the user adds a generated account with \"|any|\" color \"|any|\" and emoji \"|any|\" in Settings")
+def step(context, name, color, emoji):
+    account_popup = _settingsScreen.open_add_new_account_popup()
+    account_popup.set_name(name).set_emoji(emoji).set_color(color).save()
+    AuthenticatePopup().wait_until_appears().authenticate()
+    account_popup.wait_until_hidden()
+    
+@Then("the account is present with \"|any|\" and \"|any|\" and emoji unicode \"|any|\" in the accounts list in Settings")
+def step(context: any, account_name, color, emoji):
+    _settingsScreen._find_account_index(account_name)
+
+
 @When("the user deletes the account \"|any|\" with password \"|any|\"")
 def step(context: any, account_name: str, password: str):
     _statusMain.open_settings()

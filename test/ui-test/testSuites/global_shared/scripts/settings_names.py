@@ -104,6 +104,7 @@ settings_Wallet_AccountView_EditAccountColorRepeater = {"container": statusDeskt
 settings_Wallet_AccountView_AccountName = {"container": statusDesktop_mainWindow, "type": "StatusBaseText", "objectName": "walletAccountViewAccountName"}
 settings_Wallet_AccountView_IconSettings = {"container": statusDesktop_mainWindow, "type": "StatusEmoji", "objectName": "walletAccountViewAccountImage" , "visible": True}
 settings_Wallet_MainView_BackupSeedPhrase = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.BACKUP_SEED.value, "type": "StatusNavigationListItem", "visible": True}
+settings_Wallet_MainView_AddNewAccountButton = {"container": statusDesktop_mainWindow, "objectName": "settings_Wallet_MainView_AddNewAccountButton", "type": "StatusButton", "visible": True}
 
 generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName": "generatedAccounts", "type": "ListView"}
 
