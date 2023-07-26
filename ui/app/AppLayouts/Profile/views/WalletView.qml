@@ -165,6 +165,7 @@ SettingsContentBase {
         Component {
             id: addNewAccountButtonComponent
             StatusButton {
+                objectName: "settings_Wallet_MainView_AddNewAccountButton"
                 text: qsTr("Add new account")
                 onClicked: root.walletStore.runAddAccountPopup()
             }

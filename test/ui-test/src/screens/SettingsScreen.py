@@ -21,6 +21,7 @@ from .StatusMainScreen import MainScreenComponents
 from .StatusMainScreen import authenticate_popup_enter_password
 from .components.change_password_popup import ChangePasswordPopup
 from .components.social_links_popup import SocialLinksPopup
+from .components.wallet_account_popups import AccountPopup
 
 
 class SignOutPopup(BaseElement):
@@ -38,18 +39,17 @@ class MenuPanel(BaseElement):
     def __init__(self):
         super(MenuPanel, self).__init__('mainWindow_LeftTabView')
         self._scroll = Scroll('LeftTabView_ScrollView')
-        self._back_up_seed_phrase_item = Button('sign_out_Quit_StatusNavigationListItem')
+        self._sign_out_and_quit_item = Button('sign_out_Quit_StatusNavigationListItem')
 
     def sign_out_and_quit(self):
-        self._scroll.vertical_scroll_to(self._back_up_seed_phrase_item)
-        self._back_up_seed_phrase_item.click()
+        self._scroll.vertical_scroll_to(self._sign_out_and_quit_item)
+        self._sign_out_and_quit_item.click()
         SignOutPopup().wait_until_appears().sign_out_and_quit()
 
 
 class SidebarComponents(Enum):
     ADVANCED_OPTION: str = "advanced_StatusNavigationListItem"
     KEYCARD_OPTION: str = "keycard_StatusNavigationListItem"
-    WALLET_OPTION: str = "wallet_StatusNavigationListItem"
     LANGUAGE_CURRENCY_OPTION: str = "language_StatusNavigationListItem"
     SIGN_OUT_AND_QUIT_OPTION: str = "sign_out_Quit_StatusNavigationListItem"
     COMMUNITIES_OPTION: str = "communities_StatusNavigationListItem"
@@ -142,6 +142,8 @@ class SettingsScreen:
         self.menu = MenuPanel()
         self._profile_view = ProfileSettingsView()
         self._profile_button = Button('profile_StatusNavigationListItem')
+        self._wallet_settings_button = Button('wallet_StatusNavigationListItem')
+        self._add_new_account_button = Button('settings_Wallet_MainView_AddNewAccountButton')
 
     @property
     def profile_settings(self) -> 'ProfileSettingsView':
@@ -154,10 +156,20 @@ class SettingsScreen:
         click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
 
     def open_wallet_settings(self):
-        click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
+        self._wallet_settings_button.click()
 
     def open_wallet_section(self):
-        click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
+        click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)   
+
+    def open_add_new_account_popup(self, attempt=2):
+        self._add_new_account_button.click()
+        try:
+            return AccountPopup().wait_until_appears()
+        except AssertionError as err:
+            if attempt:
+                return self.open_add_new_account_popup(attempt - 1)
+            else:
+                raise err
 
     def delete_account(self, account_name: str, password: str):
         self.open_wallet_settings()
@@ -255,7 +267,7 @@ class SettingsScreen:
     def select_default_account(self):
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         click_obj(accounts.itemAt(0))
-        click_obj_by_name(WalletSettingsScreen.EDIT_ACCOUNT_BUTTON.value)
+        click_obj_by_name(WalletSettingsScreen.EDIT_ACCOUNT_BUTTON.value)    
 
     def edit_account(self, account_name: str, account_color: str):
         type_text(WalletSettingsScreen.EDIT_ACCOUNT_NAME_INPUT.value, account_name)
