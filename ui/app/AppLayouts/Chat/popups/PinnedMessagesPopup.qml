@@ -98,7 +98,7 @@ StatusDialog {
                     messagePinnedBy: model.pinnedBy
                     sticker: model.sticker
                     stickerPack: model.stickerPack
-                    linkUrls: model.links
+                    linkPreviewModel: model.linkPreviewModel
                     transactionParams: model.transactionParameters
                     quotedMessageText: model.quotedMessageParsedText
                     quotedMessageFrom: model.quotedMessageFrom

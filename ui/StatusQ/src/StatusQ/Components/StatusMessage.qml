@@ -39,6 +39,7 @@ Control {
 
     property string messageAttachments: ""
     property var reactionIcons: []
+    property var linkPreviewModel
 
     property string messageId: ""
     property bool editMode: false
@@ -351,7 +352,7 @@ Control {
                     Loader {
                         id: linksLoader
                         Layout.fillWidth: true
-                        active: !root.editMode && root.linkPreviewModel.count > 0
+                        active: !root.editMode && root.linkPreviewModel && root.linkPreviewModel.count > 0
                         visible: active
                     }
                     Loader {

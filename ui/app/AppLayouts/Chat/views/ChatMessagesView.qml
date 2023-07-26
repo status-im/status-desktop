@@ -296,7 +296,6 @@ Item {
             editModeOn: model.editMode
             onEditModeOnChanged: root.editModeChanged(editModeOn)
             isEdited: model.isEdited
-            linkUrls: model.links
             linkPreviewModel: model.linkPreviewModel
             messageAttachments: model.messageAttachments
             transactionParams: model.transactionParameters
