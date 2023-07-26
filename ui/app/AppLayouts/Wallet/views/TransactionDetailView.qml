@@ -28,6 +28,7 @@ Item {
     property var contactsStore
     property var transaction
     property var sendModal
+    property bool showAllAccounts: false
     readonly property bool isTransactionValid: transaction !== undefined && !!transaction
 
     onTransactionChanged: {
@@ -138,6 +139,7 @@ Item {
                     color: Theme.palette.transparent
                     state: "header"
 
+                    showAllAccounts: root.showAllAccounts
                     modelData: transaction
                     timeStampText: root.isTransactionValid ? qsTr("Signed at %1").arg(LocaleUtils.formatDateTime(transaction.timestamp * 1000, Locale.LongFormat)): ""
                     rootStore: RootStore

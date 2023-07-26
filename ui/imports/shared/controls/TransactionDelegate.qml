@@ -40,6 +40,7 @@ StatusListItem {
 
     property var modelData
     property string timeStampText: isModelDataValid ? LocaleUtils.formatRelativeTimestamp(modelData.timestamp * 1000) : ""
+    property bool showAllAccounts: false
 
     required property var rootStore
     required property var walletRootStore
@@ -192,7 +193,7 @@ StatusListItem {
         case Constants.TransactionType.Swap:
         case Constants.TransactionType.Bridge:
         case Constants.TransactionType.ContractDeployment:
-            details += subTitle + endl2
+            details += getSubtitle(true) + endl2
             break
         default:
             details += qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName) + endl2
@@ -291,7 +292,7 @@ StatusListItem {
             details += qsTr("%1 %2 contract address").arg(root.networkName).arg(protocolName) + endl
             details += protocolFromContractAddress + endl2
         }
-        if (!!modelData.contract && type !== Constants.TransactionType.ContractDeployment) {
+        if (!!modelData.contract && type !== Constants.TransactionType.ContractDeployment && !/0x0+$/.test(modelData.contract)) {
             let symbol = !!modelData.symbol || !modelData.contract ? modelData.symbol : "(%1)".arg(Utils.compactAddress(modelData.contract, 4))
             details += qsTr("%1 %2 contract address").arg(root.networkName).arg(symbol) + endl
             details += modelData.contract + endl2
@@ -412,6 +413,41 @@ StatusListItem {
         details = details.replace(/[^\x00-\x7F]/g, " ");
         // Remove empty new lines at the end
         return details.replace(/[\r\n\s]*$/, '')
+    }
+
+    function getSubtitle(allAccounts) {
+        switch(modelData.txType) {
+        case Constants.TransactionType.Receive:
+            if (allAccounts)
+                return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
+            return qsTr("%1 from %2 via %3").arg(transactionValue).arg(fromAddress).arg(networkName)
+        case Constants.TransactionType.Buy:
+            let protocol = "" // TODO fill data for buy
+            if (allAccounts)
+                return qsTr("%1 on %2 via %3 in %4").arg(transactionValue).arg(protocol).arg(networkName).arg(toAddress)
+            return qsTr("%1 on %2 via %3").arg(transactionValue).arg(protocol).arg(networkName)
+        case Constants.TransactionType.Destroy:
+            if (allAccounts)
+                return qsTr("%1 at %2 via %3 in %4").arg(inTransactionValue).arg(toAddress).arg(networkName).arg(toAddress)
+            return qsTr("%1 at %2 via %3").arg(inTransactionValue).arg(toAddress).arg(networkName)
+        case Constants.TransactionType.Swap:
+            if (allAccounts)
+                return qsTr("%1 to %2 via %3 in %4").arg(outTransactionValue).arg(inTransactionValue).arg(networkName).arg(toAddress)
+            return qsTr("%1 to %2 via %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
+        case Constants.TransactionType.Bridge:
+            let toNetworkName = "" // TODO fill when Bridge data is implemented
+            if (allAccounts)
+                return qsTr("%1 from %2 to %3 in %4").arg(inTransactionValue).arg(networkName).arg(toNetworkName).arg(toAddress)
+            return qsTr("%1 from %2 to %3").arg(inTransactionValue).arg(networkName).arg(toNetworkName)
+        case Constants.TransactionType.ContractDeployment:
+            const name = addressNameTo || addressNameFrom
+            return !!modelData.contract ? qsTr("Contract %1 via %2 on %3").arg(Utils.compactAddress(modelData.contract, 4)).arg(name).arg(networkName)
+                                        : qsTr("Via %1 on %2").arg(name).arg(networkName)
+        default:
+            if (allAccounts)
+                return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
+            return qsTr("%1 to %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
+        }
     }
 
     rightPadding: 16
@@ -554,26 +590,8 @@ StatusListItem {
         if (!root.isModelDataValid) {
             return ""
         }
-        switch(modelData.txType) {
-        case Constants.TransactionType.Receive:
-            return qsTr("%1 from %2 via %3").arg(transactionValue).arg(fromAddress).arg(networkName)
-        case Constants.TransactionType.Buy:
-        case Constants.TransactionType.Sell:
-            return qsTr("%1 on %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
-        case Constants.TransactionType.Destroy:
-            return qsTr("%1 at %2 via %3").arg(inTransactionValue).arg(toAddress).arg(networkName)
-        case Constants.TransactionType.Swap:
-            return qsTr("%1 to %2 via %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
-        case Constants.TransactionType.Bridge:
-            let toNetworkName = "" // TODO fill when Bridge data is implemented
-            return qsTr("%1 from %2 to %3").arg(inTransactionValue).arg(networkName).arg(toNetworkName)
-        case Constants.TransactionType.ContractDeployment:
-            const name = addressNameTo || addressNameFrom
-            return !!modelData.contract ? qsTr("Contract %1 via %2 on %3").arg(Utils.compactAddress(modelData.contract, 4)).arg(name).arg(networkName)
-                                        : qsTr("Via %1 on %2").arg(name).arg(networkName)
-        default:
-            return qsTr("%1 to %2 via %3").arg(transactionValue).arg(toAddress).arg(networkName)
-        }
+
+        return getSubtitle(root.showAllAccounts)
     }
     statusListItemSubTitle.maximumLoadingStateWidth: 400
     statusListItemSubTitle.customColor: Theme.palette.directColor1

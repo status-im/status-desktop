@@ -66,6 +66,7 @@ Item {
             contactsStore: root.contactsStore
             sendModal: root.sendModalPopup
             networkConnectionStore: root.networkConnectionStore
+            showAllAccounts: leftTab.showAllAccounts
             onLaunchShareAddressModal: Global.openPopup(receiveModalComponent);
         }
     }
