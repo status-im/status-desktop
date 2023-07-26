@@ -96,7 +96,14 @@ SplitView {
             onMintCollectible: logs.logEvent("CommunityMintTokensSettingsPanel::mintCollectible")
             onMintAsset: logs.logEvent("CommunityMintTokensSettingsPanel::mintAssets")
             onDeleteToken: logs.logEvent("CommunityMintTokensSettingsPanel::deleteToken: " + tokenKey)
-            onSignMintTransactionOpened: feesTimer.restart()
+
+            onDeployFeesRequested: {
+                feeText = ""
+                feeErrorText = ""
+                isFeeLoading = true
+
+                feesTimer.restart()
+            }
         }
     }
 

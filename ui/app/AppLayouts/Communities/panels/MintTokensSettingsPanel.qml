@@ -50,7 +50,7 @@ StackView {
 
     // Transaction related properties:
     property string feeText
-    property string errorText
+    property string feeErrorText
     property bool isFeeLoading: true
 
     // Network related properties:
@@ -64,8 +64,7 @@ StackView {
     signal mintAsset(var assetItem)
     signal mintOwnerToken(var ownerToken, var tMasterToken)
 
-    signal signMintTransactionOpened(int chainId, string accountAddress, int tokenType)
-
+    signal deployFeesRequested(int chainId, string accountAddress, int tokenType)
     signal signRemoteDestructTransactionOpened(var remotelyDestructTokensList, // [key , amount]
                                                string tokenKey)
     signal remotelyDestructCollectibles(var remotelyDestructTokensList, // [key , amount]
@@ -78,7 +77,7 @@ StackView {
     function setFeeLoading() {
         root.isFeeLoading = true
         root.feeText = ""
-        root.errorText = ""
+        root.feeErrorText = ""
     }
 
     function navigateBack() {
@@ -248,25 +247,31 @@ StackView {
 
                 onMintClicked: signMintPopup.open()
 
-                SignTokenTransactionsPopup {
+                onDeployFeesRequested: root.deployFeesRequested(
+                                           ownerToken.chainId,
+                                           ownerToken.accountAddress,
+                                           Constants.TokenType.ERC721)
+
+
+                feeText: root.feeText
+                feeErrorText: root.feeErrorText
+                isFeeLoading: root.isFeeLoading
+
+                SignMultiTokenTransactionsPopup {
                     id: signMintPopup
 
-                    anchors.centerIn: Overlay.overlay
-                    title: qsTr("Sign transaction - Mint %1 tokens").arg(signMintPopup.tokenName)
-                    tokenName: editOwnerTokenView.communityName
+                    title: qsTr("Sign transaction - Mint %1 tokens").arg(
+                               editOwnerTokenView.communityName)
+                    totalFeeText: root.isFeeLoading ?
+                                      "" : root.feeText
                     accountName: editOwnerTokenView.ownerToken.accountName
-                    networkName: editOwnerTokenView.ownerToken.chainName
-                    feeText: root.feeText
-                    errorText: root.errorText
-                    isFeeLoading: root.isFeeLoading
 
-                    onOpened: {
-                        root.setFeeLoading()
-                        root.signMintTransactionOpened(editOwnerTokenView.ownerToken.chainId,
-                                                       editOwnerTokenView.ownerToken.accountAddress,
-                                                       Constants.TokenType.ERC721)
+                    model: QtObject {
+                        readonly property string title: editOwnerTokenView.feeLabel
+                        readonly property string feeText: signMintPopup.totalFeeText
+                        readonly property bool error: root.feeErrorText !== ""
                     }
-                    onCancelClicked: close()
+
                     onSignTransactionClicked: editOwnerTokenView.signMintTransaction()
                 }
             }
@@ -412,7 +417,7 @@ StackView {
                     accountName: preview.accountName
                     networkName: preview.chainName
                     feeText: root.feeText
-                    errorText: root.errorText
+                    errorText: root.feeErrorText
                     isFeeLoading: root.isFeeLoading
 
                     onOpened: {
@@ -632,7 +637,7 @@ StackView {
                 networkName: footer.token.chainName
                 feeText: root.feeText
                 isFeeLoading: root.isFeeLoading
-                errorText: root.errorText
+                errorText: root.feeErrorText
 
                 onOpened: {
                     root.setFeeLoading()
