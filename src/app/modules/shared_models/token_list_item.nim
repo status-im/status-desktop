@@ -14,6 +14,8 @@ type
     image*: string
     category*: int
     communityId*: string
+    supply*: string
+    infiniteSupply*: bool
 
 proc initTokenListItem*(
   key: string,
@@ -22,7 +24,9 @@ proc initTokenListItem*(
   color: string,
   image: string,
   category: int,
-  communityId: string = ""
+  communityId: string = "",
+  supply: string = "1",
+  infiniteSupply: bool = true,
 ): TokenListItem =
   result.key = key
   result.symbol = symbol
@@ -31,6 +35,8 @@ proc initTokenListItem*(
   result.image = image
   result.category = category
   result.communityId = communityId
+  result.supply = supply
+  result.infiniteSupply = infiniteSupply
 
 proc `$`*(self: TokenListItem): string =
   result = fmt"""TokenListItem(
@@ -40,6 +46,8 @@ proc `$`*(self: TokenListItem): string =
     symbol: {self.symbol},
     category: {self.category},
     communityId: {self.communityId},
+    supply: {self.supply},
+    infiniteSupply: {self.infiniteSupply},
     ]"""
 
 proc getKey*(self: TokenListItem): string =
@@ -62,3 +70,9 @@ proc getCategory*(self: TokenListItem): int =
 
 proc getCommunityId*(self: TokenListItem): string =
   return self.communityId
+
+proc getSupply*(self: TokenListItem): string =
+  return self.supply
+
+proc getInfiniteSupply*(self: TokenListItem): bool =
+  return self.infiniteSupply

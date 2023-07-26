@@ -1,4 +1,4 @@
-import NimQml, sequtils, tables
+import NimQml, sequtils, tables, stint
 
 import ./io_interface
 import ../io_interface as delegate_interface
@@ -407,6 +407,20 @@ method requestCancelDiscordCommunityImport*(self: Module, id: string) =
 method communityInfoAlreadyRequested*(self: Module) =
   self.view.communityInfoAlreadyRequested()
 
+proc createCommunityTokenItem(self: Module, token: CommunityTokensMetadataDto, communityId: string, supply: string,
+    infiniteSupply: bool): TokenListItem =
+  result = initTokenListItem(
+    key = token.symbol,
+    name = token.name,
+    symbol = token.symbol,
+    color = "", # community tokens don't have `color`
+    image = token.image,
+    category = ord(TokenListItemCategory.Community),
+    communityId = communityId,
+    supply,
+    infiniteSupply,
+  )
+
 proc buildTokenList(self: Module) =
   var tokenListItems: seq[TokenListItem]
   var collectiblesListItems: seq[TokenListItem]
@@ -421,23 +435,28 @@ proc buildTokenList(self: Module) =
       symbol = token.symbol,
       color = token.color,
       image = "",
-      category = ord(TokenListItemCategory.General)
+      category = ord(TokenListItemCategory.General),
     )
 
     tokenListItems.add(tokenListItem)
 
   for community in communities:
-    for token in community.communityTokensMetadata:
-      let tokenListItem = initTokenListItem(
-        key = token.symbol,
-        name = token.name,
-        symbol = token.symbol,
-        color = "", # community tokens don't have `color`
-        image = token.image,
-        category = ord(TokenListItemCategory.Community),
-        communityId = community.id,
-      )
-      collectiblesListItems.add(tokenListItem)
+    let communityTokens = self.controller.getCommunityTokens(community.id)
+    for tokenMetadata in community.communityTokensMetadata:
+      # Set fallback supply to infinite in case we don't have it
+      var supply = "1"
+      var infiniteSupply = true
+      for communityToken in communityTokens:
+        if communityToken.symbol == tokenMetadata.symbol:
+          supply = communityToken.supply.toString(10)
+          infiniteSupply = communityToken.infiniteSupply
+          break
+      collectiblesListItems.add(self.createCommunityTokenItem(
+        tokenMetadata,
+        community.id,
+        supply,
+        infiniteSupply,
+      ))
 
   self.view.setTokenListItems(tokenListItems)
   self.view.setCollectiblesListItems(collectiblesListItems)
@@ -449,14 +468,21 @@ method onOwnedCollectiblesUpdated*(self: Module) =
   self.buildTokenList()
 
 method onCommunityTokenMetadataAdded*(self: Module, communityId: string, tokenMetadata: CommunityTokensMetadataDto) =
-  let tokenListItem = initTokenListItem(
-    key = tokenMetadata.symbol,
-    name = tokenMetadata.name,
-    symbol = tokenMetadata.symbol,
-    color = "", # tokenMetadata doesn't provide a color
-    image = tokenMetadata.image,
-    category = ord(TokenListItemCategory.Community),
+  let communityTokens = self.controller.getCommunityTokens(communityId)
+  var tokenListItem: TokenListItem
+  # Set fallback supply to infinite in case we don't have it
+  var supply = "1"
+  var infiniteSupply = true
+  for communityToken in communityTokens:
+    if communityToken.symbol == tokenMetadata.symbol:
+      supply = communityToken.supply.toString(10)
+      infiniteSupply = communityToken.infiniteSupply
+      break
+  tokenListItem = self.createCommunityTokenItem(
+    tokenMetadata,
     communityId,
+    supply,
+    infiniteSupply,
   )
 
   if tokenMetadata.tokenType == community_dto.TokenType.ERC721 and

@@ -11,6 +11,8 @@ type
     Image
     Category
     CommunityId
+    Supply
+    InfiniteSupply
 
 QtObject:
   type TokenListModel* = ref object of QAbstractListModel
@@ -76,6 +78,8 @@ QtObject:
       ModelRole.Image.int:"icon",
       ModelRole.Category.int:"category",
       ModelRole.CommunityId.int:"communityId",
+      ModelRole.Supply.int:"supply",
+      ModelRole.InfiniteSupply.int:"infiniteSupply",
     }.toTable
 
   method rowCount(self: TokenlistModel, index: QModelIndex = nil): int =
@@ -105,3 +109,7 @@ QtObject:
         result = newQVariant(item.getCategory())
       of ModelRole.CommunityId:
         result = newQVariant(item.getCommunityId())
+      of ModelRole.Supply:
+        result = newQVariant(item.getSupply())
+      of ModelRole.InfiniteSupply:
+        result = newQVariant(item.getInfiniteSupply())
