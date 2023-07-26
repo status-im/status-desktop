@@ -37,6 +37,8 @@ StatusDialog {
     contentItem: FeesPanel {
         id: feesPanel
 
+        highlightFees: false
+
         footer: FeesSummaryFooter {
             id: footer
         }

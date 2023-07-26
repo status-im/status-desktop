@@ -24,7 +24,20 @@ SplitView {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
+            Timer {
+                id: feeCalculationTimer
+
+                interval: 2000
+
+                onTriggered: {
+                    editOwnerTokenView.feeText = "0.0015 ETH ($75.43)"
+                    editOwnerTokenView.isFeeLoading = false
+                }
+            }
+
             EditOwnerTokenView {
+                id: editOwnerTokenView
+
                 anchors.fill: parent
                 anchors.margins: 50
 
@@ -40,6 +53,14 @@ SplitView {
                 accounts: WalletAccountsModel {}
 
                 onMintClicked: logs.logEvent("EditOwnerTokenView::onMintClicked")
+
+                onDeployFeesRequested: {
+                    feeText = ""
+                    feeErrorText = ""
+                    isFeeLoading = true
+
+                    feeCalculationTimer.restart()
+                }
             }
         }
 

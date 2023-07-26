@@ -309,17 +309,17 @@ StatusSectionLayout {
                     mintPanel.feeText = valueStr
 
                     if (errorCode === Constants.ComputeFeeErrorCode.Balance)
-                        mintPanel.errorText = qsTr("Not enough funds to make transaction")
+                        mintPanel.feeErrorText = qsTr("Not enough funds to make transaction")
 
                     mintPanel.isFeeLoading = false
 
                     return
                 } else if (errorCode === Constants.ComputeFeeErrorCode.Infura) {
-                    mintPanel.errorText = qsTr("Infura error")
+                    mintPanel.feeErrorText = qsTr("Infura error")
                     mintPanel.isFeeLoading = true
                     return
                 }
-                mintPanel.errorText = qsTr("Unknown error")
+                mintPanel.feeErrorText = qsTr("Unknown error")
                 mintPanel.isFeeLoading = true
             }
 
@@ -347,7 +347,7 @@ StatusSectionLayout {
             allNetworks: communityTokensStore.allNetworks
             accounts: root.rootStore.accounts
 
-            onSignMintTransactionOpened:
+            onDeployFeesRequested:
                 communityTokensStore.computeDeployFee(
                     chainId, accountAddress, tokenType)
 

@@ -37,6 +37,10 @@ StatusScrollView {
     // Wallet account expected roles: address, name, color, emoji, walletType
     property var accounts
 
+    property string feeText
+    property string feeErrorText
+    property bool isFeeLoading
+
     // Privileged tokens:
     readonly property TokenObject ownerToken: TokenObject {
         type: Constants.TokenType.ERC721
@@ -61,7 +65,12 @@ StatusScrollView {
         description: qsTr("This is the %1 TokenMaster token. The hodler of this collectible has full admin rights for the %1 Community in Status and can mint and airdrop %1 Community tokens.").arg(root.communityName)
     }
 
+    readonly property string feeLabel:
+        qsTr("Mint %1 Owner and TokenMaster tokens on %2")
+        .arg(communityName).arg(ownerToken.chainName)
+
     signal mintClicked
+    signal deployFeesRequested
 
     QtObject {
         id: d
@@ -145,9 +154,16 @@ StatusScrollView {
         StatusEmojiAndColorComboBox {
             id: accountBox
 
-            readonly property string address: SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
+            readonly property string address: {
+                root.accounts.count
+                return SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
+            }
+
             readonly property string initAccountName: ownerToken.accountName
-            readonly property int initIndex: SQUtils.ModelUtils.indexOf(root.accounts, "name", initAccountName)
+            readonly property int initIndex: {
+                root.accounts.count
+                return SQUtils.ModelUtils.indexOf(root.accounts, "name", initAccountName)
+            }
 
             Layout.fillWidth: true
             Layout.topMargin: -Style.current.halfPadding
@@ -182,6 +198,8 @@ StatusScrollView {
             onAddressChanged: {
                 ownerToken.accountAddress = address
                 tMasterToken.accountAddress = address
+
+                root.deployFeesRequested()
             }
             control.onDisplayTextChanged: {
                 ownerToken.accountName = control.displayText
@@ -194,6 +212,22 @@ StatusScrollView {
 
             label: qsTr("Select network")
             description: qsTr("The network on which these tokens will be minted.")
+        }
+
+        FeesBox {
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            model: QtObject {
+                id: singleFeeModel
+
+                readonly property string title: root.feeLabel
+                readonly property string feeText: root.isFeeLoading ?
+                                                      "" : root.feeText
+                readonly property bool error: root.feeErrorText !== ""
+            }
+
+            showAccountsSelector: false
         }
 
         RowLayout {
@@ -224,7 +258,7 @@ StatusScrollView {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: 4
             Layout.bottomMargin: Style.current.padding
             text: qsTr("Mint")
 
@@ -265,6 +299,8 @@ StatusScrollView {
 
         function setChain(chainId) { netFilter.setChain(chainId) }
 
+        readonly property alias currentNetworkName: netFilter.currentValue
+
         Layout.fillWidth: true
         Layout.topMargin: Style.current.padding
         spacing: 8
@@ -287,18 +323,19 @@ StatusScrollView {
 
             multiSelection: false
 
-            onToggleNetwork: (network) =>
-                             {
-                                 // Set Owner Token network properties:
-                                 ownerToken.chainId = network.chainId
-                                 ownerToken.chainName = network.chainName
-                                 ownerToken.chainIcon = network.iconUrl
+            onToggleNetwork: (network) => {
+                // Set Owner Token network properties:
+                ownerToken.chainId = network.chainId
+                ownerToken.chainName = network.chainName
+                ownerToken.chainIcon = network.iconUrl
 
-                                 // Set TMaster Token network properties:
-                                 tMasterToken.chainId = network.chainId
-                                 tMasterToken.chainName = network.chainName
-                                 tMasterToken.chainIcon = network.iconUrl
-                             }
+                // Set TMaster Token network properties:
+                tMasterToken.chainId = network.chainId
+                tMasterToken.chainName = network.chainName
+                tMasterToken.chainIcon = network.iconUrl
+
+                root.deployFeesRequested()
+            }
         }
     }
 }

@@ -22,6 +22,8 @@ Control {
 
     property alias placeholderText: placeholderText.text
 
+    property bool highlightFees: count === 1
+
     property Item footer
 
     states: State {
@@ -71,7 +73,7 @@ Control {
                 title: model.title
                 feeText: model.feeText
                 errorFee: !!model.error
-                highlightFee: repeater.count === 1
+                highlightFee: root.highlightFees
             }
         }
     }
