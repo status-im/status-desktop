@@ -35,6 +35,7 @@ QtObject {
         Global.openIncomingIDRequestPopup.connect(openIncomingIDRequestPopup)
         Global.openInviteFriendsToCommunityPopup.connect(openInviteFriendsToCommunityPopup)
         Global.openContactRequestPopup.connect(openContactRequestPopup)
+        Global.openContactRequestPopupWithContactData.connect(openContactRequestPopupWithContactData)
         Global.openChooseBrowserPopup.connect(openChooseBrowserPopup)
         Global.openDownloadModalRequested.connect(openDownloadModal)
         Global.openImagePopup.connect(openImagePopup)
@@ -192,6 +193,14 @@ QtObject {
             userIsEnsVerified: contactDetails.ensVerified
         }
 
+        openPopup(sendContactRequestPopupComponent, popupProperties, cb)
+    }
+
+    function openContactRequestPopupWithContactData(contactData, cb) {
+        const popupProperties = {
+            userPublicKey: contactData.publicKey,
+            userDisplayName: contactData.displayName
+        }
         openPopup(sendContactRequestPopupComponent, popupProperties, cb)
     }
 

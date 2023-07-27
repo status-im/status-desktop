@@ -63,10 +63,17 @@ MembersSelectorBase {
         property ListModel selectedMembers: ListModel {}
 
         function lookupContact(value) {
+            let contactObj = Utils.parseContactUrl(value)
+
+            if (contactObj) {
+                processContact(contactObj)
+                return
+            }
+
             value = Utils.dropUserLinkPrefix(value.trim())
 
             if (Utils.isChatKey(value)) {
-                processContact(value)
+                processContact({publicKey: value})
                 return
             }
 
@@ -78,12 +85,19 @@ MembersSelectorBase {
             root.suggestionsDialog.forceHide = false
         }
 
-        function processContact(publicKey) {
-            const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
+        function processContact(contactData) {
+            // Open contact request if we have data from url
+            if (contactData.publicKey !== "" && contactData.displayName !== "") {
+                Global.openContactRequestPopupWithContactData(contactData,
+                                                              popup => popup.closed.connect(root.rejected))
+                return
+            }
 
+            const contactDetails = Utils.getContactDetailsAsJson(contactData.publicKey, false)
             if (contactDetails.publicKey === "") {
                 // not a valid key given
                 root.suggestionsDialog.forceHide = false
+
                 return
             }
 

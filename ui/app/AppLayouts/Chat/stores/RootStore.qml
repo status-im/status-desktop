@@ -439,7 +439,7 @@ QtObject {
             title: "Status",
             callback: null,
             fetching: true,
-            communityId: ""
+            communityData: null
         }
 
         // User profile
@@ -455,26 +455,28 @@ QtObject {
         }*/
 
         // Community
-        result.communityId = Utils.getCommunityIdFromShareLink(link)
-        if(!result.communityId) return result
+        result.communityData = Utils.getCommunityDataFromSharedLink(link)
+        if(!result.communityData) return result
 
-        const communityName = getSectionNameById(result.communityId)
+        const communityName = getSectionNameById(result.communityData.communityId)
         if (!communityName) {
             // Unknown community, fetch the info if possible
-            root.requestCommunityInfo(result.communityId)
+            root.requestCommunityInfo(result.communityData.communityId)
+
+            result.title = qsTr("Join the %1 community").arg(result.communityData.displayName)
             return result
         }
 
         result.title = qsTr("Join the %1 community").arg(communityName)
         result.fetching = false
         result.callback = function () {
-            const isUserMemberOfCommunity = isUserMemberOfCommunity(result.communityId)
+            const isUserMemberOfCommunity = isUserMemberOfCommunity(result.communityData.communityId)
             if (isUserMemberOfCommunity) {
-                setActiveCommunity(result.communityId)
+                setActiveCommunity(result.communityData.communityId)
                 return
             }
 
-            const userCanJoin = userCanJoin(result.communityId)
+            const userCanJoin = userCanJoin(result.communityData.communityId)
             // TODO find what to do when you can't join
             if (userCanJoin) {
                 requestToJoinCommunityWithAuthentication(userProfileInst.preferredName) // FIXME what addresses to share?
@@ -493,7 +495,7 @@ QtObject {
         return {
             site: Constants.externalStatusLinkWithHttps,
             title: result.title,
-            communityId: result.communityId,
+            communityData: result.communityData,
             fetching: result.fetching,
             thumbnailUrl: Style.png("status"),
             contentType: "",

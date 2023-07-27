@@ -143,7 +143,8 @@ ColumnLayout {
             property var invitationData: root.store.getLinkDataForStatusLinks(link)
 
             store: root.store
-            communityId: invitationData ? invitationData.communityId : ""
+            communityId: invitationData && invitationData.communityData ? invitationData.communityData.communityId : ""
+            communityData: invitationData && invitationData.communityData ? invitationData.communityData : null
             anchors.left: parent.left
             visible: !!invitationData
             loading: invitationData.fetching
