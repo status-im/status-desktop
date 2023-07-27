@@ -52,6 +52,8 @@ SplitView {
             parent: container
             anchors.centerIn: container
 
+            allTokensMode: ctrlAllTokensMode.checked
+
             CollectiblesModel {
                 id: collectiblesModel
             }
@@ -161,6 +163,11 @@ SplitView {
                 id: isAirdropMode
                 text: "Airdrop mode"
                 checked: false
+            }
+
+            CheckBox {
+                id: ctrlAllTokensMode
+                text: "All tokens mode"
             }
         }
     }
