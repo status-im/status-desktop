@@ -363,6 +363,10 @@ StackView {
                         referenceName: newTokenPage.referenceName
                         referenceSymbol: newTokenPage.referenceSymbol
 
+                        feeText: root.feeText
+                        feeErrorText: root.feeErrorText
+                        isFeeLoading: root.isFeeLoading
+
                         onPreviewClicked: {
                             const properties = {
                                 token: isAssetView ? asset : collectible
@@ -370,6 +374,17 @@ StackView {
 
                             root.push(previewTokenViewComponent, properties,
                                       StackView.Immediate)
+                        }
+
+                        onDeployFeesRequested: {
+                            if (isAssetView)
+                                root.deployFeesRequested(asset.chainId,
+                                                         asset.accountAddress,
+                                                         Constants.TokenType.ERC20)
+                            else
+                                root.deployFeesRequested(collectible.chainId,
+                                                         collectible.accountAddress,
+                                                         Constants.TokenType.ERC721)
                         }
                     }
                 }
@@ -391,6 +406,20 @@ StackView {
             contentItem: CommunityTokenView {
                 id: preview
 
+                viewWidth: root.viewWidth
+                preview: true
+
+                feeText: root.feeText
+                feeErrorText: root.feeErrorText
+                isFeeLoading: root.isFeeLoading
+                accounts: root.accounts
+
+                onDeployFeesRequested: root.deployFeesRequested(
+                                           token.chainId, token.accountAddress,
+                                           token.type)
+
+                onMintClicked: signMintPopup.open()
+
                 function signMintTransaction() {
                     root.setFeeLoading()
 
@@ -402,32 +431,20 @@ StackView {
                     root.resetNavigation()
                 }
 
-                viewWidth: root.viewWidth
-                preview: true
-
-                onMintClicked: signMintPopup.open()
-
-                SignTokenTransactionsPopup {
+                SignMultiTokenTransactionsPopup {
                     id: signMintPopup
 
-                    anchors.centerIn: Overlay.overlay
                     title: qsTr("Sign transaction - Mint %1 token").arg(
-                               signMintPopup.tokenName)
-                    tokenName: preview.name
-                    accountName: preview.accountName
-                    networkName: preview.chainName
-                    feeText: root.feeText
-                    errorText: root.feeErrorText
-                    isFeeLoading: root.isFeeLoading
+                               preview.token.name)
+                    totalFeeText: root.isFeeLoading ? "" : root.feeText
+                    accountName: preview.token.accountName
 
-                    onOpened: {
-                        root.setFeeLoading()
-                        root.signMintTransactionOpened(
-                                    preview.chainId, preview.accountAddress,
-                                    preview.isAssetView ? Constants.TokenType.ERC20
-                                                        : Constants.TokenType.ERC721)
+                    model: QtObject {
+                        readonly property string title: preview.feeLabel
+                        readonly property string feeText: signMintPopup.totalFeeText
+                        readonly property bool error: root.feeErrorText !== ""
                     }
-                    onCancelClicked: close()
+
                     onSignTransactionClicked: preview.signMintTransaction()
                 }
             }

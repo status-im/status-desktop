@@ -62,6 +62,8 @@ SplitView {
 
                 token: tokenObject
                 tokenOwnersModel: TokenHoldersModel {}
+
+                accounts: WalletAccountsModel {}
                 
                 onMintClicked: logs.logEvent("CommunityTokenView::onMintClicked")
             }
