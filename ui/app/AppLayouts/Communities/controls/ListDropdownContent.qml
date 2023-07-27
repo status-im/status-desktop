@@ -36,10 +36,11 @@ StatusListView {
     implicitWidth: 273
     implicitHeight: Math.min(contentHeight, root.maxHeight)
     currentIndex: -1
-    clip: true
+    leftMargin: d.padding
+    rightMargin: 14 // scrollbar width
 
     header: ColumnLayout {
-        width: root.width
+        width: root.availableWidth
 
         spacing: 0
 
@@ -88,7 +89,7 @@ StatusListView {
     }
 
     delegate: TokenItem {
-        width: ListView.view.width
+        width: root.availableWidth
 
         name: model.name
         shortName: model.shortName ?? ""
@@ -103,30 +104,47 @@ StatusListView {
 
     section.property: root.searchMode || !root.areSectionsVisible
                       ? "" : "categoryLabel"
-    section.criteria: ViewSection.FullString
+    section.delegate: ColumnLayout {
+        width: root.availableWidth
+        height: root.searchMode || root.areSectionsVisible ? d.sectionHeight : 0
+        spacing: 0
 
-    section.delegate: Item {
-        width: ListView.view.width
-        height: d.sectionHeight
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: Theme.palette.statusListItem.backgroundColor
 
-        Loader {
-            id: loader
-            anchors.fill: parent
-            sourceComponent: sectionComponent
+            Loader {
+                id: loader
+                anchors.fill: parent
+                sourceComponent: sectionComponent
 
-            Binding {
-                target: loader.item
-                property: "section"
-                value: section
+                Binding {
+                    target: loader.item
+                    property: "section"
+                    value: section
+                    when: !root.searchMode
+                }
             }
         }
+
+        // floating divider
+        Rectangle {
+            visible: parent.y === root.contentY && (root.searchMode || root.areSectionsVisible)
+            Layout.fillWidth: true
+            Layout.leftMargin: -d.padding
+            Layout.rightMargin: -d.padding*2
+            Layout.preferredHeight: 4
+            color: Theme.palette.directColor8
+        }
     }
+    section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
 
     Component {
         id: footerComponent
 
         Item {
-            width: ListView.view ? ListView.view.width : 0
+            width: ListView.view ? ListView.view.width - Style.current.smallPadding : 0
             height: d.sectionHeight
 
             Loader {
@@ -167,6 +185,7 @@ StatusListView {
     QtObject {
         id: d
 
+        readonly property int padding: Style.current.halfPadding
         readonly property int sectionHeight: 34
     }
 
@@ -180,7 +199,7 @@ StatusListView {
                 if(!root.availableData)
                     return root.noDataText
                 if(root.count)
-                    return qsTr("Search result")
+                    return qsTr("Search results")
                 return qsTr("No results")
             }
 

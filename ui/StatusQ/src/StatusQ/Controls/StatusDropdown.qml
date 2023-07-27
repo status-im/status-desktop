@@ -8,8 +8,8 @@ import StatusQ.Core.Theme 0.1
 /*!
    \qmltype StatusDropdown
    \inherits Popup
-   \inqmlmodule StatusQ.Popups
-   \since StatusQ.Popups 0.1
+   \inqmlmodule StatusQ.Controls
+   \since StatusQ.Controls 0.1
    \brief The StatusDropdown provides a template for creating dropdowns.
 
    NOTE: Each consumer needs to set the x and y postion of the dropdown.

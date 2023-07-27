@@ -18,11 +18,12 @@ Control {
 
     signal itemClicked
 
-    leftPadding: 6 // by design
-    implicitHeight: 45 // by design
+    padding: 6 // by design
+    implicitHeight: 44 // by design
     spacing: 8 // by design
     background: Rectangle {
-        color: mouseArea.containsMouse ? Theme.palette.baseColor4 : "transparent"
+        color: mouseArea.containsMouse ? Theme.palette.statusListItem.highlightColor : "transparent"
+        radius: 8
 
         MouseArea {
             id: mouseArea
@@ -82,7 +83,6 @@ Control {
             icon: root.selected && !root.showSubItemsIcon ? "checkmark" : "tiny/chevron-right"
             visible: root.selected || root.showSubItemsIcon
             Layout.alignment: Qt.AlignVCenter
-            Layout.rightMargin: 16
             color: Theme.palette.baseColor1
             width: 16
             height: 16

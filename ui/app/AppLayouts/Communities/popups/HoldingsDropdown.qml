@@ -29,6 +29,8 @@ StatusDropdown {
     property string noDataTextForAssets: qsTr("No assets found")
     property string noDataTextForCollectibles: qsTr("No collectibles found")
 
+    property alias allTokensMode: d.allTokensMode
+
     property var usedTokens: []
     property var usedEnsNames: []
 
@@ -118,8 +120,7 @@ StatusDropdown {
         // By design values:
         readonly property int padding: 8
         readonly property int defaultWidth: 289
-        readonly property int extendedContentHeight: 380
-        readonly property int tabBarHeigh: 36
+        readonly property int tabBarHeight: 36
         readonly property int tabBarTextSize: 13
         readonly property int backButtonWidth: 56
         readonly property int backButtonHeight: 24
@@ -152,9 +153,11 @@ StatusDropdown {
     }
 
     width: d.defaultWidth
-    padding: d.padding
+    leftPadding: 0
+    rightPadding: 0
+    topPadding: d.padding
     bottomInset: d.bottomInset
-    bottomPadding: d.padding + d.bottomInset
+    bottomPadding: d.bottomInset + (loader.sourceComponent == listLayout ? 0 : d.padding)
 
     contentItem: ColumnLayout {
         id: content
@@ -167,6 +170,8 @@ StatusDropdown {
 
             Layout.preferredWidth: d.backButtonWidth
             Layout.preferredHeight: d.backButtonHeight
+            Layout.leftMargin: d.padding
+            Layout.rightMargin: d.padding
             visible: statesStack.size > 1
             spacing: 0
             leftPadding: 4
@@ -180,8 +185,10 @@ StatusDropdown {
             id: tabBar
 
             visible: !backButton.visible
-            Layout.preferredHeight: d.tabBarHeigh
+            Layout.preferredHeight: d.tabBarHeight
             Layout.fillWidth: true
+            Layout.leftMargin: d.padding
+            Layout.rightMargin: d.padding
             currentIndex: d.holdingTypes.indexOf(d.currentHoldingType)
             state: d.currentHoldingType
             states: [
@@ -222,6 +229,8 @@ StatusDropdown {
         Loader {
             id: loader
             Layout.fillWidth: true
+            Layout.leftMargin: loader.sourceComponent == listLayout ? 0 : d.padding
+            Layout.rightMargin: loader.sourceComponent == listLayout ? 0 : d.padding
             Layout.fillHeight: true
             onItemChanged: d.forceLayout()
         }
