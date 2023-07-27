@@ -31,6 +31,13 @@ QtObject:
     new(result, delete)
     result.setup
 
+  proc countChanged(self: Model) {.signal.}
+  proc getCount*(self: Model): int {.slot.} =
+    self.items.len
+  QtProperty[int]count:
+    read = getCount
+    notify = countChanged
+
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
@@ -84,6 +91,7 @@ QtObject:
     self.beginResetModel()
     self.items = items
     self.endResetModel()
+    self.countChanged()
 
   proc getItemAtIndex*(self: Model, index: int): Item =
     if(index < 0 or index >= self.items.len):

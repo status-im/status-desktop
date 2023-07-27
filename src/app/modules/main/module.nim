@@ -1174,7 +1174,7 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
     if singletonInstance.utils().isCompressedPubKey(userId):
       let contactPk = singletonInstance.utils().getDecompressedPk(userId)
       self.switchToContactOrDisplayUserProfile(contactPk)
-    else:    
+    else:
       self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
 
   elif(action == StatusUrlAction.OpenCommunity):

@@ -423,10 +423,10 @@ QtObject:
         walletRootAddress = self.importedAccount.derivedAccounts.walletRoot.address
         eip1581Address = self.importedAccount.derivedAccounts.eip1581.address
         encryptionPublicKey = self.importedAccount.derivedAccounts.encryption.publicKey
-
         whisperPrivateKey = self.importedAccount.derivedAccounts.whisper.privateKey
-        if whisperPrivateKey.startsWith("0x"):
-          whisperPrivateKey = whisperPrivateKey[2 .. ^1]
+
+      if whisperPrivateKey.startsWith("0x"):
+        whisperPrivateKey = whisperPrivateKey[2 .. ^1]
 
       let installationId = $genUUID()
       let alias = generateAliasFromPk(whisperPublicKey)

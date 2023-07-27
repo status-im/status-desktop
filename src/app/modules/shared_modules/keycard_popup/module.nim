@@ -287,6 +287,7 @@ proc handleKeycardSyncing[T](self: Module[T]) =
       elif alreadySetKeycards.len > 1:
         error "it's impossible to have more then one keycard with the same uid", keycarUid=flowEvent.instanceUID
   self.controller.terminateCurrentFlow(lastStepInTheCurrentFlow = true)
+  self.controller.rebuildKeycards()
 
 method syncKeycardBasedOnAppState*[T](self: Module[T], keyUid: string, pin: string) =
   ## This method must not be called directly. If you want to initiate keycard syncing please emit

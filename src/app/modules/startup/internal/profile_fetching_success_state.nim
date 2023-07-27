@@ -11,4 +11,4 @@ proc delete*(self: ProfileFetchingSuccessState) =
 method executePrimaryCommand*(self: ProfileFetchingSuccessState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserKeycardImport:
-      controller.checkFetchingStatusAndProceedWithAppLoading()
+      controller.checkFetchingStatusAndProceed()

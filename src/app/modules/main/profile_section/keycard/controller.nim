@@ -2,11 +2,12 @@ import chronicles
 
 import io_interface
 
-import ../../../../core/eventemitter
+import app/core/eventemitter
 
-import ../../../shared_modules/keycard_popup/io_interface as keycard_shared_module
-import ../../../../../app_service/service/contacts/service as contact_service
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
+import app_service/service/contacts/service as contact_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/settings/service as settings_service
 
 logScope:
   topics = "profile-section-keycard-module-controller"
@@ -48,8 +49,14 @@ proc init*(self: Controller) =
     let args = KeypairArgs(e)
     self.delegate.onKeypairSynced(args.keypair)
 
+  self.events.on(SIGNAL_DISPLAY_NAME_UPDATED) do(e: Args):
+    self.delegate.onLoggedInUserNameChanged()
+
   self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
     self.delegate.onLoggedInUserImageChanged()
+
+  self.events.on(SIGNAL_KEYCARD_REBUILD) do(e: Args):
+    self.delegate.rebuildAllKeycards()
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
     let args = KeycardArgs(e)

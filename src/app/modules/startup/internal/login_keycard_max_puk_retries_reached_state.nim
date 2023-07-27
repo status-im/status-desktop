@@ -14,7 +14,7 @@ method executeBackCommand*(self: LoginKeycardMaxPukRetriesReachedState, controll
 
 method getNextPrimaryState*(self: LoginKeycardMaxPukRetriesReachedState, controller: Controller): State =
   if self.flowType == FlowType.AppLogin:
-    controller.setRecoverUsingSeedPhraseWhileLogin(true)
+    controller.setRecoverKeycardUsingSeedPhraseWhileLoggingIn(true)
     return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, self)
 
 method getNextTertiaryState*(self: LoginKeycardMaxPukRetriesReachedState, controller: Controller): State =

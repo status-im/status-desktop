@@ -24,7 +24,7 @@ method getNextPrimaryState*(self: KeycardPinSetState, controller: Controller): S
       return createState(StateType.Biometrics, self.flowType, self.getBackState)
     return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
   if self.flowType == FlowType.AppLogin:
-    if controller.getRecoverUsingSeedPhraseWhileLogin():
+    if controller.getRecoverKeycardUsingSeedPhraseWhileLoggingIn():
       return nil
     if not controller.getValidPuk():
       return createState(StateType.KeycardWrongPuk, self.flowType, self.getBackState)
@@ -38,9 +38,9 @@ method executePrimaryCommand*(self: KeycardPinSetState, controller: Controller) 
     if main_constants.IS_MACOS:
       return
     if controller.getValidPuk():
-      controller.setupKeycardAccount(storeToKeychain = false, newKeycard = false)
+      controller.setupKeycardAccount(storeToKeychain = false)
   if self.flowType == FlowType.AppLogin:
-    if controller.getRecoverUsingSeedPhraseWhileLogin():
+    if controller.getRecoverKeycardUsingSeedPhraseWhileLoggingIn():
       controller.startLoginFlowAutomatically(controller.getPin())
       return
     if controller.getValidPuk():

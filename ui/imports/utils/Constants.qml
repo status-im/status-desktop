@@ -105,6 +105,7 @@ QtObject {
         readonly property int useGeneralMessageForLockedState: 64
         readonly property int maxPUKReached: 128
         readonly property int copyFromAKeycardPartDone: 256
+        readonly property int maxPairingSlotsReached: 512
     }
 
     readonly property QtObject keycardSharedFlow: QtObject {

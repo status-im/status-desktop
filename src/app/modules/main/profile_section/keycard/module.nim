@@ -3,20 +3,20 @@ import NimQml, chronicles, json, marshal, sequtils, sugar, strutils
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
-import ../../../../global/app_translatable_constants as atc
-import ../../../../global/global_singleton
-import ../../../../core/eventemitter
+import app/global/app_translatable_constants as atc
+import app/global/global_singleton
+import app/core/eventemitter
 
-import ../../../../../app_service/service/keycard/service as keycard_service
-import ../../../../../app_service/service/settings/service as settings_service
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/privacy/service as privacy_service
-import ../../../../../app_service/service/accounts/service as accounts_service
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/keychain/service as keychain_service
+import app_service/service/keycard/service as keycard_service
+import app_service/service/settings/service as settings_service
+import app_service/service/network/service as network_service
+import app_service/service/privacy/service as privacy_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/keychain/service as keychain_service
 
-import ../../../shared_modules/keycard_popup/module as keycard_shared_module
-import ../../../shared_modules/keycard_popup/models/keycard_model
+import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
+import app/modules/shared_modules/keycard_popup/models/keycard_model
 
 export io_interface
 
@@ -285,11 +285,14 @@ proc buildKeycardList(self: Module) =
   if items.len > 0:
     self.view.setKeycardItems(items)
 
+method onLoggedInUserNameChanged*(self: Module) =
+  self.view.keycardModel().setName(singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getName())
+
 method onLoggedInUserImageChanged*(self: Module) =
-  self.view.keycardModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
+  self.view.keycardModel().setImage(singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getIcon())
   if self.view.keycardDetailsModel().isNil:
     return
-  self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
+  self.view.keycardDetailsModel().setImage(singletonInstance.userProfile.getKeyUid(), singletonInstance.userProfile.getIcon())
 
 method resolveRelatedKeycardsForKeypair(self: Module, keypair: KeypairDto) =
   if keypair.keyUid.len == 0:

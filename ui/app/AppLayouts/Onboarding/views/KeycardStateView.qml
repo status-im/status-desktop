@@ -355,7 +355,9 @@ Item {
             PropertyChanges {
                 target: link
                 text: qsTr("Unlock using PUK")
-                enabled: !(root.startupStore.startupModuleInst.keycardData & Constants.predefinedKeycardData.maxPUKReached)
+                enabled: !(root.startupStore.startupModuleInst.keycardData & Constants.predefinedKeycardData.maxPUKReached ||
+                           root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunOldUserKeycardImport &&
+                           root.startupStore.startupModuleInst.keycardData & Constants.predefinedKeycardData.maxPairingSlotsReached)
                 color: !enabled? Theme.palette.baseColor1 : Theme.palette.primaryColor1
             }
             PropertyChanges {

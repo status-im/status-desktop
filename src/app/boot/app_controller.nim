@@ -113,7 +113,7 @@ proc applyNecessaryActionsAfterLoggingIn(self: AppController)
 
 # Startup Module Delegate Interface
 proc startupDidLoad*(self: AppController)
-proc userLoggedIn*(self: AppController, recoverAccount: bool): string
+proc userLoggedIn*(self: AppController): string
 proc logout*(self: AppController)
 proc finishAppLoading*(self: AppController)
 proc storeDefaultKeyPairForNewKeycardUser*(self: AppController)
@@ -237,7 +237,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.generalService,
     result.profileService,
     result.keycardService,
-    result.devicesService,
+    result.devicesService
   )
   result.mainModule = main_module.newModule[AppController](
     result,
@@ -401,9 +401,12 @@ proc start*(self: AppController) =
   self.startupModule.load()
 
 proc load(self: AppController) =
-  self.notificationsManager.init()
-
   self.settingsService.init()
+
+  self.buildAndRegisterLocalAccountSensitiveSettings()
+  self.buildAndRegisterUserProfile()
+
+  self.notificationsManager.init()
   self.profileService.init()
   self.nodeConfigurationService.init()
   self.mailserversService.init()
@@ -428,9 +431,6 @@ proc load(self: AppController) =
   singletonInstance.engine.setRootContextProperty("appSettings", self.appSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
 
-  self.buildAndRegisterLocalAccountSensitiveSettings()
-  self.buildAndRegisterUserProfile()
-
   self.networkService.init()
   self.tokenService.init()
   self.currencyService.init()
@@ -454,10 +454,10 @@ proc load(self: AppController) =
     self.mailserversService,
   )
 
-proc userLoggedIn*(self: AppController, recoverAccount: bool): string =
+proc userLoggedIn*(self: AppController): string =
   try:
     self.generalService.startMessenger()
-    self.statusFoundation.userLoggedIn(recoverAccount)
+    self.statusFoundation.userLoggedIn()
     return ""
   except Exception as e:
     let errDescription = e.msg

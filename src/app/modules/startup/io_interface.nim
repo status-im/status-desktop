@@ -168,7 +168,7 @@ method onFetchingFromWakuMessageReceived*(self: AccessInterface, backedUpMsgCloc
 method finishAppLoading*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method checkFetchingStatusAndProceedWithAppLoading*(self: AccessInterface) {.base.} =
+method checkFetchingStatusAndProceed*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method startAppAfterDelay*(self: AccessInterface) {.base.} =
@@ -196,7 +196,7 @@ method onReencryptionProcessFinished*(self: AccessInterface) {.base.} =
 type
   DelegateInterface* = concept c
     c.startupDidLoad()
-    c.userLoggedIn(bool)
+    c.userLoggedIn()
     c.finishAppLoading()
     c.storeDefaultKeyPairForNewKeycardUser()
     c.syncKeycardBasedOnAppWalletStateAfterLogin()

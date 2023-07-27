@@ -16,17 +16,17 @@ method executePrimaryCommand*(self: KeycardEnterPukState, controller: Controller
     if controller.getPuk().len == PUKLengthForStatusApp:
       controller.enterKeycardPuk(controller.getPuk())
 
-method resolveKeycardNextState*(self: KeycardEnterPukState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: KeycardEnterPukState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceOnboarding(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
+    if keycardFlowType == ResponseTypeValueEnterNewPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorUnblocking:
         return createState(StateType.KeycardCreatePin, self.flowType, self.getBackState)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUK:
         controller.setRemainingAttempts(keycardEvent.pukRetries)
@@ -37,16 +37,16 @@ method resolveKeycardNextState*(self: KeycardEnterPukState, keycardFlowType: str
       controller.setKeycardEvent(keycardEvent)
       controller.setPukValid(true)
       if not main_constants.IS_MACOS:
-        controller.setupKeycardAccount(storeToKeychain = false, newKeycard = false)
+        controller.setupKeycardAccount(storeToKeychain = false)
         return nil
       let backState = findBackStateWithTargetedStateType(self, StateType.RecoverOldUser)
       return createState(StateType.Biometrics, self.flowType, backState)
   if self.flowType == FlowType.AppLogin:
-    if keycardFlowType == ResponseTypeValueEnterNewPIN and 
+    if keycardFlowType == ResponseTypeValueEnterNewPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorUnblocking:
         return createState(StateType.KeycardCreatePin, self.flowType, self.getBackState)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUK:
         controller.setRemainingAttempts(keycardEvent.pukRetries)

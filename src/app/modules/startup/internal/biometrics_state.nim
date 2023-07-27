@@ -25,7 +25,7 @@ method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.setupKeycardAccount(storeToKeychain, newKeycard = false, recoverAccount = true)
+    controller.setupKeycardAccount(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())
@@ -47,7 +47,7 @@ method executeSecondaryCommand*(self: BiometricsState, controller: Controller) =
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.setupKeycardAccount(storeToKeychain, newKeycard = false, recoverAccount = true)
+    controller.setupKeycardAccount(storeToKeychain, recoverAccount = true)
   elif self.flowType == FlowType.LostKeycardReplacement:
     self.storeToKeychain = storeToKeychain
     controller.startLoginFlowAutomatically(controller.getPin())
