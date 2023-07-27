@@ -20,7 +20,7 @@ class NativeObject(BaseObject):
         try:
             return self.object is not None
         except LookupError as err:
-            _logger.info(err)
+            _logger.debug(err)
             return False
 
     @property

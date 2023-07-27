@@ -4,7 +4,7 @@ from copy import deepcopy
 import configs.timeouts
 
 if configs.system.IS_MAC:
-    pass
+    import atomacos
 
 BUNDLE_ID = 'im.Status.NimStatusClient'
 

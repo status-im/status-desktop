@@ -17,7 +17,7 @@ RUN_ID = os.getenv('RUN_DIR', f'run_{datetime.now():%d%m%Y_%H%M%S}')
 TEMP: SystemPath = ROOT / 'tmp'
 RESULTS: SystemPath = TEMP / 'results'
 RUN: SystemPath = RESULTS / RUN_ID
-VP: SystemPath = ROOT / 'ext' / 'VP'
+VP: SystemPath = ROOT / 'ext' / 'vp'
 TEST_FILES: SystemPath = ROOT / 'ext' / 'test_files'
 
 # Driver Directories

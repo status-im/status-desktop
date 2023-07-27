@@ -18,12 +18,29 @@ class ProfilePopup(BasePopup):
         self._emoji_hash = QObject('profileDialog_userEmojiHash_EmojiHash')
 
     @property
+    def profile_image(self):
+        return self._profile_image.image
+
+    @property
+    def cropped_profile_image(self):
+        # Profile image without identicon_ring
+        self._profile_image.image.update_view()
+        self._profile_image.image.crop(
+            driver.UiTypes.ScreenRectangle(
+                15, 15, self._profile_image.image.width-30, self._profile_image.image.height-30
+            ))
+        return self._profile_image.image
+
+    @property
     def user_name(self) -> str:
         return self._user_name_label.text
 
     @property
     def chat_key(self) -> str:
-        return self._chat_key_text_label.text.split('https://status.app/u/')[1].strip()
+        chat_key = self._chat_key_text_label.text.split('https://status.app/u/')[1].strip()
+        if '#' in chat_key:
+            chat_key = chat_key.split('#')[1]
+        return chat_key
 
     @property
     def emoji_hash(self) -> Image:
@@ -31,8 +48,7 @@ class ProfilePopup(BasePopup):
 
     def is_user_image_contains(self, text: str):
         # To remove all artifacts, the image cropped.
-        self._profile_image.image.crop(
-            driver.UiTypes.ScreenRectangle(
-                15, 15, self._profile_image.image.width-30, self._profile_image.image.height-30
-            ))
-        return self._profile_image.image.has_text(text, constants.tesseract.text_on_profile_image)
+        crop = driver.UiTypes.ScreenRectangle(
+            15, 15, self._profile_image.image.width - 30, self._profile_image.image.height - 30
+        )
+        return self.profile_image.has_text(text, constants.tesseract.text_on_profile_image, crop=crop)

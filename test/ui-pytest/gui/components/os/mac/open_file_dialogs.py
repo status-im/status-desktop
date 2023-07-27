@@ -11,10 +11,10 @@ from scripts.utils.system_path import SystemPath
 _logger = logging.getLogger(__name__)
 
 
-class OpenFilesDialog(NativeObject):
+class OpenFileDialog(NativeObject):
 
     def __init__(self):
-        super(OpenFilesDialog, self).__init__('openFileDialog')
+        super(OpenFileDialog, self).__init__('openFileDialog')
         self._open_button = Button('openButton')
 
     def _open_go_to_dialog(self, attempt: int = 2):
@@ -25,7 +25,7 @@ class OpenFilesDialog(NativeObject):
         try:
             return _GoToDialog().wait_until_appears()
         except LookupError as err:
-            _logger.info(err)
+            _logger.debug(err)
             if attempt:
                 self._open_go_to_dialog(attempt - 1)
             else:

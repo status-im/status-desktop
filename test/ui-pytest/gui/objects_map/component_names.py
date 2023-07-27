@@ -55,3 +55,9 @@ https_status_app_StatusBaseText = {"container": edit_TextEdit, "type": "StatusBa
 agreeToUse_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "agreeToUse", "type": "StatusCheckBox", "unnamed": 1, "visible": True}
 readyToUse_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id": "readyToUse", "type": "StatusCheckBox", "unnamed": 1, "visible": True}
 i_m_ready_to_use_Status_Desktop_Beta_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "type": "StatusButton", "unnamed": 1, "visible": True}
+
+# Profile Picture Popup
+o_StatusSlider = {"container": statusDesktop_mainWindow_overlay, "type": "StatusSlider", "unnamed": 1, "visible": True}
+cropSpaceItem_Item = {"container": statusDesktop_mainWindow_overlay, "id": "cropSpaceItem", "type": "Item", "unnamed": 1, "visible": True}
+make_this_my_profile_picture_StatusButton = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "objectName": "imageCropperAcceptButton", "type": "StatusButton", "visible": True}
+o_DropShadow = {"container": statusDesktop_mainWindow_overlay, "type": "DropShadow", "unnamed": 1, "visible": True}

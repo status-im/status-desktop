@@ -1,13 +1,14 @@
 import squishtest  # noqa
 
 import configs
-from . import server, context, objects_access, toplevel_window, aut, atomacos
+from . import server, context, objects_access, toplevel_window, aut, atomacos, mouse
 
 imports = {module.__name__: module for module in [
     atomacos,
     aut,
     context,
     objects_access,
+    mouse,
     server,
     toplevel_window
 

@@ -21,6 +21,10 @@ class UserCanvas(QObject):
         self._profile_image = QObject('o_StatusIdenticonRing')
 
     @property
+    def profile_image(self):
+        return self._profile_image.image
+
+    @property
     def user_name(self) -> str:
         return self._user_name_text_label.text
 
@@ -47,8 +51,7 @@ class UserCanvas(QObject):
 
     def is_user_image_contains(self, text: str):
         # To remove all artifacts, the image cropped.
-        self._profile_image.image.crop(
-            driver.UiTypes.ScreenRectangle(
+        crop = driver.UiTypes.ScreenRectangle(
                 5, 5, self._profile_image.image.width-10, self._profile_image.image.height-10
-            ))
-        return self._profile_image.image.has_text(text, constants.tesseract.text_on_profile_image)
+            )
+        return self._profile_image.image.has_text(text, constants.tesseract.text_on_profile_image, crop=crop)

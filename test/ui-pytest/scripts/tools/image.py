@@ -1,11 +1,11 @@
 import logging
 import time
+import typing
 from datetime import datetime
 
 import cv2
 import numpy as np
 import pytesseract
-import typing
 from PIL import ImageGrab
 
 import configs
@@ -25,7 +25,7 @@ class Image:
         self._view = None
 
     @property
-    def view(self):
+    def view(self) -> np.ndarray:
         return self._view
 
     @property
@@ -46,7 +46,7 @@ class Image:
         return self
 
     def update_view(self):
-        _logger.info('Image view updated')
+        _logger.debug(f'Image view was grab from: {self.object_name}')
         rect = driver.object.globalBounds(driver.waitForObject(self.object_name))
         img = ImageGrab.grab(
             bbox=(rect.x, rect.y, rect.x + rect.width, rect.y + rect.height),
@@ -61,17 +61,14 @@ class Image:
         cv2.imwrite(str(path), self.view)
 
     def compare(
-            self, expected: typing.Union[SystemPath, 'Image'], threshold: float = 0.99, verify=True) -> bool:
-        if isinstance(expected, SystemPath):
-            expected = cv2.imread(str(expected))
-        else:
-            expected = expected.view
+            self, expected: np.ndarray, threshold: float = 0.99, verify=True) -> bool:
         correlation = Ocv.compare_images(self.view, expected)
         result = correlation >= threshold
+        _logger.info(f'Images equals on: {abs(round(correlation, 4) * 100)}%')
 
         if verify:
             if result:
-                _logger.info(f'Screenshot comparison passed (equality: {round(correlation, 4)})')
+                _logger.info(f'Screenshot comparison passed')
             else:
                 configs.testpath.TEST_ARTIFACTS.mkdir(parents=True, exist_ok=True)
                 diff = Ocv.draw_contours(self.view, expected)
@@ -80,7 +77,7 @@ class Image:
                 cv2.imwrite(str(configs.testpath.TEST_ARTIFACTS / f'expected_image.png'), expected)
 
                 _logger.info(
-                    f"Screenshot comparison failed (equality: {round(correlation, 4)} %).\n"
+                    f"Screenshot comparison failed.\n"
                     f"Actual, Diff and Expected screenshots are saved:\n"
                     f"{configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT)}.")
         return result
@@ -92,10 +89,13 @@ class Image:
 
     def to_string(self, custom_config: str):
         text: str = pytesseract.image_to_string(self.view, config=custom_config)
-        _logger.info(f'Text on image: {text}')
+        _logger.debug(f'Text on image: {text}')
         return text
 
-    def has_text(self, text: str, criteria: str) -> bool:
+    def has_text(self, text: str, criteria: str, crop: driver.UiTypes.ScreenRectangle = None) -> bool:
+        self.update_view()
+        if crop:
+            self.crop(crop)
         self.set_grayscale()
         self.save(configs.testpath.TEST_ARTIFACTS / f'search_region_{datetime.now().microsecond}.png', force=True)
         if text.lower() in self.to_string(criteria).lower():
@@ -106,9 +106,13 @@ class Image:
             return True
         return False
 
-    def has_color(self, color: constants.Color, denoise: int = 10) -> bool:
-        contours = self._get_color_contours(color, denoise, apply=True)
+    def has_color(self, color: constants.Color, denoise: int = 10, crop: driver.UiTypes.ScreenRectangle = None) -> bool:
+        self.update_view()
+        if crop:
+            self.crop(crop)
         self.save(configs.testpath.TEST_ARTIFACTS / f'{color.name}_{datetime.now().microsecond}.png')
+        contours = self._get_color_contours(color, denoise, apply=True)
+        self.save(configs.testpath.TEST_ARTIFACTS / f'{color.name}_mask_{datetime.now().microsecond}.png')
         self._view = None
         return len(contours) >= 1
 
@@ -159,11 +163,23 @@ class Image:
 
 
 def compare(actual: Image,
-            expected: typing.Union[SystemPath, Image],
+            expected: typing.Union[str, SystemPath, Image],
             threshold: float = 0.99,
-            timout_sec: int = 0
+            timout_sec: int = 1
             ):
+    if isinstance(expected, str):
+        expected_fp = configs.testpath.TEST_VP / configs.system.OS_ID / expected
+        if not expected_fp.exists():
+            expected_fp = configs.testpath.TEST_VP / expected
+        expected = expected_fp
+    if isinstance(expected, SystemPath):
+        assert expected.exists(), f'File: {expected} not found'
+        expected = cv2.imread(str(expected))
+    else:
+        expected = expected.view
     start = datetime.now()
-    while not actual.compare(expected, threshold):
+    while not actual.compare(expected, threshold, verify=False):
         time.sleep(1)
-        assert (datetime.now() - start).seconds > timout_sec, 'Comparison failed'
+        assert (datetime.now() - start).seconds < timout_sec, 'Comparison failed'
+    _logger.info(f'Screenshot comparison passed')
+
