@@ -43,6 +43,7 @@ const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
 const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
 
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
+const SIGNAL_KEYCARD_REBUILD* = "keycardRebuild"
 const SIGNAL_KEYCARD_DELETED* = "keycardDeleted"
 const SIGNAL_ALL_KEYCARDS_DELETED* = "allKeycardsDeleted"
 const SIGNAL_KEYCARD_ACCOUNTS_REMOVED* = "keycardAccountsRemoved"

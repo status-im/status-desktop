@@ -24,6 +24,7 @@ type PredefinedKeycardData* {.pure.} = enum
   UseGeneralMessageForLockedState = 64
   MaxPUKReached = 128
   CopyFromAKeycardPartDone = 256
+  MaxPairingSlotsReached = 512
 
 # Forward declaration
 # General section
@@ -89,11 +90,11 @@ include max_pin_retries_reached_state
 include max_puk_retries_reached_state
 include max_pairing_slots_reached_state
 include migrating_key_pair_state
-include no_pcsc_service_state 
-include not_keycard_state 
+include no_pcsc_service_state
+include not_keycard_state
 include pin_set_state
 include pin_verified_state
-include plugin_reader_state 
+include plugin_reader_state
 include reading_keycard_state
 include recognized_keycard_state
 include remove_keycard_state

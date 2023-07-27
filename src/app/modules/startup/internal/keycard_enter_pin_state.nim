@@ -17,7 +17,7 @@ method getNextPrimaryState*(self: KeycardEnterPinState, controller: Controller):
     return createState(StateType.UserProfileCreate, self.flowType, self.getBackState)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
     return nil
-  
+
 method executeBackCommand*(self: KeycardEnterPinState, controller: Controller) =
   controller.setPin("")
 
@@ -27,36 +27,36 @@ method executePrimaryCommand*(self: KeycardEnterPinState, controller: Controller
     if self.pinValid:
       controller.enterKeycardPin(controller.getPin())
 
-method resolveKeycardNextState*(self: KeycardEnterPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: KeycardEnterPinState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceOnboarding(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    if keycardFlowType == ResponseTypeValueEnterPIN and 
+    if keycardFlowType == ResponseTypeValueEnterPIN and
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPIN:
       controller.setRemainingAttempts(keycardEvent.pinRetries)
       if keycardEvent.pinRetries > 0:
         return createState(StateType.KeycardWrongPin, self.flowType, self.getBackState)
       return createState(StateType.KeycardMaxPinRetriesReached, self.flowType, self.getBackState)
-    if keycardFlowType == ResponseTypeValueEnterPUK and 
+    if keycardFlowType == ResponseTypeValueEnterPUK and
       keycardEvent.error.len == 0:
       if keycardEvent.pinRetries == 0 and keycardEvent.pukRetries > 0:
         return createState(StateType.KeycardMaxPinRetriesReached, self.flowType, self.getBackState)
-    if keycardFlowType == ResponseTypeValueSwapCard and 
+    if keycardFlowType == ResponseTypeValueSwapCard and
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUKRetries:
         controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.MaxPUKReached, add = true))
         return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
-    if keycardFlowType == ResponseTypeValueSwapCard and 
+    if keycardFlowType == ResponseTypeValueSwapCard and
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamFreeSlots:
         return createState(StateType.KeycardMaxPairingSlotsReached, self.flowType, self.getBackState)
     if keycardFlowType == ResponseTypeValueKeycardFlowResult:
       controller.setKeycardEvent(keycardEvent)
       if not main_constants.IS_MACOS:
-        controller.setupKeycardAccount(storeToKeychain = false, newKeycard = false)
+        controller.setupKeycardAccount(storeToKeychain = false)
         return nil
       let backState = findBackStateWithTargetedStateType(self, StateType.RecoverOldUser)
       return createState(StateType.Biometrics, self.flowType, backState)

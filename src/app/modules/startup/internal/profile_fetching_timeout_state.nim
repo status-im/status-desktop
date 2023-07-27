@@ -11,4 +11,4 @@ proc delete*(self: ProfileFetchingTimeoutState) =
 method executePrimaryCommand*(self: ProfileFetchingTimeoutState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserImportSeedPhrase or
     self.flowType == FlowType.FirstRunOldUserKeycardImport:
-      controller.checkFetchingStatusAndProceedWithAppLoading()
+      controller.checkFetchingStatusAndProceed()

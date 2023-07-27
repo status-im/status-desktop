@@ -349,7 +349,6 @@ proc convertToKeycardAccount*(account: JsonNode, settings: JsonNode, keycardUid:
   try:
     let response = status_go.convertToKeycardAccount($account, $settings, keycardUid, password, newPassword)
     result.result = Json.decode(response, JsonNode)
-
   except RpcException as e:
     error "error doing rpc request", methodName = "convertToKeycardAccount", exception=e.msg
     raise newException(RpcException, e.msg)

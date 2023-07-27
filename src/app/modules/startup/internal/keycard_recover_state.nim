@@ -11,11 +11,11 @@ proc delete*(self: KeycardRecoverState) =
 method getNextPrimaryState*(self: KeycardRecoverState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport or
     self.flowType == FlowType.AppLogin:
-      controller.setRecoverUsingSeedPhraseWhileLogin(true)
+      controller.setRecoverKeycardUsingSeedPhraseWhileLoggingIn(true)
       return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, self)
 
 method getNextSecondaryState*(self: KeycardRecoverState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport or
     self.flowType == FlowType.AppLogin:
-      controller.setRecoverUsingSeedPhraseWhileLogin(false)
+      controller.setRecoverKeycardUsingSeedPhraseWhileLoggingIn(false)
       return createState(StateType.KeycardEnterPuk, self.flowType, self)

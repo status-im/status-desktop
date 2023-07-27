@@ -255,6 +255,7 @@ Item {
                 height: 24
                 anchors.verticalCenter: usernameText.verticalCenter
                 anchors.right: parent.right
+                visible: root.startupStore.startupModuleInst.loginAccountsModel.count > 0
 
                 onClicked: {
                     if (accountsPopup.opened) {

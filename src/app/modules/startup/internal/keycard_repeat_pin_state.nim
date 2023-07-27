@@ -23,7 +23,7 @@ method executePrimaryCommand*(self: KeycardRepeatPinState, controller: Controlle
       return
   if self.flowType == FlowType.FirstRunOldUserKeycardImport or
     self.flowType == FlowType.AppLogin:
-      if controller.getRecoverUsingSeedPhraseWhileLogin():
+      if controller.getRecoverKeycardUsingSeedPhraseWhileLoggingIn():
         controller.runGetMetadataFlow()
         return
       controller.storePinToKeycard(controller.getPin(), puk = "")
@@ -32,19 +32,19 @@ method executePrimaryCommand*(self: KeycardRepeatPinState, controller: Controlle
     controller.storePinToKeycard(controller.getPin(), puk = "")
     return
 
-method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   let state = ensureReaderAndCardPresenceOnboarding(self, keycardFlowType, keycardEvent, controller)
   if not state.isNil:
     return state
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    if keycardFlowType == ResponseTypeValueEnterMnemonic and 
+    if keycardFlowType == ResponseTypeValueEnterMnemonic and
       keycardEvent.error.len > 0 and
       keycardEvent.error == ErrorLoadingKeys:
         controller.buildSeedPhrasesFromIndexes(keycardEvent.seedPhraseIndexes)
         return createState(StateType.KeycardPinSet, self.flowType, self.getBackState)
   if self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and
       keycardEvent.keyUid.len > 0:
         controller.setKeyUid(keycardEvent.keyUid)
         let backState = findBackStateWithTargetedStateType(self, StateType.UserProfileImportSeedPhrase)
@@ -60,7 +60,7 @@ method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: st
           return
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.RecoverAccount or
       controller.getCurrentKeycardServiceFlow() == KCSFlowType.LoadAccount:
-        if keycardFlowType == ResponseTypeValueEnterPUK: 
+        if keycardFlowType == ResponseTypeValueEnterPUK:
           if keycardEvent.error.len > 0 and
             keycardEvent.error == RequestParamPUK:
               controller.setRemainingAttempts(keycardEvent.pukRetries)
@@ -68,19 +68,19 @@ method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: st
           if keycardEvent.pukRetries > 0:
             return createState(StateType.KeycardPinSet, self.flowType, self.getBackState)
           return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
-        if keycardFlowType == ResponseTypeValueSwapCard and 
+        if keycardFlowType == ResponseTypeValueSwapCard and
           keycardEvent.error.len > 0 and
           keycardEvent.error == RequestParamPUKRetries:
             controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.MaxPUKReached, add = true))
             return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
-        if keycardFlowType == ResponseTypeValueSwapCard and 
+        if keycardFlowType == ResponseTypeValueSwapCard and
           keycardEvent.error.len > 0 and
           keycardEvent.error == RequestParamFreeSlots:
             return createState(StateType.KeycardMaxPairingSlotsReached, self.flowType, self.getBackState)
         if keycardFlowType == ResponseTypeValueKeycardFlowResult:
           controller.setKeycardEvent(keycardEvent)
           controller.setPukValid(true)
-          if controller.getRecoverUsingSeedPhraseWhileLogin():
+          if controller.getRecoverKeycardUsingSeedPhraseWhileLoggingIn():
             controller.addToKeycardUidPairsToCheckForAChangeAfterLogin(self.oldKeycardUid, keycardEvent.instanceUID)
             let md = controller.getMetadataFromKeycard()
             let paths = md.walletAccounts.map(a => a.path)
@@ -104,7 +104,7 @@ method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: st
           return
     if controller.getCurrentKeycardServiceFlow() == KCSFlowType.Login or
       controller.getCurrentKeycardServiceFlow() == KCSFlowType.LoadAccount:
-        if keycardFlowType == ResponseTypeValueEnterPUK: 
+        if keycardFlowType == ResponseTypeValueEnterPUK:
           if keycardEvent.error.len > 0 and
             keycardEvent.error == RequestParamPUK:
               controller.setRemainingAttempts(keycardEvent.pukRetries)
@@ -112,19 +112,19 @@ method resolveKeycardNextState*(self: KeycardRepeatPinState, keycardFlowType: st
           if keycardEvent.pukRetries > 0:
             return createState(StateType.KeycardPinSet, self.flowType, self.getBackState)
           return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
-        if keycardFlowType == ResponseTypeValueSwapCard and 
+        if keycardFlowType == ResponseTypeValueSwapCard and
           keycardEvent.error.len > 0 and
           keycardEvent.error == RequestParamPUKRetries:
             controller.setKeycardData(updatePredefinedKeycardData(controller.getKeycardData(), PredefinedKeycardData.MaxPUKReached, add = true))
             return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
-        if keycardFlowType == ResponseTypeValueSwapCard and 
+        if keycardFlowType == ResponseTypeValueSwapCard and
           keycardEvent.error.len > 0 and
           keycardEvent.error == RequestParamFreeSlots:
             return createState(StateType.KeycardMaxPairingSlotsReached, self.flowType, self.getBackState)
         if keycardFlowType == ResponseTypeValueKeycardFlowResult:
           controller.setKeycardEvent(keycardEvent)
           controller.setPukValid(true)
-          if controller.getRecoverUsingSeedPhraseWhileLogin():
+          if controller.getRecoverKeycardUsingSeedPhraseWhileLoggingIn():
             controller.addToKeycardUidPairsToCheckForAChangeAfterLogin(self.oldKeycardUid, keycardEvent.instanceUID)
             let md = controller.getMetadataFromKeycard()
             let paths = md.walletAccounts.map(a => a.path)

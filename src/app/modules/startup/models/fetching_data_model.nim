@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils
+import NimQml, Tables, strutils, strformat
 
 import fetching_data_item
 
@@ -28,6 +28,11 @@ QtObject:
     result.setup
     result.allTotalsSet = false
     result.lastKnownBackedUpMsgClock = 0
+
+  proc `$`*(self: Model): string =
+    result = "FetchingDataModel:\n"
+    for i in 0 ..< self.items.len:
+      result &= fmt"""[{i}]:{$self.items[i]}"""
 
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
@@ -142,4 +147,4 @@ QtObject:
     let ind = self.findIndexForEntity(entity)
     if(ind == -1):
       return false
-    return self.items[ind].loadedMessages == self.items[ind].totalMessages
+    return self.items[ind].totalMessages > 0 and self.items[ind].loadedMessages == self.items[ind].totalMessages

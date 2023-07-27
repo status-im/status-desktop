@@ -1,3 +1,5 @@
+import strformat
+
 type
   Item* = ref object
     entity: string
@@ -11,6 +13,15 @@ proc newItem*(entity: string, icon: string, totalMessages: int = 0): Item =
   result.icon = icon
   result.trackOfLoadedMessages = @[]
   result.totalMessages = totalMessages
+
+proc `$`*(self: Item): string =
+  result = fmt"""FetchingDataItem[
+      entity: {self.entity},
+      icon: {self.icon},
+      totalMessages: {self.totalMessages},
+      trackOfLoadedMessages: {self.trackOfLoadedMessages},
+    ]
+  """
 
 proc entity*(self: Item): string =
   return self.entity

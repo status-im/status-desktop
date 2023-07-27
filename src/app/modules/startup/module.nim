@@ -6,19 +6,19 @@ import internal/[state, state_factory]
 import models/generated_account_item as gen_acc_item
 import models/login_account_item as login_acc_item
 import models/fetching_data_model as fetch_model
-import ../../../constants as main_constants
-import ../../global/global_singleton
-import ../../global/app_translatable_constants as atc
-import ../../core/eventemitter
+import constants as main_constants
+import app/global/global_singleton
+import app/global/app_translatable_constants as atc
+import app/core/eventemitter
 
-import ../../../app_service/service/keychain/service as keychain_service
-import ../../../app_service/service/accounts/service as accounts_service
-import ../../../app_service/service/general/service as general_service
-import ../../../app_service/service/profile/service as profile_service
-import ../../../app_service/service/keycard/service as keycard_service
-import ../../../app_service/service/devices/service as devices_service
+import app_service/service/keychain/service as keychain_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/general/service as general_service
+import app_service/service/profile/service as profile_service
+import app_service/service/keycard/service as keycard_service
+import app_service/service/devices/service as devices_service
 
-import ../shared_modules/keycard_popup/module as keycard_shared_module
+import app/modules/shared_modules/keycard_popup/module as keycard_shared_module
 
 export io_interface
 
@@ -327,7 +327,7 @@ method emitObtainingPasswordSuccess*[T](self: Module[T], password: string) =
 method finishAppLoading*[T](self: Module[T]) =
   self.delegate.finishAppLoading()
 
-method checkFetchingStatusAndProceedWithAppLoading*[T](self: Module[T]) =
+method checkFetchingStatusAndProceed*[T](self: Module[T]) =
   if self.view.fetchingDataModel().isEntityLoaded(FetchingFromWakuProfile):
     self.delegate.finishAppLoading()
     return
@@ -404,7 +404,7 @@ method onNodeLogin*[T](self: Module[T], error: string) =
         self.prepareAndInitFetchingData()
         self.controller.connectToFetchingFromWakuEvents()
         self.delayStartingApp()
-        let err = self.delegate.userLoggedIn(recoverAccount = true)
+        let err = self.delegate.userLoggedIn()
         if err.len > 0:
           self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
           return
@@ -416,7 +416,7 @@ method onNodeLogin*[T](self: Module[T], error: string) =
         self.delegate.logout()
         self.view.setCurrentStartupState(newLoginKeycardConvertedToRegularAccountState(currStateObj.flowType(), nil))
     else:
-      let err = self.delegate.userLoggedIn(recoverAccount = false)
+      let err = self.delegate.userLoggedIn()
       if err.len > 0:
         self.logoutAndDisplayError(err, StartupErrorType.UnknownType)
         return

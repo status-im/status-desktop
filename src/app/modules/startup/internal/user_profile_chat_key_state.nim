@@ -17,7 +17,7 @@ method executePrimaryCommand*(self: UserProfileChatKeyState, controller: Control
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
     controller.storeKeycardAccountAndLogin(storeToKeychain, newKeycard = true)
   elif self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.setupKeycardAccount(storeToKeychain, newKeycard = false)
+    controller.setupKeycardAccount(storeToKeychain)
 
 method getNextPrimaryState*(self: UserProfileChatKeyState, controller: Controller): State =
   if self.flowType == FlowType.FirstRunNewUserNewKeys or

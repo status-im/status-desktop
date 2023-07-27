@@ -14,7 +14,7 @@ method executeBackCommand*(self: LoginKeycardMaxPairingSlotsReachedState, contro
 
 method getNextPrimaryState*(self: LoginKeycardMaxPairingSlotsReachedState, controller: Controller): State =
   if self.flowType == FlowType.AppLogin:
-    controller.setRecoverUsingSeedPhraseWhileLogin(true)
+    controller.setRecoverKeycardUsingSeedPhraseWhileLoggingIn(true)
     return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, nil)
 
 method getNextTertiaryState*(self: LoginKeycardMaxPairingSlotsReachedState, controller: Controller): State =
@@ -32,6 +32,6 @@ method getNextQuinaryState*(self: LoginKeycardMaxPairingSlotsReachedState, contr
     controller.cancelCurrentFlow()
     return createState(StateType.LostKeycardOptions, self.flowType, self)
 
-method resolveKeycardNextState*(self: LoginKeycardMaxPairingSlotsReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+method resolveKeycardNextState*(self: LoginKeycardMaxPairingSlotsReachedState, keycardFlowType: string, keycardEvent: KeycardEvent,
   controller: Controller): State =
   return ensureReaderAndCardPresenceAndResolveNextLoginState(self, keycardFlowType, keycardEvent, controller)

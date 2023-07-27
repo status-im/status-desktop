@@ -110,17 +110,23 @@ QtObject:
         return self.items[i]
     return nil
 
-  proc findIndexForMember(self: KeycardModel, pubKey: string): int =
+  proc findIndexForKeyUid(self: KeycardModel, keyUid: string): int =
     for i in 0 ..< self.items.len:
-      if(self.items[i].getPubKey() == pubKey):
+      if(self.items[i].getKeyUid() == keyUid):
         return i
     return -1
 
-  proc setImage*(self: KeycardModel, pubKey: string, image: string) =
-    let ind = self.findIndexForMember(pubKey)
+  proc setImage*(self: KeycardModel, keyUid: string, image: string) =
+    let ind = self.findIndexForKeyUid(keyUid)
     if(ind == -1):
       return
     self.items[ind].setImage(image)
+
+  proc setName*(self: KeycardModel, keyUid: string, name: string) =
+    let ind = self.findIndexForKeyUid(keyUid)
+    if(ind == -1):
+      return
+    self.items[ind].setName(name)
 
   proc setLockedForKeycardWithKeycardUid*(self: KeycardModel, keycardUid: string, locked: bool) =
     for i in 0 ..< self.items.len:

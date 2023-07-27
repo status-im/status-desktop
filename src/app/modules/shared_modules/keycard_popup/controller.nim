@@ -200,6 +200,9 @@ proc switchToWalletSection*(self: Controller) =
   let data = ActiveSectionChatArgs(sectionId: conf.WALLET_SECTION_ID)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
+proc rebuildKeycards*(self: Controller) =
+  self.events.emit(SIGNAL_KEYCARD_REBUILD, Args())
+
 proc getKeycardData*(self: Controller): string =
   return self.delegate.getKeycardData()
 
