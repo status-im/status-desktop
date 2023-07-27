@@ -228,6 +228,69 @@ Item {
     }
 
     Connections {
+        target: appMain.communitiesStore
+
+        function onImportingCommunityStateChanged(communityId, state, errorMsg) {
+            const community = appMain.communitiesStore.getCommunityDetailsAsJson(communityId)
+            let title = ""
+            let subTitle = ""
+            let loading = false
+            let notificationType = Constants.ephemeralNotificationType.normal
+            let icon = ""
+            
+            switch (state)
+            {
+            case Constants.communityImported:
+                if(community.isControlNode) {
+                    title = qsTr("This device is now the control node for the %1 Community").arg(community.name)
+                    notificationType = Constants.ephemeralNotificationType.success
+                    icon = "checkmark-circle"
+                } else {
+                    title = qsTr("'%1' community imported").arg(community.name)
+                }
+                break
+            case Constants.communityImportingInProgress:
+                title = qsTr("Importing community is in progress")
+                loading = true
+                break
+            case Constants.communityImportingError:
+                title = qsTr("Failed to import community '%1'").arg(community.name)
+                subTitle = errorMsg
+                break
+            default:
+                console.error("unknown state while importing community: %1").arg(state)
+                return
+            }
+
+            Global.displayToastMessage(title,
+                                       subTitle,
+                                       icon,
+                                       loading,
+                                       notificationType,
+                                       "")
+        }
+
+        function onCommunityInfoAlreadyRequested() {
+            Global.displayToastMessage(qsTr("Community data not loaded yet."),
+                                       qsTr("Please wait for the unfurl to show"),
+                                       "",
+                                       true,
+                                       Constants.ephemeralNotificationType.normal,
+                                       "")
+        }
+
+        function onCommunityPrivateKeyRemoved(communityId) {
+            const community = appMain.communitiesStore.getCommunityDetailsAsJson(communityId)
+            Global.displayToastMessage(qsTr("This device is no longer the control node for the %1 Community").arg(community.name),
+                                "",
+                                "info",
+                                false,
+                                Constants.ephemeralNotificationType.normal,
+                                "")
+        }
+    }
+
+    Connections {
         target: Global.applicationWindow
 
         function onActiveChanged() {

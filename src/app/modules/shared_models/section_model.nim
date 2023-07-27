@@ -204,7 +204,7 @@ QtObject:
     of ModelRole.AmIBanned:
       result = newQVariant(item.amIBanned)
 
-  proc isItemExist(self: SectionModel, id: string): bool =
+  proc itemExists*(self: SectionModel, id: string): bool =
     for it in self.items:
       if(it.id == id):
         return true
@@ -215,7 +215,7 @@ QtObject:
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    if not self.isItemExist(item.id):
+    if not self.itemExists(item.id):
       self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
       self.items.add(item)
       self.endInsertRows()
@@ -226,7 +226,7 @@ QtObject:
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    if not self.isItemExist(item.id):
+    if not self.itemExists(item.id):
       self.beginInsertRows(parentModelIndex, index, index)
       self.items.insert(item, index)
       self.endInsertRows()

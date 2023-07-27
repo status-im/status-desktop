@@ -217,49 +217,4 @@ Item {
             }
         }
     }
-
-    Connections {
-        target: root.store
-
-        function onImportingCommunityStateChanged(communityId, state, errorMsg) {
-            const community = root.store.getCommunityDetailsAsJson(communityId)
-            let title = ""
-            let subTitle = ""
-            let loading = false
-
-            switch (state)
-            {
-            case Constants.communityImported:
-                title = qsTr("'%1' community imported").arg(community.name);
-                break
-            case Constants.communityImportingInProgress:
-                title = qsTr("Importing community is in progress")
-                loading = true
-                break
-            case Constants.communityImportingError:
-                title = qsTr("Failed to import community '%1'").arg(community.name)
-                subTitle = errorMsg
-                break
-            default:
-                console.error("unknown state while importing community: %1").arg(state)
-                return
-            }
-
-            Global.displayToastMessage(title,
-                                       subTitle,
-                                       "",
-                                       loading,
-                                       Constants.ephemeralNotificationType.normal,
-                                       "")
-        }
-
-        function onCommunityInfoAlreadyRequested() {
-            Global.displayToastMessage(qsTr("Community data not loaded yet."),
-                                       qsTr("Please wait for the unfurl to show"),
-                                       "",
-                                       true,
-                                       Constants.ephemeralNotificationType.normal,
-                                       "")
-        }
-    }
 }
