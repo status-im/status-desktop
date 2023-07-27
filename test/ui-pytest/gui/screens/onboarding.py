@@ -5,6 +5,7 @@ from abc import abstractmethod
 import constants.tesseract
 import driver
 from gui.components.os.open_file_dialogs import OpenFileDialog
+from gui.components.profile_picture_popup import ProfilePicturePopup
 from gui.elements.qt.button import Button
 from gui.elements.qt.object import QObject
 from gui.elements.qt.text_edit import TextEdit
@@ -87,11 +88,12 @@ class YourProfileView(OnboardingScreen):
         self._display_name_text_field.clear().text = value
         return self
 
-    def set_user_image(self, fp: SystemPath):
+    def set_user_image(self, fp: SystemPath) -> ProfilePicturePopup:
         self._upload_picture_button.hover()
         self._upload_picture_button.click()
         file_dialog = OpenFileDialog().wait_until_appears()
         file_dialog.open_file(fp)
+        return ProfilePicturePopup().wait_until_appears()
 
     def next(self) -> 'EmojiAndIconView':
         self._next_button.click()
@@ -112,6 +114,21 @@ class EmojiAndIconView(OnboardingScreen):
         self._next_button = Button('mainWindow_Next_StatusButton')
         self._emoji_hash = QObject('mainWindow_EmojiHash')
         self._identicon_ring = QObject('mainWindow_userImageCopy_StatusSmartIdenticon')
+
+    @property
+    def profile_image(self) -> Image:
+        self._profile_image.image.update_view()
+        return self._profile_image.image
+
+    @property
+    def cropped_profile_image(self) -> Image:
+        # Profile image without identicon_ring
+        self._profile_image.image.update_view()
+        self._profile_image.image.crop(
+            driver.UiTypes.ScreenRectangle(
+                20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
+            ))
+        return self._profile_image.image
 
     @property
     def chat_key(self) -> str:
@@ -135,20 +152,16 @@ class EmojiAndIconView(OnboardingScreen):
         return YourProfileView().wait_until_appears()
 
     def is_user_image_contains(self, text: str):
-        # To remove all artifacts, the image cropped.
-        self._profile_image.image.crop(
-            driver.UiTypes.ScreenRectangle(
+        crop = driver.UiTypes.ScreenRectangle(
                 20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
-            ))
-        return self._profile_image.image.has_text(text, constants.tesseract.text_on_profile_image)
+            )
+        return self.profile_image.has_text(text, constants.tesseract.text_on_profile_image, crop=crop)
 
     def is_user_image_background_white(self):
-        self._profile_image.image.update_view()
-        self._profile_image.image.crop(
-            driver.UiTypes.ScreenRectangle(
+        crop = driver.UiTypes.ScreenRectangle(
                 20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
-            ))
-        return self._profile_image.image.has_color(constants.Color.WHITE)
+            )
+        return self.profile_image.has_color(constants.Color.WHITE, crop=crop)
 
 
 class CreatePasswordView(OnboardingScreen):

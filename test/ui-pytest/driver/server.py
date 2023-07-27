@@ -43,10 +43,10 @@ class SquishServer:
             [f'"{self.path}"', '--configfile', str(self.config), '--config', action, ' '.join(options)])
 
     def add_executable_aut(self, aut_id, app_dir):
-        return self.configuring('addAUT', [aut_id, f'"{app_dir}"'])
+        self.configuring('addAUT', [aut_id, f'"{app_dir}"'])
 
     def add_attachable_aut(self, aut_id: str, port: int):
-        return self.configuring('addAttachableAUT', [aut_id, f'localhost:{port}'])
+        self.configuring('addAttachableAUT', [aut_id, f'localhost:{port}'])
 
     def set_aut_timeout(self, value: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
         self.configuring('setAUTTimeout', [str(value)])

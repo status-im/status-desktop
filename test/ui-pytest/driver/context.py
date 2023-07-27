@@ -17,7 +17,7 @@ def attach(aut_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SE
             _logger.info(f'AUT: {aut_name} attached')
             return context
         except RuntimeError as err:
-            _logger.info(err)
+            _logger.debug(err)
             time.sleep(1)
         assert time.monotonic() - started_at < timeout_sec, f'Attach error: {aut_name}'
 

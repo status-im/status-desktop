@@ -31,6 +31,14 @@ class QObject(BaseObject):
         return driver.object.globalBounds(self.object)
 
     @property
+    def x(self) -> int:
+        return self.bounds.x
+
+    @property
+    def y(self) -> int:
+        return self.bounds.y
+
+    @property
     def width(self) -> int:
         return int(self.bounds.width)
 
@@ -86,7 +94,7 @@ class QObject(BaseObject):
                 driver.mouseMove(self.object)
                 return getattr(self.object, 'hovered', True)
             except RuntimeError as err:
-                _logger.info(err)
+                _logger.debug(err)
                 time.sleep(1)
                 return False
 
