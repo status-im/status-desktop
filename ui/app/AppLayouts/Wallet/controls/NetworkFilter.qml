@@ -122,8 +122,6 @@ StatusComboBox {
                     width: 24
                     height: 24
                     visible: image.source !== ""
-                    border.width: index === 0 ? 0 : 1
-                    border.color: Theme.palette.white
                     image.source: Style.svg(model.iconUrl)
                     z: index + 1
                 }

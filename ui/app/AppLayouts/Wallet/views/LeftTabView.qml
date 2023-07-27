@@ -293,7 +293,7 @@ Rectangle {
                         hoverEnabled: true
                     }
                     radius: Style.current.radius
-                    color: header.highlighted || mouseArea.containsMouse ? Style.current.backgroundHover : root.color
+                    color: header.highlighted || mouseArea.containsMouse ? Theme.palette.baseColor3 : root.color
                     implicitWidth: parent.ListView.view.width - Style.current.padding * 2
                     implicitHeight: parent.ListView.view.firstItem.height + Style.current.padding
 
@@ -383,7 +383,7 @@ Rectangle {
                     id: savedAddressesBtn
 
                     objectName: "savedAddressesBtn"
-                    hoverColor: Theme.palette.primaryColor3
+                    hoverColor: Theme.palette.baseColor3
                     asset.bgColor: Theme.palette.primaryColor3
                     text: qsTr("Saved addresses")
                     icon.name: "address"

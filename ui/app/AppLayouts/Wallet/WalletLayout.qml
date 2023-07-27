@@ -17,6 +17,7 @@ Item {
     id: root
 
     property bool hideSignPhraseModal: false
+    property bool showAllAccounts: true
     property var store
     property var contactsStore
     property var emojiPopup: null
@@ -25,6 +26,14 @@ Item {
 
     onVisibleChanged: resetView()
 
+    Connections {
+        target: walletSection
+
+        function onFilterChanged(address, includeWatchOnly, allAddresses) {
+            root.showAllAccounts = allAddresses
+        }
+    }
+    
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
             signPhrasePopup.open();
@@ -84,14 +93,6 @@ Item {
             rightPanelStackView.currentItem.resetStack();
         }
 
-        Component.onCompleted: {
-            // Read in RootStore
-//            if(RootStore.firstTimeLogin){
-//                RootStore.firstTimeLogin = false
-//                RootStore.setInitialRange()
-//            }
-        }
-
         leftPanel: LeftTabView {
             id: leftTab
             anchors.fill: parent
@@ -133,8 +134,10 @@ Item {
         }
 
         footer: WalletFooter {
+            visible: !root.showAllAccounts
             sendModal: root.sendModalPopup
             width: parent.width
+            height: root.showAllAccounts ? implicitHeight : 61
             walletStore: RootStore
             networkConnectionStore: root.networkConnectionStore
             onLaunchShareAddressModal: Global.openPopup(receiveModalComponent)
