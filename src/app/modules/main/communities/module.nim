@@ -330,7 +330,7 @@ method isCommunityRequestPending*(self: Module, communityId: string): bool =
   self.controller.isCommunityRequestPending(communityId)
 
 method communityImported*(self: Module, community: CommunityDto) =
-  self.view.addItem(self.getCommunityItem(community))
+  self.view.addOrUpdateItem(self.getCommunityItem(community))
   self.view.emitImportingCommunityStateChangedSignal(community.id, ImportCommunityState.Imported.int, errorMsg = "")
 
 method communityDataImported*(self: Module, community: CommunityDto) = 

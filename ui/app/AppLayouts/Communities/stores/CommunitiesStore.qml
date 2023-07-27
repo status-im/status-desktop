@@ -57,6 +57,10 @@ QtObject {
     property string communityTags: communitiesModuleInst.tags
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
+    
+    signal communityPrivateKeyRemoved(string communityId)
+
+    signal communityInfoAlreadyRequested()
 
     function createCommunity(args = {
                                 name: "",
@@ -143,6 +147,17 @@ QtObject {
         root.communitiesModuleInst.resetDiscordImport(false)
     }
 
+    function getCommunityDetailsAsJson(id) {
+        const jsonObj = communitiesModuleInst.getCommunityDetails(id)
+        try {
+            return JSON.parse(jsonObj)
+        }
+        catch (e) {
+            console.warn("error parsing community by id: ", id, " error: ", e.message)
+            return {}
+        }
+    }
+
     function requestImportDiscordCommunity(args = {
                                 name: "",
                                 description: "",
@@ -175,6 +190,14 @@ QtObject {
         target: communitiesModuleInst
         function onImportingCommunityStateChanged(communityId, state, errorMsg) {
             root.importingCommunityStateChanged(communityId, state, errorMsg)
+        }
+
+        function onCommunityInfoAlreadyRequested() {
+          root.communityInfoAlreadyRequested()
+        }
+
+        function onCommunityPrivateKeyRemoved(communityId) {
+            root.communityPrivateKeyRemoved(communityId)
         }
     }
 }

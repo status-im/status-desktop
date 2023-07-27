@@ -274,7 +274,17 @@ QtObject:
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
     self.communityAdded(item.id)
+  
+  proc updateItem(self: View, item: SectionItem) =
+    self.model.editItem(item)
+    self.communityChanged(item.id)
 
+  proc addOrUpdateItem*(self: View, item: SectionItem) =
+    if self.model.itemExists(item.id):
+      self.updateItem(item)
+    else:
+      self.addItem(item)
+  
   proc model*(self: View): SectionModel =
     result = self.model
 
@@ -484,6 +494,7 @@ QtObject:
       "name": communityItem.name,
       "image": communityItem.image,
       "color": communityItem.color,
+      "isControlNode": communityItem.isControlNode,
     }
     return $jsonObj
 
