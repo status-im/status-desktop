@@ -21,7 +21,6 @@ Rectangle {
 
     signal launchShareAddressModal()
 
-    height: 61
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
     StatusModalDivider {
