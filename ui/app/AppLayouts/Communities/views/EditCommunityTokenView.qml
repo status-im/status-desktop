@@ -11,6 +11,7 @@ import StatusQ.Core.Utils 0.1 as SQUtils
 import utils 1.0
 
 import AppLayouts.Communities.helpers 1.0
+import AppLayouts.Communities.panels 1.0
 import AppLayouts.Wallet.controls 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -25,7 +26,6 @@ StatusScrollView {
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
     property var tokensModel
     property var tokensModelWallet
-
 
     property TokenObject collectible: TokenObject {
         type: Constants.TokenType.ERC721
@@ -49,8 +49,17 @@ StatusScrollView {
     // Account expected roles: address, name, color, emoji, walletType
     property var accounts
 
+    property string feeText
+    property string feeErrorText
+    property bool isFeeLoading
+
+    readonly property string feeLabel:
+        isAssetView ? qsTr("Mint asset on %1").arg(asset.chainName)
+                    : qsTr("Mint collectible on %1").arg(collectible.chainName)
+
     signal chooseArtWork
     signal previewClicked
+    signal deployFeesRequested
 
     QtObject {
         id: d
@@ -61,6 +70,7 @@ StatusScrollView {
                                               && symbolInput.valid
                                               && (unlimitedSupplyChecker.checked || (!unlimitedSupplyChecker.checked && parseInt(supplyInput.text) > 0))
                                               && (!root.isAssetView  || (root.isAssetView && assetDecimalsInput.valid))
+                                              && !root.isFeeLoading && root.feeErrorText === "" && !requestFeeDelayTimer.running
 
         readonly property int imageSelectorRectWidth: root.isAssetView ? 128 : 290
 
@@ -216,62 +226,6 @@ StatusScrollView {
             }
         }
 
-        CustomLabelDescriptionComponent {
-            Layout.topMargin: Style.current.padding
-            label: qsTr("Select account")
-            description: qsTr("Account will be required for all subsequent interactions with this token. Remember everybody in your community will be able to see this address.")
-        }
-
-        StatusEmojiAndColorComboBox {
-            id: accountBox
-
-            readonly property string address: SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
-            readonly property string initAccountName: root.isAssetView ? asset.accountName : collectible.accountName
-            readonly property int initIndex: SQUtils.ModelUtils.indexOf(root.accounts, "name", initAccountName)
-
-            Layout.fillWidth: true
-
-            currentIndex: (initIndex !== -1) ? initIndex : 0
-            model: SortFilterProxyModel {
-                sourceModel: root.accounts
-                proxyRoles: [
-                    ExpressionRole {
-                        name: "color"
-
-                        function getColor(colorId) {
-                            return Utils.getColorForId(colorId)
-                        }
-
-                        // Direct call for singleton function is not handled properly by
-                        // SortFilterProxyModel that's why helper function is used instead.
-                        expression: { return getColor(model.colorId) }
-                    }
-                ]
-                filters: ValueFilter {
-                        roleName: "walletType"
-                        value: Constants.watchWalletType
-                        inverted: true
-                    }
-            }
-            type: StatusComboBox.Type.Secondary
-            size: StatusComboBox.Size.Small
-            implicitHeight: 44
-            defaultAssetName: "filled-account"
-
-            onAddressChanged: {
-                if(root.isAssetView)
-                    asset.accountAddress = address
-                else
-                    collectible.accountAddress = address
-            }
-            control.onDisplayTextChanged: {
-                if(root.isAssetView)
-                    asset.accountName = control.displayText
-                else
-                    collectible.accountName = control.displayText
-            }
-        }
-
         CustomNetworkFilterRowComponent {
             id: networkSelector
 
@@ -360,6 +314,98 @@ StatusScrollView {
             extraValidator.validate: function (value) { return parseInt(value) > 0 && parseInt(value) <= 10 }
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 10")
             onTextChanged: asset.decimals = parseInt(text)
+        }
+
+        FeesBox {
+            id: feesBox
+
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            accountErrorText: root.feeErrorText
+            implicitWidth: 0
+
+            model: QtObject {
+                id: singleFeeModel
+
+                readonly property string title: root.feeLabel
+                readonly property string feeText: root.isFeeLoading ?
+                                                      "" : root.feeText
+                readonly property bool error: root.feeErrorText !== ""
+            }
+
+            Timer {
+                id: requestFeeDelayTimer
+
+                interval: 500
+                onTriggered: root.deployFeesRequested()
+            }
+
+            readonly property bool triggerFeeReevaluation: {
+                dropAreaItem.artworkSource
+                nameInput.text
+                descriptionInput.text
+                symbolInput.text
+                supplyInput.text
+                unlimitedSupplyChecker.checked
+                transferableChecker.checked
+                remotelyDestructChecker.checked
+                feesBox.accountsSelector.currentIndex
+                asset.chainId
+                collectible.chainId
+
+                requestFeeDelayTimer.restart()
+                return true
+            }
+
+            accountsSelector.model: SortFilterProxyModel {
+                sourceModel: root.accounts
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "color"
+
+                        function getColor(colorId) {
+                            return Utils.getColorForId(colorId)
+                        }
+
+                        // Direct call for singleton function is not handled properly by
+                        // SortFilterProxyModel that's why helper function is used instead.
+                        expression: { return getColor(model.colorId) }
+                    }
+                ]
+                filters: ValueFilter {
+                    roleName: "walletType"
+                    value: Constants.watchWalletType
+                    inverted: true
+                }
+            }
+
+            readonly property TokenObject token: root.isAssetView ? root.asset
+                                                                  : root.collectible
+
+            // account can be changed also on preview page and it should be
+            // reflected in the form after navigating back
+            Connections {
+                target: feesBox.token
+
+                function onAccountAddressChanged() {
+                    const idx = SQUtils.ModelUtils.indexOf(
+                                        feesBox.accountsSelector.model, "address",
+                                        feesBox.token.accountAddress)
+
+                    feesBox.accountsSelector.currentIndex = idx
+                }
+            }
+
+            accountsSelector.onCurrentIndexChanged: {
+                if (accountsSelector.currentIndex < 0)
+                    return
+
+                const item = SQUtils.ModelUtils.get(
+                               accountsSelector.model, accountsSelector.currentIndex)
+                token.accountAddress = item.address
+                token.accountName = item.name
+            }
         }
 
         StatusButton {
@@ -481,18 +527,17 @@ StatusScrollView {
 
             multiSelection: false
 
-            onToggleNetwork: (network) =>
-                             {
-                                 if(root.isAssetView) {
-                                     asset.chainId = network.chainId
-                                     asset.chainName = network.chainName
-                                     asset.chainIcon = network.iconUrl
-                                 } else {
-                                     collectible.chainId = network.chainId
-                                     collectible.chainName = network.chainName
-                                     collectible.chainIcon = network.iconUrl
-                                 }
-                             }
+            onToggleNetwork: (network) => {
+                if(root.isAssetView) {
+                    asset.chainId = network.chainId
+                    asset.chainName = network.chainName
+                    asset.chainIcon = network.iconUrl
+                } else {
+                    collectible.chainId = network.chainId
+                    collectible.chainName = network.chainName
+                    collectible.chainIcon = network.iconUrl
+                }
+            }
         }
     }
 }

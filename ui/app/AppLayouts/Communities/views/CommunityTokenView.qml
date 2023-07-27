@@ -14,6 +14,8 @@ import shared.panels 1.0
 import AppLayouts.Communities.helpers 1.0
 import AppLayouts.Communities.panels 1.0
 
+import SortFilterProxyModel 0.2
+
 StatusScrollView {
     id: root
 
@@ -47,8 +49,18 @@ StatusScrollView {
     readonly property bool deploymentCompleted:
         deployState === Constants.ContractTransactionStatus.Completed
 
+    readonly property string feeLabel:
+        isAssetView ? qsTr("Mint asset on %1").arg(token.chainName)
+                    : qsTr("Mint collectible on %1").arg(token.chainName)
+
     // Models:
     property var tokenOwnersModel
+
+    // Required for preview mode:
+    property var accounts
+    property string feeText
+    property string feeErrorText
+    property bool isFeeLoading
 
     signal mintClicked()
 
@@ -56,6 +68,8 @@ StatusScrollView {
     signal generalAirdropRequested
 
     signal remoteDestructRequested(string address)
+
+    signal deployFeesRequested
 
     QtObject {
         id: d
@@ -124,12 +138,79 @@ StatusScrollView {
             }
         }
 
-        StatusButton {
+        FeesBox {
+            id: feesBox
+
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            implicitWidth: 0
             visible: root.preview
+
+            accountErrorText: root.feeErrorText
+
+            model: QtObject {
+                id: singleFeeModel
+
+                readonly property string title: root.feeLabel
+                readonly property string feeText: root.isFeeLoading ?
+                                                      "" : root.feeText
+                readonly property bool error: root.feeErrorText !== ""
+            }
+
+            accountsSelector.model: SortFilterProxyModel {
+                sourceModel: root.accounts
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "color"
+
+                        function getColor(colorId) {
+                            return Utils.getColorForId(colorId)
+                        }
+
+                        // Direct call for singleton function is not handled properly by
+                        // SortFilterProxyModel that's why helper function is used instead.
+                        expression: { return getColor(model.colorId) }
+                    }
+                ]
+                filters: ValueFilter {
+                    roleName: "walletType"
+                    value: Constants.watchWalletType
+                    inverted: true
+                }
+            }
+
+            Component.onCompleted: {
+                const initIndex = StatusQUtils.ModelUtils.indexOf(
+                                    accountsSelector.model, "name",
+                                    token.accountName)
+
+                accountsSelector.currentIndex = (initIndex !== -1) ? initIndex : 0
+
+                accountsSelector.currentIndexChanged.connect(() => {
+                    if (accountsSelector.currentIndex < 0)
+                        return
+
+                    const item = StatusQUtils.ModelUtils.get(
+                                   accountsSelector.model,
+                                   accountsSelector.currentIndex)
+                    token.accountAddress = item.address
+                    token.accountName = item.name
+
+                    root.deployFeesRequested()
+                })
+            }
+        }
+
+        StatusButton {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
             Layout.topMargin: Style.current.halfPadding
+
+            visible: root.preview
+            enabled: !root.isFeeLoading && root.feeErrorText === ""
+
             text: qsTr("Mint")
 
             onClicked: root.mintClicked()

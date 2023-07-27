@@ -347,9 +347,14 @@ StatusSectionLayout {
             allNetworks: communityTokensStore.allNetworks
             accounts: root.rootStore.accounts
 
-            onDeployFeesRequested:
+            onDeployFeesRequested: {
+                feeText = ""
+                feeErrorText = ""
+                isFeeLoading = true
+
                 communityTokensStore.computeDeployFee(
                     chainId, accountAddress, tokenType)
+            }
 
             onMintCollectible:
                 communityTokensStore.deployCollectible(
