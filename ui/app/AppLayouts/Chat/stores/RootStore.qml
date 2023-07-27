@@ -56,6 +56,8 @@ QtObject {
         }
     }
 
+    readonly property var overviewChartData: chatCommunitySectionModule.overviewChartData
+
     readonly property bool isUserAllowedToSendMessage: _d.isUserAllowedToSendMessage
     readonly property string chatInputPlaceHolderText: _d.chatInputPlaceHolderText
     readonly property var oneToOneChatContact: _d.oneToOneChatContact
@@ -414,6 +416,11 @@ QtObject {
 
     function getSectionByIdJson(id) {
         return communitiesList.getSectionByIdJson(id)
+    }
+
+    // intervals is a string containing json array [{startTimestamp: 1690548852, startTimestamp: 1690547684}, {...}]
+    function collectCommunityMetricsMessagesTimestamps(communityId, intervals) {
+        communitiesModuleInst.collectCommunityMetricsMessagesTimestamps(id, intervals)
     }
 
     function requestCommunityInfo(id, importing = false) {

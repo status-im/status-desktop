@@ -6,6 +6,10 @@ import interpret/cropped_image
 
 export response_type
 
+type
+  CommunityMetricsType* {.pure.} = enum
+    MessagesTimestamps, MessagesCount, Members, ControlNodeUptime
+
 proc getCommunityTags*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("communityTags".prefix)
   
@@ -350,6 +354,14 @@ proc deleteCommunityCategory*(
     {
       "communityId": communityId,
       "categoryId": categoryId
+    }])
+
+proc collectCommunityMetrics*(communityId: string, metricsType: CommunityMetricsType, intervals: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("collectCommunityMetrics".prefix, %*[
+    {
+      "communityId": communityId,
+      "type": metricsType.int,
+      "intervals": intervals
     }])
 
 proc requestCommunityInfo*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =

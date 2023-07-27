@@ -1359,6 +1359,21 @@ QtObject:
     except Exception as e:
       error "Error reordering category channel", msg = e.msg, communityId, categoryId, position
 
+  proc asyncCommunityMetricsLoaded*(self: Service, rpcResponse: string) {.slot.} =
+    echo "-------------> asyncCommunityMetricsLoaded, rpcResponse: ", rpcResponse
+
+    let rpcResponseObj = rpcResponse.parseJson
+    if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+      error "Error collecting community metrics", msg = rpcResponseObj{"error"}
+      return
+
+      let communityId = rpcResponseObj{"communityId"}.getStr()
+      let metricsType = rpcResponseObj{"metricsType"}.getInt()
+      let result = rpcResponseObj["response"]["result"]
+
+      # NOTE: this part in progress
+      echo "================> communityId: ", communityId, ", metricsType: ", metricsType, ", result: ", result
+
 
   proc asyncCommunityInfoLoaded*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = communityIdAndRpcResponse.parseJson
@@ -1550,6 +1565,29 @@ QtObject:
       let errMsg = e.msg
       error "error loading curated communities: ", errMsg
       self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
+
+  proc collectCommunityMetricsMessagesTimestamps*(self: Service, communityId: string, intervals: string) =
+    echo "-------------> collectCommunityMetricsMessagesTimestamps, itervals: ", intervals
+    let arg = AsyncCollectCommunityMetricsTaskArg(
+      tptr: cast[ByteAddress](asyncCollectCommunityMetricsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncCommunityMetricsLoaded",
+      communityId: communityId,
+      metricsType: CommunityMetricsType.MessagesTimestamps,
+      intervals: parseJson(intervals)
+    )
+    self.threadpool.start(arg)
+
+  proc collectCommunityMetricsMessagesCount*(self: Service, communityId: string, intervals: string) =
+    let arg = AsyncCollectCommunityMetricsTaskArg(
+      tptr: cast[ByteAddress](asyncCollectCommunityMetricsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "asyncCommunityMetricsLoaded",
+      communityId: communityId,
+      metricsType: CommunityMetricsType.MessagesCount,
+      intervals: parseJson(intervals)
+    )
+    self.threadpool.start(arg)
 
   proc requestCommunityInfo*(self: Service, communityId: string, importing = false) =
 

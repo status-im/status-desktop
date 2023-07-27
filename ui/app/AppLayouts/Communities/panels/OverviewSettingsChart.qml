@@ -20,6 +20,21 @@ StatusChartPanel {
     */
     property var model: []
 
+    signal collectCommunityMetricsMessagesTimestamps(var intervals)
+
+    function requestCommunityMetrics() {
+        let intervals = d.selectedTabInfo.modelItems.map(item => {
+            return {
+                startTimestamp: item.start,
+                endTimestamp: item.end
+            }
+        })
+        collectCommunityMetricsMessagesTimestamps(JSON.stringify(intervals))
+    }
+
+    onTimeRangeTabBarIndexChanged: requestCommunityMetrics()
+    Component.onCompleted: requestCommunityMetrics()
+
     QtObject {
         id: d
 

@@ -317,6 +317,9 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
 method cancelRequestToJoinCommunity*(self: Module, communityId: string) =
   self.controller.cancelRequestToJoinCommunity(communityId)
 
+method collectCommunityMetricsMessagesTimestamps*(self: Module, communityId: string, intervals: string) =
+  self.controller.collectCommunityMetricsMessagesTimestamps(communityId, intervals)
+
 method requestCommunityInfo*(self: Module, communityId: string, importing: bool) =
   self.controller.requestCommunityInfo(communityId, importing)
 

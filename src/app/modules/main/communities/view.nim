@@ -481,6 +481,20 @@ QtObject:
   proc cancelRequestToJoinCommunity*(self: View, communityId: string) {.slot.} =
     self.delegate.cancelRequestToJoinCommunity(communityId)
 
+
+  proc getOverviewChartData*(self: View): QVariant {.slot.} =
+    echo "----------------> getOverviewChartData"
+    return newQVariant()
+
+  proc overviewChartDataChanged*(self: View) {.signal.}
+
+  QtProperty[QVariant] overviewChartData:
+    read = getOverviewChartData
+    notify = overviewChartDataChanged
+
+  proc collectCommunityMetricsMessagesTimestamps*(self: View, communityId: string, intervals: string) {.slot.} =
+    self.delegate.collectCommunityMetricsMessagesTimestamps(communityId, intervals)
+
   proc requestCommunityInfo*(self: View, communityId: string, importing: bool) {.slot.} =
     self.delegate.requestCommunityInfo(communityId, importing)
 

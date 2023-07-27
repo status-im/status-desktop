@@ -269,6 +269,9 @@ proc reorderCommunityChat*(
 proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] =
   return self.chatService.getChatsByIds(chatIds)
 
+proc collectCommunityMetricsMessagesTimestamps*(self: Controller, communityId: string, intervals: string) =
+  self.communityService.collectCommunityMetricsMessagesTimestamps(communityId, intervals)
+
 proc requestCommunityInfo*(self: Controller, communityId: string, importing: bool) =
   self.communityService.requestCommunityInfo(communityId, importing)
 

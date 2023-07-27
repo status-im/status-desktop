@@ -25,6 +25,29 @@ const asyncLoadCommunitiesDataTask: Task = proc(argEncoded: string) {.gcsafe, ni
     })
 
 type
+  AsyncCollectCommunityMetricsTaskArg = ref object of QObjectTaskArg
+    communityId: string
+    metricsType: CommunityMetricsType
+    intervals: JsonNode
+
+const asyncCollectCommunityMetricsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncCollectCommunityMetricsTaskArg](argEncoded)
+  try:
+    let response = status_go.collectCommunityMetrics(arg.communityId, arg.metricsType, arg.intervals)
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "metricsType": arg.metricsType,
+      "response": response,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "metricsType": arg.metricsType,
+      "error": e.msg,
+    })
+
+type
   AsyncRequestCommunityInfoTaskArg = ref object of QObjectTaskArg
     communityId: string
     importing: bool
