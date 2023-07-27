@@ -35,6 +35,14 @@ StatusModal {
     onAboutToShow: {
         messageInput.input.edit.forceActiveFocus()
 
+        if (userDisplayName !== "" && userPublicKey !== "") {
+            d.updateContactDetails({
+                                       displayName: userDisplayName,
+                                       largeImage: "",
+                                       userIsEnsVerified: false
+                                   })
+        }
+
         const contactDetails = Utils.getContactDetailsAsJson(userPublicKey, false)
 
         if (contactDetails.displayName !== "") {

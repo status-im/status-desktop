@@ -82,3 +82,6 @@ proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] {.raises: [Except
 proc backupData*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("backupData".prefix, payload)
+
+proc parseSharedUrl*(url: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("parseSharedURL".prefix, %*[url])

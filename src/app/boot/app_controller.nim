@@ -33,6 +33,7 @@ import ../../app_service/service/gif/service as gif_service
 import ../../app_service/service/ens/service as ens_service
 import ../../app_service/service/community_tokens/service as tokens_service
 import ../../app_service/service/network_connection/service as network_connection_service
+import ../../app_service/service/shared_urls/service as shared_urls_service
 
 import ../modules/shared_modules/keycard_popup/module as keycard_shared_module
 import ../modules/startup/module as startup_module
@@ -99,6 +100,7 @@ type
     ensService: ens_service.Service
     tokensService: tokens_service.Service
     networkConnectionService: network_connection_service.Service
+    sharedUrlsService: shared_urls_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -228,7 +230,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.transactionService, result.tokenService, result.settingsService, result.walletAccountService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
   result.networkConnectionService = network_connection_service.newService(statusFoundation.events, result.walletAccountService, result.networkService, result.nodeService)
-
+  result.sharedUrlsService = shared_urls_service.newService(statusFoundation.events, statusFoundation.threadpool)
   # Modules
   result.startupModule = startup_module.newModule[AppController](
     result,
@@ -277,7 +279,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.networkService,
     result.generalService,
     result.keycardService,
-    result.networkConnectionService
+    result.networkConnectionService,
+    result.sharedUrlsService
   )
 
   # Do connections

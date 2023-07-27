@@ -10,6 +10,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
     property var mainModuleInst: typeof mainModule !== "undefined" ? mainModule : null
+    property var sharedUrlsModuleInst: typeof  sharedUrlsModule !== "undefined" ? sharedUrlsModule : null
     property var globalUtilsInst: typeof globalUtils !== "undefined" ? globalUtils : null
     property var communitiesModuleInst: typeof communitiesModule !== "undefined" ? communitiesModule : null
 
@@ -515,6 +516,22 @@ QtObject {
         return communityKey
     }
 
+    function getCommunityDataFromSharedLink(link) {
+        let index = link.lastIndexOf("/c/")
+        if (index === -1) {
+            return null
+        }
+
+        let communityDataString = sharedUrlsModuleInst.parseCommunitySharedUrl(link)
+        try {
+            let communityData = JSON.parse(communityDataString)
+            return communityData
+        } catch (e) {
+            console.warn("Error while parsing community data from url:", e.message)
+            return null
+        }
+    }
+
 
     function changeCommunityKeyCompression(communityKey) {
         return globalUtilsInst.changeCommunityKeyCompression(communityKey)
@@ -667,6 +684,21 @@ QtObject {
         if (text.startsWith(Constants.userLinkPrefix))
             text = text.slice(Constants.userLinkPrefix.length)
         return text
+    }
+
+    function parseContactUrl(link) {
+        let index = link.lastIndexOf("/u/")
+        if (index === -1) {
+            return null
+        }
+
+        let contactDataString = sharedUrlsModuleInst.parseContactSharedUrl(link)
+        try {
+            let contactObj = JSON.parse(contactDataString)
+            return contactObj
+        } catch (e) {
+            return null
+        }
     }
 
     function dropCommunityLinkPrefix(text) {

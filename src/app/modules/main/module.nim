@@ -25,6 +25,8 @@ import communities/module as communities_module
 import node_section/module as node_section_module
 import communities/tokens/models/token_item
 import network_connection/module as network_connection_module
+import shared_urls/module as shared_urls_module
+
 import ../../../app_service/service/contacts/dto/contacts
 
 import ../../../app_service/service/keychain/service as keychain_service
@@ -59,6 +61,7 @@ import ../../../app_service/service/community_tokens/service as community_tokens
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
 import ../../../app_service/service/keycard/service as keycard_service
+import ../../../app_service/service/shared_urls/service as urls_service
 import ../../../app_service/service/network_connection/service as network_connection_service
 import ../../../app_service/common/types
 import ../../../app_service/common/social_links
@@ -102,6 +105,7 @@ type
     keycardSharedModule: keycard_shared_module.AccessInterface
     keycardSharedModuleKeycardSyncPurpose: keycard_shared_module.AccessInterface
     networkConnectionModule: network_connection_module.AccessInterface
+    sharedUrlsModule: shared_urls_module.AccessInterface
     moduleLoaded: bool
     chatsLoaded: bool
     communityDataLoaded: bool
@@ -147,7 +151,8 @@ proc newModule*[T](
   networkService: network_service.Service,
   generalService: general_service.Service,
   keycardService: keycard_service.Service,
-  networkConnectionService: network_connection_service.Service
+  networkConnectionService: network_connection_service.Service,
+  sharedUrlsService: urls_service.Service
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -214,6 +219,7 @@ proc newModule*[T](
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
   result.networkConnectionModule = network_connection_module.newModule(result, events, networkConnectionService)
+  result.sharedUrlsModule = shared_urls_module.newModule(result, events, sharedUrlsService)
 
 method delete*[T](self: Module[T]) =
   self.controller.delete
@@ -233,6 +239,7 @@ method delete*[T](self: Module[T]) =
   if not self.keycardSharedModuleKeycardSyncPurpose.isNil:
     self.keycardSharedModuleKeycardSyncPurpose.delete
   self.networkConnectionModule.delete
+  self.sharedUrlsModule.delete
   self.view.delete
   self.viewVariant.delete
 
@@ -521,6 +528,7 @@ method load*[T](
   # Load wallet last as it triggers events that are listened by other modules
   self.walletSectionModule.load()
   self.networkConnectionModule.load()
+  self.sharedUrlsModule.load()
 
   # Set active section on app start
   # If section is empty or profile then open the loading section until chats are loaded
@@ -1250,6 +1258,16 @@ method onDisplayKeycardSharedModuleFlow*[T](self: Module[T]) =
   self.view.emitDisplayKeycardSharedModuleFlow()
 
 method activateStatusDeepLink*[T](self: Module[T], statusDeepLink: string) =
+  let urlData = self.sharedUrlsModule.parseSharedUrl(statusDeepLink)
+  if urlData.community.communityId != "":
+    self.onStatusUrlRequested(StatusUrlAction.OpenCommunity, urlData.community.communityId, "", "", "")
+    return
+  if urlData.contact.publicKey != "":
+    self.onStatusUrlRequested(StatusUrlAction.DisplayUserProfile, "", "", "", urlData.contact.publicKey)
+    return
+  if urlData.channel.uuid != "":
+    self.onStatusUrlRequested(StatusUrlAction.OpenCommunityChannel, "", urlData.channel.uuid, "", "")
+    return
   let linkToActivate = self.urlsManager.convertExternalLinkToInternal(statusDeepLink)
   self.urlsManager.onUrlActivated(linkToActivate)
 
@@ -1262,3 +1280,4 @@ method windowActivated*[T](self: Module[T]) =
 
 method windowDeactivated*[T](self: Module[T]) =
   self.controller.speedupArchivesImport()
+

@@ -21,17 +21,18 @@ Control {
     property var store
     property string communityId
     property bool loading: false
+    property var communityData
 
     QtObject {
         id: d
 
         property var invitedCommunity
     
-        readonly property string communityName:         !!d.invitedCommunity ? d.invitedCommunity.name : ""
-        readonly property string communityDescription:  !!d.invitedCommunity ? d.invitedCommunity.description : ""
+        readonly property string communityName:         !!d.invitedCommunity ? d.invitedCommunity.name : (communityData ? communityData.displayName : "")
+        readonly property string communityDescription:  !!d.invitedCommunity ? d.invitedCommunity.description : (communityData ? communityData.description : "")
         readonly property string communityImage:        !!d.invitedCommunity ? d.invitedCommunity.image : ""
-        readonly property string communityColor:        !!d.invitedCommunity ? d.invitedCommunity.color : ""
-        readonly property int    communityNbMembers:    !!d.invitedCommunity ? d.invitedCommunity.nbMembers : 0
+        readonly property string communityColor:        !!d.invitedCommunity ? d.invitedCommunity.color : (communityData ? communityData.color : "")
+        readonly property int    communityNbMembers:    !!d.invitedCommunity ? d.invitedCommunity.nbMembers : (communityData ? communityData.membersCount : 0)
         readonly property bool   communityVerified:     false //!!d.invitedCommunity ? d.invitedCommunity.verified : false TODO: add this to the community object if we should support verified communities
         readonly property bool   communityJoined:       !!d.invitedCommunity ? d.invitedCommunity.joined : false
         readonly property bool   communitySpectated:    !!d.invitedCommunity ? d.invitedCommunity.spectated : false
@@ -135,7 +136,7 @@ Control {
                     isImage: true
                 }
 
-                visible: !root.loading
+                visible: d.communityColor && d.communityName
             }
 
             ColumnLayout {
@@ -144,7 +145,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: root.loading ? qsTr("Community data not loaded yet.") : d.communityName
+                    text: d.communityName
                     font.weight: Font.Bold
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     font.pixelSize: 17
@@ -154,7 +155,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: root.loading ? qsTr("Please wait for the unfurl to show") : d.communityDescription
+                    text: d.communityDescription
                     wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                     color: Theme.palette.directColor1
                 }
@@ -162,7 +163,7 @@ Control {
                 StatusBaseText {
                     Layout.fillWidth: true
 
-                    text: root.loading ? "" : qsTr("%n member(s)", "", d.communityNbMembers)
+                    text: qsTr("%n member(s)", "", d.communityNbMembers)
                     font.pixelSize: 13
                     font.weight: Font.Medium
                     color: Theme.palette.baseColor1
@@ -193,6 +194,7 @@ Control {
                     StatusBaseText {
                         anchors.centerIn: parent
                         anchors.verticalCenterOffset: d.radius/2
+                        visible: !joinBtn.loading
                         font: joinBtn.font
                         color: joinBtn.enabled ? joinBtn.textColor : joinBtn.disabledTextColor
                         text: qsTr("Go to Community")
