@@ -4,6 +4,7 @@ import time
 import configs
 import driver
 from gui.elements.base_object import BaseObject
+from scripts.tools.image import Image
 
 _logger = logging.getLogger(__name__)
 
@@ -12,6 +13,7 @@ class QObject(BaseObject):
 
     def __init__(self, name: str):
         super().__init__(name)
+        self._image = Image(self.real_name)
 
     def __str__(self):
         return f'{type(self).__qualname__}({self.symbolic_name})'
@@ -69,6 +71,12 @@ class QObject(BaseObject):
     @property
     def center(self):
         return self.bounds.center()
+
+    @property
+    def image(self) -> Image:
+        if self._image.view is None:
+            self._image.update_view()
+        return self._image
 
     def click(
             self,
