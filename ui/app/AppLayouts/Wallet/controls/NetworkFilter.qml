@@ -49,7 +49,7 @@ StatusComboBox {
             }
             else {
                  // Default value if not specified
-                d.currentModel = root.layer1Networks
+                d.currentModel = root.layer2Networks
                 d.currentIndex = 0
             }
 
