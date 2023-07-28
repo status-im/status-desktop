@@ -109,6 +109,17 @@ SettingsContentBase {
             onGoToAccountOrderView: {
                 stackContainer.currentIndex = accountOrderViewIndex
             }
+            onRunRenameKeypairFlow: {
+                renameKeypairPopup.keyUid = model.keyPair.keyUid
+                renameKeypairPopup.name = model.keyPair.name
+                renameKeypairPopup.accounts = model.keyPair.accounts
+                renameKeypairPopup.active = true
+            }
+            onRunRemoveKeypairFlow: {
+                removeKeypairPopup.keyUid = model.keyPair.keyUid
+                removeKeypairPopup.name = model.keyPair.name
+                removeKeypairPopup.active = true
+            }
         }
 
         NetworksView {
@@ -156,6 +167,17 @@ SettingsContentBase {
             userProfilePublicKey: walletStore.userProfilePublicKey
             onGoBack: stackContainer.currentIndex = mainViewIndex
             onVisibleChanged: if(!visible) root.walletStore.selectedAccount = null
+            onRunRenameKeypairFlow: {
+                renameKeypairPopup.keyUid = keyPair.keyUid
+                renameKeypairPopup.name = keyPair.name
+                renameKeypairPopup.accounts = keyPair.accounts
+                renameKeypairPopup.active = true
+            }
+            onRunRemoveKeypairFlow: {
+                removeKeypairPopup.keyUid = keyPair.keyUid
+                removeKeypairPopup.name = keyPair.name
+                removeKeypairPopup.active = true
+            }
         }
 
         DappPermissionsView {
@@ -178,6 +200,53 @@ SettingsContentBase {
                 height: 28
                 image.source: Style.svg(!!editNetwork.combinedNetwork.prod && !!editNetwork.combinedNetwork.prod.iconUrl ? editNetwork.combinedNetwork.prod.iconUrl: "")
                 image.fillMode: Image.PreserveAspectCrop
+            }
+        }
+
+        Loader {
+            id: renameKeypairPopup
+            active: false
+
+            property string keyUid
+            property string name
+            property var accounts
+
+            sourceComponent: RenameKeypairPopup {
+                accountsModule: root.walletStore.accountsModule
+                keyUid: renameKeypairPopup.keyUid
+                name: renameKeypairPopup.name
+                accounts: renameKeypairPopup.accounts
+
+                onClosed: {
+                    renameKeypairPopup.active = false
+                }
+            }
+
+            onLoaded: {
+                renameKeypairPopup.item.open()
+            }
+        }
+
+        Loader {
+            id: removeKeypairPopup
+            active: false
+
+            property string keyUid
+            property string name
+
+            sourceComponent: ConfirmationDialog {
+                headerSettings.title: qsTr("Confirm %1 Removal").arg(removeKeypairPopup.name)
+
+                confirmationText: qsTr("You will not be able to restore viewing access to any account of this keypair in the future unless you import this keypair again.")
+                confirmButtonLabel: qsTr("Remove keypair")
+                onConfirmButtonClicked: {
+                    root.walletStore.deleteKeypair(removeKeypairPopup.keyUid)
+                    removeKeypairPopup.active = false
+                }
+            }
+
+            onLoaded: {
+                removeKeypairPopup.item.open()
             }
         }
     }

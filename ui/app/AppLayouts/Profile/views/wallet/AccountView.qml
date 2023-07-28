@@ -9,6 +9,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import AppLayouts.Wallet 1.0
 import AppLayouts.Wallet.controls 1.0
+import AppLayouts.Profile.popups 1.0
 
 import shared.popups 1.0
 import shared.panels 1.0
@@ -16,13 +17,14 @@ import utils 1.0
 
 import SortFilterProxyModel 0.2
 
-import "../../popups"
 import "../../controls"
 
 ColumnLayout {
     id: root
 
     signal goBack
+    signal runRenameKeypairFlow()
+    signal runRemoveKeypairFlow()
 
     property var account
     property var keyPair
@@ -36,7 +38,11 @@ ColumnLayout {
         readonly property bool privateKeyAccount: keyPair && keyPair.pairType ? keyPair.pairType === Constants.keycard.keyPairType.privateKeyImport: false
         readonly property string preferredSharingNetworks: !!account ? account.preferredSharingChainIds: ""
         property var preferredSharingNetworksArray: preferredSharingNetworks.split(":").filter(Boolean)
-        onPreferredSharingNetworksChanged: preferredSharingNetworksArray = preferredSharingNetworks.split(":").filter(Boolean)
+        property string preferredSharingNetworkShortNames: walletStore.getNetworkShortNames(preferredSharingNetworks)
+     	onPreferredSharingNetworksChanged: {
+            preferredSharingNetworksArray = preferredSharingNetworks.split(":")
+            preferredSharingNetworkShortNames = walletStore.getNetworkShortNames(preferredSharingNetworks)
+        }
     }
 
     spacing: 0
@@ -103,11 +109,14 @@ ColumnLayout {
             }
             WalletAccountDetailsListItem {
                 Layout.fillWidth: true
+                isInteractive: true
+                moreButtonEnabled: true
                 title: qsTr("Address")
                 subTitle: {
                     let address = root.account && root.account.address ? root.account.address: ""
-                    return WalletUtils.colorizedChainPrefix(walletStore.getNetworkShortNames(d.preferredSharingNetworks)) + address
+                    return WalletUtils.colorizedChainPrefix(d.preferredSharingNetworkShortNames) + address
                 }
+                onButtonClicked: addressMenu.openMenu(this)
             }
             Separator {
                 Layout.fillWidth: true
@@ -126,6 +135,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 keyPair: root.keyPair
                 visible: !d.watchOnlyAccount
+                onButtonClicked: keycardMenu.popup(this, this.width - 40, this.height / 2 + 20)
             }
             Separator {
                 Layout.fillWidth: true
@@ -162,8 +172,11 @@ ColumnLayout {
             WalletAccountDetailsListItem {
                 id: derivationPath
                 Layout.fillWidth: true
+                isInteractive: true
+                copyButtonEnabled: true
                 title: qsTr("Derivation Path")
                 subTitle: root.account ? Utils.getPathForDisplay(root.account.path) : ""
+                onCopyClicked: root.walletStore.copyToClipboard(root.account ? root.account.path : "")
                 visible: !!subTitle && !d.privateKeyAccount && !d.watchOnlyAccount
             }
             Separator {
@@ -257,5 +270,21 @@ ColumnLayout {
             walletStore: root.walletStore
             emojiPopup: root.emojiPopup
         }
+    }
+
+    WalletAddressMenu {
+        id: addressMenu
+        selectedAddress: !!root.account ? root.account.address: ""
+        areTestNetworksEnabled: root.walletStore.areTestNetworksEnabled
+        preferredSharingNetworks: d.preferredSharingNetworkShortNames
+        preferredSharingNetworksArray: d.preferredSharingNetworksArray
+        onCopyToClipboard: root.walletStore.copyToClipboard(address)
+    }
+
+    WalletAccountKeycardMenu {
+        id: keycardMenu
+        keyPair: root.keyPair
+        onRunRenameKeypairFlow: root.runRenameKeypairFlow()
+        onRunRemoveKeypairFlow: root.runRemoveKeypairFlow()
     }
 }

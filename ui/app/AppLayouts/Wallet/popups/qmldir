@@ -2,3 +2,4 @@ NetworkSelectPopup 1.0 NetworkSelectPopup.qml
 ActivityFilterMenu 1.0 ActivityFilterMenu.qml
 ActivityPeriodFilterSubMenu 1.0 filterSubMenus/ActivityPeriodFilterSubMenu.qml
 ActivityTypeFilterSubMenu 1.0 filterSubMenus/ActivityTypeFilterSubMenu.qml
+ReceiveModal 1.0 ReceiveModal.qml

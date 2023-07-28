@@ -104,4 +104,8 @@ QtObject {
         }
         return prefChains
     }
+
+    function copyToClipboard(textToCopy) {
+        globalUtils.copyToClipboard(textToCopy)
+    }
 }

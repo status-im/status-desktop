@@ -25,6 +25,8 @@ Column {
     signal goToAccountOrderView()
     signal goToAccountView(var account, var keypair)
     signal goToDappPermissionsView()
+    signal runRenameKeypairFlow(var model)
+    signal runRemoveKeypairFlow(var model)
 
     spacing: 8
 
@@ -108,65 +110,9 @@ Column {
                 includeWatchOnlyAccount: walletStore.includeWatchOnlyAccount
                 onGoToAccountView: root.goToAccountView(account, keyPair)
                 onToggleIncludeWatchOnlyAccount: walletStore.toggleIncludeWatchOnlyAccount()
-                onRunRenameKeypairFlow: {
-                    renameKeypairPopup.keyUid = model.keyPair.keyUid
-                    renameKeypairPopup.name = model.keyPair.name
-                    renameKeypairPopup.accounts = model.keyPair.accounts
-                    renameKeypairPopup.active = true
-                }
-                onRunRemoveKeypairFlow: {
-                    removeKeypairPopup.keyUid = model.keyPair.keyUid
-                    removeKeypairPopup.name = model.keyPair.name
-                    removeKeypairPopup.active = true
-                }
+                onRunRenameKeypairFlow: root.runRenameKeypairFlow(model)
+                onRunRemoveKeypairFlow: root.runRemoveKeypairFlow(model)
             }
-        }
-    }
-
-    Loader {
-        id: renameKeypairPopup
-        active: false
-
-        property string keyUid
-        property string name
-        property var accounts
-
-        sourceComponent: RenameKeypairPopup {
-            accountsModule: root.walletStore.accountsModule
-            keyUid: renameKeypairPopup.keyUid
-            name: renameKeypairPopup.name
-            accounts: renameKeypairPopup.accounts
-
-            onClosed: {
-                renameKeypairPopup.active = false
-            }
-        }
-
-        onLoaded: {
-            renameKeypairPopup.item.open()
-        }
-    }
-
-    Loader {
-        id: removeKeypairPopup
-        active: false
-
-        property string keyUid
-        property string name
-
-        sourceComponent: ConfirmationDialog {
-            headerSettings.title: qsTr("Confirm %1 Removal").arg(removeKeypairPopup.name)
-
-            confirmationText: qsTr("You will not be able to restore viewing access to any account of this keypair in the future unless you import this keypair again.")
-            confirmButtonLabel: qsTr("Remove keypair")
-            onConfirmButtonClicked: {
-                root.walletStore.deleteKeypair(removeKeypairPopup.keyUid)
-                removeKeypairPopup.active = false
-            }
-        }
-
-        onLoaded: {
-            removeKeypairPopup.item.open()
         }
     }
 }
