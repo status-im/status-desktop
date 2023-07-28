@@ -25,11 +25,6 @@ StatusListItem {
         Disabled
     }
 
-    QtObject {
-        id: d
-        property SingleSelectionInfo tmpObject: SingleSelectionInfo { enabled: true }
-    }
-
     objectName: model.chainName
     title: model.chainName
     asset.height: 24
@@ -40,7 +35,7 @@ StatusListItem {
         if(!root.singleSelection.enabled) {
             checkBox.nextCheckState()
         } else if(!radioButton.checked) {   // Don't allow uncheck
-            radioButton.toggle()
+            root.toggleNetwork(({chainId: model.chainId, chainName: model.chainName, iconUrl: model.iconUrl}), root.networkModel, model.index)
         }
     }
 
@@ -77,19 +72,8 @@ StatusListItem {
             ButtonGroup.group: root.radioButtonGroup
             checked: root.singleSelection.currentModel === root.networkModel && root.singleSelection.currentIndex === model.index
 
-            property SingleSelectionInfo exchangeObject: null
-            function setNewInfo(networkModel, index) {
-                d.tmpObject.currentModel = networkModel
-                d.tmpObject.currentIndex = index
-                exchangeObject = d.tmpObject
-                d.tmpObject = root.singleSelection
-                root.singleSelection = exchangeObject
-                exchangeObject = null
-            }
-
-            onCheckedChanged: {
-                if(checked && (root.singleSelection.currentModel !== root.networkModel || root.singleSelection.currentIndex !== model.index)) {
-                    setNewInfo(root.networkModel, model.index)
+            onToggled: {
+                if(checked) {
                     root.toggleNetwork(({chainId: model.chainId, chainName: model.chainName, iconUrl: model.iconUrl}), root.networkModel, model.index)
                 }
             }
