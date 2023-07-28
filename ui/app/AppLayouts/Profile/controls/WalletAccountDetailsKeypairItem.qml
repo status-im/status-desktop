@@ -3,11 +3,16 @@ import QtQuick 2.13
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
 
 StatusListItem {
+    id: root
+
     property var keyPair
+
+    signal buttonClicked()
 
     title: keyPair ? keyPair.pairType === Constants.keycard.keyPairType.watchOnly ? qsTr("Watch only") : keyPair.name: ""
     titleAsideText: keyPair && keyPair.pairType === Constants.keycard.keyPairType.profile ? Utils.getElidedCompressedPk(keyPair.pubKey): ""
@@ -21,7 +26,12 @@ StatusListItem {
         charactersLen: 2
         isLetterIdenticon: !!keyPair && !keyPair.icon && !asset.name.toString()
     }
-    color: Theme.palette.transparent
+    color: {
+        if (sensor.containsMouse || root.highlighted) {
+            return Theme.palette.baseColor2
+        }
+        return Theme.palette.transparent
+    }
     ringSettings {
         ringSpecModel: keyPair && keyPair.pairType === Constants.keycard.keyPairType.profile ? Utils.getColorHashAsJson(root.userProfilePublicKey) : []
         ringPxSize: Math.max(asset.width / 24.0)
@@ -42,4 +52,17 @@ StatusListItem {
         titleText.font.pixelSize: 12
         titleText.color: Theme.palette.indirectColor1
     }
+    components: [
+        StatusRoundButton {
+            width: 32
+            height: 32
+            radius: 8
+            visible: root.sensor.containsMouse
+            type: StatusRoundButton.Type.Quinary
+            icon.name: "more"
+            icon.color: hovered ? Theme.palette.directColor1 : Theme.palette.baseColor1
+            icon.hoverColor: Theme.palette.primaryColor3
+            onClicked: root.buttonClicked()
+        }
+    ]
 }
