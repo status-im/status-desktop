@@ -161,6 +161,9 @@ method moveAccountFinally*(self: Module, fromPosition: int, toPosition: int) =
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)
 
+method deleteKeypair*(self: Module, keyUid: string) =
+  self.controller.deleteKeypair(keyUid)
+
 method toggleIncludeWatchOnlyAccount*(self: Module) =
   self.controller.toggleIncludeWatchOnlyAccount()
 

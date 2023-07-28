@@ -7,6 +7,8 @@ import shared.panels 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
+
+import shared.popups 1.0
 import shared.popups.addaccount 1.0
 
 import "../../stores"
@@ -112,6 +114,11 @@ Column {
                     renameKeypairPopup.accounts = model.keyPair.accounts
                     renameKeypairPopup.active = true
                 }
+                onRunRemoveKeypairFlow: {
+                    removeKeypairPopup.keyUid = model.keyPair.keyUid
+                    removeKeypairPopup.name = model.keyPair.name
+                    removeKeypairPopup.active = true
+                }
             }
         }
     }
@@ -137,6 +144,29 @@ Column {
 
         onLoaded: {
             renameKeypairPopup.item.open()
+        }
+    }
+
+    Loader {
+        id: removeKeypairPopup
+        active: false
+
+        property string keyUid
+        property string name
+
+        sourceComponent: ConfirmationDialog {
+            headerSettings.title: qsTr("Confirm %1 Removal").arg(removeKeypairPopup.name)
+
+            confirmationText: qsTr("You will not be able to restore viewing access to any account of this keypair in the future unless you import this keypair again.")
+            confirmButtonLabel: qsTr("Remove keypair")
+            onConfirmButtonClicked: {
+                root.walletStore.deleteKeypair(removeKeypairPopup.keyUid)
+                removeKeypairPopup.active = false
+            }
+        }
+
+        onLoaded: {
+            removeKeypairPopup.item.open()
         }
     }
 }

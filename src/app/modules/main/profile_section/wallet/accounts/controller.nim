@@ -37,6 +37,9 @@ proc renameKeypair*(self: Controller, keyUid: string, name: string) =
 proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
 
+proc deleteKeypair*(self: Controller, keyUid: string) =
+  self.walletAccountService.deleteKeypair(keyUid)
+
 proc getKeycardsWithSameKeyUid*(self: Controller, keyUid: string): seq[KeycardDto] =
   return self.walletAccountService.getKeycardsWithSameKeyUid(keyUid)
 

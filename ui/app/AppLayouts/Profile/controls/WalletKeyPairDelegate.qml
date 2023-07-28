@@ -20,6 +20,7 @@ Rectangle {
     signal goToAccountView(var account)
     signal toggleIncludeWatchOnlyAccount()
     signal runRenameKeypairFlow()
+    signal runRemoveKeypairFlow()
 
     QtObject {
         id: d
@@ -125,7 +126,7 @@ Rectangle {
                                 icon.name: "delete"
                                 icon.color: Theme.palette.dangerColor1
                                 onTriggered: {
-                                    console.warn("TODO: remove master keys and associated accounts")
+                                    root.runRemoveKeypairFlow()
                                 }
                             }
                         }

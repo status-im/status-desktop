@@ -556,6 +556,22 @@ QtObject:
     except Exception as e:
       error "error: ", procName="deleteAccount", errName = e.name, errDesription = e.msg
 
+  proc deleteKeypair*(self: Service, keyUid: string) =
+    try:
+      let localKeypairRelatedAccounts = self.getWalletAccountsForKeypair(keyUid)
+      if localKeypairRelatedAccounts.len == 0:
+        error "there are no known accounts", keyUid=keyUid, procName="deleteKeypair"
+        return
+      let response = status_go_accounts.deleteKeypair(keyUid)
+      if not response.error.isNil:
+        error "status-go error", procName="deleteKeypair", errCode=response.error.code, errDesription=response.error.message
+        return
+      self.updateAccountsPositions()
+      for acc in localKeypairRelatedAccounts:
+        self.removeAccountFromLocalStoreAndNotify(acc.address)
+    except Exception as e:
+      error "error: ", procName="deleteKeypair", errName = e.name, errDesription = e.msg
+
   proc getCurrency*(self: Service): string =
     return self.settingsService.getCurrency()
 

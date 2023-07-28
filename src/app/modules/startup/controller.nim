@@ -474,6 +474,7 @@ proc loginLocalPairingAccount*(self: Controller) =
     self.accountsService.login(self.localPairingStatus.account, self.localPairingStatus.password)
   else:
     var kcEvent = KeycardEvent()
+    kcEvent.keyUid = self.localPairingStatus.account.keyUid
     kcEvent.whisperKey.privateKey = self.localPairingStatus.chatKey
     kcEvent.encryptionKey.publicKey = self.localPairingStatus.password
     discard self.accountsService.loginAccountKeycard(self.localPairingStatus.account, kcEvent)
