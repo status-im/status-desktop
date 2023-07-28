@@ -37,6 +37,10 @@ QtObject {
         return accountsModule.deleteAccount(address)
     }
 
+    function deleteKeypair(keyUid) {
+        return accountsModule.deleteKeypair(keyUid)
+    }
+
     function updateAccount(address, accountName, colorId, emoji) {
         return accountsModule.updateAccount(address, accountName, colorId, emoji)
     }

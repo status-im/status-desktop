@@ -53,6 +53,9 @@ QtObject:
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)
 
+  proc deleteKeypair*(self: View, keyUid: string) {.slot.} =
+    self.delegate.deleteKeypair(keyUid)
+
   proc keyPairModel*(self: View): KeyPairModel =
     return self.keyPairModel
 
