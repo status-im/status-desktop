@@ -54,7 +54,9 @@ class ExecutableAut(AbstractAut):
         return self
 
     def close(self):
-        local_system.kill_process(self.fp.name)
+        # https://github.com/status-im/desktop-qa-automation/issues/85
+        # local_system.kill_process(self.fp.name)
+        pass
 
 
 class StatusAut(ExecutableAut):
