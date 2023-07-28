@@ -68,7 +68,7 @@ SplitView {
                     id: addRadioButton
 
                     readonly property string textContent:
-                        ModelsData.descriptions._short_
+                        ModelsData.descriptions.shortLoremIpsum
 
                     text: "Short text"
                     checked: true
@@ -77,7 +77,7 @@ SplitView {
                     id: updateRadioButton
 
                     readonly property string textContent:
-                        ModelsData.descriptions.medium
+                        ModelsData.descriptions.mediumLoremIpsum
 
                     text: "Long text"
                 }

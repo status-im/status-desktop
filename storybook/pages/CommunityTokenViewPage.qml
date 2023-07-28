@@ -262,7 +262,7 @@ SplitView {
 
                             Layout.fillWidth: true
 
-                            text: ModelsData.descriptions.medium
+                            text: ModelsData.descriptions.mediumLoremIpsum
                         }
 
                         Label {

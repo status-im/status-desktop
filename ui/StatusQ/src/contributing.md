@@ -148,6 +148,119 @@ Popup {
 }
 ```
 
+### StatusScrollView
+
+> A presenation on using `StatusScrollView` can be found [here](https://docs.google.com/presentation/d/1ZZeg9j2fZMV-iHreu_Wsl1u6D9POH7SlUO78ZXNj-AI).
+
+#### Basic usage
+
+```qml
+StatusScrollView {
+    anchors.fill: parent // Give the SceollView some size
+
+    // - No need to specify  contentWidth and contentHeight. 
+    // For a single child item it will be calculated automatically from implicit size of the item.
+    // The item must have implicit size specified. Not width/height.
+
+    Image {
+        source: "https://placekitten.com/400/600"
+    }
+}
+```
+
+#### Filling width
+
+```qml
+StatusScrollView {
+    id: scrollView
+    anchors.fill: parent
+    contentWidth: availableWidth // Bind ScrollView.contentWidth to availableWidth
+
+    ColumnLayout {
+        width: scrollView.availableWidth // Bind content width to  availableWidth
+    }
+}
+```
+
+#### In a popup
+
+1. Use when `StatusScrollView` is the _only direct child_ of popup's `contentItem`.
+2. If you have other items outside the scroll view, you will have to manually apply paddings to them as well.
+
+```qml
+StatusModal {
+    padding: 0 // Use paddings of StatusScrollView
+
+    StatusScrolLView {
+        id: scrollView
+
+        anchors.fill: parent
+        implicitWidth: 400
+        contentWidth: availableWidth
+        padding: 16 // Use padding of StatusScrollView, not StatusModal
+
+        Text {
+            width: scrollView.availableWidth
+            wrapMode: Text.WrapAnywhere
+            text: "long text here"
+        }
+    }
+}
+
+```
+
+#### Deep in a popup
+
+1. Use when `StatusScrollView` or `StatusListView` is not a direct child of `contentItem`, or it's not the only child.
+2. All popup contents are aligned to given paddings, but the scroll bar doesn't overlay the content and is positioned right inside the padding.
+
+```qml
+StatusModal {
+    padding: 16 // Use popup paddings
+
+    ColumnLayout {
+        anchors.fill: parent
+        
+        Text {
+            Layout.fillWidth: true
+            text: "This header is fixed and not scrollable"
+        }
+
+        Item {
+            id: scrollViewWrapper
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            implicitWidth: scrollView.implicitWidth
+            implicitHeight: scrollView.implicitHeight
+
+            StatusScrollView {
+                id: scrollView
+
+                anchors.fill: parent
+                contentWidth: availableWidth
+                padding: 0 // Use popup paddings
+
+                // Detach scrollbar
+                ScrollBar.vertical: StatusScrollBar {
+                    parent: scrollViewWrapper
+                    anchors.top: scrollView.top
+                    anchors.bottom: scrollView.bottom
+                    anchors.left: scrollView.right
+                    anchors.leftMargin: 1
+                }
+
+                Text {
+                    width: scrollView.availableWidth
+                    wrapMode: Text.WrapAnywhere
+                    text: "long scrollable text here"
+                }
+            }
+        }
+    }
+}
+```
+
 ## Testing
 
 Test in isolation

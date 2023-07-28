@@ -19,8 +19,9 @@ SplitView {
     QtObject {
         id: d
 
-        property string longText: "facilisis magna etiam tempor orci eu lobortis elementum nibh tellus molestie nunc non blandit massa enim nec dui nunc mattis enim ut tellus elementum sagittis vitae et leo duis ut diam quam nulla porttitor massa id neque aliquam vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus et magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies leo integer malesuada nunc vel risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est velit egestas dui id ornare arcu odio ut sem nulla pharetra diam sit amet nisl suscipit adipiscing bibendum est ultricies integer quis auctor elit sed vulputate mi sit amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada proin libero nunc consequat interdum varius sit amet mattis vulputate enim nulla aliquet porttitor lacus luctus accumsan tortor posuere ac ut consequat semper viverra nam libero justo laoreet sit amet cursus sit amet dictum sit amet justo donec enim diam vulputate ut pharetra sit amet aliquam id diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus turpis in eu mi bibendum neque egestas congue quisque egestas diam in arcu cursus euismod quis viverra nibh cras pulvinar mattis nunc sed blandit libero volutpat sed cras ornare arcu dui vivamus arcu felis bibendum ut tristique et egestas quis ipsum suspendisse ultrices gravida dictum fusce ut placerat orci nulla pellentesque dignissim enim sit amet venenatis urna cursus eget nunc scelerisque viverra mauris in aliquam sem fringilla ut morbi tincidunt augue interdum velit euismod in pellentesque massa placerat duis ultricies lacus sed turpis tincidunt id aliquet risus feugiat in ante metus dictum at tempor commodo ullamcorper a lacus vestibulum sed arcu non odio euismod lacinia at quis risus sed vulputate odio ut enim blandit volutpat maecenas volutpat blandit aliquam etiam erat velit scelerisque in dictum non consectetur a erat nam at lectus urna duis convallis convallis tellus id interdum velit laoreet id donec ultrices tincidunt arcu non sodales neque sodales ut etiam sit amet nisl purus in mollis nunc sed id semper risus in hendrerit gravida rutrum quisque non tellus orci ac auctor augue mauris augue neque gravida in fermentum et sollicitudin ac orci phasellus"
+        property string longText: ModelsData.descriptions.longLoremIpsum.repeat(5)
         readonly property bool isRectangle: contentComboBox.currentValue === "rectangle"
+        readonly property bool isImage: contentComboBox.currentValue === "image"
         readonly property bool isText: contentComboBox.currentValue === "text"
     }
 
@@ -28,41 +29,73 @@ SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
 
-        StatusScrollView {
-            id: scrolView1
+        Item {
             SplitView.fillWidth: true
             SplitView.fillHeight: true
-            contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
-
-            visible: d.isRectangle
 
             Rectangle {
-                gradient: Gradient.NightFade
-                implicitWidth: widthFillCheckBox.checked ? scrolView1.availableWidth : widthSpinBox.value
-                implicitHeight: heightFillCheckBox.checked ? scrolView1.availableHeight : heightSpinBox.value
-            }
-        }
+                anchors.centerIn: parent
+                width: 600
+                height: 600
 
-        StatusScrollView {
-            id: scrollView2
-            SplitView.fillWidth: true
-            SplitView.fillHeight: true
-            contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
+                border.color: "black"
+                border.width: 1
 
-            visible: d.isText
+                StatusScrollView {
+                    id: scrolView1
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
 
-            Text {
-                width: widthFillCheckBox.checked ? scrollView2.availableWidth : widthSpinBox.value
-                wrapMode: Text.WrapAnywhere
-                text: d.longText
+                    visible: d.isRectangle
+
+                    Rectangle {
+                        gradient: Gradient.NightFade
+                        implicitWidth: widthFillCheckBox.checked ? scrolView1.availableWidth : widthSpinBox.value
+                        implicitHeight: heightFillCheckBox.checked ? scrolView1.availableHeight : heightSpinBox.value
+                    }
+                }
+
+                StatusScrollView {
+                    id: scrollView3
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
+
+                    visible: d.isImage
+
+                    Image {
+                        width: widthFillCheckBox.checked ? scrollView3.availableWidth : widthSpinBox.value
+                        source: "https://placekitten.com/900/900"
+                    }
+                }
+
+                StatusScrollView {
+                    id: scrollView2
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    contentWidth: widthFillCheckBox.checked ? availableWidth : widthSpinBox.value
+
+                    visible: d.isText
+
+                    Text {
+                        width: widthFillCheckBox.checked ? scrollView2.availableWidth : widthSpinBox.value
+                        wrapMode: Text.WrapAnywhere
+                        text: d.longText
+                    }
+                }
             }
         }
 
         StatusModal {
             id: modal
-            anchors.centerIn: parent
 
+            anchors.centerIn: parent
             padding: 0
+            destroyOnClose: false
+
+            headerSettings.title: "StatusScrollView"
+            showFooter: false
 
             StatusScrollView {
                 id: modalScrollView
@@ -83,6 +116,10 @@ SplitView {
 
             anchors.centerIn: parent
             padding: 16
+            destroyOnClose: false
+
+            headerSettings.title: "StatusScrollView (detached scrollbars)"
+            showFooter: false
 
             ColumnLayout {
                 anchors.fill: parent
@@ -137,23 +174,47 @@ SplitView {
 
             logsView.logText: logs.logText
 
-            RowLayout {
-                anchors.centerIn: parent
+            ColumnLayout {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
-                Button {
-                    Layout.fillHeight: true
-                    text: "StatusModal"
-                    onClicked: {
-                        modal.open()
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Button {
+                        Layout.fillHeight: true
+                        text: "StatusModal"
+                        onClicked: {
+                            modal.open()
+                        }
+                    }
+                    Button {
+                        Layout.fillHeight: true
+                        text: "StatusModal\n(detached bar)"
+                        onClicked: {
+                            modal2.open()
+                        }
                     }
                 }
-                Button {
-                    Layout.fillHeight: true
-                    text: "StatusModal\n(detached bar)"
-                    onClicked: {
-                        modal2.open()
+
+                Label {
+                    id: slidesLabel
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.MarkdownText
+                    text: "Please, read our [contributing guide](https://github.com/status-im/status-desktop/blob/master/ui/StatusQ/src/contributing.md#StatusScrollView) (or checkout a [presenation](https://docs.google.com/presentation/d/1ZZeg9j2fZMV-iHreu_Wsl1u6D9POH7SlUO78ZXNj-AI)) about using `StatusScrollView`"
+                    onLinkActivated: (link) => {
+                        Qt.openUrlExternally(link)
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        visible: !!slidesLabel.hoveredLink
+                        acceptedButtons: Qt.NoButton
                     }
                 }
+
             }
         }
     }
@@ -174,7 +235,7 @@ SplitView {
                     Layout.columnSpan: 2
                     Layout.fillWidth: true
                     Layout.bottomMargin: 20
-                    model: ["rectangle", "text"]
+                    model: ["image", "rectangle", "text"]
                 }
 
                 Label {
@@ -182,7 +243,6 @@ SplitView {
                 }
                 CheckBox {
                     id: widthFillCheckBox
-                    checked: true
                 }
 
                 Label {
@@ -193,7 +253,7 @@ SplitView {
                     enabled: !widthFillCheckBox.checked
                     editable: true
                     height: 30
-                    value: 500
+                    value: 900
                     stepSize: 100
                     from: 0
                     to: 1000
@@ -205,7 +265,6 @@ SplitView {
                 CheckBox {
                     id: heightFillCheckBox
                     checked: false
-                    enabled: d.isRectangle
                 }
 
                 Label {
@@ -214,7 +273,6 @@ SplitView {
                 SpinBox {
                     id: heightSpinBox
                     editable: true
-                    enabled: d.isRectangle
                     height: 30
                     value: 800
                     stepSize: 100
