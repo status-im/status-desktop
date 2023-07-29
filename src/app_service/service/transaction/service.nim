@@ -123,8 +123,7 @@ QtObject:
 
   proc getPendingTransactions*(self: Service): seq[TransactionDto] =
     try:
-      let chainIds = self.networkService.getNetworks().map(a => a.chainId)
-      let response = backend.getPendingTransactionsByChainIDs(chainIds).result
+      let response = backend.getPendingTransactions().result
       if (response.kind == JArray and response.len > 0):
         return response.getElems().map(x => x.toPendingTransactionDto())
 
@@ -192,12 +191,6 @@ QtObject:
       slot: "onFetchDecodedTxData",
     )
     self.threadpool.start(arg)
-
-  proc watchPendingTransactions*(self: Service): seq[TransactionDto] =
-    let pendingTransactions = self.getPendingTransactions()
-    for tx in pendingTransactions:
-      self.watchTransaction(tx.txHash, tx.fromAddress, tx.to, tx.typeValue, tx.input, tx.chainId, track = false)
-    return pendingTransactions
 
   proc createApprovalPath*(self: Service, route: TransactionPathDto, from_addr: string, toAddress: Address, gasFees: string): TransactionBridgeDto =
     var txData = TransactionDataDto()

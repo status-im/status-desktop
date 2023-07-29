@@ -98,8 +98,8 @@ rpc(getTokensBalancesForChainIDs, "wallet"):
   accounts: seq[string]
   tokens: seq[string]
 
-rpc(getPendingTransactionsByChainIDs, "wallet"):
-  chainIds: seq[int]
+rpc(getPendingTransactions, "wallet"):
+  discard
 
 type
   TransactionIdentity* = ref object
