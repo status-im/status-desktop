@@ -206,6 +206,7 @@ StatusDialog {
 
                     RowLayout {
                         spacing: 8
+                        Layout.preferredHeight: 44
                         StatusBaseText {
                             id: modalHeader
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
