@@ -73,7 +73,6 @@ Item {
     StatusComboBox {
         id: comboBox
         objectName: "assetSelectorButton"
-        height: 34
 
         control.padding: 4
         control.popup.width: 492
@@ -129,9 +128,9 @@ Item {
             StatusIcon {
                 Layout.leftMargin: -3
                 Layout.alignment: Qt.AlignVCenter
+                Layout.preferredWidth: 16
+                Layout.preferredHeight: 16
                 icon: "chevron-down"
-                width: 16
-                height: 16
                 color: Theme.palette.miscColor1
                 visible: d.isTokenSelected
             }
