@@ -222,6 +222,8 @@ StatusScrollView {
             model: root.tokenOwnersModel
             tokenName: root.name
             showRemotelyDestructMenuItem: !root.isAssetView && root.remotelyDestruct
+            isAirdropEnabled: root.deploymentCompleted &&
+                              (token.infiniteSupply || token.remainingTokens > 0)
 
             Layout.topMargin: Style.current.padding
             Layout.fillWidth: true
