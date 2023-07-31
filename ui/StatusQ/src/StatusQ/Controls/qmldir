@@ -57,3 +57,4 @@ StatusLinkText 0.1 StatusLinkText.qml
 StatusImageSelector 0.1 StatusImageSelector.qml
 StatusColorRadioButton 0.1 StatusColorRadioButton.qml
 StatusBlockProgressBar 0.1 StatusBlockProgressBar.qml
+StatusWarningBox 0.1 StatusWarningBox.qml

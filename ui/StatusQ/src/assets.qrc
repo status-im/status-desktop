@@ -10405,5 +10405,6 @@
         <file>assets/twemoji/svg/e50a.svg</file>
         <file>assets/twemoji/LICENSE</file>
         <file>assets/twemoji/twemoji.js</file>
+        <file>assets/img/icons/caution.svg</file>
     </qresource>
 </RCC>

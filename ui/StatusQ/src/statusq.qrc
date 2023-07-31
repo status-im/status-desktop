@@ -224,5 +224,6 @@
         <file>StatusQ/Core/Utils/big.min.mjs</file>
         <file>StatusQ/Controls/StatusBlockProgressBar.qml</file>
         <file>StatusQ/Components/StatusInfoBoxPanel.qml</file>
+        <file>StatusQ/Controls/StatusWarningBox.qml</file>
     </qresource>
 </RCC>

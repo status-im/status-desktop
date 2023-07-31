@@ -23,13 +23,24 @@ StatusDialog {
     QtObject {
         id: d
         property string importErrorMessage
-        readonly property bool communityFound: (d.isPublicKey && !!d.communityDetails)
-        readonly property var communityDetails: root.store.getCommunityDetails(publicKey)
+
+        readonly property bool communityFound: (d.communityDetails !== null && !!d.communityDetails.name)
+        readonly property var communityDetails: {
+            if (isInputValid) {
+                let key = isPublicKey ? Utils.getCompressedPk(publicKey) :
+                          root.store.getCommunityPublicKeyFromPrivateKey(inputKey);
+                return root.store.getCommunityDetails(key);
+            } else {
+                return null;
+            }
+        }
+
         readonly property string inputErrorMessage: isInputValid ? "" : qsTr("Invalid key")
         readonly property string errorMessage: importErrorMessage || inputErrorMessage
         readonly property string inputKey: keyInput.text.trim()
         readonly property bool isPrivateKey: (Utils.isPrivateKey(inputKey))
         readonly property bool isPublicKey: (publicKey !== "")
+        readonly property string privateKey: inputKey
         readonly property string publicKey: {
             if (!Utils.isStatusDeepLink(inputKey)) {
                 const key = Utils.dropCommunityLinkPrefix(inputKey)
@@ -49,19 +60,15 @@ StatusDialog {
         rightButtons: ObjectModel {
             StatusButton {
                 id: importButton
-                enabled: d.isInputValid
-                loading: (d.isPublicKey && !d.communityFound)
-                text: d.isPrivateKey ? qsTr("Make this an Owner Node")
-                                     : qsTr("Import")
+                enabled: (d.isInputValid && (d.isPrivateKey && d.communityFound ? agreeToKeepOnline.checked : true))
+                loading: (enabled && !d.communityFound)
+                text: !d.publicKey ? qsTr("Make this device the control node for %1").arg((!loading && !!d.communityDetails) ? d.communityDetails.name : "")
+                                   : qsTr("Import")
                 onClicked: {
                     if (d.isPrivateKey) {
-                        const communityKey = d.inputKey
-                        if (!communityKey.startsWith("0x")) {
-                            communityKey = "0x" + communityKey;
-                        }
-                        root.store.importCommunity(communityKey);
+                        root.store.importCommunity(d.privateKey);
                         root.close();
-                    } else if (d.communityFound) {
+                    } else if (d.isPublicKey) {
                         root.joinCommunity(d.publicKey, d.communityDetails);
                     }
                 }
@@ -69,65 +76,99 @@ StatusDialog {
         }
     }
 
-    ColumnLayout {
+
+    StatusScrollView {
+        id: scrollContent
         anchors.fill: parent
-        spacing: Style.current.padding
+        anchors.leftMargin: Style.current.halfPadding
+        contentWidth: (root.width-Style.current.bigPadding-Style.current.padding)
+        padding: 0
 
-        StatusBaseText {
-            id: infoText1
-            Layout.fillWidth: true
-            text: qsTr("Enter the public key of the community you wish to access, or enter the private key of a community you own. Remember to always keep any private key safe and never share a private key with anyone else.")
-            wrapMode: Text.WordWrap
-            font.pixelSize: 13
-            color: Theme.palette.baseColor1
-        }
+        ColumnLayout {
+            width: (scrollContent.width-Style.current.padding)
+            spacing: Style.current.halfPadding
 
-        StatusBaseText {
-            id: inputLabel
-            text: qsTr("Community key")
-            color: Theme.palette.directColor1
-            font.pixelSize: 15
-        }
-
-        StatusTextArea {
-            id: keyInput
-            Layout.fillWidth: true
-            implicitHeight: 110
-            placeholderText: "0x0..."
-            wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
-            onTextChanged: d.importErrorMessage = ""
-        }
-        RowLayout {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            StatusChatInfoButton {
-                visible: (d.communityFound && d.isPublicKey)
-                title: !!d.communityDetails.name ? d.communityDetails.name : ""
-                subTitle: !!d.communityDetails.nbMembers ? qsTr("%n member(s)", "", d.communityDetails.nbMembers) : ""
-                asset.emoji: "1f918"
-                asset.emojiSize: "24x24"
-                asset.name: !!d.communityDetails.image ? d.communityDetails.image : ""
-                asset.isImage: (asset.name !== "")
-                asset.color: !!d.communityDetails.color ? d.communityDetails.color : ""
-            }
-            Item { Layout.fillWidth: true }
             StatusBaseText {
-                id: detectionLabel
-                Layout.alignment: Qt.AlignRight
+                id: infoText1
+                Layout.fillWidth: true
+                text: qsTr("Enter the public key of the community you wish to access, or enter the private key of a community you own. Remember to always keep any private key safe and never share a private key with anyone else.")
+                wrapMode: Text.WordWrap
                 font.pixelSize: 13
-                visible: keyInput.text.trim() !== ""
-                text: {
-                    if (d.errorMessage !== "") {
-                        return d.errorMessage
-                    }
-                    if (d.isPrivateKey) {
-                        return qsTr("Private key detected")
-                    }
-                    if (d.isPublicKey) {
-                        return qsTr("Public key detected")
-                    }
+                color: Theme.palette.baseColor1
+            }
+
+            StatusBaseText {
+                id: inputLabel
+                text: qsTr("Community key")
+                color: Theme.palette.directColor1
+                font.pixelSize: 15
+            }
+
+            StatusTextArea {
+                id: keyInput
+                Layout.fillWidth: true
+                implicitHeight: 108
+                placeholderText: "0x0..."
+                wrapMode: TextEdit.WrapAtWordBoundaryOrAnywhere
+                onTextChanged: d.importErrorMessage = ""
+            }
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.minimumHeight: 46
+                Layout.maximumHeight: 46
+                StatusChatInfoButton {
+                    visible: d.communityFound
+                    title: visible ? d.communityDetails.name : ""
+                    subTitle: visible ? qsTr("%n member(s)", "", d.communityDetails.nbMembers) : ""
+                    asset.name: visible ? d.communityDetails.image : ""
+                    asset.isImage: (asset.name !== "")
+                    asset.color: visible ? d.communityDetails.color : ""
                 }
-                color: d.errorMessage === "" ? Theme.palette.successColor1 : Theme.palette.dangerColor1
+                Item { Layout.fillWidth: true }
+                StatusBaseText {
+                    id: detectionLabel
+                    Layout.alignment: Qt.AlignRight
+                    font.pixelSize: 13
+                    visible: keyInput.text.trim() !== ""
+                    text: {
+                        if (d.errorMessage !== "") {
+                            return d.errorMessage
+                        }
+                        if (d.isPrivateKey) {
+                            return qsTr("Private key detected")
+                        }
+                        if (d.isPublicKey) {
+                            return qsTr("Public key detected")
+                        }
+                    }
+                    color: d.errorMessage === "" ? Theme.palette.successColor1 : Theme.palette.dangerColor1
+                }
+            }
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                visible: (d.communityFound && d.isPrivateKey)
+                Layout.topMargin: 12
+                spacing: Style.current.padding
+                StatusWarningBox {
+                    Layout.fillWidth: true
+                    icon: "caution"
+                    text: qsTr("Another device might currently have the control node for this Community. Running multiple control nodes will cause unforeseen issues. Make sure you delete the private key in that other device in the community management tab.")
+                    bgColor: borderColor
+                }
+                StatusDialogDivider { Layout.fillWidth: true; Layout.topMargin: Style.current.padding }
+                StatusBaseText {
+                    Layout.topMargin: Style.current.halfPadding
+                    visible: (d.communityFound && d.isPrivateKey)
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    text: qsTr("I acknowledge that...")
+                }
+                StatusCheckBox {
+                    id: agreeToKeepOnline
+                    Layout.fillWidth: true
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    text: qsTr("I must keep this device online and running Status for the Community to function")
+                }
             }
         }
     }
