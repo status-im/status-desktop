@@ -25,6 +25,13 @@ type MutedType* {.pure.}= enum
   For1min = 6,
   Unmuted = 7
 
+type
+  CommunityMetricsType* {.pure.} = enum
+    MessagesTimestamps = 0,
+    MessagesCount,
+    Members,
+    ControlNodeUptime
+
 type CommunityMembershipRequestDto* = object
   id*: string
   publicKey*: string
@@ -87,6 +94,17 @@ type CheckPermissionsToJoinResponseDto* = object
   satisfied*: bool
   permissions*: Table[string, CheckPermissionsResultDto]
   validCombinations*: seq[AccountChainIDsCombinationDto]
+
+type MetricsIntervalDto* = object
+  startTimestamp: string
+  endTimestamp: string
+  timestamps: seq[string]
+  count: int
+
+type CommunityMetricsDto* = object
+  communityId*: string
+  metricsType*: CommunityMetricsType
+  intervals*: seq[MetricsIntervalDto]
 
 type CommunityDto* = object
   id*: string
@@ -300,6 +318,34 @@ proc toCheckAllChannelsPermissionsResponseDto*(jsonObj: JsonNode): CheckAllChann
   if(jsonObj.getProp("channels", channelsObj) and channelsObj.kind == JObject):
     for channelId, permissionResponse in channelsObj:
       result.channels[channelId] = permissionResponse.toCheckChannelPermissionsResponseDto()
+
+proc toMetricsIntervalDto*(jsonObj: JsonNode): MetricsIntervalDto =
+  result = MetricsIntervalDto()
+  discard jsonObj.getProp("startTimestamp", result.startTimestamp)
+  discard jsonObj.getProp("endTimestamp", result.endTimestamp)
+
+  var timestampsObj: JsonNode
+  if (jsonObj.getProp("timestamps", timestampsObj) and timestampsObj.kind == JArray):
+    for timestamps in timestampsObj:
+      result.timestamps.add(timestamps.getStr)
+
+  discard jsonObj.getProp("count", result.count)
+
+proc toCommunityMetricsDto*(jsonObj: JsonNode): CommunityMetricsDto = 
+  result = CommunityMetricsDto()
+
+  discard jsonObj.getProp("communityId", result.communityId)
+
+  result.metricsType = CommunityMetricsType.MessagesTimestamps
+  var metricsTypeInt: int
+  if (jsonObj.getProp("metricsType", metricsTypeInt) and (metricsTypeInt >= ord(low(CommunityMetricsType)) and
+      metricsTypeInt <= ord(high(CommunityMetricsType)))):
+    result.metricsType = CommunityMetricsType(metricsTypeInt)
+
+  var intervalsObj: JsonNode
+  if (jsonObj.getProp("intervals", intervalsObj) and intervalsObj.kind == JArray):
+    for interval in intervalsObj:
+      result.intervals.add(interval.toMetricsIntervalDto())
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()

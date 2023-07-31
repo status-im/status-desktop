@@ -121,6 +121,10 @@ type
     communityId*: string
     checkPermissionsToJoinResponse*: CheckPermissionsToJoinResponseDto
 
+  CommunityMetricsArgs* = ref object of Args
+    communityId*: string
+    metricsType*: CommunityMetricsType
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -189,6 +193,8 @@ const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinRespon
 
 const SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED* = "communityPrivateKeyRemoved"
 
+const SIGNAL_COMMUNITY_METRICS_UPDATED* = "communityMetricsUpdated"
+
 QtObject:
   type
     Service* = ref object of QObject
@@ -202,6 +208,7 @@ QtObject:
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
       historyArchiveDownloadTaskCommunityIds*: HashSet[string]
       requestedCommunityIds*: HashSet[string]
+      communityMetrics: Table[string, CommunityMetricsDto]
 
   # Forward declaration
   proc asyncLoadCuratedCommunities*(self: Service)
@@ -237,6 +244,7 @@ QtObject:
     result.myCommunityRequests = @[]
     result.historyArchiveDownloadTaskCommunityIds = initHashSet[string]()
     result.requestedCommunityIds = initHashSet[string]()
+    result.communityMetrics = initTable[string, CommunityMetricsDto]()
 
   proc getFilteredJoinedCommunities(self: Service): Table[string, CommunityDto] =
     result = initTable[string, CommunityDto]()
@@ -1360,19 +1368,20 @@ QtObject:
       error "Error reordering category channel", msg = e.msg, communityId, categoryId, position
 
   proc asyncCommunityMetricsLoaded*(self: Service, rpcResponse: string) {.slot.} =
-    echo "-------------> asyncCommunityMetricsLoaded, rpcResponse: ", rpcResponse
-
     let rpcResponseObj = rpcResponse.parseJson
     if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
       error "Error collecting community metrics", msg = rpcResponseObj{"error"}
       return
 
-      let communityId = rpcResponseObj{"communityId"}.getStr()
-      let metricsType = rpcResponseObj{"metricsType"}.getInt()
-      let result = rpcResponseObj["response"]["result"]
+    let communityId = rpcResponseObj{"communityId"}.getStr()
+    let metricsType = rpcResponseObj{"metricsType"}.getInt()
 
-      # NOTE: this part in progress
-      echo "================> communityId: ", communityId, ", metricsType: ", metricsType, ", result: ", result
+    var metrics = rpcResponseObj{"response"}{"result"}.toCommunityMetricsDto()
+    self.communityMetrics[communityId] = metrics
+    echo "------------> metrics: ", metrics
+
+    self.events.emit(SIGNAL_COMMUNITY_METRICS_UPDATED, CommunityMetricsArgs(communityId: communityId, metricsType: metrics.metricsType))
+
 
 
   proc asyncCommunityInfoLoaded*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
@@ -1567,7 +1576,6 @@ QtObject:
       self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
 
   proc collectCommunityMetricsMessagesTimestamps*(self: Service, communityId: string, intervals: string) =
-    echo "-------------> collectCommunityMetricsMessagesTimestamps, itervals: ", intervals
     let arg = AsyncCollectCommunityMetricsTaskArg(
       tptr: cast[ByteAddress](asyncCollectCommunityMetricsTask),
       vptr: cast[ByteAddress](self.vptr),

@@ -33,7 +33,7 @@ type
 const asyncCollectCommunityMetricsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCollectCommunityMetricsTaskArg](argEncoded)
   try:
-    let response = status_go.collectCommunityMetrics(arg.communityId, arg.metricsType, arg.intervals)
+    let response = status_go.collectCommunityMetrics(arg.communityId, arg.metricsType.int, arg.intervals)
     arg.finish(%* {
       "communityId": arg.communityId,
       "metricsType": arg.metricsType,
