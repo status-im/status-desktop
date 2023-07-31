@@ -153,3 +153,5 @@ SplitView {
         SplitView.fillWidth: true
     }
 }
+
+// category: Wallet

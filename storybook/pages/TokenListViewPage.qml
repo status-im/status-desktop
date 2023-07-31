@@ -38,3 +38,5 @@ SplitView {
         SplitView.fillWidth: true
     }
 }
+
+// category: Views

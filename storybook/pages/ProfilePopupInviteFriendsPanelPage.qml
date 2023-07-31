@@ -89,3 +89,5 @@ Item {
         }
     }
 }
+
+// category: Panels

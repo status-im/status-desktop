@@ -137,3 +137,5 @@ SplitView {
         SplitView.fillWidth: true
     }
 }
+
+// category: Popups

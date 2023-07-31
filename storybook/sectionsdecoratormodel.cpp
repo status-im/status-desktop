@@ -55,7 +55,7 @@ QVariant SectionsDecoratorModel::data(const QModelIndex &index, int role) const
         return rowMetadata.count;
     } else if (role == IsSectionRole) {
         return rowMetadata.isSection;
-    } else if (role == m_sectionRole && rowMetadata.isSection) {
+    } else if (role == SectionRole && rowMetadata.isSection) {
         return rowMetadata.sectionName;
     }
 
@@ -70,6 +70,7 @@ QVariant SectionsDecoratorModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> SectionsDecoratorModel::roleNames() const
 {
     auto roles = m_sourceModel ? m_sourceModel->roleNames() : QHash<int, QByteArray>{};
+    roles.insert(SectionRole, QByteArrayLiteral("section"));
     roles.insert(IsSectionRole, QByteArrayLiteral("isSection"));
     roles.insert(IsFoldedRole, QByteArrayLiteral("isFolded"));
     roles.insert(SubitemsCountRole, QByteArrayLiteral("subitemsCount"));
@@ -130,15 +131,15 @@ void SectionsDecoratorModel::initialize()
 
     m_rowsMetadata.clear();
 
-    const auto sectionRoleOpt = ModelUtils::findRole(
-                QByteArrayLiteral("section"), m_sourceModel);
+    const auto categoryRoleOpt = ModelUtils::findRole(
+                QByteArrayLiteral("category"), m_sourceModel);
 
-    if (!sectionRoleOpt) {
-        qWarning("Section role not found!");
+    if (!categoryRoleOpt) {
+        qWarning("Category role not found!");
         return;
     }
 
-    m_sectionRole = *sectionRoleOpt;
+    m_sectionRole = *categoryRoleOpt;
     QString prevSection;
     int prevSectionIndex = 0;
 

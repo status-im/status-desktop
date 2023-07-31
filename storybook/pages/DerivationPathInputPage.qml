@@ -416,6 +416,7 @@ SplitView {
         border.width: 1
 
         radius: 5
-
     }
 }
+
+// category: Components

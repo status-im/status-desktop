@@ -51,13 +51,14 @@ add_library(${PROJECT_LIB}
     figmalinksmodel.cpp figmalinksmodel.h
     figmalinkssource.cpp figmalinkssource.h
     modelutils.cpp modelutils.h
+    pagesmodel.h pagesmodel.cpp
     sectionsdecoratormodel.cpp sectionsdecoratormodel.h
 )
 
 add_executable(
   ${PROJECT_NAME}
   main.cpp
-  main.qml PagesModel.qml
+  main.qml
   ${CORE_QML_FILES}
   ${CORE_JS_FILES}
   ${STORYBOOK_QML_FILES}

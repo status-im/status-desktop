@@ -60,3 +60,5 @@ ColumnLayout {
         onClicked: listModel.clear()
     }
 }
+
+// category: Components

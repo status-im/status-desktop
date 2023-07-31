@@ -130,3 +130,5 @@ SplitView {
         }
     }
 }
+
+// category: Components

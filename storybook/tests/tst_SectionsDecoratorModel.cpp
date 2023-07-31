@@ -11,16 +11,16 @@ namespace {
 class TestSourceModel : public QAbstractListModel {
 
 public:
-    explicit TestSourceModel(QStringList sections)
-        : m_sections(std::move(sections))
+    explicit TestSourceModel(QStringList categories)
+        : m_categories(std::move(categories))
     {
     }
 
     static constexpr int TitleRole = Qt::UserRole + 1;
-    static constexpr int SectionRole = Qt::UserRole + 2;
+    static constexpr int CategoryRole = Qt::UserRole + 2;
 
     int rowCount(const QModelIndex &parent) const override {
-        return m_sections.size();
+        return m_categories.size();
     }
 
     QVariant data(const QModelIndex &index, int role) const override {
@@ -31,17 +31,17 @@ public:
             return QString("title %1").arg(index.row());
         }
 
-        return m_sections.at(index.row());
+        return m_categories.at(index.row());
     }
 
     QHash<int, QByteArray> roleNames() const override {
         QHash<int, QByteArray> roles;
         roles.insert(TitleRole, "title");
-        roles.insert(SectionRole, "section");
+        roles.insert(CategoryRole, "category");
         return roles;
     }
 
-    QStringList m_sections;
+    QStringList m_categories;
 };
 
 } // unnamed namespace
@@ -55,7 +55,7 @@ private slots:
         SectionsDecoratorModel model;
 
         QCOMPARE(model.rowCount(), 0);
-        QCOMPARE(model.roleNames().count(), 3);
+        QCOMPARE(model.roleNames().count(), 4);
         QVERIFY(model.roleNames().contains(SectionsDecoratorModel::IsSectionRole));
         QVERIFY(model.roleNames().contains(SectionsDecoratorModel::IsFoldedRole));
         QVERIFY(model.roleNames().contains(SectionsDecoratorModel::SubitemsCountRole));
@@ -67,12 +67,12 @@ private slots:
         model.setSourceModel(&src);
 
         QCOMPARE(model.rowCount(), 0);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
         QVERIFY(model.roleNames().contains(SectionsDecoratorModel::IsSectionRole));
         QVERIFY(model.roleNames().contains(SectionsDecoratorModel::IsFoldedRole));
         QVERIFY(model.roleNames().contains(SectionsDecoratorModel::SubitemsCountRole));
         QVERIFY(model.roleNames().contains(TestSourceModel::TitleRole));
-        QVERIFY(model.roleNames().contains(TestSourceModel::SectionRole));
+        QVERIFY(model.roleNames().contains(TestSourceModel::CategoryRole));
     }
 
     void changingSourceModelHasNoEffectTest() {
@@ -82,27 +82,27 @@ private slots:
         SectionsDecoratorModel model;
 
         QCOMPARE(model.rowCount(), 0);
-        QCOMPARE(model.roleNames().count(), 3);
+        QCOMPARE(model.roleNames().count(), 4);
 
         model.setSourceModel(nullptr);
 
         QCOMPARE(model.rowCount(), 0);
-        QCOMPARE(model.roleNames().count(), 3);
+        QCOMPARE(model.roleNames().count(), 4);
 
         model.setSourceModel(&src1);
 
         QCOMPARE(model.rowCount(), 9);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         model.setSourceModel(&src2);
 
         QCOMPARE(model.rowCount(), 9);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         model.setSourceModel(nullptr);
 
         QCOMPARE(model.rowCount(), 9);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
     }
 
     void initialUnfoldedStateTest() {
@@ -111,7 +111,7 @@ private slots:
         model.setSourceModel(&src);
 
         QCOMPARE(model.rowCount(), 9);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole).toString(), QString("title 0"));
@@ -161,7 +161,7 @@ private slots:
         model.flipFolding(0);
 
         QCOMPARE(model.rowCount(), 6);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole), QVariant{});
@@ -242,7 +242,7 @@ private slots:
         model.flipFolding(7);
 
         QCOMPARE(model.rowCount(), 8);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole).toString(), QString("title 0"));
@@ -283,7 +283,7 @@ private slots:
         model.flipFolding(4);
 
         QCOMPARE(model.rowCount(), 6);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole).toString(), QString("title 0"));
@@ -316,7 +316,7 @@ private slots:
         model.flipFolding(0);
 
         QCOMPARE(model.rowCount(), 3);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole), QVariant{});
@@ -538,7 +538,7 @@ private slots:
         model.flipFolding(0);
 
         QCOMPARE(model.rowCount(), 9);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole).toString(), QString("title 0"));
@@ -588,7 +588,7 @@ private slots:
         model.flipFolding(7);
 
         QCOMPARE(model.rowCount(), 9);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole).toString(), QString("title 0"));
@@ -640,7 +640,7 @@ private slots:
         model.setSourceModel(&proxy);
 
         QCOMPARE(model.rowCount(), 9);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole).toString(), QString("title 0"));
@@ -699,7 +699,7 @@ private slots:
         QVERIFY(spy.count() > 1);
 
         QCOMPARE(model.rowCount(), 2);
-        QCOMPARE(model.roleNames().count(), 5);
+        QCOMPARE(model.roleNames().count(), 6);
 
         QCOMPARE(model.data(model.index(0, 0), TestSourceModel::TitleRole), QVariant{});
         QCOMPARE(model.data(model.index(1, 0), TestSourceModel::TitleRole).toString(), QString("title 1"));

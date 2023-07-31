@@ -99,3 +99,5 @@ SplitView {
         }
     }
 }
+
+// category: Panels

@@ -161,3 +161,5 @@ Pane {
         }
     }
 }
+
+// category: Components
