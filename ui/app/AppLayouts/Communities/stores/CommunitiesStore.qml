@@ -57,7 +57,7 @@ QtObject {
     property string communityTags: communitiesModuleInst.tags
 
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
-    
+
     signal communityPrivateKeyRemoved(string communityId)
 
     signal communityInfoAlreadyRequested()
@@ -94,6 +94,10 @@ QtObject {
 
     function importCommunity(communityKey) {
         root.communitiesModuleInst.importCommunity(communityKey);
+    }
+
+    function getCommunityPublicKeyFromPrivateKey(privateKey) {
+        return root.communitiesModuleInst.getCommunityPublicKeyFromPrivateKey(privateKey);
     }
 
     function requestCommunityInfo(communityKey, importing = false) {

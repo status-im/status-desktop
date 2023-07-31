@@ -4,6 +4,7 @@ import utils 1.0
 
 import SortFilterProxyModel 0.2
 import AppLayouts.Wallet.stores 1.0 as WalletStore
+
 import "../Profile/stores"
 
 QtObject {

@@ -18,6 +18,7 @@ import shared.popups 1.0
 import shared.status 1.0
 
 import utils 1.0
+import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 QtObject {
     id: root
@@ -518,7 +519,7 @@ QtObject {
                 id: communityIntroDialog
                 property string communityId
                 loginType: root.rootStore.loginType
-                walletAccountsModel: root.rootStore.receiveAccounts
+                walletAccountsModel: root.rootStore.walletAccountsModel
                 permissionsModel: root.rootStore.permissionsModel
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
