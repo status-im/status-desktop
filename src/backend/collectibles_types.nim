@@ -2,21 +2,15 @@ import json, strformat
 import stint, Tables
 
 type
+  # Mirrors services/wallet/thirdparty/collectible_types.go ContractID
+  ContractID* = ref object of RootObj
+    chainID*: int
+    address*: string
+
   # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleUniqueID
   CollectibleUniqueID* = ref object of RootObj
-    chainID*: int
-    contractAddress*: string
+    contractID*: ContractID
     tokenID*: UInt256
-
-  # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleHeader
-  CollectibleHeader* = ref object of RootObj
-    id* : CollectibleUniqueID
-    name*: string
-    imageUrl*: string
-    animationUrl*: string
-    animationMediaType*: string
-    backgroundColor*: string
-    collectionName*: string
 
   # Mirrors services/wallet/thirdparty/collectible_types.go CollectibleTrait
   CollectibleTrait* = ref object of RootObj
@@ -51,6 +45,31 @@ type
     tokenUri*: string
     collectionData*: CollectionData
 
+  # Mirrors services/wallet/collectibles/types.go CollectibleHeader
+  CollectibleHeader* = ref object of RootObj
+    id* : CollectibleUniqueID
+    name*: string
+    imageUrl*: string
+    animationUrl*: string
+    animationMediaType*: string
+    backgroundColor*: string
+    collectionName*: string
+
+  # Mirrors services/wallet/collectibles/types.go CollectibleDetails
+  CollectibleDetails* = ref object of RootObj
+    id* : CollectibleUniqueID
+    name*: string
+    description*: string
+    imageUrl*: string
+    animationUrl*: string
+    animationMediaType*: string
+    traits*: seq[CollectibleTrait]
+    backgroundColor*: string
+    tokenUri*: string
+    collectionName*: string
+    collectionSlug*: string
+    collectionImageUrl*: string
+
   # Mirrors services/wallet/thirdparty/collectible_types.go TokenBalance
   CollectibleBalance* = ref object
     tokenId*: UInt256
@@ -66,23 +85,48 @@ type
     contractAddress*: string
     owners*: seq[CollectibleOwner]
 
+# ContractID
+proc `$`*(self: ContractID): string =
+  return fmt"""ContractID(
+    chainID:{self.chainID},
+    address:{self.address}
+  )"""
+
+proc `==`*(a, b: ContractID): bool = 
+  result = a.chainID == b.chainID and
+    a.address == b.address
+
+proc `%`*(t: ContractID): JsonNode {.inline.} =
+  result = newJObject()
+  result["chainID"] = %(t.chainID)
+  result["address"] = %(t.address)
+  
+proc `%`*(t: ref ContractID): JsonNode {.inline.} =
+  return %(t[])
+
+proc fromJson*(t: JsonNode, T: typedesc[ContractID]): ContractID {.inline.} =
+  result = ContractID()
+  result.chainID = t["chainID"].getInt()
+  result.address = t["address"].getStr()
+
+proc fromJson*(t: JsonNode, T: typedesc[ref ContractID]): ref ContractID {.inline.} =
+  result = new(ContractID)
+  result[] = fromJson(t, ContractID)
+
 # CollectibleUniqueID
 proc `$`*(self: CollectibleUniqueID): string =
   return fmt"""CollectibleUniqueID(
-    chainID:{self.chainID},
-    contractAddress:{self.contractAddress},
+    contractID:{self.contractID},
     tokenID:{self.tokenID}
   )"""
 
 proc `==`*(a, b: CollectibleUniqueID): bool = 
-  result = a.chainID == b.chainID and
-    a.contractAddress == b.contractAddress and
+  result = a.contractID == b.contractID and
     a.tokenID == b.tokenID
 
 proc `%`*(t: CollectibleUniqueID): JsonNode {.inline.} =
   result = newJObject()
-  result["chainID"] = %(t.chainID)
-  result["contractAddress"] = %(t.contractAddress)
+  result["contractID"] = %(t.contractID)
   result["tokenID"] = %(t.tokenID.toString())
   
 proc `%`*(t: ref CollectibleUniqueID): JsonNode {.inline.} =
@@ -90,35 +134,12 @@ proc `%`*(t: ref CollectibleUniqueID): JsonNode {.inline.} =
 
 proc fromJson*(t: JsonNode, T: typedesc[CollectibleUniqueID]): CollectibleUniqueID {.inline.} =
   result = CollectibleUniqueID()
-  result.chainID = t["chainID"].getInt()
-  result.contractAddress = t["contractAddress"].getStr()
+  result.contractID = fromJson(t["contractID"], ContractID)
   result.tokenID = stint.parse(t["tokenID"].getStr(), UInt256)
 
 proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleUniqueID]): ref CollectibleUniqueID {.inline.} =
   result = new(CollectibleUniqueID)
   result[] = fromJson(t, CollectibleUniqueID)
-
-# CollectibleHeader
-proc `$`*(self: CollectibleHeader): string =
-  return fmt"""CollectibleHeader(
-    id:{self.id},
-    name:{self.name},
-    imageUrl:{self.imageUrl},
-    animationUrl:{self.animationUrl},
-    animationMediaType:{self.animationMediaType},
-    backgroundColor:{self.backgroundColor},
-    collectionName:{self.collectionName}
-  )"""
-
-proc fromJson*(t: JsonNode, T: typedesc[CollectibleHeader]): CollectibleHeader {.inline.} =
-  result = CollectibleHeader()
-  result.id = fromJson(t["id"], CollectibleUniqueID)
-  result.name = t["name"].getStr()
-  result.imageUrl = t["image_url"].getStr()
-  result.animationUrl = t["animation_url"].getStr()
-  result.animationMediaType = t["animation_media_type"].getStr()
-  result.backgroundColor = t["background_color"].getStr()
-  result.collectionName = t["collection_name"].getStr()
 
 # CollectibleTrait
 proc `$`*(self: CollectibleTrait): string =
@@ -195,7 +216,6 @@ proc `$`*(self: CollectibleData): string =
     traits:{self.traits},
     backgroundColor:{self.backgroundColor},
     tokenUri:{self.tokenUri},
-    collectionData:{self.collectionData}
   )"""
 
 proc getCollectibleTraits*(t: JsonNode): seq[CollectibleTrait] =
@@ -216,11 +236,66 @@ proc fromJson*(t: JsonNode, T: typedesc[CollectibleData]): CollectibleData {.inl
   result.traits = getCollectibleTraits(t["traits"])
   result.backgroundColor = t["background_color"].getStr()
   result.tokenUri = t["token_uri"].getStr()
-  result.collectionData = fromJson(t["collection_data"], CollectionData)
 
 proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleData]): ref CollectibleData {.inline.} =
   result = new(CollectibleData)
   result[] = fromJson(t, CollectibleData)
+
+# CollectibleHeader
+proc `$`*(self: CollectibleHeader): string =
+  return fmt"""CollectibleHeader(
+    id:{self.id},
+    name:{self.name},
+    imageUrl:{self.imageUrl},
+    animationUrl:{self.animationUrl},
+    animationMediaType:{self.animationMediaType},
+    backgroundColor:{self.backgroundColor},
+    collectionName:{self.collectionName}
+  )"""
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectibleHeader]): CollectibleHeader {.inline.} =
+  result = CollectibleHeader()
+  result.id = fromJson(t["id"], CollectibleUniqueID)
+  result.name = t["name"].getStr()
+  result.imageUrl = t["image_url"].getStr()
+  result.animationUrl = t["animation_url"].getStr()
+  result.animationMediaType = t["animation_media_type"].getStr()
+  result.backgroundColor = t["background_color"].getStr()
+  result.collectionName = t["collection_name"].getStr()
+
+# CollectibleDetails
+proc `$`*(self: CollectibleDetails): string =
+  return fmt"""CollectibleDetails(
+    id:{self.id},
+    name:{self.name},
+    description:{self.description},
+    imageUrl:{self.imageUrl},
+    animationUrl:{self.animationUrl},
+    animationMediaType:{self.animationMediaType},
+    traits:{self.traits},
+    backgroundColor:{self.backgroundColor},
+    collectionName:{self.collectionName},
+    collectionSlug:{self.collectionSlug},
+    collectionImageUrl:{self.collectionImageUrl},
+  )"""
+
+proc fromJson*(t: JsonNode, T: typedesc[CollectibleDetails]): CollectibleDetails {.inline.} =
+  result = CollectibleDetails()
+  result.id = fromJson(t["id"], CollectibleUniqueID)
+  result.name = t["name"].getStr()
+  result.description = t["description"].getStr()
+  result.imageUrl = t["image_url"].getStr()
+  result.animationUrl = t["animation_url"].getStr()
+  result.animationMediaType = t["animation_media_type"].getStr()
+  result.traits = getCollectibleTraits(t["traits"])
+  result.backgroundColor = t["background_color"].getStr()
+  result.collectionName = t["collection_name"].getStr()
+  result.collectionSlug = t["collection_slug"].getStr()
+  result.collectionImageUrl = t["collection_image_url"].getStr()
+
+proc fromJson*(t: JsonNode, T: typedesc[ref CollectibleDetails]): ref CollectibleDetails {.inline.} =
+  result = new(CollectibleDetails)
+  result[] = fromJson(t, CollectibleDetails)
 
 # CollectibleBalance
 proc `$`*(self: CollectibleBalance): string =

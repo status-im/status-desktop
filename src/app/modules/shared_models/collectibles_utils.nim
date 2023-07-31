@@ -10,8 +10,8 @@ proc collectibleToItem*(c: backend.CollectibleHeader, isPinned: bool = false) : 
     mediaType = "image"
 
   return initItem(
-    c.id.chainID,
-    c.id.contractAddress,
+    c.id.contractID.chainID,
+    c.id.contractID.address,
     c.id.tokenID,
     c.name,
     mediaUrl,
