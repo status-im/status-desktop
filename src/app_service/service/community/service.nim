@@ -1966,25 +1966,32 @@ QtObject:
       let response = status_go.shareCommunityUrlWithChatKey(communityId)
       return response.result.getStr
     except Exception as e:
-        error "error while getting community url with chat key", msg = e.msg
+      error "error while getting community url with chat key", msg = e.msg
 
   proc shareCommunityUrlWithData*(self: Service, communityId: string): string =
     try:
       let response = status_go.shareCommunityUrlWithData(communityId)
       return response.result.getStr
     except Exception as e:
-        error "error while getting community url with data", msg = e.msg
+      error "error while getting community url with data", msg = e.msg
 
   proc shareCommunityChannelUrlWithChatKey*(self: Service, communityId: string, chatId: string): string =
     try:
       let response = status_go.shareCommunityChannelUrlWithChatKey(communityId, chatId)
       return response.result.getStr
     except Exception as e:
-        error "error while getting community channel url with chat key ", msg = e.msg
+      error "error while getting community channel url with chat key ", msg = e.msg
 
   proc shareCommunityChannelUrlWithData*(self: Service, communityId: string, chatId: string): string =
     try:
       let response = status_go.shareCommunityChannelUrlWithData(communityId, chatId)
       return response.result.getStr
     except Exception as e:
-        error "error while getting community channel url with data ", msg = e.msg
+      error "error while getting community channel url with data ", msg = e.msg
+
+  proc getCommunityPublicKeyFromPrivateKey*(self: Service, communityPrivateKey: string): string =
+    try:
+      let response = status_go.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
+      result = response.result.getStr
+    except Exception as e:
+      error "error while getting community public key", msg = e.msg

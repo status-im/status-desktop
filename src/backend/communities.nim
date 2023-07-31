@@ -443,3 +443,6 @@ proc requestExtractDiscordChannelsAndCategories*(filesToImport: seq[string]): Rp
 
 proc getCheckChannelPermissionResponses*(communityId: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("getCheckChannelPermissionResponses".prefix, %*[communityId])
+
+proc getCommunityPublicKeyFromPrivateKey*(communityPrivateKey: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("getCommunityPublicKeyFromPrivateKey".prefix, %*[communityPrivateKey])
