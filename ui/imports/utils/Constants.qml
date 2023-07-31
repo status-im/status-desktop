@@ -503,12 +503,12 @@ QtObject {
                 errorMessage: qsTr("Usernames starting with whitespace are not allowed")
             },
             StatusRegularExpressionValidator {
-                regularExpression: /^[a-zA-Z0-9\-_ ]+$/
+                regularExpression: regularExpressions.alphanumericalExpanded
                 errorMessage: errorMessages.alphanumericalExpandedRegExp
             },
             StatusMinLengthValidator {
                 minLength: keypair.nameLengthMin
-                errorMessage: qsTr("Username must be at least %1 characters").arg(keypair.nameLengthMin)
+                errorMessage: qsTr("Username must be at least %n character(s)", "", keypair.nameLengthMin)
             },
             StatusValidator {
                 name: "endsWithSpaceValidator"
@@ -645,7 +645,7 @@ QtObject {
 
     readonly property QtObject regularExpressions: QtObject {
         readonly property var alphanumerical: /^$|^[a-zA-Z0-9]+$/
-        readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_ ]+$/
+        readonly property var alphanumericalExpanded: /^$|^[a-zA-Z0-9\-_.\u0020]+$/
         readonly property var alphanumericalWithSpace: /^$|^[a-zA-Z0-9\s]+$/
         readonly property var asciiPrintable:         /^$|^[!-~]+$/
         readonly property var ascii:                  /^$|^[\x00-\x7F]+$/
@@ -655,8 +655,8 @@ QtObject {
 
     readonly property QtObject errorMessages: QtObject {
         readonly property string alphanumericalRegExp: qsTr("Only letters and numbers allowed")
-        readonly property string alphanumericalWithSpaceRegExp: qsTr("Special characters are not allowed")
         readonly property string alphanumericalExpandedRegExp: qsTr("Only letters, numbers, underscores, whitespaces and hyphens allowed")
+        readonly property string alphanumericalWithSpaceRegExp: qsTr("Special characters are not allowed")
         readonly property string asciiRegExp: qsTr("Only letters, numbers and ASCII characters allowed")
     }
 

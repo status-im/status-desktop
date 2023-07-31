@@ -230,10 +230,16 @@ StatusDialog {
                 input.multiline: true
                 minimumHeight: 88
                 maximumHeight: 88
-                validators: [StatusMinLengthValidator {
+                validators: [
+                    StatusMinLengthValidator {
                         minLength: 1
-                        errorMessage:  Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))
-                    }]
+                        errorMessage: Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))
+                    },
+                    StatusRegularExpressionValidator {
+                        regularExpression: Constants.regularExpressions.alphanumericalExpanded
+                        errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
+                    }
+                ]
             }
 
             /* TODO: use the code below to enable private channels and message limit */

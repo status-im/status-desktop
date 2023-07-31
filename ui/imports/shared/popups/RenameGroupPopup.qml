@@ -9,6 +9,7 @@ import utils 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Core 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Popups.Dialog 0.1
@@ -39,7 +40,7 @@ StatusDialog {
         colorSelectionGrid.selectedColor = activeGroupColor
 
         for (let i = 0; i < colorSelectionGrid.model.length; i++) {
-            if(colorSelectionGrid.model[i] === root.activeGroupColor.toUpperCase())
+            if(colorSelectionGrid.model[i].toString().toUpperCase() === root.activeGroupColor.toUpperCase())
                 colorSelectionGrid.selectedColorIndex = i
         }
 
@@ -56,13 +57,23 @@ StatusDialog {
             Layout.alignment: Qt.AlignHCenter
             label: qsTr("Name the group")
             charLimit: d.nameCharLimit
+
+            validators: [
+                StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage: Utils.getErrorMessage(groupName.errors, qsTr("group name"))
+                },
+                StatusRegularExpressionValidator {
+                    regularExpression: Constants.regularExpressions.alphanumericalExpanded
+                    errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
+                }
+            ]
         }
 
         StatusBaseText {
             id: imgText
             text: qsTr("Group image")
             leftPadding: groupName.leftPadding - root.padding
-            font.pixelSize: 15
         }
 
         EditCroppedImagePanel {
@@ -75,49 +86,12 @@ StatusDialog {
             imageFileDialogTitle: qsTr("Choose an image as logo")
             title: qsTr("Edit group name and image")
             acceptButtonText: qsTr("Use as an icon for this group chat")
-
-            backgroundComponent:
-                StatusLetterIdenticon {
-                id: letter
-                color: colorSelectionGrid.selectedColor
-                name: root.activeGroupName
-                height: 100
-                width: 100
-                letterSize: 64
-
-                StatusRoundButton {
-                    id: addButton
-
-                    icon.name: "add"
-                    type: StatusRoundButton.Type.Secondary
-
-                    transform: [
-                        Translate {
-                            x: -addButton.width/2 - 5
-                            y: -addButton.height/2 + 5
-                        },
-                        Rotation { angle: -addRotationTransform.angle },
-                        Rotation {
-                            id: addRotationTransform
-                            angle: 135
-                            origin.x: letter.radius
-                        },
-                        Translate {
-                            x: letter.width - 2 * letter.radius
-                            y: letter.radius
-                        }
-                    ]
-
-                    onClicked: imageEditor.chooseImageToCrop()
-                }
-            }
         }
 
         StatusBaseText {
             id: colorText
             text: qsTr("Standard colours")
             leftPadding: groupName.leftPadding - root.padding
-            font.pixelSize: 15
         }
 
         StatusColorSelectorGrid {
