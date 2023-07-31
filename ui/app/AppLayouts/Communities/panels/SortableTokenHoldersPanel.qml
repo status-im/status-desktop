@@ -20,6 +20,7 @@ Control {
 
     property string tokenName
     property bool showRemotelyDestructMenuItem: true
+    property alias isAirdropEnabled: infoBoxPanel.buttonEnabled
 
     readonly property alias sortBy: holdersList.sortBy
     readonly property alias sorting: holdersList.sorting
@@ -104,6 +105,8 @@ Control {
         }
 
         StatusInfoBoxPanel {
+            id: infoBoxPanel
+
             Layout.fillWidth: true
             Layout.topMargin: Style.current.padding
 

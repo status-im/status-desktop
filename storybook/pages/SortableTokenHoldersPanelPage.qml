@@ -43,6 +43,7 @@ SplitView {
 
             model: emptyCheckBox.checked ? emptyModel : tokenHoldersModel
             showRemotelyDestructMenuItem: remotelyDestructCheckBox.checked
+            isAirdropEnabled: airdropCheckBox.checked
 
             onViewProfileRequested:
                 logs.logEvent("onViewProfileRequested: " + address)
@@ -78,6 +79,12 @@ SplitView {
 
                 checked: true
                 text: "Show \"Remotely Destruct\"  menu item"
+            }
+            CheckBox {
+                id: airdropCheckBox
+
+                text: "Airdrop enabled"
+                checked: true
             }
         }
     }

@@ -27,6 +27,8 @@ SplitView {
                 title: "Get started"
                 text: ModelsData.descriptions.ownerTokenInfo
                 buttonText: "Mint Owner token"
+                buttonVisible: btnVisible.checked
+                buttonEnabled: btnEnabled.checked
 
                 onClicked: logs.logEvent("StatusInfoBoxPanel::onClicked --> First Panel")
             }
@@ -39,6 +41,8 @@ SplitView {
                 iconType: ctrlIconType.currentIndex
                 text: ModelsData.descriptions.airdropInfo
                 buttonText: "Airdrop"
+                buttonVisible: btnVisible.checked
+                buttonEnabled: btnEnabled.checked
 
                 onClicked: logs.logEvent("StatusInfoBoxPanel::onClicked --> Second Panel")
             }
@@ -85,6 +89,18 @@ SplitView {
                         { value: StatusInfoBoxPanel.Type.Warning, text: "Warning" }
                     ]
                 }
+            }
+
+            CheckBox {
+                id: btnVisible
+                text: "Button visible"
+                checked: true
+            }
+
+            CheckBox {
+                id: btnEnabled
+                text: "Button enabled"
+                checked: true
             }
         }
     }

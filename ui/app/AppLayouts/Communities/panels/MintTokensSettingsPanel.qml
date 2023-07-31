@@ -555,6 +555,7 @@ StackView {
             id: footer
 
             readonly property TokenObject token: view.token
+            readonly property bool isAssetView: view.isAssetView
 
             readonly property bool deployStateCompleted: token.deployState === Constants.ContractTransactionStatus.Completed
 
@@ -577,7 +578,7 @@ StackView {
             }
             airdropEnabled: deployStateCompleted &&
                             (token.infiniteSupply ||
-                             token.remainingTokens !== 0)
+                             token.remainingTokens > 0)
 
             remotelyDestructEnabled: deployStateCompleted &&
                                      !!view.tokenOwnersModel &&

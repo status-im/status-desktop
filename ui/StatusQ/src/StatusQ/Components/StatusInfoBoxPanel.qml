@@ -14,7 +14,8 @@ Control {
     property string icon
     property int iconType: StatusInfoBoxPanel.Type.Info
     property alias buttonText: button.text
-    property alias buttonVisible: button.visible
+    property bool buttonVisible: true
+    property bool buttonEnabled: true
 
     enum Type {
         Info,
@@ -105,7 +106,8 @@ Control {
 
             Layout.alignment: Qt.AlignHCenter
 
-            visible: true
+            visible: root.buttonVisible
+            enabled: root.buttonEnabled
 
             onClicked: root.clicked()
         }
