@@ -17,7 +17,7 @@ QtObject:
   type
     CollectibleDetailsEntry* = ref object of QObject
       id: backend.CollectibleUniqueID
-      data: backend.CollectibleData
+      data: backend.CollectibleDetails
       extradata: ExtraData
       traits: TraitModel
 
@@ -27,7 +27,7 @@ QtObject:
   proc delete*(self: CollectibleDetailsEntry) =
     self.QObject.delete
 
-  proc newCollectibleDetailsFullEntry*(data: backend.CollectibleData, extradata: ExtraData): CollectibleDetailsEntry =
+  proc newCollectibleDetailsFullEntry*(data: backend.CollectibleDetails, extradata: ExtraData): CollectibleDetailsEntry =
     new(result, delete)
     result.id = data.id
     result.data = data
@@ -45,6 +45,10 @@ QtObject:
 
   proc newCollectibleDetailsEmptyEntry*(): CollectibleDetailsEntry =
     let id = backend.CollectibleUniqueID(
+      contractID: backend.ContractID(
+        chainID: 0,
+        address: ""
+      ),
       tokenID: stint.u256(0)
     )
     let extradata = ExtraData()
@@ -59,13 +63,13 @@ QtObject:
     )"""
 
   proc getChainID*(self: CollectibleDetailsEntry): int {.slot.} =
-    return self.id.chainID
+    return self.id.contractID.chainID
 
   QtProperty[int] chainId:
     read = getChainID
 
   proc getContractAddress*(self: CollectibleDetailsEntry): string {.slot.} =
-    return self.id.contractAddress
+    return self.id.contractID.address
 
   QtProperty[string] contractAddress:
     read = getContractAddress
@@ -119,7 +123,7 @@ QtObject:
   proc getCollectionName*(self: CollectibleDetailsEntry): string {.slot.} =
     if self.data == nil:
       return ""
-    return self.data.collectionData.name
+    return self.data.collectionName
 
   QtProperty[string] collectionName:
     read = getCollectionName
@@ -135,7 +139,7 @@ QtObject:
   proc getCollectionImageURL*(self: CollectibleDetailsEntry): string {.slot.} =
     if self.data == nil:
       return ""
-    return self.data.collectionData.imageUrl
+    return self.data.collectionImageUrl
 
   QtProperty[string] collectionImageUrl:
     read = getCollectionImageURL

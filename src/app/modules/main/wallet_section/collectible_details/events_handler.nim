@@ -21,8 +21,8 @@ QtObject:
   proc delete*(self: EventsHandler) =
     self.QObject.delete
 
-  proc onGetCollectiblesDataDone*(self: EventsHandler, handler: EventCallbackProc) =
-    self.eventHandlers[backend_collectibles.eventGetCollectiblesDataDone] = handler
+  proc onGetCollectiblesDetailsDone*(self: EventsHandler, handler: EventCallbackProc) =
+    self.eventHandlers[backend_collectibles.eventGetCollectiblesDetailsDone] = handler
 
   proc handleApiEvents(self: EventsHandler, e: Args) =
     var data = WalletSignal(e)

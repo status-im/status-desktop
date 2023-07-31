@@ -57,10 +57,10 @@ QtObject:
       networkIconUrl: network.iconURL
     )
 
-  proc processGetCollectiblesDataResponse(self: Controller, response: JsonNode) =
+  proc processGetCollectiblesDetailsResponse(self: Controller, response: JsonNode) =
     defer: self.setIsDetailedEntryLoading(false)
 
-    let res = fromJson(response, backend_collectibles.GetCollectiblesDataResponse)
+    let res = fromJson(response, backend_collectibles.GetCollectiblesDetailsResponse)
 
     if res.errorCode != ErrorCodeSuccess:
       error "error fetching collectible details: ", res.errorCode
@@ -71,7 +71,7 @@ QtObject:
       return
 
     let collectible = res.collectibles[0]
-    let extradata = self.getExtraData(collectible.id.chainID)
+    let extradata = self.getExtraData(collectible.id.contractID.chainID)
 
     self.detailedEntry = newCollectibleDetailsFullEntry(collectible, extradata)
     self.detailedEntryChanged()
@@ -80,8 +80,10 @@ QtObject:
     self.setIsDetailedEntryLoading(true)
 
     let id = backend_collectibles.CollectibleUniqueID(
-      chainID: chainId,
-      contractAddress: contractAddress,
+      contractID: backend_collectibles.ContractID(
+        chainID: chainId,
+        address: contractAddress
+      ),
       tokenID: stint.u256(tokenId)
     )
     let extradata = self.getExtraData(chainId)
@@ -89,15 +91,15 @@ QtObject:
     self.detailedEntry = newCollectibleDetailsBasicEntry(id, extradata)
     self.detailedEntryChanged()
 
-    let response = backend_collectibles.getCollectiblesDataAsync(@[id])
+    let response = backend_collectibles.getCollectiblesDetailsAsync(@[id])
     if response.error != nil:
       self.setIsDetailedEntryLoading(false)
       error "error fetching collectible details: ", response.error
       return
 
   proc setupEventHandlers(self: Controller) =
-    self.eventsHandler.onGetCollectiblesDataDone(proc (jsonObj: JsonNode) =
-      self.processGetCollectiblesDataResponse(jsonObj)
+    self.eventsHandler.onGetCollectiblesDetailsDone(proc (jsonObj: JsonNode) =
+      self.processGetCollectiblesDetailsResponse(jsonObj)
     )
 
   proc newController*(networkService: network_service.Service,

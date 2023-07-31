@@ -14,7 +14,7 @@ const eventCollectiblesOwnershipUpdateFinished*: string = "wallet-collectibles-o
 const eventCollectiblesOwnershipUpdateFinishedWithError*: string = "wallet-collectibles-ownership-update-finished-with-error"
 
 const eventOwnedCollectiblesFilteringDone*: string = "wallet-owned-collectibles-filtering-done"
-const eventGetCollectiblesDataDone*: string = "wallet-get-collectibles-data-done"
+const eventGetCollectiblesDetailsDone*: string = "wallet-get-collectibles-details-done"
 
 type
   # Mirrors services/wallet/collectibles/service.go ErrorCode
@@ -30,9 +30,9 @@ type
     hasMore*: bool
     errorCode*: ErrorCode
 
-  # Mirrors services/wallet/collectibles/service.go GetCollectiblesDataResponse
-  GetCollectiblesDataResponse* = object
-    collectibles*: seq[CollectibleData]
+  # Mirrors services/wallet/collectibles/service.go GetCollectiblesDetailsResponse
+  GetCollectiblesDetailsResponse* = object
+    collectibles*: seq[CollectibleDetails]
     errorCode*: ErrorCode
 
 
@@ -53,12 +53,12 @@ proc fromJson*(e: JsonNode, T: typedesc[FilterOwnedCollectiblesResponse]): Filte
     errorCode: ErrorCode(e["errorCode"].getInt())
   )
 
-proc fromJson*(e: JsonNode, T: typedesc[GetCollectiblesDataResponse]): GetCollectiblesDataResponse {.inline.} =
-  var collectibles: seq[CollectibleData] = @[]
+proc fromJson*(e: JsonNode, T: typedesc[GetCollectiblesDetailsResponse]): GetCollectiblesDetailsResponse {.inline.} =
+  var collectibles: seq[CollectibleDetails] = @[]
   if e.hasKey("collectibles"):
     let jsonCollectibles = e["collectibles"]
     for item in jsonCollectibles.getElems():
-      collectibles.add(fromJson(item, CollectibleData))
+      collectibles.add(fromJson(item, CollectibleDetails))
 
   result = T(
     collectibles: collectibles,
@@ -91,5 +91,5 @@ rpc(filterOwnedCollectiblesAsync, "wallet"):
   offset: int
   limit: int
 
-rpc(getCollectiblesDataAsync, "wallet"):
+rpc(getCollectiblesDetailsAsync, "wallet"):
   uniqueIds: seq[CollectibleUniqueID]
