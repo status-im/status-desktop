@@ -34,5 +34,6 @@ SplitView {
              }
          }
     }
-    
 }
+
+// category: Panels

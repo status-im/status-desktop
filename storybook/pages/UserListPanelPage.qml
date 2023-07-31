@@ -80,3 +80,5 @@ SplitView {
         logsView.logText: logs.logText
     }
 }
+
+// category: Panels

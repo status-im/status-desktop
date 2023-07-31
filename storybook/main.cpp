@@ -6,7 +6,13 @@
 #include "figmadecoratormodel.h"
 #include "figmalinks.h"
 #include "figmalinkssource.h"
+#include "pagesmodel.h"
 #include "sectionsdecoratormodel.h"
+
+struct PagesModelInitialized : public PagesModel {
+    explicit PagesModelInitialized(QObject *parent = nullptr)
+        : PagesModel(QML_IMPORT_ROOT + QStringLiteral("/pages"), parent) {}
+};
 
 int main(int argc, char *argv[])
 {
@@ -37,9 +43,10 @@ int main(int argc, char *argv[])
     for (const auto& path : additionalImportPaths)
         engine.addImportPath(path);
 
-    qmlRegisterType<SectionsDecoratorModel>("Storybook", 1, 0, "SectionsDecoratorModel");
     qmlRegisterType<FigmaDecoratorModel>("Storybook", 1, 0, "FigmaDecoratorModel");
     qmlRegisterType<FigmaLinksSource>("Storybook", 1, 0, "FigmaLinksSource");
+    qmlRegisterType<PagesModelInitialized>("Storybook", 1, 0, "PagesModel");
+    qmlRegisterType<SectionsDecoratorModel>("Storybook", 1, 0, "SectionsDecoratorModel");
     qmlRegisterUncreatableType<FigmaLinks>("Storybook", 1, 0, "FigmaLinks", {});
 
     auto watcherFactory = [additionalImportPaths](QQmlEngine*, QJSEngine*) {

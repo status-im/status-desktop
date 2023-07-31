@@ -35,3 +35,5 @@ Item {
         }
     }
 }
+
+// category: Components

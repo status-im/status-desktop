@@ -68,3 +68,5 @@ SplitView {
         SplitView.preferredWidth: 300
     }
 }
+
+// category: Views

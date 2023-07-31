@@ -28,3 +28,5 @@ SplitView {
       return from + Math.random() * (to - from)
     }
 }
+
+// category: Panels

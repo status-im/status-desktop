@@ -9,9 +9,12 @@ class SectionsDecoratorModel : public QAbstractListModel
     Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel
                WRITE setSourceModel NOTIFY sourceModelChanged)
 public:
-    static constexpr int IsSectionRole = Qt::UserRole + 100;
-    static constexpr int IsFoldedRole = Qt::UserRole + 101;
-    static constexpr int SubitemsCountRole = Qt::UserRole + 102;
+    enum Roles {
+        SectionRole = Qt::UserRole + 100,
+        IsSectionRole,
+        IsFoldedRole,
+        SubitemsCountRole
+    };
 
     explicit SectionsDecoratorModel(QObject *parent = nullptr);
 

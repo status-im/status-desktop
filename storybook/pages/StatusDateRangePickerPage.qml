@@ -36,3 +36,5 @@ SplitView {
         Component.onCompleted: dialog.open()
     }
 }
+
+// category: Components

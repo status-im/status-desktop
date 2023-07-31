@@ -4,7 +4,6 @@ import QtQuick.Controls 2.14
 ListView {
     id: root
 
-    spacing: 5
     clip: true
 
     property string currentPage

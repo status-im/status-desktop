@@ -48,3 +48,5 @@ SplitView {
         logsView.logText: logs.logText
     }
 }
+
+// category: Components

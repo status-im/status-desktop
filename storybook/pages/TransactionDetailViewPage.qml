@@ -254,3 +254,5 @@ SplitView {
         }
     }
 }
+
+// category: Wallet

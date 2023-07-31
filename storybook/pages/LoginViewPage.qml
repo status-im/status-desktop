@@ -110,3 +110,5 @@ SplitView {
         // model editor will go here
     }
 }
+
+// category: Views

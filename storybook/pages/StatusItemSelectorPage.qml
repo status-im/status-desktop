@@ -69,3 +69,5 @@ ColumnLayout {
         onClicked: model.clear()
     }
 }
+
+// category: Components

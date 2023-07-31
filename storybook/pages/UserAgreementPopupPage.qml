@@ -32,3 +32,5 @@ SplitView {
         visible: true
     }
 }
+
+// category: Popups

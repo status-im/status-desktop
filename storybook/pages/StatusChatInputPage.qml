@@ -112,29 +112,31 @@ SplitView {
     }
 
     Pane {
-         SplitView.minimumWidth: 300
-         SplitView.preferredWidth: 300
+        SplitView.minimumWidth: 300
+        SplitView.preferredWidth: 300
 
-         ColumnLayout {
-             anchors.fill: parent
-             CheckBox {
-                 id: enabledCheckBox
-                 text: "enabled"
-                 checked: true
-             }
-             MenuSeparator {
-                 Layout.fillWidth: true
-             }
-             UsersModelEditor {
-                 id: modelEditor
-                 Layout.fillWidth: true
-                 Layout.fillHeight: true
-                 model: fakeUsersModel
+        ColumnLayout {
+            anchors.fill: parent
+            CheckBox {
+                id: enabledCheckBox
+                text: "enabled"
+                checked: true
+            }
+            MenuSeparator {
+                Layout.fillWidth: true
+            }
+            UsersModelEditor {
+                id: modelEditor
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                model: fakeUsersModel
 
-                 onRemoveClicked: fakeUsersModel.remove(index, 1)
-                 onRemoveAllClicked: fakeUsersModel.clear()
-                 onAddClicked: fakeUsersModel.append(modelEditor.getNewUser(fakeUsersModel.count))
-             }
-         }
-     }
+                onRemoveClicked: fakeUsersModel.remove(index, 1)
+                onRemoveAllClicked: fakeUsersModel.clear()
+                onAddClicked: fakeUsersModel.append(modelEditor.getNewUser(fakeUsersModel.count))
+            }
+        }
+    }
 }
+
+// category: Components
