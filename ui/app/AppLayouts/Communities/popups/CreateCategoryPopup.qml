@@ -61,10 +61,16 @@ StatusModal {
             label: qsTr("Category title")
             charLimit: maxCategoryNameLength
             placeholderText: qsTr("Name the category")
-            validators: [StatusMinLengthValidator {
-                minLength: 1
-                errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("category name"))
-            }]
+            validators: [
+                StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("category name"))
+                },
+                StatusRegularExpressionValidator {
+                    regularExpression: Constants.regularExpressions.alphanumericalExpanded
+                    errorMessage: Constants.errorMessages.alphanumericalExpandedRegExp
+                }
+            ]
         }
 
         StatusModalDivider {
