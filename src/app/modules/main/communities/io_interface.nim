@@ -203,3 +203,6 @@ method callbackFromAuthentication*(self: AccessInterface, authenticated: bool) {
 
 method prepareTokenModelForCommunity*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getCommunityPublicKeyFromPrivateKey*(self: AccessInterface, communityPrivateKey: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

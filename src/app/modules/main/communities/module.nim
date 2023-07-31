@@ -501,6 +501,9 @@ method authenticateWithCallback*(self: Module) =
 method callbackFromAuthentication*(self: Module, authenticated: bool) =
   self.view.callbackFromAuthentication(authenticated)
 
+method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
+  result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
+
 method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   let community = self.controller.getCommunityById(communityId)
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]

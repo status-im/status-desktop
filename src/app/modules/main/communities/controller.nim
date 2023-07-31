@@ -395,3 +395,6 @@ proc authenticateToEditSharedAddresses*(self: Controller, communityId: string, a
 proc authenticateWithCallback*(self: Controller) =
   self.tmpAuthenticationWithCallbackInProgress = true
   self.authenticate()
+
+proc getCommunityPublicKeyFromPrivateKey*(self: Controller, communityPrivateKey: string): string =
+  result = self.communityService.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)

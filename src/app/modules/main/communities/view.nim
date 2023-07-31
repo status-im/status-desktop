@@ -659,3 +659,6 @@ QtObject:
       self.delegate.editSharedAddressesWithAuthentication(communityId, addressesArray, airdropAddress)
     except Exception as e:
       echo "Error editing shared addresses with authentication: ", e.msg
+
+  proc getCommunityPublicKeyFromPrivateKey*(self: View, communityPrivateKey: string): string {.slot.} =
+    result = self.delegate.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
