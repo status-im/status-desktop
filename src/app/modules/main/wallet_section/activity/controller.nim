@@ -430,3 +430,6 @@ QtObject:
       return
     self.setFilterAddresses(addresses)
     self.setFilterChains(chainIds)
+
+  proc noLimitTimestamp*(self: Controller): int {.slot.} =
+    return backend_activity.noLimitTimestampForPeriod

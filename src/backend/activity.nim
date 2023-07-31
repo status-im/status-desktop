@@ -12,7 +12,7 @@ import backend
 export response_type
 
 # see status-go/services/wallet/activity/filter.go NoLimitTimestampForPeriod
-const noLimitTimestampForPeriod = 0
+const noLimitTimestampForPeriod* = 0
 
 # Declared in services/wallet/activity/service.go
 const eventActivityFilteringDone*: string = "wallet-activity-filtering-done"

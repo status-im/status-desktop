@@ -243,8 +243,8 @@ Column {
     StatusDateRangePicker {
         id: dialog
         anchors.centerIn: parent
-        fromTimestamp: activityFilterStore.fromTimestamp
-        toTimestamp: activityFilterStore.toTimestamp
+        fromTimestamp: activityFilterStore.currentActivityStartTimestamp
+        toTimestamp: new Date().valueOf()
         onNewRangeSet: {
             activityFilterStore.setCustomTimeRange(fromTimestamp, toTimestamp)
             activityFilterStore.setSelectedTimestamp(Constants.TransactionTimePeriod.Custom)
