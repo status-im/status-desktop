@@ -24,6 +24,7 @@ StackView {
 
     // General properties:
     property int viewWidth: 560 // by design
+    property string previousPageName: depth > 1 ? qsTr("Back") : ""
     required property string communityName
     required property string communityLogo
     required property color communityColor
@@ -39,6 +40,7 @@ StackView {
     readonly property bool arePrivilegedTokensDeployed: root.isOwnerTokenDeployed && root.isTMasterTokenDeployed
     property bool isOwnerTokenDeployed: false
     property bool isTMasterTokenDeployed: false
+    property bool anyPrivilegedTokenFailed: false
 
     // It will monitorize if Owner and/or TMaster token items are included in the `tokensModel` despite the deployment state
     property bool ownerOrTMasterTokenItemsExist: false
@@ -97,21 +99,21 @@ StackView {
             return
         }
 
-        if(root.arePrivilegedTokensInProgress || root.arePrivilegedTokensFailed) {
-            // If Owner and TMaster tokens deployment action has been started at least ones, but still without success
-            root.push(mintedTokensViewComponent, StackView.Immediate)
-            return
-        }
-
-        if(root.ownerOrTMasterTokenItemsExist) {
-            // Regular minting flow, selecting the specific tab
+        if(root.arePrivilegedTokensDeployed) {
+            // Regular minting flow for Owner and TMaster owner, selecting the specific tab
             const properties = { isAssetView }
             root.push(newTokenViewComponent, properties, StackView.Immediate)
             return
         }
 
+        if(root.ownerOrTMasterTokenItemsExist) {
+            // Owner and TMaster tokens deployment action has been started at least ones but still without success
+            root.push(mintedTokensViewComponent, StackView.Immediate)
+            return
+        }
+
         if(root.isOwner) {
-            // Owner and TMaster tokens to be deployed.
+            // Owner and TMaster tokens to be deployed. Never tried.
             root.push(ownerTokenViewComponent, StackView.Immediate)
             return
         }
@@ -120,7 +122,23 @@ StackView {
         root.push(mintedTokensViewComponent, StackView.Immediate)
     }
 
-    property string previousPageName: depth > 1 ? qsTr("Back") : ""
+    QtObject {
+        id: d
+
+        // Owner or TMaster token retry navigation
+        function retryPrivilegedToken(key, chainId, accountName, accountAddress) {
+            var properties = {
+                key: key,
+                chainId: chainId,
+                accountName: accountName,
+                accountAddress: accountAddress,
+            }
+
+            root.push(ownerTokenEditViewComponent, properties,
+                      StackView.Immediate)
+        }
+
+    }
 
     initialItem: mintedTokensViewComponent
 
@@ -178,9 +196,11 @@ StackView {
                 isOwner: root.isOwner
                 isAdmin: root.isAdmin
                 communityName: root.communityName
+                anyPrivilegedTokenFailed: root.anyPrivilegedTokenFailed
 
                 onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
                 onMintOwnerTokenClicked: root.push(ownerTokenViewComponent, StackView.Immediate)
+                onRetryOwnerTokenClicked: d.retryPrivilegedToken(tokenKey, chainId, accountName, accountAddress)
             }
         }
     }
@@ -498,18 +518,6 @@ StackView {
                     tokenView.Component.destruction.connect(() => tokenObject.destroy())
                 }
 
-                // Owner or TMaster token
-                function retryPrivilegedToken() {
-                    var properties = {
-                        chainId: view.token.chainId,
-                        accountName: view.token.accountName,
-                        accountAddress: view.token.accountAddress,
-                    }
-
-                    root.push(ownerTokenEditViewComponent, properties,
-                              StackView.Immediate)
-                }
-
                 text: qsTr("Retry mint")
 
                 visible: (tokenViewPage.isPrivilegedTokenItem && root.isOwner && tokenViewPage.deploymentFailed) ||
@@ -517,7 +525,7 @@ StackView {
 
                 onClicked: {
                     if(tokenViewPage.isPrivilegedTokenItem) {
-                        retryPrivilegedToken()
+                        d.retryPrivilegedToken(view.token.key, view.token.chainId, view.token.accountName, view.token.accountAddress)
                     } else {
                         retryAssetOrCollectible()
                     }

@@ -37,13 +37,13 @@ Control {
 
         readonly property int iconSize: ({
                                              [PrivilegedTokenArtworkPanel.Size.Small]: 14,
-                                             [PrivilegedTokenArtworkPanel.Size.Medium]: 16,
+                                             [PrivilegedTokenArtworkPanel.Size.Medium]: 24,
                                              [PrivilegedTokenArtworkPanel.Size.Large]: 38
                                          }[size])
 
         readonly property int iconMargins: ({
                                                 [PrivilegedTokenArtworkPanel.Size.Small]: 8,
-                                                [PrivilegedTokenArtworkPanel.Size.Medium]: 12,
+                                                [PrivilegedTokenArtworkPanel.Size.Medium]: 10,
                                                 [PrivilegedTokenArtworkPanel.Size.Large]: 16
                                             }[size])
     }

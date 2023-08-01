@@ -336,6 +336,7 @@ StatusSectionLayout {
             // Owner and TMaster properties
             isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
             isTMasterTokenDeployed: tokensModelChangesTracker.isTMasterTokenDeployed
+            anyPrivilegedTokenFailed: tokensModelChangesTracker.isOwnerTokenFailed || tokensModelChangesTracker.isTMasterTokenFailed
 
             // Models
             tokensModel: root.community.communityTokens
@@ -613,21 +614,23 @@ StatusSectionLayout {
         // Owner and TMaster token deployment states
         property bool isOwnerTokenDeployed: false
         property bool isTMasterTokenDeployed: false
+        property bool isOwnerTokenFailed: false
+        property bool isTMasterTokenFailed: false
 
         // It will monitorize if Owner and/or TMaster token items are included in the `model` despite the deployment state
         property bool ownerOrTMasterTokenItemsExist: false
 
         function checkIfPrivilegedTokenItemsExist() {
-           return SQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.ownerTokenNameTag + root.communityName) ||
-                  SQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.tMasterTokenNameTag + root.communityName)
+           return StatusQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.ownerTokenNameTag + root.communityName) ||
+                  StatusQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.tMasterTokenNameTag + root.communityName)
         }
 
-        function reviewTokenDeployState(tagType, isOwner) {
-            const index = SQUtils.ModelUtils.indexOf(model, "name", tagType + root.communityName)
+        function reviewTokenDeployState(tagType, isOwner, deployState) {
+            const index = StatusQUtils.ModelUtils.indexOf(model, "name", tagType + root.communityName)
             if(index === -1)
                 return false
 
-            const token = SQUtils.ModelUtils.get(model, index)
+            const token = StatusQUtils.ModelUtils.get(model, index)
 
             // Some assertions:
             if(!token.isPrivilegedToken)
@@ -637,11 +640,7 @@ StatusSectionLayout {
                 return false
 
             // Deploy state check:
-            if(token.deployState !== Constants.ContractTransactionStatus.Completed)
-                return false
-
-            // Token deployed!!
-            return true
+            return token.deployState !== deployState
         }
 
         model: root.community.communityTokens
@@ -653,11 +652,15 @@ StatusSectionLayout {
                 return
 
             // It monitors the deployment:
-            if(!isOwnerTokenDeployed)
-                isOwnerTokenDeployed = reviewTokenDeployState(PermissionsHelpers.ownerTokenNameTag, true)
+            if(!isOwnerTokenDeployed) {
+                isOwnerTokenDeployed = reviewTokenDeployState(PermissionsHelpers.ownerTokenNameTag, true, Constants.ContractTransactionStatus.Completed)
+                isOwnerTokenFailed = reviewTokenDeployState(PermissionsHelpers.ownerTokenNameTag, true, Constants.ContractTransactionStatus.Failed)
+            }
 
-            if(!isTMasterTokenDeployed)
-                isTMasterTokenDeployed = reviewTokenDeployState(PermissionsHelpers.tMasterTokenNameTag, false)
+            if(!isTMasterTokenDeployed) {
+                isTMasterTokenDeployed = reviewTokenDeployState(PermissionsHelpers.tMasterTokenNameTag, false, Constants.ContractTransactionStatus.Completed)
+                isTMasterTokenFailed = reviewTokenDeployState(PermissionsHelpers.tMasterTokenNameTag, false, Constants.ContractTransactionStatus.Failed)
+            }
 
             // Not necessary to track more changes since privileged tokens have been correctly deployed.
             if(isOwnerTokenDeployed && isTMasterTokenDeployed)
