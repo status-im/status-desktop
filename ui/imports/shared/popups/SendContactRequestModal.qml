@@ -1,6 +1,7 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQml.Models 2.15
 
 import utils 1.0
 import shared.controls.chat 1.0
@@ -9,17 +10,15 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
-StatusModal {
+StatusDialog {
     id: root
 
     property var rootStore
 
-    property string userPublicKey: ""
-    property string userDisplayName: ""
-    property string userIcon: ""
-    property bool userIsEnsVerified
+    required property string userPublicKey
+    required property var contactDetails
 
     property string challengeText: qsTr("Say who you are / why you want to become a contact...")
     property string buttonText: qsTr("Send Contact Request")
@@ -27,31 +26,19 @@ StatusModal {
     signal accepted(string message)
 
     width: 480
-    height: 548
+    horizontalPadding: Style.current.padding
+    verticalPadding: Style.current.bigPadding
 
-    headerSettings.title: d.loadingContactDetails ? qsTr("Send Contact Request")
-                                          : qsTr("Send Contact Request to %1").arg(d.userDisplayName)
+    title: qsTr("Send Contact Request to %1").arg(d.mainDisplayName)
 
     onAboutToShow: {
         messageInput.input.edit.forceActiveFocus()
 
-        if (userDisplayName !== "" && userPublicKey !== "") {
-            d.updateContactDetails({
-                                       displayName: userDisplayName,
-                                       largeImage: "",
-                                       userIsEnsVerified: false
-                                   })
+        // (request) update from mailserver
+        if (d.userDisplayName === "") {
+            root.rootStore.contactStore.requestContactInfo(root.userPublicKey)
+            d.loadingContactDetails = true
         }
-
-        const contactDetails = Utils.getContactDetailsAsJson(userPublicKey, false)
-
-        if (contactDetails.displayName !== "") {
-            d.updateContactDetails(contactDetails)
-            return
-        }
-
-        root.rootStore.contactStore.requestContactInfo(root.userPublicKey)
-        d.loadingContactDetails = true
     }
 
     QtObject {
@@ -64,47 +51,39 @@ StatusModal {
 
         property bool loadingContactDetails: false
 
-        property string userDisplayName: ""
-        property string userIcon: ""
-        property bool userIsEnsVerified
+        property var contactDetails: root.contactDetails
 
-        function updateContactDetails(contactDetails) {
-            d.userDisplayName = contactDetails.displayName
-            d.userIcon = contactDetails.largeImage
-            d.userIsEnsVerified = contactDetails.ensVerified
-        }
+        readonly property bool userIsEnsVerified: contactDetails.ensVerified
+        readonly property string userDisplayName: contactDetails.displayName
+        readonly property string userNickName: contactDetails.localNickname
+        readonly property string prettyEnsName: contactDetails.name
+        readonly property string aliasName: contactDetails.alias
+        readonly property string mainDisplayName: ProfileUtils.displayName(userNickName, prettyEnsName, userDisplayName, aliasName)
+        readonly property var userIcon: contactDetails.largeImage
     }
 
     Connections {
         target: root.rootStore.contactStore.contactsModule
 
         function onContactInfoRequestFinished(publicKey, ok) {
-            if (ok) {
-                const details = Utils.getContactDetailsAsJson(userPublicKey, false)
-                d.updateContactDetails(details)
+            if (ok && publicKey === root.userPublicKey) {
+                d.contactDetails = Utils.getContactDetailsAsJson(userPublicKey, false)
             }
             d.loadingContactDetails = false
         }
     }
 
-    ColumnLayout {
-        id: content
-        anchors.fill: parent
-        anchors.topMargin: Style.current.bigPadding
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
+    contentItem: ColumnLayout {
         spacing: d.contentSpacing
 
         ProfileHeader {
             Layout.fillWidth: true
-
-            displayName: d.userDisplayName
+            displayName: d.mainDisplayName
             pubkey: root.userPublicKey
             icon: d.userIcon
             userIsEnsVerified: d.userIsEnsVerified
-
-            displayNameVisible: true
-            pubkeyVisible: true
+            isContact: d.contactDetails.isContact
+            trustStatus: d.contactDetails.trustStatus
             imageSize: ProfileHeader.ImageSize.Middle
             loading: d.loadingContactDetails
         }
@@ -126,13 +105,17 @@ StatusModal {
         }
     }
 
-    rightButtons: StatusButton {
-        objectName: "ProfileSendContactRequestModal_sendContactRequestButton"
-        enabled: messageInput.valid
-        text: root.buttonText
-        onClicked: {
-            root.accepted(messageInput.text);
-            root.close();
+    footer: StatusDialogFooter {
+        rightButtons: ObjectModel {
+            StatusButton {
+                objectName: "ProfileSendContactRequestModal_sendContactRequestButton"
+                enabled: messageInput.valid
+                text: root.buttonText
+                onClicked: {
+                    root.accepted(messageInput.text);
+                    root.close();
+                }
+            }
         }
     }
 }
