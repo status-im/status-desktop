@@ -40,7 +40,7 @@ StackLayout {
     property int loginType: Constants.LoginType.Password
     property bool communitySettingsDisabled
 
-    property var overviewChartData: []
+    property string overviewChartData: ""
 
     function navigateBack() {
         if (editSettingsPanelLoader.item.dirty)
@@ -117,7 +117,11 @@ StackLayout {
             }
 
             OverviewSettingsChart {
-                data: root.overviewChartData
+                model: {
+                    var newModel = JSON.parse(root.overviewChartData)
+                    // TODO: time conversion by locale may be required
+                    return newModel
+                }
                 onCollectCommunityMetricsMessagesTimestamps: {
                     root.collectCommunityMetricsMessagesTimestamps(intervals)
                 }

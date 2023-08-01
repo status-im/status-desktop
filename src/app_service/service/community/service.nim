@@ -1378,11 +1378,7 @@ QtObject:
 
     var metrics = rpcResponseObj{"response"}{"result"}.toCommunityMetricsDto()
     self.communityMetrics[communityId] = metrics
-    echo "------------> metrics: ", metrics
-
     self.events.emit(SIGNAL_COMMUNITY_METRICS_UPDATED, CommunityMetricsArgs(communityId: communityId, metricsType: metrics.metricsType))
-
-
 
   proc asyncCommunityInfoLoaded*(self: Service, communityIdAndRpcResponse: string) {.slot.} =
     let rpcResponseObj = communityIdAndRpcResponse.parseJson
@@ -1574,6 +1570,12 @@ QtObject:
       let errMsg = e.msg
       error "error loading curated communities: ", errMsg
       self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING_FAILED, Args())
+
+  proc getCommunityMetrics*(self: Service, communityId: string, metricsType: CommunityMetricsType): CommunityMetricsDto = 
+    # NOTE: use metricsType when other metrics types added
+    if self.communityMetrics.hasKey(communityId):
+      return self.communityMetrics[communityId]
+    return CommunityMetricsDto()
 
   proc collectCommunityMetricsMessagesTimestamps*(self: Service, communityId: string, intervals: string) =
     let arg = AsyncCollectCommunityMetricsTaskArg(

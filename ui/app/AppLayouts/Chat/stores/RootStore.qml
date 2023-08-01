@@ -56,7 +56,7 @@ QtObject {
         }
     }
 
-    readonly property var overviewChartData: chatCommunitySectionModule.overviewChartData
+    readonly property string overviewChartData: communitiesModuleInst.overviewChartData
 
     readonly property bool isUserAllowedToSendMessage: _d.isUserAllowedToSendMessage
     readonly property string chatInputPlaceHolderText: _d.chatInputPlaceHolderText

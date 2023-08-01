@@ -320,6 +320,9 @@ method cancelRequestToJoinCommunity*(self: Module, communityId: string) =
 method collectCommunityMetricsMessagesTimestamps*(self: Module, communityId: string, intervals: string) =
   self.controller.collectCommunityMetricsMessagesTimestamps(communityId, intervals)
 
+method setOverviewChartData*(self: Module, metrics: string) =
+  self.view.setOverviewChartData(metrics)
+
 method requestCommunityInfo*(self: Module, communityId: string, importing: bool) =
   self.controller.requestCommunityInfo(communityId, importing)
 

@@ -96,10 +96,10 @@ type CheckPermissionsToJoinResponseDto* = object
   validCombinations*: seq[AccountChainIDsCombinationDto]
 
 type MetricsIntervalDto* = object
-  startTimestamp: string
-  endTimestamp: string
-  timestamps: seq[string]
-  count: int
+  startTimestamp*: uint64
+  endTimestamp*: uint64
+  timestamps*: seq[uint64]
+  count*: int
 
 type CommunityMetricsDto* = object
   communityId*: string
@@ -326,8 +326,8 @@ proc toMetricsIntervalDto*(jsonObj: JsonNode): MetricsIntervalDto =
 
   var timestampsObj: JsonNode
   if (jsonObj.getProp("timestamps", timestampsObj) and timestampsObj.kind == JArray):
-    for timestamps in timestampsObj:
-      result.timestamps.add(timestamps.getStr)
+    for timestamp in timestampsObj:
+      result.timestamps.add(uint64(timestamp.getInt))
 
   discard jsonObj.getProp("count", result.count)
 
@@ -345,7 +345,7 @@ proc toCommunityMetricsDto*(jsonObj: JsonNode): CommunityMetricsDto =
   var intervalsObj: JsonNode
   if (jsonObj.getProp("intervals", intervalsObj) and intervalsObj.kind == JArray):
     for interval in intervalsObj:
-      result.intervals.add(interval.toMetricsIntervalDto())
+      result.intervals.add(interval.toMetricsIntervalDto)
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()

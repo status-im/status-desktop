@@ -1,4 +1,4 @@
-import stint
+import stint, std/strutils
 import ./io_interface
 
 import ../../../core/signals/types
@@ -180,6 +180,15 @@ proc init*(self: Controller) =
       let authenticated = not (args.password == "" and args.pin == "")
       self.delegate.callbackFromAuthentication(authenticated)
       self.tmpAuthenticationWithCallbackInProgress = false
+
+  self.events.on(SIGNAL_COMMUNITY_METRICS_UPDATED) do(e: Args):
+    let args = CommunityMetricsArgs(e)
+    let metrics = self.communityService.getCommunityMetrics(args.communityId, args.metricsType)
+    var strings: seq[string]
+    for interval in metrics.intervals:
+      for timestamp in interval.timestamps:
+        strings.add($timestamp)
+    self.delegate.setOverviewChartData("[" & join(strings, ", ") & "]")
 
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
