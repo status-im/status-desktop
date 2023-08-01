@@ -315,6 +315,7 @@ SettingsContentBase {
             id: sendContactRequest
             SendContactRequestModal {
                 contactsStore: root.contactsStore
+                onClosed: destroy()
             }
         }
     }

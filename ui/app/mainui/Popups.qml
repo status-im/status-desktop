@@ -142,13 +142,12 @@ QtObject {
 
     function openSendIDRequestPopup(publicKey, cb) {
         const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
+        const mainDisplayName = ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name, contactDetails.displayName, contactDetails.alias)
         openPopup(sendIDRequestPopupComponent, {
             userPublicKey: publicKey,
-            userDisplayName: contactDetails.displayName,
-            userIcon: contactDetails.largeImage,
-            userIsEnsVerified: contactDetails.ensVerified,
-            "headerSettings.title": qsTr("Verify %1's Identity").arg(contactDetails.displayName),
-            challengeText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask %1 to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(contactDetails.displayName),
+            contactDetails: contactDetails,
+            title: qsTr("Verify %1's Identity").arg(mainDisplayName),
+            challengeText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask %1 to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(mainDisplayName),
             buttonText: qsTr("Send verification request")
         }, cb)
     }
@@ -189,9 +188,7 @@ QtObject {
         const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
         const popupProperties = {
             userPublicKey: publicKey,
-            userDisplayName: contactDetails.displayName,
-            userIcon: contactDetails.largeImage,
-            userIsEnsVerified: contactDetails.ensVerified
+            contactDetails: contactDetails
         }
 
         openPopup(sendContactRequestPopupComponent, popupProperties, cb)
@@ -200,7 +197,7 @@ QtObject {
     function openContactRequestPopupWithContactData(contactData, cb) {
         const popupProperties = {
             userPublicKey: contactData.publicKey,
-            userDisplayName: contactData.displayName
+            contactDetails: { displayName: contactData.displayName }
         }
         openPopup(sendContactRequestPopupComponent, popupProperties, cb)
     }
