@@ -131,7 +131,6 @@ proc mainProc() =
 
   QResource.registerResource(app.applicationDirPath & resourcesPath)
   # Register events objects
-  let dockShowAppEvent = newStatusDockShowAppEventObject(singletonInstance.engine)
   let osThemeEvent = newStatusOSThemeEventObject(singletonInstance.engine)
 
   if not main_constants.IS_MACOS:
@@ -149,7 +148,6 @@ proc mainProc() =
   singletonInstance.engine.setRootContextProperty("signals", signalsManagerQVariant)
   singletonInstance.engine.setRootContextProperty("production", isProductionQVariant)
 
-  app.installEventFilter(dockShowAppEvent)
   app.installEventFilter(osThemeEvent)
   app.installEventFilter(urlSchemeEvent)
 
@@ -161,7 +159,6 @@ proc mainProc() =
     isExperimentalQVariant.delete()
     signalsManagerQVariant.delete()
     networkAccessFactory.delete()
-    dockShowAppEvent.delete()
     osThemeEvent.delete()
     appController.delete()
     statusFoundation.delete()
