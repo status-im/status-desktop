@@ -239,6 +239,10 @@ QtObject {
             walletSectionAllTokens.getHistoricalDataForToken(symbol,currency)
     }
 
+    function fetchDecodedTxData(txHash, input) {
+        walletSectionInst.fetchDecodedTxData(txHash, input)
+    }
+
     property bool marketHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.marketHistoryIsLoading : false
 
     function fetchHistoricalBalanceForTokenAsJson(address, tokenSymbol, currencySymbol, timeIntervalEnum) {

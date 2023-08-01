@@ -55,9 +55,11 @@ QtObject:
   proc getColorByAddress(self: View, address: string): string {.slot.}=
     return self.accounts.getColorByAddress(address)
 
+  proc isOwnedAccount(self: View, address: string): bool {.slot.} =
+    return self.accounts.isOwnedAccount(address)
+
   proc updateWalletAccountProdPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
     self.delegate.updateWalletAccountProdPreferredChains(address, preferredChainIds)
 
   proc updateWalletAccountTestPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
     self.delegate.updateWalletAccountTestPreferredChains(address, preferredChainIds)
-

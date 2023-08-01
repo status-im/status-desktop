@@ -89,6 +89,19 @@ proc fromJson*(jn: JsonNode, T: typedesc[ActivityStatus]): ActivityStatus {.inli
 proc `%`*(tt: TokenType): JsonNode {.inline.} =
   return newJInt(ord(tt))
 
+proc `$`*(tt: TokenType): string {.inline.} =
+  case tt:
+    of Native:
+      return "ETH"
+    of Erc20:
+      return "ERC-20"
+    of Erc721:
+      return "ERC-721"
+    of Erc1155:
+      return "ERC-1155"
+    else:
+      return ""
+
 proc fromJson*(jn: JsonNode, T: typedesc[TokenType]): TokenType {.inline.} =
   return cast[TokenType](jn.getInt())
 

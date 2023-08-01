@@ -139,3 +139,9 @@ QtObject:
       if(cmpIgnoreCase(item.address(), address) == 0):
         return item.colorId()
     return ""
+
+  proc isOwnedAccount*(self: Model, address: string): bool =
+    for item in self.items:
+      if cmpIgnoreCase(item.address(), address) == 0 and item.walletType != "watch":
+        return true
+    return false

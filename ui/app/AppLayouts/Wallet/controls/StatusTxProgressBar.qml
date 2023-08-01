@@ -10,6 +10,7 @@ ColumnLayout {
 
     property bool isLayer1: true
     property bool error: false
+    property bool pending: false
     property int steps: isLayer1 ? 64 : 1
     property int confirmations: 0
     property int confirmationBlocks: isLayer1 ? 4 : 1
@@ -43,14 +44,18 @@ ColumnLayout {
         color: Theme.palette.directColor1
         lineHeight: 22
         lineHeightMode: Text.FixedHeight
-        text: error ? qsTr("Failed on %1").arg(root.chainName) :
-                      d.finalized ?
-                          qsTr("Finalised on %1").arg(root.chainName) :
-                          d.confirmed ?
-                              qsTr("Confirmed on %1, finalisation in progress...").arg(root.chainName):
-                              confirmations > 0 ?
-                                  qsTr("Confirmation in progress on %1...").arg(root.chainName) :
-                                  qsTr("Pending on %1...").arg(root.chainName)
+        text: {
+            if (error) {
+                return qsTr("Failed on %1").arg(root.chainName)
+            } else if (pending) {
+                return qsTr("Confirmation in progress on %1...").arg(root.chainName)
+            } else if (d.finalized) {
+                return qsTr("Finalised on %1").arg(root.chainName)
+            } else if (d.confirmed) {
+                return qsTr("Confirmed on %1, finalisation in progress...").arg(root.chainName)
+            }
+            return qsTr("Pending on %1...").arg(root.chainName)
+        }
     }
 
     RowLayout {
@@ -99,8 +104,13 @@ ColumnLayout {
         color: Theme.palette.baseColor1
         lineHeight: 18
         lineHeightMode: Text.FixedHeight
-        text: d.finalized && !root.error ? qsTr("In epoch %1").arg(root.confirmations) : d.confirmed && !root.isLayer1 ?
-                                               qsTr("%n day(s) until finality", "", Math.ceil((root.duration - root.progress)/d.hoursInADay)):
-                                               qsTr("%1 / %2 confirmations").arg(root.confirmations).arg(root.steps)
+        text: {
+            if (d.finalized && !root.error) {
+                return qsTr("In epoch %1").arg(root.confirmations)
+            } else if (d.confirmed && !root.isLayer1) {
+                return qsTr("%n day(s) until finality", "", Math.ceil((root.duration - root.progress)/d.hoursInADay))
+            }
+            return qsTr("%1 / %2 confirmations").arg(root.confirmations).arg(root.steps)
+        }
     }
 }
