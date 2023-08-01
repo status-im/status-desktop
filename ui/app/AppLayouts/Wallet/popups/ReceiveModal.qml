@@ -23,7 +23,8 @@ StatusModal {
     id: root
 
     property string address: RootStore.selectedReceiveAccount.address
-    property string chainShortNames: ""
+    property string chainShortNames: RootStore.getNetworkShortNames(d.preferredSharingNetworksString)
+    property var preferredSharingNetworksArray: d.preferredSharingNetworksString.split(":").filter(Boolean)
 
     property string description: qsTr("Your Address")
 
@@ -31,8 +32,12 @@ StatusModal {
 
     QtObject {
         id: d
-        property string completeAddressWithNetworkPrefix
-        property var preferredSharingNetworksArray: !!RootStore.selectedReceiveAccount ? RootStore.selectedReceiveAccount.preferredSharingChainIds.split(":").filter(Boolean): []
+        property string completeAddressWithNetworkPrefix: root.chainShortNames + root.address
+        property string preferredSharingNetworksString: !!RootStore.selectedReceiveAccount ? RootStore.selectedReceiveAccount.preferredSharingChainIds : ""
+        onPreferredSharingNetworksStringChanged: {
+            root.preferredSharingNetworksArray = d.preferredSharingNetworksString.split(":").filter(Boolean)
+            root.chainShortNames = RootStore.getNetworkShortNames(d.preferredSharingNetworksString)
+        }
     }
 
     headerSettings.title: qsTr("Receive")
@@ -100,7 +105,7 @@ StatusModal {
                             tagPrimaryLabel.text: model.shortName
                             tagPrimaryLabel.color: model.chainColor
                             image.source: Style.svg("tiny/" + model.iconUrl)
-                            visible: d.preferredSharingNetworksArray.includes(model.chainId.toString())
+                            visible: root.preferredSharingNetworksArray.includes(model.chainId.toString())
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: root.readOnly ? Qt.ArrowCursor : Qt.PointingHandCursor
@@ -210,7 +215,7 @@ StatusModal {
                                 font.pixelSize: 15
                                 color: chainColor
                                 text: shortName + ":"
-                                visible: d.preferredSharingNetworksArray.includes(model.chainId.toString())
+                                visible: root.preferredSharingNetworksArray.includes(model.chainId.toString())
                                 onVisibleChanged: {
                                     if (root.readOnly)
                                         return
@@ -260,17 +265,17 @@ StatusModal {
             layer1Networks: layer1NetworksClone
             layer2Networks: layer2NetworksClone
             preferredNetworksMode: true
-            preferredSharingNetworks: d.preferredSharingNetworksArray
+            preferredSharingNetworks: root.preferredSharingNetworksArray
 
             useEnabledRole: false
 
             closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
             onToggleNetwork: (network, networkModel, index) => {
-                                 d.preferredSharingNetworksArray = RootStore.processPreferredSharingNetworkToggle( d.preferredSharingNetworksArray, network)
+                                 root.preferredSharingNetworksArray = RootStore.processPreferredSharingNetworkToggle(root.preferredSharingNetworksArray, network)
                              }
 
-            onClosed: RootStore.updateWalletAccountPreferredChains(root.address, d.preferredSharingNetworksArray.join(":"))
+            onClosed: RootStore.updateWalletAccountPreferredChains(root.address, root.preferredSharingNetworksArray.join(":"))
 
             CloneModel {
                 id: layer1NetworksClone

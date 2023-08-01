@@ -139,6 +139,7 @@ Loader {
     Component {
         id: myAccountRecipient
         WalletAccountListItem {
+            property string chainShortNames: store.getNetworkShortNames(modelData.preferredSharingChainIds)
             implicitWidth: parent.width
             modelData: root.selectedRecipient
             radius: 8
