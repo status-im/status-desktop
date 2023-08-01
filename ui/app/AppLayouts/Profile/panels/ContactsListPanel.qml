@@ -89,6 +89,20 @@ Item {
                     }
                 }
             ]
+            proxyRoles: ExpressionRole {
+                function displayNameProxy(nickname, ensName, displayName, aliasName) {
+                    return ProfileUtils.displayName(nickname, ensName, displayName, aliasName)
+                }
+                name: "preferredDisplayName"
+                expression: displayNameProxy(model.localNickname, model.ensName, model.displayName, model.alias)
+            }
+
+            sorters: [
+                StringSorter {
+                    roleName: "preferredDisplayName"
+                    caseSensitivity: Qt.CaseInsensitive
+                }
+            ]
         }
 
         delegate: ContactPanel {
@@ -96,7 +110,7 @@ Item {
 
             width: ListView.view.width
             contactsStore: root.contactsStore
-            name: ProfileUtils.displayName(model.localNickname, model.ensName, model.displayName, model.alias)
+            name: model.preferredDisplayName
             ensVerified: model.isEnsVerified
             publicKey: model.pubKey
             compressedPk: Utils.getCompressedPk(model.pubKey)
