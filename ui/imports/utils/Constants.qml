@@ -1058,11 +1058,13 @@ QtObject {
         "GRID", "LISK", "MOD", "PAX", "RAE", "SAI", "ST", "TNT", "WABI"
     ]
 
-    function tokenIcon(symbol) {
+    function tokenIcon(symbol, useDefault=true) {
         if (!!symbol && knownTokenPNGs.indexOf(symbol) !== -1)
             return Style.png("tokens/" + symbol)
 
-        return Style.png("tokens/DEFAULT-TOKEN")
+        if (useDefault)
+            return Style.png("tokens/DEFAULT-TOKEN")
+        return ""
     }
 
     // Message outgoing status

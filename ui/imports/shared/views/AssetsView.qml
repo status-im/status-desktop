@@ -34,6 +34,7 @@ Item {
         objectName: "assetViewStatusListView"
         anchors.fill: parent
         model: filteredModel
+        reuseItems: true
         delegate: delegateLoader
     }
 
@@ -49,7 +50,7 @@ Item {
 
     Component {
         id: delegateLoader
-        Loader {
+         Loader {
             property var modelData: model
             property int index: index
             width: ListView.view.width

@@ -33,9 +33,11 @@ StatusListItem {
     property string errorTooltipText_1
     property string errorTooltipText_2
 
+    readonly property string symbolUrl: !!modelData && modelData.symbol ? Constants.tokenIcon(modelData.symbol, false) : ""
+
     title: modelData ? modelData.name : ""
     subTitle: LocaleUtils.currencyAmountToLocaleString(modelData.enabledNetworkBalance)
-    asset.name: modelData && modelData.symbol ? Style.png("tokens/" + modelData.symbol) : ""
+    asset.name: symbolUrl
     asset.isImage: true
     errorIcon.tooltip.maxWidth: 300
 
@@ -96,5 +98,19 @@ StatusListItem {
                 }
             }
         }
+    ]
+
+    states: [
+        State {
+            name: "unkownToken"
+            when: !root.symbolUrl
+            PropertyChanges {
+                target: root.asset
+                isLetterIdenticon: true
+                color: Theme.palette.miscColor5
+                name: !!modelData && modelData.symbol ? modelData.symbol : ""
+            }
+        }
+
     ]
 }

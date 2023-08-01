@@ -32,7 +32,11 @@ ColumnLayout {
     signal launchTransactionDetail(var transaction)
 
     onVisibleChanged: {
-        if (visible && RootStore.transactionActivityStatus.isFilterDirty) {
+        if (!visible)
+            return
+
+        filterPanelLoader.active = true
+        if (RootStore.transactionActivityStatus.isFilterDirty) {
             WalletStores.RootStore.currentActivityFiltersStore.applyAllFilters()
         }
     }
@@ -80,13 +84,17 @@ ColumnLayout {
         text: qsTr("Activity for this account will appear here")
     }
 
-    ActivityFilterPanel {
-        id: filterComponent
-        visible: d.isInitialLoading || transactionListRoot.count > 0 || WalletStores.RootStore.currentActivityFiltersStore.filtersSet
+    Loader {
+        id: filterPanelLoader
+        active: false
+        asynchronous: true
         Layout.fillWidth: true
-        activityFilterStore: WalletStores.RootStore.currentActivityFiltersStore
-        store: WalletStores.RootStore
-        isLoading: d.isInitialLoading
+        sourceComponent: ActivityFilterPanel {
+            visible: d.isInitialLoading || transactionListRoot.count > 0 || WalletStores.RootStore.currentActivityFiltersStore.filtersSet
+            activityFilterStore: WalletStores.RootStore.currentActivityFiltersStore
+            store: WalletStores.RootStore
+            isLoading: d.isInitialLoading
+        }
     }
 
     Item {
@@ -373,6 +381,8 @@ ColumnLayout {
 
             Repeater {
                 model: {
+                    if (!root.visible)
+                        return 0
                     if (!noTxs.visible) {
                         const delegateHeight = 64 + footerColumn.spacing
                         if (d.isInitialLoading) {

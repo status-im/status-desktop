@@ -216,3 +216,15 @@ QtObject:
 
     if self.isFetching:
       self.appendLoadingItems()
+
+  proc getImageUrl*(self: Model, id: string): string {.slot.} =
+    for item in self.items:
+      if(cmpIgnoreCase(item.getId(), id) == 0):
+        return item.getImageUrl()
+    return ""
+
+  proc getName*(self: Model, id: string): string {.slot.} =
+    for item in self.items:
+      if(cmpIgnoreCase(item.getId(), id) == 0):
+        return item.getName()
+    return ""

@@ -141,42 +141,39 @@ Column {
         }
 
         Repeater {
-            model: activityFilterStore.tokensList
+            model: activityFilterStore.tokensFilter
             delegate: ActivityFilterTagItem {
-                tagPrimaryLabel.text: symbol
-                iconAsset.icon: Constants.tokenIcon(symbol)
+                tagPrimaryLabel.text: modelData
+                iconAsset.icon: Constants.tokenIcon(modelData)
                 iconAsset.color: "transparent"
-                visible: !activityFilterMenu.allTokensChecked && activityFilterStore.tokensFilter.includes(symbol)
-                onClosed: activityFilterStore.toggleToken(symbol)
+                onClosed: activityFilterStore.toggleToken(modelData)
             }
         }
 
         Repeater {
-            model: activityFilterStore.collectiblesList
+            model: activityFilterStore.collectiblesFilter
             delegate: ActivityFilterTagItem {
-                tagPrimaryLabel.text: model.name
-                iconAsset.icon: model.imageUrl
+                tagPrimaryLabel.text: activityFilterStore.collectiblesList.getName(modelData)
+                iconAsset.icon: activityFilterStore.collectiblesList.getImageUrl(modelData)
                 iconAsset.color: "transparent"
-                visible: !activityFilterMenu.allCollectiblesChecked && activityFilterStore.collectiblesFilter.includes(model.id)
                 onClosed: activityFilterStore.toggleCollectibles(model.id)
             }
         }
 
         Repeater {
-            model: activityFilterStore.recentsList
+            model: activityFilterStore.recentsFilters
             delegate: ActivityFilterTagItem {
-                tagPrimaryLabel.text: root.store.getNameForAddress(model.address) || StatusQUtils.Utils.elideText(model.address,6,4)
-                visible: !activityFilterMenu.allRecentsChecked && activityFilterMenu.recentsFilters.includes(model.address)
-                onClosed: activityFilterStore.toggleRecents(model.address)
+                tagPrimaryLabel.text: root.store.getNameForAddress(modelData) || StatusQUtils.Utils.elideText(modelData,6,4)
+                onClosed: activityFilterStore.toggleRecents(modelData)
             }
         }
 
         Repeater {
-            model: activityFilterStore.savedAddressList
+            model: activityFilterStore.savedAddressFilters
             delegate: ActivityFilterTagItem {
-                tagPrimaryLabel.text: ens.length > 0 ? ens : chainShortNames + StatusQUtils.Utils.elideText(address,6,4)
-                visible: !activityFilterMenu.allSavedAddressesChecked && activityFilterMenu.savedAddressFilters.includes(address)
-                onClosed: activityFilterStore.toggleSavedAddress(address)
+                tagPrimaryLabel.text: activityFilterStore.getEnsForSavedWalletAddress(modelData)
+                                      || activityFilterStore.getChainShortNamesForSavedWalletAddress(modelData) + StatusQUtils.Utils.elideText(modelData,6,4)
+                onClosed: activityFilterStore.toggleSavedAddress(modelData)
             }
         }
     }

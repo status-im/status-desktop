@@ -213,7 +213,15 @@ QtObject {
         activityController.updateFilter()
     }
 
-    property var savedAddressesModel: walletSectionSavedAddresses.model
+    function getChainShortNamesForSavedWalletAddress(address) {
+        return walletSectionSavedAddresses.getChainShortNamesForAddress(address)
+    }
+
+    function getEnsForSavedWalletAddress(address) {
+        return walletSectionSavedAddresses.getEnsForAddress(address)
+    }
+
+    readonly property var savedAddressesModel: walletSectionSavedAddresses.model
     property bool areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var savedAddressList:  SortFilterProxyModel {
         sourceModel: savedAddressesModel

@@ -146,6 +146,7 @@ StatusMenu {
                 width: parent.width
                 height: root.height - tabBar.height - tokensSearchBox.height - 12
                 spacing: 0
+                reuseItems: true
                 model: SortFilterProxyModel {
                     sourceModel: root.collectiblesList
                     filters: ExpressionFilter {
