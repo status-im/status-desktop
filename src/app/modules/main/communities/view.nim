@@ -1,7 +1,8 @@
 import NimQml, json, strutils, sequtils
 
 import ./io_interface
-import ../../shared_models/[section_model, section_item, section_details, token_list_model, token_list_item]
+import ../../shared_models/[section_model, section_item, section_details, token_list_model, token_list_item,
+  token_permissions_model]
 import ./models/curated_community_model
 import ./models/discord_file_list_model
 import ./models/discord_file_item
@@ -17,6 +18,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: SectionModel
       modelVariant: QVariant
+      spectatedCommunityPermissionModel: TokenPermissionsModel
+      spectatedCommunityPermissionModelVariant: QVariant
       curatedCommunitiesModel: CuratedCommunityModel
       curatedCommunitiesModelVariant: QVariant
       curatedCommunitiesLoading: bool
@@ -51,6 +54,8 @@ QtObject:
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
+    self.spectatedCommunityPermissionModel.delete
+    self.spectatedCommunityPermissionModelVariant.delete
     self.curatedCommunitiesModel.delete
     self.curatedCommunitiesModelVariant.delete
     self.discordFileListModel.delete
@@ -75,6 +80,8 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
+    result.spectatedCommunityPermissionModel = newTokenPermissionsModel()
+    result.spectatedCommunityPermissionModelVariant = newQVariant(result.spectatedCommunityPermissionModel)
     result.curatedCommunitiesModel = newCuratedCommunityModel()
     result.curatedCommunitiesModelVariant = newQVariant(result.curatedCommunitiesModel)
     result.curatedCommunitiesLoading = false
@@ -300,6 +307,18 @@ QtObject:
 
   QtProperty[QVariant] model:
     read = getModel
+
+  proc spectatedCommunityPermissionModel*(self: View): TokenPermissionsModel =
+    result = self.spectatedCommunityPermissionModel
+
+  proc prepareTokenModelForCommunity(self: View, communityId: string) {.slot.} =
+    self.delegate.prepareTokenModelForCommunity(communityId)
+
+  proc getSpectatedCommunityPermissionModel(self: View): QVariant {.slot.} =
+    return self.spectatedCommunityPermissionModelVariant
+
+  QtProperty[QVariant] spectatedCommunityPermissionModel:
+    read = getSpectatedCommunityPermissionModel
 
   proc curatedCommunitiesModel*(self: View): CuratedCommunityModel =
     result = self.curatedCommunitiesModel

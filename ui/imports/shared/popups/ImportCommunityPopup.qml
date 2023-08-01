@@ -24,9 +24,7 @@ StatusDialog {
         id: d
         property string importErrorMessage
         readonly property bool communityFound: (d.isPublicKey && !!d.communityDetails)
-        readonly property var communityDetails: {
-            return root.store.getCommunityDetails(Utils.getCompressedPk(publicKey));
-        }
+        readonly property var communityDetails: root.store.getCommunityDetails(publicKey)
         readonly property string inputErrorMessage: isInputValid ? "" : qsTr("Invalid key")
         readonly property string errorMessage: importErrorMessage || inputErrorMessage
         readonly property string inputKey: keyInput.text.trim()

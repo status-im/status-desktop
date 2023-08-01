@@ -111,6 +111,10 @@ QtObject {
         root.communitiesModuleInst.spectateCommunity(publicKey, "");
     }
 
+    function prepareTokenModelForCommunity(publicKey) {
+        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey);
+    }
+
     function getCommunityDetails(communityId, importing = false) {
         const publicKey = Utils.isCompressedPubKey(communityId)
                             ? Utils.changeCommunityKeyCompression(communityId)
