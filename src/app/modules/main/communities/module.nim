@@ -500,3 +500,14 @@ method authenticateWithCallback*(self: Module) =
 
 method callbackFromAuthentication*(self: Module, authenticated: bool) =
   self.view.callbackFromAuthentication(authenticated)
+
+method prepareTokenModelForCommunity*(self: Module, communityId: string) =
+  let community = self.controller.getCommunityById(communityId)
+  var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
+
+  for id, tokenPermission in community.tokenPermissions:
+    let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+    let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
+    tokenPermissionsItems.add(tokenPermissionItem)
+
+  self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)

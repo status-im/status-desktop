@@ -187,6 +187,9 @@ proc getCommunityTags*(self: Controller): string =
 proc getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()
 
+proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  result = self.communityService.getCommunityById(communityId)
+
 proc getCuratedCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getCuratedCommunities()
 

@@ -200,3 +200,6 @@ method authenticateWithCallback*(self: AccessInterface) {.base.} =
 
 method callbackFromAuthentication*(self: AccessInterface, authenticated: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method prepareTokenModelForCommunity*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
