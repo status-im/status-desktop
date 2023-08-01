@@ -1,9 +1,11 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.14
 
+import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import SortFilterProxyModel 0.2
 import utils 1.0
@@ -24,6 +26,7 @@ StatusScrollView {
     property int viewWidth: 560 // by design
     property var model
     property string communityName
+    property bool anyPrivilegedTokenFailed: false
     readonly property int count: assetsModel.count + collectiblesModel.count
 
     signal itemClicked(string tokenKey,
@@ -32,7 +35,11 @@ StatusScrollView {
                        string accountName,
                        string accountAddress)
 
-    signal mintOwnerTokenClicked
+    signal mintOwnerTokenClicked()
+    signal retryOwnerTokenClicked(string tokenKey,
+                                  int chainId,
+                                  string accountName,
+                                  string accountAddress)
 
     padding: 0
 
@@ -255,6 +262,27 @@ StatusScrollView {
                 Layout.preferredHeight: 44
                 visible: collectiblesGrid.count === 0
                 text: qsTr("You currently have no minted collectibles")
+            }
+
+            // Retry button, only in case of Owner or TMaster tokens failure
+            StatusButton {
+                Layout.preferredWidth: 336
+                Layout.preferredHeight: 44
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 24
+
+                visible: root.anyPrivilegedTokenFailed
+                text: qsTr("Retry mint")
+
+                onClicked: {
+                    // Get owner token item:
+                    const index = StatusQUtils.ModelUtils.indexOf(root.model, "name", PermissionsHelpers.ownerTokenNameTag + root.communityName)
+                    if(index === -1)
+                        return console.warn("Trying to get Owner Token item but it's not part of the provided model.")
+
+                    const token = StatusQUtils.ModelUtils.get(root.model, index)
+                    root.retryOwnerTokenClicked(token.contractUniqueKey, token.chainId, token.accountName, token.accountAddress)
+                }
             }
         }
     }

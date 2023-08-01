@@ -77,6 +77,7 @@ SplitView {
             // Owner and TMaster related props:
             isOwnerTokenDeployed: deployCheck.checked
             isTMasterTokenDeployed: deployCheck.checked
+            anyPrivilegedTokenFailed: failedCheck.checked
 
             // Models:
             tokensModel: editorModelChecked.checked ? emptyModel :
@@ -148,6 +149,7 @@ SplitView {
                     id: privilegedModelChecked
 
                     text: "Owner token and TMaster token only"
+
                 }
                 RadioButton {
                     id: completeModelChecked
@@ -165,7 +167,10 @@ SplitView {
                 }
 
                 RadioButton {
+                    id: failedCheck
+
                     text: "Set all to 'Error'"
+                    checked: true
 
                     onClicked: mintedTokensModel.changeAllMintingStates(0)
                 }
