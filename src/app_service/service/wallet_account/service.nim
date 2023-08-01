@@ -38,6 +38,7 @@ const SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED* = "walletAccount/addressDet
 const SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED* = "walletAccount/positionUpdated"
 const SIGNAL_WALLET_ACCOUNT_OPERABILITY_UPDATED* = "walletAccount/operabilityUpdated"
 const SIGNAL_WALLET_ACCOUNT_CHAIN_ID_FOR_URL_FETCHED* = "walletAccount/chainIdForUrlFetched"
+const SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED* = "walletAccount/preferredSharingChainsUpdated"
 
 const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
 const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
@@ -435,24 +436,20 @@ QtObject:
       self.storeAccount(localAcc)
 
   proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string,
-    positionUpdated: Option[bool] = none(bool), prodPreferredChains: string = "", testPreferredChains: string = "", notify: bool = true) =
+    positionUpdated: Option[bool] = none(bool), notify: bool = true) =
     if address.len > 0:
       if not self.walletAccountsContainsAddress(address):
         return
       var account = self.getAccountByAddress(address)
       if account.isNil:
         return
-      if name.len > 0 or colorId.len > 0 or emoji.len > 0 or prodPreferredChains.len > 0 or testPreferredChains.len > 0:
+      if name.len > 0 or colorId.len > 0 or emoji.len > 0:
         if name.len > 0 and name != account.name:
           account.name = name
         if colorId.len > 0 and colorId != account.colorId:
           account.colorId = colorId
         if emoji.len > 0 and emoji != account.emoji:
           account.emoji = emoji
-        if testPreferredChains.len > 0 and testPreferredChains != account.testPreferredChainIds:
-          account.testPreferredChainIds = testPreferredChains
-        if prodPreferredChains.len > 0 and prodPreferredChains != account.prodPreferredChainIds:
-          account.prodPreferredChainIds = prodPreferredChains
         self.storeAccount(account)
         if notify:
           self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
@@ -464,6 +461,22 @@ QtObject:
         self.updateAccountsPositions()
       if notify:
         self.events.emit(SIGNAL_WALLET_ACCOUNT_POSITION_UPDATED, Args())
+
+  proc updatePreferredSharingChainsAndNotify(self: Service, address, prodPreferredChains, testPreferredChains: string) =
+    if address.len == 0:
+      return
+    if not self.walletAccountsContainsAddress(address):
+      return
+    var account = self.getAccountByAddress(address)
+    if account.isNil:
+      return
+    if testPreferredChains.len > 0 and testPreferredChains != account.testPreferredChainIds:
+      account.testPreferredChainIds = testPreferredChains
+    if prodPreferredChains.len > 0 and prodPreferredChains != account.prodPreferredChainIds:
+      account.prodPreferredChainIds = prodPreferredChains
+    self.storeAccount(account)
+
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED, AccountArgs(account: account))
 
   ## if password is not provided local keystore file won't be created
   proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool, name, address, path, publicKey,
@@ -617,7 +630,7 @@ QtObject:
       if not response.error.isNil:
         error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
         return false
-      self.updateAccountInLocalStoreAndNotify(address, name ="", colorId = "", emoji = "", positionUpdated = none(bool), prodPreferredChains = preferredChainIds, testPreferredChains = "")
+      self.updatePreferredSharingChainsAndNotify(address, prodPreferredChains = preferredChainIds, testPreferredChains = "")
       return true
     except Exception as e:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
@@ -634,7 +647,7 @@ QtObject:
       if not response.error.isNil:
         error "status-go error", procName="updateWalletAccount", errCode=response.error.code, errDesription=response.error.message
         return false
-      self.updateAccountInLocalStoreAndNotify(address, name ="", colorId = "", emoji = "", positionUpdated = none(bool), prodPreferredChains = "", testPreferredChains = preferredChainIds)
+      self.updatePreferredSharingChainsAndNotify(address, prodPreferredChains = "", testPreferredChains = preferredChainIds)
       return true
     except Exception as e:
       error "error: ", procName="updateWalletAccount", errName=e.name, errDesription=e.msg
@@ -1036,7 +1049,7 @@ QtObject:
     else:
       if self.walletAccountsContainsAddress(account.address):
         self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji,
-          none(bool), account.prodPreferredChainIDs, account.testPreferredChainIDs, notify)
+          none(bool), notify)
       else:
         self.addNewAccountToLocalStoreAndNotify(notify)
 

@@ -118,7 +118,7 @@ method load*(self: Module) =
     let args = AccountArgs(e)
     let keycardAccount = self.controller.isKeycardAccount(args.account)
     let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
-    self.view.onUpdatedAccount(walletAccountToWalletAccountItem(args.account, keycardAccount, areTestNetworksEnabled), args.account.prodPreferredChainIds, args.account.testPreferredChainIds)
+    self.view.onUpdatedAccount(walletAccountToWalletAccountItem(args.account, keycardAccount, areTestNetworksEnabled))
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
     let args = KeycardArgs(e)
@@ -139,6 +139,10 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED) do(e: Args):
     self.view.setIncludeWatchOnlyAccount(self.controller.isIncludeWatchOnlyAccount())
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED) do(e: Args):
+    let args = AccountArgs(e)
+    self.view.onPreferredSharingChainsUpdated(args.account.keyUid, args.account.address, args.account.prodPreferredChainIds, args.account.testPreferredChainIds)
 
   self.controller.init()
   self.view.load()

@@ -46,9 +46,12 @@ QtObject:
   proc updateAccount(self: View, address: string, accountName: string, colorId: string, emoji: string) {.slot.} =
     self.delegate.updateAccount(address, accountName, colorId, emoji)
 
-  proc onUpdatedAccount*(self: View, account: WalletAccountItem, prodPreferredChainIds: string, testPreferredChainIds: string) =
+  proc onUpdatedAccount*(self: View, account: WalletAccountItem) =
     self.accounts.onUpdatedAccount(account)
-    self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji, prodPreferredChainIds, testPreferredChainIds)
+    self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji)
+
+  proc onPreferredSharingChainsUpdated*(self: View, keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
+    self.keyPairModel.onPreferredSharingChainsUpdated(keyUid, address, prodPreferredChainIds, testPreferredChainIds)
 
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)
