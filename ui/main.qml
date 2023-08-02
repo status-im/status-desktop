@@ -228,9 +228,8 @@ StatusWindow {
     // On MacOS, explicitely restore the window on activating
     Connections {
         target: Qt.application
+        enabled: Qt.platform.os === Constants.mac
         function onStateChanged() {
-            if (Qt.platform.os != Constants.mac)
-                return
 
             if (d.previousApplicationState == Qt.application.state) {
                 applicationWindow.visible = true
