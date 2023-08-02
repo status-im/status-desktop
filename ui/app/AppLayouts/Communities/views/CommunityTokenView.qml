@@ -67,7 +67,9 @@ StatusScrollView {
     signal airdropRequested(string address)
     signal generalAirdropRequested
 
-    signal remoteDestructRequested(string address)
+    signal remoteDestructRequested(string name, string address)
+    signal kickRequested(string name, string address)
+    signal banRequested(string name, string address)
 
     signal deployFeesRequested
 
@@ -150,8 +152,6 @@ StatusScrollView {
             accountErrorText: root.feeErrorText
 
             model: QtObject {
-                id: singleFeeModel
-
                 readonly property string title: root.feeLabel
                 readonly property string feeText: root.isFeeLoading ?
                                                       "" : root.feeText
@@ -159,7 +159,7 @@ StatusScrollView {
             }
 
             accountsSelector.model: SortFilterProxyModel {
-                sourceModel: root.accounts
+                sourceModel: root.accounts || null
                 proxyRoles: [
                     ExpressionRole {
                         name: "color"
@@ -230,7 +230,10 @@ StatusScrollView {
 
             onAirdropRequested: root.airdropRequested(address)
             onGeneralAirdropRequested: root.generalAirdropRequested()
-            onRemoteDestructRequested: root.remoteDestructRequested(address)
+            onRemoteDestructRequested: root.remoteDestructRequested(name, address)
+
+            onKickRequested: root.kickRequested(name, address)
+            onBanRequested: root.banRequested(name, address)
         }
     }
 }

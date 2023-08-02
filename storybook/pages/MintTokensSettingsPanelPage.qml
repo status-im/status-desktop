@@ -1,6 +1,8 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+
+import Qt.labs.settings 1.0
 
 import AppLayouts.Communities.panels 1.0
 import AppLayouts.Chat.stores 1.0
@@ -184,6 +186,12 @@ SplitView {
                 }
             }
         }
+    }
+
+    Settings {
+        property alias editorModelChecked: editorModelChecked.checked
+        property alias privilegedModelChecked: privilegedModelChecked.checked
+        property alias completeModelChecked: completeModelChecked.checked
     }
 }
 
