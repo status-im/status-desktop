@@ -65,14 +65,18 @@ method refreshWalletAccounts*(self: Module) =
   let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
 
   let items = walletAccounts.map(w => (block:
+    let tokens = self.controller.getTokensByAddress(w.address)
     let tokenFormats = collect(initTable()):
-      for t in w.tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
+      for t in tokens: {t.symbol: self.controller.getCurrencyFormat(t.symbol)}
 
+    let currencyBalance = self.controller.getCurrencyBalance(w.address, enabledChainIds, currency)
     walletAccountToWalletSendAccountItem(
       w,
+      tokens,
       chainIds,
       enabledChainIds,
       currency,
+      currencyBalance,
       currencyFormat,
       tokenFormats,
       areTestNetworksEnabled,

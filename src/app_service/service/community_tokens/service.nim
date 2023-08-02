@@ -257,7 +257,7 @@ QtObject:
         self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
       except Exception as e:
         error "Error processing Collectible deployment pending transaction event", msg=e.msg, receivedData
-     
+
 
     self.events.on(PendingTransactionTypeDto.AirdropCommunityToken.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
@@ -374,7 +374,7 @@ QtObject:
 
     except RpcException as e:
       error "Error deploying contract", message = getCurrentExceptionMsg()
-      let data = CommunityTokenDeployedStatusArgs(communityId: communityId, 
+      let data = CommunityTokenDeployedStatusArgs(communityId: communityId,
                                                   deployState: DeployState.Failed)
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
 
@@ -696,14 +696,10 @@ QtObject:
       error "Error computing eth value", msg = e.msg
 
   proc getWalletBalanceForChain(self:Service, walletAddress: string, chainId: int): float =
-    let wallet = self.walletAccountService.getAccountByAddress(walletAddress.toLower())
-    var balance = 0.0
-    let tokens = wallet.tokens
+    let tokens = self.walletAccountService.getTokensByAddress(walletAddress.toLower())
     for token in tokens:
       if token.symbol == ethSymbol:
-        balance = token.balancesPerChain[chainId].balance
-        break
-    return balance
+        return token.balancesPerChain[chainId].balance
 
   proc createComputeFeeArgsFromEthAndBalance(self: Service, ethValue: float, balance: float): ComputeFeeArgs =
     let fiatValue = self.getFiatValue(ethValue, ethSymbol)

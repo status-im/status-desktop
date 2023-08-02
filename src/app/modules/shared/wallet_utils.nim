@@ -44,15 +44,15 @@ proc walletAccountToWalletAccountItem*(w: WalletAccountDto, keycardAccount: bool
     w.testPreferredChainIds
   )
 
-proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool, enabledChainIds: seq[int], currency: string,
-  currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool): wallet_accounts_item.Item =
+proc walletAccountToWalletAccountsItem*(w: WalletAccountDto, keycardAccount: bool,
+  currencyBalance: float64, currencyFormat: CurrencyFormatDto, areTestNetworksEnabled: bool): wallet_accounts_item.Item =
   return wallet_accounts_item.initItem(
     w.name,
     w.address,
     w.path,
     w.colorId,
     w.walletType,
-    currencyAmountToItem(w.getCurrencyBalance(enabledChainIds, currency), currencyFormat),
+    currencyAmountToItem(currencyBalance, currencyFormat),
     w.emoji,
     w.keyUid,
     w.createdAt,
@@ -101,11 +101,11 @@ proc walletTokenToItem*(
     loading = false
     )
 
-proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, chainIds: seq[int], enabledChainIds: seq[int], currency: string,
-  currencyFormat: CurrencyFormatDto, tokenFormats: Table[string, CurrencyFormatDto], areTestNetworksEnabled: bool): wallet_send_account_item.AccountItem =
+proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, tokens: seq[WalletTokenDto], chainIds: seq[int], enabledChainIds: seq[int], currency: string,
+  currencyBalance: float64, currencyFormat: CurrencyFormatDto, tokenFormats: Table[string, CurrencyFormatDto], areTestNetworksEnabled: bool): wallet_send_account_item.AccountItem =
   let assets = token_model.newModel()
   assets.setItems(
-    w.tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, tokenFormats[t.symbol]))
+    tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, tokenFormats[t.symbol]))
   )
   return wallet_send_account_item.newAccountItem(
     w.name,
@@ -114,7 +114,7 @@ proc walletAccountToWalletSendAccountItem*(w: WalletAccountDto, chainIds: seq[in
     w.emoji,
     w.walletType,
     assets,
-    currencyAmountToItem(w.getCurrencyBalance(enabledChainIds, currency), currencyFormat),
+    currencyAmountToItem(currencyBalance, currencyFormat),
     areTestNetworksEnabled,
     w.prodPreferredChainIds,
     w.testPreferredChainIds

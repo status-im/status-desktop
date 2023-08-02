@@ -141,6 +141,7 @@ QtObject:
     networkService: network_service.Service
     currencyService: currency_service.Service
     walletAccounts: OrderedTable[string, WalletAccountDto]
+    accountsTokens*: Table[string, seq[WalletTokenDto]] ## [address, seq[WalletTokenDto]]
 
   # Forward declaration
   proc buildAllTokens(self: Service, accounts: seq[string], store: bool)
@@ -236,9 +237,9 @@ QtObject:
 
   proc storeTokensForAccount*(self: Service, address: string, tokens: seq[WalletTokenDto], areBalancesCached: bool, areMarketValuesCached: bool) =
     if self.walletAccounts.hasKey(address):
-      deepCopy(self.walletAccounts[address].tokens, tokens)
       self.walletAccounts[address].hasBalanceCache = areBalancesCached
       self.walletAccounts[address].hasMarketValuesCache = areMarketValuesCached
+      self.accountsTokens[address] = tokens
 
   proc allBalancesForAllTokensHaveError(tokens: seq[WalletTokenDto]): bool =
     for token in tokens:
@@ -266,40 +267,47 @@ QtObject:
         return true
     return false
 
-  proc updateReceivedTokens*(self: Service, address: string, tokens: var seq[WalletTokenDto]) =
-    if not self.walletAccounts.hasKey(address) or
-      self.walletAccounts[address].tokens.len == 0:
-        return
-
-    let allBalancesForAllTokensHaveError = allBalancesForAllTokensHaveError(tokens)
-    let allMarketValuesForAllTokensHaveError = allMarketValuesForAllTokensHaveError(tokens)
-
-    for waToken in self.walletAccounts[address].tokens:
-      for token in tokens.mitems:
-        if waToken.name == token.name:
-          if allBalancesForAllTokensHaveError:
-            token.balancesPerChain = waToken.balancesPerChain
-          if allMarketValuesForAllTokensHaveError:
-            token.marketValuesPerCurrency = waToken.marketValuesPerCurrency
-
-  proc walletAccountsContainsAddress*(self: Service, address: string): bool =
+  proc walletAccountsContainsAddress(self: Service, address: string): bool =
     return self.walletAccounts.hasKey(address)
 
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
-    result = WalletAccountDto()
     if not self.walletAccountsContainsAddress(address):
       return
-    result = self.walletAccounts[address]
+    return self.walletAccounts[address]
+
+  proc updateReceivedTokens*(self: Service, address: string, tokens: var seq[WalletTokenDto]) =
+    let acc = self.getAccountByAddress(address)
+    if acc.isNil or not self.accountsTokens.hasKey(address):
+      return
+    let allBalancesForAllTokensHaveError = allBalancesForAllTokensHaveError(tokens)
+    let allMarketValuesForAllTokensHaveError = allMarketValuesForAllTokensHaveError(tokens)
+
+    for storedToken in self.accountsTokens[address]:
+      for token in tokens.mitems:
+        if storedToken.name == token.name:
+          if allBalancesForAllTokensHaveError:
+            token.balancesPerChain = storedToken.balancesPerChain
+          if allMarketValuesForAllTokensHaveError:
+            token.marketValuesPerCurrency = storedToken.marketValuesPerCurrency
 
   proc getAccountsByAddresses*(self: Service, addresses: seq[string]): seq[WalletAccountDto] =
     for address in addresses:
-      result.add(self.getAccountByAddress(address))
+      let acc = self.getAccountByAddress(address)
+      if acc.isNil:
+        continue
+      result.add(acc)
+
+  proc getTokensByAddress*(self: Service, address: string): seq[WalletTokenDto] =
+    if not self.accountsTokens.hasKey(address):
+      return
+    return self.accountsTokens[address]
 
   proc getTokensByAddresses*(self: Service, addresses: seq[string]): seq[WalletTokenDto] =
     var tokens = initTable[string, WalletTokenDto]()
     for address in addresses:
-      let walletAccount = self.getAccountByAddress(address)
-      for token in walletAccount.tokens:
+      if not self.accountsTokens.hasKey(address):
+        continue
+      for token in self.accountsTokens[address]:
         if not tokens.hasKey(token.symbol):
           let newToken = token.copyToken()
           tokens[token.symbol] = newToken
@@ -327,6 +335,7 @@ QtObject:
 
   proc init*(self: Service) =
     try:
+      let chainId = self.networkService.getNetworkForEns().chainId
       let accounts = self.getAccounts()
       for account in accounts:
         let account = account # TODO https://github.com/nim-lang/Nim/issues/16740
@@ -399,6 +408,7 @@ QtObject:
       return
 
   proc addNewAccountToLocalStoreAndNotify(self: Service, notify: bool = true) =
+    let chainId = self.networkService.getNetworkForEns().chainId
     let accounts = self.getAccounts()
     var newAccount: WalletAccountDto
     var found = false
@@ -587,8 +597,7 @@ QtObject:
     except Exception as e:
       error "error: ", procName="deleteKeypair", errName = e.name, errDesription = e.msg
 
-  proc getCurrency*(self: Service): string =
-    return self.settingsService.getCurrency()
+
 
   proc updateCurrency*(self: Service, newCurrency: string) =
     discard self.settingsService.saveCurrency(newCurrency)
@@ -610,6 +619,9 @@ QtObject:
       return false
     try:
       var account = self.getAccountByAddress(address)
+      if account.isNil:
+        error "on account for given address", procName="updateWalletAccount"
+        return false
       let response = status_go_accounts.updateAccount(accountName, account.address, account.path, account.publicKey,
         account.keyUid, account.walletType, colorId, emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, account.testPreferredChainIds)
       if not response.error.isNil:
@@ -627,6 +639,9 @@ QtObject:
       return false
     try:
       var account = self.getAccountByAddress(address)
+      if account.isNil:
+        error "on account for given address", procName="updateWalletAccount"
+        return false
       let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
         account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, preferredChainIds, account.testPreferredChainIds)
       if not response.error.isNil:
@@ -644,6 +659,9 @@ QtObject:
       return false
     try:
       var account = self.getAccountByAddress(address)
+      if account.isNil:
+        error "on account for given address", procName="updateWalletAccount"
+        return false
       let response = status_go_accounts.updateAccount(account.name, account.address, account.path, account.publicKey,
         account.keyUid, account.walletType, account.colorId, account.emoji, account.isWallet, account.isChat, account.prodPreferredChainIds, preferredChainIds)
       if not response.error.isNil:
@@ -822,41 +840,45 @@ QtObject:
     )
     self.threadpool.start(arg)
 
+  proc getCurrency*(self: Service): string =
+    return self.settingsService.getCurrency()
+
   proc getCurrentCurrencyIfEmpty(self: Service, currency = ""): string =
     if currency != "":
       return currency
     else:
       return self.getCurrency()
 
-  proc getNetworkCurrencyBalance*(self: Service, network: NetworkDto, currency: string = ""): float64 =
-    let accounts = self.getWalletAccounts()
-    for walletAccount in accounts:
-      result += walletAccount.getCurrencyBalance(@[network.chainId], self.getCurrentCurrencyIfEmpty(currency))
+  proc getCurrencyBalance*(self: Service, address: string, chainIds: seq[int], currency: string): float64 =
+    if not self.accountsTokens.hasKey(address):
+      return
+    return self.accountsTokens[address].map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
+
+  proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], currency: string = ""): float64 =
+    let chainIds = self.networkService.getNetworks().filter(a => a.enabled).map(a => a.chainId)
+    let accounts = self.getWalletAccounts().filter(w => addresses.contains(w.address))
+    return accounts.map(a => self.getCurrencyBalance(a.address, chainIds, self.getCurrentCurrencyIfEmpty(currency))).foldl(a + b, 0.0)
 
   proc findTokenSymbolByAddress*(self: Service, address: string): string =
     return self.tokenService.findTokenSymbolByAddress(address)
 
   proc getOrFetchBalanceForAddressInPreferredCurrency*(self: Service, address: string): tuple[balance: float64, fetched: bool] =
-    if self.walletAccountsContainsAddress(address):
-      let chainIds = self.networkService.getNetworks().map(n => n.chainId)
-      result.balance = self.getAccountByAddress(address).getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty())
-      result.fetched = true
-    else:
+    let acc = self.getAccountByAddress(address)
+    if acc.isNil:
       self.buildAllTokens(@[address], store = false)
       result.balance = 0.0
       result.fetched = false
-
-  proc getTotalCurrencyBalance*(self: Service, addresses: seq[string], currency: string = ""): float64 =
-    let chainIds = self.networkService.getNetworks().filter(a => a.enabled).map(a => a.chainId)
-    let accounts = self.getWalletAccounts().filter(w => addresses.contains(w.address))
-    return accounts.map(a => a.getCurrencyBalance(chainIds, self.getCurrentCurrencyIfEmpty(currency))).foldl(a + b, 0.0)
+      return
+    let chainIds = self.networkService.getNetworks().map(n => n.chainId)
+    result.balance = self.getCurrencyBalance(acc.address, chainIds, self.getCurrentCurrencyIfEmpty())
+    result.fetched = true
 
   proc getTokenBalanceOnChain*(self: Service, address: string, chainId: int, symbol: string): float64 =
-    let account = self.getAccountByAddress(address)
-    for token in account.tokens:
+    if not self.accountsTokens.hasKey(address):
+      return 0.0
+    for token in self.accountsTokens[address]:
       if token.symbol == symbol and token.balancesPerChain.hasKey(chainId):
         return token.balancesPerChain[chainId].balance
-
     return 0.0
 
   proc addKeycardOrAccountsAsync*(self: Service, keycard: KeycardDto, accountsComingFromKeycard: bool = false) =
@@ -1076,12 +1098,13 @@ QtObject:
 
   proc allAccountsTokenBalance*(self: Service, symbol: string): float64 =
     var totalTokenBalance = 0.0
-    for walletAccount in self.getWalletAccounts:
-      if walletAccount.walletType != WalletTypeWatch:
-        for token in walletAccount.tokens:
-          if token.symbol == symbol:
-            totalTokenBalance += token.getTotalBalanceOfSupportedChains()
-
+    for walletAccount in self.getWalletAccounts():
+      if walletAccount.walletType == WalletTypeWatch or
+        not self.accountsTokens.hasKey(walletAccount.address):
+          continue
+      for token in self.accountsTokens[walletAccount.address]:
+        if token.symbol == symbol:
+          totalTokenBalance += token.getTotalBalanceOfSupportedChains()
     return totalTokenBalance
 
   proc isIncludeWatchOnlyAccount*(self: Service): bool =

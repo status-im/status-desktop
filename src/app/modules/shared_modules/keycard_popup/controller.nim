@@ -631,7 +631,7 @@ proc authenticateUser*(self: Controller, keyUid = "") =
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   if not serviceApplicable(self.walletAccountService):
     return
-  return self.walletAccountService.getAccounts()
+  return self.walletAccountService.getWalletAccounts()
 
 proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
   if not serviceApplicable(self.walletAccountService):

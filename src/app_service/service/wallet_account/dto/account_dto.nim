@@ -1,4 +1,4 @@
-import tables, json, strformat, sequtils, sugar, strutils
+import tables, json, strformat, strutils
 
 import token_dto
 
@@ -27,7 +27,6 @@ type
     walletType*: string
     isWallet*: bool
     isChat*: bool
-    tokens*: seq[WalletTokenDto]
     emoji*: string
     ens*: string
     assetsLoading*: bool
@@ -76,13 +75,11 @@ proc `$`*(self: WalletAccountDto): string =
     walletType: {self.walletType},
     isChat: {self.isChat},
     emoji: {self.emoji},
+    assetsLoading: {self.assetsLoading},
     hasBalanceCache: {self.hasBalanceCache},
     hasMarketValuesCache: {self.hasMarketValuesCache},
-    removed: {self.removed}
-    operable: {self.operable}
-    prodPreferredChainIds: {self.prodPreferredChainIds}
+    removed: {self.removed},
+    operable: {self.operable},
+    prodPreferredChainIds: {self.prodPreferredChainIds},
     testPreferredChainIds: {self.testPreferredChainIds}
     ]"""
-
-proc getCurrencyBalance*(self: WalletAccountDto, chainIds: seq[int], currency: string): float64 =
-  return self.tokens.map(t => t.getCurrencyBalance(chainIds, currency)).foldl(a + b, 0.0)
