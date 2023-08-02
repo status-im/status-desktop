@@ -117,11 +117,7 @@ StackLayout {
             }
 
             OverviewSettingsChart {
-                model: {
-                    var newModel = JSON.parse(root.overviewChartData)
-                    // TODO: time conversion by locale may be required
-                    return newModel
-                }
+                model: JSON.parse(root.overviewChartData)
                 onCollectCommunityMetricsMessagesTimestamps: {
                     root.collectCommunityMetricsMessagesTimestamps(intervals)
                 }
@@ -129,6 +125,11 @@ StackLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.bottomMargin: 16
+
+                Connections {
+                    target: root
+                    onCommunityIdChanged: requestCommunityMetrics()
+                }
             }
 
             Rectangle {

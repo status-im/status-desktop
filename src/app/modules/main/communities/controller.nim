@@ -181,15 +181,6 @@ proc init*(self: Controller) =
       self.delegate.callbackFromAuthentication(authenticated)
       self.tmpAuthenticationWithCallbackInProgress = false
 
-  self.events.on(SIGNAL_COMMUNITY_METRICS_UPDATED) do(e: Args):
-    let args = CommunityMetricsArgs(e)
-    let metrics = self.communityService.getCommunityMetrics(args.communityId, args.metricsType)
-    var strings: seq[string]
-    for interval in metrics.intervals:
-      for timestamp in interval.timestamps:
-        strings.add($timestamp)
-    self.delegate.setOverviewChartData("[" & join(strings, ", ") & "]")
-
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
 
@@ -277,9 +268,6 @@ proc reorderCommunityChat*(
 
 proc getChatDetailsByIds*(self: Controller, chatIds: seq[string]): seq[ChatDto] =
   return self.chatService.getChatsByIds(chatIds)
-
-proc collectCommunityMetricsMessagesTimestamps*(self: Controller, communityId: string, intervals: string) =
-  self.communityService.collectCommunityMetricsMessagesTimestamps(communityId, intervals)
 
 proc requestCommunityInfo*(self: Controller, communityId: string, importing: bool) =
   self.communityService.requestCommunityInfo(communityId, importing)

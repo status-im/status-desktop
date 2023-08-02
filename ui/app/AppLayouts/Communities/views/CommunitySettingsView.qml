@@ -179,7 +179,7 @@ StatusSectionLayout {
             overviewChartData: rootStore.overviewChartData
 
             onCollectCommunityMetricsMessagesTimestamps: {
-                rootStore.collectCommunityMetricsMessagesTimestamps(root.community.id, intervals)
+                rootStore.collectCommunityMetricsMessagesTimestamps(intervals)
             }
 
             onEdited: {

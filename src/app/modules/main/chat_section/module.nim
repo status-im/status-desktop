@@ -1322,3 +1322,9 @@ method deleteCommunityTokenPermission*(self: Module, communityId: string, permis
 
 method onDeactivateChatLoader*(self: Module, chatId: string) =
   self.view.chatsModel().disableChatLoader(chatId)
+
+method collectCommunityMetricsMessagesTimestamps*(self: Module, intervals: string) =
+  self.controller.collectCommunityMetricsMessagesTimestamps(intervals)
+
+method setOverviewChartData*(self: Module, metrics: string) =
+  self.view.setOverviewChartData(metrics)
