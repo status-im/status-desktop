@@ -94,8 +94,7 @@ StackView {
         resetNavigation()
 
         if(root.isAdminOnly) {
-            // Admins can only see the initial tokens page. They cannot mint
-            root.push(mintedTokensViewComponent, StackView.Immediate)
+            // Admins can only see the initial tokens page. They cannot mint. Initial view.
             return
         }
 
@@ -107,8 +106,7 @@ StackView {
         }
 
         if(root.ownerOrTMasterTokenItemsExist) {
-            // Owner and TMaster tokens deployment action has been started at least ones but still without success
-            root.push(mintedTokensViewComponent, StackView.Immediate)
+            // Owner and TMaster tokens deployment action has been started at least ones but still without success. Initial view.
             return
         }
 
@@ -117,9 +115,6 @@ StackView {
             root.push(ownerTokenViewComponent, StackView.Immediate)
             return
         }
-
-        // Any other case, initial view
-        root.push(mintedTokensViewComponent, StackView.Immediate)
     }
 
     QtObject {
@@ -140,7 +135,57 @@ StackView {
 
     }
 
-    initialItem: mintedTokensViewComponent
+    initialItem: SettingsPage {
+        implicitWidth: 0
+        title: qsTr("Tokens")
+
+        buttons: [
+            // TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the minting flow available somehow
+            StatusButton {
+
+                text: qsTr("TEMP Mint token")
+
+                onClicked: root.push(newTokenViewComponent, StackView.Immediate)
+
+                StatusToolTip {
+                    visible: parent.hovered
+                    text: "TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the airdrop flow available somehow"
+                    orientation: StatusToolTip.Orientation.Bottom
+                    y: parent.height + 12
+                    maxWidth: 300
+                }
+            },
+            DisabledTooltipButton {
+                readonly property bool buttonEnabled: root.isPrivilegedTokenOwnerProfile && root.arePrivilegedTokensDeployed
+
+                buttonType: DisabledTooltipButton.Normal
+                aliasedObjectName: "addNewItemButton"
+                text: qsTr("Mint token")
+                enabled: root.isAdminOnly || buttonEnabled
+                interactive: buttonEnabled
+                onClicked: root.push(newTokenViewComponent, StackView.Immediate)
+                tooltipText: qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName)
+            }
+        ]
+
+        contentItem: MintedTokensView {
+            model: SortFilterProxyModel {
+                sourceModel: root.tokensModel
+                proxyRoles: ExpressionRole {
+                    name: "color"
+                    expression: root.communityColor
+                }
+            }
+            isOwner: root.isOwner
+            isAdmin: root.isAdmin
+            communityName: root.communityName
+            anyPrivilegedTokenFailed: root.anyPrivilegedTokenFailed
+
+            onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
+            onMintOwnerTokenClicked: root.push(ownerTokenViewComponent, StackView.Immediate)
+            onRetryOwnerTokenClicked: d.retryPrivilegedToken(tokenKey, chainId, accountName, accountAddress)
+        }
+    }
 
     Component {
         id: tokenObjectComponent
@@ -149,62 +194,6 @@ StackView {
     }
 
     // Mint tokens possible view contents:
-    Component {
-        id: mintedTokensViewComponent
-
-        SettingsPage {
-            implicitWidth: 0
-            title: qsTr("Tokens")
-
-            buttons: [
-                // TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the minting flow available somehow
-                StatusButton {
-
-                    text: qsTr("TEMP Mint token")
-
-                    onClicked: root.push(newTokenViewComponent, StackView.Immediate)
-
-                    StatusToolTip {
-                        visible: parent.hovered
-                        text: "TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the airdrop flow available somehow"
-                        orientation: StatusToolTip.Orientation.Bottom
-                        y: parent.height + 12
-                        maxWidth: 300
-                    }
-                },
-                DisabledTooltipButton {
-                    readonly property bool buttonEnabled: root.isPrivilegedTokenOwnerProfile && root.arePrivilegedTokensDeployed
-
-                    buttonType: DisabledTooltipButton.Normal
-                    aliasedObjectName: "addNewItemButton"
-                    text: qsTr("Mint token")
-                    enabled: root.isAdminOnly || buttonEnabled
-                    interactive: buttonEnabled
-                    onClicked: root.push(newTokenViewComponent, StackView.Immediate)
-                    tooltipText: qsTr("In order to mint, you must hodl the TokenMaster token for %1").arg(root.communityName)
-                }
-            ]
-
-            contentItem: MintedTokensView {
-                model: SortFilterProxyModel {
-                    sourceModel: root.tokensModel
-                    proxyRoles: ExpressionRole {
-                        name: "color"
-                        expression: root.communityColor
-                    }
-                }
-                isOwner: root.isOwner
-                isAdmin: root.isAdmin
-                communityName: root.communityName
-                anyPrivilegedTokenFailed: root.anyPrivilegedTokenFailed
-
-                onItemClicked: root.push(tokenViewComponent, { tokenKey }, StackView.Immediate)
-                onMintOwnerTokenClicked: root.push(ownerTokenViewComponent, StackView.Immediate)
-                onRetryOwnerTokenClicked: d.retryPrivilegedToken(tokenKey, chainId, accountName, accountAddress)
-            }
-        }
-    }
-
     Component {
         id: ownerTokenViewComponent
 
