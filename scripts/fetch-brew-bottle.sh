@@ -41,8 +41,11 @@ BOTTLE_PATH="/tmp/${BOTTLE_NAME}.tar.gz"
 # GitHub Packages requires authentication.
 GITHUB_USER="${GITHUB_USER:-_}"
 GITHUB_TOKEN="${GITHUB_TOKEN:-_}"
-if [[ "${GITHUB_USER}" == "_" ]] || [[ "${GITHUB_TOKEN}" == "_" ]]; then
-    echo "No GITHUB_USER or GITHUB_TOKEN variable set!" >&2
+if [[ "${GITHUB_USER}" == "_" ]]; then
+    echo "No GITHUB_USER variable set!" >&2
+    echo "GitHub Packages can throttle unauthorized requests." >&2
+elif [[ "${GITHUB_TOKEN}" == "_" ]]; then
+    echo "No GITHUB_TOKEN variable set!" >&2
     echo "GitHub Packages can throttle unauthorized requests." >&2
 else
     echo "${BOTTLE_NAME} - Fetching GH Pkgs Token"
