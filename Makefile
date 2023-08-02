@@ -146,18 +146,15 @@ QML_DEBUG ?= false
 QML_DEBUG_PORT ?= 49152
 
 ifneq ($(QML_DEBUG), false)
- STATUSQ_BUILD_TYPE=Debug
- DOTHERSIDE_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Debug -DQML_DEBUG_PORT=$(QML_DEBUG_PORT)
- DOTHERSIDE_BUILD_CMD := cmake --build . --config Debug
+ COMMON_CMAKE_BUILD_TYPE=Debug
+ DOTHERSIDE_CMAKE_CONFIG_PARAMS := -DQML_DEBUG_PORT=$(QML_DEBUG_PORT)
 else
- STATUSQ_BUILD_TYPE=Release
- DOTHERSIDE_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release
- DOTHERSIDE_BUILD_CMD := cmake --build . --config Release
+ COMMON_CMAKE_BUILD_TYPE=Release
 endif
 
 MONITORING ?= false
 ifneq ($(MONITORING), false)
- DOTHERSIDE_CMAKE_PARAMS += -DMONITORING:BOOL=ON -DMONITORING_QML_ENTRY_POINT:STRING="/../monitoring/Main.qml"
+ DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DMONITORING:BOOL=ON -DMONITORING_QML_ENTRY_POINT:STRING="/../monitoring/Main.qml"
 endif
 
 
@@ -182,19 +179,14 @@ ifneq ($(detected_OS),Windows)
  else
   NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
  endif
- DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
- DOTHERSIDE_CMAKE_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
  # order matters here, due to "-Wl,-as-needed"
- NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
+ NIM_PARAMS += --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
- ifneq ($(QML_DEBUG), false)
-  DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
- else
-  DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
- endif
- DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
- NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
+endif
+
+ifeq ($(detected_OS),Windows)
+ COMMON_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
 endif
 
 ifeq ($(detected_OS),Darwin)
@@ -202,8 +194,7 @@ ifeq ($(detected_OS),Darwin)
    ifneq ($(QT_ARCH),arm64)
 	STATUSGO_MAKE_PARAMS += GOBIN_SHARED_LIB_CFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
 	STATUSKEYCARDGO_MAKE_PARAMS += CGOFLAGS="CGO_ENABLED=1 GOOS=darwin GOARCH=amd64"
-	DOTHERSIDE_CMAKE_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
-	STATUSQ_CMAKE_CONFIG_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
+	COMMON_CMAKE_CONFIG_PARAMS += -DCMAKE_OSX_ARCHITECTURES=x86_64
 	QRCODEGEN_MAKE_PARAMS += CFLAGS="-target x86_64-apple-macos10.12"
 	NIM_PARAMS += --cpu:amd64 --os:MacOSX --passL:"-arch x86_64" --passC:"-arch x86_64"
   endif
@@ -250,27 +241,22 @@ endif
 ##	StatusQ
 ##
 
-ifneq ($(detected_OS),Windows)
- STATUSQ := bin/StatusQ/libStatusQ.$(LIBSTATUS_EXT)
-else
- STATUSQ := bin/StatusQ/StatusQ.$(LIBSTATUS_EXT)
- STATUSQ_CMAKE_CONFIG_PARAMS := -T"v141" -A x64
-endif
-
+STATUSQ_SOURCE_PATH := ui/StatusQ
 STATUSQ_BUILD_PATH := ui/StatusQ/build
 STATUSQ_INSTALL_PATH := $(shell pwd)/bin
 STATUSQ_CMAKE_CACHE := $(STATUSQ_BUILD_PATH)/CMakeCache.txt
 
 $(STATUSQ_CMAKE_CACHE): | deps
 	echo -e "\033[92mConfiguring:\033[39m StatusQ"
-	cmake -DCMAKE_INSTALL_PREFIX=$(STATUSQ_INSTALL_PATH) \
-		-DCMAKE_BUILD_TYPE=$(STATUSQ_BUILD_TYPE) \
+	cmake \
+		-DCMAKE_INSTALL_PREFIX=$(STATUSQ_INSTALL_PATH) \
+		-DCMAKE_BUILD_TYPE=$(COMMON_CMAKE_BUILD_TYPE) \
 		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=OFF \
 		-DSTATUSQ_BUILD_TESTS=OFF \
-		$(STATUSQ_CMAKE_CONFIG_PARAMS) \
+		$(COMMON_CMAKE_CONFIG_PARAMS) \
 		-B $(STATUSQ_BUILD_PATH) \
-		-S ui/StatusQ \
+		-S $(STATUSQ_SOURCE_PATH) \
 		-Wno-dev \
 		$(HANDLE_OUTPUT)
 
@@ -280,7 +266,7 @@ statusq-build: | statusq-configure
 	echo -e "\033[92mBuilding:\033[39m StatusQ"
 	cmake --build $(STATUSQ_BUILD_PATH) \
 		--target StatusQ \
-		--config $(STATUSQ_BUILD_TYPE) \
+		--config $(COMMON_CMAKE_BUILD_TYPE) \
 		$(HANDLE_OUTPUT)
 
 statusq-install: | statusq-build
@@ -301,8 +287,8 @@ statusq-sanity-checker:
 		-DSTATUSQ_BUILD_SANDBOX=OFF \
 		-DSTATUSQ_BUILD_SANITY_CHECKER=ON \
 		-DSTATUSQ_BUILD_TESTS=OFF \
-		-B$(STATUSQ_BUILD_PATH) \
-		-Sui/StatusQ \
+		-B $(STATUSQ_BUILD_PATH) \
+		-S $(STATUSQ_SOURCE_PATH) \
 		$(HANDLE_OUTPUT)
 	echo -e "\033[92mBuilding:\033[39m StatusQ SanityChecker"
 	cmake \
@@ -318,23 +304,53 @@ run-statusq-sanity-checker: statusq-sanity-checker
 ##	DOtherSide
 ##
 
-$(DOTHERSIDE): | deps
-	echo -e $(BUILD_MSG) "DOtherSide"
-	+ cd vendor/DOtherSide && \
-		mkdir -p build && \
-		cd build && \
-		rm -f CMakeCache.txt && \
-		cmake $(DOTHERSIDE_CMAKE_PARAMS)\
-			-DENABLE_DOCS=OFF \
-			-DENABLE_TESTS=OFF \
-			.. $(HANDLE_OUTPUT) && \
-		$(DOTHERSIDE_BUILD_CMD) \
-			$(HANDLE_OUTPUT)
+ifneq ($(detected_OS),Windows)
+ DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
+ DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
+ NIM_PARAMS += --passL:"$(DOTHERSIDE_LIBFILE)" 
+else
+ DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/$(COMMON_CMAKE_BUILD_TYPE)/DOtherSide.dll
+ DOTHERSIDE_CMAKE_CONFIG_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
+ NIM_PARAMS += -L:$(DOTHERSIDE_LIBFILE)
+endif
 
-dotherside: $(DOTHERSIDE)
+DOTHERSIDE_SOURCE_PATH := vendor/DOtherSide
+DOTHERSIDE_BUILD_PATH := vendor/DOtherSide/build
+DOTHERSIDE_CMAKE_CACHE := $(DOTHERSIDE_BUILD_PATH)/CMakeCache.txt
+DOTHERSIDE_LIBDIR := $(shell pwd)/$(shell dirname "$(DOTHERSIDE_LIBFILE)")
+export DOTHERSIDE_LIBDIR
+
+$(DOTHERSIDE_CMAKE_CACHE): | deps
+	echo -e "\033[92mConfiguring:\033[39m DOtherSide"
+	cmake \
+		-DCMAKE_BUILD_TYPE=$(COMMON_CMAKE_BUILD_TYPE) \
+		-DENABLE_DOCS=OFF \
+		-DENABLE_TESTS=OFF \
+		$(COMMON_CMAKE_CONFIG_PARAMS) \
+		$(DOTHERSIDE_CMAKE_CONFIG_PARAMS) \
+		-B $(DOTHERSIDE_BUILD_PATH) \
+		-S $(DOTHERSIDE_SOURCE_PATH) \
+		-Wno-dev \
+		$(HANDLE_OUTPUT)
+
+dotherside-configure: | $(DOTHERSIDE_CMAKE_CACHE) 
+
+dotherside-build: | dotherside-configure
+	echo -e "\033[92mBuilding:\033[39m DOtherSide"
+	cmake \
+		--build $(DOTHERSIDE_BUILD_PATH) \
+		--config $(COMMON_CMAKE_BUILD_TYPE) \
+		$(HANDLE_OUTPUT)
 
 dotherside-clean:
-	$(MAKE) -C vendor/DOtherSide/build --no-print-directory clean
+	echo -e "\033[92mCleaning:\033[39m DOtherSide"
+	rm -rf $(DOTHERSIDE_BUILD_PATH)
+
+dotherside: | dotherside-build
+
+##
+##	status-go
+##
 
 STATUSGO := vendor/status-go/build/bin/libstatus.$(LIBSTATUS_EXT)
 STATUSGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSGO)")
@@ -474,7 +490,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | statusq check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | statusq dotherside check-qt-dir $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc compile-translations deps
 	echo -e $(BUILD_MSG) "$@"
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) \
 		--passL:"-L$(STATUSGO_LIBDIR)" \
@@ -684,7 +700,7 @@ $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBU
 	cp bin/nim_windows_launcher.exe $(OUTPUT)/Status.exe
 	rcedit $(OUTPUT)/bin/Status.exe --set-icon $(OUTPUT)/resources/status.ico
 	rcedit $(OUTPUT)/Status.exe --set-icon $(OUTPUT)/resources/status.ico
-	cp $(DOTHERSIDE) $(STATUSGO) $(STATUSKEYCARDGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
+	cp $(DOTHERSIDE_LIBFILE) $(STATUSGO) $(STATUSKEYCARDGO) tmp/windows/tools/*.dll $(OUTPUT)/bin/
 	cp "$(shell which libgcc_s_seh-1.dll)" $(OUTPUT)/bin/
 	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
 	echo -e $(BUILD_MSG) "deployable folder"
@@ -763,10 +779,10 @@ run-macos: nim_status_client
 
 run-windows: nim_status_client $(NIM_WINDOWS_PREBUILT_DLLS)
 	echo -e "\033[92mRunning:\033[39m bin/nim_status_client.exe"
-	PATH="$(shell pwd)"/"$(shell dirname "$(DOTHERSIDE)")":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
+	PATH="$(DOTHERSIDE_LIBDIR)":"$(STATUSGO_LIBDIR)":"$(STATUSKEYCARDGO_LIBDIR)":"$(shell pwd)"/"$(shell dirname "$(NIM_WINDOWS_PREBUILT_DLLS)")":"$(PATH)" \
 	./bin/nim_status_client.exe
 
-tests-nim-linux: | $(DOTHERSIDE)
+tests-nim-linux: | dotherside
 	LD_LIBRARY_PATH="$(QT5_LIBDIR):$(LD_LIBRARY_PATH)" \
 	$(ENV_SCRIPT) nim c $(NIM_PARAMS) $(NIM_EXTRA_PARAMS) -r test/nim/message_model_test.nim
 
