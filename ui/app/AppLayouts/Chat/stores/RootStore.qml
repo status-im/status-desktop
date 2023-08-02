@@ -675,7 +675,7 @@ QtObject {
         property var authenticationCallbacks: []
 
         readonly property Connections chatCommunitySectionModuleConnections: Connections {
-            target: chatCommunitySectionModule
+            target: communitiesModuleInst
             function onCallbackFromAuthentication(authenticated: bool) {
                 _d.authenticationCallbacks.forEach((callback) => {
                     if(!!callback)
