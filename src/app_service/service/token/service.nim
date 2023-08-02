@@ -5,7 +5,7 @@ from web3/conversions import `$`
 import ../../../backend/backend as backend
 
 import ../network/service as network_service
-import ../wallet_account/dto as wallet_account_dto
+import ../wallet_account/dto/account_dto as wallet_account_dto
 import ../../../app/global/global_singleton
 
 import ../../../app/core/eventemitter
@@ -41,7 +41,7 @@ type
   TokenBalanceHistoryDataArgs* = ref object of Args
     result*: string
 
-type 
+type
   TokenData* = ref object of RootObj
     addresses*: Table[int, string]
     decimals*: int
@@ -57,7 +57,7 @@ QtObject:
     priceCache: TimedCache[float64]
 
   proc updateCachedTokenPrice(self: Service, crypto: string, fiat: string, price: float64)
-  proc jsonToPricesMap(node: JsonNode): Table[string, Table[string, float64]] 
+  proc jsonToPricesMap(node: JsonNode): Table[string, Table[string, float64]]
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -83,7 +83,7 @@ QtObject:
 
     try:
       let networks = self.networkService.getNetworks()
-    
+
       for network in networks:
         let network = network # TODO https://github.com/nim-lang/Nim/issues/16740
         var found = false
@@ -96,7 +96,7 @@ QtObject:
           continue
         let responseTokens = backend.getTokens(network.chainId)
         let default_tokens = map(
-          responseTokens.result.getElems(), 
+          responseTokens.result.getElems(),
           proc(x: JsonNode): TokenDto = x.toTokenDto(network.enabled, hasIcon=true, isCustom=false)
         )
         self.tokens[network.chainId] = default_tokens.filter(
@@ -138,8 +138,8 @@ QtObject:
 
   proc init*(self: Service) =
     self.loadData()
-    
-  proc getTokenList*(self: Service): seq[TokenDto] = 
+
+  proc getTokenList*(self: Service): seq[TokenDto] =
     return self.tokenList
 
   proc hasContractAddressesForToken*(self: Service, symbol: string): bool =

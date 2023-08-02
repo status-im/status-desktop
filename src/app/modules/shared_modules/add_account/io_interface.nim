@@ -1,7 +1,7 @@
 import Tables, NimQml
 
 import ../../../../app_service/service/accounts/dto/generated_accounts
-import ../../../../app_service/service/wallet_account/derived_address
+import ../../../../app_service/service/wallet_account/dto/derived_address_dto
 from ../../../../app_service/service/keycard/service import KeycardEvent
 
 type
@@ -27,7 +27,7 @@ method getSeedPhrase*(self: AccessInterface): string {.base.} =
 
 method onBackActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-    
+
 method onPrimaryActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

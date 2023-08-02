@@ -1,6 +1,6 @@
 import json
 
-include  ../../common/json_utils
+include  app_service/common/json_utils
 
 const ParamKeycardUid = "keycard-uid"
 const ParamKeycardName = "keycard-name"
@@ -23,7 +23,7 @@ const KeycardActionNameChanged* = "NAME_CHANGED"
 type KeycardDto* = object
   keycardUid*: string
   keycardName*: string
-  keycardLocked*: bool  
+  keycardLocked*: bool
   accountsAddresses*: seq[string]
   keyUid*: string
 
@@ -38,7 +38,7 @@ proc toKeycardDto*(jsonObj: JsonNode): KeycardDto =
   discard jsonObj.getProp(ParamKeycardName, result.keycardName)
   discard jsonObj.getProp(ParamKeycardLocked, result.keycardLocked)
   discard jsonObj.getProp(ParamKeyUid, result.keyUid)
-  
+
   var jArr: JsonNode
   if(jsonObj.getProp(ParamAccountAddresses, jArr) and jArr.kind == JArray):
     for addrObj in jArr:
@@ -48,7 +48,7 @@ proc toKeycardActionDto*(jsonObj: JsonNode): KeycardActionDto =
   result = KeycardActionDto()
   discard jsonObj.getProp(ParamAction, result.action)
   discard jsonObj.getProp(ParamOldKeycardUid, result.oldKeycardUid)
-  
+
   var keycardObj: JsonNode
   if(jsonObj.getProp("keycard", keycardObj)):
     result.keycard = toKeycardDto(keycardObj)

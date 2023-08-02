@@ -1,6 +1,6 @@
 import json
 
-include  ../../common/json_utils
+include  app_service/common/json_utils
 
 type DerivedAddressDto* = object
   address*: string

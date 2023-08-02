@@ -2,26 +2,28 @@ import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, http
 import net, strutils, os, times, algorithm, options
 import web3/ethtypes
 
-import ../settings/service as settings_service
-import ../accounts/service as accounts_service
-import ../token/service as token_service
-import ../network/service as network_service
-import ../currency/service as currency_service
-import ../../common/[utils]
-import ../../../app/global/global_singleton
+import app/global/global_singleton
 
-import keypair_dto, derived_address, keycard_dto
+import app_service/service/settings/service as settings_service
+import app_service/service/accounts/service as accounts_service
+import app_service/service/token/service as token_service
+import app_service/service/network/service as network_service
+import app_service/service/currency/service as currency_service
+import app_service/common/[utils]
 
-import ../../../app/core/eventemitter
-import ../../../app/core/signals/types
-import ../../../app/core/tasks/[qt, threadpool]
-import ../../../backend/accounts as status_go_accounts
-import ../../../backend/backend as backend
-import ../../../backend/eth as status_go_eth
-import ../../../backend/transactions as status_go_transactions
-import ../../../constants as main_constants
+import dto/keypair_dto as keypair_dto
+import dto/derived_address_dto as derived_address_dto
 
-export keypair_dto, derived_address, keycard_dto
+import app/core/eventemitter
+import app/core/signals/types
+import app/core/tasks/[qt, threadpool]
+import backend/accounts as status_go_accounts
+import backend/backend as backend
+import backend/eth as status_go_eth
+import backend/transactions as status_go_transactions
+import constants as main_constants
+
+export keypair_dto, derived_address_dto
 
 logScope:
   topics = "wallet-account-service"

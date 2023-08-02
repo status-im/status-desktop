@@ -1,5 +1,5 @@
 import NimQml
-import app_service/service/wallet_account/keypair_dto
+import app_service/service/wallet_account/dto/keypair_dto
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

@@ -3,7 +3,7 @@ import strutils, sequtils, sugar, chronicles
 import ../shared_models/[keypair_item, currency_amount]
 import ../../global/global_singleton
 
-import ../../../app_service/service/wallet_account/[keypair_dto, keycard_dto]
+import ../../../app_service/service/wallet_account/dto/[keypair_dto]
 
 export keypair_item
 

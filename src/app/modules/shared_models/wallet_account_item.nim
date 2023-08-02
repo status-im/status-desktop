@@ -1,5 +1,5 @@
 import NimQml, strformat
-import app_service/service/wallet_account/dto as wa_dto
+import app_service/service/wallet_account/dto/account_dto as wa_dto
 
 export wa_dto
 

@@ -12,7 +12,7 @@ import ../../../../app_service/service/contacts/dto/[contacts, status_update]
 import ../../../../app_service/service/devices/dto/[installation]
 import ../../../../app_service/service/settings/dto/[settings]
 import ../../../../app_service/service/saved_address/dto as saved_address_dto
-import ../../../../app_service/service/wallet_account/[keypair_dto]
+import ../../../../app_service/service/wallet_account/dto/[keypair_dto]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
