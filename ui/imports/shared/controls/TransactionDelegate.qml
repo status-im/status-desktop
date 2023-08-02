@@ -69,15 +69,28 @@ StatusListItem {
             return qsTr("N/A")
         } else if (root.isNFT) {
             return modelData.nftName ? modelData.nftName : "#" + modelData.tokenID
-        } else if (!modelData.symbol) {
-            return "%1 (%2)".arg(root.rootStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.contract, 4))
+        } else if (!modelData.symbol && !!modelData.tokenAddress) {
+            return "%1 (%2)".arg(root.rootStore.formatCurrencyAmount(cryptoValue, "")).arg(Utils.compactAddress(modelData.tokenAddress, 4))
         }
-
         return root.rootStore.formatCurrencyAmount(cryptoValue, modelData.symbol)
     }
 
-    readonly property string inTransactionValue: isModelDataValid && isMultiTransaction ? rootStore.formatCurrencyAmount(inCryptoValue, modelData.inSymbol) : qsTr("N/A")
-    readonly property string outTransactionValue: isModelDataValid && isMultiTransaction ? rootStore.formatCurrencyAmount(outCryptoValue, modelData.outSymbol) : qsTr("N/A")
+    readonly property string inTransactionValue: {
+        if (!isModelDataValid || !isMultiTransaction) {
+            return qsTr("N/A")
+        } else if (!modelData.inSymbol && !!modelData.tokenInAddress) {
+            return "%1 (%2)".arg(root.rootStore.formatCurrencyAmount(inCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenInAddress, 4))
+        }
+        return rootStore.formatCurrencyAmount(inCryptoValue, modelData.inSymbol)
+    }
+    readonly property string outTransactionValue: {
+        if (!isModelDataValid || !isMultiTransaction) {
+            return qsTr("N/A")
+        } else if (!modelData.outSymbol && !!modelData.tokenOutAddress) {
+            return "%1 (%2)".arg(root.rootStore.formatCurrencyAmount(outCryptoValue, "")).arg(Utils.compactAddress(modelData.tokenOutAddress, 4))
+        }
+        return rootStore.formatCurrencyAmount(outCryptoValue, modelData.outSymbol)
+    }
 
     readonly property string tokenImage: {
         if (!isModelDataValid || modelData.txType === Constants.TransactionType.ContractDeployment)
@@ -146,6 +159,7 @@ StatusListItem {
         property int datePixelSize: 12
         property int titlePixelSize: 15
         property int subtitlePixelSize: 13
+        property bool showRetryButton: false
     }
 
     function getDetailsString() {
@@ -293,7 +307,7 @@ StatusListItem {
             details += protocolFromContractAddress + endl2
         }
         if (!!modelData.contract && type !== Constants.TransactionType.ContractDeployment && !/0x0+$/.test(modelData.contract)) {
-            let symbol = !!modelData.symbol || !modelData.contract ? modelData.symbol : "(%1)".arg(Utils.compactAddress(modelData.contract, 4))
+            let symbol = !!modelData.symbol || !modelData.tokenAddress ? modelData.symbol : "(%1)".arg(Utils.compactAddress(modelData.tokenAddress, 4))
             details += qsTr("%1 %2 contract address").arg(root.networkName).arg(symbol) + endl
             details += modelData.contract + endl2
         }
@@ -325,7 +339,7 @@ StatusListItem {
         if (type !== Constants.TransactionType.Bridge) {
             details += qsTr("Network") + endl + networkName + endl2
         }
-        details += qsTr("Token format") + endl + modelData.type.toUpperCase() + endl2
+        details += qsTr("Token format") + endl + modelData.tokenType.toUpperCase() + endl2
         details += qsTr("Nonce") + endl + rootStore.hex2Dec(modelData.nonce) + endl2
         if (type === Constants.TransactionType.Bridge) {
             details += qsTr("Included in Block on %1").arg(networkName) + endl
@@ -716,7 +730,7 @@ StatusListItem {
                     text: qsTr("Retry")
                     size: StatusButton.Small
                     type: StatusButton.Primary
-                    visible: !root.loading && root.transactionStatus === Constants.TransactionStatus.Failed
+                    visible: d.showRetryButton
                     onClicked: root.retryClicked()
                 }
 
@@ -730,6 +744,7 @@ StatusListItem {
                     loading: root.loading
                     name: root.title
                 }
+
                 StatusRoundIcon {
                     visible: !root.loading
                     anchors {
@@ -759,7 +774,7 @@ StatusListItem {
             }
             PropertyChanges {
                 target: root.asset
-                bgBorderWidth: root.transactionStatus === Constants.TransactionStatus.Failed ? 0 : 1
+                bgBorderWidth: d.showRetryButton ? 0 : 1
                 width: 34
                 height: 34
                 bgWidth: 56
@@ -781,6 +796,7 @@ StatusListItem {
                 datePixelSize: 13
                 subtitlePixelSize: 15
                 loadingPixelSize: 14
+                showRetryButton: (!root.loading && root.transactionStatus === Constants.TransactionStatus.Failed && walletRootStore.isOwnedAccount(modelData.sender))
             }
         }
     ]

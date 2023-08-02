@@ -15,6 +15,7 @@ ColumnLayout {
     // To-do adapt this for multi-tx, not sure how the data will look for that yet
     property bool isLayer1: true
     property bool error: false
+    property bool pending: false
     property int confirmations: 0
     property string chainName
     property double timeStamp
@@ -23,8 +24,8 @@ ColumnLayout {
 
     QtObject {
         id: d
-        readonly property bool finalized: (isLayer1 ? confirmations >= progressBar.steps : progress >= duration) && !error
-        readonly property bool confirmed: confirmations >= progressBar.confirmationBlocks && !error
+        readonly property bool finalized: (isLayer1 ? confirmations >= progressBar.steps : progress >= duration) && !error && !pending
+        readonly property bool confirmed: confirmations >= progressBar.confirmationBlocks && !error && !pending
         readonly property double confirmationTimeStamp: {
             if (root.isLayer1) {
                 return root.timeStamp + 12 * 4 // A block on layer1 is every 12s
@@ -42,7 +43,7 @@ ColumnLayout {
         }
 
         readonly property int duration: 168 // 7 days in hours
-        readonly property int progress: (Math.floor(Date.now() / 1000) - root.timeStamp) / 3600
+        readonly property int progress: pending || error ? 0 : (Math.floor(Date.now() / 1000) - root.timeStamp) / 3600
     }
 
     StatusTxProgressBar {

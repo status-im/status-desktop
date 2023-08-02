@@ -36,7 +36,7 @@ Item {
         if (!transaction || !transaction.input)
             return
         d.loadingInputDate = true
-        walletSection.fetchDecodedTxData(transaction.txHash, transaction.input)
+        RootStore.fetchDecodedTxData(transaction.txHash, transaction.input)
     }
 
     QtObject {
@@ -61,7 +61,7 @@ Item {
             if (!root.isTransactionValid || transactionHeader.isMultiTransaction)
                 return ""
             const formatted = RootStore.formatCurrencyAmount(transaction.amount, transaction.symbol)
-            return symbol || !transaction.contract ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.contract, 4))
+            return symbol || !transaction.contract ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenAddress, 4))
         }
         readonly property string outFiatValueFormatted: {
             if (!root.isTransactionValid || !transactionHeader.isMultiTransaction || !outSymbol)
@@ -72,7 +72,7 @@ Item {
             if (!root.isTransactionValid || !transactionHeader.isMultiTransaction)
                 return ""
             const formatted = RootStore.formatCurrencyAmount(transaction.outAmount, transaction.outSymbol)
-            return outSymbol || !transaction.contract ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.contract, 4))
+            return outSymbol || !transaction.tokenOutAddress ? formatted : "%1 (%2)".arg(formatted).arg(Utils.compactAddress(transaction.tokenOutAddress, 4))
         }
         readonly property real feeEthValue: root.isTransactionValid ? RootStore.getGasEthValue(transaction.totalFees.amount, 1) : 0 // TODO use directly?
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0 // TODO use directly?
@@ -81,10 +81,6 @@ Item {
 
         property string decodedInputData: ""
         property bool loadingInputDate: false
-
-        function getNameForSavedWalletAddress(address) {
-            return RootStore.getNameForSavedWalletAddress(address)
-        }
 
         function retryTransaction() {
             // TODO handle failed transaction retry
@@ -155,8 +151,9 @@ Item {
                 id: progressBlock
                 width: Math.min(513, root.width)
                 error: transactionHeader.transactionStatus === Constants.TransactionStatus.Failed
+                pending: transactionHeader.transactionStatus === Constants.TransactionStatus.Pending
                 isLayer1: root.isTransactionValid && RootStore.getNetworkLayer(root.transaction.chainId) == 1
-                confirmations: root.isTransactionValid ? Math.abs(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId) - d.blockNumber): 0
+                confirmations: root.isTransactionValid && !pending && !error ? Math.abs(WalletStores.RootStore.getLatestBlockNumber(root.transaction.chainId) - d.blockNumber): 0
                 chainName: transactionHeader.networkName
                 timeStamp: root.isTransactionValid ? transaction.timestamp: ""
             }
@@ -205,7 +202,7 @@ Item {
                             subTitle: {
                                 switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
-                                    return d.outSymbol
+                                    return !!d.outSymbol ? d.outSymbol : " "
                                 case Constants.TransactionType.Bridge:
                                     return transactionHeader.networkName
                                 default:
@@ -215,7 +212,7 @@ Item {
                             asset.name: {
                                 switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
-                                    return !!d.outSymbol ? Constants.tokenIcon(d.outSymbol) : ""
+                                    return Constants.tokenIcon(d.outSymbol)
                                 case Constants.TransactionType.Bridge:
                                     return !!d.networkIcon ? Style.svg(d.networkIcon) : ""
                                 default:
@@ -232,7 +229,7 @@ Item {
                             subTitle: {
                                 switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
-                                    return d.inSymbol
+                                    return !!d.inSymbol ? d.inSymbol : " "
                                 case Constants.TransactionType.Bridge:
                                     return d.toNetworkName
                                 default:
@@ -242,7 +239,7 @@ Item {
                             asset.name: {
                                 switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
-                                    return !!d.inSymbol ? Constants.tokenIcon(d.inSymbol) : ""
+                                    return Constants.tokenIcon(d.inSymbol)
                                 case Constants.TransactionType.Bridge:
                                     return !!d.toNetworkIcon ? Style.svg(d.toNetworkIcon) : ""
                                 default:
@@ -346,7 +343,7 @@ Item {
                         symbol: {
                             if (!root.isTransactionValid)
                                 return ""
-                            return d.symbol ? d.symbol : "(%1)".arg(Utils.compactAddress(transaction.contract, 4))
+                            return d.symbol ? d.symbol : "(%1)".arg(Utils.compactAddress(transaction.tokenAddress, 4))
                         }
                         networkName: transactionHeader.networkName
                         shortNetworkName: d.networkShortName
@@ -440,13 +437,13 @@ Item {
                             asset.name: !!d.networkIcon ? Style.svg(d.networkIcon) : ""
                             subTitleBadgeLoaderAlignment: Qt.AlignTop
                             smallIcon: true
-                            visible: d.transactionType !== Constants.TransactionType.Bridge
+                            visible: !!subTitle && d.transactionType !== Constants.TransactionType.Bridge
                         }
                         TransactionDataTile {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             title: qsTr("Token format")
-                            subTitle: root.isTransactionValid ? transaction.type.toUpperCase() : ""
+                            subTitle: root.isTransactionValid ? transaction.tokenType.toUpperCase() : ""
                             visible: !!subTitle
                         }
                         TransactionDataTile {

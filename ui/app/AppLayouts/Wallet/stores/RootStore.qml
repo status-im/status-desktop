@@ -190,6 +190,10 @@ QtObject {
         return name
     }
 
+    function isOwnedAccount(address) {
+        return walletSectionAccounts.isOwnedAccount(address)
+    }
+
     function getEmojiForWalletAddress(address) {
         return walletSectionAccounts.getEmojiByAddress(address)
     }

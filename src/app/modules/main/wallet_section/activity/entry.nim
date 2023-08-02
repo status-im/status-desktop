@@ -233,15 +233,46 @@ QtObject:
   QtProperty[int] txType:
     read = getTxType
 
-  proc getType*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getType: ActivityEntry is not an transaction entry"
-      return ""
-    return self.transaction[].typeValue
+  proc getTokenType*(self: ActivityEntry): string {.slot.} =
+    if self.transaction != nil:
+      return self.transaction[].typeValue
+    if self.metadata.activityType == backend.ActivityType.Receive and self.metadata.tokenOut.isSome:
+      return $self.metadata.tokenOut.unsafeGet().tokenType
+    if self.metadata.tokenIn.isSome:
+      return $self.metadata.tokenIn.unsafeGet().tokenType
+    return ""
 
   # TODO: used only in details, move it to a entry_details.nim. See #11598
-  QtProperty[string] type:
-    read = getType
+  QtProperty[string] tokenType:
+    read = getTokenType
+    
+  proc getTokenInAddress*(self: ActivityEntry): string {.slot.} =
+    if self.metadata.tokenIn.isSome:
+      let address = self.metadata.tokenIn.unsafeGet().address
+      if address.isSome:
+        return toHex(address.unsafeGet())
+    return ""
+
+  QtProperty[string] tokenInAddress:
+    read = getTokenInAddress
+
+  proc getTokenOutAddress*(self: ActivityEntry): string {.slot.} =
+    if self.metadata.tokenOut.isSome:
+      let address = self.metadata.tokenOut.unsafeGet().address
+      if address.isSome:
+        return toHex(address.unsafeGet())
+    return ""
+
+  QtProperty[string] tokenOutAddress:
+    read = getTokenOutAddress
+
+  proc getTokenAddress*(self: ActivityEntry): string {.slot.} =
+    if self.metadata.activityType == backend.ActivityType.Receive:
+      return self.getTokenInAddress()
+    return self.getTokenOutAddress()
+
+  QtProperty[string] tokenAddress:
+    read = getTokenAddress
 
   proc getContract*(self: ActivityEntry): string {.slot.} =
     return if self.metadata.contractAddress.isSome(): "0x" & self.metadata.contractAddress.unsafeGet().toHex() else: ""
@@ -250,10 +281,11 @@ QtObject:
     read = getContract
 
   proc getTxHash*(self: ActivityEntry): string {.slot.} =
-    if self.transaction == nil:
-      error "getTxHash: ActivityEntry is not an transaction entry"
-      return ""
-    return self.transaction[].txHash
+    if self.transaction != nil and len(self.transaction[].txHash) > 0:
+      return self.transaction[].txHash
+    if self.metadata.transaction.isSome:
+      return self.metadata.transaction.unsafeGet().hash
+    return ""
 
   # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] txHash:
