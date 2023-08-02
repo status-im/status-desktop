@@ -179,8 +179,9 @@ ifneq ($(detected_OS),Windows)
  else
   NIM_PARAMS += --passL:"-L$(QT5_LIBDIR)"
  endif
+ DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  # order matters here, due to "-Wl,-as-needed"
- NIM_PARAMS += --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
+ NIM_PARAMS += --passL:"$(DOTHERSIDE_LIBFILE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
@@ -305,12 +306,11 @@ run-statusq-sanity-checker: statusq-sanity-checker
 ##
 
 ifneq ($(detected_OS),Windows)
- DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
- NIM_PARAMS += --passL:"$(DOTHERSIDE_LIBFILE)" 
+#  NIM_PARAMS += 
 else
  DOTHERSIDE_LIBFILE := vendor/DOtherSide/build/lib/$(COMMON_CMAKE_BUILD_TYPE)/DOtherSide.dll
- DOTHERSIDE_CMAKE_CONFIG_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
+ DOTHERSIDE_CMAKE_CONFIG_PARAMS += -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
  NIM_PARAMS += -L:$(DOTHERSIDE_LIBFILE)
 endif
 
