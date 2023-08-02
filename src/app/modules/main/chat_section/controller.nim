@@ -169,6 +169,16 @@ proc init*(self: Controller) =
         self.nodeConfigurationService, self.contactService, self.chatService, self.communityService,
         self.messageService, self.gifService, self.mailserversService, setChatAsActive = true)
 
+    self.events.on(SIGNAL_COMMUNITY_METRICS_UPDATED) do(e: Args):
+      let args = CommunityMetricsArgs(e)
+      if args.communityId == self.sectionId:
+        let metrics = self.communityService.getCommunityMetrics(args.communityId, args.metricsType)
+        var strings: seq[string]
+        for interval in metrics.intervals:
+          for timestamp in interval.timestamps:
+            strings.add($timestamp)
+        self.delegate.setOverviewChartData("[" & join(strings, ", ") & "]")
+
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
       let args = CommunityChatIdArgs(e)
       if (args.communityId == self.sectionId):
@@ -652,3 +662,6 @@ proc getContractAddressesForToken*(self: Controller, symbol: string): Table[int,
 
 proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
   return self.communityTokensService.getCommunityTokens(self.getMySectionId())
+
+proc collectCommunityMetricsMessagesTimestamps*(self: Controller, intervals: string) =
+  self.communityService.collectCommunityMetricsMessagesTimestamps(self.getMySectionId(), intervals)

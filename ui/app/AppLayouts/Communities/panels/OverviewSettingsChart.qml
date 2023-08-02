@@ -20,6 +20,20 @@ StatusChartPanel {
     */
     property var model: []
 
+    signal collectCommunityMetricsMessagesTimestamps(var intervals)
+
+    function requestCommunityMetrics() {
+        let intervals = d.selectedTabInfo.modelItems.map(item => {
+            return {
+                startTimestamp: item.start,
+                endTimestamp: item.end
+            }
+        })
+        collectCommunityMetricsMessagesTimestamps(JSON.stringify(intervals))
+    }
+
+    onVisibleChanged: if (visible) requestCommunityMetrics()
+
     QtObject {
         id: d
 
@@ -219,6 +233,8 @@ StatusChartPanel {
             return leftPositon ? Qt.point(relativeMousePoint.x - toolTip.width - 15, relativeMousePoint.y - 5)
                                : Qt.point(relativeMousePoint.x + 15, relativeMousePoint.y - 5)
         }
+
+        onSelectedTabInfoChanged: root.requestCommunityMetrics()
     }
     headerLeftPadding: 0
     headerBottomPadding: Style.current.bigPadding

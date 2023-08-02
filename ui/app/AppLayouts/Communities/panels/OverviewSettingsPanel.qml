@@ -40,12 +40,16 @@ StackLayout {
     property int loginType: Constants.LoginType.Password
     property bool communitySettingsDisabled
 
+    property string overviewChartData: ""
+
     function navigateBack() {
         if (editSettingsPanelLoader.item.dirty)
             settingsDirtyToastMessage.notifyDirty()
         else
             root.currentIndex = 0
     }
+
+    signal collectCommunityMetricsMessagesTimestamps(var intervals)
 
     signal edited(Item item) // item containing edited fields (name, description, logoImagePath, color, options, etc..)
 
@@ -113,11 +117,21 @@ StackLayout {
             }
 
             OverviewSettingsChart {
+                model: JSON.parse(root.overviewChartData)
+                onCollectCommunityMetricsMessagesTimestamps: {
+                    root.collectCommunityMetricsMessagesTimestamps(intervals)
+                }
                 Layout.topMargin: 16
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 Layout.bottomMargin: 16
+
+                Connections {
+                    target: root
+                    onCommunityIdChanged: requestCommunityMetrics()
+                }
             }
+
             Rectangle {
                 Layout.fillWidth: true
 

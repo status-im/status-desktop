@@ -176,6 +176,11 @@ StatusSectionLayout {
             loginType: root.rootStore.loginType
             isControlNode: root.isControlNode
             communitySettingsDisabled: root.communitySettingsDisabled
+            overviewChartData: rootStore.overviewChartData
+
+            onCollectCommunityMetricsMessagesTimestamps: {
+                rootStore.collectCommunityMetricsMessagesTimestamps(intervals)
+            }
 
             onEdited: {
                 const error = root.chatCommunitySectionModule.editCommunity(

@@ -1,4 +1,4 @@
-import stint
+import stint, std/strutils
 import ./io_interface
 
 import ../../../core/signals/types

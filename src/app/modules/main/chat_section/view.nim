@@ -27,6 +27,8 @@ QtObject:
       requiresTokenPermissionToJoin: bool
       amIMember: bool
       chatsLoaded: bool
+      communityMetrics: string # NOTE: later this should be replaced with QAbstractListModel-based model
+
 
   proc delete*(self: View) =
     self.model.delete
@@ -64,6 +66,7 @@ QtObject:
     result.amIMember = false
     result.requiresTokenPermissionToJoin = false
     result.chatsLoaded = false
+    result.communityMetrics = "[]"
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -409,3 +412,19 @@ QtObject:
   QtProperty[bool] allTokenRequirementsMet:
     read = getAllTokenRequirementsMet
     notify = allTokenRequirementsMetChanged
+
+  proc getOverviewChartData*(self: View): QVariant {.slot.} =
+    return newQVariant(self.communityMetrics)
+
+  proc overviewChartDataChanged*(self: View) {.signal.}
+
+  QtProperty[QVariant] overviewChartData:
+    read = getOverviewChartData
+    notify = overviewChartDataChanged
+
+  proc setOverviewChartData*(self: View, communityMetrics: string) =
+    self.communityMetrics = communityMetrics
+    self.overviewChartDataChanged()
+
+  proc collectCommunityMetricsMessagesTimestamps*(self: View, intervals: string) {.slot.} =
+    self.delegate.collectCommunityMetricsMessagesTimestamps(intervals)

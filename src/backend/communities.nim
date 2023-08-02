@@ -352,6 +352,15 @@ proc deleteCommunityCategory*(
       "categoryId": categoryId
     }])
 
+proc collectCommunityMetrics*(communityId: string, metricsType: int, intervals: JsonNode
+    ):RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("collectCommunityMetrics".prefix, %*[
+    {
+      "communityId": communityId,
+      "type": metricsType,
+      "intervals": intervals
+    }])
+
 proc requestCommunityInfo*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("requestCommunityInfoFromMailserver".prefix, %*[communityId])
 
