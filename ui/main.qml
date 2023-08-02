@@ -92,6 +92,11 @@ StatusWindow {
     onWidthChanged: Qt.callLater(storeAppState)
     onHeightChanged: Qt.callLater(storeAppState)
 
+    QtObject {
+        id: d
+        property int previousApplicationState: -1
+    }
+
     Action {
         shortcut: StandardKey.FullScreen
         onTriggered: {
@@ -217,6 +222,20 @@ StatusWindow {
                     }
                 }
             }
+        }
+    }
+
+    // On MacOS, explicitely restore the window on activating
+    Connections {
+        target: Qt.application
+        enabled: Qt.platform.os === Constants.mac
+        function onStateChanged() {
+            if (Qt.application.state == d.previousApplicationState
+                && Qt.application.state == Qt.ApplicationActive) {
+                applicationWindow.visible = true
+                applicationWindow.showNormal()
+            }
+            d.previousApplicationState = Qt.application.state
         }
     }
 
@@ -358,15 +377,16 @@ StatusWindow {
 
         onClose: {
             if (loader.sourceComponent != app) {
+                Qt.quit()
+                return
+            }
+        
+            if (localAccountSensitiveSettings.quitOnClose) {
                 Qt.quit();
-            }
-            else if (loader.sourceComponent == app) {
-                if (localAccountSensitiveSettings.quitOnClose) {
-                    Qt.quit();
-                } else {
-                    applicationWindow.visible = false;
-                }
-            }
+                return
+            } 
+
+            applicationWindow.visible = false;
         }
 
         onMinimised: {
