@@ -59,7 +59,7 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     let arg = TokensPerAccountArgs(e)
     self.onTokensRebuilt(arg.hasBalanceCache, arg.hasMarketValuesCache)
-  
+
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
     if self.view.getAssetsModel().getCount() == 0:
       self.setLoadingAssets()
@@ -86,16 +86,16 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto], enabledChain
 
   let items = tokens.map(t => walletTokenToItem(t, chainIds, enabledChainIds, currency, currencyFormat, self.controller.getCurrencyFormat(t.symbol)))
   let totalCurrencyBalanceForAllAssets = tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0)
-    
+
   self.view.getAssetsModel().setItems(items)
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   let walletAccounts = self.controller.getWalletAccountsByAddresses(addresses)
-  
+
   let accountItem = walletAccountToWalletAssetsItem(walletAccounts[0])
   self.view.setData(accountItem)
 
-  if walletAccounts[0].tokens.len == 0 and walletAccounts[0].assetsLoading:
+  if walletAccounts[0].assetsLoading:
     self.setLoadingAssets()
   else:
     let walletTokens = self.controller.getWalletTokensByAddresses(addresses)

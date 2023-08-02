@@ -59,3 +59,9 @@ proc getCurrencyFormat*(self: Controller, symbol: string): CurrencyFormatDto =
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
+
+proc getTokensByAddress*(self: Controller, address: string): seq[WalletTokenDto] =
+  return self.walletAccountService.getTokensByAddress(address)
+
+proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], currency: string): float64 =
+  return self.walletAccountService.getCurrencyBalance(address, chainIds, currency)

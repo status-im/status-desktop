@@ -49,16 +49,16 @@ method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) 
   let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
   let items = walletAccounts.map(w => (block:
     let keycardAccount = self.controller.isKeycardAccount(w)
+    let currencyBalance = self.controller.getCurrencyBalance(w.address, chainIds, currency)
     walletAccountToWalletAccountsItem(
       w,
       keycardAccount,
-      chainIds,
-      currency,
+      currencyBalance,
       currencyFormat,
       areTestNetworksEnabled
     )
   ))
-  self.view.setItems(items)  
+  self.view.setItems(items)
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionAccounts", newQVariant(self.view))

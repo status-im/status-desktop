@@ -12,7 +12,7 @@ type
     networkService: network_service.Service
     tokenService: token_service.Service
     currencyService: currency_service.Service
- 
+
 proc newController*(
   delegate: io_interface.AccessInterface,
   walletAccountService: wallet_account_service.Service,
@@ -39,7 +39,7 @@ proc getWalletAccountsByAddresses*(self: Controller, addresses: seq[string]): se
 proc getWalletTokensByAddresses*(self: Controller, addresses: seq[string]): seq[wallet_account_service.WalletTokenDto] =
   return self.walletAccountService.getTokensByAddresses(addresses)
 
-proc getChainIds*(self: Controller): seq[int] = 
+proc getChainIds*(self: Controller): seq[int] =
   return self.networkService.getNetworks().map(n => n.chainId)
 
 proc getCurrentCurrency*(self: Controller): string =
