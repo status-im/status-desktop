@@ -168,6 +168,7 @@ proc init*(self: Controller) =
       discard self.delegate.addOrUpdateChat(args.chat, belongsToCommunity, self.events, self.settingsService,
         self.nodeConfigurationService, self.contactService, self.chatService, self.communityService,
         self.messageService, self.gifService, self.mailserversService, setChatAsActive = true)
+
     self.events.on(SIGNAL_COMMUNITY_METRICS_UPDATED) do(e: Args):
       let args = CommunityMetricsArgs(e)
       if args.communityId == self.sectionId:
