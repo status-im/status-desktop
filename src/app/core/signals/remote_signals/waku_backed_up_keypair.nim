@@ -1,7 +1,7 @@
 import json
 import base
 
-import ../../../../app_service/service/wallet_account/[keypair_dto]
+import ../../../../app_service/service/wallet_account/dto/[keypair_dto]
 
 type WakuBackedUpKeypairSignal* = ref object of Signal
   keypair*: KeypairDto
@@ -11,4 +11,4 @@ proc fromEvent*(T: type WakuBackedUpKeypairSignal, event: JsonNode): WakuBackedU
 
   let e = event["event"]
   if e.contains("backedUpKeypair"):
-    result.keypair = e["backedUpKeypair"].toKeypairDto()  
+    result.keypair = e["backedUpKeypair"].toKeypairDto()

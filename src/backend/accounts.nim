@@ -1,6 +1,6 @@
 import json, json_serialization, chronicles, strutils
 import ./core, ../app_service/common/utils
-import ../app_service/service/wallet_account/dto
+import ../app_service/service/wallet_account/dto/account_dto
 import ./response_type
 
 import status_go

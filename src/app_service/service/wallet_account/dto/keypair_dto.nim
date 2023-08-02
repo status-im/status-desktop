@@ -1,10 +1,10 @@
 import tables, json, strformat, strutils, chronicles
 
-import dto, keycard_dto
+import account_dto, keycard_dto
 
-include  ../../common/json_utils
+include  app_service/common/json_utils
 
-export dto, keycard_dto
+export account_dto, keycard_dto
 
 const KeypairTypeProfile* = "profile"
 const KeypairTypeSeed* = "seed"
@@ -69,4 +69,5 @@ proc `$`*(self: KeypairDto): string =
     result &= fmt"""
     [{i}]:({$self.accounts[i]})
     """
-  result &= "]"
+  result &= """
+    ]"""
