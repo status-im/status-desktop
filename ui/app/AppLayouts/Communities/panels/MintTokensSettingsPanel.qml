@@ -540,8 +540,58 @@ StackView {
             }
 
             onRemoteDestructRequested: {
-                remotelyDestructPopup.open()
-                // TODO: set the address selected in the popup's list
+                if (token.isPrivilegedToken) {
+                    tokenMasterActionPopup.openPopup(
+                                TokenMasterActionPopup.ActionType.RemotelyDestruct, name)
+                } else {
+                    remotelyDestructPopup.open()
+                    // TODO: set the address selected in the popup's list
+                }
+            }
+
+            onBanRequested: {
+                tokenMasterActionPopup.openPopup(
+                            TokenMasterActionPopup.ActionType.Ban, name)
+            }
+
+            onKickRequested: {
+                tokenMasterActionPopup.openPopup(
+                            TokenMasterActionPopup.ActionType.Kick, name)
+            }
+
+            TokenMasterActionPopup {
+                id: tokenMasterActionPopup
+
+                communityName: root.communityName
+                networkName: view.token.chainName
+
+                accountsModel: SortFilterProxyModel {
+                    sourceModel: root.accounts
+                    proxyRoles: [
+                        ExpressionRole {
+                            name: "color"
+
+                            function getColor(colorId) {
+                                return Utils.getColorForId(colorId)
+                            }
+
+                            // Direct call for singleton function is not handled properly by
+                            // SortFilterProxyModel that's why helper function is used instead.
+                            expression: { return getColor(model.colorId) }
+                        }
+                    ]
+                    filters: ValueFilter {
+                        roleName: "walletType"
+                        value: Constants.watchWalletType
+                        inverted: true
+                    }
+                }
+
+                function openPopup(type, userName) {
+                    tokenMasterActionPopup.actionType = type
+                    tokenMasterActionPopup.userName = userName
+                    open()
+                }
             }
         }
 

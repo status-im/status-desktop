@@ -30,9 +30,9 @@ Control {
     signal viewProfileRequested(string address)
     signal viewMessagesRequested(string address)
     signal airdropRequested(string address)
-    signal remoteDestructRequested(string address)
-    signal kickRequested(string address)
-    signal banRequested(string address)
+    signal remoteDestructRequested(string name, string address)
+    signal kickRequested(string name, string address)
+    signal banRequested(string name, string address)
 
     signal generalAirdropRequested
 
@@ -134,11 +134,9 @@ Control {
                     return
 
                 const entry = ModelUtils.get(proxyModel, index)
-                const address = entry.walletAddress
-                const name = entry.name
 
-                menu.rawAddress = name === ""
-                menu.currentAddress = address
+                menu.name = entry.name
+                menu.currentAddress = entry.walletAddress
                 menu.popup(parent, mouse.x, mouse.y)
 
                 holdersList.currentIndex = index
@@ -149,8 +147,9 @@ Control {
     StatusMenu {
         id: menu
 
+        property string name
         property string currentAddress
-        property bool rawAddress
+        readonly property bool rawAddress: name === ""
 
         onClosed: holdersList.currentIndex = -1
 
@@ -190,7 +189,8 @@ Control {
             enabled: root.showRemotelyDestructMenuItem
             type: StatusBaseButton.Type.Danger
 
-            onTriggered: root.remoteDestructRequested(menu.currentAddress)
+            onTriggered: root.remoteDestructRequested(menu.name,
+                                                      menu.currentAddress)
         }
 
         StatusAction {
@@ -201,7 +201,8 @@ Control {
             enabled: !menu.rawAddress
             type: StatusBaseButton.Type.Danger
 
-            onTriggered: root.kickRequested(menu.currentAddress)
+            onTriggered: root.kickRequested(menu.name,
+                                            menu.currentAddress)
         }
 
         StatusAction {
@@ -212,7 +213,8 @@ Control {
             enabled: !menu.rawAddress
             type: StatusBaseButton.Type.Danger
 
-            onTriggered: root.banRequested(menu.currentAddress)
+            onTriggered: root.banRequested(menu.name,
+                                           menu.currentAddress)
         }
     }
 }

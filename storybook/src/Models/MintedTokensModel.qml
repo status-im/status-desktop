@@ -4,6 +4,7 @@ ListModel {
     id: root
 
     readonly property ListModel tokenOwnersModel: TokenHoldersModel {}
+    readonly property ListModel emptyModel: ListModel {}
 
     readonly property var data: [
         {
@@ -24,7 +25,8 @@ ListModel {
             chainId: 2,
             chainName: "Optimism",
             chainIcon: ModelsData.networks.optimism,
-            accountName: "Another account - generated"
+            accountName: "Another account - generated",
+            tokenOwnersModel: root.emptyModel
         },
         {
             isPrivilegedToken: true,
@@ -44,7 +46,8 @@ ListModel {
             chainId: 2,
             chainName: "Optimism",
             chainIcon: ModelsData.networks.optimism,
-            accountName: "Another account - generated"
+            accountName: "Another account - generated",
+            tokenOwnersModel: root.tokenOwnersModel
         },
         {
             isPrivilegedToken: false,
@@ -64,7 +67,8 @@ ListModel {
             chainId: 1,
             chainName: "Testnet",
             chainIcon: ModelsData.networks.testnet,
-            accountName: "Status Account"
+            accountName: "Status Account",
+            tokenOwnersModel: root.emptyModel
         },
         {
             isPrivilegedToken: false,
@@ -84,7 +88,8 @@ ListModel {
             chainId: 2,
             chainName: "Optimism",
             chainIcon: ModelsData.networks.optimism,
-            accountName: "Status New Account"
+            accountName: "Status New Account",
+            tokenOwnersModel: root.emptyModel
         },
         {
             isPrivilegedToken: false,
@@ -104,7 +109,8 @@ ListModel {
             chainId: 5,
             chainName: "Custom",
             chainIcon: ModelsData.networks.custom,
-            accountName: "Other Account"
+            accountName: "Other Account",
+            tokenOwnersModel: root.emptyModel
         },
         {
             isPrivilegedToken: false,
@@ -144,7 +150,8 @@ ListModel {
             chainId: 2,
             chainName: "Optimism",
             chainIcon: ModelsData.networks.optimism,
-            accountName: "Status SNT Account"
+            accountName: "Status SNT Account",
+            tokenOwnersModel: root.emptyModel
         },
         {
             isPrivilegedToken: false,
@@ -163,7 +170,8 @@ ListModel {
             chainId: 1,
             chainName: "Testnet",
             chainIcon: ModelsData.networks.testnet,
-            accountName: "Status Account"
+            accountName: "Status Account",
+            tokenOwnersModel: root.emptyModel
         }
     ]
 
