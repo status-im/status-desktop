@@ -279,7 +279,7 @@ proc removePrivateKey*(self: Controller, communityId: string) =
   self.communityService.removePrivateKey(communityId)
 
 proc importCommunity*(self: Controller, communityKey: string) =
-  self.communityService.importCommunity(communityKey)
+  self.communityService.asyncImportCommunity(communityKey)
 
 proc setCommunityMuted*(self: Controller, communityId: string, mutedType: int) =
   self.communityService.setCommunityMuted(communityId, mutedType)

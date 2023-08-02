@@ -1636,33 +1636,44 @@ QtObject:
     except Exception as e:
       error "Error removing community private key: ", msg = e.msg
 
-  proc importCommunity*(self: Service, communityKey: string) =
+  proc asyncImportCommunity*(self: Service, communityKey: string) =
+    let arg = AsyncImportCommunityTaskArg(
+      tptr: cast[ByteAddress](asyncImportCommunityTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncImportCommunityCompleted",
+      communityKey: communityKey,
+    )
+    self.threadpool.start(arg)
+
+  proc onAsyncImportCommunityCompleted*(self: Service, response: string) {.slot.} =
     try:
-      let response = status_go.importCommunity(communityKey)
+      let rpcResponseObj = response.parseJson
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(RpcException, rpcResponseObj["error"].getStr)
       ## after `importCommunity` call everything should be handled in a slot cnnected to `SignalType.CommunityFound.event`
       ## but because of insufficient data (chats details are missing) sent as a payload of that signal we're unable to do
       ## that until `status-go` part gets improved in ragards of that.
 
-      if (response.error != nil):
-        let error = Json.decode($response.error, RpcError)
-        raise newException(RpcException, fmt"community id `{communityKey}` err: {error.message}")
+      if rpcResponseObj["response"]{"error"}.kind != JNull:
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        raise newException(RpcException, error.message)
 
-      if response.result == nil or response.result.kind != JObject:
-        raise newException(RpcException, fmt"response is empty or not an json object, community id `{communityKey}`")
+      if rpcResponseObj["response"]{"result"} == nil or rpcResponseObj["response"]{"result"}.kind != JObject:
+        raise newException(RpcException, "response is empty or not an json object")
 
       var communityJArr: JsonNode
-      if(not response.result.getProp("communities", communityJArr)):
-        raise newException(RpcException, fmt"there is no `communities` key in the response for community id: {communityKey}")
+      if not rpcResponseObj["response"]{"result"}.getProp("communities", communityJArr):
+        raise newException(RpcException, "there is no `communities` key in the response")
 
-      if(communityJArr.len == 0):
-        raise newException(RpcException, fmt"`communities` array is empty in the response for community id: {communityKey}")
+      if communityJArr.len == 0:
+        raise newException(RpcException, "`communities` array is empty in the response")
 
       var communitiesSettingsJArr: JsonNode
-      if(not response.result.getProp("communitiesSettings", communitiesSettingsJArr)):
-        raise newException(RpcException, fmt"there is no `communitiesSettings` key in the response for community id: {communityKey}")
+      if not rpcResponseObj["response"]{"result"}.getProp("communitiesSettings", communitiesSettingsJArr):
+        raise newException(RpcException, "there is no `communitiesSettings` key in the response")
 
-      if(communitiesSettingsJArr.len == 0):
-        raise newException(RpcException, fmt"`communitiesSettings` array is empty in the response for community id: {communityKey}")
+      if communitiesSettingsJArr.len == 0:
+        raise newException(RpcException, "`communitiesSettings` array is empty in the response")
 
       var communityDto = communityJArr[0].toCommunityDto()
       let communitySettingsDto = communitiesSettingsJArr[0].toCommunitySettingsDto()
@@ -1671,7 +1682,7 @@ QtObject:
       self.communities[communityDto.id] = communityDto
 
       var chatsJArr: JsonNode
-      if(response.result.getProp("chats", chatsJArr)):
+      if rpcResponseObj["response"]{"result"}.getProp("chats", chatsJArr):
         for chatObj in chatsJArr:
           let chatDto = chatObj.toChatDto(communityDto.id)
           self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
