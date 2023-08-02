@@ -65,7 +65,7 @@ StackLayout {
             viewAndPostHoldingsModel: root.permissionsStore.viewAndPostPermissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
-            isInvitationPending: root.rootStore.isCommunityRequestPending(communityData.id)
+            isInvitationPending: root.rootStore.isCommunityRequestPending(communityId)
             notificationCount: activityCenterStore.unreadNotificationsCount
             hasUnseenNotifications: activityCenterStore.hasUnseenNotifications
             openCreateChat: rootStore.openCreateChat
@@ -74,7 +74,7 @@ StackLayout {
             onAdHocChatButtonClicked: rootStore.openCloseCreateChatView()
             onRevealAddressClicked: {
                 Global.openPopup(communityIntroDialogPopup, {
-                    communityId: communityData.id,
+                    communityId: joinCommunityView.communityId,
                     isInvitationPending: joinCommunityView.isInvitationPending,
                     name: communityData.name,
                     introMessage: communityData.introMessage,
@@ -83,15 +83,15 @@ StackLayout {
                 })
             }
             onInvitationPendingClicked: {
-                root.rootStore.cancelPendingRequest(communityData.id)
-                joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
+                root.rootStore.cancelPendingRequest(communityId)
+                joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityId)
             }
 
             Connections {
                 target: root.rootStore.communitiesModuleInst
                 function onCommunityAccessRequested(communityId: string) {
-                    if (communityId === joinCommunityView.communityData.id) {
-                        joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityData.id)
+                    if (communityId === joinCommunityView.communityId) {
+                        joinCommunityView.isInvitationPending = root.rootStore.isCommunityRequestPending(communityId)
                     }
                 }
             }

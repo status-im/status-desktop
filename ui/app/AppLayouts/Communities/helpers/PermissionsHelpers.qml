@@ -69,7 +69,6 @@ QtObject {
     }
 
     function getUniquePermissionChannels(model, permissionsTypesArray = []) {
-        // TODO return a QVariantMap (https://github.com/status-im/status-desktop/issues/11481)
         return Internal.PermissionUtils.getUniquePermissionChannels(model, permissionsTypesArray)
     }
 

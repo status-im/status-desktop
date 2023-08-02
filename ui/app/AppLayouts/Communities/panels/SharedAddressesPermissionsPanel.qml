@@ -18,11 +18,17 @@ import utils 1.0
 Rectangle {
     id: root
 
+    property bool isEditMode
+
+    property string communityName
+    property string communityIcon
+
     property var permissionsModel
     property var assetsModel
     property var collectiblesModel
-    property string communityName
-    property string communityIcon
+
+    readonly property bool lostPermissionToJoin: d.lostPermissionToJoin
+    readonly property bool lostChannelPermissions: d.lostChannelPermissions
 
     implicitHeight: permissionsScrollView.contentHeight - permissionsScrollView.anchors.topMargin
     color: Theme.palette.baseColor2
@@ -35,10 +41,25 @@ Rectangle {
         readonly property color tableBorderColor: Theme.palette.directColor7
 
         // internal logic
+        readonly property bool lostPermissionToJoin: root.isEditMode && joinPermissionsModel.count && !joinPermissionPanel.tokenCriteriaMet
+
         readonly property var uniquePermissionChannels:
             root.permissionsModel && root.permissionsModel.count ?
                 PermissionsHelpers.getUniquePermissionChannels(root.permissionsModel, [PermissionTypes.Type.Read, PermissionTypes.Type.ViewAndPost])
               : []
+
+        property var initialChannelPermissions
+
+        function getChannelPermissions() {
+            var result = {}
+            for (let i = 0; i < channelPermissionsPanel.count; i++) {
+                const channel = channelPermissionsPanel.itemAt(i)
+                const ckey = channel.channelKey
+                result[ckey] = [channel.readPermissionMet, channel.viewAndPostPermissionMet]
+            }
+            return result
+        }
+        readonly property bool lostChannelPermissions: root.isEditMode && d.uniquePermissionChannels.length > 0 && channelPermissionsPanel.anyPermissionLost
 
         // models
         readonly property var adminPermissionsModel: SortFilterProxyModel {
@@ -63,6 +84,10 @@ Rectangle {
                 expression: joinPermissionsModel.filterPredicate(model)
             }
         }
+    }
+
+    Component.onCompleted: {
+        d.initialChannelPermissions = d.getChannelPermissions()
     }
 
     StatusScrollView {
@@ -94,6 +119,7 @@ Rectangle {
 
             // permission types
             PermissionPanel {
+                id: joinPermissionPanel
                 permissionType: PermissionTypes.Type.Member
                 permissionsModel: d.joinPermissionsModel
             }
@@ -103,8 +129,17 @@ Rectangle {
             }
 
             Repeater { // channel repeater
+                id: channelPermissionsPanel
                 model: d.uniquePermissionChannels
                 delegate: ChannelPermissionPanel {}
+                readonly property bool anyPermissionLost: {
+                    for (let i = 0; i < channelPermissionsPanel.count; i++) {
+                        const channel = channelPermissionsPanel.itemAt(i)
+                        if (channel && channel.anyPermissionLost)
+                            return true
+                    }
+                    return false
+                }
             }
         }
     }
@@ -150,7 +185,7 @@ Rectangle {
     }
 
     component SinglePermissionFlow: Flow {
-        width: parent.width
+        Layout.fillWidth: true
         spacing: Style.current.halfPadding
         Repeater {
             model: HoldingsSelectionModel {
@@ -214,9 +249,11 @@ Rectangle {
                             id: permissionsRepeater
 
                             property int revision
+                            onItemAdded: revision++
+                            onItemRemoved: revision++
 
                             model: permissionPanel.permissionsModel
-                            delegate: Column {
+                            delegate: ColumnLayout {
                                 Layout.column: 0
                                 Layout.row: index
                                 Layout.fillWidth: true
@@ -228,9 +265,10 @@ Rectangle {
                                 SinglePermissionFlow {}
 
                                 Rectangle {
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    width: parent.width + grid.anchors.margins*2
-                                    height: 1
+                                    Layout.fillWidth: true
+                                    Layout.leftMargin: -grid.anchors.leftMargin
+                                    Layout.rightMargin: -grid.anchors.rightMargin
+                                    Layout.preferredHeight: 1
                                     color: d.tableBorderColor
                                     visible: index < permissionsRepeater.count - 1
                                 }
@@ -244,10 +282,10 @@ Rectangle {
                             Layout.fillHeight: true
 
                             readonly property bool tokenCriteriaMet: {
-                                permissionsRepeater.revision // NB no let/const here b/c of https://bugreports.qt.io/browse/QTBUG-91917
-                                for (var i = 0; i < permissionsRepeater.count; i++) {
+                                permissionsRepeater.revision
+                                for (var i = 0; i < permissionsRepeater.count; i++) { // NB no let/const here b/c of https://bugreports.qt.io/browse/QTBUG-91917
                                     var permissionItem = permissionsRepeater.itemAt(i);
-                                    if (permissionItem.tokenCriteriaMet)
+                                    if (permissionItem && permissionItem.tokenCriteriaMet)
                                         return true
                                 }
                                 return false
@@ -267,7 +305,13 @@ Rectangle {
                                     width: 16
                                     height: 16
                                     icon: overallPermissionRow.tokenCriteriaMet ? "tiny/checkmark" : "tiny/secure"
-                                    color: overallPermissionRow.tokenCriteriaMet ? Theme.palette.successColor1 : Theme.palette.baseColor1
+                                    color: {
+                                        if (d.lostPermissionToJoin)
+                                            return Theme.palette.dangerColor1
+                                        if (overallPermissionRow.tokenCriteriaMet)
+                                            return Theme.palette.successColor1
+                                        return Theme.palette.baseColor1
+                                    }
                                 }
                                 StatusBaseText {
                                     anchors.verticalCenter: parent.verticalCenter
@@ -287,7 +331,13 @@ Rectangle {
                                         }
                                     }
 
-                                    color: overallPermissionRow.tokenCriteriaMet ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                                    color: {
+                                        if (d.lostPermissionToJoin)
+                                            return Theme.palette.dangerColor1
+                                        if (overallPermissionRow.tokenCriteriaMet)
+                                            return Theme.palette.directColor1
+                                        return Theme.palette.baseColor1
+                                    }
                                 }
                             }
                         }
@@ -304,7 +354,10 @@ Rectangle {
         padding: d.absLeftMargin
         background: PanelBg {}
 
-        readonly property string channelKey: d.uniquePermissionChannels[index][0]
+        readonly property string channelKey: modelData[0]
+        readonly property bool readPermissionMet: channelPermsRepeater.count > 0 ? channelPermsRepeater.itemAt(0).tokenCriteriaMet : false
+        readonly property bool viewAndPostPermissionMet: channelPermsRepeater.count > 1 ? channelPermsRepeater.itemAt(1).tokenCriteriaMet : false
+        readonly property bool anyPermissionLost: channelPermsRepeater.count > 0 ? channelPermsRepeater.itemAt(0).permissionLost || channelPermsRepeater.itemAt(1).permissionLost : false
 
         contentItem: RowLayout {
             spacing: Style.current.padding
@@ -315,12 +368,15 @@ Rectangle {
                 spacing: Style.current.smallPadding
                 PanelHeading {}
                 Repeater { // permissions repeater
+                    id: channelPermsRepeater
                     model: [PermissionTypes.Type.Read, PermissionTypes.Type.ViewAndPost]
 
                     delegate: Rectangle {
                         id: channelPermsSubPanel
 
                         readonly property int permissionType: modelData
+                        readonly property alias tokenCriteriaMet: overallPermissionRow2.tokenCriteriaMet
+                        readonly property bool permissionLost: d.initialChannelPermissions[channelPermsPanel.channelKey][index] && !tokenCriteriaMet
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: grid2.implicitHeight + grid2.anchors.margins*2
@@ -341,6 +397,8 @@ Rectangle {
                                 id: permissionsRepeater2
 
                                 property int revision
+                                onItemAdded: revision++
+                                onItemRemoved: revision++
 
                                 model: SortFilterProxyModel {
                                     id: channelPermissionsModel
@@ -354,7 +412,7 @@ Rectangle {
                                         expression: channelPermissionsModel.filterPredicate(model)
                                     }
                                 }
-                                delegate: Column {
+                                delegate: ColumnLayout {
                                     Layout.column: 0
                                     Layout.row: index
                                     Layout.fillWidth: true
@@ -366,9 +424,10 @@ Rectangle {
                                     SinglePermissionFlow {}
 
                                     Rectangle {
-                                        anchors.horizontalCenter: parent.horizontalCenter
-                                        width: parent.width + grid2.anchors.margins*2
-                                        height: 1
+                                        Layout.fillWidth: true
+                                        Layout.leftMargin: -grid2.anchors.leftMargin
+                                        Layout.rightMargin: -grid2.anchors.rightMargin
+                                        Layout.preferredHeight: 1
                                         color: d.tableBorderColor
                                         visible: index < permissionsRepeater2.count - 1
                                     }
@@ -384,9 +443,9 @@ Rectangle {
 
                                 readonly property bool tokenCriteriaMet: {
                                     permissionsRepeater2.revision
-                                    for (let i = 0; i < permissionsRepeater2.count; i++) {
+                                    for (var i = 0; i < permissionsRepeater2.count; i++) { // NB no let/const here b/c of https://bugreports.qt.io/browse/QTBUG-91917
                                         const permissionItem = permissionsRepeater2.itemAt(i);
-                                        if (permissionItem.tokenCriteriaMet)
+                                        if (permissionItem && permissionItem.tokenCriteriaMet)
                                             return true
                                     }
                                     return false
@@ -406,7 +465,13 @@ Rectangle {
                                         width: 16
                                         height: 16
                                         icon: overallPermissionRow2.tokenCriteriaMet ? "tiny/checkmark" : "tiny/secure"
-                                        color: overallPermissionRow2.tokenCriteriaMet ? Theme.palette.successColor1 : Theme.palette.baseColor1
+                                        color: {
+                                            if (channelPermsSubPanel.permissionLost)
+                                                return Theme.palette.dangerColor1
+                                            if (overallPermissionRow2.tokenCriteriaMet)
+                                                return Theme.palette.successColor1
+                                            return Theme.palette.baseColor1
+                                        }
                                     }
                                     StatusBaseText {
                                         anchors.verticalCenter: parent.verticalCenter
@@ -424,7 +489,13 @@ Rectangle {
                                             }
                                         }
 
-                                        color: overallPermissionRow2.tokenCriteriaMet ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                                        color: {
+                                            if (channelPermsSubPanel.permissionLost)
+                                                return Theme.palette.dangerColor1
+                                            if (overallPermissionRow2.tokenCriteriaMet)
+                                                return Theme.palette.directColor1
+                                            return Theme.palette.baseColor1
+                                        }
                                     }
                                 }
                             }

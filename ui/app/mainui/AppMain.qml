@@ -449,8 +449,9 @@ Item {
                 popupMenu: Component {
                     StatusMenu {
                         id: communityContextMenu
-                        width: 180
                         property var chatCommunitySectionModule
+
+                        readonly property bool isSpectator: model.spectated && !model.joined
 
                         openHandler: function () {
                             // we cannot return QVariant if we pass another parameter in a function call
@@ -496,20 +497,36 @@ Item {
                             }
                         }
 
+                        StatusAction {
+                            text: qsTr("Edit Shared Addresses")
+                            icon.name: "wallet"
+                            enabled: {
+                                if (model.memberRole === Constants.memberRole.owner)
+                                    return false
+                                if (communityContextMenu.isSpectator && !appMain.rootStore.isCommunityRequestPending(model.id))
+                                    return false
+                                return true
+                            }
+                            onTriggered: {
+                                communityContextMenu.close()
+                                Global.openEditSharedAddressesFlow(model.id)
+                            }
+                        }
+
                         StatusMenuSeparator { visible: leaveCommunityMenuItem.enabled }
 
                         StatusAction {
                             id: leaveCommunityMenuItem
                             enabled: model.memberRole !== Constants.memberRole.owner
                             text: {
-                                if (model.spectated)
+                                if (communityContextMenu.isSpectator)
                                     return qsTr("Close Community")
                                 return qsTr("Leave Community")
                             }
-                            icon.name: model.spectated ? "close-circle" : "arrow-left"
+                            icon.name: communityContextMenu.isSpectator ? "close-circle" : "arrow-left"
                             type: StatusAction.Type.Danger
-                            onTriggered: model.spectated ? communityContextMenu.chatCommunitySectionModule.leaveCommunity()
-                                                         : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
+                            onTriggered: communityContextMenu.isSpectator ? communityContextMenu.chatCommunitySectionModule.leaveCommunity()
+                                                                          : popups.openLeaveCommunityPopup(model.name, model.id, model.outroMessage)
                         }
                     }
                 }
@@ -1198,6 +1215,7 @@ Item {
                                 emojiPopup: statusEmojiPopup.item
                                 stickersPopup: statusStickersPopupLoader.item
                                 sectionItemModel: model
+                                createChatPropertiesStore: appMain.createChatPropertiesStore
                                 communitySettingsDisabled: production && appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
 
                                 rootStore: ChatStores.RootStore {

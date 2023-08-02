@@ -128,7 +128,6 @@ StatusListView {
                         onTriggered: {
                             moreMenu.close()
                             Global.openEditSharedAddressesFlow(model.id)
-                            // TODO shared addresses flow, cf https://github.com/status-im/status-desktop/issues/11138
                         }
                     }
                     StatusMenuSeparator {

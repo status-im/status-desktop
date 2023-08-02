@@ -9,6 +9,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
+import StatusQ.Internal 0.1 as SQInternal
 
 import SortFilterProxyModel 0.2
 
@@ -18,6 +19,7 @@ import AppLayouts.Communities.views 1.0
 import AppLayouts.Communities.helpers 1.0
 
 import utils 1.0
+import shared.panels 1.0
 
 Control {
     id: root
@@ -44,18 +46,20 @@ Control {
             onClicked: root.close()
         }
         StatusButton {
-            enabled: root.selectedSharedAddresses.length && root.selectedAirdropAddress
+            enabled: d.dirty
+            type: d.lostCommunityPermission || d.lostChannelPermissions ? StatusBaseButton.Type.Danger : StatusBaseButton.Type.Normal
             visible: root.isEditMode
-            icon.name: Constants.authenticationIconByType[root.loginType]
-            text: qsTr("Save changes")
+            icon.name: type === StatusBaseButton.Type.Normal && d.selectedAddressesDirty ? Constants.authenticationIconByType[root.loginType] : ""
+            text: d.lostCommunityPermission ? qsTr("Save changes & leave %1").arg(root.communityName) :
+                                              d.lostChannelPermissions ? qsTr("Save changes & update my permissions")
+                                                                       : qsTr("Save changes")
             onClicked: {
-                // TODO connect to backend
+                root.saveSelectedAddressesClicked(root.selectedAirdropAddress, root.selectedSharedAddresses)
                 root.close()
             }
         }
         StatusButton {
             visible: !root.isEditMode
-            enabled: root.selectedAirdropAddress && root.selectedSharedAddresses.length
             text: qsTr("Share selected addresses to join")
             onClicked: {
                 root.shareSelectedAddressesClicked(root.selectedAirdropAddress, root.selectedSharedAddresses)
@@ -67,12 +71,15 @@ Control {
 
     readonly property var rightButtons: [buttons.get(buttons.count-1)] // "magically" used by CommunityIntroDialog StatusStackModal impl
 
-    readonly property string selectedAirdropAddress: accountSelector.selectedAirdropAddress
-    readonly property var selectedSharedAddresses: accountSelector.selectedSharedAddresses
+    property var selectedSharedAddresses: []
+    property string selectedAirdropAddress
+
+    signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
+    signal saveSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
 
     signal close()
-    signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
 
+    padding: 0
     spacing: Style.current.padding
 
     QtObject {
@@ -80,12 +87,73 @@ Control {
 
         // internal logic
         readonly property bool hasPermissions: root.permissionsModel && root.permissionsModel.count
+
+        // initial state (not bindings, we want a static snapshot of the initial state)
+        property var initialSelectedSharedAddresses: []
+        property string initialSelectedAirdropAddress
+
+        // dirty state handling
+        readonly property bool selectedAddressesDirty: !SQInternal.ModelUtils.isSameArray(d.initialSelectedSharedAddresses, root.selectedSharedAddresses)
+        readonly property bool selectedAirdropAddressDirty: root.selectedAirdropAddress !== d.initialSelectedAirdropAddress
+        readonly property bool dirty: selectedAddressesDirty || selectedAirdropAddressDirty
+
+        // warning states
+        readonly property bool lostCommunityPermission: root.isEditMode && permissionsView.lostPermissionToJoin
+        readonly property bool lostChannelPermissions: root.isEditMode && permissionsView.lostChannelPermissions
     }
 
-    padding: 0
+    Component.onCompleted: {
+        // initialize the state
+        d.initialSelectedSharedAddresses = root.selectedSharedAddresses.length ? root.selectedSharedAddresses
+                                                                               : filteredAccountsModel.count ? ModelUtils.modelToFlatArray(filteredAccountsModel, "address")
+                                                                                                             : []
+        d.initialSelectedAirdropAddress = !!root.selectedAirdropAddress ? root.selectedAirdropAddress
+                                                                        : d.initialSelectedSharedAddresses.length ? d.initialSelectedSharedAddresses[0] : ""
+        root.selectedSharedAddresses = accountSelector.selectedSharedAddresses
+        root.selectedAirdropAddress = accountSelector.selectedAirdropAddress
+    }
+
+    SortFilterProxyModel {
+        id: filteredAccountsModel
+        sourceModel: root.walletAccountsModel
+        filters: ValueFilter {
+            roleName: "walletType"
+            value: Constants.watchWalletType
+            inverted: true
+        }
+        sorters: [
+            ExpressionSorter {
+                function isGenerated(modelData) {
+                    return modelData.walletType === Constants.generatedWalletType
+                }
+
+                expression: {
+                    return isGenerated(modelLeft)
+                }
+            },
+            RoleSorter {
+                roleName: "position"
+            },
+            RoleSorter {
+                roleName: "name"
+            }
+        ]
+    }
 
     contentItem: ColumnLayout {
         spacing: 0
+
+        // warning panel
+        ModuleWarning {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 32
+            text: d.lostCommunityPermission ? qsTr("Selected addresses have insufficient tokens to maintain %1 membership").arg(root.communityName) :
+                                              d.lostChannelPermissions ? qsTr("By deselecting these addresses, you will lose channel permissions") :
+                                                                         ""
+            visible: d.lostCommunityPermission || d.lostChannelPermissions
+            closeBtnVisible: false
+        }
+
         // addresses
         SharedAddressesAccountSelector {
             id: accountSelector
@@ -96,6 +164,12 @@ Control {
             Layout.maximumHeight: hasPermissions ? permissionsView.implicitHeight > root.availableHeight / 2 ? root.availableHeight / 2 : root.availableHeight : -1
             Layout.fillHeight: !hasPermissions
             model: root.walletAccountsModel
+            selectedSharedAddresses: d.initialSelectedSharedAddresses
+            selectedAirdropAddress: d.initialSelectedAirdropAddress
+            onAddressesChanged: {
+                root.selectedSharedAddresses = selectedSharedAddresses
+                root.selectedAirdropAddress = selectedAirdropAddress
+            }
         }
 
         // divider with top rounded corners + drop shadow
@@ -121,6 +195,7 @@ Control {
         // permissions
         SharedAddressesPermissionsPanel {
             id: permissionsView
+            isEditMode: root.isEditMode
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel
