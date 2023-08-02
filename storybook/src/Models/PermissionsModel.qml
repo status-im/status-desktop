@@ -28,6 +28,23 @@ QtObject {
         }
     ]
 
+    readonly property var permissionsModelDataNotMet: [
+        {
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: true,
+            tokenCriteriaMet: false
+        },
+        {
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        }
+    ]
+
     readonly property var shortPermissionsModelData: [
         {
             holdingsListModel: root.createHoldingsModel4(),
@@ -197,6 +214,41 @@ QtObject {
         }
     ]
 
+    readonly property var complexPermissionsModelDataNotMet: [
+        {
+            id: "admin1",
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "admin2",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Admin,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "member1",
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "member2",
+            holdingsListModel: root.createHoldingsModel4(),
+            channelsListModel: root.createChannelsModel2(),
+            permissionType: PermissionTypes.Type.Member,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        }
+    ]
+
     readonly property var channelsOnlyPermissionsModelData: [
         {
             id: "read1a",
@@ -290,6 +342,89 @@ QtObject {
         }
     ]
 
+    readonly property var channelsOnlyPermissionsModelDataNotMet: [
+        {
+            id: "read1a",
+            holdingsListModel: root.createHoldingsModel1b(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: true
+        },
+        {
+            id: "read1b",
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "read1c",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "read2a",
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "read2b",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.Read,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "viewAndPost1a",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "viewAndPost1b",
+            holdingsListModel: root.createHoldingsModel2b(),
+            channelsListModel: root.createChannelsModel1(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: true
+        },
+        {
+            id: "viewAndPost2a",
+            holdingsListModel: root.createHoldingsModel3(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "viewAndPost2b",
+            holdingsListModel: root.createHoldingsModel5(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        },
+        {
+            id: "viewAndPost2c",
+            holdingsListModel: root.createHoldingsModel1(),
+            channelsListModel: root.createChannelsModel3(),
+            permissionType: PermissionTypes.Type.ViewAndPost,
+            isPrivate: false,
+            tokenCriteriaMet: false
+        }
+    ]
+
     readonly property ListModel permissionsModel: ListModel {
         readonly property ModelChangeGuard guard: ModelChangeGuard {
             model: root.permissionsModel
@@ -297,6 +432,17 @@ QtObject {
 
         Component.onCompleted: {
             append(permissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property ListModel permissionsModelNotMet: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.permissionsModelNotMet
+        }
+
+        Component.onCompleted: {
+            append(permissionsModelDataNotMet)
             guard.enabled = true
         }
     }
@@ -367,6 +513,30 @@ QtObject {
         }
     }
 
+    readonly property var complexCombinedPermissionsModel: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.complexCombinedPermissionsModel
+        }
+
+        Component.onCompleted: {
+            append(complexPermissionsModelData)
+            append(channelsOnlyPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property var complexCombinedPermissionsModelNotMet: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.complexCombinedPermissionsModelNotMet
+        }
+
+        Component.onCompleted: {
+            append(complexPermissionsModelDataNotMet)
+            append(channelsOnlyPermissionsModelDataNotMet)
+            guard.enabled = true
+        }
+    }
+
     readonly property var complexPermissionsModel: ListModel {
         readonly property ModelChangeGuard guard: ModelChangeGuard {
             model: root.complexPermissionsModel
@@ -374,7 +544,17 @@ QtObject {
 
         Component.onCompleted: {
             append(complexPermissionsModelData)
-            append(channelsOnlyPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property var complexPermissionsModelNotMet: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.complexPermissionsModelNotMet
+        }
+
+        Component.onCompleted: {
+            append(complexPermissionsModelDataNotMet)
             guard.enabled = true
         }
     }
@@ -386,6 +566,17 @@ QtObject {
 
         Component.onCompleted: {
             append(channelsOnlyPermissionsModelData)
+            guard.enabled = true
+        }
+    }
+
+    readonly property var channelsOnlyPermissionsModelNotMet: ListModel {
+        readonly property ModelChangeGuard guard: ModelChangeGuard {
+            model: root.channelsOnlyPermissionsModelNotMet
+        }
+
+        Component.onCompleted: {
+            append(channelsOnlyPermissionsModelDataNotMet)
             guard.enabled = true
         }
     }

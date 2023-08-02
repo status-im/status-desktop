@@ -14,11 +14,13 @@ import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile.popups 1.0
 import AppLayouts.Communities.popups 1.0
 
+import AppLayouts.Wallet.stores 1.0 as WalletStore
+import AppLayouts.Chat.stores 1.0 as ChatStore
+
 import shared.popups 1.0
 import shared.status 1.0
 
 import utils 1.0
-import AppLayouts.Wallet.stores 1.0 as WalletStore
 
 QtObject {
     id: root
@@ -61,6 +63,7 @@ QtObject {
         Global.openTestnetPopup.connect(openTestnetPopup)
         Global.openExportControlNodePopup.connect(openExportControlNodePopup)
         Global.openImportControlNodePopup.connect(openImportControlNodePopup)
+        Global.openEditSharedAddressesFlow.connect(openEditSharedAddressesPopup)
     }
 
     property var currentPopup
@@ -234,7 +237,11 @@ QtObject {
                    imageSrc: imageSrc,
                    accessType: accessType,
                    isInvitationPending: isInvitationPending
-                  });
+                  })
+    }
+
+    function openEditSharedAddressesPopup(communityId) {
+        openPopup(editSharedAddressesPopupComponent, {communityId: communityId, isEditMode: true})
     }
 
     function openDiscordImportProgressPopup() {
@@ -498,18 +505,15 @@ QtObject {
             ImportCommunityPopup {
                 store: root.communitiesStore
                 onJoinCommunity: {
-                    Global.communityIntroPopupRequested(
-                        communityId,
-                        communityDetails.name,
-                        communityDetails.introMessage,
-                        communityDetails.image,
-                        Constants.communityChatOnRequestAccess,
-                        root.rootStore.isCommunityRequestPending(communityId));
-                    close();
+                    close()
+                    openCommunityIntroPopup(communityId,
+                                            communityDetails.name,
+                                            communityDetails.introMessage,
+                                            communityDetails.image,
+                                            communityDetails.access,
+                                            root.rootStore.isCommunityRequestPending(communityId))
                 }
-                onClosed: {
-                    destroy();
-                }
+                onClosed: destroy()
             }
         },
 
@@ -528,10 +532,14 @@ QtObject {
                 Connections {
                     target: root.communitiesStore.communitiesModuleInst
                     function onCommunityAccessRequested(communityId: string) {
+                        if (communityId !== communityIntroDialog.communityId)
+                            return
                         root.communitiesStore.spectateCommunity(communityId);
                         communityIntroDialog.close();
                     }
                     function onCommunityAccessFailed(communityId: string) {
+                        if (communityId !== communityIntroDialog.communityId)
+                            return
                         communityIntroDialog.close();
                     }
                     function onUserAuthenticationCanceled() {
@@ -675,7 +683,38 @@ QtObject {
             ImportControlNodePopup {
                 onClosed: destroy()
             }
-        }
+        },
 
+        Component {
+            id: editSharedAddressesPopupComponent
+            SharedAddressesPopup {
+                id: editSharedAddressesPopup
+
+                property string communityId
+
+                readonly property var chatStore: ChatStore.RootStore {
+                    contactsStore: root.rootStore.contactStore
+                    chatCommunitySectionModule: {
+                        root.rootStore.mainModuleInst.prepareCommunitySectionModuleForCommunityId(editSharedAddressesPopup.communityId)
+                        return root.rootStore.mainModuleInst.getCommunitySectionModule()
+                    }
+                }
+
+                communityName: chatStore.sectionDetails.name
+                communityIcon: chatStore.sectionDetails.image
+                // FIXME get these from the community settings (from the initial "join" call)
+                //selectedSharedAddresses: [???]
+                //selectedAirdropAddress: "???"
+                loginType: chatStore.loginType
+                walletAccountsModel: WalletStore.RootStore.receiveAccounts
+                permissionsModel: chatStore.permissionsStore.permissionsModel
+                assetsModel: chatStore.assetsModel
+                collectiblesModel: chatStore.collectiblesModel
+
+                onSaveSelectedAddressesClicked: console.warn("!!! FIXME implement saving the shared & airdrop addresses for the community",
+                                                             JSON.stringify(sharedAddresses), airdropAddress)
+                onClosed: destroy()
+            }
+        }
     ]
 }

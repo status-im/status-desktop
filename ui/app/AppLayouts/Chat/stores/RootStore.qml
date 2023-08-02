@@ -670,7 +670,7 @@ QtObject {
         target: mainModuleInst
         enabled: !!chatCommunitySectionModule
         function onOpenCommunityMembershipRequestsView(sectionId: string) {
-            if(root.getMySectionId() != sectionId)
+            if(root.getMySectionId() !== sectionId)
                 return
 
             root.goToMembershipRequestsPage()
@@ -703,6 +703,7 @@ QtObject {
                 readonly property string id: model.id
                 readonly property int sectionType: model.sectionType
                 readonly property string name: model.name
+                readonly property string image: model.image
                 readonly property bool joined: model.joined
                 readonly property bool amIBanned: model.amIBanned
                 // add others when needed..

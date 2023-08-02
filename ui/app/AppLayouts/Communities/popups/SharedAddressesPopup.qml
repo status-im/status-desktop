@@ -20,10 +20,11 @@ StatusDialog {
     required property var assetsModel
     required property var collectiblesModel
 
-    readonly property string selectedAirdropAddress: panel.selectedAirdropAddress
-    readonly property var selectedSharedAddresses: panel.selectedSharedAddresses
+    property alias selectedSharedAddresses: panel.selectedSharedAddresses
+    property alias selectedAirdropAddress: panel.selectedAirdropAddress
 
     signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
+    signal saveSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
 
     title: panel.title
     implicitWidth: 640 // by design
@@ -40,6 +41,7 @@ StatusDialog {
         assetsModel: root.assetsModel
         collectiblesModel: root.collectiblesModel
         onShareSelectedAddressesClicked: root.shareSelectedAddressesClicked(airdropAddress, sharedAddresses)
+        onSaveSelectedAddressesClicked: root.saveSelectedAddressesClicked(airdropAddress, sharedAddresses)
         onClose: root.close()
     }
 

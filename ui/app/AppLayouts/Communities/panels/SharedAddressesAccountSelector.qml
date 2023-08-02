@@ -18,8 +18,10 @@ StatusListView {
     property var uniquePermissionTokenKeys
 
     // read/write properties
-    property string selectedAirdropAddress: selectedSharedAddresses.length ? selectedSharedAddresses[0] : ""
-    property var selectedSharedAddresses: count ? ModelUtils.modelToFlatArray(model, "address") : []
+    property string selectedAirdropAddress
+    property var selectedSharedAddresses: []
+
+    signal addressesChanged()
 
     leftMargin: d.absLeftMargin
     topMargin: Style.current.padding
@@ -105,6 +107,7 @@ StatusListView {
                 visible: shareAddressCheckbox.checked
                 opacity: enabled ? 1.0 : 0.3
                 onCheckedChanged: if (checked) root.selectedAirdropAddress = model.address
+                onToggled: root.addressesChanged()
 
                 StatusToolTip {
                     text: qsTr("Use this address for any Community airdrops")
@@ -134,6 +137,8 @@ StatusListView {
                     if (!checked && model.address === root.selectedAirdropAddress) {
                         d.selectFirstAvailableAirdropAddress()
                     }
+
+                    root.addressesChanged()
                 }
             }
         ]

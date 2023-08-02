@@ -72,3 +72,20 @@ bool ModelUtilsInternal::contains(QAbstractItemModel* model,
     const auto indexes = model->match(model->index(0, 0), roleByName(model, roleName), value, 1, flags);
     return !indexes.isEmpty();
 }
+
+bool ModelUtilsInternal::isSameArray(const QJSValue& lhs, const QJSValue& rhs) const
+{
+    if (!lhs.isArray() || !rhs.isArray())
+        return false;
+
+    auto left = lhs.toVariant().toStringList();
+    auto right = rhs.toVariant().toStringList();
+
+    if (left.size() != right.size())
+        return false;
+
+    left.sort();
+    right.sort();
+
+    return left == right;
+}
