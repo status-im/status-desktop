@@ -230,12 +230,11 @@ StatusWindow {
         target: Qt.application
         enabled: Qt.platform.os === Constants.mac
         function onStateChanged() {
-
-            if (d.previousApplicationState == Qt.application.state) {
+            if (Qt.application.state == d.previousApplicationState
+                && Qt.application.state == Qt.ApplicationActive) {
                 applicationWindow.visible = true
                 applicationWindow.showNormal()
             }
-
             d.previousApplicationState = Qt.application.state
         }
     }
