@@ -1,10 +1,13 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 import AppLayouts.Communities.panels 1.0
 
 import Storybook 1.0
 import Models 1.0
+
+import utils 1.0
 
 SplitView {
     id: root
@@ -46,6 +49,32 @@ SplitView {
         SplitView.preferredHeight: 200
 
         logsView.logText: logs.logText
+
+        RowLayout {
+            Button {
+                text: "Set all remotely burn to completed"
+
+                onClicked: {
+                    for (let i = 0; i < tokenHoldersModel.count; i++) {
+                        tokenHoldersModel.setProperty(
+                                    i, "remotelyDestructState",
+                                    Constants.ContractTransactionStatus.Completed)
+                    }
+                }
+            }
+
+            Button {
+                text: "Set all remotely burn to in progress"
+
+                onClicked: {
+                    for (let i = 0; i < tokenHoldersModel.count; i++) {
+                        tokenHoldersModel.setProperty(
+                                    i, "remotelyDestructState",
+                                    Constants.ContractTransactionStatus.InProgress)
+                    }
+                }
+            }
+        }
     }
 }
 

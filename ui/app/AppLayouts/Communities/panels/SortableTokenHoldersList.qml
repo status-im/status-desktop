@@ -161,6 +161,14 @@ StatusListView {
     delegate: ItemDelegate {
         id: delegate
 
+        readonly property bool remotelyDestructInProgress:
+            model.remotelyDestructState === Constants.ContractTransactionStatus.InProgress
+
+        onRemotelyDestructInProgressChanged: {
+            if(!remotelyDestructInProgress)
+                colorAnimation.restart()
+        }
+
         padding: 0
         horizontalPadding: Style.current.padding
 
@@ -184,12 +192,29 @@ StatusListView {
         background: Item {
             Rectangle {
                 anchors.fill: parent
-
                 anchors.topMargin: delegate.topPadding
 
                 radius: Style.current.radius
                 color: (delegate.hovered || delegate.ListView.isCurrentItem)
                        ? Theme.palette.baseColor2 : "transparent"
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                anchors.topMargin: delegate.topPadding
+
+                radius: Style.current.radius
+                color: "transparent"
+
+                SequentialAnimation on color {
+                    id: colorAnimation
+
+                    running: false
+
+                    PropertyAction { value: Theme.palette.primaryColor3 }
+                    PauseAnimation { duration: 1000 }
+                    ColorAnimation { to: "transparent"; duration: 500 }
+                }
             }
 
             Rectangle {
@@ -205,13 +230,8 @@ StatusListView {
         }
 
         contentItem: Item {
-            id: delegateRoot
-
             implicitWidth: delegateRow.implicitWidth
             implicitHeight: delegateRow.implicitHeight
-
-            readonly property bool remotelyDestructInProgress:
-                model.remotelyDestructState === Constants.ContractTransactionStatus.InProgress
 
             RowLayout {
                 id: delegateRow
@@ -261,7 +281,6 @@ StatusListView {
                 }
 
                 RowLayout {
-
                     Layout.preferredWidth: root.headerItem.holdingHeaderWidth
                     spacing: 4
 
@@ -271,7 +290,7 @@ StatusListView {
 
                         text: StatusQUtils.Emoji.fromCodePoint("1f525") // :fire: emoji
                         font.pixelSize: Style.current.tertiaryTextFontSize
-                        visible: delegateRoot.remotelyDestructInProgress
+                        visible: delegate.remotelyDestructInProgress
                         color: Theme.palette.directColor1
                     }
 
@@ -284,7 +303,7 @@ StatusListView {
                         Layout.preferredHeight: Theme.primaryTextFontSize
                         Layout.preferredWidth: Layout.preferredHeight
                         Layout.leftMargin: 6
-                        visible: delegateRoot.remotelyDestructInProgress
+                        visible: delegate.remotelyDestructInProgress
                         color: Theme.palette.primaryColor1
                     }
                 }
