@@ -4,7 +4,6 @@ import utils 1.0
 
 import SortFilterProxyModel 0.2
 import AppLayouts.Wallet.stores 1.0 as WalletStore
-import AppLayouts.Chat.stores 1.0 as ChatStore
 import "../Profile/stores"
 
 QtObject {
@@ -29,8 +28,18 @@ QtObject {
         return Constants.LoginType.Password
     }
 
-    //TODO see how these values can be retrieved from the community the user attempts to join
-    property var permissionsModel: ChatStore.RootStore.permissionsStore.permissionsModel
+    function prepareTokenModelForCommunity(publicKey) {
+        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
+    }
+
+    property string communityKeyToImport
+    onCommunityKeyToImportChanged: {
+        if (!!communityKeyToImport)
+            root.prepareTokenModelForCommunity(communityKeyToImport);
+    }
+
+    property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
+                                     root.communitiesModuleInst.spectatedCommunityPermissionModel : null
     property var walletAccountsModel: WalletStore.RootStore.receiveAccounts
     property var assetsModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.tokenList
@@ -41,6 +50,20 @@ QtObject {
             name: "iconSource"
             expression: !!model.icon ? model.icon : tokenIcon(model.symbol)
         }
+        filters: [
+            AnyOf {
+                // We accept tokens from this community or general (empty community ID)
+                ValueFilter {
+                    roleName: "communityId"
+                    value: ""
+                }
+
+                ValueFilter {
+                    roleName: "communityId"
+                    value: root.communityKeyToImport
+                }
+            }
+        ]
     }
     property var collectiblesModel: SortFilterProxyModel {
         sourceModel: communitiesModuleInst.collectiblesModel
@@ -51,6 +74,20 @@ QtObject {
             name: "iconSource"
             expression: collectibleIcon(model.icon)
         }
+        filters: [
+            AnyOf {
+                // We accept tokens from this community or general (empty community ID)
+                ValueFilter {
+                    roleName: "communityId"
+                    value: ""
+                }
+
+                ValueFilter {
+                    roleName: "communityId"
+                    value: root.communityKeyToImport
+                }
+            }
+        ]
     }
 
     function setLatestVersionInfo(newVersionAvailable, latestVersion, downloadURL) {

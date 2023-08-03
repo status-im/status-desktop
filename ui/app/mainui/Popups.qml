@@ -537,7 +537,8 @@ QtObject {
                         communityIntroDialog.close();
                     }
                 }
-                onClosed: { destroy(); }
+                onAboutToShow: { root.rootStore.communityKeyToImport = communityIntroDialog.communityId; }
+                onClosed: { root.rootStore.communityKeyToImport = ""; destroy(); }
             }
         },
 
