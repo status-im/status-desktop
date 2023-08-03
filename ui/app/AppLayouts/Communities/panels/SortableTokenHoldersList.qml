@@ -34,6 +34,7 @@ StatusListView {
     signal clicked(int index, var parent, var mouse)
 
     currentIndex: -1
+    spacing: Style.current.halfPadding
 
     component ColumnHeader: StatusSortableColumnHeader {
         id: columnHeader
@@ -62,6 +63,7 @@ StatusListView {
 
     component NumberCell: StatusBaseText {
         horizontalAlignment: Qt.AlignRight
+        verticalAlignment: Qt.AlignVCenter
 
         font.weight: Font.Medium
         font.pixelSize: 13
@@ -86,6 +88,7 @@ StatusListView {
 
         padding: 0
         horizontalPadding: Style.current.padding
+
 
         readonly property alias usernameHeaderWidth: usernameHeader.width
         readonly property alias noOfMessagesHeaderWidth: noOfMessagesHeader.width
@@ -161,7 +164,7 @@ StatusListView {
         padding: 0
         horizontalPadding: Style.current.padding
 
-        topPadding: showSeparator ? 10 : 0
+        topPadding: showSeparator ? Style.current.halfPadding : 0
 
         readonly property string name: model.name
 
@@ -195,7 +198,6 @@ StatusListView {
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.topMargin: delegate.topPadding / 2
 
                 height: 1
                 color: Theme.palette.baseColor2
@@ -203,8 +205,13 @@ StatusListView {
         }
 
         contentItem: Item {
+            id: delegateRoot
+
             implicitWidth: delegateRow.implicitWidth
             implicitHeight: delegateRow.implicitHeight
+
+            readonly property bool remotelyDestructInProgress:
+                model.remotelyDestructState === Constants.ContractTransactionStatus.InProgress
 
             RowLayout {
                 id: delegateRow
@@ -253,10 +260,33 @@ StatusListView {
                           : "-"
                 }
 
-                NumberCell {
-                    Layout.preferredWidth: root.headerItem.holdingHeaderWidth
+                RowLayout {
 
-                    text: LocaleUtils.numberToLocaleString(model.amount)
+                    Layout.preferredWidth: root.headerItem.holdingHeaderWidth
+                    spacing: 4
+
+                    StatusBaseText {
+                        Layout.fillWidth: true
+                        horizontalAlignment: Qt.AlignRight
+
+                        text: StatusQUtils.Emoji.fromCodePoint("1f525") // :fire: emoji
+                        font.pixelSize: Style.current.tertiaryTextFontSize
+                        visible: delegateRoot.remotelyDestructInProgress
+                        color: Theme.palette.directColor1
+                    }
+
+                    NumberCell {
+                        Layout.alignment: Qt.AlignRight
+                        text: LocaleUtils.numberToLocaleString(model.amount)
+                    }
+
+                    StatusLoadingIndicator {
+                        Layout.preferredHeight: Theme.primaryTextFontSize
+                        Layout.preferredWidth: Layout.preferredHeight
+                        Layout.leftMargin: 6
+                        visible: delegateRoot.remotelyDestructInProgress
+                        color: Theme.palette.primaryColor1
+                    }
                 }
             }
         }
