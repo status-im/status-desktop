@@ -563,10 +563,10 @@ QtObject:
     except Exception as e:
       error "error: ", procName="pinUnpinMessage", errName = e.name, errDesription = e.msg
 
-  proc fetchMessageByMessageId*(self: Service, chatId: string, messageId: string):
+  proc getMessageByMessageId*(self: Service, chatId: string, messageId: string):
       tuple[message: MessageDto, error: string] =
     try:
-      let msgResponse = status_go.fetchMessageByMessageId(messageId)
+      let msgResponse = status_go.getMessageByMessageId(messageId)
       if(msgResponse.error.isNil):
         result.message = msgResponse.result.toMessageDto()
 
@@ -575,7 +575,7 @@ QtObject:
         return
     except Exception as e:
       result.error = e.msg
-      error "error: ", procName="fetchMessageByMessageId", errName = e.name, errDesription = e.msg
+      error "error: ", procName="getMessageByMessageId", errName = e.name, errDesription = e.msg
 
   proc finishAsyncSearchMessagesWithError*(self: Service, chatId, errorMessage: string) =
     error "error: ", procName="onAsyncSearchMessages", errDescription = errorMessage

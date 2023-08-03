@@ -204,7 +204,7 @@ proc unpinMessage*(self: Controller, messageId: string) =
 
 proc getMessageById*(self: Controller, messageId: string):
     tuple[message: MessageDto, error: string] =
-  return self.messageService.fetchMessageByMessageId(self.chatId, messageId)
+  return self.messageService.getMessageByMessageId(self.chatId, messageId)
 
 proc isUsersListAvailable*(self: Controller): bool =
   return self.isUsersListAvailable
