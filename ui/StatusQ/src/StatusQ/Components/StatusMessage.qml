@@ -133,14 +133,11 @@ Control {
         SequentialAnimation {
             id: messageFoundAnimation
 
-            PauseAnimation {
-                duration: 600
-            }
             NumberAnimation {
                 target: highlightRect
                 property: "opacity"
                 to: 1.0
-                duration: 1500
+                duration: 250
             }
             PauseAnimation {
                 duration: 1000
