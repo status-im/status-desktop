@@ -63,6 +63,7 @@ import ../../../app_service/service/general/service as general_service
 import ../../../app_service/service/keycard/service as keycard_service
 import ../../../app_service/service/shared_urls/service as urls_service
 import ../../../app_service/service/network_connection/service as network_connection_service
+import ../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 import ../../../app_service/common/types
 import ../../../app_service/common/social_links
 
@@ -812,17 +813,29 @@ method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVar
   return self.channelGroupModules[communityId].getModuleAsVariant()
 
 method rebuildChatSearchModel*[T](self: Module[T]) =
-  let transformItem = proc(item: chat_item.Item, sectionId, sectionName: string): chat_search_item.Item =
-    result = chat_search_item.initItem(item.id(), item.name(), item.color(), item.colorId(), item.icon(), item.colorHash().toJson(), sectionId, sectionName)
-
-  let transform = proc(items: seq[chat_item.Item], sectionId, sectionName: string): seq[chat_search_item.Item] =
-    for item in items:
-      result.add(transformItem(item, sectionId, sectionName))
-
   var items: seq[chat_search_item.Item] = @[]
-  for cId in self.channelGroupModules.keys:
-    items.add(transform(self.channelGroupModules[cId].chatsModel().items(), cId,
-      self.view.model().getItemById(cId).name()))
+  for chat in self.controller.getAllChats():
+    var chatName = chat.name
+    var chatImage = chat.icon
+    var colorHash: ColorHashDto = @[]
+    var colorId: int = 0
+    if chat.chatType == ChatType.OneToOne:
+      let contactDetails = self.controller.getContactDetails(chat.id)
+      chatName = contactDetails.defaultDisplayName
+      chatImage = contactDetails.icon
+      if not contactDetails.dto.ensVerified:
+        colorHash = self.controller.getColorHash(chat.id)
+      colorId = self.controller.getColorId(chat.id)
+    items.add(chat_search_item.initItem(
+      chat.id,
+      chatName,
+      chat.color,
+      colorId,
+      chatImage,
+      colorHash.toJson(),
+      chat.communityId,
+      self.view.model().getItemById(chat.communityId).name(),
+    ))
 
   self.view.chatSearchModel().setItems(items)
 

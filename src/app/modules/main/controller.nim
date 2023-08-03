@@ -21,6 +21,8 @@ import ../../../app_service/service/community_tokens/service as community_tokens
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/network/service as networks_service
+import ../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
+
 from backend/collectibles_types import CollectibleOwner
 
 import io_interface
@@ -441,17 +443,8 @@ proc setActiveSection*(self: Controller, sectionId: string, skipSavingInSettings
     singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionIdToSave)
   self.delegate.activeSectionSet(self.activeSectionId)
 
-proc getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentions:int] =
-  result.unviewed = 0
-  result.mentions = 0
-  let chats = self.chatService.getAllChats()
-  for chat in chats:
-    if(chat.chatType == ChatType.CommunityChat):
-      continue
-
-    if not chat.muted:
-      result.unviewed += chat.unviewedMessagesCount
-    result.mentions += chat.unviewedMentionsCount
+proc getAllChats*(self: Controller): seq[ChatDto] =
+  result = self.chatService.getAllChats()
 
 proc sectionUnreadMessagesAndMentionsCount*(self: Controller, communityId: string):
     tuple[unviewedMessagesCount: int, unviewedMentionsCount: int] =
@@ -525,3 +518,9 @@ proc slowdownArchivesImport*(self:Controller) =
 
 proc speedupArchivesImport*(self:Controller) =
   communityService.speedupArchivesImport()
+
+proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
+  procs_from_visual_identity_service.colorHashOf(pubkey)
+
+proc getColorId*(self: Controller, pubkey: string): int =
+  procs_from_visual_identity_service.colorIdOf(pubkey)
