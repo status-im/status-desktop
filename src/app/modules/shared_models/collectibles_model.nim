@@ -18,7 +18,7 @@ type
     IsLoading
     IsPinned
 
-const loadingItemsCount = 50
+const loadingItemsCount = 10
 
 QtObject:
   type
@@ -26,11 +26,13 @@ QtObject:
       items: seq[Item]
       hasMore: bool
       isFetching: bool
+      isUpdating: bool
       isError: bool
-      loadingItemsStartIdx: int
+      hasLoadingItems: bool
 
   proc appendLoadingItems(self: Model)
   proc removeLoadingItems(self: Model)
+  proc checkLoadingItems(self: Model)
 
   proc delete(self: Model) =
     self.items = @[]
@@ -44,17 +46,25 @@ QtObject:
     result.setup
     result.items = @[]
     result.hasMore = true
+    result.isUpdating = false
     result.isFetching = false
     result.isError = false
-    result.loadingItemsStartIdx = -1
+    result.hasLoadingItems = true
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""[{i}]:({$self.items[i]})"""
 
+  proc getCollectiblesCount*(self: Model): int =
+    return self.items.len
+
   proc countChanged(self: Model) {.signal.}
   proc getCount*(self: Model): int {.slot.} =
-    self.items.len
+    var count = self.items.len
+    if self.hasLoadingItems:
+      count += loadingItemsCount
+    return count
+    
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -68,12 +78,22 @@ QtObject:
   proc setIsFetching*(self: Model, value: bool) =
     if value == self.isFetching:
       return
-    if value:
-      self.appendLoadingItems()
-    else:
-      self.removeLoadingItems()
     self.isFetching = value
     self.isFetchingChanged()
+    self.checkLoadingItems()
+
+  proc isUpdatingChanged(self: Model) {.signal.}
+  proc getIsUpdating*(self: Model): bool {.slot.} =
+    self.isUpdating
+  QtProperty[bool] isUpdating:
+    read = getIsUpdating
+    notify = isUpdatingChanged
+  proc setIsUpdating*(self: Model, isUpdating: bool) =
+    if isUpdating == self.isUpdating:
+      return
+    self.isUpdating = isUpdating
+    self.isUpdatingChanged()
+    self.checkLoadingItems()
 
   proc isErrorChanged(self: Model) {.signal.}
   proc getIsError*(self: Model): bool {.slot.} =
@@ -93,22 +113,26 @@ QtObject:
   QtProperty[bool] hasMore:
     read = getHasMore
     notify = hasMoreChanged
-  proc setHasMore(self: Model, hasMore: bool) {.slot.} =
+  proc setHasMore(self: Model, hasMore: bool) =
     if hasMore == self.hasMore:
       return
     self.hasMore = hasMore
     self.hasMoreChanged()
+    self.checkLoadingItems()
 
   method canFetchMore*(self: Model, parent: QModelIndex): bool =
     return self.hasMore
 
   proc loadMoreItems(self: Model) {.signal.}
 
-  method fetchMore*(self: Model, parent: QModelIndex) =
+  proc loadMore*(self: Model) {.slot.} =
     self.loadMoreItems()
 
+  method fetchMore*(self: Model, parent: QModelIndex) =
+    self.loadMore()
+
   method rowCount*(self: Model, index: QModelIndex = nil): int =
-    return self.items.len
+    return self.getCount()
 
   method roleNames(self: Model): Table[int, string] =
     {
@@ -130,92 +154,132 @@ QtObject:
     if (not index.isValid):
       return
 
-    if (index.row < 0 or index.row >= self.items.len):
+    if (index.row < 0 or index.row >= self.getCount()):
       return
 
-    let item = self.items[index.row]
     let enumRole = role.CollectibleRole
 
-    case enumRole:
-    of CollectibleRole.Uid:
-      result = newQVariant(item.getId())
-    of CollectibleRole.ChainId:
-      result = newQVariant(item.getChainId())
-    of CollectibleRole.ContractAddress:
-      result = newQVariant(item.getContractAddress())
-    of CollectibleRole.TokenId:
-      result = newQVariant(item.getTokenId().toString())
-    of CollectibleRole.Name:
-      result = newQVariant(item.getName())
-    of CollectibleRole.MediaUrl:
-      result = newQVariant(item.getMediaUrl())
-    of CollectibleRole.MediaType:
-      result = newQVariant(item.getMediaType())
-    of CollectibleRole.ImageUrl:
-      result = newQVariant(item.getImageUrl())
-    of CollectibleRole.BackgroundColor:
-      result = newQVariant(item.getBackgroundColor())
-    of CollectibleRole.CollectionName:
-      result = newQVariant(item.getCollectionName())
-    of CollectibleRole.IsLoading:
-      result = newQVariant(item.getIsLoading())
-    of CollectibleRole.IsPinned:
-      result = newQVariant(item.getIsPinned())
+    if index.row < self.items.len:
+      let item = self.items[index.row]
+      case enumRole:
+      of CollectibleRole.Uid:
+        result = newQVariant(item.getId())
+      of CollectibleRole.ChainId:
+        result = newQVariant(item.getChainId())
+      of CollectibleRole.ContractAddress:
+        result = newQVariant(item.getContractAddress())
+      of CollectibleRole.TokenId:
+        result = newQVariant(item.getTokenId().toString())
+      of CollectibleRole.Name:
+        result = newQVariant(item.getName())
+      of CollectibleRole.MediaUrl:
+        result = newQVariant(item.getMediaUrl())
+      of CollectibleRole.MediaType:
+        result = newQVariant(item.getMediaType())
+      of CollectibleRole.ImageUrl:
+        result = newQVariant(item.getImageUrl())
+      of CollectibleRole.BackgroundColor:
+        result = newQVariant(item.getBackgroundColor())
+      of CollectibleRole.CollectionName:
+        result = newQVariant(item.getCollectionName())
+      of CollectibleRole.IsLoading:
+        result = newQVariant(false)
+      of CollectibleRole.IsPinned:
+        result = newQVariant(item.getIsPinned())
+    else:
+      # Loading item
+      case enumRole:
+      of CollectibleRole.IsLoading:
+        result = newQVariant(true)
+      else:
+        error "Invalid role for loading item"
+        result = newQVariant()
 
-  proc appendLoadingItems(self: Model) =
-    if not self.loadingItemsStartIdx < 0:
+  proc appendCollectibleItems(self: Model, newItems: seq[Item]) =
+    if len(newItems) == 0:
       return
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    let loadingItem = initLoadingItem()
-    self.loadingItemsStartIdx = self.items.len
-    self.beginInsertRows(parentModelIndex, self.loadingItemsStartIdx, self.loadingItemsStartIdx + loadingItemsCount - 1)
-    for i in 1..loadingItemsCount:
-      self.items.add(loadingItem)
+    # Start after the current last real item
+    let startIdx = self.items.len
+    # End at the new last real item
+    let endIdx = startIdx + newItems.len - 1
+
+    self.beginInsertRows(parentModelIndex, startIdx, endIdx)
+    self.items.insert(newItems, startIdx)
     self.endInsertRows()
     self.countChanged()
-
-  proc removeLoadingItems(self: Model) =
-    if self.loadingItemsStartIdx < 0:
+  
+  proc removeCollectibleItems(self: Model) =
+    if self.items.len <= 0:
       return
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
   
-    self.beginRemoveRows(parentModelIndex, self.loadingItemsStartIdx, self.loadingItemsStartIdx + loadingItemsCount - 1)
-    self.items.delete(self.loadingItemsStartIdx, self.loadingItemsStartIdx + loadingItemsCount - 1)
-    self.loadingItemsStartIdx = -1
+    # Start from the beginning
+    let startIdx = 0
+    # End at the last real item
+    let endIdx = startIdx + self.items.len - 1
+  
+    self.beginRemoveRows(parentModelIndex, startIdx, endIdx)
+    self.items = @[]
     self.endRemoveRows()
     self.countChanged()
 
-  proc resetModel*(self: Model, newItems: seq[Item]) =
-    self.beginResetModel()
-    self.items = newItems
-    self.endResetModel()
+  proc appendLoadingItems(self: Model) =
+    if self.hasLoadingItems:
+      return
 
-  proc setItems*(self: Model, newItems: seq[Item], offset: int, hasMore: bool) =
-    if self.isFetching:
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    # Start after the last real item
+    let startIdx = self.items.len
+    # End after loadingItemsCount
+    let endIdx = startIdx + loadingItemsCount - 1
+
+    self.beginInsertRows(parentModelIndex, startIdx, endIdx)
+    self.hasLoadingItems = true
+    self.endInsertRows()
+    self.countChanged()
+
+  proc removeLoadingItems(self: Model) =
+    if not self.hasLoadingItems:
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    # Start after the last real item
+    let startIdx = self.items.len
+    # End after loadingItemsCount
+    let endIdx = startIdx + loadingItemsCount - 1
+  
+    self.beginRemoveRows(parentModelIndex, startIdx, endIdx)
+    self.hasLoadingItems = false
+    self.endRemoveRows()
+    self.countChanged()
+
+  proc checkLoadingItems(self: Model) =
+    # If fetch is in progress or we have more items in the DB, show loading items
+    let showLoadingItems = self.isUpdating or self.isFetching or self.hasMore
+    if showLoadingItems:
+      self.appendLoadingItems()
+    else:
       self.removeLoadingItems()
 
+  proc setItems*(self: Model, newItems: seq[Item], offset: int, hasMore: bool) =
     if offset == 0:
-      self.resetModel(newItems)
-    else:
-      let parentModelIndex = newQModelIndex()
-      defer: parentModelIndex.delete
+      self.removeCollectibleItems()
+    elif offset != self.getCollectiblesCount():
+      error "invalid offset"
+      return
 
-      if offset != self.items.len:
-        error "offset != self.items.len"
-        return
-      self.beginInsertRows(parentModelIndex, self.items.len, self.items.len + newItems.len - 1)
-      self.items.add(newItems)
-      self.endInsertRows()
-    self.countChanged()
+    self.appendCollectibleItems(newItems)
     self.setHasMore(hasMore)
-
-    if self.isFetching:
-      self.appendLoadingItems()
 
   proc getImageUrl*(self: Model, id: string): string {.slot.} =
     for item in self.items:

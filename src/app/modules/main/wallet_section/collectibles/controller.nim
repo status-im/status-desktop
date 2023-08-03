@@ -15,6 +15,7 @@ QtObject:
   type
     Controller* = ref object of QObject
       model: Model
+      fetchFromStart: bool
 
       eventsHandler: EventsHandler
 
@@ -51,43 +52,48 @@ QtObject:
     except Exception as e:
       error "Error converting activity entries: ", e.msg
 
-  proc updateFilter*(self: Controller) {.slot.} =
-    self.model.resetModel(@[])
-
-    let response = backend_collectibles.filterOwnedCollectiblesAsync(self.chainIds, self.addresses, 0, FETCH_BATCH_COUNT_DEFAULT)
-    if response.error != nil:
-      self.model.setIsFetching(false)
-      self.model.setIsError(true)
-      error "error fetching collectibles entries: ", response.error
-      return
-    self.model.setIsFetching(true)
-    self.model.setIsError(false)
+  proc resetModel*(self: Controller) {.slot.} =
+    self.model.setItems(@[], 0, true)
+    self.fetchFromStart = true
 
   proc loadMoreItems(self: Controller) {.slot.} =
     if self.model.getIsFetching():
       return
 
-    let response = backend_collectibles.filterOwnedCollectiblesAsync(self.chainIds, self.addresses, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
-    if response.error != nil:
-      self.model.setIsError(true)
-      error "error fetching collectibles entries: ", response.error
-      return
     self.model.setIsFetching(true)
     self.model.setIsError(false)
+
+    var offset = 0
+    if not self.fetchFromStart:
+      offset = self.model.getCollectiblesCount()
+    self.fetchFromStart = false
+
+    let response = backend_collectibles.filterOwnedCollectiblesAsync(self.chainIds, self.addresses, offset, FETCH_BATCH_COUNT_DEFAULT)
+    if response.error != nil:
+      self.model.setIsFetching(false)
+      self.model.setIsError(true)
+      self.fetchFromStart = true
+      error "error fetching collectibles entries: ", response.error
 
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onOwnedCollectiblesFilteringDone(proc (jsonObj: JsonNode) =
       self.processFilterOwnedCollectiblesResponse(jsonObj)
     )
 
+    self.eventsHandler.onCollectiblesOwnershipUpdateStarted(proc () =
+      self.model.setIsUpdating(true)
+    )
+
     self.eventsHandler.onCollectiblesOwnershipUpdateFinished(proc () =
-      self.updateFilter()
+      self.resetModel()
+      self.model.setIsUpdating(false)
     )
 
   proc newController*(events: EventEmitter): Controller =
     new(result, delete)
 
     result.model = newModel()
+    result.fetchFromStart = true
   
     result.eventsHandler = newEventsHandler(events)
 
@@ -105,4 +111,4 @@ QtObject:
       return
     self.chainIds = chainIds
     self.addresses = addresses
-    self.updateFilter()
+    self.resetModel()
