@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 import SortFilterProxyModel 0.2
@@ -33,17 +33,26 @@ Rectangle {
     property bool showSavedAddresses: false
     property bool showAllAccounts: true
     property string currentAddress: ""
+
+    onCurrentAddressChanged: {
+        if (!currentAddress)
+            return
+        root.showAllAccounts = false
+        root.showSavedAddresses = false
+    }
     
     onShowSavedAddressesChanged: {
+        if (!showSavedAddresses)
+            return
         root.currentAddress = ""
-        walletAccountsListView.headerItem.highlighted = root.showAllAccounts
-        walletAccountsListView.footerItem.button.highlighted = root.showSavedAddresses
+        root.showAllAccounts = false
     }
 
     onShowAllAccountsChanged: {
+        if (!showAllAccounts)
+            return
         root.currentAddress = ""
-        walletAccountsListView.headerItem.highlighted = root.showAllAccounts
-        walletAccountsListView.footerItem.button.highlighted = root.showSavedAddresses
+        root.showSavedAddresses = false
     }
 
     property var emojiPopup: null
@@ -160,7 +169,7 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: Style.current.padding
+        spacing: 0
 
         Item {
             Layout.fillWidth: true
@@ -172,9 +181,7 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 acceptedButtons: Qt.RightButton
-                onClicked: {
-                    mouse.accepted = true
-                }
+                onClicked: mouse.accepted = true
             }
 
             StatusBaseText {
@@ -199,169 +206,189 @@ Rectangle {
             }
         }
 
-        StatusListView {
-            id: walletAccountsListView
-
-            objectName: "walletAccountsListView"
-            spacing: Style.current.smallPadding
+        Rectangle {
             Layout.fillWidth: true
+            Layout.minimumHeight: Style.current.bigPadding
+            color: root.color
+            z: 2
+
+            layer.enabled: !walletAccountsListView.atYBeginning
+            layer.effect: DropShadow {
+                verticalOffset: 10
+                radius: 20
+                samples: 41
+                fast: true
+                cached: true
+                color: Theme.palette.dropShadow2
+            }
+        }
+
+        Item {
             Layout.fillHeight: true
-            Layout.topMargin: Style.current.halfPadding
-            currentIndex: -1
-            highlightRangeMode: ListView.ApplyRange
-            preferredHighlightBegin: 0
-            preferredHighlightEnd: height - (footerOverlayed ? footerItem.height : 0)
+            Layout.fillWidth: true
 
-            readonly property Item firstItem: count > 0 ? itemAtIndex(0) : null
-
-            delegate: StatusListItem {
-                objectName: "walletAccount-" + model.name
-                readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
-                width: ListView.view.width - Style.current.padding * 2
-                highlighted: root.currentAddress.toLowerCase() === model.address.toLowerCase()
-                onHighlightedChanged: {
-                    if (highlighted)
-                        ListView.view.currentIndex = index
+            StatusListView {
+                id: walletAccountsListView
+                objectName: "walletAccountsListView"
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
                 }
-                anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
-                title: model.name
-                subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
-                asset.emoji: !!model.emoji ? model.emoji: ""
-                asset.color: Utils.getColorForId(model.colorId)
-                asset.name: !model.emoji ? "filled-account": ""
-                asset.width: 40
-                asset.height: 40
-                asset.letterSize: 14
-                asset.isLetterIdenticon: !!model.emoji ? true : false
-                asset.bgColor: Theme.palette.primaryColor3
-                statusListItemTitle.font.weight: Font.Medium
-                color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
-                statusListItemSubTitle.loading: !!model.assetsLoading
-                errorMode: networkConnectionStore.accountBalanceNotAvailable
-                errorIcon.tooltip.maxWidth: 300
-                errorIcon.tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
-                onClicked: {
-                    if (mouse.button === Qt.RightButton) {
-                        walletAccountContextMenu.active = true
-                        walletAccountContextMenu.item.account = model
-                        walletAccountContextMenu.item.popup(this, mouse.x, mouse.y)
-                        return
+                height: parent.height - footer.height
+
+                spacing: Style.current.smallPadding
+                currentIndex: -1
+                highlightRangeMode: ListView.ApplyRange
+                preferredHighlightBegin: 0
+                preferredHighlightEnd: height
+                bottomMargin: Style.current.padding
+
+                readonly property Item firstItem: count > 0 ? itemAtIndex(0) : null
+                readonly property bool footerOverlayed: contentHeight > availableHeight
+
+                delegate: StatusListItem {
+                    objectName: "walletAccount-" + model.name
+                    readonly property bool itemLoaded: !model.assetsLoading // needed for e2e tests
+                    width: ListView.view.width - Style.current.padding * 2
+                    highlighted: root.currentAddress.toLowerCase() === model.address.toLowerCase()
+                    onHighlightedChanged: {
+                        if (highlighted)
+                            ListView.view.currentIndex = index
                     }
-                    root.showSavedAddresses = false
-                    root.showAllAccounts = false
-                    changeSelectedAccount(model.address)
-                }
-                components: [
-                    StatusIcon {
-                        width: !!icon ? 15: 0
-                        height: !!icon ? 15: 0
-                        color: Theme.palette.directColor1
-                        icon: model.walletType === Constants.watchWalletType ? "show" : ""
-                    },
-                    StatusIcon {
-                        width: !!icon ? 15: 0
-                        height: !!icon ? 15: 0
-                        color: Theme.palette.directColor1
-                        icon: model.keycardAccount ? "keycard" : ""
-                    }
-                ]
-            }
-
-            readonly property bool footerOverlayed: contentHeight > availableHeight
-
-            header: Button {
-                id: header
-                verticalPadding: Style.current.padding
-                horizontalPadding: Style.current.padding
-                highlighted: true
-                objectName: "allAccountsBtn"
-                
-                leftInset: Style.current.padding
-                bottomInset: Style.current.padding
-
-                background: Rectangle {
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        acceptedButtons: Qt.LeftButton
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            root.showSavedAddresses = false
-                            walletAccountsListView.currentIndex = -1
-                            root.selectAllAccounts()
+                    anchors.horizontalCenter: !!parent ? parent.horizontalCenter : undefined
+                    title: model.name
+                    subTitle: LocaleUtils.currencyAmountToLocaleString(model.currencyBalance)
+                    asset.emoji: !!model.emoji ? model.emoji: ""
+                    asset.color: Utils.getColorForId(model.colorId)
+                    asset.name: !model.emoji ? "filled-account": ""
+                    asset.width: 40
+                    asset.height: 40
+                    asset.letterSize: 14
+                    asset.isLetterIdenticon: !!model.emoji ? true : false
+                    asset.bgColor: Theme.palette.primaryColor3
+                    statusListItemTitle.font.weight: Font.Medium
+                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
+                    statusListItemSubTitle.loading: !!model.assetsLoading
+                    errorMode: networkConnectionStore.accountBalanceNotAvailable
+                    errorIcon.tooltip.maxWidth: 300
+                    errorIcon.tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
+                    onClicked: {
+                        if (mouse.button === Qt.RightButton) {
+                            walletAccountContextMenu.active = true
+                            walletAccountContextMenu.item.account = model
+                            walletAccountContextMenu.item.popup(this, mouse.x, mouse.y)
+                            return
                         }
-                        hoverEnabled: true
+                        changeSelectedAccount(model.address)
                     }
-                    radius: Style.current.radius
-                    color: header.highlighted || mouseArea.containsMouse ? Theme.palette.baseColor3 : root.color
-                    implicitWidth: parent.ListView.view.width - Style.current.padding * 2
-                    implicitHeight: parent.ListView.view.firstItem.height + Style.current.padding
+                    components: [
+                        StatusIcon {
+                            width: !!icon ? 15: 0
+                            height: !!icon ? 15: 0
+                            color: Theme.palette.directColor1
+                            icon: model.walletType === Constants.watchWalletType ? "show" : ""
+                        },
+                        StatusIcon {
+                            width: !!icon ? 15: 0
+                            height: !!icon ? 15: 0
+                            color: Theme.palette.directColor1
+                            icon: model.keycardAccount ? "keycard" : ""
+                        }
+                    ]
+                }
 
-                    layer.effect: DropShadow {
-                        verticalOffset: -10
-                        radius: 20
-                        samples: 41
-                        fast: true
-                        cached: true
-                        color: Theme.palette.dropShadow2
+                header: Button {
+                    id: header
+                    verticalPadding: Style.current.padding
+                    horizontalPadding: Style.current.padding
+                    highlighted: root.showAllAccounts
+                    objectName: "allAccountsBtn"
+
+                    leftInset: Style.current.padding
+                    bottomInset: Style.current.padding
+
+                    background: Rectangle {
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            acceptedButtons: Qt.LeftButton
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: root.selectAllAccounts()
+                            hoverEnabled: true
+                        }
+                        radius: Style.current.radius
+                        color: header.highlighted || mouseArea.containsMouse ? Style.current.backgroundHover : root.color
+                        implicitWidth: parent.ListView.view.width - Style.current.padding * 2
+                        implicitHeight: parent.ListView.view.firstItem.height + Style.current.padding
+                    }
+
+                    contentItem: Item {
+                        StatusBaseText {
+                            id: allAccounts
+                            leftPadding: Style.current.padding
+                            color: Theme.palette.baseColor1
+                            text: qsTr("All accounts")
+                            font.weight: Font.Medium
+                            font.pixelSize: 15
+                        }
+
+                        StatusTextWithLoadingState {
+                            id: walletAmountValue
+                            objectName: "walletLeftListAmountValue"
+                            customColor: Style.current.textColor
+                            text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance)
+                            font.pixelSize: 22
+                            loading: RootStore.assetsLoading
+                            visible: !networkConnectionStore.accountBalanceNotAvailable
+                            anchors.top: allAccounts.bottom
+                            anchors.topMargin: 4
+                            anchors.bottomMargin: Style.current.padding
+                            leftPadding: Style.current.padding
+                        }
+
+                        StatusFlatRoundButton {
+                            id: errorIcon
+                            width: 14
+                            height: visible ? 14 : 0
+                            icon.width: 14
+                            icon.height: 14
+                            icon.name: "tiny/warning"
+                            icon.color: Theme.palette.dangerColor1
+                            tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
+                            tooltip.maxWidth: 200
+                            visible: networkConnectionStore.accountBalanceNotAvailable
+                        }
                     }
                 }
 
-                contentItem: Item {
-                    StatusBaseText {
-                        id: allAccounts
-                        leftPadding: Style.current.padding
-                        color: Theme.palette.baseColor1
-                        text: qsTr("All accounts")
-                        font.weight: Font.Medium
-                        font.pixelSize: 15
-                    }
-
-                    StatusTextWithLoadingState {
-                        id: walletAmountValue
-                        objectName: "walletLeftListAmountValue"
-                        customColor: Style.current.textColor
-                        text: LocaleUtils.currencyAmountToLocaleString(RootStore.totalCurrencyBalance)
-                        font.pixelSize: 22
-                        loading: RootStore.assetsLoading
-                        visible: !networkConnectionStore.accountBalanceNotAvailable
-                        anchors.top: allAccounts.bottom
-                        anchors.topMargin: 4
-                        anchors.bottomMargin: Style.current.padding
-                        leftPadding: Style.current.padding
-                    }
-
-                    StatusFlatRoundButton {
-                        id: errorIcon
-                        width: 14
-                        height: visible ? 14 : 0
-                        icon.width: 14
-                        icon.height: 14
-                        icon.name: "tiny/warning"
-                        icon.color: Theme.palette.dangerColor1
-                        tooltip.text: networkConnectionStore.accountBalanceNotAvailableText
-                        tooltip.maxWidth: 200
-                        visible: networkConnectionStore.accountBalanceNotAvailable
-                    }
+                model: SortFilterProxyModel {
+                    sourceModel: RootStore.accounts
+                    sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
                 }
             }
 
-            footerPositioning: footerOverlayed ? ListView.OverlayFooter : ListView.InlineFooter
-            footer: Control {
+            Control {
                 id: footer
 
-                z: 2 // to be on top of delegates when in ListView.OverlayFooter
+                anchors {
+                    top: parent.top
+                    // Bottom Margin is not applied to ListView if it's fully visible
+                    topMargin: Math.min(walletAccountsListView.contentHeight, parent.height - height) + (walletAccountsListView.footerOverlayed ? 0 : walletAccountsListView.bottomMargin)
+                    left: parent.left
+                    right: parent.right
+                }
+
                 horizontalPadding: Style.current.padding
                 verticalPadding: Style.current.padding
 
-                property alias button: savedAddressesBtn
-
                 background: Rectangle {
+                    id: footerBackground
                     color: root.color
                     implicitWidth: root.width
-                    implicitHeight: parent.ListView.view.firstItem.height + Style.current.xlPadding
+                    implicitHeight: walletAccountsListView.firstItem.height + Style.current.xlPadding
 
-                    layer.enabled: parent.ListView.view.footerOverlayed
+                    layer.enabled: walletAccountsListView.footerOverlayed && !walletAccountsListView.atYEnd
                     layer.effect: DropShadow {
                         verticalOffset: -10
                         radius: 20
@@ -371,19 +398,17 @@ Rectangle {
                         color: Theme.palette.dropShadow2
                     }
 
-                    StatusMenuSeparator {
-                        id: footerSeparator
-
+                    Separator {
+                        anchors.top: parent.top
+                        anchors.topMargin: -1
                         width: parent.width
-                        visible: !footer.ListView.view.footerOverlayed
                     }
                 }
 
                 contentItem: StatusFlatButton {
-                    id: savedAddressesBtn
-
                     objectName: "savedAddressesBtn"
-                    hoverColor: Theme.palette.baseColor3
+                    highlighted: root.showSavedAddresses
+                    hoverColor: Style.current.backgroundHover
                     asset.bgColor: Theme.palette.primaryColor3
                     text: qsTr("Saved addresses")
                     icon.name: "address"
@@ -393,28 +418,19 @@ Rectangle {
                     isRoundIcon: true
                     textColor: Theme.palette.directColor1
                     textFillWidth: true
-                    spacing: parent.ListView.view.firstItem.statusListItemTitleArea.anchors.leftMargin
-                    onClicked: {
-                        root.showAllAccounts = false
-                        root.showSavedAddresses = true
-                    }
+                    spacing: walletAccountsListView.firstItem.statusListItemTitleArea.anchors.leftMargin
+                    onClicked: root.showSavedAddresses = true
 
                     MouseArea {
                         anchors.fill: parent
                         acceptedButtons: Qt.RightButton
                         cursorShape: Qt.PointingHandCursor
                         propagateComposedEvents: true
-                        onClicked: {
-                            mouse.accepted = true
-                        }
+                        onClicked: mouse.accepted = true
                     }
                 }
             }
-
-            model: SortFilterProxyModel {
-                sourceModel: RootStore.accounts
-                sorters: RoleSorter { roleName: "position"; sortOrder: Qt.AscendingOrder }
-            }
         }
+
     }
 }
