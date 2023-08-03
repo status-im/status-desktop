@@ -24,68 +24,32 @@
         "https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=448%3A36296",
         "https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=1573%3A296338"
     ],
+    "BurnTokensPopup": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29528%3A588403&t=GUxMZEWcfRO7pXJb-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29528%3A588563&t=GUxMZEWcfRO7pXJb-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29528%3A587660&t=GUxMZEWcfRO7pXJb-1"
+    ],
     "ChatAnchorButtonsPanel": [
         "https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/%F0%9F%92%AC-Chat%E2%8E%9CDesktop?node-id=14632-460085&t=SGTU2JeRA8ifbv2E-0"
+    ],
+    "ChatPermissionQualificationPanel": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2698%3A375926&t=iIeFeGOBx5BbbYJa-0"
     ],
     "CommunitiesPortalLayout": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A415655",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A415935"
+    ],
+    "CommunitiesView": [
+        "https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=16089-387522&t=HRT9BmZXnl7Lt55Q-0"
+    ],
+    "CommunityIntroDialog": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A563897&mode=dev"
     ],
     "CommunityTokenView": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A481005&t=Qo2FwPRxvSxbluqB-1",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A479431&t=Qo2FwPRxvSxbluqB-1",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A479570&t=Qo2FwPRxvSxbluqB-1",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29384-568106&t=mAtmLENvQyRJqDGQ-0"
-    ],
-    "MintTokensSettingsPanel": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22721%3A498587&t=v2Krj5iZQaSTK7Om-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A480877&t=v2Krj5iZQaSTK7Om-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22721%3A498811&t=v2Krj5iZQaSTK7Om-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A480927&t=v2Krj5iZQaSTK7Om-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-689073&t=mAtmLENvQyRJqDGQ-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29437-599353&t=mAtmLENvQyRJqDGQ-0"
-    ],
-    "MintedTokensView": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A479136&t=zs22ORYUVDYpqubQ-1"
-    ],
-    "EditAirdropView": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22602-495563&t=9dIP8Sji2UlfhsEs-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22628-495258&t=9dIP8Sji2UlfhsEs-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22628-496145&t=9dIP8Sji2UlfhsEs-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-497754&t=9dIP8Sji2UlfhsEs-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-501014&t=9dIP8Sji2UlfhsEs-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-499051&t=kHAcE8WSCyGqhWSH-0"
-    ],
-    "EditCommunityTokenView": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A480877&t=Qo2FwPRxvSxbluqB-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=26601%3A518245&t=Qo2FwPRxvSxbluqB-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22721%3A498811&t=Qo2FwPRxvSxbluqB-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29384%3A563759&t=g40TADKO0p93G4r0-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29423%3A593514&t=g40TADKO0p93G4r0-1"
-
-    ],
-    "EditPermissionView": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22253%3A486103&t=JrCIfks1zVzsk3vn-0"
-    ],
-    "PermissionsSettingsPanel": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2992%3A367890&t=7gqqAFbdG5KrPOmn-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22137%3A484809&t=7gqqAFbdG5KrPOmn-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22813%3A497277&t=7gqqAFbdG5KrPOmn-0"
-    ],
-    "PermissionsView": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22813%3A497277&t=7gqqAFbdG5KrPOmn-0"
-    ],
-    "ChatPermissionQualificationPanel": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2698%3A375926&t=iIeFeGOBx5BbbYJa-0"
-    ],
-    "ProfilePopupInviteFriendsPanel": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2927%3A343592",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2990%3A353179",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2927%3A344073"
-    ],
-    "ProfilePopupInviteMessagePanel": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=4291%3A385536",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=4295%3A385958"
     ],
     "CreateChannelPopup": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2975%3A488608",
@@ -102,6 +66,33 @@
     "DidYouKnowSplashScreen": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?node-id=25878%3A518438&t=C7xTpNib38t7s7XU-4"
     ],
+    "EditAirdropView": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22602-495563&t=9dIP8Sji2UlfhsEs-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22628-495258&t=9dIP8Sji2UlfhsEs-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22628-496145&t=9dIP8Sji2UlfhsEs-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-497754&t=9dIP8Sji2UlfhsEs-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-501014&t=9dIP8Sji2UlfhsEs-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-499051&t=kHAcE8WSCyGqhWSH-0"
+    ],
+    "EditCommunityTokenView": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A480877&t=Qo2FwPRxvSxbluqB-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=26601%3A518245&t=Qo2FwPRxvSxbluqB-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22721%3A498811&t=Qo2FwPRxvSxbluqB-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29384%3A563759&t=g40TADKO0p93G4r0-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29423%3A593514&t=g40TADKO0p93G4r0-1"
+    ],
+    "EditOwnerTokenView": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=34794-590207&mode=design&t=ZnwK9yenS5oSgwws-0"
+    ],
+    "EditPermissionView": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22253%3A486103&t=JrCIfks1zVzsk3vn-0"
+    ],
+    "EditSettingsPanel": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?node-id=3132%3A383870&mode=dev"
+    ],
+    "ExportControlNodePopup": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31171-627949&mode=design&t=WxK2N6sL8idHBKMZ-0"
+    ],
     "HoldingsDropdown": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22721%3A499660&t=F5yiYQV2YGPBdrJ8-0",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22827%3A501381&t=7gqqAFbdG5KrPOmn-0",
@@ -109,6 +100,9 @@
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22772%3A496580&t=7gqqAFbdG5KrPOmn-0",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22772%3A496653&t=7gqqAFbdG5KrPOmn-0",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22734%3A502737&t=7gqqAFbdG5KrPOmn-0"
+    ],
+    "ImportControlNodePopup": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31171-628434&mode=design&t=IFFCNUpRS3oQbzAR-0"
     ],
     "InDropdown": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A482182",
@@ -145,10 +139,33 @@
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22647-498410",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22642-497015"
     ],
+    "MintTokensSettingsPanel": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22721%3A498587&t=v2Krj5iZQaSTK7Om-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A480877&t=v2Krj5iZQaSTK7Om-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22721%3A498811&t=v2Krj5iZQaSTK7Om-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A480927&t=v2Krj5iZQaSTK7Om-1",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-689073&t=mAtmLENvQyRJqDGQ-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29437-599353&t=mAtmLENvQyRJqDGQ-0"
+    ],
+    "MintedTokensView": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A479136&t=zs22ORYUVDYpqubQ-1"
+    ],
     "NetworkSelectPopup": [
         "https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=13200-352357&t=jKciSCy3BVlrZmBs-0",
         "https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=13185-350333&t=b2AclcJgxjXDL6Wl-0",
         "https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=13187-359097&t=b2AclcJgxjXDL6Wl-0"
+    ],
+    "OverviewSettingsChart": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31281-635619&mode=design&t=RYpVRgwqCjp8fUEX-0"
+    ],
+    "OverviewSettingsFooter": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31171-629792&mode=design&t=IAlt2Frp5gx0yPAn-0"
+    ],
+    "OverviewSettingsPanel": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31229-627216&mode=design&t=KoQOW7vmoNc7f41m-0"
+    ],
+    "OwnerTokenWelcomeView": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=34794%3A590064&mode=design&t=eabTmd6JZbuycoy8-1"
     ],
     "PermissionConflictWarningPanel": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22253%3A486103&t=JrCIfks1zVzsk3vn-0"
@@ -156,6 +173,19 @@
     "PermissionQualificationPanel": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2934%3A480089",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22734%3A502803"
+    ],
+    "PermissionsRow": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=28570-546277&t=PVEC7ehRew4RnGFa-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159&t=bTEq7jsSZT0nfC4y-1",
+        "https://www.figma.com/file/WQZcp6S0EnzxdTL4taoKDv/Design-System-for-Mobile?node-id=17582-215241&t=8cRmw5jIlzUtfJbY-0"
+    ],
+    "PermissionsSettingsPanel": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2992%3A367890&t=7gqqAFbdG5KrPOmn-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22137%3A484809&t=7gqqAFbdG5KrPOmn-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22813%3A497277&t=7gqqAFbdG5KrPOmn-0"
+    ],
+    "PermissionsView": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=22813%3A497277&t=7gqqAFbdG5KrPOmn-0"
     ],
     "ProfileDialogView": [
         "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=733%3A12552",
@@ -168,6 +198,15 @@
         "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=724%3A15511&t=h8DUW6Eysawqe5u0-0",
         "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=6%3A16845&t=h8DUW6Eysawqe5u0-0",
         "https://www.figma.com/file/ibJOTPlNtIxESwS96vJb06/%F0%9F%91%A4-Profile-%7C-Desktop?node-id=4%3A25437&t=h8DUW6Eysawqe5u0-0"
+    ],
+    "ProfilePopupInviteFriendsPanel": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2927%3A343592",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2990%3A353179",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=2927%3A344073"
+    ],
+    "ProfilePopupInviteMessagePanel": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=4291%3A385536",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=4295%3A385958"
     ],
     "ProfileShowcaseAccountsPanel": [
         "https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14580-339549&t=RkXAEv3G6mp3EUvl-0",
@@ -193,68 +232,32 @@
     "ProfileSocialLinksPanel": [
         "https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?node-id=14588%3A308727&t=cwFGbBHsAGOP0T5R-0"
     ],
-    "SignTokenTransactionsPopup": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=27140%3A521359&t=V6wYVbwctoC6uD2E-1"
-    ],
-    "StatusCommunityCard": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416160"
-    ],
-    "ChatAnchorButtonsPanel": [
-        "https://www.figma.com/file/Mr3rqxxgKJ2zMQ06UAKiWL/%F0%9F%92%AC-Chat%E2%8E%9CDesktop?node-id=14632-460085&t=SGTU2JeRA8ifbv2E-0"
-    ],
-    "DerivationPathInput": [
-        "https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=12272%3A269692&t=YiipgcxOhdOvqprP-0"
-    ],
-    "PermissionsRow": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=28570-546277&t=PVEC7ehRew4RnGFa-0",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159&t=bTEq7jsSZT0nfC4y-1",
-        "https://www.figma.com/file/WQZcp6S0EnzxdTL4taoKDv/Design-System-for-Mobile?node-id=17582-215241&t=8cRmw5jIlzUtfJbY-0"
-    ],
-    "BurnTokensPopup": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29528%3A588403&t=GUxMZEWcfRO7pXJb-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29528%3A588563&t=GUxMZEWcfRO7pXJb-1",
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29528%3A587660&t=GUxMZEWcfRO7pXJb-1"
-    ],
-    "UserAgreementPopup": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31450-560694&t=Q4MOViPCoHsTjhs6-0"
-    ],
-    "StatusButton": [
-        "https://www.figma.com/file/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?type=design&node-id=1-12&t=UHegCbqAa5K7qUKd-0"
-    ],
-    "CommunitiesView": [
-        "https://www.figma.com/file/idUoxN7OIW2Jpp3PMJ1Rl8/%E2%9A%99%EF%B8%8F-Settings-%7C-Desktop?type=design&node-id=16089-387522&t=HRT9BmZXnl7Lt55Q-0"
-    ],
-    "EditSettingsPanel": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?node-id=3132%3A383870&mode=dev"
-    ],
-    "OverviewSettingsFooter": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31171-629792&mode=design&t=IAlt2Frp5gx0yPAn-0"
-    ],
-    "OverviewSettingsPanel": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31229-627216&mode=design&t=KoQOW7vmoNc7f41m-0"
-    ],
-    "OwnerTokenWelcomeView": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=34794%3A590064&mode=design&t=eabTmd6JZbuycoy8-1"
-    ],
-    "OverviewSettingsChart": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31281-635619&mode=design&t=RYpVRgwqCjp8fUEX-0"
-    ],
-    "EditOwnerTokenView": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=34794-590207&mode=design&t=ZnwK9yenS5oSgwws-0"
-    ],
-    "CommunityIntroDialog": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A563897&mode=dev"
-    ],
     "SharedAddressesPopup": [
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A564367&mode=dev",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A563905&mode=dev",
         "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=31461%3A579875&mode=dev"
     ],
-    "ExportControlNodePopup": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31171-627949&mode=design&t=WxK2N6sL8idHBKMZ-0"
+    "SignTokenTransactionsPopup": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=27140%3A521359&t=V6wYVbwctoC6uD2E-1"
     ],
-    "ImportControlNodePopup": [
-        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31171-628434&mode=design&t=IFFCNUpRS3oQbzAR-0"
+    "SortableTokenHoldersPanel": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-690307&mode=design&t=xJYwzqj8f8v72gYz-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-690334&mode=design&t=xJYwzqj8f8v72gYz-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-690939&mode=design&t=xJYwzqj8f8v72gYz-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-690557&mode=design&t=xJYwzqj8f8v72gYz-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-691130&mode=design&t=xJYwzqj8f8v72gYz-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-691320&mode=design&t=xJYwzqj8f8v72gYz-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-691513&mode=design&t=xJYwzqj8f8v72gYz-0",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?type=design&node-id=29566-691703&mode=design&t=xJYwzqj8f8v72gYz-0"
+    ],
+    "StatusButton": [
+        "https://www.figma.com/file/MtAO3a7HnEH5xjCDVNilS7/%F0%9F%8E%A8-Design-System-%E2%8E%9C-Desktop?type=design&node-id=1-12&t=UHegCbqAa5K7qUKd-0"
+    ],
+    "StatusCommunityCard": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416159",
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=8159%3A416160"
+    ],
+    "UserAgreementPopup": [
+        "https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba⎜Desktop?type=design&node-id=31450-560694&t=Q4MOViPCoHsTjhs6-0"
     ]
 }
