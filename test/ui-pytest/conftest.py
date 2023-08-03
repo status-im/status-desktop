@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+import allure
 import pytest
 from PIL import ImageGrab
 
@@ -20,8 +21,8 @@ pytest_plugins = [
 
 @pytest.fixture(scope='session', autouse=True)
 def setup_session_scope(
-        run_dir,
-        server,
+        prepare_test_directory,
+        start_squish_server,
 ):
     yield
 
@@ -39,11 +40,14 @@ def pytest_exception_interact(node):
         node_dir: SystemPath = configs.testpath.RUN / test_path / test_name / test_params
         node_dir.mkdir(parents=True, exist_ok=True)
 
-        desktop_screenshot = node_dir / 'screenshot.png'
-        if desktop_screenshot.exists():
-            desktop_screenshot = node_dir / f'screenshot_{datetime.now():%H%M%S}.png'
-        ImageGrab.grab().save(desktop_screenshot)
-        _logger.info(f'Screenshot on fail: {desktop_screenshot.relative_to(configs.testpath.ROOT)}')
+        screenshot = node_dir / 'screenshot.png'
+        if screenshot.exists():
+            screenshot = node_dir / f'screenshot_{datetime.now():%H%M%S}.png'
+        ImageGrab.grab().save(screenshot)
+        allure.attach(
+            name='Screenshot on fail',
+            body=screenshot.read_bytes(),
+            attachment_type=allure.attachment_type.PNG)
         AUT().stop()
     except Exception as ex:
         _logger.debug(ex)

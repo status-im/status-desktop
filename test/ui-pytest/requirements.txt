@@ -5,3 +5,4 @@ opencv-python-headless==4.8.0.74
 numpy~=1.25.1
 pytesseract==0.3.10
 atomacos==3.3.0; platform_system == "Darwin"
+allure-pytest==2.13.2

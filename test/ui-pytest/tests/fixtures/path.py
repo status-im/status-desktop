@@ -32,7 +32,7 @@ def generate_test_info(node):
 
 
 @pytest.fixture(scope='session')
-def run_dir():
+def prepare_test_directory():
     keep_results = 5
     run_name_pattern = 'run_????????_??????'
     runs = list(sorted(configs.testpath.RESULTS.glob(run_name_pattern)))

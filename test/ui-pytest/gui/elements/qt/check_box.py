@@ -1,3 +1,5 @@
+import allure
+
 import configs
 import driver
 from gui.elements.qt.object import QObject
@@ -5,6 +7,7 @@ from gui.elements.qt.object import QObject
 
 class CheckBox(QObject):
 
+    @allure.step("Set {0} value: {1}")
     def set(self, value: bool, x: int = None, y: int = None):
         if self.is_checked is not value:
             self.click(x, y)
