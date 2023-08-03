@@ -423,6 +423,10 @@ QtObject {
         chatCommunitySectionModule.collectCommunityMetricsMessagesTimestamps(intervals)
     }
 
+    function collectCommunityMetricsMessagesCount(intervals) {
+        chatCommunitySectionModule.collectCommunityMetricsMessagesCount(intervals)
+    }
+
     function requestCommunityInfo(id, importing = false) {
         communitiesModuleInst.requestCommunityInfo(id, importing)
     }

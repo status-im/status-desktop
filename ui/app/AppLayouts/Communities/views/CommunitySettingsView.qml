@@ -178,8 +178,8 @@ StatusSectionLayout {
             communitySettingsDisabled: root.communitySettingsDisabled
             overviewChartData: rootStore.overviewChartData
 
-            onCollectCommunityMetricsMessagesTimestamps: {
-                rootStore.collectCommunityMetricsMessagesTimestamps(intervals)
+            onCollectCommunityMetricsMessagesCount: {
+                rootStore.collectCommunityMetricsMessagesCount(intervals)
             }
 
             onEdited: {

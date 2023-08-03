@@ -27,6 +27,8 @@ Canvas {
 
     function updateToNewData()
     {
+        if(!jsChart) return
+        
         jsChart.update('none');
         root.requestPaint();
     }

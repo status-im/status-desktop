@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, sequtils, strutils, strformat, sugar
+import NimQml, Tables, chronicles, json, sequtils, strutils, strformat, sugar, marshal
 
 import io_interface
 import ../io_interface as delegate_interface
@@ -1326,5 +1326,8 @@ method onDeactivateChatLoader*(self: Module, chatId: string) =
 method collectCommunityMetricsMessagesTimestamps*(self: Module, intervals: string) =
   self.controller.collectCommunityMetricsMessagesTimestamps(intervals)
 
-method setOverviewChartData*(self: Module, metrics: string) =
-  self.view.setOverviewChartData(metrics)
+method setCommunityMetrics*(self: Module, metrics: CommunityMetricsDto) =
+  self.view.setCommunityMetrics($$metrics)
+
+method collectCommunityMetricsMessagesCount*(self: Module, intervals: string) =
+  self.controller.collectCommunityMetricsMessagesCount(intervals)

@@ -173,11 +173,7 @@ proc init*(self: Controller) =
       let args = CommunityMetricsArgs(e)
       if args.communityId == self.sectionId:
         let metrics = self.communityService.getCommunityMetrics(args.communityId, args.metricsType)
-        var strings: seq[string]
-        for interval in metrics.intervals:
-          for timestamp in interval.timestamps:
-            strings.add($timestamp)
-        self.delegate.setOverviewChartData("[" & join(strings, ", ") & "]")
+        self.delegate.setCommunityMetrics(metrics)
 
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
       let args = CommunityChatIdArgs(e)
@@ -665,3 +661,6 @@ proc getCommunityTokenList*(self: Controller): seq[CommunityTokenDto] =
 
 proc collectCommunityMetricsMessagesTimestamps*(self: Controller, intervals: string) =
   self.communityService.collectCommunityMetricsMessagesTimestamps(self.getMySectionId(), intervals)
+
+proc collectCommunityMetricsMessagesCount*(self: Controller, intervals: string) =
+  self.communityService.collectCommunityMetricsMessagesCount(self.getMySectionId(), intervals)

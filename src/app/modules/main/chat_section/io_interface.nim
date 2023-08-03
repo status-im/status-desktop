@@ -352,7 +352,10 @@ method deleteCommunityTokenPermission*(self: AccessInterface, communityId: strin
 method collectCommunityMetricsMessagesTimestamps*(self: AccessInterface, intervals: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setOverviewChartData*(self: AccessInterface, metrics: string) {.base.} =
+method collectCommunityMetricsMessagesCount*(self: AccessInterface, intervals: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setCommunityMetrics*(self: AccessInterface, metrics: CommunityMetricsDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenPermissionCreated*(self: AccessInterface, communityId: string, tokenPermission: CommunityTokenPermissionDto) {.base.} =

@@ -17,22 +17,22 @@ StatusChartPanel {
     /**
         *  Flat model to use for the chart containing timestamps
         *  type: {Array}
+        *  default: []
+        *  example:  {"communityId": "", "metricsType": "MessagesCount", "intervals": [{"startTimestamp": 1691047800000, "endTimestamp": 1691062200000, "timestamps": [], "count": 0}]}
     */
     property var model: []
 
-    signal collectCommunityMetricsMessagesTimestamps(var intervals)
+    signal collectCommunityMetricsMessagesCount(var intervals)
 
-    function requestCommunityMetrics() {
-        let intervals = d.selectedTabInfo.modelItems.map(item => {
-            return {
-                startTimestamp: item.start,
-                endTimestamp: item.end
-            }
-        })
-        collectCommunityMetricsMessagesTimestamps(JSON.stringify(intervals))
+    function reset() {
+        d.now = Date.now()
+        d.requestCommunityMetrics()
     }
 
-    onVisibleChanged: if (visible) requestCommunityMetrics()
+    onVisibleChanged: if(visible) d.resetWithSpamProtection()
+    onTimeRangeTabBarIndexChanged: reset()
+    onModelChanged: chart.updateToNewData()
+    onCollectCommunityMetricsMessagesCount: d.lastRequestModelMetadata = d.selectedTabInfo.modelItems
 
     QtObject {
         id: d
@@ -49,7 +49,8 @@ StatusChartPanel {
         readonly property var hoveredModelMetadata: modelMetadata[root.timeRangeTabBarIndex].modelItems[hoveredBarIndex]
         readonly property var tooltipConfig: modelMetadata[root.timeRangeTabBarIndex].tooltipConfig
         readonly property var graphTabsModel: [{text: messagesLabel, enabled: true}]
-        readonly property var now: Date.now()
+        property var now: Date.now()
+        property var lastRequestModelMetadata: null
 
         readonly property var chartData: selectedTabInfo.modelItems.map(x => d.itemsCountInRange(root.model, x.start, x.end))
         readonly property var labels: selectedTabInfo.modelItems.map(x => x.label)
@@ -165,8 +166,35 @@ StatusChartPanel {
             }
         ]
 
-        function itemsCountInRange(array, start, end) {
-            return array ? array.filter(x => x <= end && x > start).length : 0
+        function resetWithSpamProtection() {
+            if(Date.now() - d.now > LocaleUtils.minutesToMs(5) || d.lastRequestModelMetadata != selectedTabInfo.modelItems) {
+                root.reset()
+            }
+        }
+
+        function requestCommunityMetrics() {
+            let intervals = d.selectedTabInfo.modelItems.map(item => {
+                return {
+                    startTimestamp: item.start,
+                    endTimestamp: item.end
+                }
+            })
+            root.collectCommunityMetricsMessagesCount(JSON.stringify(intervals))
+        }
+
+        function itemsCountInRange(model, start, end) {
+            if (model == undefined || model.intervals == undefined)
+                return 0
+
+            const interval = model.intervals.find(x => x.startTimestamp == start && x.endTimestamp == end)
+
+            if (!interval)
+                return 0
+            
+            if(model.metricsType === "MessagesTimestamps")
+                return interval.timestamps.length
+
+            return interval.count
         }
 
         function minutesStr(before = 0, timeReference = now, roundCurrentTime = true) {
@@ -233,9 +261,8 @@ StatusChartPanel {
             return leftPositon ? Qt.point(relativeMousePoint.x - toolTip.width - 15, relativeMousePoint.y - 5)
                                : Qt.point(relativeMousePoint.x + 15, relativeMousePoint.y - 5)
         }
-
-        onSelectedTabInfoChanged: root.requestCommunityMetrics()
     }
+
     headerLeftPadding: 0
     headerBottomPadding: Style.current.bigPadding
     graphsModel: d.graphTabsModel

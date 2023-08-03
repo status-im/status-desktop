@@ -1374,7 +1374,7 @@ QtObject:
       return
 
     let communityId = rpcResponseObj{"communityId"}.getStr()
-    let metricsType = rpcResponseObj{"metricsType"}.getInt()
+    let metricsType = rpcResponseObj{"response"}{"result"}{"type"}.getInt()
 
     var metrics = rpcResponseObj{"response"}{"result"}.toCommunityMetricsDto()
     self.communityMetrics[communityId] = metrics
