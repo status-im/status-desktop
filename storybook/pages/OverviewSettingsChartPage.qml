@@ -4,28 +4,66 @@ import QtQuick.Controls 2.15
 import AppLayouts.Communities.panels 1.0
 import Models 1.0
 
+import Storybook 1.0
+
 SplitView {
+    id: root
+
+    orientation: Qt.Vertical
 
     OverviewSettingsChart {
         id: chart
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-
-        model: generateRandomModel()
+        onCollectCommunityMetricsMessagesCount: generateRandomModel(intervals)
     }
 
-    function generateRandomModel() {
+    function generateRandomModel(intervalsStr) {
+        if(!intervalsStr) return
+
+        var response = {
+            communityId: "",
+            metricsType: timestampMetrics.checked ? "MessagesTimestamps" : "MessagesCount",
+            intervals: []
+        }
+
+        var intervals = JSON.parse(intervalsStr)
+
+        response.intervals = intervals.map( x => {
+            var timestamps = generateRandomDate(x.startTimestamp, x.endTimestamp, Math.random() * 10)
+
+            return {
+                startTimestamp: x.startTimestamp,
+                endTimestamp: x.endTimestamp,
+                timestamps: timestamps,
+                count: timestamps.length
+            }
+        })
+
+        chart.model = response
+    }
+
+    function generateRandomDate(from, to, count) {
         var newModel = []
-        const now = Date.now()
-        for(var i = 0; i < 500000; i++) {
-            var date = generateRandomDate(1463154962000, now)
+        for(var i = 0; i < count; i++) {
+            var date = from + Math.random() * (to - from)
             newModel.push(date)
         }
         return newModel
     }
 
-    function generateRandomDate(from, to) {
-      return from + Math.random() * (to - from)
+    LogsAndControlsPanel {
+        id: logsAndControlsPanel
+
+        SplitView.minimumHeight: 100
+        SplitView.preferredHeight: 150
+
+        CheckBox {
+            id: timestampMetrics
+            text: "Metrics using timestamps"
+            checked: false
+            onCheckedChanged: chart.reset()
+        }
     }
 }
 

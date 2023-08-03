@@ -422,9 +422,12 @@ QtObject:
     read = getOverviewChartData
     notify = overviewChartDataChanged
 
-  proc setOverviewChartData*(self: View, communityMetrics: string) =
+  proc setCommunityMetrics*(self: View, communityMetrics: string) =
     self.communityMetrics = communityMetrics
     self.overviewChartDataChanged()
 
   proc collectCommunityMetricsMessagesTimestamps*(self: View, intervals: string) {.slot.} =
     self.delegate.collectCommunityMetricsMessagesTimestamps(intervals)
+
+  proc collectCommunityMetricsMessagesCount*(self: View, intervals: string) {.slot.} =
+    self.delegate.collectCommunityMetricsMessagesCount(intervals)

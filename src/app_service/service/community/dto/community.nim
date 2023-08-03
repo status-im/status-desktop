@@ -338,7 +338,7 @@ proc toCommunityMetricsDto*(jsonObj: JsonNode): CommunityMetricsDto =
 
   result.metricsType = CommunityMetricsType.MessagesTimestamps
   var metricsTypeInt: int
-  if (jsonObj.getProp("metricsType", metricsTypeInt) and (metricsTypeInt >= ord(low(CommunityMetricsType)) and
+  if (jsonObj.getProp("type", metricsTypeInt) and (metricsTypeInt >= ord(low(CommunityMetricsType)) and
       metricsTypeInt <= ord(high(CommunityMetricsType)))):
     result.metricsType = CommunityMetricsType(metricsTypeInt)
 
