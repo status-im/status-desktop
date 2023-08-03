@@ -174,8 +174,9 @@ Item {
 
                     MouseArea {
                         anchors.fill: parent
+                        enabled: !root.replyDetails.messageDeleted && root.replyDetails.sender.id
                         hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
+                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                         onClicked: {
                             root.messageClicked(mouse)
                         }

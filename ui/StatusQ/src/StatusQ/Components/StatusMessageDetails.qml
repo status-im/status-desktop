@@ -12,6 +12,7 @@ QtObject {
     property string messageText: ""
     property string messageContent: ""
     property string messageOriginInfo: ""
+    property bool messageDeleted: false
     property var album: []
     property int albumCount: 0
 }
