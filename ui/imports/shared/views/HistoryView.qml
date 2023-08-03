@@ -136,11 +136,18 @@ ColumnLayout {
                             return qsTr("Earlier this week")
                         } else if (daysToBeginingOfThisWeek > -7) {
                             return qsTr("Last week")
-                        } else if (currDate.getMonth() === timestampDate.getMonth()) {
+                        } else if (currDate.getMonth() === timestampDate.getMonth() && currDate.getYear() === timestampDate.getYear()) {
                             return qsTr("Earlier this month")
-                        } else if ((new Date(new Date().setDate(0))).getMonth() === timestampDate.getMonth()) {
+                        }
+
+                        const previousMonthDate = (new Date(new Date().setDate(0)))
+                        // Special case for the end of the year
+                        if ((timestampDate.getMonth() === previousMonthDate.getMonth() && timestampDate.getYear() === previousMonthDate.getYear())
+                            || (previousMonthDate.getMonth() === 11 && timestampDate.getMonth() === 0 && Math.abs(timestampDate.getYear() - previousMonthDate.getYear()) === 1))
+                        {
                             return qsTr("Last month")
                         }
+
                         return timestampDate.toLocaleDateString(Qt.locale(), "MMM yyyy")
                     }
                 }
