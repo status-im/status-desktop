@@ -457,3 +457,6 @@ proc getCheckChannelPermissionResponses*(communityId: string,): RpcResponse[Json
 
 proc getCommunityPublicKeyFromPrivateKey*(communityPrivateKey: string,): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("getCommunityPublicKeyFromPrivateKey".prefix, %*[communityPrivateKey])
+
+proc getCommunityMembersForWalletAddresses*(communityId: string, chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("getCommunityMembersForWalletAddresses".prefix, %* [communityId, chainId])

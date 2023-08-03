@@ -28,7 +28,7 @@ import network_connection/module as network_connection_module
 import shared_urls/module as shared_urls_module
 
 import ../../../app_service/service/contacts/dto/contacts
-from backend/collectibles_types import CollectibleOwner
+import ../../../app_service/service/community_tokens/community_collectible_owner
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -1060,7 +1060,7 @@ method onCommunityTokenRemoved*[T](self: Module[T], communityId: string, chainId
   if item.id != "":
     item.removeCommunityToken(chainId, address)
 
-method onCommunityTokenOwnersFetched*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) =
+method onCommunityTokenOwnersFetched*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) =
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.setCommunityTokenOwners(chainId, contractAddress, owners)

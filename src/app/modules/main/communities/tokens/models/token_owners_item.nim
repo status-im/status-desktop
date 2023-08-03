@@ -4,6 +4,7 @@ import ../../../../../../app_service/common/types
 
 type
   TokenOwnersItem* = object
+    contactId*: string
     name*: string
     imageSource*: string
     ownerDetails*: CollectibleOwner
@@ -16,11 +17,13 @@ proc remoteDestructTransactionStatus*(remoteDestructedAddresses: seq[string], ad
   return ContractTransactionStatus.Completed
 
 proc initTokenOwnersItem*(
+  contactId: string,
   name: string,
   imageSource: string,
   ownerDetails: CollectibleOwner,
   remoteDestructedAddresses: seq[string]
 ): TokenOwnersItem =
+  result.contactId = contactId
   result.name = name
   result.imageSource = imageSource
   result.ownerDetails = ownerDetails
@@ -30,6 +33,7 @@ proc initTokenOwnersItem*(
 
 proc `$`*(self: TokenOwnersItem): string =
   result = fmt"""TokenOwnersItem(
+    contactId: {self.contactId},
     name: {self.name},
     amount: {self.amount},
     ownerDetails: {self.ownerDetails}

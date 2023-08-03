@@ -12,8 +12,8 @@ import ../../../app_service/service/community_tokens/service as community_token_
 import ../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/community_tokens/service as community_tokens_service
+import ../../../app_service/service/community_tokens/community_collectible_owner
 from ../../../app_service/common/types import StatusType, ContractTransactionStatus
-from backend/collectibles_types import CollectibleOwner
 
 import ../../global/app_signals
 import ../../core/eventemitter
@@ -294,7 +294,7 @@ method onCommunityTokenDeploymentStarted*(self: AccessInterface, communityToken:
 method onOwnerTokensDeploymentStarted*(self: AccessInterface, ownerToken: CommunityTokenDto, masterToken: CommunityTokenDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.base.} =
+method onCommunityTokenOwnersFetched*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityTokenDeployStateChanged*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, deployState: DeployState) {.base.} =

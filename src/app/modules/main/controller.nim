@@ -23,7 +23,7 @@ import ../../../app_service/service/token/service as token_service
 import ../../../app_service/service/network/service as networks_service
 import ../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 
-from backend/collectibles_types import CollectibleOwner
+import ../../../app_service/service/community_tokens/community_collectible_owner
 
 import io_interface
 import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -504,7 +504,7 @@ proc getVerificationRequestFrom*(self: Controller, publicKey: string): Verificat
 proc getCommunityTokens*(self: Controller, communityId: string): seq[CommunityTokenDto] =
   self.communityTokensService.getCommunityTokens(communityId)
 
-proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner] =
+proc getCommunityTokenOwners*(self: Controller, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner] =
   return self.communityTokensService.getCommunityTokenOwners(communityId, chainId, contractAddress)
 
 proc getCommunityTokenOwnerName*(self: Controller, contractOwnerAddress: string): string =

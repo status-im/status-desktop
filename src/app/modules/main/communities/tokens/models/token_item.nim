@@ -1,5 +1,6 @@
 import strformat, sequtils, stint
 import ../../../../../../app_service/service/community_tokens/dto/community_token
+import ../../../../../../app_service/service/community_tokens/community_collectible_owner
 import ../../../../../../app_service/service/network/dto
 import ../../../../../../app_service/common/types
 from backend/collectibles_types import CollectibleOwner
@@ -24,7 +25,7 @@ type
 proc initTokenItem*(
   tokenDto: CommunityTokenDto,
   network: NetworkDto,
-  tokenOwners: seq[CollectibleOwner],
+  tokenOwners: seq[CommunityCollectibleOwner],
   accountName: string,
   burnState: ContractTransactionStatus,
   remoteDestructedAddresses: seq[string],
@@ -41,10 +42,9 @@ proc initTokenItem*(
   result.burnState = burnState
   result.remoteDestructedAddresses = remoteDestructedAddresses
   result.tokenOwnersModel = newTokenOwnersModel()
-  result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
-          # TODO find member with the address - later when airdrop to member will be added
-          result = initTokenOwnersItem("", "", owner, remoteDestructedAddresses)
-        ))
+  result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
+    result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, owner.collectibleOwner, remoteDestructedAddresses)
+  ))
 
 proc `$`*(self: TokenItem): string =
   result = fmt"""TokenItem(
