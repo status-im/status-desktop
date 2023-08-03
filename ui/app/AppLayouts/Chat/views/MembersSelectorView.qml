@@ -86,13 +86,6 @@ MembersSelectorBase {
         }
 
         function processContact(contactData) {
-            // Open contact request if we have data from url
-            if (contactData.publicKey !== "" && contactData.displayName !== "") {
-                Global.openContactRequestPopupWithContactData(contactData,
-                                                              popup => popup.closed.connect(root.rejected))
-                return
-            }
-
             const contactDetails = Utils.getContactDetailsAsJson(contactData.publicKey, false)
             if (contactDetails.publicKey === "") {
                 // not a valid key given
@@ -121,8 +114,18 @@ MembersSelectorBase {
 
             if (root.model.count === 0 && !hasPendingContactRequest) {
                 // List is empty and not a contact yet. Open the contact request popup
-                Global.openContactRequestPopup(contactDetails.publicKey,
-                                               popup => popup.closed.connect(root.rejected))
+
+                // If `displayName` is not undefiend and not empty,
+                // then we open the popup with given `contactData`, which probably came from URL.
+                if (contactData.displayName) {
+                    // Open contact request if we have data from url
+                    Global.openContactRequestPopupWithContactData(contactData,
+                                                                  popup => popup.closed.connect(root.rejected))
+                    
+                } else {
+                    Global.openContactRequestPopup(contactDetails.publicKey,
+                                                   popup => popup.closed.connect(root.rejected))
+                }
                 return
             }
 
@@ -171,7 +174,7 @@ MembersSelectorBase {
                 root.suggestionsDialog.forceHide = false
                 return
             }
-            d.processContact(resolvedPubKey)
+            d.processContact({publicKey: resolvedPubKey})
         }
     }
 }
