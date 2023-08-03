@@ -37,6 +37,12 @@ Dialog {
         restoreMode: Binding.RestoreBindingOrValue
     }
 
+    onImplicitContentHeightChanged: {
+        workaroundBinding.value = root.margins + 1
+        workaroundBinding.when = true
+        workaroundBinding.when = false
+    }
+
     standardButtons: Dialog.Cancel | Dialog.Ok
 
     Overlay.modal: Rectangle {
