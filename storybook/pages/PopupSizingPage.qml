@@ -48,6 +48,15 @@ Item {
             when: false
         }
 
+        onImplicitContentHeightChanged: {
+            if (!workAroundCheckBox.checked)
+                return
+
+            workaroundBinding.value = popup.margins + 1
+            workaroundBinding.when = true
+            workaroundBinding.when = false
+        }
+
         ColumnLayout {
             Button {
                 text: "Some button 1"
@@ -58,15 +67,6 @@ Item {
                 text: "Some button 2"
 
                  Layout.fillWidth: true
-            }
-
-            onImplicitHeightChanged: {
-                if (!workAroundCheckBox.checked)
-                    return
-
-                workaroundBinding.value = popup.margins + 1
-                workaroundBinding.when = true
-                workaroundBinding.when = false
             }
 
             anchors.fill: parent

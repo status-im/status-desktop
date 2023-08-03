@@ -57,13 +57,9 @@ QC.Popup {
         restoreMode: Binding.RestoreBindingOrValue
     }
 
-    Connections {
-        target: root.contentItem
-
-        function onImplicitHeightChanged() {
-            workaroundBinding.value = root.margins + 1
-            workaroundBinding.when = true
-            workaroundBinding.when = false
-        }
+    onImplicitContentHeightChanged: {
+        workaroundBinding.value = root.margins + 1
+        workaroundBinding.when = true
+        workaroundBinding.when = false
     }
 }

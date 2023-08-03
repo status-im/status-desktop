@@ -167,12 +167,6 @@ StatusDialog {
 
         anchors.fill: parent
 
-        // Workaround for https://bugreports.qt.io/browse/QTBUG-87804
-        onImplicitHeightChanged: {
-            margins--
-            margins++
-        }
-
         ClippingWrapper {
             Layout.fillWidth: true
             Layout.preferredHeight: assetAndAmountSelector.implicitHeight
