@@ -661,10 +661,14 @@ proc switchToMessage*(self: Module, messageId: string) =
     self.controller.setSearchedMessageId(messageId)
 
 method scrollToMessage*(self: Module, messageId: string) =
-  if(messageId == ""):
+  if messageId == "":
     return
 
-  if(self.view.getMessageSearchOngoing()):
+  if self.view.getMessageSearchOngoing():
+    return
+
+  if not self.controller.messageFetched(messageId):
+    warn "attempting to scroll to a not fetched message", messageId, chatId = self.controller.getMyChatId()
     return
 
   self.view.setMessageSearchOngoing(true)

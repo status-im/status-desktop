@@ -320,3 +320,7 @@ proc leaveChat*(self: Controller) =
 
 proc resendChatMessage*(self: Controller, messageId: string): string =
   return self.messageService.resendChatMessage(messageId)
+
+proc messageFetched*(self: Controller, messageId: string): bool =
+  let (message, err) = self.messageService.getMessageByMessageId(self.chatId, messageId)
+  return err.len == 0
