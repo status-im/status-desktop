@@ -57,17 +57,48 @@ Item {
                 height: gridView.cellHeight
                 width: gridView.cellWidth
                 title: model.name ? model.name : "..."
-                subTitle: model.collectionName ? model.collectionName : ""
-                mediaUrl: model.mediaUrl ? model.mediaUrl : ""
-                mediaType: model.mediaType ? model.mediaType : ""
-                fallbackImageUrl: model.imageUrl
+                subTitle: model.collectionName ?? ""
+                mediaUrl: model.mediaUrl ?? ""
+                mediaType: model.mediaType ?? ""
+                fallbackImageUrl: model.imageUrl ?? ""
                 backgroundColor: model.backgroundColor ? model.backgroundColor : "transparent"
-                isLoading: model.isLoading
+                isLoading: !!model.isLoading
 
                 onClicked: root.collectibleClicked(model.chainId, model.contractAddress, model.tokenId)
             }
 
             ScrollBar.vertical: StatusScrollBar {}
+
+            // For some reason fetchMore is not working properly.
+            // Adding some logic here as a workaround.
+            visibleArea.onYPositionChanged: checkLoadMore()
+            visibleArea.onHeightRatioChanged: checkLoadMore()
+
+            Connections {
+                target: gridView
+                function onVisibleChanged() {
+                    checkLoadMore()
+                }
+            }
+
+            Connections {
+                target: root.collectiblesModel
+                function onHasMoreChanged() {
+                    checkLoadMore()
+                }
+                function onIsFetchingChanged() {
+                    checkLoadMore()
+                }
+            }
+
+            function checkLoadMore() {
+                // If there is no more items to load or we're already fetching, return
+                if (!gridView.visible || !root.collectiblesModel.hasMore || root.collectiblesModel.isFetching)
+                    return
+                // Only trigger if close to the bottom of the list
+                if (visibleArea.yPosition + visibleArea.heightRatio > 0.9)
+                    root.collectiblesModel.loadMore()
+            }
         }
     }
 }

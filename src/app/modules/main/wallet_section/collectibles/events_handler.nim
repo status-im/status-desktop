@@ -16,6 +16,7 @@ QtObject:
       events: EventEmitter
       eventHandlers: Table[string, EventCallbackProc]
       walletEventHandlers: Table[string, WalletEventCallbackProc]
+      collectiblesOwnershipUpdateStartedFn: proc()
       collectiblesOwnershipUpdateFinishedFn: proc()
 
   proc setup(self: EventsHandler) =
@@ -26,6 +27,9 @@ QtObject:
 
   proc onOwnedCollectiblesFilteringDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_collectibles.eventOwnedCollectiblesFilteringDone] = handler
+
+  proc onCollectiblesOwnershipUpdateStarted*(self: EventsHandler, handler: proc()) =
+    self.collectiblesOwnershipUpdateStartedFn = handler
 
   proc onCollectiblesOwnershipUpdateFinished*(self: EventsHandler, handler: proc()) =
     self.collectiblesOwnershipUpdateFinishedFn = handler
@@ -49,6 +53,11 @@ QtObject:
       discard
 
   proc setupWalletEventHandlers(self: EventsHandler) =
+    self.walletEventHandlers[backend_collectibles.eventCollectiblesOwnershipUpdateStarted] = proc (data: WalletSignal) =
+      if self.collectiblesOwnershipUpdateStartedFn == nil:
+        return
+      self.collectiblesOwnershipUpdateStartedFn()
+
     self.walletEventHandlers[backend_collectibles.eventCollectiblesOwnershipUpdateFinished] = proc (data: WalletSignal) =
       if self.collectiblesOwnershipUpdateFinishedFn == nil:
         return
