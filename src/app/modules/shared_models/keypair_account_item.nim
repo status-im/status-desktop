@@ -55,6 +55,7 @@ QtObject:
       icon: {self.icon},
       balance: {self.balance},
       balanceFetched: {self.balanceFetched},
+      operability: {self.operability},
       isDefaultAccount: {self.isDefaultAccount},
       areTestNetworksEnabled: {self.areTestNetworksEnabled},
       prodPreferredChainIds: {self.prodPreferredChainIds},

@@ -107,3 +107,10 @@ proc getEnsName(address: string, chainId: int): string =
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
+
+proc hasPairedDevices(): bool =
+  try:
+    let response = backend.hasPairedDevices()
+    return response.result.getBool
+  except Exception as e:
+    error "error: ", errDesription=e.msg

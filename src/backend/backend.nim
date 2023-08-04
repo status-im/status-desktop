@@ -299,3 +299,6 @@ rpc(getCachedCurrencyFormats, "wallet"):
 
 rpc(fetchAllCurrencyFormats, "wallet"):
   discard
+
+rpc(hasPairedDevices, "accounts"):
+  discard

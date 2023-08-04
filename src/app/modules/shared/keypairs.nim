@@ -32,7 +32,8 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         pairType = KeyPairType.Profile,
         derivedFrom = kp.derivedFrom,
         lastUsedDerivationIndex = kp.lastUsedDerivationIndex,
-        migratedToKeycard = kpMigrated)
+        migratedToKeycard = kpMigrated,
+        syncedFrom = kp.syncedFrom)
       for acc in kp.accounts:
         if acc.isChat:
           continue
@@ -53,7 +54,8 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         pairType = KeyPairType.SeedImport,
         derivedFrom = kp.derivedFrom,
         lastUsedDerivationIndex = kp.lastUsedDerivationIndex,
-        migratedToKeycard = kpMigrated)
+        migratedToKeycard = kpMigrated,
+        syncedFrom = kp.syncedFrom)
       for acc in kp.accounts:
         var icon = ""
         if acc.emoji.len == 0:
@@ -74,7 +76,8 @@ proc buildKeyPairsList*(keypairs: seq[KeypairDto], excludeAlreadyMigratedPairs: 
         pairType = KeyPairType.PrivateKeyImport,
         derivedFrom = kp.derivedFrom,
         lastUsedDerivationIndex = kp.lastUsedDerivationIndex,
-        migratedToKeycard = kpMigrated)
+        migratedToKeycard = kpMigrated,
+        syncedFrom = kp.syncedFrom)
       for acc in kp.accounts:
         var icon = ""
         if acc.emoji.len == 0:

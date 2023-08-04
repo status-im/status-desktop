@@ -34,9 +34,9 @@ ColumnLayout {
 
     QtObject {
         id: d
-        readonly property bool watchOnlyAccount: keyPair && keyPair.pairType ? keyPair.pairType === Constants.keycard.keyPairType.watchOnly: false
-        readonly property bool privateKeyAccount: keyPair && keyPair.pairType ? keyPair.pairType === Constants.keycard.keyPairType.privateKeyImport: false
-        readonly property string preferredSharingNetworks: !!account ? account.preferredSharingChainIds: ""
+        readonly property bool watchOnlyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.watchOnly: false
+        readonly property bool privateKeyAccount: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.privateKeyImport: false
+        readonly property string preferredSharingNetworks: !!root.account? root.account.preferredSharingChainIds: ""
         property var preferredSharingNetworksArray: preferredSharingNetworks.split(":").filter(Boolean)
         property string preferredSharingNetworkShortNames: walletStore.getNetworkShortNames(preferredSharingNetworks)
      	onPreferredSharingNetworksChanged: {
@@ -56,17 +56,17 @@ ColumnLayout {
                 id: accountName
                 objectName: "walletAccountViewAccountName"
                 Layout.alignment: Qt.AlignLeft
-                text: root.account ? root.account.name : ""
+                text: !!root.account? root.account.name : ""
                 font.weight: Font.Bold
                 font.pixelSize: 28
-                color: root.account ? Utils.getColorForId(root.account.colorId) : Theme.palette.directColor1
+                color: !!root.account? Utils.getColorForId(root.account.colorId) : Theme.palette.directColor1
             }
             StatusEmoji {
                 id: accountImage
                 objectName: "walletAccountViewAccountImage"
                 Layout.preferredWidth: 28
                 Layout.preferredHeight: 28
-                emojiId: StatusQUtils.Emoji.iconId(root.account && root.account.emoji ? root.account.emoji : "", StatusQUtils.Emoji.size.big) || ""
+                emojiId: StatusQUtils.Emoji.iconId(!!root.account && root.account.emoji ? root.account.emoji : "", StatusQUtils.Emoji.size.big) || ""
             }
         }
         StatusButton {
@@ -100,7 +100,7 @@ ColumnLayout {
             WalletAccountDetailsListItem {
                 Layout.fillWidth: true
                 title: qsTr("Balance")
-                subTitle: root.account && root.account.balance ? LocaleUtils.currencyAmountToLocaleString(root.account.balance): ""
+                subTitle: !!root.account && root.account.balance ? LocaleUtils.currencyAmountToLocaleString(root.account.balance): ""
             }
             Separator {
                 Layout.fillWidth: true
@@ -113,7 +113,7 @@ ColumnLayout {
                 moreButtonEnabled: true
                 title: qsTr("Address")
                 subTitle: {
-                    let address = root.account && root.account.address ? root.account.address: ""
+                    let address = !!root.account && root.account.address ? root.account.address: ""
                     return WalletUtils.colorizedChainPrefix(d.preferredSharingNetworkShortNames) + address
                 }
                 onButtonClicked: addressMenu.openMenu(this)
@@ -147,15 +147,15 @@ ColumnLayout {
                 Layout.fillWidth: true
                 title: qsTr("Origin")
                 subTitle: {
-                    if(keyPair) {
-                        switch(keyPair.pairType) {
-                        case Constants.keycard.keyPairType.profile:
+                    if(!!root.keyPair) {
+                        switch(root.keyPair.pairType) {
+                        case Constants.keypair.type.profile:
                             return qsTr("Derived from your default Status keypair")
-                        case Constants.keycard.keyPairType.seedImport:
+                        case Constants.keypair.type.seedImport:
                             return qsTr("Imported from seed phrase")
-                        case Constants.keycard.keyPairType.privateKeyImport:
+                        case Constants.keypair.type.privateKeyImport:
                             return qsTr("Imported from private key")
-                        case Constants.keycard.keyPairType.watchOnly:
+                        case Constants.keypair.type.watchOnly:
                             return qsTr("Watched address")
                         default:
                             return ""
@@ -175,8 +175,8 @@ ColumnLayout {
                 isInteractive: true
                 copyButtonEnabled: true
                 title: qsTr("Derivation Path")
-                subTitle: root.account ? Utils.getPathForDisplay(root.account.path) : ""
-                onCopyClicked: root.walletStore.copyToClipboard(root.account ? root.account.path : "")
+                subTitle: !!root.account? Utils.getPathForDisplay(root.account.path) : ""
+                onCopyClicked: root.walletStore.copyToClipboard(!!root.account? root.account.path : "")
                 visible: !!subTitle && !d.privateKeyAccount && !d.watchOnlyAccount
             }
             Separator {
@@ -188,7 +188,8 @@ ColumnLayout {
             WalletAccountDetailsListItem {
                 Layout.fillWidth: true
                 title: qsTr("Stored")
-                subTitle: keyPair && keyPair.migratedToKeycard ? qsTr("On Keycard"): qsTr("On device")
+                subTitle: Utils.getKeypairLocation(root.keyPair)
+                statusListItemSubTitle.color: Utils.getKeypairLocationColor(root.keyPair)
             }
         }
     }
@@ -226,7 +227,11 @@ ColumnLayout {
                 onToggleNetwork: (network) => {
                                      d.preferredSharingNetworksArray = root.walletStore.processPreferredSharingNetworkToggle(d.preferredSharingNetworksArray, network)
                                  }
-                control.popup.onClosed: root.walletStore.updateWalletAccountPreferredChains(root.account.address, d.preferredSharingNetworksArray.join(":"))
+                control.popup.onClosed: {
+                    if (!!root.account) {
+                        root.walletStore.updateWalletAccountPreferredChains(root.account.address, d.preferredSharingNetworksArray.join(":"))
+                    }
+                }
             }
         ]
     }
@@ -250,11 +255,13 @@ ColumnLayout {
         ConfirmationDialog {
             id: confirmationPopup
             confirmButtonObjectName: "confirmDeleteAccountButton"
-            headerSettings.title: qsTr("Confirm %1 Removal").arg(root.account ? root.account.name : "")
+            headerSettings.title: qsTr("Confirm %1 Removal").arg(!!root.account? root.account.name : "")
             confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
             confirmButtonLabel: qsTr("Remove Account")
             onConfirmButtonClicked: {
-                root.walletStore.deleteAccount(root.account.address);
+                if (!!root.account) {
+                    root.walletStore.deleteAccount(root.account.address)
+                }
                 confirmationPopup.close()
                 root.goBack()
             }
@@ -281,7 +288,7 @@ ColumnLayout {
         onCopyToClipboard: root.walletStore.copyToClipboard(address)
     }
 
-    WalletAccountKeycardMenu {
+    WalletKeypairAccountMenu {
         id: keycardMenu
         keyPair: root.keyPair
         onRunRenameKeypairFlow: root.runRenameKeypairFlow()
