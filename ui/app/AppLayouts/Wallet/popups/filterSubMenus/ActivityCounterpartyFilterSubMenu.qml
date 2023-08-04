@@ -93,6 +93,7 @@ StatusMenu {
                 width: parent.width
                 height: root.height - tabBar.height - 12
                 model: root.recentsList
+                reuseItems: true
                 delegate: ActivityTypeCheckBox {
                     readonly property string name: store.getNameForAddress(model.address)
                     width: ListView.view.width

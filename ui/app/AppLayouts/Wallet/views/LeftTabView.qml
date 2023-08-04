@@ -59,6 +59,15 @@ Rectangle {
 
     color: Style.current.secondaryMenuBackground
 
+    Component.onCompleted: {
+        d.loaded = true
+    }
+
+    QtObject {
+        id: d
+        property bool loaded: false
+    }
+
     Loader {
         id: addAccount
         active: false
@@ -245,7 +254,7 @@ Rectangle {
                 bottomMargin: Style.current.padding
 
                 readonly property Item firstItem: count > 0 ? itemAtIndex(0) : null
-                readonly property bool footerOverlayed: contentHeight > availableHeight
+                readonly property bool footerOverlayed: d.loaded && contentHeight > availableHeight
 
                 delegate: StatusListItem {
                     objectName: "walletAccount-" + model.name
