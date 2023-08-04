@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import allure
 import pytest
 
 import configs
@@ -17,11 +18,6 @@ def aut() -> AUT:
 
 
 @pytest.fixture
-def app_data() -> system_path.SystemPath:
-    yield configs.testpath.STATUS_DATA / f'app_{datetime.now():%H%M%S_%f}'
-
-
-@pytest.fixture
 def user_data(request) -> system_path.SystemPath:
     user_data = configs.testpath.STATUS_DATA / f'app_{datetime.now():%H%M%S_%f}' / 'data'
     if hasattr(request, 'param'):
@@ -30,7 +26,7 @@ def user_data(request) -> system_path.SystemPath:
 
 
 @pytest.fixture
-def main_window(aut: AUT, user_data: system_path.SystemPath):
+def main_window(aut: AUT, user_data):
     aut.launch(f'-d={user_data.parent}')
     yield MainWindow().wait_until_appears().prepare()
     aut.detach().stop()
