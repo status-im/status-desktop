@@ -16,11 +16,13 @@ pytest_plugins = [
     'tests.fixtures.aut',
     'tests.fixtures.path',
     'tests.fixtures.squish',
+    'tests.fixtures.testrail',
 ]
 
 
 @pytest.fixture(scope='session', autouse=True)
 def setup_session_scope(
+        init_testrail_api,
         prepare_test_directory,
         start_squish_server,
 ):
@@ -30,8 +32,16 @@ def setup_session_scope(
 @pytest.fixture(autouse=True)
 def setup_function_scope(
         generate_test_data,
+        check_result
 ):
     yield
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, 'rep_' + rep.when, rep)
 
 
 def pytest_exception_interact(node):
