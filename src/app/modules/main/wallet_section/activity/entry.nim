@@ -114,6 +114,9 @@ QtObject:
       isPending:{self.isPending}
     )"""
 
+  proc isInTransactionType(self: ActivityEntry): bool =
+    return self.metadata.activityType == backend.ActivityType.Receive or self.metadata.activityType == backend.ActivityType.Mint
+
   proc getMultiTransaction*(self: ActivityEntry): MultiTransactionDto =
     if not self.isMultiTransaction():
       raise newException(Defect, "ActivityEntry is not a MultiTransaction")
@@ -144,7 +147,7 @@ QtObject:
     read = getOutSymbol
 
   proc getSymbol*(self: ActivityEntry): string {.slot.} =
-    if self.metadata.activityType == backend.ActivityType.Receive:
+    if self.isInTransactionType():
       return self.getInSymbol()
     return self.getOutSymbol()
 
@@ -168,7 +171,7 @@ QtObject:
       error "getChainId: ActivityEntry is not a transaction"
       return 0
 
-    if self.metadata.activityType == backend.ActivityType.Receive:
+    if self.isInTransactionType():
       return self.metadata.chainIdIn.get(ChainId(0)).int
     return self.metadata.chainIdOut.get(ChainId(0)).int
 
@@ -236,7 +239,7 @@ QtObject:
   proc getTokenType*(self: ActivityEntry): string {.slot.} =
     if self.transaction != nil:
       return self.transaction[].typeValue
-    if self.metadata.activityType == backend.ActivityType.Receive and self.metadata.tokenOut.isSome:
+    if self.isInTransactionType() and self.metadata.tokenOut.isSome:
       return $self.metadata.tokenOut.unsafeGet().tokenType
     if self.metadata.tokenIn.isSome:
       return $self.metadata.tokenIn.unsafeGet().tokenType
@@ -267,7 +270,7 @@ QtObject:
     read = getTokenOutAddress
 
   proc getTokenAddress*(self: ActivityEntry): string {.slot.} =
-    if self.metadata.activityType == backend.ActivityType.Receive:
+    if self.isInTransactionType():
       return self.getTokenInAddress()
     return self.getTokenOutAddress()
 
@@ -296,7 +299,7 @@ QtObject:
       error "getTokenID: ActivityEntry is not a transaction"
       return ""
 
-    if self.metadata.activityType == backend.ActivityType.Receive:
+    if self.isInTransactionType():
       return if self.metadata.tokenIn.isSome(): $self.metadata.tokenIn.unsafeGet().tokenId else: ""
     return if self.metadata.tokenOut.isSome(): $self.metadata.tokenOut.unsafeGet().tokenId else: ""
 
@@ -336,7 +339,7 @@ QtObject:
     read = getInAmount
 
   proc getAmount*(self: ActivityEntry): float {.slot.} =
-    if self.metadata.activityType == backend.ActivityType.Receive:
+    if self.isInTransactionType():
       return self.getInAmount()
     return self.getOutAmount()
 
