@@ -1019,12 +1019,17 @@ QtObject {
         Dismissed = 4
     }
 
-
     enum TokenType {
         Unknown = 0,
         ERC20 = 1, // Asset
         ERC721 = 2, // Collectible
         ENS = 3
+    }
+
+    enum TokenPrivilegesLevel {
+        Owner = 0,
+        TMaster = 1,
+        Community = 2
     }
 
     // Mirrors src/backend/activity.nim ActivityStatus

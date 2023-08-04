@@ -25,8 +25,9 @@ Control {
     property bool navigationIconVisible: false
 
     // Special Owner and TMaster token properties
-    property bool isPrivilegedToken: false // Owner or TMaster tokens
-    property bool isOwner: false // Owner token
+    property int privilegesLevel: Constants.TokenPrivilegesLevel.Community
+    readonly property bool isPrivilegedToken: (privilegesLevel === Constants.TokenPrivilegesLevel.Owner) ||
+                                              (privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
     property color ornamentColor // Relevant color for these special tokens (community color)
 
     signal clicked
@@ -78,7 +79,7 @@ Control {
             size: PrivilegedTokenArtworkPanel.Size.Medium
             artwork: root.fallbackImageUrl
             color: root.ornamentColor
-            isOwner: root.isOwner
+            isOwner: root.privilegesLevel === Constants.TokenPrivilegesLevel.Owner
 
             Loader {
                 anchors.fill: parent

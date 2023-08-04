@@ -12,7 +12,7 @@ import SortFilterProxyModel 0.2
 
 import Storybook 1.0
 import Models 1.0
-
+import utils 1.0
 
 SplitView {
     orientation: Qt.Vertical
@@ -43,7 +43,7 @@ SplitView {
     Rectangle {
         SplitView.fillWidth: true
         SplitView.fillHeight: true
-        color: Theme.palette.statusAppLayout.rightPanelBackgroundColor        
+        color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
         MintTokensSettingsPanel {
             id: panel
@@ -57,10 +57,17 @@ SplitView {
 
                 sourceModel: mintedTokensModel
 
-                filters: ValueFilter {
-                    roleName: "isPrivilegedToken"
-                    value: true
-                }
+                filters: [
+                    ExpressionFilter {
+                        readonly property int ownerLevel: Constants.TokenPrivilegesLevel.Owner
+                        readonly property int tMasterLevel: Constants.TokenPrivilegesLevel.TMaster
+
+                        expression: {
+                            return ((model.privilegesLevel === ownerLevel) ||
+                                    (model.privilegesLevel === tMasterLevel))
+                        }
+                    }
+                ]
             }
 
             anchors.fill: parent

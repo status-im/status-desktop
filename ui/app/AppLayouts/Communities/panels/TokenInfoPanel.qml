@@ -84,7 +84,7 @@ Control {
             size: PrivilegedTokenArtworkPanel.Size.Large
             artwork: token.artworkSource
             color: token.color
-            isOwner: token.isOwner
+            isOwner: token.privilegesLevel === Constants.TokenPrivilegesLevel.Owner
         }
 
         Flow {

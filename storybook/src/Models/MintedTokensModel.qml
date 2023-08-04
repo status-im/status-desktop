@@ -1,5 +1,7 @@
 import QtQuick 2.15
 
+import utils 1.0
+
 ListModel {
     id: root
 
@@ -8,8 +10,7 @@ ListModel {
 
     readonly property var data: [
         {
-            isPrivilegedToken: true,
-            isOwner: true,
+            privilegesLevel: Constants.TokenPrivilegesLevel.Owner,
             contractUniqueKey: "0x15a23414a3",
             tokenType: 2,
             name: "Owner-Doodles",
@@ -29,8 +30,7 @@ ListModel {
             tokenOwnersModel: root.emptyModel
         },
         {
-            isPrivilegedToken: true,
-            isOwner: false,
+            privilegesLevel: Constants.TokenPrivilegesLevel.TMaster,
             contractUniqueKey: "0x23124443",
             tokenType: 2,
             name: "TMaster-Doodles",
@@ -50,8 +50,7 @@ ListModel {
             tokenOwnersModel: root.tokenOwnersModel
         },
         {
-            isPrivilegedToken: false,
-            isOwner: false,
+            privilegesLevel: Constants.TokenPrivilegesLevel.Community,
             contractUniqueKey: "0x1726362343",
             tokenType: 2,
             name: "SuperRare artwork",
@@ -71,8 +70,7 @@ ListModel {
             tokenOwnersModel: root.emptyModel
         },
         {
-            isPrivilegedToken: false,
-            isOwner: false,
+            privilegesLevel: Constants.TokenPrivilegesLevel.Community,
             contractUniqueKey: "0x847843",
             tokenType: 2,
             name: "Kitty artwork",
@@ -92,8 +90,7 @@ ListModel {
             tokenOwnersModel: root.emptyModel
         },
         {
-            isPrivilegedToken: false,
-            isOwner: false,
+            privilegesLevel: Constants.TokenPrivilegesLevel.Community,
             contractUniqueKey: "0x1234525",
             tokenType: 2,
             name: "More artwork",
@@ -113,8 +110,7 @@ ListModel {
             tokenOwnersModel: root.emptyModel
         },
         {
-            isPrivilegedToken: false,
-            isOwner: false,
+            privilegesLevel: Constants.TokenPrivilegesLevel.Community,
             contractUniqueKey: "0x38576852",
             tokenType: 2,
             name: "Crypto Punks artwork",
@@ -134,8 +130,7 @@ ListModel {
             tokenOwnersModel: root.tokenOwnersModel
         },
         {
-            isPrivilegedToken: false,
-            isOwner: false,
+            privilegesLevel: Constants.TokenPrivilegesLevel.Community,
             contractUniqueKey: "0x38745623865",
             tokenType: 1,
             name: "Unisocks",
@@ -154,8 +149,7 @@ ListModel {
             tokenOwnersModel: root.emptyModel
         },
         {
-            isPrivilegedToken: false,
-            isOwner: false,
+            privilegesLevel: Constants.TokenPrivilegesLevel.Community,
             contractUniqueKey: "0x872364871623",
             tokenType: 1,
             name: "Dai",

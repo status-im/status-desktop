@@ -609,8 +609,8 @@ StatusSectionLayout {
         property bool ownerOrTMasterTokenItemsExist: false
 
         function checkIfPrivilegedTokenItemsExist() {
-           return StatusQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.ownerTokenNameTag + root.communityName) ||
-                  StatusQUtils.ModelUtils.contains(model, "name", PermissionsHelpers.tMasterTokenNameTag + root.communityName)
+           return StatusQUtils.ModelUtils.contains(model, "privilegesLevel", Constants.TokenPrivilegesLevel.Owner) ||
+                  StatusQUtils.ModelUtils.contains(model, "privilegesLevel", Constants.TokenPrivilegesLevel.TMaster)
         }
 
         function reviewTokenDeployState(isOwner, deployState) {
@@ -624,9 +624,6 @@ StatusSectionLayout {
             if(isOwner && token.privilegesLevel !== Constants.TokenPrivilegesLevel.Owner)
                 return false
             if(!isOwner && token.privilegesLevel !== Constants.TokenPrivilegesLevel.TMaster)
-                return false
-
-            if(token.isOwner !== isOwner)
                 return false
 
             // Deploy state check:
@@ -643,13 +640,13 @@ StatusSectionLayout {
 
             // It monitors the deployment:
             if(!isOwnerTokenDeployed) {
-                isOwnerTokenDeployed = reviewTokenDeployState(PermissionsHelpers.ownerTokenNameTag, true, Constants.ContractTransactionStatus.Completed)
-                isOwnerTokenFailed = reviewTokenDeployState(PermissionsHelpers.ownerTokenNameTag, true, Constants.ContractTransactionStatus.Failed)
+                isOwnerTokenDeployed = reviewTokenDeployState(true, Constants.ContractTransactionStatus.Completed)
+                isOwnerTokenFailed = reviewTokenDeployState(true, Constants.ContractTransactionStatus.Failed)
             }
 
             if(!isTMasterTokenDeployed) {
-                isTMasterTokenDeployed = reviewTokenDeployState(PermissionsHelpers.tMasterTokenNameTag, false, Constants.ContractTransactionStatus.Completed)
-                isTMasterTokenFailed = reviewTokenDeployState(PermissionsHelpers.tMasterTokenNameTag, false, Constants.ContractTransactionStatus.Failed)
+                isTMasterTokenDeployed = reviewTokenDeployState(false, Constants.ContractTransactionStatus.Completed)
+                isTMasterTokenFailed = reviewTokenDeployState(false, Constants.ContractTransactionStatus.Failed)
             }
 
             // Not necessary to track more changes since privileged tokens have been correctly deployed.

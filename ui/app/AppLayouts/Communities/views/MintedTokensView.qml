@@ -58,14 +58,14 @@ StatusScrollView {
             return ""
         }
 
-        function getRemainingInfo(isOwnerToken, isPrivilegedToken,
+        function getRemainingInfo(isOwnerToken, isTMasterToken,
                                   remainingSupply, supply, isInfiniteSupply) {
             // Owner token use case:
             if(isOwnerToken)
                 return qsTr("1 of 1 (you hodl)")
 
             // TMaster token use case:
-            if(isPrivilegedToken)
+            if(isTMasterToken)
                 return "∞"
 
             // Rest of collectible cases:
@@ -233,8 +233,8 @@ StatusScrollView {
                     width: collectiblesGrid.cellWidth
                     title: model.name ? model.name : "..."
                     subTitle: deployState === Constants.ContractTransactionStatus.Completed ?
-                                  d.getRemainingInfo(model.isOwner,
-                                                     model.isPrivilegedToken,
+                                  d.getRemainingInfo(model.privilegesLevel === Constants.TokenPrivilegesLevel.Owner,
+                                                     model.privilegesLevel === Constants.TokenPrivilegesLevel.TMaster,
                                                      model.remainingSupply,
                                                      model.supply,
                                                      model.infiniteSupply) :
@@ -245,8 +245,7 @@ StatusScrollView {
                     backgroundColor: "transparent"
                     isLoading: false
                     navigationIconVisible: false
-                    isPrivilegedToken: model.isPrivilegedToken
-                    isOwner: model.isOwner
+                    privilegesLevel: model.privilegesLevel
                     ornamentColor: model.color
 
                     onClicked: root.itemClicked(model.contractUniqueKey,
