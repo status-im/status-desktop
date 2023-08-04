@@ -6,6 +6,7 @@ import time
 from collections import namedtuple
 from datetime import datetime
 
+import allure
 import psutil
 
 import configs
@@ -16,6 +17,7 @@ _logger = logging.getLogger(__name__)
 process_info = namedtuple('RunInfo', ['pid', 'name', 'create_time'])
 
 
+@allure.step('Find process by name')
 def find_process_by_name(process_name: str):
     processes = []
     for proc in psutil.process_iter():
@@ -31,6 +33,7 @@ def find_process_by_name(process_name: str):
     return processes
 
 
+@allure.step('Kill process by name')
 def kill_process_by_name(process_name: str, verify: bool = True, timeout_sec: int = 10):
     _logger.info(f'Closing process: {process_name}')
     processes = find_process_by_name(process_name)
@@ -43,6 +46,7 @@ def kill_process_by_name(process_name: str, verify: bool = True, timeout_sec: in
         wait_for_close(process_name, timeout_sec)
 
 
+@allure.step('Wait for process start')
 def wait_for_started(process_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
     started_at = time.monotonic()
     while True:
@@ -55,6 +59,7 @@ def wait_for_started(process_name: str, timeout_sec: int = configs.timeouts.PROC
         assert time.monotonic() - started_at < timeout_sec, f'Start process error: {process_name}'
 
 
+@allure.step('Wait for process close')
 def wait_for_close(process_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
     started_at = time.monotonic()
     while True:
@@ -65,6 +70,7 @@ def wait_for_close(process_name: str, timeout_sec: int = configs.timeouts.PROCES
     _logger.info(f'Process closed: {process_name}')
 
 
+@allure.step('System execute command')
 def execute(
         command: list,
         shell=True,
@@ -92,6 +98,7 @@ def execute(
     return process.pid
 
 
+@allure.step('System run command')
 def run(
         command: list,
         shell=True,

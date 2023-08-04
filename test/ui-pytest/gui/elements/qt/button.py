@@ -1,11 +1,14 @@
 import typing
 
+import allure
+
 import driver
 from gui.elements.qt.object import QObject
 
 
 class Button(QObject):
 
+    @allure.step('Click {0}')
     def click(
             self,
             x: typing.Union[int, driver.UiTypes.ScreenPoint] = None,

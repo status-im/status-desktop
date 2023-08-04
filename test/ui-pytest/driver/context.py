@@ -1,6 +1,7 @@
 import logging
 import time
 
+import allure
 import squish
 
 import configs
@@ -8,8 +9,8 @@ import configs
 _logger = logging.getLogger(__name__)
 
 
+@allure.step('Attaching to "{0}"')
 def attach(aut_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
-    _logger.info(f'Attaching squish to {aut_name}')
     started_at = time.monotonic()
     while True:
         try:
@@ -22,6 +23,7 @@ def attach(aut_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SE
         assert time.monotonic() - started_at < timeout_sec, f'Attach error: {aut_name}'
 
 
+@allure.step('Detaching')
 def detach():
     for ctx in squish.applicationContextList():
         ctx.detach()

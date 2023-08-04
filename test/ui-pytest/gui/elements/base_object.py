@@ -1,5 +1,7 @@
 import logging
 
+import allure
+
 import configs
 import driver
 from gui import objects_map
@@ -27,10 +29,12 @@ class BaseObject:
     def is_visible(self) -> bool:
         raise NotImplementedError
 
+    @allure.step('Wait until appears {0}')
     def wait_until_appears(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         assert driver.waitFor(lambda: self.is_visible, timeout_msec), f'Object {self} is not visible'
         return self
 
+    @allure.step('Wait until hidden {0}')
     def wait_until_hidden(self, timeout_msec: int = configs.timeouts.UI_LOAD_TIMEOUT_MSEC):
         assert driver.waitFor(lambda: not self.is_visible, timeout_msec), f'Object {self} is not hidden'
 

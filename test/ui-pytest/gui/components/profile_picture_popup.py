@@ -1,6 +1,8 @@
 import time
 from collections import namedtuple
 
+import allure
+
 import driver.mouse
 from gui.components.base_popup import BasePopup
 from gui.elements.qt.button import Button
@@ -19,6 +21,7 @@ class ProfilePicturePopup(BasePopup):
         self._make_profile_picture_button = Button('make_this_my_profile_picture_StatusButton')
         self._slider_handler = QObject('o_DropShadow')
 
+    @allure.step('Make profile image')
     def make_profile_picture(
             self,
             zoom: int = None,

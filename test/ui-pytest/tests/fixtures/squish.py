@@ -1,11 +1,10 @@
 import pytest
 
-import configs
 from driver.server import SquishServer
 
 
 @pytest.fixture(scope='session')
-def server():
+def start_squish_server():
     squish_server = SquishServer()
     squish_server.stop()
     attempt = 3
