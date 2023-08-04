@@ -15,6 +15,7 @@ QtObject:
       chatDetailsVariant: QVariant
       viewOnlyPermissionsSatisfied: bool
       viewAndPostPermissionsSatisfied: bool
+      permissionsCheckOngoing: bool
 
   proc chatDetailsChanged*(self:View) {.signal.}
 
@@ -179,3 +180,17 @@ QtObject:
     read = getViewAndPostPermissionsSatisfied
     notify = viewAndPostPermissionsSatisfiedChanged
 
+  proc getPermissionsCheckOngoing*(self: View): bool {.slot.} =
+    return self.permissionsCheckOngoing
+
+  proc permissionsCheckOngoingChanged*(self: View) {.signal.}
+
+  QtProperty[bool] permissionsCheckOngoing:
+    read = getPermissionsCheckOngoing
+    notify = permissionsCheckOngoingChanged
+
+  proc setPermissionsCheckOngoing*(self: View, value: bool) =
+    if (value == self.permissionsCheckOngoing):
+      return
+    self.permissionsCheckOngoing = value
+    self.permissionsCheckOngoingChanged()

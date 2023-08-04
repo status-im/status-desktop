@@ -405,3 +405,6 @@ method onUpdateViewOnlyPermissionsSatisfied*(self: Module, value: bool) =
 
 method onUpdateViewAndPostPermissionsSatisfied*(self: Module, value: bool) =
   self.view.setViewAndPostPermissionsSatisfied(value)
+
+method setPermissionsCheckOngoing*(self: Module, value: bool) =
+  self.view.setPermissionsCheckOngoing(value)

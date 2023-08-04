@@ -843,11 +843,13 @@ proc updateChannelPermissionViewData*(self: Module, chatId: string, viewOnlyPerm
   if self.chatContentModules.hasKey(chatId):
     self.chatContentModules[chatId].onUpdateViewOnlyPermissionsSatisfied(viewOnlyPermissions.satisfied)
     self.chatContentModules[chatId].onUpdateViewAndPostPermissionsSatisfied(viewAndPostPermissions.satisfied)
+    self.chatContentModules[chatId].setPermissionsCheckOngoing(false)
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   let community = self.controller.getMyCommunity()
   self.view.setAllTokenRequirementsMet(checkPermissionsToJoinResponse.satisfied)
   self.updateTokenPermissionModel(checkPermissionsToJoinResponse.permissions, community)
+  self.setPermissionsToJoinCheckOngoing(false)
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
   let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
@@ -1317,3 +1319,11 @@ method setCommunityMetrics*(self: Module, metrics: CommunityMetricsDto) =
 
 method collectCommunityMetricsMessagesCount*(self: Module, intervals: string) =
   self.controller.collectCommunityMetricsMessagesCount(intervals)
+
+method setPermissionsToJoinCheckOngoing*(self: Module, value: bool) =
+  self.view.setPermissionsCheckOngoing(value)
+
+method setChannelsPermissionsCheckOngoing*(self: Module, value: bool) =
+  for chatId, cModule in self.chatContentModules:
+    if self.view.chatsModel().getItemPermissionsRequired(chatId):
+      cModule.setPermissionsCheckOngoing(true)

@@ -77,6 +77,8 @@ QtObject {
 
     property var advancedModule: profileSectionModule.advancedModule
 
+    readonly property bool permissionsCheckOngoing: chatCommunitySectionModule.permissionsCheckOngoing
+
     signal importingCommunityStateChanged(string communityId, int state, string errorMsg)
 
     signal communityAdded(string communityId)
