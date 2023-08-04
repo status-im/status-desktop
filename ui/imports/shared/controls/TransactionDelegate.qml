@@ -195,6 +195,12 @@ StatusListItem {
         case Constants.TransactionType.ContractDeployment:
             details += qsTr("Contract deployment details") + endl2
             break
+        case Constants.TransactionType.Mint:
+            if (isNFT)
+                details += qsTr("Mint collectible details") + endl2
+            else
+                details += qsTr("Mint token details") + endl2
+            break
         default:
             break
         }
@@ -207,6 +213,7 @@ StatusListItem {
         case Constants.TransactionType.Swap:
         case Constants.TransactionType.Bridge:
         case Constants.TransactionType.ContractDeployment:
+        case Constants.TransactionType.Mint:
             details += getSubtitle(true) + endl2
             break
         default:
@@ -457,6 +464,10 @@ StatusListItem {
             const name = addressNameTo || addressNameFrom
             return !!modelData.contract ? qsTr("Contract %1 via %2 on %3").arg(Utils.compactAddress(modelData.contract, 4)).arg(name).arg(networkName)
                                         : qsTr("Via %1 on %2").arg(name).arg(networkName)
+        case Constants.TransactionType.Mint:
+            if (allAccounts)
+                return qsTr("%1 via %2 in %4").arg(transactionValue).arg(networkName).arg(toAddress)
+            return qsTr("%1 via %2").arg(transactionValue).arg(networkName).arg(networkName)
         default:
             if (allAccounts)
                 return qsTr("%1 from %2 to %3 via %4").arg(transactionValue).arg(fromAddress).arg(toAddress).arg(networkName)
@@ -487,6 +498,7 @@ StatusListItem {
                 return "receive"
             case Constants.TransactionType.Buy:
             case Constants.TransactionType.Sell:
+            case Constants.TransactionType.Mint:
                 return "token"
             case Constants.TransactionType.Destroy:
                 return "destroy"
@@ -545,6 +557,10 @@ StatusListItem {
             return failed ? qsTr("Bridge failed") : (isPending ? qsTr("Bridging") : qsTr("Bridged"))
         case Constants.TransactionType.ContractDeployment:
             return failed ? qsTr("Contract deployment failed") : (isPending ? qsTr("Deploying contract") : qsTr("Contract deployed"))
+        case Constants.TransactionType.Mint:
+            if (isNFT)
+                return failed ? qsTr("Collectible minting failed") : (isPending ? qsTr("Minting collectible") : qsTr("Collectible minted"))
+            return failed ? qsTr("Token minting failed") : (isPending ? qsTr("Minting token") : qsTr("Token minted"))
         default:
             return ""
         }

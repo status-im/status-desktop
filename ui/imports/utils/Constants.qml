@@ -1009,6 +1009,7 @@ QtObject {
         Swap,
         Bridge,
         ContractDeployment,
+        Mint,
         Sell,
         Destroy // TODO update value when added to backend
     }
