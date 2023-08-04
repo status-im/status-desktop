@@ -32,7 +32,6 @@ class SquishServer:
         except AssertionError:
             local_system.execute(cmd, check=True)
 
-
     @classmethod
     def stop(cls, attempt: int = 2):
         local_system.kill_process_by_name(_PROCESS_NAME, verify=False)

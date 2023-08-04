@@ -1,3 +1,5 @@
+import allure
+
 import constants.commands
 import driver
 from gui.elements.qt.button import Button
@@ -13,6 +15,7 @@ class OpenFileDialog(Window):
         self._path_text_edit = TextEdit('titleBar_textInput_TextInputWithHandles')
         self._open_button = Button('please_choose_an_image_Open_Button')
 
+    @allure.step('Open file')
     def open_file(self, fp: SystemPath):
         self._path_text_edit.text = str(fp)
         driver.type(self._path_text_edit.object, f'<{constants.commands.RETURN}>')

@@ -1,6 +1,8 @@
 import time
 import typing
 
+import allure
+
 import configs
 import driver
 from gui.elements.qt.object import QObject
@@ -9,9 +11,11 @@ from gui.elements.qt.object import QObject
 class List(QObject):
 
     @property
+    @allure.step('Get list items {0}')
     def items(self):
         return [self.object.itemAtIndex(index) for index in range(self.object.count)]
 
+    @allure.step('Get values of list items {0}')
     def get_values(self, attr_name: str) -> typing.List[str]:
         values = []
         for index in range(self.object.count):
@@ -20,9 +24,11 @@ class List(QObject):
                 values.append(value)
         return values
 
+    @allure.step('Select item {1} in {0}')
     def select(self, value: str, attr_name: str):
         driver.mouseClick(self.wait_for_item(value, attr_name))
 
+    @allure.step('Wait for item {1} in {0} with attribute {2}')
     def wait_for_item(self, value: str, attr_name: str, timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC):
         started_at = time.monotonic()
         values = []

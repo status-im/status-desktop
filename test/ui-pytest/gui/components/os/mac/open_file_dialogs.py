@@ -1,6 +1,8 @@
 import logging
 import time
 
+import allure
+
 import constants
 import driver
 from gui.elements.os.mac.button import Button
@@ -31,6 +33,7 @@ class OpenFileDialog(NativeObject):
             else:
                 raise err
 
+    @allure.step('Open file')
     def open_file(self, fp: SystemPath):
         # Set focus
         driver.nativeMouseClick(int(self.bounds.x + 10), int(self.bounds.y + 10), driver.Qt.LeftButton)
@@ -47,6 +50,7 @@ class _GoToDialog(NativeObject):
         self.go_to_text_edit = TextEdit('pathTextField')
         super(_GoToDialog, self).__init__('goToDialog')
 
+    @allure.step('Select file')
     def select_file(self, fp: SystemPath):
         self.go_to_text_edit.text = str(fp)
         driver.nativeMouseClick(int(self.bounds.x + 10), int(self.bounds.y + 10), driver.Qt.LeftButton)
