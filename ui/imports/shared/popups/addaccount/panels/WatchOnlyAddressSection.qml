@@ -9,6 +9,7 @@ import StatusQ.Controls.Validators 0.1
 import utils 1.0
 
 import "../stores"
+import "../../common"
 
 Column {
     id: root
@@ -53,7 +54,7 @@ Column {
         }
 
         onKeyPressed: {
-            root.store.submitAddAccount(event)
+            root.store.submitPopup(event)
         }
     }
 

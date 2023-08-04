@@ -11,6 +11,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
+import shared.popups.keypairimport 1.0
 import shared.status 1.0
 
 import "../controls"
@@ -251,6 +252,32 @@ SettingsContentBase {
                 }
             }
             onLoaded: removeKeypairPopup.item.open()
+        }
+
+        Connections {
+            target: root.walletStore.walletModule
+
+            function onDisplayKeypairImportPopup() {
+                keypairImport.active = true
+            }
+            function onDestroyKeypairImportPopup() {
+                keypairImport.active = false
+            }
+        }
+
+
+        Loader {
+            id: keypairImport
+            active: false
+            asynchronous: true
+
+            sourceComponent: KeypairImportPopup {
+                store.keypairImportModule: root.walletStore.walletModule.keypairImportModule
+            }
+
+            onLoaded: {
+                keypairImport.item.open()
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ Column {
     property bool addressResolved: true
     property bool displayDetails: true
     property bool displayCopyButton: true
+    property bool alreadyCreatedAccountIsAnError: true
 
     spacing: Style.current.halfPadding
 
@@ -44,5 +45,6 @@ Column {
         addressDetailsItem: root.addressDetailsItem
         defaultMessage: ""
         defaultMessageCondition: !root.addressResolved
+        alreadyCreatedAccountIsAnError: root.alreadyCreatedAccountIsAnError
     }
 }

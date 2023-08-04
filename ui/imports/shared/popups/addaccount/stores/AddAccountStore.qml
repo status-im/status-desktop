@@ -1,9 +1,12 @@
 import QtQuick 2.13
 import utils 1.0
 
-QtObject {
+import "../../common"
+
+BasePopupStore {
     id: root
 
+    isAddAccountPopup: true
     required property var addAccountModule
     required property var emojiPopup
 
@@ -19,13 +22,11 @@ QtObject {
     property var derivedAddressModel: root.addAccountModule.derivedAddressModel
     property var selectedDerivedAddress: root.addAccountModule.selectedDerivedAddress
     property var watchOnlyAccAddress: root.addAccountModule.watchOnlyAccAddress
-    property var privateKeyAccAddress: root.addAccountModule.privateKeyAccAddress
+    privateKeyAccAddress: root.addAccountModule.privateKeyAccAddress
     property bool editMode: root.addAccountModule.editMode
     property bool disablePopup: root.addAccountModule.disablePopup
 
     property bool accountNameIsValid: false
-    property bool enteredSeedPhraseIsValid: false
-    property bool enteredPrivateKeyIsValid: false
     property bool addingNewMasterKeyConfirmed: false
     property bool seedPhraseRevealed: false
     property bool seedPhraseWord1Valid: false
@@ -82,7 +83,7 @@ QtObject {
         return root.addAccountModule.getStoredSelectedColorId()
     }
 
-    function submitAddAccount(event) {
+    submitPopup: function(event) {
         if (!root.primaryPopupButtonEnabled) {
             return
         }
@@ -116,11 +117,11 @@ QtObject {
         root.addAccountModule.changeWatchOnlyAccountAddress("")
     }
 
-    readonly property var changePrivateKeyPostponed: Backpressure.debounce(root, 400, function (privateKey) {
+    changePrivateKeyPostponed: Backpressure.debounce(root, 400, function (privateKey) {
         root.addAccountModule.changePrivateKey(privateKey)
     })
 
-    function cleanPrivateKey() {
+    cleanPrivateKey: function() {
         root.enteredPrivateKeyIsValid = false
         root.addAccountModule.newKeyPairName = ""
         root.addAccountModule.changePrivateKey("")
@@ -152,11 +153,11 @@ QtObject {
         root.addAccountModule.startScanningForActivity()
     }
 
-    function validSeedPhrase(seedPhrase) {
+    validSeedPhrase: function(seedPhrase) {
         return root.addAccountModule.validSeedPhrase(seedPhrase)
     }
 
-    function changeSeedPhrase(seedPhrase) {
+    changeSeedPhrase: function(seedPhrase) {
         root.addAccountModule.changeSeedPhrase(seedPhrase)
     }
 
@@ -184,10 +185,6 @@ QtObject {
         case Constants.addAccountPopup.predefinedPaths.ethereumLedgerLive:
             return qsTr("Ethereum (Ledger Live/KeepKey)")
         }
-    }
-
-    function getFromClipboard() {
-       return globalUtils.getFromClipboard()
     }
 
     readonly property bool primaryPopupButtonEnabled: {

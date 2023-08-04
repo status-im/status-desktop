@@ -10,6 +10,8 @@ StatusMenu {
 
     property var keyPair
 
+    signal runImportViaSeedPhraseFlow()
+    signal runImportViaPrivateKeyFlow()
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
 
@@ -56,15 +58,16 @@ StatusMenu {
     StatusAction {
         text: enabled? root.keyPair.pairType === Constants.keypair.type.privateKeyImport? qsTr("Import via entering private key") : qsTr("Import via entering seed phrase") : ""
         enabled: !!root.keyPair &&
+                 root.keyPair.operability === Constants.keypair.operability.nonOperable &&
                  (root.keyPair.pairType === Constants.keypair.type.seedImport ||
                   root.keyPair.pairType === Constants.keypair.type.privateKeyImport)
         icon.name: enabled? root.keyPair.pairType === Constants.keypair.type.privateKeyImport? "objects" : "key_pair_seed_phrase" : ""
         icon.color: Theme.palette.primaryColor1
         onTriggered: {
             if (root.keyPair.pairType === Constants.keypair.type.privateKeyImport)
-                console.warn("TODO: run import via private key flow")
+                root.runImportViaPrivateKeyFlow()
             else
-                console.warn("TODO: run import via seed phrase flow")
+                root.runImportViaSeedPhraseFlow()
         }
     }
 

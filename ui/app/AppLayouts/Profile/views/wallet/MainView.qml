@@ -6,6 +6,7 @@ import shared.status 1.0
 import shared.panels 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
 import shared.popups 1.0
@@ -39,6 +40,10 @@ Column {
         function onDestroyAddAccountPopup() {
             addAccount.active = false
         }
+    }
+
+    component Spacer: Item {
+        height: 8
     }
 
 
@@ -91,9 +96,42 @@ Column {
 
     Separator {}
 
-    Item {
+    Spacer {
+        visible: root.walletStore.walletModule.hasPairedDevices
         width: parent.width
-        height: 8
+    }
+
+    Rectangle {
+        visible: root.walletStore.walletModule.hasPairedDevices
+        height: 102
+        width: parent.width
+        color: Theme.palette.transparent
+        radius: 8
+        border.width: 1
+        border.color: Theme.palette.baseColor5
+
+        Column {
+            anchors.fill: parent
+            padding: 16
+            spacing: 8
+
+            StatusBaseText {
+                text: qsTr("Import keypairs from this device to your other synced devices")
+                font.pixelSize: 15
+            }
+
+            StatusButton {
+                text: qsTr("Show encrypted QR of keypairs on device")
+                icon.name: "qr"
+                onClicked: {
+                    console.warn("TODO: run generate qr code flow...")
+                }
+            }
+        }
+    }
+
+    Spacer {
+        width: parent.width
     }
 
     Column {
@@ -112,6 +150,12 @@ Column {
                 onToggleIncludeWatchOnlyAccount: walletStore.toggleIncludeWatchOnlyAccount()
                 onRunRenameKeypairFlow: root.runRenameKeypairFlow(model)
                 onRunRemoveKeypairFlow: root.runRemoveKeypairFlow(model)
+                onRunImportViaSeedPhraseFlow: {
+                    root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.importOption.seedPhrase)
+                }
+                onRunImportViaPrivateKeyFlow: {
+                    root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.importOption.privateKey)
+                }
             }
         }
     }

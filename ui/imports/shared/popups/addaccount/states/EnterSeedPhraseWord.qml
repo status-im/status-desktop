@@ -151,7 +151,7 @@ Item {
             }
 
             onKeyPressed: {
-                root.store.submitAddAccount(event)
+                root.store.submitPopup(event)
             }
         }
     }

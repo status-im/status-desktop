@@ -5,8 +5,9 @@ import utils 1.0
 QtObject {
     id: root
 
-    property var accountsModule
-    property var networksModule
+    property var walletModule
+    property var accountsModule: root.walletModule.accountsModule
+    property var networksModule: root.walletModule.networksModule
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
 
@@ -58,7 +59,16 @@ QtObject {
     }
 
     function runAddAccountPopup() {
+        // TODO:
+        // - `runAddAccountPopup` should be part of `root.walletModule`
+        // - `AddAccountPopup {}` should be moved from `MainView` to `WalletView`
+        // - `Edit account` popup opened from the wallet settings should be the same as one opened from the wallet section
+        // - `walletSection` should not be used in the context of wallet settings
         walletSection.runAddAccountPopup(false)
+    }
+
+    function runKeypairImportPopup(keyUid, importOption) {
+        root.walletModule.runKeypairImportPopup(keyUid, importOption)
     }
 
     function evaluateRpcEndPoint(url) {

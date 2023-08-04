@@ -19,6 +19,7 @@ const SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED* = "walletAccount/p
 const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
 const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
 const SIGNAL_KEYPAIR_DELETED* = "keypairDeleted"
+const SIGNAL_KEYPAIR_OPERABILITY_CHANGED* = "keypairOperabilityChanged"
 
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
 const SIGNAL_KEYCARD_REBUILD* = "keycardRebuild"

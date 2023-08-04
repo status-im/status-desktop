@@ -10,6 +10,7 @@ import StatusQ.Components 0.1
 import utils 1.0
 
 import "../stores"
+import "../../common"
 
 GridLayout {
     id: root
@@ -77,7 +78,7 @@ GridLayout {
             }
 
             onEditingFinished: {
-                root.store.submitAddAccount(null)
+                root.store.submitPopup(null)
             }
 
             input.rightComponent: StatusIcon {

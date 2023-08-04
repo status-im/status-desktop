@@ -238,6 +238,11 @@ proc importMnemonic*(mnemonic, password: string):
   let payload = %* [mnemonic, password]
   return core.callPrivateRPC("accounts_importMnemonic", payload)
 
+proc makeSeedPhraseKeypairFullyOperable*(mnemonic, password: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [mnemonic, password]
+  return core.callPrivateRPC("accounts_makeSeedPhraseKeypairFullyOperable", payload)
+
 proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
     "mnemonicPhrase": mnemonic,
@@ -257,6 +262,11 @@ proc importPrivateKey*(privateKey, password: string):
   RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [privateKey, password]
   return core.callPrivateRPC("accounts_importPrivateKey", payload)
+
+proc makePrivateKeyKeypairFullyOperable*(privateKey, password: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [privateKey, password]
+  return core.callPrivateRPC("accounts_makePrivateKeyKeypairFullyOperable", payload)
 
 proc createAccountFromPrivateKey*(privateKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {"privateKey": privateKey}

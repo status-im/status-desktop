@@ -98,8 +98,5 @@ method getKeycardModule*(self: AccessInterface): QVariant {.base.} =
 method walletModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getWalletAccountsModule*(self: AccessInterface): QVariant {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getWalletNetworksModule*(self: AccessInterface): QVariant {.base.} =
+method getWalletModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")

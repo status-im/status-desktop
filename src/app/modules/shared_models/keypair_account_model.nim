@@ -125,10 +125,9 @@ QtObject:
           self.items[i].setEmoji(emoji)
         return
 
-  proc updateOperabilityForAddress*(self: KeyPairAccountModel, address: string, operability: string) =
+  proc updateOperabilityForAllAddresses*(self: KeyPairAccountModel, operability: string) =
     for i in 0 ..< self.items.len:
-      if cmpIgnoreCase(self.items[i].getAddress(), address) == 0:
-        self.items[i].setOperability(operability)
+      self.items[i].setOperability(operability)
 
   proc setBalanceForAddress*(self: KeyPairAccountModel, address: string, balance: CurrencyAmount) =
     for i in 0 ..< self.items.len:
