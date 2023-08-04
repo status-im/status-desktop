@@ -248,8 +248,10 @@ method onUnpinMessage*(self: Module, messageId: string) =
 
 method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string) =
   var item: pinned_msg_item.Item
-  let (message, err) = self.controller.getMessageById(messageId)
-  if(err.len > 0 or not self.buildPinnedMessageItem(message, actionInitiatedBy, item)):
+  let response = self.controller.getMessageById(messageId)
+  if response.error.len > 0:
+    return
+  if not self.buildPinnedMessageItem(response.message, actionInitiatedBy, item):
     return
 
   self.view.pinnedModel().insertItemBasedOnClock(item)

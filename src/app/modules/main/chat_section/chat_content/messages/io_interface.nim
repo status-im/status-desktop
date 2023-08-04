@@ -179,3 +179,6 @@ method isFirstUnseenMessageInitialized*(self: AccessInterface): bool {.base.} =
 
 method reevaluateViewLoadingState*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method continueScrollToMessage*(self: AccessInterface, messageId: string, message: MessageDto, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

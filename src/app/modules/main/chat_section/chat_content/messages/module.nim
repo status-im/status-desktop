@@ -15,6 +15,7 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../../app_service/common/types
+import ../../../../../../app_service/service/message/dto/call_reason
 
 export io_interface
 
@@ -667,11 +668,15 @@ method scrollToMessage*(self: Module, messageId: string) =
   if self.view.getMessageSearchOngoing():
     return
 
-  if not self.controller.messageFetched(messageId):
-    warn "attempting to scroll to a not fetched message", messageId, chatId = self.controller.getMyChatId()
+  self.controller.asyncGetMessageById(messageId, GetMessageByIdCallReason.ScrollTomessage)
+  self.view.setMessageSearchOngoing(true)
+
+method continueScrollToMessage*(self: Module, messageId: string, message: MessageDto, errorMessage: string) =
+  if errorMessage != "":
+    error "attempted to scroll to a not fetched message", errorMessage, messageId, chatId = self.controller.getMyChatId()
+    self.view.setMessageSearchOngoing(false)
     return
 
-  self.view.setMessageSearchOngoing(true)
   self.controller.setSearchedMessageId(messageId)
   self.checkIfMessageLoadedAndScrollToItIfItIs()
   self.reevaluateViewLoadingState()

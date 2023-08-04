@@ -5,6 +5,7 @@ include ../../../app/core/tasks/common
 import ../../../backend/chat as status_go_chat
 
 import ../../../app/core/custom_urls/urls_manager
+import dto/call_reason
 
 
 #################################################
@@ -312,3 +313,38 @@ const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       "requestedUrls": %*arg.urls
     }
     arg.finish(output)
+
+
+#################################################
+# Async get message by id
+#################################################
+
+type
+  AsyncGetMessageByMessageIdTaskArg = ref object of QObjectTaskArg
+    messageId*: string
+    chatId*: string
+    callReason*: GetMessageByIdCallReason
+
+const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetMessageByMessageIdTaskArg](argEncoded)
+  try:
+    let response = status_go.getMessageByMessageId(arg.messageId)
+    let output = %*{
+      "error": (if response.error != nil: response.error.message else: ""),
+      "message": response.result,
+      "messageId": arg.messageId,
+      "chatId": arg.chatId,
+      "callReason": arg.callReason
+    }
+    arg.finish(output)
+  except Exception as e:
+    error "asyncGetMessageByMessageIdTask failed", message = e.msg
+    let output = %*{
+      "error": e.msg,
+      "message": "",
+      "messageId": arg.messageId,
+      "chatId": arg.chatId,
+      "callReason": arg.callReason
+    }
+    arg.finish(output)
+
