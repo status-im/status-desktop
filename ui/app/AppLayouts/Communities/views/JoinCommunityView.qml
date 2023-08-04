@@ -34,6 +34,7 @@ StatusSectionLayout {
 
     // Permission overlay view properties:
     property bool requirementsMet: true
+    property bool requirementsCheckPending: false
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
     property alias loginType: joinCommunityCenterPanel.loginType
@@ -132,6 +133,7 @@ StatusSectionLayout {
         isJoinRequestRejected: root.isJoinRequestRejected
         requiresRequest: root.requiresRequest
         requirementsMet: root.requirementsMet
+        requirementsCheckPending: root.requirementsCheckPending
 
         communityHoldingsModel: root.communityHoldingsModel
         viewOnlyHoldingsModel: root.viewOnlyHoldingsModel

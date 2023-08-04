@@ -28,7 +28,7 @@ QtObject:
       amIMember: bool
       chatsLoaded: bool
       communityMetrics: string # NOTE: later this should be replaced with QAbstractListModel-based model
-
+      permissionsCheckOngoing: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -431,3 +431,18 @@ QtObject:
 
   proc collectCommunityMetricsMessagesCount*(self: View, intervals: string) {.slot.} =
     self.delegate.collectCommunityMetricsMessagesCount(intervals)
+
+  proc getPermissionsCheckOngoing*(self: View): bool {.slot.} =
+    return self.permissionsCheckOngoing
+
+  proc permissionsCheckOngoingChanged*(self: View) {.signal.}
+
+  QtProperty[bool] permissionsCheckOngoing:
+    read = getPermissionsCheckOngoing
+    notify = permissionsCheckOngoingChanged
+
+  proc setPermissionsCheckOngoing*(self: View, value: bool) =
+    if (value == self.permissionsCheckOngoing):
+      return
+    self.permissionsCheckOngoing = value
+    self.permissionsCheckOngoingChanged()

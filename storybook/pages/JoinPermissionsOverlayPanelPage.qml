@@ -21,6 +21,7 @@ SplitView {
         property string channelName: "vip"
         property bool joinCommunity: true // Otherwise, enter channel
         property bool requirementsMet: true
+        property bool requirementsCheckPending: false
         property bool isInvitationPending: false
         property bool isJoinRequestRejected: false
         property bool requiresRequest: false
@@ -74,6 +75,7 @@ SplitView {
                             anchors.centerIn: parent
                             joinCommunity: d.joinCommunity
                             requirementsMet: d.requirementsMet
+                            requirementsCheckPending: d.requirementsCheckPending
                             isInvitationPending: d.isInvitationPending
                             isJoinRequestRejected: d.isJoinRequestRejected
                             requiresRequest: d.requiresRequest
@@ -151,6 +153,7 @@ SplitView {
                 channelName: d.chanelName
                 joinCommunity: d.joinCommunity
                 requirementsMet: d.requirementsMet
+                requirementsCheckPending: d.requirementsCheckPending
                 isInvitationPending: d.isInvitationPending
                 isJoinRequestRejected: d.isJoinRequestRejected
                 requiresRequest: d.requiresRequest
@@ -158,6 +161,7 @@ SplitView {
                 onChannelNameChanged: d.channelName = channelName
                 onJoinCommunityChanged: d.joinCommunity = joinCommunity
                 onRequirementsMetChanged: d.requirementsMet = requirementsMet
+                onRequirementsCheckPendingChanged: d.requirementsCheckPending = requirementsCheckPending
                 onIsInvitationPendingChanged: d.isInvitationPending = isInvitationPending
                 onIsJoinRequestRejectedChanged: d.isJoinRequestRejected = isJoinRequestRejected
                 onRequiresRequestChanged: d.requiresRequest = requiresRequest

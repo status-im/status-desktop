@@ -393,3 +393,9 @@ method onCommunityCheckChannelPermissionsResponse*(self: AccessInterface, chatId
 
 method onCommunityCheckAllChannelsPermissionsResponse*(self: AccessInterface, checkAllChannelsPermissionsResponse: CheckAllChannelsPermissionsResponseDto) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method setPermissionsToJoinCheckOngoing*(self: AccessInterface, value: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setChannelsPermissionsCheckOngoing*(self: AccessInterface, value: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

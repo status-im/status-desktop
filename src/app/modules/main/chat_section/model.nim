@@ -298,6 +298,13 @@ QtObject:
     let modelIndex = self.createIndex(index, 0, nil)
     self.dataChanged(modelIndex, modelIndex, @[ModelRole.RequiresPermissions.int])
 
+  proc getItemPermissionsRequired*(self: Model, id: string): bool =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return false
+
+    return self.items[index].requiresPermissions
+
   proc changeMutedOnItemById*(self: Model, id: string, muted: bool) =
     let index = self.getItemIdxById(id)
     if index == -1:

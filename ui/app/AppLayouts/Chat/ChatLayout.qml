@@ -58,6 +58,7 @@ StackLayout {
                              communityData.memberRole === Constants.memberRole.admin
             communityItemsModel: root.rootStore.communityItemsModel
             requirementsMet: root.permissionsStore.allTokenRequirementsMet
+            requirementsCheckPending: root.rootStore.permissionsCheckOngoing
             requiresRequest: !communityData.amIMember
             communityHoldingsModel: root.permissionsStore.becomeMemberPermissionsModel
             viewOnlyHoldingsModel: root.permissionsStore.viewOnlyPermissionsModel

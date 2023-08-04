@@ -22,6 +22,7 @@ ColumnLayout {
     property alias loginType: overlayPanel.loginType
 
     property bool requirementsMet: true
+    property bool requirementsCheckPending: false
 
     property var communityHoldingsModel
     property var viewOnlyHoldingsModel
@@ -140,6 +141,7 @@ ColumnLayout {
                     topPadding: 2 * bottomPadding
                     joinCommunity: root.joinCommunity
                     requirementsMet: root.requirementsMet
+                    requirementsCheckPending: root.requirementsCheckPending
                     isInvitationPending: root.isInvitationPending
                     isJoinRequestRejected: root.isJoinRequestRejected
                     requiresRequest: root.requiresRequest

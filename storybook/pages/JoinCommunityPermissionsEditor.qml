@@ -13,6 +13,7 @@ ColumnLayout {
     property string channelName: "#vip"
     property bool joinCommunity: true // Otherwise, enter channel
     property bool requirementsMet: true
+    property bool requirementsCheckPending: false
     property bool isInvitationPending: false
     property bool isJoinRequestRejected: false
     property bool requiresRequest: false
@@ -52,6 +53,19 @@ ColumnLayout {
         CheckBox {
             checked: root.requirementsMet
             onCheckedChanged: root.requirementsMet = checked
+        }
+    }
+
+    ColumnLayout {
+        visible: !isOnlyChannelPanelEditor
+        Label {
+            Layout.fillWidth: true
+            text: "Requirements check pending:"
+        }
+
+        CheckBox {
+            checked: root.requirementsCheckPending
+            onCheckedChanged: root.requirementsCheckPending = checked
         }
     }
 
