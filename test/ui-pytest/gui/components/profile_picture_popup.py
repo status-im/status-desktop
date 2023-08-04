@@ -34,18 +34,18 @@ class ProfilePicturePopup(BasePopup):
             time.sleep(1)
         if shift is not None:
             if shift.left:
-                driver.mouse.press_and_move(self._view.object, 1, 1, shift.left, 1, step=100)
+                driver.mouse.press_and_move(self._view.object, 1, 1, shift.left, 1)
                 time.sleep(1)
             if shift.right:
                 driver.mouse.press_and_move(
-                    self._view.object, self._view.width, 1, self._view.width - shift.right, 1, step=100)
+                    self._view.object, self._view.width, 1, self._view.width - shift.right, 1)
                 time.sleep(1)
             if shift.top:
-                driver.mouse.press_and_move(self._view.object, 1, 1, 1, shift.top, step=100)
+                driver.mouse.press_and_move(self._view.object, 1, 1, 1, shift.top, step=1)
                 time.sleep(1)
             if shift.bottom:
                 driver.mouse.press_and_move(
-                    self._view.object, 1, self._view.height, 1, self._view.height - shift.bottom, step=100)
+                    self._view.object, 1, self._view.height, 1, self._view.height - shift.bottom, step=1)
                 time.sleep(1)
 
             self._make_profile_picture_button.click()

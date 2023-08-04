@@ -70,34 +70,33 @@ class Image:
 
     @allure.step('Compare images')
     def compare(
-            self, expected: np.ndarray, threshold: float = 0.99, verify=True) -> bool:
+            self, expected: np.ndarray, threshold: float = 0.99) -> bool:
         correlation = Ocv.compare_images(self.view, expected)
         result = correlation >= threshold
         _logger.info(f'Images equals on: {abs(round(correlation, 4) * 100)}%')
 
-        if verify:
-            if result:
-                _logger.info(f'Screenshot comparison passed')
-            else:
-                configs.testpath.TEST_ARTIFACTS.mkdir(parents=True, exist_ok=True)
-                diff = Ocv.draw_contours(self.view, expected)
+        if result:
+            _logger.info(f'Screenshot comparison passed')
+        else:
+            configs.testpath.TEST_ARTIFACTS.mkdir(parents=True, exist_ok=True)
+            diff = Ocv.draw_contours(self.view, expected)
 
-                actual_fp = configs.testpath.TEST_ARTIFACTS / f'actual_image.png'
-                expected_fp = configs.testpath.TEST_ARTIFACTS / f'expected_image.png'
-                diff_fp = configs.testpath.TEST_ARTIFACTS / f'diff_image.png'
+            actual_fp = configs.testpath.TEST_ARTIFACTS / f'actual_image.png'
+            expected_fp = configs.testpath.TEST_ARTIFACTS / f'expected_image.png'
+            diff_fp = configs.testpath.TEST_ARTIFACTS / f'diff_image.png'
 
-                self.save(actual_fp, force=True)
-                cv2.imwrite(str(expected_fp), expected)
-                cv2.imwrite(str(diff_fp), diff)
+            self.save(actual_fp, force=True)
+            cv2.imwrite(str(expected_fp), expected)
+            cv2.imwrite(str(diff_fp), diff)
 
-                allure.attach(name='actual', body=actual_fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
-                allure.attach(name='expected', body=expected_fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
-                allure.attach(name='diff', body=diff_fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
+            allure.attach(name='actual', body=actual_fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
+            allure.attach(name='expected', body=expected_fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
+            allure.attach(name='diff', body=diff_fp.read_bytes(), attachment_type=allure.attachment_type.PNG)
 
-                _logger.info(
-                    f"Screenshot comparison failed.\n"
-                    f"Actual, Diff and Expected screenshots are saved:\n"
-                    f"{configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT)}.")
+            _logger.info(
+                f"Screenshot comparison failed.\n"
+                f"Actual, Diff and Expected screenshots are saved:\n"
+                f"{configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT)}.")
         return result
 
     @allure.step('Crop image')
@@ -218,7 +217,7 @@ def compare(actual: Image,
     else:
         expected = expected.view
     start = datetime.now()
-    while not actual.compare(expected, threshold, verify=False):
+    while not actual.compare(expected, threshold):
         time.sleep(1)
         assert (datetime.now() - start).seconds < timout_sec, 'Comparison failed'
     _logger.info(f'Screenshot comparison passed')

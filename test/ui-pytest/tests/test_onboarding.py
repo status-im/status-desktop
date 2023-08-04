@@ -16,8 +16,8 @@ _logger = logging.getLogger(__name__)
 pytestmark = allure.suite("Onboarding")
 
 
-@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703020', 'Generate new keys')
-@pytest.mark.case(703021)
+@allure.testcase('https://ethstatus.testrail.net/index.php?/cases/view/703421', 'Generate new keys')
+@pytest.mark.case(703421)
 @pytest.mark.parametrize('user_name, password, user_image', [
     pytest.param('Test-User _1', '*P@ssw0rd*', None),
     pytest.param('_1Test-User', '*P@ssw0rd*', 'tv_signal.jpeg', marks=pytest.mark.smoke),
