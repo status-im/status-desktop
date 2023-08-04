@@ -13,6 +13,13 @@ _logger = logging.getLogger(__name__)
 def generate_test_data(request):
     test_path, test_name, test_params = generate_test_info(request.node)
     configs.testpath.TEST = configs.testpath.RUN / test_path / test_name
+    node_dir = configs.testpath.TEST / test_params
+    configs.testpath.TEST_ARTIFACTS = node_dir / 'artifacts'
+    configs.testpath.TEST_VP = configs.testpath.VP / test_path / test_name
+    _logger.info(
+        f'\nArtifacts directory:\t{configs.testpath.TEST_ARTIFACTS.relative_to(configs.testpath.ROOT)}'
+        f'\nVerification points directory:\t{configs.testpath.TEST_VP.relative_to(configs.testpath.ROOT)}'
+    )
     _logger.info(f'Start test: {test_name}')
 
 
@@ -25,7 +32,7 @@ def generate_test_info(node):
 
 
 @pytest.fixture(scope='session')
-def run_dir():
+def prepare_test_directory():
     keep_results = 5
     run_name_pattern = 'run_????????_??????'
     runs = list(sorted(configs.testpath.RESULTS.glob(run_name_pattern)))
