@@ -1,7 +1,7 @@
 import NimQml, Tables, strutils, sequtils, sugar, chronicles
 
 import io_interface
-import view, controller, derived_address_model
+import view, controller
 import internal/[state, state_factory]
 
 import ../../../core/eventemitter
@@ -9,7 +9,7 @@ import ../../../core/eventemitter
 import ../../../global/global_singleton
 
 import ../../shared/keypairs
-import ../../shared_models/[keypair_model]
+import ../../shared_models/[keypair_model, derived_address_model]
 import ../../shared_modules/keycard_popup/module as keycard_shared_module
 
 import ../../../../app_service/common/account_constants

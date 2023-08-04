@@ -71,7 +71,7 @@ ColumnLayout {
         function pasteWords () {
             const clipboardText = globalUtils.getFromClipboard()
             // Split words separated by commas and or blank spaces (spaces, enters, tabs)
-            const words = clipboardText.split(/[, \s]+/)
+            const words = clipboardText.trim().split(/[, \s]+/)
 
             let index = d.tabs.indexOf(words.length)
             if (index === -1) {

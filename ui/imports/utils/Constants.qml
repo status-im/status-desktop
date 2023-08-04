@@ -739,6 +739,23 @@ QtObject {
         }
     }
 
+    readonly property QtObject keypairImportPopup: QtObject {
+        readonly property int popupWidth: 480
+        readonly property int contentHeight: 626
+        readonly property int footerButtonsHeight: 44
+
+        readonly property QtObject importOption: QtObject {
+            readonly property int seedPhrase: 1
+            readonly property int privateKey: 2
+        }
+
+        readonly property QtObject state: QtObject {
+            readonly property string noState: "NoState"
+            readonly property string importSeedPhrase: "ImportSeedPhrase"
+            readonly property string importPrivateKey: "ImportPrivateKey"
+        }
+    }
+
     readonly property QtObject localPairingAction: QtObject {
         readonly property int actionUnknown: 0
         readonly property int actionConnect: 1

@@ -12,6 +12,7 @@ import utils 1.0
 
 import "../stores"
 import "../panels"
+import "../../common"
 
 Item {
     id: root
@@ -140,7 +141,7 @@ Item {
                 }
 
                 onKeyPressed: {
-                    root.store.submitAddAccount(event)
+                    root.store.submitPopup(event)
                 }
 
                 onValidChanged: {

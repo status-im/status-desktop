@@ -11,13 +11,10 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 
-import "../stores"
-import "../panels"
-
 Item {
     id: root
 
-    property AddAccountStore store
+    property BasePopupStore store
 
     QtObject {
         id: d
@@ -38,8 +35,10 @@ Item {
             spacing: Style.current.halfPadding
 
             StatusBaseText {
-                text: qsTr("Private key")
+                width: parent.width
+                text: root.store.isAddAccountPopup? qsTr("Private key") : qsTr("Private key for %1 keypair").arg(root.store.selectedKeypair.name)
                 font.pixelSize: Constants.addAccountPopup.labelFontSize1
+                elide: Text.ElideRight
             }
 
             GridLayout {
@@ -68,7 +67,7 @@ Item {
                     }
 
                     onPressed: {
-                        root.store.submitAddAccount(event)
+                        root.store.submitPopup(event)
                     }
 
                     StatusButton {
@@ -97,11 +96,17 @@ Item {
 
                 StatusBaseText {
                     Layout.alignment: Qt.AlignRight
-                    visible: privKeyInput.text !== "" && !root.store.enteredPrivateKeyIsValid
+                    visible: privKeyInput.text !== "" && !(root.store.enteredPrivateKeyIsValid && root.store.enteredPrivateKeyMatchTheKeypair)
                     wrapMode: Text.WordWrap
                     font.pixelSize: 12
                     color: Theme.palette.dangerColor1
-                    text: qsTr("Private key invalid")
+                    text: {
+                        if (!root.store.enteredPrivateKeyIsValid)
+                            return qsTr("Private key invalid")
+                        if (!root.store.enteredPrivateKeyMatchTheKeypair)
+                            return qsTr("This is not the correct private key")
+                        return ""
+                    }
                 }
             }
         }
@@ -136,17 +141,18 @@ Item {
             addressDetailsItem: root.store.privateKeyAccAddress
             addressResolved: d.addressResolved
             displayCopyButton: false
+            alreadyCreatedAccountIsAnError: root.store.isAddAccountPopup
         }
 
         StatusModalDivider {
             width: parent.width
-            visible: d.addressResolved
+            visible: root.store.isAddAccountPopup && d.addressResolved
         }
 
         Column {
             width: parent.width
             spacing: Style.current.halfPadding
-            visible: d.addressResolved
+            visible: root.store.isAddAccountPopup && d.addressResolved
 
             StatusInput {
                 objectName: "AddAccountPopup-PrivateKeyName"
@@ -154,9 +160,12 @@ Item {
                 label: qsTr("Key name")
                 charLimit: Constants.addAccountPopup.keyPairNameMaxLength
                 placeholderText: qsTr("Enter a name")
-                text: root.store.addAccountModule.newKeyPairName
+                text: root.store.isAddAccountPopup? root.store.addAccountModule.newKeyPairName : ""
 
                 onTextChanged: {
+                    if (!root.store.isAddAccountPopup) {
+                        return
+                    }
                     if (text.trim() == "") {
                         root.store.addAccountModule.newKeyPairName = ""
                         return
@@ -165,7 +174,7 @@ Item {
                 }
 
                 onKeyPressed: {
-                    root.store.submitAddAccount(event)
+                    root.store.submitPopup(event)
                 }
             }
 

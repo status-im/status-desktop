@@ -215,6 +215,15 @@ proc removeAccountFromLocalStoreAndNotify(self: Service, address: string, notify
   if notify:
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountArgs(account: acc))
 
+proc updateKeypairOperabilityInLocalStoreAndNotify(self: Service, keyUid: string) =
+  let kp = self.getKeypairByKeyUid(keyUid)
+  if kp.isNil:
+    error "there is no known keypair", keyUid=keyUid, procName="updateKeypairOperabilityInLocalStoreAndNotify"
+    return
+  for acc in kp.accounts:
+    acc.operable = AccountFullyOperable
+  self.events.emit(SIGNAL_KEYPAIR_OPERABILITY_CHANGED, KeypairArgs(keypair: kp))
+
 proc updateAccountsPositions(self: Service) =
   let dbAccounts = getAccountsFromDb()
   for dbAcc in dbAccounts:
@@ -305,6 +314,24 @@ proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPas
     error "error: ", procName="addNewPrivateKeyKeypair", errName=e.name, errDesription=e.msg
     return e.msg
 
+proc makePrivateKeyKeypairFullyOperable*(self: Service, keyUid, privateKey, password: string, doPasswordHashing: bool): string =
+  if password.len == 0:
+    error "for making a private key keypair fully operable, password must be provided"
+    return
+  var finalPassword = password
+  if doPasswordHashing:
+    finalPassword = utils.hashPassword(password)
+  try:
+    var response = status_go_accounts.makePrivateKeyKeypairFullyOperable(privateKey, finalPassword)
+    if not response.error.isNil:
+      error "status-go error", procName="makePrivateKeyKeypairFullyOperable", errCode=response.error.code, errDesription=response.error.message
+      return response.error.message
+    self.updateKeypairOperabilityInLocalStoreAndNotify(keyUid)
+    return ""
+  except Exception as e:
+    error "error: ", procName="makePrivateKeyKeypairFullyOperable", errName=e.name, errDesription=e.msg
+    return e.msg
+
 ## Mandatory fields for all accounts: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
 proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPasswordHashing: bool,
   keyUid, keypairName, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): string =
@@ -326,6 +353,24 @@ proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPas
     return ""
   except Exception as e:
     error "error: ", procName="addNewSeedPhraseKeypair", errName=e.name, errDesription=e.msg
+    return e.msg
+
+proc makeSeedPhraseKeypairFullyOperable*(self: Service, keyUid, mnemonic, password: string, doPasswordHashing: bool): string =
+  if password.len == 0:
+    error "for making a private key keypair fully operable, password must be provided"
+    return
+  var finalPassword = password
+  if doPasswordHashing:
+    finalPassword = utils.hashPassword(password)
+  try:
+    var response = status_go_accounts.makeSeedPhraseKeypairFullyOperable(mnemonic, finalPassword)
+    if not response.error.isNil:
+      error "status-go error", procName="makeSeedPhraseKeypairFullyOperable", errCode=response.error.code, errDesription=response.error.message
+      return response.error.message
+    self.updateKeypairOperabilityInLocalStoreAndNotify(keyUid)
+    return ""
+  except Exception as e:
+    error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
     return e.msg
 
 proc getRandomMnemonic*(self: Service): string =
@@ -591,3 +636,6 @@ proc getCurrencyFormat*(self: Service, symbol: string): CurrencyFormatDto =
 
 proc areTestNetworksEnabled*(self: Service): bool =
   return self.settingsService.areTestNetworksEnabled()
+
+proc hasPairedDevices*(self: Service): bool =
+  return hasPairedDevices()

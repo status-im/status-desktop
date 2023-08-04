@@ -9,6 +9,7 @@ import utils 1.0
 
 import "./stores"
 import "./states"
+import "../common"
 
 StatusModal {
     id: root
@@ -255,7 +256,7 @@ StatusModal {
             }
 
             onClicked: {
-                root.store.submitAddAccount(null)
+                root.store.submitPopup(null)
             }
         }
     ]

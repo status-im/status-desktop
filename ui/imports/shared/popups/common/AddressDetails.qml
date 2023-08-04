@@ -12,6 +12,7 @@ Row {
     property var addressDetailsItem
     property bool defaultMessageCondition: true
     property string defaultMessage: ""
+    property bool alreadyCreatedAccountIsAnError: true
 
     StatusIcon {
         id: icon
@@ -36,7 +37,7 @@ Row {
             if (!root.addressDetailsItem || !root.addressDetailsItem.loaded) {
                 return qsTr("Scanning for activity...")
             }
-            if (root.addressDetailsItem.alreadyCreated) {
+            if (root.alreadyCreatedAccountIsAnError && root.addressDetailsItem.alreadyCreated) {
                 return qsTr("Already added")
             }
             if (root.addressDetailsItem.hasActivity) {
@@ -48,7 +49,7 @@ Row {
             if (root.defaultMessageCondition || !root.addressDetailsItem || !root.addressDetailsItem.loaded) {
                 return Theme.palette.baseColor1
             }
-            if (root.addressDetailsItem.alreadyCreated) {
+            if (root.alreadyCreatedAccountIsAnError && root.addressDetailsItem.alreadyCreated) {
                 return Theme.palette.dangerColor1
             }
             if (root.addressDetailsItem.hasActivity) {

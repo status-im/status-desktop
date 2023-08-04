@@ -82,6 +82,12 @@ QtObject:
         item.getAccountsModel().updateDetailsForAddressIfTheyAreSet(address, name, colorId, emoji)
         break
 
+  proc onUpdatedKeypairOperability*(self: KeyPairModel, keyUid, operability: string) =
+    for item in self.items:
+      if keyUid == item.getKeyUid():
+        item.updateOperabilityForAllAddresses(operability)
+        break
+
   proc onPreferredSharingChainsUpdated*(self: KeyPairModel,keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
     for item in self.items:
       if keyUid == item.getKeyUid():

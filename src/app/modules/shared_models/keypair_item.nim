@@ -270,8 +270,8 @@ QtObject:
     self.accounts.updatePreferredSharingChainsForAddress(address, prodPreferredChainIds, testPreferredChainIds)
   proc setBalanceForAddress*(self: KeyPairItem, address: string, balance: CurrencyAmount) =
     self.accounts.setBalanceForAddress(address, balance)
-  proc updateOperabilityForAccountWithAddress*(self: KeyPairItem, address: string, operability: string) =
-    self.accounts.updateOperabilityForAddress(address, operability)
+  proc updateOperabilityForAllAddresses*(self: KeyPairItem, operability: string) =
+    self.accounts.updateOperabilityForAllAddresses(operability)
     self.operabilityChanged()
 
   proc setItem*(self: KeyPairItem, item: KeyPairItem) =

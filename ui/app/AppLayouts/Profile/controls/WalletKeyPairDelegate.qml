@@ -21,6 +21,8 @@ Rectangle {
 
     signal goToAccountView(var account)
     signal toggleIncludeWatchOnlyAccount()
+    signal runImportViaSeedPhraseFlow()
+    signal runImportViaPrivateKeyFlow()
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
 
@@ -80,6 +82,8 @@ Rectangle {
                                 menuLoader.active = false
                             }
                             keyPair: root.keyPair
+                            onRunImportViaSeedPhraseFlow: root.runImportViaSeedPhraseFlow()
+                            onRunImportViaPrivateKeyFlow: root.runImportViaPrivateKeyFlow()
                             onRunRenameKeypairFlow: root.runRenameKeypairFlow()
                             onRunRemoveKeypairFlow: root.runRemoveKeypairFlow()
                         }

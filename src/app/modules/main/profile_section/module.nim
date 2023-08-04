@@ -111,7 +111,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.keycardModule = keycard_module.newModule(result, events, keycardService, settingsService, networkService,
     privacyService, accountsService, walletAccountService, keychainService)
 
-  result.walletModule = wallet_module.newModule(result, events, walletAccountService, settingsService, networkService)
+  result.walletModule = wallet_module.newModule(result, events, accountsService, walletAccountService, settingsService, networkService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
@@ -276,8 +276,5 @@ method getKeycardModule*(self: Module): QVariant =
 method walletModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getWalletAccountsModule*(self: Module): QVariant =
-  return self.walletModule.getAccountsModuleAsVariant()
-
-method getWalletNetworksModule*(self: Module): QVariant =
-  return self.walletModule.getNetworksModuleAsVariant()
+method getWalletModule*(self: Module): QVariant =
+  return self.walletModule.getModuleAsVariant()

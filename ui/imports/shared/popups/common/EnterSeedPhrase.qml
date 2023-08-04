@@ -12,13 +12,10 @@ import StatusQ.Popups 0.1
 import utils 1.0
 import shared.panels 1.0 as SharedPanels
 
-import "../stores"
-import "../panels"
-
 Item {
     id: root
 
-    property AddAccountStore store
+    property BasePopupStore store
 
     Column {
         anchors.top: parent.top
@@ -29,8 +26,10 @@ Item {
 
 
         StatusBaseText {
-            text: qsTr("Enter seed phrase")
+            width: parent.width
+            text: root.store.isAddAccountPopup? qsTr("Enter seed phrase") : qsTr("Enter seed phrase for %1 keypair").arg(root.store.selectedKeypair.name)
             font.pixelSize: Constants.addAccountPopup.labelFontSize1
+            elide: Text.ElideRight
         }
 
         SharedPanels.EnterSeedPhrase {
@@ -47,24 +46,28 @@ Item {
                 }
                 root.store.enteredSeedPhraseIsValid = valid
                 if (!enterSeedPhrase.isSeedPhraseValid(seedPhrase)) {
-                    enterSeedPhrase.setWrongSeedPhraseMessage(qsTr("The entered seed phrase is already added"))
+                    let err = qsTr("The entered seed phrase is already added")
+                    if (!root.store.isAddAccountPopup) {
+                        err = qsTr("This is not the correct seed  phrase for %1 key").arg(root.store.selectedKeypair.name)
+                    }
+                    enterSeedPhrase.setWrongSeedPhraseMessage(err)
                 }
             }
 
             onSubmitSeedPhrase: {
-                root.store.submitAddAccount()
+                root.store.submitPopup()
             }
         }
 
         StatusModalDivider {
             width: parent.width
-            visible: root.store.enteredSeedPhraseIsValid
+            visible: root.store.isAddAccountPopup && root.store.enteredSeedPhraseIsValid
         }
 
         Column {
             width: parent.width
             spacing: Style.current.halfPadding
-            visible: root.store.enteredSeedPhraseIsValid
+            visible: root.store.isAddAccountPopup && root.store.enteredSeedPhraseIsValid
 
             StatusInput {
                 objectName: "AddAccountPopup-ImportedSeedPhraseKeyName"
@@ -72,9 +75,12 @@ Item {
                 label: qsTr("Key name")
                 charLimit: Constants.addAccountPopup.keyPairNameMaxLength
                 placeholderText: qsTr("Enter a name")
-                text: root.store.addAccountModule.newKeyPairName
+                text: root.store.isAddAccountPopup? root.store.addAccountModule.newKeyPairName : ""
 
                 onTextChanged: {
+                    if (!root.store.isAddAccountPopup) {
+                        return
+                    }
                     if (text.trim() == "") {
                         root.store.addAccountModule.newKeyPairName = ""
                         return
@@ -83,7 +89,7 @@ Item {
                 }
 
                 onKeyPressed: {
-                    root.store.submitAddAccount(event)
+                    root.store.submitPopup(event)
                 }
             }
 

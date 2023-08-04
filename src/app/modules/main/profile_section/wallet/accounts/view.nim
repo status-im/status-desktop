@@ -51,6 +51,9 @@ QtObject:
     self.accounts.onUpdatedAccount(account)
     self.keyPairModel.onUpdatedAccount(account.keyUid, account.address, account.name, account.colorId, account.emoji)
 
+  proc onUpdatedKeypairOperability*(self: View, keyUid, operability: string) =
+    self.keyPairModel.onUpdatedKeypairOperability(keyUid, operability)
+
   proc onPreferredSharingChainsUpdated*(self: View, keyUid, address, prodPreferredChainIds, testPreferredChainIds: string) =
     self.keyPairModel.onPreferredSharingChainsUpdated(keyUid, address, prodPreferredChainIds, testPreferredChainIds)
 

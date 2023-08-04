@@ -1,8 +1,7 @@
 import NimQml
 import io_interface
-import derived_address_model
 import internal/[state, state_wrapper]
-import ../../shared_models/[keypair_model, keypair_item]
+import ../../shared_models/[keypair_model, keypair_item, derived_address_model]
 
 QtObject:
   type
@@ -178,8 +177,8 @@ QtObject:
     return self.selectedDerivedAddressVariant
   QtProperty[QVariant] selectedDerivedAddress:
     read = getSelectedDerivedAddressVariant
-    notify = selectedDerivedAddressChanged  
-  
+    notify = selectedDerivedAddressChanged
+
   proc setSelectedDerivedAddress*(self: View, item: DerivedAddressItem) =
     self.selectedDerivedAddress.setItem(item)
     self.selectedDerivedAddressChanged()
@@ -192,8 +191,8 @@ QtObject:
     return self.watchOnlyAccAddressVariant
   QtProperty[QVariant] watchOnlyAccAddress:
     read = getWatchOnlyAccAddressVariant
-    notify = watchOnlyAccAddressChanged  
-  
+    notify = watchOnlyAccAddressChanged
+
   proc setWatchOnlyAccAddress*(self: View, item: DerivedAddressItem) =
     self.watchOnlyAccAddress.setItem(item)
     self.watchOnlyAccAddressChanged()
@@ -206,8 +205,8 @@ QtObject:
     return self.privateKeyAccAddressVariant
   QtProperty[QVariant] privateKeyAccAddress:
     read = getPrivateKeyAccAddressVariant
-    notify = privateKeyAccAddressChanged  
-  
+    notify = privateKeyAccAddressChanged
+
   proc setPrivateKeyAccAddress*(self: View, item: DerivedAddressItem) =
     self.privateKeyAccAddress.setItem(item)
     self.privateKeyAccAddressChanged()
@@ -258,7 +257,7 @@ QtObject:
   QtProperty[string] newKeyPairName:
     read = getNewKeyPairName
     write = setNewKeyPairName
-    notify = newKeyPairNameChanged    
+    notify = newKeyPairNameChanged
 
   proc selectedEmojiChanged*(self: View) {.signal.}
   proc setSelectedEmoji*(self: View, value: string) {.slot.} =
@@ -312,7 +311,7 @@ QtObject:
   QtProperty[string] derivationPath:
     read = getDerivationPath
     write = setDerivationPath
-    notify = derivationPathChanged  
+    notify = derivationPathChanged
 
   proc suggestedDerivationPathChanged*(self: View) {.signal.}
   proc getSuggestedDerivationPath*(self: View): string {.slot.} =
@@ -320,11 +319,11 @@ QtObject:
   QtProperty[string] suggestedDerivationPath:
     read = getSuggestedDerivationPath
     notify = suggestedDerivationPathChanged
-  
+
   proc setSuggestedDerivationPath*(self: View, value: string) =
     self.suggestedDerivationPath = value
     self.suggestedDerivationPathChanged()
-  
+
   proc changeSelectedOrigin*(self: View, keyUid: string) {.slot.} =
     self.delegate.changeSelectedOrigin(keyUid)
 
@@ -354,4 +353,4 @@ QtObject:
 
   proc startScanningForActivity*(self: View) {.slot.} =
     self.delegate.startScanningForActivity()
-    
+
