@@ -26,11 +26,9 @@ Rectangle {
 
     QtObject {
         id: d
-        readonly property var relatedAccounts: keyPair.accounts
-        readonly property bool isWatchOnly: keyPair.pairType === Constants.keycard.keyPairType.watchOnly
-        readonly property bool isPrivateKeyImport: keyPair.pairType === Constants.keycard.keyPairType.privateKeyImport
-        readonly property bool isProfileKeypair: keyPair.pairType === Constants.keycard.keyPairType.profile
-        readonly property string locationInfo: keyPair.migratedToKeycard ? qsTr("On Keycard"): qsTr("On device")
+        readonly property var relatedAccounts: !!root.keyPair? root.keyPair.accounts : {}
+        readonly property bool isWatchOnly: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.watchOnly
+        readonly property bool isProfileKeypair: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile
     }
 
     implicitHeight: layout.height
@@ -43,25 +41,25 @@ Rectangle {
         width: parent.width
         StatusListItem {
             Layout.fillWidth: true
-            title: d.isWatchOnly ? qsTr("Watched addresses") : keyPair.name
+            title: !!root.keyPair? d.isWatchOnly ? qsTr("Watched addresses") : root.keyPair.name : ""
             statusListItemSubTitle.textFormat: Qt.RichText
-            titleTextIcon: keyPair.migratedToKeycard ? "keycard": ""
-            subTitle: d.isWatchOnly ? "" : d.isProfileKeypair ?
-                      Utils.getElidedCompressedPk(keyPair.pubKey) + Constants.settingsSection.dotSepString + d.locationInfo : d.locationInfo
+            titleTextIcon: !!root.keyPair && keyPair.migratedToKeycard ? "keycard": ""
+            subTitle: Utils.getKeypairLocation(root.keyPair)
+            statusListItemSubTitle.color: Utils.getKeypairLocationColor(root.keyPair)
             color: Theme.palette.transparent
             ringSettings {
                 ringSpecModel: d.isProfileKeypair ? Utils.getColorHashAsJson(root.userProfilePublicKey) : []
                 ringPxSize: Math.max(asset.width / 24.0)
             }
             asset {
-                width: keyPair.icon ? Style.current.bigPadding : 40
-                height: keyPair.icon ? Style.current.bigPadding : 40
-                name: keyPair.image ? keyPair.image : keyPair.icon
-                isImage: !!keyPair.image
+                width: !!root.keyPair && keyPair.icon? Style.current.bigPadding : 40
+                height: !!root.keyPair && keyPair.icon? Style.current.bigPadding : 40
+                name: !!root.keyPair? !!root.keyPair.image? root.keyPair.image : root.keyPair.icon : ""
+                isImage: !!root.keyPair && !!keyPair.image
                 color: d.isProfileKeypair ? Utils.colorForPubkey(root.userProfilePublicKey) : Theme.palette.primaryColor1
                 letterSize: Math.max(4, asset.width / 2.4)
                 charactersLen: 2
-                isLetterIdenticon: !keyPair.icon && !asset.name.toString()
+                isLetterIdenticon: !!root.keyPair && !keyPair.icon && !asset.name.toString()
             }
             components: [
                 StatusFlatRoundButton {
@@ -77,7 +75,7 @@ Rectangle {
                     Loader {
                         id: menuLoader
                         active: false
-                        sourceComponent: WalletAccountKeycardMenu {
+                        sourceComponent: WalletKeypairAccountMenu {
                             onClosed: {
                                 menuLoader.active = false
                             }

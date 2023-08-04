@@ -10,6 +10,9 @@ const KeypairTypeProfile* = "profile"
 const KeypairTypeSeed* = "seed"
 const KeypairTypeKey* = "key"
 
+const SyncedFromBackup* = "backup" # means a account is coming from backed up data
+const SyncedFromLocalPairing* = "local-pairing" # means a account is coming from another device when user is reocovering Status account
+
 type
   KeypairDto* = ref object of RootObj
     keyUid*: string

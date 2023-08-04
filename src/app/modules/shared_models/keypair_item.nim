@@ -25,6 +25,7 @@ QtObject:
     lastUsedDerivationIndex: int
     migratedToKeycard: bool
     operability: string
+    syncedFrom: string
     accounts: KeyPairAccountModel
     observedAccount: KeyPairAccountItem
 
@@ -38,7 +39,8 @@ QtObject:
     pairType: KeyPairType,
     derivedFrom: string,
     lastUsedDerivationIndex: int,
-    migratedToKeycard: bool
+    migratedToKeycard: bool,
+    syncedFrom: string
     ) =
     self.QObject.setup
     self.keyUid = keyUid
@@ -51,6 +53,7 @@ QtObject:
     self.derivedFrom = derivedFrom
     self.lastUsedDerivationIndex = lastUsedDerivationIndex
     self.migratedToKeycard = migratedToKeycard
+    self.syncedFrom = syncedFrom
     self.accounts = newKeyPairAccountModel()
 
   proc delete*(self: KeyPairItem) =
@@ -65,9 +68,11 @@ QtObject:
     pairType = KeyPairType.Unknown,
     derivedFrom = "",
     lastUsedDerivationIndex = 0,
-    migratedToKeycard = false): KeyPairItem =
+    migratedToKeycard = false,
+    syncedFrom = ""): KeyPairItem =
     new(result, delete)
-    result.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom, lastUsedDerivationIndex, migratedToKeycard)
+    result.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom, lastUsedDerivationIndex,
+      migratedToKeycard, syncedFrom)
 
   proc `$`*(self: KeyPairItem): string =
     result = fmt"""KeyPairItem[
@@ -82,6 +87,7 @@ QtObject:
       lastUsedDerivationIndex: {self.lastUsedDerivationIndex},
       migratedToKeycard: {self.migratedToKeycard},
       operability: {self.operability},
+      syncedFrom: {self.syncedFrom},
       accounts: {$self.accounts}
       ]"""
 
@@ -203,10 +209,20 @@ QtObject:
     if items.any(x => x.getOperability() == AccountPartiallyOperable):
       return AccountPartiallyOperable
     return AccountFullyOperable
-
   QtProperty[string] operability:
     read = getOperability
     notify = operabilityChanged
+
+  proc syncedFromChanged*(self: KeyPairItem) {.signal.}
+  proc getSyncedFrom*(self: KeyPairItem): string {.slot.} =
+    return self.syncedFrom
+  proc setSyncedFrom*(self: KeyPairItem, value: string) {.slot.} =
+    self.syncedFrom = value
+    self.syncedFromChanged()
+  QtProperty[string] syncedFrom:
+    read = getSyncedFrom
+    write = setSyncedFrom
+    notify = syncedFromChanged
 
   proc observedAccountChanged*(self: KeyPairItem) {.signal.}
   proc getObservedAccountAsVariant*(self: KeyPairItem): QVariant {.slot.} =

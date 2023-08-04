@@ -14,17 +14,17 @@ StatusListItem {
 
     signal buttonClicked()
 
-    title: keyPair ? keyPair.pairType === Constants.keycard.keyPairType.watchOnly ? qsTr("Watch only") : keyPair.name: ""
-    titleAsideText: keyPair && keyPair.pairType === Constants.keycard.keyPairType.profile ? Utils.getElidedCompressedPk(keyPair.pubKey): ""
+    title: !!root.keyPair? root.keyPair.pairType === Constants.keypair.type.watchOnly ? qsTr("Watch only") : root.keyPair.name: ""
+    titleAsideText: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.getElidedCompressedPk(root.keyPair.pubKey): ""
     asset {
-        width: keyPair && keyPair.icon ? Style.current.bigPadding : 40
-        height: keyPair && keyPair.icon ? Style.current.bigPadding : 40
-        name: keyPair ? keyPair.image ? keyPair.image : keyPair.icon: ""
-        isImage: !!keyPair && !!keyPair.image
-        color: keyPair && keyPair.pairType === Constants.keycard.keyPairType.profile ? Utils.colorForPubkey(root.userProfilePublicKey) : Theme.palette.primaryColor1
+        width: !!root.keyPair && root.keyPair.icon? Style.current.bigPadding : 40
+        height: !!root.keyPair && root.keyPair.icon? Style.current.bigPadding : 40
+        name: !!root.keyPair? !!root.keyPair.image? root.keyPair.image : root.keyPair.icon : ""
+        isImage: !!root.keyPair && !!root.keyPair.image
+        color: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.colorForPubkey(root.userProfilePublicKey) : Theme.palette.primaryColor1
         letterSize: Math.max(4, asset.width / 2.4)
         charactersLen: 2
-        isLetterIdenticon: !!keyPair && !keyPair.icon && !asset.name.toString()
+        isLetterIdenticon: !!root.keyPair && !root.keyPair.icon && !asset.name.toString()
     }
     color: {
         if (sensor.containsMouse || root.highlighted) {
@@ -33,10 +33,10 @@ StatusListItem {
         return Theme.palette.transparent
     }
     ringSettings {
-        ringSpecModel: keyPair && keyPair.pairType === Constants.keycard.keyPairType.profile ? Utils.getColorHashAsJson(root.userProfilePublicKey) : []
+        ringSpecModel: !!root.keyPair && root.keyPair.pairType === Constants.keypair.type.profile? Utils.getColorHashAsJson(root.userProfilePublicKey) : []
         ringPxSize: Math.max(asset.width / 24.0)
     }
-    tagsModel: keyPair ? keyPair.accounts: []
+    tagsModel: !!root.keyPair? root.keyPair.accounts: []
     tagsDelegate: StatusListItemTag {
         bgColor: !!model.account.colorId ? Utils.getColorForId(model.account.colorId): ""
         bgRadius: 6

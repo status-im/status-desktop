@@ -25,7 +25,7 @@ QtObject:
       ): KeycardItem =
     new(result, delete)
     result.KeyPairItem.setup(keyUid, pubKey, locked, name, image, icon, pairType, derivedFrom,lastUsedDerivationIndex,
-      migratedToKeycard)
+      migratedToKeycard, syncedFrom = "")
     result.keycardUid = keycardUid
 
   proc `$`*(self: KeycardItem): string =

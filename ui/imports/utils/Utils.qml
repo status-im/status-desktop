@@ -822,6 +822,49 @@ QtObject {
         return path.split("/").join(" / ")
     }
 
+    function getKeypairLocationColor(keypair) {
+        return !keypair ||
+                keypair.migratedToKeycard ||
+                keypair.operability === Constants.keypair.operability.fullyOperable ||
+                keypair.operability === Constants.keypair.operability.partiallyOperable?
+                    Theme.palette.baseColor1 :
+                    Theme.palette.warningColor1
+    }
+
+    function getKeypairLocation(keypair) {
+        if (!keypair || keypair.pairType === Constants.keypair.type.watchOnly) {
+            return ""
+        }
+
+        let profileTitle = ""
+        if (keypair.pairType === Constants.keypair.type.profile) {
+            profileTitle = Utils.getElidedCompressedPk(keypair.pubKey) + Constants.settingsSection.dotSepString
+        }
+        if (keypair.migratedToKeycard) {
+            return profileTitle + qsTr("On Keycard")
+        }
+        if (keypair.operability === Constants.keypair.operability.fullyOperable ||
+                keypair.operability === Constants.keypair.operability.partiallyOperable) {
+            return profileTitle + qsTr("On device")
+        }
+        if (keypair.operability === Constants.keypair.operability.nonOperable) {
+            if (keypair.syncedFrom === Constants.keypair.syncedFrom.backup) {
+                if (keypair.pairType === Constants.keypair.type.seedImport) {
+                    return qsTr("Restored from backup. Re-enter seed phrase to use.")
+                }
+                if (keypair.pairType === Constants.keypair.type.privateKeyImport) {
+                    return qsTr("Restored from backup. Re-enter private key to use.")
+                }
+            }
+            if (keypair.syncedFrom !== "" &&
+                    keypair.syncedFrom !== Constants.keypair.syncedFrom.localPairing) {
+                return qsTr("Synced from %1").arg(keypair.syncedFrom)
+            }
+        }
+
+        return ""
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
