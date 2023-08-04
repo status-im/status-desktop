@@ -1,13 +1,12 @@
 import logging
 
-import pytest
+import allure
 
 import driver
 
 _logger = logging.getLogger(__name__)
+pytestmark = allure.suite("Self")
 
 
-@pytest.mark.self
-def test_import_squish():
-    _logger.info(str(driver.__dict__))
-    driver.snooze(1)
+def test_start_aut(main_window):
+    driver.context.detach()
