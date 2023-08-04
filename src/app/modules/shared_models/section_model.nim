@@ -5,8 +5,6 @@ import json
 import section_item, member_model
 import ../main/communities/tokens/models/token_item
 
-import ../../../app_service/common/types
-
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
@@ -292,6 +290,8 @@ QtObject:
       ModelRole.CanJoin.int,
       ModelRole.Joined.int,
       ModelRole.Spectated.int,
+      ModelRole.Access.int,
+      ModelRole.EnsOnly.int,
       ModelRole.Muted.int, 
       ModelRole.MembersModel.int,
       ModelRole.PendingRequestsToJoinModel.int,
