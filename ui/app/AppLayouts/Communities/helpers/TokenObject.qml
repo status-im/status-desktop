@@ -9,11 +9,10 @@ import utils 1.0
 */
 QtObject {
     property int type: Constants.TokenType.ERC20
-
-    // Special token (Owner and TMaster tokens):
-    property bool isPrivilegedToken: false
-    property bool isOwner: false
-    property color color
+    property int privilegesLevel: Constants.TokenPrivilegesLevel.Community
+    readonly property bool isPrivilegedToken: (privilegesLevel === Constants.TokenPrivilegesLevel.Owner) ||
+                                              (privilegesLevel === Constants.TokenPrivilegesLevel.TMaster)
+    property color color // Owner and TMaster icon color
 
     // Unique identifier:
     property string key

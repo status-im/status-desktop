@@ -42,12 +42,12 @@ StatusScrollView {
 
     // Privileged tokens:
     readonly property TokenObject ownerToken: TokenObject {
+        name: PermissionsHelpers.ownerTokenNameTag + root.communityName
         type: Constants.TokenType.ERC721
-        isPrivilegedToken: true
-        isOwner: true
+        privilegesLevel: Constants.TokenPrivilegesLevel.Owner
         artworkSource: root.communityLogo
         color: root.communityColor
-        symbol: PermissionsHelpers.communityNameToSymbol(isOwner, root.communityName)
+        symbol: PermissionsHelpers.communityNameToSymbol(true, root.communityName)
         transferable: true
         remotelyDestruct: false
         supply: 1
@@ -55,11 +55,12 @@ StatusScrollView {
         description: qsTr("This is the %1 Owner token. The hodler of this collectible has ultimate control over %1 Community token administration.").arg(root.communityName)
     }
     readonly property TokenObject tMasterToken: TokenObject {
+        name: PermissionsHelpers.tMasterTokenNameTag + root.communityName
         type: Constants.TokenType.ERC721
-        isPrivilegedToken: true
+        privilegesLevel: Constants.TokenPrivilegesLevel.TMaster
         artworkSource: root.communityLogo
         color: root.communityColor
-        symbol: PermissionsHelpers.communityNameToSymbol(isOwner, root.communityName)
+        symbol: PermissionsHelpers.communityNameToSymbol(false, root.communityName)
         remotelyDestruct: true
         description: qsTr("This is the %1 TokenMaster token. The hodler of this collectible has full admin rights for the %1 Community in Status and can mint and airdrop %1 Community tokens.").arg(root.communityName)
     }
@@ -98,7 +99,7 @@ StatusScrollView {
             font.pixelSize: d.titleSize
             font.bold: true
 
-            text: PermissionsHelpers.ownerTokenNameTag + root.communityName
+            text: ownerToken.name
         }
 
         TokenInfoPanel {
@@ -124,7 +125,7 @@ StatusScrollView {
             font.pixelSize: d.titleSize
             font.bold: true
 
-            text: PermissionsHelpers.tMasterTokenNameTag + root.communityName
+            text: tMasterToken.name
         }
 
         TokenInfoPanel {

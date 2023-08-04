@@ -470,9 +470,9 @@ StackView {
         property alias airdropKey: view.airdropKey
 
         // Owner and TMaster related props
-        readonly property bool isPrivilegedTokenItem: token.isPrivilegedToken
-        readonly property bool isOwnerTokenItem: token.isPrivilegedToken && token.isOwner
-        readonly property bool isTMasterTokenItem: token.isPrivilegedToken && !token.isOwner
+        readonly property bool isPrivilegedTokenItem: isOwnerTokenItem || isTMasterTokenItem
+        readonly property bool isOwnerTokenItem: token.privilegesLevel === Constants.TokenPrivilegesLevel.Owner
+        readonly property bool isTMasterTokenItem: token.privilegesLevel === Constants.TokenPrivilegesLevel.TMaster
 
         title: view.name
         subtitle: view.symbol
@@ -771,8 +771,7 @@ StackView {
                     tokenOwnersModel: model.tokenOwnersModel
                     airdropKey: model.symbol // TO BE REMOVED: When airdrop backend is ready to use token key instead of symbol
 
-                    token.isPrivilegedToken: model.isPrivilegedToken
-                    token.isOwner: model.isOwner
+                    token.privilegesLevel: model.privilegesLevel
                     token.color: root.communityColor
                     token.accountName: model.accountName
                     token.artworkSource: model.image
