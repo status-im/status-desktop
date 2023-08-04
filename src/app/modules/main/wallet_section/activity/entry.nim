@@ -299,9 +299,16 @@ QtObject:
       error "getTokenID: ActivityEntry is not a transaction"
       return ""
 
+    var tokenId: Option[TokenID]
     if self.isInTransactionType():
-      return if self.metadata.tokenIn.isSome(): $self.metadata.tokenIn.unsafeGet().tokenId else: ""
-    return if self.metadata.tokenOut.isSome(): $self.metadata.tokenOut.unsafeGet().tokenId else: ""
+      if self.metadata.tokenIn.isSome(): 
+        tokenId = self.metadata.tokenIn.unsafeGet().tokenId
+    elif self.metadata.tokenOut.isSome():
+        tokenId = self.metadata.tokenOut.unsafeGet().tokenId
+
+    if tokenId.isSome():
+      return $stint.fromHex(UInt256, string(tokenId.unsafeGet()))
+    return ""
 
   QtProperty[string] tokenID:
     read = getTokenID
