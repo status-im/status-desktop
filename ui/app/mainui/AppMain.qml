@@ -630,7 +630,7 @@ Item {
                     active: appMain.rootStore.profileSectionStore.walletStore.areTestNetworksEnabled
 
                     onClicked: Global.openTestnetPopup()
-                    onCloseClicked: Global.openTestnetPopup()
+                    onCloseClicked: hide()
                 }
 
                 ModuleWarning {
