@@ -27,7 +27,10 @@ Control {
     property Item footer
 
     states: State {
-        when: root.footer
+        // Setting condition on root.footer doesn't work for some configurations (macOS or specific qt version)
+        // Setting when directly to true seems to be relable option because ParentChange and PropertyChanges tolerate target set to null
+        // when: root.footer
+        when: true
 
         ParentChange {
             target: root.footer
