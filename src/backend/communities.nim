@@ -72,9 +72,10 @@ proc getRevealedAccountsForAllMembers*(
   ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("getRevealedAccountsForAllMembers".prefix, %*[communityId])
 
-proc checkPermissionsToJoinCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc checkPermissionsToJoinCommunity*(communityId: string, addresses: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("checkPermissionsToJoinCommunity".prefix, %*[{
-    "communityId": communityId
+    "communityId": communityId,
+    "addresses": addresses
   }])
 
 proc checkCommunityChannelPermissions*(communityId: string, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =

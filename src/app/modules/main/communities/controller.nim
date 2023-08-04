@@ -162,6 +162,11 @@ proc init*(self: Controller) =
     let args = CommunityTokenMetadataArgs(e)
     self.delegate.onCommunityTokenMetadataAdded(args.communityId, args.tokenMetadata)
 
+  self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE) do(e: Args):
+    let args = CheckPermissionsToJoinResponseArgs(e)
+    if (args.communityId == self.tmpCommunityId):
+      self.delegate.onCommunityCheckPermissionsToJoinResponse(args.communityId, args.checkPermissionsToJoinResponse)
+
   self.events.on(SignalType.Wallet.event, proc(e: Args) =
     var data = WalletSignal(e)
     if data.eventType == backend_collectibles.eventCollectiblesOwnershipUpdateFinished:
@@ -398,3 +403,7 @@ proc authenticateWithCallback*(self: Controller) =
 
 proc getCommunityPublicKeyFromPrivateKey*(self: Controller, communityPrivateKey: string): string =
   result = self.communityService.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
+
+proc asyncCheckPermissionsToJoin*(self: Controller, communityId: string, addressesToShare: seq[string]) =
+  self.tmpCommunityId = communityId
+  self.communityService.asyncCheckPermissionsToJoin(communityId, addressesToShare)

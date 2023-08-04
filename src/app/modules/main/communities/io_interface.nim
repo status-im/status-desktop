@@ -206,3 +206,9 @@ method prepareTokenModelForCommunity*(self: AccessInterface, communityId: string
 
 method getCommunityPublicKeyFromPrivateKey*(self: AccessInterface, communityPrivateKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method updateTokenModelForCommunity*(self: AccessInterface, communityId: string, sharedAddresses: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, communityId: string, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =
+  raise newException(ValueError, "No implementation available")

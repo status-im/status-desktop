@@ -153,11 +153,12 @@ const asyncEditSharedAddressesTask: Task = proc(argEncoded: string) {.gcsafe, ni
 type
   AsyncCheckPermissionsToJoinTaskArg = ref object of QObjectTaskArg
     communityId: string
+    addresses: seq[string]
 
 const asyncCheckPermissionsToJoinTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckPermissionsToJoinTaskArg](argEncoded)
   try:
-    let response = status_go.checkPermissionsToJoinCommunity(arg.communityId)
+    let response = status_go.checkPermissionsToJoinCommunity(arg.communityId, arg.addresses)
     arg.finish(%* {
       "response": response,
       "communityId": arg.communityId,

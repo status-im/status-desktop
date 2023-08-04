@@ -137,6 +137,10 @@ Item {
                     root.store.cancelPendingRequest(communityData.id)
                     joinCommunityButton.invitationPending = root.store.isCommunityRequestPending(communityData.id)
                 }
+                onSharedAddressesUpdated: {
+                    root.store.updatePermissionsModel(communityData.id, sharedAddresses)
+                }
+
                 onClosed: destroy()
             }
         }

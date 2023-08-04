@@ -236,4 +236,8 @@ QtObject {
     function requestToJoinCommunityWithAuthentication(communityId, ensName, addressesToShare = [], airdropAddress = "") {
         communitiesModuleInst.requestToJoinCommunityWithAuthenticationWithSharedAddresses(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress)
     }
+
+    function updatePermissionsModel(communityId, sharedAddresses) {
+        communitiesModuleInst.updateTokenModelForCommunity(communityId, sharedAddresses)
+    }
 }

@@ -13,7 +13,7 @@ import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
 import ../../shared_models/[member_item, section_model, section_item, token_permissions_model, token_permission_item,
-  token_list_item, token_list_model, token_criteria_item]
+  token_list_item, token_list_model, token_criteria_item, token_criteria_model, token_permission_chat_list_model]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/common/types
@@ -541,3 +541,44 @@ method prepareTokenModelForCommunity*(self: Module, communityId: string) =
     tokenPermissionsItems.add(tokenPermissionItem)
 
   self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
+
+method updateTokenModelForCommunity*(self: Module, communityId: string, sharedAddresses: seq[string]) =
+  self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
+
+method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
+  let community = self.controller.getCommunityById(communityId)
+  let permissions = checkPermissionsToJoinResponse.permissions
+  for id, criteriaResult in permissions:
+    if community.tokenPermissions.hasKey(id):
+      let tokenPermissionItem = self.view.spectatedCommunityPermissionModel.getItemById(id)
+      if tokenPermissionItem.id == "":
+        continue
+
+      var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
+      var permissionSatisfied = true
+
+      for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
+
+        let updatedTokenCriteriaItem = initTokenCriteriaItem(
+          tokenCriteriaItem.symbol,
+          tokenCriteriaItem.name,
+          tokenCriteriaItem.amount,
+          tokenCriteriaItem.`type`,
+          tokenCriteriaItem.ensPattern,
+          criteriaResult.criteria[index]
+        )
+
+        if criteriaResult.criteria[index] == false:
+          permissionSatisfied = false
+
+        updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
+
+      let updatedTokenPermissionItem = initTokenPermissionItem(
+          tokenPermissionItem.id,
+          tokenPermissionItem.`type`,
+          updatedTokenCriteriaItems,
+          tokenPermissionItem.getChatList().getItems(),
+          tokenPermissionItem.isPrivate,
+          permissionSatisfied
+      )
+      self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)

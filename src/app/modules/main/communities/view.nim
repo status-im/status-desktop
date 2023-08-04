@@ -314,6 +314,13 @@ QtObject:
   proc prepareTokenModelForCommunity(self: View, communityId: string) {.slot.} =
     self.delegate.prepareTokenModelForCommunity(communityId)
 
+  proc updateTokenModelForCommunity*(self: View, communityId: string, addressesToShare: string) {.slot.} =
+    try:
+      let sharedAddresses = map(parseJson(addressesToShare).getElems(), proc(x:JsonNode):string = x.getStr())
+      self.delegate.updateTokenModelForCommunity(communityId, sharedAddresses)
+    except Exception as e:
+      echo "Error updating token model with addresses: ", e.msg
+
   proc getSpectatedCommunityPermissionModel(self: View): QVariant {.slot.} =
     return self.spectatedCommunityPermissionModelVariant
 
