@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, uuids, std/tables
+import NimQml, chronicles, sequtils, uuids
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -41,7 +41,7 @@ type
     moduleLoaded: bool
     initialMessagesLoaded: bool
     firstUnseenMessageState: FirstUnseenMessageState
-    scrollToMessageRequests: Table[UUID, string]
+    getMessageRequestId: UUID
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
@@ -668,15 +668,12 @@ method scrollToMessage*(self: Module, messageId: string) =
   if self.view.getMessageSearchOngoing():
     return
 
-  let requestId = self.controller.asyncGetMessageById(messageId)
-  self.scrollToMessageRequests[requestId] = messageId
+  self.getMessageRequestId = self.controller.asyncGetMessageById(messageId)
   self.view.setMessageSearchOngoing(true)
 
-method onGetMessageById*(self: Module, requestId: UUID, message: MessageDto, errorMessage: string) =
+method onGetMessageById*(self: Module, requestId: UUID, messageId: string, message: MessageDto, errorMessage: string) =
 
-  var messageId: string
-
-  if not self.scrollToMessageRequests.pop(requestId, messageId):
+  if self.getMessageRequestId != requestId:
     return
 
   if errorMessage != "":

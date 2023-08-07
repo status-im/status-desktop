@@ -136,6 +136,7 @@ type
 
   GetMessageResult* = ref object of Args
     requestId*: UUID
+    messageId*: string
     message*: MessageDto
     error*: string
 
@@ -588,15 +589,13 @@ QtObject:
       if responseObj.kind != JObject:
         raise newException(RpcException, "getMessageById response is not an json object")
 
-      let requestId = responseObj["requestId"].getStr
-      let responseError = responseObj["error"].getStr
-
-      var signalData = GetMessageResult( 
-        requestId: parseUUID(requestId),
-        error: responseError,
+      var signalData = GetMessageResult(
+        requestId: parseUUID(responseObj["requestId"].getStr),
+        messageId: responseObj["messageId"].getStr,
+        error: responseObj["error"].getStr,
       )
       
-      if responseError == "":
+      if signalData.error == "":
         signalData.message = responseObj["message"].toMessageDto()
 
       if signalData.message.id.len == 0:

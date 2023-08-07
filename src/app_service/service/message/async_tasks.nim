@@ -330,7 +330,8 @@ const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, 
     let output = %*{
       "error": (if response.error != nil: response.error.message else: ""),
       "message": response.result,
-      "requestId": arg.requestId
+      "requestId": arg.requestId,
+      "messageId": arg.messageId,
     }
     arg.finish(output)
   except Exception as e:
@@ -338,7 +339,8 @@ const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, 
     let output = %*{
       "error": e.msg,
       "message": "",
-      "requestId": arg.requestId
+      "requestId": arg.requestId,
+      "messageId": arg.messageId,
     }
     arg.finish(output)
 

@@ -228,7 +228,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_GET_MESSAGE_FINISHED) do(e: Args):
     let args = GetMessageResult(e)
-    self.delegate.onGetMessageById(args.requestId, args.message, args.error)
+    self.delegate.onGetMessageById(args.requestId, args.messageId, args.message, args.error)
 
 proc getMySectionId*(self: Controller): string =
   return self.sectionId
