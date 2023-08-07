@@ -9,15 +9,19 @@ import StatusQ.Components 0.1
 import utils 1.0
 import shared.panels 1.0
 
+import "../stores"
+
 Item {
     id: root
 
-    property bool pending: false
-    property bool accepted: false
-    property bool declined: false
-    property bool acceptedPending: false
-    property bool declinedPending: false
+    property int membershipStatus: ActivityCenterStore.ActivityCenterMembershipStatus.None
     property bool ctaAllowed: true
+
+    readonly property bool pending: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Pending
+    readonly property bool accepted: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Accepted
+    readonly property bool declined: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Declined
+    readonly property bool acceptedPending: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.AcceptedPending
+    readonly property bool declinedPending: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.DeclinedPending
 
     signal acceptRequestToJoinCommunity()
     signal declineRequestToJoinCommunity()
