@@ -1,5 +1,5 @@
 import NimQml, logging, std/json, sequtils, strutils
-import tables, stint
+import tables, stint, sets
 
 import app/core/eventemitter
 import app/core/signals/types
@@ -16,6 +16,10 @@ QtObject:
       events: EventEmitter
       eventHandlers: Table[string, EventCallbackProc]
       walletEventHandlers: Table[string, WalletEventCallbackProc]
+
+      subscribedAddresses: HashSet[string]
+      subscribedChainIDs: HashSet[int]
+
       collectiblesOwnershipUpdateStartedFn: proc()
       collectiblesOwnershipUpdateFinishedFn: proc()
 
@@ -52,16 +56,22 @@ QtObject:
     else:
       discard
 
+  proc shouldIgnoreEvent(self: EventsHandler, data: WalletSignal): bool =
+    if data.chainID in self.subscribedChainIDs:
+      for address in data.accounts:
+        if address in self.subscribedAddresses:
+          return false
+    return true
+
   proc setupWalletEventHandlers(self: EventsHandler) =
     self.walletEventHandlers[backend_collectibles.eventCollectiblesOwnershipUpdateStarted] = proc (data: WalletSignal) =
-      if self.collectiblesOwnershipUpdateStartedFn == nil:
+      if self.collectiblesOwnershipUpdateStartedFn == nil or self.shouldIgnoreEvent(data):
         return
       self.collectiblesOwnershipUpdateStartedFn()
 
     self.walletEventHandlers[backend_collectibles.eventCollectiblesOwnershipUpdateFinished] = proc (data: WalletSignal) =
-      if self.collectiblesOwnershipUpdateFinishedFn == nil:
+      if self.collectiblesOwnershipUpdateFinishedFn == nil or self.shouldIgnoreEvent(data):
         return
-
       self.collectiblesOwnershipUpdateFinishedFn()
 
   proc newEventsHandler*(events: EventEmitter): EventsHandler =
@@ -79,3 +89,12 @@ QtObject:
         eventsHandler.handleApiEvents(e)
     )
  
+  proc updateSubscribedAddresses*(self: EventsHandler, addresses: seq[string]) =
+    self.subscribedAddresses.clear()
+    for address in addresses:
+      self.subscribedAddresses.incl(address)
+
+  proc updateSubscribedChainIDs*(self: EventsHandler, chainIDs: seq[int]) =
+    self.subscribedChainIDs.clear()
+    for chainID in chainIDs:
+      self.subscribedChainIDs.incl(chainID)
