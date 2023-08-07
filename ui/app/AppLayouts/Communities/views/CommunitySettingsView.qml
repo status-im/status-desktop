@@ -361,6 +361,14 @@ StatusSectionLayout {
                     chainId, accountAddress, tokenType)
             }
 
+            onBurnFeesRequested: {
+                feeText = ""
+                feeErrorText = ""
+                isFeeLoading = true
+
+                communityTokensStore.computeBurnFee(tokenKey, amount, accountAddress)
+            }
+
             onMintCollectible:
                 communityTokensStore.deployCollectible(
                     root.community.id, collectibleItem)
@@ -381,10 +389,10 @@ StatusSectionLayout {
                     root.community.id, remotelyDestructTokensList, tokenKey)
 
             onSignBurnTransactionOpened:
-                communityTokensStore.computeBurnFee(tokenKey, amount)
+                communityTokensStore.computeBurnFee(tokenKey, amount, accountAddress)
 
             onBurnToken:
-                communityTokensStore.burnToken(root.community.id, tokenKey, amount)
+                communityTokensStore.burnToken(root.community.id, tokenKey, amount, accountAddress)
 
             onDeleteToken:
                 communityTokensStore.deleteToken(root.community.id, tokenKey)

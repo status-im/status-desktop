@@ -10,6 +10,24 @@ import AppLayouts.Communities.popups 1.0
 SplitView {
     Logs { id: logs }
 
+    ListModel {
+        id: accountsModel
+
+        ListElement {
+            name: "Test account"
+            emoji: "😋"
+            address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            color: "red"
+        }
+
+        ListElement {
+            name: "Another account - generated"
+            emoji: "🚗"
+            address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8888"
+            color: "blue"
+        }
+    }
+
     SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
@@ -38,6 +56,8 @@ SplitView {
                 remainingTokens: editorAmount.text
                 isAsset: assetButton.checked
                 tokenSource: assetButton.checked ? ModelsData.assets.socks :  ModelsData.collectibles.kitty1Big
+                accounts: accountsModel
+                chainName: "Optimism"
 
                 onBurnClicked: logs.logEvent("BurnTokensPopup::onBurnClicked --> Burn amount: " + burnAmount)
                 onCancelClicked: logs.logEvent("BurnTokensPopup::onCancelClicked")

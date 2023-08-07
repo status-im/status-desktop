@@ -109,12 +109,14 @@ QtObject {
     }
 
     // Burn:
-    function computeBurnFee(tokenKey, amount) {
-        communityTokensModuleInst.computeBurnFee(tokenKey, amount)
+    function computeBurnFee(tokenKey, amount, accountAddress) {
+        // TODO: Backend. It should include the account address in the calculation.
+        communityTokensModuleInst.computeBurnFee(tokenKey, amount/*, accountAddress*/)
     }
 
-    function burnToken(communityId, tokenKey, burnAmount) {
-        communityTokensModuleInst.burnTokens(communityId, tokenKey, burnAmount)
+    function burnToken(communityId, tokenKey, burnAmount, accountAddress) {
+         // TODO: Backend. It should include the account address in the burn action.
+        communityTokensModuleInst.burnTokens(communityId, tokenKey, burnAmount/*, accountAddress*/)
     }
 
     // Airdrop tokens:
