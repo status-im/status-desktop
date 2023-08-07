@@ -650,6 +650,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	cp bin/i18n/* $(MACOS_OUTER_BUNDLE)/Contents/i18n
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS/StatusQ
 	cp bin/StatusQ/* $(MACOS_OUTER_BUNDLE)/Contents/MacOS/StatusQ
+	cp embedded.provisionprofile $(MACOS_OUTER_BUNDLE)/Contents/
 
 	echo -e $(BUILD_MSG) "app"
 	macdeployqt \
@@ -663,6 +664,7 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	# if MACOS_CODESIGN_IDENT is not set then the outer and inner .app
 	# bundles are not signed
 ifdef MACOS_CODESIGN_IDENT
+	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT) --deep --entitlements child-ent.plist
 	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT) --entitlements Entitlements.plist
 endif
 	echo -e $(BUILD_MSG) "dmg"
@@ -685,7 +687,7 @@ ifdef MACOS_CODESIGN_IDENT
 endif
 
 notarize-macos: export CHECK_TIMEOUT ?= 10m
-notarize-macos: export MACOS_BUNDLE_ID ?= im.status.ethereum.desktop
+notarize-macos: export MACOS_BUNDLE_ID ?= im.Status.NimStatusClient
 notarize-macos:
 	scripts/notarize-macos-pkg.sh $(STATUS_CLIENT_DMG)
 
