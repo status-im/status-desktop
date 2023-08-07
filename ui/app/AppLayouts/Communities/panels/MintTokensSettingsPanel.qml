@@ -66,12 +66,13 @@ StackView {
     signal mintOwnerToken(var ownerToken, var tMasterToken)
 
     signal deployFeesRequested(int chainId, string accountAddress, int tokenType)
+    signal burnFeesRequested(string tokenKey, int amount, string accountAddress)
     signal signRemoteDestructTransactionOpened(var remotelyDestructTokensList, // [key , amount]
                                                string tokenKey)
     signal remotelyDestructCollectibles(var remotelyDestructTokensList, // [key , amount]
                                         string tokenKey)
-    signal signBurnTransactionOpened(string tokenKey, int amount)
-    signal burnToken(string tokenKey, int amount)
+    signal signBurnTransactionOpened(string tokenKey, int amount, string accountAddress)
+    signal burnToken(string tokenKey, int amount, string accountAddress)
     signal airdropToken(string tokenKey, int type, var addresses)
     signal deleteToken(string tokenKey)
 
@@ -642,6 +643,7 @@ StackView {
             // helper properties to pass data through popups
             property var remotelyDestructTokensList
             property int burnAmount
+            property string accountAddress
 
             RemotelyDestructPopup {
                 id: remotelyDestructPopup
@@ -685,9 +687,9 @@ StackView {
                         root.remotelyDestructCollectibles(
                                     footer.remotelyDestructTokensList, tokenKey)
                     else
-                        root.burnToken(tokenKey, footer.burnAmount)
+                        root.burnToken(tokenKey, footer.burnAmount, footer.accountAddress)
 
-                    footerPanel.closePopups()
+                    footer.closePopups()
                 }
 
                 title: signTransactionPopup.isRemotelyDestructTransaction
@@ -705,7 +707,7 @@ StackView {
                     root.setFeeLoading()
                     signTransactionPopup.isRemotelyDestructTransaction
                             ? root.signRemoteDestructTransactionOpened(footer.remotelyDestructTokensList, tokenKey)
-                            : root.signBurnTransactionOpened(tokenKey, footer.burnAmount)
+                            : root.signBurnTransactionOpened(tokenKey, footer.burnAmount, footer.accountAddress)
                 }
                 onSignTransactionClicked: signTransaction()
             }
@@ -717,10 +719,19 @@ StackView {
                 tokenName: footer.token.name
                 remainingTokens: footer.token.remainingTokens
                 tokenSource: footer.token.artworkSource
+                chainName: footer.token.chainName
+
+                feeText: root.feeText
+                feeErrorText: root.feeErrorText
+                isFeeLoading: root.isFeeLoading
+                accounts: root.accounts
+
+                onBurnFeesRequested: root.burnFeesRequested(footer.token.key, burnAmount, accountAddress)
 
                 onBurnClicked: {
                     burnTokensPopup.close()
                     footer.burnAmount = burnAmount
+                    footer.accountAddress = accountAddress
                     signTransactionPopup.isRemotelyDestructTransaction = false
                     signTransactionPopup.open()
                 }

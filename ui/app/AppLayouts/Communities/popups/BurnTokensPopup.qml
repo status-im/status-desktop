@@ -3,35 +3,52 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 import QtQml.Models 2.14
 import QtGraphicalEffects 1.0
+import QtQml 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Core.Utils 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 
 import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.helpers 1.0
 
 import utils 1.0
+import SortFilterProxyModel 0.2
 
 StatusDialog {
     id: root
 
     property string communityName
+    property bool isAsset // If asset isAsset = true; if collectible --> isAsset = false
     property string tokenName
     property int remainingTokens
     property url tokenSource
-    property bool isAsset // If asset isAsset = true; if collectible --> isAsset = false
+    property string chainName
 
-    signal burnClicked(int burnAmount)
+    // Fees related properties:
+    property string feeText
+    property string feeErrorText: ""
+    property bool isFeeLoading
+    readonly property string feeLabel: qsTr("Burn %1 token on %2").arg(root.tokenName).arg(root.chainName)
+
+    // Account expected roles: address, name, color, emoji, walletType
+    property var accounts
+
+    signal burnClicked(int burnAmount, string accountAddress)
     signal cancelClicked
+    signal burnFeesRequested(int burnAmount, string accountAddress)
 
     QtObject {
         id: d
 
+        property string accountAddress
         property alias amountToBurn: amountToBurnInput.text
+        readonly property bool isFeeError: root.feeErrorText !== ""
+        readonly property bool isFormValid: specificAmountButton.checked && amountToBurnInput.valid || allTokensButton.checked
 
         function initialize() {
             specificAmountButton.checked = true
@@ -117,10 +134,85 @@ StatusDialog {
 
             ButtonGroup { id: radioGroup }
         }
+
+        StatusDialogDivider {
+            Layout.fillWidth: true
+        }
+
+        FeesBox {
+            id: feesBox
+
+            readonly property bool triggerFeeReevaluation: {
+                specificAmountButton.checked
+                amountToBurnInput.text
+                allTokensButton.checked
+                feesBox.accountsSelector.currentIndex
+
+                requestFeeDelayTimer.restart()
+                return true
+            }
+
+            Layout.fillWidth: true
+
+            placeholderText: qsTr("Choose number of tokens to burn to see gas fees")
+            accountErrorText: root.feeErrorText
+            implicitWidth: 0
+            model: d.isFormValid ? singleFeeModel : undefined
+            accountsSelector.model: SortFilterProxyModel {
+                sourceModel: root.accounts
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "color"
+
+                        function getColor(colorId) {
+                            return Utils.getColorForId(colorId)
+                        }
+
+                        // Direct call for singleton function is not handled properly by
+                        // SortFilterProxyModel that's why helper function is used instead.
+                        expression: { return getColor(model.colorId) }
+                    }
+                ]
+                filters: ValueFilter {
+                    roleName: "walletType"
+                    value: Constants.watchWalletType
+                    inverted: true
+                }
+            }
+
+            accountsSelector.onCurrentIndexChanged: {
+                if (accountsSelector.currentIndex < 0)
+                    return
+
+                const item = SQUtils.ModelUtils.get(accountsSelector.model, accountsSelector.currentIndex)
+                d.accountAddress = item.address
+            }
+
+            Timer {
+                id: requestFeeDelayTimer
+
+                interval: 500
+                onTriggered: {
+                    if(specificAmountButton.checked)
+                        root.burnFeesRequested(parseInt(amountToBurnInput.text), d.accountAddress)
+                    else
+                        root.burnFeesRequested(root.remainingTokens, d.accountAddress)
+                }
+            }
+
+            QtObject {
+                id: singleFeeModel
+
+                readonly property string title: root.feeLabel
+                readonly property string feeText: root.isFeeLoading ?
+                                                      "" : root.feeText
+                readonly property bool error: d.isFeeError
+            }
+        }
     }
 
     header: StatusDialogHeader {
-        headline.title: qsTr("Burn %1 tokens").arg(root.tokenName)       
+        headline.title: qsTr("Burn %1 tokens").arg(root.tokenName)
         headline.subtitle: qsTr("%n %1 remaining in smart contract", "", root.remainingTokens).arg(root.tokenName)
         leftComponent: Rectangle {
             height: 40
@@ -160,14 +252,14 @@ StatusDialog {
             }
 
             StatusButton {
-                enabled: specificAmountButton.checked && amountToBurnInput.valid || allTokensButton.checked
+                enabled: d.isFormValid && !d.isFeeError && !root.isFeeLoading
                 text: qsTr("Burn tokens")
                 type: StatusBaseButton.Type.Danger
                 onClicked: {
                     if(specificAmountButton.checked)
-                        root.burnClicked(parseInt(amountToBurnInput.text))
+                        root.burnClicked(parseInt(amountToBurnInput.text), d.accountAddress)
                     else
-                        root.burnClicked(root.remainingTokens)
+                        root.burnClicked(root.remainingTokens, d.accountAddress)
                 }
             }
         }
