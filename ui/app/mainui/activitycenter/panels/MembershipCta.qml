@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -14,6 +15,9 @@ Item {
     property bool pending: false
     property bool accepted: false
     property bool declined: false
+    property bool acceptedPending: false
+    property bool declinedPending: false
+    property bool ctaAllowed: true
 
     signal acceptRequestToJoinCommunity()
     signal declineRequestToJoinCommunity()
@@ -47,30 +51,31 @@ Item {
         }
     }
 
-    Row {
+    RowLayout {
         id: buttons
         anchors.centerIn: parent
-        visible: pending
-        spacing: Style.current.padding
-
-        StatusRoundButton {
-            icon.name: "thumbs-up"
-            icon.color: Style.current.white
-            icon.hoverColor: Style.current.white
-            implicitWidth: 28
-            implicitHeight: 28
-            color: Theme.palette.successColor1
+        visible: pending || acceptedPending || declinedPending
+        spacing: Style.current.halfPadding
+        StatusFlatButton {
+            icon.name: "checkmark-circle"
+            icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
             onClicked: root.acceptRequestToJoinCommunity()
+            enabled: !root.acceptedPending
+            text: root.acceptedPending ? qsTr("Accept pending") : ""
+            verticalPadding: 4
+            horizontalPadding: 4
+            visible: root.ctaAllowed || !enabled
         }
 
-        StatusRoundButton {
-            icon.name: "thumbs-down"
-            icon.color: Style.current.white
-            icon.hoverColor: Style.current.white
-            implicitWidth: 28
-            implicitHeight: 28
-            color: Theme.palette.dangerColor1
+        StatusFlatButton {
+            icon.name: "close-circle"
+            icon.color: enabled ? Theme.palette.dangerColor1 : disabledTextColor
             onClicked: root.declineRequestToJoinCommunity()
+            enabled: !root.declinedPending
+            text: root.declinedPending ? qsTr("Reject pending") : ""
+            verticalPadding: 4
+            horizontalPadding: 4
+            visible: root.ctaAllowed || !enabled
         }
     }
 }
