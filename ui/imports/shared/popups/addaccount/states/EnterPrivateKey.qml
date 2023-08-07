@@ -54,6 +54,7 @@ Item {
                     Layout.preferredHeight: Constants.addAccountPopup.itemHeight
                     Layout.preferredWidth: parent.width - parent.columnSpacing - showHideButton.width
                     rightPadding: pasteButton.width + pasteButton.anchors.rightMargin + Style.current.halfPadding
+                    wrapMode: TextEdit.Wrap
                     placeholderText: qsTr("Type or paste your private key")
                     echoMode: d.showPassword ? TextInput.Normal : TextInput.Password
 
