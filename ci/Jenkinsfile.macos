@@ -103,6 +103,12 @@ pipeline {
             jenkins.setBuildDesc(Dmg: env.PKG_URL)
           } }
         }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts('bin/nim_status_client')
+            archiveArtifacts(env.STATUS_CLIENT_DMG)
+          } }
+        }
       }
     }
   }
