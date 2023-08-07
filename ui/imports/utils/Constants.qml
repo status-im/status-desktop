@@ -1113,7 +1113,20 @@ QtObject {
         MembershipRequests,
         RejectedMembers,
         BannedMembers
-    }   
+    }
+
+    enum CommunityMembershipRequestState {
+        None = 0,
+        Pending,
+        Accepted,
+        Rejected,
+        AcceptedPending,
+        RejectedPending,
+        Banned,
+        Kicked,
+        BannedPending,
+        KickedPending
+    }
 
     readonly property QtObject walletAccountColors: QtObject {
         readonly property string primary: "primary"

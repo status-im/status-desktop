@@ -10,6 +10,8 @@ Item {
     property alias tooltipText: tooltip.text
     property int buttonType: DisabledTooltipButton.Normal
     property bool interactive: true
+    property Component buttonComponent: buttonType === DisabledTooltipButton.Normal ? normalButton : flatButton
+    
     signal clicked()
 
     enum Type {
@@ -23,7 +25,7 @@ Item {
     Loader {
         id: buttonLoader
         anchors.centerIn: parent
-        sourceComponent: buttonType === DisabledTooltipButton.Normal ? normalButton : flatButton
+        sourceComponent: buttonComponent
         active: root.visible
     }
     HoverHandler {

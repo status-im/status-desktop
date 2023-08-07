@@ -12,6 +12,7 @@ type
     requestToJoinId: string
     requestToJoinLoading*: bool
     airdropAddress*: string
+    membershipRequestState: MembershipRequestState
 
 # FIXME: remove defaults
 proc initMemberItem*(
@@ -37,6 +38,7 @@ proc initMemberItem*(
   requestToJoinId: string = "",
   requestToJoinLoading: bool = false,
   airdropAddress: string = "",
+  membershipRequestState: MembershipRequestState = MembershipRequestState.None
 ): MemberItem =
   result = MemberItem()
   result.memberRole = memberRole
@@ -44,6 +46,7 @@ proc initMemberItem*(
   result.requestToJoinId = requestToJoinId
   result.requestToJoinLoading = requestToJoinLoading
   result.airdropAddress = airdropAddress
+  result.membershipRequestState = membershipRequestState
   result.UserItem.setup(
     pubKey = pubKey,
     displayName = displayName,
@@ -86,7 +89,8 @@ proc `$`*(self: MemberItem): string =
     outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     memberRole: {self.memberRole},
     joined: {self.joined},
-    requestToJoinId: {self.requestToJoinId}
+    requestToJoinId: {self.requestToJoinId},
+    membershipRequestState: {$self.membershipRequestState.int}
     ]"""
 
 proc memberRole*(self: MemberItem): MemberRole {.inline.} =
@@ -112,3 +116,6 @@ proc requestToJoinLoading*(self: MemberItem): bool {.inline.} =
 
 proc airdropAddress*(self: MemberItem): string {.inline.} =
   self.airdropAddress
+
+proc membershipRequestState*(self: MemberItem): MembershipRequestState {.inline.} =
+  self.membershipRequestState

@@ -11,6 +11,7 @@ import StatusQ.Popups 0.1
 import utils 1.0
 import shared.views.chat 1.0
 import shared.controls.chat 1.0
+import shared.controls 1.0
 
 import AppLayouts.Communities.layouts 1.0
 
@@ -102,28 +103,46 @@ Item {
                         onClicked: root.unbanUserClicked(model.pubKey)
                     },
 
-                    StatusButton {
-                        visible: (root.panelType === MembersTabPanel.TabType.PendingRequests) && isHovered
-                        text: qsTr("Reject")
-                        type: StatusBaseButton.Type.Danger
-                        icon.name: "close-circle"
-                        icon.color: Style.current.danger
-                        onClicked: root.declineRequestToJoin(model.requestToJoinId)
+                    DisabledTooltipButton {
+                        id: acceptButton
+                        visible: ((root.panelType === MembersTabPanel.TabType.PendingRequests ||
+                                    root.panelType === MembersTabPanel.TabType.DeclinedRequests) && isHovered) || 
+                                    model.membershipRequestState === Constants.CommunityMembershipRequestState.AcceptedPending
+                                    //TODO: Only the current user can reject a pending request, so we should check that here
+
+                        tooltipText: qsTr("Waiting for owner node to come online")
+                        interactive: model.membershipRequestState !== Constants.CommunityMembershipRequestState.AcceptedPending
+                        buttonComponent: StatusButton {
+                            text: model.membershipRequestState == Constants.CommunityMembershipRequestState.AcceptedPending ? qsTr("Accept pending") : qsTr("Accept")
+                            icon.name: "checkmark-circle"
+                            icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
+                            normalColor: Theme.palette.successColor2
+                            hoverColor: Theme.palette.successColor3
+                            textColor: Theme.palette.successColor1
+                            loading: model.requestToJoinLoading
+                            enabled: acceptButton.interactive
+                            onClicked: root.acceptRequestToJoin(model.requestToJoinId)
+                        }
                     },
 
-                    StatusButton {
-                        visible: (root.panelType === MembersTabPanel.TabType.PendingRequests ||
-                                  root.panelType === MembersTabPanel.TabType.DeclinedRequests) && isHovered
-                        text: qsTr("Accept")
-                        icon.name: "checkmark-circle"
-                        icon.color: Theme.palette.successColor1
-                        normalColor: Theme.palette.successColor2
-                        hoverColor: Theme.palette.successColor3
-                        textColor: Theme.palette.successColor1
-                        loading: model.requestToJoinLoading
-                        onClicked: root.acceptRequestToJoin(model.requestToJoinId)
-                    }
+                    DisabledTooltipButton {
+                        id: rejectButton
+                        //using opacity instead of visible to avoid the acceptButton jumping around 
+                        opacity: ((root.panelType === MembersTabPanel.TabType.PendingRequests) && isHovered) ||
+                                    model.membershipRequestState === Constants.CommunityMembershipRequestState.RejectedPending
+                                    //TODO: Only the current user can reject a pending request, so we should check that here
 
+                        tooltipText: qsTr("Waiting for owner node to come online")
+                        interactive: model.membershipRequestState !== Constants.CommunityMembershipRequestState.RejectedPending
+                        buttonComponent: StatusButton {
+                            text: model.membershipRequestState == Constants.CommunityMembershipRequestState.RejectedPending ? qsTr("Reject pending") : qsTr("Reject")
+                            type: StatusBaseButton.Type.Danger
+                            icon.name: "close-circle"
+                            icon.color: enabled ? Style.current.danger : disabledTextColor
+                            enabled: rejectButton.interactive
+                            onClicked: root.declineRequestToJoin(model.requestToJoinId)
+                        }
+                    }
                 ]
 
                 width: membersList.width

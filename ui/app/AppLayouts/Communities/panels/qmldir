@@ -14,6 +14,7 @@ JoinCommunityCenterPanel 1.0 JoinCommunityCenterPanel.qml
 JoinCommunityHeaderPanel 1.0 JoinCommunityHeaderPanel.qml
 JoinPermissionsOverlayPanel 1.0 JoinPermissionsOverlayPanel.qml
 MembersSettingsPanel 1.0 MembersSettingsPanel.qml
+MembersTabPanel 1.0 MembersTabPanel.qml
 MintTokensFooterPanel 1.0 MintTokensFooterPanel.qml
 MintTokensSettingsPanel 1.0 MintTokensSettingsPanel.qml
 OverviewSettingsChart 1.0 OverviewSettingsChart.qml

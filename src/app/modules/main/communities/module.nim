@@ -121,7 +121,7 @@ method curatedCommunitiesLoadingFailed*(self: Module) =
   self.curatedCommunitiesLoaded = true
   self.view.setCuratedCommunitiesLoading(false)
 
-proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
+proc createMemberItem(self: Module, memberId, requestId: string, status: MembershipRequestState): MemberItem =
   let contactDetails = self.controller.getContactDetails(memberId)
   result = initMemberItem(
     pubKey = memberId,
@@ -137,6 +137,7 @@ proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
     isContact = contactDetails.dto.isContact,
     isVerified = contactDetails.dto.isContactVerified(),
     requestToJoinId = requestId,
+    membershipRequestState = status,
   )
 
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
@@ -168,14 +169,14 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.permissions.ensOnly,
       c.muted,
       c.members.map(proc(member: ChatMember): MemberItem =
-        result = self.createMemberItem(member.id, "")),
+        result = self.createMemberItem(member.id, "", MembershipRequestState.Accepted)),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
       bannedMembers = c.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem =
-        result = self.createMemberItem(bannedMemberId, "")),
+        result = self.createMemberItem(bannedMemberId, "", MembershipRequestState.Banned)),
       pendingMemberRequests = c.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-        result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
+        result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),
       declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
-        result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
+        result = self.createMemberItem(requestDto.publicKey, requestDto.id, MembershipRequestState(requestDto.state))),
       encrypted = c.encrypted,
       communityTokens = @[]
     )

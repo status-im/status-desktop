@@ -54,6 +54,18 @@ type MemberRole* {.pure} = enum
   ModerateContent
   Admin
 
+type MembershipRequestState* {.pure} = enum 
+  None = 0,
+  Pending = 1,
+  Accepted = 2,
+  Declined = 3,
+  AcceptedPending = 4,
+  DeclinedPending = 5,
+  Banned = 6,
+  Kicked = 7,
+  BannedPending = 8,
+  KickedPending = 9
+
 type
   ContractTransactionStatus* {.pure.} = enum
     Failed,
