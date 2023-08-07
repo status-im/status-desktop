@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, uuids
 
 import ../../../../../../app_service/service/message/dto/[message, reaction, pinned_message]
 import ../../../../../../app_service/service/community/dto/community
@@ -180,5 +180,5 @@ method isFirstUnseenMessageInitialized*(self: AccessInterface): bool {.base.} =
 method reevaluateViewLoadingState*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method continueScrollToMessage*(self: AccessInterface, messageId: string, message: MessageDto, error: string) {.base.} =
+method onGetMessageById*(self: AccessInterface, requestId: UUID, message: MessageDto, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")

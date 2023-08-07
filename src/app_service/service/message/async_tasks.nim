@@ -1,11 +1,10 @@
-import std/uri
+import std/uri, uuids
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
 import ../../../backend/chat as status_go_chat
 
 import ../../../app/core/custom_urls/urls_manager
-import dto/call_reason
 
 
 #################################################
@@ -321,9 +320,8 @@ const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
 
 type
   AsyncGetMessageByMessageIdTaskArg = ref object of QObjectTaskArg
+    requestId*: string
     messageId*: string
-    chatId*: string
-    callReason*: GetMessageByIdCallReason
 
 const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetMessageByMessageIdTaskArg](argEncoded)
@@ -332,9 +330,7 @@ const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, 
     let output = %*{
       "error": (if response.error != nil: response.error.message else: ""),
       "message": response.result,
-      "messageId": arg.messageId,
-      "chatId": arg.chatId,
-      "callReason": arg.callReason
+      "requestId": arg.requestId
     }
     arg.finish(output)
   except Exception as e:
@@ -342,9 +338,7 @@ const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, 
     let output = %*{
       "error": e.msg,
       "message": "",
-      "messageId": arg.messageId,
-      "chatId": arg.chatId,
-      "callReason": arg.callReason
+      "requestId": arg.requestId
     }
     arg.finish(output)
 

@@ -89,7 +89,7 @@ Control {
     signal activeChanged(string messageId, bool active)
 
     function startMessageFoundAnimation() {
-        messageFoundAnimation.start();
+        messageFoundAnimation.restart();
     }
 
     onMessageAttachmentsChanged: {

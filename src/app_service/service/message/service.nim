@@ -1,4 +1,4 @@
-import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles, times, oids
+import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles, times, oids, uuids
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
@@ -18,7 +18,6 @@ import ../chat/dto/chat as chat_dto
 import ./dto/pinned_message_update as pinned_msg_update_dto
 import ./dto/removed_message as removed_msg_dto
 import ./dto/link_preview
-import ./dto/call_reason
 import ./message_cursor
 
 import ../../common/message as message_common
@@ -136,11 +135,9 @@ type
     messageId*: string
 
   GetMessageResult* = ref object of Args
-    chatId*: string
-    messageId*: string
+    requestId*: UUID
     message*: MessageDto
     error*: string
-    callReason*: GetMessageByIdCallReason
 
 QtObject:
   type Service* = ref object of QObject
@@ -573,7 +570,6 @@ QtObject:
       error "error: ", procName="pinUnpinMessage", errName = e.name, errDesription = e.msg
 
   proc getMessageByMessageId*(self: Service, messageId: string): GetMessageResult =
-    result.callReason = GetMessageByIdCallReason.Unknown
     try:
       let msgResponse = status_go.getMessageByMessageId(messageId)
       if msgResponse.error.isNil:
@@ -592,16 +588,12 @@ QtObject:
       if responseObj.kind != JObject:
         raise newException(RpcException, "getMessageById response is not an json object")
 
-      let chatId = responseObj["chatId"].getStr
-      let messageId = responseObj["messageId"].getStr
+      let requestId = responseObj["requestId"].getStr
       let responseError = responseObj["error"].getStr
-      let callReason = responseObj["callReason"].getStr
 
       var signalData = GetMessageResult( 
-        chatId: chatId,
-        messageId: messageId,
+        requestId: parseUUID(requestId),
         error: responseError,
-        callReason: parseEnum[GetMessageByIdCallReason](callReason),
       )
       
       if responseError == "":
@@ -616,16 +608,17 @@ QtObject:
       error "response processing failed", procName="asyncGetMessageByMessageId", errName = e.name, errDesription = e.msg
       self.events.emit(SIGNAL_GET_MESSAGE_FINISHED, GetMessageResult( error: e.msg ))
 
-  proc asyncGetMessageById*(self: Service, chatId: string, messageId: string, callReason: GetMessageByIdCallReason) =
+  proc asyncGetMessageById*(self: Service, messageId: string): UUID =
+    let requestId = genUUID()
     let arg = AsyncGetMessageByMessageIdTaskArg(
       tptr: cast[ByteAddress](asyncGetMessageByMessageIdTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncGetMessageById",
+      requestId: $requestId,
       messageId: messageId,
-      chatId: chatId,
-      callReason: callReason,
     )
     self.threadpool.start(arg)
+    return requestId
 
   proc finishAsyncSearchMessagesWithError*(self: Service, chatId, errorMessage: string) =
     error "error: ", procName="onAsyncSearchMessages", errDescription = errorMessage

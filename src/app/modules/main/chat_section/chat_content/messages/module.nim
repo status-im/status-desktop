@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils
+import NimQml, chronicles, sequtils, uuids, std/tables
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -15,7 +15,6 @@ import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../../../app_service/common/types
-import ../../../../../../app_service/service/message/dto/call_reason
 
 export io_interface
 
@@ -42,6 +41,7 @@ type
     moduleLoaded: bool
     initialMessagesLoaded: bool
     firstUnseenMessageState: FirstUnseenMessageState
+    scrollToMessageRequests: Table[UUID, string]
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
@@ -668,10 +668,17 @@ method scrollToMessage*(self: Module, messageId: string) =
   if self.view.getMessageSearchOngoing():
     return
 
-  self.controller.asyncGetMessageById(messageId, GetMessageByIdCallReason.ScrollTomessage)
+  let requestId = self.controller.asyncGetMessageById(messageId)
+  self.scrollToMessageRequests[requestId] = messageId
   self.view.setMessageSearchOngoing(true)
 
-method continueScrollToMessage*(self: Module, messageId: string, message: MessageDto, errorMessage: string) =
+method onGetMessageById*(self: Module, requestId: UUID, message: MessageDto, errorMessage: string) =
+
+  var messageId: string
+
+  if not self.scrollToMessageRequests.pop(requestId, messageId):
+    return
+
   if errorMessage != "":
     error "attempted to scroll to a not fetched message", errorMessage, messageId, chatId = self.controller.getMyChatId()
     self.view.setMessageSearchOngoing(false)

@@ -1,4 +1,4 @@
-import chronicles
+import chronicles, uuids
 import io_interface
 import json
 
@@ -13,7 +13,6 @@ import ../../../../../global/app_signals
 import ../../../../../core/signals/types
 import ../../../../../core/eventemitter
 import ../../../../../core/unique_event_emitter
-import ../../../../../../app_service/service/message/dto/call_reason
 
 logScope:
   topics = "messages-controller"
@@ -229,11 +228,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_GET_MESSAGE_FINISHED) do(e: Args):
     let args = GetMessageResult(e)
-    if args.chatId != self.chatId:
-      return
-    if args.callReason != GetMessageByIdCallReason.ScrollTomessage:
-      return
-    self.delegate.continueScrollToMessage(args.messageId, args.message, args.error)
+    self.delegate.onGetMessageById(args.requestId, args.message, args.error)
 
 proc getMySectionId*(self: Controller): string =
   return self.sectionId
@@ -330,5 +325,5 @@ proc leaveChat*(self: Controller) =
 proc resendChatMessage*(self: Controller, messageId: string): string =
   return self.messageService.resendChatMessage(messageId)
 
-proc asyncGetMessageById*(self: Controller, messageId: string, callReason: GetMessageByIdCallReason) =
-  self.messageService.asyncGetMessageById(self.chatId, messageId, callReason)
+proc asyncGetMessageById*(self: Controller, messageId: string): UUID =
+  return self.messageService.asyncGetMessageById(messageId)
