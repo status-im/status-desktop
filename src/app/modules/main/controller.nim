@@ -1,4 +1,4 @@
-import chronicles, stint
+import chronicles, stint, tables
 import ../../global/app_sections_config as conf
 import ../../global/global_singleton
 import ../../global/app_signals
@@ -247,6 +247,10 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_EDITED) do(e:Args):
     let args = CommunityArgs(e)
     self.delegate.communityEdited(args.community)
+
+  self.events.on(SIGNAL_COMMUNITY_MEMBERS_REVEALED_ACCOUNTS_LOADED) do(e:Args):
+    let args = CommunityMembersRevealedAccountsArgs(e)
+    self.delegate.communityMembersRevealedAccountsLoaded(args.communityId, args.membersRevealedAccounts)
 
   self.events.on(SIGNAL_COMMUNITY_PRIVATE_KEY_REMOVED) do(e:Args):
     let args = CommunityArgs(e)
@@ -524,3 +528,6 @@ proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
 
 proc getColorId*(self: Controller, pubkey: string): int =
   procs_from_visual_identity_service.colorIdOf(pubkey)
+
+proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: string) =
+  self.communityService.asyncGetRevealedAccountsForAllMembers(communityId)

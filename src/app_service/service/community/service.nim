@@ -125,6 +125,10 @@ type
     communityId*: string
     metricsType*: CommunityMetricsType
 
+  CommunityMembersRevealedAccountsArgs* = ref object of Args
+    communityId*: string
+    membersRevealedAccounts*: MembersRevealedAccounts
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_DATA_LOADED* = "communityDataLoaded"
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -133,6 +137,7 @@ const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
 const SIGNAL_COMMUNITY_MY_REQUEST_FAILED* = "communityMyRequestFailed"
 const SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_SUCCEEDED* = "communityEditSharedAddressesSucceded"
 const SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_FAILED* = "communityEditSharedAddressesFailed"
+const SIGNAL_COMMUNITY_MEMBERS_REVEALED_ACCOUNTS_LOADED* = "communityMembersRevealedAccountsLoaded"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
 const SIGNAL_COMMUNITY_ADDED* = "communityAdded"
@@ -2011,3 +2016,32 @@ QtObject:
       result = response.result.getStr
     except Exception as e:
       error "error while getting community public key", msg = e.msg
+
+  proc asyncGetRevealedAccountsForAllMembers*(self: Service, communityId: string) =
+    let arg = AsyncGetRevealedAccountsForAllMembersArg(
+      tptr: cast[ByteAddress](asyncGetRevealedAccountsForAllMembersTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncGetRevealedAccountsForAllMembersCompleted",
+      communityId: communityId,
+    )
+    self.threadpool.start(arg)
+  
+  proc onAsyncGetRevealedAccountsForAllMembersCompleted*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(RpcException, rpcResponseObj["error"].getStr)
+
+      if rpcResponseObj["response"]{"error"}.kind != JNull:
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        raise newException(RpcException, error.message)
+
+      let revealedAccounts = rpcResponseObj["response"]["result"].toMembersRevealedAccounts
+
+      self.events.emit(SIGNAL_COMMUNITY_MEMBERS_REVEALED_ACCOUNTS_LOADED, CommunityMembersRevealedAccountsArgs(
+        communityId: rpcResponseObj["communityId"].getStr,
+        membersRevealedAccounts: revealedAccounts
+      ))
+    except Exception as e:
+      error "error while getting the community members' revealed addressesses", msg = e.msg

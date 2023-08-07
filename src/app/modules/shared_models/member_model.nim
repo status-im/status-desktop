@@ -298,19 +298,33 @@ QtObject:
       ModelRole.IsUntrustworthy.int,
     ])
 
-  proc setOnlineStatus*(self: Model, pubKey: string,
-      onlineStatus: OnlineStatus) =
-    let ind = self.findIndexForMember(pubKey)
-    if(ind == -1):
+  proc setOnlineStatus*(self: Model, pubKey: string, onlineStatus: OnlineStatus) =
+    let idx = self.findIndexForMember(pubKey)
+    if(idx == -1):
       return
 
-    if(self.items[ind].onlineStatus == onlineStatus):
+    if(self.items[idx].onlineStatus == onlineStatus):
       return
 
-    var item = self.items[ind]
-    item.onlineStatus = onlineStatus
-    self.removeItemWithIndex(ind)
-    self.addItem(item)
+    self.items[idx].onlineStatus = onlineStatus
+    let index = self.createIndex(idx, 0, nil)
+    self.dataChanged(index, index, @[
+      ModelRole.OnlineStatus.int
+    ])
+
+  proc setAirdropAddress*(self: Model, pubKey: string, airdropAddress: string) =
+    let idx = self.findIndexForMember(pubKey)
+    if(idx == -1):
+      return
+
+    if(self.items[idx].airdropAddress == airdropAddress):
+      return
+
+    self.items[idx].airdropAddress = airdropAddress
+    let index = self.createIndex(idx, 0, nil)
+    self.dataChanged(index, index, @[
+      ModelRole.AirdropAddress.int
+    ])
 
 # TODO: rename me to removeItemByPubkey
   proc removeItemById*(self: Model, pubKey: string) =

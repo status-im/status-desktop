@@ -35,16 +35,10 @@ type
     large*: string
     banner*: string
 
-type RevealedAccount* = object
-  address*: string
-  chainIds*: seq[int]
-  isAirdropAddress*: bool
-
 type ChatMember* = object
   id*: string
   joined*: bool
   role*: MemberRole
-  airdropAccount*: RevealedAccount
 
 type CheckPermissionsResultDto* = object
   criteria*: seq[bool]
@@ -242,22 +236,6 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
   if(jsonObj.getProp("roles", rolesObj)):
     for roleObj in rolesObj:
       roles.add(roleObj.getInt)
-
-  var revealedAccountsObj: JsonNode
-  if jsonObj.getProp("revealed_accounts", revealedAccountsObj):
-    for revealedAccountObj in revealedAccountsObj:
-      if revealedAccountObj{"isAirdropAddress"}.getBool:
-        var chainIdsObj: JsonNode
-        var chainIds: seq[int] = @[]
-        if revealedAccountObj.getProp("chain_ids", chainIdsObj):
-          for chainIdObj in chainIdsObj:
-            chainIds.add(chainIdObj.getInt)
-
-        result.airdropAccount = RevealedAccount(
-          address: revealedAccountObj["address"].getStr,
-          chainIds: chainIds,
-          isAirdropAddress: true,
-        )
   
   result.role = MemberRole.None
   if roles.contains(MemberRole.Owner.int): 

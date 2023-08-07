@@ -446,3 +446,12 @@ QtObject:
           "encrypted": item.encrypted,
         }
         return $jsonObj
+
+  proc setMembersAirdropAddress*(self: SectionModel, id: string, communityMembersAirdropAddress: Table[string, string]) = 
+    let index = self.getItemIndex(id)
+    if (index == -1):
+      return
+
+    for pubkey, revealedAccounts in communityMembersAirdropAddress.pairs:
+      self.items[index].members.setAirdropAddress(pubkey, revealedAccounts)
+      

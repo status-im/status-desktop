@@ -330,6 +330,9 @@ method windowActivated*(self: AccessInterface) {.base.} =
 method windowDeactivated*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method communityMembersRevealedAccountsLoaded*(self: AccessInterface, communityId: string, membersRevealedAccounts: MembersRevealedAccounts) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # This way (using concepts) is used only for the modules managed by AppController
 type
   DelegateInterface* = concept c

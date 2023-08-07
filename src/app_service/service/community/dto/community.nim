@@ -106,6 +106,13 @@ type CommunityMetricsDto* = object
   metricsType*: CommunityMetricsType
   intervals*: seq[MetricsIntervalDto]
 
+type RevealedAccount* = object
+  address*: string
+  chainIds*: seq[int]
+  isAirdropAddress*: bool
+
+type MembersRevealedAccounts* = Table[string, seq[RevealedAccount]]
+
 type CommunityDto* = object
   id*: string
   memberRole*: MemberRole
@@ -524,3 +531,26 @@ proc parseDiscordChannels*(response: JsonNode): seq[DiscordChannelDto] =
   if (response["discordChannels"].kind == JArray):
     for channel in response["discordChannels"].items():
       result.add(channel.toDiscordChannelDto())
+
+proc toRevealedAccount*(revealedAccountObj: JsonNode): RevealedAccount =
+  var chainIdsObj: JsonNode
+  var chainIds: seq[int] = @[]
+  if revealedAccountObj.getProp("chain_ids", chainIdsObj):
+    for chainIdObj in chainIdsObj:
+      chainIds.add(chainIdObj.getInt)
+
+  result = RevealedAccount(
+    address: revealedAccountObj["address"].getStr,
+    chainIds: chainIds,
+    isAirdropAddress: revealedAccountObj{"isAirdropAddress"}.getBool,
+  )
+
+proc toRevealedAccounts*(revealedAccountsObj: JsonNode): seq[RevealedAccount] =
+  result = @[]
+  for revealedAccountObj in revealedAccountsObj:
+    result.add(revealedAccountObj.toRevealedAccount())
+
+proc toMembersRevealedAccounts*(membersRevealedAccountsObj: JsonNode): MembersRevealedAccounts =
+  result = initTable[string, seq[RevealedAccount]]()
+  for (pubkey, revealedAccountsObj) in membersRevealedAccountsObj.pairs:
+    result[pubkey] = revealedAccountsObj.toRevealedAccounts()

@@ -185,3 +185,22 @@ const asyncImportCommunityTask: Task = proc(argEncoded: string) {.gcsafe, nimcal
     arg.finish(%* {
       "error": e.msg,
     })
+
+type
+  AsyncGetRevealedAccountsForAllMembersArg = ref object of QObjectTaskArg
+    communityId: string
+
+const asyncGetRevealedAccountsForAllMembersTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetRevealedAccountsForAllMembersArg](argEncoded)
+  try:
+    let response = status_go.getRevealedAccountsForAllMembers(arg.communityId)
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "response": response,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "error": e.msg,
+    })
