@@ -1,4 +1,4 @@
-import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles, times, oids
+import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles, times, oids, uuids
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
@@ -60,6 +60,7 @@ const SIGNAL_ENVELOPE_EXPIRED* = "envelopeExpired"
 const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
 const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
 const SIGNAL_URLS_UNFURLED* = "urlsUnfurled"
+const SIGNAL_GET_MESSAGE_FINISHED* = "getMessageFinished"
 
 include async_tasks
 
@@ -132,6 +133,12 @@ type
   FirstUnseenMessageLoadedArgs* = ref object of Args
     chatId*: string
     messageId*: string
+
+  GetMessageResult* = ref object of Args
+    requestId*: UUID
+    messageId*: string
+    message*: MessageDto
+    error*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -563,19 +570,54 @@ QtObject:
     except Exception as e:
       error "error: ", procName="pinUnpinMessage", errName = e.name, errDesription = e.msg
 
-  proc fetchMessageByMessageId*(self: Service, chatId: string, messageId: string):
-      tuple[message: MessageDto, error: string] =
+  proc getMessageByMessageId*(self: Service, messageId: string): GetMessageResult =
     try:
-      let msgResponse = status_go.fetchMessageByMessageId(messageId)
-      if(msgResponse.error.isNil):
+      let msgResponse = status_go.getMessageByMessageId(messageId)
+      if msgResponse.error.isNil:
         result.message = msgResponse.result.toMessageDto()
 
-      if(result.message.id.len == 0):
+      if result.message.id.len == 0:
         result.error = "message with id: " & messageId & " doesn't exist"
         return
     except Exception as e:
       result.error = e.msg
-      error "error: ", procName="fetchMessageByMessageId", errName = e.name, errDesription = e.msg
+      error "error: ", procName="getMessageByMessageId", errName = e.name, errDesription = e.msg
+
+  proc onAsyncGetMessageById*(self: Service, response: string) {.slot.} =
+    try:
+      let responseObj = response.parseJson
+      if responseObj.kind != JObject:
+        raise newException(RpcException, "getMessageById response is not an json object")
+
+      var signalData = GetMessageResult(
+        requestId: parseUUID(responseObj["requestId"].getStr),
+        messageId: responseObj["messageId"].getStr,
+        error: responseObj["error"].getStr,
+      )
+      
+      if signalData.error == "":
+        signalData.message = responseObj["message"].toMessageDto()
+
+      if signalData.message.id.len == 0:
+        signalData.error = "message doesn't exist"
+
+      self.events.emit(SIGNAL_GET_MESSAGE_FINISHED, signalData)
+
+    except Exception as e:
+      error "response processing failed", procName="asyncGetMessageByMessageId", errName = e.name, errDesription = e.msg
+      self.events.emit(SIGNAL_GET_MESSAGE_FINISHED, GetMessageResult( error: e.msg ))
+
+  proc asyncGetMessageById*(self: Service, messageId: string): UUID =
+    let requestId = genUUID()
+    let arg = AsyncGetMessageByMessageIdTaskArg(
+      tptr: cast[ByteAddress](asyncGetMessageByMessageIdTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncGetMessageById",
+      requestId: $requestId,
+      messageId: messageId,
+    )
+    self.threadpool.start(arg)
+    return requestId
 
   proc finishAsyncSearchMessagesWithError*(self: Service, chatId, errorMessage: string) =
     error "error: ", procName="onAsyncSearchMessages", errDescription = errorMessage

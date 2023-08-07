@@ -1,4 +1,4 @@
-import chronicles
+import chronicles, uuids
 import io_interface
 import json
 
@@ -226,6 +226,10 @@ proc init*(self: Controller) =
       return
     self.delegate.onFirstUnseenMessageLoaded(args.messageId)
 
+  self.events.on(SIGNAL_GET_MESSAGE_FINISHED) do(e: Args):
+    let args = GetMessageResult(e)
+    self.delegate.onGetMessageById(args.requestId, args.messageId, args.message, args.error)
+
 proc getMySectionId*(self: Controller): string =
   return self.sectionId
 
@@ -320,3 +324,6 @@ proc leaveChat*(self: Controller) =
 
 proc resendChatMessage*(self: Controller, messageId: string): string =
   return self.messageService.resendChatMessage(messageId)
+
+proc asyncGetMessageById*(self: Controller, messageId: string): UUID =
+  return self.messageService.asyncGetMessageById(messageId)

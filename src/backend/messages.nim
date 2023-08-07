@@ -32,7 +32,7 @@ proc pinUnpinMessage*(chatId: string, messageId: string, pin: bool): RpcResponse
   }]
   result = callPrivateRPC("sendPinMessage".prefix, payload)
 
-proc fetchMessageByMessageId*(messageId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc getMessageByMessageId*(messageId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [messageId]
   result = callPrivateRPC("messageByMessageID".prefix, payload)
 

@@ -1,4 +1,4 @@
-import std/uri
+import std/uri, uuids
 include ../../common/json_utils
 include ../../../app/core/tasks/common
 
@@ -312,3 +312,35 @@ const asyncUnfurlUrlsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       "requestedUrls": %*arg.urls
     }
     arg.finish(output)
+
+
+#################################################
+# Async get message by id
+#################################################
+
+type
+  AsyncGetMessageByMessageIdTaskArg = ref object of QObjectTaskArg
+    requestId*: string
+    messageId*: string
+
+const asyncGetMessageByMessageIdTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncGetMessageByMessageIdTaskArg](argEncoded)
+  try:
+    let response = status_go.getMessageByMessageId(arg.messageId)
+    let output = %*{
+      "error": (if response.error != nil: response.error.message else: ""),
+      "message": response.result,
+      "requestId": arg.requestId,
+      "messageId": arg.messageId,
+    }
+    arg.finish(output)
+  except Exception as e:
+    error "asyncGetMessageByMessageIdTask failed", message = e.msg
+    let output = %*{
+      "error": e.msg,
+      "message": "",
+      "requestId": arg.requestId,
+      "messageId": arg.messageId,
+    }
+    arg.finish(output)
+

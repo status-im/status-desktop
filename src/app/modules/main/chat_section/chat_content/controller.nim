@@ -202,9 +202,8 @@ proc belongsToCommunity*(self: Controller): bool =
 proc unpinMessage*(self: Controller, messageId: string) =
   self.messageService.pinUnpinMessage(self.chatId, messageId, false)
 
-proc getMessageById*(self: Controller, messageId: string):
-    tuple[message: MessageDto, error: string] =
-  return self.messageService.fetchMessageByMessageId(self.chatId, messageId)
+proc getMessageById*(self: Controller, messageId: string): GetMessageResult =
+  return self.messageService.getMessageByMessageId(messageId)
 
 proc isUsersListAvailable*(self: Controller): bool =
   return self.isUsersListAvailable

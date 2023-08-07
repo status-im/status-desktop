@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, uuids
 
 import ../../../../../../app_service/service/message/dto/[message, reaction, pinned_message]
 import ../../../../../../app_service/service/community/dto/community
@@ -178,4 +178,7 @@ method isFirstUnseenMessageInitialized*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method reevaluateViewLoadingState*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onGetMessageById*(self: AccessInterface, requestId: UUID, messageId: string, message: MessageDto, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")

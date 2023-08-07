@@ -576,8 +576,7 @@ Loader {
                 }
 
                 onReplyMessageClicked: {
-                    if (!root.quotedMessageDeleted && root.quotedMessageFrom)
-                        root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
+                    root.messageStore.messageModule.jumpToMessage(root.responseToMessageWithId)
                 }
 
                 onSenderNameClicked: {
@@ -679,14 +678,13 @@ Loader {
                     }
 
                     messageText: {
-                        if (root.quotedMessageDeleted) {
+                        if (messageDeleted)
                             return qsTr("Message deleted")
-                        }
-                        if (!root.quotedMessageText && !root.quotedMessageFrom) {
+                        if (!root.quotedMessageText && !root.quotedMessageFrom)
                             return qsTr("Unknown message. Try fetching more messages")
-                        }
                         return root.quotedMessageText
                     }
+                    messageDeleted: root.quotedMessageDeleted
                     contentType: d.convertContentType(root.quotedMessageContentType)
                     amISender: root.quotedMessageFrom === userProfile.pubKey
                     sender.id: root.quotedMessageFrom

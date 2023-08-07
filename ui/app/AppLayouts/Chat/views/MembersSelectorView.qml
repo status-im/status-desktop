@@ -115,7 +115,7 @@ MembersSelectorBase {
             if (root.model.count === 0 && !hasPendingContactRequest) {
                 // List is empty and not a contact yet. Open the contact request popup
 
-                // If `displayName` is not undefiend and not empty,
+                // If `displayName` is not undefined and not empty,
                 // then we open the popup with given `contactData`, which probably came from URL.
                 if (contactData.displayName) {
                     // Open contact request if we have data from url

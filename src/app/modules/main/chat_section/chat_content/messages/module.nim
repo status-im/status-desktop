@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils
+import NimQml, chronicles, sequtils, uuids
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -41,6 +41,7 @@ type
     moduleLoaded: bool
     initialMessagesLoaded: bool
     firstUnseenMessageState: FirstUnseenMessageState
+    getMessageRequestId: UUID
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, contactService: contact_service.Service, communityService: community_service.Service,
@@ -661,13 +662,25 @@ proc switchToMessage*(self: Module, messageId: string) =
     self.controller.setSearchedMessageId(messageId)
 
 method scrollToMessage*(self: Module, messageId: string) =
-  if(messageId == ""):
+  if messageId == "":
     return
 
-  if(self.view.getMessageSearchOngoing()):
+  if self.view.getMessageSearchOngoing():
     return
 
+  self.getMessageRequestId = self.controller.asyncGetMessageById(messageId)
   self.view.setMessageSearchOngoing(true)
+
+method onGetMessageById*(self: Module, requestId: UUID, messageId: string, message: MessageDto, errorMessage: string) =
+
+  if self.getMessageRequestId != requestId:
+    return
+
+  if errorMessage != "":
+    error "attempted to scroll to a not fetched message", errorMessage, messageId, chatId = self.controller.getMyChatId()
+    self.view.setMessageSearchOngoing(false)
+    return
+
   self.controller.setSearchedMessageId(messageId)
   self.checkIfMessageLoadedAndScrollToItIfItIs()
   self.reevaluateViewLoadingState()
