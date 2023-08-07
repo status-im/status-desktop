@@ -394,6 +394,14 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     let args = KeypairArgs(e)
     self.view.showToastKeypairRenamed(args.oldKeypairName, args.keypair.name)
 
+  self.events.on(SIGNAL_NETWORK_ENDPOINT_UPDATED) do(e: Args):
+    let args = NetworkEndpointUpdatedArgs(e)
+    self.view.showNetworkEndpointUpdated(args.networkName, args.isTest)
+
+  self.events.on(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED) do(e: Args):
+    let args = SettingsBoolValueArgs(e)
+    self.view.showIncludeWatchOnlyAccountUpdated(args.value)
+
 method load*[T](
   self: Module[T],
   events: EventEmitter,

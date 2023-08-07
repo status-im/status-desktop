@@ -42,7 +42,7 @@ Item {
             delegate: WalletNetworkDelegate {
                 network: areTestNetworksEnabled ? model.test: model.prod
                 areTestNetworksEnabled: walletStore.areTestNetworksEnabled
-                onClicked: editNetwork(model)
+                onClicked: editNetwork(walletStore.getNetworkData(model))
             }
         }
 
@@ -70,7 +70,7 @@ Item {
             delegate: WalletNetworkDelegate {
                 network: areTestNetworksEnabled ? model.test: model.prod
                 areTestNetworksEnabled: walletStore.areTestNetworksEnabled
-                onClicked: editNetwork(model)
+                onClicked: editNetwork(walletStore.getNetworkData(model))
             }
         }
 

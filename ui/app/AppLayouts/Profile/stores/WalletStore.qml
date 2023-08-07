@@ -108,4 +108,30 @@ QtObject {
     function copyToClipboard(textToCopy) {
         globalUtils.copyToClipboard(textToCopy)
     }
+
+    function getNetworkData(combinedNetwork) {
+        return {
+            prod: {chainId: combinedNetwork.prod.chainId,
+                layer: combinedNetwork.prod.layer,
+                chainName: combinedNetwork.prod.chainName,
+                iconUrl: combinedNetwork.prod.iconUrl,
+                shortName: combinedNetwork.prod.shortName,
+                chainColor: combinedNetwork.prod.chainColor,
+                rpcURL: combinedNetwork.prod.rpcURL,
+                fallbackURL: combinedNetwork.prod.fallbackURL,
+                blockExplorerURL: combinedNetwork.prod.blockExplorerURL,
+                nativeCurrencySymbol: combinedNetwork.prod.nativeCurrencySymbol},
+            test: {chainId: combinedNetwork.test.chainId,
+                layer: combinedNetwork.test.layer,
+                chainName: combinedNetwork.test.chainName,
+                iconUrl: combinedNetwork.test.iconUrl,
+                shortName: combinedNetwork.test.shortName,
+                chainColor: combinedNetwork.test.chainColor,
+                rpcURL: combinedNetwork.test.rpcURL,
+                fallbackURL: combinedNetwork.test.fallbackURL,
+                blockExplorerURL: combinedNetwork.test.blockExplorerURL,
+                nativeCurrencySymbol: combinedNetwork.test.nativeCurrencySymbol},
+            layer: combinedNetwork.layer
+        }
+    }
 }

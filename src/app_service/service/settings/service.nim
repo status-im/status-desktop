@@ -47,6 +47,9 @@ type
   SettingProfilePictureArgs* = ref object of Args
     value*: int
 
+  SettingsBoolValueArgs* = ref object of Args
+    value*: bool
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -974,4 +977,4 @@ QtObject:
     let newValue = not self.settings.includeWatchOnlyAccount
     if(self.saveSetting(INCLUDE_WATCH_ONLY_ACCOUNT, newValue)):
       self.settings.includeWatchOnlyAccount = newValue
-      self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, Args())
+      self.events.emit(SIGNAL_INCLUDE_WATCH_ONLY_ACCOUNTS_UPDATED, SettingsBoolValueArgs(value: newValue))

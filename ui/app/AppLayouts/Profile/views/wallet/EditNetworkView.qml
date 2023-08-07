@@ -28,22 +28,25 @@ ColumnLayout {
         }
     }
 
-    StackLayout {
-        id: stackLayout
-        Layout.preferredHeight: currentIndex === 0 ? editLiveNetwork.height: editTestNetwork.height
+    Loader {
         Layout.fillWidth: true
-        currentIndex: editPreviwTabBar.currentIndex
+        active: root.visible
+        sourceComponent: editPreviwTabBar.currentIndex === 0 ? editLiveNetwork: editTestNetwork
+    }
 
+    Component {
+        id: editLiveNetwork
         EditNetworkForm {
-            id: editLiveNetwork
             network: !!root.combinedNetwork ? root.combinedNetwork.prod: null
             networksModule: root.networksModule
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url)
             onUpdateNetworkValues: root.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl)
         }
+    }
 
+    Component {
+        id: editTestNetwork
         EditNetworkForm {
-            id: editTestNetwork
             network: !!root.combinedNetwork ? root.combinedNetwork.test: null
             networksModule: root.networksModule
             onEvaluateRpcEndPoint: root.evaluateRpcEndPoint(url)
