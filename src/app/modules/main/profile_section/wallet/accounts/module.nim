@@ -75,11 +75,13 @@ method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto], 
   var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
   excludePrivateKeyKeypairs = false, self.controller.areTestNetworksEnabled())
 
-  var item = newKeyPairItem()
-  item.setIcon("show")
-  item.setPairType(KeyPairType.WatchOnly.int)
-  item.setAccounts(walletAccounts.filter(a => a.walletType == WalletTypeWatch).map(x => self.convertWalletAccountDtoToKeyPairAccountItem(x)))
-  keyPairItems.add(item)
+  var watchOnlyAccounts = walletAccounts.filter(a => a.walletType == WalletTypeWatch).map(x => self.convertWalletAccountDtoToKeyPairAccountItem(x))
+  if watchOnlyAccounts.len > 0:
+    var item = newKeyPairItem()
+    item.setIcon("show")
+    item.setPairType(KeyPairType.WatchOnly.int)
+    item.setAccounts(watchOnlyAccounts)
+    keyPairItems.add(item)
 
   for address, tokens in accountsTokens.pairs:
     let balance = currencyAmountToItem(tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0),currencyFormat)

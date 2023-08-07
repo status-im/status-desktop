@@ -145,7 +145,10 @@ SettingsContentBase {
             Layout.fillWidth: true
             networksModule: root.walletStore.networksModule
             onEvaluateRpcEndPoint: root.walletStore.evaluateRpcEndPoint(url)
-            onUpdateNetworkValues: root.walletStore.updateNetworkValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+            onUpdateNetworkValues: {
+                root.walletStore.updateNetworkEndPointValues(chainId, newMainRpcInput, newFailoverRpcUrl)
+                stackContainer.currentIndex = networksViewIndex
+            }
         }
 
         AccountOrderView {

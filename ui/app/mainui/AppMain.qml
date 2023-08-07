@@ -99,7 +99,7 @@ Item {
             Global.displayToastMessage(
                 qsTr("\"%1\" successfuly added").arg(name),
                 "",
-                "check-circle",
+                "checkmark-circle",
                 false,
                 Constants.ephemeralNotificationType.success,
                 ""
@@ -110,11 +110,32 @@ Item {
             Global.displayToastMessage(
                 qsTr("You successfully renamed your keypair\nfrom \"%1\" to \"%2\"").arg(oldName).arg(newName),
                 "",
-                "check-circle",
+                "checkmark-circle",
                 false,
                 Constants.ephemeralNotificationType.success,
                 ""
             )
+        }
+
+        function onShowNetworkEndpointUpdated(name: string, isTest: bool) {
+            Global.displayToastMessage(
+                isTest ? qsTr("Test network settings for %1 updated").arg(name): qsTr("Live network settings for %1 updated").arg(name),
+                "",
+                "checkmark-circle",
+                false,
+                Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
+
+        function onShowIncludeWatchOnlyAccountUpdated(includeWatchOnly: bool) {
+            Global.displayToastMessage(
+                        includeWatchOnly ? qsTr("Your wallet’s total balance will now include balances of watched addresses") : qsTr("Your wallet’s total balance will not include balances of watched addresses") ,
+                        "",
+                        "checkmark-circle",
+                        false,
+                        Constants.ephemeralNotificationType.success,
+                        "")
         }
     }
 
