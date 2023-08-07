@@ -109,6 +109,11 @@ QtObject:
   proc globalFilterChanged*(self: Controller, addresses: seq[string], chainIds: seq[int]) = 
     if chainIds == self.chainIds and addresses == self.addresses:
       return
+
     self.chainIds = chainIds
     self.addresses = addresses
+  
+    self.eventsHandler.updateSubscribedAddresses(self.addresses)
+    self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
+
     self.resetModel()

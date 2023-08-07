@@ -29,7 +29,7 @@ proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal =
       for account in event["accounts"]:
         result.accounts.add(account.getStr)
     result.at = event{"at"}.getInt
-    result.chainID = event{"chainID"}.getInt
+    result.chainID = event{"chainId"}.getInt
     result.message = event{"message"}.getStr
     const requestIdName = "requestId"
     if event.contains(requestIdName):
