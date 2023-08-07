@@ -504,14 +504,7 @@ StatusSectionLayout {
 
             assetsModel: assetsModelLoader.item
             collectiblesModel: collectiblesModelLoader.item
-            membersModel: {
-                const chatContentModule = root.rootStore.currentChatContentModule()
-                if (!chatContentModule || !chatContentModule.usersModule) {
-                    // New communities have no chats, so no chatContentModule
-                    return null
-                }
-                return chatContentModule.usersModule.model
-            }
+            membersModel: community.members
 
             accountsModel: SortFilterProxyModel {
                 sourceModel: root.rootStore.accounts

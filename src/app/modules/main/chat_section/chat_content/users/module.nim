@@ -133,7 +133,6 @@ proc addChatMember(self: Module,  member: ChatMember) =
     memberRole = member.role,
     joined = member.joined,
     isUntrustworthy = contactDetails.dto.trustStatus == TrustStatus.Untrustworthy,
-    airdropAddress = member.airdropAccount.address,
     ))
 
 method onChatMembersAdded*(self: Module, ids: seq[string]) =

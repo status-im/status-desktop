@@ -262,6 +262,11 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     communityTokensItems = communityTokens.map(proc(tokenDto: CommunityTokenDto): TokenItem =
       result = self.createTokenItem(tokenDto)
     )
+    # Get community members' revealed accounts
+    # We will update the model later when we finish loading the accounts
+    # TODO add TokenMaster here too when it's available
+    if communityDetails.memberRole == MemberRole.Owner:
+      self.controller.asyncGetRevealedAccountsForAllMembers(channelGroup.id)
 
   let unviewedCount = channelGroup.unviewedMessagesCount
   let notificationsCount = channelGroup.unviewedMentionsCount
@@ -312,9 +317,8 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
         isContact = contactDetails.dto.isContact,
         isVerified = contactDetails.dto.isContactVerified(),
         memberRole = member.role,
-        airdropAddress = member.airdropAccount.address,
         membershipRequestState = MembershipRequestState.Accepted
-        )),
+      )),
     # pendingRequestsToJoin
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
@@ -1304,4 +1308,14 @@ method windowActivated*[T](self: Module[T]) =
 
 method windowDeactivated*[T](self: Module[T]) =
   self.controller.speedupArchivesImport()
+
+method communityMembersRevealedAccountsLoaded*[T](self: Module[T], communityId: string, membersRevealedAccounts: MembersRevealedAccounts) =
+  var  communityMembersAirdropAddress: Table[string, string]
+  for pubkey, revealedAccounts in membersRevealedAccounts.pairs:
+    for revealedAccount in revealedAccounts:
+      if revealedAccount.isAirdropAddress:
+        communityMembersAirdropAddress[pubkey] = revealedAccount.address
+        discard
+  
+  self.view.model.setMembersAirdropAddress(communityId, communityMembersAirdropAddress)
 

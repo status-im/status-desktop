@@ -61,6 +61,17 @@ proc editSharedAddresses*(
     "airdropAddress": airdropAddress,
   }])
 
+proc getRevealedAccountsForMember*(
+    communityId: string,
+    memberPubkey: string,
+  ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("getRevealedAccounts".prefix, %*[communityId, memberPubkey])
+
+proc getRevealedAccountsForAllMembers*(
+    communityId: string,
+  ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("getRevealedAccountsForAllMembers".prefix, %*[communityId])
+
 proc checkPermissionsToJoinCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("checkPermissionsToJoinCommunity".prefix, %*[{
     "communityId": communityId
