@@ -41,7 +41,9 @@ QtObject {
     enum ActivityCenterMembershipStatus {
         Pending = 1,
         Accepted = 2,
-        Declined = 3
+        Declined = 3,
+        AcceptedPending = 4,
+        DeclinedPending = 5
     }
 
     enum ActivityCenterContactRequestState {
