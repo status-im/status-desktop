@@ -1,5 +1,6 @@
 import NimQml, Tables, strformat, sequtils, sugar
 import keypair_item
+import ./currency_amount
 
 export keypair_item
 
@@ -95,3 +96,7 @@ QtObject:
     if item.isNil:
       return
     item.setName(name)
+
+  proc setBalanceForAddress*(self: KeyPairModel, address: string, balance: CurrencyAmount) =
+    for item in self.items:
+      item.setBalanceForAddress(address, balance)

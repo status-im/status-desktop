@@ -116,8 +116,9 @@ SettingsContentBase {
                 renameKeypairPopup.active = true
             }
             onRunRemoveKeypairFlow: {
-                removeKeypairPopup.keyUid = model.keyPair.keyUid
                 removeKeypairPopup.name = model.keyPair.name
+                removeKeypairPopup.keyUid = model.keyPair.keyUid
+                removeKeypairPopup.accounts= model.keyPair.accounts
                 removeKeypairPopup.active = true
             }
         }
@@ -177,8 +178,9 @@ SettingsContentBase {
                 renameKeypairPopup.active = true
             }
             onRunRemoveKeypairFlow: {
-                removeKeypairPopup.keyUid = keyPair.keyUid
                 removeKeypairPopup.name = keyPair.name
+                removeKeypairPopup.keyUid = keyPair.keyUid
+                removeKeypairPopup.accounts= keyPair.accounts
                 removeKeypairPopup.active = true
             }
         }
@@ -234,23 +236,21 @@ SettingsContentBase {
             id: removeKeypairPopup
             active: false
 
-            property string keyUid
             property string name
+            property string keyUid
+            property var accounts
 
-            sourceComponent: ConfirmationDialog {
-                headerSettings.title: qsTr("Confirm %1 Removal").arg(removeKeypairPopup.name)
-
-                confirmationText: qsTr("You will not be able to restore viewing access to any account of this keypair in the future unless you import this keypair again.")
-                confirmButtonLabel: qsTr("Remove keypair")
-                onConfirmButtonClicked: {
+            sourceComponent: RemoveKeypairPopup {
+                name: removeKeypairPopup.name
+                relatedAccounts: removeKeypairPopup.accounts
+                getNetworkShortNames: function(chainIds) {return root.walletStore.getNetworkShortNames(chainIds)}
+                onClosed: removeKeypairPopup.active = false
+                onConfirmClicked: {
                     root.walletStore.deleteKeypair(removeKeypairPopup.keyUid)
                     removeKeypairPopup.active = false
                 }
             }
-
-            onLoaded: {
-                removeKeypairPopup.item.open()
-            }
+            onLoaded: removeKeypairPopup.item.open()
         }
     }
 }

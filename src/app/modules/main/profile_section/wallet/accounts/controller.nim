@@ -75,3 +75,6 @@ proc updateWalletAccountTestPreferredChains*(self: Controller, address, preferre
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
+
+proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], currency: string): float64 =
+  return self.walletAccountService.getCurrencyBalance(address, chainIds, currency)

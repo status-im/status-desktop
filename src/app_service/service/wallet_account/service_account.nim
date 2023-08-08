@@ -362,6 +362,7 @@ proc deleteKeypair*(self: Service, keyUid: string) =
     self.updateAccountsPositions()
     for acc in kp.accounts:
       self.removeAccountFromLocalStoreAndNotify(acc.address)
+    self.events.emit(SIGNAL_KEYPAIR_DELETED, KeypairArgs(keyPairName: kp.name))
   except Exception as e:
     error "error: ", procName="deleteKeypair", errName = e.name, errDesription = e.msg
 

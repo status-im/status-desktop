@@ -4,6 +4,7 @@ import ./io_interface
 import ./model
 import app/modules/shared_models/keypair_model
 import app/modules/shared_models/wallet_account_item
+import app/modules/shared_models/currency_amount
 
 QtObject:
   type
@@ -104,3 +105,6 @@ QtObject:
 
   proc updateWalletAccountTestPreferredChains*(self: View, address: string, preferredChainIds: string) {.slot.} =
     self.delegate.updateWalletAccountTestPreferredChains(address, preferredChainIds)
+
+  proc setBalanceForKeyPairs*(self: View, address: string, balance: CurrencyAmount) =
+    self.keyPairModel.setBalanceForAddress(address, balance)
