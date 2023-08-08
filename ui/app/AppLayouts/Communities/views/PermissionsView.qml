@@ -85,6 +85,7 @@ StatusScrollView {
                 }
 
                 permissionType: model.permissionType
+                permissionState: model.permissionState // TODO: Backend!
 
                 ChannelsSelectionModel {
                     id: channelsSelectionModel

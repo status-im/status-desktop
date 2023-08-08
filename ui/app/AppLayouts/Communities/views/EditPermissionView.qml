@@ -595,6 +595,16 @@ StatusScrollView {
             visible: root.permissionDuplicated || root.permissionTypeLimitReached
         }
 
+        StatusWarningBox {
+            Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
+
+            icon: "desktop"
+            text: qsTr("Any changes to community permissions will take effect after the control node receives and processes them")
+            borderColor: Theme.palette.baseColor1
+            iconColor: textColor
+        }
+
         StatusButton {
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter

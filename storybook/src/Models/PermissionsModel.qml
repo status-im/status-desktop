@@ -14,6 +14,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: true,
             tokenCriteriaMet: false
         },
@@ -21,6 +22,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: true
         }
@@ -31,6 +33,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel4(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: true
         }
     ]
@@ -40,24 +43,28 @@ QtObject {
             holdingsListModel: root.createHoldingsModel4(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         }
     ]
@@ -67,12 +74,14 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         }
     ]
@@ -82,12 +91,14 @@ QtObject {
             holdingsListModel: root.createHoldingsModel5(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel4(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         }
     ]
@@ -97,18 +108,21 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel1b(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         }
     ]
@@ -118,24 +132,28 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: true
         },
         {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         },
         {
             holdingsListModel: root.createHoldingsModel5(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false
         }
     ]
@@ -146,6 +164,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2b(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -154,6 +173,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Admin,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -162,6 +182,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -170,6 +191,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel2(),
             permissionType: PermissionTypes.Type.Member,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         }
@@ -181,6 +203,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1b(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Read,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -189,6 +212,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Read,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -197,6 +221,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.Read,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -205,6 +230,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.Read,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -213,6 +239,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel5(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.Read,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -221,6 +248,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.ViewAndPost,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -229,6 +257,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel2b(),
             channelsListModel: root.createChannelsModel1(),
             permissionType: PermissionTypes.Type.ViewAndPost,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: true
         },
@@ -237,6 +266,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel3(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.ViewAndPost,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -245,6 +275,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel5(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.ViewAndPost,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         },
@@ -253,6 +284,7 @@ QtObject {
             holdingsListModel: root.createHoldingsModel1(),
             channelsListModel: root.createChannelsModel3(),
             permissionType: PermissionTypes.Type.ViewAndPost,
+            permissionState: PermissionTypes.State.Active,
             isPrivate: false,
             tokenCriteriaMet: false
         }
@@ -525,5 +557,14 @@ QtObject {
                         channelName: "Club VIP"
                     }
                 ]
+    }
+
+    function changePermissionState(model, index, permissionState) {
+        model.get(index).permissionState = permissionState
+    }
+
+    function changeAllPermissionStates(model, permissionState) {
+        for(let i = 0; i < model.count; i++)
+            changePermissionState(model, i, permissionState)
     }
 }

@@ -15,6 +15,7 @@ Control{
     property var channelsListModel
 
     property int permissionType: PermissionTypes.Type.None
+    property int permissionState: PermissionTypes.State.Active
     property bool isPrivate: false
     property bool showButtons: true
 
@@ -32,6 +33,23 @@ Control{
         readonly property int buttonTextPixelSize: 12
         readonly property int buttonDiameter: 36
         readonly property int buttonTextSpacing: 6
+        readonly property int headerIconleftMargin: 20
+        readonly property bool isActiveState: root.permissionState === PermissionTypes.State.Active
+        readonly property bool isDeletingState: root.permissionState === PermissionTypes.State.Deleting
+
+        function getStateText(state) {
+            if(state === PermissionTypes.State.Active)
+                return qsTr("Active")
+
+            if(state === PermissionTypes.State.Creating)
+                return qsTr("Pending, will become active once owner node comes online")
+
+            if(state === PermissionTypes.State.Deleting)
+                return qsTr("Deletion pending, will be deleted once owner node comes online")
+
+            if(state === PermissionTypes.State.Editing)
+                return qsTr("Pending updates will be applied when owner node comes online")
+        }
     }
     background: Rectangle {
         color: "transparent"
@@ -55,16 +73,24 @@ Control{
                 spacing: 8
 
                 StatusIcon {
-                    Layout.leftMargin: 19
+                    Layout.leftMargin: d.headerIconleftMargin
+
+                    visible: d.isActiveState
                     icon: "checkmark"
                     Layout.preferredWidth: 11
                     Layout.preferredHeight: 8
                     color: Theme.palette.directColor1
                 }
 
+                StatusDotsLoadingIndicator {
+                    Layout.leftMargin: d.headerIconleftMargin
+
+                    visible: !d.isActiveState
+                }
+
                 StatusBaseText {
                     Layout.fillWidth: true
-                    text: qsTr("Active")
+                    text: d.getStateText(root.permissionState)
                     font.pixelSize: d.tagTextPixelSize
                 }
 
@@ -229,7 +255,7 @@ Control{
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Delete")
+                    text: d.isDeletingState ? qsTr("Undo delete") : qsTr("Delete")
                     color: Theme.palette.dangerColor1
                     font.pixelSize: d.buttonTextPixelSize
                 }

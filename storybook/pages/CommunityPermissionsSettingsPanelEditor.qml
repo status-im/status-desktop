@@ -6,6 +6,8 @@ import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Communities.controls 1.0
 
+import Models 1.0
+
 Flickable {
     id: root
 
@@ -48,6 +50,36 @@ Flickable {
                     id: content
                     spacing: 20
                     anchors.fill: parent
+
+                    Label {
+                        Layout.leftMargin: 5
+
+                        text: "Permission State:"
+                    }
+                    ColumnLayout {
+                        Layout.leftMargin: 5
+
+                        RadioButton {
+                            text: "Active state"
+                            checked: true
+                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Active)
+                        }
+
+                        RadioButton {
+                            text: "Creating state"
+                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Creating)
+                        }
+
+                        RadioButton {
+                            text: "Editing state"
+                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Editing)
+                        }
+
+                        RadioButton {
+                            text: "Deleting state"
+                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Deleting)
+                        }
+                    }
 
                     Repeater {
                         model: holdingsListModel
