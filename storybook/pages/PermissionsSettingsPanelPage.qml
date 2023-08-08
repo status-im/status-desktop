@@ -112,16 +112,10 @@ SplitView {
 
         logsView.logText: logs.logText
 
-        ColumnLayout {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
+        CheckBox {
+            id: isOwnerCheckBox
 
-            CheckBox {
-                id: isOwnerCheckBox
-
-                text: "Is owner"
-            }
+            text: "Is owner"
         }
     }
 }

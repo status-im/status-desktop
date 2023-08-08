@@ -9,6 +9,10 @@ QtObject {
         None, Admin, Member, Read, ViewAndPost, Moderator
     }
 
+    enum State {
+        Active, Creating, Deleting, Editing
+    }
+
     function getName(type) {
         switch (type) {
             case PermissionTypes.Type.Admin:
