@@ -72,6 +72,15 @@ Item {
                 readonly property bool itsMe: model.pubKey.toLowerCase() === userProfile.pubKey.toLowerCase()
                 readonly property bool isHovered: memberItem.sensor.containsMouse
                 readonly property bool canBeBanned: !memberItem.itsMe && (model.memberRole !== Constants.memberRole.owner && model.memberRole !== Constants.memberRole.admin)
+                readonly property bool canEnableKickBanButtons: canBeBanned && root.panelType === MembersTabPanel.TabType.AllMembers
+                readonly property bool kickEnabled: canEnableKickBanButtons && model.membershipRequestState !== Constants.CommunityMembershipRequestState.KickedPending
+                readonly property bool banEnabled: canEnableKickBanButtons && model.membershipRequestState !== Constants.CommunityMembershipRequestState.BannedPending
+                readonly property bool kickVisible: (isHovered || !kickEnabled) && banEnabled
+                readonly property bool banVisible: (isHovered || !banEnabled) && kickEnabled
+                readonly property bool unBanVisible: (root.panelType === MembersTabPanel.TabType.BannedMembers) && isHovered && canBeBanned
+
+                readonly property bool isRejectedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.RejectedPending
+                readonly property bool isAcceptedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.AcceptedPending
 
                 statusListItemComponentsSlot.spacing: 16
                 statusListItemTitleArea.anchors.rightMargin: 0
@@ -80,25 +89,38 @@ Item {
                 leftPadding: 12
 
                 components: [
-                    StatusButton {
-                        objectName: "MemberListIten_KickButton"
-                        visible: (root.panelType === MembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
-                        text: qsTr("Kick")
-                        type: StatusBaseButton.Type.Danger
-                        size: StatusBaseButton.Size.Small
-                        onClicked: root.kickUserClicked(model.pubKey, model.displayName)
+                    DisabledTooltipButton {
+                        id: kickButton
+                        visible: kickVisible
+                        interactive: kickEnabled
+                        tooltipText: qsTr("Waiting for owner node to come online")
+                        buttonComponent: StatusButton {
+                            objectName: "MemberListItem_KickButton"
+                            text: model.membershipRequestState === Constants.CommunityMembershipRequestState.KickedPending ? qsTr("Kick pending") : qsTr("Kick")
+                            type: StatusBaseButton.Type.Danger
+                            size: StatusBaseButton.Size.Small
+                            onClicked: root.kickUserClicked(model.pubKey, model.displayName)
+                            enabled: kickButton.interactive
+                        }
+                    },
+
+                    DisabledTooltipButton {
+                        id: banButton
+                        //using opacity instead of visible to avoid the acceptButton jumping around
+                        opacity: banVisible
+                        interactive: banEnabled
+                        tooltipText: qsTr("Waiting for owner node to come online")
+                        buttonComponent: StatusButton {
+                            text: model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedPending || !banVisible ? qsTr("Ban pending") : qsTr("Ban")
+                            type: StatusBaseButton.Type.Danger
+                            size: StatusBaseButton.Size.Small
+                            onClicked: root.banUserClicked(model.pubKey, model.displayName)
+                            enabled: banButton.interactive
+                        }
                     },
 
                     StatusButton {
-                        visible: (root.panelType === MembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
-                        text: qsTr("Ban")
-                        type: StatusBaseButton.Type.Danger
-                        size: StatusBaseButton.Size.Small
-                        onClicked: root.banUserClicked(model.pubKey, model.displayName)
-                    },
-
-                    StatusButton {
-                        visible: (root.panelType === MembersTabPanel.TabType.BannedMembers) && isHovered && canBeBanned
+                        visible: unBanVisible
                         text: qsTr("Unban")
                         onClicked: root.unbanUserClicked(model.pubKey)
                     },
@@ -107,13 +129,13 @@ Item {
                         id: acceptButton
                         visible: ((root.panelType === MembersTabPanel.TabType.PendingRequests ||
                                     root.panelType === MembersTabPanel.TabType.DeclinedRequests) && isHovered) || 
-                                    model.membershipRequestState === Constants.CommunityMembershipRequestState.AcceptedPending
+                                    isAcceptedPending
                                     //TODO: Only the current user can reject a pending request, so we should check that here
 
                         tooltipText: qsTr("Waiting for owner node to come online")
-                        interactive: model.membershipRequestState !== Constants.CommunityMembershipRequestState.AcceptedPending
+                        interactive: !isAcceptedPending
                         buttonComponent: StatusButton {
-                            text: model.membershipRequestState == Constants.CommunityMembershipRequestState.AcceptedPending ? qsTr("Accept pending") : qsTr("Accept")
+                            text: isAcceptedPending ? qsTr("Accept Pending") : qsTr("Accept")
                             icon.name: "checkmark-circle"
                             icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
                             normalColor: Theme.palette.successColor2
@@ -128,14 +150,13 @@ Item {
                     DisabledTooltipButton {
                         id: rejectButton
                         //using opacity instead of visible to avoid the acceptButton jumping around 
-                        opacity: ((root.panelType === MembersTabPanel.TabType.PendingRequests) && isHovered) ||
-                                    model.membershipRequestState === Constants.CommunityMembershipRequestState.RejectedPending
+                        opacity: ((root.panelType === MembersTabPanel.TabType.PendingRequests) && isHovered) || isRejectedPending
                                     //TODO: Only the current user can reject a pending request, so we should check that here
 
                         tooltipText: qsTr("Waiting for owner node to come online")
-                        interactive: model.membershipRequestState !== Constants.CommunityMembershipRequestState.RejectedPending
+                        interactive: !isRejectedPending
                         buttonComponent: StatusButton {
-                            text: model.membershipRequestState == Constants.CommunityMembershipRequestState.RejectedPending ? qsTr("Reject pending") : qsTr("Reject")
+                            text: isRejectedPending ? qsTr("Reject pending") : qsTr("Reject")
                             type: StatusBaseButton.Type.Danger
                             icon.name: "close-circle"
                             icon.color: enabled ? Style.current.danger : disabledTextColor

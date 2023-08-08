@@ -31,7 +31,7 @@ communitySettingsView_NavigationListItem_Mint_Tokens = {"container": statusDeskt
 communitySettings_Permissions_NavigationListItem = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Permissions", "type": "StatusNavigationListItem", "visible": True}
 communitySettingsView_NavigationListItem_Overview = {"container": statusDesktop_mainWindow, "objectName": "CommunitySettingsView_NavigationListItem_Overview", "type": "StatusNavigationListItem", "visible": True}
 communitySettings_MembersTab_Members_ListView = {"container": statusDesktop_mainWindow, "objectName": "CommunityMembersTabPanel_MembersListViews", "type": "ListView", "visible": True}
-communitySettings_MembersTab_Member_Kick_Button = {"container": communitySettings_MembersTab_Members_ListView, "objectName": "MemberListIten_KickButton", "type": "StatusButton", "visible": True}
+communitySettings_MembersTab_Member_Kick_Button = {"container": communitySettings_MembersTab_Members_ListView, "objectName": "MemberListItem_KickButton", "type": "StatusButton", "visible": True}
 communitySettings_KickModal_Kick_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "CommunityMembers_KickModal_KickButton", "type": "StatusButton", "visible": True}
 
 # Chat components
