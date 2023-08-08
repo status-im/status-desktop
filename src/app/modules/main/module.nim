@@ -410,6 +410,10 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     let args = SettingsBoolValueArgs(e)
     self.view.showIncludeWatchOnlyAccountUpdated(args.value)
 
+  self.events.on(SIGNAL_KEYPAIR_DELETED) do(e: Args):
+    let args = KeypairArgs(e)
+    self.view.showToastKeypairRemoved(args.keyPairName)
+
 method load*[T](
   self: Module[T],
   events: EventEmitter,

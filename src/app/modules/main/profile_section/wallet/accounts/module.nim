@@ -67,11 +67,15 @@ method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: Wallet
     prodPreferredChainIds = account.prodPreferredChainIds,
     testPreferredChainIds = account.testPreferredChainIds)
 
-method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto], accountsTokens: OrderedTable[string, seq[WalletTokenDto]]): seq[KeyPairItem] =
+method setBalance(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
   let enabledChainIds = self.controller.getEnabledChainIds()
   let currency = self.controller.getCurrentCurrency()
   let currencyFormat = self.controller.getCurrencyFormat(currency)
+  for address, tokens in accountsTokens.pairs:
+    let balance = currencyAmountToItem(tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0),currencyFormat)
+    self.view.setBalanceForKeyPairs(address, balance)
 
+method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto]): seq[KeyPairItem] =
   var keyPairItems = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = false,
   excludePrivateKeyKeypairs = false, self.controller.areTestNetworksEnabled())
 
@@ -83,14 +87,18 @@ method createKeypairItems*(self: Module, walletAccounts: seq[WalletAccountDto], 
     item.setAccounts(watchOnlyAccounts)
     keyPairItems.add(item)
 
-  for address, tokens in accountsTokens.pairs:
-    let balance = currencyAmountToItem(tokens.map(t => t.getCurrencyBalance(enabledChainIds, currency)).foldl(a + b, 0.0),currencyFormat)
-    for item in keyPairItems:
-      item.setBalanceForAddress(address, balance)
+  let enabledChainIds = self.controller.getEnabledChainIds()
+  let currency = self.controller.getCurrentCurrency()
+  let currencyFormat = self.controller.getCurrencyFormat(currency)
+  for item in keyPairItems:
+    let accounts = item.getAccountsModel().getItems()
+    for acc in accounts:
+      let balance =  currencyAmountToItem(self.controller.getCurrencyBalance(acc.getAddress(), enabledChainIds, currency), currencyFormat)
+      acc.setBalance(balance)
 
   return keyPairItems
 
-method refreshWalletAccounts*(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]] = initOrderedTable[string, seq[WalletTokenDto]]()) =
+method refreshWalletAccounts*(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
 
   let items = walletAccounts.map(w => (block:
@@ -99,7 +107,7 @@ method refreshWalletAccounts*(self: Module, accountsTokens: OrderedTable[string,
     walletAccountToWalletAccountItem(w, keycardAccount, areTestNetworksEnabled)
   ))
 
-  self.view.setKeyPairModelItems(self.createKeypairItems(walletAccounts, accountsTokens))
+  self.view.setKeyPairModelItems(self.createKeypairItems(walletAccounts))
   self.view.setItems(items)
 
 method load*(self: Module) =
@@ -114,7 +122,7 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     let arg = TokensPerAccountArgs(e)
-    self.refreshWalletAccounts(arg.accountsTokens)
+    self.setBalance(arg.accountsTokens)
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_UPDATED) do(e:Args):
     let args = AccountArgs(e)

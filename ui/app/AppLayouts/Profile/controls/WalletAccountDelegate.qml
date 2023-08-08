@@ -15,6 +15,7 @@ StatusListItem {
     property var account
     property var getNetworkShortNames: function(chainIds){}
     property int totalCount: 0
+    property bool nextIconVisible: true
 
     signal goToAccountView()
 
@@ -37,6 +38,7 @@ StatusListItem {
     components: StatusIcon {
         icon: "next"
         color: Theme.palette.baseColor1
+        visible: root.nextIconVisible
     }
 
     onClicked: goToAccountView()

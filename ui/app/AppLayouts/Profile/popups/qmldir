@@ -6,3 +6,4 @@ RenameKeypairPopup 1.0 RenameKeypairPopup.qml
 WalletKeypairAccountMenu 1.0 WalletKeypairAccountMenu.qml
 WalletAddressMenu 1.0 WalletAddressMenu.qml
 RenameAccontModal 1.0 RenameAccontModal.qml
+RemoveKeypairPopup 1.0 RemoveKeypairPopup.qml

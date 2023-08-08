@@ -137,6 +137,17 @@ Item {
                         Constants.ephemeralNotificationType.success,
                         "")
         }
+
+        function onShowToastKeypairRemoved(keypairName: string) {
+            Global.displayToastMessage(
+                qsTr("“%1” keypair and its associated accounts were successfully removed from all devices").arg(keypairName),
+                "",
+                "checkmark-circle",
+                false,
+                Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
     }
 
     QtObject {
