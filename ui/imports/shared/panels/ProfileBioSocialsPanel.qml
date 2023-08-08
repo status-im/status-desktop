@@ -84,7 +84,7 @@ Control {
 
             StatusBaseText {
                 id: bioText
-                text: root.bio
+                text: root.bio.trim()
                 wrapMode: Text.Wrap
                 font.weight: Font.Medium
                 lineHeight: 1.2
