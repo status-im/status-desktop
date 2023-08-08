@@ -173,6 +173,8 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
       self.buildAllTokens(addresses, store = true)
       for acc in kpDb.accounts:
         acc.ens = getEnsName(acc.address, chainId)
+        if acc.isChat:
+          continue
         if notify:
           self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: acc))
     else:
@@ -186,6 +188,8 @@ proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = t
           continue
         accDb.ens = getEnsName(accDb.address, chainId)
         self.storeAccountToKeypair(accDb)
+        if accDb.isChat:
+          continue
         self.buildAllTokens(@[accDb.address], store = true)
         if notify:
           self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountArgs(account: accDb))
