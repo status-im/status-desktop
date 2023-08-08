@@ -713,6 +713,7 @@ MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.
 STATUS_CLIENT_DMG ?= pkg/Status.dmg
 
 $(STATUS_CLIENT_DMG): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
+$(STATUS_CLIENT_DMG): ENTITLEMENTS ?= resources/Entitlements.plist
 $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	rm -rf tmp/macos pkg/*.dmg
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS
@@ -740,7 +741,8 @@ $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	# if MACOS_CODESIGN_IDENT is not set then the outer and inner .app
 	# bundles are not signed
 ifdef MACOS_CODESIGN_IDENT
-	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT) --entitlements Entitlements.plist
+	scripts/sign-macos-pkg.sh $(MACOS_OUTER_BUNDLE) $(MACOS_CODESIGN_IDENT) \
+		--entitlements $(ENTITLEMENTS)
 endif
 	echo -e $(BUILD_MSG) "dmg"
 	mkdir -p pkg
