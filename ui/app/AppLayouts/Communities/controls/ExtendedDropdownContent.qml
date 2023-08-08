@@ -28,7 +28,7 @@ Item {
 
     property string noDataText: qsTr("No data found")
     property bool showAllTokensMode: false
-
+    property bool showTokenAmount: true
     readonly property bool canGoBack: root.state !== d.depth1_ListState
 
     signal itemClicked(string key, string name, url iconSource)
@@ -491,6 +491,7 @@ Item {
             isFooterButtonVisible: !root.showAllTokensMode && !d.searchMode
                                    && filteredModel.item && d.currentModel.count > filteredModel.item.count
 
+            showTokenAmount: root.showTokenAmount
             onHeaderItemClicked: root.navigateToMintTokenSettings()
             onFooterButtonClicked: root.footerButtonClicked()
 
@@ -537,6 +538,7 @@ Item {
                                    && filteredModel.item && d.currentModel
                                    && d.currentModel.count > filteredModel.item.count
 
+            showTokenAmount: root.showTokenAmount
             onHeaderItemClicked: root.navigateToMintTokenSettings()
             onFooterButtonClicked: root.footerButtonClicked()
 

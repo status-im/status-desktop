@@ -41,6 +41,7 @@ StatusDropdown {
     property real collectibleAmount: 1
 
     property string ensDomainName: ""
+    property bool showTokenAmount: true
 
     signal addAsset(string key, real amount)
     signal addCollectible(string key, real amount)
@@ -284,6 +285,7 @@ StatusDropdown {
             checkedKeys: root.usedTokens.map(entry => entry.key)
             type: d.extendedDropdownType
             showAllTokensMode: d.allTokensMode
+            showTokenAmount: root.showTokenAmount
 
             Binding on showAllTokensMode {
                 value: true
@@ -324,7 +326,18 @@ StatusDropdown {
                 if(d.extendedDropdownType === ExtendedDropdownContent.Type.Assets)
                     root.assetKey = key
                 else
+                {
                     root.collectibleKey = key
+                    const amount = PermissionsHelpers.getTokenAmountByKey(root.collectiblesModel, root.collectibleKey)
+                    //When the collectible is unique, there is no need for the user to select amount
+                    //Just send the add/update events
+                    if(amount == 1) {
+                        root.collectibleAmount = amount
+                        d.updateSelected ? root.updateCollectible(root.collectibleKey, amount)
+                                            : root.addCollectible(root.collectibleKey, amount)
+                        return
+                    }
+                }
 
                 statesStack.push(HoldingsDropdown.FlowType.Selected)
             }

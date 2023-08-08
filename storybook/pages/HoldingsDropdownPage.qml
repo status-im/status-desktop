@@ -66,11 +66,11 @@ SplitView {
                 proxyRoles: [
                     ExpressionRole {
                         name: "supply"
-                        expression: (model.index + 1) * 115
+                        expression: model.index === 1 ? model.index : (model.index + 1) * 115
                     },
                     ExpressionRole {
                         name: "infiniteSupply"
-                        expression: !(model.index % 4)
+                        expression: !((model.index + 1) % 4)
                     },
                     ExpressionRole {
                         name: "chainName"
@@ -85,11 +85,6 @@ SplitView {
                         expression: model.index ? icon1 : icon2
                     }
                 ]
-
-                filters: ValueFilter {
-                    roleName: "category"
-                    value: TokenCategories.Category.Community
-                }
             }
 
             AssetsModel {
@@ -130,13 +125,9 @@ SplitView {
                 }
             }
 
-            collectiblesModel: isAirdropMode.checked
-                               ? collectiblesModelWithSupply
-                               : collectiblesModel
+            collectiblesModel: collectiblesModelWithSupply
 
-            assetsModel: isAirdropMode.checked
-                         ? assetsModelWithSupply
-                         : assetsModel
+            assetsModel: assetsModelWithSupply
             isENSTab: isEnsTabChecker.checked
 
             onOpened: contentItem.parent.parent = container

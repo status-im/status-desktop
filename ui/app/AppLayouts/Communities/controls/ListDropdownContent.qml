@@ -27,6 +27,7 @@ StatusListView {
     property string noDataText: qsTr("No data found")
 
     property int maxHeight: 381 // default by design
+    property bool showTokenAmount: true
 
     signal headerItemClicked(string key)
     signal itemClicked(var key, string name, var shortName,  url iconSource, var subItems)
@@ -96,7 +97,15 @@ StatusListView {
         iconSource: model.iconSource ?? ""
         showSubItemsIcon: !!model.subItems && model.subItems.count > 0
         selected: root.checkedKeys.includes(model.key)
-        amount: !!model.infiniteSupply ? "∞" : model.supply ?? ""
+        amount: {
+            if(!model.infiniteSupply && !!model.supply && model.supply == 1)
+                return qsTr("Max. 1")
+
+            if(root.showTokenAmount)
+                return !!model.infiniteSupply ? "∞" : model.supply ?? ""
+            
+            return ""
+        }
 
         onItemClicked: root.itemClicked(
                            model.key, name, shortName, iconSource, model.subItems)

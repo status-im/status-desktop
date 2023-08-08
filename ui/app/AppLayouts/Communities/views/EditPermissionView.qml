@@ -236,6 +236,7 @@ StatusScrollView {
 
                 assetsModel: root.assetsModel
                 collectiblesModel: root.collectiblesModel
+                showTokenAmount: false
 
                 function addItem(type, item, amount) {
                     const key = item.key
