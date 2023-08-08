@@ -31,6 +31,11 @@ pipeline {
       description: 'Decides whether the mocked status-keycard-go library is built.',
       defaultValue: false
     )
+    choice(
+      name: 'ENTITLEMENTS',
+      description: 'Select app entitlements. Squish requires extra entitlements.',
+      choices: ['resources/Entitlements.plist', 'resources/Entitlements_squish.plist']
+    )
   }
 
   options {

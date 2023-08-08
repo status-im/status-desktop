@@ -4,9 +4,11 @@
 <dict>
 	<key>com.apple.security.device.camera</key>
 	<true/>
-    <!-- <key>com.apple.developer.associated-domains</key>
+	<!--
+	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:status.app</string>
-	</array> -->
+	</array>
+	-->
 </dict>
 </plist>
