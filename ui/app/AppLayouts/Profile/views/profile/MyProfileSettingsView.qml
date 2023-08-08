@@ -55,7 +55,7 @@ ColumnLayout {
     function save() {
         if (!descriptionPanel.isEnsName)
             profileStore.setDisplayName(descriptionPanel.displayName.text)
-        profileStore.setBio(descriptionPanel.bio.text)
+        profileStore.setBio(descriptionPanel.bio.text.trim())
         profileStore.saveSocialLinks()
         if (profileHeader.icon === "") {
             root.profileStore.removeImage()
