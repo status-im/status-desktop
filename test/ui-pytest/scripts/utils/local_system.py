@@ -33,6 +33,35 @@ def find_process_by_name(process_name: str):
     return processes
 
 
+@allure.step('Find process by pid')
+def find_process_by_pid(pid):
+    for proc in psutil.process_iter():
+        try:
+            if proc.pid == pid:
+                return process_info(
+                    proc.pid,
+                    proc.name(),
+                    datetime.fromtimestamp(proc.create_time()).strftime("%H:%M:%S.%f")
+                )
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+
+@allure.step('Find process by port')
+def find_process_by_port(port: int):
+    for proc in psutil.process_iter():
+        try:
+            for conns in proc.connections(kind='inet'):
+                if conns.laddr.port == port:
+                    return process_info(
+                        proc.pid,
+                        proc.name(),
+                        datetime.fromtimestamp(proc.create_time()).strftime("%H:%M:%S.%f")
+                    )
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+
 @allure.step('Kill process by name')
 def kill_process_by_name(process_name: str, verify: bool = True, timeout_sec: int = 10):
     _logger.info(f'Closing process: {process_name}')
@@ -46,8 +75,22 @@ def kill_process_by_name(process_name: str, verify: bool = True, timeout_sec: in
         wait_for_close(process_name, timeout_sec)
 
 
+@allure.step('Kill process by PID')
+def kill_process_by_pid(pid, verify: bool = True, timeout_sec: int = 10):
+    os.kill(pid, signal.SIGILL if IS_WIN else signal.SIGKILL)
+    if verify:
+        wait_for_close(pid=pid, timeout_sec=timeout_sec)
+
+
+@allure.step('Kill process by port')
+def kill_process_by_port(port: int):
+    proc = find_process_by_port(port)
+    if proc is not None and proc.pid:
+        kill_process_by_pid(proc.pid)
+
+
 @allure.step('Wait for process start')
-def wait_for_started(process_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
+def wait_for_started(process_name: str = None, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
     started_at = time.monotonic()
     while True:
         process = find_process_by_name(process_name)
@@ -60,11 +103,19 @@ def wait_for_started(process_name: str, timeout_sec: int = configs.timeouts.PROC
 
 
 @allure.step('Wait for process close')
-def wait_for_close(process_name: str, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC):
+def wait_for_close(process_name: str = None, timeout_sec: int = configs.timeouts.PROCESS_TIMEOUT_SEC, pid=None):
     started_at = time.monotonic()
     while True:
-        if not find_process_by_name(process_name):
-            break
+        if process_name is not None:
+            process = find_process_by_name(process_name)
+            if not process:
+                break
+        elif pid is not None:
+            process = find_process_by_pid(pid)
+            if process is None:
+                break
+        else:
+            raise RuntimeError('Set process name or PID to find process')
         time.sleep(1)
         assert time.monotonic() - started_at < timeout_sec, f'Close process error: {process_name}'
     _logger.info(f'Process closed: {process_name}')
@@ -112,3 +163,4 @@ def run(
     process = subprocess.run(command, shell=shell, stderr=stderr, stdout=stdout, timeout=timeout_sec)
     if check and process.returncode != 0:
         raise subprocess.CalledProcessError(process.returncode, command, process.stdout, process.stderr)
+    _logger.debug(f'stdout: {process.stdout}')

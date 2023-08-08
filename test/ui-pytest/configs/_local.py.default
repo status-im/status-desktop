@@ -1,3 +1,2 @@
 LOCAL_RUN = True
-ATTACH_MODE = True
 APP_DIR = None

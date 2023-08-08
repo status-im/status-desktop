@@ -6,6 +6,7 @@ import pytest
 from PIL import ImageGrab
 
 import configs
+import driver
 from driver.aut import AUT
 from scripts.utils.system_path import SystemPath
 from tests.fixtures.path import generate_test_info
@@ -58,6 +59,7 @@ def pytest_exception_interact(node):
             name='Screenshot on fail',
             body=screenshot.read_bytes(),
             attachment_type=allure.attachment_type.PNG)
+        driver.context.detach()
         AUT().stop()
     except Exception as ex:
         _logger.debug(ex)
