@@ -11,6 +11,8 @@ import StatusQ.Controls 0.1
 import utils 1.0
 import shared.status 1.0
 
+import SortFilterProxyModel 0.2
+
 import "../helpers"
 
 Item {
@@ -19,6 +21,11 @@ Item {
     property var sharedKeycardModule
 
     signal keyPairSelected()
+
+    QtObject {
+        id: d
+        readonly property string profilePairTypeValue: Constants.keycard.keyPairType.profile
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -77,12 +84,14 @@ Item {
             Layout.alignment: Qt.AlignLeft
             Layout.preferredWidth: parent.width
 
-            sharedKeycardModule: root.sharedKeycardModule
-            filterProfilePair: true
+            modelFilters: ExpressionFilter {
+                expression: model.keyPair.pairType == d.profilePairTypeValue
+            }
             keyPairModel: root.sharedKeycardModule.keyPairModel
             buttonGroup: keyPairsButtonGroup
 
             onKeyPairSelected: {
+                root.sharedKeycardModule.setSelectedKeyPair(keyUid)
                 root.keyPairSelected()
             }
         }
@@ -107,11 +116,15 @@ Item {
             Layout.alignment: Qt.AlignLeft
             Layout.preferredWidth: parent.width
 
-            sharedKeycardModule: root.sharedKeycardModule
+            modelFilters: ExpressionFilter {
+                expression: model.keyPair.pairType == d.profilePairTypeValue
+                inverted: true
+            }
             keyPairModel: root.sharedKeycardModule.keyPairModel
             buttonGroup: keyPairsButtonGroup
 
             onKeyPairSelected: {
+                root.sharedKeycardModule.setSelectedKeyPair(keyUid)
                 root.keyPairSelected()
             }
         }

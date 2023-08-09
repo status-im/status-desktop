@@ -20,10 +20,12 @@ StatusMenu {
         enabled: !!root.keyPair &&
                  root.keyPair.pairType !== Constants.keypair.type.profile &&
                  !root.keyPair.migratedToKeycard &&
-                 root.keyPair.operability === Constants.keypair.operability.fullyOperable
+                 root.keyPair.operability !== Constants.keypair.operability.nonOperable
         icon.name: "qr"
         icon.color: Theme.palette.primaryColor1
         onTriggered: {
+            // in this case we need to check if any account of a keypair is partially operable and not migrated to a keycard
+            // and if so we need to create a keystore for them first and then proceed with qr code
             console.warn("TODO: show encrypted QR")
         }
     }
@@ -46,6 +48,7 @@ StatusMenu {
         text: enabled? qsTr("Import keypair from device via encrypted QR") : ""
         enabled: !!root.keyPair &&
                  root.keyPair.pairType !== Constants.keypair.type.profile &&
+                 !root.keyPair.migratedToKeycard &&
                  root.keyPair.operability === Constants.keypair.operability.nonOperable &&
                  root.keyPair.syncedFrom !== Constants.keypair.syncedFrom.backup
         icon.name: "qr-scan"
@@ -58,6 +61,7 @@ StatusMenu {
     StatusAction {
         text: enabled? root.keyPair.pairType === Constants.keypair.type.privateKeyImport? qsTr("Import via entering private key") : qsTr("Import via entering seed phrase") : ""
         enabled: !!root.keyPair &&
+                 !root.keyPair.migratedToKeycard &&
                  root.keyPair.operability === Constants.keypair.operability.nonOperable &&
                  (root.keyPair.pairType === Constants.keypair.type.seedImport ||
                   root.keyPair.pairType === Constants.keypair.type.privateKeyImport)

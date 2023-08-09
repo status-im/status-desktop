@@ -8,6 +8,7 @@ import StatusQ.Controls 0.1
 import utils 1.0
 
 import "./stores"
+import "./states"
 import "../common"
 
 StatusModal {
@@ -20,6 +21,15 @@ StatusModal {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
     headerSettings.title: {
+        switch (root.store.currentState.stateType) {
+        case Constants.keypairImportPopup.state.selectKeypair:
+            return qsTr("Import missing keypairs")
+        case Constants.keypairImportPopup.state.selectImportMethod:
+            return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
+        case Constants.keypairImportPopup.state.scanQr:
+            return qsTr("Scan encrypted QR")
+        }
+
         return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
     }
 
@@ -46,6 +56,12 @@ StatusModal {
                 width: parent.width
                 sourceComponent: {
                     switch (root.store.currentState.stateType) {
+                    case Constants.keypairImportPopup.state.selectKeypair:
+                        return selectKeypairComponent
+                    case Constants.keypairImportPopup.state.selectImportMethod:
+                        return selectImportMethodComponent
+                    case Constants.keypairImportPopup.state.scanQr:
+                        return scanQrComponent
                     case Constants.keypairImportPopup.state.importPrivateKey:
                         return keypairImportPrivateKeyComponent
                     case Constants.keypairImportPopup.state.importSeedPhrase:
@@ -57,6 +73,28 @@ StatusModal {
 
                 onLoaded: {
                     content.height = Qt.binding(function(){return item.height})
+                }
+            }
+
+            Component {
+                id: selectKeypairComponent
+                SelectKeypair {
+                    height: Constants.keypairImportPopup.contentHeight
+                    store: root.store
+                }
+            }
+
+            Component {
+                id: selectImportMethodComponent
+                SelectImportMethod {
+                    height: Constants.keypairImportPopup.contentHeight
+                    store: root.store
+                }
+            }
+
+            Component {
+                id: scanQrComponent
+                Item {
                 }
             }
 
@@ -97,6 +135,8 @@ StatusModal {
             text: {
                 switch (root.store.currentState.stateType) {
 
+                case Constants.keypairImportPopup.state.scanQr:
+                    return qsTr("Done")
                 case Constants.keypairImportPopup.state.importPrivateKey:
                 case Constants.keypairImportPopup.state.importSeedPhrase:
                     return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)

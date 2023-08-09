@@ -1,10 +1,13 @@
 import Tables, NimQml
 
+import app/modules/shared_models/[keypair_item]
 import app_service/service/wallet_account/dto/derived_address_dto
 
 type ImportOption* {.pure.}= enum
-  SeedPhrase = 1,
-  PrivateKey = 2
+  SelectKeypair = 1
+  SeedPhrase
+  PrivateKey
+  QrCode
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -27,6 +30,9 @@ method onBackActionClicked*(self: AccessInterface) {.base.} =
 method onPrimaryActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onSecondaryActionClicked*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onCancelActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -43,6 +49,12 @@ method validSeedPhrase*(self: AccessInterface, seedPhrase: string): bool {.base.
   raise newException(ValueError, "No implementation available")
 
 method onAddressDetailsFetched*(self: AccessInterface, derivedAddresses: seq[DerivedAddressDto], error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getSelectedKeypair*(self: AccessInterface): KeyPairItem {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setSelectedKeyPairByKeyUid*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

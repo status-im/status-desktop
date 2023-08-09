@@ -5,6 +5,7 @@ import app/core/eventemitter
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
 
+import app/modules/shared_models/[keypair_item]
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
 
 logScope:
@@ -94,3 +95,9 @@ proc makePrivateKeyKeypairFullyOperable*(self: Controller, keyUid, privateKey, p
 
 proc makeSeedPhraseKeypairFullyOperable*(self: Controller, keyUid, mnemonic, password: string, doPasswordHashing: bool): string =
   return self.walletAccountService.makeSeedPhraseKeypairFullyOperable(keyUid, mnemonic, password, doPasswordHashing)
+
+proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
+  return self.walletAccountService.getKeypairs()
+
+proc getSelectedKeypair*(self: Controller): KeyPairItem =
+  return self.delegate.getSelectedKeypair()

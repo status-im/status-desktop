@@ -130,6 +130,51 @@ Column {
         }
     }
 
+    Rectangle {
+        id: importMissingKeypairs
+        visible: importMissingKeypairs.unimportedKeypairs > 0
+        height: 102
+        width: parent.width
+        color: Theme.palette.transparent
+        radius: 8
+        border.width: 1
+        border.color: Theme.palette.baseColor5
+
+        readonly property int unimportedKeypairs: {
+            let total = 0
+            for (var i = 0; i < keypairsRepeater.count; i++) {
+                let kp = keypairsRepeater.itemAt(i).keyPair
+                if (kp.migratedToKeycard ||
+                        kp.operability === Constants.keypair.operability.fullyOperable ||
+                        kp.operability === Constants.keypair.operability.partiallyOperable) {
+                    continue
+                }
+                total++
+            }
+            return total
+        }
+
+        Column {
+            anchors.fill: parent
+            padding: 16
+            spacing: 8
+
+            StatusBaseText {
+                text: qsTr("%n keypair(s) require import to use on this device", "", importMissingKeypairs.unimportedKeypairs)
+                font.pixelSize: 15
+            }
+
+            StatusButton {
+                text: qsTr("Import missing keypairs")
+                type: StatusBaseButton.Type.Warning
+                icon.name: "download"
+                onClicked: {
+                    root.walletStore.runKeypairImportPopup("", Constants.keypairImportPopup.importOption.selectKeypair)
+                }
+            }
+        }
+    }
+
     Spacer {
         width: parent.width
     }
@@ -138,6 +183,7 @@ Column {
         width: parent.width
         spacing: 24
         Repeater {
+            id: keypairsRepeater
             objectName: "generatedAccounts"
             model: walletStore.originModel
             delegate: WalletKeyPairDelegate {
