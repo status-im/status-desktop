@@ -94,6 +94,16 @@ proc mainProc() =
         echo("sigaltstack error!")
         quit()
 
+    var sa: ptr Sigaction = cast[ptr Sigaction](allocShared0(sizeof(Sigaction)))
+    var sa2: Sigaction
+
+    sa.sa_handler = SIG_DFL
+    sa.sa_flags = SA_ONSTACK
+
+    if sigaction(SIGURG, sa[], addr sa2) < 0:
+        echo("sigaction error!")
+        quit()
+
   if main_constants.IS_MACOS and defined(production):
     setCurrentDir(getAppDir())
 
