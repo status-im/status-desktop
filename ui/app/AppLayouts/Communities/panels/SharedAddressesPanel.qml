@@ -95,31 +95,7 @@ Control {
             Layout.preferredHeight: contentHeight + topMargin + bottomMargin
             Layout.maximumHeight: hasPermissions ? permissionsView.implicitHeight > root.availableHeight / 2 ? root.availableHeight / 2 : root.availableHeight : -1
             Layout.fillHeight: !hasPermissions
-            model: SortFilterProxyModel {
-                sourceModel: root.walletAccountsModel
-                filters: ValueFilter {
-                    roleName: "walletType"
-                    value: Constants.watchWalletType
-                    inverted: true
-                }
-                sorters: [
-                    ExpressionSorter {
-                        function isGenerated(modelData) {
-                            return modelData.walletType === Constants.generatedWalletType
-                        }
-
-                        expression: {
-                            return isGenerated(modelLeft)
-                        }
-                    },
-                    RoleSorter {
-                        roleName: "position"
-                    },
-                    RoleSorter {
-                        roleName: "name"
-                    }
-                ]
-            }
+            model: root.walletAccountsModel
         }
 
         // divider with top rounded corners + drop shadow

@@ -85,7 +85,7 @@ StatusListView {
             }
         }
 
-        asset.color: !!model.colorId ? Utils.getColorForId(model.colorId): ""
+        asset.color: !!model.color ? model.color : ""
         asset.emoji: model.emoji
         asset.name: !model.emoji ? "filled-account": ""
         asset.letterSize: 14
