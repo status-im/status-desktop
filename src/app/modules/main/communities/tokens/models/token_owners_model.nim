@@ -4,6 +4,7 @@ import token_owners_item
 type
   ModelRole {.pure.} = enum
     Name = UserRole + 1
+    ContactId,
     ImageSource
     WalletAddress
     Amount
@@ -45,6 +46,7 @@ QtObject:
   method roleNames(self: TokenOwnersModel): Table[int, string] =
     {
       ModelRole.Name.int:"name",
+      ModelRole.ContactId.int:"contactId",
       ModelRole.ImageSource.int:"imageSource",
       ModelRole.WalletAddress.int:"walletAddress",
       ModelRole.Amount.int:"amount",
@@ -70,6 +72,8 @@ QtObject:
     case enumRole:
       of ModelRole.Name:
         result = newQVariant(item.name)
+      of ModelRole.ContactId:
+        result = newQVariant(item.contactId)
       of ModelRole.ImageSource:
         result = newQVariant(item.imageSource)
       of ModelRole.WalletAddress:

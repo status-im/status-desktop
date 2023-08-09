@@ -537,6 +537,14 @@ StackView {
                 }
             }
 
+            onViewProfileRequested: {
+                Global.openProfilePopup(contactId)
+            }
+            onViewMessagesRequested: {
+                // TODO: https://github.com/status-im/status-desktop/issues/11860
+                console.warn("View Messages is not implemented yet")
+            }
+
             onBanRequested: {
                 tokenMasterActionPopup.openPopup(
                             TokenMasterActionPopup.ActionType.Ban, name)
