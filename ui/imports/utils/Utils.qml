@@ -856,8 +856,7 @@ QtObject {
                     return qsTr("Restored from backup. Re-enter private key to use.")
                 }
             }
-            if (keypair.syncedFrom !== "" &&
-                    keypair.syncedFrom !== Constants.keypair.syncedFrom.localPairing) {
+            if (keypair.syncedFrom !== "") {
                 return qsTr("Synced from %1").arg(keypair.syncedFrom)
             }
         }

@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQml.Models 2.14
 import QtQuick.Controls 2.14
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Components 0.1
@@ -12,12 +13,12 @@ import utils 1.0
 StatusListItem {
     id: root
 
-    property var sharedKeycardModule
     property ButtonGroup buttonGroup
     property bool usedAsSelectOption: false
     property bool tagClickable: false
     property bool tagDisplayRemoveAccountButton: false
     property bool canBeSelected: true
+    property bool displayRadioButtonForSelection: true
 
     property int keyPairType: Constants.keycard.keyPairType.unknown
     property string keyPairKeyUid: ""
@@ -115,23 +116,38 @@ StatusListItem {
         property list<Item> components: [
             StatusRadioButton {
                 id: radioButton
-                visible: root.usedAsSelectOption
+                visible: root.usedAsSelectOption && root.displayRadioButtonForSelection
                 ButtonGroup.group: root.buttonGroup
                 onCheckedChanged: {
-                    if (!root.usedAsSelectOption || !root.canBeSelected)
-                        return
-                    if (checked) {
-                        root.sharedKeycardModule.setSelectedKeyPair(root.keyPairKeyUid)
-                        root.keyPairSelected()
+                    d.doAction(checked)
+                }
+            },
+            StatusIcon {
+                visible: root.usedAsSelectOption && !root.displayRadioButtonForSelection
+                icon: "next"
+                color: Theme.palette.baseColor1
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        d.doAction(true)
                     }
                 }
             }
         ]
+
+        function doAction(checked){
+            if (!root.usedAsSelectOption || !root.canBeSelected)
+                return
+            if (checked) {
+                root.keyPairSelected()
+            }
+        }
     }
 
     onClicked: {
         if (!root.usedAsSelectOption || !root.canBeSelected)
             return
-        radioButton.checked = true
+        d.doAction(!root.displayRadioButtonForSelection || radioButton.checked)
     }
 }

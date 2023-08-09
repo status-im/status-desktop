@@ -591,6 +591,10 @@ proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool 
 proc handleKeypair(self: Service, keypair: KeypairDto) =
   let localKp = self.getKeypairByKeyUid(keypair.keyUid)
   if not localKp.isNil:
+    # sotore only keypair fields which may change
+    localKp.name = keypair.name
+    localKp.lastUsedDerivationIndex = keypair.lastUsedDerivationIndex
+    localKp.syncedFrom = keypair.syncedFrom
     # - first remove removed accounts from the UI
     for localAcc in localKp.accounts:
       let accAddress = localAcc.address

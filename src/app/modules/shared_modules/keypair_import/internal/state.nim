@@ -2,7 +2,9 @@ import ../controller
 
 type StateType* {.pure.} = enum
   NoState = "NoState"
-  Main = "Main"
+  SelectKeypair = "SelectKeypair"
+  SelectImportMethod = "SelectImportMethod"
+  ScanQr = "ScanQr"
   ImportSeedPhrase = "ImportSeedPhrase"
   ImportPrivateKey = "ImportPrivateKey"
 

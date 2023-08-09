@@ -487,8 +487,7 @@ QtObject {
         }
 
         readonly property QtObject syncedFrom: QtObject {
-            readonly property string backup: "backup" // means a account is coming from backed up data
-            readonly property string localPairing: "local-pairing" // means a account is coming from another device when user is reocovering Status account
+            readonly property string backup: "backup" // means an account is coming from backed up data
         }
     }
 
@@ -743,14 +742,20 @@ QtObject {
         readonly property int popupWidth: 480
         readonly property int contentHeight: 626
         readonly property int footerButtonsHeight: 44
+        readonly property int labelFontSize1: 15
 
         readonly property QtObject importOption: QtObject {
-            readonly property int seedPhrase: 1
-            readonly property int privateKey: 2
+            readonly property int selectKeypair: 1
+            readonly property int seedPhrase: 2
+            readonly property int privateKey: 3
+            readonly property int qrCode: 4
         }
 
         readonly property QtObject state: QtObject {
             readonly property string noState: "NoState"
+            readonly property string selectKeypair: "SelectKeypair"
+            readonly property string selectImportMethod: "SelectImportMethod"
+            readonly property string scanQr: "ScanQr"
             readonly property string importSeedPhrase: "ImportSeedPhrase"
             readonly property string importPrivateKey: "ImportPrivateKey"
         }

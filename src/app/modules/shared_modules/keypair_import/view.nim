@@ -1,7 +1,7 @@
 import NimQml
 import io_interface
 import internal/[state, state_wrapper]
-import app/modules/shared_models/[keypair_item, derived_address_model]
+import app/modules/shared_models/[keypair_model, derived_address_model]
 
 QtObject:
   type
@@ -9,6 +9,8 @@ QtObject:
       delegate: io_interface.AccessInterface
       currentState: StateWrapper
       currentStateVariant: QVariant
+      keypairModel: KeyPairModel
+      keypairModelVariant: QVariant
       selectedKeypair: KeyPairItem
       selectedKeypairVariant: QVariant
       privateKeyAccAddress: DerivedAddressItem
@@ -20,6 +22,10 @@ QtObject:
     self.currentState.delete
     self.selectedKeypair.delete
     self.selectedKeypairVariant.delete
+    if not self.keypairModel.isNil:
+      self.keypairModel.delete
+    if not self.keypairModelVariant.isNil:
+      self.keypairModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -37,6 +43,7 @@ QtObject:
     signalConnect(result.currentState, "backActionClicked()", result, "onBackActionClicked()", 2)
     signalConnect(result.currentState, "cancelActionClicked()", result, "onCancelActionClicked()", 2)
     signalConnect(result.currentState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
+    signalConnect(result.currentState, "secondaryActionClicked()", result, "onSecondaryActionClicked()", 2)
 
   proc currentStateObj*(self: View): State =
     return self.currentState.getStateObj()
@@ -57,6 +64,9 @@ QtObject:
   proc onPrimaryActionClicked*(self: View) {.slot.} =
     self.delegate.onPrimaryActionClicked()
 
+  proc onSecondaryActionClicked*(self: View) {.slot.} =
+    self.delegate.onSecondaryActionClicked()
+
   proc getSelectedKeypair*(self: View): KeyPairItem =
     return self.selectedKeypair
   proc getSelectedKeypairAsVariant*(self: View): QVariant {.slot.} =
@@ -64,8 +74,11 @@ QtObject:
   QtProperty[QVariant] selectedKeypair:
     read = getSelectedKeypairAsVariant
 
-  proc setSelectedKeypair*(self: View, item: KeyPairItem) =
+  proc setSelectedKeypairItem*(self: View, item: KeyPairItem) =
     self.selectedKeypair.setItem(item)
+
+  proc setSelectedKeyPair*(self: View, keyUid: string) {.slot.} =
+    self.delegate.setSelectedKeyPairByKeyUid(keyUid)
 
   proc getPrivateKeyAccAddress*(self: View): DerivedAddressItem =
     return self.privateKeyAccAddress
@@ -100,3 +113,23 @@ QtObject:
   proc setEnteredPrivateKeyMatchTheKeypair*(self: View, value: bool) =
     self.enteredPrivateKeyMatchTheKeypair = value
     self.enteredPrivateKeyMatchTheKeypairChanged()
+
+  proc keypairModel*(self: View): KeyPairModel =
+    return self.keypairModel
+
+  proc keypairModelChanged(self: View) {.signal.}
+  proc getKeypairModel(self: View): QVariant {.slot.} =
+    if self.keypairModelVariant.isNil:
+      return newQVariant()
+    return self.keypairModelVariant
+  QtProperty[QVariant] keypairModel:
+    read = getKeypairModel
+    notify = keypairModelChanged
+
+  proc createKeypairModel*(self: View, items: seq[KeyPairItem]) =
+    if self.keypairModel.isNil:
+      self.keypairModel = newKeyPairModel()
+    if self.keypairModelVariant.isNil:
+      self.keypairModelVariant = newQVariant(self.keypairModel)
+    self.keypairModel.setItems(items)
+    self.keypairModelChanged()
