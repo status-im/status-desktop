@@ -168,27 +168,7 @@ StatusScrollView {
             Layout.topMargin: -Style.current.halfPadding
 
             currentIndex: (initIndex !== -1) ? initIndex : 0
-            model: SortFilterProxyModel {
-                sourceModel: root.accounts
-                proxyRoles: [
-                    ExpressionRole {
-                        name: "color"
-
-                        function getColor(colorId) {
-                            return Utils.getColorForId(colorId)
-                        }
-
-                        // Direct call for singleton function is not handled properly by
-                        // SortFilterProxyModel that's why helper function is used instead.
-                        expression: { return getColor(model.colorId) }
-                    }
-                ]
-                filters: ValueFilter {
-                    roleName: "walletType"
-                    value: Constants.watchWalletType
-                    inverted: true
-                }
-            }
+            model: root.accounts
             type: StatusComboBox.Type.Secondary
             size: StatusComboBox.Size.Small
             implicitHeight: 44

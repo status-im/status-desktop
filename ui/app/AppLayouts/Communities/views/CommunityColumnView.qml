@@ -124,7 +124,7 @@ Item {
                 imageSrc: communityData.image
                 accessType: communityData.access
                 loginType: root.store.loginType
-                walletAccountsModel: WalletStore.RootStore.receiveAccounts
+                walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
                 permissionsModel: root.store.permissionsStore.permissionsModel
                 assetsModel: root.store.assetsModel
                 collectiblesModel: root.store.collectiblesModel

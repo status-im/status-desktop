@@ -44,6 +44,28 @@ QtObject {
         ]
     }
 
+    property var watchOnlyAccounts: SortFilterProxyModel {
+        sourceModel: receiveAccounts
+        proxyRoles: [
+            ExpressionRole {
+                name: "color"
+
+                function getColor(colorId) {
+                    return Utils.getColorForId(colorId)
+                }
+
+                // Direct call for singleton function is not handled properly by
+                // SortFilterProxyModel that's why helper function is used instead.
+                expression: { return getColor(model.colorId) }
+            }
+        ]
+        filters: ValueFilter {
+            roleName: "walletType"
+            value: Constants.watchWalletType
+            inverted: true
+        }
+    }
+
     readonly property var currentActivityFiltersStore: {
         const address = root.overview.mixedcaseAddress
         if (address in d.activityFiltersStoreDictionary) {

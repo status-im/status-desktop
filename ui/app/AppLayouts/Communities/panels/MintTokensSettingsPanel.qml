@@ -566,27 +566,7 @@ StackView {
                 communityName: root.communityName
                 networkName: view.token.chainName
 
-                accountsModel: SortFilterProxyModel {
-                    sourceModel: root.accounts
-                    proxyRoles: [
-                        ExpressionRole {
-                            name: "color"
-
-                            function getColor(colorId) {
-                                return Utils.getColorForId(colorId)
-                            }
-
-                            // Direct call for singleton function is not handled properly by
-                            // SortFilterProxyModel that's why helper function is used instead.
-                            expression: { return getColor(model.colorId) }
-                        }
-                    ]
-                    filters: ValueFilter {
-                        roleName: "walletType"
-                        value: Constants.watchWalletType
-                        inverted: true
-                    }
-                }
+                accountsModel: root.accounts
 
                 function openPopup(type, userName) {
                     tokenMasterActionPopup.actionType = type

@@ -233,7 +233,7 @@ SettingsContentBase {
             }
 
             loginType: chatStore.loginType
-            walletAccountsModel: WalletStore.RootStore.receiveAccounts
+            walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
             permissionsModel: chatStore.permissionsStore.permissionsModel
             assetsModel: chatStore.assetsModel
             collectiblesModel: chatStore.collectiblesModel

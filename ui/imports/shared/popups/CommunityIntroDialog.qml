@@ -63,13 +63,6 @@ StatusStackModal {
 
         readonly property var tempAddressesModel: SortFilterProxyModel {
             sourceModel: root.walletAccountsModel
-            filters: [
-                ValueFilter {
-                    roleName: "walletType"
-                    value: Constants.watchWalletType
-                    inverted: true
-                }
-            ]
             sorters: [
                 ExpressionSorter {
                     function isGenerated(modelData) {
@@ -108,7 +101,26 @@ StatusStackModal {
             communityName: root.name
             communityIcon: root.imageSrc
             loginType: root.loginType
-            walletAccountsModel: root.walletAccountsModel
+            walletAccountsModel: SortFilterProxyModel {
+                sourceModel: root.walletAccountsModel
+                sorters: [
+                    ExpressionSorter {
+                        function isGenerated(modelData) {
+                            return modelData.walletType === Constants.generatedWalletType
+                        }
+
+                        expression: {
+                            return isGenerated(modelLeft)
+                        }
+                    },
+                    RoleSorter {
+                        roleName: "position"
+                    },
+                    RoleSorter {
+                        roleName: "name"
+                    }
+                ]
+            }
             permissionsModel: root.permissionsModel
             assetsModel: root.assetsModel
             collectiblesModel: root.collectiblesModel

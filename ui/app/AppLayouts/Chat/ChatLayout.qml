@@ -156,6 +156,7 @@ StackLayout {
         sourceComponent: CommunitySettingsView {
             id: communitySettingsView
             rootStore: root.rootStore
+            walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
 
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule
             community: sectionItemModel
@@ -182,7 +183,7 @@ StackLayout {
             property string communityId
 
             loginType: root.rootStore.loginType
-            walletAccountsModel: WalletStore.RootStore.receiveAccounts
+            walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
             permissionsModel: root.permissionsStore.permissionsModel
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel

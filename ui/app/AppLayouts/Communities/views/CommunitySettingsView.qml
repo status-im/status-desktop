@@ -35,6 +35,8 @@ StatusSectionLayout {
     property var transactionStore: TransactionStore {}
     property bool communitySettingsDisabled
 
+    required property var walletAccountsModel // name, address, emoji, color
+
     readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
     readonly property bool isAdmin: isOwner || community.memberRole === Constants.memberRole.admin
     readonly property bool isControlNode: community.isControlNode
@@ -350,7 +352,7 @@ StatusSectionLayout {
             layer2Networks: communityTokensStore.layer2Networks
             enabledNetworks: communityTokensStore.enabledNetworks
             allNetworks: communityTokensStore.allNetworks
-            accounts: root.rootStore.accounts
+            accounts: root.walletAccountsModel
 
             onDeployFeesRequested: {
                 feeText = ""
@@ -513,27 +515,7 @@ StatusSectionLayout {
                 return chatContentModule.usersModule.model
             }
 
-            accountsModel: SortFilterProxyModel {
-                sourceModel: root.rootStore.accounts
-                proxyRoles: [
-                    ExpressionRole {
-                        name: "color"
-
-                        function getColor(colorId) {
-                            return Utils.getColorForId(colorId)
-                        }
-
-                        // Direct call for singleton function is not handled properly by
-                        // SortFilterProxyModel that's why helper function is used instead.
-                        expression: { return getColor(model.colorId) }
-                    }
-                ]
-                filters: ValueFilter {
-                    roleName: "walletType"
-                    value: Constants.watchWalletType
-                    inverted: true
-                }
-            }
+            accountsModel: root.walletAccountsModel
 
             onAirdropClicked: communityTokensStore.airdrop(
                                   root.community.id, airdropTokens, addresses,
