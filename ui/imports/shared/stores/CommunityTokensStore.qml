@@ -100,12 +100,14 @@ QtObject {
         communityTokensModuleInst.computeDeployFee(chainId, accountAddress, tokenType)
     }
 
-    function computeSelfDestructFee(selfDestructTokensList, tokenKey) {
-        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(selfDestructTokensList), tokenKey)
+    function computeSelfDestructFee(selfDestructTokensList, tokenKey, accountAddress) {
+        //TODO uncomment accountAddress when supported in backend
+        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(selfDestructTokensList), tokenKey, /*accountAddress*/)
     }
 
-    function remoteSelfDestructCollectibles(communityId, selfDestructTokensList, tokenKey) {
-        communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(selfDestructTokensList), tokenKey)
+    function remoteSelfDestructCollectibles(communityId, selfDestructTokensList, tokenKey, accountAddress) {
+        //TODO uncomment accountAddress when supported in backend
+        communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(selfDestructTokensList), tokenKey, /*accountAddress*/)
     }
 
     // Burn:

@@ -382,13 +382,13 @@ StatusSectionLayout {
                 communityTokensStore.deployOwnerToken(
                     root.community.id, ownerToken, tMasterToken)
 
-            onSignRemoteDestructTransactionOpened:
+            onRemotelyDestructFeesRequest:
                 communityTokensStore.computeSelfDestructFee(
-                    remotelyDestructTokensList, tokenKey)
+                    remotelyDestructTokensList, tokenKey, accountAddress)
 
             onRemotelyDestructCollectibles:
                 communityTokensStore.remoteSelfDestructCollectibles(
-                    root.community.id, remotelyDestructTokensList, tokenKey)
+                    root.community.id, remotelyDestructTokensList, tokenKey, accountAddress)
 
             onSignBurnTransactionOpened:
                 communityTokensStore.computeBurnFee(tokenKey, amount, accountAddress)
