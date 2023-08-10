@@ -1,7 +1,6 @@
 import os
-from datetime import datetime
-
 import typing
+from datetime import datetime
 
 from scripts.utils.system_path import SystemPath
 
@@ -19,6 +18,7 @@ RESULTS: SystemPath = TEMP / 'results'
 RUN: SystemPath = RESULTS / RUN_ID
 VP: SystemPath = ROOT / 'ext' / 'vp'
 TEST_FILES: SystemPath = ROOT / 'ext' / 'test_files'
+TEST_USER_DATA: SystemPath = ROOT / 'ext' / 'user_data'
 
 # Driver Directories
 SQUISH_DIR = SystemPath(os.getenv('SQUISH_DIR'))

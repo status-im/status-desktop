@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import allure
 import pytest
 
 import configs
@@ -21,7 +20,11 @@ def aut() -> AUT:
 def user_data(request) -> system_path.SystemPath:
     user_data = configs.testpath.STATUS_DATA / f'app_{datetime.now():%H%M%S_%f}' / 'data'
     if hasattr(request, 'param'):
-        system_path.SystemPath(request.param).copy_to(user_data)
+        fp = request.param
+        if isinstance(fp, str):
+            fp = configs.testpath.TEST_USER_DATA / fp / 'data'
+        assert fp.is_dir()
+        fp.copy_to(user_data)
     yield user_data
 
 
