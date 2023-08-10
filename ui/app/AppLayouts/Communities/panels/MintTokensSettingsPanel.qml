@@ -54,6 +54,9 @@ StackView {
     property string feeText
     property string feeErrorText
     property bool isFeeLoading: true
+    property string chainName
+    property string totalFeeText
+    property string generalAccountErrorText: ""
 
     // Network related properties:
     property var layer1Networks
@@ -630,6 +633,11 @@ StackView {
 
                 collectibleName: view.token.name
                 model: view.tokenOwnersModel || null
+                accounts: root.accounts
+                chainName: root.chainName
+                totalFeeText: root.totalFeeText
+                feeErrorText: root.feeErrorText
+                generalAccountErrorText: root.generalAccountErrorText
 
                 onRemotelyDestructClicked: {
                     remotelyDestructPopup.close()

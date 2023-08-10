@@ -10,6 +10,7 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 
 import AppLayouts.Communities.panels 1.0
+import SortFilterProxyModel 0.2
 
 import utils 1.0
 
@@ -17,10 +18,18 @@ StatusDialog {
     id: root
 
     property alias model: tokenHoldersPanel.model
-
     property string collectibleName
-
+    property string chainName
+    property string totalFeeText
+    property bool isFeeLoading
+    property string feeErrorText: ""
+    property string generalAccountErrorText: ""
+    property string feeLabel: qsTr("Remotely destruct %1 token on %2").arg(root.collectibleName).arg(root.chainName)
+    property string feePlaceholderText: qsTr("Select a hodler to see remote destruction gas fees")
+    // Account expected roles: address, name, color, emoji, walletType
+    property var accounts
     signal remotelyDestructClicked(int tokenCount, var remotelyDestructTokensList)
+
 
     QtObject {
         id: d
@@ -63,12 +72,58 @@ StatusDialog {
     implicitWidth: 600 // by design
     padding: 0
 
-    contentItem: TokenHoldersPanel {
-        id: tokenHoldersPanel
-        tokenName: root.collectibleName
-        isSelectorMode: true
-        onSelfDestructAmountChanged: d.updateTokensToDestruct(walletAddress, amount)
-        onSelfDestructRemoved: d.clearTokensToDesctruct(walletAddress)
+    contentItem: ColumnLayout {
+        spacing: 16
+        TokenHoldersPanel {
+            id: tokenHoldersPanel
+            tokenName: root.collectibleName
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            isSelectorMode: true
+            onSelfDestructAmountChanged: d.updateTokensToDestruct(walletAddress, amount)
+            onSelfDestructRemoved: d.clearTokensToDesctruct(walletAddress)
+        }
+        FeesBox {
+            Layout.fillWidth: true
+            Layout.bottomMargin: 16
+            Layout.leftMargin: 16
+            Layout.rightMargin: 16
+            implicitWidth: 0
+            totalFeeText: root.totalFeeText
+            generalErrorText: root.generalAccountErrorText
+            accountErrorText: root.feeErrorText
+            placeholderText: root.feePlaceholderText
+            showAccountsSelector: true
+            model: d.tokenCount > 0 ? singleFeeModel : undefined
+            accountsSelector.model: SortFilterProxyModel {
+                sourceModel: root.accounts
+                proxyRoles: [
+                    ExpressionRole {
+                        name: "color"
+                        function getColor(colorId) {
+                            return Utils.getColorForId(colorId)
+                        }
+                        // Direct call for singleton function is not handled properly by
+                        // SortFilterProxyModel that's why helper function is used instead.
+                        expression: { return getColor(model.colorId) }
+                    }
+                ]
+                filters: ValueFilter {
+                    roleName: "walletType"
+                    value: Constants.watchWalletType
+                    inverted: true
+                }
+            }
+
+            QtObject {
+                id: singleFeeModel
+
+                readonly property string title: root.feeLabel
+                readonly property string feeText: root.isFeeLoading ?
+                                                      "" : root.feeText
+                readonly property bool error: d.isFeeError
+            }
+        }
     }
 
     footer: StatusDialogFooter {

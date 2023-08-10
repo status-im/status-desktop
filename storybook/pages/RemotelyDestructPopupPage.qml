@@ -9,6 +9,23 @@ import AppLayouts.Communities.popups 1.0
 
 SplitView {
     Logs { id: logs }
+    ListModel {
+        id: accountsModel
+
+        ListElement {
+            name: "Test account"
+            emoji: "😋"
+            address: "0x7F47C2e18a4BBf5487E6fb082eC2D9Ab0E6d7240"
+            color: "red"
+        }
+
+        ListElement {
+            name: "Another account - generated"
+            emoji: "🚗"
+            address: "0x7F47C2e98a4BBf5487E6fb082eC2D9Ab0E6d8888"
+            color: "blue"
+        }
+    }
 
     SplitView {
         orientation: Qt.Vertical
@@ -35,7 +52,11 @@ SplitView {
                 anchors.centerIn: parent
                 collectibleName: editorCollectible.text
                 model: TokenHoldersModel {}
-
+                accounts: accountsModel
+                chainName: "Optimism"
+                totalFeeText: "0.00001 ($123.7)"
+                feeErrorText: "ghreoghreui"
+                generalAccountErrorText: "fhirfghryeruof"
                 onRemotelyDestructClicked: logs.logEvent("RemoteSelfDestructPopup::onRemotelyDestructClicked")
 
                 Component.onCompleted: {
