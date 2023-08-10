@@ -8,6 +8,11 @@ from ./gen import rpc
 
 export response_type, collectibles_types
 
+type
+  CollectiblesRequestID* = enum
+    WalletAccount
+    ProfileShowcase
+
 # Declared in services/wallet/collectibles/service.go
 const eventCollectiblesOwnershipUpdateStarted*: string = "wallet-collectibles-ownership-update-started"
 const eventCollectiblesOwnershipUpdateFinished*: string = "wallet-collectibles-ownership-update-finished"
@@ -86,10 +91,12 @@ rpc(getCollectibleOwnersByContractAddress, "wallet"):
   contractAddress: string
 
 rpc(filterOwnedCollectiblesAsync, "wallet"):
+  requestId: int32
   chainIDs: seq[int]
   addresses: seq[string]
   offset: int
   limit: int
 
 rpc(getCollectiblesDetailsAsync, "wallet"):
+  requestId: int32
   uniqueIds: seq[CollectibleUniqueID]

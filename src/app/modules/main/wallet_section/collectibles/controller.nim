@@ -22,6 +22,8 @@ QtObject:
       addresses: seq[string]
       chainIds: seq[int]
 
+      requestId: int32
+
   proc setup(self: Controller) =
     self.QObject.setup
 
@@ -68,7 +70,7 @@ QtObject:
       offset = self.model.getCollectiblesCount()
     self.fetchFromStart = false
 
-    let response = backend_collectibles.filterOwnedCollectiblesAsync(self.chainIds, self.addresses, offset, FETCH_BATCH_COUNT_DEFAULT)
+    let response = backend_collectibles.filterOwnedCollectiblesAsync(self.requestId, self.chainIds, self.addresses, offset, FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.model.setIsFetching(false)
       self.model.setIsError(true)
@@ -89,13 +91,15 @@ QtObject:
       self.model.setIsUpdating(false)
     )
 
-  proc newController*(events: EventEmitter): Controller =
+  proc newController*(requestId: int32, events: EventEmitter): Controller =
     new(result, delete)
+
+    result.requestId = requestId
 
     result.model = newModel()
     result.fetchFromStart = true
   
-    result.eventsHandler = newEventsHandler(events)
+    result.eventsHandler = newEventsHandler(result.requestId, events)
 
     result.addresses = @[]
     result.chainIds = @[]
