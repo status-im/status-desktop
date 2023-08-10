@@ -67,10 +67,12 @@ StackView {
 
     signal deployFeesRequested(int chainId, string accountAddress, int tokenType)
     signal burnFeesRequested(string tokenKey, int amount, string accountAddress)
-    signal signRemoteDestructTransactionOpened(var remotelyDestructTokensList, // [key , amount]
-                                               string tokenKey)
+    signal remotelyDestructFeesRequest(var remotelyDestructTokensList, // [key , amount]
+                                       string tokenKey,
+                                       string accountAddress)
     signal remotelyDestructCollectibles(var remotelyDestructTokensList, // [key , amount]
-                                        string tokenKey)
+                                        string tokenKey,
+                                        string accountAddress)
     signal signBurnTransactionOpened(string tokenKey, int amount, string accountAddress)
     signal burnToken(string tokenKey, int amount, string accountAddress)
     signal airdropToken(string tokenKey, int type, var addresses)
@@ -630,9 +632,20 @@ StackView {
 
                 collectibleName: view.token.name
                 model: view.tokenOwnersModel || null
+                accounts: root.accounts
+                chainName: view.token.chainName
+
+                feeText: root.feeText                
+                isFeeLoading: root.isFeeLoading
+                feeErrorText: root.feeErrorText
+
+                onRemotelyDestructFeesRequested:root.remotelyDestructFeesRequest(remotelyDestructTokensList,
+                                                                                  tokenKey,
+                                                                                  accountAddress)
 
                 onRemotelyDestructClicked: {
                     remotelyDestructPopup.close()
+                    footer.accountAddress = accountAddress
                     footer.remotelyDestructTokensList = remotelyDestructTokensList
                     alertPopup.tokenCount = tokenCount
                     alertPopup.open()
@@ -664,8 +677,7 @@ StackView {
                     root.setFeeLoading()
 
                     if(signTransactionPopup.isRemotelyDestructTransaction)
-                        root.remotelyDestructCollectibles(
-                                    footer.remotelyDestructTokensList, tokenKey)
+                        root.remotelyDestructCollectibles(footer.remotelyDestructTokensList, tokenKey, footer.accountAddress)
                     else
                         root.burnToken(tokenKey, footer.burnAmount, footer.accountAddress)
 
@@ -686,7 +698,7 @@ StackView {
                 onOpened: {
                     root.setFeeLoading()
                     signTransactionPopup.isRemotelyDestructTransaction
-                            ? root.signRemoteDestructTransactionOpened(footer.remotelyDestructTokensList, tokenKey)
+                            ? root.remotelyDestructFeesRequest(footer.remotelyDestructTokensList, tokenKey, footer.accountAddress)
                             : root.signBurnTransactionOpened(tokenKey, footer.burnAmount, footer.accountAddress)
                 }
                 onSignTransactionClicked: signTransaction()
