@@ -1,8 +1,8 @@
 import NimQml, json
 
 import ./activity/controller as activityc
-import ./collectibles/controller as collectiblesc
-import ./collectible_details/controller as collectible_detailsc
+import app/modules/shared_modules/collectibles/controller as collectiblesc
+import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 import ./io_interface
 import ../../shared_models/currency_amount
 
