@@ -31,7 +31,7 @@ Item {
     readonly property alias sortBy: d.sortBy
     readonly property alias sortOrder: d.sorting
     readonly property bool bottomSeparatorVisible: ((listView.contentY > 0) &&
-    (listView.contentY < (listView.contentHeight - listView.height - 40/*margins*/)))
+    (listView.contentY < (listView.contentHeight - listView.height)))
 
     signal selfDestructAmountChanged(string walletAddress, int amount)
     signal selfDestructRemoved(string walletAddress)
