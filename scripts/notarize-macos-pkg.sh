@@ -64,4 +64,11 @@ fi
 # Optional but preferrable to attach the ticket to the bundle.
 echo -e "\n### Stapling Notarization Ticket..."
 xcrun stapler staple "${BUNDLE_PATH}"
+
+echo -e "\n### Validating Signature and Notarization..."
+spctl --verbose=2 \
+    --assess --type open \
+    --context context:primary-signature \
+    "${BUNDLE_PATH}"
+
 exit $?
