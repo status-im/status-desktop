@@ -49,8 +49,11 @@ class AUT:
         return self
 
     @allure.step('Close application by process name')
-    def stop(self, verify: bool = True):
-        local_system.kill_process_by_name(self.process_name, verify=verify)
+    def stop(self):
+        if configs.LOCAL_RUN:
+            local_system.kill_process_by_port(self.port)
+        else:
+            local_system.kill_process_by_name(self.process_name)
 
     @allure.step("Start application")
     def launch(self, *args) -> 'AUT':
