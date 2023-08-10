@@ -15,8 +15,8 @@ import ./send/module as send_module
 import ../../shared_modules/add_account/module as add_account_module
 
 import ./activity/controller as activityc
-import ./collectibles/controller as collectiblesc
-import ./collectible_details/controller as collectible_detailsc
+import app/modules/shared_modules/collectibles/controller as collectiblesc
+import app/modules/shared_modules/collectible_details/controller as collectible_detailsc
 
 import ../../../global/global_singleton
 import ../../../core/eventemitter
