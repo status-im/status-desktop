@@ -1,11 +1,10 @@
 import logging
 import time
+import typing
 from abc import abstractmethod
 
 import allure
-import cv2
 
-import configs.testpath
 import constants.tesseract
 import driver
 from gui.components.os.open_file_dialogs import OpenFileDialog
@@ -62,16 +61,92 @@ class KeysView(OnboardingScreen):
     def __init__(self):
         super(KeysView, self).__init__('mainWindow_KeysMainView')
         self._generate_key_button = Button('mainWindow_Generate_new_keys_StatusButton')
+        self._generate_key_for_new_keycard_button = Button('mainWindow_Generate_keys_for_new_Keycard_StatusBaseText')
+        self._import_seed_phrase_button = Button('mainWindow_Import_seed_phrase')
 
     @allure.step('Open Profile view')
     def generate_new_keys(self) -> 'YourProfileView':
         self._generate_key_button.click()
         return YourProfileView().wait_until_appears()
 
+    @allure.step('Open Keycard Init view')
+    def generate_key_for_new_keycard(self) -> 'KeycardInitView':
+        self._generate_key_for_new_keycard_button.click()
+        return KeycardInitView().wait_until_appears()
+
+    @allure.step('Open Import Seed Phrase view')
+    def open_import_seed_phrase_view(self) -> 'ImportSeedPhraseView':
+        self._import_seed_phrase_button.click()
+        return ImportSeedPhraseView().wait_until_appears()
+
     @allure.step('Go back')
     def back(self) -> WelcomeScreen:
         self._back_button.click()
         return WelcomeScreen().wait_until_appears()
+
+
+class ImportSeedPhraseView(OnboardingScreen):
+
+    def __init__(self):
+        super(ImportSeedPhraseView, self).__init__('mainWindow_KeysMainView')
+        self._import_seed_phrase_button = Button('keysMainView_PrimaryAction_Button')
+
+    @allure.step('Open seed phrase input view')
+    def open_seed_phrase_input_view(self):
+        self._import_seed_phrase_button.click()
+        return SeedPhraseInputView().wait_until_appears()
+
+    @allure.step('Go back')
+    def back(self) -> KeysView:
+        self._back_button.click()
+        return KeysView().wait_until_appears()
+
+
+class SeedPhraseInputView(OnboardingScreen):
+
+    def __init__(self):
+        super(SeedPhraseInputView, self).__init__('mainWindow_SeedPhraseInputView')
+        self._12_words_tab_button = Button('switchTabBar_12_words_Button')
+        self._18_words_tab_button = Button('switchTabBar_18_words_Button')
+        self._24_words_tab_button = Button('switchTabBar_24_words_Button')
+        self._seed_phrase_input_text_edit = TextEdit('mainWindow_statusSeedPhraseInputField_TextEdit')
+        self._import_button = Button('mainWindow_Import_StatusButton')
+
+    @allure.step('Input seed phrase')
+    def input_seed_phrase(self, seed_phrase: typing.List[str]):
+        if len(seed_phrase) == 12:
+            if not self._12_words_tab_button.is_checked:
+                self._12_words_tab_button.click()
+        elif len(seed_phrase) == 18:
+            if not self._18_words_tab_button.is_checked:
+                self._18_words_tab_button.click()
+        elif len(seed_phrase) == 24:
+            if not self._24_words_tab_button.is_checked:
+                self._24_words_tab_button.click()
+        else:
+            raise RuntimeError("Wrong amount of seed words", len(seed_phrase))
+
+        for index, word in enumerate(seed_phrase, start=1):
+            self._seed_phrase_input_text_edit.real_name['objectName'] = f'statusSeedPhraseInputField{index}'
+            self._seed_phrase_input_text_edit.text = word
+
+        self._import_button.click()
+        return YourProfileView().wait_until_appears()
+
+
+class KeycardInitView(OnboardingScreen):
+
+    def __init__(self):
+        super(KeycardInitView, self).__init__('mainWindow_KeycardInitView')
+        self._message = TextLabel('mainWindow_Plug_in_Keycard_reader_StatusBaseText')
+
+    @property
+    def message(self) -> str:
+        return self._message.text
+
+    def back(self) -> KeysView:
+        self._back_button.click()
+        return KeysView().wait_until_appears()
 
 
 class YourProfileView(OnboardingScreen):
@@ -177,16 +252,16 @@ class EmojiAndIconView(OnboardingScreen):
     @allure.step('Verify: User image contains text')
     def is_user_image_contains(self, text: str):
         crop = driver.UiTypes.ScreenRectangle(
-                20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
-            )
+            20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
+        )
         return self.profile_image.has_text(text, constants.tesseract.text_on_profile_image, crop=crop)
 
     @allure.step
     @allure.step('Verify: User image background color')
     def is_user_image_background_white(self):
         crop = driver.UiTypes.ScreenRectangle(
-                20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
-            )
+            20, 20, self._profile_image.image.width - 40, self._profile_image.image.height - 40
+        )
         return self.profile_image.has_color(constants.Color.WHITE, crop=crop)
 
 

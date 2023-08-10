@@ -1,5 +1,4 @@
 import logging
-import time
 import typing
 
 import configs.testpath
@@ -36,17 +35,12 @@ class SquishServer:
             _logger.info(err)
             local_system.execute(cmd, check=True)
 
-    def stop(self, attempt: int = 2):
-        local_system.run([self.path, '--stop'])
+    def stop(self):
+        local_system.kill_process_by_name(_PROCESS_NAME, verify=False)
         try:
             local_system.wait_for_close(_PROCESS_NAME, 2)
         except AssertionError as err:
             _logger.debug(err)
-            if attempt:
-                time.sleep(1)
-                self.stop(attempt-1)
-            else:
-                raise err
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     def configuring(self, action: str, options: typing.Union[int, str, list]):

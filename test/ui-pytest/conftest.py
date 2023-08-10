@@ -32,9 +32,11 @@ def setup_session_scope(
 
 @pytest.fixture(autouse=True)
 def setup_function_scope(
+        caplog,
         generate_test_data,
         check_result
 ):
+    caplog.set_level(configs.LOG_LEVEL)
     yield
 
 
