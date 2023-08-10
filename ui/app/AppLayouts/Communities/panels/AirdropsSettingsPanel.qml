@@ -65,7 +65,7 @@ StackView {
 
         readonly property bool isAdminOnly: root.isAdmin && !root.isPrivilegedTokenOwnerProfile
 
-        signal selectToken(string key, int amount, int type)
+        signal selectToken(string key, string amount, int type)
         signal addAddresses(var addresses)
     }
 

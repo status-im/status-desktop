@@ -35,20 +35,21 @@ StatusDropdown {
     property var usedEnsNames: []
 
     property string assetKey: ""
-    property real assetAmount: 0
+    property string assetAmount: "0"
+    property int assetMultiplierIndex: 0
 
     property string collectibleKey: ""
-    property real collectibleAmount: 1
+    property string collectibleAmount: "1"
 
     property string ensDomainName: ""
     property bool showTokenAmount: true
 
-    signal addAsset(string key, real amount)
-    signal addCollectible(string key, real amount)
+    signal addAsset(string key, string amount)
+    signal addCollectible(string key, string amount)
     signal addEns(string domain)
 
-    signal updateAsset(string key, real amount)
-    signal updateCollectible(string key, real amount)
+    signal updateAsset(string key, string amount)
+    signal updateCollectible(string key, string amount)
     signal updateEns(string domain)
 
     signal removeClicked
@@ -94,8 +95,10 @@ StatusDropdown {
         ]
         readonly property var tabsModel: [qsTr("Assets"), qsTr("Collectibles"), qsTr("ENS")]
         readonly property var tabsModelNoEns: [qsTr("Assets"), qsTr("Collectibles")]
-        readonly property bool assetsReady: root.assetAmount > 0 && root.assetKey
-        readonly property bool collectiblesReady: root.collectibleAmount > 0 && root.collectibleKey
+
+        readonly property bool assetsReady: root.assetAmount !== "0" && root.assetKey
+        readonly property bool collectiblesReady: root.collectibleAmount !== "0" && root.collectibleKey
+
         readonly property bool ensReady: d.ensDomainNameValid
 
         property int extendedDropdownType: ExtendedDropdownContent.Type.Assets
@@ -139,8 +142,8 @@ StatusDropdown {
         function setDefaultAmounts() {
             d.assetAmountText = ""
             d.collectibleAmountText = ""
-            root.assetAmount = 0
-            root.collectibleAmount = 1
+            root.assetAmount = "0"
+            root.collectibleAmount = "1"
         }
 
         function forceLayout() {
@@ -388,7 +391,8 @@ StatusDropdown {
         TokenPanel {
             id: assetPanel
 
-            readonly property real effectiveAmount: amountValid ? amount : 0
+            readonly property string effectiveAmount: amountValid ? amount : "0"
+            property bool completed: false
 
             tokenName: PermissionsHelpers.getTokenNameByKey(root.assetsModel, root.assetKey)
             tokenShortName: PermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
@@ -415,9 +419,10 @@ StatusDropdown {
                         return
 
                     append({
-                        name:chainName,
+                        name: chainName,
                         icon: chainIcon,
                         amount: asset.supply,
+                        multiplierIndex: asset.multiplierIndex,
                         infiniteAmount: asset.infiniteSupply
                     })
 
@@ -425,7 +430,12 @@ StatusDropdown {
                 }
             }
 
-            onEffectiveAmountChanged: root.assetAmount = effectiveAmount
+            onEffectiveAmountChanged: {
+                if (completed)
+                    root.assetAmount = effectiveAmount
+            }
+
+            onMultiplierIndexChanged: root.assetMultiplierIndex = multiplierIndex
             onAmountTextChanged: d.assetAmountText = amountText
             onAddClicked: root.addAsset(root.assetKey, root.assetAmount)
             onUpdateClicked: root.updateAsset(root.assetKey, root.assetAmount)
@@ -438,8 +448,11 @@ StatusDropdown {
             }
 
             Component.onCompleted: {
-                if (d.assetAmountText.length === 0 && root.assetAmount)
-                    assetPanel.setAmount(root.assetAmount)
+                completed = true
+
+                if (d.assetAmountText.length === 0 && root.assetAmount !== "0")
+                    assetPanel.setAmount(root.assetAmount,
+                                         root.assetMultiplierIndex)
             }
         }
     }
@@ -450,7 +463,8 @@ StatusDropdown {
         TokenPanel {
             id: collectiblePanel
 
-            readonly property real effectiveAmount: amountValid ? amount : 0
+            readonly property string effectiveAmount: amountValid ? amount : "0"
+            property bool completed: false
 
             tokenName: PermissionsHelpers.getTokenNameByKey(root.collectiblesModel, root.collectibleKey)
             tokenShortName: ""
@@ -482,6 +496,7 @@ StatusDropdown {
                         name:chainName,
                         icon: chainIcon,
                         amount: collectible.supply,
+                        multiplierIndex: collectible.multiplierIndex,
                         infiniteAmount: collectible.infiniteSupply
                     })
 
@@ -489,13 +504,19 @@ StatusDropdown {
                 }
             }
 
-            onEffectiveAmountChanged: root.collectibleAmount = effectiveAmount
+            onEffectiveAmountChanged: {
+                if (completed)
+                    root.collectibleAmount = effectiveAmount
+            }
+
             onAmountTextChanged: d.collectibleAmountText = amountText
             onAddClicked: root.addCollectible(root.collectibleKey, root.collectibleAmount)
             onUpdateClicked: root.updateCollectible(root.collectibleKey, root.collectibleAmount)
             onRemoveClicked: root.removeClicked()
 
             Component.onCompleted: {
+                completed = true
+
                 if (d.collectibleAmountText.length === 0 && root.collectibleAmount)
                     collectiblePanel.setAmount(root.collectibleAmount)
             }

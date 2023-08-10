@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import Qt.labs.settings 1.0
+
 import Models 1.0
 import Storybook 1.0
 import utils 1.0
@@ -20,20 +22,30 @@ SplitView {
             {
                 name: "Optimism",
                 icon: Style.svg(ModelsData.networks.optimism),
-                amount: 300,
+                amount: "300",
+                multiplierIndex: 0,
                 infiniteAmount: false
             },
             {
                 name: "Arbitrum",
                 icon: Style.svg(ModelsData.networks.arbitrum),
-                amount: 400,
+                amount: "400000",
+                multiplierIndex: 3,
                 infiniteAmount: false
             },
             {
                 name: "Hermez",
                 icon: Style.svg(ModelsData.networks.hermez),
-                amount: 500,
+                amount: "0",
+                multiplierIndex: 0,
                 infiniteAmount: true
+            },
+            {
+                name: "Ethereum",
+                icon: Style.svg(ModelsData.networks.ethereum),
+                amount: "12" + "0".repeat(18),
+                multiplierIndex: 18,
+                infiniteAmount: false
             }
         ]
 
@@ -119,7 +131,16 @@ SplitView {
                     text: "∞"
                 }
             }
+
+            Label {
+                text: "amount: " + tokenPanel.amount
+            }
         }
+    }
+
+    Settings {
+        property alias networksModelCheckBoxChecked:
+            networksModelCheckBox.checked
     }
 }
 

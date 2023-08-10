@@ -66,16 +66,16 @@ StackView {
     signal mintOwnerToken(var ownerToken, var tMasterToken)
 
     signal deployFeesRequested(int chainId, string accountAddress, int tokenType)
-    signal burnFeesRequested(string tokenKey, int amount, string accountAddress)
+    signal burnFeesRequested(string tokenKey, string amount, string accountAddress)
     signal remotelyDestructFeesRequest(var remotelyDestructTokensList, // [key , amount]
                                        string tokenKey,
                                        string accountAddress)
     signal remotelyDestructCollectibles(var remotelyDestructTokensList, // [key , amount]
                                         string tokenKey,
                                         string accountAddress)
-    signal signBurnTransactionOpened(string tokenKey, int amount, string accountAddress)
-    signal burnToken(string tokenKey, int amount, string accountAddress)
-    signal airdropToken(string tokenKey, int type, var addresses)
+    signal signBurnTransactionOpened(string tokenKey, string amount, string accountAddress)
+    signal burnToken(string tokenKey, string amount, string accountAddress)
+    signal airdropToken(string tokenKey, string amount, int type, var addresses)
     signal deleteToken(string tokenKey)
 
     function setFeeLoading() {
@@ -281,6 +281,7 @@ StackView {
 
             property TokenObject asset: TokenObject{
                 type: Constants.TokenType.ERC20
+                multiplierIndex: 18
             }
 
             property TokenObject collectible: TokenObject {
@@ -520,11 +521,15 @@ StackView {
             token: TokenObject {}
 
             onGeneralAirdropRequested: {
-                root.airdropToken(view.airdropKey, view.token.type, []) // tokenKey instead when backend airdrop ready to use key instead of symbol
+                root.airdropToken(view.airdropKey,
+                                  "1" + "0".repeat(view.token.multiplierIndex),
+                                  view.token.type, []) // tokenKey instead when backend airdrop ready to use key instead of symbol
             }
 
             onAirdropRequested: {
-                root.airdropToken(view.airdropKey, view.token.type, [address]) // tokenKey instead when backend airdrop ready to use key instead of symbol
+                root.airdropToken(view.airdropKey,
+                                  "1" + "0".repeat(view.token.multiplierIndex),
+                                  view.token.type, [address]) // tokenKey instead when backend airdrop ready to use key instead of symbol
             }
 
             onRemoteDestructRequested: {
@@ -601,15 +606,17 @@ StackView {
             remotelyDestructVisible: token.remotelyDestruct
             burnVisible: !token.infiniteSupply
 
-            onAirdropClicked: root.airdropToken(view.airdropKey, // tokenKey instead when backend airdrop ready to use key instead of symbol
-                                                view.token.type, [])
+            onAirdropClicked: root.airdropToken(
+                                  view.airdropKey,
+                                  "1" + "0".repeat(view.token.multiplierIndex),
+                                  view.token.type, [])
 
             onRemotelyDestructClicked: remotelyDestructPopup.open()
             onBurnClicked: burnTokensPopup.open()
 
             // helper properties to pass data through popups
             property var remotelyDestructTokensList
-            property int burnAmount
+            property string burnAmount
             property string accountAddress
 
             RemotelyDestructPopup {
@@ -695,6 +702,7 @@ StackView {
                 communityName: root.communityName
                 tokenName: footer.token.name
                 remainingTokens: footer.token.remainingTokens
+                multiplierIndex: footer.token.multiplierIndex
                 tokenSource: footer.token.artworkSource
                 chainName: footer.token.chainName
 
@@ -778,6 +786,7 @@ StackView {
                     token.burnState: model.burnState
                     token.remotelyDestructState: model.remotelyDestructState
                     token.accountAddress: model.accountAddress
+                    token.multiplierIndex: model.multiplierIndex
                 }
 
                 onCountChanged: {

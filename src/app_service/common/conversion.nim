@@ -45,6 +45,7 @@ proc toUInt256*(flt: float): UInt256 =
 proc toUInt64*(flt: float): StUInt[64] =
   toStUInt(flt, StUInt[64])
 
+# This method may introduce distortions and should be avoided if possible.
 proc eth2Wei*(eth: float, decimals: int = 18): UInt256 =
   let weiValue = eth * parseFloat(alignLeft("1", decimals + 1, '0'))
   weiValue.toUInt256

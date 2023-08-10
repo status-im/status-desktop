@@ -172,7 +172,7 @@ StatusScrollView {
     onPermissionTypeChanged: Qt.callLater(() => d.loadInitValues())
     contentWidth: mainLayout.width
     contentHeight: mainLayout.height
-    
+
     SequenceColumnLayout {
         id: mainLayout
 
@@ -242,7 +242,7 @@ StatusScrollView {
                     const key = item.key
 
                     d.dirtyValues.selectedHoldingsModel.append(
-                                { type, key, amount })
+                                { type, key, amount: parseFloat(amount) })
                 }
 
                 function prepareUpdateIndex(key) {
@@ -270,6 +270,7 @@ StatusScrollView {
                 onAddAsset: {
                     const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.assetsModel, key)
+
                     addItem(HoldingTypes.Type.Asset, modelItem, amount)
                     dropdown.close()
                 }
@@ -277,6 +278,7 @@ StatusScrollView {
                 onAddCollectible: {
                     const modelItem = PermissionsHelpers.getTokenByKey(
                                         root.collectiblesModel, key)
+
                     addItem(HoldingTypes.Type.Collectible, modelItem, amount)
                     dropdown.close()
                 }
@@ -292,7 +294,7 @@ StatusScrollView {
                     const modelItem = PermissionsHelpers.getTokenByKey(root.assetsModel, key)
 
                     d.dirtyValues.selectedHoldingsModel.set(
-                                itemIndex, { type: HoldingTypes.Type.Asset, key, amount })
+                                itemIndex, { type: HoldingTypes.Type.Asset, key, amount: parseFloat(amount) })
                     dropdown.close()
                 }
 
@@ -303,7 +305,7 @@ StatusScrollView {
 
                     d.dirtyValues.selectedHoldingsModel.set(
                                 itemIndex,
-                                { type: HoldingTypes.Type.Collectible, key, amount })
+                                { type: HoldingTypes.Type.Collectible, key, amount: parseFloat(amount) })
                     dropdown.close()
                 }
 

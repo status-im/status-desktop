@@ -177,7 +177,11 @@ Control {
                 id: totalbox
 
                 label: qsTr("Total")
-                value: token.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(token.supply)
+                value: token.infiniteSupply
+                       ? d.infiniteSymbol
+                       : LocaleUtils.numberToLocaleString(
+                             StatusQUtils.AmountsArithmetic.toNumber(token.supply,
+                                                                     token.multiplierIndex))
                 isLoading: !token.infiniteSupply &&
                            ((!root.isAssetPanel && token.remotelyDestructState === Constants.ContractTransactionStatus.InProgress) ||
                             (d.burnState === Constants.ContractTransactionStatus.InProgress))
@@ -189,7 +193,11 @@ Control {
                 readonly property int remainingTokens: root.preview ? token.supply : token.remainingTokens
 
                 label: qsTr("Remaining")
-                value: token.infiniteSupply ? d.infiniteSymbol : LocaleUtils.numberToLocaleString(remainingTokens)
+                value: token.infiniteSupply
+                       ? d.infiniteSymbol
+                       : LocaleUtils.numberToLocaleString(
+                             StatusQUtils.AmountsArithmetic.toNumber(token.remainingTokens,
+                                                                     token.multiplierIndex))
                 isLoading: !token.infiniteSupply && (d.burnState === Constants.ContractTransactionStatus.InProgress)
             }
 

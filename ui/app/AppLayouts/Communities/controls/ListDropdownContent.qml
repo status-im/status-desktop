@@ -1,12 +1,13 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
+import QtGraphicalEffects 1.15
 
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import utils 1.0
 
@@ -98,12 +99,20 @@ StatusListView {
         showSubItemsIcon: !!model.subItems && model.subItems.count > 0
         selected: root.checkedKeys.includes(model.key)
         amount: {
-            if(!model.infiniteSupply && !!model.supply && model.supply == 1)
+            if (model.supply === undefined
+                    || model.multiplierIndex === undefined)
+                return ""
+
+            if (model.infiniteSupply)
+                return "∞"
+
+            if (model.supply === "1")
                 return qsTr("Max. 1")
 
-            if(root.showTokenAmount)
-                return !!model.infiniteSupply ? "∞" : model.supply ?? ""
-            
+            if (root.showTokenAmount)
+                return SQUtils.AmountsArithmetic.toNumber(model.supply,
+                                                          model.multiplierIndex)
+
             return ""
         }
 

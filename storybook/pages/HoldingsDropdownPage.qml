@@ -66,7 +66,11 @@ SplitView {
                 proxyRoles: [
                     ExpressionRole {
                         name: "supply"
-                        expression: model.index === 1 ? model.index : (model.index + 1) * 115
+                        expression: (model.index === 1 ? 1 : (model.index + 1) * 115).toString()
+                    },
+                    ExpressionRole {
+                        name: "multiplierIndex"
+                        expression: 0
                     },
                     ExpressionRole {
                         name: "infiniteSupply"
@@ -99,7 +103,12 @@ SplitView {
                 proxyRoles: [
                     ExpressionRole {
                         name: "supply"
-                        expression: (model.index + 1) * 584
+                        expression: ((model.index + 1) * 584).toString()
+                                    + "0".repeat(18)
+                    },
+                    ExpressionRole {
+                        name: "multiplierIndex"
+                        expression: 18
                     },
                     ExpressionRole {
                         name: "infiniteSupply"

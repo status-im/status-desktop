@@ -21,14 +21,14 @@ method computeAirdropFee*(self: AccessInterface, communityId: string, tokensJson
 method selfDestructCollectibles*(self: AccessInterface, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method burnTokens*(self: AccessInterface, communityId: string, contractUniqueKey: string, amount: float64) {.base.} =
+method burnTokens*(self: AccessInterface, communityId: string, contractUniqueKey: string, amount: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deployCollectibles*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: float64, infiniteSupply: bool, transferable: bool,
+method deployCollectibles*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: string, infiniteSupply: bool, transferable: bool,
                            selfDestruct: bool, chainId: int, imageCropInfoJson: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deployAssets*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: float64, infiniteSupply: bool, decimals: int,
+method deployAssets*(self: AccessInterface, communityId: string, address: string, name: string, symbol: string, description: string, supply: string, infiniteSupply: bool, decimals: int,
                      chainId: int, imageCropInfoJson: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -48,7 +48,7 @@ method computeDeployFee*(self: AccessInterface, chainId: int, accountAddress: st
 method computeSelfDestructFee*(self: AccessInterface, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method computeBurnFee*(self: AccessInterface, contractUniqueKey: string, amount: float64) {.base.} =
+method computeBurnFee*(self: AccessInterface, contractUniqueKey: string, amount: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onDeployFeeComputed*(self: AccessInterface, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: ComputeFeeErrorCode) {.base.} =

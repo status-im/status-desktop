@@ -40,13 +40,14 @@ QtObject {
         console.assert(!isNaN(number) && Number.isInteger(multiplier)
                        && multiplier >= 0)
         const amount = new Big.Big(number).times(10 ** multiplier)
-        console.assert(amount.eq(amount.round()))
+        // TODO: restore assert when permissions handled as bigints
+        // console.assert(amount.eq(amount.round()))
         return amount
     }
 
     /*!
       \qmlmethod AmountsArithmetic::toNumber(amount, multiplier = 0)
-      \brief Converts an amount to a java script number.
+      \brief Converts an amount (in form of amount object or string) to a java script number.
 
       This operation may result in loss of precision. Because of that it should
       be used only to display a value in the user interface, but requires
@@ -57,10 +58,16 @@ QtObject {
       \qml
         console.log(AmountsArithmetic.toNumber(
                         AmountsArithmetic.fromString("123456789123456789123"))) // 123456789123456800000
+        console.log(AmountsArithmetic.toNumber("123456789123456789123")) // 123456789123456800000
       \endqml
      */
     function toNumber(amount, multiplier = 0) {
         console.assert(Number.isInteger(multiplier) && multiplier >= 0)
+
+        if (typeof amount === "string")
+            amount = fromString(amount)
+
+        console.assert(amount instanceof Big.Big)
         return amount.div(10 ** multiplier).toNumber()
     }
 
@@ -84,7 +91,8 @@ QtObject {
     function fromString(numStr) {
         console.assert(typeof numStr === "string")
         const amount = new Big.Big(numStr)
-        console.assert(amount.eq(amount.round()))
+        // TODO: restore assert when permissions handled as bigints
+        //console.assert(amount.eq(amount.round()))
         return amount
     }
 
@@ -103,6 +111,16 @@ QtObject {
         console.assert(amount instanceof Big.Big)
         console.assert(multiplier instanceof Big.Big || Number.isInteger(multiplier))
         return amount.times(multiplier)
+    }
+
+    /*!
+      \qmlmethod AmountsArithmetic::div(divident, divisor)
+      \brief Returns a Big number whose value is the value of divident divided by divisor.
+     */
+    function div(divident, divisor) {
+        console.assert(divident instanceof Big.Big)
+        console.assert(divisor instanceof Big.Big)
+        return divident.div(divisor)
     }
 
     /*!

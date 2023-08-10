@@ -73,6 +73,9 @@ QtObject {
     }
 
     function setHoldingsTextFormat(type, name, amount) {
+        if (typeof amount === "string")
+            amount = AmountsArithmetic.toNumber(AmountsArithmetic.fromString(amount))
+
         switch (type) {
             case HoldingTypes.Type.Asset:
                 return `${LocaleUtils.numberToLocaleString(amount)} ${name}`

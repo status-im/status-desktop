@@ -161,7 +161,7 @@ StatusScrollView {
                 id: assetsList
 
                 Layout.fillWidth: true
-                Layout.preferredHeight: childrenRect.height
+                Layout.preferredHeight: contentHeight
 
                 visible: count > 0
                 model: assetsModel
