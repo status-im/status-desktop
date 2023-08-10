@@ -182,7 +182,7 @@ Rectangle {
 
         Item {
             Layout.fillWidth: true
-            Layout.preferredHeight: walletTitleText.height
+            Layout.preferredHeight: icon.height
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             Layout.topMargin: Style.current.padding
@@ -199,16 +199,18 @@ Rectangle {
                 font.weight: Font.Bold
                 font.pixelSize: 17
                 color: Theme.palette.directColor1
+                anchors.verticalCenter: parent.verticalCenter
             }
 
             StatusRoundButton {
+                id: icon
                 objectName: "addAccountButton"
                 icon.name: "add-circle"
                 anchors.right: parent.right
                 anchors.rightMargin: -Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
-                width: height
-                height: parent.height * 2
+                icon.width: 24
+                icon.height: 24
                 color: hovered || highlighted ? Theme.palette.primaryColor3
                                               : "transparent"
                 onClicked: RootStore.runAddAccountPopup()
