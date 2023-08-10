@@ -1,4 +1,4 @@
-import NimQml, logging, std/json, sequtils, strutils
+import NimQml, logging, std/json, sequtils, strutils, options
 import tables, stint, sets
 
 import app/core/eventemitter
@@ -23,6 +23,8 @@ QtObject:
       collectiblesOwnershipUpdateStartedFn: proc()
       collectiblesOwnershipUpdateFinishedFn: proc()
 
+      requestId: int32
+
   proc setup(self: EventsHandler) =
     self.QObject.setup
 
@@ -40,6 +42,9 @@ QtObject:
 
   proc handleApiEvents(self: EventsHandler, e: Args) =
     var data = WalletSignal(e)
+
+    if data.requestId.isSome and data.requestId.get() != self.requestId:
+      return
 
     if self.walletEventHandlers.hasKey(data.eventType):
       let callback = self.walletEventHandlers[data.eventType]
@@ -74,8 +79,11 @@ QtObject:
         return
       self.collectiblesOwnershipUpdateFinishedFn()
 
-  proc newEventsHandler*(events: EventEmitter): EventsHandler =
+  proc newEventsHandler*(requestId: int32, events: EventEmitter): EventsHandler =
     new(result, delete)
+
+    result.requestId = requestId
+
     result.events = events
     result.eventHandlers = initTable[string, EventCallbackProc]()
 
