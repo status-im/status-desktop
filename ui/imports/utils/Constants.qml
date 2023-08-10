@@ -1145,8 +1145,9 @@ QtObject {
     enum CommunityMembershipRequestState {
         None = 0,
         Pending,
-        Accepted,
         Rejected,
+        Accepted,
+        Canceled,
         AcceptedPending,
         RejectedPending,
         Banned,

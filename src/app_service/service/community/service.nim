@@ -221,6 +221,7 @@ QtObject:
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto], removedChats: seq[string])
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
+  proc allPendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int
@@ -305,6 +306,12 @@ QtObject:
               community.pendingRequestsToJoin.delete(indexPending)
               self.communities[membershipRequest.communityId] = community
               self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
+
+          of RequestToJoinType.AcceptedPending:
+            echo "received an accepted pending"
+
+          of RequestToJoinType.DeclinedPending:
+            echo "received a declined pending"
 
           of RequestToJoinType.Declined:
             break
@@ -674,7 +681,7 @@ QtObject:
       for community in communities:
         self.communities[community.id] = community
         if community.memberRole == MemberRole.Owner or community.memberRole == MemberRole.Admin:
-          self.communities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
+          self.communities[community.id].pendingRequestsToJoin = self.allPendingRequestsToJoinForCommunity(community.id)
           self.communities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
           self.communities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
 
@@ -896,6 +903,17 @@ QtObject:
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
     try:
       let response = status_go.pendingRequestsToJoinForCommunity(communityId)
+
+      result = @[]
+      if response.result.kind != JNull:
+        for jsonCommunityReqest in response.result:
+          result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
+    except Exception as e:
+      error "Error fetching community requests", msg = e.msg
+
+  proc allPendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
+    try:
+      let response = status_go.allPendingRequestsToJoinForCommunity(communityId)
 
       result = @[]
       if response.result.kind != JNull:
