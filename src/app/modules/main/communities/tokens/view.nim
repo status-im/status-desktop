@@ -21,10 +21,10 @@ QtObject:
     result.QObject.setup
     result.communityTokensModule = communityTokensModule
 
-  proc deployCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: float, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) {.slot.} =
+  proc deployCollectible*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: string, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) {.slot.} =
     self.communityTokensModule.deployCollectibles(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, transferable, selfDestruct, chainId, imageCropInfoJson)
 
-  proc deployAssets*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: float, infiniteSupply: bool, decimals: int, chainId: int, imageCropInfoJson: string) {.slot.} =
+  proc deployAssets*(self: View, communityId: string, fromAddress: string, name: string, symbol: string, description: string, supply: string, infiniteSupply: bool, decimals: int, chainId: int, imageCropInfoJson: string) {.slot.} =
     self.communityTokensModule.deployAssets(communityId, fromAddress, name, symbol, description, supply, infiniteSupply, decimals, chainId, imageCropInfoJson)
 
   proc deployOwnerToken*(self:View, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string, masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) {.slot.} =
@@ -42,7 +42,7 @@ QtObject:
   proc selfDestructCollectibles*(self: View, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.selfDestructCollectibles(communityId, collectiblesToBurnJsonString, contractUniqueKey)
 
-  proc burnTokens*(self: View, communityId: string, contractUniqueKey: string, amount: float) {.slot.} =
+  proc burnTokens*(self: View, communityId: string, contractUniqueKey: string, amount: string) {.slot.} =
     self.communityTokensModule.burnTokens(communityId, contractUniqueKey, amount)
 
   proc deployFeeUpdated*(self: View, ethCurrency: QVariant, fiatCurrency: QVariant, errorCode: int) {.signal.}
@@ -56,7 +56,7 @@ QtObject:
   proc computeSelfDestructFee*(self: View, collectiblesToBurnJsonString: string, contractUniqueKey: string) {.slot.} =
     self.communityTokensModule.computeSelfDestructFee(collectiblesToBurnJsonString, contractUniqueKey)
 
-  proc computeBurnFee*(self: View, contractUniqueKey: string, amount: float) {.slot.} =
+  proc computeBurnFee*(self: View, contractUniqueKey: string, amount: string) {.slot.} =
     self.communityTokensModule.computeBurnFee(contractUniqueKey, amount)
 
   proc updateDeployFee*(self: View, ethCurrency: CurrencyAmount, fiatCurrency: CurrencyAmount, errorCode: int) =

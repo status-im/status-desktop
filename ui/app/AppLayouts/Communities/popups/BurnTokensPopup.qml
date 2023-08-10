@@ -25,7 +25,8 @@ StatusDialog {
     property string communityName
     property bool isAsset // If asset isAsset = true; if collectible --> isAsset = false
     property string tokenName
-    property int remainingTokens
+    property string remainingTokens
+    property int multiplierIndex
     property url tokenSource
     property string chainName
 
@@ -38,12 +39,19 @@ StatusDialog {
     // Account expected roles: address, name, color, emoji, walletType
     property var accounts
 
-    signal burnClicked(int burnAmount, string accountAddress)
+    signal burnClicked(string burnAmount, string accountAddress)
     signal cancelClicked
-    signal burnFeesRequested(int burnAmount, string accountAddress)
+    signal burnFeesRequested(string burnAmount, string accountAddress)
 
     QtObject {
         id: d
+
+        readonly property real remainingTokensFloat:
+            SQUtils.AmountsArithmetic.toNumber(
+                root.remainingTokens, root.multiplierIndex)
+
+        readonly property string remainingTokensDisplayText:
+            LocaleUtils.numberToLocaleString(remainingTokensFloat)
 
         property string accountAddress
         property alias amountToBurn: amountToBurnInput.text
@@ -75,7 +83,7 @@ StatusDialog {
         StatusBaseText {
             Layout.fillWidth: true
 
-            text: qsTr("How many of %1’s remaining %n %2 tokens would you like to burn?", "", root.remainingTokens).arg(root.communityName).arg(root.tokenName)
+            text: qsTr("How many of %1’s remaining %n %2 tokens would you like to burn?", "", d.remainingTokensFloat).arg(root.communityName).arg(root.tokenName)
             wrapMode: Text.WordWrap
             lineHeight: 1.2
             font.pixelSize: Style.current.primaryTextFontSize
@@ -107,7 +115,19 @@ StatusDialog {
                     validationMode: StatusInput.ValidationMode.OnlyWhenDirty
                     validators: [
                         StatusValidator {
-                            validate: (value) => { return (parseInt(value) > 0 && parseInt(value) <= root.remainingTokens) }
+                            validate: (value) => {
+                                const intAmount = parseInt(value)
+
+                                if (!intAmount)
+                                    return false
+
+                                const current = SQUtils.AmountsArithmetic.fromNumber(
+                                              intAmount, root.multiplierIndex)
+                                const remaining = SQUtils.AmountsArithmetic.fromString(
+                                              root.remainingTokens)
+
+                                return SQUtils.AmountsArithmetic.cmp(current, remaining) <= 0
+                            }
                             errorMessage: qsTr("Exceeds available remaining")
                         },
                         StatusValidator {
@@ -127,7 +147,7 @@ StatusDialog {
 
                 Layout.alignment: Qt.AlignTop
 
-                text: qsTr("All available remaining (%1)").arg(root.remainingTokens)
+                text: qsTr("All available remaining (%1)").arg(d.remainingTokensDisplayText)
                 font.pixelSize: Style.current.primaryTextFontSize
                 ButtonGroup.group: radioGroup
             }
@@ -173,10 +193,18 @@ StatusDialog {
 
                 interval: 500
                 onTriggered: {
-                    if(specificAmountButton.checked)
-                        root.burnFeesRequested(parseInt(amountToBurnInput.text), d.accountAddress)
-                    else
+                    if(specificAmountButton.checked) {
+                        if (!amountToBurnInput.text)
+                            return
+
+                        root.burnFeesRequested(
+                                    SQUtils.AmountsArithmetic.fromNumber(
+                                        parseInt(amountToBurnInput.text),
+                                        root.multiplierIndex),
+                                    d.accountAddress)
+                    } else {
                         root.burnFeesRequested(root.remainingTokens, d.accountAddress)
+                    }
                 }
             }
 
@@ -193,7 +221,7 @@ StatusDialog {
 
     header: StatusDialogHeader {
         headline.title: qsTr("Burn %1 tokens").arg(root.tokenName)
-        headline.subtitle: qsTr("%n %1 remaining in smart contract", "", root.remainingTokens).arg(root.tokenName)
+        headline.subtitle: qsTr("%n %1 remaining in smart contract", "", d.remainingTokensFloat).arg(root.tokenName)
         leftComponent: Rectangle {
             height: 40
             width: height
@@ -236,10 +264,15 @@ StatusDialog {
                 text: qsTr("Burn tokens")
                 type: StatusBaseButton.Type.Danger
                 onClicked: {
-                    if(specificAmountButton.checked)
-                        root.burnClicked(parseInt(amountToBurnInput.text), d.accountAddress)
-                    else
+                    if(specificAmountButton.checked) {
+                        root.burnClicked(
+                                    SQUtils.AmountsArithmetic.fromNumber(
+                                        parseInt(amountToBurnInput.text),
+                                        root.multiplierIndex),
+                                    d.accountAddress)
+                    } else {
                         root.burnClicked(root.remainingTokens, d.accountAddress)
+                    }
                 }
             }
         }

@@ -49,7 +49,7 @@ StatusScrollView {
         symbol: PermissionsHelpers.communityNameToSymbol(true, root.communityName)
         transferable: true
         remotelyDestruct: false
-        supply: 1
+        supply: "1"
         infiniteSupply: false
         description: qsTr("This is the %1 Owner token. The hodler of this collectible has ultimate control over %1 Community token administration.").arg(root.communityName)
     }

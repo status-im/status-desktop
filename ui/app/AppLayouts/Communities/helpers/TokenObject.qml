@@ -22,8 +22,9 @@ QtObject {
     property string symbol
     property string description
     property bool infiniteSupply: true
-    property int supply: 1
-    property int remainingTokens: supply
+    property string supply: "1"
+    property string remainingTokens: supply
+    property int multiplierIndex: 0
 
     // Artwork related properties:
     property url artworkSource

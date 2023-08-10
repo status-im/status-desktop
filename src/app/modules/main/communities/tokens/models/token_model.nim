@@ -2,6 +2,7 @@ import NimQml, Tables, strformat, sequtils, stint
 import token_item
 import token_owners_item
 import token_owners_model
+import ../../../../../../app_service/service/community/dto/community
 import ../../../../../../app_service/service/community_tokens/dto/community_token
 import ../../../../../../app_service/service/community_tokens/community_collectible_owner
 import ../../../../../../app_service/common/utils
@@ -32,6 +33,7 @@ type
     BurnState
     RemotelyDestructState
     PrivilegesLevel
+    MultiplierIndex
 
 QtObject:
   type TokenModel* = ref object of QAbstractListModel
@@ -181,7 +183,8 @@ QtObject:
       ModelRole.Decimals.int:"decimals",
       ModelRole.BurnState.int:"burnState",
       ModelRole.RemotelyDestructState.int:"remotelyDestructState",
-      ModelRole.PrivilegesLevel.int:"privilegesLevel"
+      ModelRole.PrivilegesLevel.int:"privilegesLevel",
+      ModelRole.MultiplierIndex.int:"multiplierIndex"
     }.toTable
 
   method data(self: TokenModel, index: QModelIndex, role: int): QVariant =
@@ -206,7 +209,7 @@ QtObject:
         result = newQVariant(item.tokenDto.description)
       of ModelRole.Supply:
         # we need to present maxSupply - destructedAmount
-        result = newQVariant(supplyByType(item.tokenDto.supply - item.destructedAmount, item.tokenDto.tokenType))
+        result = newQVariant((item.tokenDto.supply - item.destructedAmount).toString(10))
       of ModelRole.InfiniteSupply:
         result = newQVariant(item.tokenDto.infiniteSupply)
       of ModelRole.Transferable:
@@ -230,7 +233,7 @@ QtObject:
       of ModelRole.AccountAddress:
         result = newQVariant(item.tokenDto.deployer)
       of ModelRole.RemainingSupply:
-        result = newQVariant(supplyByType(item.remainingSupply, item.tokenDto.tokenType))
+        result = newQVariant(item.remainingSupply.toString(10))
       of ModelRole.Decimals:
         result = newQVariant(item.tokenDto.decimals)
       of ModelRole.BurnState:
@@ -240,6 +243,8 @@ QtObject:
         result = newQVariant(destructStatus)
       of ModelRole.PrivilegesLevel:
         result = newQVariant(item.tokenDto.privilegesLevel.int)
+      of ModelRole.MultiplierIndex:
+        result = newQVariant(if item.tokenDto.tokenType == TokenType.ERC20: 18 else: 0)
 
   proc `$`*(self: TokenModel): string =
       for i in 0 ..< self.items.len:

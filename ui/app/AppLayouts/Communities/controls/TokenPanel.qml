@@ -1,5 +1,5 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -21,6 +21,7 @@ ColumnLayout {
     property alias tokenImage: item.iconSource
     property alias amountText: amountInput.text
     property alias amount: amountInput.amount
+    property alias multiplierIndex: amountInput.multiplierIndex
     property alias tokenCategoryText: tokenLabel.text
     property alias networkLabelText: d.networkLabelText
     property alias addOrUpdateButtonEnabled: addOrUpdateButton.enabled
@@ -33,8 +34,9 @@ ColumnLayout {
     signal updateClicked
     signal removeClicked
 
-    function setAmount(amount) {
-        amountInput.setAmount(amount)
+    function setAmount(amount, multiplierIndex = 0) {
+        console.assert(typeof amount === "string")
+        amountInput.setAmount(amount, multiplierIndex)
     }
 
     QtObject {
@@ -86,7 +88,10 @@ ColumnLayout {
             spacing: 10
 
             property alias currentAmount: inlineNetworksComboBox.currentAmount
-            property alias currentInfiniteAmount: inlineNetworksComboBox.currentInfiniteAmount
+            property alias currentMultiplierIndex:
+                inlineNetworksComboBox.currentMultiplierIndex
+            property alias currentInfiniteAmount:
+                inlineNetworksComboBox.currentInfiniteAmount
 
             CustomText {
                 id: networkLabel
@@ -124,10 +129,14 @@ ColumnLayout {
             !networksComboBoxLoader.item.currentInfiniteAmount
 
         maximumAmount: !!networksComboBoxLoader.item
-                       ? networksComboBoxLoader.item.currentAmount : 0
+                       ? networksComboBoxLoader.item.currentAmount : "0"
+
+        multiplierIndex: !!networksComboBoxLoader.item
+                         ? networksComboBoxLoader.item.currentMultiplierIndex : 0
 
         onKeyPressed: {
-            if(!addOrUpdateButton.enabled) return
+            if(!addOrUpdateButton.enabled)
+                return
 
             if(event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
                 addOrUpdateButton.clicked()
@@ -145,7 +154,8 @@ ColumnLayout {
     StatusButton {
         id: addOrUpdateButton
 
-        text: (root.mode === HoldingTypes.Mode.Add) ? qsTr("Add") : qsTr("Update")
+        text: root.mode === HoldingTypes.Mode.Add ? qsTr("Add")
+                                                  : qsTr("Update")
         Layout.preferredHeight: d.defaultHeight
         Layout.topMargin: d.defaultSpacing
         Layout.fillWidth: true

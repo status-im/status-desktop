@@ -89,14 +89,3 @@ proc toCommunityTokenDto*(jsonObj: JsonNode): CommunityTokenDto =
 proc parseCommunityTokens*(response: RpcResponse[JsonNode]): seq[CommunityTokenDto] =
   result = map(response.result.getElems(),
     proc(x: JsonNode): CommunityTokenDto = x.toCommunityTokenDto())
-
-proc supplyByType*(supply: Uint256, tokenType: TokenType): float64 =
-  try:
-    var eths: string
-    if tokenType == TokenType.ERC20:
-      eths = wei2Eth(supply, 18)
-    else:
-      eths = supply.toString(10)
-    return parseFloat(eths)
-  except Exception as e:
-    error "Error parsing supply by type ", msg=e.msg, supply=supply, tokenType=tokenType

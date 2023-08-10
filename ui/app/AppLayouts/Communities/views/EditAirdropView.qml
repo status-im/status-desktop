@@ -87,11 +87,9 @@ StatusScrollView {
     function selectToken(key, amount, type) {
         if(selectedHoldingsModel)
             selectedHoldingsModel.clear()
-        var tokenModel = null
-        if(type === Constants.TokenType.ERC20)
-            tokenModel = root.assetsModel
-        else if (type === Constants.TokenType.ERC721)
-            tokenModel = root.collectiblesModel
+
+        const tokenModel = type === Constants.TokenType.ERC20 ?
+                             root.assetsModel : root.collectiblesModel
 
         const modelItem = PermissionsHelpers.getTokenByKey(
                             tokenModel, key)
@@ -178,22 +176,23 @@ StatusScrollView {
         onTotalRevisionChanged: Qt.callLater(() => d.resetFees())
 
         function prepareEntry(key, amount, type) {
-            let tokenModel = null
-            if(type === Constants.TokenType.ERC20)
-                tokenModel = root.assetsModel
-            else if (type === Constants.TokenType.ERC721)
-                tokenModel = root.collectiblesModel
-
+            const tokenModel = type === Constants.TokenType.ERC20
+                             ? root.assetsModel : root.collectiblesModel
             const modelItem = PermissionsHelpers.getTokenByKey(
                                 tokenModel, key)
-
+            const multiplierIndex = modelItem.multiplierIndex
+            const amountNumber = AmountsArithmetic.toNumber(
+                                   amount, multiplierIndex)
+            const amountLocalized = LocaleUtils.numberToLocaleString(
+                                      amountNumber, -1)
             return {
                 key, amount, type,
-                tokenText: amount + " " + modelItem.name,
+                tokenText: amountLocalized + " " + modelItem.name,
                 tokenImage: modelItem.iconSource,
                 networkText: modelItem.chainName,
                 networkImage: Style.svg(modelItem.chainIcon),
                 supply: modelItem.supply,
+                multiplierIndex: modelItem.multiplierIndex,
                 infiniteSupply: modelItem.infiniteSupply,
                 contractUniqueKey: modelItem.contractUniqueKey,
                 accountName: modelItem.accountName,
@@ -278,7 +277,13 @@ StatusScrollView {
                 if (!item || item.infiniteSupply)
                     continue
 
-                min = Math.min(item.supply / item.amount, min)
+                const dividient = AmountsArithmetic.fromString(item.supply)
+                const divisor = AmountsArithmetic.fromString(item.amount)
+
+                const quotient = AmountsArithmetic.toNumber(
+                                   AmountsArithmetic.div(dividient, divisor))
+
+                min = Math.min(quotient, min)
             }
 
             infinity = min === Number.MAX_SAFE_INTEGER
@@ -286,12 +291,24 @@ StatusScrollView {
         }
 
         delegate: QtObject {
-            readonly property int supply: model.supply
-            readonly property real amount: model.amount
+            readonly property string supply: model.supply
+            readonly property string amount: model.amount
             readonly property bool infiniteSupply: model.infiniteSupply
 
-            readonly property bool valid:
-                infiniteSupply || amount * airdropRecipientsSelector.count <= supply
+            readonly property bool valid: {
+                if (infiniteSupply)
+                    return true
+
+                const recipientsCount = airdropRecipientsSelector.count
+                const demand = AmountsArithmetic.times(
+                                 AmountsArithmetic.fromString(amount),
+                                 recipientsCount)
+
+                const available = AmountsArithmetic.fromString(supply)
+
+                return AmountsArithmetic.cmp(demand, available) <= 0
+            }
+
 
             onSupplyChanged: recipientsCountInstantiator.findRecipientsCount()
             onAmountChanged: recipientsCountInstantiator.findRecipientsCount()
@@ -426,6 +443,7 @@ StatusScrollView {
                     case HoldingTypes.Type.Asset:
                         dropdown.assetKey = modelItem.key
                         dropdown.assetAmount = modelItem.amount
+                        dropdown.assetMultiplierIndex = modelItem.multiplierIndex
                         dropdown.setActiveTab(HoldingTypes.Type.Asset)
                         break
                     case HoldingTypes.Type.Collectible:

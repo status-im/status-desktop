@@ -5,6 +5,7 @@ import QtQml 2.15
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import SortFilterProxyModel 0.2
 
@@ -13,6 +14,7 @@ StatusComboBox {
 
     readonly property string currentName: control.currentText
     readonly property alias currentAmount: instantiator.amount
+    readonly property alias currentMultiplierIndex: instantiator.multiplierIndex
     readonly property alias currentInfiniteAmount: instantiator.infiniteAmount
     readonly property alias currentIcon: instantiator.icon
 
@@ -49,6 +51,10 @@ StatusComboBox {
         readonly property int iconSize: 32
 
         readonly property string infinitySymbol: "∞"
+
+        function amountText(amount, multiplierIndex) {
+            return SQUtils.AmountsArithmetic.toNumber(amount, multiplierIndex)
+        }
     }
 
     component CustomText: StatusBaseText {
@@ -94,7 +100,8 @@ StatusComboBox {
         id: instantiator
 
         property string icon
-        property int amount
+        property string amount
+        property int multiplierIndex
         property bool infiniteAmount
 
         model: SortFilterProxyModel {
@@ -109,6 +116,7 @@ StatusComboBox {
             readonly property list<Binding> bindings: [
                 Bind { property: "icon"; value: model.icon },
                 Bind { property: "amount"; value: model.amount },
+                Bind { property: "multiplierIndex"; value: model.multiplierIndex },
                 Bind { property: "infiniteAmount"; value: model.infiniteAmount }
             ]
         }
@@ -118,10 +126,17 @@ StatusComboBox {
         title: root.control.displayText
         iconSource: instantiator.icon
 
-        amount: !d.oneItem
-                ? (instantiator.infiniteAmount ? d.infinitySymbol
-                                               : instantiator.amount)
-                : ""
+        amount: {
+            if (d.oneItem || !instantiator.amount)
+                return ""
+
+            if (instantiator.infiniteAmount)
+                return d.infinitySymbol
+
+            return d.amountText(instantiator.amount,
+                                instantiator.multiplierIndex)
+        }
+
         cursorShape: d.oneItem ? Qt.ArrowCursor : Qt.PointingHandCursor
 
         onClicked: {
@@ -135,7 +150,9 @@ StatusComboBox {
     delegate: DelegateItem {
         title: model.name
         iconSource: model.icon
-        amount: model.infiniteAmount ? d.infinitySymbol : model.amount
+        amount: model.infiniteAmount
+                ? d.infinitySymbol
+                : d.amountText(model.amount, model.multiplierIndex)
 
         width: root.width
         height: root.height

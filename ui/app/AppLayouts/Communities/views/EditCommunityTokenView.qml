@@ -254,7 +254,13 @@ StatusScrollView {
 
             visible: !unlimitedSupplyChecker.checked
             label: qsTr("Total finite supply")
-            text: root.isAssetView ? asset.supply : collectible.supply
+            text: {
+                const token = root.isAssetView ? root.asset : root.collectible
+
+                return SQUtils.AmountsArithmetic.toNumber(token.supply,
+                                                          token.multiplierIndex)
+            }
+
             placeholderText: qsTr("e.g. 300")
             minLengthValidator.errorMessage: qsTr("Please enter a total finite supply")
             regexValidator.errorMessage: d.hasEmoji(text) ? qsTr("Your total finite supply is too cool (use 0-9 only)") :
@@ -264,14 +270,13 @@ StatusScrollView {
             extraValidator.errorMessage: qsTr("Enter a number between 1 and 999,999,999")
 
             onTextChanged: {
-                const amount = parseInt(text)
-                if (Number.isNaN(amount) || Object.values(errors).length)
+                const supplyNumber = parseInt(text)
+                if (Number.isNaN(supplyNumber) || Object.values(errors).length)
                     return
 
-                if(root.isAssetView)
-                    asset.supply = amount
-                else
-                    collectible.supply = amount
+                const token = root.isAssetView ? root.asset : root.collectible
+                token.supply = SQUtils.AmountsArithmetic.fromNumber(
+                            supplyNumber, token.multiplierIndex).toFixed(0)
             }
         }
 

@@ -26,10 +26,10 @@ QtObject {
 
     // Minting tokens:
     function deployCollectible(communityId, collectibleItem)
-    {        
-        if (collectibleItem.key !== "") {
+    {
+        if (collectibleItem.key !== "")
             deleteToken(communityId, collectibleItem.key)
-        }
+
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(collectibleItem.artworkSource, collectibleItem.artworkCropRect)
         communityTokensModuleInst.deployCollectible(communityId, collectibleItem.accountAddress, collectibleItem.name,
                                                     collectibleItem.symbol, collectibleItem.description, collectibleItem.supply,
@@ -39,9 +39,9 @@ QtObject {
 
     function deployAsset(communityId, assetItem)
     {
-        if (assetItem.key !== "") {
+        if (assetItem.key !== "")
             deleteToken(communityId, assetItem.key)
-        }
+
         const jsonArtworkFile = Utils.getImageAndCropInfoJson(assetItem.artworkSource, assetItem.artworkCropRect)
         communityTokensModuleInst.deployAssets(communityId, assetItem.accountAddress, assetItem.name,
                                                assetItem.symbol, assetItem.description, assetItem.supply,
@@ -120,11 +120,13 @@ QtObject {
 
     // Burn:
     function computeBurnFee(tokenKey, amount, accountAddress) {
+        console.assert(typeof amount === "string")
         // TODO: Backend. It should include the account address in the calculation.
         communityTokensModuleInst.computeBurnFee(tokenKey, amount/*, accountAddress*/)
     }
 
     function burnToken(communityId, tokenKey, burnAmount, accountAddress) {
+        console.assert(typeof burnAmount === "string")
          // TODO: Backend. It should include the account address in the burn action.
         communityTokensModuleInst.burnTokens(communityId, tokenKey, burnAmount/*, accountAddress*/)
     }

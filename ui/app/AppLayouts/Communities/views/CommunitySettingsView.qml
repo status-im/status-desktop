@@ -403,8 +403,8 @@ StatusSectionLayout {
             onAirdropToken: {
                 root.goTo(Constants.CommunitySettingsSections.Airdrops)
 
-                // Force a token selection to be airdroped with default amount 1
-                airdropPanel.selectToken(tokenKey, 1, type)
+                // Force a token selection to be airdroped with given amount
+                airdropPanel.selectToken(tokenKey, amount, type)
 
                 // Set given addresses as recipients
                 airdropPanel.addAddresses(addresses)
