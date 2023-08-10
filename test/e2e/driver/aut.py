@@ -21,6 +21,7 @@ class AUT:
         self.host = host
         self.port = int(port)
         self.ctx = None
+        self.pid = None
         self.aut_id = self.path.name if IS_LIN else self.path.stem
         self.process_name = 'Status' if IS_WIN else 'nim_status_client'
         driver.testSettings.setWrappersForApplication(self.aut_id, ['Qt'])
@@ -51,7 +52,7 @@ class AUT:
     @allure.step('Close application by process name')
     def stop(self):
         if configs.LOCAL_RUN:
-            local_system.kill_process_by_port(self.port)
+            local_system.kill_process_by_pid(self.pid)
         else:
             local_system.kill_process_by_name(self.process_name)
 
@@ -77,5 +78,6 @@ class AUT:
                 ' '.join(command), configs.timeouts.PROCESS_TIMEOUT_SEC)
 
         self.attach()
+        self.pid = self.ctx.pid
         assert squish.waitFor(lambda: self.ctx.isRunning, configs.timeouts.PROCESS_TIMEOUT_SEC)
         return self

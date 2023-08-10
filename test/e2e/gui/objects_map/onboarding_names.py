@@ -14,6 +14,36 @@ mainWindow_I_already_use_Status_StatusBaseText = {"container": mainWindow_Welcom
 # Get Keys View
 mainWindow_KeysMainView = {"container": statusDesktop_mainWindow, "type": "KeysMainView", "unnamed": 1, "visible": True}
 mainWindow_Generate_new_keys_StatusButton = {"checkable": False, "container": mainWindow_KeysMainView, "objectName": "keysMainViewPrimaryActionButton", "type": "StatusButton", "visible": True}
+mainWindow_Generate_keys_for_new_Keycard_StatusBaseText = {"container": mainWindow_KeysMainView, "id": "button2",
+                                                           "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_Import_seed_phrase = {"container": mainWindow_KeysMainView, "id": "button3", "type": "Row", "unnamed": 1,
+                                 "visible": True}
+
+# Import Seed Phrase View
+keysMainView_PrimaryAction_Button = {"container": statusDesktop_mainWindow,
+                                     "objectName": "keysMainViewPrimaryActionButton", "type": "StatusButton"}
+
+# Seed Phrase Input View
+mainWindow_SeedPhraseInputView = {"container": statusDesktop_mainWindow, "type": "SeedPhraseInputView", "unnamed": 1,
+                                  "visible": True}
+switchTabBar_12_words_Button = {"container": mainWindow_SeedPhraseInputView, "objectName": "12SeedButton",
+                                "type": "StatusSwitchTabButton"}
+switchTabBar_18_words_Button = {"container": mainWindow_SeedPhraseInputView, "objectName": "18SeedButton",
+                                "type": "StatusSwitchTabButton"}
+switchTabBar_24_words_Button = {"container": mainWindow_SeedPhraseInputView, "objectName": "24SeedButton",
+                                "type": "StatusSwitchTabButton"}
+mainWindow_statusSeedPhraseInputField_TextEdit = {"container": mainWindow_SeedPhraseInputView,
+                                                  "objectName": "statusSeedPhraseInputField", "type": "TextEdit",
+                                                  "visible": True}
+mainWindow_Import_StatusButton = {"checkable": False, "container": mainWindow_SeedPhraseInputView,
+                                  "objectName": "seedPhraseViewSubmitButton", "text": "Import", "type": "StatusButton",
+                                  "visible": True}
+
+# Keycard Init View
+mainWindow_KeycardInitView = {"container": statusDesktop_mainWindow, "type": "KeycardInitView", "unnamed": 1,
+                              "visible": True}
+mainWindow_Plug_in_Keycard_reader_StatusBaseText = {"container": mainWindow_KeycardInitView, "type": "StatusBaseText",
+                                                    "unnamed": 1, "visible": True}
 
 # Your Profile View
 mainWindow_InsertDetailsView = {"container": statusDesktop_mainWindow, "type": "InsertDetailsView", "unnamed": 1, "visible": True}

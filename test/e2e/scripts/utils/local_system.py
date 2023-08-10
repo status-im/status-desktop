@@ -117,7 +117,7 @@ def wait_for_close(process_name: str = None, timeout_sec: int = configs.timeouts
         else:
             raise RuntimeError('Set process name or PID to find process')
         time.sleep(1)
-        assert time.monotonic() - started_at < timeout_sec, f'Close process error: {process_name}'
+        assert time.monotonic() - started_at < timeout_sec, f'Close process error: {process_name or pid}'
     _logger.info(f'Process closed: {process_name}')
 
 
