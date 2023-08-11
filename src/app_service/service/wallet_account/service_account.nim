@@ -405,8 +405,9 @@ proc deleteKeypair*(self: Service, keyUid: string) =
       error "status-go error", procName="deleteKeypair", errCode=response.error.code, errDesription=response.error.message
       return
     self.updateAccountsPositions()
-    for acc in kp.accounts:
-      self.removeAccountFromLocalStoreAndNotify(acc.address)
+    let addresses = kp.accounts.map(a => a.address)
+    for address in addresses:
+      self.removeAccountFromLocalStoreAndNotify(address)
     self.events.emit(SIGNAL_KEYPAIR_DELETED, KeypairArgs(keyPairName: kp.name))
   except Exception as e:
     error "error: ", procName="deleteKeypair", errName = e.name, errDesription = e.msg
