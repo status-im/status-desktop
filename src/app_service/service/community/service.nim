@@ -225,7 +225,8 @@ QtObject:
   proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc canceledRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
   proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int
-  proc removeMembershipRequestFromCommunityAndGetMemberPubkey*(self: Service, communityId: string, requestId: string, updatedCommunity: CommunityDto): string
+  proc updateMembershipRequestToNewState*(self: Service, communityId: string, requestId: string,
+    updatedCommunity: CommunityDto, newState: RequestToJoinType)
   proc getUserPubKeyFromPendingRequest*(self: Service, communityId: string, requestId: string): string
 
   proc delete*(self: Service) =
@@ -1553,8 +1554,14 @@ QtObject:
           self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
         return
 
-      discard self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId,
-        rpcResponseObj["response"]["result"]["communities"][0].toCommunityDto)
+      let updatedCommunity = rpcResponseObj["response"]["result"]["communities"][0].toCommunityDto
+
+      let newState = if updatedCommunity.isControlNode:
+          RequestToJoinType.Accepted
+        else:
+          RequestToJoinType.AcceptedPending
+
+      self.updateMembershipRequestToNewState(communityId, requestId, updatedCommunity, newState)
 
       if (userKey == ""):
         error "Did not find pubkey in the pending request"
@@ -1768,37 +1775,25 @@ QtObject:
       i.inc()
     return -1
 
-  proc removeMembershipRequestFromCommunityAndGetMemberPubkey*(self: Service, communityId: string, requestId: string,
-      updatedCommunity: CommunityDto): string =
+  proc updateMembershipRequestToNewState*(self: Service, communityId: string, requestId: string,
+      updatedCommunity: CommunityDto, newState: RequestToJoinType) =
     let indexPending = self.getPendingRequestIndex(communityId, requestId)
-    let indexDeclined = self.getDeclinedRequestIndex(communityId, requestId)
 
-    if (indexPending == -1 and indexDeclined == -1):
-      raise newException(RpcException, fmt"Community request not found: {requestId}")
-
-    var community = self.communities[communityId]
-
-    if (indexPending != -1):
-      result = community.pendingRequestsToJoin[indexPending].publicKey
-      community.pendingRequestsToJoin.delete(indexPending)
-    elif (indexDeclined != -1):
-      result = community.declinedRequestsToJoin[indexDeclined].publicKey
-      community.declinedRequestsToJoin.delete(indexDeclined)
-
-    community.members = updatedCommunity.members
-    self.communities[communityId] = community
-
-  proc moveRequestToDeclined*(self: Service, communityId: string, requestId: string) =
-    let indexPending = self.getPendingRequestIndex(communityId, requestId)
     if (indexPending == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
     var community = self.communities[communityId]
 
-    let itemToMove = community.pendingRequestsToJoin[indexPending]
-    community.declinedRequestsToJoin.add(itemToMove)
-    community.pendingRequestsToJoin.delete(indexPending)
+    if @[RequestToJoinType.Declined, RequestToJoinType.Accepted, RequestToJoinType.Canceled].any(x => x == newState):
+      # If the state is now declined, add to the declined requests
+      if newState == RequestToJoinType.Declined:
+        community.declinedRequestsToJoin.add(community.pendingRequestsToJoin[indexPending])
+      # If the state is no longer pending, delete the request
+      community.pendingRequestsToJoin.delete(indexPending)
+    else:
+      community.pendingRequestsToJoin[indexPending].state = newState.int
 
+    community.members = updatedCommunity.members
     self.communities[communityId] = community
 
   proc cancelRequestToJoinCommunity*(self: Service, communityId: string) =
@@ -1826,7 +1821,12 @@ QtObject:
       let response = status_go.declineRequestToJoinCommunity(requestId)
       self.activityCenterService.parseActivityCenterResponse(response)
 
-      self.moveRequestToDeclined(communityId, requestId)
+      let newState = if self.communities[communityId].isControlNode:
+          RequestToJoinType.Declined
+        else:
+          RequestToJoinType.DeclinedPending
+
+      self.updateMembershipRequestToNewState(communityId, requestId, self.communities[communityId], newState)
 
       self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[communityId]))
     except Exception as e:
