@@ -37,6 +37,9 @@ QtObject:
   proc onFilteringDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_activity.eventActivityFilteringDone] = handler
 
+  proc onFilteringUpdateDone*(self: EventsHandler, handler: EventCallbackProc) =
+    self.eventHandlers[backend_activity.eventActivityFilteringUpdate] = handler
+
   proc onGetRecipientsDone*(self: EventsHandler, handler: EventCallbackProc) =
     self.eventHandlers[backend_activity.eventActivityGetRecipientsDone] = handler
 
@@ -56,13 +59,8 @@ QtObject:
       let callback = self.walletEventHandlers[data.eventType]
       callback(data)
     elif self.eventHandlers.hasKey(data.eventType):
-      var responseJson: JsonNode
-      responseJson = parseJson(data.message)
-
-      if responseJson.kind != JObject:
-        error "unexpected json type", responseJson.kind
-        return
       let callback = self.eventHandlers[data.eventType]
+      let responseJson = parseJson(data.message)
       callback(responseJson)
 
   proc setupWalletEventHandlers(self: EventsHandler) =

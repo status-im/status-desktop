@@ -28,7 +28,6 @@ type
 # It is used to display an activity history entry in the QML UI
 #
 # TODO remove this legacy after the NFT is served async; see #11598
-# TODO add all required metadata from filtering; see #11597
 #
 # Looking into going away from carying the whole detailed data and just keep the required data for the UI
 # and request the detailed data on demand
@@ -49,6 +48,9 @@ QtObject:
       totalFees: CurrencyAmount
       amountCurrency: CurrencyAmount
       noAmount: CurrencyAmount
+
+      nftName: string
+      nftImageURL: string
 
   proc setup(self: ActivityEntry) =
     self.QObject.setup
@@ -129,6 +131,9 @@ QtObject:
   QtProperty[string] id:
     read = getId
 
+  proc getMetadata*(self: ActivityEntry): backend.ActivityEntry =
+    return self.metadata
+
   proc getSender*(self: ActivityEntry): string {.slot.} =
     return if self.metadata.sender.isSome(): "0x" & self.metadata.sender.unsafeGet().toHex() else: ""
 
@@ -199,21 +204,33 @@ QtObject:
   QtProperty[bool] isNFT:
     read = getIsNFT
 
-  proc getNFTName*(self: ActivityEntry): string {.slot.} =
-    # TODO: complete this async #11597
-    return ""
+  proc nftNameChanged*(self: ActivityEntry) {.signal.}
 
-  # TODO: lazy load this in activity history service. See #11597
+  proc getNftName*(self: ActivityEntry): string {.slot.} =
+    return self.nftName
+
+  proc setNftName*(self: ActivityEntry, nftName: string) =
+    self.nftName = nftName
+    self.nftNameChanged()
+
   QtProperty[string] nftName:
-    read = getNFTName
+    read = getNftName
+    write = setNftName
+    notify = nftNameChanged
 
-  proc getNFTImageURL*(self: ActivityEntry): string {.slot.} =
-    # TODO: complete this async #11597
-    return ""
+  proc nftImageUrlChanged*(self: ActivityEntry) {.signal.}
 
-  # TODO: lazy load this in activity history service. See #11597
-  QtProperty[string] nftImageURL:
-    read = getNFTImageURL
+  proc getNftImageUrl*(self: ActivityEntry): string {.slot.} =
+    return self.nftImageUrl
+
+  proc setNftImageUrl*(self: ActivityEntry, nftImageUrl: string) =
+    self.nftImageUrl = nftImageUrl
+    self.nftImageUrlChanged()
+
+  QtProperty[string] nftImageUrl:
+    read = getNftImageUrl
+    write = setNftImageUrl
+    notify = nftImageUrlChanged
 
   proc getTotalFees*(self: ActivityEntry): QVariant {.slot.} =
     if self.transaction == nil:
@@ -244,7 +261,7 @@ QtObject:
   # TODO: used only in details, move it to a entry_details.nim. See #11598
   QtProperty[string] tokenType:
     read = getTokenType
-    
+
   proc getTokenInAddress*(self: ActivityEntry): string {.slot.} =
     if self.metadata.tokenIn.isSome:
       let address = self.metadata.tokenIn.unsafeGet().address

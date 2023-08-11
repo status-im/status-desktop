@@ -1,4 +1,4 @@
-import json, stint, json_serialization
+import json, stint, json_serialization, strformat
 
 import ../app_service/service/eth/dto/transaction
 import ./core as core
@@ -40,6 +40,19 @@ const EventNonArchivalNodeDetected*: string = "non-archival-node-detected"
 # Mirrors the pending transfer event from status-go, status-go/services/wallet/transfer/transaction.go
 const EventPendingTransactionUpdate*: string = "pending-transaction-update"
 const EventMTTransactionUpdate*: string = "multi-transaction-update"
+
+proc `$`*(self: MultiTransactionDto): string =
+  return fmt"""MultiTransactionDto(
+    id:{self.id},
+    timestamp:{self.timestamp},
+    fromAddress:{self.fromAddress},
+    toAddress:{self.toAddress},
+    fromAsset:{self.fromAsset},
+    toAsset:{self.toAsset},
+    fromAmount:{self.fromAmount},
+    toAmount:{self.toAmount},
+    multiTxType:{self.multiTxType}
+  )"""
 
 proc getTransactionByHash*(chainId: int, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   core.callPrivateRPCWithChainId("eth_getTransactionByHash", chainId, %* [hash])
