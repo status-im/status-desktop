@@ -260,7 +260,6 @@ StackView {
                                            ownerToken.accountAddress,
                                            Constants.TokenType.ERC721)
 
-
                 feeText: root.feeText
                 feeErrorText: root.feeErrorText
                 isFeeLoading: root.isFeeLoading
@@ -272,6 +271,7 @@ StackView {
                                editOwnerTokenView.communityName)
                     totalFeeText: root.isFeeLoading ?
                                       "" : root.feeText
+                    errorText: root.feeErrorText
                     accountName: editOwnerTokenView.ownerToken.accountName
 
                     model: QtObject {

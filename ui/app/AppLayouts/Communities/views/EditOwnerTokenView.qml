@@ -1,19 +1,18 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.14
 
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Popups 0.1
 
-import utils 1.0
-
-import AppLayouts.Communities.panels 1.0
+import AppLayouts.Communities.controls 1.0
 import AppLayouts.Communities.helpers 1.0
-
+import AppLayouts.Communities.panels 1.0
 import AppLayouts.Wallet.controls 1.0
+import utils 1.0
 
 import SortFilterProxyModel 0.2
 
@@ -149,40 +148,51 @@ StatusScrollView {
             description: qsTr("This account will be where you receive your Owner token and will also be the account that pays the token minting gas fees.")
         }
 
-        // TO BE REMOVED: It will be removed with the new fees panel
-        StatusEmojiAndColorComboBox {
-            id: accountBox
+        ColumnLayout {
+            spacing: 11
 
-            readonly property string address: {
-                root.accounts.count
-                return SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
+            AccountSelector {
+                id: accountBox
+
+                readonly property string address: {
+                    root.accounts.count
+                    return SQUtils.ModelUtils.get(root.accounts, currentIndex, "address")
+                }
+
+                readonly property string initAccountName: ownerToken.accountName
+                readonly property int initIndex: {
+                    root.accounts.count
+                    return SQUtils.ModelUtils.indexOf(root.accounts, "name", initAccountName)
+                }
+
+                Layout.fillWidth: true
+                Layout.topMargin: -Style.current.halfPadding
+
+                currentIndex: (initIndex !== -1) ? initIndex : 0
+                model: root.accounts
+
+                onAddressChanged: {
+                    ownerToken.accountAddress = address
+                    tMasterToken.accountAddress = address
+
+                    requestFeeDelayTimer.restart()
+                }
+                control.onDisplayTextChanged: {
+                    ownerToken.accountName = control.displayText
+                    tMasterToken.accountName = control.displayText
+                }
             }
 
-            readonly property string initAccountName: ownerToken.accountName
-            readonly property int initIndex: {
-                root.accounts.count
-                return SQUtils.ModelUtils.indexOf(root.accounts, "name", initAccountName)
-            }
+            StatusBaseText {
+                Layout.fillWidth: true
 
-            Layout.fillWidth: true
-            Layout.topMargin: -Style.current.halfPadding
+                visible: !!root.feeErrorText
+                horizontalAlignment: Text.AlignRight
 
-            currentIndex: (initIndex !== -1) ? initIndex : 0
-            model: root.accounts
-            type: StatusComboBox.Type.Secondary
-            size: StatusComboBox.Size.Small
-            implicitHeight: 44
-            defaultAssetName: "filled-account"
-
-            onAddressChanged: {
-                ownerToken.accountAddress = address
-                tMasterToken.accountAddress = address
-
-                root.deployFeesRequested()
-            }
-            control.onDisplayTextChanged: {
-                ownerToken.accountName = control.displayText
-                tMasterToken.accountName = control.displayText
+                font.pixelSize: Theme.tertiaryTextFontSize
+                color: Theme.palette.dangerColor1
+                text: root.feeErrorText
+                wrapMode: Text.Wrap
             }
         }
 
@@ -239,6 +249,8 @@ StatusScrollView {
             Layout.fillWidth: true
             Layout.topMargin: 4
             Layout.bottomMargin: Style.current.padding
+
+            enabled: root.feeText && !root.feeErrorText
             text: qsTr("Mint")
 
             onClicked: root.mintClicked()
@@ -312,8 +324,15 @@ StatusScrollView {
                 tMasterToken.chainName = network.chainName
                 tMasterToken.chainIcon = network.iconUrl
 
-                root.deployFeesRequested()
+                requestFeeDelayTimer.restart()
             }
         }
+    }
+
+    Timer {
+        id: requestFeeDelayTimer
+
+        interval: 500
+        onTriggered: root.deployFeesRequested()
     }
 }
