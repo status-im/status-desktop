@@ -20,6 +20,8 @@ StatusScrollView {
 
     default property alias content: column.children
 
+    signal enterPressed()
+
     function forceInputFocus() {
         inputText.input.edit.forceActiveFocus();
     }
@@ -54,6 +56,11 @@ StatusScrollView {
                 }
             ]
             Layout.fillWidth: true
+            onKeyPressed: {
+                if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && inputText.valid) {
+                    root.enterPressed();
+                }
+            }
         }
     }
 }

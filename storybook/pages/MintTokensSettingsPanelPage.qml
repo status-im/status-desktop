@@ -47,10 +47,6 @@ SplitView {
 
         MintTokensSettingsPanel {
             id: panel
-            chainName: "Optimism"
-            totalFeeText: "0.00001 ($123.7)"
-            feeErrorText: "frndeufire"
-            generalAccountErrorText: "fgreudfighlre"
 
             MintedTokensModel {
                 id: mintedTokensModel

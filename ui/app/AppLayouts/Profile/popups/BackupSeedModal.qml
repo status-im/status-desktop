@@ -66,6 +66,7 @@ StatusStackModal {
     rightButtons: [ d.skipButton, nextButton, finishButton ]
 
     nextButton: StatusButton {
+        id: nextButton
         objectName: "BackupSeedModal_nextButton"
         enabled: {
             switch (root.currentIndex) {
@@ -136,6 +137,9 @@ StatusStackModal {
             titleText: qsTr("Confirm word #%1 of your seed phrase").arg(d.firstRandomNo + 1)
             wordRandomNumber: d.firstRandomNo
             wordAtRandomNumber: root.privacyStore.getMnemonicWordAtIndex(d.firstRandomNo)
+            onEnterPressed: {
+                nextButton.clicked();
+            }
         },
         BackupSeedStepBase {
             id: confirmSecondWord
