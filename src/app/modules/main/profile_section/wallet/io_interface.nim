@@ -34,6 +34,9 @@ method networksModuleDidLoad*(self: AccessInterface) {.base.} =
 method getNetworksModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getCollectiblesModel*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getKeypairImportModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 

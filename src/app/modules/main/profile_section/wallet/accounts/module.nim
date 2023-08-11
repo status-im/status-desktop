@@ -1,16 +1,20 @@
 import NimQml, sequtils, sugar, chronicles, tables
 
-import ./io_interface, ./view, ./controller
+import ./io_interface, ./view
+import ./controller as accountsc
 import ../io_interface as delegate_interface
 import app/modules/shared/wallet_utils
 import app/modules/shared/keypairs
 import app/modules/shared_models/[keypair_model, currency_amount]
+import app/modules/shared_modules/collectibles/controller as collectiblesc
 import app/global/global_singleton
 import app/core/eventemitter
 import app_service/service/keycard/service as keycard_service
 import app_service/service/wallet_account/service as wallet_account_service
 import app_service/service/network/service as network_service
 import app_service/service/settings/service
+
+import backend/collectibles as backend_collectibles
 
 export io_interface
 
@@ -20,9 +24,10 @@ type
     events: EventEmitter
     view: View
     viewVariant: QVariant
-    controller: Controller
+    controller: accountsc.Controller
     moduleLoaded: bool
     walletAccountService: wallet_account_service.Service
+    collectiblesController: collectiblesc.Controller
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -36,7 +41,8 @@ proc newModule*(
   result.walletAccountService = walletAccountService
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, walletAccountService)
+  result.controller = accountsc.newController(result, walletAccountService)
+  result.collectiblesController = collectiblesc.newController(int32(backend_collectibles.CollectiblesRequestID.ProfileShowcase), events)
   result.moduleLoaded = false
 
 ## Forward declarations
@@ -46,9 +52,13 @@ method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+  self.collectiblesController.delete
 
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
+
+method getCollectiblesModel*(self: Module): QVariant =
+  return self.collectiblesController.getModel()
 
 method convertWalletAccountDtoToKeyPairAccountItem(self: Module, account: WalletAccountDto): KeyPairAccountItem =
   result = newKeyPairAccountItem(
@@ -109,6 +119,11 @@ method refreshWalletAccounts*(self: Module) =
 
   self.view.setKeyPairModelItems(self.createKeypairItems(walletAccounts))
   self.view.setItems(items)
+
+  let ownedWalletAccounts = walletAccounts.filter(a => a.walletType != WalletTypeWatch)
+  let ownedWalletAccountAddresses = ownedWalletAccounts.map(a => a.address)
+  let enabledNetworks = self.controller.getEnabledChainIds()
+  self.collectiblesController.globalFilterChanged(ownedWalletAccountAddresses, enabledNetworks)
 
 method load*(self: Module) =
   self.events.on(SIGNAL_KEYPAIR_SYNCED) do(e: Args):

@@ -26,6 +26,11 @@ QtObject:
   QtProperty[QVariant] networksModule:
     read = getNetworksModule
 
+  proc getCollectiblesModel(self: View): QVariant {.slot.} =
+    return self.delegate.getCollectiblesModel()
+  QtProperty[QVariant] collectiblesModel:
+    read = getCollectiblesModel
+
   proc runKeypairImportPopup*(self: View, keyUid: string, importOption: int) {.slot.} =
     self.delegate.runKeypairImportPopup(keyUid, ImportOption(importOption))
 

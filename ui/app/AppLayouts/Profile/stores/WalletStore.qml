@@ -8,6 +8,7 @@ QtObject {
     property var walletModule
     property var accountsModule: root.walletModule.accountsModule
     property var networksModule: root.walletModule.networksModule
+    property var collectibles: root.walletModule.collectiblesModel
 
     property var accountSensitiveSettings: Global.appIsReady? localAccountSensitiveSettings : null
 
@@ -23,7 +24,6 @@ QtObject {
     // TODO(alaibe): there should be no access to wallet section, create collectible in profile
     property var overview: walletSectionOverview
     property var assets: walletSectionAssets.assets
-    property var collectibles: Global.appIsReady ? walletSection.collectiblesController.model : null // To-do: Fetch profile collectibles separately
     property var accounts: Global.appIsReady? accountsModule.accounts : null
     property var originModel: accountsModule.keyPairModel
     property bool includeWatchOnlyAccount: accountsModule.includeWatchOnlyAccount
