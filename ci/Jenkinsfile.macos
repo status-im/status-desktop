@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.7.11'
+library 'status-jenkins-lib@switch_altool_to_notarytool'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
