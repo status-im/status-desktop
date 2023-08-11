@@ -1,4 +1,4 @@
-import NimQml, logging, std/json, sequtils, sugar, options, strutils
+import NimQml, logging, std/json, sequtils, sugar, options, strutils, locks
 import tables, stint, sets
 
 import model
@@ -38,6 +38,7 @@ QtObject:
   type
     Controller* = ref object of QObject
       model: Model
+
       recipientsModel: RecipientsModel
       currentActivityFilter: backend_activity.ActivityFilter
       currencyService: currency_service.Service
@@ -229,6 +230,7 @@ QtObject:
       return
 
     let entries = self.backendToPresentation(res.activities)
+
     self.model.setEntries(entries, res.offset, res.hasMore)
 
     if len(entries) > 0:
@@ -237,7 +239,9 @@ QtObject:
   proc updateFilter*(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
     self.status.setIsFilterDirty(false)
+
     self.model.resetModel(@[])
+
     self.eventsHandler.updateSubscribedAddresses(self.addresses)
     self.eventsHandler.updateSubscribedChainIDs(self.chainIds)
     self.status.setNewDataAvailable(false)
@@ -250,7 +254,6 @@ QtObject:
 
   proc loadMoreItems(self: Controller) {.slot.} =
     self.status.setLoadingData(true)
-
     let response = backend_activity.filterActivityAsync(self.requestId, self.addresses, seq[backend_activity.ChainId](self.chainIds), self.currentActivityFilter, self.model.getCount(), FETCH_BATCH_COUNT_DEFAULT)
     if response.error != nil:
       self.status.setLoadingData(false)
@@ -286,6 +289,17 @@ QtObject:
   proc setupEventHandlers(self: Controller) =
     self.eventsHandler.onFilteringDone(proc (jsonObj: JsonNode) =
       self.processResponse(jsonObj)
+    )
+
+    self.eventsHandler.onFilteringUpdateDone(proc (jn: JsonNode) =
+      if jn.kind != JArray:
+        error "expected an array"
+
+      var entries = newSeq[backend_activity.Data](jn.len)
+      for i in 0 ..< jn.len:
+        entries[i] = fromJson(jn[i], backend_activity.Data)
+
+      self.model.updateEntries(entries)
     )
 
     self.eventsHandler.onGetRecipientsDone(proc (jsonObj: JsonNode) =
