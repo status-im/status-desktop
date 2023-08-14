@@ -39,6 +39,7 @@ StatusSectionLayout {
 
     readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
     readonly property bool isAdmin: isOwner || community.memberRole === Constants.memberRole.admin
+    readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: community.isControlNode
 
     readonly property string filteredSelectedTags: {
@@ -338,7 +339,7 @@ StatusSectionLayout {
             // User profile props
             isOwner: root.isOwner
             isAdmin: root.isAdmin
-            isTokenMasterOwner: false // TODO: Backend
+            isTokenMasterOwner: root.isTokenMasterOwner
 
             // Owner and TMaster properties
             isOwnerTokenDeployed: tokensModelChangesTracker.isOwnerTokenDeployed
