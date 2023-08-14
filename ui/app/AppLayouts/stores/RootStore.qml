@@ -238,6 +238,6 @@ QtObject {
     }
 
     function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.updateTokenModelForCommunity(communityId, sharedAddresses)
+        communitiesModuleInst.updateTokenModelForCommunity(communityId, JSON.stringify(sharedAddresses))
     }
 }

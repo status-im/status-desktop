@@ -234,12 +234,19 @@ SettingsContentBase {
 
             loginType: chatStore.loginType
             walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
-            permissionsModel: chatStore.permissionsStore.permissionsModel
+            permissionsModel: {
+                root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
+                return root.rootStore.permissionsModel
+            }
             assetsModel: chatStore.assetsModel
             collectiblesModel: chatStore.collectiblesModel
 
             onJoined: chatStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name, JSON.stringify(sharedAddresses), airdropAddress)
             onCancelMembershipRequest: root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
+
+            onSharedAddressesUpdated: {
+                root.rootStore.updatePermissionsModel(communityIntroDialog.communityId, sharedAddresses)
+            }
 
             onClosed: destroy()
         }

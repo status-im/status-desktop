@@ -25,6 +25,7 @@ StatusDialog {
 
     signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
     signal saveSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
+    signal sharedAddressesChanged(string airdropAddress, var sharedAddresses)
 
     title: panel.title
     implicitWidth: 640 // by design
@@ -42,6 +43,9 @@ StatusDialog {
         collectiblesModel: root.collectiblesModel
         onShareSelectedAddressesClicked: root.shareSelectedAddressesClicked(airdropAddress, sharedAddresses)
         onSaveSelectedAddressesClicked: root.saveSelectedAddressesClicked(airdropAddress, sharedAddresses)
+        onSharedAddressesChanged: {
+            root.sharedAddressesChanged(airdropAddress, sharedAddresses)
+        }
         onClose: root.close()
     }
 

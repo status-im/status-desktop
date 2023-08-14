@@ -125,7 +125,10 @@ Item {
                 accessType: communityData.access
                 loginType: root.store.loginType
                 walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
-                permissionsModel: root.store.permissionsStore.permissionsModel
+                permissionsModel: {
+                    root.store.prepareTokenModelForCommunity(communityData.id)
+                    return root.store.permissionsModel
+                }
                 assetsModel: root.store.assetsModel
                 collectiblesModel: root.store.collectiblesModel
 

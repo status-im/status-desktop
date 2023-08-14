@@ -129,7 +129,9 @@ StatusStackModal {
                 d.selectedAirdropAddress = airdropAddress
                 d.selectedSharedAddresses = sharedAddresses
                 root.replaceItem = undefined // go back, unload us
-                root.sharedAddressesUpdated(d.selectedSharedAddresses)
+            }
+            onSharedAddressesChanged: {
+                root.sharedAddressesUpdated(sharedAddresses)
             }
         }
     }

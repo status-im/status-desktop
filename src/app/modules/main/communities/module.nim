@@ -531,6 +531,9 @@ method callbackFromAuthentication*(self: Module, authenticated: bool) =
 method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
+method updateTokenModelForCommunity*(self: Module, communityId: string, sharedAddresses: seq[string]) =
+  self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
+
 method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   let community = self.controller.getCommunityById(communityId)
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
@@ -541,9 +544,7 @@ method prepareTokenModelForCommunity*(self: Module, communityId: string) =
     tokenPermissionsItems.add(tokenPermissionItem)
 
   self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
-
-method updateTokenModelForCommunity*(self: Module, communityId: string, sharedAddresses: seq[string]) =
-  self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
+  self.updateTokenModelForCommunity(communityId, @[])
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   let community = self.controller.getCommunityById(communityId)

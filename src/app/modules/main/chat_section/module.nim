@@ -1320,8 +1320,17 @@ method setCommunityMetrics*(self: Module, metrics: CommunityMetricsDto) =
 method collectCommunityMetricsMessagesCount*(self: Module, intervals: string) =
   self.controller.collectCommunityMetricsMessagesCount(intervals)
 
+method getPermissionsToJoinCheckOngoing*(self: Module): bool =
+  self.view.getPermissionsCheckOngoing()
+
 method setPermissionsToJoinCheckOngoing*(self: Module, value: bool) =
   self.view.setPermissionsCheckOngoing(value)
+
+method getChannelsPermissionsCheckOngoing*(self: Module): bool =
+  for chatId, cModule in self.chatContentModules:
+    if self.view.chatsModel().getItemPermissionsRequired(chatId):
+      return cModule.getPermissionsCheckOngoing()
+  return false
 
 method setChannelsPermissionsCheckOngoing*(self: Module, value: bool) =
   for chatId, cModule in self.chatContentModules:

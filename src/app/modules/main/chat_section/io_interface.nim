@@ -397,5 +397,11 @@ method onCommunityCheckAllChannelsPermissionsResponse*(self: AccessInterface, ch
 method setPermissionsToJoinCheckOngoing*(self: AccessInterface, value: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getPermissionsToJoinCheckOngoing*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setChannelsPermissionsCheckOngoing*(self: AccessInterface, value: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChannelsPermissionsCheckOngoing*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")

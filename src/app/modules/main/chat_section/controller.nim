@@ -28,6 +28,7 @@ type
     isCommunitySection: bool
     activeItemId: string
     isCurrentSectionActive: bool
+    channelPermissionsChecksInProgress: bool
     events: UniqueUUIDEventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
@@ -55,6 +56,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.sectionId = sectionId
   result.isCommunitySection = isCommunity
   result.isCurrentSectionActive = false
+  result.channelPermissionsChecksInProgress = false
   result.events = initUniqueUUIDEventEmitter(events)
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService
@@ -84,10 +86,14 @@ proc getMySectionId*(self: Controller): string =
   return self.sectionId
 
 proc asyncCheckPermissionsToJoin*(self: Controller) =
+  if self.delegate.getPermissionsToJoinCheckOngoing():
+    return
   self.communityService.asyncCheckPermissionsToJoin(self.getMySectionId(), @[])
   self.delegate.setPermissionsToJoinCheckOngoing(true)
 
 proc asyncCheckAllChannelsPermissions*(self: Controller) =
+  if self.delegate.getPermissionsToJoinCheckOngoing():
+    return
   self.chatService.asyncCheckAllChannelsPermissions(self.getMySectionId())
   self.delegate.setChannelsPermissionsCheckOngoing(true)
 
@@ -281,6 +287,11 @@ proc init*(self: Controller) =
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityCheckPermissionsToJoinResponse(args.checkPermissionsToJoinResponse)
 
+    self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED) do(e: Args):
+      let args = CheckPermissionsToJoinFailedArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.setPermissionsToJoinCheckOngoing(false)
+
     self.events.on(SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE) do(e: Args):
       let args = CheckChannelPermissionsResponseArgs(e)
       if args.communityId == self.sectionId:
@@ -290,6 +301,11 @@ proc init*(self: Controller) =
       let args = CheckAllChannelsPermissionsResponseArgs(e)
       if args.communityId == self.sectionId:
         self.delegate.onCommunityCheckAllChannelsPermissionsResponse(args.checkAllChannelsPermissionsResponse)
+
+    self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
+      let args = CheckChannelsPermissionsErrorArgs(e)
+      if args.communityId == self.sectionId:
+       self.delegate.setPermissionsToJoinCheckOngoing(false)
 
     self.events.on(SignalType.Wallet.event, proc(e: Args) =
       var data = WalletSignal(e)
