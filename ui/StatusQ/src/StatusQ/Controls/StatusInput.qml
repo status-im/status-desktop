@@ -65,6 +65,11 @@ Item {
     */
     property alias placeholderText: statusBaseInput.placeholderText
     /*!
+        \qmlproperty alias StatusInput::placeholderFont
+        This property holds a reference to the TextEdit's placeholder font property.
+    */
+    property alias placeholderFont: statusBaseInput.placeholderFont
+    /*!
         \qmlproperty alias StatusInput::font
         This property holds a reference to the TextEdit's font property.
     */

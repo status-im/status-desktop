@@ -97,12 +97,12 @@ Item {
             id: leftTab
             anchors.fill: parent
             changeSelectedAccount: function(address) {
-                RootStore.setFilterAddress(address)
                 root.resetView()
+                RootStore.setFilterAddress(address)
             }
             selectAllAccounts: function() {
-                RootStore.setFillterAllAddresses()
                 root.resetView()
+                RootStore.setFillterAllAddresses()
             }
             onShowSavedAddressesChanged: {
                 if(showSavedAddresses)
