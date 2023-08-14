@@ -74,21 +74,6 @@ StackView {
         title: qsTr("Airdrops")
 
         buttons: [
-            // TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the airdrop flow available somehow
-            StatusButton {
-
-                text: qsTr("TEMP Airdrop")
-
-                onClicked: root.push(newAirdropView, StackView.Immediate)
-
-                StatusToolTip {
-                    visible: parent.hovered
-                    text: "TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the airdrop flow available somehow"
-                    orientation: StatusToolTip.Orientation.Bottom
-                    y: parent.height + 12
-                    maxWidth: 300
-                }
-            },
             StatusButton {
 
                 objectName: "addNewItemButton"
@@ -98,7 +83,6 @@ StackView {
 
                 onClicked: root.push(newAirdropView, StackView.Immediate)
             }
-
         ]
 
         contentItem: WelcomeSettingsView {

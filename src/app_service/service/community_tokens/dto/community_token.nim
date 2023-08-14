@@ -14,7 +14,7 @@ type
 type
   PrivilegesLevel* {.pure.} = enum
     Owner,
-    Master,
+    TokenMaster,
     Community
 
 type
