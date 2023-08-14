@@ -159,7 +159,7 @@ method burnTokens*(self: Module, communityId: string, contractUniqueKey: string,
 method deployCollectibles*(self: Module, communityId: string, fromAddress: string, name: string, symbol: string, description: string,
                            supply: float64, infiniteSupply: bool, transferable: bool, selfDestruct: bool, chainId: int, imageCropInfoJson: string) =
   let ownerToken = self.controller.getOwnerToken(communityId)
-  let masterToken = self.controller.getMasterToken(communityId)
+  let masterToken = self.controller.getTokenMasterToken(communityId)
 
   if not (ownerToken.address != "" and ownerToken.deployState == DeployState.Deployed and masterToken.address != "" and masterToken.deployState == DeployState.Deployed):
       error "Owner token and master token not deployed"
@@ -185,6 +185,13 @@ method deployCollectibles*(self: Module, communityId: string, fromAddress: strin
 
 method deployOwnerToken*(self: Module, communityId: string, fromAddress: string, ownerName: string, ownerSymbol: string, ownerDescription: string,
                         masterName: string, masterSymbol: string, masterDescription: string, chainId: int, imageCropInfoJson: string) =
+  let ownerToken = self.controller.getOwnerToken(communityId)
+  let masterToken = self.controller.getTokenMasterToken(communityId)
+
+  if ownerToken.address != "" and ownerToken.deployState != DeployState.Failed and masterToken.address != "" and masterToken.deployState == DeployState.Failed:
+      error "Owner token and master token are deployed or pending"
+      return
+
   self.tempAddressFrom = fromAddress
   self.tempCommunityId = communityId
   self.tempChainId = chainId

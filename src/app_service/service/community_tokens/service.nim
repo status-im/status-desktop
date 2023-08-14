@@ -287,7 +287,7 @@ QtObject:
         let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
         let tokenDto = toCommunityTokenDto(parseJson(receivedData.data))
         if not receivedData.success:
-          error "Collectible contract not deployed", chainId=tokenDto.chainId, address=tokenDto.address
+          error "Community contract not deployed", chainId=tokenDto.chainId, address=tokenDto.address
         try:
           discard updateCommunityTokenState(tokenDto.chainId, tokenDto.address, deployState) #update db state
           # now add community token to community and publish update
@@ -296,13 +296,13 @@ QtObject:
             let error = Json.decode($response.error, RpcError)
             raise newException(RpcException, "error adding community token: " & error.message)
         except RpcException:
-          error "Error updating collectibles contract state", message = getCurrentExceptionMsg()
+          error "Error updating community contract state", message = getCurrentExceptionMsg()
         let data = CommunityTokenDeployedStatusArgs(communityId: tokenDto.communityId, contractAddress: tokenDto.address,
                                                     deployState: deployState, chainId: tokenDto.chainId,
                                                     transactionHash: receivedData.transactionHash)
         self.events.emit(SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS, data)
       except Exception as e:
-        error "Error processing Collectible deployment pending transaction event", msg=e.msg, receivedData
+        error "Error processing community token deployment pending transaction event", msg=e.msg, receivedData
 
     self.events.on(PendingTransactionTypeDto.DeployOwnerToken.event) do(e: Args):
       var receivedData = TransactionMinedArgs(e)
@@ -310,7 +310,7 @@ QtObject:
         let deployState = if receivedData.success: DeployState.Deployed else: DeployState.Failed
         let ownerTransactionDetails = toOwnerTokenDeploymentTransactionDetails(parseJson(receivedData.data))
         if not receivedData.success:
-          error "Owner contracts not deployed", chainId=ownerTransactionDetails.ownerToken.chainId, address=ownerTransactionDetails.ownerToken.address
+          warn "Owner contracts not deployed", chainId=ownerTransactionDetails.ownerToken.chainId, address=ownerTransactionDetails.ownerToken.address
         var masterContractAddress = ownerTransactionDetails.masterToken.address
 
         try:
@@ -347,7 +347,7 @@ QtObject:
                                                 transactionHash: receivedData.transactionHash)
         self.events.emit(SIGNAL_OWNER_TOKEN_DEPLOY_STATUS, data)
       except Exception as e:
-        error "Error processing Collectible deployment pending transaction event", msg=e.msg, receivedData
+        error "Error processing Owner token deployment pending transaction event", msg=e.msg, receivedData
 
     self.events.on(PendingTransactionTypeDto.AirdropCommunityToken.event) do(e: Args):
       let receivedData = TransactionMinedArgs(e)
@@ -466,7 +466,7 @@ QtObject:
       debug "Deployment transaction hash ", transactionHash=transactionHash
 
       var ownerToken = self.createCommunityToken(ownerDeploymentParams, ownerTokenMetadata, chainId, ownerContractAddress, communityId, addressFrom, PrivilegesLevel.Owner)
-      var masterToken = self.createCommunityToken(masterDeploymentParams, masterTokenMetadata, chainId, temporaryMasterContractAddress(ownerContractAddress), communityId, addressFrom, PrivilegesLevel.Master)
+      var masterToken = self.createCommunityToken(masterDeploymentParams, masterTokenMetadata, chainId, temporaryMasterContractAddress(ownerContractAddress), communityId, addressFrom, PrivilegesLevel.TokenMaster)
 
       var croppedImage = croppedImageJson.parseJson
       ownerToken.image = croppedImage{"imagePath"}.getStr
@@ -1048,8 +1048,8 @@ QtObject:
       if token.privilegesLevel == PrivilegesLevel.Owner:
         return token
 
-  proc getMasterToken*(self: Service, communityId: string): CommunityTokenDto =
+  proc getTokenMasterToken*(self: Service, communityId: string): CommunityTokenDto =
     let communityTokens = self.getCommunityTokens(communityId)
     for token in communityTokens:
-      if token.privilegesLevel == PrivilegesLevel.Master:
+      if token.privilegesLevel == PrivilegesLevel.TokenMaster:
         return token

@@ -134,8 +134,8 @@ proc getNetwork*(self:Controller, chainId: int): NetworkDto =
 proc getOwnerToken*(self: Controller, communityId: string): CommunityTokenDto =
   return self.communityTokensService.getOwnerToken(communityId)
 
-proc getMasterToken*(self: Controller, communityId: string): CommunityTokenDto =
-  return self.communityTokensService.getMasterToken(communityId)
+proc getTokenMasterToken*(self: Controller, communityId: string): CommunityTokenDto =
+  return self.communityTokensService.getTokenMasterToken(communityId)
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)

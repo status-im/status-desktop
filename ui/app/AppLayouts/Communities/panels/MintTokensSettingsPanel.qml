@@ -143,21 +143,6 @@ StackView {
         title: qsTr("Tokens")
 
         buttons: [
-            // TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the minting flow available somehow
-            StatusButton {
-
-                text: qsTr("TEMP Mint token")
-
-                onClicked: root.push(newTokenViewComponent, StackView.Immediate)
-
-                StatusToolTip {
-                    visible: parent.hovered
-                    text: "TO BE REMOVED when Owner and TMaster backend is integrated. This is just to keep the airdrop flow available somehow"
-                    orientation: StatusToolTip.Orientation.Bottom
-                    y: parent.height + 12
-                    maxWidth: 300
-                }
-            },
             DisabledTooltipButton {
                 readonly property bool buttonEnabled: root.isPrivilegedTokenOwnerProfile && root.arePrivilegedTokensDeployed
 
