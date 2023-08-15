@@ -73,8 +73,8 @@ ModalPopup {
                 preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
                 preSelectedAsset: store.getAsset(buyStickersPackModal.store.assets, JSON.parse(stickerPackDetailsPopup.store.stickersStore.getStatusToken()).symbol)
                 sendTransaction: function() {
-                    if(bestRoutes.length === 1) {
-                        let path = bestRoutes[0]
+                    if(bestRoutes.count === 1) {
+                        let path = bestRoutes.firstItem()
                         let eip1559Enabled = path.gasFees.eip1559Enabled
                         let maxFeePerGas = path.gasFees.maxFeePerGasM
                         stickerPackDetailsPopup.store.stickersStore.authenticateAndBuy(packId,
@@ -88,30 +88,22 @@ ModalPopup {
                 }
                 Connections {
                     target: stickerPackDetailsPopup.store.stickersStore.stickersModule
-                    function onTransactionWasSent(txResult: string) {
-                        try {
-                            let response = JSON.parse(txResult)
-                            if (!response.success) {
-                                if (response.result.includes(Constants.walletSection.cancelledMessage)) {
-                                    return
-                                }
-                                buyStickersPackModal.sendingError.text = response.result
-                                return buyStickersPackModal.sendingError.open()
+                    function onTransactionWasSent(chainId: int, txHash: string, error: string) {
+                        if (!!error) {
+                            if (error.includes(Constants.walletSection.cancelledMessage)) {
+                                return
                             }
-                            for(var i=0; i<buyStickersPackModal.bestRoutes.length; i++) {
-                                let txHash = response.result[buyStickersPackModal.bestRoutes[i].fromNetwork.chainId]
-                                let url =  "%1/%2".arg(buyStickersPackModal.store.getEtherscanLink(buyStickersPackModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
-                                Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                           qsTr("View on etherscan"),
-                                                           "",
-                                                           true,
-                                                           Constants.ephemeralNotificationType.normal,
-                                                           url)
-                            }
-                            buyStickersPackModal.close()
-                        } catch (e) {
-                            console.error('Error parsing the response', e)
+                            buyStickersPackModal.sendingError.text = error
+                            return buyStickersPackModal.sendingError.open()
                         }
+                        let url =  "%1/%2".arg(buyStickersPackModal.store.getEtherscanLink(chainId)).arg(txHash)
+                        Global.displayToastMessage(qsTr("Transaction pending..."),
+                                                   qsTr("View on etherscan"),
+                                                   "",
+                                                   true,
+                                                   Constants.ephemeralNotificationType.normal,
+                                                   url)
+                        buyStickersPackModal.close()
                     }
                 }
             }

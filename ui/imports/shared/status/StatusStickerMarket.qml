@@ -148,7 +148,7 @@ Item {
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
                         onBuyClicked: {
-                            Global.openPopup(stickerPackPurchaseModal, {price})
+                            Global.openPopup(stickerPackPurchaseModal, {price, packId})
                             root.buyClicked(packId)
                         }
                     }
@@ -181,7 +181,7 @@ Item {
                         onCancelClicked: root.cancelClicked(packId)
                         onUpdateClicked: root.updateClicked(packId)
                         onBuyClicked: {
-                            Global.openPopup(stickerPackPurchaseModal, {price})
+                            Global.openPopup(stickerPackPurchaseModal, {price, packId})
                             root.buyClicked(packId)
                         }
                     }
@@ -196,6 +196,7 @@ Item {
             id: buyStickersModal
 
             required property int price
+            required property string packId
 
             interactive: false
             sendType: Constants.SendType.StickersBuy
@@ -203,8 +204,8 @@ Item {
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(parseFloat(price))
             preSelectedAsset: store.getAsset(buyStickersModal.store.assets, JSON.parse(root.store.stickersStore.getStatusToken()).symbol)
             sendTransaction: function() {
-                if(bestRoutes.length === 1) {
-                    let path = bestRoutes[0]
+                if(bestRoutes.count === 1) {
+                    let path = bestRoutes.firstItem()
                     let eip1559Enabled = path.gasFees.eip1559Enabled
                     let maxFeePerGas = path.gasFees.maxFeePerGasM
                     root.store.stickersStore.authenticateAndBuy(packId,
@@ -218,29 +219,22 @@ Item {
             }
             Connections {
                 target: root.store.stickersStore.stickersModule
-                function onTransactionWasSent(txResult: string) {
-                    try {
-                        let response = JSON.parse(txResult)
-                        if (!response.success) {
-                            if (response.result.includes(Constants.walletSection.cancelledMessage)) {
-                                return
-                            }
-                            buyStickersModal.sendingError.text = response.result
-                            return buyStickersModal.sendingError.open()
+                function onTransactionWasSent(chainId: int, txHash: string, error: string) {
+                    if (!!error) {
+                        if (error.includes(Constants.walletSection.cancelledMessage)) {
+                            return
                         }
-                        for(var i=0; i<buyStickersModal.bestRoutes.length; i++) {
-                            let url =  "%1/%2".arg(buyStickersModal.store.getEtherscanLink(buyStickersModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
-                            Global.displayToastMessage(qsTr("Transaction pending..."),
-                                                       qsTr("View on etherscan"),
-                                                       "",
-                                                       true,
-                                                       Constants.ephemeralNotificationType.normal,
-                                                       url)
-                        }
-                        buyStickersModal.close()
-                    } catch (e) {
-                        console.error('Error parsing the response', e)
+                        buyStickersModal.sendingError.text = error
+                        return buyStickersModal.sendingError.open()
                     }
+                    let url =  "%1/%2".arg(buyStickersModal.store.getEtherscanLink(chainId)).arg(txHash)
+                    Global.displayToastMessage(qsTr("Transaction pending..."),
+                                               qsTr("View on etherscan"),
+                                               "",
+                                               true,
+                                               Constants.ephemeralNotificationType.normal,
+                                               url)
+                    buyStickersModal.close()
                 }
             }
         }

@@ -18,7 +18,6 @@ Loader {
     property var store
     property bool isBridgeTx: false
     property bool interactive: true
-    property bool showUnpreferredNetworks: false
     property var selectedAsset
     property var selectedRecipient: null
     property int selectedRecipientType
@@ -36,6 +35,10 @@ Loader {
     onSelectedRecipientChanged: {
         root.isLoading()
         d.waitTimer.restart()
+        if(!root.isBridgeTx)
+            root.store.updatePreferredChains(root.selectedRecipient.preferredSharingChainIds)
+        else
+            root.store.setAllNetworksAsPreferredChains()
         if(!!root.selectedRecipient && root.selectedRecipientType !== TabAddressSelectorView.Type.None) {
             switch(root.selectedRecipientType) {
             case TabAddressSelectorView.Type.SavedAddress: {
@@ -85,10 +88,10 @@ Loader {
                         if(!!root.item.input)
                             root.item.input.text = root.resolvedENSAddress
                         root.addressText = root.resolvedENSAddress
-                        store.splitAndFormatAddressPrefix(root.address, root.isBridgeTx, root.showUnpreferredNetworks)
+                        store.splitAndFormatAddressPrefix(root.address, root.isBridgeTx)
                     } else {
                         let address = d.getAddress()
-                        let result = store.splitAndFormatAddressPrefix(address, root.isBridgeTx, root.showUnpreferredNetworks)
+                        let result = store.splitAndFormatAddressPrefix(address, root.isBridgeTx)
                         if(!!result.address) {
                             root.addressText = result.address
                             if(!!root.item.input)
@@ -139,7 +142,7 @@ Loader {
     Component {
         id: myAccountRecipient
         WalletAccountListItem {
-            property string chainShortNames: store.getNetworkShortNames(modelData.preferredSharingChainIds)
+            property string chainShortNames: !!modelData ? store.getNetworkShortNames(modelData.preferredSharingChainIds): ""
             implicitWidth: parent.width
             modelData: root.selectedRecipient
             radius: 8

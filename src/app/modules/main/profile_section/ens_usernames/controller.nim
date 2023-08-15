@@ -88,7 +88,7 @@ proc setPubKeyGasEstimate*(self: Controller, chainId: int, ensUsername: string, 
   return self.ensService.setPubKeyGasEstimate(chainId, ensUsername, address)
 
 proc setPubKey*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): EnsTxResultArgs =
   return self.ensService.setPubKey(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getSigningPhrase*(self: Controller): string =
@@ -108,7 +108,7 @@ proc releaseEnsEstimate*(self: Controller, chainId: int, ensUsername: string, ad
 
 proc release*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool):
-  string =
+  EnsTxResultArgs =
   return self.ensService.release(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc setPreferredName*(self: Controller, preferredName: string) =
@@ -137,7 +137,7 @@ proc registerEnsGasEstimate*(self: Controller, chainId: int, ensUsername: string
   return self.ensService.registerEnsGasEstimate(chainId, ensUsername, address)
 
 proc registerEns*(self: Controller, chainId: int, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): EnsTxResultArgs =
   return self.ensService.registerEns(chainId, ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getSNTBalance*(self: Controller): string =

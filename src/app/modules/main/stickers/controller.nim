@@ -97,7 +97,7 @@ proc init*(self: Controller) =
     let args = StickerPackInstalledArgs(e)
     self.delegate.onStickerPackInstalled(args.packId)
 
-proc buy*(self: Controller, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
+proc buy*(self: Controller, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): StickerBuyResultArgs =
   self.stickerService.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getRecentStickers*(self: Controller): seq[StickerDto] = 

@@ -17,9 +17,9 @@ type
     account: string
     amount: Uint256
     token: string
-    disabledFromChainIDs: seq[uint64]
-    disabledToChainIDs: seq[uint64]
-    preferredChainIDs: seq[uint64]
+    disabledFromChainIDs: seq[int]
+    disabledToChainIDs: seq[int]
+    preferredChainIDs: seq[int]
     sendType: int
     lockedInAmounts: string
 
@@ -28,8 +28,8 @@ proc getGasEthValue*(gweiValue: float, gasLimit: uint64): float =
   let ethValue = parseFloat(service_conversion.wei2Eth(weiValue))
   return ethValue
 
-proc getFeesTotal*(paths: seq[TransactionPathDto]): Fees =
-  var fees: Fees = Fees()
+proc getFeesTotal*(paths: seq[TransactionPathDto]): FeesDto =
+  var fees: FeesDto = FeesDto()
   if(paths.len == 0):
     return fees
 
@@ -65,11 +65,10 @@ proc addFirstSimpleBridgeTxFlag(paths: seq[TransactionPathDto]) : seq[Transactio
   var firstBridgePath: bool = false
 
   for path in txPaths:
-    if path.bridgeName == "Simple":
-      if not firstSimplePath:
-        firstSimplePath = true
-        path.isFirstSimpleTx = true
-    else:
+    if not firstSimplePath:
+      firstSimplePath = true
+      path.isFirstSimpleTx = true
+    if path.bridgeName != "Simple":
       if not firstBridgePath:
         firstBridgePath = false
         path.isFirstBridgeTx = true
@@ -84,8 +83,8 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
     var lockedInAmounts = Table[string, string] : initTable[string, string]()
 
     try:
-      for lockedAmount in parseJson(arg.lockedInAmounts):
-        lockedInAmounts[$lockedAmount["chainID"].getInt] = "0x" & lockedAmount["value"].getStr
+      for chainId, lockedAmount in parseJson(arg.lockedInAmounts):
+        lockedInAmounts[chainId] = lockedAmount.getStr
     except:
       discard
 
@@ -110,7 +109,7 @@ const getSuggestedRoutesTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall
 
   except Exception as e:
     let output = %* {
-     "suggestedRoutes": SuggestedRoutesDto(best: @[], gasTimeEstimate:  Fees(), amountToReceive: stint.u256(0), toNetworks: @[]),
+     "suggestedRoutes": SuggestedRoutesDto(best: @[], gasTimeEstimate: FeesDto(), amountToReceive: stint.u256(0), toNetworks: @[]),
       "error": fmt"Error getting suggested routes: {e.msg}"
     }
     arg.finish(output)

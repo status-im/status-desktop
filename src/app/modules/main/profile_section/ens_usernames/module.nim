@@ -155,26 +155,16 @@ proc setPubKey*(self: Module, password: string) =
     password,
     self.tmpSendEnsTransactionDetails.eip1559Enabled
   )
-  if(response.len == 0):
-    info "expected response is empty", methodName="setPubKey"
-    return
 
-  let responseObj = response.parseJson
-  if (responseObj.kind != JObject):
-    info "expected response is not a json object", methodName="setPubKey"
-    return
-
-  var success: bool
-  if(not responseObj.getProp("success", success)):
+  if(not response.error.isEmptyOrWhitespace()):
     info "remote call is not executed with success", methodName="setPubKey"
+    return
 
-  var respResult: string
-  if(responseObj.getProp("result", respResult)):
-    let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId,
-                    ensUsername: self.tmpSendEnsTransactionDetails.ensUsername,
-                    isPending: true)
-    self.view.model().addItem(item)
-    self.view.emitTransactionWasSentSignal(response)
+  let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId,
+                  ensUsername: self.tmpSendEnsTransactionDetails.ensUsername,
+                  isPending: true)
+  self.view.model().addItem(item)
+  self.view.emitTransactionWasSentSignal(response.chainId, response.txHash, response.error)
 
 method releaseEnsEstimate*(self: Module, chainId: int, ensUsername: string, address: string): int =
   return self.controller.releaseEnsEstimate(chainId, ensUsername, address)
@@ -225,24 +215,12 @@ proc releaseEns*(self: Module, password: string) =
     self.tmpSendEnsTransactionDetails.eip1559Enabled
   )
 
-  if(response.len == 0):
-    info "expected response is empty", methodName="release"
-    return
-
-  let responseObj = response.parseJson
-  if(responseObj.kind != JObject):
-    info "expected response is not a json object", methodName="release"
-    return
-
-  var success: bool
-  if(not responseObj.getProp("success", success)):
+  if(not response.error.isEmptyOrWhitespace()):
     info "remote call is not executed with success", methodName="release"
     return
 
-  var result: string
-  if(responseObj.getProp("result", result)):
-    self.onEnsUsernameRemoved(self.tmpSendEnsTransactionDetails.chainId, self.tmpSendEnsTransactionDetails.ensUsername)
-    self.view.emitTransactionWasSentSignal(response)
+  self.onEnsUsernameRemoved(self.tmpSendEnsTransactionDetails.chainId, self.tmpSendEnsTransactionDetails.ensUsername)
+  self.view.emitTransactionWasSentSignal(response.chainId, response.txHash, response.error)
 
 proc formatUsername(self: Module, ensUsername: string, isStatus: bool): string =
   result = ensUsername
@@ -334,18 +312,15 @@ proc registerEns(self: Module, password: string) =
     self.tmpSendEnsTransactionDetails.eip1559Enabled
   )
 
-  let responseObj = response.parseJson
-  if (responseObj.kind != JObject):
-    info "expected response is not a json object", methodName="registerEns"
+  if(not response.error.isEmptyOrWhitespace()):
+    info "remote call is not executed with success", methodName="registerEns"
     return
 
-  var respResult: string
-  if(responseObj.getProp("result", respResult) and responseObj{"success"}.getBool == true):
-    let ensUsername = self.formatUsername(self.tmpSendEnsTransactionDetails.ensUsername, true)
-    let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId, ensUsername: ensUsername, isPending: true)
-    self.controller.fixPreferredName()
-    self.view.model().addItem(item)
-  self.view.emitTransactionWasSentSignal(response)
+  let ensUsername = self.formatUsername(self.tmpSendEnsTransactionDetails.ensUsername, true)
+  let item = Item(chainId: self.tmpSendEnsTransactionDetails.chainId, ensUsername: ensUsername, isPending: true)
+  self.controller.fixPreferredName()
+  self.view.model().addItem(item)
+  self.view.emitTransactionWasSentSignal(response.chainId, response.txHash, response.error)
 
 method getSNTBalance*(self: Module): string =
   return self.controller.getSNTBalance()
@@ -416,8 +391,7 @@ method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
 
 method onUserAuthenticated*(self: Module, password: string) =
   if password.len == 0:
-    let response = %* {"success": false, "result": cancelledRequest}
-    self.view.emitTransactionWasSentSignal($response)
+    self.view.emitTransactionWasSentSignal(chainId = 0, txHash =  "", error = cancelledRequest)
   else:
     if self.tmpSendEnsTransactionDetails.isRegistration:
       self.registerEns(password)

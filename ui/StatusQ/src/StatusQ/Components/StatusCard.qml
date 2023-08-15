@@ -176,10 +176,10 @@ Rectangle {
     signal clicked()
 
     /*!
-        \qmlsignal StatusCard::cardLocked
+        \qmlsignal StatusCard::lockCard
         This signal is emitted when the card is locked or unlocked
     */
-    signal cardLocked(bool isLocked)
+    signal lockCard(bool lock)
 
     /*!
        \qmlproperty string StatusCard::state
@@ -285,7 +285,6 @@ Rectangle {
         }
         StatusInput {
             id: advancedInput
-            property bool tempLock: false
             Layout.preferredWidth: layout.width
             maximumHeight: 32
             topPadding: 0
@@ -305,17 +304,13 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     width: 12
                     height: 12
-                    icon.name: root.locked && advancedInput.tempLock ? "lock" : "unlock"
+                    icon.name: root.locked ? "lock" : "unlock"
                     icon.width: 12
                     icon.height: 12
-                    icon.color: root.locked && advancedInput.tempLock ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                    icon.color: root.locked ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                     type: StatusFlatRoundButton.Type.Secondary
                     enabled: !disabled
-                    onClicked: {
-                        advancedInput.tempLock = !advancedInput.tempLock
-                        root.locked = advancedInput.tempLock
-                        root.cardLocked(advancedInput.tempLock)
-                    }
+                    onClicked: root.lockCard(!root.locked)
                 }
             }
             validators: [
@@ -328,18 +323,13 @@ Rectangle {
                 }
             ]
             text: root.preCalculatedAdvancedText
-            onTextChanged: {
-                advancedInput.tempLock = false
-                waitTimer.restart()
-            }
+            onTextChanged: waitTimer.restart()           
             Timer {
                 id: waitTimer
                 interval: lockTimeout
                 onTriggered: {
-                    advancedInput.tempLock = true
                     if(!!advancedInput.text && root.preCalculatedAdvancedText !== advancedInput.text) {
-                        root.locked = advancedInput.tempLock
-                        root.cardLocked(advancedInput.tempLock)
+                        root.lockCard(true)
                     }
                 }
             }

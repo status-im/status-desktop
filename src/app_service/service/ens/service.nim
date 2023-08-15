@@ -57,6 +57,11 @@ type
     ensUsername*: string
     transactionType*: string
 
+  EnsTxResultArgs* = ref object of Args
+    chainId*: int
+    txHash*: string
+    error*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED* = "ensUsernameAvailabilityChecked"
 const SIGNAL_ENS_USERNAME_DETAILS_FETCHED* = "ensUsernameDetailsFetched"
@@ -284,7 +289,7 @@ QtObject:
       maxFeePerGas: string,
       password: string,
       eip1559Enabled: bool,
-    ): string =    
+    ): EnsTxResultArgs =
     try:
       let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
@@ -300,10 +305,10 @@ QtObject:
       let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
       self.pendingEnsUsernames.incl(dto)
 
-      result = $(%* { "result": hash, "success": true })
+      result = EnsTxResultArgs(chainId: chainId, txHash: hash, error: "")
     except Exception as e:
       error "error occurred", procName="setPubKey", msg = e.msg
-      result = $(%* { "result": e.msg, "success": false })
+      result = EnsTxResultArgs(chainId: 0, txHash: "", error: e.msg)
 
   proc releaseEnsEstimate*(self: Service, chainId: int, ensUsername: string, address: string): int =
     try:
@@ -332,7 +337,7 @@ QtObject:
       maxFeePerGas: string,
       password: string,
       eip1559Enabled: bool
-    ): string =    
+    ): EnsTxResultArgs =
     try:
       let
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
@@ -353,10 +358,10 @@ QtObject:
       let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
       self.pendingEnsUsernames.excl(dto)
 
-      result = $(%* { "result": hash, "success": true })
+      result = EnsTxResultArgs(chainId: chainId, txHash: hash, error: "")
     except Exception as e:
       error "error occurred", procName="release", msg = e.msg
-      result = $(%* { "result": e.msg, "success": false })
+      result = EnsTxResultArgs(chainId: 0, txHash: "", error: e.msg)
 
   proc registerENSGasEstimate*(self: Service, chainId: int, ensUsername: string, address: string): int =
     try:
@@ -383,7 +388,7 @@ QtObject:
       maxFeePerGas: string,
       password: string,
       eip1559Enabled: bool,
-    ): string =    
+    ): EnsTxResultArgs =
     try:
       let txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
@@ -400,10 +405,10 @@ QtObject:
 
       let dto = EnsUsernameDto(chainId: chainId, username: ensUsername)
       self.pendingEnsUsernames.incl(dto)
-      result = $(%* { "result": hash, "success": true })
+      result = EnsTxResultArgs(chainId: chainId, txHash: hash, error: "")
     except Exception as e:
       error "error occurred", procName="registerEns", msg = e.msg
-      result = $(%* { "result": e.msg, "success": false })
+      result = EnsTxResultArgs(chainId: 0, txHash: "", error: e.msg)
 
   proc getSNTBalance*(self: Service): string =
     let token = self.getStatusToken()

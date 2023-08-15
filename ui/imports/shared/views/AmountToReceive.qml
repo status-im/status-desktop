@@ -10,7 +10,6 @@ import shared.stores 1.0
 ColumnLayout {
     id: root
 
-    property var store
     property string selectedSymbol
     property bool isLoading: false
     property double cryptoValueToReceive

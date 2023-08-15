@@ -29,7 +29,7 @@ Item {
                 cardIconName: "status"
                 advancedInputText: "75,0000000"
                 disabledText: "Disabled"
-                onCardLocked: locked = isLocked
+                onLockCard: locked = !lock
                 disableText: "Disable"
                 enableText: "Enable"
             }
@@ -99,7 +99,7 @@ Item {
                         advancedMode: card.advancedMode
                         advancedInputText: tokensToSend
                         disabledText: "Disabled"
-                        onCardLocked: locked = isLocked
+                        onLockCard: locked = !lock
                         disableText: "Disable"
                         enableText: "Enable"
                     }
@@ -121,7 +121,7 @@ Item {
                         advancedMode: card.advancedMode
                         advancedInputText: tokensToReceive
                         disabledText: "Disabled"
-                        onCardLocked: locked = isLocked
+                        onLockCard: locked = !lock
                         disableText: "Disable"
                         enableText: "Enable"
                     }

@@ -54,6 +54,10 @@ type
     stickers*: seq[StickerDto]
   StickerPacksArgs* = ref object of Args
     packs*: Table[string, StickerPackDto]
+  StickerBuyResultArgs* = ref object of Args
+    chainId*: int
+    txHash*: string
+    error*: string
 
 # Signals which may be emitted by this service:
 const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
@@ -204,11 +208,10 @@ QtObject:
 
     return self.tokenService.findTokenBySymbol(networkDto.chainId, networkDto.sntSymbol())
 
-  proc buyPack*(self: Service, packId: string, address, gas, gasPrice: string, eip1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): tuple[txHash: string, error: string] =
+  proc buyPack*(self: Service, packId: string, address, gas, gasPrice: string, eip1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[txHash: string, error: string] =
     let
       chainId = self.networkService.getNetworkForStickers().chainId
       txData = buildTransaction(parseAddress(address), gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-
     try:
       let transactionResponse = status_stickers.buy(chainId, %txData, packId, password)
       let transactionHash = transactionResponse.result.getStr()
@@ -232,23 +235,16 @@ QtObject:
     except RpcException:
       error "Error sending transaction", message = getCurrentExceptionMsg()
 
-  proc buy*(self: Service, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
+  proc buy*(self: Service, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): StickerBuyResultArgs =
     try:
       status_utils.validateTransactionInput(address, address, "", "0", gas, gasPrice, "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")
     except Exception as e:
       error "Error buying sticker pack", msg = e.msg
-      return (response: e.msg, success: false)
+      return StickerBuyResultArgs(chainId: 0, txHash: "", error: e.msg)
 
-    var success: bool
-    var (response, err) = self.buyPack(packId, address, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password, success)
+    var (txHash, err) = self.buyPack(packId, address, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password)
 
-    if err != "":
-      response = err
-      success = false
-    else:
-      success = true
-
-    result = (response: $response, success: success)
+    return StickerBuyResultArgs(chainId: self.networkService.getNetworkForStickers().chainId, txHash: txHash, error: err)
 
   proc setMarketStickerPacks*(self: Service, strickersJSON: string) {.slot.} =
     let stickersResult = Json.decode(strickersJSON, tuple[packs: seq[StickerPackDto], error: string])

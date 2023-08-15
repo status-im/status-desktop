@@ -72,11 +72,14 @@ proc `$`*(self: TransactionMinedArgs): string =
 
 type
   TransactionSentArgs* = ref object of Args
-    result*: string
+    chainId*: int
+    txHash*: string
+    uuid*: string
+    error*: string
 
 type
   SuggestedRoutesArgs* = ref object of Args
-    suggestedRoutes*: string
+    suggestedRoutes*: SuggestedRoutesDto
 
 type
   CryptoServicesArgs* = ref object of Args
@@ -287,11 +290,9 @@ QtObject:
         for route in routes:
           for hash in response.result["hashes"][$route.fromNetwork.chainID]:
             self.watchTransaction(hash.getStr, from_addr, to_addr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
-      let output = %* {"result": response.result{"hashes"}, "success":true, "uuid": %uuid }
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
     except Exception as e:
-      let output = %* {"success":false, "uuid": %uuid, "error":fmt"Error sending token transfer transaction: {e.msg}"}
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
 
   proc transferToken*(
     self: Service,
@@ -354,11 +355,9 @@ QtObject:
         for route in routes:
           for hash in response.result["hashes"][$route.fromNetwork.chainID]:
             self.watchTransaction(hash.getStr, from_addr, to_addr, $PendingTransactionTypeDto.WalletTransfer, " ", route.fromNetwork.chainID, track = false)
-      let output = %* {"result": response.result{"hashes"}, "success":true, "uuid": %uuid }
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+            self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: route.fromNetwork.chainID, txHash: hash.getStr, uuid: uuid , error: ""))
     except Exception as e:
-      let output = %* {"success":false, "uuid": %uuid, "error":fmt"Error sending token transfer transaction: {e.msg}"}
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
 
   proc transfer*(
     self: Service,
@@ -367,31 +366,27 @@ QtObject:
     tokenSymbol: string,
     value: string,
     uuid: string,
-    selectedRoutes: string,
+    selectedRoutes: seq[TransactionPathDto],
     password: string,
   ) =
     try:
       var chainID = 0
-      let selRoutes = parseJson(selectedRoutes)
-      let routes = selRoutes.getElems().map(x => x.convertToTransactionPathDto())
-
       var isEthTx = false
 
-      if(routes.len > 0):
-        chainID = routes[0].fromNetwork.chainID
+      if(selectedRoutes.len > 0):
+        chainID = selectedRoutes[0].fromNetwork.chainID
 
       let network = self.networkService.getNetwork(chainID)
       if network.nativeCurrencySymbol == tokenSymbol:
         isEthTx = true
 
       if(isEthTx):
-        self.transferEth(from_addr, to_addr, tokenSymbol, value, uuid, routes, password)
+        self.transferEth(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
       else:
-        self.transferToken(from_addr, to_addr, tokenSymbol, value, uuid, routes, password)
+        self.transferToken(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
 
     except Exception as e:
-      let output = %* {"success":false, "uuid": %uuid, "error":fmt"Error sending token transfer transaction: {e.msg}"}
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(chainId: 0, txHash: "", uuid: uuid, error: fmt"Error sending token transfer transaction: {e.msg}"))
 
   proc suggestedFees*(self: Service, chainId: int): SuggestedFeesDto =
     try:
@@ -401,9 +396,15 @@ QtObject:
       error "Error getting suggested fees", msg = e.msg
 
   proc suggestedRoutesReady*(self: Service, suggestedRoutes: string) {.slot.} =
-    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutes))
+    var suggestedRoutesDto: SuggestedRoutesDto = SuggestedRoutesDto()
+    try:
+      let responseObj = suggestedRoutes.parseJson
+      suggestedRoutesDto = responseObj.convertToSuggestedRoutesDto()
+    except Exception as e:
+      error "error handling suggestedRoutesReady response", errDesription=e.msg
+    self.events.emit(SIGNAL_SUGGESTED_ROUTES_READY, SuggestedRoutesArgs(suggestedRoutes: suggestedRoutesDto))
 
-  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): SuggestedRoutesDto =
+  proc suggestedRoutes*(self: Service, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): SuggestedRoutesDto =
     let arg = GetSuggestedRoutesTaskArg(
       tptr: cast[ByteAddress](getSuggestedRoutesTask),
       vptr: cast[ByteAddress](self.vptr),

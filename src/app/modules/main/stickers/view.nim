@@ -55,7 +55,7 @@ QtObject:
     read = getRecentStickerList
     notify = recentStickersUpdated
 
-  proc transactionWasSent*(self: View, txResult: string) {.signal.}
+  proc transactionWasSent*(self: View, chainId: int, txHash: string, error: string) {.signal.}
 
   proc transactionCompleted*(self: View, success: bool, txHash: string) {.signal.}
 

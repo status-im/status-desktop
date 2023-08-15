@@ -107,9 +107,9 @@ method authenticateAndBuy*(self: Module, packId: string, address: string, gas: s
 method onUserAuthenticated*(self: Module, password: string) =
   if password.len == 0:
     let response = %* {"success": false, "error": cancelledRequest}
-    self.view.transactionWasSent($response)
+    self.view.transactionWasSent(chainId = 0, txHash = "", error = cancelledRequest)
   else:
-    let responseTuple = self.controller.buy(
+    let response = self.controller.buy(
       self.tmpBuyStickersTransactionDetails.packId,
       self.tmpBuyStickersTransactionDetails.address,
       self.tmpBuyStickersTransactionDetails.gas,
@@ -119,11 +119,9 @@ method onUserAuthenticated*(self: Module, password: string) =
       password,
       self.tmpBuyStickersTransactionDetails.eip1559Enabled
     )
-    let response = responseTuple.response
-    let success = responseTuple.success
-    if success:
+    if response.error.isEmptyOrWhitespace():
       self.view.stickerPacks.updateStickerPackInList(self.tmpBuyStickersTransactionDetails.packId, false, true)
-    self.view.transactionWasSent($(%*{"success": success, "result": response}))
+    self.view.transactionWasSent(chainId = response.chainId, txHash = response.txHash, error = response.error)
 
 method obtainMarketStickerPacks*(self: Module) =
   self.controller.obtainMarketStickerPacks()
