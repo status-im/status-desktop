@@ -23,6 +23,7 @@ from .components.user_canvas import UserCanvas
 
 
 class MainScreenComponents(Enum):
+    PROFILE_NAVBAR_BUTTON = 'mainWindow_ProfileNavBarButton'
     MAIN_WINDOW = "statusDesktop_mainWindow"
     POPUP_OVERLAY = "statusDesktop_mainWindow_overlay"
     CHAT_NAVBAR_ICON = "navBarListView_Chat_navbar_StatusNavBarTabButton"

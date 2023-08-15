@@ -333,9 +333,7 @@ class StatusWalletScreen:
     def accept_signing_phrase(self):
         click_obj_by_name(SigningPhrasePopUp.OK_GOT_IT_BUTTON.value)
 
-    def add_account_popup_go_to_keycard_settings(self):
-        self.add_account_popup_change_origin(AddEditAccountPopup.ORIGIN_OPTION_NEW_MASTER_KEY.value)
-        is_loaded_visible_and_enabled(AddEditAccountPopup.MASTER_KEY_GO_TO_KEYCARD_SETTINGS_OPTION.value)
+    def go_to_keycard_settings(self):
         click_obj_by_name(AddEditAccountPopup.MASTER_KEY_GO_TO_KEYCARD_SETTINGS_OPTION.value)
 
     def send_transaction(self, account_name, amount, token, chain_name, password):

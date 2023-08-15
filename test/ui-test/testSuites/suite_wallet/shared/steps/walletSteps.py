@@ -112,8 +112,9 @@ def step(context, name, color, emoji, keypair_name):
 
 @When("the user adds new master key and go to use a Keycard")
 def step(context):
-    _walletScreen.left_panel.open_add_account_popup()
-    _walletScreen.add_account_popup_go_to_keycard_settings()
+    account_popup = _walletScreen.left_panel.open_add_account_popup()
+    account_popup.set_origin_keypair('LABEL-OPTION-ADD-NEW-MASTER-KEY')
+    _walletScreen.go_to_keycard_settings()
 
 
 @When("the user edits an account with \"|any|\" to \"|any|\" with color \"|any|\" and emoji \"|any|\"")
