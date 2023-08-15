@@ -16,7 +16,6 @@ import utils 1.0
 import shared.controls 1.0
 import shared.views 1.0
 
-import "setupsyncing" as Views
 import "../stores"
 
 StatusDialog {
@@ -193,7 +192,7 @@ StatusDialog {
                                  localPairingView.implicitHeight,
                                  errorView.implicitHeight)
 
-        Views.DisplaySyncCode {
+        SyncingDisplayCode {
             id: displaySyncCodeView
             anchors.fill: parent
             visible: displaySyncCodeState.active
@@ -204,7 +203,7 @@ StatusDialog {
             }
         }
 
-        DeviceSyncingView {
+        SyncingDeviceView {
             id: localPairingView
             anchors.fill: parent
             visible: localPairingBaseState.active
@@ -221,7 +220,7 @@ StatusDialog {
             installationDeviceType: root.devicesStore.localPairingInstallationDeviceType
         }
 
-        Views.ErrorMessage {
+        SyncingErrorMessage {
             id: errorView
             anchors.fill: parent
             visible: errorState.active
