@@ -1066,6 +1066,11 @@ QtObject:
     for token in allTokens:
       self.fetchCommunityOwners(token)
 
+  proc fetchCommunityTokenOwners*(self: Service, communityId: string) =
+    let tokens = self.getCommunityTokens(communityId)
+    for token in tokens:
+      self.fetchCommunityOwners(token)
+
   proc getOwnerToken*(self: Service, communityId: string): CommunityTokenDto =
     let communityTokens = self.getCommunityTokens(communityId)
     for token in communityTokens:

@@ -404,6 +404,10 @@ proc init*(self: Controller) =
     var args = CommunityMemberArgs(e)
     self.delegate.onAcceptRequestToJoinSuccess(args.communityId, args.pubKey, args.requestId)
 
+  self.events.on(SIGNAL_COMMUNITY_MEMBERS_CHANGED) do(e: Args):
+    let args = CommunityMembersArgs(e)
+    self.communityTokensService.fetchCommunityTokenOwners(args.communityId)
+
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_FLOW_TERMINATED) do(e: Args):
     let args = SharedKeycarModuleFlowTerminatedArgs(e)
     if args.uniqueIdentifier == UNIQUE_MAIN_MODULE_KEYCARD_SYNC_IDENTIFIER:
