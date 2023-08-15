@@ -264,7 +264,8 @@ StatusMenu {
                                                 root.chatType === Constants.chatType.oneToOne ?
                                                 qsTr("Are you sure you want to delete this chat?"):
                                                 qsTr("Are you sure you want to leave this chat?")
-            showCancelButton: root.isCommunityChat
+            showCancelButton: true
+            cancelBtnType: "normal"
 
             onClosed: {
                 destroy()
