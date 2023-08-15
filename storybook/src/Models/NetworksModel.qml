@@ -9,13 +9,16 @@ QtObject {
     readonly property int arbitrumNet: 3
     readonly property int hermezNet: 4
     readonly property int testnetNet: 5
-    readonly property int customNet: 6   
+    readonly property int customNet: 6
 
-    readonly property var layer1Networks: ListModel {
+    component CustomNetworkModel: ListModel {
+        // Simulate Nim's way of providing access to data
         function rowData(index, propName) {
             return get(index)[propName]
         }
+    }
 
+    readonly property var layer1Networks: CustomNetworkModel {
         Component.onCompleted:
             append([
                        {
@@ -31,7 +34,7 @@ QtObject {
                    ])
     }
 
-    readonly property var layer2Networks: ListModel {
+    readonly property var layer2Networks: CustomNetworkModel {
         Component.onCompleted:
             append([
                        {
@@ -57,7 +60,7 @@ QtObject {
                    ])
     }
 
-    readonly property var testNetworks: ListModel {
+    readonly property var testNetworks: CustomNetworkModel {
         Component.onCompleted:
             append([
                        {
@@ -93,12 +96,7 @@ QtObject {
                    ])
     }
 
-    readonly property var enabledNetworks: ListModel {
-        // Simulate Nim's way of providing access to data
-        function rowData(index, propName) {
-            return get(index)[propName]
-        }
-
+    readonly property var enabledNetworks: CustomNetworkModel {
         Component.onCompleted:
             append([
                        {
@@ -170,12 +168,7 @@ QtObject {
                    ])
     }
 
-    readonly property var allNetworks: ListModel {
-        // Simulate Nim's way of providing access to data
-        function rowData(index, propName) {
-            return get(index)[propName]
-        }
-
+    readonly property var allNetworks: CustomNetworkModel {
         Component.onCompleted: append([
             {
                 chainId: 1,
@@ -264,7 +257,7 @@ QtObject {
         )
     }
 
-    readonly property var mainNetworks: ListModel {
+    readonly property var mainNetworks: CustomNetworkModel {
         Component.onCompleted: append([
                    {
                        chainId: 1,

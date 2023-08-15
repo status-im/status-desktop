@@ -85,7 +85,8 @@ SplitView {
                 onlineStatus: 1,
                 pubKey: key,
                 isVerified: true,
-                isUntrustworthy: false
+                isUntrustworthy: false,
+                airdropAddress: `0x${firstLetter}${i}`
             })
         }
 
