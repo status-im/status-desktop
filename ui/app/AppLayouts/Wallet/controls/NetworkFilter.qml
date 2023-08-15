@@ -66,7 +66,7 @@ StatusComboBox {
         readonly property bool noneSelected: (!!root.enabledNetworks) ? root.enabledNetworks.count === 0 : false
 
         // Persist selection between selectPopupLoader reloads
-        property var currentModel: layer1Networks
+        property var currentModel: layer2Networks
         property int currentIndex: 0
     }
 
@@ -116,7 +116,7 @@ StatusComboBox {
             visible: !d.allSelected && chainRepeater.count > 0
             Repeater {
                 id: chainRepeater
-                model: root.enabledNetworks
+                model: root.multiSelection ? root.enabledNetworks : []
                 delegate: StatusRoundedImage {
                     width: 24
                     height: 24
