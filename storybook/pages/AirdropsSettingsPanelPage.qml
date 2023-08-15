@@ -198,6 +198,7 @@ SplitView {
                     readonly property string color: "red"
                     readonly property bool owner: true
                 }
+                accountsModel: WalletAccountsModel {}
 
                 onAirdropClicked: logs.logEvent("AirdropsSettingsPanel::onAirdropClicked")
             }
