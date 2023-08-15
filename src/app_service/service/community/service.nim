@@ -294,30 +294,19 @@ QtObject:
             continue
           var community = self.communities[membershipRequest.communityId]
 
-          case RequestToJoinType(membershipRequest.state):
-          of RequestToJoinType.Pending:
+          let requestToJoinState = RequestToJoinType(membershipRequest.state)
+
+          if requestToJoinState != RequestToJoinType.Pending:
+            try:
+              self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, community, requestToJoinState)
+            except Exception as e:
+              error "Unknown request", msg = e.msg
+          else:
             community.pendingRequestsToJoin.add(membershipRequest)
             self.communities[membershipRequest.communityId] = community
-            self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
             self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
 
-          of RequestToJoinType.Canceled:
-            let indexPending = self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id)
-            if (indexPending != -1):
-              community.pendingRequestsToJoin.delete(indexPending)
-              self.communities[membershipRequest.communityId] = community
-              self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
-
-          of RequestToJoinType.AcceptedPending:
-            echo "received an accepted pending"
-
-          of RequestToJoinType.DeclinedPending:
-            echo "received a declined pending"
-
-          of RequestToJoinType.Declined:
-            break
-          of RequestToJoinType.Accepted:
-            break
+          self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[membershipRequest.communityId]))
 
     self.events.on(SignalType.DiscordCategoriesAndChannelsExtracted.event) do(e: Args):
       var receivedData = DiscordCategoriesAndChannelsExtractedSignal(e)
@@ -1778,20 +1767,24 @@ QtObject:
   proc updateMembershipRequestToNewState*(self: Service, communityId: string, requestId: string,
       updatedCommunity: CommunityDto, newState: RequestToJoinType) =
     let indexPending = self.getPendingRequestIndex(communityId, requestId)
+    let indexDeclined = self.getDeclinedRequestIndex(communityId, requestId)
 
-    if (indexPending == -1):
+    if (indexPending == -1 and indexDeclined == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
     var community = self.communities[communityId]
 
-    if @[RequestToJoinType.Declined, RequestToJoinType.Accepted, RequestToJoinType.Canceled].any(x => x == newState):
-      # If the state is now declined, add to the declined requests
-      if newState == RequestToJoinType.Declined:
-        community.declinedRequestsToJoin.add(community.pendingRequestsToJoin[indexPending])
-      # If the state is no longer pending, delete the request
-      community.pendingRequestsToJoin.delete(indexPending)
+    if (indexPending != -1):
+      if @[RequestToJoinType.Declined, RequestToJoinType.Accepted, RequestToJoinType.Canceled].any(x => x == newState):
+        # If the state is now declined, add to the declined requests
+        if newState == RequestToJoinType.Declined:
+          community.declinedRequestsToJoin.add(community.pendingRequestsToJoin[indexPending])
+        # If the state is no longer pending, delete the request
+        community.pendingRequestsToJoin.delete(indexPending)
+      else:
+        community.pendingRequestsToJoin[indexPending].state = newState.int
     else:
-      community.pendingRequestsToJoin[indexPending].state = newState.int
+      community.declinedRequestsToJoin.delete(indexDeclined)
 
     community.members = updatedCommunity.members
     self.communities[communityId] = community
@@ -1978,11 +1971,15 @@ QtObject:
 
   proc getUserPubKeyFromPendingRequest*(self: Service, communityId: string, requestId: string): string =
     let indexPending = self.getPendingRequestIndex(communityId, requestId)
-    if (indexPending == -1):
+    let indexDeclined = self.getDeclinedRequestIndex(communityId, requestId)
+    if (indexPending == -1 and indexDeclined == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
     let community = self.communities[communityId]
-    return community.pendingRequestsToJoin[indexPending].publicKey
+    if (indexPending != -1):
+      return community.pendingRequestsToJoin[indexPending].publicKey
+    else:
+      return community.declinedRequestsToJoin[indexDeclined].publicKey
 
   proc checkChatHasPermissions*(self: Service, communityId: string, chatId: string): bool =
     let community = self.getCommunityById(communityId)
