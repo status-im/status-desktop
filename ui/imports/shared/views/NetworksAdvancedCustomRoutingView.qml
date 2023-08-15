@@ -8,6 +8,7 @@ import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import "../controls"
 
@@ -20,16 +21,13 @@ ColumnLayout {
     property double amountToSend
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
-    property double requiredGasInEth
     property bool customMode: false
     property var selectedAsset
-    property var bestRoutes
     property bool isLoading: false
     property bool errorMode: networksLoader.item ? networksLoader.item.errorMode : false
     property var weiToEth: function(wei) {}
     property bool interactive: true
     property bool isBridgeTx: false
-    property bool showUnpreferredNetworks: preferredToggleButton.checked
     property int errorType: Constants.NoError
 
     signal reCalculateSuggestedRoute()
@@ -58,7 +56,6 @@ ColumnLayout {
                     wrapMode: Text.WordWrap
                 }
                 StatusButton {
-                    id: preferredToggleButton
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredHeight: 22
                     verticalPadding: -1
@@ -68,8 +65,12 @@ ColumnLayout {
                     icon.height: 16
                     icon.width: 16
                     text: checked ? qsTr("Hide Unpreferred Networks"): qsTr("Show Unpreferred Networks")
-                    onToggled: if(!checked) store.addUnpreferredChainsToDisabledChains()
                     visible: !isBridgeTx
+                    checked: root.store.showUnPreferredChains
+                    onClicked: {
+                        root.store.toggleShowUnPreferredChains()
+                        root.reCalculateSuggestedRoute()
+                    }
                 }
             }
             StatusBaseText {
@@ -87,20 +88,17 @@ ColumnLayout {
                 visible: active
                 sourceComponent: NetworkCardsComponent {
                     store: root.store
-                    selectedAccount: root.selectedAccount
-                    ensAddressOrEmpty: root.ensAddressOrEmpty
-                    allNetworks: root.store.allNetworks
+                    receiverIdentityText: root.ensAddressOrEmpty.length > 0 ?
+                                              root.ensAddressOrEmpty : !!root.selectedAccount ?
+                                                  StatusQUtils.Utils.elideText(root.selectedAccount.address, 6, 4).toUpperCase() :  ""
                     amountToSend: root.amountToSend
                     minSendCryptoDecimals: root.minSendCryptoDecimals
                     minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                     customMode: root.customMode
-                    requiredGasInEth: root.requiredGasInEth
                     selectedAsset: root.selectedAsset
                     reCalculateSuggestedRoute: function() {
                         root.reCalculateSuggestedRoute()
                     }
-                    showPreferredChains: preferredToggleButton.checked
-                    bestRoutes: root.bestRoutes
                     weiToEth: root.weiToEth
                     interactive: root.interactive
                     errorType: root.errorType

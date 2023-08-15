@@ -142,18 +142,10 @@ QtObject {
         return ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function getEstimatedTime(chainId, maxFeePerGas) {
-       return walletSectionSend.getEstimatedTime(chainId, maxFeePerGas)
-    }
-
     function getStatusToken() {
         if(!root.ensUsernamesModule)
             return ""
         return ensUsernamesModule.getStatusToken()
-    }
-
-    function suggestedFees(chainId) {
-        return JSON.parse(walletSectionSend.suggestedFees(chainId))
     }
 
     function removeEnsUsername(chainId, ensUsername) {

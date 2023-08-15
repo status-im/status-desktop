@@ -1,4 +1,4 @@
-import json, strutils, stint, json_serialization, strformat
+import json, strutils, stint, json_serialization, strformat, sugar, sequtils
 
 import
   web3/ethtypes
@@ -284,6 +284,9 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   result.amountIn = stint.u256(jsonObj{"amountIn"}.getStr)
   result.amountOut = stint.u256(jsonObj{"amountOut"}.getStr)
   result.estimatedTime = jsonObj{"estimatedTime"}.getInt
+  result.amountInLocked = jsonObj{"amountInLocked"}.getBool
+  result.isFirstSimpleTx = jsonObj{"isFirstSimpleTx"}.getBool
+  result.isFirstBridgeTx = jsonObj{"isFirstBridgeTx"}.getBool
   discard jsonObj.getProp("gasAmount", result.gasAmount)
   discard jsonObj.getProp("approvalRequired", result.approvalRequired)
   result.approvalAmountRequired = stint.u256(jsonObj{"approvalAmountRequired"}.getStr)
@@ -291,10 +294,16 @@ proc convertToTransactionPathDto*(jsonObj: JsonNode): TransactionPathDto =
   discard jsonObj.getProp("approvalContractAddress", result.approvalContractAddress)
 
 type
-  Fees* = ref object
+  FeesDto* = ref object
     totalFeesInEth*: float
     totalTokenFees*: float
     totalTime*: int
+
+proc convertToFeesDto*(jsonObj: JsonNode): FeesDto =
+  result = FeesDto()
+  discard jsonObj.getProp("totalFeesInEth", result.totalFeesInEth)
+  discard jsonObj.getProp("totalTokenFees", result.totalTokenFees)
+  discard jsonObj.getProp("totalTime", result.totalTime)
 
 type
   SendToNetwork* = ref object
@@ -303,9 +312,23 @@ type
     iconUrl*: string
     amountOut*: UInt256
 
+proc convertSendToNetwork*(jsonObj: JsonNode): SendToNetwork =
+  result = SendToNetwork()
+  discard jsonObj.getProp("chainId", result.chainId)
+  discard jsonObj.getProp("chainName", result.chainName)
+  discard jsonObj.getProp("iconUrl", result.iconUrl)
+  result.amountOut = stint.u256(jsonObj{"amountOut"}.getStr)
+
 type
   SuggestedRoutesDto* = ref object
     best*: seq[TransactionPathDto]
-    gasTimeEstimate*: Fees
+    gasTimeEstimate*: FeesDto
     amountToReceive*: UInt256
     toNetworks*: seq[SendToNetwork]
+
+proc convertToSuggestedRoutesDto*(jsonObj: JsonNode): SuggestedRoutesDto =
+  result = SuggestedRoutesDto()
+  result.best = jsonObj["suggestedRoutes"]["best"].getElems().map(x => x.convertToTransactionPathDto())
+  result.gasTimeEstimate = jsonObj["suggestedRoutes"]["gasTimeEstimate"].convertToFeesDto()
+  result.amountToReceive = stint.u256(jsonObj["suggestedRoutes"]["amountToReceive"].getStr)
+  result.toNetworks = jsonObj["suggestedRoutes"]["toNetworks"].getElems().map(x => x.convertSendToNetwork())

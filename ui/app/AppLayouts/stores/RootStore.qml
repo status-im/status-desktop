@@ -200,14 +200,6 @@ QtObject {
         return profileSectionStore.ensUsernamesStore.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function suggestedFees(chainId) {
-        return JSON.parse(walletSectionSendInst.suggestedFees(chainId))
-    }
-
-    function getEstimatedTime(chainId, maxFeePerGas) {
-       return walletSectionSendInst.getEstimatedTime(chainId, maxFeePerGas)
-    }
-
     function hex2Eth(value) {
         return globalUtils.hex2Eth(value)
     }

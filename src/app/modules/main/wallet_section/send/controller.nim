@@ -44,7 +44,8 @@ proc delete*(self: Controller) =
 
 proc init*(self: Controller) =
   self.events.on(SIGNAL_TRANSACTION_SENT) do(e:Args):
-    self.delegate.transactionWasSent(TransactionSentArgs(e).result)
+    let args = TransactionSentArgs(e)
+    self.delegate.transactionWasSent(args.chainId, args.txHash, args.uuid, args.error)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
@@ -87,20 +88,13 @@ proc authenticateUser*(self: Controller, keyUid = "") =
     keyUid: keyUid)
   self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_AUTHENTICATE_USER, data)
 
-proc getEstimatedTime*(self: Controller, chainId: int, maxFeePerGas: string): EstimatedTime =
-  return self.transactionService.getEstimatedTime(chainId, maxFeePerGas)
-
-proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
+proc suggestedRoutes*(self: Controller, account: string, amount: Uint256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): string =
   let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
   return suggestedRoutes.toJson()
 
 proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
-    value: string, uuid: string, selectedRoutes: string, password: string) =
+    value: string, uuid: string, selectedRoutes: seq[TransactionPathDto], password: string) =
   self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, uuid, selectedRoutes, password)
-
-proc suggestedFees*(self: Controller, chainId: int): string =
-  let suggestedFees = self.transactionService.suggestedFees(chainId)
-  return suggestedFees.toJson()
 
 proc areTestNetworksEnabled*(self: Controller): bool =
   return self.walletAccountService.areTestNetworksEnabled()
@@ -110,3 +104,6 @@ proc getTokensByAddress*(self: Controller, address: string): seq[WalletTokenDto]
 
 proc getCurrencyBalance*(self: Controller, address: string, chainIds: seq[int], currency: string): float64 =
   return self.walletAccountService.getCurrencyBalance(address, chainIds, currency)
+
+proc getNetworks*(self: Controller): seq[NetworkDto] =
+  return self.networkService.getNetworks()

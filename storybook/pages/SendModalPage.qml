@@ -53,7 +53,7 @@ SplitView {
                         }
                     }
 
-                    function splitAndFormatAddressPrefix(textAddrss, isBridgeTx, showUnpreferredNetworks) {
+                    function splitAndFormatAddressPrefix(textAddrss, isBridgeTx) {
                         return textAddrss
                     }
 
@@ -83,8 +83,6 @@ SplitView {
                     function plainText(text) {
                         return text
                     }
-
-                    function setDefaultPreferredDisabledChains() {}
 
                     function prepareTransactionsForAddress(address) {
                         console.log("prepareTransactionsForAddress:", address)

@@ -34,7 +34,6 @@ StatusDialog {
     property alias modalHeader: modalHeader.text
 
     property var store: TransactionStore{}
-    property var contactsStore: store.contactStore
     property var currencyStore: store.currencyStore
     property var selectedAccount: store.selectedSenderAccount
     property var bestRoutes
@@ -56,45 +55,34 @@ StatusDialog {
                     recipientAddress,
                     d.selectedSymbol,
                     amountToSendInput.cryptoValueToSend,
-                    d.uuid,
-                    JSON.stringify(popup.bestRoutes)
-                    )
+                    d.uuid)
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         if(!!popup.selectedAccount && !!assetSelector.selectedAsset && recipientLoader.ready && amountToSendInput.inputNumberValid) {
             popup.isLoading = true
             let amount = Math.round(amountToSendInput.cryptoValueToSend * Math.pow(10, assetSelector.selectedAsset.decimals))
-            popup.store.suggestedRoutes(popup.selectedAccount.address, amount.toString(16), assetSelector.selectedAsset.symbol,
-                                        store.disabledChainIdsFromList, store.disabledChainIdsToList,
-                                        store.preferredChainIds, popup.sendType, store.lockedInAmounts)
+            popup.store.suggestedRoutes(amount.toString(16), popup.sendType)
         }
     })
 
     QtObject {
         id: d
         readonly property int errorType: !amountToSendInput.input.valid ? Constants.SendAmountExceedsBalance :
-                                                                          (networkSelector.bestRoutes && networkSelector.bestRoutes.length <= 0 && !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
+                                                                          (popup.bestRoutes && popup.bestRoutes.count === 0 &&
+                                                                           !!amountToSendInput.input.text && recipientLoader.ready && !popup.isLoading) ?
                                                                               Constants.NoRoute : Constants.NoError
         readonly property double maxFiatBalance: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.totalCurrencyBalance.amount : 0
         readonly property double maxCryptoBalance: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.totalBalance.amount : 0
         readonly property double maxInputBalance: amountToSendInput.inputIsFiat ? maxFiatBalance : maxCryptoBalance
-        readonly property string selectedSymbol: !!assetSelector.selectedAsset ? assetSelector.selectedAsset.symbol : ""
-        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.store.currentCurrency : selectedSymbol
+        readonly property string selectedSymbol: store.selectedAssetSymbol
+        readonly property string inputSymbol: amountToSendInput.inputIsFiat ? popup.currencyStore.currentCurrency : selectedSymbol
         readonly property bool errorMode: popup.isLoading || !recipientLoader.ready ? false : errorType !== Constants.NoError || networkSelector.errorMode || !amountToSendInput.inputNumberValid
         readonly property string uuid: Utils.uuid()
         property bool isPendingTx: false
         property string totalTimeEstimate
-        property double totalFeesInEth
         property double totalFeesInFiat
         property double totalAmountToReceive
-
-        readonly property NetworkConnectionStore networkConnectionStore: NetworkConnectionStore {}
-
-        onErrorTypeChanged: {
-            if(errorType === Constants.SendAmountExceedsBalance)
-                bestRoutes = []
-        }
     }
 
     width: 556
@@ -106,18 +94,9 @@ StatusDialog {
         color: Theme.palette.baseColor3
     }
 
-    onIsLoadingChanged: if(isLoading) bestRoutes = []
-
     onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
     onOpened: {
-        if(!isBridgeTx) {
-            store.setDefaultPreferredDisabledChains()
-        }
-        else {
-            store.setAllNetworksAsPreferredChains()
-        }
-
         amountToSendInput.input.input.edit.forceActiveFocus()
 
         if(!!popup.preSelectedAsset) {
@@ -136,13 +115,6 @@ StatusDialog {
         if(popup.isBridgeTx) {
             recipientLoader.selectedRecipientType = TabAddressSelectorView.Type.Address
             recipientLoader.selectedRecipient = {address: popup.selectedAccount.address}
-        }
-
-        // add networks that are down to disabled list
-        if(d.networkConnectionStore.blockchainNetworksDown.length !== 0) {
-            for(let i in d.networkConnectionStore.blockchainNetworksDown) {
-                store.addRemoveDisabledToChain(parseInt(d.networkConnectionStore.blockchainNetworksDown[i]), true)
-            }
         }
     }
 
@@ -236,6 +208,7 @@ StatusDialog {
                                     assetSelector.selectedAsset = store.getAsset(selectedAccount.assets, assetSelector.selectedAsset.symbol)
                             }
                             onSelectedAssetChanged: {
+                                store.setSelectedAssetSymbol(assetSelector.selectedAsset.symbol)
                                 if (!assetSelector.selectedAsset || !amountToSendInput.inputNumberValid) {
                                     return
                                 }
@@ -299,7 +272,7 @@ StatusDialog {
                             interactive: popup.interactive
                             selectedSymbol: d.selectedSymbol
                             maxInputBalance: d.maxInputBalance
-                            currentCurrency: popup.store.currentCurrency
+                            currentCurrency: popup.currencyStore.currentCurrency
                             getFiatValue: function(cryptoValue) {
                                 return selectedSymbol ? popup.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency) : 0.0
                             }
@@ -317,8 +290,7 @@ StatusDialog {
                             id: amountToReceive
                             Layout.alignment: Qt.AlignRight
                             Layout.fillWidth:true
-                            visible: popup.bestRoutes !== undefined && popup.bestRoutes.length > 0 && amountToSendInput.inputNumberValid
-                            store: popup.store
+                            visible: !!popup.bestRoutes && popup.bestRoutes !== undefined && popup.bestRoutes.count > 0 && amountToSendInput.inputNumberValid
                             isLoading: popup.isLoading
                             selectedSymbol: d.selectedSymbol
                             isBridgeTx: popup.isBridgeTx
@@ -326,7 +298,7 @@ StatusDialog {
                             inputIsFiat: amountToSendInput.inputIsFiat
                             minCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
                             minFiatDecimals: amountToSendInput.minReceiveFiatDecimals
-                            currentCurrency: popup.store.currentCurrency
+                            currentCurrency: popup.currencyStore.currentCurrency
                             getFiatValue: function(cryptoValue) {
                                 return popup.currencyStore.getFiatValue(cryptoValue, selectedSymbol, currentCurrency)
                             }
@@ -385,7 +357,6 @@ StatusDialog {
                             isBridgeTx: popup.isBridgeTx
                             interactive: popup.interactive
                             selectedAsset: assetSelector.selectedAsset
-                            showUnpreferredNetworks: networkSelector.showUnpreferredNetworks
                             onIsLoading: popup.isLoading = true
                             onRecalculateRoutesAndFees: popup.recalculateRoutesAndFees()
                         }
@@ -419,13 +390,11 @@ StatusDialog {
                         amountToSend: amountToSendInput.cryptoValueToSend
                         minSendCryptoDecimals: amountToSendInput.minSendCryptoDecimals
                         minReceiveCryptoDecimals: amountToSendInput.minReceiveCryptoDecimals
-                        requiredGasInEth: d.totalFeesInEth
                         selectedAsset: assetSelector.selectedAsset
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees()
                         visible: recipientLoader.ready && !!assetSelector.selectedAsset && amountToSendInput.inputNumberValid
                         errorType: d.errorType
                         isLoading: popup.isLoading
-                        bestRoutes: popup.bestRoutes
                         isBridgeTx: popup.isBridgeTx
                     }
 
@@ -450,7 +419,7 @@ StatusDialog {
 
     footer: SendModalFooter {
         nextButtonText: popup.isBridgeTx ? qsTr("Bridge") : qsTr("Send")
-        maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.store.currentCurrency)
+        maxFiatFees: popup.isLoading ? "..." : popup.currencyStore.formatCurrencyAmount(d.totalFeesInFiat, popup.currencyStore.currentCurrency)
         totalTimeEstimate: popup.isLoading? "..." : d.totalTimeEstimate
         pending: d.isPendingTx || popup.isLoading
         visible: recipientLoader.ready && amountToSendInput.inputNumberValid && !d.errorMode
@@ -464,54 +433,38 @@ StatusDialog {
 
     Connections {
         target: popup.store.walletSectionSendInst
-        function onSuggestedRoutesReady(suggestedRoutes: string) {
-            let response = JSON.parse(suggestedRoutes)
-            if(!!response.error) {
-                popup.isLoading = false
-                return
-            }
-            popup.bestRoutes =  response.suggestedRoutes.best
-            let gasTimeEstimate = response.suggestedRoutes.gasTimeEstimate
+        function onSuggestedRoutesReady(txRoutes) {
+            popup.bestRoutes =  txRoutes.suggestedRoutes
+            let gasTimeEstimate = txRoutes.gasTimeEstimate
             d.totalTimeEstimate = popup.store.getLabelForEstimatedTxTime(gasTimeEstimate.totalTime)
-            d.totalFeesInEth = gasTimeEstimate.totalFeesInEth
-            d.totalFeesInFiat = popup.currencyStore.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.store.currentCurrency) +
-                popup.currencyStore.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.store.currentCurrency)
-            d.totalAmountToReceive = popup.store.getWei2Eth(response.suggestedRoutes.amountToReceive, assetSelector.selectedAsset.decimals)
-            networkSelector.toNetworksList = response.suggestedRoutes.toNetworks
+            d.totalFeesInFiat = popup.currencyStore.getFiatValue( gasTimeEstimate.totalFeesInEth, "ETH", popup.currencyStore.currentCurrency) +
+                popup.currencyStore.getFiatValue(gasTimeEstimate.totalTokenFees, fees.selectedTokenSymbol, popup.currencyStore.currentCurrency)
+            d.totalAmountToReceive = popup.store.getWei2Eth(txRoutes.amountToReceive, assetSelector.selectedAsset.decimals)
+            networkSelector.toNetworksList = txRoutes.toNetworksModel
             popup.isLoading = false
         }
     }
 
     Connections {
         target: popup.store.walletSectionSendInst
-        function onTransactionSent(txResult: string) {
+        function onTransactionSent(chainId: int, txHash: string, uuid: string, error: string) {
             d.isPendingTx = false
-            try {
-                let response = JSON.parse(txResult)
-                if (response.uuid !== d.uuid) return
-
-                if (!response.success) {
-                    if (response.error.includes(Constants.walletSection.cancelledMessage)) {
-                        return
-                    }
-                    sendingError.text = response.error
-                    return sendingError.open()
+            if (uuid !== d.uuid) return
+            if (!!error) {
+                if (error.includes(Constants.walletSection.cancelledMessage)) {
+                    return
                 }
-                for(var i=0; i<popup.bestRoutes.length; i++) {
-                    let txHash = response.result[popup.bestRoutes[i].fromNetwork.chainId]
-                    let url =  "%1/%2".arg(popup.store.getEtherscanLink(popup.bestRoutes[i].fromNetwork.chainId)).arg(txHash)
-                    Global.displayToastMessage(qsTr("Transaction pending..."),
-                                               qsTr("View on etherscan"),
-                                               "",
-                                               true,
-                                               Constants.ephemeralNotificationType.normal,
-                                               url)
-                }
-
-                popup.close()
-            } catch (e) {
-                console.error('Error parsing the response', e)
+                sendingError.text = error
+                return sendingError.open()
             }
+            let url =  "%1/%2".arg(popup.store.getEtherscanLink(chainId)).arg(txHash)
+            Global.displayToastMessage(qsTr("Transaction pending..."),
+                                       qsTr("View on etherscan"),
+                                       "",
+                                       true,
+                                       Constants.ephemeralNotificationType.normal,
+                                       url)
+            popup.close()
         }
     }
 }

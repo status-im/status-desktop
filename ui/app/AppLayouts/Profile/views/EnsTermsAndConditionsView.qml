@@ -52,8 +52,8 @@ Item {
             preDefinedAmountToSend: LocaleUtils.numberToLocaleString(10)
             preSelectedAsset: store.getAsset(buyEnsModal.store.assets, JSON.parse(root.stickersStore.getStatusToken()).symbol)
             sendTransaction: function() {
-                if(bestRoutes.length === 1) {
-                    let path = bestRoutes[0]
+                if(bestRoutes.count === 1) {
+                    let path = bestRoutes.firstItem()
                     let eip1559Enabled = path.gasFees.eip1559Enabled
                     let maxFeePerGas = path.gasFees.maxFeePerGasM
                     root.ensUsernamesStore.authenticateAndRegisterEns(
@@ -70,29 +70,22 @@ Item {
             }
             Connections {
                 target: root.ensUsernamesStore.ensUsernamesModule
-                function onTransactionWasSent(txResult: string) {
-                    try {
-                        let response = JSON.parse(txResult)
-                        if (!response.success) {
-                            if (response.result.includes(Constants.walletSection.cancelledMessage)) {
+                function onTransactionWasSent(chainId: int, txHash: string, error: string) {
+                        if (!!error) {
+                            if (error.includes(Constants.walletSection.cancelledMessage)) {
                                 return
                             }
-                            buyEnsModal.sendingError.text = response.result
+                            buyEnsModal.sendingError.text = error
                             return buyEnsModal.sendingError.open()
                         }
-                        for(var i=0; i<buyEnsModal.bestRoutes.length; i++) {
                             usernameRegistered(username)
-                            let url =  "%1/%2".arg(buyEnsModal.store.getEtherscanLink(buyEnsModal.bestRoutes[i].fromNetwork.chainId)).arg(response.result)
+                            let url =  "%1/%2".arg(buyEnsModal.store.getEtherscanLink(chainId)).arg(txHash)
                             Global.displayToastMessage(qsTr("Transaction pending..."),
                                                        qsTr("View on etherscan"),
                                                        "",
                                                        true,
                                                        Constants.ephemeralNotificationType.normal,
                                                        url)
-                        }
-                    } catch (e) {
-                        console.error('Error parsing the response', e)
-                    }
                 }
             }
         }

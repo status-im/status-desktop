@@ -1,14 +1,17 @@
-import tables, NimQml, sequtils, sugar, json, stint
+import tables, NimQml, sequtils, sugar, json, stint, strutils
 
-import ./io_interface, ./view, ./controller
+import ./io_interface, ./view, ./controller, ./network_item, ./transaction_routes, ./suggested_route_item, ./suggested_route_model, ./gas_estimate_item, ./gas_fees_item, ./network_model
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
-import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../../../../../app_service/service/network/service as network_service
-import ../../../../../app_service/service/currency/service as currency_service
-import ../../../../../app_service/service/transaction/service as transaction_service
-import ../../../shared/wallet_utils
+import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/network/service as network_service
+import app_service/service/currency/service as currency_service
+import app_service/service/transaction/service as transaction_service
+import app_service/service/network_connection/service
+import app/modules/shared/wallet_utils
+import app_service/service/transaction/dto
+import app/modules/shared_models/currency_amount
 
 export io_interface
 
@@ -20,8 +23,8 @@ type TmpSendTransactionDetails = object
   toAddr: string
   tokenSymbol: string
   value: string
+  paths: seq[TransactionPathDto]
   uuid: string
-  selectedRoutes: string
 
 type
   Module* = ref object of io_interface.AccessInterface
@@ -34,6 +37,9 @@ type
     senderCurrentAccountIndex: int
     # To-do we should create a dedicated module Receive
     receiveCurrentAccountIndex: int
+
+# Forward declaration
+method getTokenBalanceOnChain*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -55,6 +61,81 @@ proc newModule*(
 method delete*(self: Module) =
   self.view.delete
   self.controller.delete
+
+method convertSendToNetworkToNetworkItem(self: Module, network: SendToNetwork): NetworkItem =
+  result = initNetworkItem(
+      network.chainId,
+      network.chainName,
+      network.iconUrl,
+      chainColor = "",
+      shortName = "",
+      layer = 0,
+      nativeCurrencyDecimals = 0,
+      nativeCurrencyName = "",
+      nativeCurrencySymbol = "",
+      true,
+      true,
+      true,
+      newCurrencyAmount(),
+      false,
+      lockedAmount = "",
+      amountIn = "",
+      $network.amountOut)
+
+method convertNetworkDtoToNetworkItem(self: Module, network: NetworkDto): NetworkItem =
+  result = initNetworkItem(
+      network.chainId,
+      network.chainName,
+      network.iconUrl,
+      network.chainColor,
+      network.shortName,
+      network.layer,
+      network.nativeCurrencyDecimals,
+      network.nativeCurrencyName,
+      network.nativeCurrencySymbol,
+      true,
+      false,
+      true,
+      self.getTokenBalanceOnChain(self.view.getSelectedSenderAccountAddress(), network.chainId, self.view.getSelectedAssetSymbol())
+      )
+
+method convertSuggestedFeesDtoToGasFeesItem(self: Module, gasFees: SuggestedFeesDto): GasFeesItem =
+  result = newGasFeesItem(
+    gasPrice = gasFees.gasPrice,
+    baseFee = gasFees.baseFee,
+    maxPriorityFeePerGas = gasFees.maxPriorityFeePerGas,
+    maxFeePerGasL = gasFees.maxFeePerGasL,
+    maxFeePerGasM = gasFees.maxFeePerGasM,
+    maxFeePerGasH = gasFees.maxFeePerGasH,
+    eip1559Enabled = gasFees.eip1559Enabled
+    )
+
+method convertFeesDtoToGasEstimateItem(self: Module, fees: FeesDto): GasEstimateItem =
+  result = newGasEstimateItem(
+    totalFeesInEth = fees.totalFeesInEth,
+    totalTokenFees = fees.totalTokenFees,
+    totalTime = fees.totalTime
+    )
+
+method convertTransactionPathDtoToSuggestedRouteItem(self: Module, path: TransactionPathDto): SuggestedRouteItem =
+  result = newSuggestedRouteItem(
+    bridgeName = path.bridgeName,
+    fromNetwork = path.fromNetwork.chainId,
+    toNetwork = path.toNetwork.chainId,
+    maxAmountIn = $path.maxAmountIn,
+    amountIn = $path.amountIn,
+    amountOut = $path.amountOut,
+    gasAmount = $path.gasAmount,
+    gasFees = self.convertSuggestedFeesDtoToGasFeesItem(path.gasFees),
+    tokenFees = path.tokenFees,
+    cost = path.cost,
+    estimatedTime = path.estimatedTime,
+    amountInLocked = path.amountInLocked,
+    isFirstSimpleTx = path.isFirstSimpleTx,
+    isFirstBridgeTx = path.isFirstBridgeTx,
+    approvalRequired = path.approvalRequired,
+    approvalGasFees = path.approvalGasFees
+    )
 
 method refreshWalletAccounts*(self: Module) =
   let walletAccounts = self.controller.getWalletAccounts()
@@ -87,6 +168,12 @@ method refreshWalletAccounts*(self: Module) =
   self.view.switchSenderAccount(self.senderCurrentAccountIndex)
   self.view.switchReceiveAccount(self.receiveCurrentAccountIndex)
 
+method refreshNetworks*(self: Module) =
+  let networks = self.controller.getNetworks()
+  let fromNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
+  let toNetworks = networks.map(x => self.convertNetworkDtoToNetworkItem(x))
+  self.view.setNetworkItems(fromNetworks, toNetworks)
+
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSectionSend", newQVariant(self.view))
 
@@ -105,6 +192,7 @@ method load*(self: Module) =
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
+    self.refreshNetworks()
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
     self.refreshWalletAccounts()
@@ -129,21 +217,19 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   self.refreshWalletAccounts()
+  self.refreshNetworks()
   self.moduleLoaded = true
   self.delegate.sendModuleDidLoad()
 
 method getTokenBalanceOnChain*(self: Module, address: string, chainId: int, symbol: string): CurrencyAmount =
   return self.controller.getTokenBalanceOnChain(address, chainId, symbol)
 
-method authenticateAndTransfer*(
-  self: Module, from_addr: string, to_addr: string, tokenSymbol: string, value: string, uuid: string, selectedRoutes: string
-) =
+method authenticateAndTransfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string, value: string, uuid: string) =
   self.tmpSendTransactionDetails.fromAddr = from_addr
   self.tmpSendTransactionDetails.toAddr = to_addr
   self.tmpSendTransactionDetails.tokenSymbol = tokenSymbol
   self.tmpSendTransactionDetails.value = value
   self.tmpSendTransactionDetails.uuid = uuid
-  self.tmpSendTransactionDetails.selectedRoutes = selectedRoutes
 
   if singletonInstance.userProfile.getIsKeycardUser():
     let keyUid = singletonInstance.userProfile.getKeyUid()
@@ -174,29 +260,36 @@ method authenticateAndTransfer*(
 
 method onUserAuthenticated*(self: Module, password: string) =
   if password.len == 0:
-    let response = %* {"uuid": self.tmpSendTransactionDetails.uuid, "success": false, "error": cancelledRequest}
-    self.view.transactionWasSent($response)
+    self.view.transactionWasSent(chainId = 0, txHash = "", uuid = self.tmpSendTransactionDetails.uuid, error = cancelledRequest)
   else:
     self.controller.transfer(
       self.tmpSendTransactionDetails.fromAddr, self.tmpSendTransactionDetails.toAddr,
       self.tmpSendTransactionDetails.tokenSymbol, self.tmpSendTransactionDetails.value, self.tmpSendTransactionDetails.uuid,
-      self.tmpSendTransactionDetails.selectedRoutes, password
+      self.tmpSendTransactionDetails.paths, password
     )
 
-method transactionWasSent*(self: Module, result: string) =
-  self.view.transactionWasSent(result)
+method transactionWasSent*(self: Module, chainId: int, txHash, uuid, error: string) =
+  self.view.transactionWasSent(chainId, txHash, uuid, error)
 
-method suggestedFees*(self: Module, chainId: int): string =
-  return self.controller.suggestedFees(chainId)
-
-method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string =
+method suggestedRoutes*(self: Module, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): string =
   return self.controller.suggestedRoutes(account, amount, token, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs, sendType, lockedInAmounts)
 
-method suggestedRoutesReady*(self: Module, suggestedRoutes: string) =
-  self.view.suggestedRoutesReady(suggestedRoutes)
-
-method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int =
-  return self.controller.getEstimatedTime(chainId, maxFeePerGas).int
+method suggestedRoutesReady*(self: Module, suggestedRoutes: SuggestedRoutesDto) =
+  self.tmpSendTransactionDetails.paths = suggestedRoutes.best
+  let paths = suggestedRoutes.best.map(x => self.convertTransactionPathDtoToSuggestedRouteItem(x))
+  let suggestedRouteModel = newSuggestedRouteModel()
+  suggestedRouteModel.setItems(paths)
+  let gasTimeEstimate = self.convertFeesDtoToGasEstimateItem(suggestedRoutes.gasTimeEstimate)
+  let networks = suggestedRoutes.toNetworks.map(x => self.convertSendToNetworkToNetworkItem(x))
+  let toNetworksModel = newNetworkModel()
+  toNetworksModel.setItems(networks)
+  self.view.updatedNetworksWithRoutes(paths, gasTimeEstimate.getTotalFeesInEth())
+  let transactionRoutes = newTransactionRoutes(
+    suggestedRoutes = suggestedRouteModel,
+    gasTimeEstimate = gasTimeEstimate,
+    amountToReceive = suggestedRoutes.amountToReceive,
+    toNetworksModel = toNetworksModel)
+  self.view.setTransactionRoute(transactionRoutes)
 
 method filterChanged*(self: Module, addresses: seq[string], chainIds: seq[int]) =
   if addresses.len == 0:

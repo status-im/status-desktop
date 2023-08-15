@@ -74,9 +74,9 @@ QtObject:
     self.loading(false)
     self.detailsObtained(chainId, ensUsername, address, pubkey, isStatus, expirationTime)
 
-  proc transactionWasSent(self: View, txResult: string) {.signal.}
-  proc emitTransactionWasSentSignal*(self: View, txResult: string) =
-    self.transactionWasSent(txResult)
+  proc transactionWasSent(self: View, chainId: int, txHash: string, error: string) {.signal.}
+  proc emitTransactionWasSentSignal*(self: View, chainId: int, txHash: string, error: string) =
+    self.transactionWasSent(chainId, txHash, error)
 
   proc setPubKeyGasEstimate*(self: View, chainId: int, ensUsername: string, address: string): int {.slot.} =
     return self.delegate.setPubKeyGasEstimate(chainId, ensUsername, address)

@@ -17,10 +17,11 @@ Item {
     property string selectedTokenSymbol
     property string currentCurrency
 
-    property var bestRoutes: []
+    property var bestRoutes
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
     property var formatCurrencyAmount: function () {}
+    property var getNetworkName: function () {}
 
     width: parent.width
     height: visible ? advancedGasSelector.height + Style.current.halfPadding : 0
@@ -47,7 +48,7 @@ Item {
                 asset.color: Theme.palette.directColor1
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
-                title: qsTr("%1 transaction fee").arg(modelData.fromNetwork.chainName)
+                title: qsTr("%1 transaction fee").arg(root.getNetworkName(modelData.fromNetwork))
                 subTitle: root.formatCurrencyAmount(totalGasAmountEth, "ETH")
                 property double totalGasAmountEth: {
                     let maxFees = modelData.gasFees.maxFeePerGasM
@@ -64,8 +65,6 @@ Item {
                         text: root.formatCurrencyAmount(totalGasAmountFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
-                        width: listItem.width/2 - Style.current.padding
-                        elide: Text.ElideRight
                     }
                 ]
             }
@@ -75,19 +74,19 @@ Item {
         Repeater {
             model: root.bestRoutes
             StatusListItem {
-                id: listItem
+                id: listItem1
                 color: Theme.palette.statusListItem.backgroundColor
                 width: parent.width
                 asset.name: "tiny/checkmark"
                 asset.color: Theme.palette.directColor1
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstSimpleTx
-                title: qsTr("Approve %1 %2 Bridge").arg(modelData.fromNetwork.chainName).arg(root.selectedTokenSymbol)
+                title: qsTr("Approve %1 %2 Bridge").arg(root.getNetworkName(modelData.fromNetwork)).arg(root.selectedTokenSymbol)
                 property double approvalGasFees: modelData.approvalGasFees
                 property string approvalGasFeesSymbol: "ETH"
                 property double approvalGasFeesFiat: root.getFiatValue(approvalGasFees, approvalGasFeesSymbol, root.currentCurrency)
                 subTitle: root.formatCurrencyAmount(approvalGasFees, approvalGasFeesSymbol)
-                statusListItemSubTitle.width: listItem.width/2 - Style.current.smallPadding
+                statusListItemSubTitle.width: listItem1.width/2 - Style.current.smallPadding
                 statusListItemSubTitle.elide: Text.ElideMiddle
                 statusListItemSubTitle.wrapMode: Text.NoWrap
                 visible: modelData.approvalRequired
@@ -97,8 +96,6 @@ Item {
                         text:  root.formatCurrencyAmount(approvalGasFeesFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
-                        width: listItem.width/2 - Style.current.padding
-                        elide: Text.ElideRight
                     }
                 ]
             }
@@ -116,7 +113,7 @@ Item {
                 asset.color: Theme.palette.directColor1
                 statusListItemIcon.active: true
                 statusListItemIcon.opacity: modelData.isFirstBridgeTx
-                title: qsTr("%1 -> %2 bridge").arg(modelData.fromNetwork.chainName).arg(modelData.toNetwork.chainName)
+                title: qsTr("%1 -> %2 bridge").arg(root.getNetworkName(modelData.fromNetwork)).arg(root.getNetworkName(modelData.toNetwork))
                 property double tokenFees: modelData.tokenFees
                 property double tokenFeesFiat: root.getFiatValue(tokenFees, root.selectedTokenSymbol, root.currentCurrency)
                 subTitle: root.formatCurrencyAmount(tokenFees, root.selectedTokenSymbol)
@@ -129,8 +126,6 @@ Item {
                         text: root.formatCurrencyAmount(tokenFeesFiat, root.currentCurrency)
                         font.pixelSize: 15
                         color: Theme.palette.baseColor1
-                        width: listItem2.width/2 - Style.current.padding
-                        elide: Text.ElideRight
                     }
                 ]
             }

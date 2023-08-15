@@ -25,15 +25,12 @@ Item {
     property var amountToSend
     property int minSendCryptoDecimals: 0
     property int minReceiveCryptoDecimals: 0
-    property var requiredGasInEth
-    property var bestRoutes
     property bool isLoading: false
     property bool advancedOrCustomMode: (tabBar.currentIndex === 1) || (tabBar.currentIndex === 2)
     property bool errorMode: advancedNetworkRoutingPage.errorMode
     property bool interactive: true
     property bool isBridgeTx: false
-    property bool showUnpreferredNetworks: advancedNetworkRoutingPage.showUnpreferredNetworks
-    property var toNetworksList: []
+    property var toNetworksList
     property int errorType: Constants.NoError
 
     signal reCalculateSuggestedRoute()
@@ -78,19 +75,18 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: Style.current.padding
                 width: stackLayout.width  - Style.current.bigPadding
-                bestRoutes: root.bestRoutes
                 isBridgeTx: root.isBridgeTx
                 amountToSend: root.amountToSend
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 isLoading: root.isLoading
                 store: root.store
-                selectedAsset: root.selectedAsset
                 selectedAccount: root.selectedAccount
                 errorMode: root.errorMode
                 errorType: root.errorType
                 toNetworksList: root.toNetworksList
                 weiToEth: function(wei) {
-                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
+                    if(root.selectedAsset !== undefined)
+                        return parseFloat(store.getWei2Eth(wei, root.selectedAsset.decimals))
                 }
                 formatCurrencyAmount: root.currencyStore.formatCurrencyAmount
                 reCalculateSuggestedRoute: function() {
@@ -114,18 +110,17 @@ Item {
                 selectedAccount: root.selectedAccount
                 ensAddressOrEmpty: root.ensAddressOrEmpty
                 amountToSend: root.amountToSend
-                requiredGasInEth: root.requiredGasInEth
                 minSendCryptoDecimals: root.minSendCryptoDecimals
                 minReceiveCryptoDecimals: root.minReceiveCryptoDecimals
                 selectedAsset: root.selectedAsset
                 onReCalculateSuggestedRoute: root.reCalculateSuggestedRoute()
-                bestRoutes: root.bestRoutes
                 isLoading: root.isLoading
                 interactive: root.interactive
                 isBridgeTx: root.isBridgeTx
                 errorType: root.errorType
                 weiToEth: function(wei) {
-                    return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
+                    if(selectedAsset !== undefined)
+                        return parseFloat(store.getWei2Eth(wei, selectedAsset.decimals))
                 }
             }
         }

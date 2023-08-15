@@ -63,7 +63,7 @@ Rectangle {
                     text: root.isLoading ? "..." : root.currencyStore.formatCurrencyAmount(root.gasFiatAmount, root.currencyStore.currentCurrency)
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
-                    visible: !!root.bestRoutes && root.bestRoutes !== undefined && root.bestRoutes.length > 0
+                    visible: !!root.bestRoutes && root.bestRoutes !== undefined && root.bestRoutes.count > 0
                 }
             }
             GasSelector {
@@ -76,6 +76,7 @@ Rectangle {
                 visible: root.errorType === Constants.NoError && !root.isLoading
                 bestRoutes: root.bestRoutes
                 selectedTokenSymbol: root.selectedTokenSymbol
+                getNetworkName: root.store.getNetworkName
             }
             GasValidator {
                 id: gasValidator

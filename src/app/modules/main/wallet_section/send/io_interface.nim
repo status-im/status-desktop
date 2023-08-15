@@ -1,5 +1,6 @@
 import stint
 import ../../../shared_models/currency_amount
+import app_service/service/transaction/dto
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -20,26 +21,20 @@ method refreshWalletAccounts*(self: AccessInterface) {.base.} =
 method getTokenBalanceOnChain*(self: AccessInterface, address: string, chainId: int, symbol: string): CurrencyAmount {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method suggestedRoutes*(self: AccessInterface, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[uint64], sendType: int, lockedInAmounts: string): string {.base.} =
+method suggestedRoutes*(self: AccessInterface, account: string, amount: UInt256, token: string, disabledFromChainIDs, disabledToChainIDs, preferredChainIDs: seq[int], sendType: int, lockedInAmounts: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method suggestedRoutesReady*(self: AccessInterface, suggestedRoutes: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getEstimatedTime*(self: AccessInterface, chainId: int, maxFeePerGas: string): int {.base.} = 
-  raise newException(ValueError, "No implementation available")
-
-method suggestedFees*(self: AccessInterface, chainId: int): string {.base.} = 
+method suggestedRoutesReady*(self: AccessInterface, suggestedRoutes: SuggestedRoutesDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method authenticateAndTransfer*(self: AccessInterface, from_addr: string, to_addr: string,
-    tokenSymbol: string, value: string, uuid: string, selectedRoutes: string) {.base.} =
+    tokenSymbol: string, value: string, uuid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onUserAuthenticated*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method transactionWasSent*(self: AccessInterface, result: string) {.base.} =
+method transactionWasSent*(self: AccessInterface, chainId: int, txHash, uuid, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
