@@ -39,7 +39,7 @@ Item {
             text: qsTr("Sign in by syncing")
         }
 
-        DeviceSyncingView {
+        SyncingDeviceView {
             Layout.alignment: Qt.AlignHCenter
 
             localPairingState: startupStore.localPairingState
