@@ -43,11 +43,11 @@ Item {
         id: d
         readonly property bool isIncoming: transactionType === Constants.TransactionType.Received
         readonly property string networkShortName: root.isTransactionValid ? RootStore.getNetworkShortName(transaction.chainId) : ""
-        readonly property string networkIcon: isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : ""
+        readonly property string networkIcon: isTransactionValid ? RootStore.getNetworkIcon(transaction.chainId) : "network/Network=Custom"
         readonly property int blockNumber: root.isTransactionValid ? RootStore.hex2Dec(root.transaction.blockNumber) : 0
         readonly property int toBlockNumber: 0 // TODO fill when bridge data is implemented
-        readonly property string toNetworkIcon: "" // TODO fill when bridge data is implemented
-        readonly property string toNetworkShortName: "" // TODO fill when bridge data is implemented
+        readonly property string networkShortNameOut: networkShortName
+        readonly property string networkShortNameIn: transactionHeader.isMultiTransaction ? RootStore.getNetworkShortName(transaction.chainIdOut) : ""
         readonly property string symbol: isTransactionValid ? transaction.symbol : ""
         readonly property string inSymbol: isTransactionValid ? transaction.inSymbol : ""
         readonly property string outSymbol: isTransactionValid ? transaction.outSymbol : ""
@@ -77,7 +77,6 @@ Item {
         readonly property real feeEthValue: root.isTransactionValid ? RootStore.getGasEthValue(transaction.totalFees.amount, 1) : 0 // TODO use directly?
         readonly property real feeFiatValue: root.isTransactionValid ? RootStore.getFiatValue(d.feeEthValue, Constants.ethToken, RootStore.currentCurrency) : 0 // TODO use directly?
         readonly property int transactionType: root.isTransactionValid ? transaction.txType : Constants.TransactionType.Send
-        readonly property string toNetworkName: "" // TODO fill network name for bridge
 
         property string decodedInputData: ""
         property bool loadingInputDate: false
@@ -200,21 +199,25 @@ Item {
                             Layout.fillHeight: true
                             title: qsTr("From")
                             subTitle: {
+                                if (!root.isTransactionValid)
+                                    return ""
                                 switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
                                     return !!d.outSymbol ? d.outSymbol : " "
                                 case Constants.TransactionType.Bridge:
-                                    return transactionHeader.networkName
+                                    return transactionHeader.networkNameOut
                                 default:
                                     return ""
                                 }
                             }
                             asset.name: {
+                                if (!root.isTransactionValid)
+                                    return ""
                                 switch(d.transactionType) {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.outSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return !!d.networkIcon ? Style.svg(d.networkIcon) : ""
+                                    return Style.svg(RootStore.getNetworkIcon(root.transaction.chainIdOut)) ?? Style.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
@@ -231,7 +234,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return !!d.inSymbol ? d.inSymbol : " "
                                 case Constants.TransactionType.Bridge:
-                                    return d.toNetworkName
+                                    return transactionHeader.networkNameIn ?? " "
                                 default:
                                     return ""
                                 }
@@ -241,7 +244,7 @@ Item {
                                 case Constants.TransactionType.Swap:
                                     return Constants.tokenIcon(d.inSymbol)
                                 case Constants.TransactionType.Bridge:
-                                    return !!d.toNetworkIcon ? Style.svg(d.toNetworkIcon) : ""
+                                    return Style.svg(RootStore.getNetworkIcon(root.transaction.chainIdIn)) ?? Style.svg("network/Network=Custom")
                                 default:
                                     return ""
                                 }
@@ -258,7 +261,7 @@ Item {
                         rootStore: WalletStores.RootStore
                         onButtonClicked: {
                             if (d.transactionType === Constants.TransactionType.Swap || d.transactionType === Constants.TransactionType.Bridge) {
-                                addressMenu.openEthAddressMenu(this, addresses[0], d.networkShortName)
+                                addressMenu.openEthAddressMenu(this, addresses[0], d.networkShortNameOut)
                             } else {
                                 addressMenu.openSenderMenu(this, addresses[0], d.networkShortName)
                             }
@@ -323,11 +326,11 @@ Item {
                     }
                     TransactionDataTile {
                         width: parent.width
-                        title: qsTr("%1 Tx hash").arg(d.toNetworkName)
+                        title: qsTr("%1 Tx hash").arg(transactionHeader.networkNameIn)
                         subTitle: "" // TODO fill tx hash for Bridge
                         visible: !!subTitle
                         buttonIconName: "more"
-                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, d.toNetworkShortName)
+                        onButtonClicked: addressMenu.openTxMenu(this, subTitle, d.networkShortNameIn)
                     }
                     TransactionContractTile {
                         // Used for Bridge and Swap to display 'From' network Protocol contract address
@@ -353,8 +356,8 @@ Item {
                         // Used for Bridge to display 'To' network Protocol contract address
                         address: "" // TODO fill protocol contract address for 'to' network for Bridge
                         symbol: "" // TODO fill protocol name for Bridge
-                        networkName: d.toNetworkName
-                        shortNetworkName: d.toNetworkShortName
+                        networkName: transactionHeader.networknameOut
+                        shortNetworkName: d.networkShortNameOut
                         visible: !!subTitle && d.transactionType === Constants.TransactionType.Bridge
                     }
                     TransactionContractTile {
@@ -383,8 +386,8 @@ Item {
                                 return ""
                             }
                         }
-                        networkName: d.toNetworkName
-                        shortNetworkName: d.toNetworkShortName
+                        networkName: transactionHeader.networkNameIn
+                        shortNetworkName: d.networkShortNameIn
                         visible: root.isTransactionValid && !!subTitle
                     }
                 }
