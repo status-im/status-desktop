@@ -83,12 +83,12 @@ change_password_button = {"container": statusDesktop_mainWindow, "type": "Status
 mainWindow_StatusWindow = {"name": "mainWindow", "type": "StatusWindow", "visible": True}
 mainWindow_settingsContentBaseScrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
 mainWindow_KeycardView = {"container": statusDesktop_mainWindow, "type": "KeycardView", "unnamed": 1, "visible": True}
-settingsContentBaseScrollView_StatusListItem = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "type": "StatusListItem", "unnamed": 1, "visible": True}
-settingsContentBaseScrollView_StatusListItem_2 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 2, "type": "StatusListItem", "unnamed": 1, "visible": True}
-settingsContentBaseScrollView_StatusListItem_3 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 3, "type": "StatusListItem", "unnamed": 1, "visible": True}
-settingsContentBaseScrollView_StatusListItem_4 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 4, "type": "StatusListItem", "unnamed": 1, "visible": True}
-settingsContentBaseScrollView_StatusListItem_5 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 5, "type": "StatusListItem", "unnamed": 1, "visible": True}
-settingsContentBaseScrollView_StatusListItem_6 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 6, "type": "StatusListItem", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_setupFromExistingKeycardAccount_StatusListItem = {"container": settingsContentBase_ScrollView, "objectName": "setupFromExistingKeycardAccount", "type": "StatusListItem", "visible": True}
+settingsContentBaseScrollView_createNewKeycardAccount_StatusListItem = {"container": settingsContentBase_ScrollView, "objectName": "createNewKeycardAccount", "type": "StatusListItem", "visible": True}
+settingsContentBaseScrollView_importRestoreKeycard_StatusListItem = {"container": settingsContentBase_ScrollView, "objectName": "importRestoreKeycard", "type": "StatusListItem", "visible": True}
+settingsContentBaseScrollView_importFromKeycard_StatusListItem = {"container": ":settingsContentBase_ScrollView", "objectName": "importFromKeycard", "type": "StatusListItem", "visible": True}
+settingsContentBaseScrollView_checkWhatsNewKeycard_StatusListItem = {"container": ":settingsContentBase_ScrollView", "objectName": "checkWhatsNewKeycard", "type": "StatusListItem", "visible": True}
+settingsContentBaseScrollView_factoryResetKeycard_StatusListItem = {"container": ":settingsContentBase_ScrollView", "objectName": "factoryResetKeycard", "type": "StatusListItem", "visible": True}
 
 # Social Links Popup
 socialLink_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListItem", "title": "", "visible": True}

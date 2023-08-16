@@ -515,12 +515,12 @@ class KeycardSettingsView(BaseElement):
     def __init__(self):
         super(KeycardSettingsView, self).__init__('mainWindow_KeycardView')
 
-        self._setup_keycard_with_existing_account_button = Button('settingsContentBaseScrollView_StatusListItem')
-        self._create_new_keycard_account_button = Button('settingsContentBaseScrollView_StatusListItem_2')
-        self._import_restore_via_seed_phrase_button = Button('settingsContentBaseScrollView_StatusListItem_3')
-        self._import_from_keycard_button = Button('settingsContentBaseScrollView_StatusListItem_4')
-        self._check_whats_on_keycard_button = Button('settingsContentBaseScrollView_StatusListItem_5')
-        self._factory_reset_keycard_button = Button('settingsContentBaseScrollView_StatusListItem_6')
+        self._setup_keycard_with_existing_account_button = Button('settingsContentBaseScrollView_setupFromExistingKeycardAccount_StatusListItem')
+        self._create_new_keycard_account_button = Button('settingsContentBaseScrollView_createNewKeycardAccount_StatusListItem')
+        self._import_restore_via_seed_phrase_button = Button('settingsContentBaseScrollView_importRestoreKeycard_StatusListItem')
+        self._import_from_keycard_button = Button('settingsContentBaseScrollView_importFromKeycard_StatusListItem')
+        self._check_whats_on_keycard_button = Button('settingsContentBaseScrollView_checkWhatsNewKeycard_StatusListItem')
+        self._factory_reset_keycard_button = Button('settingsContentBaseScrollView_factoryResetKeycard_StatusListItem')
 
     def check_keycard_screen_loaded(self):
         assert KeycardSettingsView().is_visible
