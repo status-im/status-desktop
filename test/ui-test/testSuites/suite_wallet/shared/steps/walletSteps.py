@@ -1,4 +1,5 @@
 from common.Common import str_to_bool
+from screens.SettingsScreen import KeycardSettingsView
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusWalletScreen import StatusWalletScreen
 from screens.StatusWalletScreen import VALUE_YES
@@ -7,6 +8,7 @@ from scripts.decorators import verify_screenshot
 
 _statusMain = StatusMainScreen()
 _walletScreen = StatusWalletScreen()
+_keycardView = KeycardSettingsView()
 
 
 #########################
@@ -191,8 +193,20 @@ def step(context, name, color, emoji_unicode):
 def step(context):
     _walletScreen.verify_keycard_settings_is_opened()
 
+@Then("keycard view is displayed")
+def step(context):
+    _keycardView.check_keycard_screen_loaded()
 
-@Then("the account with \"|any|\" is not displayed")
+@Then("all buttons of keycard view are displayed")
+def step(context):
+    _keycardView.check_setup_existing_option()
+    _keycardView.check_create_new_option()
+    _keycardView.check_import_restore_option()
+    _keycardView.check_import_from_keycard_option()
+    _keycardView.check_whats_on_keycard_option()
+    _keycardView.check_factory_reset_option()
+
+Then("the account with \"|any|\" is not displayed")
 def step(context, name):
     _walletScreen.verify_account_doesnt_exist(name)
 

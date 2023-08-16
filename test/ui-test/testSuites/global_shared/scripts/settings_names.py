@@ -79,6 +79,17 @@ customUrl_popup_StatusInput = {"container": statusDesktop_mainWindow_overlay, "o
 customUrl_popup_TextEdit = {"container": customUrl_popup_StatusInput, "type": "TextEdit", "unnamed": 1, "visible": True}
 change_password_button = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "profileSettingsChangePasswordButton", "visible": True}
 
+# Keycard Settings:
+mainWindow_StatusWindow = {"name": "mainWindow", "type": "StatusWindow", "visible": True}
+mainWindow_settingsContentBaseScrollView_StatusScrollView = {"container": mainWindow_StatusWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
+mainWindow_KeycardView = {"container": statusDesktop_mainWindow, "type": "KeycardView", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_StatusListItem = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "type": "StatusListItem", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_StatusListItem_2 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 2, "type": "StatusListItem", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_StatusListItem_3 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 3, "type": "StatusListItem", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_StatusListItem_4 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 4, "type": "StatusListItem", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_StatusListItem_5 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 5, "type": "StatusListItem", "unnamed": 1, "visible": True}
+settingsContentBaseScrollView_StatusListItem_6 = {"container": mainWindow_settingsContentBaseScrollView_StatusScrollView, "occurrence": 6, "type": "StatusListItem", "unnamed": 1, "visible": True}
+
 # Social Links Popup
 socialLink_StatusListItem = {"container": statusDesktop_mainWindow_overlay, "type": "StatusListItem", "title": "", "visible": True}
 placeholder_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "id": "placeholder", "type": "StatusBaseText", "unnamed": 1, "visible": True}

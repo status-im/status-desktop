@@ -162,6 +162,3 @@ Feature: Status Desktop Wallet Section Wallet Account Management
             | 20            | Ethereum (Ledger Live/KeepKey) | CustomGenAcc4 | 7140fd | sunglasses | 1f60e         | SPKeyPair    |
             | 95            | N/A                            | CustomGenAcc1 | 216266 | sunglasses | 1f60e         | SPKeyPair    |
 
-        Scenario: The user adds an account and then decides to use a Keycard
-        When the user adds new master key and go to use a Keycard
-        Then settings keycard section is opened

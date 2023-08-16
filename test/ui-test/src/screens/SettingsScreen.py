@@ -508,3 +508,40 @@ class ProfileSettingsView(BaseElement):
         self._scroll_view.vertical_scroll_to(self._change_password_button)
         self._change_password_button.click()
         return ChangePasswordPopup().wait_until_appears()
+
+
+class KeycardSettingsView(BaseElement):
+
+    def __init__(self):
+        super(KeycardSettingsView, self).__init__('mainWindow_KeycardView')
+
+        self._setup_keycard_with_existing_account_button = Button('settingsContentBaseScrollView_StatusListItem')
+        self._create_new_keycard_account_button = Button('settingsContentBaseScrollView_StatusListItem_2')
+        self._import_restore_via_seed_phrase_button = Button('settingsContentBaseScrollView_StatusListItem_3')
+        self._import_from_keycard_button = Button('settingsContentBaseScrollView_StatusListItem_4')
+        self._check_whats_on_keycard_button = Button('settingsContentBaseScrollView_StatusListItem_5')
+        self._factory_reset_keycard_button = Button('settingsContentBaseScrollView_StatusListItem_6')
+
+    def check_keycard_screen_loaded(self):
+        assert KeycardSettingsView().is_visible
+
+    def check_setup_existing_option(self):
+        assert self._setup_keycard_with_existing_account_button.is_visible, f'Setup keycard with existing account not visible'
+
+    def check_create_new_option(self):
+        assert self._create_new_keycard_account_button.is_visible, f'Create new keycard button not visible'
+
+    def check_import_restore_option(self):
+        assert self._import_restore_via_seed_phrase_button.is_visible, f'Import and restore via seed phrase button not visible'
+
+    def check_import_from_keycard_option(self):
+        assert self._import_from_keycard_button.is_visible, f'Import keycard button not visible'
+
+    def check_whats_on_keycard_option(self):
+        assert self._check_whats_on_keycard_button.is_visible, f'Check what on keycard not visible'
+
+    def check_factory_reset_option(self):
+        ProfileSettingsView()._scroll_view.vertical_scroll_to(self._factory_reset_keycard_button)
+        assert self._factory_reset_keycard_button.is_visible, f'Factory reset button not visible'
+
+
