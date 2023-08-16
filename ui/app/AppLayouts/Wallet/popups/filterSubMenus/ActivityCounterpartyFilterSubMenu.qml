@@ -40,124 +40,183 @@ StatusMenu {
 
     Component.onCompleted: root.updateRecipientsModel()
 
-    MenuBackButton {
-        id: backButton
-        width: parent.width
-        onClicked: {
-            close()
-            back()
-        }
-    }
+    contentItem: ColumnLayout {
+        spacing: 12
 
-    StatusSwitchTabBar {
-        id: tabBar
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: backButton.bottom
-        anchors.topMargin: 12
-        width: parent.width - 16
-        StatusSwitchTabButton {
-            text: qsTr("Recent")
-        }
-        StatusSwitchTabButton {
-            text: qsTr("Saved")
-        }
-    }
-
-    StackLayout {
-        id: layout
-        width: parent.width
-        anchors.top: tabBar.bottom
-        anchors.topMargin: 12
-        currentIndex: tabBar.currentIndex
-
-        Column {
-            id: column1
+        MenuBackButton {
+            id: backButton
             Layout.fillWidth: true
-            spacing: 0
-            ButtonGroup {
-                id: recentsButtonGroup
-                exclusive: false
+            onClicked: {
+                close()
+                back()
             }
-            StatusBaseText {
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("No Recents")
-                visible: root.recentsList.count === 0 && !root.loadingRecipients
+        }
+
+        SearchBox {
+            id: searchBox
+
+            property string searchValue: ""
+
+            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
+            Layout.leftMargin: 8
+            Layout.rightMargin: 8
+            font.pixelSize: 13
+            placeholderFont.pixelSize: font.pixelSize
+            input.height: 36
+            placeholderText: qsTr("Search name, ENS or address")
+            onTextChanged: searchTimer.restart()
+
+            // Used to optimize the search when writing word
+            Timer {
+               id: searchTimer
+               interval: 750
+               onTriggered: searchBox.searchValue = searchBox.text
             }
-            StatusBaseText {
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("Loading Recents")
-                visible: root.loadingRecipients
+        }
+
+        StatusSwitchTabBar {
+            id: tabBar
+            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
+            Layout.leftMargin: 8
+            Layout.rightMargin: 8
+            StatusSwitchTabButton {
+                text: qsTr("Recent")
             }
-            StatusListView {
-                visible: !root.loadingRecipients
-                width: parent.width
-                height: root.height - tabBar.height - 12
-                model: root.recentsList
-                reuseItems: true
-                delegate: ActivityTypeCheckBox {
-                    readonly property string name: store.getNameForAddress(model.address)
-                    width: ListView.view.width
-                    height: 44
-                    title: name || StatusQUtils.Utils.elideText(model.address,6,4)
-                    subTitle: name ? StatusQUtils.Utils.elideText(model.address,6,4): ""
-                    statusListItemSubTitle.elide: Text.ElideMiddle
-                    statusListItemSubTitle.wrapMode: Text.NoWrap
-                    assetSettings.name: name || "address"
-                    assetSettings.isLetterIdenticon: !!name
-                    assetSettings.bgHeight: 32
-                    assetSettings.bgWidth: 32
-                    assetSettings.bgRadius: assetSettings.bgHeight/2
-                    assetSettings.width: 16
-                    assetSettings.height: 16
-                    buttonGroup: recentsButtonGroup
-                    allChecked: root.allRecentsChecked
-                    checked: root.allRecentsChecked ? true : root.recentsFilters.includes(model.address)
-                    onActionTriggered: root.recentsToggled(model.address)
+            StatusSwitchTabButton {
+                text: qsTr("Saved")
+            }
+        }
+
+        StackLayout {
+            id: layout
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            currentIndex: tabBar.currentIndex
+
+            ColumnLayout {
+                id: column1
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: 0
+                ButtonGroup {
+                    id: recentsButtonGroup
+                    exclusive: false
                 }
-            }
-        }
-
-        Column {
-            id: column2
-            Layout.fillWidth: true
-            spacing: 0
-            ButtonGroup {
-                id: savedButtonGroup
-                exclusive: false
-            }
-            StatusBaseText {
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("No Saved Address")
-                visible: root.savedAddressList.count === 0
-            }
-            StatusListView {
-                width: parent.width
-                height: root.height - tabBar.height - 12
-                model: root.savedAddressList
-                delegate: ActivityTypeCheckBox {
-                    width: ListView.view.width
-                    height: 44
-                    title: model.name ?? ""
-                    subTitle:  {
-                        if (model.ens.length > 0) {
-                            return sensor.containsMouse ? Utils.richColorText(model.ens, Theme.palette.directColor1) : model.ens
-                        }
-                        else {
-                            let elidedAddress = StatusQUtils.Utils.elideText(model.address,6,4)
-                            return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(model.chainShortNames) + Utils.richColorText(elidedAddress, Theme.palette.directColor1): model.chainShortNames + elidedAddress
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: qsTr("No Recents")
+                    visible: recipientsListView.count === 0 && !root.loadingRecipients
+                }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: qsTr("Loading Recents")
+                    visible: root.loadingRecipients
+                }
+                StatusListView {
+                    id: recipientsListView
+                    visible: !root.loadingRecipients
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: SortFilterProxyModel {
+                        sourceModel: root.recentsList
+                        filters: ExpressionFilter {
+                            enabled: root.recentsList.count > 0 && layout.currentIndex === 0
+                            expression: {
+                                const searchValue = searchBox.searchValue
+                                if (!searchValue)
+                                    return true
+                                const address = model.address.toLowerCase()
+                                return address.startsWith(searchValue) || store.getNameForAddress(address).toLowerCase().indexOf(searchValue) !== -1
+                            }
                         }
                     }
-                    statusListItemSubTitle.elide: Text.ElideMiddle
-                    statusListItemSubTitle.wrapMode: Text.NoWrap
-                    assetSettings.name: model.name
-                    assetSettings.isLetterIdenticon: true
-                    buttonGroup: savedButtonGroup
-                    allChecked: root.allSavedAddressesChecked
-                    checked: root.allSavedAddressesChecked ? true : root.savedAddressFilters.includes(model.address)
-                    onActionTriggered: root.savedAddressToggled(model.address)
+
+                    reuseItems: true
+                    delegate: ActivityTypeCheckBox {
+                        readonly property string name: store.getNameForAddress(model.address)
+                        width: ListView.view.width
+                        height: 44
+                        title: name || StatusQUtils.Utils.elideText(model.address,6,4)
+                        subTitle: name ? StatusQUtils.Utils.elideText(model.address,6,4): ""
+                        statusListItemSubTitle.elide: Text.ElideMiddle
+                        statusListItemSubTitle.wrapMode: Text.NoWrap
+                        assetSettings.name: name || "address"
+                        assetSettings.isLetterIdenticon: !!name
+                        assetSettings.bgHeight: 32
+                        assetSettings.bgWidth: 32
+                        assetSettings.bgRadius: assetSettings.bgHeight/2
+                        assetSettings.width: !!name ? 32 : 16
+                        assetSettings.height: !!name ? 32 : 16
+                        buttonGroup: recentsButtonGroup
+                        allChecked: root.allRecentsChecked
+                        checked: root.allRecentsChecked ? true : root.recentsFilters.includes(model.address)
+                        onActionTriggered: root.recentsToggled(model.address)
+                    }
+                }
+            }
+
+            ColumnLayout {
+                id: column2
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                spacing: 0
+                ButtonGroup {
+                    id: savedButtonGroup
+                    exclusive: false
+                }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: qsTr("No Saved Address")
+                    visible: savedAddressesListView.count === 0
+                }
+                StatusListView {
+                    id: savedAddressesListView
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    model: SortFilterProxyModel {
+                        sourceModel: root.savedAddressList
+                        filters: ExpressionFilter {
+                            enabled: root.savedAddressList.count > 0 && layout.currentIndex === 1
+                            expression: {
+                                const searchValue = searchBox.searchValue
+                                if (!searchValue)
+                                    return true
+                                return model.name.toLowerCase().indexOf(searchValue) !== -1
+                                       || model.address.toLowerCase().startsWith(searchValue)
+                                       || model.ens.toLowerCase().startsWith(searchValue)
+                            }
+                        }
+                    }
+                    delegate: ActivityTypeCheckBox {
+                        width: ListView.view.width
+                        height: 44
+                        title: model.name ?? ""
+                        subTitle: {
+                            if (model.ens.length > 0) {
+                                return sensor.containsMouse ? Utils.richColorText(model.ens, Theme.palette.directColor1) : model.ens
+                            }
+                            else {
+                                let elidedAddress = StatusQUtils.Utils.elideText(model.address,6,4)
+                                return sensor.containsMouse ? WalletUtils.colorizedChainPrefix(model.chainShortNames) + Utils.richColorText(elidedAddress, Theme.palette.directColor1): model.chainShortNames + elidedAddress
+                            }
+                        }
+                        statusListItemSubTitle.elide: Text.ElideMiddle
+                        statusListItemSubTitle.wrapMode: Text.NoWrap
+                        assetSettings.name: model.name
+                        assetSettings.isLetterIdenticon: true
+                        assetSettings.bgHeight: 32
+                        assetSettings.bgWidth: 32
+                        assetSettings.width: 32
+                        assetSettings.height: 32
+                        buttonGroup: savedButtonGroup
+                        allChecked: root.allSavedAddressesChecked
+                        checked: root.allSavedAddressesChecked ? true : root.savedAddressFilters.includes(model.address)
+                        onActionTriggered: root.savedAddressToggled(model.address)
+                    }
                 }
             }
         }
     }
-
 }

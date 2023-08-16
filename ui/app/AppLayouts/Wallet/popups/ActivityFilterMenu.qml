@@ -84,7 +84,7 @@ StatusMenu {
         }
         ActivityTokensFilterSubMenu {
             id: tokensMenu
-            height: Math.min(439, tokensMenu.implicitHeight)
+            height: 439
             onBack: root.open()
             tokensList: root.tokensList
             tokensFilter: root.tokensFilter
@@ -96,7 +96,7 @@ StatusMenu {
         }
         ActivityCounterpartyFilterSubMenu {
             id: counterPartyMenu
-            height: Math.min(439, counterPartyMenu.implicitHeight)
+            height: 439
             onBack: root.open()
             store: root.store
             recentsList: root.recentsList

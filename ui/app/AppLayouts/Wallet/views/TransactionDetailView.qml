@@ -486,6 +486,7 @@ Item {
                             }
                         }
                         tertiaryTitle: !d.loadingInputDate && !d.decodedInputData ? qsTr("Data could not be decoded") : ""
+                        statusListItemTertiaryTitle.anchors.top: undefined
                         statusListItemTertiaryTitle.anchors.baseline: statusListItemTitle.baseline
                         statusListItemTertiaryTitle.font: statusListItemTitle.font
                         onButtonClicked: addressMenu.openInputDataMenu(this, !!d.decodedInputData ? d.decodedInputData : root.transaction.input)
