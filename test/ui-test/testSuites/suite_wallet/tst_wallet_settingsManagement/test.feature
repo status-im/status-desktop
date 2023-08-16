@@ -24,3 +24,11 @@ Feature: Settings -> Wallet
         Examples:
             | name    | color  | emoji      | emoji_unicode |
             | GenAcc1 | 2a4af5 | sunglasses | 1f60e |
+
+    Scenario: The user adds an account and then decides to use a Keycard
+        When the user adds new master key and go to use a Keycard
+        Then settings keycard section is opened
+        And keycard view is displayed
+        And all buttons of keycard view are displayed
+
+
