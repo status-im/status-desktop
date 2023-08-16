@@ -206,7 +206,7 @@ def step(context):
     _keycardView.check_whats_on_keycard_option()
     _keycardView.check_factory_reset_option()
 
-Then("the account with \"|any|\" is not displayed")
+@Then("the account with \"|any|\" is not displayed")
 def step(context, name):
     _walletScreen.verify_account_doesnt_exist(name)
 
