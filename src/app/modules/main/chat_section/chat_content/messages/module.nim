@@ -632,6 +632,8 @@ method onMessageEdited*(self: Module, message: MessageDto) =
 
 method onHistoryCleared*(self: Module) =
   self.view.model().clear()
+  # Add ChatIdentifier back after model is cleared, so that the chat screen is not blank
+  self.view.model().insertItemBasedOnClock(self.createChatIdentifierItem())
 
 method updateChatIdentifier*(self: Module) =
   let chatDto = self.controller.getChatDetails()
