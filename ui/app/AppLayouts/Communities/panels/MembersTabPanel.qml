@@ -21,6 +21,10 @@ Item {
     property string placeholderText
     property var model
     property var rootStore
+    property int memberRole: Constants.memberRole.none
+
+    property bool isOwner: memberRole === Constants.memberRole.owner
+    property bool isTokenMaster: memberRole === Constants.memberRole.tokenMaster
 
     signal kickUserClicked(string id, string name)
     signal banUserClicked(string id, string name)
@@ -107,7 +111,21 @@ Item {
 
                 readonly property bool itsMe: model.pubKey.toLowerCase() === Global.userProfile.pubKey.toLowerCase()
                 readonly property bool isHovered: memberItem.sensor.containsMouse
-                readonly property bool canBeBanned: !memberItem.itsMe && (model.memberRole !== Constants.memberRole.owner && model.memberRole !== Constants.memberRole.admin)
+                readonly property bool canBeBanned: {
+                    if (memberItem.itsMe) {
+                        return false
+                    }
+                    switch ( model.memberRole) {
+                        // Owner can't be banned
+                        case Constants.memberRole.owner: return false
+                        // TokenMaster can only be banned by owner
+                        case Constants.memberRole.tokenMaster: return root.isOwner
+                        // Admin can only be banned by owner and tokenMaster
+                        case Constants.memberRole.admin: return root.isOwner || root.isTokenMaster
+                        // Everyone can be banned by everyone
+                        default: return true
+                    }
+                }
                 readonly property bool showOnHover: isHovered && ctaAllowed
 
                 /// Button visibility ///

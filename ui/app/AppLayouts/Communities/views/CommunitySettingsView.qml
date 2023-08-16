@@ -249,6 +249,7 @@ StatusSectionLayout {
             pendingMemberRequestsModel: root.community.pendingMemberRequests
             declinedMemberRequestsModel: root.community.declinedMemberRequests
             editable: root.isAdmin
+            memberRole: community.memberRole
             communityName: root.community.name
 
             onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
