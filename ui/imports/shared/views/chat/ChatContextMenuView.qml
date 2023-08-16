@@ -197,13 +197,14 @@ StatusMenu {
     }
 
     StatusMenuSeparator {
-        visible: deleteOrLeaveMenuItem.enabled
+        visible: clearHistoryMenuItem.enabled || deleteOrLeaveMenuItem.enabled
     }
 
     StatusAction {
         objectName: "clearHistoryMenuItem"
         text: qsTr("Clear History")
         icon.name: "close-circle"
+        type: deleteOrLeaveMenuItem.enabled ? StatusAction.Type.Normal : StatusAction.Type.Danger
         onTriggered: {
             Global.openPopup(clearChatConfirmationDialogComponent);
         }
