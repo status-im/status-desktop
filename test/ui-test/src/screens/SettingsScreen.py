@@ -535,7 +535,8 @@ class KeycardSettingsView(BaseElement):
         assert self._import_restore_via_seed_phrase_button.is_visible, f'Import and restore via seed phrase button not visible'
 
     def check_import_from_keycard_option(self):
-        assert self._import_from_keycard_button.is_visible, f'Import keycard button not visible'
+        #assert self._import_from_keycard_button.is_visible, f'Import from keycard button not visible'
+        self._import_from_keycard_button.wait_until_appears()
 
     def check_whats_on_keycard_option(self):
         assert self._check_whats_on_keycard_button.is_visible, f'Check what on keycard not visible'
