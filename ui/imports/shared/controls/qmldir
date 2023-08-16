@@ -38,6 +38,7 @@ TokenDelegate 1.0 TokenDelegate.qml
 StyledTextEditWithLoadingState 1.0 StyledTextEditWithLoadingState.qml
 LoadingTokenDelegate 1.0 LoadingTokenDelegate.qml
 StatusSyncCodeInput 1.0 StatusSyncCodeInput.qml
+StatusSyncCodeScan 1.0 StatusSyncCodeScan.qml
 GetSyncCodeMobileInstructions 1.0 GetSyncCodeMobileInstructions.qml
 GetSyncCodeDesktopInstructions 1.0 GetSyncCodeDesktopInstructions.qml
 ErrorDetails 1.0 ErrorDetails.qml
