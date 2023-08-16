@@ -307,7 +307,7 @@ QtObject:
       if(self.importedAccount.id == accountId):
         return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName)
 
-  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool): JsonNode =
+  proc getDefaultNodeConfig*(self: Service, installationId: string, recoverAccount: bool, login: bool = false): JsonNode =
     let fleet = Fleet.StatusProd
     let dnsDiscoveryURL = @["enrtree://AOGECG2SPND25EEFMAJ5WF3KSGJNSGV356DSTL2YVLLZWIV6SAYBM@prod.nodes.status.im"]
 
@@ -343,6 +343,15 @@ QtObject:
       let wV1Port = $getEnv("STATUS_PORT")
       # Waku V1 config
       result["ListenAddr"] = newJString("0.0.0.0:" & wV1Port)
+
+    # Don't override log level on login. For onboarding it is required, nothing to override
+    if login:
+      result.delete("LogLevel")
+
+    if existsEnv("LOG_LEVEL"):
+      let logLvl = getEnv("LOG_LEVEL")
+      if logLvl in @["ERROR", "WARN", "INFO", "DEBUG", "TRACE"]:
+        result["LogLevel"] = newJString($logLvl)
 
     result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
     result["RootDataDir"] = newJString(main_constants.STATUSGODIR)
@@ -613,7 +622,7 @@ QtObject:
       error "error: ", procName="verifyDatabasePassword", errName = e.name, errDesription = e.msg
 
   proc doLogin(self: Service, account: AccountDto, hashedPassword, thumbnailImage, largeImage: string) =
-    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
+    let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false, login = true)
     let response = status_account.login(
       account.name,
       account.keyUid,
@@ -695,7 +704,7 @@ QtObject:
         "key-uid": accToBeLoggedIn.keyUid,
       }
 
-      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false)
+      let nodeConfigJson = self.getDefaultNodeConfig(installationId = "", recoverAccount = false, login = true)
 
       let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey,
         keycardData.encryptionKey.publicKey,
