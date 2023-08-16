@@ -197,8 +197,9 @@ method deployOwnerToken*(self: Module, communityId: string, fromAddress: string,
   self.tempChainId = chainId
   let communityDto = self.controller.getCommunityById(communityId)
   let commName = communityDto.name
-  self.tempOwnerDeploymentParams = DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commName[0 .. 2].toUpper, supply: stint.u256("1"), infiniteSupply: false, transferable: true, remoteSelfDestruct: false, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
-  self.tempMasterDeploymentParams = DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commName[0 .. 2].toUpper, infiniteSupply: true, transferable: false, remoteSelfDestruct: true, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
+  let commNameShort = try: commName[0 .. 2].toUpper except: commName.toUpper
+  self.tempOwnerDeploymentParams = DeploymentParameters(name: "Owner-" & commName, symbol: "OWN" & commNameShort, supply: stint.u256("1"), infiniteSupply: false, transferable: true, remoteSelfDestruct: false, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
+  self.tempMasterDeploymentParams = DeploymentParameters(name: "TMaster-" & commName, symbol: "TM" & commNameShort, infiniteSupply: true, transferable: false, remoteSelfDestruct: true, tokenUri: utl.changeCommunityKeyCompression(communityId) & "/")
   self.tempOwnerTokenMetadata.description = ownerDescription
   self.tempOwnerTokenMetadata.tokenType = TokenType.ERC721
   self.tempMasterTokenMetadata.description = masterDescription
