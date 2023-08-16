@@ -98,6 +98,7 @@ ColumnLayout {
         Layout.fillWidth: true
         title: d.noKeycardsSet? qsTr("Setup a new Keycard with an existing account")
                               : qsTr("Migrate an existing account from Status Desktop to Keycard")
+        objectName: "setupFromExistingKeycardAccount"
         components: [
             StatusIcon {
                 icon: "next"
@@ -119,6 +120,7 @@ ColumnLayout {
     StatusListItem {
         Layout.fillWidth: true
         title: qsTr("Create a new Keycard account with a new seed phrase")
+        objectName: "createNewKeycardAccount"
         components: [
             StatusIcon {
                 icon: "next"
@@ -133,6 +135,7 @@ ColumnLayout {
     StatusListItem {
         Layout.fillWidth: true
         title: qsTr("Import or restore via a seed phrase")
+        objectName: "importRestoreKeycard"
         components: [
             StatusIcon {
                 icon: "next"
@@ -147,6 +150,7 @@ ColumnLayout {
     StatusListItem {
         Layout.fillWidth: true
         title: qsTr("Import from Keycard to Status Desktop")
+        objectName: "importFromKeycard"
         components: [
             StatusIcon {
                 icon: "next"
@@ -168,6 +172,7 @@ ColumnLayout {
     StatusListItem {
         Layout.fillWidth: true
         title: qsTr("Check what’s on a Keycard")
+        objectName: "checkWhatsNewKeycard"
         components: [
             StatusIcon {
                 icon: "next"
@@ -182,6 +187,7 @@ ColumnLayout {
     StatusListItem {
         Layout.fillWidth: true
         title: qsTr("Factory reset a Keycard")
+        objectName: "factoryResetKeycard"
         components: [
             StatusIcon {
                 icon: "next"
