@@ -51,6 +51,8 @@ method refreshNetworks*(self: Module) =
         n.prod.chainColor,
         n.prod.rpcURL,
         n.prod.fallbackURL,
+        n.prod.originalRpcURL,
+        n.prod.originalFallbackURL,
         n.prod.blockExplorerURL,
         n.prod.nativeCurrencySymbol
       )
@@ -63,6 +65,8 @@ method refreshNetworks*(self: Module) =
         n.test.chainColor,
         n.test.rpcURL,
         n.test.fallbackURL,
+        n.test.originalRpcURL,
+        n.test.originalFallbackURL,
         n.test.blockExplorerURL,
         n.test.nativeCurrencySymbol
       )

@@ -131,9 +131,17 @@ ColumnLayout {
             id: mainRpcInput
             width: parent.width
             label: qsTr("Main JSON RPC URL")
-            text: !!network ? network.rpcURL : ""
+            text: {
+                if (!network) {
+                    return ""
+                }
+                if (network.originalRpcURL == network.rpcURL) {
+                    return network.rpcURL.replace(/(.*\/).*/, '$1')
+                }
+                return network.rpcURL
+            }
             onTextChanged: {
-                if(!!text && text !== network.rpcURL) {
+                if(!!text && text !== network.rpcURL.replace(/(.*\/).*/, '$1')) {
                     d.evaluationStatus = EditNetworkForm.Pending
                     Qt.callLater(d.evaluateRpcEndPoint, text);
                 }
@@ -154,9 +162,17 @@ ColumnLayout {
         id: failoverRpcUrlInput
         Layout.fillWidth: true
         label: qsTr("Failover JSON RPC URL")
-        text: !!network ? network.fallbackURL : ""
+        text: {
+            if (!network) {
+                return ""
+            }
+            if (network.originalFallbackURL == network.fallbackURL) {
+                return network.fallbackURL.replace(/(.*\/).*/, '$1')
+            }
+            return network.fallbackURL
+        }
         onTextChanged: {
-            if(!!text && text !== network.fallbackURL) {
+            if(!!text && text !== network.fallbackURL.replace(/(.*\/).*/, '$1')) {
                 d.evaluationStatusFallBackRpc = EditNetworkForm.Pending
                 Qt.callLater(d.evaluateRpcEndPoint, text);
             }
