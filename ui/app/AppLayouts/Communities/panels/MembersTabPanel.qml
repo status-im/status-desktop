@@ -63,18 +63,63 @@ Item {
             delegate: StatusMemberListItem {
                 id: memberItem
 
+                // Buttons visibility conditions:
+                // 1. Tab based buttons - only visible when the tab is selected
+                //      a. All members tab
+                //          - Kick; - Kick pending
+                //          - Ban; - Ban pending
+                //      b. Pending requests tab
+                //          - Accept; - Accept pending
+                //          - Reject; - Reject pending
+                //      c. Rejected members tab
+                //          - Accept; - Accept pending
+                //      d. Banned members tab
+                //          - Unban
+                // 2. Pending states - buttons in pending states are always visible in their specific tab. Other buttons are disabled if the request is in pending state
+                //    - Accept button is visible when the user is hovered or when the request is in accepted pending state. This condition can be overriden by the ctaAllowed property
+                //    - Reject button is visible when the user is hovered or when the request is in rejected pending state. This condition can be overriden by the ctaAllowed property
+                //    - Kick and ban buttons are visible when the user is hovered or when the request is in kick or ban pending state. This condition can be overriden by the ctaAllowed property
+                // 3. Other conditions - buttons are visible when the user is hovered and is not himself or other privileged user
+
+                /// Helpers ///
+
+                // Tab based buttons
+                readonly property bool tabIsShowingKickBanButtons: root.panelType === MembersTabPanel.TabType.AllMembers
+                readonly property bool tabIsShowingUnbanButton: root.panelType === MembersTabPanel.TabType.BannedMembers
+                readonly property bool tabIsShowingRejectButton: root.panelType === MembersTabPanel.TabType.PendingRequests
+                readonly property bool tabIsShowingAcceptButton: root.panelType === MembersTabPanel.TabType.PendingRequests ||
+                                                                    root.panelType === MembersTabPanel.TabType.DeclinedRequests
+
+                // Request states
+                readonly property bool isPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.Pending
+                readonly property bool isAccepted: model.membershipRequestState === Constants.CommunityMembershipRequestState.Accepted
+                readonly property bool isRejected: model.membershipRequestState === Constants.CommunityMembershipRequestState.Rejected
+                readonly property bool isRejectedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.RejectedPending
+                readonly property bool isAcceptedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.AcceptedPending
+                readonly property bool isBanPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedPending
+                readonly property bool isKickPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.KickedPending
+                readonly property bool isBanned: model.membershipRequestState === Constants.CommunityMembershipRequestState.Banned
+                readonly property bool isKicked: model.membershipRequestState === Constants.CommunityMembershipRequestState.Kicked
+
+                // TODO: Connect to backend when available
+                // The admin that initited the pending state can change the state. Actions are not visible for other admins
+                readonly property bool ctaAllowed: !isRejectedPending && !isAcceptedPending && !isBanPending && !isKickPending
+
                 readonly property bool itsMe: model.pubKey.toLowerCase() === Global.userProfile.pubKey.toLowerCase()
                 readonly property bool isHovered: memberItem.sensor.containsMouse
                 readonly property bool canBeBanned: !memberItem.itsMe && (model.memberRole !== Constants.memberRole.owner && model.memberRole !== Constants.memberRole.admin)
-                readonly property bool canEnableKickBanButtons: canBeBanned && root.panelType === MembersTabPanel.TabType.AllMembers
-                readonly property bool kickEnabled: canEnableKickBanButtons && model.membershipRequestState !== Constants.CommunityMembershipRequestState.KickedPending
-                readonly property bool banEnabled: canEnableKickBanButtons && model.membershipRequestState !== Constants.CommunityMembershipRequestState.BannedPending
-                readonly property bool kickVisible: (isHovered || !kickEnabled) && banEnabled
-                readonly property bool banVisible: (isHovered || !banEnabled) && kickEnabled
-                readonly property bool unBanVisible: (root.panelType === MembersTabPanel.TabType.BannedMembers) && isHovered && canBeBanned
+                readonly property bool showOnHover: isHovered && ctaAllowed
 
-                readonly property bool isRejectedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.RejectedPending
-                readonly property bool isAcceptedPending: model.membershipRequestState === Constants.CommunityMembershipRequestState.AcceptedPending
+                /// Button visibility ///
+                readonly property bool acceptButtonVisible:  tabIsShowingAcceptButton && (isPending || isRejected || isRejectedPending) && showOnHover
+                readonly property bool rejectButtonVisible: tabIsShowingRejectButton && (isPending || isAcceptedPending) && showOnHover
+                readonly property bool acceptPendingButtonVisible: tabIsShowingAcceptButton && isAcceptedPending
+                readonly property bool rejectPendingButtonVisible: tabIsShowingRejectButton && isRejectedPending
+                readonly property bool kickButtonVisible: tabIsShowingKickBanButtons && isAccepted && showOnHover && canBeBanned
+                readonly property bool banButtonVisible: tabIsShowingKickBanButtons && isAccepted && showOnHover && canBeBanned
+                readonly property bool kickPendingButtonVisible: tabIsShowingKickBanButtons && isKickPending
+                readonly property bool banPendingButtonVisible: tabIsShowingKickBanButtons && isBanPending
+                readonly property bool unbanButtonVisible: tabIsShowingUnbanButton && isBanned && showOnHover
 
                 statusListItemComponentsSlot.spacing: 16
                 statusListItemTitleArea.anchors.rightMargin: 0
@@ -86,12 +131,12 @@ Item {
                     DisabledTooltipButton {
                         id: kickButton
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: kickVisible
-                        interactive: kickEnabled
+                        visible: kickButtonVisible || kickPendingButtonVisible
+                        interactive: kickButtonVisible
                         tooltipText: qsTr("Waiting for owner node to come online")
                         buttonComponent: StatusButton {
                             objectName: "MemberListItem_KickButton"
-                            text: model.membershipRequestState === Constants.CommunityMembershipRequestState.KickedPending ? qsTr("Kick pending") : qsTr("Kick")
+                            text: kickButtonVisible ? qsTr("Kick") : qsTr("Kick pending")
                             type: StatusBaseButton.Type.Danger
                             size: StatusBaseButton.Size.Small
                             onClicked: root.kickUserClicked(model.pubKey, memberItem.title)
@@ -103,11 +148,13 @@ Item {
                         id: banButton
                         anchors.verticalCenter: parent.verticalCenter
                         //using opacity instead of visible to avoid the acceptButton jumping around
-                        opacity: banVisible
-                        interactive: banEnabled
-                        tooltipText: banVisible ? qsTr("Waiting for owner node to come online") : ""
+                        opacity: banButtonVisible || banPendingButtonVisible
+                        visible: !!banButton.opacity || kickButton.visible
+                        enabled: !!opacity
+                        interactive: banButtonVisible
+                        tooltipText: qsTr("Waiting for owner node to come online")
                         buttonComponent: StatusButton {
-                            text: model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedPending || !banVisible ? qsTr("Ban pending") : qsTr("Ban")
+                            text: banButtonVisible ?  qsTr("Ban") : qsTr("Ban pending")
                             type: StatusBaseButton.Type.Danger
                             size: StatusBaseButton.Size.Small
                             onClicked: root.banUserClicked(model.pubKey, memberItem.title)
@@ -117,7 +164,7 @@ Item {
 
                     StatusButton {
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: unBanVisible
+                        visible: unbanButtonVisible
                         text: qsTr("Unban")
                         onClicked: root.unbanUserClicked(model.pubKey)
                     },
@@ -125,15 +172,11 @@ Item {
                     DisabledTooltipButton {
                         id: acceptButton
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: ((root.panelType === MembersTabPanel.TabType.PendingRequests ||
-                                    root.panelType === MembersTabPanel.TabType.DeclinedRequests) && isHovered) || 
-                                    isAcceptedPending
-                                    //TODO: Only the current user can reject a pending request, so we should check that here
-
+                        visible: acceptButtonVisible || acceptPendingButtonVisible
                         tooltipText: qsTr("Waiting for owner node to come online")
-                        interactive: !isAcceptedPending
+                        interactive: acceptButtonVisible
                         buttonComponent: StatusButton {
-                            text: isAcceptedPending ? qsTr("Accept Pending") : qsTr("Accept")
+                            text: acceptButtonVisible ? qsTr("Accept") : qsTr("Accept Pending")
                             icon.name: "checkmark-circle"
                             icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
                             normalColor: Theme.palette.successColor2
@@ -149,13 +192,13 @@ Item {
                         id: rejectButton
                         anchors.verticalCenter: parent.verticalCenter
                         //using opacity instead of visible to avoid the acceptButton jumping around 
-                        opacity: ((root.panelType === MembersTabPanel.TabType.PendingRequests) && isHovered) || isRejectedPending
-                                    //TODO: Only the current user can reject a pending request, so we should check that here
-
+                        opacity: rejectButtonVisible || rejectPendingButtonVisible
+                        enabled: !!opacity
+                        visible: !!rejectButton.opacity || acceptButton.visible
                         tooltipText: qsTr("Waiting for owner node to come online")
-                        interactive: !isRejectedPending
+                        interactive: rejectButtonVisible
                         buttonComponent: StatusButton {
-                            text: isRejectedPending ? qsTr("Reject pending") : qsTr("Reject")
+                            text: rejectPendingButtonVisible ? qsTr("Reject pending") : qsTr("Reject")
                             type: StatusBaseButton.Type.Danger
                             icon.name: "close-circle"
                             icon.color: enabled ? Style.current.danger : disabledTextColor
