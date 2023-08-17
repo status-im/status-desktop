@@ -4,6 +4,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/modules/shared_models/currency_amount
 
+import ../../../backend/communities as communities_backend
 import ../../../backend/community_tokens as tokens_backend
 import ../transaction/service as transaction_service
 import ../token/service as token_service
@@ -19,7 +20,9 @@ import ../../common/conversion
 import ../../common/account_constants
 import ../../common/utils as common_utils
 import ../community/dto/community
+import ../contacts/dto/contacts
 
+import ./community_collectible_owner
 import ./dto/deployment_parameters
 import ./dto/community_token
 import ./dto/community_token_owner
@@ -197,7 +200,7 @@ type
     communityId*: string
     contractAddress*: string
     chainId*: int
-    owners*: seq[CollectibleOwner]
+    owners*: seq[CommunityCollectibleOwner]
 
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_TOKEN_DEPLOY_STATUS* = "communityTokenDeployStatus"
@@ -231,7 +234,7 @@ QtObject:
       tokenOwnersTimer: QTimer
       tokenOwners1SecTimer: QTimer # used to update 1 sec after changes in owners
       tempTokenOwnersToFetch: CommunityTokenDto # used by 1sec timer
-      tokenOwnersCache: Table[ContractTuple, seq[CollectibleOwner]]
+      tokenOwnersCache: Table[ContractTuple, seq[CommunityCollectibleOwner]]
 
       tempFeeTable: Table[int, SuggestedFeesDto] # fees per chain, filled during gas computation, used during operation (deployment, mint, burn)
       tempGasTable: Table[ContractTuple, int] # gas per contract, filled during gas computation, used during operation (deployment, mint, burn)
@@ -245,7 +248,7 @@ QtObject:
 
   # Forward declaration
   proc fetchAllTokenOwners*(self: Service)
-  proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner]
+  proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner]
   proc getCommunityToken*(self: Service, chainId: int, address: string): CommunityTokenDto
 
   proc delete*(self: Service) =
@@ -699,12 +702,12 @@ QtObject:
       if common_utils.contractUniqueKey(token.chainId, token.address) == contractUniqueKey:
         return token
 
-  proc getOwnerBalances(self: Service, contractOwners: seq[CollectibleOwner], ownerAddress: string): seq[CollectibleBalance] =
+  proc getOwnerBalances(self: Service, contractOwners: seq[CommunityCollectibleOwner], ownerAddress: string): seq[CollectibleBalance] =
     for owner in contractOwners:
-      if owner.address == ownerAddress:
-        return owner.balances
+      if owner.collectibleOwner.address == ownerAddress:
+        return owner.collectibleOwner.balances
 
-  proc collectTokensToBurn(self: Service, walletAndAmountList: seq[WalletAndAmount], contractOwners: seq[CollectibleOwner]): seq[UInt256] =
+  proc collectTokensToBurn(self: Service, walletAndAmountList: seq[WalletAndAmount], contractOwners: seq[CommunityCollectibleOwner]): seq[UInt256] =
     if len(walletAndAmountList) == 0 or len(contractOwners) == 0:
       return
     for walletAndAmount in walletAndAmountList:
@@ -1009,7 +1012,7 @@ QtObject:
     self.threadpool.start(arg)
 
   # get owners from cache
-  proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CollectibleOwner] =
+  proc getCommunityTokenOwners*(self: Service, communityId: string, chainId: int, contractAddress: string): seq[CommunityCollectibleOwner] =
     return self.tokenOwnersCache.getOrDefault((chainId: chainId, address: contractAddress))
 
   proc onCommunityTokenOwnersFetched*(self:Service, response: string) {.slot.} =
@@ -1024,8 +1027,29 @@ QtObject:
     let resultJson = responseJson["result"]
     var owners = fromJson(resultJson, CollectibleContractOwnership).owners
     owners = owners.filter(x => x.address != ZERO_ADDRESS)
-    self.tokenOwnersCache[(chainId, contractAddress)] = owners
-    let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: owners)
+
+    let response = communities_backend.getCommunityMembersForWalletAddresses(communityId, chainId)
+    if response.error != nil:
+      let errorMessage = responseJson["error"].getStr
+      error "Can't get community members with addresses", errorMsg=errorMessage
+      return
+
+    let communityOwners = owners.map(proc(owner: CollectibleOwner): CommunityCollectibleOwner =
+      let ownerAddressUp = owner.address.toUpper()
+      for responseAddress in response.result.keys():
+        let responseAddressUp = responseAddress.toUpper()
+        if ownerAddressUp == responseAddressUp:
+          let member = response.result[responseAddress].toContactsDto()
+          return CommunityCollectibleOwner(
+            contactId: member.id,
+            name: member.displayName,
+            imageSource: member.image.thumbnail,
+            collectibleOwner: owner
+          )
+      return CommunityCollectibleOwner(collectibleOwner: owner)
+    )
+    self.tokenOwnersCache[(chainId, contractAddress)] = communityOwners
+    let data = CommunityTokenOwnersArgs(chainId: chainId, contractAddress: contractAddress, communityId: communityId, owners: communityOwners)
     self.events.emit(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED, data)
 
   proc onRefreshTransferableTokenOwners*(self:Service) {.slot.} =
@@ -1040,6 +1064,11 @@ QtObject:
   proc fetchAllTokenOwners*(self: Service) =
     let allTokens = self.getAllCommunityTokens()
     for token in allTokens:
+      self.fetchCommunityOwners(token)
+
+  proc fetchCommunityTokenOwners*(self: Service, communityId: string) =
+    let tokens = self.getCommunityTokens(communityId)
+    for token in tokens:
       self.fetchCommunityOwners(token)
 
   proc getOwnerToken*(self: Service, communityId: string): CommunityTokenDto =

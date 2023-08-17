@@ -3,11 +3,11 @@ import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
 import ../main/communities/tokens/models/token_model as community_tokens_model
 import ../main/communities/tokens/models/token_item
-from backend/collectibles_types import CollectibleOwner
 
 import ../../global/global_singleton
 
 import ../../../app_service/common/types
+import ../../../app_service/service/community_tokens/community_collectible_owner
 
 type
   SectionType* {.pure.} = enum
@@ -353,7 +353,7 @@ proc updateBurnState*(self: SectionItem, chainId: int, contractAddress: string, 
 proc updateRemoteDestructedAddresses*(self: SectionItem, chainId: int, contractAddress: string, addresess: seq[string]) {.inline.} =
   self.communityTokensModel.updateRemoteDestructedAddresses(chainId, contractAddress, addresess)
 
-proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) {.inline.} =
+proc setCommunityTokenOwners*(self: SectionItem, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) {.inline.} =
   self.communityTokensModel.setCommunityTokenOwners(chainId, contractAddress, owners)
 
 proc communityTokens*(self: SectionItem): community_tokens_model.TokenModel {.inline.} =

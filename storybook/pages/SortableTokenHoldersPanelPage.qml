@@ -46,9 +46,9 @@ SplitView {
             isAirdropEnabled: airdropCheckBox.checked
 
             onViewProfileRequested:
-                logs.logEvent("onViewProfileRequested: " + address)
+                logs.logEvent("onViewProfileRequested: " + contactId)
             onViewMessagesRequested:
-                logs.logEvent("onViewMessagesRequested: " + address)
+                logs.logEvent("onViewMessagesRequested: " + contactId)
             onAirdropRequested:
                 logs.logEvent("onAirdropRequested: " + address)
             onRemoteDestructRequested:

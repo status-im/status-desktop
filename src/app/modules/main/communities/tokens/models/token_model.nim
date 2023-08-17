@@ -3,9 +3,9 @@ import token_item
 import token_owners_item
 import token_owners_model
 import ../../../../../../app_service/service/community_tokens/dto/community_token
+import ../../../../../../app_service/service/community_tokens/community_collectible_owner
 import ../../../../../../app_service/common/utils
 import ../../../../../../app_service/common/types
-from backend/collectibles_types import CollectibleOwner
 
 type
   ModelRole {.pure.} = enum
@@ -107,12 +107,11 @@ QtObject:
           self.dataChanged(index, index, @[ModelRole.RemainingSupply.int])
         return
 
-  proc setCommunityTokenOwners*(self: TokenModel, chainId: int, contractAddress: string, owners: seq[CollectibleOwner]) =
+  proc setCommunityTokenOwners*(self: TokenModel, chainId: int, contractAddress: string, owners: seq[CommunityCollectibleOwner]) =
     for i in 0 ..< self.items.len:
       if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
-        self.items[i].tokenOwnersModel.setItems(owners.map(proc(owner: CollectibleOwner): TokenOwnersItem =
-          # TODO find member with the address - later when airdrop to member will be added
-          result = initTokenOwnersItem("", "", owner, self.items[i].remoteDestructedAddresses)
+        self.items[i].tokenOwnersModel.setItems(owners.map(proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
+          result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, owner.collectibleOwner, self.items[i].remoteDestructedAddresses)
         ))
         let index = self.createIndex(i, 0, nil)
         defer: index.delete

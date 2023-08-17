@@ -67,6 +67,9 @@ StatusScrollView {
     signal airdropRequested(string address)
     signal generalAirdropRequested
 
+    signal viewProfileRequested(string contactId)
+    signal viewMessagesRequested(string contactId)
+
     signal remoteDestructRequested(string name, string address)
     signal kickRequested(string name, string address)
     signal banRequested(string name, string address)
@@ -208,6 +211,8 @@ StatusScrollView {
             Layout.topMargin: Style.current.padding
             Layout.fillWidth: true
 
+            onViewProfileRequested: root.viewProfileRequested(contactId)
+            onViewMessagesRequested: root.viewMessagesRequested(contactId)
             onAirdropRequested: root.airdropRequested(address)
             onGeneralAirdropRequested: root.generalAirdropRequested()
             onRemoteDestructRequested: root.remoteDestructRequested(name, address)

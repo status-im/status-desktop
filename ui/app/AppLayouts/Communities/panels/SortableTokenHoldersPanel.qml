@@ -27,8 +27,8 @@ Control {
 
     readonly property bool empty: countCheckHelper.count === 0
 
-    signal viewProfileRequested(string address)
-    signal viewMessagesRequested(string address)
+    signal viewProfileRequested(string contactId)
+    signal viewMessagesRequested(string contactId)
     signal airdropRequested(string address)
     signal remoteDestructRequested(string name, string address)
     signal kickRequested(string name, string address)
@@ -134,6 +134,7 @@ Control {
 
                 const entry = ModelUtils.get(proxyModel, index)
 
+                menu.contactId = entry.contactId
                 menu.name = entry.name
                 menu.currentAddress = entry.walletAddress
                 menu.popup(parent, mouse.x, mouse.y)
@@ -146,6 +147,7 @@ Control {
     StatusMenu {
         id: menu
 
+        property string contactId
         property string name
         property string currentAddress
         readonly property bool rawAddress: name === ""
@@ -157,7 +159,7 @@ Control {
             icon.name: "profile"
             enabled: !menu.rawAddress
 
-            onTriggered: root.viewProfileRequested(menu.currentAddress)
+            onTriggered: root.viewProfileRequested(menu.contactId)
         }
 
         StatusAction {
@@ -165,7 +167,7 @@ Control {
             icon.name: "chat"
             enabled: !menu.rawAddress
 
-            onTriggered: root.viewMessagesRequested(menu.currentAddress)
+            onTriggered: root.viewMessagesRequested(menu.contactId)
         }
 
         StatusAction {
