@@ -129,6 +129,8 @@ QtObject {
                 chainColor: combinedNetwork.prod.chainColor,
                 rpcURL: combinedNetwork.prod.rpcURL,
                 fallbackURL: combinedNetwork.prod.fallbackURL,
+                originalRpcURL: combinedNetwork.prod.originalRpcURL,
+                originalFallbackURL: combinedNetwork.prod.originalFallbackURL,
                 blockExplorerURL: combinedNetwork.prod.blockExplorerURL,
                 nativeCurrencySymbol: combinedNetwork.prod.nativeCurrencySymbol},
             test: {chainId: combinedNetwork.test.chainId,
@@ -139,6 +141,8 @@ QtObject {
                 chainColor: combinedNetwork.test.chainColor,
                 rpcURL: combinedNetwork.test.rpcURL,
                 fallbackURL: combinedNetwork.test.fallbackURL,
+                originalRpcURL: combinedNetwork.test.originalRpcURL,
+                originalFallbackURL: combinedNetwork.test.originalFallbackURL,
                 blockExplorerURL: combinedNetwork.test.blockExplorerURL,
                 nativeCurrencySymbol: combinedNetwork.test.nativeCurrencySymbol},
             layer: combinedNetwork.layer

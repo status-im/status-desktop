@@ -10,6 +10,8 @@ QtObject:
       chainColor: string
       rpcURL: string
       fallbackURL: string
+      originalRpcURL: string
+      originalFallbackURL: string
       blockExplorerURL: string
       nativeCurrencySymbol: string
 
@@ -22,6 +24,8 @@ QtObject:
     chainColor: string,
     rpcURL: string,
     fallbackURL: string,
+    originalRpcURL: string,
+    originalFallbackURL: string,
     blockExplorerURL: string,
     nativeCurrencySymbol: string
     ) =
@@ -34,6 +38,8 @@ QtObject:
       self.chainColor = chainColor
       self.rpcURL = rpcURL
       self.fallbackURL = fallbackURL
+      self.originalRpcURL = originalRpcURL
+      self.originalFallbackURL = originalFallbackURL
       self.blockExplorerURL = blockExplorerURL
       self.nativeCurrencySymbol =  nativeCurrencySymbol
 
@@ -49,11 +55,13 @@ QtObject:
     chainColor: string,
     rpcURL: string,
     fallbackURL: string,
+    originalRpcURL: string,
+    originalFallbackURL: string,
     blockExplorerURL: string,
     nativeCurrencySymbol: string
     ): Item =
     new(result, delete)
-    result.setup(chainId, layer, chainName, iconUrl, shortName, chainColor, rpcURL, fallbackURL, blockExplorerURL, nativeCurrencySymbol)
+    result.setup(chainId, layer, chainName, iconUrl, shortName, chainColor, rpcURL, fallbackURL, originalRpcURL, originalFallbackURL, blockExplorerURL, nativeCurrencySymbol)
 
   proc `$`*(self: Item): string =
     result = fmt"""NetworkItem(
@@ -124,6 +132,20 @@ QtObject:
   QtProperty[string] fallbackURL:
     read = fallbackURL
     notify = fallbackURLChanged
+
+  proc originalRpcURLChanged*(self: Item) {.signal.}
+  proc originalRpcURL*(self: Item): string {.slot.} =
+    return self.originalRpcURL
+  QtProperty[string] originalRpcURL:
+    read = originalRpcURL
+    notify = originalRpcURLChanged
+
+  proc originalFallbackURLChanged*(self: Item) {.signal.}
+  proc originalFallbackURL*(self: Item): string {.slot.} =
+    return self.originalFallbackURL
+  QtProperty[string] originalFallbackURL:
+    read = originalFallbackURL
+    notify = originalFallbackURLChanged
 
   proc blockExplorerURLChanged*(self: Item) {.signal.}
   proc blockExplorerURL*(self: Item): string {.slot.} =
