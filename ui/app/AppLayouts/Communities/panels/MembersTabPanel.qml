@@ -42,20 +42,15 @@ Item {
         anchors.fill: parent
         spacing: 30
 
-        StatusInput {
+        SearchBox {
             id: memberSearch
             Layout.preferredWidth: 400
             Layout.leftMargin: 12
-            maximumHeight: 36
-            topPadding: 0
-            bottomPadding: 0
-            rightPadding: 0
             placeholderText: root.placeholderText
-            input.asset.name: "search"
             enabled: !!model && model.count > 0
         }
 
-        ListView {
+        StatusListView {
             id: membersList
             objectName: "CommunityMembersTabPanel_MembersListViews"
 
@@ -63,13 +58,12 @@ Item {
             Layout.fillHeight: true
 
             model: root.model
-            clip: true
-            spacing: 15
+            spacing: 0
 
             delegate: StatusMemberListItem {
                 id: memberItem
 
-                readonly property bool itsMe: model.pubKey.toLowerCase() === userProfile.pubKey.toLowerCase()
+                readonly property bool itsMe: model.pubKey.toLowerCase() === Global.userProfile.pubKey.toLowerCase()
                 readonly property bool isHovered: memberItem.sensor.containsMouse
                 readonly property bool canBeBanned: !memberItem.itsMe && (model.memberRole !== Constants.memberRole.owner && model.memberRole !== Constants.memberRole.admin)
                 readonly property bool canEnableKickBanButtons: canBeBanned && root.panelType === MembersTabPanel.TabType.AllMembers
@@ -91,6 +85,7 @@ Item {
                 components: [
                     DisabledTooltipButton {
                         id: kickButton
+                        anchors.verticalCenter: parent.verticalCenter
                         visible: kickVisible
                         interactive: kickEnabled
                         tooltipText: qsTr("Waiting for owner node to come online")
@@ -99,27 +94,29 @@ Item {
                             text: model.membershipRequestState === Constants.CommunityMembershipRequestState.KickedPending ? qsTr("Kick pending") : qsTr("Kick")
                             type: StatusBaseButton.Type.Danger
                             size: StatusBaseButton.Size.Small
-                            onClicked: root.kickUserClicked(model.pubKey, model.displayName)
+                            onClicked: root.kickUserClicked(model.pubKey, memberItem.title)
                             enabled: kickButton.interactive
                         }
                     },
 
                     DisabledTooltipButton {
                         id: banButton
+                        anchors.verticalCenter: parent.verticalCenter
                         //using opacity instead of visible to avoid the acceptButton jumping around
                         opacity: banVisible
                         interactive: banEnabled
-                        tooltipText: qsTr("Waiting for owner node to come online")
+                        tooltipText: banVisible ? qsTr("Waiting for owner node to come online") : ""
                         buttonComponent: StatusButton {
                             text: model.membershipRequestState === Constants.CommunityMembershipRequestState.BannedPending || !banVisible ? qsTr("Ban pending") : qsTr("Ban")
                             type: StatusBaseButton.Type.Danger
                             size: StatusBaseButton.Size.Small
-                            onClicked: root.banUserClicked(model.pubKey, model.displayName)
+                            onClicked: root.banUserClicked(model.pubKey, memberItem.title)
                             enabled: banButton.interactive
                         }
                     },
 
                     StatusButton {
+                        anchors.verticalCenter: parent.verticalCenter
                         visible: unBanVisible
                         text: qsTr("Unban")
                         onClicked: root.unbanUserClicked(model.pubKey)
@@ -127,6 +124,7 @@ Item {
 
                     DisabledTooltipButton {
                         id: acceptButton
+                        anchors.verticalCenter: parent.verticalCenter
                         visible: ((root.panelType === MembersTabPanel.TabType.PendingRequests ||
                                     root.panelType === MembersTabPanel.TabType.DeclinedRequests) && isHovered) || 
                                     isAcceptedPending
@@ -149,6 +147,7 @@ Item {
 
                     DisabledTooltipButton {
                         id: rejectButton
+                        anchors.verticalCenter: parent.verticalCenter
                         //using opacity instead of visible to avoid the acceptButton jumping around 
                         opacity: ((root.panelType === MembersTabPanel.TabType.PendingRequests) && isHovered) || isRejectedPending
                                     //TODO: Only the current user can reject a pending request, so we should check that here
@@ -188,7 +187,7 @@ Item {
                     if(mouse.button === Qt.RightButton) {
                         Global.openMenu(memberContextMenuComponent, this, {
                                             selectedUserPublicKey: model.pubKey,
-                                            selectedUserDisplayName: userName,
+                                            selectedUserDisplayName: memberItem.title,
                                             selectedUserIcon: asset.name,
                                         })
                     } else {
@@ -205,7 +204,7 @@ Item {
         ProfileContextMenu {
             id: memberContextMenuView
             store: root.rootStore
-            myPublicKey: userProfile.pubKey
+            myPublicKey: Global.userProfile.pubKey
 
             onOpenProfileClicked: {
                 Global.openProfilePopup(publicKey, null)
