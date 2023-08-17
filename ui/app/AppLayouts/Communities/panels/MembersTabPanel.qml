@@ -122,7 +122,7 @@ Item {
                         case Constants.memberRole.tokenMaster: return root.isOwner
                         // Admin can only be banned by owner and tokenMaster
                         case Constants.memberRole.admin: return root.isOwner || root.isTokenMaster
-                        // Everyone can be banned by everyone
+                        // All normal members can be banned by all privileged users
                         default: return true
                     }
                 }
