@@ -698,6 +698,7 @@ StackView {
 
                 onOpened: {
                     root.setFeeLoading()
+
                     signTransactionPopup.isRemotelyDestructTransaction
                             ? root.remotelyDestructFeesRequest(footer.walletsAndAmounts, tokenKey, footer.accountAddress)
                             : root.signBurnTransactionOpened(tokenKey, footer.burnAmount, footer.accountAddress)
