@@ -1242,6 +1242,49 @@ Item {
                     }
                 }
             }
+
+            RowLayout {
+                id: testTools
+
+                Layout.fillWidth: true
+                Layout.margins: 10
+
+                function requestCommunity(communityId) {
+
+                    console.log("request info", communityId)
+                    
+                    // const communityJson = root.store.getSectionByIdJson(communityId)
+
+                    // if (!communityJson) {
+                    appMain.communitiesStore.requestCommunityInfo(communityId)
+                    //     return null
+                    // }
+
+                    // return JSON.parse(communityJson)
+                }
+
+                function spectateCommunity(communityId) {
+                    console.log("spectate", communityId)
+                    appMain.communitiesStore.spectateCommunity(communityId)
+                }
+
+                StatusInput {
+                    id: communityIdInput
+                    Layout.fillWidth: true
+                }
+                StatusButton {
+                    text: "Request Info"
+                    onClicked: {
+                        testTools.requestCommunity(communityIdInput.text)
+                    }
+                }
+                StatusButton {
+                    text: "Spectate"
+                    onClicked: {
+                        testTools.spectateCommunity(communityIdInput.text)
+                    }
+                }
+            }
         } // ColumnLayout
 
         Component {

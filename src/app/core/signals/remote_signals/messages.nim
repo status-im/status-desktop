@@ -54,6 +54,8 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   signal.messages = @[]
   signal.contacts = @[]
 
+  info "<<< message event", event
+
   if not event.contains("event"):
     return signal
 

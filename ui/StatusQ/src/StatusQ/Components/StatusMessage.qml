@@ -242,7 +242,7 @@ Control {
                     }
                     Loader {
                         Layout.fillWidth: true
-                        active: root.showHeader && !editMode
+                        active: true // root.showHeader && !editMode
                         visible: active
                         sourceComponent: StatusMessageHeader {
                             sender: root.messageDetails.sender

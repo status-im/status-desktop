@@ -135,6 +135,11 @@ Item {
             showFullTimestamp: root.showFullTimestamp
         }
 
+        StatusTimeStampLabel {
+            verticalAlignment: Text.AlignVCenter
+            text: root.timestamp
+        }
+
         Loader {
             id: resendButtonLoader
             active: showResendButton && !!timestampText.text
