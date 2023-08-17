@@ -533,6 +533,7 @@ method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: s
 
 method updateTokenModelForCommunity*(self: Module, communityId: string, sharedAddresses: seq[string]) =
   self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
+  self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
 
 method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   let community = self.controller.getCommunityById(communityId)
@@ -546,9 +547,8 @@ method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
   self.updateTokenModelForCommunity(communityId, @[])
 
-method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
+proc applyPermissionResponse*(self: Module, communityId: string, permissions: Table[string, CheckPermissionsResultDto]) =
   let community = self.controller.getCommunityById(communityId)
-  let permissions = checkPermissionsToJoinResponse.permissions
   for id, criteriaResult in permissions:
     if community.tokenPermissions.hasKey(id):
       let tokenPermissionItem = self.view.spectatedCommunityPermissionModel.getItemById(id)
@@ -583,3 +583,19 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: str
           permissionSatisfied
       )
       self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
+
+method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string,
+    checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
+  self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions)
+
+method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId: string,
+    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
+  for _, channelPermissionResponse in checkChannelPermissionsResponse.channels:
+    self.applyPermissionResponse(
+      communityId,
+      channelPermissionResponse.viewOnlyPermissions.permissions,
+    )
+    self.applyPermissionResponse(
+      communityId,
+      channelPermissionResponse.viewAndPostPermissions.permissions,
+    )
