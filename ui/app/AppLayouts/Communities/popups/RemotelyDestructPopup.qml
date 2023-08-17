@@ -29,7 +29,7 @@ StatusDialog {
     // Account expected roles: address, name, color, emoji, walletType
     property var accounts
     signal remotelyDestructClicked(int tokenCount, var remotelyDestructTokensList, string accountAddress)
-    signal remotelyDestructFeesRequested(int tokenCount, var remotelyDestructTokensList, string accountAddress)
+    signal remotelyDestructFeesRequested(var remotelyDestructTokensList, string accountAddress)
 
     QtObject {
         id: d
@@ -68,7 +68,8 @@ StatusDialog {
            for(var i = 0; i < d.selfDestructTokensList.count; i ++)
                d.tokenCount += ModelUtils.get(d.selfDestructTokensList, i, "amount")
            if (d.tokenCount > 0) {
-               root.remotelyDestructFeesRequested(d.tokenCount, d.selfDestructTokensList, d.accountAddress);
+               console.log("^^^ updateTokensCount")
+               root.remotelyDestructFeesRequested(d.selfDestructTokensList, d.accountAddress);
            }
        }
     }
@@ -105,15 +106,21 @@ StatusDialog {
             accountsSelector.model: root.accounts
 
             accountsSelector.onCurrentIndexChanged: {
-                if (accountsSelector.currentIndex < 0)
+                console.log("^^^1")
+                if (accountsSelector.currentIndex < 0) {
+                    console.log("^^^1.5")
                     return
-
+                }
+                console.log("^^^2")
                 const item = ModelUtils.get(accountsSelector.model, accountsSelector.currentIndex)
                 d.accountAddress = item.address
-
+                console.log("^^^3")
                 // Whenever a change in the form happens, new fee calculation:
-                if(d.tokenCount > 0)
-                    root.remotelyDestructFeesRequested(d.tokenCount, d.selfDestructTokensList, d.accountAddress)
+                if(d.tokenCount > 0) {
+                    console.log("^^^4")
+                    root.remotelyDestructFeesRequested(d.selfDestructTokensList, d.accountAddress)
+                }
+                console.log("^^^5")
             }
 
             ModelChangeTracker {
@@ -121,6 +128,10 @@ StatusDialog {
 
                 // Whenever a change in the form happens, new fee calculation:
                 onRevisionChanged: {
+                    console.log("^^^ onRevisionChanged")
+                    console.log("^^^ tokenCount", d.tokenCount)
+                    console.log("^^^ tokenList", d.selfDestructTokensList)
+                    console.log("^^^ accAddr", d.accountAddress)
                     root.remotelyDestructFeesRequested(d.tokenCount, d.selfDestructTokensList, d.accountAddress)
                 }
             }

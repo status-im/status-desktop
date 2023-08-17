@@ -49,9 +49,11 @@ StatusDialog {
         property alias amountToBurn: amountToBurnInput.text
         readonly property bool isFeeError: root.feeErrorText !== ""
         readonly property bool isFormValid: specificAmountButton.checked && amountToBurnInput.valid || allTokensButton.checked
+        property bool isInitialized: false
 
         function initialize() {
             specificAmountButton.checked = true
+            isInitialized = true
             amountToBurnInput.forceActiveFocus()
         }
 
@@ -147,8 +149,9 @@ StatusDialog {
                 amountToBurnInput.text
                 allTokensButton.checked
                 feesBox.accountsSelector.currentIndex
-
-                requestFeeDelayTimer.restart()
+                if (d.isInitialized) {
+                    requestFeeDelayTimer.restart()
+                }
                 return true
             }
 
@@ -170,7 +173,6 @@ StatusDialog {
 
             Timer {
                 id: requestFeeDelayTimer
-
                 interval: 500
                 onTriggered: {
                     if(specificAmountButton.checked)
@@ -246,4 +248,5 @@ StatusDialog {
     }
 
     onOpened: d.initialize()
+    onClosed: d.isInitialized = false
 }

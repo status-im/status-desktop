@@ -623,6 +623,8 @@ StackView {
             RemotelyDestructPopup {
                 id: remotelyDestructPopup
 
+                readonly property string tokenKey: tokenViewPage.token.key
+
                 collectibleName: view.token.name
                 model: view.tokenOwnersModel || null
                 accounts: root.accounts
@@ -633,8 +635,8 @@ StackView {
                 feeErrorText: root.feeErrorText
 
                 onRemotelyDestructFeesRequested:root.remotelyDestructFeesRequest(remotelyDestructTokensList,
-                                                                                  tokenKey,
-                                                                                  accountAddress)
+                                                                                 remotelyDestructPopup.tokenKey,
+                                                                                 accountAddress)
 
                 onRemotelyDestructClicked: {
                     remotelyDestructPopup.close()
