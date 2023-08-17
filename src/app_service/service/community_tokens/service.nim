@@ -229,8 +229,7 @@ QtObject:
       tokenService: token_service.Service
       settingsService: settings_service.Service
       walletAccountService: wallet_account_service.Service
-      tempAccountAddress: string
-      tempChainId: int
+
       tokenOwnersTimer: QTimer
       tokenOwners1SecTimer: QTimer # used to update 1 sec after changes in owners
       tempTokenOwnersToFetch: CommunityTokenDto # used by 1sec timer
@@ -239,12 +238,6 @@ QtObject:
       tempFeeTable: Table[int, SuggestedFeesDto] # fees per chain, filled during gas computation, used during operation (deployment, mint, burn)
       tempGasTable: Table[ContractTuple, int] # gas per contract, filled during gas computation, used during operation (deployment, mint, burn)
       tempTokensAndAmounts: seq[CommunityTokenAndAmount]
-
-      tempDeploymentChainId: int
-      tempDeploymentCommunityId: string
-      tempDeploymentParams: DeploymentParameters
-      tempDeploymentCroppedImageJson: string
-      tempDeploymentAddressFrom: string
 
   # Forward declaration
   proc fetchAllTokenOwners*(self: Service)
@@ -616,10 +609,9 @@ QtObject:
     except RpcException:
       error "Error getting remote destructed amount", message = getCurrentExceptionMsg()
 
-  proc airdropTokens*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+  proc airdropTokens*(self: Service, communityId: string, password: string, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string) =
     try:
       for collectibleAndAmount in collectiblesAndAmounts:
-        let addressFrom = collectibleAndAmount.communityToken.deployer
         let txData = self.buildTransactionDataDto(addressFrom, collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)
         if txData.source == parseAddress(ZERO_ADDRESS):
           return
@@ -643,7 +635,7 @@ QtObject:
     except RpcException:
       error "Error airdropping tokens", message = getCurrentExceptionMsg()
 
-  proc computeAirdropFee*(self: Service, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string]) =
+  proc computeAirdropFee*(self: Service, collectiblesAndAmounts: seq[CommunityTokenAndAmount], walletAddresses: seq[string], addressFrom: string) =
     try:
       self.tempTokensAndAmounts = collectiblesAndAmounts
       let arg = AsyncGetMintFees(
@@ -651,7 +643,8 @@ QtObject:
         vptr: cast[ByteAddress](self.vptr),
         slot: "onAirdropFees",
         collectiblesAndAmounts: collectiblesAndAmounts,
-        walletAddresses: walletAddresses
+        walletAddresses: walletAddresses,
+        addressFrom: addressFrom
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -669,13 +662,12 @@ QtObject:
       if tokenType != TokenType.ERC20 and tokenType != TokenType.ERC721:
         error "Error loading fees: unknown token type", tokenType = tokenType
         return
-      self.tempAccountAddress = accountAddress
-      self.tempChainId = chainId
       let arg = AsyncGetDeployFeesArg(
         tptr: cast[ByteAddress](asyncGetDeployFeesTask),
         vptr: cast[ByteAddress](self.vptr),
         slot: "onDeployFees",
         chainId: chainId,
+        addressFrom: accountAddress,
         tokenType: tokenType
       )
       self.threadpool.start(arg)
@@ -684,13 +676,12 @@ QtObject:
 
   proc computeDeployOwnerContractsFee*(self: Service, chainId: int, accountAddress: string) =
     try:
-      self.tempAccountAddress = accountAddress
-      self.tempChainId = chainId
       let arg = AsyncDeployOwnerContractsFeesArg(
         tptr: cast[ByteAddress](asyncGetDeployOwnerContractsFeesTask),
         vptr: cast[ByteAddress](self.vptr),
         slot: "onDeployOwnerContractsFees",
         chainId: chainId,
+        addressFrom: accountAddress
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -729,13 +720,12 @@ QtObject:
       error "Can't find token ids to burn"
     return tokenIds
 
-  proc selfDestructCollectibles*(self: Service, communityId: string, password: string, walletAndAmounts: seq[WalletAndAmount], contractUniqueKey: string) =
+  proc selfDestructCollectibles*(self: Service, communityId: string, password: string, walletAndAmounts: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
       let tokenIds = self.getTokensToBurn(walletAndAmounts, contract)
       if len(tokenIds) == 0:
         return
-      let addressFrom = contract.deployer
       let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
       debug "Remote destruct collectibles ", chainId=contract.chainId, address=contract.address, tokens=tokenIds
       let response = tokens_backend.remoteBurn(contract.chainId, contract.address, %txData, password, tokenIds)
@@ -761,11 +751,9 @@ QtObject:
     except Exception as e:
       error "Remote self destruct error", msg = e.msg
 
-  proc computeSelfDestructFee*(self: Service, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string) =
+  proc computeSelfDestructFee*(self: Service, walletAndAmountList: seq[WalletAndAmount], contractUniqueKey: string, addressFrom: string) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
-      self.tempAccountAddress = contract.deployer
-      self.tempChainId = contract.chainId
       let tokenIds = self.getTokensToBurn(walletAndAmountList, contract)
       if len(tokenIds) == 0:
         warn "token list is empty"
@@ -777,7 +765,7 @@ QtObject:
         chainId: contract.chainId,
         contractAddress: contract.address,
         tokenIds: tokenIds,
-        addressFrom: contract.deployer
+        addressFrom: addressFrom
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -799,10 +787,9 @@ QtObject:
       errorCode = ComputeFeeErrorCode.Infura
     return errorCode
 
-  proc burnTokens*(self: Service, communityId: string, password: string, contractUniqueKey: string, amount: Uint256) =
+  proc burnTokens*(self: Service, communityId: string, password: string, contractUniqueKey: string, amount: Uint256, addressFrom: string) =
     try:
       var contract = self.findContractByUniqueId(contractUniqueKey)
-      let addressFrom = contract.deployer
       let txData = self.buildTransactionDataDto(addressFrom, contract.chainId, contract.address)
       debug "Burn tokens ", chainId=contract.chainId, address=contract.address, amount=amount
       let response = tokens_backend.burn(contract.chainId, contract.address, %txData, password, amount)
@@ -825,11 +812,9 @@ QtObject:
     except Exception as e:
       error "Burn error", msg = e.msg
 
-  proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: Uint256) =
+  proc computeBurnFee*(self: Service, contractUniqueKey: string, amount: Uint256, addressFrom: string) =
     try:
       let contract = self.findContractByUniqueId(contractUniqueKey)
-      self.tempAccountAddress = contract.deployer
-      self.tempChainId = contract.chainId
       let arg = AsyncGetBurnFees(
         tptr: cast[ByteAddress](asyncGetBurnFeesTask),
         vptr: cast[ByteAddress](self.vptr),
@@ -837,7 +822,7 @@ QtObject:
         chainId: contract.chainId,
         contractAddress: contract.address,
         amount: amount,
-        addressFrom: contract.deployer
+        addressFrom: addressFrom
       )
       self.threadpool.start(arg)
     except Exception as e:
@@ -907,14 +892,16 @@ QtObject:
         return
       let gasTable = responseJson{"gasTable"}.toGasTable
       let feeTable = responseJson{"feeTable"}.toFeeTable
+      let chainId = responseJson{"chainId"}.getInt
+      let addressFrom = responseJson{"addressFrom"}.getStr
       self.tempGasTable = gasTable
       self.tempFeeTable = feeTable
       let gasUnits = toSeq(gasTable.values())[0]
       let suggestedFees = toSeq(feeTable.values())[0]
-      let data = self.createComputeFeeArgs(gasUnits, suggestedFees, self.tempChainId, self.tempAccountAddress)
+      let data = self.createComputeFeeArgs(gasUnits, suggestedFees, chainId, addressFrom)
       self.events.emit(signalName, data)
     except Exception:
-      error "Error creating self destruct fee args", message = getCurrentExceptionMsg()
+      error "Error creating fee args", message = getCurrentExceptionMsg()
       let data = self.createComputeFeeArgsWithError(getCurrentExceptionMsg())
       self.events.emit(signalName, data)
 
@@ -954,6 +941,7 @@ QtObject:
 
       let gasTable = responseJson{"gasTable"}.toGasTable
       let feeTable = responseJson{"feeTable"}.toFeeTable
+      let addressFrom = responseJson{"addressFrom"}.getStr
       self.tempGasTable = gasTable
       self.tempFeeTable = feeTable
 
@@ -963,8 +951,7 @@ QtObject:
         let gasUnits = self.tempGasTable[(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)]
         let suggestedFees = self.tempFeeTable[collectibleAndAmount.communityToken.chainId]
         let ethValue = self.computeEthValue(gasUnits, suggestedFees)
-        let walletAddress = collectibleAndAmount.communityToken.deployer
-        wholeEthCostForChainWallet[(collectibleAndAmount.communityToken.chainId, walletAddress)] = wholeEthCostForChainWallet.getOrDefault((collectibleAndAmount.communityToken.chainId, walletAddress), 0.0) + ethValue
+        wholeEthCostForChainWallet[(collectibleAndAmount.communityToken.chainId, addressFrom)] = wholeEthCostForChainWallet.getOrDefault((collectibleAndAmount.communityToken.chainId, addressFrom), 0.0) + ethValue
         ethValuesForContracts[(collectibleAndAmount.communityToken.chainId, collectibleAndAmount.communityToken.address)] = ethValue
 
       var totalEthVal = 0.0
@@ -974,9 +961,8 @@ QtObject:
         let contractTuple = (chainId: collectibleAndAmount.communityToken.chainId,
                                           address: collectibleAndAmount.communityToken.address)
         let ethValue = ethValuesForContracts[contractTuple]
-        let walletAddress = collectibleAndAmount.communityToken.deployer
-        var balance = self.getWalletBalanceForChain(walletAddress, contractTuple.chainId)
-        if balance < wholeEthCostForChainWallet[(contractTuple.chainId, walletAddress)]:
+        var balance = self.getWalletBalanceForChain(addressFrom, contractTuple.chainId)
+        if balance < wholeEthCostForChainWallet[(contractTuple.chainId, addressFrom)]:
           # if wallet balance for this chain is less than the whole cost
           # then we can't afford it; setting balance to 0.0 will set balance error code in Args
           balance = 0.0

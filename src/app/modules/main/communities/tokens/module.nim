@@ -107,20 +107,21 @@ proc getTokenAndAmountList(self: Module, communityId: string, tokensJsonString: 
   except Exception as e:
     error "Error getTokenAndAmountList", msg = e.msg
 
-method airdropTokens*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string) =
+method airdropTokens*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) =
   self.tempTokenAndAmountList = self.getTokenAndAmountList(communityId, tokensJsonString)
   if len(self.tempTokenAndAmountList) == 0:
     return
   self.tempWalletAddresses = walletsJsonString.parseJson.to(seq[string])
   self.tempCommunityId = communityId
+  self.tempAddressFrom = addressFrom
   self.tempContractAction = ContractAction.Airdrop
   self.authenticate()
 
-method computeAirdropFee*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string) =
+method computeAirdropFee*(self: Module, communityId: string, tokensJsonString: string, walletsJsonString: string, addressFrom: string) =
   let tokenAndAmountList = self.getTokenAndAmountList(communityId, tokensJsonString)
   if len(tokenAndAmountList) == 0:
     return
-  self.controller.computeAirdropFee(tokenAndAmountList, walletsJsonString.parseJson.to(seq[string]))
+  self.controller.computeAirdropFee(tokenAndAmountList, walletsJsonString.parseJson.to(seq[string]), addressFrom)
 
 proc getWalletAndAmountListFromJson(self: Module, collectiblesToBurnJsonString: string): seq[WalletAndAmount] =
   let collectiblesToBurnJson = collectiblesToBurnJsonString.parseJson
@@ -129,18 +130,19 @@ proc getWalletAndAmountListFromJson(self: Module, collectiblesToBurnJsonString: 
     let amount = collectibleToBurn["amount"].getInt
     result.add(WalletAndAmount(walletAddress: walletAddress, amount: amount))
 
-method selfDestructCollectibles*(self: Module, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string) =
+method selfDestructCollectibles*(self: Module, communityId: string, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string) =
   self.tempWalletAndAmountList = self.getWalletAndAmountListFromJson(collectiblesToBurnJsonString)
   self.tempCommunityId = communityId
   self.tempContractUniqueKey = contractUniqueKey
+  self.tempAddressFrom = addressFrom
   self.tempContractAction = ContractAction.SelfDestruct
   self.authenticate()
 
-method burnTokens*(self: Module, communityId: string, contractUniqueKey: string, amount: string) =
-  let tokenDto = self.controller.findContractByUniqueId(contractUniqueKey)
+method burnTokens*(self: Module, communityId: string, contractUniqueKey: string, amount: string, addressFrom: string) =
   self.tempCommunityId = communityId
   self.tempContractUniqueKey = contractUniqueKey
   self.tempAmount = amount.parse(Uint256)
+  self.tempAddressFrom = addressFrom
   self.tempContractAction = ContractAction.Burn
   self.authenticate()
 
@@ -225,11 +227,11 @@ method onUserAuthenticated*(self: Module, password: string) =
     if self.tempContractAction == ContractAction.Deploy:
       self.controller.deployContract(self.tempCommunityId, self.tempAddressFrom, password, self.tempDeploymentParams, self.tempTokenMetadata, self.tempTokenImageCropInfoJson, self.tempChainId)
     elif self.tempContractAction == ContractAction.Airdrop:
-      self.controller.airdropTokens(self.tempCommunityId, password, self.tempTokenAndAmountList, self.tempWalletAddresses)
+      self.controller.airdropTokens(self.tempCommunityId, password, self.tempTokenAndAmountList, self.tempWalletAddresses, self.tempAddressFrom)
     elif self.tempContractAction == ContractAction.SelfDestruct:
-      self.controller.selfDestructCollectibles(self.tempCommunityId, password, self.tempWalletAndAmountList, self.tempContractUniqueKey)
+      self.controller.selfDestructCollectibles(self.tempCommunityId, password, self.tempWalletAndAmountList, self.tempContractUniqueKey, self.tempAddressFrom)
     elif self.tempContractAction == ContractAction.Burn:
-      self.controller.burnTokens(self.tempCommunityId, password, self.tempContractUniqueKey, self.tempAmount)
+      self.controller.burnTokens(self.tempCommunityId, password, self.tempContractUniqueKey, self.tempAmount, self.tempAddressFrom)
     elif self.tempContractAction == ContractAction.DeployOwnerToken:
       self.controller.deployOwnerContracts(self.tempCommunityId, self.tempAddressFrom, password,
                 self.tempOwnerDeploymentParams, self.tempOwnerTokenMetadata,
@@ -254,13 +256,12 @@ method computeDeployFee*(self: Module, chainId: int, accountAddress: string, tok
   else:
     self.controller.computeDeployFee(chainId, accountAddress, tokenType)
 
-method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: string, contractUniqueKey: string) =
+method computeSelfDestructFee*(self: Module, collectiblesToBurnJsonString: string, contractUniqueKey: string, addressFrom: string) =
   let walletAndAmountList = self.getWalletAndAmountListFromJson(collectiblesToBurnJsonString)
-  self.controller.computeSelfDestructFee(walletAndAmountList, contractUniqueKey)
+  self.controller.computeSelfDestructFee(walletAndAmountList, contractUniqueKey, addressFrom)
 
-method computeBurnFee*(self: Module, contractUniqueKey: string, amount: string) =
-  let tokenDto = self.controller.findContractByUniqueId(contractUniqueKey)
-  self.controller.computeBurnFee(contractUniqueKey, amount.parse(Uint256))
+method computeBurnFee*(self: Module, contractUniqueKey: string, amount: string, addressFrom: string) =
+  self.controller.computeBurnFee(contractUniqueKey, amount.parse(Uint256), addressFrom)
 
 proc createUrl(self: Module, chainId: int, transactionHash: string): string =
   let network = self.controller.getNetwork(chainId)

@@ -118,38 +118,32 @@ QtObject {
       * ]
       */
     function computeSelfDestructFee(walletsAndAmounts, tokenKey, accountAddress) {
-        //TODO uncomment accountAddress when supported in backend
-        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(walletsAndAmounts), tokenKey, /*accountAddress*/)
+        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(walletsAndAmounts), tokenKey, accountAddress)
     }
 
     function remoteSelfDestructCollectibles(communityId, walletsAndAmounts, tokenKey, accountAddress) {
-        //TODO uncomment accountAddress when supported in backend
-        communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(walletsAndAmounts), tokenKey, /*accountAddress*/)
+        communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(walletsAndAmounts), tokenKey, accountAddress)
     }
 
     // Burn:
     function computeBurnFee(tokenKey, amount, accountAddress) {
         console.assert(typeof amount === "string")
-        // TODO: Backend. It should include the account address in the calculation.
-        communityTokensModuleInst.computeBurnFee(tokenKey, amount/*, accountAddress*/)
+        communityTokensModuleInst.computeBurnFee(tokenKey, amount, accountAddress)
     }
 
     function burnToken(communityId, tokenKey, burnAmount, accountAddress) {
         console.assert(typeof burnAmount === "string")
-         // TODO: Backend. It should include the account address in the burn action.
-        communityTokensModuleInst.burnTokens(communityId, tokenKey, burnAmount/*, accountAddress*/)
+        communityTokensModuleInst.burnTokens(communityId, tokenKey, burnAmount, accountAddress)
     }
 
     // Airdrop tokens:
     function airdrop(communityId, airdropTokens, addresses, feeAccountAddress) {
-        // TODO: Take `feeAccountAddress` into account for the airdrop
-        communityTokensModuleInst.airdropTokens(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses))
+        communityTokensModuleInst.airdropTokens(communityId, JSON.stringify(airdropTokens), JSON.stringify(addresses), feeAccountAddress)
     }
 
     function computeAirdropFee(communityId, contractKeysAndAmounts, addresses, feeAccountAddress) {
-        // TODO: Take `feeAccountAddress` into account when calculating fee
         communityTokensModuleInst.computeAirdropFee(
                     communityId, JSON.stringify(contractKeysAndAmounts),
-                    JSON.stringify(addresses))
+                    JSON.stringify(addresses), feeAccountAddress)
     }
 }

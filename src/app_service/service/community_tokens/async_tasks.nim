@@ -20,6 +20,7 @@ proc tableToJsonArray[A, B](t: var Table[A, B]): JsonNode =
 type
   AsyncDeployOwnerContractsFeesArg = ref object of QObjectTaskArg
     chainId: int
+    addressFrom: string
 
 const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncDeployOwnerContractsFeesArg](argEncoded)
@@ -33,6 +34,8 @@ const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gc
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
+      "chainId": arg.chainId,
+      "addressFrom": arg.addressFrom,
       "error": "",
     })
   except Exception as e:
@@ -43,6 +46,7 @@ const asyncGetDeployOwnerContractsFeesTask: Task = proc(argEncoded: string) {.gc
 type
   AsyncGetDeployFeesArg = ref object of QObjectTaskArg
     chainId: int
+    addressFrom: string
     tokenType: TokenType
 
 const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
@@ -58,6 +62,8 @@ const asyncGetDeployFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
+      "chainId": arg.chainId,
+      "addressFrom": arg.addressFrom,
       "error": "",
     })
   except Exception as e:
@@ -84,6 +90,8 @@ const asyncGetRemoteBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimc
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
+      "chainId": arg.chainId,
+      "addressFrom": arg.addressFrom,
       "error": "" })
   except Exception as e:
     arg.finish(%* {
@@ -109,6 +117,8 @@ const asyncGetBurnFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
+      "chainId": arg.chainId,
+      "addressFrom": arg.addressFrom,
       "error": "" })
   except Exception as e:
     arg.finish(%* {
@@ -119,6 +129,7 @@ type
   AsyncGetMintFees = ref object of QObjectTaskArg
     collectiblesAndAmounts: seq[CommunityTokenAndAmount]
     walletAddresses: seq[string]
+    addressFrom: string
 
 const asyncGetMintFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncGetMintFees](argEncoded)
@@ -134,12 +145,13 @@ const asyncGetMintFeesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
 
       # get gas for smart contract
       let gas = community_tokens.estimateMintTokens(chainId,
-        collectibleAndAmount.communityToken.address, collectibleAndAmount.communityToken.deployer,
+        collectibleAndAmount.communityToken.address, arg.addressFrom,
         arg.walletAddresses, collectibleAndAmount.amount).result.getInt
       gasTable[(chainId, collectibleAndAmount.communityToken.address)] = gas
     arg.finish(%* {
       "feeTable": tableToJsonArray(feeTable),
       "gasTable": tableToJsonArray(gasTable),
+      "addressFrom": arg.addressFrom,
       "error": "" })
   except Exception as e:
     let output = %* {
