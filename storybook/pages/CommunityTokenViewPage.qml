@@ -333,14 +333,14 @@ SplitView {
                         CheckBox {
                             id: transferibleChecker
 
-                            text: "Tranferible"
+                            text: "Tranferable"
                             checked: true
                         }
 
                         CheckBox {
                             id: selfdestructChecker
 
-                            text: "Remote self-desctruct"
+                            text: "Remote self-destruct"
                             checked: true
                         }
                     }
