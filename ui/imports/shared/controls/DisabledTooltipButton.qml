@@ -35,7 +35,7 @@ Item {
     }
     StatusToolTip {
         id: tooltip
-        visible: hoverHandler.hovered
+        visible: hoverHandler.hovered && !!text
     }
 
     Component{
