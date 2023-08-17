@@ -168,7 +168,9 @@ StatusDialog {
                 allTokensButton.checked
                 feesBox.accountsSelector.currentIndex
 
-                requestFeeDelayTimer.restart()
+                if (root.opened) {
+                    requestFeeDelayTimer.restart()
+                }
                 return true
             }
 
