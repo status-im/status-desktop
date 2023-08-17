@@ -31,7 +31,9 @@ SplitView {
         orientation: Qt.Vertical
         SplitView.fillWidth: true
 
-        Item {
+        Pane {
+            id: pane
+
             SplitView.fillWidth: true
             SplitView.fillHeight: true
 
@@ -49,17 +51,35 @@ SplitView {
             RemotelyDestructPopup {
                 id: dialog
 
-                anchors.centerIn: parent
+                margins: 250
+                topMargin: 30
+
+                closePolicy: Popup.NoAutoClose
+                visible: true
+                modal: false
+                destroyOnClose: false
+                parent: pane
+                anchors.centerIn: pane
+
+
                 collectibleName: editorCollectible.text
                 model: TokenHoldersModel {}
                 accounts: accountsModel
                 chainName: "Optimism"
-                feeText: "0,01et(100Usd)"
+                feeText: "0,01 ETH (60,34 USD)"
                 onRemotelyDestructClicked: {
-                    logs.logEvent("RemoteSelfDestructPopup::onRemotelyDestructClicked")
+                    logs.logEvent("RemoteSelfDestructPopup::onRemotelyDestructClicked",
+                                  ["walletsAndAmounts", "accountAddress"], [
+                                      JSON.stringify(walletsAndAmounts), accountAddress
+                                  ])
                     close()
                 }
-                onRemotelyDestructFeesRequested: logs.logEvent("RemoteSelfDestructPopup::onRemotelyDestructClicked")
+                onRemotelyDestructFeesRequested: {
+                    logs.logEvent("RemoteSelfDestructPopup::onRemotelyDestructFeesRequested",
+                                  ["walletsAndAmounts", "accountAddress"], [
+                                      JSON.stringify(walletsAndAmounts), accountAddress
+                                  ])
+                }
 
                 Component.onCompleted: {
                     open()

@@ -108,14 +108,23 @@ QtObject {
         communityTokensModuleInst.computeDeployFee(chainId, accountAddress, tokenType, isOwnerDeployment)
     }
 
-    function computeSelfDestructFee(selfDestructTokensList, tokenKey, accountAddress) {
+    /**
+      * walletsAndAmounts - array of following structure is expected:
+      * [
+      *   {
+      *      walletAddress: string
+      *      amount: int
+      *   }
+      * ]
+      */
+    function computeSelfDestructFee(walletsAndAmounts, tokenKey, accountAddress) {
         //TODO uncomment accountAddress when supported in backend
-        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(selfDestructTokensList), tokenKey, /*accountAddress*/)
+        communityTokensModuleInst.computeSelfDestructFee(JSON.stringify(walletsAndAmounts), tokenKey, /*accountAddress*/)
     }
 
-    function remoteSelfDestructCollectibles(communityId, selfDestructTokensList, tokenKey, accountAddress) {
+    function remoteSelfDestructCollectibles(communityId, walletsAndAmounts, tokenKey, accountAddress) {
         //TODO uncomment accountAddress when supported in backend
-        communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(selfDestructTokensList), tokenKey, /*accountAddress*/)
+        communityTokensModuleInst.selfDestructCollectibles(communityId, JSON.stringify(walletsAndAmounts), tokenKey, /*accountAddress*/)
     }
 
     // Burn:
