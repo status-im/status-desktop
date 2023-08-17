@@ -554,3 +554,12 @@ proc toMembersRevealedAccounts*(membersRevealedAccountsObj: JsonNode): MembersRe
   result = initTable[string, seq[RevealedAccount]]()
   for (pubkey, revealedAccountsObj) in membersRevealedAccountsObj.pairs:
     result[pubkey] = revealedAccountsObj.toRevealedAccounts()
+
+proc getCommunityChats*(self: CommunityDto, chatsIds: seq[string]): seq[ChatDto] =
+  var chats: seq[ChatDto] = @[]
+  for chatId in chatsIds:
+    for communityChat in self.chats:
+      if chatId == communityChat.id:
+        chats.add(communityChat)
+        break
+  return chats

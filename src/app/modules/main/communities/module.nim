@@ -185,7 +185,7 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+    let chats = community.getCommunityChats(tokenPermission.chatIds)
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
@@ -539,7 +539,7 @@ method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+    let chats = community.getCommunityChats(tokenPermission.chatIds)
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 

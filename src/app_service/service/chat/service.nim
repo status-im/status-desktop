@@ -428,7 +428,9 @@ QtObject:
 
     return self.chats[chatId]
 
-  proc getChatsByIds*(self: Service, chatIds: seq[string]): seq[ChatDto] = 
+  proc getChatsByIds*(self: Service, chatIds: seq[string]): seq[ChatDto] =
+    if chatIds.len == 0:
+      return
     return self.getAllChats().filterIt(it.id in chatIds)
 
   proc getOneToOneChatNameAndImage*(self: Service, chatId: string):
