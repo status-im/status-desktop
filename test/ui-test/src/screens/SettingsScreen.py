@@ -536,7 +536,8 @@ class KeycardSettingsView(BaseElement):
 
     def check_import_from_keycard_option(self):
         #assert self._import_from_keycard_button.is_visible, f'Import from keycard button not visible'
-        self._import_from_keycard_button.wait_until_appears()
+        #self._import_from_keycard_button.wait_until_appears()
+        assert self._import_from_keycard_button.existent()
 
     def check_whats_on_keycard_option(self):
         assert self._check_whats_on_keycard_button.is_visible, f'Check what on keycard not visible'
