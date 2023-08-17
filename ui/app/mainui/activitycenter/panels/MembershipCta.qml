@@ -15,7 +15,7 @@ Item {
     id: root
 
     property int membershipStatus: ActivityCenterStore.ActivityCenterMembershipStatus.None
-    property bool ctaAllowed: true
+    property bool ctaAllowed: !acceptedPending && !declinedPending
 
     readonly property bool pending: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Pending
     readonly property bool accepted: membershipStatus === ActivityCenterStore.ActivityCenterMembershipStatus.Accepted

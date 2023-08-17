@@ -48,6 +48,6 @@ ActivityNotificationMessage {
         onDeclineRequestToJoinCommunity: root.store.declineRequestToJoinCommunity(notification.id, notification.communityId)
         //TODO: Get backend value. If the membersip is in acceptedPending or declinedPending state, another user can't accept or decline the request
         //Only the user who requested can cancel the request
-        ctaAllowed: true
+        //ctaAllowed: true
     }
 }
