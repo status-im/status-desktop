@@ -296,15 +296,17 @@ QtObject:
 
           let requestToJoinState = RequestToJoinType(membershipRequest.state)
 
-          if requestToJoinState != RequestToJoinType.Pending:
-            try:
-              self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, community, requestToJoinState)
-            except Exception as e:
-              error "Unknown request", msg = e.msg
-          else:
+          if self.getPendingRequestIndex(membershipRequest.communityId, membershipRequest.id) == -1:
             community.pendingRequestsToJoin.add(membershipRequest)
             self.communities[membershipRequest.communityId] = community
-            self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
+            self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY,
+              CommunityRequestArgs(communityRequest: membershipRequest))
+          else:
+            try:
+              self.updateMembershipRequestToNewState(membershipRequest.communityId, membershipRequest.id, community,
+                requestToJoinState)
+            except Exception as e:
+              error "Unknown request", msg = e.msg
 
           self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[membershipRequest.communityId]))
 
