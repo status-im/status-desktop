@@ -113,7 +113,8 @@ Control {
                     components: [
                         StatusIcon {
                             visible: model.memberRole === Constants.memberRole.owner ||
-                                     model.memberRole === Constants.memberRole.admin
+                                     model.memberRole === Constants.memberRole.admin ||
+                                     model.memberRole === Constants.memberRole.tokenMaster
                             anchors.verticalCenter: parent.verticalCenter
                             icon: "crown"
                             color: Theme.palette.directColor1

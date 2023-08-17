@@ -396,11 +396,12 @@ method amIChatAdmin*(self: Module): bool =
     let chatDto = self.controller.getChatDetails()
     for member in chatDto.members:
       if member.id == singletonInstance.userProfile.getPubKey():
-        return member.role == MemberRole.Owner or member.role == MemberRole.Admin
+        return member.role == MemberRole.Owner or member.role == MemberRole.Admin or member.role == MemberRole.TokenMaster
     return false
   else:
     let communityDto = self.controller.getCommunityDetails()
-    return communityDto.memberRole == MemberRole.Owner or communityDto.memberRole == MemberRole.Admin
+    return communityDto.memberRole == MemberRole.Owner or 
+      communityDto.memberRole == MemberRole.Admin or communityDto.memberRole == MemberRole.TokenMaster
 
 method onUpdateViewOnlyPermissionsSatisfied*(self: Module, value: bool) =
   self.view.setViewOnlyPermissionsSatisfied(value)

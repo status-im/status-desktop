@@ -55,7 +55,8 @@ StackLayout {
             accessType: communityData.access
             joinCommunity: true
             amISectionAdmin: communityData.memberRole === Constants.memberRole.owner ||
-                             communityData.memberRole === Constants.memberRole.admin
+                             communityData.memberRole === Constants.memberRole.admin ||
+                             communityData.memberRole === Constants.memberRole.tokenMaster
             communityItemsModel: root.rootStore.communityItemsModel
             requirementsMet: root.permissionsStore.allTokenRequirementsMet
             requirementsCheckPending: root.rootStore.permissionsCheckOngoing
@@ -114,7 +115,8 @@ StackLayout {
             sectionItemModel: root.sectionItemModel
             amIMember: chatItem.amIMember
             amISectionAdmin: root.sectionItemModel.memberRole === Constants.memberRole.owner ||
-                             root.sectionItemModel.memberRole === Constants.memberRole.admin
+                             root.sectionItemModel.memberRole === Constants.memberRole.admin ||
+                             root.sectionItemModel.memberRole === Constants.memberRole.tokenMaster
             hasViewOnlyPermissions: root.permissionsStore.viewOnlyPermissionsModel.count > 0
             hasViewAndPostPermissions: root.permissionsStore.viewAndPostPermissionsModel.count > 0
             viewOnlyPermissionsModel: root.permissionsStore.viewOnlyPermissionsModel

@@ -38,7 +38,7 @@ StatusSectionLayout {
     required property var walletAccountsModel // name, address, emoji, color
 
     readonly property bool isOwner: community.memberRole === Constants.memberRole.owner
-    readonly property bool isAdmin: isOwner || community.memberRole === Constants.memberRole.admin
+    readonly property bool isAdmin: community.memberRole === Constants.memberRole.admin
     readonly property bool isTokenMasterOwner: community.memberRole === Constants.memberRole.tokenMaster
     readonly property bool isControlNode: community.isControlNode
 
@@ -248,7 +248,7 @@ StatusSectionLayout {
             bannedMembersModel: root.community.bannedMembers
             pendingMemberRequestsModel: root.community.pendingMemberRequests
             declinedMemberRequestsModel: root.community.declinedMemberRequests
-            editable: root.isAdmin
+            editable: root.isAdmin || root.isOwner || root.isTokenMasterOwner
             memberRole: community.memberRole
             communityName: root.community.name
 
@@ -304,7 +304,7 @@ StatusSectionLayout {
             readonly property int sectionKey: Constants.CommunitySettingsSections.MintTokens
             readonly property string sectionName: qsTr("Tokens")
             readonly property string sectionIcon: "token"
-            readonly property bool sectionEnabled: root.isOwner
+            readonly property bool sectionEnabled: true
 
             readonly property CommunityTokensStore communityTokensStore:
                 rootStore.communityTokensStore
@@ -418,13 +418,13 @@ StatusSectionLayout {
             readonly property int sectionKey: Constants.CommunitySettingsSections.Airdrops
             readonly property string sectionName: qsTr("Airdrops")
             readonly property string sectionIcon: "airdrop"
-            readonly property bool sectionEnabled: root.isOwner
+            readonly property bool sectionEnabled: true
 
             communityDetails: d.communityDetails
 
             // Profile type
             isOwner: root.isOwner
-            isTokenMasterOwner: false // TODO: Backend
+            isTokenMasterOwner: root.isTokenMasterOwner
             isAdmin: root.isAdmin
 
             // Owner and TMaster properties
@@ -540,6 +540,7 @@ StatusSectionLayout {
             readonly property string color: root.community.color
             readonly property bool owner: root.community.memberRole === Constants.memberRole.owner
             readonly property bool admin: root.community.memberRole === Constants.memberRole.admin
+            readonly property bool tokenMaster: root.community.memberRole === Constants.memberRole.tokenMaster
         }
 
         function goTo(section: int, subSection: int) {

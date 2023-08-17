@@ -246,6 +246,8 @@ proc toChannelMember*(jsonObj: JsonNode, memberId: string, joined: bool): ChatMe
     result.role = MemberRole.ManageUsers
   elif roles.contains(MemberRole.ModerateContent.int):
     result.role = MemberRole.ModerateContent
+  elif roles.contains(MemberRole.TokenMaster.int):
+    result.role = MemberRole.TokenMaster
 
   result.joined = joined
 

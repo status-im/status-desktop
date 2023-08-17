@@ -482,8 +482,6 @@ Rectangle {
                                                 return qsTr("View only")
                                             case PermissionTypes.Type.ViewAndPost:
                                                 return qsTr("View & post")
-                                            case PermissionTypes.Type.Moderator:
-                                                return qsTr("Moderate")
                                             default:
                                                 return "???"
                                             }

@@ -315,6 +315,9 @@ method onBurnStateChanged*(self: AccessInterface, communityId: string, chainId: 
 method onRemoteDestructed*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string, addresses: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onRequestReevaluateMembersPermissionsIfRequired*(self: AccessInterface, communityId: string, chainId: int, contractAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onAcceptRequestToJoinFailed*(self: AccessInterface, communityId: string, memberKey: string, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

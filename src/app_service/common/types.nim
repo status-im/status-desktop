@@ -53,6 +53,7 @@ type MemberRole* {.pure} = enum
   ManageUsers
   ModerateContent
   Admin
+  TokenMaster
 
 type MembershipRequestState* {.pure} = enum 
   None = 0,

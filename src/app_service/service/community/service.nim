@@ -677,7 +677,8 @@ QtObject:
       let communities = parseCommunities(responseObj["communities"])
       for community in communities:
         self.communities[community.id] = community
-        if community.memberRole == MemberRole.Owner or community.memberRole == MemberRole.Admin:
+        if community.memberRole == MemberRole.Owner or
+            community.memberRole == MemberRole.Admin or community.memberRole == MemberRole.TokenMaster:
           self.communities[community.id].pendingRequestsToJoin = self.allPendingRequestsToJoinForCommunity(community.id)
           self.communities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
           self.communities[community.id].canceledRequestsToJoin = self.canceledRequestsToJoinForCommunity(community.id)
@@ -2079,3 +2080,22 @@ QtObject:
       ))
     except Exception as e:
       error "error while getting the community members' revealed addressesses", msg = e.msg
+
+  proc asyncReevaluateCommunityMembersPermissions*(self: Service, communityId: string) =
+    let arg = AsyncGetRevealedAccountsForAllMembersArg(
+      tptr: cast[ByteAddress](asyncReevaluateCommunityMembersPermissionsTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncReevaluateCommunityMembersPermissionsCompleted",
+      communityId: communityId,
+    )
+    self.threadpool.start(arg)
+  
+  proc onAsyncReevaluateCommunityMembersPermissionsCompleted*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(RpcException, rpcResponseObj["error"].getStr)
+      
+    except Exception as e:
+      error "error while reevaluating community members permissions", msg = e.msg
