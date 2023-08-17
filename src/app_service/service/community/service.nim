@@ -1540,34 +1540,37 @@ QtObject:
         let errorMessage = rpcResponseObj{"error"}.getStr
 
         if errorMessage.contains("has no permission to join"):
-          self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
+          self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION,
+            CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
         else:
-          self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
+          self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED,
+            CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
         return
 
       let updatedCommunity = rpcResponseObj["response"]["result"]["communities"][0].toCommunityDto
+      let requestToJoin = rpcResponseObj["response"]["result"]["requestsToJoinCommunity"][0].toCommunityMembershipRequestDto
 
-      let newState = if updatedCommunity.isControlNode:
-          RequestToJoinType.Accepted
-        else:
-          RequestToJoinType.AcceptedPending
-
-      self.updateMembershipRequestToNewState(communityId, requestId, updatedCommunity, newState)
+      self.updateMembershipRequestToNewState(communityId, requestId, updatedCommunity,
+        RequestToJoinType(requestToJoin.state))
 
       if (userKey == ""):
         error "Did not find pubkey in the pending request"
         return
 
       self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[communityId]))
-      self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
+      self.events.emit(SIGNAL_COMMUNITY_MEMBER_APPROVED,
+        CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
 
       if rpcResponseObj["response"]["result"]{"activityCenterNotifications"}.kind != JNull:
-        self.activityCenterService.parseActivityCenterNotifications(rpcResponseObj["response"]["result"]["activityCenterNotifications"])
+        self.activityCenterService.parseActivityCenterNotifications(
+          rpcResponseObj["response"]["result"]["activityCenterNotifications"]
+        )
 
     except Exception as e:
       let errMsg = e.msg
       error "error accepting request to join: ", errMsg
-      self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED, CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
+      self.events.emit(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED,
+        CommunityMemberArgs(communityId: communityId, pubKey: userKey, requestId: requestId))
 
   proc asyncLoadCuratedCommunities*(self: Service) =
     self.events.emit(SIGNAL_CURATED_COMMUNITIES_LOADING, Args())
@@ -1816,12 +1819,10 @@ QtObject:
       let response = status_go.declineRequestToJoinCommunity(requestId)
       self.activityCenterService.parseActivityCenterResponse(response)
 
-      let newState = if self.communities[communityId].isControlNode:
-          RequestToJoinType.Declined
-        else:
-          RequestToJoinType.DeclinedPending
+      let requestToJoin = response.result["requestsToJoinCommunity"][0].toCommunityMembershipRequestDto
 
-      self.updateMembershipRequestToNewState(communityId, requestId, self.communities[communityId], newState)
+      self.updateMembershipRequestToNewState(communityId, requestId, self.communities[communityId],
+        RequestToJoinType(requestToJoin.state))
 
       self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.communities[communityId]))
     except Exception as e:

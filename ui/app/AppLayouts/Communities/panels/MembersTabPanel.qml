@@ -23,8 +23,8 @@ Item {
     property var rootStore
     property int memberRole: Constants.memberRole.none
 
-    property bool isOwner: memberRole === Constants.memberRole.owner
-    property bool isTokenMaster: memberRole === Constants.memberRole.tokenMaster
+    readonly property bool isOwner: memberRole === Constants.memberRole.owner
+    readonly property bool isTokenMaster: memberRole === Constants.memberRole.tokenMaster
 
     signal kickUserClicked(string id, string name)
     signal banUserClicked(string id, string name)
@@ -115,7 +115,7 @@ Item {
                     if (memberItem.itsMe) {
                         return false
                     }
-                    switch ( model.memberRole) {
+                    switch (model.memberRole) {
                         // Owner can't be banned
                         case Constants.memberRole.owner: return false
                         // TokenMaster can only be banned by owner
