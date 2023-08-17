@@ -79,12 +79,9 @@ Control {
             Layout.topMargin: 12
             isSelectorMode: root.isSelectorMode
             model: filteredModel
-            onSelfDestructRemoved: {
-                root.selfDestructRemoved(walletAddress);
-            }
-            onSelfDestructAmountChanged: {
-                root.selfDestructAmountChanged(walletAddress, amount);
-            }
+            onSelfDestructRemoved: root.selfDestructRemoved(walletAddress)
+            onSelfDestructAmountChanged: root.selfDestructAmountChanged(
+                                             walletAddress, amount)
         }
         Rectangle {
             Layout.fillWidth: true

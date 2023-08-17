@@ -385,11 +385,11 @@ StatusSectionLayout {
 
             onRemotelyDestructFeesRequest:
                 communityTokensStore.computeSelfDestructFee(
-                    remotelyDestructTokensList, tokenKey, accountAddress)
+                    walletsAndAmounts, tokenKey, accountAddress)
 
             onRemotelyDestructCollectibles:
                 communityTokensStore.remoteSelfDestructCollectibles(
-                    root.community.id, remotelyDestructTokensList, tokenKey, accountAddress)
+                    root.community.id, walletsAndAmounts, tokenKey, accountAddress)
 
             onSignBurnTransactionOpened:
                 communityTokensStore.computeBurnFee(tokenKey, amount, accountAddress)

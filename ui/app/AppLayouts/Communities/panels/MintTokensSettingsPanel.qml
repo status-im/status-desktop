@@ -67,10 +67,10 @@ StackView {
 
     signal deployFeesRequested(int chainId, string accountAddress, int tokenType)
     signal burnFeesRequested(string tokenKey, string amount, string accountAddress)
-    signal remotelyDestructFeesRequest(var remotelyDestructTokensList, // [key , amount]
+    signal remotelyDestructFeesRequest(var walletsAndAmounts, // { [walletAddress (string), amount (int)] }
                                        string tokenKey,
                                        string accountAddress)
-    signal remotelyDestructCollectibles(var remotelyDestructTokensList, // [key , amount]
+    signal remotelyDestructCollectibles(var walletsAndAmounts, // { [walletAddress (string), amount (int)] }
                                         string tokenKey,
                                         string accountAddress)
     signal signBurnTransactionOpened(string tokenKey, string amount, string accountAddress)
@@ -623,7 +623,7 @@ StackView {
             onBurnClicked: burnTokensPopup.open()
 
             // helper properties to pass data through popups
-            property var remotelyDestructTokensList
+            property var walletsAndAmounts
             property string burnAmount
             property string accountAddress
 
@@ -639,15 +639,16 @@ StackView {
                 isFeeLoading: root.isFeeLoading
                 feeErrorText: root.feeErrorText
 
-                onRemotelyDestructFeesRequested:root.remotelyDestructFeesRequest(remotelyDestructTokensList,
-                                                                                  tokenKey,
-                                                                                  accountAddress)
+                onRemotelyDestructFeesRequested: {
+                    root.remotelyDestructFeesRequest(walletsAndAmounts,
+                                                     view.token.key,
+                                                     accountAddress)
+                }
 
                 onRemotelyDestructClicked: {
                     remotelyDestructPopup.close()
                     footer.accountAddress = accountAddress
-                    footer.remotelyDestructTokensList = remotelyDestructTokensList
-                    alertPopup.tokenCount = tokenCount
+                    footer.walletsAndAmounts = walletsAndAmounts
                     alertPopup.open()
                 }
             }
@@ -655,9 +656,8 @@ StackView {
             AlertPopup {
                 id: alertPopup
 
-                property int tokenCount
-
-                title: qsTr("Remotely destruct %n token(s)", "", tokenCount)
+                title: qsTr("Remotely destruct %n token(s)", "",
+                            remotelyDestructPopup.tokenCount)
                 acceptBtnText: qsTr("Remotely destruct")
                 alertText: qsTr("Continuing will destroy tokens held by members and revoke any permissions they are given. To undo you will have to issue them new tokens.")
 
@@ -677,7 +677,8 @@ StackView {
                     root.setFeeLoading()
 
                     if(signTransactionPopup.isRemotelyDestructTransaction)
-                        root.remotelyDestructCollectibles(footer.remotelyDestructTokensList, tokenKey, footer.accountAddress)
+                        root.remotelyDestructCollectibles(footer.walletsAndAmounts,
+                                                          tokenKey, footer.accountAddress)
                     else
                         root.burnToken(tokenKey, footer.burnAmount, footer.accountAddress)
 
@@ -698,7 +699,7 @@ StackView {
                 onOpened: {
                     root.setFeeLoading()
                     signTransactionPopup.isRemotelyDestructTransaction
-                            ? root.remotelyDestructFeesRequest(footer.remotelyDestructTokensList, tokenKey, footer.accountAddress)
+                            ? root.remotelyDestructFeesRequest(footer.walletsAndAmounts, tokenKey, footer.accountAddress)
                             : root.signBurnTransactionOpened(tokenKey, footer.burnAmount, footer.accountAddress)
                 }
                 onSignTransactionClicked: signTransaction()

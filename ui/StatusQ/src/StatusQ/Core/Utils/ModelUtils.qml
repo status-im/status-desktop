@@ -56,6 +56,9 @@ QtObject {
     }
 
     function indexOf(model, role, key) {
+        if (!model)
+            return -1
+
         const count = model.rowCount()
 
         for (let i = 0; i < count; i++)
