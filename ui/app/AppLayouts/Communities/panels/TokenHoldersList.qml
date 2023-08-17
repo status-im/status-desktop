@@ -1,6 +1,6 @@
-import QtQuick 2.14
-import QtQuick.Layouts 1.14
-import QtQuick.Controls 2.14
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -11,6 +11,8 @@ import SortFilterProxyModel 0.2
 
 import utils 1.0
 import shared.controls 1.0
+
+import "../controls"
 
 /*!
    \qmltype TokenHoldersList
@@ -141,16 +143,6 @@ Item {
             }
         }
 
-        component NumberCell: StatusBaseText {
-            horizontalAlignment: Qt.AlignRight
-
-            font.weight: Font.Medium
-            font.pixelSize: 13
-
-            color: Theme.palette.baseColor1
-            elide: Qt.ElideRight
-        }
-
         delegate: ItemDelegate {
             id: delegate
             width: ListView.view.width
@@ -215,7 +207,7 @@ Item {
                         asset.color: Theme.palette.getColor("red2")
                     }
 
-                    NumberCell {
+                    TokenHolderNumberCell {
                         Layout.preferredWidth: header.holdingHeaderWidth
                         Layout.leftMargin: Style.current.halfPadding
 
