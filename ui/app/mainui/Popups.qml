@@ -530,7 +530,7 @@ QtObject {
                 }
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
-                onJoined: root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, communityIntroDialog.name, JSON.stringify(sharedAddresses), airdropAddress)
+                onJoined: root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, communityIntroDialog.name, sharedAddresses, airdropAddress)
                 onCancelMembershipRequest: root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
                 Connections {
                     target: root.communitiesStore.communitiesModuleInst
@@ -720,8 +720,10 @@ QtObject {
                 assetsModel: chatStore.assetsModel
                 collectiblesModel: chatStore.collectiblesModel
 
-                onSaveSelectedAddressesClicked: console.warn("!!! FIXME implement saving the shared & airdrop addresses for the community",
-                                                             JSON.stringify(sharedAddresses), airdropAddress)
+                onSharedAddressesChanged: root.rootStore.updatePermissionsModel(
+                    editSharedAddressesPopup.communityId, sharedAddresses)
+                onSaveSelectedAddressesClicked: root.rootStore.editSharedAddressesWithAuthentication(
+                    editSharedAddressesPopup.communityId, sharedAddresses, airdropAddress)
                 onClosed: destroy()
             }
         }
