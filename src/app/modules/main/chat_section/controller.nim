@@ -28,7 +28,6 @@ type
     isCommunitySection: bool
     activeItemId: string
     isCurrentSectionActive: bool
-    channelPermissionsChecksInProgress: bool
     events: UniqueUUIDEventEmitter
     settingsService: settings_service.Service
     nodeConfigurationService: node_configuration_service.Service
@@ -56,7 +55,6 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.sectionId = sectionId
   result.isCommunitySection = isCommunity
   result.isCurrentSectionActive = false
-  result.channelPermissionsChecksInProgress = false
   result.events = initUniqueUUIDEventEmitter(events)
   result.settingsService = settingsService
   result.nodeConfigurationService = nodeConfigurationService

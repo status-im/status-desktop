@@ -60,7 +60,7 @@ QtObject {
         root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
     }
 
-    property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
+    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                      root.communitiesModuleInst.spectatedCommunityPermissionModel : null
 
     readonly property string overviewChartData: chatCommunitySectionModule.overviewChartData
@@ -791,6 +791,6 @@ QtObject {
     }
 
     function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.updateTokenModelForCommunity(communityId, JSON.stringify(sharedAddresses))
+        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 }

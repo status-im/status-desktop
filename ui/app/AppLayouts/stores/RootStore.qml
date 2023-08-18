@@ -39,7 +39,7 @@ QtObject {
             root.prepareTokenModelForCommunity(communityKeyToImport);
     }
 
-    property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
+    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                      root.communitiesModuleInst.spectatedCommunityPermissionModel : null
     property var walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
     property var assetsModel: SortFilterProxyModel {
@@ -238,6 +238,6 @@ QtObject {
     }
 
     function updatePermissionsModel(communityId, sharedAddresses) {
-        communitiesModuleInst.updateTokenModelForCommunity(communityId, JSON.stringify(sharedAddresses))
+        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 }

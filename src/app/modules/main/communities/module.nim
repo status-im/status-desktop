@@ -1,4 +1,4 @@
-import NimQml, sequtils, tables, stint
+import NimQml, sequtils, tables, stint, chronicles
 
 import ./io_interface
 import ../io_interface as delegate_interface
@@ -531,7 +531,7 @@ method callbackFromAuthentication*(self: Module, authenticated: bool) =
 method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
-method updateTokenModelForCommunity*(self: Module, communityId: string, sharedAddresses: seq[string]) =
+method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string]) =
   self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
   self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
 
@@ -545,44 +545,48 @@ method prepareTokenModelForCommunity*(self: Module, communityId: string) =
     tokenPermissionsItems.add(tokenPermissionItem)
 
   self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
-  self.updateTokenModelForCommunity(communityId, @[])
+  self.checkPermissions(communityId, @[])
 
 proc applyPermissionResponse*(self: Module, communityId: string, permissions: Table[string, CheckPermissionsResultDto]) =
   let community = self.controller.getCommunityById(communityId)
   for id, criteriaResult in permissions:
-    if community.tokenPermissions.hasKey(id):
-      let tokenPermissionItem = self.view.spectatedCommunityPermissionModel.getItemById(id)
-      if tokenPermissionItem.id == "":
-        continue
+    if not community.tokenPermissions.hasKey(id):
+      warn "unknown permission", id
+      continue
 
-      var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
-      var permissionSatisfied = true
+    let tokenPermissionItem = self.view.spectatedCommunityPermissionModel.getItemById(id)
+    if tokenPermissionItem.id == "":
+      warn "no permission in model", id
+      continue
 
-      for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
+    var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
+    var permissionSatisfied = true
 
-        let updatedTokenCriteriaItem = initTokenCriteriaItem(
-          tokenCriteriaItem.symbol,
-          tokenCriteriaItem.name,
-          tokenCriteriaItem.amount,
-          tokenCriteriaItem.`type`,
-          tokenCriteriaItem.ensPattern,
-          criteriaResult.criteria[index]
-        )
+    for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
 
-        if criteriaResult.criteria[index] == false:
-          permissionSatisfied = false
-
-        updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
-
-      let updatedTokenPermissionItem = initTokenPermissionItem(
-          tokenPermissionItem.id,
-          tokenPermissionItem.`type`,
-          updatedTokenCriteriaItems,
-          tokenPermissionItem.getChatList().getItems(),
-          tokenPermissionItem.isPrivate,
-          permissionSatisfied
+      let updatedTokenCriteriaItem = initTokenCriteriaItem(
+        tokenCriteriaItem.symbol,
+        tokenCriteriaItem.name,
+        tokenCriteriaItem.amount,
+        tokenCriteriaItem.`type`,
+        tokenCriteriaItem.ensPattern,
+        criteriaResult.criteria[index]
       )
-      self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
+
+      if criteriaResult.criteria[index] == false:
+        permissionSatisfied = false
+
+      updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
+
+    let updatedTokenPermissionItem = initTokenPermissionItem(
+        tokenPermissionItem.id,
+        tokenPermissionItem.`type`,
+        updatedTokenCriteriaItems,
+        tokenPermissionItem.getChatList().getItems(),
+        tokenPermissionItem.isPrivate,
+        permissionSatisfied
+    )
+    self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
 
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string,
     checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
