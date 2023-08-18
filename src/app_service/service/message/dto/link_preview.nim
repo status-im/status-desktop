@@ -2,6 +2,17 @@ import json, strformat, tables
 include ../../../common/json_utils
 
 type
+  LinkType* {.pure.} = enum
+    Link = 0
+    Image
+
+proc toLinkType*(value: int): LinkType =
+  try:
+    return LinkType(value)
+  except RangeDefect:
+    return LinkType.Link
+
+type
   LinkPreviewThumbnail* = object
     width*: int
     height*: int
@@ -15,6 +26,7 @@ type
     title*: string
     description*: string
     thumbnail*: LinkPreviewThumbnail
+    linkType*: LinkType
 
 proc delete*(self: LinkPreview) =
   discard
@@ -37,6 +49,7 @@ proc toLinkPreview*(jsonObj: JsonNode): LinkPreview =
   discard jsonObj.getProp("title", result.title)
   discard jsonObj.getProp("description", result.description)
   discard jsonObj.getProp("hostname", result.hostname)
+  result.linkType = toLinkType(jsonObj["type"].getInt)
 
   var thumbnail: JsonNode
   if jsonObj.getProp("thumbnail", thumbnail):
@@ -46,15 +59,27 @@ proc `$`*(self: LinkPreviewThumbnail): string =
   result = fmt"""LinkPreviewThumbnail(
     width: {self.width},
     height: {self.height},
-    url: {self.url},
-    dataUri: {self.dataUri}
+    urlLength: {self.url.len},
+    dataUriLength: {self.dataUri.len}
   )"""
 
 proc `$`*(self: LinkPreview): string =
   result = fmt"""LinkPreview(
+    type: {self.linkType},
     url: {self.url},
     hostname: {self.hostname},
     title: {self.title},
     description: {self.description},
     thumbnail: {self.thumbnail}
   )"""
+
+# Custom JSON converter to force `linkType` integer instead of string
+proc `%`*(self: LinkPreview): JsonNode =
+  result = %* {
+    "type": self.linkType.int,
+    "url": self.url,
+    "hostname": self.hostname,
+    "title": self.title,
+    "description": self.description,
+    "thumbnail": %self.thumbnail,
+  }
