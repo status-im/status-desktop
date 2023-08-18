@@ -99,19 +99,20 @@ StatusListView {
         showSubItemsIcon: !!model.subItems && model.subItems.count > 0
         selected: root.checkedKeys.includes(model.key)
         amount: {
-            if (model.supply === undefined
+            if (model.remainingSupply === undefined
                     || model.multiplierIndex === undefined)
                 return ""
 
             if (model.infiniteSupply)
                 return "∞"
 
-            if (model.supply === "1")
+            if (model.remainingSupply === "1" && model.multiplierIndex === 0)
                 return qsTr("Max. 1")
 
             if (root.showTokenAmount)
-                return SQUtils.AmountsArithmetic.toNumber(model.supply,
-                                                          model.multiplierIndex)
+                return LocaleUtils.numberToLocaleString(
+                            SQUtils.AmountsArithmetic.toNumber(
+                                model.remainingSupply, model.multiplierIndex))
 
             return ""
         }
