@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 1.0 as QQC1
 
 import utils 1.0
+import StatusQ.Core.Utils 0.1 as SQUtils
 
 import "../controls/styles"
 
@@ -32,7 +33,7 @@ QQC1.TabView {
                 tabTitle = qsTr("New Tab")
             }
 
-            return Utils.escapeHtml(tabTitle);
+            return SQUtils.StringUtils.escapeHtml(tabTitle);
         })
 
         if (createAsStartPage) {

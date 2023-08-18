@@ -572,10 +572,6 @@ QtObject {
         return (str.length > maxLength) ? str.substr(0, maxLength-4) + '...' : str;
     }
 
-    function escapeHtml(unsafeStr) {
-        return globalUtilsInst.escapeHtml(unsafeStr)
-    }
-
     function plainText(text) {
         return globalUtilsInst.plainText(text)
     }

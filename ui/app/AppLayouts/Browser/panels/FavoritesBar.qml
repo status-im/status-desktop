@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as SQUtils
 import StatusQ.Controls 0.1
 
 import utils 1.0
@@ -32,7 +33,7 @@ RowLayout {
             icon.height: 24
             // Limit long named tabs. StatusFlatButton is not well-behaved control
             //  implicitWidth doesn't work. Also avoid breaking visualization by escaping HTML
-            text: Utils.escapeHtml(Utils.elideIfTooLong(name, 40))
+            text: SQUtils.StringUtils.escapeHtml(Utils.elideIfTooLong(name, 40))
 
             MouseArea {
                 anchors.fill: parent
