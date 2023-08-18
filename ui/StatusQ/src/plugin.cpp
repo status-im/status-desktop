@@ -9,6 +9,7 @@
 #include "StatusQ/rxvalidator.h"
 #include "StatusQ/statussyntaxhighlighter.h"
 #include "StatusQ/statuswindow.h"
+#include "StatusQ/stringutilsinternal.h"
 
 class StatusQPlugin : public QQmlExtensionPlugin {
     Q_OBJECT
@@ -26,6 +27,8 @@ public:
 
         qmlRegisterSingletonType<ModelUtilsInternal>(
             "StatusQ.Internal", 0, 1, "ModelUtils", &ModelUtilsInternal::qmlInstance);
+        qmlRegisterSingletonType<StringUtilsInternal>(
+            "StatusQ.Internal", 0, 1, "StringUtils", &StringUtilsInternal::qmlInstance);
 
         qmlRegisterSingletonType<PermissionUtilsInternal>("StatusQ.Internal", 0, 1, "PermissionUtils", [](QQmlEngine *, QJSEngine *) {
             return new PermissionUtilsInternal;
