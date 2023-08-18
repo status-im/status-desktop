@@ -9,23 +9,11 @@ type
     Hostname
     Title
     Description
+    LinkType
     ThumbnailWidth
     ThumbnailHeight
     ThumbnailUrl
     ThumbnailDataUri
-
-    #
-    # TODO: 
-    #
-    #   Consider adding a `LinkType` property, which would probably follow the way of unfurling:
-    #       - basic       (maybe divide OpenGraph/oEmbed/...)
-    #       - image       (contantType == "image/.*")
-    #       - status link (hostname == "status.app")
-    #
-    # In future, we can also unfurl other types, like PDF/audio/etc !
-    #
-    # This is needed on receiver side to know how to render the preview 
-    # and what to do on click.
 
 QtObject:
   type
@@ -79,6 +67,7 @@ QtObject:
       ModelRole.Hostname.int:"hostname",
       ModelRole.Title.int:"title",
       ModelRole.Description.int:"description",
+      ModelRole.LinkType.int:"linkType",
       ModelRole.ThumbnailWidth.int:"thumbnailWidth",
       ModelRole.ThumbnailHeight.int:"thumbnailHeight",
       ModelRole.ThumbnailUrl.int:"thumbnailUrl",
@@ -87,14 +76,16 @@ QtObject:
 
   method allLinkPreviewRoles(self: Model): seq[int] =
     return @[
-      Unfurled.int,
-      Hostname.int,
-      Title.int,
-      Description.int,
-      ThumbnailWidth.int,
-      ThumbnailHeight.int,
-      ThumbnailUrl.int,
-      ThumbnailDataUri.int,
+      ModelRole.Url.int,
+      ModelRole.Unfurled.int,
+      ModelRole.Hostname.int,
+      ModelRole.Title.int,
+      ModelRole.Description.int,
+      ModelRole.LinkType.int,
+      ModelRole.ThumbnailWidth.int,
+      ModelRole.ThumbnailHeight.int,
+      ModelRole.ThumbnailUrl.int,
+      ModelRole.ThumbnailDataUri.int,
     ]
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -118,6 +109,8 @@ QtObject:
       result = newQVariant(item.linkPreview.title)
     of ModelRole.Description:
       result = newQVariant(item.linkPreview.description)
+    of ModelRole.LinkType:
+      result = newQVariant(item.linkPreview.linkType.int)
     of ModelRole.ThumbnailWidth:
       result = newQVariant(item.linkPreview.thumbnail.width)
     of ModelRole.ThumbnailHeight:

@@ -32,36 +32,35 @@ ColumnLayout {
             id: linkMessageLoader
 
             // properties from the model
+            required property string url
             required property bool unfurled
+            required property string hostname
             required property string title
             required property string description
-            required property string hostname
+            required property int linkType
             required property int thumbnailWidth
             required property int thumbnailHeight
             required property string thumbnailUrl
             required property string thumbnailDataUri
 
             asynchronous: true
-            sourceComponent: unfurledLinkComponent
 
             StateGroup {
                 //Using StateGroup as a warkardound for https://bugreports.qt.io/browse/QTBUG-47796
                 states: [
                     State {
                         name: "loadLinkPreview"
-                        when: !linkMessageLoader.isImage && !linkMessageLoader.isStatusDeepLink
+                        when: linkMessageLoader.linkType === Constants.LinkPreviewType.Link
                         PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledLinkComponent }
+                    },
+                    State {
+                        name: "loadImage"
+                        when: linkMessageLoader.linkType === Constants.LinkPreviewType.Image
+                        PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledImageComponent }
                     }
-                    // NOTE: New unfurling not yet suppport images and status links.
+                    // NOTE: New unfurling not yet suppport status links.
                     //       Uncomment code below when implemented:
-                    //       - https://github.com/status-im/status-go/issues/3761
                     //       - https://github.com/status-im/status-go/issues/3762
-
-                    // State {
-                    //     name: "loadImage"
-                    //     when: linkMessageLoader.isImage
-                    //     PropertyChanges { target: linkMessageLoader; sourceComponent: unfurledImageComponent }
-                    // },
                     // State {
                     //     name: "statusInvitation"
                     //     when: linkMessageLoader.isStatusDeepLink
@@ -88,13 +87,13 @@ ColumnLayout {
 
                 objectName: "LinksMessageView_unfurledImageComponent_linkImage"
                 anchors.centerIn: parent
-                source: result.thumbnailUrl
+                source: thumbnailUrl
                 imageWidth: 300
                 isCurrentUser: root.isCurrentUser
                 playing: globalAnimationEnabled && localAnimationEnabled
                 isOnline: root.store.mainModuleInst.isOnline
                 asynchronous: true
-                isAnimated: result.contentType ? result.contentType.toLowerCase().endsWith("gif") : false
+                isAnimated: false // FIXME: GIFs are not supported with new unfurling yet
                 onClicked: {
                     if (isAnimated && !playing)
                         localAnimationEnabled = true
@@ -190,7 +189,7 @@ ColumnLayout {
                 isOnline: root.store.mainModuleInst.isOnline
                 asynchronous: true
                 onClicked: {
-                    Global.openLink(result.address)
+                    Global.openLink(url)
                 }
             }
 
@@ -227,7 +226,7 @@ ColumnLayout {
                 anchors.bottom: linkSite.bottom
                 cursorShape: Qt.PointingHandCursor
                 onClicked:  {
-                    Global.openLink(link)
+                    Global.openLink(url)
                 }
             }
         }
