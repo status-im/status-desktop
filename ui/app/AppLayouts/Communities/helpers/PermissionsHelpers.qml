@@ -53,15 +53,19 @@ QtObject {
         return ""
     }
 
-    function getTokenAmountByKey(model, key) {
+    function getTokenRemainingSupplyByKey(model, key) {
         const item = getTokenByKey(model, key)
-        if (item) {
-            if (item.infiniteSupply === true)
-                return "∞"
 
-            return item.supply ?? ""
-        }
-        return ""
+        if (!item || item.remainingSupply === undefined
+                || item.multiplierIndex === undefined)
+            return ""
+
+        if (item.infiniteSupply)
+            return "∞"
+
+        return LocaleUtils.numberToLocaleString(
+                    AmountsArithmetic.toNumber(item.remainingSupply,
+                                               item.multiplierIndex))
     }
 
     function getUniquePermissionTokenKeys(model) {

@@ -331,13 +331,16 @@ StatusDropdown {
                 else
                 {
                     root.collectibleKey = key
-                    const amount = PermissionsHelpers.getTokenAmountByKey(root.collectiblesModel, root.collectibleKey)
+                    const item = PermissionsHelpers.getTokenByKey(root.collectiblesModel, root.collectibleKey)
+
                     //When the collectible is unique, there is no need for the user to select amount
                     //Just send the add/update events
-                    if(amount == 1) {
-                        root.collectibleAmount = amount
-                        d.updateSelected ? root.updateCollectible(root.collectibleKey, amount)
-                                            : root.addCollectible(root.collectibleKey, amount)
+                    if(item.supply.toString() === "1"
+                            || (item.remainingSupply
+                                && item.remainingSupply.toString() === "1")) {
+                        root.collectibleAmount = "1"
+                        d.updateSelected ? root.updateCollectible(root.collectibleKey, "1")
+                                            : root.addCollectible(root.collectibleKey, "1")
                         return
                     }
                 }
@@ -397,6 +400,7 @@ StatusDropdown {
             tokenName: PermissionsHelpers.getTokenNameByKey(root.assetsModel, root.assetKey)
             tokenShortName: PermissionsHelpers.getTokenShortNameByKey(root.assetsModel, root.assetKey)
             tokenImage: PermissionsHelpers.getTokenIconByKey(root.assetsModel, root.assetKey)
+            tokenAmount: PermissionsHelpers.getTokenRemainingSupplyByKey(root.assetsModel, root.assetKey)
             amountText: d.assetAmountText
             tokenCategoryText: qsTr("Asset")
             addOrUpdateButtonEnabled: d.assetsReady
@@ -421,7 +425,7 @@ StatusDropdown {
                     append({
                         name: chainName,
                         icon: chainIcon,
-                        amount: asset.supply,
+                        amount: asset.remainingSupply,
                         multiplierIndex: asset.multiplierIndex,
                         infiniteAmount: asset.infiniteSupply
                     })
@@ -469,7 +473,7 @@ StatusDropdown {
             tokenName: PermissionsHelpers.getTokenNameByKey(root.collectiblesModel, root.collectibleKey)
             tokenShortName: ""
             tokenImage: PermissionsHelpers.getTokenIconByKey(root.collectiblesModel, root.collectibleKey)
-            tokenAmount: PermissionsHelpers.getTokenAmountByKey(root.collectiblesModel, root.collectibleKey)
+            tokenAmount: PermissionsHelpers.getTokenRemainingSupplyByKey(root.collectiblesModel, root.collectibleKey)
             amountText: d.collectibleAmountText
             tokenCategoryText: qsTr("Collectible")
             addOrUpdateButtonEnabled: d.collectiblesReady
@@ -495,7 +499,7 @@ StatusDropdown {
                     append({
                         name:chainName,
                         icon: chainIcon,
-                        amount: collectible.supply,
+                        amount: collectible.remainingSupply,
                         multiplierIndex: collectible.multiplierIndex,
                         infiniteAmount: collectible.infiniteSupply
                     })

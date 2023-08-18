@@ -191,7 +191,7 @@ StatusScrollView {
                 tokenImage: modelItem.iconSource,
                 networkText: modelItem.chainName,
                 networkImage: Style.svg(modelItem.chainIcon),
-                supply: modelItem.supply,
+                remainingSupply: modelItem.remainingSupply,
                 multiplierIndex: modelItem.multiplierIndex,
                 infiniteSupply: modelItem.infiniteSupply,
                 contractUniqueKey: modelItem.contractUniqueKey,
@@ -277,7 +277,7 @@ StatusScrollView {
                 if (!item || item.infiniteSupply)
                     continue
 
-                const dividient = AmountsArithmetic.fromString(item.supply)
+                const dividient = AmountsArithmetic.fromString(item.remainingSupply)
                 const divisor = AmountsArithmetic.fromString(item.amount)
 
                 const quotient = AmountsArithmetic.toNumber(
@@ -291,7 +291,7 @@ StatusScrollView {
         }
 
         delegate: QtObject {
-            readonly property string supply: model.supply
+            readonly property string remainingSupply: model.remainingSupply
             readonly property string amount: model.amount
             readonly property bool infiniteSupply: model.infiniteSupply
 
@@ -304,13 +304,13 @@ StatusScrollView {
                                  AmountsArithmetic.fromString(amount),
                                  recipientsCount)
 
-                const available = AmountsArithmetic.fromString(supply)
+                const available = AmountsArithmetic.fromString(remainingSupply)
 
                 return AmountsArithmetic.cmp(demand, available) <= 0
             }
 
 
-            onSupplyChanged: recipientsCountInstantiator.findRecipientsCount()
+            onRemainingSupplyChanged: recipientsCountInstantiator.findRecipientsCount()
             onAmountChanged: recipientsCountInstantiator.findRecipientsCount()
             onInfiniteSupplyChanged: recipientsCountInstantiator.findRecipientsCount()
 
