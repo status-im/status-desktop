@@ -10,7 +10,7 @@ SortFilterProxyModel {
     property int sortOrder: Qt.AscendingOrder
 
     enum SortBy {
-        None, Username, NoOfMessages, Holding
+        None, Username, NumberOfMessages, Holding
     }
 
     filters: ExpressionFilter {
@@ -53,8 +53,8 @@ SortFilterProxyModel {
         },
 
         RoleSorter {
-            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.NoOfMessages
-            roleName: "noOfMessages"
+            enabled: root.sortBy === TokenHoldersProxyModel.SortBy.NumberOfMessages
+            roleName: "numberOfMessages"
             sortOrder: root.sortOrder
         },
 

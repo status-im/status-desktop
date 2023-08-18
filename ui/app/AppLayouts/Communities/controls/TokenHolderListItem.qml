@@ -31,10 +31,13 @@ ItemDelegate {
     property string contactId
     property string walletAddress
     property string imageSource
-    property int noOfMessages
-    property int amount
+    property int numberOfMessages: 0
+    property int amount: 0
 
-    property var contactDetails
+    property var contactDetails: null
+
+    readonly property string addressElided: StatusQUtils.Utils.elideText(root.walletAddress, 6, 3).replace(
+                                                "0x", "0" + String.fromCodePoint(0x00D7))
 
     signal clicked(var mouse)
 
@@ -42,10 +45,11 @@ ItemDelegate {
         contactDetails = contactId !== "" ? Utils.getContactDetailsAsJson(contactId, false) : null
     }
 
+    Component.onCompleted: root.updateContactDetails()
     onContactIdChanged: root.updateContactDetails()
 
     onRemotelyDestructInProgressChanged: {
-        if(!remotelyDestructInProgress)
+        if (!remotelyDestructInProgress)
             colorAnimation.restart()
     }
 
@@ -92,6 +96,67 @@ ItemDelegate {
         }
     }
 
+    Component {
+        id: communityMemberContentItem
+
+        RowLayout {
+            spacing: 16
+
+            StatusSmartIdenticon {
+                id: profileImage
+                name: contactDetails.displayName
+                asset.width: 40
+                asset.height: 40
+                asset.letterSize: 14
+                asset.color: Utils.colorForPubkey(root.contactId)
+                asset.charactersLen: 2
+                asset.name: contactDetails.displayIcon
+                asset.isImage: !!asset.name
+                ringSettings {
+                    ringSpecModel: Utils.getColorHashAsJson(root.contactId)
+                }
+            }
+
+            ColumnLayout {
+                Layout.alignment: Qt.AlignVCenter
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    horizontalAlignment: Qt.AlignLeft
+                    font.pixelSize: 15
+                    text: contactDetails.displayName
+                }
+
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    horizontalAlignment: Qt.AlignLeft
+                    font.pixelSize: 15
+                    text: root.addressElided
+                }
+            }
+        }
+    }
+
+    Component {
+        id: bareAddressContentItem
+
+        StatusListItem {
+            color: "transparent"
+            leftPadding: 0
+            rightPadding: 0
+            sensor.enabled: false
+            title: root.addressElided
+            statusListItemIcon.name: "?"
+            statusListItemSubTitle.font.pixelSize: Theme.asideTextFontSize
+            statusListItemSubTitle.lineHeightMode: Text.FixedHeight
+            statusListItemSubTitle.lineHeight: 14
+            asset.name: root.imageSource
+            asset.isImage: true
+            asset.isLetterIdenticon: true
+            asset.color: Theme.palette.userCustomizationColors[d.red2Color]
+        }
+    }
+
     contentItem: Item {
         implicitWidth: delegateRow.implicitWidth
         implicitHeight: delegateRow.implicitHeight
@@ -101,44 +166,16 @@ ItemDelegate {
 
             spacing: Style.current.padding
 
-            StatusListItem {
-                id: listItem
-
-                readonly property bool unknownHolder: root.name === ""
-                readonly property string formattedTitle: unknownHolder ? "?" : root.name
-
-                readonly property string addressElided:
-                    StatusQUtils.Utils.elideText(root.walletAddress, 6, 3).replace("0x",
-                    "0" + String.fromCodePoint(0x00D7))
-
+            Loader {
                 Layout.preferredWidth: root.usernameHeaderWidth
-
-                color: "transparent"
-
-                leftPadding: 0
-                rightPadding: 0
-                sensor.enabled: false
-                title: unknownHolder ? addressElided : root.name
-
-                statusListItemIcon.name: "?"
-
-                subTitle: unknownHolder ? "" : addressElided
-
-                statusListItemSubTitle.font.pixelSize: Theme.asideTextFontSize
-                statusListItemSubTitle.lineHeightMode: Text.FixedHeight
-                statusListItemSubTitle.lineHeight: 14
-
-                asset.name: root.imageSource
-                asset.isImage: true
-                asset.isLetterIdenticon: unknownHolder
-                asset.color: Theme.palette.userCustomizationColors[d.red2Color]
+                sourceComponent: contactDetails ? communityMemberContentItem : bareAddressContentItem
             }
 
             TokenHolderNumberCell {
                 Layout.preferredWidth: root.noOfMessagesHeaderWidth
 
                 text: root.name
-                        ? LocaleUtils.numberToLocaleString(root.noOfMessages)
+                        ? LocaleUtils.numberToLocaleString(root.numberOfMessages)
                         : "-"
             }
 

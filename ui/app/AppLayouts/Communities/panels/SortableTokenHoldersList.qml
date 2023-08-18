@@ -17,7 +17,7 @@ import "../controls"
    \brief Shows list of users or addresses with corrensponding numbers of
    messages and holding amounts.
 
-   Expected roles: contactId, name, walletAddress, imageSource, noOfMessages, amount
+   Expected roles: contactId, name, walletAddress, imageSource, numberOfMessages, amount
   */
 StatusListView {
     id: root
@@ -114,7 +114,7 @@ StatusListView {
 
                 onClicked: {
                     if (sorting !== StatusSortableColumnHeader.Sorting.NoSorting)
-                        d.sortBy = TokenHoldersProxyModel.SortBy.NoOfMessages
+                        d.sortBy = TokenHoldersProxyModel.SortBy.NumberOfMessages
                     else
                         d.sortBy = TokenHoldersProxyModel.SortBy.None
                 }
@@ -151,11 +151,14 @@ StatusListView {
         isCurrentItem: delegate.ListView.isCurrentItem
 
         remotelyDestructInProgress: model.remotelyDestructState === Constants.ContractTransactionStatus.InProgress
+
+        contactId: model.contactId
         name: model.name
         walletAddress: model.walletAddress
         imageSource: model.imageSource
-        noOfMessages: model.noOfMessages
+        numberOfMessages: model.numberOfMessages
         amount: model.amount
+
         showSeparator: isFirstRowAddress && root.sortBy === TokenHoldersProxyModel.SortBy.Username
         isFirstRowAddress: {
             if (name !== "")

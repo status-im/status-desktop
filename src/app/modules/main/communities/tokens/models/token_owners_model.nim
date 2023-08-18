@@ -5,9 +5,10 @@ type
   ModelRole {.pure.} = enum
     Name = UserRole + 1
     ContactId,
-    ImageSource
-    WalletAddress
-    Amount
+    ImageSource,
+    NumberOfMessages,
+    WalletAddress,
+    Amount,
     RemotelyDestructState
 
 QtObject:
@@ -48,6 +49,7 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.ContactId.int:"contactId",
       ModelRole.ImageSource.int:"imageSource",
+      ModelRole.NumberOfMessages.int:"numberOfMessages",
       ModelRole.WalletAddress.int:"walletAddress",
       ModelRole.Amount.int:"amount",
       ModelRole.RemotelyDestructState.int:"remotelyDestructState"
@@ -76,6 +78,8 @@ QtObject:
         result = newQVariant(item.contactId)
       of ModelRole.ImageSource:
         result = newQVariant(item.imageSource)
+      of ModelRole.NumberOfMessages:
+        result = newQVariant(item.numberOfMessages)
       of ModelRole.WalletAddress:
         result = newQVariant(item.ownerDetails.address)
       of ModelRole.Amount:
