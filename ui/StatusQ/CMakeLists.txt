@@ -88,19 +88,21 @@ endif()
 
 add_library(StatusQ SHARED
         ${STATUSQ_QRC_COMPILED}
-        src/plugin.cpp
         include/StatusQ/QClipboardProxy.h
         include/StatusQ/modelutilsinternal.h
         include/StatusQ/permissionutilsinternal.h
         include/StatusQ/rxvalidator.h
         include/StatusQ/statussyntaxhighlighter.h
         include/StatusQ/statuswindow.h
+        include/StatusQ/stringutilsinternal.h
         src/QClipboardProxy.cpp
         src/modelutilsinternal.cpp
         src/permissionutilsinternal.cpp
+        src/plugin.cpp
         src/rxvalidator.cpp
         src/statussyntaxhighlighter.cpp
         src/statuswindow.cpp
+        src/stringutilsinternal.cpp
         )
 
 set_target_properties(StatusQ PROPERTIES 
