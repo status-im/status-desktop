@@ -81,7 +81,7 @@ Item {
                     parent.font.underline = false
                 }
                 onClicked: {
-                    inviteFriendsPopup.open();
+                    Global.openPopup(inviteFriendsPopup)
                 }
             }
         }
@@ -95,8 +95,11 @@ Item {
         anchors.top: links.bottom
     }
 
-    InviteFriendsPopup {
+    Component {
         id: inviteFriendsPopup
-        rootStore: element.rootStore
+        InviteFriendsPopup {
+            rootStore: element.rootStore
+            destroyOnClose: true
+        }
     }
 }

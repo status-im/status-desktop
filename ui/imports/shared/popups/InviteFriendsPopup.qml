@@ -4,9 +4,6 @@ import utils 1.0
 
 StatusModal {
     id: root
-    anchors.centerIn: parent
-
-    readonly property string getStatusText: qsTr("Get Status at https://status.im")
 
     property var rootStore
 
@@ -14,11 +11,11 @@ StatusModal {
     height: 156
 
     StatusDescriptionListItem {
-        subTitle: root.getStatusText
-        tooltip.text: qsTr("Copy to clipboard")
+        subTitle: qsTr("Get Status at %1").arg(Constants.externalStatusLinkWithHttps)
+        tooltip.text: qsTr("Copied!")
         asset.name: "copy"
         iconButton.onClicked: {
-            root.rootStore.copyToClipboard(Constants.statusLinkPrefix)
+            root.rootStore.copyToClipboard(Constants.downloadLink)
             tooltip.visible = !tooltip.visible
         }
         width: parent.width

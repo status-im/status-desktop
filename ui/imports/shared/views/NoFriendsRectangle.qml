@@ -41,6 +41,7 @@ Item {
         id: inviteFriendsPopup
         InviteFriendsPopup {
             rootStore: noContactsRect.rootStore
+            destroyOnClose: true
         }
     }
 }
