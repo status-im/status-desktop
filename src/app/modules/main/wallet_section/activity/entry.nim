@@ -166,14 +166,22 @@ QtObject:
   QtProperty[int] status:
     read = getStatus
 
-  proc getChainId*(self: ActivityEntry): int {.slot.} =
-    if self.metadata.payloadType == backend.PayloadType.MultiTransaction:
-      error "getChainId: ActivityEntry is not a transaction"
-      return 0
+  proc getChainIdIn*(self: ActivityEntry): int {.slot.} =
+    return self.metadata.chainIdIn.get(ChainId(0)).int
 
-    if self.isInTransactionType():
-      return self.metadata.chainIdIn.get(ChainId(0)).int
+  QtProperty[int] chainIdIn:
+    read = getChainIdIn
+    
+  proc getChainIdOut*(self: ActivityEntry): int {.slot.} =
     return self.metadata.chainIdOut.get(ChainId(0)).int
+
+  QtProperty[int] chainIdOut:
+    read = getChainIdOut
+
+  proc getChainId*(self: ActivityEntry): int {.slot.} =
+    if self.isInTransactionType():
+      return self.getChainIdIn()
+    return self.getChainIdOut()
 
   QtProperty[int] chainId:
     read = getChainId

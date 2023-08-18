@@ -60,6 +60,8 @@ StatusListItem {
     readonly property double feeFiatValue: 0.0 // TODO fill when bridge data is implemented
     readonly property string networkColor: isModelDataValid ? rootStore.getNetworkColor(modelData.chainId) : ""
     readonly property string networkName: isModelDataValid ? rootStore.getNetworkFullName(modelData.chainId) : ""
+    readonly property string networkNameIn: isMultiTransaction ? rootStore.getNetworkFullName(modelData.chainIdIn) : ""
+    readonly property string networkNameOut: isMultiTransaction ? rootStore.getNetworkFullName(modelData.chainIdOut) : ""
     readonly property string addressNameTo: isModelDataValid ? walletRootStore.getNameForAddress(modelData.recipient) : ""
     readonly property string addressNameFrom: isModelDataValid ? walletRootStore.getNameForAddress(modelData.sender) : ""
     readonly property bool isNFT: isModelDataValid && modelData.isNFT
@@ -268,17 +270,16 @@ StatusListItem {
         }
 
         // SUMMARY ADRESSES
-        const toNetworkName = "" // TODO fill when bridge data is implemented
         switch (type) {
         case Constants.TransactionType.Swap:
             details += qsTr("From") + endl + modelData.outSymbol + endl2
             details += qsTr("To") + endl + modelData.inSymbol + endl2
-            details += qsTr("In") + endl + root.fromAddress + endl2
+            details += qsTr("In") + endl + modelData.sender + endl2
             break
         case Constants.TransactionType.Bridge:
-            details += qsTr("From") + endl + root.networkName + endl2
-            details += qsTr("To") + endl + toNetworkName + endl2
-            details += qsTr("In") + endl + modelData.from + endl2
+            details += qsTr("From") + endl + networkNameOut + endl2
+            details += qsTr("To") + endl + networkNameIn + endl2
+            details += qsTr("In") + endl + modelData.sender + endl2
             break
         case Constants.TransactionType.ContractDeployment:
             details += qsTr("From") + endl + modelData.sender + endl2
@@ -306,7 +307,7 @@ StatusListItem {
         }
         const bridgeTxHash = "" // TODO fill tx hash for Bridge
         if (!!bridgeTxHash) {
-            details += qsTr("%1 Tx hash").arg(toNetworkName) + endl + bridgeTxHash + endl2
+            details += qsTr("%1 Tx hash").arg(networkNameOut) + endl + bridgeTxHash + endl2
         }
         const protocolFromContractAddress = "" // TODO fill protocol contract address for 'from' network for Bridge and Swap
         if (!!protocolName && !!protocolFromContractAddress) {
@@ -320,7 +321,7 @@ StatusListItem {
         }
         const protocolToContractAddress = "" // TODO fill protocol contract address for 'to' network for Bridge
         if (!!protocolToContractAddress && !!protocolName) {
-            details += qsTr("%1 %2 contract address").arg(toNetworkName).arg(protocolName) + endl
+            details += qsTr("%1 %2 contract address").arg(networkNameOut).arg(protocolName) + endl
             details += protocolToContractAddress + endl2
         }
         const swapContractAddress = "" // TODO fill swap contract address for Swap
@@ -334,7 +335,7 @@ StatusListItem {
             break
         case Constants.TransactionType.Bridge:
             if (!!bridgeContractAddress) {
-                details += qsTr("%1 %2 contract address").arg(toNetworkName).arg(modelData.symbol) + endl
+                details += qsTr("%1 %2 contract address").arg(networkNameOut).arg(modelData.symbol) + endl
                 details += bridgeContractAddress + endl2
             }
             break
@@ -351,7 +352,7 @@ StatusListItem {
         if (type === Constants.TransactionType.Bridge) {
             details += qsTr("Included in Block on %1").arg(networkName) + endl
             details += rootStore.hex2Dec(modelData.blockNumber)  + endl2
-            details += qsTr("Included in Block on %1").arg(toNetworkName) + endl
+            details += qsTr("Included in Block on %1").arg(networkNameOut) + endl
             const bridgeBlockNumber = 0 // TODO fill when bridge data is implemented
             details += rootStore.hex2Dec(bridgeBlockNumber)  + endl2
         } else {
@@ -430,8 +431,8 @@ StatusListItem {
             details += valuesString + endl2
         }
 
-        // Remove unicode characters
-        details = details.replace(/[^\x00-\x7F]/g, " ");
+        // Remove no-break space
+        details = details.replace(/[\xA0]/g, " ");
         // Remove empty new lines at the end
         return details.replace(/[\r\n\s]*$/, '')
     }
@@ -453,13 +454,12 @@ StatusListItem {
             return qsTr("%1 at %2 via %3").arg(inTransactionValue).arg(toAddress).arg(networkName)
         case Constants.TransactionType.Swap:
             if (allAccounts)
-                return qsTr("%1 to %2 via %3 in %4").arg(outTransactionValue).arg(inTransactionValue).arg(networkName).arg(toAddress)
+                return qsTr("%1 to %2 via %3 in %4").arg(outTransactionValue).arg(inTransactionValue).arg(networkName).arg(fromAddress)
             return qsTr("%1 to %2 via %3").arg(outTransactionValue).arg(inTransactionValue).arg(networkName)
         case Constants.TransactionType.Bridge:
-            let toNetworkName = "" // TODO fill when Bridge data is implemented
             if (allAccounts)
-                return qsTr("%1 from %2 to %3 in %4").arg(inTransactionValue).arg(networkName).arg(toNetworkName).arg(toAddress)
-            return qsTr("%1 from %2 to %3").arg(inTransactionValue).arg(networkName).arg(toNetworkName)
+                return qsTr("%1 from %2 to %3 in %4").arg(inTransactionValue).arg(networkNameOut).arg(networkNameIn).arg(fromAddress)
+            return qsTr("%1 from %2 to %3").arg(inTransactionValue).arg(networkNameOut).arg(networkNameIn)
         case Constants.TransactionType.ContractDeployment:
             const name = addressNameTo || addressNameFrom
             return !!modelData.contract ? qsTr("Contract %1 via %2 on %3").arg(Utils.compactAddress(modelData.contract, 4)).arg(name).arg(networkName)
