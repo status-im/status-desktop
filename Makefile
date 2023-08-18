@@ -516,6 +516,9 @@ endif
 endif
 
 nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
+# FIXME: Hack to avoid Squish sending SIGKILL to 'make nim_status_client'.
+# https://github.com/status-im/infra-ci/issues/88
+not_nim_status_client: force-rebuild-status-go $(NIM_STATUS_CLIENT)
 
 _APPIMAGE_TOOL := appimagetool-x86_64.AppImage
 APPIMAGE_TOOL := tmp/linux/tools/$(_APPIMAGE_TOOL)
