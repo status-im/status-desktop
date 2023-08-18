@@ -467,7 +467,7 @@ Rectangle {
                     d.copiedTextFormatted = ""
                     d.copiedMentionsPos = []
                     messageInputField.insert(d.copyTextStart, ((d.nbEmojisInClipboard === 0) ?
-                    ("<div style='white-space: pre-wrap'>" + Utils.escapeHtml(QClipboardProxy.text) + "</div>")
+                    ("<div style='white-space: pre-wrap'>" + StatusQUtils.StringUtils.escapeHtml(QClipboardProxy.text) + "</div>")
                     : StatusQUtils.Emoji.deparse(QClipboardProxy.html)));
                 }
             }
