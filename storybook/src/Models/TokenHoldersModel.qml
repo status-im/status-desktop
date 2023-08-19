@@ -8,7 +8,7 @@ ListModel {
                                                      nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
     readonly property var data: [
         {
-            contactId: "0x123202030504020303030102020303020149594",
+            contactId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
             name: "chris.eth",
             walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579262",
             imageSource: image,
@@ -17,7 +17,7 @@ ListModel {
             remotelyDestructState: Constants.ContractTransactionStatus.None
         },
         {
-            contactId: "0x123202030504020303030102020303020149594",
+            contactId: "0x043a8ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
             name: "carmen.eth",
             walletAddress: "0xb794f5450ba39494ce839613fffba74279579261",
             imageSource: image,
@@ -26,7 +26,7 @@ ListModel {
             remotelyDestructState: Constants.ContractTransactionStatus.InProgress
         },
         {
-            contactId: "0x123202030504020303030102020303020149594",
+            contactId: "0x043a7ed0e9752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04",
             name: "emily.eth",
             walletAddress: "0xb794f5ea0ba39494ce839613fffba74279579263",
             imageSource: image,
@@ -35,7 +35,7 @@ ListModel {
             remotelyDestructState: Constants.ContractTransactionStatus.Completed
         },
         {
-            contactId: "0x123202030504020303030102020303020149594",
+            contactId: "",
             name: "",
             walletAddress: "0xb794f5ea0ba394782634hhh3fffba74279579264",
             imageSource: "",
@@ -44,7 +44,7 @@ ListModel {
             remotelyDestructState: Constants.ContractTransactionStatus.Failed
         },
         {
-            contactId: "0x123202030504020303030102020303020149594",
+            contactId: "",
             name: "",
             walletAddress: "0xc794f577990jjjjjewaofherfffba74279579265",
             imageSource: "",
@@ -53,7 +53,7 @@ ListModel {
             remotelyDestructState: Constants.ContractTransactionStatus.None
         },
         {
-            contactId: "0x123202030504020303030102020303020149594",
+            contactId: "",
             name: "",
             walletAddress: "0xd794f5ea009fnrsehggwe7777ffba74279579266",
             imageSource: "",

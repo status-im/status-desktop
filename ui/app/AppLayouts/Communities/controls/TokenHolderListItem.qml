@@ -99,41 +99,24 @@ ItemDelegate {
     Component {
         id: communityMemberContentItem
 
-        RowLayout {
-            spacing: 16
-
-            StatusSmartIdenticon {
-                id: profileImage
-                name: contactDetails.displayName
-                asset.width: 40
-                asset.height: 40
-                asset.letterSize: 14
-                asset.color: Utils.colorForPubkey(root.contactId)
-                asset.charactersLen: 2
-                asset.name: contactDetails.displayIcon
-                asset.isImage: !!asset.name
-                ringSettings {
-                    ringSpecModel: Utils.getColorHashAsJson(root.contactId)
-                }
-            }
-
-            ColumnLayout {
-                Layout.alignment: Qt.AlignVCenter
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    horizontalAlignment: Qt.AlignLeft
-                    font.pixelSize: 15
-                    text: contactDetails.displayName
-                }
-
-                StatusBaseText {
-                    Layout.fillWidth: true
-                    horizontalAlignment: Qt.AlignLeft
-                    font.pixelSize: 15
-                    text: root.addressElided
-                }
-            }
+        StatusMemberListItem {
+            color: "transparent"
+            leftPadding: 0
+            rightPadding: 0
+            sensor.enabled: false
+            nickName: root.contactDetails.localNickname
+            userName: ProfileUtils.displayName("", root.contactDetails.ensName, root.contactDetails.displayName, root.contactDetails.alias)
+            pubKey: root.contactDetails.isEnsVerified ? "" : Utils.getCompressedPk(root.contactId)
+            isContact: root.contactDetails.isContact
+            isVerified: root.contactDetails.verificationStatus === Constants.verificationStatus.verified
+            isUntrustworthy: root.contactDetails.trustStatus == Constants.trustStatus.untrustworthy
+            isAdmin: root.contactDetails.memberRole === Constants.memberRole.owner
+            status: root.contactDetails.onlineStatus
+            asset.name: root.contactDetails.displayIcon
+            asset.isImage: (asset.name !== "")
+            asset.isLetterIdenticon: (asset.name === "")
+            asset.color: Utils.colorForPubkey(root.contactId)
+            ringSettings.ringSpecModel: Utils.getColorHashAsJson(root.contactId)
         }
     }
 
