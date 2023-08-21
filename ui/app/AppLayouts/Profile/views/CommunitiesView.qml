@@ -241,7 +241,7 @@ SettingsContentBase {
             assetsModel: chatStore.assetsModel
             collectiblesModel: chatStore.collectiblesModel
 
-            onJoined: chatStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name, JSON.stringify(sharedAddresses), airdropAddress)
+            onJoined: chatStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, root.rootStore.userProfileInst.name, sharedAddresses, airdropAddress)
             onCancelMembershipRequest: root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
 
             onSharedAddressesUpdated: {
