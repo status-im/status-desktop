@@ -1,4 +1,4 @@
-import io_interface, chronicles, tables
+import io_interface, chronicles, tables, sequtils
 
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/community/service as community_service
@@ -102,13 +102,14 @@ proc sendChatMessage*(
 
   let urls = self.messageService.getTextUrls(msg)
   let linkPreviews = self.linkPreviewCache.linkPreviewsSeq(urls)
-  
+  let unfurledLinkPreviews = filter(linkPreviews, proc(x: LinkPreview): bool = x.hostname.len > 0)
+
   self.chatService.sendChatMessage(self.chatId, 
     msg, 
     replyTo, 
     contentType, 
     preferredUsername,
-    linkPreviews
+    unfurledLinkPreviews
   )
 
 proc requestAddressForTransaction*(self: Controller, fromAddress: string, amount: string, tokenAddress: string) =
