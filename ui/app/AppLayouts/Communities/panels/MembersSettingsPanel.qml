@@ -23,6 +23,7 @@ SettingsPage {
     property var declinedMemberRequestsModel
     property string communityName
 
+    property int memberRole
     property bool editable: true
 
     signal membershipRequestsClicked()
@@ -107,6 +108,7 @@ SettingsPage {
             MembersTabPanel {
                 model: root.membersModel
                 rootStore: root.rootStore
+                memberRole: root.memberRole
                 placeholderText: {
                     if (root.membersModel.count === 0)
                         return qsTr("No members to search")
@@ -134,6 +136,7 @@ SettingsPage {
             MembersTabPanel {
                 model: root.pendingMemberRequestsModel
                 rootStore: root.rootStore
+                memberRole: root.memberRole
                 placeholderText: {
                     if (root.pendingMemberRequestsModel.count === 0)
                         return qsTr("No pending requests to search")
@@ -152,6 +155,7 @@ SettingsPage {
             MembersTabPanel {
                 model: root.declinedMemberRequestsModel
                 rootStore: root.rootStore
+                memberRole: root.memberRole
                 placeholderText: {
                     if (root.declinedMemberRequestsModel.count === 0)
                         return qsTr("No rejected members to search")
@@ -169,6 +173,7 @@ SettingsPage {
             MembersTabPanel {
                 model: root.bannedMembersModel
                 rootStore: root.rootStore
+                memberRole: root.memberRole
                 placeholderText: {
                     if (root.bannedMembersModel.count === 0)
                         return qsTr("No banned members to search")
