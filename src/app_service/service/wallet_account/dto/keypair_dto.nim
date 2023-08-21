@@ -1,4 +1,4 @@
-import tables, json, strformat, strutils, chronicles
+import tables, json, strformat, strutils, sequtils, sugar, chronicles
 
 import account_dto, keycard_dto
 
@@ -73,3 +73,10 @@ proc `$`*(self: KeypairDto): string =
     """
   result &= """
     ]"""
+
+proc getOperability*(self: KeypairDto): string =
+  if self.accounts.any(x => x.operable == AccountNonOperable):
+    return AccountNonOperable
+  if self.accounts.any(x => x.operable == AccountPartiallyOperable):
+    return AccountPartiallyOperable
+  return AccountFullyOperable

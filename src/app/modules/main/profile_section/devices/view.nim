@@ -27,7 +27,7 @@ QtObject:
     result.devicesLoadingError = false
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
-    result.localPairingStatus = newLocalPairingStatus()
+    result.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()

@@ -6,23 +6,25 @@ import installation
 
 type
   EventType* {.pure.} = enum
-    EventUnknown = -1,
-    EventConnectionError = 0,
-    EventConnectionSuccess = 1,
-    EventTransferError = 2,
-    EventTransferSuccess = 3,
-    EventReceivedAccount = 4,
-    EventReceivedInstallation = 5
-    EventProcessSuccess = 6,
-    EventProcessError = 7
+    EventUnknown = -1
+    EventConnectionError
+    EventConnectionSuccess
+    EventTransferError
+    EventTransferSuccess
+    EventReceivedAccount
+    EventReceivedInstallation
+    EventProcessSuccess
+    EventProcessError
+    EventReceivedKeystoreFiles
 
 type
   Action* {.pure.} = enum
     ActionUnknown = 0
-    ActionConnect = 1,
-    ActionPairingAccount = 2,
-    ActionSyncDevice = 3,
-    ActionPairingInstallation = 4,
+    ActionConnect
+    ActionPairingAccount
+    ActionSyncDevice
+    ActionPairingInstallation
+    ActionKeystoreFilesTransfer
 
 type
   LocalPairingAccountData* = ref object
@@ -38,6 +40,7 @@ type
     error*: string
     accountData*: LocalPairingAccountData
     installation*: InstallationDto
+    transferredKeypairs*: seq[string] ## seq[keypair_key_uid]
 
 proc parse*(self: string): EventType =
   case self:
@@ -57,6 +60,8 @@ proc parse*(self: string): EventType =
       return EventReceivedAccount
     of "received-installation":
       return EventReceivedInstallation
+    of "received-keystore-files":
+      return EventReceivedKeystoreFiles
     else:
       return EventUnknown
 

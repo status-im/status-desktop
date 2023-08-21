@@ -69,7 +69,7 @@ QtObject:
     result.loginAccountsModel = login_acc_model.newModel()
     result.loginAccountsModelVariant = newQVariant(result.loginAccountsModel)
     result.remainingAttempts = -1
-    result.localPairingStatus = newLocalPairingStatus()
+    result.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
 
     signalConnect(result.currentStartupState, "backActionClicked()", result, "onBackActionClicked()", 2)
     signalConnect(result.currentStartupState, "primaryActionClicked()", result, "onPrimaryActionClicked()", 2)
