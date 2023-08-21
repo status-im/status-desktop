@@ -1,5 +1,6 @@
 import logging
 import typing
+from subprocess import CalledProcessError
 
 import configs.testpath
 from scripts.utils import local_system
@@ -20,6 +21,7 @@ class SquishServer:
         self.config = configs.testpath.ROOT / 'squish_server.ini'
         self.host = host
         self.port = port
+        self.pid = None
 
     def start(self):
         cmd = [
@@ -28,19 +30,12 @@ class SquishServer:
             f'--host={self.host}',
             f'--port={self.port}',
         ]
-        local_system.execute(cmd)
-        try:
-            local_system.wait_for_started(_PROCESS_NAME)
-        except AssertionError as err:
-            _logger.info(err)
-            local_system.execute(cmd, check=True)
+        self.pid = local_system.execute(cmd)
 
     def stop(self):
-        local_system.kill_process_by_name(_PROCESS_NAME, verify=False)
-        try:
-            local_system.wait_for_close(_PROCESS_NAME, 2)
-        except AssertionError as err:
-            _logger.debug(err)
+        if self.pid is not None:
+            local_system.kill_process(self.pid)
+            self.pid = None
 
     # https://doc-snapshots.qt.io/squish/cli-squishserver.html
     def configuring(self, action: str, options: typing.Union[int, str, list]):

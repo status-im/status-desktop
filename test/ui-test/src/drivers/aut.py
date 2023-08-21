@@ -1,15 +1,14 @@
+import time
 from datetime import datetime
 
-import configs
 import squish
-import time
 import utils.FileManager as filesMngr
-from utils import local_system
 from drivers.elements.base_window import BaseWindow
 from screens.main_window import MainWindow
-from utils import local_system
 from utils.system_path import SystemPath
 
+import configs
+from scripts.utils import local_system
 from . import context
 
 
@@ -34,7 +33,6 @@ class AbstractAut:
         pid = self.ctx.pid
         squish.currentApplicationContext().detach()
         assert squish.waitFor(lambda: not self.ctx.isRunning, configs.squish.APP_LOAD_TIMEOUT_MSEC)
-        assert squish.waitFor(lambda: pid not in local_system.get_pid(self.fp.name), configs.squish.APP_LOAD_TIMEOUT_MSEC)
         self.ctx = None
         return self
 
@@ -44,19 +42,18 @@ class ExecutableAut(AbstractAut):
     def __init__(self, fp: SystemPath):
         super(ExecutableAut, self).__init__()
         self.fp = fp
+        self.pid = None
 
     def start(self, *args) -> 'ExecutableAut':
         cmd = ' '.join([self.fp.name] + list(args))
         self.ctx = squish.startApplication(cmd)
-        local_system.wait_for_started(self.fp.stem)
         assert squish.waitFor(lambda: self.ctx.isRunning, configs.squish.APP_LOAD_TIMEOUT_MSEC)
         squish.setApplicationContext(self.ctx)
+        self.pid = self.ctx.pid
         return self
 
     def close(self):
-        # https://github.com/status-im/desktop-qa-automation/issues/85
-        # local_system.kill_process(self.fp.name)
-        pass
+        local_system.kill_process(self.pid)
 
 
 class StatusAut(ExecutableAut):
