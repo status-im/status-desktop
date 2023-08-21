@@ -297,6 +297,7 @@ Item {
             onEditModeOnChanged: root.editModeChanged(editModeOn)
             isEdited: model.isEdited
             linkPreviewModel: model.linkPreviewModel
+            links: model.links
             messageAttachments: model.messageAttachments
             transactionParams: model.transactionParameters
             hasMention: model.mentioned
