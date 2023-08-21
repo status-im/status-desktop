@@ -6,8 +6,12 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+import shared.views 1.0
+
 Column {
     id: root
+
+    property int type: SyncingCodeInstructions.Type.AppSync
 
     spacing: 4
 
@@ -34,7 +38,7 @@ Column {
             Layout.alignment: Qt.AlignVCenter
             font.pixelSize: 15
             color: Theme.palette.baseColor1
-            text: qsTr("2. Open your")
+            text: qsTr("2. Open")
         }
         StatusRoundIcon {
             asset.name: "profile"
@@ -43,9 +47,8 @@ Column {
             Layout.alignment: Qt.AlignVCenter
             font.pixelSize: 15
             color: Theme.palette.directColor1
-            text: qsTr("Profile")
+            text: qsTr("Settings")
         }
-
     }
 
     RowLayout {
@@ -58,11 +61,21 @@ Column {
             text: qsTr("3. Go to")
         }
         StatusRoundIcon {
-            asset.name: "rotate"
+            asset.name: {
+                if (root.type === SyncingCodeInstructions.Type.KeypairSync) {
+                    return "wallet"
+                }
+                return "rotate"
+            }
         }
         StatusBaseText {
             Layout.alignment: Qt.AlignVCenter
-            text: qsTr("Syncing")
+            text: {
+                if (root.type === SyncingCodeInstructions.Type.KeypairSync) {
+                    return qsTr("Wallet")
+                }
+                return qsTr("Syncing")
+            }
             font.pixelSize: 15
             color: Theme.palette.directColor1
         }
@@ -79,7 +92,12 @@ Column {
         }
         StatusBaseText {
             Layout.alignment: Qt.AlignVCenter
-            text: qsTr("Sync new device")
+            text: {
+                if (root.type === SyncingCodeInstructions.Type.KeypairSync) {
+                    return qsTr("Import missing keypairs")
+                }
+                return qsTr("Sync new device")
+            }
             font.pixelSize: 15
             color: Theme.palette.directColor1
         }
@@ -90,7 +108,35 @@ Column {
 
         StatusBaseText {
             Layout.alignment: Qt.AlignVCenter
-            text: qsTr("5. Scan or enter the code ")
+            text: qsTr("5.")
+            font.pixelSize: 15
+            color: Theme.palette.baseColor1
+        }
+        StatusBaseText {
+            Layout.alignment: Qt.AlignVCenter
+            text: qsTr("Enable camera")
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+        StatusBaseText {
+            Layout.alignment: Qt.AlignVCenter
+            text: qsTr("on this device")
+            font.pixelSize: 15
+            color: Theme.palette.baseColor1
+        }
+    }
+
+    RowLayout {
+        height: d.listItemHeight
+
+        StatusBaseText {
+            Layout.alignment: Qt.AlignVCenter
+            text: {
+                if (root.type === SyncingCodeInstructions.Type.KeypairSync) {
+                    return qsTr("6. Scan or enter the encrypted key with this device")
+                }
+                return qsTr("6. Scan or enter the code")
+            }
             font.pixelSize: 15
             color: Theme.palette.baseColor1
         }

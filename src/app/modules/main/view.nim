@@ -277,3 +277,4 @@ QtObject:
   proc showNetworkEndpointUpdated*(self: View, name: string, isTest: bool) {.signal.}
   proc showIncludeWatchOnlyAccountUpdated*(self: View, includeWatchOnly: bool) {.signal.}
   proc showToastKeypairRemoved*(self: View, keypairName: string) {.signal.}
+  proc showToastKeypairsImported*(self: View, keypairName: string, keypairsCount: int, error: string) {.signal.}

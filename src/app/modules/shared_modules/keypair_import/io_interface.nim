@@ -3,11 +3,12 @@ import Tables, NimQml
 import app/modules/shared_models/[keypair_item]
 import app_service/service/wallet_account/dto/derived_address_dto
 
-type ImportOption* {.pure.}= enum
+type ImportKeypairModuleMode* {.pure.}= enum
   SelectKeypair = 1
-  SeedPhrase
-  PrivateKey
-  QrCode
+  ImportViaSeedPhrase
+  ImportViaPrivateKey
+  ImportViaQr
+  ExportKeypairQr
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -15,7 +16,7 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface, keyUid: string, importOption: ImportOption) {.base.} =
+method load*(self: AccessInterface, keyUid: string, mode: ImportKeypairModuleMode) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method closeKeypairImportPopup*(self: AccessInterface) {.base.} =
@@ -54,8 +55,21 @@ method onAddressDetailsFetched*(self: AccessInterface, derivedAddresses: seq[Der
 method getSelectedKeypair*(self: AccessInterface): KeyPairItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method clearSelectedKeypair*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setConnectionString*(self: AccessInterface, connectionString: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setSelectedKeyPairByKeyUid*(self: AccessInterface, keyUid: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method generateConnectionStringForExporting*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method validateConnectionString*(self: AccessInterface, connectionString: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 
 type
   DelegateInterface* = concept c

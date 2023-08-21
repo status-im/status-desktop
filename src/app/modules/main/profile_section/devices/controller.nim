@@ -56,6 +56,8 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
     let args = LocalPairingStatus(e)
+    if args.pairingType != PairingType.AppSync:
+      return
     self.delegate.onLocalPairingStatusUpdate(args)
 
 

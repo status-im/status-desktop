@@ -168,7 +168,10 @@ proc init*(self: Controller) =
   self.connectionIds.add(handlerId)
 
   handlerId = self.events.onWithUUID(SIGNAL_LOCAL_PAIRING_STATUS_UPDATE) do(e: Args):
-    self.localPairingStatus = LocalPairingStatus(e)
+    let args = LocalPairingStatus(e)
+    if args.pairingType != PairingType.AppSync:
+      return
+    self.localPairingStatus = args
     self.delegate.onLocalPairingStatusUpdate(self.localPairingStatus)
   self.connectionIds.add(handlerId)
 

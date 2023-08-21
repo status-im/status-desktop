@@ -16,6 +16,8 @@ QtObject:
       privateKeyAccAddress: DerivedAddressItem
       privateKeyAccAddressVariant: QVariant
       enteredPrivateKeyMatchTheKeypair: bool
+      connectionString: string
+      connectionStringError: string
 
   proc delete*(self: View) =
     self.currentStateVariant.delete
@@ -133,3 +135,30 @@ QtObject:
       self.keypairModelVariant = newQVariant(self.keypairModel)
     self.keypairModel.setItems(items)
     self.keypairModelChanged()
+
+  proc connectionStringChanged(self: View) {.signal.}
+  proc getConnectionString*(self: View): string {.slot.} =
+    return self.connectionString
+  proc setConnectionString*(self: View, connectionScreen: string) {.slot.} =
+    self.connectionString = connectionScreen
+    self.connectionStringChanged()
+  QtProperty[string] connectionString:
+    read = getConnectionString
+    write = setConnectionString
+    notify = connectionStringChanged
+
+  proc connectionStringErrorChanged(self: View) {.signal.}
+  proc getConnectionStringError*(self: View): string {.slot.} =
+    return self.connectionStringError
+  QtProperty[string] connectionStringError:
+    read = getConnectionStringError
+    notify = connectionStringErrorChanged
+  proc setConnectionStringError*(self: View, error: string) =
+    self.connectionStringError = error
+    self.connectionStringErrorChanged()
+
+  proc generateConnectionStringForExporting*(self: View) {.slot.} =
+    self.delegate.generateConnectionStringForExporting()
+
+  proc validateConnectionString*(self: View, connectionString: string): string {.slot.} =
+    return self.delegate.validateConnectionString(connectionString)

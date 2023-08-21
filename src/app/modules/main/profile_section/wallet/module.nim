@@ -32,6 +32,7 @@ type
     moduleLoaded: bool
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
+    devicesService: devices_service.Service
     accountsModule: accounts_module.AccessInterface
     networksModule: networks_module.AccessInterface
     keypairImportModule: keypair_import_module.AccessInterface
@@ -43,6 +44,7 @@ proc newModule*(
   walletAccountService: wallet_account_service.Service,
   settingsService: settings_service.Service,
   networkService: network_service.Service,
+  devicesService: devices_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -53,6 +55,7 @@ proc newModule*(
   result.moduleLoaded = false
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
+  result.devicesService = devicesService
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService, networkService)
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
 
@@ -111,9 +114,10 @@ method destroyKeypairImportPopup*(self: Module) =
   self.keypairImportModule.delete
   self.keypairImportModule = nil
 
-method runKeypairImportPopup*(self: Module, keyUid: string, importOption: ImportOption) =
-  self.keypairImportModule = keypair_import_module.newModule(self, self.events, self.accountsService, self.walletAccountService)
-  self.keypairImportModule.load(keyUid, importOption)
+method runKeypairImportPopup*(self: Module, keyUid: string, mode: ImportKeypairModuleMode) =
+  self.keypairImportModule = keypair_import_module.newModule(self, self.events, self.accountsService,
+    self.walletAccountService, self.devicesService)
+  self.keypairImportModule.load(keyUid, mode)
 
 method getKeypairImportModule*(self: Module): QVariant =
   if self.keypairImportModule.isNil:

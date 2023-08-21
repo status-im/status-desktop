@@ -11,31 +11,25 @@ ColumnLayout {
 
     property string  firstTabName: qsTr("Scan QR code")
     property string  secondTabName: qsTr("Enter sync code")
+    property string  firstInstructionButtonName: qsTr("How to get a sync code")
+    property string  secondInstructionButtonName: qsTr("How to get a sync code")
     property string  syncQrErrorMessage: qsTr("This does not look like a sync QR code")
     property string  syncCodeErrorMessage: qsTr("This does not look like a sync code")
-    property string  instructionButtonName: qsTr("How to get a sync code")
+    property string  syncCodeLabel: qsTr("Paste sync code")
 
     property var validateConnectionString: function(){}
+
+    readonly property bool syncViaQr:  !switchTabBar.currentIndex
 
     signal displayInstructions()
     signal proceed(string connectionString)
 
-    Timer {
-        id: nextStateDelay
-
-        property string connectionString
-
-        interval: 1000
-        repeat: false
-        onTriggered: {
-            root.proceed(connectionString)
-        }
-    }
-
 
     StatusSwitchTabBar {
         id: switchTabBar
-        Layout.alignment: Qt.AlignHCenter
+        Layout.fillWidth: true
+        Layout.leftMargin: 16
+        Layout.rightMargin: 16
         currentIndex: 0
 
         StatusSwitchTabButton {
@@ -49,21 +43,17 @@ ColumnLayout {
 
     StackLayout {
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.max(mobileSync.implicitHeight, desktopSync.implicitHeight)
+        Layout.preferredHeight: Math.max(syncQr.implicitHeight, syncCode.implicitHeight)
         currentIndex: switchTabBar.currentIndex
 
         // StackLayout doesn't support alignment, so we create an `Item` wrappers
 
         Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
             StatusSyncCodeScan {
-                id: mobileSync
+                id: syncQr
                 anchors {
                     left: parent.left
                     right: parent.right
-                    verticalCenter: parent.verticalCenter
                 }
                 validators: [
                     StatusValidator {
@@ -79,17 +69,15 @@ ColumnLayout {
         }
 
         Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
             StatusSyncCodeInput {
-                id: desktopSync
-                anchors {
-                    left: parent.left
-                    right: parent.right
-                    verticalCenter: parent.verticalCenter
-                }
-                readOnly: nextStateDelay.running
+                id: syncCode
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: 424
+
+                mode: StatusSyncCodeInput.Mode.WriteMode
+                label:root.syncCodeLabel
+                input.placeholderText: qsTr("eg. %1").arg("0x2Ef19")
+
                 validators: [
                     StatusValidator {
                         name: "isSyncCode"
@@ -100,8 +88,7 @@ ColumnLayout {
                 input.onValidChanged: {
                     if (!input.valid)
                         return
-                    nextStateDelay.connectionString = desktopSync.text
-                    nextStateDelay.start()
+                    root.proceed(syncCode.text)
                 }
             }
         }
@@ -109,10 +96,18 @@ ColumnLayout {
 
     StatusFlatButton {
         Layout.alignment: Qt.AlignHCenter
-        visible: !!root.instructionButtonName
-        text: root.instructionButtonName
+        visible: switchTabBar.currentIndex == 0 && !!root.firstInstructionButtonName ||
+                 switchTabBar.currentIndex == 1 && !!root.secondInstructionButtonName
+        text: switchTabBar.currentIndex == 0?
+                  root.firstInstructionButtonName :
+                  root.secondInstructionButtonName
         onClicked: {
             root.displayInstructions()
         }
+    }
+
+    Item {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
     }
 }

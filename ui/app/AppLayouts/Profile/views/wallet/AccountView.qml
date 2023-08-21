@@ -291,6 +291,7 @@ ColumnLayout {
     WalletKeypairAccountMenu {
         id: keycardMenu
         keyPair: root.keyPair
+        hasPairedDevices: root.walletStore.walletModule.hasPairedDevices
         onRunRenameKeypairFlow: root.runRenameKeypairFlow()
         onRunRemoveKeypairFlow: root.runRemoveKeypairFlow()
     }

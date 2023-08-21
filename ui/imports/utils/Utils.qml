@@ -853,7 +853,7 @@ QtObject {
                 }
             }
             if (keypair.syncedFrom !== "") {
-                return qsTr("Synced from %1").arg(keypair.syncedFrom)
+                return qsTr("Requires import to use")
             }
         }
 

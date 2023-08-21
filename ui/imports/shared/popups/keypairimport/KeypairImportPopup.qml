@@ -26,8 +26,12 @@ StatusModal {
             return qsTr("Import missing keypairs")
         case Constants.keypairImportPopup.state.selectImportMethod:
             return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
-        case Constants.keypairImportPopup.state.scanQr:
+        case Constants.keypairImportPopup.state.exportKeypair:
+            return qsTr("Encrypted QR for keypairs on this device")
+        case Constants.keypairImportPopup.state.importQr:
             return qsTr("Scan encrypted QR")
+        case Constants.keypairImportPopup.state.displayInstructions:
+            return qsTr("How to generate the encrypted QR")
         }
 
         return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
@@ -60,12 +64,16 @@ StatusModal {
                         return selectKeypairComponent
                     case Constants.keypairImportPopup.state.selectImportMethod:
                         return selectImportMethodComponent
-                    case Constants.keypairImportPopup.state.scanQr:
-                        return scanQrComponent
+                    case Constants.keypairImportPopup.state.exportKeypair:
+                        return exportKeypairComponent
+                    case Constants.keypairImportPopup.state.importQr:
+                        return keypairImportQrComponent
                     case Constants.keypairImportPopup.state.importPrivateKey:
                         return keypairImportPrivateKeyComponent
                     case Constants.keypairImportPopup.state.importSeedPhrase:
                         return keypairImportSeedPhraseComponent
+                    case Constants.keypairImportPopup.state.displayInstructions:
+                        return displayInstructionsComponent
                     }
 
                     return undefined
@@ -93,8 +101,18 @@ StatusModal {
             }
 
             Component {
-                id: scanQrComponent
-                Item {
+                id: exportKeypairComponent
+                ExportKeypair {
+                    height: Constants.keypairImportPopup.contentHeight
+                    store: root.store
+                }
+            }
+
+            Component {
+                id: keypairImportQrComponent
+                ScanOrEnterQrCode {
+                    height: Constants.keypairImportPopup.contentHeight
+                    store: root.store
                 }
             }
 
@@ -111,6 +129,13 @@ StatusModal {
                 EnterSeedPhrase {
                     height: Constants.keypairImportPopup.contentHeight
                     store: root.store
+                }
+            }
+
+            Component {
+                id: displayInstructionsComponent
+                DisplayInstructions {
+                    height: Constants.keypairImportPopup.contentHeight
                 }
             }
         }
@@ -135,8 +160,9 @@ StatusModal {
             text: {
                 switch (root.store.currentState.stateType) {
 
-                case Constants.keypairImportPopup.state.scanQr:
+                case Constants.keypairImportPopup.state.exportKeypair:
                     return qsTr("Done")
+                case Constants.keypairImportPopup.state.importQr:
                 case Constants.keypairImportPopup.state.importPrivateKey:
                 case Constants.keypairImportPopup.state.importSeedPhrase:
                     return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
@@ -148,6 +174,10 @@ StatusModal {
             enabled: root.store.primaryPopupButtonEnabled
 
             icon.name: {
+                if (root.store.currentState.stateType === Constants.keypairImportPopup.state.exportKeypair) {
+                    return ""
+                }
+
                 if (root.store.userProfileUsingBiometricLogin) {
                     return "touch-id"
                 }

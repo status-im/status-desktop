@@ -33,7 +33,7 @@ QtObject {
     }
 
     property string userProfilePublicKey: userProfile.pubKey
-    
+
     function deleteAccount(address) {
         return accountsModule.deleteAccount(address)
     }
@@ -67,8 +67,8 @@ QtObject {
         walletSection.runAddAccountPopup(false)
     }
 
-    function runKeypairImportPopup(keyUid, importOption) {
-        root.walletModule.runKeypairImportPopup(keyUid, importOption)
+    function runKeypairImportPopup(keyUid, mode) {
+        root.walletModule.runKeypairImportPopup(keyUid, mode)
     }
 
     function evaluateRpcEndPoint(url) {

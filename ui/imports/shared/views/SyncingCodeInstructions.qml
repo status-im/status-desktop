@@ -8,10 +8,12 @@ import shared.controls 1.0
 ColumnLayout {
     id: root
 
-    enum Source {
-        Mobile,
-        Desktop
+    enum Type {
+        AppSync,
+        KeypairSync
     }
+
+    property int type: SyncingCodeInstructions.Type.AppSync
 
     spacing: 0
 
@@ -47,6 +49,8 @@ ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: false
             Layout.alignment: Qt.AlignHCenter
+
+            type: root.type
         }
 
         GetSyncCodeDesktopInstructions {
@@ -54,6 +58,8 @@ ColumnLayout {
             Layout.fillHeight: true
             Layout.fillWidth: false
             Layout.alignment: Qt.AlignHCenter
+
+            type: root.type
         }
     }
 }

@@ -145,9 +145,12 @@ method load*(self: Module) =
     let areTestNetworksEnabled = self.controller.areTestNetworksEnabled()
     self.view.onUpdatedAccount(walletAccountToWalletAccountItem(args.account, keycardAccount, areTestNetworksEnabled))
 
-  self.events.on(SIGNAL_KEYPAIR_OPERABILITY_CHANGED) do(e:Args):
-    let args = KeypairArgs(e)
-    self.view.onUpdatedKeypairOperability(args.keypair.keyUid, AccountFullyOperable)
+  self.events.on(SIGNAL_IMPORTED_KEYPAIRS) do(e:Args):
+    let args = KeypairsArgs(e)
+    if args.error.len != 0:
+      return
+    for kp in args.keypairs:
+      self.view.onUpdatedKeypairOperability(kp.keyUid, AccountFullyOperable)
 
   self.events.on(SIGNAL_NEW_KEYCARD_SET) do(e: Args):
     let args = KeycardArgs(e)

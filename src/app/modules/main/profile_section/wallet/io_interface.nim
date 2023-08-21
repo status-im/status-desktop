@@ -46,7 +46,7 @@ method onKeypairImportModuleLoaded*(self: AccessInterface) {.base.} =
 method destroyKeypairImportPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method runKeypairImportPopup*(self: AccessInterface, keyUid: string, importOption: ImportOption) {.base.} =
+method runKeypairImportPopup*(self: AccessInterface, keyUid: string, mode: ImportKeypairModuleMode) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method hasPairedDevices*(self: AccessInterface): bool {.base.} =
