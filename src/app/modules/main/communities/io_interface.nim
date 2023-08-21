@@ -1,5 +1,6 @@
 import tables
 import ../../../../app_service/service/community/service as community_service
+import ../../../../app_service/service/chat/service as chat_service
 import ../../shared_models/section_item
 
 type
@@ -205,4 +206,14 @@ method prepareTokenModelForCommunity*(self: AccessInterface, communityId: string
   raise newException(ValueError, "No implementation available")
 
 method getCommunityPublicKeyFromPrivateKey*(self: AccessInterface, communityPrivateKey: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkPermissions*(self: AccessInterface, communityId: string, sharedAddresses: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, communityId: string, checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckAllChannelsPermissionsResponse*(self: AccessInterface, communityId: string,
+    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) {.base.} =
   raise newException(ValueError, "No implementation available")

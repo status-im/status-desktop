@@ -32,6 +32,7 @@ StatusStackModal {
 
     signal joined(string airdropAddress, var sharedAddresses)
     signal cancelMembershipRequest()
+    signal sharedAddressesUpdated(var sharedAddresses)
 
     width: 640 // by design
     padding: 0
@@ -128,6 +129,9 @@ StatusStackModal {
                 d.selectedAirdropAddress = airdropAddress
                 d.selectedSharedAddresses = sharedAddresses
                 root.replaceItem = undefined // go back, unload us
+            }
+            onSharedAddressesChanged: {
+                root.sharedAddressesUpdated(sharedAddresses)
             }
         }
     }

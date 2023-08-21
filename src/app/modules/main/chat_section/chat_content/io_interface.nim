@@ -136,3 +136,6 @@ method onUpdateViewAndPostPermissionsSatisfied*(self: AccessInterface, value: bo
 
 method setPermissionsCheckOngoing*(self: AccessInterface, value: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getPermissionsCheckOngoing*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

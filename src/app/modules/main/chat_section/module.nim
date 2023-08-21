@@ -267,7 +267,7 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+    let chats = community.getCommunityChats(tokenPermission.chatIds)
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
@@ -769,7 +769,8 @@ method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, per
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+  let community = self.controller.getCommunityById(communityId)
+  let chats = community.getCommunityChats(tokenPermission.chatIds)
   let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
 
   self.view.tokenPermissionsModel.addItem(tokenPermissionItem)
@@ -852,7 +853,8 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissions
   self.setPermissionsToJoinCheckOngoing(false)
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+  let community = self.controller.getCommunityById(communityId)
+  let chats = community.getCommunityChats(tokenPermission.chatIds)
   let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
   self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
   self.reevaluateRequiresTokenPermissionToJoin()
@@ -1320,8 +1322,17 @@ method setCommunityMetrics*(self: Module, metrics: CommunityMetricsDto) =
 method collectCommunityMetricsMessagesCount*(self: Module, intervals: string) =
   self.controller.collectCommunityMetricsMessagesCount(intervals)
 
+method getPermissionsToJoinCheckOngoing*(self: Module): bool =
+  self.view.getPermissionsCheckOngoing()
+
 method setPermissionsToJoinCheckOngoing*(self: Module, value: bool) =
   self.view.setPermissionsCheckOngoing(value)
+
+method getChannelsPermissionsCheckOngoing*(self: Module): bool =
+  for chatId, cModule in self.chatContentModules:
+    if self.view.chatsModel().getItemPermissionsRequired(chatId):
+      return cModule.getPermissionsCheckOngoing()
+  return false
 
 method setChannelsPermissionsCheckOngoing*(self: Module, value: bool) =
   for chatId, cModule in self.chatContentModules:

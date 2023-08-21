@@ -39,7 +39,7 @@ QtObject {
             root.prepareTokenModelForCommunity(communityKeyToImport);
     }
 
-    property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
+    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                      root.communitiesModuleInst.spectatedCommunityPermissionModel : null
     property var walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
     property var assetsModel: SortFilterProxyModel {
@@ -235,5 +235,9 @@ QtObject {
 
     function requestToJoinCommunityWithAuthentication(communityId, ensName, addressesToShare = [], airdropAddress = "") {
         communitiesModuleInst.requestToJoinCommunityWithAuthenticationWithSharedAddresses(communityId, ensName, JSON.stringify(addressesToShare), airdropAddress)
+    }
+
+    function updatePermissionsModel(communityId, sharedAddresses) {
+        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 }

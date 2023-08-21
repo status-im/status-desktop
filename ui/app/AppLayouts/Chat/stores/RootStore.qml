@@ -56,6 +56,13 @@ QtObject {
         }
     }
 
+    function prepareTokenModelForCommunity(publicKey) {
+        root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
+    }
+
+    readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
+                                     root.communitiesModuleInst.spectatedCommunityPermissionModel : null
+
     readonly property string overviewChartData: chatCommunitySectionModule.overviewChartData
 
     readonly property bool isUserAllowedToSendMessage: _d.isUserAllowedToSendMessage
@@ -781,5 +788,9 @@ QtObject {
             value: Utils.getContactDetailsAsJson(_d.activeChatId, false)
             restoreMode: Binding.RestoreBindingOrValue
         }
+    }
+
+    function updatePermissionsModel(communityId, sharedAddresses) {
+        communitiesModuleInst.checkPermissions(communityId, JSON.stringify(sharedAddresses))
     }
 }

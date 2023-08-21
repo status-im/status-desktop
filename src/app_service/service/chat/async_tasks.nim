@@ -39,11 +39,12 @@ const asyncCheckChannelPermissionsTask: Task = proc(argEncoded: string) {.gcsafe
 type
   AsyncCheckAllChannelsPermissionsTaskArg = ref object of QObjectTaskArg
     communityId: string
+    addresses: seq[string]
 
 const asyncCheckAllChannelsPermissionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[AsyncCheckAllChannelsPermissionsTaskArg](argEncoded)
   try:
-    let response = status_communities.checkAllCommunityChannelsPermissions(arg.communityId)
+    let response = status_communities.checkAllCommunityChannelsPermissions(arg.communityId, arg.addresses)
     arg.finish(%* {
       "response": response,
       "communityId": arg.communityId,

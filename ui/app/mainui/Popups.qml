@@ -524,7 +524,10 @@ QtObject {
                 property string communityId
                 loginType: root.rootStore.loginType
                 walletAccountsModel: root.rootStore.walletAccountsModel
-                permissionsModel: root.rootStore.permissionsModel
+                permissionsModel: {
+                    root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
+                    return root.rootStore.permissionsModel
+                }
                 assetsModel: root.rootStore.assetsModel
                 collectiblesModel: root.rootStore.collectiblesModel
                 onJoined: root.rootStore.requestToJoinCommunityWithAuthentication(communityIntroDialog.communityId, communityIntroDialog.name, JSON.stringify(sharedAddresses), airdropAddress)
@@ -545,6 +548,9 @@ QtObject {
                     function onUserAuthenticationCanceled() {
                         communityIntroDialog.close();
                     }
+                }
+                onSharedAddressesUpdated: {
+                    root.rootStore.updatePermissionsModel(communityIntroDialog.communityId, sharedAddresses)
                 }
                 onAboutToShow: { root.rootStore.communityKeyToImport = communityIntroDialog.communityId; }
                 onClosed: { root.rootStore.communityKeyToImport = ""; destroy(); }
@@ -707,7 +713,10 @@ QtObject {
                 //selectedAirdropAddress: "???"
                 loginType: chatStore.loginType
                 walletAccountsModel: WalletStore.RootStore.receiveAccounts
-                permissionsModel: chatStore.permissionsStore.permissionsModel
+                permissionsModel: {
+                    root.rootStore.prepareTokenModelForCommunity(editSharedAddressesPopup.communityId)
+                    return root.rootStore.permissionsModel
+                }
                 assetsModel: chatStore.assetsModel
                 collectiblesModel: chatStore.collectiblesModel
 

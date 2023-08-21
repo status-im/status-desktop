@@ -97,6 +97,9 @@ type
     communityId*: string
     checkAllChannelsPermissionsResponse*: CheckAllChannelsPermissionsResponseDto
 
+  CheckChannelsPermissionsErrorArgs* = ref object of Args
+    communityId*: string
+    error*: string
 
 # Signals which may be emitted by this service:
 const SIGNAL_CHANNEL_GROUPS_LOADED* = "channelGroupsLoaded"
@@ -121,6 +124,7 @@ const SIGNAL_CHAT_CREATED* = "chatCreated"
 const SIGNAL_CHAT_REQUEST_UPDATE_AFTER_SEND* = "chatRequestUpdateAfterSend"
 const SIGNAL_CHECK_CHANNEL_PERMISSIONS_RESPONSE* = "checkChannelPermissionsResponse"
 const SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE* = "checkAllChannelsPermissionsResponse"
+const SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED* = "checkAllChannelsPermissionsFailed"
 
 QtObject:
   type Service* = ref object of QObject
@@ -424,7 +428,9 @@ QtObject:
 
     return self.chats[chatId]
 
-  proc getChatsByIds*(self: Service, chatIds: seq[string]): seq[ChatDto] = 
+  proc getChatsByIds*(self: Service, chatIds: seq[string]): seq[ChatDto] =
+    if chatIds.len == 0:
+      return
     return self.getAllChats().filterIt(it.id in chatIds)
 
   proc getOneToOneChatNameAndImage*(self: Service, chatId: string):
@@ -786,28 +792,34 @@ QtObject:
       let errMsg = e.msg
       error "error checking all channel permissions: ", errMsg
 
-  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string) =
+  proc asyncCheckAllChannelsPermissions*(self: Service, communityId: string, addresses: seq[string]) =
     let arg = AsyncCheckAllChannelsPermissionsTaskArg(
       tptr: cast[ByteAddress](asyncCheckAllChannelsPermissionsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncCheckAllChannelsPermissionsDone",
-      communityId: communityId
+      communityId: communityId,
+      addresses: addresses,
     )
     self.threadpool.start(arg)
 
   proc onAsyncCheckAllChannelsPermissionsDone*(self: Service, rpcResponse: string) {.slot.} =
+    let rpcResponseObj = rpcResponse.parseJson
+    let communityId = rpcResponseObj{"communityId"}.getStr()
     try:
-      let rpcResponseObj = rpcResponse.parseJson
       if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
-        let error = Json.decode($rpcResponseObj["error"], RpcError)
-        error "Error checking all community channel permissions", msg = error.message
-        return
+        raise newException(CatchableError, rpcResponseObj["error"].getStr)
 
-      let communityId = rpcResponseObj{"communityId"}.getStr()
+      if rpcResponseObj["response"]{"error"}.kind != JNull:
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        raise newException(RpcException, error.message)
+
       let checkAllChannelsPermissionsResponse = rpcResponseObj["response"]["result"].toCheckAllChannelsPermissionsResponseDto()
       self.channelGroups[communityId].channelPermissions = checkAllChannelsPermissionsResponse
       self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_RESPONSE, CheckAllChannelsPermissionsResponseArgs(communityId: communityId, checkAllChannelsPermissionsResponse: checkAllChannelsPermissionsResponse))
     except Exception as e:
       let errMsg = e.msg
       error "error checking all channels permissions: ", errMsg
-
+      self.events.emit(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED, CheckChannelsPermissionsErrorArgs(
+        communityId: communityId,
+        error: errMsg,
+      ))

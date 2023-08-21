@@ -74,6 +74,7 @@ Control {
     property var selectedSharedAddresses: []
     property string selectedAirdropAddress
 
+    signal sharedAddressesChanged(string airdropAddress, var sharedAddresses)
     signal shareSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
     signal saveSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
 
@@ -169,6 +170,7 @@ Control {
             onAddressesChanged: {
                 root.selectedSharedAddresses = selectedSharedAddresses
                 root.selectedAirdropAddress = selectedAirdropAddress
+                root.sharedAddressesChanged(selectedAirdropAddress, selectedSharedAddresses)
             }
         }
 

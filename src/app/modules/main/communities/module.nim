@@ -1,4 +1,4 @@
-import NimQml, sequtils, tables, stint
+import NimQml, sequtils, tables, stint, chronicles
 
 import ./io_interface
 import ../io_interface as delegate_interface
@@ -13,7 +13,7 @@ import ./models/discord_file_list_model
 import ./models/discord_import_task_item
 import ./models/discord_import_tasks_model
 import ../../shared_models/[member_item, section_model, section_item, token_permissions_model, token_permission_item,
-  token_list_item, token_list_model, token_criteria_item]
+  token_list_item, token_list_model, token_criteria_item, token_criteria_model, token_permission_chat_list_model]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/common/types
@@ -185,7 +185,7 @@ proc getCuratedCommunityItem(self: Module, community: CommunityDto): CuratedComm
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+    let chats = community.getCommunityChats(tokenPermission.chatIds)
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
@@ -531,13 +531,75 @@ method callbackFromAuthentication*(self: Module, authenticated: bool) =
 method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: string): string =
   result = self.controller.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
 
+method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string]) =
+  self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
+  self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
+
 method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   let community = self.controller.getCommunityById(communityId)
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
   for id, tokenPermission in community.tokenPermissions:
-    let chats = self.controller.getChatDetailsByIds(tokenPermission.chatIDs)
+    let chats = community.getCommunityChats(tokenPermission.chatIds)
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
   self.view.spectatedCommunityPermissionModel.setItems(tokenPermissionsItems)
+  self.checkPermissions(communityId, @[])
+
+proc applyPermissionResponse*(self: Module, communityId: string, permissions: Table[string, CheckPermissionsResultDto]) =
+  let community = self.controller.getCommunityById(communityId)
+  for id, criteriaResult in permissions:
+    if not community.tokenPermissions.hasKey(id):
+      warn "unknown permission", id
+      continue
+
+    let tokenPermissionItem = self.view.spectatedCommunityPermissionModel.getItemById(id)
+    if tokenPermissionItem.id == "":
+      warn "no permission in model", id
+      continue
+
+    var updatedTokenCriteriaItems: seq[TokenCriteriaItem] = @[]
+    var permissionSatisfied = true
+
+    for index, tokenCriteriaItem in tokenPermissionItem.getTokenCriteria().getItems():
+
+      let updatedTokenCriteriaItem = initTokenCriteriaItem(
+        tokenCriteriaItem.symbol,
+        tokenCriteriaItem.name,
+        tokenCriteriaItem.amount,
+        tokenCriteriaItem.`type`,
+        tokenCriteriaItem.ensPattern,
+        criteriaResult.criteria[index]
+      )
+
+      if criteriaResult.criteria[index] == false:
+        permissionSatisfied = false
+
+      updatedTokenCriteriaItems.add(updatedTokenCriteriaItem)
+
+    let updatedTokenPermissionItem = initTokenPermissionItem(
+        tokenPermissionItem.id,
+        tokenPermissionItem.`type`,
+        updatedTokenCriteriaItems,
+        tokenPermissionItem.getChatList().getItems(),
+        tokenPermissionItem.isPrivate,
+        permissionSatisfied
+    )
+    self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
+
+method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string,
+    checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
+  self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions)
+
+method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId: string,
+    checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
+  for _, channelPermissionResponse in checkChannelPermissionsResponse.channels:
+    self.applyPermissionResponse(
+      communityId,
+      channelPermissionResponse.viewOnlyPermissions.permissions,
+    )
+    self.applyPermissionResponse(
+      communityId,
+      channelPermissionResponse.viewAndPostPermissions.permissions,
+    )

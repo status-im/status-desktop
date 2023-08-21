@@ -184,7 +184,10 @@ StackLayout {
 
             loginType: root.rootStore.loginType
             walletAccountsModel: WalletStore.RootStore.watchOnlyAccounts
-            permissionsModel: root.permissionsStore.permissionsModel
+            permissionsModel: {
+                root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
+                return root.rootStore.permissionsModel
+            }
             assetsModel: root.rootStore.assetsModel
             collectiblesModel: root.rootStore.collectiblesModel
 
@@ -195,6 +198,10 @@ StackLayout {
             onCancelMembershipRequest: {
                 root.rootStore.cancelPendingRequest(communityIntroDialog.communityId)
                 mainViewLoader.item.isInvitationPending = root.rootStore.isCommunityRequestPending(communityIntroDialog.communityId)
+            }
+
+            onSharedAddressesUpdated: {
+                root.rootStore.updatePermissionsModel(communityIntroDialog.communityId, sharedAddresses)
             }
 
             onClosed: {
