@@ -215,14 +215,24 @@ proc removeAccountFromLocalStoreAndNotify(self: Service, address: string, notify
   if notify:
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountArgs(account: acc))
 
-proc updateKeypairOperabilityInLocalStoreAndNotify(self: Service, keyUid: string) =
-  let kp = self.getKeypairByKeyUid(keyUid)
-  if kp.isNil:
-    error "there is no known keypair", keyUid=keyUid, procName="updateKeypairOperabilityInLocalStoreAndNotify"
+proc updateKeypairOperabilityInLocalStoreAndNotify*(self: Service, importedKeyUids: seq[string]) =
+  var updatedKeypairs: seq[KeypairDto]
+  let localKeypairs = self.getKeypairs()
+  for keyUid in importedKeyUids:
+    var foundKp: KeypairDto = nil
+    for kp in localKeypairs:
+      if keyUid == kp.keyUid:
+        foundKp = kp
+        break
+    if foundKp.isNil:
+      error "there is no known keypair", keyUid=keyUid, procName="updateKeypairOperabilityInLocalStoreAndNotify"
+      return
+    for acc in foundKp.accounts:
+      acc.operable = AccountFullyOperable
+    updatedKeypairs.add(foundKp)
+  if updatedKeypairs.len == 0:
     return
-  for acc in kp.accounts:
-    acc.operable = AccountFullyOperable
-  self.events.emit(SIGNAL_KEYPAIR_OPERABILITY_CHANGED, KeypairArgs(keypair: kp))
+  self.events.emit(SIGNAL_IMPORTED_KEYPAIRS, KeypairsArgs(keypairs: updatedKeypairs))
 
 proc updateAccountsPositions(self: Service) =
   let dbAccounts = getAccountsFromDb()
@@ -326,7 +336,7 @@ proc makePrivateKeyKeypairFullyOperable*(self: Service, keyUid, privateKey, pass
     if not response.error.isNil:
       error "status-go error", procName="makePrivateKeyKeypairFullyOperable", errCode=response.error.code, errDesription=response.error.message
       return response.error.message
-    self.updateKeypairOperabilityInLocalStoreAndNotify(keyUid)
+    self.updateKeypairOperabilityInLocalStoreAndNotify(@[keyUid])
     return ""
   except Exception as e:
     error "error: ", procName="makePrivateKeyKeypairFullyOperable", errName=e.name, errDesription=e.msg
@@ -367,7 +377,7 @@ proc makeSeedPhraseKeypairFullyOperable*(self: Service, keyUid, mnemonic, passwo
     if not response.error.isNil:
       error "status-go error", procName="makeSeedPhraseKeypairFullyOperable", errCode=response.error.code, errDesription=response.error.message
       return response.error.message
-    self.updateKeypairOperabilityInLocalStoreAndNotify(keyUid)
+    self.updateKeypairOperabilityInLocalStoreAndNotify(@[keyUid])
     return ""
   except Exception as e:
     error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg

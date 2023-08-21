@@ -19,7 +19,7 @@ const SIGNAL_WALLET_ACCOUNT_PREFERRED_SHARING_CHAINS_UPDATED* = "walletAccount/p
 const SIGNAL_KEYPAIR_SYNCED* = "keypairSynced"
 const SIGNAL_KEYPAIR_NAME_CHANGED* = "keypairNameChanged"
 const SIGNAL_KEYPAIR_DELETED* = "keypairDeleted"
-const SIGNAL_KEYPAIR_OPERABILITY_CHANGED* = "keypairOperabilityChanged"
+const SIGNAL_IMPORTED_KEYPAIRS* = "importedKeypairs"
 
 const SIGNAL_NEW_KEYCARD_SET* = "newKeycardSet"
 const SIGNAL_KEYCARD_REBUILD* = "keycardRebuild"
@@ -42,6 +42,10 @@ type KeypairArgs* = ref object of Args
   keypair*: KeypairDto
   keyPairName*: string
   oldKeypairName*: string
+
+type KeypairsArgs* = ref object of Args
+  keypairs*: seq[KeypairDto]
+  error*: string
 
 type KeycardArgs* = ref object of Args
   success*: bool

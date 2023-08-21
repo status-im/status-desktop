@@ -8,6 +8,7 @@ import ./dto/local_pairing_status
 
 import app_service/service/settings/service as settings_service
 import app_service/service/accounts/service as accounts_service
+import app_service/service/wallet_account/service as wallet_account_service
 
 import app/global/global_singleton
 import app/core/[main]
@@ -55,23 +56,26 @@ QtObject:
     threadpool: ThreadPool
     settingsService: settings_service.Service
     accountsService: accounts_service.Service
+    walletAccountService: wallet_account_service.Service
     localPairingStatus: LocalPairingStatus
 
   proc delete*(self: Service) =
     self.QObject.delete
-    self.localPairingStatus.delete
+    if not self.localPairingStatus.isNil:
+      self.localPairingStatus.delete
 
   proc newService*(events: EventEmitter,
-                  threadpool: ThreadPool,
-                  settingsService: settings_service.Service,
-                  accountsService: accounts_service.Service): Service =
-    new(result, delete)
-    result.QObject.setup
-    result.events = events
-    result.threadpool = threadpool
-    result.settingsService = settingsService
-    result.accountsService = accountsService
-    result.localPairingStatus = newLocalPairingStatus()
+    threadpool: ThreadPool,
+    settingsService: settings_service.Service,
+    accountsService: accounts_service.Service,
+    walletAccountService: wallet_account_service.Service): Service =
+      new(result, delete)
+      result.QObject.setup
+      result.events = events
+      result.threadpool = threadpool
+      result.settingsService = settingsService
+      result.accountsService = accountsService
+      result.walletAccountService = walletAccountService
 
   proc updateLocalPairingStatus(self: Service, data: LocalPairingEventArgs) =
     self.localPairingStatus.update(data)
@@ -98,15 +102,23 @@ QtObject:
 
     self.events.on(SignalType.LocalPairing.event) do(e:Args):
       let signalData = LocalPairingSignal(e)
-      if not signalData.accountData.isNil and signalData.accountData.keycardPairings.len > 0:
-        createKeycardPairingFile(signalData.accountData.keycardPairings)
-      let data = LocalPairingEventArgs(
-        eventType: signalData.eventType,
-        action: signalData.action,
-        accountData: signalData.accountData,
-        installation: signalData.installation,
-        error: signalData.error)
-      self.updateLocalPairingStatus(data)
+      if self.localPairingStatus.pairingType == PairingType.AppSync:
+        if not signalData.accountData.isNil and signalData.accountData.keycardPairings.len > 0:
+          createKeycardPairingFile(signalData.accountData.keycardPairings)
+        let data = LocalPairingEventArgs(
+          eventType: signalData.eventType,
+          action: signalData.action,
+          accountData: signalData.accountData,
+          installation: signalData.installation,
+          error: signalData.error)
+        self.updateLocalPairingStatus(data)
+      elif self.localPairingStatus.pairingType == PairingType.KeypairSync:
+        let data = LocalPairingEventArgs(
+          eventType: signalData.eventType,
+          action: signalData.action,
+          error: signalData.error,
+          transferredKeypairs: signalData.transferredKeypairs)
+        self.updateLocalPairingStatus(data)
 
   proc init*(self: Service) =
     self.doConnect()
@@ -185,6 +197,10 @@ QtObject:
     self.updateLocalPairingStatus(data)
 
   proc validateConnectionString*(self: Service, connectionString: string): string =
+    if connectionString.len == 0:
+      result = "an empty connection string provided"
+      error "error", msg=result
+      return
     return status_go.validateConnectionString(connectionString)
 
   proc getConnectionStringForBootstrappingAnotherDevice*(self: Service, password: string, chatKey: string): string =
@@ -209,8 +225,7 @@ QtObject:
         "timeout": 5 * 60 * 1000,
       }
     }
-    self.localPairingStatus.reset()
-    self.localPairingStatus.mode = LocalPairingMode.Sender
+    self.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Sender)
     return status_go.getConnectionStringForBootstrappingAnotherDevice($configJSON)
 
   proc inputConnectionStringForBootstrapping*(self: Service, connectionString: string): string =
@@ -226,13 +241,136 @@ QtObject:
       },
       "clientConfig": %* {}
     }
-    self.localPairingStatus.reset()
-    self.localPairingStatus.mode = LocalPairingMode.Receiver
+    self.localPairingStatus = newLocalPairingStatus(PairingType.AppSync, LocalPairingMode.Receiver)
 
     let arg = AsyncInputConnectionStringArg(
       tptr: cast[ByteAddress](asyncInputConnectionStringTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "inputConnectionStringForBootstrappingFinished",
+      connectionString: connectionString,
+      configJSON: $configJSON
+    )
+    self.threadpool.start(arg)
+
+  proc validateKeyUids*(self: Service, keyUids: seq[string], validateForExport: bool): tuple[finalKeyUids: seq[string], err: string] =
+    if keyUids.len > 0:
+      for keyUid in keyUids:
+        let kp = self.walletAccountService.getKeypairByKeyUid(keyUid)
+        if kp.isNil:
+          result.err = "cannot resolve keypair for provided keyUid"
+          return
+        let migratedToKeycard = kp.keycards.len > 0
+        if migratedToKeycard or kp.keypairType == KeypairTypeProfile:
+          result.err = "keypair is migrated to a keycard or refers to a profile keypair"
+          return
+        if validateForExport:
+          if kp.getOperability() == AccountNonOperable:
+            result.err = "cannot export non operable keypair"
+            return
+        elif kp.getOperability() != AccountNonOperable:
+          result.err = "keypair is already fully or partially operable"
+          return
+        result.finalKeyUids.add(kp.keyUid)
+    else:
+      let keypairs = self.walletAccountService.getKeypairs()
+      for kp in keypairs:
+        let migratedToKeycard = kp.keycards.len > 0
+        if migratedToKeycard or
+          kp.keypairType == KeypairTypeProfile or
+          validateForExport and kp.getOperability() == AccountNonOperable or
+          not validateForExport and kp.getOperability() != AccountNonOperable:
+            continue
+        result.finalKeyUids.add(kp.keyUid)
+
+    if result.finalKeyUids.len == 0:
+      result.err = "there is no valid keypair"
+
+  ## Providing an empty array of keyUids means generating a connection string and transferring all non operable keypairs
+  proc generateConnectionStringForExportingKeypairsKeystores*(self: Service, keyUids: seq[string], password: string): tuple[res: string, err: string] =
+    if password.len == 0:
+      result.err = "emtpy password provided"
+      error "error", msg=result.err
+      return
+    let(finalKeyUids, err) = self.validateKeyUids(keyUids, validateForExport=true)
+    if err.len > 0:
+      result.err = err
+      error "error", msg=err
+      return
+
+    let loggedInUserKeyUid = singletonInstance.userProfile.getKeyUid()
+    let keycardUser = singletonInstance.userProfile.getIsKeycardUser()
+
+    var finalPassword = utils.hashPassword(password)
+    if keycardUser:
+      finalPassword = password
+
+    let configJSON = %* {
+      "senderConfig": %* {
+        "keystorePath": joinPath(main_constants.ROOTKEYSTOREDIR, loggedInUserKeyUid),
+        "loggedInKeyUid": loggedInUserKeyUid,
+        "password": finalPassword,
+        "keypairsToExport": finalKeyUids,
+      },
+      "serverConfig": %* {
+        "timeout": 5 * 60 * 1000,
+      }
+    }
+    self.localPairingStatus = newLocalPairingStatus(PairingType.KeypairSync, LocalPairingMode.Sender)
+    let response = status_go.getConnectionStringForExportingKeypairsKeystores($configJSON)
+    try:
+      let jsonObj = response.parseJson
+      if jsonObj.hasKey("error"):
+        return ("", jsonObj["error"].getStr)
+    except Exception:
+      return (response, "")
+
+  proc inputConnectionStringForImportingKeystoreFinished*(self: Service, responseJson: string) {.slot.} =
+    try:
+      let jsonObj = responseJson.parseJson
+      if jsonObj.hasKey("error") and jsonObj["error"].getStr.len == 0:
+        info "keystore files successfully transferred"
+        self.walletAccountService.updateKeypairOperabilityInLocalStoreAndNotify(self.localPairingStatus.transferredKeypairs)
+        return
+      let errorDescription = jsonObj["error"].getStr
+      error "failed to start transferring keystore files", errorDescription
+      self.events.emit(SIGNAL_IMPORTED_KEYPAIRS, KeypairsArgs(error: errorDescription))
+    except Exception as e:
+      error "unexpected error", msg=e.msg
+
+  ## Providing an empty array of keyUids means expecting keystore files for all non operable keypairs to be received
+  proc inputConnectionStringForImportingKeypairsKeystores*(self: Service, keyUids: seq[string], connectionString: string, password: string): string =
+    if password.len == 0:
+      result = "emtpy password provided"
+      error "error", msg=result
+      return
+    let(finalKeyUids, err) = self.validateKeyUids(keyUids, validateForExport=false)
+    if err.len > 0:
+      result = err
+      error "error", msg=result
+      return
+
+    let loggedInUserKeyUid = singletonInstance.userProfile.getKeyUid()
+    let keycardUser = singletonInstance.userProfile.getIsKeycardUser()
+
+    var finalPassword = utils.hashPassword(password)
+    if keycardUser:
+      finalPassword = password
+
+    let configJSON = %* {
+      "receiverConfig": %* {
+        "keystorePath": main_constants.ROOTKEYSTOREDIR,
+        "loggedInKeyUid": loggedInUserKeyUid,
+        "password": finalPassword,
+        "keypairsToImport": finalKeyUids,
+      },
+      "clientConfig": %* {}
+    }
+    self.localPairingStatus = newLocalPairingStatus(PairingType.KeypairSync, LocalPairingMode.Receiver)
+
+    let arg = AsyncInputConnectionStringArg(
+      tptr: cast[ByteAddress](asyncInputConnectionStringForImportingKeystoreTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "inputConnectionStringForImportingKeystoreFinished",
       connectionString: connectionString,
       configJSON: $configJSON
     )

@@ -1,8 +1,8 @@
-import json, tables, chronicles
+import json, tables, sequtils, sugar, chronicles
 import base
-import ../../../../app_service/service/accounts/dto/accounts
-import ../../../../app_service/service/devices/dto/installation
-import ../../../../app_service/service/devices/dto/local_pairing_event
+import app_service/service/accounts/dto/accounts
+import app_service/service/devices/dto/installation
+import app_service/service/devices/dto/local_pairing_event
 
 
 type LocalPairingSignal* = ref object of Signal
@@ -11,6 +11,7 @@ type LocalPairingSignal* = ref object of Signal
   error*: string
   accountData*: LocalPairingAccountData
   installation*: InstallationDto
+  transferredKeypairs*: seq[string] ## seq[keypair_key_uid]
 
 proc fromEvent*(T: type LocalPairingSignal, event: JsonNode): LocalPairingSignal =
   result = LocalPairingSignal()
@@ -29,5 +30,7 @@ proc fromEvent*(T: type LocalPairingSignal, event: JsonNode): LocalPairingSignal
       result.accountData = e["data"].toLocalPairingAccountData()
     of EventReceivedInstallation:
       result.installation = e["data"].toInstallationDto()
+    of EventReceivedKeystoreFiles:
+      result.transferredKeypairs = map(e["data"].getElems(), x => x.getStr())
     else:
       discard

@@ -18,3 +18,8 @@ const asyncInputConnectionStringTask: Task = proc(argEncoded: string) {.gcsafe, 
   let arg = decode[AsyncInputConnectionStringArg](argEncoded)
   let response = status_go.inputConnectionStringForBootstrapping(arg.connectionString, arg.configJSON)
   arg.finish(response)
+
+const asyncInputConnectionStringForImportingKeystoreTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncInputConnectionStringArg](argEncoded)
+  let response = status_go.inputConnectionStringForImportingKeypairsKeystores(arg.connectionString, arg.configJSON)
+  arg.finish(response)

@@ -4,6 +4,11 @@ import installation
 import local_pairing_event
 
 type
+  PairingType* {.pure.} = enum
+    AppSync = 0
+    KeypairSync
+
+type
   LocalPairingState* {.pure.} = enum
     Idle = 0
     Transferring
@@ -18,29 +23,25 @@ type
 
 type
   LocalPairingStatus* = ref object of Args
+    pairingType*: PairingType
     mode*: LocalPairingMode
     state*: LocalPairingState
     account*: AccountDto
     password*: string
     chatKey*: string
     installation*: InstallationDto
+    transferredKeypairs*: seq[string] ## seq[keypair_key_uid]
     error*: string
-
-proc reset*(self: LocalPairingStatus) =
-  self.mode = LocalPairingMode.Idle
-  self.state = LocalPairingState.Idle
-  self.error = ""
-  self.installation = InstallationDto()
-
-proc setup(self: LocalPairingStatus) =
-  self.reset()
 
 proc delete*(self: LocalPairingStatus) =
   discard
 
-proc newLocalPairingStatus*(): LocalPairingStatus =
+proc newLocalPairingStatus*(pairingType: PairingType, mode: LocalPairingMode): LocalPairingStatus =
   new(result, delete)
-  result.setup()
+  result.pairingType = pairingType
+  result.mode = mode
+  result.state = LocalPairingState.Idle
+  result.installation = InstallationDto()
 
 proc update*(self: LocalPairingStatus, data: LocalPairingEventArgs) =
 
@@ -54,6 +55,8 @@ proc update*(self: LocalPairingStatus, data: LocalPairingEventArgs) =
     self.chatKey = data.accountData.chatKey
   of EventReceivedInstallation:
     self.installation = data.installation
+  of EventReceivedKeystoreFiles:
+    self.transferredKeypairs = data.transferredKeypairs
   of EventConnectionError:
       self.state = LocalPairingState.Error
   of EventTransferError:
@@ -67,15 +70,19 @@ proc update*(self: LocalPairingStatus, data: LocalPairingEventArgs) =
     return
 
   # Detect finished state
-  if (self.mode == LocalPairingMode.Sender and
-      data.eventType == EventProcessSuccess and
-      data.action == ActionPairingInstallation):
-    self.state = LocalPairingState.Finished
+  if self.mode == LocalPairingMode.Sender and
+    data.eventType == EventProcessSuccess:
+    if self.pairingType == PairingType.AppSync and
+      data.action == ActionPairingInstallation or
+      self.pairingType == PairingType.KeypairSync:
+        self.state = LocalPairingState.Finished
 
-  if (self.mode == LocalPairingMode.Receiver and
-      data.eventType == EventTransferSuccess and
-      data.action == ActionPairingInstallation):
-    self.state = LocalPairingState.Finished
+  if self.mode == LocalPairingMode.Receiver and
+    data.eventType == EventTransferSuccess:
+      if self.pairingType == PairingType.AppSync and
+        data.action == ActionPairingInstallation or
+        self.pairingType == PairingType.KeypairSync:
+          self.state = LocalPairingState.Finished
 
   if self.state == LocalPairingState.Finished:
     return
