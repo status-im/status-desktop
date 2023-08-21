@@ -111,8 +111,8 @@ Item {
                 readonly property bool showOnHover: isHovered && ctaAllowed
 
                 /// Button visibility ///
-                readonly property bool acceptButtonVisible:  tabIsShowingAcceptButton && (isPending || isRejected || isRejectedPending) && showOnHover
-                readonly property bool rejectButtonVisible: tabIsShowingRejectButton && (isPending || isAcceptedPending) && showOnHover
+                readonly property bool acceptButtonVisible:  tabIsShowingAcceptButton && (isPending || isRejected || isRejectedPending || isAcceptedPending) && showOnHover
+                readonly property bool rejectButtonVisible: tabIsShowingRejectButton && (isPending || isRejectedPending || isAcceptedPending) && showOnHover
                 readonly property bool acceptPendingButtonVisible: tabIsShowingAcceptButton && isAcceptedPending
                 readonly property bool rejectPendingButtonVisible: tabIsShowingRejectButton && isRejectedPending
                 readonly property bool kickButtonVisible: tabIsShowingKickBanButtons && isAccepted && showOnHover && canBeBanned
@@ -121,6 +121,13 @@ Item {
                 readonly property bool banPendingButtonVisible: tabIsShowingKickBanButtons && isBanPending
                 readonly property bool unbanButtonVisible: tabIsShowingUnbanButton && isBanned && showOnHover
 
+                /// Pending states ///
+                readonly property bool isPendingState: isAcceptedPending || isRejectedPending || isBanPending || isKickPending
+                readonly property string pendingStateText:  isAcceptedPending ? qsTr("Accept pending...") :
+                                                            isRejectedPending ? qsTr("Reject pending...") :
+                                                            isBanPending ? qsTr("Ban pending...") :
+                                                            isKickPending ? qsTr("Kick pending...") : ""
+
                 statusListItemComponentsSlot.spacing: 16
                 statusListItemTitleArea.anchors.rightMargin: 0
                 statusListItemSubTitle.elide: Text.ElideRight
@@ -128,38 +135,45 @@ Item {
                 leftPadding: 12
 
                 components: [
-                    DisabledTooltipButton {
-                        id: kickButton
+                    StatusBaseText {
+                        id: pendingText
+                        width: Math.max(implicitWidth, d.pendingTextMaxWidth)
+                        onImplicitWidthChanged: {
+                            d.pendingTextMaxWidth = Math.max(implicitWidth, d.pendingTextMaxWidth)
+                        }
+                        visible: !!text && isPendingState
+                        rightPadding: isKickPending || isBanPending ? 0 : Style.current.bigPadding
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: kickButtonVisible || kickPendingButtonVisible
-                        interactive: kickButtonVisible
-                        tooltipText: qsTr("Waiting for owner node to come online")
-                        buttonComponent: StatusButton {
-                            objectName: "MemberListItem_KickButton"
-                            text: kickButtonVisible ? qsTr("Kick") : qsTr("Kick pending")
-                            type: StatusBaseButton.Type.Danger
-                            size: StatusBaseButton.Size.Small
-                            onClicked: root.kickUserClicked(model.pubKey, memberItem.title)
-                            enabled: kickButton.interactive
+                        text: pendingStateText
+                        color: Theme.palette.baseColor1
+                        StatusToolTip {
+                            text: qsTr("Waiting for owner node to come online")
+                            visible: hoverHandler.hovered
+                        }
+                        HoverHandler {
+                            id: hoverHandler
+                            enabled: pendingText.visible
                         }
                     },
+                    StatusButton {
+                        id: kickButton
+                        anchors.verticalCenter: parent.verticalCenter
+                        objectName: "MemberListItem_KickButton"
+                        text: qsTr("Kick")
+                        visible: kickButtonVisible
+                        type: StatusBaseButton.Type.Danger
+                        size: StatusBaseButton.Size.Small
+                        onClicked: root.kickUserClicked(model.pubKey, memberItem.title)
+                    },
 
-                    DisabledTooltipButton {
+                    StatusButton {
                         id: banButton
                         anchors.verticalCenter: parent.verticalCenter
-                        //using opacity instead of visible to avoid the acceptButton jumping around
-                        opacity: banButtonVisible || banPendingButtonVisible
-                        visible: !!banButton.opacity || kickButton.visible
-                        enabled: !!opacity
-                        interactive: banButtonVisible
-                        tooltipText: qsTr("Waiting for owner node to come online")
-                        buttonComponent: StatusButton {
-                            text: banButtonVisible ?  qsTr("Ban") : qsTr("Ban pending")
-                            type: StatusBaseButton.Type.Danger
-                            size: StatusBaseButton.Size.Small
-                            onClicked: root.banUserClicked(model.pubKey, memberItem.title)
-                            enabled: banButton.interactive
-                        }
+                        visible: banButtonVisible
+                        text: qsTr("Ban")
+                        type: StatusBaseButton.Type.Danger
+                        size: StatusBaseButton.Size.Small
+                        onClicked: root.banUserClicked(model.pubKey, memberItem.title)
                     },
 
                     StatusButton {
@@ -169,42 +183,30 @@ Item {
                         onClicked: root.unbanUserClicked(model.pubKey)
                     },
 
-                    DisabledTooltipButton {
+                    StatusButton {
                         id: acceptButton
                         anchors.verticalCenter: parent.verticalCenter
-                        visible: acceptButtonVisible || acceptPendingButtonVisible
-                        tooltipText: qsTr("Waiting for owner node to come online")
-                        interactive: acceptButtonVisible
-                        buttonComponent: StatusButton {
-                            text: acceptButtonVisible ? qsTr("Accept") : qsTr("Accept Pending")
-                            icon.name: "checkmark-circle"
-                            icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
-                            normalColor: Theme.palette.successColor2
-                            hoverColor: Theme.palette.successColor3
-                            textColor: Theme.palette.successColor1
-                            loading: model.requestToJoinLoading
-                            enabled: acceptButton.interactive
-                            onClicked: root.acceptRequestToJoin(model.requestToJoinId)
-                        }
+                        opacity: acceptButtonVisible
+                        text: qsTr("Accept")
+                        icon.name: "checkmark-circle"
+                        icon.color: enabled ? Theme.palette.successColor1 : disabledTextColor
+                        normalColor: Theme.palette.successColor2
+                        hoverColor: Theme.palette.successColor3
+                        textColor: Theme.palette.successColor1
+                        loading: model.requestToJoinLoading
+                        enabled: !acceptPendingButtonVisible
+                        onClicked: root.acceptRequestToJoin(model.requestToJoinId)
                     },
 
-                    DisabledTooltipButton {
+                    StatusButton {
                         id: rejectButton
-                        anchors.verticalCenter: parent.verticalCenter
-                        //using opacity instead of visible to avoid the acceptButton jumping around 
-                        opacity: rejectButtonVisible || rejectPendingButtonVisible
-                        enabled: !!opacity
-                        visible: !!rejectButton.opacity || acceptButton.visible
-                        tooltipText: qsTr("Waiting for owner node to come online")
-                        interactive: rejectButtonVisible
-                        buttonComponent: StatusButton {
-                            text: rejectPendingButtonVisible ? qsTr("Reject pending") : qsTr("Reject")
-                            type: StatusBaseButton.Type.Danger
-                            icon.name: "close-circle"
-                            icon.color: enabled ? Style.current.danger : disabledTextColor
-                            enabled: rejectButton.interactive
-                            onClicked: root.declineRequestToJoin(model.requestToJoinId)
-                        }
+                        opacity: rejectButtonVisible
+                        text: qsTr("Reject")
+                        type: StatusBaseButton.Type.Danger
+                        icon.name: "close-circle"
+                        icon.color: enabled ? Style.current.danger : disabledTextColor
+                        enabled: !rejectPendingButtonVisible
+                        onClicked: root.declineRequestToJoin(model.requestToJoinId)
                     }
                 ]
 
@@ -261,4 +263,12 @@ Item {
             }
         }
     }
+
+    QtObject {
+        id: d
+        // This is used to calculate the max width of the pending text
+        // so that the text aligned on all rows (the text might be different on each row)
+        property real pendingTextMaxWidth: 0
+    }
+    onPanelTypeChanged: { d.pendingTextMaxWidth = 0 }
 }
