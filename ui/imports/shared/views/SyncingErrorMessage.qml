@@ -13,40 +13,24 @@ ColumnLayout {
 
     property string primaryText
     property string secondaryText
+    property string errorDetails
 
     spacing: 12
 
     StatusBaseText {
         Layout.fillWidth: true
-        Layout.fillHeight: true
-        Layout.preferredHeight: parent.height / 2
         horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignBottom
         text: root.primaryText
         font.pixelSize: 17
         color: Theme.palette.dangerColor1
     }
 
-    Item {
+    ErrorDetails {
         Layout.fillWidth: true
-        Layout.fillHeight: true
         Layout.leftMargin: 60
         Layout.rightMargin: 60
-        Layout.preferredWidth: 360
-        Layout.preferredHeight: parent.height / 2
-        Layout.minimumHeight: detailsView.implicitHeight
-
-        ErrorDetails {
-            id: detailsView
-
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-
-            title: qsTr("Failed to start pairing server")
-            details: root.secondaryText
-        }
+        Layout.preferredHeight: implicitHeight
+        title: root.secondaryText
+        details: root.errorDetails
     }
 }

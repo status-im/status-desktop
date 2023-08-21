@@ -414,6 +414,13 @@ proc connectForNotificationsOnly[T](self: Module[T]) =
     let args = KeypairArgs(e)
     self.view.showToastKeypairRemoved(args.keyPairName)
 
+  self.events.on(SIGNAL_IMPORTED_KEYPAIRS) do(e:Args):
+    let args = KeypairsArgs(e)
+    var kpName: string
+    if args.keypairs.len > 0:
+      kpName = args.keypairs[0].name
+    self.view.showToastKeypairsImported(kpName, args.keypairs.len, args.error)
+
 method load*[T](
   self: Module[T],
   events: EventEmitter,

@@ -744,20 +744,23 @@ QtObject {
         readonly property int footerButtonsHeight: 44
         readonly property int labelFontSize1: 15
 
-        readonly property QtObject importOption: QtObject {
+        readonly property QtObject mode: QtObject {
             readonly property int selectKeypair: 1
-            readonly property int seedPhrase: 2
-            readonly property int privateKey: 3
-            readonly property int qrCode: 4
+            readonly property int importViaSeedPhrase: 2
+            readonly property int importViaPrivateKey: 3
+            readonly property int importViaQr: 4
+            readonly property int exportKeypairQr: 5
         }
 
         readonly property QtObject state: QtObject {
             readonly property string noState: "NoState"
             readonly property string selectKeypair: "SelectKeypair"
             readonly property string selectImportMethod: "SelectImportMethod"
-            readonly property string scanQr: "ScanQr"
+            readonly property string exportKeypair: "ExportKeypair"
+            readonly property string importQr: "ImportQr"
             readonly property string importSeedPhrase: "ImportSeedPhrase"
             readonly property string importPrivateKey: "ImportPrivateKey"
+            readonly property string displayInstructions: "DisplayInstructions"
         }
     }
 

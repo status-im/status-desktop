@@ -1,7 +1,7 @@
 import NimQml
 
 import ./io_interface
-from app/modules/shared_modules/keypair_import/module import ImportOption
+from app/modules/shared_modules/keypair_import/module import ImportKeypairModuleMode
 
 QtObject:
   type
@@ -31,8 +31,8 @@ QtObject:
   QtProperty[QVariant] collectiblesModel:
     read = getCollectiblesModel
 
-  proc runKeypairImportPopup*(self: View, keyUid: string, importOption: int) {.slot.} =
-    self.delegate.runKeypairImportPopup(keyUid, ImportOption(importOption))
+  proc runKeypairImportPopup*(self: View, keyUid: string, mode: int) {.slot.} =
+    self.delegate.runKeypairImportPopup(keyUid, ImportKeypairModuleMode(mode))
 
   proc getKeypairImportModule(self: View): QVariant {.slot.} =
     return self.delegate.getKeypairImportModule()

@@ -50,6 +50,11 @@ BasePopupStore {
     }
 
     readonly property bool primaryPopupButtonEnabled: {
+        if (root.currentState.stateType === Constants.keypairImportPopup.state.importQr) {
+            return !!root.keypairImportModule.connectionString &&
+                    !root.keypairImportModule.connectionStringError
+        }
+
         if (root.currentState.stateType === Constants.keypairImportPopup.state.importPrivateKey) {
             return root.enteredPrivateKeyIsValid &&
                     root.enteredPrivateKeyMatchTheKeypair &&
@@ -64,5 +69,13 @@ BasePopupStore {
         }
 
         return true
+    }
+
+    function generateConnectionStringForExporting() {
+        root.keypairImportModule.generateConnectionStringForExporting()
+    }
+
+    function validateConnectionString(connectionString) {
+        return root.keypairImportModule.validateConnectionString(connectionString)
     }
 }

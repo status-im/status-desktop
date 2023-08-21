@@ -13,6 +13,19 @@ Item {
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
 
+    Timer {
+        id: nextStateDelay
+
+        property string connectionString
+
+        interval: 1000
+        repeat: false
+        onTriggered: {
+            root.startupStore.setConnectionString(nextStateDelay.connectionString)
+            root.startupStore.doPrimaryAction()
+        }
+    }
+
     SyncingEnterCode {
         id: layout
 
@@ -26,8 +39,8 @@ Item {
         }
 
         onProceed: {
-            root.startupStore.setConnectionString(connectionString)
-            root.startupStore.doPrimaryAction()
+            nextStateDelay.connectionString = connectionString
+            nextStateDelay.start()
         }
 
         onDisplayInstructions: {

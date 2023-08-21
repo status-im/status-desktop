@@ -10,6 +10,7 @@ import app/modules/shared/keypairs
 import app/modules/shared_models/[keypair_model, derived_address_model]
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/devices/service as devices_service
 
 export io_interface
 
@@ -23,17 +24,19 @@ type
     view: View
     viewVariant: QVariant
     controller: Controller
+    tmpPassword: string
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
   accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service):
+  walletAccountService: wallet_account_service.Service,
+  devicesService: devices_service.Service):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, accountsService, walletAccountService)
+  result.controller = controller.newController(result, events, accountsService, walletAccountService, devicesService)
 
 method delete*[T](self: Module[T]) =
   self.view.delete
@@ -46,14 +49,23 @@ method closeKeypairImportPopup*[T](self: Module[T]) =
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
 
-method load*[T](self: Module[T], keyUid: string, importOption: ImportOption) =
+method load*[T](self: Module[T], keyUid: string, mode: ImportKeypairModuleMode) =
   self.controller.init()
-  if importOption == ImportOption.SelectKeypair:
+  if mode == ImportKeypairModuleMode.SelectKeypair:
     let items = keypairs.buildKeyPairsList(self.controller.getKeypairs(), excludeAlreadyMigratedPairs = true,
       excludePrivateKeyKeypairs = false)
     self.view.createKeypairModel(items)
     self.view.setCurrentState(newSelectKeypairState(nil))
   else:
+    self.view.setSelectedKeypairItem(newKeyPairItem(keyUid = keyUid))
+    if mode == ImportKeypairModuleMode.ExportKeypairQr:
+      self.view.setCurrentState(newExportKeypairState(nil))
+      self.controller.authenticateLoggedInUser()
+      return
+    elif mode == ImportKeypairModuleMode.ImportViaQr:
+      self.view.setCurrentState(newImportQrState(nil))
+      self.delegate.onKeypairImportModuleLoaded()
+      return
     let keypair = self.controller.getKeypairByKeyUid(keyUid)
     if keypair.isNil:
       error "ki_trying to import an unknown keypair"
@@ -65,9 +77,9 @@ method load*[T](self: Module[T], keyUid: string, importOption: ImportOption) =
       self.closeKeypairImportPopup()
       return
     self.view.setSelectedKeypairItem(keypairItem)
-    if importOption == ImportOption.PrivateKey:
+    if mode == ImportKeypairModuleMode.ImportViaPrivateKey:
       self.view.setCurrentState(newImportPrivateKeyState(nil))
-    elif importOption == ImportOption.SeedPhrase:
+    elif mode == ImportKeypairModuleMode.ImportViaSeedPhrase:
       self.view.setCurrentState(newImportSeedPhraseState(nil))
   self.delegate.onKeypairImportModuleLoaded()
 
@@ -118,11 +130,11 @@ method onSecondaryActionClicked*[T](self: Module[T]) =
   self.view.setCurrentState(nextState)
   debug "ki_secondary_action - set state", setCurrState=nextState.stateType()
 
-proc authenticateLoggedInUser[T](self: Module[T]) =
-  self.controller.authenticateLoggedInUser()
-
 method getSelectedKeypair*[T](self: Module[T]): KeyPairItem =
   return self.view.getSelectedKeypair()
+
+method clearSelectedKeypair*[T](self: Module[T]) =
+  self.view.setSelectedKeypairItem(newKeyPairItem())
 
 method setSelectedKeyPairByKeyUid*[T](self: Module[T], keyUid: string) =
   let item = self.view.keypairModel().findItemByKeyUid(keyUid)
@@ -191,6 +203,30 @@ method onAddressDetailsFetched*[T](self: Module[T], derivedAddresses: seq[Derive
         return
   error "ki_unknown error, since the length of the response is not expected", length=derivedAddresses.len
 
+method setConnectionString*[T](self: Module[T], connectionString: string) =
+  self.view.setConnectionString(connectionString)
+
+method generateConnectionStringForExporting*[T](self: Module[T]) =
+  self.view.setConnectionString("")
+  self.view.setConnectionStringError("")
+  let currStateObj = self.view.currentStateObj()
+  if currStateObj.isNil:
+    error "ki_cannot resolve current state"
+    return
+  if currStateObj.stateType() == StateType.ExportKeypair:
+    var keyUids: seq[string]
+    let keyUid = self.view.getSelectedKeypair().getKeyUid()
+    if keyUid.len > 0:
+      keyUids.add(keyUid)
+    let (connectionString, err) = self.controller.generateConnectionStringForExportingKeypairsKeystores(keyUids, self.tmpPassword)
+    if err.len > 0:
+      self.view.setConnectionStringError(err)
+      return
+    self.view.setConnectionString(connectionString)
+
+method validateConnectionString*[T](self: Module[T], connectionString: string): string =
+  return self.controller.validateConnectionString(connectionString)
+
 method onUserAuthenticated*[T](self: Module[T], pin: string, password: string, keyUid: string) =
   if password.len == 0:
     info "ki_unsuccessful authentication"
@@ -199,13 +235,27 @@ method onUserAuthenticated*[T](self: Module[T], pin: string, password: string, k
   if currStateObj.isNil:
     error "ki_cannot resolve current state"
     return
+  if currStateObj.stateType() == StateType.ExportKeypair:
+    self.tmpPassword = password
+    self.generateConnectionStringForExporting()
+    self.delegate.onKeypairImportModuleLoaded()
+    return
+  if currStateObj.stateType() == StateType.ImportQr:
+    var keyUids: seq[string]
+    let keyUid = self.view.getSelectedKeypair().getKeyUid()
+    if keyUid.len > 0:
+      keyUids.add(keyUid)
+    let res = self.controller.inputConnectionStringForImportingKeypairsKeystores(keyUids, self.view.getConnectionString(), password)
+    if res.len > 0:
+      error "ki_unable to make a keypair operable", errDesription=res
+      return
   if currStateObj.stateType() == StateType.ImportPrivateKey:
     let res = self.controller.makePrivateKeyKeypairFullyOperable(self.controller.getGeneratedAccount().keyUid,
       self.controller.getPrivateKey(),
       password,
       doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser())
     if res.len > 0:
-      error "ki_unable to make a keypair operable"
+      error "ki_unable to make a keypair operable", errDesription=res
       return
   if currStateObj.stateType() == StateType.ImportSeedPhrase:
     let res = self.controller.makeSeedPhraseKeypairFullyOperable(self.controller.getGeneratedAccount().keyUid,
@@ -213,6 +263,6 @@ method onUserAuthenticated*[T](self: Module[T], pin: string, password: string, k
       password,
       doPasswordHashing = not singletonInstance.userProfile.getIsKeycardUser())
     if res.len > 0:
-      error "ki_unable to make a keypair operable"
+      error "ki_unable to make a keypair operable", errDesription=res
       return
   self.closeKeypairImportPopup()

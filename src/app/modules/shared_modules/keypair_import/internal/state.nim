@@ -4,9 +4,11 @@ type StateType* {.pure.} = enum
   NoState = "NoState"
   SelectKeypair = "SelectKeypair"
   SelectImportMethod = "SelectImportMethod"
-  ScanQr = "ScanQr"
+  ExportKeypair = "ExportKeypair"
+  ImportQr = "ImportQr"
   ImportSeedPhrase = "ImportSeedPhrase"
   ImportPrivateKey = "ImportPrivateKey"
+  DisplayInstructions = "DisplayInstructions"
 
 
 ## This is the base class for all states

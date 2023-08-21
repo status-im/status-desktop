@@ -9,24 +9,26 @@ StatusMenu {
     id: root
 
     property var keyPair
+    property bool hasPairedDevices: false
 
+    signal runExportQrFlow()
+    signal runImportViaQrFlow()
     signal runImportViaSeedPhraseFlow()
     signal runImportViaPrivateKeyFlow()
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
 
     StatusAction {
-        text: enabled? qsTr("Show encrypted QR of keypairs on device") : ""
-        enabled: !!root.keyPair &&
+        text: enabled? qsTr("Show encrypted QR on device") : ""
+        enabled: root.hasPairedDevices &&
+                 !!root.keyPair &&
                  root.keyPair.pairType !== Constants.keypair.type.profile &&
                  !root.keyPair.migratedToKeycard &&
                  root.keyPair.operability !== Constants.keypair.operability.nonOperable
         icon.name: "qr"
         icon.color: Theme.palette.primaryColor1
         onTriggered: {
-            // in this case we need to check if any account of a keypair is partially operable and not migrated to a keycard
-            // and if so we need to create a keystore for them first and then proceed with qr code
-            console.warn("TODO: show encrypted QR")
+            root.runExportQrFlow()
         }
     }
 
@@ -46,15 +48,15 @@ StatusMenu {
 
     StatusAction {
         text: enabled? qsTr("Import keypair from device via encrypted QR") : ""
-        enabled: !!root.keyPair &&
+        enabled: root.hasPairedDevices &&
+                 !!root.keyPair &&
                  root.keyPair.pairType !== Constants.keypair.type.profile &&
                  !root.keyPair.migratedToKeycard &&
-                 root.keyPair.operability === Constants.keypair.operability.nonOperable &&
-                 root.keyPair.syncedFrom !== Constants.keypair.syncedFrom.backup
+                 root.keyPair.operability === Constants.keypair.operability.nonOperable
         icon.name: "qr-scan"
         icon.color: Theme.palette.primaryColor1
         onTriggered: {
-            console.warn("TODO: run import via encrypted QR")
+            root.runImportViaQrFlow()
         }
     }
 

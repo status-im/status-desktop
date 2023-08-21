@@ -148,6 +148,29 @@ Item {
                 ""
             )
         }
+
+        function onShowToastKeypairsImported(keypairName: string, keypairsCount: int, error: string) {
+            let notification = qsTr("Please re-generate QR code and try importing again")
+            if (error !== "") {
+                if (error.startsWith("one or more expected keystore files are not found among the sent files")) {
+                    notification = qsTr("Make sure you're importing the exported keypair on paired device")
+                }
+            }
+            else {
+                notification = qsTr("%1 keypair successfully imported").arg(keypairName)
+                if (keypairsCount > 1) {
+                    notification = qsTr("%n keypair(s) successfully imported", "", keypairsCount)
+                }
+            }
+            Global.displayToastMessage(
+                notification,
+                "",
+                error!==""? "info" : "checkmark-circle",
+                false,
+                error!==""? Constants.ephemeralNotificationType.normal : Constants.ephemeralNotificationType.success,
+                ""
+            )
+        }
     }
 
     QtObject {

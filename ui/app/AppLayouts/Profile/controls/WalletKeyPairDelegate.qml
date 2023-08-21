@@ -15,12 +15,15 @@ Rectangle {
     id: root
 
     property var keyPair
+    property bool hasPairedDevices
     property var getNetworkShortNames: function(chainIds){}
     property string userProfilePublicKey
     property bool includeWatchOnlyAccount
 
     signal goToAccountView(var account)
     signal toggleIncludeWatchOnlyAccount()
+    signal runExportQrFlow()
+    signal runImportViaQrFlow()
     signal runImportViaSeedPhraseFlow()
     signal runImportViaPrivateKeyFlow()
     signal runRenameKeypairFlow()
@@ -82,6 +85,9 @@ Rectangle {
                                 menuLoader.active = false
                             }
                             keyPair: root.keyPair
+                            hasPairedDevices: root.hasPairedDevices
+                            onRunExportQrFlow: root.runExportQrFlow()
+                            onRunImportViaQrFlow: root.runImportViaQrFlow()
                             onRunImportViaSeedPhraseFlow: root.runImportViaSeedPhraseFlow()
                             onRunImportViaPrivateKeyFlow: root.runImportViaPrivateKeyFlow()
                             onRunRenameKeypairFlow: root.runRenameKeypairFlow()

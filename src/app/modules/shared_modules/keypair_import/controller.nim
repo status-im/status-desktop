@@ -1,9 +1,11 @@
 import times, chronicles
+import uuids
 import io_interface
 
 import app/core/eventemitter
 import app_service/service/accounts/service as accounts_service
 import app_service/service/wallet_account/service as wallet_account_service
+import app_service/service/devices/service as devices_service
 
 import app/modules/shared_models/[keypair_item]
 import app/modules/shared_modules/keycard_popup/io_interface as keycard_shared_module
@@ -19,6 +21,8 @@ type
     events: EventEmitter
     accountsService: accounts_service.Service
     walletAccountService: wallet_account_service.Service
+    devicesService: devices_service.Service
+    connectionIds: seq[UUID]
     uniqueFetchingDetailsId: string
     tmpPrivateKey: string
     tmpSeedPhrase: string
@@ -27,29 +31,37 @@ type
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   accountsService: accounts_service.Service,
-  walletAccountService: wallet_account_service.Service):
+  walletAccountService: wallet_account_service.Service,
+  devicesService: devices_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.accountsService = accountsService
   result.walletAccountService = walletAccountService
+  result.devicesService = devicesService
+
+proc disconnectAll*(self: Controller) =
+  for id in self.connectionIds:
+    self.events.disconnect(id)
 
 proc delete*(self: Controller) =
-  discard
+  self.disconnectAll()
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
+  var handlerId = self.events.onWithUUID(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED) do(e: Args):
     let args = SharedKeycarModuleArgs(e)
     if args.uniqueIdentifier != UNIQUE_WALLET_SECTION_KEYPAIR_IMPORT_MODULE_IDENTIFIER:
       return
     self.delegate.onUserAuthenticated(args.pin, args.password, args.keyUid)
+  self.connectionIds.add(handlerId)
 
-  self.events.on(SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED) do(e:Args):
+  handlerId = self.events.onWithUUID(SIGNAL_WALLET_ACCOUNT_ADDRESS_DETAILS_FETCHED) do(e:Args):
     var args = DerivedAddressesArgs(e)
     if args.uniqueId != self.uniqueFetchingDetailsId:
       return
     self.delegate.onAddressDetailsFetched(args.derivedAddresses, args.error)
+  self.connectionIds.add(handlerId)
 
 proc closeKeypairImportPopup*(self: Controller) =
   self.delegate.closeKeypairImportPopup()
@@ -101,3 +113,18 @@ proc getKeypairs*(self: Controller): seq[wallet_account_service.KeypairDto] =
 
 proc getSelectedKeypair*(self: Controller): KeyPairItem =
   return self.delegate.getSelectedKeypair()
+
+proc clearSelectedKeypair*(self: Controller) =
+  self.delegate.clearSelectedKeypair()
+
+proc setConnectionString*(self: Controller, connectionString: string) =
+  self.delegate.setConnectionString(connectionString)
+
+proc generateConnectionStringForExportingKeypairsKeystores*(self: Controller, keyUids: seq[string], password: string): tuple[res: string, err: string] =
+  return self.devicesService.generateConnectionStringForExportingKeypairsKeystores(keyUids, password)
+
+proc validateConnectionString*(self: Controller, connectionString: string): string =
+  return self.devicesService.validateConnectionString(connectionString)
+
+proc inputConnectionStringForImportingKeypairsKeystores*(self: Controller, keyUids: seq[string], connectionString: string, password: string): string =
+  return self.devicesService.inputConnectionStringForImportingKeypairsKeystores(keyUids, connectionString, password)

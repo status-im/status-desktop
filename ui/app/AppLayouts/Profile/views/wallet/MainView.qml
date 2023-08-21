@@ -42,6 +42,40 @@ Column {
         }
     }
 
+    QtObject {
+        id: d
+
+        readonly property int unimportedNonProfileKeypairs: {
+            let total = 0
+            for (var i = 0; i < keypairsRepeater.count; i++) {
+                let kp = keypairsRepeater.itemAt(i).keyPair
+                if (kp.migratedToKeycard ||
+                        kp.pairType === Constants.keypair.type.profile ||
+                        kp.pairType === Constants.keypair.type.watchOnly ||
+                        kp.operability === Constants.keypair.operability.fullyOperable ||
+                        kp.operability === Constants.keypair.operability.partiallyOperable) {
+                    continue
+                }
+                total++
+            }
+            return total
+        }
+
+        readonly property int allNonProfileKeypairsMigratedToAKeycard: {
+            for (var i = 0; i < keypairsRepeater.count; i++) {
+                let kp = keypairsRepeater.itemAt(i).keyPair
+                if (!kp.migratedToKeycard &&
+                        kp.pairType !== Constants.keypair.type.profile &&
+                        kp.pairType !== Constants.keypair.type.watchOnly &&
+                        kp.operability !== Constants.keypair.operability.nonOperable) {
+                    return false
+                }
+            }
+            return true
+        }
+
+    }
+
     component Spacer: Item {
         height: 8
     }
@@ -102,7 +136,8 @@ Column {
     }
 
     Rectangle {
-        visible: root.walletStore.walletModule.hasPairedDevices
+        visible: root.walletStore.walletModule.hasPairedDevices &&
+                 !d.allNonProfileKeypairsMigratedToAKeycard
         height: 102
         width: parent.width
         color: Theme.palette.transparent
@@ -124,15 +159,15 @@ Column {
                 text: qsTr("Show encrypted QR of keypairs on device")
                 icon.name: "qr"
                 onClicked: {
-                    console.warn("TODO: run generate qr code flow...")
+                    root.walletStore.runKeypairImportPopup("", Constants.keypairImportPopup.mode.exportKeypairQr)
                 }
             }
         }
     }
 
     Rectangle {
-        id: importMissingKeypairs
-        visible: importMissingKeypairs.unimportedKeypairs > 0
+        visible: root.walletStore.walletModule.hasPairedDevices &&
+                 d.unimportedNonProfileKeypairs > 0
         height: 102
         width: parent.width
         color: Theme.palette.transparent
@@ -140,27 +175,13 @@ Column {
         border.width: 1
         border.color: Theme.palette.baseColor5
 
-        readonly property int unimportedKeypairs: {
-            let total = 0
-            for (var i = 0; i < keypairsRepeater.count; i++) {
-                let kp = keypairsRepeater.itemAt(i).keyPair
-                if (kp.migratedToKeycard ||
-                        kp.operability === Constants.keypair.operability.fullyOperable ||
-                        kp.operability === Constants.keypair.operability.partiallyOperable) {
-                    continue
-                }
-                total++
-            }
-            return total
-        }
-
         Column {
             anchors.fill: parent
             padding: 16
             spacing: 8
 
             StatusBaseText {
-                text: qsTr("%n keypair(s) require import to use on this device", "", importMissingKeypairs.unimportedKeypairs)
+                text: qsTr("%n keypair(s) require import to use on this device", "", d.unimportedNonProfileKeypairs)
                 font.pixelSize: 15
             }
 
@@ -169,7 +190,7 @@ Column {
                 type: StatusBaseButton.Type.Warning
                 icon.name: "download"
                 onClicked: {
-                    root.walletStore.runKeypairImportPopup("", Constants.keypairImportPopup.importOption.selectKeypair)
+                    root.walletStore.runKeypairImportPopup("", Constants.keypairImportPopup.mode.selectKeypair)
                 }
             }
         }
@@ -189,6 +210,7 @@ Column {
             delegate: WalletKeyPairDelegate {
                 width: parent.width
                 keyPair: model.keyPair
+                hasPairedDevices: root.walletStore.walletModule.hasPairedDevices
                 getNetworkShortNames: walletStore.getNetworkShortNames
                 userProfilePublicKey: walletStore.userProfilePublicKey
                 includeWatchOnlyAccount: walletStore.includeWatchOnlyAccount
@@ -197,10 +219,16 @@ Column {
                 onRunRenameKeypairFlow: root.runRenameKeypairFlow(model)
                 onRunRemoveKeypairFlow: root.runRemoveKeypairFlow(model)
                 onRunImportViaSeedPhraseFlow: {
-                    root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.importOption.seedPhrase)
+                    root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.mode.importViaSeedPhrase)
                 }
                 onRunImportViaPrivateKeyFlow: {
-                    root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.importOption.privateKey)
+                    root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.mode.importViaPrivateKey)
+                }
+                onRunExportQrFlow: {
+                    root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.mode.exportKeypairQr)
+                }
+                onRunImportViaQrFlow: {
+                    root.walletStore.runKeypairImportPopup(model.keyPair.keyUid, Constants.keypairImportPopup.mode.importViaQr)
                 }
             }
         }

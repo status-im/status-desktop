@@ -14,7 +14,10 @@ ColumnLayout {
     id: root
 
     property int secondsTimeout: 5 * 60
+    property string connectionStringLabel: ""
     property string connectionString: ""
+    property string importCodeInstructions : ""
+    property string codeExpiredMessage: ""
 
     signal requestConnectionString()
 
@@ -156,27 +159,27 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.topMargin: 12
         Layout.bottomMargin: 7
-        text: qsTr("Sync code")
+        text: root.connectionStringLabel
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Theme.palette.directColor1
     }
 
-    Input {
+    StatusPasswordInput {
         id: syncCodeInput
 
         property bool showPassword
         readonly property bool effectiveShowPassword: showPassword && !d.codeExpired
 
         Layout.fillWidth: true
+        Layout.preferredHeight: 88
         Layout.bottomMargin: 24
         readOnly: true
-        keepHeight: true
-        textField.echoMode: effectiveShowPassword ? TextInput.Normal : TextInput.Password
-        textField.rightPadding: syncCodeButtons.width + Style.current.padding / 2
-        textField.color: Style.current.textColor
-        textField.selectByMouse: !d.codeExpired
+        selectByMouse: !d.codeExpired
         text: root.connectionString
+        rightPadding: syncCodeButtons.width + Style.current.padding / 2
+        wrapMode: TextEdit.Wrap
+        echoMode: effectiveShowPassword ? TextInput.Normal : TextInput.Password
 
         Row {
             id: syncCodeButtons
@@ -206,9 +209,9 @@ ColumnLayout {
                 onClicked: {
                     const showPassword = syncCodeInput.showPassword
                     syncCodeInput.showPassword = true
-                    syncCodeInput.textField.selectAll()
-                    syncCodeInput.textField.copy()
-                    syncCodeInput.textField.deselect()
+                    syncCodeInput.selectAll()
+                    syncCodeInput.copy()
+                    syncCodeInput.deselect()
                     syncCodeInput.showPassword = showPassword
                 }
             }
@@ -222,7 +225,7 @@ ColumnLayout {
         visible: !d.codeExpired
         font.pixelSize: 15
         color: Theme.palette.baseColor1
-        text: qsTr("On your other device, navigate to the Syncing<br>screen and select Enter Sync Code.")
+        text: root.importCodeInstructions
     }
 
     StatusBaseText {
@@ -232,8 +235,6 @@ ColumnLayout {
         visible: d.codeExpired
         font.pixelSize: 15
         color: Theme.palette.baseColor1
-        text: qsTr("Your QR and Sync Code has expired.")
+        text: root.codeExpiredMessage
     }
-
-
 }

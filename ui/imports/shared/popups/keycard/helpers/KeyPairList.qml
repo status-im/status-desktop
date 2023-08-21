@@ -12,6 +12,7 @@ Item {
     property ButtonGroup buttonGroup
     property bool disableSelectionForKeypairsWithNonDefaultDerivationPath: true
     property bool displayRadioButtonForSelection: true
+    property bool useTransparentItemBackgroundColor: false
     property string optionLabel: ""
     property alias modelFilters: proxyModel.filters
 
@@ -36,6 +37,7 @@ Item {
             canBeSelected: !root.disableSelectionForKeypairsWithNonDefaultDerivationPath ||
                            !model.keyPair.containsPathOutOfTheDefaultStatusDerivationTree()
             displayRadioButtonForSelection: root.displayRadioButtonForSelection
+            useTransparentItemBackgroundColor: root.useTransparentItemBackgroundColor
 
             keyPairType: model.keyPair.pairType
             keyPairKeyUid: model.keyPair.keyUid

@@ -8,8 +8,11 @@ proc newSelectImportMethodState*(backState: State): SelectImportMethodState =
 proc delete*(self: SelectImportMethodState) =
   self.State.delete
 
+method executePreBackStateCommand*(self: SelectImportMethodState, controller: Controller) =
+  controller.clearSelectedKeypair()
+
 method getNextPrimaryState*(self: SelectImportMethodState, controller: Controller): State =
-  return createState(StateType.ScanQr, self)
+  return createState(StateType.ImportQr, self)
 
 method getNextSecondaryState*(self: SelectImportMethodState, controller: Controller): State =
   let kp = controller.getSelectedKeypair()

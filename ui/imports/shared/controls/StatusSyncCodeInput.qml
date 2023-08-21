@@ -14,17 +14,10 @@ StatusInput {
         ReadMode
     }
 
-    property int mode: StatusSyncCodeInput.Mode.WriteMode
+    required property int mode
     property bool readOnly: false
 
-    QtObject {
-        id: d
-        readonly property bool writeMode: root.mode === StatusSyncCodeInput.Mode.WriteMode
-    }
-
-    label: d.writeMode ? qsTr("Paste sync code") : qsTr("Sync code")
     input.edit.readOnly: root.readOnly
-    input.placeholderText: d.writeMode ? qsTr("eg. %1").arg("0x2Ef19") : ""
     input.font: Theme.palette.monoFont.name
     input.placeholderFont: root.input.font
 

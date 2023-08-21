@@ -19,6 +19,7 @@ StatusListItem {
     property bool tagDisplayRemoveAccountButton: false
     property bool canBeSelected: true
     property bool displayRadioButtonForSelection: true
+    property bool useTransparentItemBackgroundColor: false
 
     property int keyPairType: Constants.keycard.keyPairType.unknown
     property string keyPairKeyUid: ""
@@ -33,7 +34,17 @@ StatusListItem {
     signal removeAccount(int index, string name)
     signal accountClicked(int index)
 
-    color: root.keyPairCardLocked? Theme.palette.dangerColor3 : Theme.palette.baseColor2
+    color: {
+        if (!root.useTransparentItemBackgroundColor) {
+            return root.keyPairCardLocked? Theme.palette.dangerColor3 : Theme.palette.baseColor2
+        }
+
+        if (sensor.containsMouse) {
+            return Theme.palette.baseColor2
+        }
+
+        return Theme.palette.transparent
+    }
     title: root.keyPairName
     statusListItemTitleAside.textFormat: Text.RichText
     statusListItemTitleAside.visible: !!statusListItemTitleAside.text
