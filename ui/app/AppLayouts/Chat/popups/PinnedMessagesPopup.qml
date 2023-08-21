@@ -99,6 +99,7 @@ StatusDialog {
                     sticker: model.sticker
                     stickerPack: model.stickerPack
                     linkPreviewModel: model.linkPreviewModel
+                    links: model.links
                     transactionParams: model.transactionParameters
                     quotedMessageText: model.quotedMessageParsedText
                     quotedMessageFrom: model.quotedMessageFrom

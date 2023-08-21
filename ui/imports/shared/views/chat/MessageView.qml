@@ -64,6 +64,19 @@ Loader {
     property string messageAttachments: ""
     property var transactionParams
 
+    // These 2 properties can be dropped when the new unfurling flow supports GIFs
+    property var links
+    readonly property var localUnfurlLinks: {
+        if (!links)
+            return []
+        const separator = " "
+        const arr = links.split(separator)
+        const filtered = arr.filter(v => v.toLowerCase().endsWith('.gif'))
+        const out = filtered.join(separator)
+        console.log(`<<<${arr}->${out}`)
+        return out
+    }
+
     property string responseToMessageWithId: ""
     property string quotedMessageText: ""
     property string quotedMessageFrom: ""
@@ -518,6 +531,7 @@ Loader {
                 resendError: root.resendError
                 reactionsModel: root.reactionsModel
                 linkPreviewModel: root.linkPreviewModel
+                localUnfurlLinks: root.localUnfurlLinks
 
                 showHeader: root.shouldRepeatHeader || dateGroupLabel.visible || isAReply ||
                             root.prevMessageContentType === Constants.messageContentType.systemMessagePrivateGroupType ||
@@ -744,6 +758,7 @@ Loader {
                     LinksMessageView {
                         id: linksMessageView
                         linkPreviewModel: root.linkPreviewModel
+                        localUnfurlLinks: root.localUnfurlLinks
                         messageStore: root.messageStore
                         store: root.rootStore
                         isCurrentUser: root.amISender
