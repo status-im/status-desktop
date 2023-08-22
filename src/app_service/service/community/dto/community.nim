@@ -56,6 +56,8 @@ type TokenPermissionType* {.pure.}= enum
   BecomeMember = 2,
   View = 3,
   ViewAndPost = 4,
+  BecomeTokenMaster = 5,
+  BecomeTokenOwner = 6
   
 type TokenType* {.pure.}= enum
   Unknown = 0,

@@ -205,3 +205,22 @@ const asyncGetRevealedAccountsForAllMembersTask: Task = proc(argEncoded: string)
       "communityId": arg.communityId,
       "error": e.msg,
     })
+
+type
+  AsyncReevaluateCommunityMembersPermissionsArg = ref object of QObjectTaskArg
+    communityId: string
+
+const asyncReevaluateCommunityMembersPermissionsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
+  let arg = decode[AsyncReevaluateCommunityMembersPermissionsArg](argEncoded)
+  try:
+    let response = status_go.reevaluateCommunityMembersPermissions(arg.communityId)
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "response": response,
+      "error": "",
+    })
+  except Exception as e:
+    arg.finish(%* {
+      "communityId": arg.communityId,
+      "error": e.msg,
+    })

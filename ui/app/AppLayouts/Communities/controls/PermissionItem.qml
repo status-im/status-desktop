@@ -152,15 +152,60 @@ Control{
                 verticalAlignment: Text.AlignVCenter
             }
 
-            StatusListItemTag {
-                height: d.flowRowHeight
-                title: PermissionTypes.getName(root.permissionType)
-                asset.name: PermissionTypes.getIcon(root.permissionType)
-                asset.isImage: false
-                asset.bgColor: "transparent"
-                closeButtonVisible: false
-                titleText.color: Theme.palette.primaryColor1
-                titleText.font.pixelSize: d.tagTextPixelSize
+            ListModel {
+                id: tokenOwnerModel
+
+                ListElement { permissionType: PermissionTypes.Type.Owner }
+                ListElement { permissionType: PermissionTypes.Type.TokenMaster }
+                ListElement { permissionType: PermissionTypes.Type.Admin }
+            }
+
+            ListModel {
+                id: tokenMasterModel
+                ListElement { permissionType: PermissionTypes.Type.TokenMaster }
+                ListElement { permissionType: PermissionTypes.Type.Admin }
+            }
+
+            ListModel {
+                id: regularRoleModel
+                ListElement { permissionType: PermissionTypes.Type.None }
+            }
+
+            Repeater {
+                id: rolesRepeater
+
+                model: {
+                    if (root.permissionType === PermissionTypes.Type.Owner)
+                        return tokenOwnerModel
+                    if (root.permissionType === PermissionTypes.Type.TokenMaster)
+                        return tokenMasterModel
+                    return regularRoleModel
+                }
+
+                Flow {
+                    spacing: 6
+
+                    StatusListItemTag {
+                        height: d.flowRowHeight
+                        title: PermissionTypes.getName(model.permissionType === PermissionTypes.Type.None
+                                                       ? root.permissionType : model.permissionType)
+                        asset.name: PermissionTypes.getIcon(root.permissionType)
+                        asset.isImage: false
+                        asset.bgColor: "transparent"
+                        closeButtonVisible: false
+                        titleText.color: Theme.palette.primaryColor1
+                        titleText.font.pixelSize: d.tagTextPixelSize
+                    }
+
+                    StatusBaseText {
+                        height: d.flowRowHeight
+                        visible: model.index < rolesRepeater.model.count  - 1
+                        font.pixelSize: d.itemTextPixelSize
+                        text: qsTr("and")
+                        verticalAlignment: Text.AlignVCenter
+
+                    }
+                }
             }
 
             StatusBaseText {

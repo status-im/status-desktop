@@ -271,12 +271,6 @@ proc rebuildCommunityTokenPermissionsModel(self: Module) =
     let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
     tokenPermissionsItems.add(tokenPermissionItem)
 
-  let memberPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
-    tokenPermissionsItem.getType() == TokenPermissionType.BecomeMember.int)
-
-  let adminPermissions = filter(tokenPermissionsItems, tokenPermissionsItem =>
-    tokenPermissionsItem.getType() == TokenPermissionType.BecomeAdmin.int)
-
   self.view.tokenPermissionsModel().setItems(tokenPermissionsItems)
   self.reevaluateRequiresTokenPermissionToJoin()
 

@@ -264,8 +264,7 @@ proc createChannelGroupItem[T](self: Module[T], channelGroup: ChannelGroupDto): 
     )
     # Get community members' revealed accounts
     # We will update the model later when we finish loading the accounts
-    # TODO add TokenMaster here too when it's available
-    if communityDetails.memberRole == MemberRole.Owner:
+    if communityDetails.memberRole == MemberRole.Owner or communityDetails.memberRole == MemberRole.TokenMaster:
       self.controller.asyncGetRevealedAccountsForAllMembers(channelGroup.id)
 
   let unviewedCount = channelGroup.unviewedMessagesCount
@@ -1105,6 +1104,16 @@ method onRemoteDestructed*[T](self: Module[T], communityId: string, chainId: int
   let item = self.view.model().getItemById(communityId)
   if item.id != "":
     item.updateRemoteDestructedAddresses(chainId, contractAddress, addresses)
+
+method onRequestReevaluateMembersPermissionsIfRequired*[T](self: Module[T], communityId: string, chainId: int, contractAddress: string) =
+  let communityDto = self.controller.getCommunityById(communityId)
+  for _, tokenPermission in communityDto.tokenPermissions.pairs:
+    for tokenCriteria in tokenPermission.tokenCriteria:
+      if tokenCriteria.contractAddresses.hasKey(chainId):
+        let actualAddress = tokenCriteria.contractAddresses[chainId]
+        if actualAddress == contractAddress:
+          self.controller.asyncReevaluateCommunityMembersPermissions(communityId)
+          return
 
 method onAcceptRequestToJoinLoading*[T](self: Module[T], communityId: string, memberKey: string) =
   let item = self.view.model().getItemById(communityId)

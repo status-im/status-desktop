@@ -375,6 +375,8 @@ proc init*(self: Controller) =
       self.getRemainingSupply(communityToken.chainId, communityToken.address),
       self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
     self.delegate.onRemoteDestructed(communityToken.communityId, communityToken.chainId, communityToken.address, args.remoteDestructAddresses)
+    if args.status == ContractTransactionStatus.Completed:
+      self.delegate.onRequestReevaluateMembersPermissionsIfRequired(communityToken.communityId, communityToken.chainId, communityToken.address)
 
   self.events.on(SIGNAL_AIRDROP_STATUS) do(e: Args):
     let args = AirdropArgs(e)
@@ -383,6 +385,8 @@ proc init*(self: Controller) =
       communityToken.address, communityToken.supply,
       self.getRemainingSupply(communityToken.chainId, communityToken.address),
       self.getRemoteDestructedAmount(communityToken.chainId, communityToken.address))
+    if args.status == ContractTransactionStatus.Completed:
+      self.delegate.onRequestReevaluateMembersPermissionsIfRequired(communityToken.communityId, communityToken.chainId, communityToken.address)
 
   self.events.on(SIGNAL_COMMUNITY_TOKEN_OWNERS_FETCHED) do(e: Args):
     let args = CommunityTokenOwnersArgs(e)
@@ -543,3 +547,6 @@ proc getColorId*(self: Controller, pubkey: string): int =
 
 proc asyncGetRevealedAccountsForAllMembers*(self: Controller, communityId: string) =
   self.communityService.asyncGetRevealedAccountsForAllMembers(communityId)
+
+proc asyncReevaluateCommunityMembersPermissions*(self: Controller, communityId: string) =
+  self.communityService.asyncReevaluateCommunityMembersPermissions(communityId) 

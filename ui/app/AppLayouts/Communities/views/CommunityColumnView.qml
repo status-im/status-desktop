@@ -41,7 +41,8 @@ Item {
 
     readonly property bool isSectionAdmin:
         communityData.memberRole === Constants.memberRole.owner ||
-        communityData.memberRole === Constants.memberRole.admin
+        communityData.memberRole === Constants.memberRole.admin ||
+        communityData.memberRole === Constants.memberRole.tokenMaster
 
     signal infoButtonClicked
     signal manageButtonClicked

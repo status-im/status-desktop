@@ -78,6 +78,13 @@ proc checkPermissionsToJoinCommunity*(communityId: string, addresses: seq[string
     "addresses": addresses
   }])
 
+proc reevaluateCommunityMembersPermissions*(
+    communityId: string,
+  ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("reevaluateCommunityMembersPermissions".prefix, %*[{
+    "communityId": communityId
+  }])
+  
 proc checkCommunityChannelPermissions*(communityId: string, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("checkCommunityChannelPermissions".prefix, %*[{
     "communityId": communityId,

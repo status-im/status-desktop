@@ -593,7 +593,11 @@ QtObject:
 
   proc contractOwnerName*(self: Service, contractOwnerAddress: string): string =
     try:
-      return self.walletAccountService.getAccountByAddress(contractOwnerAddress).name
+      let res = self.walletAccountService.getAccountByAddress(contractOwnerAddress)
+      if res == nil:
+        error "getAccountByAddress result is nil"
+        return ""
+      return res.name
     except RpcException:
       error "Error getting contract owner name", message = getCurrentExceptionMsg()
 

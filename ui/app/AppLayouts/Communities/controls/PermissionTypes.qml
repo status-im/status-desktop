@@ -6,7 +6,7 @@ import StatusQ.Core.Theme 0.1
 
 QtObject {
     enum Type {
-        None, Admin, Member, Read, ViewAndPost, Moderator
+        None, Admin, Member, Read, ViewAndPost, TokenMaster, Owner
     }
 
     enum State {
@@ -16,15 +16,17 @@ QtObject {
     function getName(type) {
         switch (type) {
             case PermissionTypes.Type.Admin:
-                return qsTr("Become admin")
+                return qsTr("Become an admin")
             case PermissionTypes.Type.Member:
                 return qsTr("Become member")
             case PermissionTypes.Type.Read:
                 return qsTr("View only")
             case PermissionTypes.Type.ViewAndPost:
                 return qsTr("View and post")
-            case PermissionTypes.Type.Moderator:
-                return qsTr("Moderate")
+            case PermissionTypes.Type.TokenMaster:
+                return qsTr("Admin community tokens")
+            case PermissionTypes.Type.Owner:
+                return qsTr("Admin TokenMaster tokens")
         }
 
         return ""
@@ -40,7 +42,9 @@ QtObject {
                 return "edit"
             case PermissionTypes.Type.Read:
                 return "show"
-            case PermissionTypes.Type.Moderator:
+            case PermissionTypes.Type.TokenMaster:
+                return "arbitrator"
+            case PermissionTypes.Type.Owner:
                 return "arbitrator"
         }
 
@@ -58,8 +62,6 @@ QtObject {
                 return `${generalInfo}<br><br>${warningStyled} ${warningExplanation}`
             case PermissionTypes.Type.Member:
                 return qsTr("Anyone who meets the requirements will be allowed to join your community")
-            case PermissionTypes.Type.Moderator:
-                return qsTr("Members who meet the requirements will be allowed to read, write, ban members and pin messages in the selected channels")
             case PermissionTypes.Type.ViewAndPost:
                 return qsTr("Members who meet the requirements will be allowed to read and write in the selected channels")
             case PermissionTypes.Type.Read:
@@ -70,8 +72,8 @@ QtObject {
     }
 
     function isCommunityPermission(permissionType) {
-        return permissionType === PermissionTypes.Type.Admin
-                || permissionType === PermissionTypes.Type.Member
+        return permissionType === PermissionTypes.Type.Admin || permissionType === PermissionTypes.Type.Member ||
+                permissionType === PermissionTypes.Type.TokenMaster || permissionType === PermissionTypes.Type.Owner
     }
 
     function getPermissionsCountLimit(permissionType) {
