@@ -607,8 +607,9 @@ proc handleKeypair(self: Service, keypair: KeypairDto) =
     localKp.lastUsedDerivationIndex = keypair.lastUsedDerivationIndex
     localKp.syncedFrom = keypair.syncedFrom
     # - first remove removed accounts from the UI
-    for localAcc in localKp.accounts:
-      let accAddress = localAcc.address
+    let addresses = localKp.accounts.map(a => a.address)
+    for address in addresses:
+      let accAddress = address
       if keypair.accounts.filter(a => cmpIgnoreCase(a.address, accAddress) == 0).len == 0:
         self.handleWalletAccount(WalletAccountDto(address: accAddress, removed: true), notify = false)
     # - second add/update new/existing accounts
