@@ -71,10 +71,12 @@ Loader {
             return []
         const separator = " "
         const arr = links.split(separator)
-        const filtered = arr.filter(v => v.toLowerCase().endsWith('.gif'))
-        const out = filtered.join(separator)
-        console.log(`<<<${arr}->${out}`)
-        return out
+        const filtered = arr.filter(v => {
+                                        const u = v.toLowerCase()
+                                        return u.endsWith('.gif')
+                                               || u.includes(Constants.externalStatusLink)
+                                    })
+        return filtered.join(separator)
     }
 
     property string responseToMessageWithId: ""

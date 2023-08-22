@@ -326,17 +326,12 @@ ColumnLayout {
                         name: "loadImage"
                         when: tempLoader.unfurl && tempLoader.isImage
                         PropertyChanges { target: tempLoader; sourceComponent: unfurledImageComponent }
+                    },
+                    State {
+                        name: "statusInvitation"
+                        when: tempLoader.unfurl && tempLoader.isStatusDeepLink
+                        PropertyChanges { target: tempLoader; sourceComponent: invitationBubble }
                     }
-//                    State {
-//                        name: "loadLinkPreview"
-//                        when: unfurl && !isImage && !isStatusDeepLink
-//                        PropertyChanges { target: tempLoader; sourceComponent: unfurledLinkComponent }
-//                    },
-//                    State {
-//                        name: "statusInvitation"
-//                        when: unfurl && isStatusDeepLink
-//                        PropertyChanges { target: tempLoader; sourceComponent: invitationBubble }
-//                    }
                 ]
             }
         }
@@ -453,7 +448,4 @@ ColumnLayout {
             }
         }
     }
-
-
-
 }
