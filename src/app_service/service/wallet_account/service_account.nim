@@ -145,6 +145,10 @@ proc init*(self: Service) =
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.buildAllTokens(self.getWalletAddresses(), store = true)
 
+  self.events.on(SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS) do(e: Args):
+    let args = ImportAccountsArgs(e)
+    self.importPartiallyOperableAccounts(args.keyUid, args.password)
+
 proc addNewKeypairsAccountsToLocalStoreAndNotify(self: Service, notify: bool = true) =
   let chainId = self.networkService.getNetworkForEns().chainId
   let allLocalAaccounts = self.getWalletAccounts()
@@ -242,19 +246,22 @@ proc updateAccountsPositions(self: Service) =
       continue
     localAcc.position = dbAcc.position
 
-proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string,
+proc updateAccountInLocalStoreAndNotify(self: Service, address, name, colorId, emoji: string, operable: string = "",
   positionUpdated: Option[bool] = none(bool), notify: bool = true) =
   if address.len > 0:
     var account = self.getAccountByAddress(address)
     if account.isNil:
       return
-    if name.len > 0 or colorId.len > 0 or emoji.len > 0:
+    if name.len > 0 or colorId.len > 0 or emoji.len > 0 or operable.len > 0:
       if name.len > 0 and name != account.name:
         account.name = name
       if colorId.len > 0 and colorId != account.colorId:
         account.colorId = colorId
       if emoji.len > 0 and emoji != account.emoji:
         account.emoji = emoji
+      if operable.len > 0 and operable != account.operable and
+        (operable == AccountNonOperable or operable == AccountPartiallyOperable or operable == AccountFullyOperable):
+          account.operable = operable
       if notify:
         self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, AccountArgs(account: account))
   else:
@@ -304,8 +311,9 @@ proc addWalletAccount*(self: Service, password: string, doPasswordHashing: bool,
 proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPasswordHashing: bool,
   keyUid, keypairName, rootWalletMasterKey: string, account: WalletAccountDto): string =
   if password.len == 0:
-    error "for adding new private key account, password must be provided"
-    return
+    let err = "for adding new private key account, password must be provided"
+    error "error", err
+    return err
   var finalPassword = password
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
@@ -326,8 +334,9 @@ proc addNewPrivateKeyKeypair*(self: Service, privateKey, password: string, doPas
 
 proc makePrivateKeyKeypairFullyOperable*(self: Service, keyUid, privateKey, password: string, doPasswordHashing: bool): string =
   if password.len == 0:
-    error "for making a private key keypair fully operable, password must be provided"
-    return
+    let err = "for making a private key keypair fully operable, password must be provided"
+    error "error", err
+    return err
   var finalPassword = password
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
@@ -345,6 +354,10 @@ proc makePrivateKeyKeypairFullyOperable*(self: Service, keyUid, privateKey, pass
 ## Mandatory fields for all accounts: `address`, `keyUid`, `walletType`, `path`, `publicKey`, `name`, `emoji`, `colorId`
 proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPasswordHashing: bool,
   keyUid, keypairName, rootWalletMasterKey: string, accounts: seq[WalletAccountDto]): string =
+  if password.len == 0:
+    let err = "for adding a new seed phrase keypair, password must be provided"
+    error "error", err
+    return err
   var finalPassword = password
   if password.len > 0 and doPasswordHashing:
     finalPassword = utils.hashPassword(password)
@@ -367,8 +380,9 @@ proc addNewSeedPhraseKeypair*(self: Service, seedPhrase, password: string, doPas
 
 proc makeSeedPhraseKeypairFullyOperable*(self: Service, keyUid, mnemonic, password: string, doPasswordHashing: bool): string =
   if password.len == 0:
-    error "for making a private key keypair fully operable, password must be provided"
-    return
+    let err = "for making a private key keypair fully operable, password must be provided"
+    error "error", err
+    return err
   var finalPassword = password
   if doPasswordHashing:
     finalPassword = utils.hashPassword(password)
@@ -382,6 +396,24 @@ proc makeSeedPhraseKeypairFullyOperable*(self: Service, keyUid, mnemonic, passwo
   except Exception as e:
     error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
     return e.msg
+
+proc makePartiallyOperableAccoutsFullyOperable(self: Service, password: string, doPasswordHashing: bool) =
+  if password.len == 0:
+    error "for making partially operable accounts a fully operable, password must be provided"
+    return
+  var finalPassword = password
+  if doPasswordHashing:
+    finalPassword = utils.hashPassword(password)
+  try:
+    var response = status_go_accounts.makePartiallyOperableAccoutsFullyOperable(finalPassword)
+    if not response.error.isNil:
+      error "status-go error", procName="makePartiallyOperableAccoutsFullyOperable", errCode=response.error.code, errDesription=response.error.message
+      return
+    let affectedAccounts = map(response.result.getElems(), x => x.getStr())
+    for acc in affectedAccounts:
+      self.updateAccountInLocalStoreAndNotify(acc, name = "", colorId = "", emoji = "", operable = AccountFullyOperable)
+  except Exception as e:
+    error "error: ", procName="makeSeedPhraseKeypairFullyOperable", errName=e.name, errDesription=e.msg
 
 proc getRandomMnemonic*(self: Service): string =
   try:
@@ -497,7 +529,7 @@ proc moveAccountFinally*(self: Service, fromPosition: int, toPosition: int) =
     updated = true
   except Exception as e:
     error "error: ", procName="moveAccountFinally", errName=e.name, errDesription=e.msg
-  self.updateAccountInLocalStoreAndNotify(address = "", name = "", colorId = "", emoji = "", some(updated))
+  self.updateAccountInLocalStoreAndNotify(address = "", name = "", colorId = "", emoji = "", operable = "", some(updated))
 
 proc updateKeypairName*(self: Service, keyUid: string, name: string) =
   try:
@@ -595,7 +627,7 @@ proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool 
     var localAcc = self.getAccountByAddress(account.address)
     if not localAcc.isNil:
       self.updateAccountInLocalStoreAndNotify(account.address, account.name, account.colorId, account.emoji,
-        none(bool), notify)
+        account.operable, none(bool), notify)
     else:
       self.addNewKeypairsAccountsToLocalStoreAndNotify(notify)
 
@@ -655,3 +687,9 @@ proc areTestNetworksEnabled*(self: Service): bool =
 
 proc hasPairedDevices*(self: Service): bool =
   return hasPairedDevices()
+
+proc importPartiallyOperableAccounts(self: Service, keyUid: string, password: string) =
+  ## Whenever user provides a password/pin we need to make all partially operable accounts (if any exists) a fully operable.
+  if  keyUid != singletonInstance.userProfile.getKeyUid():
+    return
+  self.makePartiallyOperableAccoutsFullyOperable(password, not singletonInstance.userProfile.getIsKeycardUser())

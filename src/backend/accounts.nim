@@ -243,6 +243,11 @@ proc makeSeedPhraseKeypairFullyOperable*(mnemonic, password: string):
   let payload = %* [mnemonic, password]
   return core.callPrivateRPC("accounts_makeSeedPhraseKeypairFullyOperable", payload)
 
+proc makePartiallyOperableAccoutsFullyOperable*(password: string):
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [password]
+  return core.callPrivateRPC("accounts_makePartiallyOperableAccoutsFullyOperable", payload)
+
 proc createAccountFromMnemonicAndDeriveAccountsForPaths*(mnemonic: string, paths: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
     "mnemonicPhrase": mnemonic,
