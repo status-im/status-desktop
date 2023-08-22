@@ -186,6 +186,7 @@ StackLayout {
 
             loginType: root.rootStore.loginType
             walletAccountsModel: WalletStore.RootStore.nonWatchAccounts
+            requirementsCheckPending: root.rootStore.requirementsCheckPending
             permissionsModel: {
                 root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
                 return root.rootStore.permissionsModel

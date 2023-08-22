@@ -11,6 +11,8 @@ StatusDialog {
 
     property bool isEditMode
 
+    property bool requirementsCheckPending
+
     required property string communityName
     required property string communityIcon
     property int loginType: Constants.LoginType.Password
@@ -34,6 +36,7 @@ StatusDialog {
     contentItem: SharedAddressesPanel {
         id: panel
         isEditMode: root.isEditMode
+        requirementsCheckPending: root.requirementsCheckPending
         communityName: root.communityName
         communityIcon: root.communityIcon
         loginType: root.loginType

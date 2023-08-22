@@ -110,6 +110,7 @@ QtObject {
     }
 
     property var communitiesList: communitiesModuleInst.model
+    readonly property bool requirementsCheckPending: communitiesModuleInst.requirementsCheckPending
 
     function spectateCommunity(publicKey) {
         root.communitiesModuleInst.spectateCommunity(publicKey, "");

@@ -44,6 +44,8 @@ type
     moduleLoaded: bool
     curatedCommunitiesLoaded: bool
     communityTokensModule: community_tokens_module.AccessInterface
+    checkingPermissionToJoinInProgress: bool
+    checkingAllChannelPermissionsInProgress: bool
 
 # Forward declaration
 method setCommunityTags*(self: Module, communityTags: string)
@@ -79,6 +81,8 @@ proc newModule*(
   result.communityTokensModule = community_tokens_module.newCommunityTokensModule(result, events, communityTokensService, transactionService, networksService, communityService)
   result.moduleLoaded = false
   result.curatedCommunitiesLoaded = false
+  result.checkingPermissionToJoinInProgress = false
+  result.checkingAllChannelPermissionsInProgress = false
 
 method delete*(self: Module) =
   self.view.delete
@@ -541,6 +545,7 @@ method getCommunityPublicKeyFromPrivateKey*(self: Module, communityPrivateKey: s
 method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq[string]) =
   self.controller.asyncCheckPermissionsToJoin(communityId, sharedAddresses)
   self.controller.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
+  self.view.setCheckingPermissionsInProgress(inProgress = true)
 
 method prepareTokenModelForCommunity*(self: Module, communityId: string) =
   let community = self.controller.getCommunityById(communityId)
@@ -595,12 +600,32 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
     )
     self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
 
+proc updateCheckingPermissionsInProgressIfNeeded(self: Module, inProgress = false) =
+  if self.checkingPermissionToJoinInProgress != self.checkingAllChannelPermissionsInProgress:
+    # Wait until both join and channel permissions have returned to update the loading
+    return
+  self.view.setCheckingPermissionsInProgress(inProgress)
+
+method onCommunityCheckPermissionsToJoinFailed*(self: Module, communityId: string, error: string) =
+  # TODO show error
+  self.checkingPermissionToJoinInProgress = false
+  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
+
+method onCommunityCheckAllChannelPermissionsFailed*(self: Module, communityId: string, error: string) =
+  # TODO show error
+  self.checkingAllChannelPermissionsInProgress = false
+  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
+
 method onCommunityCheckPermissionsToJoinResponse*(self: Module, communityId: string,
     checkPermissionsToJoinResponse: CheckPermissionsToJoinResponseDto) =
   self.applyPermissionResponse(communityId, checkPermissionsToJoinResponse.permissions)
+  self.checkingPermissionToJoinInProgress = false
+  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
 
 method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId: string,
     checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) =
+  self.checkingAllChannelPermissionsInProgress = false
+  self.updateCheckingPermissionsInProgressIfNeeded(inProgress = false)
   for _, channelPermissionResponse in checkChannelPermissionsResponse.channels:
     self.applyPermissionResponse(
       communityId,

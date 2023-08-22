@@ -15,6 +15,7 @@ QtObject {
     property var aboutModuleInst: aboutModule
     property var communitiesModuleInst: communitiesModule
     property bool newVersionAvailable: false
+    readonly property bool requirementsCheckPending: communitiesModuleInst.requirementsCheckPending
     property string latestVersion
     property string downloadURL
 

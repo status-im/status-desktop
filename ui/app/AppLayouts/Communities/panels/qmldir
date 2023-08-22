@@ -27,6 +27,7 @@ PrivilegedTokenArtworkPanel 1.0 PrivilegedTokenArtworkPanel.qml
 ProfilePopupInviteFriendsPanel 1.0 ProfilePopupInviteFriendsPanel.qml
 ProfilePopupInviteMessagePanel 1.0 ProfilePopupInviteMessagePanel.qml
 ProfilePopupOverviewPanel 1.0 ProfilePopupOverviewPanel.qml
+RequirementsCheckPendingLoader 1.0 RequirementsCheckPendingLoader.qml
 SharedAddressesPanel 1.0 SharedAddressesPanel.qml
 SortableTokenHoldersList 1.0 SortableTokenHoldersList.qml
 SortableTokenHoldersPanel 1.0 SortableTokenHoldersPanel.qml

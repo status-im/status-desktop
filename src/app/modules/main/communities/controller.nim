@@ -198,6 +198,14 @@ proc init*(self: Controller) =
       self.delegate.callbackFromAuthentication(authenticated)
       self.tmpAuthenticationWithCallbackInProgress = false
 
+    self.events.on(SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED) do(e: Args):
+      let args = CheckPermissionsToJoinFailedArgs(e)
+      self.delegate.onCommunityCheckPermissionsToJoinFailed(args.communityId, args.error)
+
+    self.events.on(SIGNAL_CHECK_ALL_CHANNELS_PERMISSIONS_FAILED) do(e: Args):
+      let args = CheckChannelsPermissionsErrorArgs(e)
+      self.delegate.onCommunityCheckAllChannelPermissionsFailed(args.communityId, args.error)
+
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
 

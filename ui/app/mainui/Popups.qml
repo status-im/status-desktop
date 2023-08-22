@@ -523,6 +523,7 @@ QtObject {
                 id: communityIntroDialog
                 property string communityId
                 loginType: root.rootStore.loginType
+                requirementsCheckPending: root.rootStore.requirementsCheckPending
                 walletAccountsModel: root.rootStore.walletAccountsModel
                 permissionsModel: {
                     root.rootStore.prepareTokenModelForCommunity(communityIntroDialog.communityId)
@@ -708,6 +709,7 @@ QtObject {
 
                 communityName: chatStore.sectionDetails.name
                 communityIcon: chatStore.sectionDetails.image
+                requirementsCheckPending: root.rootStore.requirementsCheckPending
                 // FIXME get these from the community settings (from the initial "join" call)
                 //selectedSharedAddresses: [???]
                 //selectedAirdropAddress: "???"
