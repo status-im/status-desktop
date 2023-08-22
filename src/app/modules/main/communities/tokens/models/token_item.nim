@@ -43,7 +43,8 @@ proc initTokenItem*(
   result.remoteDestructedAddresses = remoteDestructedAddresses
   result.tokenOwnersModel = newTokenOwnersModel()
   result.tokenOwnersModel.setItems(tokenOwners.map(proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
-    result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, owner.collectibleOwner, remoteDestructedAddresses)
+    # TODO: provide number of messages here
+    result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner, remoteDestructedAddresses)
   ))
 
 proc `$`*(self: TokenItem): string =

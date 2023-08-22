@@ -206,8 +206,8 @@ QtObject:
   QtProperty[QVariant] appSearchModule:
     read = getAppSearchModule
 
-  proc getContactDetailsAsJson(self: View, publicKey: string, getVerificationRequest: bool): string {.slot.} =
-    return self.delegate.getContactDetailsAsJson(publicKey, getVerificationRequest)
+  proc getContactDetailsAsJson(self: View, publicKey: string, getVerificationRequest: bool, getOnlineStatus: bool): string {.slot.} =
+    return self.delegate.getContactDetailsAsJson(publicKey, getVerificationRequest, getOnlineStatus)
 
   proc isEnsVerified(self:View, publicKey: string): bool {.slot.} =
     return self.delegate.isEnsVerified(publicKey)

@@ -988,11 +988,14 @@ method onCommunityMuted*[T](
 method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): VerificationRequest =
   self.controller.getVerificationRequestFrom(publicKey)
 
-method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool): string =
+method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerificationRequest: bool, getOnlineStatus: bool): string =
   let contact = self.controller.getContact(publicKey)
   var requestStatus = 0
   if getVerificationRequest:
     requestStatus = self.getVerificationRequestFrom(publicKey).status.int
+  var onlineStatus = OnlineStatus.Inactive
+  if getOnlineStatus:
+    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType)
   let jsonObj = %* {
     "displayName": contact.displayName,
     "displayIcon": contact.image.thumbnail,
@@ -1018,7 +1021,8 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "incomingVerificationStatus": requestStatus,
     "hasAddedUs": contact.hasAddedUs,
     "socialLinks": $contact.socialLinks.toJsonNode(),
-    "bio": contact.bio
+    "bio": contact.bio,
+    "onlineStatus": onlineStatus.int
   }
   return $jsonObj
 

@@ -113,7 +113,8 @@ QtObject:
     for i in 0 ..< self.items.len:
       if((self.items[i].tokenDto.address == contractAddress) and (self.items[i].tokenDto.chainId == chainId)):
         self.items[i].tokenOwnersModel.setItems(owners.map(proc(owner: CommunityCollectibleOwner): TokenOwnersItem =
-          result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, owner.collectibleOwner, self.items[i].remoteDestructedAddresses)
+          # TODO: provide number of messages here
+          result = initTokenOwnersItem(owner.contactId, owner.name, owner.imageSource, 0, owner.collectibleOwner, self.items[i].remoteDestructedAddresses)
         ))
         let index = self.createIndex(i, 0, nil)
         defer: index.delete

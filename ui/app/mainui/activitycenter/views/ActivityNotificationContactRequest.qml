@@ -36,8 +36,8 @@ ActivityNotificationMessage {
     messageDetails.messageText: !root.isOutgoingMessage && notification ? notification.message.messageText : ""
 
     messageSubheaderComponent: StatusBaseText {
-        text: root.isOutgoingMessage ? qsTr("Сontact request sent to %1").arg(contactName) :
-                                       qsTr("Сontact request:")
+        text: root.isOutgoingMessage ? qsTr("Contact request sent to %1").arg(contactName) :
+                                       qsTr("Contact request:")
         font.italic: true
         font.pixelSize: 15
         maximumLineCount: 2
