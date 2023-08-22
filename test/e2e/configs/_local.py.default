@@ -1,7 +1,6 @@
 import logging
 
 LOG_LEVEL = logging.DEBUG
-LOCAL_RUN = True
 DEV_BUILD = False
 
 APP_DIR = None

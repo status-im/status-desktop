@@ -4,6 +4,7 @@ from copy import deepcopy
 import configs.timeouts
 
 if configs.system.IS_MAC:
+    from atomacos._a11y import _running_apps_with_bundle_id
     import atomacos
 
 BUNDLE_ID = 'im.Status.NimStatusClient'
@@ -13,7 +14,19 @@ BUNDLE_ID = 'im.Status.NimStatusClient'
 
 
 def attach_atomac(timeout_sec: int = configs.timeouts.UI_LOAD_TIMEOUT_SEC):
-    atomator = atomacos.getAppRefByBundleId(BUNDLE_ID)
+    def from_bundle_id(bundle_id):
+        """
+        Get the top level element for the application with the specified
+        bundle ID, such as com.vmware.fusion.
+        """
+        apps = _running_apps_with_bundle_id(bundle_id)
+        if not apps:
+            raise ValueError(
+                "Specified bundle ID not found in " "running apps: %s" % bundle_id
+            )
+        return atomacos.NativeUIElement.from_pid(apps[-1].processIdentifier())
+
+    atomator = from_bundle_id(BUNDLE_ID)
     started_at = time.monotonic()
     while not hasattr(atomator, 'AXMainWindow'):
         time.sleep(1)

@@ -62,6 +62,5 @@ def pytest_exception_interact(node):
             body=screenshot.read_bytes(),
             attachment_type=allure.attachment_type.PNG)
         driver.context.detach()
-        AUT().stop()
     except Exception as ex:
         _logger.debug(ex)
