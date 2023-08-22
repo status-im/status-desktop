@@ -149,15 +149,6 @@ StatusMenu {
 //    }
 
     StatusAction {
-        objectName: "clearHistoryMenuItem"
-        text: qsTr("Clear History")
-        icon.name: "close-circle"
-        onTriggered: {
-            root.clearChatHistory(root.chatId)
-        }
-    }
-
-    StatusAction {
         objectName: "editChannelMenuItem"
         text: qsTr("Edit Channel")
         icon.name: "edit"
@@ -206,7 +197,17 @@ StatusMenu {
     }
 
     StatusMenuSeparator {
-        visible: deleteOrLeaveMenuItem.enabled
+        visible: clearHistoryMenuItem.enabled || deleteOrLeaveMenuItem.enabled
+    }
+
+    StatusAction {
+        objectName: "clearHistoryMenuItem"
+        text: qsTr("Clear History")
+        icon.name: "close-circle"
+        type: deleteOrLeaveMenuItem.enabled ? StatusAction.Type.Normal : StatusAction.Type.Danger
+        onTriggered: {
+            Global.openPopup(clearChatConfirmationDialogComponent);
+        }
     }
 
     StatusAction {
@@ -252,6 +253,29 @@ StatusMenu {
     }
 
     Component {
+        id: clearChatConfirmationDialogComponent
+        ConfirmationDialog {
+            confirmButtonObjectName: "clearChatConfirmationDialogClearButton"
+            headerSettings.title: qsTr("Clear chat history")
+            confirmationText: qsTr("Are you sure you want to clear chat history for <b>%1</b>?").arg(root.chatName)
+            confirmButtonLabel: qsTr("Clear")
+            showCancelButton: true
+            cancelBtnType: "normal"
+
+            onClosed: {
+                destroy()
+            }
+            onCancelButtonClicked: {
+                close()
+            }
+            onConfirmButtonClicked: {
+                root.clearChatHistory(root.chatId)
+                close()
+            }
+        }
+    }
+
+    Component {
         id: deleteChatConfirmationDialogComponent
         ConfirmationDialog {
             confirmButtonObjectName: "deleteChatConfirmationDialogDeleteButton"
@@ -264,7 +288,8 @@ StatusMenu {
                                                 root.chatType === Constants.chatType.oneToOne ?
                                                 qsTr("Are you sure you want to delete this chat?"):
                                                 qsTr("Are you sure you want to leave this chat?")
-            showCancelButton: root.isCommunityChat
+            showCancelButton: true
+            cancelBtnType: "normal"
 
             onClosed: {
                 destroy()
