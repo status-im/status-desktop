@@ -23,13 +23,17 @@ Item {
         secondTabName: qsTr("Enter encrypted key")
         syncQrErrorMessage: qsTr("This does not look like the correct keypair QR code")
         syncCodeErrorMessage: qsTr("This does not look like an encrypted keypair code")
-        firstInstructionButtonName: qsTr("How to generate the QR")
-        secondInstructionButtonName: qsTr("How to generate the key")
+        firstInstructionButtonName: qsTr("How to display the QR code on your other device")
+        secondInstructionButtonName: qsTr("How to copy the encrypted key from your other device")
         syncCodeLabel: qsTr("Paste encrypted key")
 
         validateConnectionString: function(connectionString) {
             const result = root.store.validateConnectionString(connectionString)
             return result === ""
+        }
+
+        onSyncViaQrChanged: {
+            root.store.syncViaQr = syncViaQr
         }
 
         onProceed: {

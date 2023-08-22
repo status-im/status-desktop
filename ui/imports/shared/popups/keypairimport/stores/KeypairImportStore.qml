@@ -11,6 +11,7 @@ BasePopupStore {
 
     property bool userProfileIsKeycardUser: userProfile.isKeycardUser
     property bool userProfileUsingBiometricLogin: userProfile.usingBiometricLogin
+    property bool syncViaQr: true
 
     // Module Properties
     property var currentState: root.keypairImportModule.currentState
@@ -19,7 +20,7 @@ BasePopupStore {
     privateKeyAccAddress: root.keypairImportModule.privateKeyAccAddress
 
     submitPopup: function(event) {
-        if (!root.primaryPopupButtonEnabled) {
+        if (!root.syncViaQr && !root.primaryPopupButtonEnabled) {
             return
         }
 
@@ -51,7 +52,8 @@ BasePopupStore {
 
     readonly property bool primaryPopupButtonEnabled: {
         if (root.currentState.stateType === Constants.keypairImportPopup.state.importQr) {
-            return !!root.keypairImportModule.connectionString &&
+            return !root.syncViaQr &&
+                    !!root.keypairImportModule.connectionString &&
                     !root.keypairImportModule.connectionStringError
         }
 

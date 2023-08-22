@@ -36,7 +36,7 @@ Item {
 
             StatusBaseText {
                 width: parent.width
-                text: root.store.isAddAccountPopup? qsTr("Private key") : qsTr("Private key for %1 keypair").arg(root.store.selectedKeypair.name)
+                text: root.store.isAddAccountPopup? qsTr("Private key") : qsTr("Enter seed phrase for %1 keypair").arg(root.store.selectedKeypair.name)
                 font.pixelSize: Constants.addAccountPopup.labelFontSize1
                 elide: Text.ElideRight
             }

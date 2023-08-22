@@ -24,12 +24,13 @@ StatusModal {
         switch (root.store.currentState.stateType) {
         case Constants.keypairImportPopup.state.selectKeypair:
             return qsTr("Import missing keypairs")
-        case Constants.keypairImportPopup.state.selectImportMethod:
-            return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
         case Constants.keypairImportPopup.state.exportKeypair:
+            if (!!root.store.selectedKeypair.name) {
+                return qsTr("Encrypted QR for %1 keypair").arg(root.store.selectedKeypair.name)
+            }
             return qsTr("Encrypted QR for keypairs on this device")
         case Constants.keypairImportPopup.state.importQr:
-            return qsTr("Scan encrypted QR")
+            return qsTr("Scan encrypted keypair QR code")
         case Constants.keypairImportPopup.state.displayInstructions:
             return qsTr("How to generate the encrypted QR")
         }
@@ -163,9 +164,13 @@ StatusModal {
                 case Constants.keypairImportPopup.state.exportKeypair:
                     return qsTr("Done")
                 case Constants.keypairImportPopup.state.importQr:
+                    if (root.store.syncViaQr) {
+                        return qsTr("Done")
+                    }
+                    return qsTr("Import keypair")
                 case Constants.keypairImportPopup.state.importPrivateKey:
                 case Constants.keypairImportPopup.state.importSeedPhrase:
-                    return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
+                    return qsTr("Import keypair")
                 }
 
                 return ""
@@ -174,7 +179,8 @@ StatusModal {
             enabled: root.store.primaryPopupButtonEnabled
 
             icon.name: {
-                if (root.store.currentState.stateType === Constants.keypairImportPopup.state.exportKeypair) {
+                if (root.store.currentState.stateType === Constants.keypairImportPopup.state.exportKeypair ||
+                        root.store.currentState.stateType === Constants.keypairImportPopup.state.importQr && root.store.syncViaQr) {
                     return ""
                 }
 
