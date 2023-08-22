@@ -48,7 +48,11 @@ Column {
         readonly property int unimportedNonProfileKeypairs: {
             let total = 0
             for (var i = 0; i < keypairsRepeater.count; i++) {
-                let kp = keypairsRepeater.itemAt(i).keyPair
+                let item = keypairsRepeater.itemAt(i)
+                if (item == undefined || item == null) {
+                    continue
+                }
+                let kp = item.keyPair
                 if (kp.migratedToKeycard ||
                         kp.pairType === Constants.keypair.type.profile ||
                         kp.pairType === Constants.keypair.type.watchOnly ||
@@ -63,7 +67,11 @@ Column {
 
         readonly property int allNonProfileKeypairsMigratedToAKeycard: {
             for (var i = 0; i < keypairsRepeater.count; i++) {
-                let kp = keypairsRepeater.itemAt(i).keyPair
+                let item = keypairsRepeater.itemAt(i)
+                if (item == undefined || item == null) {
+                    continue
+                }
+                let kp = item.keyPair
                 if (!kp.migratedToKeycard &&
                         kp.pairType !== Constants.keypair.type.profile &&
                         kp.pairType !== Constants.keypair.type.watchOnly &&
