@@ -58,6 +58,9 @@ method load*[T](self: Module[T], keyUid: string, mode: ImportKeypairModuleMode) 
     self.view.setCurrentState(newSelectKeypairState(nil))
   else:
     self.view.setSelectedKeypairItem(newKeyPairItem(keyUid = keyUid))
+    let keypair = self.controller.getKeypairByKeyUid(keyUid)
+    if not keypair.isNil:
+      self.view.getSelectedKeypair().setName(keypair.name)
     if mode == ImportKeypairModuleMode.ExportKeypairQr:
       self.view.setCurrentState(newExportKeypairState(nil))
       self.controller.authenticateLoggedInUser()
@@ -66,7 +69,6 @@ method load*[T](self: Module[T], keyUid: string, mode: ImportKeypairModuleMode) 
       self.view.setCurrentState(newImportQrState(nil))
       self.delegate.onKeypairImportModuleLoaded()
       return
-    let keypair = self.controller.getKeypairByKeyUid(keyUid)
     if keypair.isNil:
       error "ki_trying to import an unknown keypair"
       self.closeKeypairImportPopup()
