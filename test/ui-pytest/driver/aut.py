@@ -3,7 +3,7 @@ import squish
 
 import configs
 import driver
-from configs.system import IS_WIN, IS_LIN
+from configs.system import IS_LIN
 from driver import context
 from driver.server import SquishServer
 from scripts.utils import system_path, local_system
@@ -23,7 +23,6 @@ class AUT:
         self.ctx = None
         self.pid = None
         self.aut_id = self.path.name if IS_LIN else self.path.stem
-        self.process_name = 'Status' if IS_WIN else 'nim_status_client'
         driver.testSettings.setWrappersForApplication(self.aut_id, ['Qt'])
 
     def __str__(self):
@@ -49,12 +48,9 @@ class AUT:
         self.ctx = None
         return self
 
-    @allure.step('Close application by process name')
+    @allure.step('Close application')
     def stop(self):
-        if configs.LOCAL_RUN:
-            local_system.kill_process_by_pid(self.pid)
-        else:
-            local_system.kill_process_by_name(self.process_name)
+        local_system.kill_process(self.pid)
 
     @allure.step("Start application")
     def launch(self, *args) -> 'AUT':
@@ -67,10 +63,6 @@ class AUT:
                           f'"{self.path}"'
                       ] + list(args)
             local_system.execute(command)
-            try:
-                local_system.wait_for_started(self.process_name)
-            except AssertionError:
-                local_system.execute(command, check=True)
         else:
             SquishServer().add_executable_aut(self.aut_id, self.path.parent)
             command = [self.aut_id] + list(args)

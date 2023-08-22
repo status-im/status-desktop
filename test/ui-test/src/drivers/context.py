@@ -25,5 +25,3 @@ def detach(timeout_sec: int = configs.squish.PROCESS_TIMEOUT_SEC):
         ctx.detach()
         while ctx.isRunning and time.monotonic() - started_at < timeout_sec:
             time.sleep(1)
-                
-    utils.local_system.kill_process(configs.path.AUT.name)
