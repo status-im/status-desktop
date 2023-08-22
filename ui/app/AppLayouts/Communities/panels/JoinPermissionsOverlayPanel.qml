@@ -169,24 +169,9 @@ Control {
             color: Theme.palette.dangerColor1
         }
 
-        StatusBaseText {
-            id: requirementsCheckPendingText
-
-            Layout.alignment: Qt.AlignHCenter
+        RequirementsCheckPendingLoader {
             visible: root.requirementsCheckPending
-
-            text: qsTr("Requirements check pending...")
-
-            color: Theme.palette.dangerColor1
-
-            SequentialAnimation {
-                id: blinkingAnimation
-
-                loops: Animation.Infinite
-                running: requirementsCheckPendingText.visible
-                NumberAnimation { target: requirementsCheckPendingText; property: "opacity"; to: 0; duration: 1500;}
-                NumberAnimation { target: requirementsCheckPendingText; property: "opacity"; to: 1; duration: 1500;}
-            }
+            Layout.alignment: Qt.AlignHCenter
         }
     }
 }

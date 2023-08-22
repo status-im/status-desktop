@@ -120,6 +120,7 @@ Item {
             CommunityIntroDialog {
 
                 isInvitationPending: joinCommunityButton.invitationPending
+                requirementsCheckPending: root.store.requirementsCheckPending
                 name: communityData.name
                 introMessage: communityData.introMessage
                 imageSrc: communityData.image

@@ -30,6 +30,8 @@ StatusStackModal {
     required property var assetsModel
     required property var collectiblesModel
 
+    required property bool requirementsCheckPending
+
     signal joined(string airdropAddress, var sharedAddresses)
     signal cancelMembershipRequest()
     signal sharedAddressesUpdated(var sharedAddresses)
@@ -102,6 +104,7 @@ StatusStackModal {
             communityName: root.name
             communityIcon: root.imageSrc
             loginType: root.loginType
+            requirementsCheckPending: root.requirementsCheckPending
             walletAccountsModel: SortFilterProxyModel {
                 sourceModel: root.walletAccountsModel
                 sorters: [

@@ -26,6 +26,8 @@ Control {
 
     property bool isEditMode
 
+    property bool requirementsCheckPending: false
+
     required property string communityName
     required property string communityIcon
     property int loginType: Constants.LoginType.Password
@@ -172,6 +174,16 @@ Control {
                 root.selectedAirdropAddress = selectedAirdropAddress
                 root.sharedAddressesChanged(selectedAirdropAddress, selectedSharedAddresses)
             }
+        }
+
+        RequirementsCheckPendingLoader {
+            visible: root.requirementsCheckPending
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: Style.current.padding
         }
 
         // divider with top rounded corners + drop shadow

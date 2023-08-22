@@ -217,3 +217,9 @@ method onCommunityCheckPermissionsToJoinResponse*(self: AccessInterface, communi
 method onCommunityCheckAllChannelsPermissionsResponse*(self: AccessInterface, communityId: string,
     checkChannelPermissionsResponse: CheckAllChannelsPermissionsResponseDto) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckPermissionsToJoinFailed*(self: AccessInterface, communityId: string, ValueErrorerror: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCommunityCheckAllChannelPermissionsFailed*(self: AccessInterface, communityId: string, ValueErrorerror: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -60,6 +60,8 @@ QtObject {
         root.communitiesModuleInst.prepareTokenModelForCommunity(publicKey)
     }
 
+    readonly property bool requirementsCheckPending: root.communitiesModuleInst.requirementsCheckPending
+
     readonly property var permissionsModel: !!root.communitiesModuleInst.spectatedCommunityPermissionModel ?
                                      root.communitiesModuleInst.spectatedCommunityPermissionModel : null
 

@@ -50,6 +50,7 @@ QtObject:
       discordImportCommunityImage: string
       discordImportHasCommunityImage: bool
       downloadingCommunityHistoryArchives: bool
+      checkingPermissionsInProgress: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -142,7 +143,7 @@ QtObject:
 
   proc downloadingCommunityHistoryArchivesChanged*(self: View) {.signal.}
 
-  proc setDownloadingCommunityHistoryArchives*(self: View, flag: bool) {.slot.} =
+  proc setDownloadingCommunityHistoryArchives*(self: View, flag: bool) =
     if (self.downloadingCommunityHistoryArchives == flag): return
     self.downloadingCommunityHistoryArchives = flag
     self.downloadingCommunityHistoryArchivesChanged()
@@ -156,7 +157,7 @@ QtObject:
 
   proc discordImportHasCommunityImageChanged*(self: View) {.signal.}
 
-  proc setDiscordImportHasCommunityImage*(self: View, hasImage: bool) {.slot.} =
+  proc setDiscordImportHasCommunityImage*(self: View, hasImage: bool) =
     if (self.discordImportHasCommunityImage == hasImage): return
     self.discordImportHasCommunityImage = hasImage
     self.discordImportHasCommunityImageChanged()
@@ -170,7 +171,7 @@ QtObject:
 
   proc discordImportWarningsCountChanged*(self: View) {.signal.}
 
-  proc setDiscordImportWarningsCount*(self: View, count: int) {.slot.} =
+  proc setDiscordImportWarningsCount*(self: View, count: int) =
     if (self.discordImportWarningsCount == count): return
     self.discordImportWarningsCount = count
     self.discordImportWarningsCountChanged()
@@ -182,7 +183,7 @@ QtObject:
     read = getDiscordImportWarningsCount
     notify = discordImportWarningsCountChanged
 
-  proc setDiscordImportErrorsCount*(self: View, count: int) {.slot.} =
+  proc setDiscordImportErrorsCount*(self: View, count: int) =
     if (self.discordImportErrorsCount == count): return
     self.discordImportErrorsCount = count
     self.discordImportErrorsCountChanged()
@@ -196,7 +197,7 @@ QtObject:
 
   proc discordImportProgressChanged*(self: View) {.signal.}
 
-  proc setDiscordImportProgress*(self: View, value: int) {.slot.} =
+  proc setDiscordImportProgress*(self: View, value: int) =
     if (self.discordImportProgress == value): return
     self.discordImportProgress = value
     self.discordImportProgressChanged()
@@ -210,7 +211,7 @@ QtObject:
 
   proc discordImportInProgressChanged*(self: View) {.signal.}
 
-  proc setDiscordImportInProgress*(self: View, value: bool) {.slot.} =
+  proc setDiscordImportInProgress*(self: View, value: bool) =
     if (self.discordImportInProgress == value): return
     self.discordImportInProgress = value
     self.discordImportInProgressChanged()
@@ -224,7 +225,7 @@ QtObject:
 
   proc discordImportCancelledChanged*(self: View) {.signal.}
 
-  proc setDiscordImportCancelled*(self: View, value: bool) {.slot.} =
+  proc setDiscordImportCancelled*(self: View, value: bool) =
     if (self.discordImportCancelled == value): return
     self.discordImportCancelled = value
     self.discordImportCancelledChanged()
@@ -238,7 +239,7 @@ QtObject:
 
   proc discordImportProgressStoppedChanged*(self: View) {.signal.}
 
-  proc setDiscordImportProgressStopped*(self: View, stopped: bool) {.slot.} =
+  proc setDiscordImportProgressStopped*(self: View, stopped: bool) =
     if (self.discordImportProgressStopped == stopped): return
     self.discordImportProgressStopped = stopped
     self.discordImportProgressStoppedChanged()
@@ -252,7 +253,7 @@ QtObject:
 
   proc discordImportProgressTotalChunksCountChanged*(self: View) {.signal.}
 
-  proc setDiscordImportProgressTotalChunksCount*(self: View, count: int) {.slot.} =
+  proc setDiscordImportProgressTotalChunksCount*(self: View, count: int) =
     if (self.discordImportProgressTotalChunksCount == count): return
     self.discordImportProgressTotalChunksCount = count
     self.discordImportProgressTotalChunksCountChanged()
@@ -266,7 +267,7 @@ QtObject:
 
   proc discordImportProgressCurrentChunkChanged*(self: View) {.signal.}
 
-  proc setDiscordImportProgressCurrentChunk*(self: View, count: int) {.slot.} =
+  proc setDiscordImportProgressCurrentChunk*(self: View, count: int) =
     if (self.discordImportProgressCurrentChunk == count): return
     self.discordImportProgressCurrentChunk = count
     self.discordImportProgressCurrentChunkChanged()
@@ -669,3 +670,17 @@ QtObject:
 
   proc getCommunityPublicKeyFromPrivateKey*(self: View, communityPrivateKey: string): string {.slot.} =
     result = self.delegate.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
+
+  proc checkingPermissionsInProgressChanged*(self: View) {.signal.}
+
+  proc setCheckingPermissionsInProgress*(self: View, inProgress: bool) =
+    if (self.checkingPermissionsInProgress == inProgress): return
+    self.checkingPermissionsInProgress = inProgress
+    self.checkingPermissionsInProgressChanged()
+
+  proc getCheckingPermissionsInProgress*(self: View): bool {.slot.} =
+    return self.checkingPermissionsInProgress
+
+  QtProperty[bool] requirementsCheckPending:
+    read = getCheckingPermissionsInProgress
+    notify = checkingPermissionsInProgressChanged
