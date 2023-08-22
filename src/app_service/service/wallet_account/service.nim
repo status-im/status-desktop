@@ -53,6 +53,7 @@ QtObject:
   proc handleWalletAccount(self: Service, account: WalletAccountDto, notify: bool = true)
   proc handleKeypair(self: Service, keypair: KeypairDto)
   proc updateAccountsPositions(self: Service)
+  proc importPartiallyOperableAccounts(self: Service, keyUid: string, password: string)
   # All slots defined in included files have to be forward declared
   proc onAllTokensBuilt*(self: Service, response: string) {.slot.}
   proc onDerivedAddressesFetched*(self: Service, jsonString: string) {.slot.}

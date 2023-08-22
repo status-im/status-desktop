@@ -1,4 +1,10 @@
 #################################################
+# Special signal emitted by main module and handled in wallet account service
+#################################################
+
+const SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS* = "importPartiallyOperableAccounts"
+
+#################################################
 # Signals emitted by wallet account service
 #################################################
 
@@ -34,6 +40,10 @@ const SIGNAL_KEYCARD_NAME_CHANGED* = "keycardNameChanged"
 #################################################
 # Payload sent via above defined signals
 #################################################
+
+type ImportAccountsArgs* = ref object of Args
+  keyUid*: string
+  password*: string
 
 type AccountArgs* = ref object of Args
   account*: WalletAccountDto

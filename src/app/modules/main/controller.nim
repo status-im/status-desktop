@@ -429,6 +429,8 @@ proc init*(self: Controller) =
       keycardUid: args.keycardUid,
       additinalPathsDetails: args.additinalPathsDetails)
     self.authenticateUserFlowRequestedBy = ""
+    ## Whenever user provides a password/pin we need to make all partially operable accounts (if any exists) a fully operable.
+    self.events.emit(SIGNAL_IMPORT_PARTIALLY_OPERABLE_ACCOUNTS, ImportAccountsArgs(keyUid: data.keyUid, password: data.password))
     self.events.emit(SIGNAL_SHARED_KEYCARD_MODULE_USER_AUTHENTICATED, data)
 
   self.events.on(SIGNAL_SHARED_KEYCARD_MODULE_DISPLAY_POPUP) do(e: Args):
