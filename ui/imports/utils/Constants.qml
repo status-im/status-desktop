@@ -1181,4 +1181,9 @@ QtObject {
         For1min = 6,
         Unmuted = 7
     }
+
+    enum LinkPreviewType {
+        Link = 0,
+        Image = 1
+    }
 }
