@@ -854,7 +854,7 @@ QtObject {
                 }
             }
             if (keypair.syncedFrom !== "") {
-                return qsTr("Requires import to use")
+                return qsTr("Import keypair to use derived accounts")
             }
         }
 
