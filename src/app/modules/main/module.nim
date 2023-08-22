@@ -993,9 +993,9 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
   var requestStatus = 0
   if getVerificationRequest:
     requestStatus = self.getVerificationRequestFrom(publicKey).status.int
-  var onlineStatus = 0
+  var onlineStatus = OnlineStatus.Inactive
   if getOnlineStatus:
-    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType).int
+    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(publicKey).statusType)
   let jsonObj = %* {
     "displayName": contact.displayName,
     "displayIcon": contact.image.thumbnail,
@@ -1022,7 +1022,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string, getVerifi
     "hasAddedUs": contact.hasAddedUs,
     "socialLinks": $contact.socialLinks.toJsonNode(),
     "bio": contact.bio,
-    "onlineStatus": onlineStatus
+    "onlineStatus": onlineStatus.int
   }
   return $jsonObj
 

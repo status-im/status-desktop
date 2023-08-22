@@ -423,7 +423,7 @@ QtObject {
             trustStatus: Constants.trustStatus.unknown,
             verificationStatus: Constants.verificationStatus.unverified,
             incomingVerificationStatus: Constants.verificationStatus.unverified,
-            onlineStatus: 0
+            onlineStatus: Constants.onlineStatus.inactive
         }
 
         if (!mainModuleInst || !publicKey)
