@@ -197,7 +197,7 @@ proc newModule*[T](
     result, events, tokenService, currencyService,
     transactionService, walletAccountService,
     settingsService, savedAddressService, networkService, accountsService,
-    keycardService, nodeService, networkConnectionService
+    keycardService, nodeService, networkConnectionService, devicesService
   )
   result.browserSectionModule = browser_section_module.newModule(
     result, events, bookmarkService, settingsService, networkService,
@@ -1355,6 +1355,6 @@ method communityMembersRevealedAccountsLoaded*[T](self: Module[T], communityId: 
       if revealedAccount.isAirdropAddress:
         communityMembersAirdropAddress[pubkey] = revealedAccount.address
         discard
-  
+
   self.view.model.setMembersAirdropAddress(communityId, communityMembersAirdropAddress)
 

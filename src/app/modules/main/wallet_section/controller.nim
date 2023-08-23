@@ -68,3 +68,9 @@ proc toggleIncludeWatchOnlyAccount*(self: Controller) =
 
 proc isIncludeWatchOnlyAccount*(self: Controller): bool =
   return self.walletAccountService.isIncludeWatchOnlyAccount()
+
+proc getKeypairByAccountAddress*(self: Controller, address: string): KeypairDto =
+  return self.walletAccountService.getKeypairByAccountAddress(address)
+
+proc hasPairedDevices*(self: Controller): bool =
+  return self.walletAccountService.hasPairedDevices()
