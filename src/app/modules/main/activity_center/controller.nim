@@ -99,6 +99,7 @@ proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
    return self.contactsService.getContactDetails(contactId)
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  echo "getCommunityById from activity_center module"
   return self.communityService.getCommunityById(communityId)
 
 proc getActivityCenterNotifications*(self: Controller): seq[ActivityCenterNotificationDto] =

@@ -727,6 +727,7 @@ QtObject:
     return toSeq(self.communities.keys)
 
   proc getCommunityTokenBySymbol*(self: Service, communityId: string, symbol: string): CommunityTokenDto =
+    echo "getCommunityById from getCommunityTokenBySymbol"
     let community = self.getCommunityById(communityId)
     for metadata in community.communityTokensMetadata:
       if metadata.symbol == symbol:
@@ -2002,6 +2003,7 @@ QtObject:
       return community.declinedRequestsToJoin[indexDeclined].publicKey
 
   proc checkChatHasPermissions*(self: Service, communityId: string, chatId: string): bool =
+    echo "getCommunityById from checkChatHasPermissions"
     let community = self.getCommunityById(communityId)
     for id, tokenPermission in community.tokenPermissions:
       if TokenPermissionType(tokenPermission.`type`) == TokenPermissionType.View or TokenPermissionType(tokenPermission.`type`) == TokenPermissionType.ViewAndPost:

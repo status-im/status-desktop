@@ -240,6 +240,7 @@ proc getChatDetails*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
 proc getCommunityDetails*(self: Controller): CommunityDto =
+  echo "getCommunityById from messages module"
   return self.communityService.getCommunityById(self.sectionId)
 
 proc getOneToOneChatNameAndImage*(self: Controller):

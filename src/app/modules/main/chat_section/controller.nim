@@ -381,6 +381,7 @@ proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
 proc getMyCommunity*(self: Controller): CommunityDto =
+  echo "getCommunityById from chat_section module"
   return self.communityService.getCommunityById(self.sectionId)
 
 proc getCategories*(self: Controller, communityId: string): seq[Category] =

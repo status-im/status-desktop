@@ -501,6 +501,7 @@ proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  echo "getCommunityById from main module"
   return self.communityService.getCommunityById(communityId)
 
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
