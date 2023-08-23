@@ -237,8 +237,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       if message.deleted or message.deletedForMe:
         continue
 
-      let chatDetails = self.controller.getChatDetails()
-
       let sender = self.controller.getContactDetails(message.`from`)
       var quotedMessageAuthorDetails = ContactDetails()
       if message.quotedMessage.`from` != "":
@@ -248,8 +246,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           quotedMessageAuthorDetails = self.controller.getContactDetails(message.quotedMessage.`from`)
 
       var communityChats: seq[ChatDto]
-      if chatDetails.communityId != "":
-        communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+      communityChats = self.controller.getCommunityDetails().chats
 
       var renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
 
@@ -367,8 +364,7 @@ method messagesAdded*(self: Module, messages: seq[MessageDto]) =
 
   for message in messages:
     let sender = self.controller.getContactDetails(message.`from`)
-    let chatDetails = self.controller.getChatDetails()
-    let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+    let communityChats = self.controller.getCommunityDetails().chats
     var quotedMessageAuthorDetails = ContactDetails()
     if message.quotedMessage.`from` != "":
       if(message.`from` == message.quotedMessage.`from`):
@@ -597,8 +593,7 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.quotedMessageAuthorAvatar = updatedContact.icon
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
-      let chatDetails = self.controller.getChatDetails()
-      let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+      let communityChats = self.controller.getCommunityDetails().chats
       item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
 
 method deleteMessage*(self: Module, messageId: string) =
@@ -616,8 +611,7 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     return
 
   let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
-  let chatDetails = self.controller.getChatDetails()
-  let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+  let communityChats = self.controller.getCommunityDetails().chats
 
   self.view.model().updateEditedMsg(
     message.id,
