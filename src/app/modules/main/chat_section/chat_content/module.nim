@@ -153,8 +153,7 @@ proc buildPinnedMessageItem(self: Module, message: MessageDto, actionInitiatedBy
     item: var pinned_msg_item.Item):bool =
 
   let contactDetails = self.controller.getContactDetails(message.`from`)
-  let chatDetails = self.controller.getChatDetails()
-  let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+  let communityChats = self.controller.getCommunityDetails().chats
   var quotedMessageAuthorDetails = ContactDetails()
   if message.quotedMessage.`from` != "":
     if(message.`from` == message.quotedMessage.`from`):
@@ -342,8 +341,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
       item.quotedMessageAuthorAvatar = updatedContact.icon
 
     if item.messageContainsMentions and item.mentionedUsersPks.anyIt(it == contactId):
-      let chatDetails = self.controller.getChatDetails()
-      let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+      let communityChats = self.controller.getCommunityDetails().chats
       item.messageText = self.controller.getRenderedText(item.parsedText, communityChats)
 
   if(self.controller.getMyChatId() == contactId):
