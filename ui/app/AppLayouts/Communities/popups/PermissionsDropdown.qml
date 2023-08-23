@@ -106,12 +106,14 @@ StatusDropdown {
             enabled: root.enableAdminPermission
 
             Layout.fillWidth: true
+            objectName: "becomeAdmin"
         }
 
         CustomPermissionListItem {
             permissionType: PermissionTypes.Type.Member
 
             Layout.fillWidth: true
+            objectName: "becomeMember"
         }
 
         CustomSeparator {
@@ -125,12 +127,14 @@ StatusDropdown {
             permissionType: PermissionTypes.Type.ViewAndPost
 
             Layout.fillWidth: true
+            objectName: "viewAndPost"
         }
 
         CustomPermissionListItem {
             permissionType: PermissionTypes.Type.Read
 
             Layout.fillWidth: true
+            objectName: "viewOnly"
         }
 
         Separator {

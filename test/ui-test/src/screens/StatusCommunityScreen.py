@@ -7,8 +7,7 @@
 # * \date    July 2022
 # * \brief   Community Screen.
 # *****************************************************************************/
-
-
+import typing
 from enum import Enum
 import time
 from unittest import TestSuite
@@ -568,4 +567,83 @@ class StatusCommunityScreen:
             assert button.is_disabled
         button_title = get_obj(CommunityWelcomeScreenComponents.ADD_NEW_ITEM_BUTTON.value).text
         verify_equals(option, str(button_title))
-                
+
+class PermissionsView(BaseElement):
+    def __init__(self):
+        super(PermissionsView, self).__init__('mainWindow_editPermissionView_EditPermissionView')
+        self._add_new_permission_button = Button('community_welcome_screen_add_new_item')
+        self._who_holds_checkbox = CheckBox('editPermissionView_whoHoldsSwitch_StatusSwitch')
+        self._who_holds_asset_field = TextEdit('edit_TextEdit')
+        self._who_holds_amount_field = TextEdit('inputValue_StyledTextField')
+        self._asset_item = BaseElement('o_TokenItem')
+        self._is_allowed_to_option_button = Button('CustomPermissionListItem')
+        self._in_general_button = Button('communityItem_CommunityListItem')
+        self._hide_permission_checkbox = CheckBox('editPermissionView_switchItem_StatusSwitch')
+        self._create_permission_button = Button('editPermissionView_Create_permission_StatusButton')
+        self._add_button = Button('add_StatusButton')
+        self._who_holds_list_item = BaseElement('editPermissionView_Who_holds_StatusItemSelector')
+        self._is_allowed_to_list_item = BaseElement('editPermissionView_Is_allowed_to_StatusFlowSelector')
+        self._in_list_item = BaseElement('editPermissionView_In_StatusItemSelector')
+        self._tag_item = BaseElement('o_StatusListItemTag')
+
+    @property
+    def tags(self) -> typing.List[str]:
+        _tags = get_objects(self._tag_item.symbolic_name)
+        return [str(getattr(tag, 'title', '')) for tag in _tags]
+
+    def add_new_permission(self):
+        self._add_new_permission_button.click()
+        return PermissionsView().wait_until_appears()
+
+    def set_who_holds_checkbox_state(self, state):
+        if state == 'Off':
+            self._who_holds_checkbox.set(False)
+
+    def set_who_holds_asset_and_amount(self, asset: str, amount: str):
+        if asset != 'No':
+            self.open_who_holds_context_menu()
+            self._who_holds_asset_field.clear().text = asset
+            self._asset_item.click()
+            self._who_holds_asset_field.wait_until_hidden()
+            self._who_holds_amount_field.text = amount
+            self._add_button.click()
+            self._who_holds_amount_field.wait_until_hidden()
+
+    def set_is_allowed_to(self, name):
+        self.open_is_allowed_to_context_menu()
+        self._is_allowed_to_option_button.object_name['objectName'] = name
+        self._is_allowed_to_option_button.wait_until_appears().click()
+        self._add_button.click()
+        self._add_button.wait_until_hidden()
+
+    def set_in_community(self, in_general):
+        if in_general == '#general':
+            self.open_in_context_menu()
+            self._in_general_button.wait_until_appears().click()
+            self._add_button.click()
+            self._add_button.wait_until_hidden()
+
+    def create_permission(self):
+        self._create_permission_button.click()
+        self._create_permission_button.wait_until_hidden()
+
+    def open_who_holds_context_menu(self):
+        for child in walk_children(self._who_holds_list_item.object):
+            if getattr(child, 'id', '') == 'addItemButton':
+                click_obj(child)
+                return
+        raise LookupError('Add button for who holds not found ')
+
+    def open_is_allowed_to_context_menu(self):
+        for child in walk_children(self._is_allowed_to_list_item.object):
+            if getattr(child, 'id', '') == 'addItemButton':
+                click_obj(child)
+                return
+        raise LookupError('Add button for allowed to not found ')
+
+    def open_in_context_menu(self):
+        for child in walk_children(self._in_list_item.object):
+            if getattr(child, 'id', '') == 'addItemButton':
+                click_obj(child)
+                return
+        raise LookupError('Add button for in not found ')

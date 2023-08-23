@@ -2,10 +2,13 @@ import steps.commonInitSteps as init_steps
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusCommunityPortalScreen import StatusCommunityPortalScreen
 from screens.StatusCommunityScreen import StatusCommunityScreen
+from screens.StatusCommunityScreen import PermissionsView
+from drivers.SquishDriver import *
 
 _statusCommunityScreen = StatusCommunityScreen()
 _statusCommunitityPortal = StatusCommunityPortalScreen()
 _statusMainScreen = StatusMainScreen()
+_permissionsView = PermissionsView()
 
 #########################
 ### PRECONDITIONS region:
@@ -170,15 +173,33 @@ def step(context, community_sidebar_option:str):
     _statusCommunityScreen.click_sidebar_option(community_sidebar_option)
     time.sleep(1)
     
-@When("\"|any|\" section is selected") 
+@When("\"|any|\" section is selected")
 def step(context, section_option:str):
     _statusCommunityScreen.select_community_settings_option(section_option)
     time.sleep(1)
 
+@When("the user adds new permission with anyone checkbox \"|any|\", holds \"|any|\" and \"|any|\" in amount \"|any|\" and \"|any|\" \"|any|\"")
+def step(context, state, first_asset, second_asset, amount, allowed_to, in_general):
+    permission_view = _permissionsView.add_new_permission()
+    permission_view.set_who_holds_checkbox_state(state)
+    permission_view.set_who_holds_asset_and_amount(first_asset, amount)
+    permission_view.set_who_holds_asset_and_amount(second_asset, amount)
+    permission_view.set_is_allowed_to(allowed_to)
+    permission_view.set_in_community(in_general)
+    permission_view.create_permission()
 
 #########################
 ### VERIFICATIONS region:
 #########################
+
+@Then("created permission with \"|any|\" and \"|any|\" and \"|any|\" is on permission page")
+def step(context, title, second_title, third_title):
+    if title != 'No':
+        assert wait_for(title in _permissionsView.tags)
+    if second_title != 'No':
+        assert wait_for(second_title in _permissionsView.tags)
+    if third_title != 'No':
+        assert wait_for(third_title in _permissionsView.tags)
 
 @Then("the user lands on the community named \"|any|\"")
 def step(context: any, community_name: str):
