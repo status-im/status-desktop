@@ -6,6 +6,7 @@ import StatusQ.Layout 0.1
 
 import utils 1.0
 import shared.controls 1.0
+import shared.popups.keypairimport 1.0
 
 import "popups"
 import "panels"
@@ -31,6 +32,14 @@ Item {
 
         function onFilterChanged(address, includeWatchOnly, allAddresses) {
             root.showAllAccounts = allAddresses
+        }
+
+        function onDisplayKeypairImportPopup() {
+            keypairImport.active = true
+        }
+
+        function onDestroyKeypairImportPopup() {
+            keypairImport.active = false
         }
     }
     
@@ -148,6 +157,20 @@ Item {
         id: receiveModalComponent
         ReceiveModal {
             anchors.centerIn: parent
+        }
+    }
+
+    Loader {
+        id: keypairImport
+        active: false
+        asynchronous: true
+
+        sourceComponent: KeypairImportPopup {
+            store.keypairImportModule: root.store.walletSectionInst.keypairImportModule
+        }
+
+        onLoaded: {
+            keypairImport.item.open()
         }
     }
 }

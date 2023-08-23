@@ -45,3 +45,4 @@ ErrorDetails 1.0 ErrorDetails.qml
 CopyButton 1.0 CopyButton.qml
 DisabledTooltipButton 1.0 DisabledTooltipButton.qml
 WalletAccountListItem 1.0 WalletAccountListItem.qml
+ImportKeypairInfo 1.0 ImportKeypairInfo.qml

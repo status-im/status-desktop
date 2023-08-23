@@ -20,6 +20,7 @@ QtObject:
       collectiblesController: collectiblesc.Controller
       collectibleDetailsController: collectible_detailsc.Controller
       isNonArchivalNode: bool
+      keypairOperabilityForObservedAccount: string
 
   proc setup(self: View) =
     self.QObject.setup
@@ -167,3 +168,38 @@ QtObject:
     notify = isNonArchivalNodeChanged
 
   proc txDecoded*(self: View, txHash: string, dataDecoded: string) {.signal.}
+
+  proc hasPairedDevicesChanged*(self: View) {.signal.}
+  proc emitHasPairedDevicesChangedSignal*(self: View) =
+    self.hasPairedDevicesChanged()
+  proc getHasPairedDevices(self: View): bool {.slot.} =
+    return self.delegate.hasPairedDevices()
+  QtProperty[bool] hasPairedDevices:
+    read = getHasPairedDevices
+    notify = hasPairedDevicesChanged
+
+  proc keypairOperabilityForObservedAccountChanged(self: View) {.signal.}
+  proc getKeypairOperabilityForObservedAccount(self: View): string {.slot.} =
+    return self.keypairOperabilityForObservedAccount
+  QtProperty[string] keypairOperabilityForObservedAccount:
+    read = getKeypairOperabilityForObservedAccount
+    notify = keypairOperabilityForObservedAccountChanged
+  proc setKeypairOperabilityForObservedAccount*(self: View, value: string) =
+    self.keypairOperabilityForObservedAccount = value
+    self.keypairOperabilityForObservedAccountChanged()
+
+  proc runKeypairImportPopup*(self: View) {.slot.} =
+    self.delegate.runKeypairImportPopup()
+
+  proc getKeypairImportModule(self: View): QVariant {.slot.} =
+    return self.delegate.getKeypairImportModule()
+  QtProperty[QVariant] keypairImportModule:
+    read = getKeypairImportModule
+
+  proc displayKeypairImportPopup*(self: View) {.signal.}
+  proc emitDisplayKeypairImportPopup*(self: View) =
+    self.displayKeypairImportPopup()
+
+  proc destroyKeypairImportPopup*(self: View) {.signal.}
+  proc emitDestroyKeypairImportPopup*(self: View) =
+    self.destroyKeypairImportPopup()

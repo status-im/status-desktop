@@ -99,3 +99,18 @@ method getLatestBlockNumber*(self: AccessInterface, chainId: int): string {.base
 
 method fetchDecodedTxData*(self: AccessInterface, txHash: string, data: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method runKeypairImportPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getKeypairImportModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onKeypairImportModuleLoaded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method destroyKeypairImportPopup*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method hasPairedDevices*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -11,6 +11,7 @@ QtObject {
     id: root
 
     property var mainModuleInst: mainModule
+    property var walletSectionInst: walletSection
     property var aboutModuleInst: aboutModule
     property var communitiesModuleInst: communitiesModule
     property bool newVersionAvailable: false

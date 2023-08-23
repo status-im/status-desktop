@@ -5,6 +5,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
+import shared.controls 1.0
 import shared.views 1.0
 import shared.stores 1.0
 
@@ -76,6 +77,18 @@ Item {
                 onLaunchShareAddressModal: root.launchShareAddressModal()
                 onSwitchHideWatchOnlyAccounts: RootStore.toggleWatchOnlyAccounts()
             }
+
+            ImportKeypairInfo {
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.bigPadding
+                Layout.preferredHeight: childrenRect.height
+                visible: root.store.walletSectionInst.hasPairedDevices && root.store.walletSectionInst.keypairOperabilityForObservedAccount === Constants.keypair.operability.nonOperable
+
+                onRunImport: {
+                    root.store.walletSectionInst.runKeypairImportPopup()
+                }
+            }
+
             StatusTabBar {
                 id: walletTabBar
                 objectName: "rightSideWalletTabBar"

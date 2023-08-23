@@ -30,6 +30,12 @@ proc getKeypairByKeyUid*(self: Service, keyUid: string): KeypairDto =
     return
   return self.keypairs[keyUid]
 
+proc getKeypairByAccountAddress*(self: Service, address: string): KeypairDto =
+  for _, kp in self.keypairs:
+    for acc in kp.accounts:
+      if cmpIgnoreCase(acc.address, address) == 0:
+        return kp
+
 proc getWatchOnlyAccounts*(self: Service): seq[WalletAccountDto] =
   return toSeq(self.watchOnlyAccounts.values)
 
