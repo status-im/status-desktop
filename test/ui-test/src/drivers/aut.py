@@ -8,7 +8,7 @@ from screens.main_window import MainWindow
 from utils.system_path import SystemPath
 
 import configs
-from scripts.utils import local_system
+from utils import local_system
 from . import context
 
 
