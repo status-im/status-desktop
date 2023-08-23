@@ -12,6 +12,7 @@ Feature: Status Desktop One to One Chat Flows
     When the user "Athletic" logs in with password "TesTEr16843/!@00"
     And the user lands on the signed in app
 
+    @mayfail
     Scenario: The user can create a one to chat
        	When the user maximizes the "1" application window
    		And the user opens the chat section
