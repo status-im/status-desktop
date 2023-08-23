@@ -662,7 +662,7 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
   if (self.doesCatOrChatExist(cat.id)):
     return
 
-  let community = self.controller.getCommunityById(communityId)
+  let community = self.controller.getMyCommunity()
   discard self.addCategoryItem(cat, community.memberRole, communityId)
   # Update chat items that now belong to that category
   self.view.chatsModel().updateItemsWithCategoryDetailsById(
@@ -763,7 +763,7 @@ method onCommunityTokenPermissionDeleted*(self: Module, communityId: string, per
   singletonInstance.globalEvents.showCommunityTokenPermissionDeletedNotification(communityId, "Community permission deleted", "A token permission has been removed")
 
 method onCommunityTokenPermissionCreated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  let community = self.controller.getCommunityById(communityId)
+  let community = self.controller.getMyCommunity()
   let chats = community.getCommunityChats(tokenPermission.chatIds)
   let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
 
@@ -847,7 +847,7 @@ method onCommunityCheckPermissionsToJoinResponse*(self: Module, checkPermissions
   self.setPermissionsToJoinCheckOngoing(false)
 
 method onCommunityTokenPermissionUpdated*(self: Module, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
-  let community = self.controller.getCommunityById(communityId)
+  let community = self.controller.getMyCommunity()
   let chats = community.getCommunityChats(tokenPermission.chatIds)
   let tokenPermissionItem = buildTokenPermissionItem(tokenPermission, chats)
   self.view.tokenPermissionsModel.updateItem(tokenPermission.id, tokenPermissionItem)
@@ -979,7 +979,7 @@ method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatI
     notificationType = notification_details.NotificationType.NewMessageWithGlobalMention
 
   let contactDetails = self.controller.getContactDetails(message.`from`)
-  let communityChats = self.controller.getCommunityById(chatDetails.communityId).chats
+  let communityChats = self.controller.getMyCommunity().chats
   let renderedMessageText = self.controller.getRenderedText(message.parsedText, communityChats)
   var plainText = singletonInstance.utils.plainText(renderedMessageText)
   if message.contentType == ContentType.Sticker or (message.contentType == ContentType.Image and len(plainText) == 0):
@@ -1048,7 +1048,7 @@ method declineRequestToJoinCommunity*(self: Module, requestId: string, community
   self.controller.declineRequestToJoinCommunity(requestId, communityId)
 
 method onAcceptRequestToJoinFailedNoPermission*(self: Module, communityId: string, memberKey: string, requestId: string) =
-  let community = self.controller.getCommunityById(communityId)
+  let community = self.controller.getMyCommunity()
   let contact = self.controller.getContactById(memberKey)
   self.view.emitOpenNoPermissionsToJoinPopupSignal(community.name, contact.displayName,  community.id, requestId)
 

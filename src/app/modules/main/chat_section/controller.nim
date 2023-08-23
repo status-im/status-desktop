@@ -263,7 +263,6 @@ proc init*(self: Controller) =
         self.delegate.onCommunityTokenPermissionUpdated(args.communityId, args.tokenPermission)
         self.asyncCheckPermissions()
 
-
     self.events.on(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATE_FAILED) do(e: Args):
       let args = CommunityTokenPermissionArgs(e)
       if (args.communityId == self.sectionId):
@@ -326,7 +325,8 @@ proc init*(self: Controller) =
 
     self.events.on(SIGNAL_ACCEPT_REQUEST_TO_JOIN_FAILED_NO_PERMISSION) do(e: Args):
       var args = CommunityMemberArgs(e)
-      self.delegate.onAcceptRequestToJoinFailedNoPermission(args.communityId, args.pubKey, args.requestId)
+      if (args.communityId == self.sectionId):
+        self.delegate.onAcceptRequestToJoinFailedNoPermission(args.communityId, args.pubKey, args.requestId)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
@@ -380,11 +380,8 @@ proc init*(self: Controller) =
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
-proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
-  return self.communityService.getCommunityById(communityId)
-
 proc getMyCommunity*(self: Controller): CommunityDto =
-  return self.getCommunityById(self.sectionId)
+  return self.communityService.getCommunityById(self.sectionId)
 
 proc getCategories*(self: Controller, communityId: string): seq[Category] =
   return self.communityService.getCategories(communityId)
