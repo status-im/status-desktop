@@ -812,7 +812,8 @@ proc updateTokenPermissionModel*(self: Module, permissions: Table[string, CheckP
           updatedTokenCriteriaItems,
           tokenPermissionItem.getChatList().getItems(),
           tokenPermissionItem.isPrivate,
-          permissionSatisfied
+          permissionSatisfied,
+          tokenPermissionItem.state
       )
       self.view.tokenPermissionsModel().updateItem(id, updatedTokenPermissionItem)
 

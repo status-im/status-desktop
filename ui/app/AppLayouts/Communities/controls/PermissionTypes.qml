@@ -10,7 +10,7 @@ QtObject {
     }
 
     enum State {
-        Active, Creating, Deleting, Editing
+        Approved, AdditionPending, UpdatePending, RemovalPending
     }
 
     function getName(type) {

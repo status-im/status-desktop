@@ -62,22 +62,22 @@ Flickable {
                         RadioButton {
                             text: "Active state"
                             checked: true
-                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Active)
+                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Approved)
                         }
 
                         RadioButton {
                             text: "Creating state"
-                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Creating)
+                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.AdditionPending)
                         }
 
                         RadioButton {
                             text: "Editing state"
-                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Editing)
+                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.UpdatePending)
                         }
 
                         RadioButton {
                             text: "Deleting state"
-                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.Deleting)
+                            onCheckedChanged: if(checked) PermissionsModel.changePermissionState(root.model, model.index, PermissionTypes.State.RemovalPending)
                         }
                     }
 

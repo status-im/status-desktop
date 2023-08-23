@@ -203,6 +203,7 @@ const SIGNAL_COMMUNITY_INFO_ALREADY_REQUESTED* = "communityInfoAlreadyRequested"
 
 const TOKEN_PERMISSIONS_ADDED = "tokenPermissionsAdded"
 const TOKEN_PERMISSIONS_MODIFIED = "tokenPermissionsModified"
+const TOKEN_PERMISSIONS_REMOVED = "tokenPermissionsRemoved"
 
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_RESPONSE* = "checkPermissionsToJoinResponse"
 const SIGNAL_CHECK_PERMISSIONS_TO_JOIN_FAILED* = "checkPermissionsToJoinFailed"
@@ -619,7 +620,8 @@ QtObject:
           if tokenPermission.tokenCriteria.len != prevTokenPermission.tokenCriteria.len or
             tokenPermission.isPrivate != prevTokenPermission.isPrivate or
             tokenPermission.chatIds.len != prevTokenPermission.chatIds.len or
-            tokenPermission.`type` != prevTokenPermission.`type`:
+            tokenPermission.`type` != prevTokenPermission.`type` or
+            tokenPermission.state != prevTokenPermission.state:
 
               permissionUpdated = true
 
@@ -1946,28 +1948,23 @@ QtObject:
   proc createOrEditCommunityTokenPermission*(self: Service, communityId: string, tokenPermission: CommunityTokenPermissionDto) =
     try:
       let editing = tokenPermission.id != ""
-
       var response: RpcResponse[JsonNode]
-
       if editing:
         response = status_go.editCommunityTokenPermission(communityId, tokenPermission.id, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.chatIDs, tokenPermission.isPrivate)
       else:
         response = status_go.createCommunityTokenPermission(communityId, int(tokenPermission.`type`), Json.encode(tokenPermission.tokenCriteria), tokenPermission.chatIDs, tokenPermission.isPrivate)
 
       if response.result != nil and response.result.kind != JNull:
-        var changesField = TOKEN_PERMISSIONS_ADDED
-        if editing:
-          changesField = TOKEN_PERMISSIONS_MODIFIED
-
-        for permissionId, permission in response.result["communityChanges"].getElems()[0][changesField].pairs():
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_ADDED].pairs():
           let p = permission.toCommunityTokenPermissionDto()
           self.communities[communityId].tokenPermissions[permissionId] = p
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
 
-          var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATED
-          if editing:
-            signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_MODIFIED].pairs():
+          let p = permission.toCommunityTokenPermissionDto()
+          self.communities[communityId].tokenPermissions[permissionId] = p
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
 
-          self.events.emit(signal, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
         return
 
       var signal = SIGNAL_COMMUNITY_TOKEN_PERMISSION_CREATION_FAILED
@@ -1982,12 +1979,18 @@ QtObject:
     try:
       let response = status_go.deleteCommunityTokenPermission(communityId, permissionId)
       if response.result != nil and response.result.kind != JNull:
-        for permissionId in response.result["communityChanges"].getElems()[0]["tokenPermissionsRemoved"].getElems():
-          if self.communities[communityId].tokenPermissions.hasKey(permissionId.getStr()):
-            self.communities[communityId].tokenPermissions.del(permissionId.getStr())
-          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED,
-        CommunityTokenPermissionRemovedArgs(communityId: communityId, permissionId: permissionId.getStr))
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_REMOVED].pairs():
+          if self.communities[communityId].tokenPermissions.hasKey(permissionId):
+            self.communities[communityId].tokenPermissions.del(permissionId)
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETED, CommunityTokenPermissionRemovedArgs(communityId: communityId, permissionId: permissionId))
+
+        for permissionId, permission in response.result["communityChanges"].getElems()[0][TOKEN_PERMISSIONS_MODIFIED].pairs():
+          let p = permission.toCommunityTokenPermissionDto()
+          self.communities[communityId].tokenPermissions[permissionId] = p
+          self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_UPDATED, CommunityTokenPermissionArgs(communityId: communityId, tokenPermission: p))
+
         return
+
       var tokenPermission = CommunityTokenPermissionDto()
       tokenPermission.id = permissionId
       self.events.emit(SIGNAL_COMMUNITY_TOKEN_PERMISSION_DELETION_FAILED,
