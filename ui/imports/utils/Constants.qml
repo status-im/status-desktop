@@ -743,6 +743,8 @@ QtObject {
         readonly property int contentHeight: 626
         readonly property int footerButtonsHeight: 44
         readonly property int labelFontSize1: 15
+        readonly property string instructionsLabelForQr: qsTr("How to display the QR code on your other device")
+        readonly property string instructionsLabelForEncryptedKey: qsTr("How to copy the encrypted key from your other device")
 
         readonly property QtObject mode: QtObject {
             readonly property int selectKeypair: 1

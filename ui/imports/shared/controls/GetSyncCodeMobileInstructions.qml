@@ -1,9 +1,5 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.12
+import QtQuick 2.15
 
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import shared.views 1.0
@@ -11,134 +7,164 @@ import shared.views 1.0
 Column {
     id: root
 
-    property int type: SyncingCodeInstructions.Type.AppSync
+    property int purpose: SyncingCodeInstructions.Purpose.AppSync
+    property int type: SyncingCodeInstructions.Type.QRCode
 
     spacing: 4
 
-    QtObject {
-        id: d
-        readonly property int listItemHeight: 40
-    }
-
-    RowLayout {
-        height: d.listItemHeight
-
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            font.pixelSize: 15
-            color: Theme.palette.baseColor1
-            text: qsTr("1. Open Status App on your mobile device")
-        }
-    }
-
-    RowLayout {
-        height: d.listItemHeight
-
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            font.pixelSize: 15
-            color: Theme.palette.baseColor1
-            text: qsTr("2. Open")
-        }
-        StatusRoundIcon {
-            asset.name: "profile"
-        }
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
-            text: qsTr("Settings")
-        }
-    }
-
-    RowLayout {
-        height: d.listItemHeight
-
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            font.pixelSize: 15
-            color: Theme.palette.baseColor1
-            text: qsTr("3. Go to")
-        }
-        StatusRoundIcon {
-            asset.name: {
-                if (root.type === SyncingCodeInstructions.Type.KeypairSync) {
-                    return "wallet"
-                }
-                return "rotate"
+    GetSyncCodeInstruction {
+        order: "1."
+        orderColor: Theme.palette.baseColor1
+        text1: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                return qsTr("Open Status on the device you want to import from")
             }
+            return qsTr("Open Status App on your mobile device")
         }
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: {
-                if (root.type === SyncingCodeInstructions.Type.KeypairSync) {
-                    return qsTr("Wallet")
-                }
-                return qsTr("Syncing")
+        text1Color: Theme.palette.baseColor1
+    }
+
+    GetSyncCodeInstruction {
+        order: "2."
+        orderColor: Theme.palette.baseColor1
+        text1: qsTr("Open")
+        text1Color: Theme.palette.baseColor1
+        icon: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                return "settings"
             }
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
+            return "profile"
+        }
+        text2: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                return qsTr("Settings / Wallet")
+            }
+            return qsTr("Settings")
+        }
+        text2Color: Theme.palette.directColor1
+    }
+
+    GetSyncCodeInstruction {
+        order: "3."
+        orderColor: Theme.palette.baseColor1
+        text1: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                return qsTr("Tap")
+            }
+            return qsTr("Go to")
+        }
+        text1Color: Theme.palette.baseColor1
+        icon: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                return ""
+            }
+            return "rotate"
+        }
+        text2: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                return qsTr("Show encrypted keypairs code")
+            }
+            return qsTr("Syncing")
+        }
+        text2Color: Theme.palette.directColor1
+    }
+
+    GetSyncCodeInstruction {
+        order: "4."
+        orderColor: Theme.palette.baseColor1
+        text1: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return qsTr("Copy the")
+                }
+                return qsTr("Enable camera")
+            }
+            return qsTr("Tap")
+        }
+        text1Color: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return Theme.palette.baseColor1
+                }
+                return Theme.palette.directColor1
+            }
+            return Theme.palette.baseColor1
+        }
+        text2: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return qsTr("encrypted keypairs code")
+                }
+                return qsTr("on this device")
+            }
+            return qsTr("Sync new device")
+        }
+        text2Color: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return Theme.palette.directColor1
+                }
+                return Theme.palette.baseColor1
+            }
+            return Theme.palette.directColor1
         }
     }
 
-    RowLayout {
-        height: d.listItemHeight
-
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: qsTr("4. Tap")
-            font.pixelSize: 15
-            color: Theme.palette.baseColor1
-        }
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: {
-                if (root.type === SyncingCodeInstructions.Type.KeypairSync) {
-                    return qsTr("Import missing keypairs")
+    GetSyncCodeInstruction {
+        order: "5."
+        orderColor: Theme.palette.baseColor1
+        text1: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return qsTr("Paste the")
                 }
-                return qsTr("Sync new device")
+                return qsTr("Scan or enter the encrypted QR with this device")
             }
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
+            return qsTr("Tap")
         }
+        text1Color: Theme.palette.baseColor1
+        text2: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return qsTr("encrypted keypairs code")
+                }
+                return ""
+            }
+            return qsTr("Enable camera")
+        }
+        text2Color: Theme.palette.directColor1
+        text3: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return qsTr("to this device")
+                }
+                return ""
+            }
+            return qsTr("on this device")
+        }
+        text3Color: Theme.palette.baseColor1
     }
 
-    RowLayout {
-        height: d.listItemHeight
-
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: qsTr("5.")
-            font.pixelSize: 15
-            color: Theme.palette.baseColor1
-        }
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: qsTr("Enable camera")
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
-        }
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: qsTr("on this device")
-            font.pixelSize: 15
-            color: Theme.palette.baseColor1
-        }
-    }
-
-    RowLayout {
-        height: d.listItemHeight
-
-        StatusBaseText {
-            Layout.alignment: Qt.AlignVCenter
-            text: {
-                if (root.type === SyncingCodeInstructions.Type.KeypairSync) {
-                    return qsTr("6. Scan or enter the encrypted key with this device")
+    GetSyncCodeInstruction {
+        order: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return "6."
                 }
-                return qsTr("6. Scan or enter the code")
+                return ""
             }
-            font.pixelSize: 15
-            color: Theme.palette.baseColor1
+            return "6."
         }
+        orderColor: Theme.palette.baseColor1
+        text1: {
+            if (root.purpose === SyncingCodeInstructions.Purpose.KeypairSync) {
+                if (root.type === SyncingCodeInstructions.Type.EncryptedKey) {
+                    return qsTr("For security, delete the code as soon as you are done")
+                }
+                return ""
+            }
+            return qsTr("Scan or enter the code")
+        }
+        text1Color: Theme.palette.baseColor1
     }
 }

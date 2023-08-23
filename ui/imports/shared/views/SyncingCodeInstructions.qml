@@ -8,12 +8,18 @@ import shared.controls 1.0
 ColumnLayout {
     id: root
 
-    enum Type {
+    enum Purpose {
         AppSync,
         KeypairSync
     }
 
-    property int type: SyncingCodeInstructions.Type.AppSync
+    enum Type {
+        QRCode,
+        EncryptedKey
+    }
+
+    property int purpose: SyncingCodeInstructions.Purpose.AppSync
+    property int type: SyncingCodeInstructions.Type.QRCode
 
     spacing: 0
 
@@ -50,6 +56,7 @@ ColumnLayout {
             Layout.fillWidth: false
             Layout.alignment: Qt.AlignHCenter
 
+            purpose: root.purpose
             type: root.type
         }
 
@@ -59,6 +66,7 @@ ColumnLayout {
             Layout.fillWidth: false
             Layout.alignment: Qt.AlignHCenter
 
+            purpose: root.purpose
             type: root.type
         }
     }

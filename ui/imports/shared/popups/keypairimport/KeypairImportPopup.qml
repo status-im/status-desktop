@@ -32,7 +32,10 @@ StatusModal {
         case Constants.keypairImportPopup.state.importQr:
             return qsTr("Scan encrypted keypair QR code")
         case Constants.keypairImportPopup.state.displayInstructions:
-            return qsTr("How to generate the encrypted QR")
+            if (root.store.syncViaQr) {
+                return Constants.keypairImportPopup.instructionsLabelForQr
+            }
+            return Constants.keypairImportPopup.instructionsLabelForEncryptedKey
         }
 
         return qsTr("Import %1 keypair").arg(root.store.selectedKeypair.name)
@@ -137,6 +140,7 @@ StatusModal {
                 id: displayInstructionsComponent
                 DisplayInstructions {
                     height: Constants.keypairImportPopup.contentHeight
+                    store: root.store
                 }
             }
         }
