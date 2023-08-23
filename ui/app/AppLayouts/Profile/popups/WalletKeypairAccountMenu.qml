@@ -94,7 +94,7 @@ StatusMenu {
     }
 
     StatusAction {
-        text: enabled? qsTr("Remove keypair and associated accounts") : ""
+        text: enabled? qsTr("Remove keypair and derived accounts") : ""
         enabled: !!root.keyPair &&
                  root.keyPair.pairType !== Constants.keypair.type.profile
         type: StatusAction.Type.Danger

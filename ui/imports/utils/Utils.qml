@@ -846,11 +846,9 @@ QtObject {
         }
         if (keypair.operability === Constants.keypair.operability.nonOperable) {
             if (keypair.syncedFrom === Constants.keypair.syncedFrom.backup) {
-                if (keypair.pairType === Constants.keypair.type.seedImport) {
-                    return qsTr("Restored from backup. Re-enter seed phrase to use.")
-                }
-                if (keypair.pairType === Constants.keypair.type.privateKeyImport) {
-                    return qsTr("Restored from backup. Re-enter private key to use.")
+                if (keypair.pairType === Constants.keypair.type.seedImport ||
+                        keypair.pairType === Constants.keypair.type.privateKeyImport) {
+                    return qsTr("Restored from backup. Import keypair to use derived accounts.")
                 }
             }
             if (keypair.syncedFrom !== "") {
