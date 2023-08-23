@@ -188,6 +188,7 @@ proc getChatDetails*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
 proc getCommunityDetails*(self: Controller): CommunityDto =
+  echo "getCommunityById from chat_content module"
   return self.communityService.getCommunityById(self.sectionId)
 
 proc getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, largeImage: string] =

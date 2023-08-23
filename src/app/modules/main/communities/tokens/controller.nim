@@ -138,4 +138,5 @@ proc getTokenMasterToken*(self: Controller, communityId: string): CommunityToken
   return self.communityTokensService.getTokenMasterToken(communityId)
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  echo "getCommunityById from tokens module"
   return self.communityService.getCommunityById(communityId)

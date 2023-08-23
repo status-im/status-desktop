@@ -89,6 +89,7 @@ proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
   return self.chatService.getChannelGroups()
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
+  echo "getCommunityById from app_search module"
   return self.communityService.getCommunityById(communityId)
 
 proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
