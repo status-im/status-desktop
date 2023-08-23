@@ -79,7 +79,9 @@ method load*[T](self: Module[T], keyUid: string, mode: ImportKeypairModuleMode) 
       self.closeKeypairImportPopup()
       return
     self.view.setSelectedKeypairItem(keypairItem)
-    if mode == ImportKeypairModuleMode.ImportViaPrivateKey:
+    if mode == ImportKeypairModuleMode.SelectImportMethod:
+      self.view.setCurrentState(newSelectImportMethodState(nil))
+    elif mode == ImportKeypairModuleMode.ImportViaPrivateKey:
       self.view.setCurrentState(newImportPrivateKeyState(nil))
     elif mode == ImportKeypairModuleMode.ImportViaSeedPhrase:
       self.view.setCurrentState(newImportSeedPhraseState(nil))

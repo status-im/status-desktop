@@ -25,6 +25,7 @@ ColumnLayout {
     signal goBack
     signal runRenameKeypairFlow()
     signal runRemoveKeypairFlow()
+    signal runImportMissingKeypairFlow()
 
     property var account
     property var keyPair
@@ -77,6 +78,50 @@ ColumnLayout {
             onClicked: Global.openPopup(renameAccountModalComponent)
         }
     }
+
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.topMargin: Style.current.bigPadding
+        Layout.preferredHeight: childrenRect.height
+        visible: !!root.keyPair && root.keyPair.operability === Constants.keypair.operability.nonOperable
+        radius: Style.current.radius
+        border.width: 1
+        border.color: Theme.palette.directColor8
+        color: Theme.palette.transparent
+
+        ColumnLayout {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.leftMargin: Style.current.padding
+            anchors.rightMargin: Style.current.padding
+            spacing: Style.current.halfPadding
+
+            StatusBaseText {
+                Layout.fillWidth: true
+                Layout.topMargin: Style.current.padding
+                text: qsTr("Import keypair to use this account")
+                color: Theme.palette.warningColor1
+            }
+
+            StatusBaseText {
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                text: qsTr("This account was added to one of your synced devices. To use this account you will first need import the associated keypair to this device.")
+            }
+
+            StatusButton {
+                Layout.alignment: Qt.AlignLeft
+                Layout.bottomMargin: Style.current.padding
+                text: qsTr("Import keypair")
+                type: StatusBaseButton.Type.Warning
+                icon.name: "download"
+                onClicked: {
+                    root.runImportMissingKeypairFlow()
+                }
+            }
+        }
+    }
+
 
     StatusBaseText {
         Layout.topMargin: Style.current.bigPadding
