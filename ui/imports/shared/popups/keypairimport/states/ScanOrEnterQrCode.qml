@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.14
 
 import shared.views 1.0
 
+import utils 1.0
+
 import "../stores"
 
 Item {
@@ -23,8 +25,8 @@ Item {
         secondTabName: qsTr("Enter encrypted key")
         syncQrErrorMessage: qsTr("This does not look like the correct keypair QR code")
         syncCodeErrorMessage: qsTr("This does not look like an encrypted keypair code")
-        firstInstructionButtonName: qsTr("How to display the QR code on your other device")
-        secondInstructionButtonName: qsTr("How to copy the encrypted key from your other device")
+        firstInstructionButtonName: Constants.keypairImportPopup.instructionsLabelForQr
+        secondInstructionButtonName: Constants.keypairImportPopup.instructionsLabelForEncryptedKey
         syncCodeLabel: qsTr("Paste encrypted key")
 
         validateConnectionString: function(connectionString) {
