@@ -184,6 +184,9 @@ SettingsContentBase {
                 removeKeypairPopup.accounts= keyPair.accounts
                 removeKeypairPopup.active = true
             }
+            onRunImportMissingKeypairFlow: {
+                root.walletStore.runKeypairImportPopup(keyPair.keyUid, Constants.keypairImportPopup.mode.selectImportMethod)
+            }
         }
 
         DappPermissionsView {

@@ -748,10 +748,11 @@ QtObject {
 
         readonly property QtObject mode: QtObject {
             readonly property int selectKeypair: 1
-            readonly property int importViaSeedPhrase: 2
-            readonly property int importViaPrivateKey: 3
-            readonly property int importViaQr: 4
-            readonly property int exportKeypairQr: 5
+            readonly property int selectImportMethod: 2
+            readonly property int importViaSeedPhrase: 3
+            readonly property int importViaPrivateKey: 4
+            readonly property int importViaQr: 5
+            readonly property int exportKeypairQr: 6
         }
 
         readonly property QtObject state: QtObject {

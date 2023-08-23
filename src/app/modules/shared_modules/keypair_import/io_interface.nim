@@ -5,6 +5,7 @@ import app_service/service/wallet_account/dto/derived_address_dto
 
 type ImportKeypairModuleMode* {.pure.}= enum
   SelectKeypair = 1
+  SelectImportMethod
   ImportViaSeedPhrase
   ImportViaPrivateKey
   ImportViaQr
