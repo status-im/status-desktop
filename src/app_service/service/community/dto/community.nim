@@ -58,7 +58,13 @@ type TokenPermissionType* {.pure.}= enum
   ViewAndPost = 4,
   BecomeTokenMaster = 5,
   BecomeTokenOwner = 6
-  
+
+type TokenPermissionState* {.pure.}= enum
+  Approved = 0,
+  AdditionPending = 1,
+  UpdatePending = 2,
+  RemovalPending = 3,
+
 type TokenType* {.pure.}= enum
   Unknown = 0,
   ERC20 = 1,
@@ -81,6 +87,7 @@ type CommunityTokenPermissionDto* = object
   tokenCriteria*: seq[TokenCriteriaDto]
   chatIds*: seq[string]
   isPrivate*: bool
+  state*: TokenPermissionState
 
 type CommunityTokensMetadataDto* = object
   addresses*: Table[int, string]
@@ -280,8 +287,13 @@ proc toCommunityTokenPermissionDto*(jsonObj: JsonNode): CommunityTokenPermission
   discard jsonObj.getProp("is_private", result.isPrivate)
   var tokenPermissionTypeInt: int
   discard jsonObj.getProp("type", tokenPermissionTypeInt)
-  if (tokenPermissionTypeInt >= ord(low(TokenPermissionType)) or tokenPermissionTypeInt <= ord(high(TokenPermissionType))):
+  if (tokenPermissionTypeInt >= ord(low(TokenPermissionType)) and tokenPermissionTypeInt <= ord(high(TokenPermissionType))):
       result.`type` = TokenPermissionType(tokenPermissionTypeInt)
+
+  var tokenPermissionStateInt: int
+  discard jsonObj.getProp("state", tokenPermissionStateInt)
+  if (tokenPermissionStateInt >= ord(low(TokenPermissionState)) and tokenPermissionStateInt <= ord(high(TokenPermissionState))):
+      result.state = TokenPermissionState(tokenPermissionStateInt)
 
   var tokenCriteriaObj: JsonNode
   if(jsonObj.getProp("token_criteria", tokenCriteriaObj)):

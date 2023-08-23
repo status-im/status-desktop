@@ -14,6 +14,7 @@ type
     chatList*: TokenPermissionChatListModel
     isPrivate*: bool
     tokenCriteriaMet*: bool
+    state*: TokenPermissionState
 
 proc `$`*(self: TokenPermissionItem): string =
   result = fmt"""TokenPermissionItem(
@@ -27,7 +28,8 @@ proc initTokenPermissionItem*(
   tokenCriteria: seq[TokenCriteriaItem],
   chatList: seq[TokenPermissionChatListItem],
   isPrivate: bool,
-  tokenCriteriaMet: bool
+  tokenCriteriaMet: bool,
+  state: TokenPermissionState
 ): TokenPermissionItem =
   result.id = id
   result.`type` = `type`
@@ -35,6 +37,7 @@ proc initTokenPermissionItem*(
   result.chatList = newTokenPermissionChatListModel()
   result.isPrivate = isPrivate
   result.tokenCriteriaMet = tokenCriteriaMet
+  result.state = state
 
   for tcItem in tokenCriteria:
     result.tokenCriteria.addItem(tcItem)
@@ -63,6 +66,9 @@ proc getIsPrivate*(self: TokenPermissionItem): bool =
 proc getTokenCriteriaMet*(self: TokenPermissionItem): bool =
   return self.tokenCriteriaMet
 
+proc getState*(self: TokenPermissionItem): int =
+  return self.state.int
+
 proc buildTokenPermissionItem*(tokenPermission: CommunityTokenPermissionDto, chats: seq[ChatDto]): TokenPermissionItem =
   var tokenCriteriaItems: seq[TokenCriteriaItem] = @[]
 
@@ -90,7 +96,8 @@ proc buildTokenPermissionItem*(tokenPermission: CommunityTokenPermissionDto, cha
       tokenCriteriaItems,
       tokenPermissionChatListItems,
       tokenPermission.isPrivate,
-      false # allTokenCriteriaMet will be updated by a call to checkPermissionsToJoin
+      false, # allTokenCriteriaMet will be updated by a call to checkPermissionsToJoin
+      tokenPermission.state
   )
 
   return tokenPermissionItem

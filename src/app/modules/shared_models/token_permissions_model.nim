@@ -13,6 +13,7 @@ type
     ChatList
     IsPrivate
     TokenCriteriaMet
+    State
 
 QtObject:
   type TokenPermissionsModel* = ref object of QAbstractListModel
@@ -38,6 +39,7 @@ QtObject:
       ModelRole.ChatList.int:"channelsListModel",
       ModelRole.IsPrivate.int:"isPrivate",
       ModelRole.TokenCriteriaMet.int:"tokenCriteriaMet",
+      ModelRole.State.int:"permissionState",
     }.toTable
 
   proc countChanged(self: TokenPermissionsModel) {.signal.}
@@ -95,6 +97,8 @@ QtObject:
         result = newQVariant(item.getIsPrivate())
       of ModelRole.TokenCriteriaMet:
         result = newQVariant(item.getTokenCriteriaMet())
+      of ModelRole.State:
+        result = newQVariant(item.getState())
 
   proc addItem*(self: TokenPermissionsModel, item: TokenPermissionItem) =
     let parentModelIndex = newQModelIndex()
@@ -143,6 +147,7 @@ QtObject:
     self.items[idx].chatList.setItems(item.chatList.getItems())
     self.items[idx].isPrivate = item.isPrivate
     self.items[idx].tokenCriteriaMet = item.tokenCriteriaMet
+    self.items[idx].state = item.state
 
     let index = self.createIndex(idx, 0, nil)
     defer: index.delete
@@ -151,5 +156,6 @@ QtObject:
       ModelRole.TokenCriteria.int,
       ModelRole.ChatList.int,
       ModelRole.IsPrivate.int,
-      ModelRole.TokenCriteriaMet.int
+      ModelRole.TokenCriteriaMet.int,
+      ModelRole.State.int
     ])

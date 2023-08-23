@@ -15,7 +15,7 @@ Control{
     property var channelsListModel
 
     property int permissionType: PermissionTypes.Type.None
-    property int permissionState: PermissionTypes.State.Active
+    property int permissionState: PermissionTypes.State.Approved
     property bool isPrivate: false
     property bool showButtons: true
 
@@ -34,20 +34,20 @@ Control{
         readonly property int buttonDiameter: 36
         readonly property int buttonTextSpacing: 6
         readonly property int headerIconleftMargin: 20
-        readonly property bool isActiveState: root.permissionState === PermissionTypes.State.Active
-        readonly property bool isDeletingState: root.permissionState === PermissionTypes.State.Deleting
+        readonly property bool isActiveState: root.permissionState === PermissionTypes.State.Approved
+        readonly property bool isDeletingState: root.permissionState === PermissionTypes.State.RemovalPending
 
         function getStateText(state) {
-            if(state === PermissionTypes.State.Active)
+            if(state === PermissionTypes.State.Approved)
                 return qsTr("Active")
 
-            if(state === PermissionTypes.State.Creating)
+            if(state === PermissionTypes.State.AdditionPending)
                 return qsTr("Pending, will become active once owner node comes online")
 
-            if(state === PermissionTypes.State.Deleting)
+            if(state === PermissionTypes.State.RemovalPending)
                 return qsTr("Deletion pending, will be deleted once owner node comes online")
 
-            if(state === PermissionTypes.State.Editing)
+            if(state === PermissionTypes.State.UpdatePending)
                 return qsTr("Pending updates will be applied when owner node comes online")
         }
     }
@@ -261,6 +261,9 @@ Control{
                     Layout.preferredWidth: Layout.preferredHeight
                     type: StatusRoundButton.Type.Primary
                     onClicked: root.editClicked()
+
+                    // FIXME: implement undo operation first
+                    enabled: d.isActiveState
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
@@ -297,10 +300,13 @@ Control{
                     Layout.preferredWidth: Layout.preferredHeight
                     type: StatusRoundButton.Type.Quaternary
                     onClicked: root.removeClicked()
+
+                    // FIXME: implement undo operation first
+                    enabled: d.isActiveState
                 }
                 StatusBaseText {
                     Layout.alignment: Qt.AlignHCenter
-                    text: d.isDeletingState ? qsTr("Undo delete") : qsTr("Delete")
+                    text: /*d.isDeletingState*/false ? qsTr("Undo delete") : qsTr("Delete")
                     color: Theme.palette.dangerColor1
                     font.pixelSize: d.buttonTextPixelSize
                 }

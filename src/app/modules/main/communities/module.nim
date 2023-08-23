@@ -592,7 +592,8 @@ proc applyPermissionResponse*(self: Module, communityId: string, permissions: Ta
         updatedTokenCriteriaItems,
         tokenPermissionItem.getChatList().getItems(),
         tokenPermissionItem.isPrivate,
-        permissionSatisfied
+        permissionSatisfied,
+        tokenPermissionItem.state
     )
     self.view.spectatedCommunityPermissionModel.updateItem(id, updatedTokenPermissionItem)
 
