@@ -98,7 +98,7 @@ StatusDialog {
             }
             StatusButton {
                 type: StatusBaseButton.Type.Danger
-                text: qsTr("Remove keypair & associated accounts")
+                text: qsTr("Remove keypair and derived accounts")
                 onClicked: root.confirmClicked()
                 Keys.onReturnPressed: function(event) {
                     root.confirmClicked()

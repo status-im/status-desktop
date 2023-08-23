@@ -140,7 +140,7 @@ Item {
 
         function onShowToastKeypairRemoved(keypairName: string) {
             Global.displayToastMessage(
-                qsTr("“%1” keypair and its associated accounts were successfully removed from all devices").arg(keypairName),
+                qsTr("“%1” keypair and its derived accounts were successfully removed from all devices").arg(keypairName),
                 "",
                 "checkmark-circle",
                 false,
