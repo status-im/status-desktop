@@ -49,6 +49,9 @@ StatusListView {
 
     spacing: Style.current.halfPadding
     delegate: StatusListItem {
+        readonly property string address: model.address.toLowerCase()
+
+        id: listItem
         width: ListView.view.width - ListView.view.leftMargin - ListView.view.rightMargin
         statusListItemTitle.font.weight: Font.Medium
         title: model.name
@@ -102,11 +105,11 @@ StatusListView {
                 icon.color: hovered ? Theme.palette.primaryColor3 :
                                       checked ? Theme.palette.primaryColor1 : disabledTextColor
                 checkable: true
-                checked: model.address === root.selectedAirdropAddress
+                checked: listItem.address === root.selectedAirdropAddress
                 enabled: shareAddressCheckbox.checked && root.selectedSharedAddresses.length > 1 // last cannot be unchecked
                 visible: shareAddressCheckbox.checked
                 opacity: enabled ? 1.0 : 0.3
-                onCheckedChanged: if (checked) root.selectedAirdropAddress = model.address
+                onCheckedChanged: if (checked) root.selectedAirdropAddress = listItem.address
                 onToggled: root.addressesChanged()
 
                 StatusToolTip {
@@ -120,21 +123,21 @@ StatusListView {
                 ButtonGroup.group: d.addressesGroup
                 anchors.verticalCenter: parent.verticalCenter
                 checkable: true
-                checked: root.selectedSharedAddresses.includes(model.address)
+                checked: root.selectedSharedAddresses.includes(listItem.address)
                 enabled: !(root.selectedSharedAddresses.length === 1 && checked) // last cannot be unchecked
                 onToggled: {
                     // handle selected addresses
-                    const index = root.selectedSharedAddresses.indexOf(model.address)
+                    const index = root.selectedSharedAddresses.indexOf(listItem.address)
                     const selectedSharedAddressesCopy = Object.assign([], root.selectedSharedAddresses) // deep copy
                     if (index === -1) {
-                        selectedSharedAddressesCopy.push(model.address)
+                        selectedSharedAddressesCopy.push(listItem.address)
                     } else {
                         selectedSharedAddressesCopy.splice(index, 1)
                     }
                     root.selectedSharedAddresses = selectedSharedAddressesCopy
 
                     // switch to next available airdrop address when unchecking
-                    if (!checked && model.address === root.selectedAirdropAddress) {
+                    if (!checked && listItem.address === root.selectedAirdropAddress) {
                         d.selectFirstAvailableAirdropAddress()
                     }
 

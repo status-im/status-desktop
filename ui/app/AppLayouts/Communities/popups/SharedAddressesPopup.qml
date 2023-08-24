@@ -29,6 +29,14 @@ StatusDialog {
     signal saveSelectedAddressesClicked(string airdropAddress, var sharedAddresses)
     signal sharedAddressesChanged(string airdropAddress, var sharedAddresses)
 
+    function setOldSharedAddresses(oldSharedAddresses) {
+        panel.setOldSharedAddresses(oldSharedAddresses)
+    }
+
+    function setOldAirdropAddress(oldAirdropAddress) {
+        panel.setOldAirdropAddress(oldAirdropAddress)
+    }
+
     title: panel.title
     implicitWidth: 640 // by design
     padding: 0

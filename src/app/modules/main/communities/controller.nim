@@ -34,6 +34,7 @@ type
     chatService: chat_service.Service
     tmpCommunityId: string
     tmpCommunityIdForChannelsPermisisons: string
+    tmpCommunityIdForRevealedAccounts: string
     tmpAuthenticationAction: AuthenticationAction
     tmpRequestToJoinEnsName: string
     tmpAddressesToShare: seq[string]
@@ -61,6 +62,7 @@ proc newController*(
   result.chatService = chatService
   result.tmpCommunityId = ""
   result.tmpCommunityIdForChannelsPermisisons = ""
+  result.tmpCommunityIdForRevealedAccounts = ""
   result.tmpRequestToJoinEnsName = ""
   result.tmpAirdropAddress = ""
   result.tmpAddressesToShare = @[]
@@ -178,6 +180,16 @@ proc init*(self: Controller) =
         args.checkAllChannelsPermissionsResponse,
       )
       self.tmpCommunityIdForChannelsPermisisons = ""
+
+  self.events.on(SIGNAL_COMMUNITY_MEMBER_REVEALED_ACCOUNTS_LOADED) do(e: Args):
+    let args = CommunityMemberRevealedAccountsArgs(e)
+    if self.tmpCommunityIdForRevealedAccounts == args.communityId:
+      self.delegate.onCommunityMemberRevealedAccountsLoaded(
+        args.communityId,
+        args.memberPubkey,
+        args.memberRevealedAccounts,
+      )
+      self.tmpCommunityIdForRevealedAccounts = ""
 
   self.events.on(SignalType.Wallet.event, proc(e: Args) =
     var data = WalletSignal(e)
@@ -432,3 +444,7 @@ proc asyncCheckPermissionsToJoin*(self: Controller, communityId: string, address
 proc asyncCheckAllChannelsPermissions*(self: Controller, communityId: string, sharedAddresses: seq[string]) =
   self.tmpCommunityIdForChannelsPermisisons = communityId
   self.chatService.asyncCheckAllChannelsPermissions(communityId, sharedAddresses)
+
+proc asyncGetRevealedAccountsForMember*(self: Controller, communityId, memberPubkey: string) =
+  self.tmpCommunityIdForRevealedAccounts = communityId
+  self.communityService.asyncGetRevealedAccountsForMember(communityId, memberPubkey)

@@ -129,6 +129,11 @@ type
     communityId*: string
     metricsType*: CommunityMetricsType
 
+  CommunityMemberRevealedAccountsArgs* = ref object of Args
+    communityId*: string
+    memberPubkey*: string
+    memberRevealedAccounts*: seq[RevealedAccount]
+
   CommunityMembersRevealedAccountsArgs* = ref object of Args
     communityId*: string
     membersRevealedAccounts*: MembersRevealedAccounts
@@ -141,6 +146,7 @@ const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
 const SIGNAL_COMMUNITY_MY_REQUEST_FAILED* = "communityMyRequestFailed"
 const SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_SUCCEEDED* = "communityEditSharedAddressesSucceded"
 const SIGNAL_COMMUNITY_EDIT_SHARED_ADDRESSES_FAILED* = "communityEditSharedAddressesFailed"
+const SIGNAL_COMMUNITY_MEMBER_REVEALED_ACCOUNTS_LOADED* = "communityMemberRevealedAccountsLoaded"
 const SIGNAL_COMMUNITY_MEMBERS_REVEALED_ACCOUNTS_LOADED* = "communityMembersRevealedAccountsLoaded"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
@@ -2052,8 +2058,39 @@ QtObject:
     except Exception as e:
       error "error while getting community public key", msg = e.msg
 
+  proc asyncGetRevealedAccountsForMember*(self: Service, communityId, memberPubkey: string) =
+    let arg = AsyncGetRevealedAccountsArg(
+      tptr: cast[ByteAddress](asyncGetRevealedAccountsForMemberTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAsyncGetRevealedAccountsForMemberCompleted",
+      communityId: communityId,
+      memberPubkey: memberPubkey,
+    )
+    self.threadpool.start(arg)
+  
+  proc onAsyncGetRevealedAccountsForMemberCompleted*(self: Service, response: string) {.slot.} =
+    try:
+      let rpcResponseObj = response.parseJson
+
+      if rpcResponseObj{"error"}.kind != JNull and rpcResponseObj{"error"}.getStr != "":
+        raise newException(RpcException, rpcResponseObj["error"].getStr)
+
+      if rpcResponseObj["response"]{"error"}.kind != JNull:
+        let error = Json.decode(rpcResponseObj["response"]["error"].getStr, RpcError)
+        raise newException(RpcException, error.message)
+
+      let revealedAccounts = rpcResponseObj["response"]["result"].toRevealedAccounts()
+
+      self.events.emit(SIGNAL_COMMUNITY_MEMBER_REVEALED_ACCOUNTS_LOADED, CommunityMemberRevealedAccountsArgs(
+        communityId: rpcResponseObj["communityId"].getStr,
+        memberPubkey: rpcResponseObj["memberPubkey"].getStr,
+        memberRevealedAccounts: revealedAccounts,
+      ))
+    except Exception as e:
+      error "error while getting the community members' revealed addressesses", msg = e.msg
+
   proc asyncGetRevealedAccountsForAllMembers*(self: Service, communityId: string) =
-    let arg = AsyncGetRevealedAccountsForAllMembersArg(
+    let arg = AsyncGetRevealedAccountsArg(
       tptr: cast[ByteAddress](asyncGetRevealedAccountsForAllMembersTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncGetRevealedAccountsForAllMembersCompleted",
@@ -2082,7 +2119,7 @@ QtObject:
       error "error while getting the community members' revealed addressesses", msg = e.msg
 
   proc asyncReevaluateCommunityMembersPermissions*(self: Service, communityId: string) =
-    let arg = AsyncGetRevealedAccountsForAllMembersArg(
+    let arg = AsyncGetRevealedAccountsArg(
       tptr: cast[ByteAddress](asyncReevaluateCommunityMembersPermissionsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onAsyncReevaluateCommunityMembersPermissionsCompleted",
