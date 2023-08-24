@@ -1,4 +1,4 @@
-import NimQml, sequtils, tables, stint, chronicles
+import NimQml, sequtils, tables, stint, chronicles, json
 
 import ./io_interface
 import ../io_interface as delegate_interface
@@ -548,6 +548,8 @@ method checkPermissions*(self: Module, communityId: string, sharedAddresses: seq
   self.view.setCheckingPermissionsInProgress(inProgress = true)
 
 method prepareTokenModelForCommunity*(self: Module, communityId: string) =
+  self.controller.asyncGetRevealedAccountsForMember(communityId, singletonInstance.userProfile.getPubKey())
+
   let community = self.controller.getCommunityById(communityId)
   var tokenPermissionsItems: seq[TokenPermissionItem] = @[]
 
@@ -635,3 +637,15 @@ method onCommunityCheckAllChannelsPermissionsResponse*(self: Module, communityId
       communityId,
       channelPermissionResponse.viewAndPostPermissions.permissions,
     )
+
+method onCommunityMemberRevealedAccountsLoaded*(self: Module, communityId, memberPubkey: string,
+    revealedAccounts: seq[RevealedAccount]) =
+  if memberPubkey == singletonInstance.userProfile.getPubKey():
+    var addresses: seq[string] = @[]
+    var airdropAddress = ""
+    for revealedAccount in revealedAccounts:
+      addresses.add(revealedAccount.address)
+      if revealedAccount.isAirdropAddress:
+        airdropAddress = revealedAccount.address
+
+    self.view.setMyRevealedAddressesForCurrentCommunity($(%*addresses), airdropAddress)

@@ -116,6 +116,15 @@ Control {
         root.selectedAirdropAddress = accountSelector.selectedAirdropAddress
     }
 
+    function setOldSharedAddresses(oldSharedAddresses) {
+        d.initialSelectedSharedAddresses = oldSharedAddresses
+    }
+
+    function setOldAirdropAddress(oldAirdropAddress) {
+        d.initialSelectedAirdropAddress = oldAirdropAddress
+        accountSelector.selectedAirdropAddress = oldAirdropAddress
+    }
+
     SortFilterProxyModel {
         id: filteredAccountsModel
         sourceModel: root.walletAccountsModel

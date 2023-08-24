@@ -51,6 +51,8 @@ QtObject:
       discordImportHasCommunityImage: bool
       downloadingCommunityHistoryArchives: bool
       checkingPermissionsInProgress: bool
+      myRevealedAddressesStringForCurrentCommunity: string
+      myRevealedAirdropAddressForCurrentCommunity: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -670,6 +672,28 @@ QtObject:
 
   proc getCommunityPublicKeyFromPrivateKey*(self: View, communityPrivateKey: string): string {.slot.} =
     result = self.delegate.getCommunityPublicKeyFromPrivateKey(communityPrivateKey)
+
+  proc myRevealedAirdropAddressesForCurrentCommunityChanged*(self: View) {.signal.}
+
+  proc setMyRevealedAddressesForCurrentCommunity*(self: View, revealedAddress, airdropAddress: string) =
+    self.myRevealedAddressesStringForCurrentCommunity = revealedAddress
+    self.myRevealedAirdropAddressForCurrentCommunity = airdropAddress
+    self.myRevealedAirdropAddressesForCurrentCommunityChanged()
+
+  proc getMyRevealedAddressesStringForCurrentCommunity*(self: View): string {.slot.} =
+    return self.myRevealedAddressesStringForCurrentCommunity
+
+  QtProperty[string] myRevealedAddressesStringForCurrentCommunity:
+    read = getMyRevealedAddressesStringForCurrentCommunity
+    notify = myRevealedAirdropAddressesForCurrentCommunityChanged
+
+
+  proc getMyRevealedAirdropAddressStringForCurrentCommunity*(self: View): string {.slot.} =
+    return self.myRevealedAirdropAddressForCurrentCommunity
+
+  QtProperty[string] myRevealedAirdropAddressForCurrentCommunity:
+    read = getMyRevealedAirdropAddressStringForCurrentCommunity
+    notify = myRevealedAirdropAddressesForCurrentCommunityChanged
 
   proc checkingPermissionsInProgressChanged*(self: View) {.signal.}
 
