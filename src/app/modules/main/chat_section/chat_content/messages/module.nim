@@ -222,10 +222,24 @@ proc currentUserWalletContainsAddress(self: Module, address: string): bool =
   return false
 
 method reevaluateViewLoadingState*(self: Module) =
-  self.view.setLoading(not self.initialMessagesLoaded or 
-                       not self.firstUnseenMessageState.initialized or
-                       self.firstUnseenMessageState.fetching or
-                       self.view.getMessageSearchOngoing())
+
+  let loading = not self.initialMessagesLoaded or 
+                not self.firstUnseenMessageState.initialized or
+                self.firstUnseenMessageState.fetching or
+                self.view.getMessageSearchOngoing()
+
+  debug "<<< reevaluateViewLoadingState", 
+        loading = $loading,
+        initialMessagesLoaded = $self.initialMessagesLoaded,
+        firstUnseenMessageState = $self.firstUnseenMessageState,
+        messageSearchOngoing = $self.view.getMessageSearchOngoing()
+  
+  try:
+    doAssert false
+  except:
+    echo getCurrentException().getStackTrace()
+
+  self.view.setLoading(loading)
 
 method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: seq[ReactionDto]) =
   var viewItems: seq[Item]
@@ -666,6 +680,9 @@ proc switchToMessage*(self: Module, messageId: string) =
     self.controller.setSearchedMessageId(messageId)
 
 method scrollToMessage*(self: Module, messageId: string) =
+
+  debug "<<< scrollToMessage", messageId
+
   if messageId == "":
     return
 
@@ -721,6 +738,7 @@ method resendChatMessage*(self: Module, messageId: string): string =
   return self.controller.resendChatMessage(messageId)
 
 method resetNewMessagesMarker*(self: Module) =
+  debug "<<< resetNewMessagesMarker"
   self.firstUnseenMessageState.fetching = true
   self.firstUnseenMessageState.scrollToWhenFetched = false
   self.controller.getAsyncFirstUnseenMessageId()

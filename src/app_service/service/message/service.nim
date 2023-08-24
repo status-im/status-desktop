@@ -254,6 +254,11 @@ QtObject:
     self.threadpool.start(arg)
 
   proc asyncLoadInitialMessagesForChat*(self: Service, chatId: string) =
+
+    debug "<<< asyncLoadInitialMessagesForChat",
+          isChatCursorInitialized = $self.isChatCursorInitialized(chatId), 
+          chatId
+
     if(self.isChatCursorInitialized(chatId)):
       let data = MessagesLoadedArgs(chatId: chatId,
         messages: @[],
@@ -464,6 +469,9 @@ QtObject:
     self.events.emit(SIGNAL_PINNED_MESSAGES_LOADED, data)
 
   proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
+
+    debug "<<< onAsyncLoadMoreMessagesForChat"
+
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
       info "load more messages response is not a json object"
@@ -785,6 +793,7 @@ QtObject:
     self.threadpool.start(arg)
 
   proc onGetFirstUnseenMessageIdFor*(self: Service, response: string) {.slot.} =
+    debug "<<< onGetFirstUnseenMessageIdFor", response
     try:
       let responseObj = response.parseJson
 
