@@ -456,11 +456,15 @@ proc updateParentBadgeNotifications(self: Module) =
   )
 
 proc updateChatLocked(self: Module, chatId: string) =
+  if not self.controller.isCommunity():
+    return
   let communityId = self.controller.getMySectionId()
   let locked = self.controller.checkChatIsLocked(communityId, chatId)
   self.view.chatsModel().setItemLocked(chatId, locked)
 
 proc updateChatRequiresPermissions(self: Module, chatId: string) =
+  if not self.controller.isCommunity():
+    return
   let communityId = self.controller.getMySectionId
   let requiresPermissions = self.controller.checkChatHasPermissions(communityId, chatId)
   self.view.chatsModel().setItemPermissionsRequired(chatId, requiresPermissions)
@@ -599,8 +603,14 @@ method addNewChat*(
     categoryOpened,
     onlineStatus = onlineStatus,
     loaderActive = setChatAsActive,
-    locked = self.controller.checkChatIsLocked(self.controller.getMySectionId(), chatDto.id),
-    requiresPermissions = self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
+    locked = if self.controller.isCommunity:
+        self.controller.checkChatIsLocked(self.controller.getMySectionId(), chatDto.id)
+      else:
+        false,
+    requiresPermissions = if self.controller.isCommunity:
+        self.controller.checkChatHasPermissions(self.controller.getMySectionId(), chatDto.id)
+      else:
+        false,
   )
 
   self.addSubmodule(
