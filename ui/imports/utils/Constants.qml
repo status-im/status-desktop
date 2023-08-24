@@ -1113,6 +1113,10 @@ QtObject {
         return ""
     }
 
+    function isDefaultTokenIcon(url) {
+        return url.indexOf("DEFAULT-TOKEN") !== -1
+    }
+
     // Message outgoing status
     readonly property string sending: "sending"
     readonly property string sent: "sent"

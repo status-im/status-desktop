@@ -230,6 +230,10 @@ QtObject {
         return currencyStore.getGasEthValue(gweiValue, gasLimit)
     }
 
+    function getFeeEthValue(feeCurrency) {
+        return currencyStore.getGasEthValue(feeCurrency.amount / Math.pow(10, feeCurrency.displayDecimals), 1)
+    }
+
     function formatCurrencyAmount(amount, symbol, options = null, locale = null) {
         return currencyStore.formatCurrencyAmount(amount, symbol, options, locale)
     }
@@ -241,6 +245,14 @@ QtObject {
 
     function fetchDecodedTxData(txHash, input) {
         walletSectionInst.fetchDecodedTxData(txHash, input)
+    }
+
+    function fetchTxDetails(id, isMultiTx, isPending) {
+        walletSectionInst.activityController.fetchTxDetails(id, isMultiTx, isPending)
+    }
+
+    function getTxDetails() {
+        return walletSectionInst.activityController.activityDetails
     }
 
     property bool marketHistoryIsLoading: Global.appIsReady? walletSectionAllTokens.marketHistoryIsLoading : false

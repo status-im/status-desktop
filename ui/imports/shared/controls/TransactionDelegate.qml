@@ -143,11 +143,13 @@ StatusListItem {
     }
 
     property StatusAssetSettings tokenIconAsset: StatusAssetSettings {
-        width: 18
-        height: 18
-        bgWidth: width
-        bgHeight: height
-        bgColor: "transparent"
+        width: 20
+        height: 20
+        bgWidth: width + 2
+        bgHeight: height + 2
+        bgRadius: bgWidth / 2
+        bgColor: Style.current.name === Constants.lightThemeName && Constants.isDefaultTokenIcon(root.tokenImage) ?
+                     Theme.palette.white : "transparent"
         color: "transparent"
         isImage: !loading
         name: root.tokenImage
@@ -164,7 +166,12 @@ StatusListItem {
         property bool showRetryButton: false
     }
 
-    function getDetailsString() {
+    function getDetailsString(detailsObj) {
+        if (!detailsObj) {
+            rootStore.fetchTxDetails(modelData.id, modelData.isMultiTransaction, modelData.isPending)
+            detailsObj = rootStore.getTxDetails()
+        }
+
         let details = ""
         const endl = "\n"
         const endl2 = endl + endl
@@ -246,7 +253,7 @@ StatusListItem {
         case Constants.TransactionStatus.Verified: {
             const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
             details += qsTr("Status") + endl
-            const epoch = parseFloat(Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - rootStore.hex2Dec(modelData.blockNumber)).toFixed(0)).toLocaleString()
+            const epoch = parseFloat(Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - detailsObj.blockNumber).toFixed(0)).toLocaleString()
             details += qsTr("Finalised in epoch %1").arg(epoch.toFixed(0)) + endl2
             details += qsTr("Signed") + endl + root.timestampString + endl2
             details += qsTr("Confirmed") + endl
@@ -256,7 +263,7 @@ StatusListItem {
         case Constants.TransactionStatus.Finished: {
             const timestampString = LocaleUtils.formatDateTime(modelData.timestamp * 1000, Locale.LongFormat)
             details += qsTr("Status") + endl
-            const epoch = Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - rootStore.hex2Dec(modelData.blockNumber))
+            const epoch = Math.abs(walletRootStore.getLatestBlockNumber(modelData.chainId) - detailsObj.blockNumber)
             details += qsTr("Finalised in epoch %1").arg(epoch.toFixed(0)) + endl2
             details += qsTr("Signed") + endl + timestampString + endl2
             details += qsTr("Confirmed") + endl
@@ -298,9 +305,8 @@ StatusListItem {
             details += qsTr("To") + endl + modelData.recipient + endl2
             break
         }
-        const protocolName = "" // TODO fill protocol name for Bridge and Swap
-        if (!!protocolName) {
-            details += qsTr("Using") + endl + protocolName + endl2
+        if (!!detailsObj.protocol) {
+            details += qsTr("Using") + endl + detailsObj.protocol + endl2
         }
         if (!!modelData.txHash) {
             details += qsTr("%1 Tx hash").arg(root.networkName) + endl + modelData.txHash + endl2
@@ -310,18 +316,18 @@ StatusListItem {
             details += qsTr("%1 Tx hash").arg(networkNameOut) + endl + bridgeTxHash + endl2
         }
         const protocolFromContractAddress = "" // TODO fill protocol contract address for 'from' network for Bridge and Swap
-        if (!!protocolName && !!protocolFromContractAddress) {
-            details += qsTr("%1 %2 contract address").arg(root.networkName).arg(protocolName) + endl
+        if (!!detailsObj.protocol && !!protocolFromContractAddress) {
+            details += qsTr("%1 %2 contract address").arg(root.networkName).arg(detailsObj.protocol) + endl
             details += protocolFromContractAddress + endl2
         }
-        if (!!modelData.contract && type !== Constants.TransactionType.ContractDeployment && !/0x0+$/.test(modelData.contract)) {
+        if (!!detailsObj.contract && type !== Constants.TransactionType.ContractDeployment && !/0x0+$/.test(detailsObj.contract)) {
             let symbol = !!modelData.symbol || !modelData.tokenAddress ? modelData.symbol : "(%1)".arg(Utils.compactAddress(modelData.tokenAddress, 4))
             details += qsTr("%1 %2 contract address").arg(root.networkName).arg(symbol) + endl
-            details += modelData.contract + endl2
+            details += detailsObj.contract + endl2
         }
         const protocolToContractAddress = "" // TODO fill protocol contract address for 'to' network for Bridge
-        if (!!protocolToContractAddress && !!protocolName) {
-            details += qsTr("%1 %2 contract address").arg(networkNameOut).arg(protocolName) + endl
+        if (!!protocolToContractAddress && !!detailsObj.protocol) {
+            details += qsTr("%1 %2 contract address").arg(networkNameOut).arg(detailsObj.protocol) + endl
             details += protocolToContractAddress + endl2
         }
         const swapContractAddress = "" // TODO fill swap contract address for Swap
@@ -348,15 +354,17 @@ StatusListItem {
             details += qsTr("Network") + endl + networkName + endl2
         }
         details += qsTr("Token format") + endl + modelData.tokenType.toUpperCase() + endl2
-        details += qsTr("Nonce") + endl + rootStore.hex2Dec(modelData.nonce) + endl2
+        details += qsTr("Nonce") + endl + detailsObj.nonce + endl2
         if (type === Constants.TransactionType.Bridge) {
             details += qsTr("Included in Block on %1").arg(networkName) + endl
-            details += rootStore.hex2Dec(modelData.blockNumber)  + endl2
-            details += qsTr("Included in Block on %1").arg(networkNameOut) + endl
+            details += detailsObj.blockNumber  + endl2
             const bridgeBlockNumber = 0 // TODO fill when bridge data is implemented
-            details += rootStore.hex2Dec(bridgeBlockNumber)  + endl2
+            if (bridgeBlockNumber > 0) {
+                details += qsTr("Included in Block on %1").arg(networkNameOut) + endl
+                details += bridgeBlockNumber  + endl2
+            }
         } else {
-            details += qsTr("Included in Block") + endl + rootStore.hex2Dec(modelData.blockNumber)  + endl2
+            details += qsTr("Included in Block") + endl + detailsObj.blockNumber  + endl2
         }
 
         // VALUES
@@ -409,7 +417,7 @@ StatusListItem {
             } else if (type === Constants.TransactionType.ContractDeployment) {
                 const isPending = root.transactionStatus === Constants.TransactionStatus.Pending
                 if (isPending) {
-                    const maxFeeEthValue = rootStore.getGasEthValue(modelData.maxTotalFees.amount, 1)
+                    const maxFeeEthValue = rootStore.getFeeEthValue(detailsObj.maxTotalFees.amount)
                     const maxFeeCrypto = rootStore.formatCurrencyAmount(maxFeeEthValue, "ETH")
                     const maxFeeFiat = rootStore.formatCurrencyAmount(maxFeeCrypto, root.currentCurrency)
                     valuesString += qsTr("Estimated max fee %1 (%2)").arg(maxFeeCrypto).arg(maxFeeFiat) + endl2
@@ -462,8 +470,7 @@ StatusListItem {
             return qsTr("%1 from %2 to %3").arg(inTransactionValue).arg(networkNameOut).arg(networkNameIn)
         case Constants.TransactionType.ContractDeployment:
             const name = addressNameTo || addressNameFrom
-            return !!modelData.contract ? qsTr("Contract %1 via %2 on %3").arg(Utils.compactAddress(modelData.contract, 4)).arg(name).arg(networkName)
-                                        : qsTr("Via %1 on %2").arg(name).arg(networkName)
+            return qsTr("Via %1 on %2").arg(name).arg(networkName)
         case Constants.TransactionType.Mint:
             if (allAccounts)
                 return qsTr("%1 via %2 in %4").arg(transactionValue).arg(networkName).arg(toAddress)
@@ -591,7 +598,7 @@ StatusListItem {
                     bgWidth: width + 2
                     bgHeight: height + 2
                     bgRadius: bgWidth / 2
-                    bgColor: root.color
+                    bgColor: Theme.palette.white
                     isImage:root.tokenIconAsset.isImage
                     color: root.tokenIconAsset.color
                     name: root.inTokenImage
@@ -800,11 +807,6 @@ StatusListItem {
                 target: root.statusIconAsset
                 width: 17
                 height: 17
-            }
-            PropertyChanges {
-                target: root.tokenIconAsset
-                width: 20
-                height: 20
             }
             PropertyChanges {
                 target: d

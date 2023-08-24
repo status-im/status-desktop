@@ -18,6 +18,7 @@ const noLimitTimestampForPeriod* = 0
 const eventActivityFilteringDone*: string = "wallet-activity-filtering-done"
 const eventActivityGetRecipientsDone*: string = "wallet-activity-get-recipients-result"
 const eventActivityGetOldestTimestampDone*: string = "wallet-activity-get-oldest-timestamp-result"
+const eventActivityFetchTransactionDetails*: string = "wallet-activity-fetch-transaction-details-result"
 
 type
   Period* = object
@@ -218,6 +219,29 @@ proc `%`*(pt: PayloadType): JsonNode {.inline.} =
 proc fromJson*(jn: JsonNode, T: typedesc[PayloadType]): PayloadType {.inline.} =
   return cast[PayloadType](jn.getInt())
 
+# Mirrors status-go/services/wallet/activity/activity.go ProtocolType
+type
+  ProtocolType* {.pure} = enum
+    Hop = 1
+    Uniswap
+
+# Define toJson proc for ProtocolType
+proc `%`*(pt: ProtocolType): JsonNode {.inline.} =
+  return newJInt(ord(pt))
+
+# Define fromJson proc for ProtocolType
+proc fromJson*(jn: JsonNode, T: typedesc[ProtocolType]): ProtocolType {.inline.} =
+  return cast[ProtocolType](jn.getInt())
+
+proc `$`*(pt: ProtocolType): string {.inline.} =
+  case pt:
+    of Hop:
+      return "Hop"
+    of Uniswap:
+      return "Uniswap"
+    else:
+      return ""
+
 # Mirrors status-go/services/wallet/activity/activity.go TransferType
 type
   TransferType* {.pure.} = enum
@@ -259,7 +283,6 @@ type
     chainIdOut*: Option[ChainId]
     chainIdIn*: Option[ChainId]
     transferType*: Option[TransferType]
-    contractAddress*: Option[eth.Address]
 
   # Mirrors services/wallet/activity/service.go ErrorCode
   ErrorCode* = enum
@@ -287,7 +310,6 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
   const chainIdOutField = "chainIdOut"
   const chainIdInField = "chainIdIn"
   const transferTypeField = "transferType"
-  const contractAddressField = "contractAddress"
   result = T(
     payloadType: fromJson(e["payloadType"], PayloadType),
     transaction:  if e.hasKey("transaction"):
@@ -325,10 +347,6 @@ proc fromJson*(e: JsonNode, T: typedesc[ActivityEntry]): ActivityEntry {.inline.
     result.chainIdIn = some(fromJson(e[chainIdInField], ChainId))
   if e.hasKey(transferTypeField) and e[transferTypeField].kind != JNull:
     result.transferType = some(fromJson(e[transferTypeField], TransferType))
-  if e.hasKey(contractAddressField) and e[contractAddressField].kind != JNull:
-    var address: eth.Address
-    fromJson(e[contractAddressField], contractAddressField, address)
-    result.contractAddress = some(address)
 
 proc `$`*(self: ActivityEntry): string =
   let transactionStr = if self.transaction.isSome: $self.transaction.get()
@@ -420,3 +438,9 @@ proc fromJson*(e: JsonNode, T: typedesc[GetOldestTimestampResponse]): GetOldestT
 rpc(getOldestActivityTimestampAsync, "wallet"):
   requestId: int32
   addresses: seq[string]
+
+rpc(getMultiTxDetails, "wallet"):
+  id: int
+
+rpc(getTxDetails, "wallet"):
+  id: string

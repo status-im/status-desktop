@@ -3,6 +3,7 @@ import tables, stint, sets
 
 import model
 import entry
+import entry_details
 import recipients_model
 import events_handler
 import status
@@ -41,6 +42,7 @@ QtObject:
       currentActivityFilter: backend_activity.ActivityFilter
       currencyService: currency_service.Service
       tokenService: token_service.Service
+      activityDetails: ActivityDetails
 
       eventsHandler: EventsHandler
       status: Status
@@ -182,6 +184,38 @@ QtObject:
           else:
             error "failed to find pending transaction with identity: ", identity
           ptIndex += 1
+
+  proc fetchTxDetails*(self: Controller, id: string, isMultiTx: bool, isPending: bool) {.slot.} =
+    self.activityDetails = newActivityDetails(id, isMultiTx)
+    if isPending:
+      return
+
+    try:
+      let amountToCurrencyConvertor = proc(amount: UInt256, symbol: string): CurrencyAmount =
+        return currencyAmountToItem(self.currencyService.parseCurrencyValue(symbol, amount),
+                                    self.currencyService.getCurrencyFormat(symbol))
+      if isMultiTx:
+        let res = backend_activity.getMultiTxDetails(parseInt(id))
+        if res.error != nil:
+          error "failed to fetch multi tx details: ", id
+          return
+        self.activityDetails = newActivityDetails(res.result, amountToCurrencyConvertor)
+      else:
+        let res = backend_activity.getTxDetails(id)
+        if res.error != nil:
+          error "failed to fetch tx details: ", id
+          return
+        self.activityDetails = newActivityDetails(res.result, amountToCurrencyConvertor)
+    except Exception as e:
+      let errDescription = e.msg
+      error "error: ", errDescription
+      return
+
+  proc getActivityDetails(self: Controller): QVariant {.slot.} =
+    return newQVariant(self.activityDetails)
+
+  QtProperty[QVariant] activityDetails:
+    read = getActivityDetails
 
   proc processResponse(self: Controller, response: JsonNode) =
     defer: self.status.setLoadingData(false)

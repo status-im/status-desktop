@@ -30,28 +30,28 @@ type
     id*: string
     typeValue*: string
     address*: string
-    blockNumber*: string
+    blockNumber*: string # TODO remove, fetched separately in details
     blockHash*: string
     contract*: string
     timestamp*: UInt256
     gasPrice*: string
-    gasLimit*: string
+    gasLimit*: string # TODO remove, fetched separately in details
     gasUsed*: string
-    nonce*: string
+    nonce*: string # TODO remove, fetched separately in details
     txStatus*: string
     value*: string
     tokenId*: UInt256
     fromAddress*: string
     to*: string
     chainId*: int
-    maxFeePerGas*: string
+    maxFeePerGas*: string # TODO remove, fetched separately in details
     maxPriorityFeePerGas*: string
-    input*: string
-    txHash*: string
+    input*: string # TODO remove, fetched separately in details
+    txHash*: string # TODO remove, fetched separately in details
     multiTransactionID*: int
     baseGasFees*: string
     totalFees*: string
-    maxTotalFees*: string
+    maxTotalFees*: string # TODO remove, fetched separately in details
     additionalData*: string
     symbol*: string
 
