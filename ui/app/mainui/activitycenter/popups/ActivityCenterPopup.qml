@@ -113,6 +113,8 @@ Popup {
                         return communityKickedNotificationComponent
                     case ActivityCenterStore.ActivityCenterNotificationType.ContactRemoved:
                         return contactRemovedComponent
+                    case ActivityCenterStore.ActivityCenterNotificationType.NewKeypairAddedToPairedDevice:
+                        return newKeypairFromPairedDeviceComponent
                     default:
                         return null
                 }
@@ -217,6 +219,16 @@ Popup {
             notification: parent.notification
             store: root.store
             activityCenterStore: root.activityCenterStore
+            onCloseActivityCenter: root.close()
+        }
+    }
+
+    Component {
+        id: newKeypairFromPairedDeviceComponent
+
+        ActivityNotificationNewKeypairFromPairedDevice {
+            filteredIndex: parent.filteredIndex
+            notification: parent.notification
             onCloseActivityCenter: root.close()
         }
     }
