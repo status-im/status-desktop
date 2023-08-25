@@ -84,7 +84,7 @@ class EditCommunityView(QObject):
         self._banner = QObject('communityEditPanelScrollView_image_StatusImage_2')
         self._add_banner_button = Button('communityEditPanelScrollView_editButton_StatusRoundButton_2')
         self._select_color_button = Button('communityEditPanelScrollView_StatusPickerButton')
-        self._choose_tag_button = Button('communityEditPanelScrollView_Choose_StatusPickerButton')
+        self._choose_tage_button = Button('communityEditPanelScrollView_Choose_StatusPickerButton')
         self._tag_item = QObject('communityEditPanelScrollView_StatusCommunityTag')
         self._archive_support_checkbox = CheckBox('communityEditPanelScrollView_archiveSupportToggle_StatusCheckBox')
         self._request_to_join_checkbox = CheckBox('communityEditPanelScrollView_requestToJoinToggle_StatusCheckBox')
@@ -152,14 +152,14 @@ class EditCommunityView(QObject):
     @property
     @allure.step('Get community tags')
     def tags(self):
-        self._scroll.vertical_scroll_to(self._choose_tag_button)
+        self._scroll.vertical_scroll_to(self._choose_tage_button)
         return [str(tag.title) for tag in driver.fiandAllObjects(self._tag_item.real_name)]
 
     @tags.setter
     @allure.step('Set community tags')
     def tags(self, values: typing.List[str]):
-        self._scroll.vertical_scroll_to(self._choose_tag_button)
-        self._choose_tag_button.click()
+        self._scroll.vertical_scroll_to(self._choose_tage_button)
+        self._choose_tage_button.click()
         TagsSelectPopup().wait_until_appears().select_tags(values)
 
     @property

@@ -35,7 +35,7 @@ class CreateCommunityPopup(BasePopup):
         self._add_logo_button = Button('addButton_StatusRoundButton2')
         self._add_banner_button = Button('addButton_StatusRoundButton')
         self._select_color_button = Button('StatusPickerButton')
-        self._choose_tag_button = Button('choose_tags_StatusPickerButton')
+        self._choose_tage_button = Button('choose_tags_StatusPickerButton')
         self._archive_support_checkbox = CheckBox('archiveSupportToggle_StatusCheckBox')
         self._request_to_join_checkbox = CheckBox('requestToJoinToggle_StatusCheckBox')
         self._pin_messages_checkbox = CheckBox('pinMessagesToggle_StatusCheckBox')
@@ -108,8 +108,8 @@ class CreateCommunityPopup(BasePopup):
     @tags.setter
     @allure.step('Set community tags')
     def tags(self, values: typing.List[str]):
-        self._scroll.vertical_scroll_to(self._choose_tag_button)
-        self._choose_tag_button.click()
+        self._scroll.vertical_scroll_to(self._choose_tage_button)
+        self._choose_tage_button.click()
         TagsSelectPopup().wait_until_appears().select_tags(values)
 
     @property
